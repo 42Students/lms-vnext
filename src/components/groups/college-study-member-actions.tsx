@@ -13,6 +13,7 @@ import { Dropdown } from "@/components/ui/dropdown";
 import {
   collegeStudyMemberLabel, type CollegeStudyMemberAction,
 } from "@/modules/groups/college-member-management-model";
+import { Label } from "@/components/ui/label";
 
 export function CollegeStudyMemberActions({
   groupId, name, members, available,
@@ -68,19 +69,19 @@ export function CollegeStudyMemberActions({
       setError(null);
       setAction({ action: "ADD", membershipId });
     }} className="grid min-w-0 grid-cols-1 items-end gap-3 border-t border-border pt-4 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-body leading-4">
+      <Label stack className="min-w-0">
         Add learner
         <Select value={selection} onChange={(event) => {setSelection(event.target.value);if(event.target.value)setManualId("");}}
           className="min-h-11 min-w-0 md:min-h-9">
           <option value="">Choose from first 100 members</option>
           {available.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
         </Select>
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-body leading-4">
+      </Label>
+      <Label stack className="min-w-0">
         Or learner membership ID
         <Input value={manualId} onChange={(event) => {setManualId(event.target.value);if(event.target.value.trim())setSelection("");}}
           placeholder="UUID" className="min-h-11 min-w-0 md:min-h-9" />
-      </label>
+      </Label>
       <Button type="submit" loading={pending} className="min-h-11 w-full md:col-span-2 md:min-h-9 lg:col-span-1 lg:w-auto" disabled={pending}>Review add</Button>
     </form>
     <details className="border-b border-border pb-3 text-xs text-muted-foreground"><summary className="min-h-11 cursor-pointer py-3 font-semibold md:min-h-9">Membership policy</summary><p>

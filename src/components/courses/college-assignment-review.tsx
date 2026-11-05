@@ -9,6 +9,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {FacultyAssignmentReview} from "./faculty-assignment-review";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
 
@@ -108,7 +109,7 @@ export function CollegeAssignmentReview({
    footer={<Button type="button" variant="secondary" disabled={bulkBusy}
     onClick={()=>setReviewOpen(false)}>Close</Button>}>
   <div className="min-w-0 space-y-3">
-  {options.length>1?<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+  {options.length>1?<Label stack>
    Section
    <Select value={selected.deliveryId} disabled={bulkBusy} onChange={event=>{setDeliveryId(event.target.value);setBulkStatus("");setRetryAllowed(false);setFailedIds([]);}}
     className="min-h-11 md:min-h-9">
@@ -116,7 +117,7 @@ export function CollegeAssignmentReview({
      {item.sectionName} ({item.sectionCode})
     </option>)}
    </Select>
-  </label>:null}
+  </Label>:null}
   <div className="flex min-w-0 flex-wrap items-center gap-2">
    <FacultyAssignmentReview key={selected.deliveryId} reviewScope="COLLEGE"
     assignmentId={assignmentId} deliveryId={selected.deliveryId}

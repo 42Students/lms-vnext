@@ -9,6 +9,7 @@ import {TpoOutsideParticipantsEditor} from "@/components/placements/tpo-outside-
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
+import { Label } from "@/components/ui/label";
 export default async function TpoOutsideDriveDetail({params,searchParams}:{
  params:Promise<{recordId:string}>;searchParams:Promise<{q?:string|string[]}>;
 }){
@@ -34,9 +35,9 @@ export default async function TpoOutsideDriveDetail({params,searchParams}:{
   <p className="text-sm text-body">Occurred {new Intl.DateTimeFormat("en-IN",{
    timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(data.record.occurredAt)} IST</p>
   <form method="get" role="search" aria-label="Find college learners" className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-   <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search college learners
+   <Label stack className="min-w-0 flex-1">Search college learners
     <Input type="search" name="q" defaultValue={q} maxLength={80} />
-   </label>
+   </Label>
    <Button variant="secondary" type="submit" className="w-full self-end sm:w-auto">Find</Button>
   </form>
   <TpoOutsideParticipantsEditor recordId={recordId} choices={data.choices}

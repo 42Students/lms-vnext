@@ -20,6 +20,7 @@ import {
 } from "@/modules/academics/college-cohort-mutation-model";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Option = { id: string; name: string; code: string; startDate?:string; endDate?:string };
 type Batch = {
@@ -181,7 +182,7 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
       </p>
       : <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] lg:grid-cols-2">
         <div className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          <label htmlFor="create-batch-program">Program</label>
+          <Label htmlFor="create-batch-program">Program</Label>
           <Input type="search" value={programQuery} onChange={e => setProgramQuery(e.target.value)}
             aria-label="Search programs" placeholder="Search programs by name or code" disabled={pending} />
           <Select id="create-batch-program" required value={programId} error={Boolean(fieldErrors["programId"])}
@@ -194,7 +195,7 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
           </Select>
           {fieldErrors["programId"] ? <span role="alert" className="text-xs text-error">{fieldErrors["programId"]}</span> : null}
         </div>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start academic period
+        <Label stack>Start academic period
           <Select value={startPeriodId} error={Boolean(fieldErrors["startPeriodId"])}
             onChange={e => startPeriodChanged(e.target.value)}
             className="min-h-11 md:min-h-9 ">
@@ -202,49 +203,49 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </Select>
           {fieldErrors["startPeriodId"] ? <span role="alert" className="text-xs text-error">{fieldErrors["startPeriodId"]}</span> : null}
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch Name
+        </Label>
+        <Label stack>Batch Name
           <Input maxLength={255} value={name} placeholder="e.g., 2024–2028 Batch" error={Boolean(fieldErrors["name"])}
             onChange={e => { setName(e.target.value); setFieldErrors(current => ({ ...current, name: "" })); }}
             className="min-h-11 min-w-0 md:min-h-9" />
           {fieldErrors["name"] ? <span role="alert" className="text-xs text-error">{fieldErrors["name"]}</span> : null}
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch code
+        </Label>
+        <Label stack>Batch code
           <Input maxLength={64} value={code} error={Boolean(fieldErrors["code"])}
             onChange={e => { setCode(e.target.value); setFieldErrors(current => ({ ...current, code: "" })); }}
             className="min-h-11 min-w-0 md:min-h-9" />
           {fieldErrors["code"] ? <span role="alert" className="text-xs text-error">{fieldErrors["code"]}</span> : null}
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Expected end period (optional)
+        </Label>
+        <Label stack>Expected end period (optional)
           <Select disabled={pending} value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
             className="min-h-11 md:min-h-9 ">
             <option value="">Not specified</option>
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </Select>
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic Year
+        </Label>
+        <Label stack>Academic Year
           <Input maxLength={7} value={academicYear} error={Boolean(fieldErrors["academicYear"])}
             onChange={e => { setAcademicYear(e.target.value); setFieldErrors(current => ({ ...current, academicYear: "" })); }}
             placeholder="e.g., 2024-25" className="min-h-11 min-w-0 md:min-h-9"/>
           {fieldErrors["academicYear"] ? <span role="alert" className="text-xs text-error">{fieldErrors["academicYear"]}</span> : null}
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start Date
+        </Label>
+        <Label stack>Start Date
           <Input type="date" value={startDate} error={Boolean(fieldErrors["startDate"])}
             onChange={e=>startDateChanged(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9"/>
           {fieldErrors["startDate"] ? <span role="alert" className="text-xs text-error">{fieldErrors["startDate"]}</span> : null}
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End Date
+        </Label>
+        <Label stack>End Date
           <Input type="date" value={endDate} min={startDate||start?.startDate||undefined}
             error={Boolean(fieldErrors["endDate"])}
             onChange={e => { setEndDate(e.target.value); setFieldErrors(current => ({ ...current, endDate: "" })); }}
             className="min-h-11 min-w-0 md:min-h-9"/>
           {fieldErrors["endDate"] ? <span role="alert" className="text-xs text-error">{fieldErrors["endDate"]}</span> : null}
-        </label>
+        </Label>
         <div className="min-w-0 space-y-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-sm text-body md:col-span-2">
           <p>Start Date: {start?.startDate??"Choose start period"} · End Date: {end?.endDate??"Not specified"}</p>
           <div className="flex flex-wrap items-end gap-[var(--lms-space-2)]">
-            <label className="grid min-w-0 gap-[var(--lms-space-1)] text-xs font-semibold">
+            <Label stack className="min-w-0">
               Academic year starts in
               <Select value={startMonth} onChange={e => {
                 const value = Number(e.target.value);
@@ -256,7 +257,7 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
               }} className="min-h-11 md:min-h-9">
                 {MONTHS.map((month, index) => <option key={month} value={index + 1}>{month}</option>)}
               </Select>
-            </label>
+            </Label>
             <Button type="button" variant="secondary" disabled={!yearSource}
               onClick={() => setAcademicYear(suggestedYear)}>Recalculate</Button>
           </div>
@@ -451,19 +452,19 @@ export function CollegeCohortRowActions({ row, periods }: {
       <form onSubmit={save} className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         
         <p className="text-sm text-muted-foreground md:col-span-2 leading-[22px]">Program and starting period cannot change after creation. Status: {row.status}. Planned batches can be archived only before class or student records exist; active batches may be marked Completed after their final term. The legacy Inactive transition is not supported by this progression model.</p>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch Name
+        <Label stack>Batch Name
           <Input maxLength={255} value={name} placeholder="e.g., 2024–2028 Batch" error={Boolean(editErrors["name"])}
             onChange={e => { setName(e.target.value); setEditErrors(current => ({ ...current, name: "" })); }}
             className="min-h-11 min-w-0 md:min-h-9" />
           {editErrors["name"] ? <span role="alert" className="text-xs text-error">{editErrors["name"]}</span> : null}
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch code
+        </Label>
+        <Label stack>Batch code
           <Input maxLength={64} value={code} error={Boolean(editErrors["code"])}
             onChange={e => { setCode(e.target.value); setEditErrors(current => ({ ...current, code: "" })); }}
             className="min-h-11 min-w-0 md:min-h-9" />
           {editErrors["code"] ? <span role="alert" className="text-xs text-error">{editErrors["code"]}</span> : null}
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Expected end period
+        </Label>
+        <Label stack>Expected end period
           <Select value={expectedEndPeriodId} error={Boolean(editErrors["expectedEndPeriodId"])}
             onChange={e => { setExpectedEndPeriodId(e.target.value); setEditErrors(current => ({ ...current, expectedEndPeriodId: "" })); }}
             className="min-h-11 md:min-h-9 ">
@@ -473,26 +474,26 @@ export function CollegeCohortRowActions({ row, periods }: {
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </Select>
           {editErrors["expectedEndPeriodId"] ? <span role="alert" className="text-xs text-error">{editErrors["expectedEndPeriodId"]}</span> : null}
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic Year
+        </Label>
+        <Label stack>Academic Year
           <Input maxLength={16} value={academicYear} error={Boolean(editErrors["academicYear"])}
             onChange={e => { setAcademicYear(e.target.value); setEditErrors(current => ({ ...current, academicYear: "" })); }}
             placeholder="e.g., 2024-25" className="min-h-11 min-w-0 md:min-h-9"/>
           {editErrors["academicYear"] ? <span role="alert" className="text-xs text-error">{editErrors["academicYear"]}</span> : null}
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start Date
+        </Label>
+        <Label stack>Start Date
           <Input type="date" disabled={endDateLocked} error={Boolean(editErrors["startDate"])}
             value={startDate} onChange={e => { setStartDate(e.target.value); setEditErrors(current => ({ ...current, startDate: "" })); }}
             className="min-h-11 min-w-0 md:min-h-9"/>
           {editErrors["startDate"] ? <span role="alert" className="text-xs text-error">{editErrors["startDate"]}</span> : null}
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End Date
+        </Label>
+        <Label stack>End Date
           <Input type="date" disabled={endDateLocked} error={Boolean(editErrors["endDate"])}
             value={endDate} min={startDate||undefined}
             onChange={e => { setEndDate(e.target.value); setEditErrors(current => ({ ...current, endDate: "" })); }}
             className="min-h-11 min-w-0 md:min-h-9"/>
           {editErrors["endDate"] ? <span role="alert" className="text-xs text-error">{editErrors["endDate"]}</span> : null}
-        </label>
+        </Label>
         {endDateLocked && <p className="text-xs text-muted-foreground md:col-span-2 leading-5">
           End period is locked because the batch has enrolled learners or classes. Name and code remain editable.
         </p>}

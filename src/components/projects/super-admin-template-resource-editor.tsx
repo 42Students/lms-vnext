@@ -14,6 +14,7 @@ import {useRouter} from "next/navigation";
 import {projectTemplateBlueprintSchema,type ProjectTemplateBlueprint} from "@/modules/projects/validation";
 import {projectMutation} from "./project-api";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Resource=ProjectTemplateBlueprint["resources"][number];
 const cls="mt-1 w-full";
 function slug(value:string){
@@ -149,7 +150,7 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
   {open?<div className="min-w-0 space-y-4 rounded-[8px] border border-border bg-surface p-4">
    <p className="text-sm text-muted-foreground">Use ordinary http(s) URLs only. javascript: and data: links cannot be saved; links to private files must use approved access and signed URLs.</p>
    {rows.length>12?<div className="min-w-0 space-y-1">
-    <label className="text-sm font-semibold text-body" htmlFor="template-resource-search">Find a resource</label>
+    <Label htmlFor="template-resource-search">Find a resource</Label>
     <Input id="template-resource-search" type="search" value={search} onChange={event=>setSearch(event.target.value)}
       placeholder="Search resources by title or content" className="max-w-[420px]" />
     <p role="status" className="text-xs text-muted-foreground">Showing {visibleRows.length} of {rows.length} resources</p>
@@ -167,37 +168,37 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
     </ul>:null}
     <fieldset disabled={pending} className="grid min-w-0 gap-3 pb-4 pt-3 md:grid-cols-2 md:gap-3">
     <legend className="sr-only">Edit {row.title||"resource "+(i+1)}</legend>
-    <label className="text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Key<Input value={row.key} maxLength={64}
+    <Label>Key<Input value={row.key} maxLength={64}
       onChange={e=>change(i,{key:e.target.value})} placeholder={slug(row.title)}
       className={cls}/><span className="mt-1 block text-xs font-normal text-muted-foreground">
        Generated key: {uniqueKey(row.title||"resource",rows.filter((_,at)=>at!==i).map(item=>item.key))}
-      </span></label>
-    <label className="text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Title *<Input value={row.title} required maxLength={200} aria-invalid={Boolean(rowErrors[i]?.length)} placeholder="e.g. Project brief"
-      onChange={e=>changeTitle(i,e.target.value)} className={cls}/></label>
-    <label className="text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Type<Select value={row.type??"LINK"}
+      </span></Label>
+    <Label>Title *<Input value={row.title} required maxLength={200} aria-invalid={Boolean(rowErrors[i]?.length)} placeholder="e.g. Project brief"
+      onChange={e=>changeTitle(i,e.target.value)} className={cls}/></Label>
+    <Label>Type<Select value={row.type??"LINK"}
       onChange={e=>change(i,{type:e.target.value as NonNullable<Resource["type"]>})} className={cls}>
       {(["LINK","PDF","DOCUMENT","SLIDES","VIDEO","FILE"] as const).map(v=><option key={v} value={v}>
        {({LINK:"Link",PDF:"PDF",DOCUMENT:"Document",SLIDES:"Slides",VIDEO:"Video",FILE:"File"} as const)[v]}
       </option>)}
-    </Select></label>
-    <label className="text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Status<Select value={row.status??"ACTIVE"}
+    </Select></Label>
+    <Label>Status<Select value={row.status??"ACTIVE"}
       onChange={e=>change(i,{status:e.target.value as NonNullable<Resource["status"]>})} className={cls}>
       {["ACTIVE","DRAFT","ARCHIVED"].map(v=><option key={v} value={v}>{v}</option>)}
-    </Select></label>
-    <label className="text-[var(--lms-font-sm)] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">URL (for a Link)<Input value={row.url??""}
+    </Select></Label>
+    <Label className="md:col-span-2">URL (for a Link)<Input value={row.url??""}
       onChange={e=>changeOptional(i,"url",e.target.value)}
-      placeholder="https://example.com/resource" className={cls}/></label>
-    <label className="text-[var(--lms-font-sm)] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">Description
+      placeholder="https://example.com/resource" className={cls}/></Label>
+    <Label className="md:col-span-2">Description
      <Textarea value={row.description??""} onChange={e=>changeOptional(i,"description",e.target.value)}
-      placeholder="What this resource is for" className="mt-1 w-full min-h-20"/></label>
-    <label className="text-[var(--lms-font-sm)] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">Access notes (optional)
+      placeholder="What this resource is for" className="mt-1 w-full min-h-20"/></Label>
+    <Label className="md:col-span-2">Access notes (optional)
      <Input maxLength={2000} value={row.accessNotes??""}
       onChange={e=>changeOptional(i,"accessNotes",e.target.value)}
-      placeholder="e.g. Requires college email to view" className={cls}/></label>
-    <label className="flex items-center gap-2 text-xs font-semibold text-body"><Checkbox className="size-5"
-      checked={row.pinned??false} onChange={e=>change(i,{pinned:e.target.checked})}/>Pinned</label>
-    <label className="flex items-center gap-2 text-xs font-semibold text-body"><Checkbox className="size-5"
-      checked={row.required} onChange={e=>change(i,{required:e.target.checked})}/>Required</label>
+      placeholder="e.g. Requires college email to view" className={cls}/></Label>
+    <Label className="flex items-center gap-2"><Checkbox className="size-5"
+      checked={row.pinned??false} onChange={e=>change(i,{pinned:e.target.checked})}/>Pinned</Label>
+    <Label className="flex items-center gap-2"><Checkbox className="size-5"
+      checked={row.required} onChange={e=>change(i,{required:e.target.checked})}/>Required</Label>
     <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap md:col-span-2">
       <Button type="button" variant="secondary" aria-label={"Move "+(row.title||"resource")+" up"} disabled={i===0} onClick={()=>{setRowErrors({});setRows(r=>{const n=[...r];const previous=n[i-1],current=n[i];if(previous===undefined||current===undefined)return r;n[i-1]=current;n[i]=previous;return n;});}}
        className="min-h-11 w-full text-xs sm:min-h-9 sm:w-auto">Move up</Button>

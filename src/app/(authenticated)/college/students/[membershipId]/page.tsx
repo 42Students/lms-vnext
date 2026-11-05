@@ -10,6 +10,7 @@ import { CollegePersonNotFoundError } from "@/modules/people/college-person-deta
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export default async function CollegeStudentDetailPage({ params, searchParams }: {
   params: Promise<{ membershipId: string }>;
@@ -41,7 +42,7 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
       <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">Program and batch enrollments</Heading>
       <form method="get" role="search" aria-label="Enrollment lifecycle filter" className="mt-3 flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-md:flex-col max-md:items-stretch"
         action={`/college/students/${encodeURIComponent(membershipId)}`}>
-        <label className="grid w-full min-w-0 basis-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-[220px] md:basis-auto">
+        <Label stack className="w-full min-w-0 basis-full md:w-[220px] md:basis-auto">
           Enrollment lifecycle
           <Select name="status" defaultValue={data.filter.status}
             >
@@ -50,7 +51,7 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
             <option value="COMPLETED">Completed</option>
             <option value="WITHDRAWN">Withdrawn</option>
           </Select>
-        </label>
+        </Label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
       </form>
       <p className="mt-2 text-xs text-muted-foreground leading-5">{data.enrollmentTotal} total persisted enrollment(s), including other lifecycle statuses.</p>

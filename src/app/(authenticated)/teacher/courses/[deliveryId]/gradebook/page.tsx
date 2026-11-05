@@ -14,6 +14,7 @@ import {
 import {getFacultyPublishedGradebook} from "@/modules/courses/faculty-gradebook-service";
 import {CoursesServiceError} from "@/modules/courses/errors";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type SearchParams={search?:string|string[];page?:string|string[]};
 
@@ -80,12 +81,12 @@ export default async function FacultyGradebookPage({
       as the roster minus Absent, which counted unmarked learners as present.
     </p>
     <form role="search" aria-label="gradebook filters" method="get" className="grid min-w-0 gap-[8px] border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <Label stack className="min-w-0">
         Find learner
         <Input type="search" name="search" defaultValue={view.data.search}
           maxLength={120} placeholder="Name, roll number or email"
           className="min-h-11 md:min-h-[var(--lms-control-height)]" />
-      </label>
+      </Label>
       <Button type="submit" variant="primary" className="w-full sm:w-auto">
         Search
       </Button>

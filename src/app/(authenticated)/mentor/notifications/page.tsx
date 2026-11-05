@@ -29,6 +29,8 @@ import {sortMentorUnifiedNotifications,type MentorUnifiedNotification}
   from "@/modules/projects/mentor-unified-notification-model";
 import {mentorAttentionKindSchema,mentorAttentionProjectSchema,mentorAttentionOrderSchema,selectMentorAttention,mentorAttentionProjectOptions} from "@/modules/projects/mentor-attention-kind-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 export const dynamic = "force-dynamic";
 const MENTOR_INBOX = "/mentor/notifications";
@@ -51,8 +53,8 @@ function MentorNotificationsLoading() {
     <div className="space-y-3" aria-hidden="true">
       {[1,2,3].map(value=><div key={value} className="flex items-start gap-3 border-b border-border py-4">
         <span className="h-9 w-9 shrink-0 animate-pulse rounded-lg bg-muted" />
-        <div className="w-full space-y-2"><div className="h-4 w-2/5 animate-pulse rounded bg-muted"/>
-          <div className="h-3 w-4/5 animate-pulse rounded bg-muted"/></div>
+        <div className="w-full space-y-2"><SkeletonBlock className="h-4 w-2/5" />
+          <SkeletonBlock className="h-3 w-4/5" /></div>
       </div>)}
     </div>
   </div>;
@@ -263,21 +265,21 @@ async function MentorNotificationsContent({
       <form method="get" action={MENTOR_INBOX} role="search" aria-label="Mentor attention filters"
         className="grid min-w-0 items-end gap-3 border-b border-border pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-[repeat(3,minmax(0,1fr))_auto_auto]">
         <input type="hidden" name="pill" value={selectedPill}/>
-        <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Project with recorded attention
+        <Label stack className="min-w-0">Project with recorded attention
           <Select name="projectId" defaultValue={projectId.data??""}
             className="min-h-11 max-w-full md:min-h-9">
             <option value="">All assigned Projects</option>
             {projectOptions.map(({id,title})=><option key={id} value={id}>{title}</option>)}
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Attention order
+        </Label>
+        <Label stack className="min-w-0">Attention order
           <Select name="attentionOrder" defaultValue={attentionOrder.data}
             className="min-h-11 md:min-h-9">
             <option value="RECENT">Most recent recorded first</option>
             <option value="REVIEW_FIRST">Reviews and requests first</option>
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Attention type
+        </Label>
+        <Label stack className="min-w-0">Attention type
           <Select name="kind" defaultValue={kind.data}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All</option><option value="REVIEW">Reviews</option>
@@ -289,7 +291,7 @@ async function MentorNotificationsContent({
             <option value="SPRINT_SIGN_OFF">Sprint sign-offs</option>
             <option value="UNASSIGNED_NEXT">Next sprint unassigned</option>
           </Select>
-        </label>
+        </Label>
         <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
           Filter attention
         </Button>

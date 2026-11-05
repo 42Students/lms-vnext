@@ -15,6 +15,7 @@ import {friendlyApiError} from "@/lib/friendly-error";
 import { canRecordTpoOfferAction, parseTpoOfferExpiryIstInput, TPO_OFFER_REASON_PRESETS, TPO_OFFER_ACTIONS, type TpoOfferAction } from "@/modules/placements/tpo-offer-lifecycle-model";
 import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type CandidateOffer = {
   id: string;
@@ -110,7 +111,7 @@ export function TpoOfferLifecyclePanel({
           Changing a learner response here requires independent confirmation evidence.
         </p>
       </div>
-      <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+      <Label className="block">
         Administrative action
         <Select
           value={action}
@@ -126,13 +127,13 @@ export function TpoOfferLifecyclePanel({
             <option key={value} value={value}>{value.replaceAll("_", " ")}</option>
           ))}
         </Select>
-      </label>
+      </Label>
       {eligible.length === 0 ? (
         <EmptyState title="No offers currently match this action." description="Nothing will be changed."/>
       ) : (
         <div tabIndex={0} role="group" aria-label="Eligible offers, scroll for more" className="max-h-56 min-h-0 min-w-0 divide-y divide-border overflow-auto overscroll-contain rounded-[var(--lms-canvas-radius)] border border-border px-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
           {eligible.map((offer) => (
-            <label key={offer.id} className="flex min-h-11 min-w-0 flex-wrap items-center gap-2 px-2 py-1 text-sm hover:bg-muted md:min-h-9">
+            <Label variant="choice" key={offer.id} className="flex min-h-11 min-w-0 flex-wrap items-center gap-2 px-2 py-1 hover:bg-muted md:min-h-9">
               <Checkbox
                 checked={ids.includes(offer.id)}
                 disabled={busy || (ids.length >= 200 && !ids.includes(offer.id)) ||
@@ -141,12 +142,12 @@ export function TpoOfferLifecyclePanel({
               />
               <span className="min-w-0 flex-1 break-words font-medium text-foreground">{offer.label}</span>
               <span className="text-muted-foreground">{offer.status}</span>
-            </label>
+            </Label>
           ))}
         </div>
       )}
       {action === "EXTEND" ? (
-        <label className="block text-[13px] font-semibold">
+        <Label className="block">
           New expiry (IST)
           <DateInput
             mode="datetime-local"
@@ -155,10 +156,10 @@ export function TpoOfferLifecyclePanel({
             onChange={(event) => setExpiresAt(event.target.value)}
             className="mt-2 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"
           />
-        </label>
+        </Label>
       ) : null}
       {action === "RECORD_JOINED" ? (
-        <label className="block text-[13px] font-semibold">
+        <Label className="block">
           Confirmed joining date
           <DateInput
             mode="date"
@@ -167,17 +168,17 @@ export function TpoOfferLifecyclePanel({
             onChange={(event) => setJoiningDate(event.target.value)}
             className="mt-2 block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"
           />
-        </label>
+        </Label>
       ) : null}
-      <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+      <Label className="block">
         Reason
         <Select className="mt-2 min-h-11 w-full md:min-h-9" value={TPO_OFFER_REASON_PRESETS.includes(reason as typeof TPO_OFFER_REASON_PRESETS[number])?reason:""} disabled={busy}
          onChange={event=>setReason(event.target.value)}>
          <option value="">Choose a reason or write your own</option>
          {TPO_OFFER_REASON_PRESETS.map(option=><option value={option} key={option}>{option}</option>)}
         </Select>
-      </label>
-      <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+      </Label>
+      <Label className="block">
         Mandatory evidence / reason (10–1200 characters)
         <Textarea
           rows={3}
@@ -187,15 +188,15 @@ export function TpoOfferLifecyclePanel({
           onChange={(event) => setReason(event.target.value)}
           className="mt-2 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm font-normal text-foreground"
         />
-      </label>
+      </Label>
       <div className="flex flex-col items-stretch gap-3 md:flex-row md:flex-wrap md:items-center md:justify-between">
         <span className="text-sm text-body">{ids.length} / 200 selected</span>
-        <label className="flex min-w-0 items-start gap-[6px] break-words text-[13px] text-[var(--lms-neutral-400)]">
+        <Label className="flex min-w-0 items-start gap-[6px] break-words">
           <Checkbox checked={reviewed} disabled={busy}
             onChange={event=>setReviewed(event.target.checked)} className="mt-1 h-4 w-4 accent-primary"/>
           I reviewed the {selected.length} affected offer(s) and supporting evidence.
           This is an audited administrative action, not a learner self-response.
-        </label>
+        </Label>
         <Button
           className="min-h-11 w-full md:w-auto md:min-h-9"
           loading={busy}
@@ -290,33 +291,33 @@ function TpoOfferLetterAttachment({jobId,choices}:{
   <p className="text-xs text-body">Use a permanent HTTPS reference supplied by the company.
    The selected-college TPO must record evidence. Private offer-letter files
    already stored through signed uploads are not replaced here.</p>
-  <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Offer
+  <Label stack className="min-w-0">Offer
    <Select value={selectedId} disabled={busy} onChange={e=>void choose(e.target.value)}
     className="min-h-11 w-full md:min-h-9">
     <option value="">Select issued or accepted offer</option>
     {attachable.map(offer=><option key={offer.id} value={offer.id}>{offer.label} · {offer.status}</option>)}
    </Select>
-  </label>
+  </Label>
   {state?.hasPrivateFile?<p role="status" className="text-sm text-body">
    This offer has a private uploaded letter. Use its signed file workflow instead of replacing it with an external link.
   </p>:state?<div className="min-w-0 space-y-3">
-   <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+   <Label stack className="min-w-0">
     Offer-letter HTTPS URL
     <Input type="url" maxLength={2048} required value={url} disabled={busy}
      placeholder="https://company.example/offer-letter.pdf"
      onChange={event=>{setUrl(event.target.value);setConfirmed(false);}}/>
-   </label>
+   </Label>
    {url&&!linkValid?<p role="alert" className="text-xs text-error">Enter a valid public HTTPS letter link.</p>:null}
-   <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+   <Label stack className="min-w-0">
     Evidence / reason (10–1200 characters)
     <Textarea rows={2} maxLength={1200} value={reason} disabled={busy}
      onChange={event=>{setReason(event.target.value);setConfirmed(false);}}/>
-   </label>
-   <label className="flex min-w-0 items-start gap-2 text-xs text-body">
+   </Label>
+   <Label variant="choice" className="flex min-w-0 items-start gap-2">
     <Checkbox checked={confirmed} disabled={busy}
      onChange={event=>setConfirmed(event.target.checked)}/>
     I verified this letter with the employer and understand that the affected learner will be notified.
-   </label>
+   </Label>
    <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
     disabled={busy||!confirmed||!linkValid||reason.trim().length<10} loading={busy}
     onClick={()=>void attach()}>Save letter reference</Button>

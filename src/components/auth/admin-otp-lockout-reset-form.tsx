@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 /** The contact stays in the POST body, never in a link or page search params. */
 export function AdminOtpLockoutResetForm() {
@@ -38,13 +39,13 @@ export function AdminOtpLockoutResetForm() {
       This does not change their membership or bypass anti-abuse limits.
     </p>
     <div>
-      <label htmlFor="otp-reset-phone" className="block text-sm font-semibold">Mobile number</label>
+      <Label htmlFor="otp-reset-phone" className="block">Mobile number</Label>
       <Input id="otp-reset-phone" type="tel" inputMode="tel" required minLength={8} maxLength={32}
         value={phone} onChange={event => setPhone(event.target.value)}
         className="mt-1 w-full" />
     </div>
     <div>
-      <label htmlFor="otp-reset-reason" className="block text-sm font-semibold">Reason for reset</label>
+      <Label htmlFor="otp-reset-reason" className="block">Reason for reset</Label>
       <Textarea id="otp-reset-reason" required minLength={10} maxLength={500} rows={3}
         value={reason} onChange={event => setReason(event.target.value)}
         className="mt-1 w-full" />

@@ -6,6 +6,7 @@ import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import type {ProjectParticipantListQuery} from "./project-participant-list-controls";
 import {learnerProjectMobileFilterSummary} from "@/modules/projects/learner-project-mobile-filter-model";
+import { Label } from "@/components/ui/label";
 
 const statuses = [
   ["CURRENT","Current only"],["ACTIVE","Active"],["IN_PROGRESS","In progress"],
@@ -49,7 +50,7 @@ export function LearnerProjectMobileFilters({query}:{query:ProjectParticipantLis
         onChange={submitFilters} aria-busy={searchPending}
         className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
         <div className={label+" w-full sm:w-[300px]"}>
-          <label htmlFor="learner-project-search">Search</label>
+          <Label htmlFor="learner-project-search">Search</Label>
           <div className="relative min-w-0">
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" strokeWidth="2" strokeLinecap="round"
@@ -72,39 +73,39 @@ export function LearnerProjectMobileFilters({query}:{query:ProjectParticipantLis
             ):null}
           </div>
         </div>
-        <label className={label+" w-full sm:w-[172px]"}>Status
+        <Label className={label+" w-full sm:w-[172px]"}>Status
           <Select name="status" defaultValue={query.status??""} className="min-h-11 w-full">
             <option value="">All statuses</option>
             {statuses.map(([value,text])=><option value={value} key={value}>{text}</option>)}
           </Select>
-        </label>
-        <label className={label+" w-full sm:w-[212px]"}>Attention
+        </Label>
+        <Label className={label+" w-full sm:w-[212px]"}>Attention
           <Select name="attention" defaultValue={query.attention??""} className="min-h-11 w-full"
             aria-label="Project attention">
             <option value="">All attention states</option>
             <option value="LEARNER_ACTION">Needs my action</option>
             <option value="BLOCKED">Blocked</option>
           </Select>
-        </label>
-        <label className={label+" w-full sm:w-[172px]"}>Work attention
+        </Label>
+        <Label className={label+" w-full sm:w-[172px]"}>Work attention
           <Select name="work" defaultValue={query.work??""} className="min-h-11 w-full">
             <option value="">All work</option>
             <option value="BLOCKED">Has blocked tasks</option>
             <option value="NO_TASKS">No tracked tasks yet</option>
           </Select>
-        </label>
-        <label className={label+" w-full sm:w-[172px]"}>Sort projects
+        </Label>
+        <Label className={label+" w-full sm:w-[172px]"}>Sort projects
           <Select name="sort" defaultValue={query.sort??"RECENT"} className="min-h-11 w-full">
             <option value="RECENT">Recently updated</option>
             <option value="TITLE">Title A–Z</option>
             <option value="PROGRESS">Least progress first</option>
           </Select>
-        </label>
-        <label className={label+" w-full sm:w-[172px]"}>Results per page
+        </Label>
+        <Label className={label+" w-full sm:w-[172px]"}>Results per page
           <Select name="pageSize" defaultValue={String(query.pageSize??25)} className="min-h-11 w-full">
             {[10,25,50].map(size=><option value={size} key={size}>{size}</option>)}
           </Select>
-        </label>
+        </Label>
         <Button type="submit" className="min-h-11" onClick={cancelDebounce}>Apply</Button>
         <Link href="/learn/projects" onClick={cancelDebounce}
           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:bg-primary-subtle">

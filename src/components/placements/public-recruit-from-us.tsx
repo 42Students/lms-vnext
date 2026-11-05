@@ -6,6 +6,7 @@ import { PUBLIC_RECRUIT_COPY,publicRecruitThanks } from "@/modules/placements/pu
 import {publicRecruiterWorkEmailSchema} from "@/modules/placements/public-college-join-model";
 import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 const control="w-full";
 export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;enabled:boolean}){
@@ -101,38 +102,38 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
    </div>:<form aria-busy={busy} className="mt-5 max-w-2xl space-y-4" onSubmit={e=>{
     e.preventDefault();void submit(sent?"recruit":"send-code");
    }} noValidate>
-    <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">{PUBLIC_RECRUIT_COPY.workEmail}
+    <Label className="block text-[length:var(--lms-font-sm)]">{PUBLIC_RECRUIT_COPY.workEmail}
      <Input className={control+" mt-1"} required type="email" maxLength={150} autoComplete="email"
       readOnly={Boolean(sent)} aria-invalid={Boolean(fieldErrors.email)} aria-describedby={fieldErrors.email?"public-recruit-email-error":undefined} value={email} onChange={e=>{setEmail(e.target.value);clearFieldError("email");}}/>
      <span className="block mt-1 text-xs font-normal">Your company email. We send a code to it.</span>
      {fieldErrors.email?<span role="alert" id="public-recruit-email-error" className="mt-1 block text-xs text-error">{fieldErrors.email}</span>:null}
-    </label>
-    <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">{PUBLIC_RECRUIT_COPY.name}
+    </Label>
+    <Label className="block text-[length:var(--lms-font-sm)]">{PUBLIC_RECRUIT_COPY.name}
      <Input className={control+" mt-1"} required maxLength={120} autoComplete="name"
       aria-invalid={Boolean(fieldErrors.name)} aria-describedby={fieldErrors.name?"public-recruit-name-error":undefined} value={name} onChange={e=>{setName(e.target.value);clearFieldError("name");}}/>
      {fieldErrors.name?<span role="alert" id="public-recruit-name-error" className="mt-1 block text-xs text-error">{fieldErrors.name}</span>:null}
-    </label>
+    </Label>
     <div className="grid min-w-0 grid-cols-1 gap-4">
-    <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">{PUBLIC_RECRUIT_COPY.company}
+    <Label className="block text-[length:var(--lms-font-sm)]">{PUBLIC_RECRUIT_COPY.company}
      <Input className={control+" mt-1"} maxLength={150} autoComplete="organization"
       value={company} onChange={e=>setCompany(e.target.value)}/>
-    </label>
-    <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">{PUBLIC_RECRUIT_COPY.mobile}
+    </Label>
+    <Label className="block text-[length:var(--lms-font-sm)]">{PUBLIC_RECRUIT_COPY.mobile}
      <Input className={control+" mt-1"} type="tel" maxLength={14} autoComplete="tel" inputMode="tel"
       value={mobile} onChange={e=>setMobile(e.target.value)}/>
-    </label>
-    <label className="block min-w-0 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">{PUBLIC_RECRUIT_COPY.hiringFor}
+    </Label>
+    <Label className="block min-w-0 text-[length:var(--lms-font-sm)] sm:col-span-2">{PUBLIC_RECRUIT_COPY.hiringFor}
      <Textarea className={control+" mt-1 py-2"} maxLength={1000} rows={3}
       value={hiringFor} onChange={e=>setHiringFor(e.target.value)}/>
-    </label>
+    </Label>
     </div>
-    {sent?<label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Code sent to {sent}
+    {sent?<Label className="block text-[length:var(--lms-font-sm)]">Code sent to {sent}
       <Input className={control+" mt-1"} inputMode="numeric" pattern="[0-9]{6}"
        required maxLength={6} autoComplete="one-time-code" aria-invalid={Boolean(fieldErrors.code)} aria-describedby={fieldErrors.code?"public-recruit-code-error":undefined} value={code}
        onChange={e=>{setCode(e.target.value);clearFieldError("code");}}/>
       {fieldErrors.code?<span role="alert" id="public-recruit-code-error" className="mt-1 block text-xs text-error">{fieldErrors.code}</span>:null}
       <span className="block mt-1 text-xs font-normal">{PUBLIC_RECRUIT_COPY.code} Enter the six-digit code received by email; it may autofill on supported devices.</span>
-     </label>:null}
+     </Label>:null}
     {error?<div role="alert" className="flex items-start gap-2 rounded-[var(--lms-control-radius)] border border-error bg-error-subtle px-3 py-2 text-sm text-error">
       <span aria-hidden="true">⚠</span><span>{error}</span>
     </div>:null}

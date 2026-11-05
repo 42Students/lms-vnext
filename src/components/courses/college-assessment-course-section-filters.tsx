@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 export type AssessmentDirectoryCourse = { code: string; name: string };
 export type AssessmentDirectorySection = {
@@ -30,7 +31,7 @@ export function CollegeAssessmentCourseSectionFilters({
     ? deliveryId : "";
 
   return <>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    <Label stack className="min-w-0">
       Course
       <Input type="hidden" name="courseCode" value={courseCode}/>
       <Input type="search" list={listId} aria-label="Search or clear course"
@@ -41,8 +42,8 @@ export function CollegeAssessmentCourseSectionFilters({
         {courses.map(course => <option key={course.code} value={course.name}
           label={course.code} />)}
       </datalist>
-    </label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    </Label>
+    <Label stack className="min-w-0">
       Section
       <Select name="deliveryId" value={selectedDeliveryId}
         disabled={!courseCode || sectionOptions.length === 0}
@@ -54,6 +55,6 @@ export function CollegeAssessmentCourseSectionFilters({
           {section.sectionName} ({section.sectionCode})
         </option>)}
       </Select>
-    </label>
+    </Label>
   </>;
 }

@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
+import { Label } from "@/components/ui/label";
 
 export function ProjectTaskSubmissionControl({
   projectId,
@@ -105,7 +106,7 @@ export function ProjectTaskSubmissionControl({
           onSubmit={submit}
           className="grid min-w-0 gap-[var(--lms-space-4)]"
         >
-          <label>
+          <Label>
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Work link
             </span>
@@ -122,8 +123,8 @@ export function ProjectTaskSubmissionControl({
                 )
               }
             />
-          </label>
-          <label className="min-w-0">
+          </Label>
+          <Label className="min-w-0">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Note
             </span>
@@ -135,7 +136,7 @@ export function ProjectTaskSubmissionControl({
                 setNote(event.target.value)
               }
             />
-          </label>
+          </Label>
           {error ? (
             <p
               role="alert"

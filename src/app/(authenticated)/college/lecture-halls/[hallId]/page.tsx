@@ -13,6 +13,7 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Query = Record<string, string | string[] | undefined>;
 
@@ -46,14 +47,14 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
       description="Persisted scheduled bookings, not a guarantee of open slots or live room occupancy."
       actions={<PageBackLink href="/college/lecture-halls" label="Back to lecture halls"/>} />
     <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]" aria-label="Filter lecture hall bookings">
-      <label className="grid w-full min-w-0 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4 md:w-auto">From (IST)
+      <Label stack className="w-full min-w-0 flex-1 md:w-auto">From (IST)
         <Input name="from" type="date" required defaultValue={typeof from === "string" ? from : ""}
           />
-      </label>
-      <label className="grid w-full min-w-0 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4 md:w-auto">To (IST)
+      </Label>
+      <Label stack className="w-full min-w-0 flex-1 md:w-auto">To (IST)
         <Input name="to" type="date" required defaultValue={typeof to === "string" ? to : ""}
           />
-      </label>
+      </Label>
       <Button type="submit" className="min-h-11 w-full md:col-span-2 md:min-h-9 lg:col-span-1 lg:w-auto">View schedule</Button>
     </form>
     {!parsed.success && hasRange ? <ErrorState title="Invalid date range"

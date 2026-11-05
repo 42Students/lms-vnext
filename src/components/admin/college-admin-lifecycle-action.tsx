@@ -9,6 +9,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useToast} from "@/components/ui/toast";
+import { Label } from "@/components/ui/label";
 
 export function CollegeAdminLifecycleAction({membershipId,status,hasMentorRole,displayName}:{
  membershipId:string;status:string;hasMentorRole:boolean;displayName?:string;
@@ -77,7 +78,7 @@ export function CollegeAdminLifecycleAction({membershipId,status,hasMentorRole,d
    confirmLabel={action==="SUSPEND"?"Suspend":action==="REACTIVATE"?"Reactivate":"End membership"} confirmVariant={action==="REACTIVATE"?"primary":"danger"}
    pending={busy} confirmDisabled={action==="SUSPEND"&&reason.trim().length<3}
    onConfirm={()=>void submit()}>
-   {action==="SUSPEND"?<label className="grid min-w-0 gap-1.5 text-sm font-semibold text-body">
+   {action==="SUSPEND"?<Label stack className="min-w-0">
      Suspension reason (required)
      <Input value={reason} maxLength={1000} disabled={busy} aria-invalid={reasonIssue}
       aria-describedby="admin-suspension-reason-help" placeholder="Reason for suspension"
@@ -85,7 +86,7 @@ export function CollegeAdminLifecycleAction({membershipId,status,hasMentorRole,d
      <span id="admin-suspension-reason-help" className={"text-xs font-normal "+(reasonIssue?"text-error":"text-muted-foreground")}>
       {reasonIssue?"Enter at least 3 characters before suspending.":"At least 3 characters required · "+reason.length+"/1000"}
      </span>
-   </label>:null}
+   </Label>:null}
   </ConfirmDialog>
  </section>;
 }

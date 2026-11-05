@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type CourseRow = {
  id:string;
@@ -78,12 +79,12 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingBy
     <p className="faculty-proto-subtitle mt-1">{counts.All} {counts.All===1?"course":"courses"} you teach {period==="all"?"across periods":"this semester"}, {new Set(scope.flatMap(c=>c.deliveries)).size} classes. <span className="sr-only">{totalAssignments} teaching assignment records.</span></p>
    </div>
    <div className="flex min-w-0 flex-wrap gap-2">
-   <label className="sr-only" htmlFor="faculty-course-search">Search courses</label>
+   <Label className="sr-only" htmlFor="faculty-course-search">Search courses</Label>
    <Input id="faculty-course-search" type="search" value={q}
     onChange={event=>setQ(event.target.value)} placeholder="Search courses"
     className="h-11 w-full rounded-lg border border-[color:var(--lms-border)] bg-surface px-4 text-sm sm:w-56"
    />
-   <label className="sr-only" htmlFor="faculty-course-period">Academic period</label>
+   <Label className="sr-only" htmlFor="faculty-course-period">Academic period</Label>
    <Select id="faculty-course-period" value={period}
     className="min-h-11 min-w-48 rounded-lg border border-[color:var(--lms-border)] bg-surface px-3 text-sm"
     onChange={event=>{setPeriod(event.target.value);setKind("All");}}>

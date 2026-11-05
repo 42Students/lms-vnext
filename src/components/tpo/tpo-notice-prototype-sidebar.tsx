@@ -3,6 +3,7 @@ import Link from "next/link";
 import {useState} from "react";
 import { Input } from "@/components/ui/input";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export type TpoNoticePrototypeListRow={
  id:string;title:string;senderName:string|null;createdAt:string;
@@ -42,7 +43,7 @@ export function TpoNoticePrototypeSidebar({rows,activeId,tab,mine,page,nowIso}:{
     className="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-primary px-3 text-sm font-semibold text-on-primary">
     + New announcement
    </Link>:null}
-   <label className="sr-only" htmlFor="tpo-notice-search">Search loaded announcements</label>
+   <Label className="sr-only" htmlFor="tpo-notice-search">Search loaded announcements</Label>
    <Input id="tpo-notice-search" type="search" value={q} onChange={event=>setQ(event.target.value)}
     placeholder="Search announcements on this page"
     className="min-h-11 w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground"/>

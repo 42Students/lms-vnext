@@ -14,6 +14,7 @@ import {sortFacultyRosterByRollThenName,facultyRosterPhotoPreview,facultyRosterM
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Img } from "@/components/ui/img";
+import { Label } from "@/components/ui/label";
 
 export type FacultyCourseRosterLearner = {
   membershipId: string;
@@ -167,7 +168,7 @@ export function FacultyCourseRoster({
             </Link>
           </div>
           <div className="grid w-full min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end lg:max-w-[42rem]">
-          <label className="block w-full min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] print:hidden leading-4">
+          <Label className="block w-full min-w-0 print:hidden">
             {advanced?"Search detailed roster":"Search students"}
             <Input
               className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9"
@@ -181,7 +182,7 @@ export function FacultyCourseRoster({
             />
             {search?<Button size="sm" type="button" variant="ghost"
               aria-label="Clear student search" onClick={()=>{setSearch("");setPage(1);}}>Clear search ×</Button>:null}
-          </label>
+          </Label>
           <Button
             type="button"
             variant="secondary"

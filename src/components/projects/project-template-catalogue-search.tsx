@@ -4,6 +4,7 @@ import {useEffect,useState} from "react";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 /** Legacy 350ms search with clear control and shallow, canonical URL updates. */
 export function ProjectTemplateCatalogueSearch({initialQuery}:{
@@ -33,8 +34,8 @@ export function ProjectTemplateCatalogueSearch({initialQuery}:{
  // eslint-disable-next-line react-hooks/exhaustive-deps
  },[value,pathname,params]);
  return <div className="min-w-0 w-full sm:w-[240px]">
-  <label htmlFor="college-template-search"
-   className="sr-only">Search title or slug</label>
+  <Label htmlFor="college-template-search"
+   className="sr-only">Search title or slug</Label>
   <div className="relative">
    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"

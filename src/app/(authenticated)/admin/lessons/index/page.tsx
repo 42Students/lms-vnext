@@ -9,6 +9,7 @@ import {
  listGlobalSuperAdminLessonIndex,GLOBAL_LESSON_INDEX_PAGE_SIZE,
 } from "@/modules/courses/super-admin-global-lesson-index-service";
 import { Table } from "@/components/ui/table";
+import { Label } from "@/components/ui/label";
 
 export const dynamic="force-dynamic";
 
@@ -51,10 +52,10 @@ export default async function GlobalLessonIndexPage({searchParams}:{
   <Alert tone="info">These figures cover lesson records, not individual class deliveries. Hidden and inactive lessons remain in the total. Global indexing does not grant cross-college editing.</Alert>
   <section aria-label="Global lesson directory" className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
    <form method="get" className="mb-4 flex min-w-0 flex-wrap items-end gap-3">
-    <label className="grid min-w-[200px] flex-1 gap-1 text-sm font-semibold text-body">
+    <Label stack className="min-w-[200px] flex-1">
      College or organization
      <Input type="search" name="q" defaultValue={search} maxLength={80} placeholder="Search colleges"/>
-    </label>
+    </Label>
     <Button type="submit">Search</Button>
     <Link href={href(data.page)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">Refresh</Link>
    </form>

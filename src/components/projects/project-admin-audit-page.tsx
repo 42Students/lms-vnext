@@ -27,6 +27,7 @@ import {z} from "zod";
 import {getProjectResourceHistory} from "@/modules/projects/resource-history-service";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 /** Mirrors the legacy destructive/access-changing action keys. Count each
  * raw activity item, not distinct projects or condensed groups. */
@@ -339,7 +340,7 @@ export async function ProjectAdminAuditPage({
         className="grid min-w-0 gap-3 pt-3 md:grid-cols-2 xl:grid-cols-3"
         action={basePath + "/audit"}
       >
-        <label>
+        <Label>
           <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Filter by action
           </span>
@@ -358,8 +359,8 @@ export async function ProjectAdminAuditPage({
                 </option>)}
             </optgroup>
           </Select>
-        </label>
-        <label>
+        </Label>
+        <Label>
           <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Importance
           </span>
@@ -382,8 +383,8 @@ export async function ProjectAdminAuditPage({
               ),
             )}
           </Select>
-        </label>
-        <label>
+        </Label>
+        <Label>
           <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Subject
           </span>
@@ -393,13 +394,13 @@ export async function ProjectAdminAuditPage({
             defaultValue={subjectType}
             placeholder="project"
           />
-        </label>
-        <label>
+        </Label>
+        <Label>
           <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Entity ID</span>
           <Input className={inputClass} name="subjectId" defaultValue={subjectId??""}
             placeholder="Exact project or task UUID"/>
-        </label>
-        <label>
+        </Label>
+        <Label>
           <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             From (IST)
           </span>
@@ -408,8 +409,8 @@ export async function ProjectAdminAuditPage({
             name="from"
             defaultValue={from}
           />
-        </label>
-        <label>
+        </Label>
+        <Label>
           <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             To (IST)
           </span>
@@ -418,7 +419,7 @@ export async function ProjectAdminAuditPage({
             name="to"
             defaultValue={to}
           />
-        </label>
+        </Label>
         <div className="flex min-w-0 flex-col gap-2 md:col-span-2 md:flex-row md:items-end xl:col-span-3">
           <Button
             type="submit"

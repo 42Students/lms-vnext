@@ -7,6 +7,7 @@ import {useToast} from "@/components/ui/toast";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Dialog} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 type Company = { id: string; name: string };
 export function SuperAdminCompanyMerge({companies}:{companies:readonly Company[]}) {
@@ -78,12 +79,12 @@ export function SuperAdminCompanyMerge({companies}:{companies:readonly Company[]
        onClick={()=>setModalOpen(false)}>Close</Button>}>
     <div className="mt-[var(--lms-space-3)] min-w-0 space-y-[var(--lms-space-3)] print:hidden">
     <div className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+      <Label stack className="min-w-0">
         Search merge targets in the selected college
         <Input value={searchTerm} maxLength={100} disabled={busy||searching}
           onChange={event=>setSearchTerm(event.target.value)}
           placeholder="Company name or domain" className="min-h-11 md:min-h-9"/>
-      </label>
+      </Label>
       <Button type="button" variant="secondary" disabled={busy||searching}
         onClick={()=>void searchTargets(1)} className="min-h-11 md:min-h-9">
         {searching?"Searching…":"Search"}
@@ -93,19 +94,19 @@ export function SuperAdminCompanyMerge({companies}:{companies:readonly Company[]
         More results
       </Button>
     </div>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Keep company
+    <Label stack className="min-w-0">Keep company
       <Select className="min-h-11 w-full md:min-h-9"
         value={keep} disabled={busy} onChange={e=>{setKeep(e.target.value);setError("");setResult("");}}>
         {allCompanies.filter(x=>x.id!==source).map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
       </Select>
-    </label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Merge duplicate
+    </Label>
+    <Label stack className="min-w-0">Merge duplicate
       <Select className="min-h-11 w-full md:min-h-9"
         value={source} disabled={busy} onChange={e=>{setSource(e.target.value);setError("");setResult("");}}>
         <option value="">Select company</option>
         {companies.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
       </Select>
-    </label>
+    </Label>
     <p className="text-xs leading-5 text-muted-foreground">Pick two different companies. Targets are restricted to active identities with a relationship to the acting college; search results can be paged beyond the duplicate group. The server rejects a source shared outside this college.</p>
     <Button type="button" variant="danger" disabled={busy||!keep||!source||keep===source} onClick={()=>{setError("");setResult("");setConfirmOpen(true);}}
       className="min-h-11 w-full sm:w-auto md:min-h-9">

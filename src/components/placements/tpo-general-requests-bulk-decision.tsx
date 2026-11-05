@@ -11,6 +11,7 @@ import {
  MAX_GENERAL_REQUEST_BULK_DECISIONS,generalRequestBulkBlockReason,planGeneralRequestBulk,
  type GeneralRequestBulkAction,type GeneralRequestBulkRow,
 } from "@/modules/placements/tpo-general-request-bulk-model";
+import { Label } from "@/components/ui/label";
 
 type Outcome={id:string;name:string;ok:boolean};
 /** Separate CAS-protected decisions, never a pretend atomic batch. An uncertain
@@ -96,16 +97,16 @@ export function TpoGeneralRequestsBulkDecision({rows,onReviewed,disabled=false}:
      const blocked=generalRequestBulkBlockReason(row,action);
      const wrongKind=plan.kind!==null&&plan.kind!==row.kind;
      const unavailable=!checked&&(Boolean(blocked)||wrongKind||selected.length>=MAX_GENERAL_REQUEST_BULK_DECISIONS);
-     return <label key={row.id} className="flex min-h-11 min-w-0 items-center gap-3 px-2 py-2 text-sm">
+     return <Label variant="choice" key={row.id} className="flex min-h-11 min-w-0 items-center gap-3 px-2 py-2">
       <Checkbox checked={checked} disabled={pending||disabled||unavailable}
        onChange={event=>toggle(row,event.target.checked)}/>
       <span className="min-w-0 break-words">{row.studentName??"Student"} · {row.kind.replaceAll("_"," ").toLowerCase()}
        {blocked?<span className="block text-xs text-muted-foreground">{blocked}</span>:null}
       </span>
-     </label>;
+     </Label>;
     })}
    </div>
-   <label className="grid max-w-xs gap-2 text-sm font-semibold">Decision
+   <Label stack className="max-w-xs">Decision
     <Select value={action} disabled={pending||disabled} onChange={event=>{
      setAction(event.target.value as GeneralRequestBulkAction);
      setAcknowledged(false);setConfirmOpen(false);setError("");
@@ -113,11 +114,11 @@ export function TpoGeneralRequestsBulkDecision({rows,onReviewed,disabled=false}:
      <option value="REJECT">Decline with reason</option>
      <option value="APPROVE">Approve and apply supported effect</option>
     </Select>
-   </label>
-   {action==="REJECT"?<label className="grid gap-2 text-sm font-semibold">Rejection reason for each learner
+   </Label>
+   {action==="REJECT"?<Label stack>Rejection reason for each learner
     <Textarea value={reason} disabled={pending||disabled} minLength={3} maxLength={2000} rows={3}
      onChange={event=>{setReason(event.target.value);setAcknowledged(false);}}/>
-   </label>:null}
+   </Label>:null}
    {selected.length>0&&plan.error?<InlineNotice tone="error" message={plan.error}/>:null}
    <Button type="button" disabled={!valid||pending} onClick={()=>{
     setAcknowledged(false);setConfirmOpen(true);
@@ -133,11 +134,11 @@ export function TpoGeneralRequestsBulkDecision({rows,onReviewed,disabled=false}:
     <p className="text-sm">You are deciding {plan.requests.length} {plan.kind?.replaceAll("_"," ").toLowerCase()} requests.</p>
     <ul className="max-h-40 list-disc overflow-y-auto pl-5 text-sm">{plan.requests.map(row=>
      <li key={row.id} className="py-1">{row.studentName??"Student"}</li>)}</ul>
-    <label className="flex min-h-11 items-center gap-2 text-sm">
+    <Label variant="choice" className="flex min-h-11 items-center gap-2">
      <Checkbox checked={acknowledged} disabled={pending}
       onChange={event=>setAcknowledged(event.target.checked)}/>
      I have reviewed the selections and understand each change is permanent here.
-    </label>
+    </Label>
    </div>
   </ConfirmDialog>
   {outcomes.length>0?<div role="status" aria-live="polite" className="space-y-2 text-sm">

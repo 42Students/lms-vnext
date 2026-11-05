@@ -9,6 +9,7 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {courseBulkSelectionFilterKey} from "@/modules/courses/course-bulk-selection-scope-model";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Course={id:string;name:string};
 type Report={
  selectedCourses:number;matchedLessons:number;matchedContents:number;
@@ -119,11 +120,11 @@ export function SuperAdminCourseBulkVisibility({courses,collegeId,maxSelection=1
    <Button type="button" variant="secondary" disabled={!ready||pending||!selected.length}
     onClick={()=>changeSelection([])} className="min-h-11 md:min-h-9">Clear selection</Button>
   </div>
-  <label className="inline-flex min-h-11 items-center gap-2 text-sm">
+  <Label variant="choice" className="inline-flex min-h-11 items-center gap-2">
    <Checkbox checked={Boolean(courses.length&&courses.every(row=>selected.includes(row.id)))}
     disabled={!ready||pending||!courses.length} onChange={event=>selectPage(event.target.checked)}/>
    Select all courses on this page ({courses.length})
-  </label>
+  </Label>
   <div className="min-w-0 overflow-x-auto rounded border border-border">
    <Table className="min-w-[460px]">
     <thead><tr className="border-b border-border">

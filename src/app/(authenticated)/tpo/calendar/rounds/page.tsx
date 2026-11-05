@@ -9,6 +9,7 @@ import { TpoRoundCalendarControl } from "@/components/placements/tpo-round-calen
 import { hasMembershipRole } from "@/modules/identity/context";
 import { listTpoCalendarRoundChoices } from "@/modules/placements/tpo-round-calendar-service";
 import {getTpoBlockedDates} from "@/modules/placements/tpo-configuration-read-service";
+import { Label } from "@/components/ui/label";
 export default async function TpoRoundCalendarPage({searchParams}:{
  searchParams:Promise<{page?:string|string[];q?:string|string[]}>;
 }) {
@@ -26,10 +27,10 @@ export default async function TpoRoundCalendarPage({searchParams}:{
     <PageHeader title="Drive round scheduling"
       description="Schedule an existing pending drive round, reschedule an active one or cancel it. All times are IST." actions={<PageBackLink href="/tpo/calendar" label="Calendar"/>} />
     <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]" aria-label="Filter rounds">
-     <label className="grid w-full min-w-0 flex-1 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-56">Find rounds
+     <Label stack className="w-full min-w-0 flex-1 md:min-w-56">Find rounds
       <Input type="search" name="q" maxLength={100} defaultValue={result.q}
        placeholder="Company, drive or round name" />
-     </label>
+     </Label>
      <Button type="submit" variant="primary" className="min-h-11 w-full px-4 md:w-auto md:min-h-9">Find</Button>
      <Link href="/tpo/calendar/rounds" className="lms-inline-link inline-flex min-h-11 items-center justify-center text-[14px] font-semibold text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Clear</Link>
     </form>

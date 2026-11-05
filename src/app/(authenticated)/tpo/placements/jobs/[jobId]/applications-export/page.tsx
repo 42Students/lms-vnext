@@ -12,6 +12,7 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 export default async function TpoApplicationsExportPage({params,searchParams}:{
  params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];channel?:string|string[];eligibility?:string|string[];flag?:string|string[];sort?:string|string[];submittedWithin?:string|string[]}>;
 }){
@@ -32,42 +33,42 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
     <ButtonLink variant="secondary" href={"/api/placements/tpo/jobs/"+jobId+"/applications/export?"+query} download>Download all matching CSV</ButtonLink>
    </div>}/>
   <form method="get" className="grid min-w-0 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stage
+   <Label stack className="min-w-0">Stage
     <Select name="stage" defaultValue={result.stage} className="block min-h-11 w-full md:min-h-9">
      {stages.map(stage=><option key={stage} value={stage}>{stage}</option>)}
-    </Select></label>
-   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll, branch, batch, email, phone or role
+    </Select></Label>
+   <Label stack className="min-w-0">Name, roll, branch, batch, email, phone or role
     <Input type="search" name="search" defaultValue={result.search} maxLength={100} className="block min-h-11 w-full md:min-h-9"/>
-   </label>
+   </Label>
    <Button type="submit" className="min-h-11 w-full md:min-h-9 lg:w-auto">Preview filters</Button>
    <details className="group col-span-full" open={result.flag !== "ALL" || result.channel !== "ALL" || result.eligibility !== "ALL" || result.sort !== "NEWEST" || result.submittedWithin !== "ALL"}>
     <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-ring [&::-webkit-details-marker]:hidden">Applicant flags · Channel · Eligibility evidence · Order by · Submitted window</summary>
     <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-5">
-   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applicant flags
+   <Label stack className="min-w-0">Applicant flags
     <Select name="flag" defaultValue={result.flag} className="block min-h-11 w-full md:min-h-9">
      <option value="ALL">Any flag</option><option value="WITHDRAWAL_REQUESTED">Withdrawal requested</option>
      <option value="NO_SHOW">No-show</option><option value="PLACED_ELSEWHERE">Accepted another offer</option>
      <option value="ADDED_BY_COLLEGE">Added by college</option>
-    </Select></label>
-   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Channel
+    </Select></Label>
+   <Label stack className="min-w-0">Channel
     <Select name="channel" defaultValue={result.channel} className="block min-h-11 w-full md:min-h-9">
      <option value="ALL">All</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
-    </Select></label>
-   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Eligibility evidence
+    </Select></Label>
+   <Label stack className="min-w-0">Eligibility evidence
     <Select name="eligibility" defaultValue={result.eligibility} className="block min-h-11 w-full md:min-h-9">
      <option value="ALL">All</option><option value="ELIGIBLE">Eligible</option>
      <option value="ELIGIBLE_WITH_MISSING_EVIDENCE">Eligible · missing evidence</option>
-    </Select></label>
-   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order by
+    </Select></Label>
+   <Label stack className="min-w-0">Order by
     <Select name="sort" defaultValue={result.sort} className="block min-h-11 w-full md:min-h-9">
      <option value="NEWEST">Recently submitted</option><option value="OLDEST">Earliest submitted</option>
      <option value="LEARNER_NAME">Learner Name</option>
-    </Select></label>
-   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submitted window
+    </Select></Label>
+   <Label stack className="min-w-0">Submitted window
     <Select name="submittedWithin" defaultValue={result.submittedWithin} className="block min-h-11 w-full md:min-h-9">
      <option value="ALL">Any date</option><option value="LAST_7_DAYS">Last 7 × 24h</option>
      <option value="LAST_30_DAYS">Last 30 × 24h</option>
-    </Select></label>
+    </Select></Label>
     </div>
    </details>
   </form>

@@ -12,6 +12,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import { Label } from "@/components/ui/label";
 
 type JoiningChoice = "JOINED" | "DEFERRED" | "DID_NOT_JOIN";
 
@@ -92,7 +93,7 @@ export function TpoJoiningUpdateForm({
 
   return (
     <Disclosure title={corrected?"Correct joining outcome":"Record joining outcome"} defaultOpen={!corrected} className="mt-3 min-w-0 border-t border-border pt-2" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2">
-      <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <Label>
         New joining outcome
         <Select
           value={status}
@@ -103,30 +104,30 @@ export function TpoJoiningUpdateForm({
           <option value="DEFERRED">Deferred</option>
           <option value="DID_NOT_JOIN">Did not join</option>
         </Select>
-      </label>
+      </Label>
       {needsDate ? (
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label>
           {status === "JOINED" ? "Actual joining date" : "Revised joining date"}
           <Input type="date" required value={joiningDate}
             onChange={(event) => setJoiningDate(event.target.value)}
             className="mt-1 min-h-11 w-full min-w-0 md:min-h-9" />
-        </label>
+        </Label>
       ) : null}
       {needsReason ? (
-        <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label className="sm:col-span-2">
           Outcome reason
           <Textarea rows={2} required value={reason} maxLength={2000}
             onChange={(event) => setReason(event.target.value)}
             className="mt-1 min-h-28 w-full" />
-        </label>
+        </Label>
       ) : null}
       {corrected ? (
-        <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label className="sm:col-span-2">
           Reason for correcting the recorded outcome
           <Textarea rows={2} required value={correctionReason} maxLength={2000}
             onChange={(event) => setCorrectionReason(event.target.value)}
             className="mt-1 min-h-28 w-full" />
-        </label>
+        </Label>
       ) : null}
       <div className="sm:col-span-2">
         <Button variant="primary" type="button" disabled={busy} onClick={() => void save()}

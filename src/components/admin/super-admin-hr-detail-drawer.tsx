@@ -22,6 +22,7 @@ import {
 } from "./super-admin-hr-types";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 
 export function SuperAdminHrDetailDrawer({
@@ -300,12 +301,12 @@ export function SuperAdminHrDetailDrawer({
                   {account.companyName} are eligible. Choose the college to grant access.
                 </p>
 
-                <label
+                <Label
                   htmlFor={`${id}-grant`}
-                  className="mb-[6px] mt-[var(--lms-space-3)] block text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4"
+                  className="mb-[6px] mt-[var(--lms-space-3)] block"
                 >
                   College
-                </label>
+                </Label>
                 <Select
                   id={`${id}-grant`}
                   value={selectedRelationshipId}
@@ -335,13 +336,13 @@ export function SuperAdminHrDetailDrawer({
                   )}
                 </Select>
 
-                <label className="mb-[6px] mt-[var(--lms-space-3)] block text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">
+                <Label className="mb-[6px] mt-[var(--lms-space-3)] block">
                  Until (optional)
                  <Input type="date" value={validUntil} onChange={event=>{setValidUntil(event.target.value);setExpiryError("");}}
                   className="mt-1 min-h-11 w-full md:min-h-9"/>
                  {expiryError?<span role="alert" className="mt-[var(--lms-space-2)] block text-[12px] leading-5 text-[var(--lms-error)]">{expiryError}</span>:null}
                  <span className="mt-[var(--lms-space-2)] block text-[13px] font-normal leading-5 text-[var(--lms-muted-text)]">If blank, access expires in three months by current vNext policy, unlike the legacy unlimited grant. A chosen date expires at 11:59:59 PM IST. Expired or unverified grants cannot authorize recruiter actions.</span>
-                </label>
+                </Label>
                 {optionsLoading ? (
                   <p
                     role="status"

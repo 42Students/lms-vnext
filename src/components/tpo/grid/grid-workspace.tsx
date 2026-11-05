@@ -14,6 +14,7 @@ import {chosenTpoGridColumns,exportTpoGridCsv,tpoGridExportColumns,parseTpoGridC
 import {legacyGridExportFilename,legacySavedViewExportFilename} from "@/modules/placements/grid-export-filename";
 import {gridClipboardTsv} from "./grid-export";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type Selection={selected:readonly string[];onChange:(ids:string[])=>void};
 type GridWorkspaceProps<Row>={
@@ -244,10 +245,10 @@ export function GridWorkspace<Row>({
    <span className="text-xs text-muted-foreground">Exports contain only rows on this page{selectedPage.length?" that are selected":""}; server-side Excel uses existing permissions.</span>
   </div>:null}
   {pasteOpen&&selection&&rollOf?<div id={id+"-paste"} className="space-y-2">
-   <label className="block text-[13px] font-semibold">Roll numbers (one per line, space or comma separated)
+   <Label className="block">Roll numbers (one per line, space or comma separated)
     <Textarea className="mt-1 w-full min-w-0" value={pasteText} maxLength={15000} rows={3}
      onChange={event=>setPasteText(event.target.value)}/>
-   </label>
+   </Label>
    <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={!pasteText.trim()} onClick={selectRolls}>
     Select matching students on this page
    </Button>

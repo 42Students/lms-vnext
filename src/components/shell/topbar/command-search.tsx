@@ -22,6 +22,7 @@ import {tpoGoToTerm,tpoGoToPageMatches} from "./tpo-go-to-pages-model";
 import {FacultyFindSuggestions} from "./faculty-find-suggestions";
 import { RecruiterFindSuggestions } from "./recruiter-find-suggestions";
 import style from "./topbar.module.css";
+import { Label } from "@/components/ui/label";
 
 export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] }) {
   const pathname = usePathname() ?? "/";
@@ -285,7 +286,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           className="inline-flex shrink-0 items-center justify-center text-body">
           <SearchIcon />
         </Button>
-        <label className="sr-only" htmlFor="lms-topbar-command-search">Search workspace</label>
+        <Label className="sr-only" htmlFor="lms-topbar-command-search">Search workspace</Label>
         <Input id="lms-topbar-command-search" ref={input} type="search" value={query} maxLength={200}
           autoComplete="off" role="combobox" data-shortcut-ready={shortcutReady?"true":"false"} aria-haspopup="listbox" aria-keyshortcuts="Control+K Meta+K"
           aria-controls={open ? "lms-topbar-command-results" : undefined} aria-expanded={open} aria-describedby="lms-topbar-command-key-help"

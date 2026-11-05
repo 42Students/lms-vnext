@@ -18,6 +18,7 @@ import { listLectureHalls } from "@/modules/academics/lecture-hall-service";
 import { listDepartments } from "@/modules/departments/service";
 import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { lectureHallsCsvHref } from "@/modules/academics/college-lecture-halls-export-model";
+import { Label } from "@/components/ui/label";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -157,13 +158,13 @@ export default async function CollegeLectureHallsPage({
         className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
       <section aria-label="Lecture hall filters" className="min-w-0 pt-3">
         <form action="/college/lecture-halls" method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 lg:grid-cols-4">
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack>
             Room name
             <Input type="search" name="q" maxLength={100} defaultValue={query.q}
               placeholder="Search halls"
               className="w-full" />
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack>
             Status
             <Select name="status" defaultValue={query.status}
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
@@ -171,8 +172,8 @@ export default async function CollegeLectureHallsPage({
               <option value="ACTIVE">Active only</option>
               <option value="ARCHIVED">Archived only</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack>
             Room type
             <Select name="roomType" defaultValue={query.roomType}
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
@@ -180,8 +181,8 @@ export default async function CollegeLectureHallsPage({
               {ROOM_OPTIONS.map(({ value, label }) =>
                 <option key={value} value={value}>{label}</option>)}
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack>
             Department
             <Select name="departmentId" defaultValue={query.departmentId ?? ""}
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
@@ -191,23 +192,23 @@ export default async function CollegeLectureHallsPage({
               {departments.map((dept) =>
                 <option key={dept.id} value={dept.id}>{dept.name}</option>)}
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack>
             Rows per page
             <Select name="pageSize" defaultValue={query.pageSize} className="min-h-[var(--lms-control-height)]">
               {[10,20,50,100].map(size=><option key={size} value={size}>{size}</option>)}
             </Select>
-          </label>
+          </Label>
           <details className="min-w-0 border-t border-border pt-2 md:col-span-2 lg:col-span-4" open={Boolean(query.minimumCapacity||query.maximumCapacity||query.upcoming!=="ALL")||undefined}>
             <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-ring md:min-h-9">Filters</summary>
             <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 lg:grid-cols-3">
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack>
             Minimum seats
             <Input name="minimumCapacity" type="number" min={1} max={5000} step={1}
               defaultValue={query.minimumCapacity ?? ""} placeholder="Any capacity"
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack>
             Scheduled upcoming classes
             <Select name="upcoming" defaultValue={query.upcoming}
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
@@ -215,13 +216,13 @@ export default async function CollegeLectureHallsPage({
               <option value="YES">Upcoming classes scheduled</option>
               <option value="NO">No upcoming scheduled classes</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack>
             Maximum seats
             <Input name="maximumCapacity" type="number" min={1} max={5000} step={1}
               defaultValue={query.maximumCapacity ?? ""} placeholder="Any capacity"
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
-          </label>
+          </Label>
             </div>
           </details>
           <div className="flex min-w-0 flex-wrap items-end gap-2 max-md:flex-col max-md:items-stretch md:col-span-2 lg:col-span-4">

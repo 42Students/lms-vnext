@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {Select} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 type Option={id:string;name:string};
 type Program=Option&{departmentId?:string};
@@ -27,33 +28,33 @@ export function AdminPeopleAcademicCascade({departments,programs,batches,classes
  const selectedSection=availableClasses.some(row=>row.id===section)?section:"";
  const field="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]";
  return <>
-  <label className={field}>Department
+  <Label className={field}>Department
    <Select name="departmentId" className="w-full" value={department}
      onChange={e=>{setDepartment(e.target.value);setProgram("");setBatch("");setSection("");}}>
     <option value="">All departments</option>
     {departments.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
    </Select>
-  </label>
-  <label className={field}>Program
+  </Label>
+  <Label className={field}>Program
    <Select name="programId" className="w-full" value={selectedProgram}
      onChange={e=>{setProgram(e.target.value);setBatch("");setSection("");}}>
     <option value="">All programs</option>
     {availablePrograms.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
    </Select>
-  </label>
-  <label className={field}>Batch
+  </Label>
+  <Label className={field}>Batch
    <Select name="cohortId" className="w-full" value={selectedBatch} disabled={!selectedProgram}
      onChange={e=>{setBatch(e.target.value);setSection("");}}>
     <option value="">All batches</option>
     {availableBatches.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
    </Select>
-  </label>
-  <label className={field}>Class
+  </Label>
+  <Label className={field}>Class
    <Select name="sectionId" className="w-full" value={selectedSection} disabled={!selectedBatch}
      onChange={e=>setSection(e.target.value)}>
     <option value="">All classes</option>
     {availableClasses.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
    </Select>
-  </label>
+  </Label>
  </>;
 }

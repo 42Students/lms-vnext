@@ -4,6 +4,7 @@ import {Input} from "@/components/ui/input";
 import {recruiterColleagueInviteRequestMessage,recruiterColleagueWorkEmail} from "@/modules/placements/recruiter-team-invite-request-model";
 import styles from "./recruiter-company-prototype.module.css";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 export function RecruiterColleagueInviteRequest({
  collegeId,companyName,collegeName,allowedDomains,
@@ -22,14 +23,14 @@ export function RecruiterColleagueInviteRequest({
   <input type="hidden" name="collegeId" value={collegeId}/>
   <input type="hidden" name="message" value={normalized
    ?recruiterColleagueInviteRequestMessage(normalized,companyName,collegeName):""}/>
-  <label className={styles.inviteField}>
+  <Label className={styles.inviteField}>
    <span className="sr-only">Colleague work email</span>
    <Input type="email" autoComplete="email" value={email} maxLength={254} required
     placeholder={"colleague@"+allowedDomains[0]?.replace(/^@/,"")}
     aria-invalid={touched&&email.length>0&&!normalized}
     onBlur={()=>setTouched(true)} onChange={event=>setEmail(event.target.value)}
     aria-describedby="recruiter-colleague-invite-help"/>
-  </label>
+  </Label>
   <Button variant="bare" type="submit" disabled={!normalized} className={styles.inviteAction}>Request invite</Button>
   <p id="recruiter-colleague-invite-help" className={styles.muted}>
    Use a verified company email ({allowedDomains.map(domain=>"@"+domain.replace(/^@/,"")).join(", ")}).

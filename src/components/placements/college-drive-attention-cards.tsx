@@ -8,6 +8,7 @@ import type {getCollegeDriveAttention} from "@/modules/placements/college-drive-
 import {CollegeDriveDeadlineAction} from "./college-drive-deadline-action";
 import {CollegeDriveDuplicateAction} from "./college-drive-duplicate-action";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Attention=Awaited<ReturnType<typeof getCollegeDriveAttention>>;
 const labels={
@@ -108,12 +109,12 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
    <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
     <Heading level={2} size="lg">Active drives ({data.activeDriveCount})</Heading>
     <div className="flex min-w-0 flex-wrap items-center gap-3">
-      <label className="min-w-0 w-full text-xs font-semibold text-muted-foreground sm:w-60">
+      <Label className="min-w-0 w-full sm:w-60">
         <span className="sr-only">Search active drives</span>
         <Input type="search" aria-label="Search active drives"
           value={search} maxLength={100} onChange={event=>setSearch(event.target.value)}
           placeholder="Search drives…" className="min-h-11 w-full md:min-h-9"/>
-      </label>
+      </Label>
       <Link href="/college/placements/new"
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover md:min-h-9">
         New Drive

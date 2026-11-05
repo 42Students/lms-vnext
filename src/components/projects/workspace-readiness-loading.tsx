@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 /** Six-row legacy readiness skeleton. This is only a loading placeholder;
  * the authorized readiness service still determines readiness and permissions.
@@ -8,7 +9,7 @@ export function WorkspaceReadinessLoading({basePath}:{basePath:string}){
    aria-label="Loading workspace readiness"
    className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-4 md:p-6">
    <div className="space-y-2">
-     <div className="h-5 w-44 animate-pulse rounded bg-surface-secondary"/>
+     <SkeletonBlock className="h-5 w-44" />
      <p className="text-sm text-muted-foreground">Loading submission readiness…</p>
    </div>
    <div className="space-y-3" aria-hidden="true">

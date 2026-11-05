@@ -7,6 +7,7 @@ import {Input} from "@/components/ui/input";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Season={
  id:string;name:string;status:string;updatedAt:string;
@@ -87,12 +88,12 @@ export function TpoSeasonRegistrationControls({seasons}:{seasons:readonly Season
    confirmVariant={action==="OPEN_REGISTRATION"?"primary":"danger"}
    pending={busy} onConfirm={()=>void submit()}>
    {selected?<p className="mb-3 break-words text-sm font-semibold">{selected.name}</p>:null}
-   {action==="OPEN_REGISTRATION"?<label className="grid gap-1 text-sm font-semibold text-body">
+   {action==="OPEN_REGISTRATION"?<Label stack>
     Registration deadline (IST, optional)
     <Input type="datetime-local" value={deadline} disabled={busy}
      onChange={event=>{setDeadline(event.target.value);setError("");}}/>
     <span className="text-xs font-normal text-muted-foreground">Leave blank to keep registration open until it is closed manually. Cohort deadlines still apply.</span>
-   </label>:null}
+   </Label>:null}
    {error?<InlineNotice tone="error" message={error}/>:null}
   </ConfirmDialog>
  </section>;

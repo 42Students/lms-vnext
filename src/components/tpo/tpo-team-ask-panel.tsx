@@ -11,6 +11,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Dialog} from "@/components/ui/dialog";
 import {Disclosure} from "@/components/ui/disclosure";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Ask={
  id:string;title:string;status:string;dueAt:string|null;doneNote:string|null;
  askerMembershipId:string;assigneeMembershipId:string;
@@ -52,10 +53,10 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
      {busy?"Saving…":confirmation==="DONE"?"Mark done":"Cancel the ask"}
     </Button>
    </div>}>
-   {confirmation==="DONE"?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">A note goes into the conversation as your reply (optional)
+   {confirmation==="DONE"?<Label stack className="min-w-0">A note goes into the conversation as your reply (optional)
     <Textarea rows={2} maxLength={2000} disabled={busy} value={note}
      onChange={event=>{setNote(event.target.value);setError("");}} className="w-full min-w-0"/>
-   </label>:null}
+   </Label>:null}
    {error?<InlineNotice tone="error" message={error}/>:null}
   </Dialog>
  </div>;
@@ -117,25 +118,25 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
   <p className="text-xs text-muted-foreground">Ask one teammate to do something, with an optional due date.</p>
   <Disclosure title="New ask" defaultOpen={items.length===0} className="border-t border-border" contentClassName="px-2 pb-3">
   <form onSubmit={event=>void create(event)} className="grid min-w-0 gap-3">
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Ask a teammate
+   <Label stack className="min-w-0">Ask a teammate
     <Select value={assigneeId} disabled={busy} onChange={event=>{setAssigneeId(event.target.value);key.current=null;setError("");}}
      className="min-h-11 w-full min-w-0 md:min-h-9">
      {(eligibleAssignees?.length?eligibleAssignees:[{membershipId:recipientId,displayName:recipientName,awayLabel:recipientAwayLabel}]).map(member=>
       <option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
     </Select>
-   </label>
+   </Label>
    {assigneeId!==recipientId?<p className="text-xs text-muted-foreground">This will open a separate private conversation with {assigneeName}, not share this conversation.</p>:null}
    {assigneeAway?<Alert tone="warning">{assigneeName.split(" ")[0]} is away until {assigneeAway}.</Alert>:null}
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What needs doing?
+   <Label stack className="min-w-0">What needs doing?
     <Input required maxLength={200} disabled={busy} value={title}
      onChange={event=>{setTitle(event.target.value);key.current=null;setError("");}}
      className="min-h-11 w-full min-w-0 md:min-h-9"/>
-   </label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">By (optional, IST)
+   </Label>
+   <Label stack className="min-w-0">By (optional, IST)
     <Input type="datetime-local" disabled={busy} value={due}
      onChange={event=>{setDue(event.target.value);key.current=null;setError("");}}
      className="min-h-11 w-full min-w-0 md:min-h-9"/>
-   </label>
+   </Label>
    {error?<InlineNotice tone="error" message={error}/>:null}
    <Button type="submit" className="min-h-11 w-full md:w-auto md:min-h-9" loading={busy} disabled={busy||!title.trim()||!assigneeId}
     >

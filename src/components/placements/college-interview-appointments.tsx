@@ -20,6 +20,7 @@ import {collegeInterviewIcs} from "@/modules/placements/college-interview-calend
 import {visibleInterviewConflictKinds,visibleInterviewConflictLabel} from "@/modules/placements/interview-visual-conflict-model";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 type Round={id:string;name:string;status:string;kind:string};
 type Candidate={applicationId:string;name:string|null;screening:string;departmentName?:string|null;rollNumber?:string|null};
 type Appointment={id:string;roundId:string;applicationId:string;status:string;scheduledAt:string;
@@ -489,16 +490,16 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
        {companyName?" · "+companyName:""}
       </span>
     </div>:null}
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Round<Select value={roundId} disabled={busy||Boolean(editing)}
+    <Label stack className="min-w-0">Round<Select value={roundId} disabled={busy||Boolean(editing)}
      onChange={e=>{setRoundId(e.target.value);setDirty(true);}} className="w-full">
      {available.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}
-    </Select></label>
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Candidate<Select value={applicationId} disabled={busy||Boolean(editing)}
+    </Select></Label>
+    <Label stack className="min-w-0">Candidate<Select value={applicationId} disabled={busy||Boolean(editing)}
      onChange={e=>{setApplicationId(e.target.value);setDirty(true);}} className="w-full">
      {candidates.map(c=><option key={c.applicationId} value={c.applicationId}>{c.name??"Learner"} · {c.screening}</option>)}
-    </Select></label>
+    </Select></Label>
     <div className="grid min-w-0 gap-3">
-     <label className="grid gap-[6px] text-[13px] font-semibold">Interview Type
+     <Label stack>Interview Type
       <Select value={interviewType} disabled={busy} onChange={event=>{
        setInterviewType(event.target.value as typeof interviewType);setDirty(true);
       }} className="w-full">
@@ -506,17 +507,17 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
        <option value="HR">HR</option><option value="MANAGERIAL">Managerial</option>
        <option value="FINAL">Final</option>
       </Select>
-     </label>
-     <label className="grid gap-[6px] text-[13px] font-semibold">
+     </Label>
+     <Label stack>
       What this round is about <span className="text-xs text-muted-foreground">({roundDescription.length}/500)</span>
       <Textarea rows={3} minLength={10} maxLength={500} disabled={busy} value={roundDescription}
        placeholder="Explain this interview round and how candidates should prepare"
        onChange={event=>{setRoundDescription(event.target.value);setDirty(true);}}
        className="w-full"/>
       {fieldErrors["roundDescription"]?<span role="alert" className="text-error">{fieldErrors["roundDescription"]}</span>:null}
-     </label>
+     </Label>
     </div>
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+    <Label stack className="min-w-0">
       Interviewer(s) <span className="text-xs font-normal text-muted-foreground">Use the same spelling as existing interviews to avoid double-booking.</span>
      <Input value={interviewer} list={"interviewer-suggestions-"+jobId} maxLength={255} disabled={busy}
       placeholder="e.g. Jane Doe, Ravi Kumar" autoComplete="off"
@@ -526,36 +527,36 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
         <option key={name} value={name}/>)}
      </datalist>
      {nearInterviewer?<span role="status" className="text-xs text-warning">Existing name uses “{nearInterviewer}”. Select the existing spelling.</span>:null}
-     </label>
+     </Label>
     <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-1">
-     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Duration (minutes)
+     <Label stack className="min-w-0">Duration (minutes)
       <Select value={String(duration)} disabled={busy} onChange={e=>{setDuration(Number(e.target.value));setDirty(true);}} className="w-full">
         {!INTERVIEW_DURATIONS.includes(duration as typeof INTERVIEW_DURATIONS[number])?<option value={duration}>{duration} minutes (existing)</option>:null}
         {INTERVIEW_DURATIONS.map(value=><option key={value} value={value}>{value} minutes</option>)}
-      </Select></label>
+      </Select></Label>
      <p className="text-xs text-muted-foreground">Times shown in your local timezone (Asia/Kolkata, IST).</p>
-     <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+     <Label stack className="min-w-0">
       Date (IST)
       <Input type="date" required disabled={busy} value={date}
        onChange={e=>{setDate(e.target.value);setDirty(true);setFieldErrors({});}} className="w-full"/>
-     </label>
-     <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+     </Label>
+     <Label stack className="min-w-0">
       Time (IST, 5-minute increments)
       <Input type="time" step={300} required disabled={busy} value={time}
        onChange={e=>{setTime(e.target.value);setDirty(true);setFieldErrors({});}} className="w-full"/>
       {time&&!validFiveMinuteSlot?<span role="alert" className="text-xs text-error">Choose a time in 5-minute increments.</span>:null}
-     </label>
+     </Label>
     </div>
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Mode<Select value={mode} disabled={busy} onChange={e=>{setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL");setVenue("");setMeetingUrl("");setFieldErrors({});setDirty(true);}}
+    <Label stack className="min-w-0">Mode<Select value={mode} disabled={busy} onChange={e=>{setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL");setVenue("");setMeetingUrl("");setFieldErrors({});setDirty(true);}}
      className="w-full">
-     <option value="ON_CAMPUS">Offline</option><option value="VIRTUAL">Online</option></Select></label>
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">{mode==="VIRTUAL"?"Meeting Link":"Venue Address"}
+     <option value="ON_CAMPUS">Offline</option><option value="VIRTUAL">Online</option></Select></Label>
+    <Label stack className="min-w-0">{mode==="VIRTUAL"?"Meeting Link":"Venue Address"}
      <Input value={mode==="VIRTUAL"?meetingUrl:venue} maxLength={500} disabled={busy}
       placeholder={mode==="VIRTUAL"?"https://meet.example.com/...":"Enter interview venue address"}
       onChange={e=>{if(mode==="VIRTUAL")setMeetingUrl(e.target.value);else setVenue(e.target.value);setDirty(true);}}
       className="w-full"/>
      {fieldErrors[mode==="VIRTUAL"?"meetingUrl":"venue"]?<span role="alert" className="text-xs text-error">{fieldErrors[mode==="VIRTUAL"?"meetingUrl":"venue"]}</span>:null}
-     </label>
+     </Label>
     <p className="text-xs text-muted-foreground">Times shown in Asia/Kolkata (IST). The server checks other drives and interviewer conflicts before accepting a slot.</p>
     {scopedResult?.incomplete?<Banner tone="warning" role="alert">
       More than 500 overlapping appointments were found in this college. The preview is incomplete; review the calendar before booking. Server-side scheduling checks remain authoritative.
@@ -573,8 +574,8 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
     </Banner>:null}
     {!currentScopedPreview&&!previewConflicts.length&&show&&start&&applicationId&&validFiveMinuteSlot?
       <p role="status" className="text-xs text-muted-foreground">Checking other interviews in this college…</p>:null}
-    {editing?<label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Reason for change<Textarea rows={2} value={reason} disabled={busy}
-     onChange={e=>{setReason(e.target.value);setDirty(true);}} className="w-full"/></label>:null}
+    {editing?<Label stack className="min-w-0">Reason for change<Textarea rows={2} value={reason} disabled={busy}
+     onChange={e=>{setReason(e.target.value);setDirty(true);}} className="w-full"/></Label>:null}
     {error?<Banner tone="error" action={<Button type="button" size="sm"
       variant="secondary" onClick={()=>setError("")}>Dismiss</Button>}>
       <strong>Interview was not scheduled.</strong> {error}
@@ -606,13 +607,13 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
     <p className="whitespace-pre-wrap">Comments: {feedbackExisting.comments}</p>
     <p className="text-xs text-muted-foreground">Recorded on {display(feedbackExisting.createdAt)}</p>
    </div>:!feedbackBusy?<>
-    <label className="grid gap-2 text-[13px] font-semibold">Rating (1–5)
+    <Label stack>Rating (1–5)
      <Select value={String(feedbackRating)} disabled={feedbackBusy}
       onChange={event=>{setFeedbackRating(Number(event.target.value));setFeedbackDirty(true);}}>
       {[1,2,3,4,5].map(value=><option key={value} value={value}>{value} / 5</option>)}
      </Select>
-    </label>
-    <label className="mt-3 grid gap-2 text-[13px] font-semibold">Recommendation
+    </Label>
+    <Label stack className="mt-3">Recommendation
      <Select value={feedbackRecommendation} disabled={feedbackBusy} onChange={event=>{
       setFeedbackRecommendation(event.target.value as typeof feedbackRecommendation);
       setFeedbackDirty(true);
@@ -621,8 +622,8 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       <option value="HOLD">Hold for review</option>
       <option value="REJECT">Recommend not selecting</option>
      </Select>
-    </label>
-    <label className="mt-3 grid gap-2 text-[13px] font-semibold">
+    </Label>
+    <Label stack className="mt-3">
       Comments <span className="text-xs font-normal text-muted-foreground">
         ({feedbackComments.length}/{feedbackRecommendation==="REJECT"?500:2000})
       </span>
@@ -634,7 +635,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
        Staff-only feedback; these notes do not change placement selection results or notify the learner.
        {feedbackRecommendation==="REJECT"?" Please keep rejection remarks within 500 characters.":""}
      </span>
-    </label>
+    </Label>
    </>:null}
    {feedbackError?<Banner tone="error" action={<Button type="button" size="sm"
     variant="secondary" onClick={()=>feedbackFor&&void openFeedback(feedbackFor)}>
@@ -655,9 +656,9 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
    description="This action is recorded and the learner will be notified."
    confirmLabel="Save decision" pending={busy} confirmDisabled={decisionReason.trim().length<3}
    onConfirm={()=>void confirmDecision()}>
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason or outcome note
+   <Label stack>Reason or outcome note
     <Textarea rows={3} value={decisionReason} onChange={e=>setDecisionReason(e.target.value)}
-     className="w-full" /></label>
+     className="w-full" /></Label>
   </ConfirmDialog>
  </section>;
 }

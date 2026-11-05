@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type LeadChoice = {
   id: string;
@@ -188,7 +189,7 @@ export function RecruiterBulkOwnerControls({
               No eligible owner memberships were found. No assignment can be made.
             </p>
           ) : (
-            <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+            <Label className="block">
               New owner
               <Select
                 className={fieldClass + " mt-1 block w-full max-w-md"}
@@ -203,7 +204,7 @@ export function RecruiterBulkOwnerControls({
                   </option>
                 ))}
               </Select>
-            </label>
+            </Label>
           )}
           {assignable.length === 0 ? (
             <p role="status" className="text-sm text-body leading-[22px]">
@@ -212,7 +213,7 @@ export function RecruiterBulkOwnerControls({
           ) : (
             <div className="max-h-52 space-y-1 overflow-y-auto rounded-md border border-border p-2">
               {assignable.map((item) => (
-                <label key={item.id} className="flex min-h-11 items-center gap-2 px-1 py-1 text-sm">
+                <Label variant="choice" key={item.id} className="flex min-h-11 items-center gap-2 px-1 py-1">
                   <Checkbox
                     checked={chosen.includes(item.id)}
                     onChange={(event) => choose(item.id, event.target.checked)}
@@ -223,7 +224,7 @@ export function RecruiterBulkOwnerControls({
                   <span className="text-muted-foreground">
                     {item.companyName ?? "Unlinked company"}
                   </span>
-                </label>
+                </Label>
               ))}
             </div>
           )}

@@ -11,6 +11,7 @@ import {getFacultyLiveClasses} from "@/modules/courses/faculty-live-classes-serv
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Params={view?:string|string[];deliveryId?:string|string[];page?:string|string[]};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function Page({searchParams}:{searchParams:Promise<Params>}){
@@ -40,21 +41,21 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
   </Disclosure>
   <form role="search" aria-label="teacher live classes filters" action="/teacher/live-classes" method="get"
    className="grid min-w-0 gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,12rem)_minmax(0,1fr)_auto_auto] lg:items-end">
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">When
+   <Label stack className="min-w-0">When
     <Select name="view" defaultValue={data.query.view}
      className="text-sm">
      <option value="UPCOMING">Upcoming and in progress</option>
      <option value="PAST">Past</option>
      <option value="ALL">All</option>
-    </Select></label>
-   <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
+    </Select></Label>
+   <Label stack className="w-full min-w-0">Section
     <Select name="deliveryId" defaultValue={data.query.deliveryId??""}
      className="text-sm">
      <option value="">All assigned Sections</option>
      {data.courses.map(c=><option key={c.deliveryId} value={c.deliveryId}>
       {c.courseName} · {c.sectionName}
      </option>)}
-    </Select></label>
+    </Select></Label>
    <Button type="submit" className="w-full lg:w-auto">Filter</Button>
    <Link href="/teacher/live-classes" className="inline-flex min-h-11 items-center justify-center p-2 text-sm text-[var(--lms-link-text)] focus-ring md:min-h-[var(--lms-control-height)]">Clear</Link>
   </form>

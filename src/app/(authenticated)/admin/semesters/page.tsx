@@ -18,6 +18,7 @@ import { academicDirectorySearchParams, collegeSemesterDirectorySchema } from "@
 import { listCollegeSemesters } from "@/modules/academics/college-academic-directory-service";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type Search = Record<string, string | string[] | undefined>;
 
@@ -99,30 +100,30 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       </div>
       <div className="border-b border-border pb-4" aria-label="Semester filters">
       <form method="get" action="/admin/semesters" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto_auto]" aria-label="Search semesters">
-        <label className="grid min-w-44 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search semesters
+        <Label stack className="min-w-44 flex-1">Search semesters
           <Input name="q" type="search" placeholder="Search semesters" defaultValue={data.query.q} maxLength={100}
             className="min-h-11 w-full min-w-0 md:min-h-9" />
-        </label>
-        <label className="grid min-w-40 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+        </Label>
+        <Label stack className="min-w-40">Program
           <Select name="programId" defaultValue={data.query.programId ?? ""}
             className="min-h-11 w-full min-w-0 md:min-h-9 lg:w-[200px]">
             <option value="">All programs</option>
             {data.programs.map(program => <option key={program.id} value={program.id}>{program.name}</option>)}
           </Select>
-        </label>
-        <label className="grid min-w-32 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+        </Label>
+        <Label stack className="min-w-32">Status
           <Select name="status" defaultValue={data.query.status}
             className="min-h-11 w-full min-w-0 md:min-h-9">
             <option value="ALL">All statuses</option>
             <option value="ACTIVE">Active</option>
             <option value="INACTIVE">Inactive</option>
           </Select>
-        </label>
-        <label className="grid min-w-32 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
+        </Label>
+        <Label stack className="min-w-32">Rows per page
           <Select name="pageSize" defaultValue={data.query.pageSize} className="min-h-11 w-full min-w-0 md:min-h-9">
             {[10,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
           </Select>
-        </label>
+        </Label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
         <Link href="/admin/semesters" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-primary-text hover:underline md:min-h-9 md:w-auto hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring">Clear</Link>
       </form>

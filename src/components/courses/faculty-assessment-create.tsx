@@ -11,6 +11,7 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {FacultyLessonAuthoring} from "./faculty-lesson-authoring";
 import type {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment-service";
+import { Label } from "@/components/ui/label";
 
 type LessonChoice=Awaited<ReturnType<typeof getFacultyAssessmentOverview>>["lessonChoices"][number];
 type ContextSnapshot={deliveryId:string;lessonId:string;nextSequence:number};
@@ -81,7 +82,7 @@ export function FacultyAssessmentCreate({kind,lessons,lessonsLoadError=null,
   </Alert>:null}
   {lessonsLoadError?<Button type="button" size="sm" variant="secondary"
    onClick={()=>router.refresh()}>Retry courses</Button>:null}
-  <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+  <Label stack>
    Course
    <Input type="search" value={courseSearch} disabled={editorBusy}
     placeholder="Search courses" onChange={event=>setCourseSearch(event.target.value)}/>
@@ -92,8 +93,8 @@ export function FacultyAssessmentCreate({kind,lessons,lessonsLoadError=null,
     {course&&!eligibleCourses.some(item=>item.deliveryId===course.deliveryId)?
      <option value={course.deliveryId}>{course.name}</option>:null}
    </Select>
-  </label>
-  <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+  </Label>
+  <Label stack>
    Lesson
    <Input type="search" value={lessonSearch} disabled={editorBusy||!course}
     placeholder="Search lessons" onChange={event=>setLessonSearch(event.target.value)}/>
@@ -104,7 +105,7 @@ export function FacultyAssessmentCreate({kind,lessons,lessonsLoadError=null,
     {lesson&&!eligibleLessons.some(item=>item.lessonId===lesson.lessonId)?
      <option value={lesson.lessonId}>{lesson.lessonName}</option>:null}
    </Select>
-  </label>
+  </Label>
   {!courses.length&&!lessonsLoadError?<Alert tone="info">
    No assigned courses found. Assign yourself to a course before creating a {name.toLowerCase()}.
   </Alert>:null}

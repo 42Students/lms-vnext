@@ -28,6 +28,7 @@ import { Radio } from "@/components/ui/radio";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type ClassChoice = { id:string;name:string;code:string };
 type Learner = {membershipId:string;rollNumber:string;displayName:string};
@@ -433,7 +434,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
     {emptyMessages.classes?<p role="status" className="border-b border-border py-3 text-sm text-body leading-[22px]">{emptyMessages.classes}</p>:null}
     {emptyMessages.templates?<p role="alert" className="border-b border-border py-3 text-sm text-body leading-[22px]">{emptyMessages.templates}</p>:null}
     <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
-      <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
+      <Label className="block space-y-1">Class
         <Input type="search" aria-label="Find a class" placeholder="Search class name or code"
           value={classQuery} maxLength={120} disabled={pending}
           onChange={event=>{setClassQuery(event.target.value);setClassPage(0);}} />
@@ -455,8 +456,8 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
         </span>:null}
         {error&&classes.length===0?<Button variant="secondary" size="sm" type="button"
           onClick={()=>setClassesRetry(v=>v+1)}>Retry class search</Button>:null}
-      </label>
-      <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Template <span aria-hidden="true">*</span>
+      </Label>
+      <Label className="block space-y-1">Template <span aria-hidden="true">*</span>
         <Input type="search" value={templateQuery} disabled={pending}
           onChange={event=>setTemplateQuery(event.target.value)}
           placeholder="Search by template title" maxLength={120}
@@ -472,8 +473,8 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
         {!templateId?<span role="alert" className="block text-xs text-error">
           A template is required — every workspace needs a sprint/task baseline to start from
         </span>:null}
-      </label>
-      <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Workspace title <span aria-hidden="true">*</span>
+      </Label>
+      <Label className="block space-y-1">Workspace title <span aria-hidden="true">*</span>
         <Input required aria-invalid={Boolean(classId&&!title.trim())} value={title} disabled={!plannerEditable}
           onChange={event=>{
             const next=event.target.value;
@@ -485,17 +486,17 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
           maxLength={160} placeholder="Campus Event Coordination" />
         <span className="text-xs text-body">{title.length}/160</span>
         {classId&&!title.trim()?<span role="alert" className="text-xs text-error">Title is required</span>:null}
-      </label>
-      <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Base slug
+      </Label>
+      <Label className="block space-y-1">Base slug
         <Input value={slug} disabled={!plannerEditable} onChange={e=>{setSlugEdited(true);setSlug(e.target.value.toLowerCase());}} maxLength={50} placeholder="capstone-project" aria-invalid={slug.length>0&&!isValidClassTeamBaseSlug(slug)} />
         {slug.length>0&&!isValidClassTeamBaseSlug(slug)?<span role="alert" className="block text-xs text-error">Use lowercase letters, numbers and single hyphens only. Start and end with a letter or number.</span>:null}
-      </label>
-      <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Summary
+      </Label>
+      <Label className="block space-y-1 md:col-span-2">Summary
         <Textarea value={summary} disabled={!plannerEditable} maxLength={2000} rows={3}
           placeholder="Short live workspace summary"
           onChange={event=>setSummary(event.target.value)}/>
-      </label>
-      <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mentor
+      </Label>
+      <Label className="block space-y-1">Mentor
         <Input type="search" value={mentorQuery} maxLength={120} disabled={pending}
           aria-label="Search project mentors" placeholder="Search mentors by name or email"
           onChange={event=>{setMentorQuery(event.target.value);setMentorPage(0);}}/>
@@ -517,8 +518,8 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
         </span>
         {mentorsLoading?<span className="text-xs text-body">Loading mentors…</span>:null}
         {mentorsError?<span role="alert" className="text-xs text-error">{mentorsError}</span>:null}
-      </label>
-      <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+      </Label>
+      <Label className="block space-y-1">Status
         <Select value={initialStatus} disabled={pending}
           onChange={event=>setInitialStatus(event.target.value as "PLANNED"|"ACTIVE")}>
           <option value="PLANNED">Planned</option>
@@ -529,7 +530,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
           <span role="alert" className="text-xs text-error">
             A mentor is required before a workspace can be Active
           </span>:null}
-      </label>
+      </Label>
       <fieldset className="space-y-2 md:col-span-2">
        <legend className="text-[13px] font-semibold text-body">Workspace mode</legend>
        <div role="radiogroup" aria-label="Workspace creation mode"
@@ -538,29 +539,29 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
           ["WHOLE_CLASS","One team"],
           ["INDIVIDUAL","Cohort · One per student"],
           ["TEAMS","Teams · Split a class"],
-        ] as const).map(([value,title])=><label key={value}
+        ] as const).map(([value,title])=><Label key={value}
          className={"flex min-h-11 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] border px-3 py-2 text-sm font-semibold "+
           (mode===value?"border-primary bg-primary-subtle text-link":"border-transparent bg-surface text-body")}>
          <Radio name="workspaceMode" value={value}
           checked={mode===value} disabled={!plannerEditable}
           onChange={()=>setMode(value)}/>
          {title}
-        </label>)}
+        </Label>)}
        </div>
       </fieldset>
       {mode==="TEAMS"?<>
-        <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Preferred team size
+        <Label className="block space-y-1">Preferred team size
           <Input type="number" min={1} max={100} value={size} disabled={!plannerEditable} onChange={e=>setSize(Number(e.target.value))} />
-        </label>
-        <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Grouping order
+        </Label>
+        <Label className="block space-y-1">Grouping order
           <Select value={order} disabled={!plannerEditable} onChange={e=>setOrder(e.target.value as "ROLL"|"SHUFFLE")}>
             <option value="ROLL">Roll number</option>
             <option value="SHUFFLE">Seeded shuffle</option>
           </Select>
-        </label>
-        {order==="SHUFFLE"?<label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Shuffle seed
+        </Label>
+        {order==="SHUFFLE"?<Label className="block space-y-1">Shuffle seed
           <Input value={seed} disabled={!plannerEditable} onChange={e=>setSeed(e.target.value)} maxLength={128}/>
-        </label>:null}
+        </Label>:null}
       </>:null}
     </div>
     {classId?<div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center">
@@ -626,15 +627,15 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
           const learner=names.get(id);
           return <li key={id} className="flex min-w-0 flex-col gap-2 border-t border-border py-2 text-sm md:flex-row md:flex-wrap md:items-center">
             <span className="min-w-0 flex-1 break-words">{learner?.rollNumber??"—"} · {learner?.displayName??"Learner"}</span>
-            {groups.length>1?<label className="block min-w-0 md:w-36 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Team
+            {groups.length>1?<Label className="block min-w-0 md:w-36">Team
               <Select aria-label={"Move "+(learner?.displayName??"learner")+" to team"} disabled={!plannerEditable} value={index} onChange={event=>{
                 try{const updated=moveMemberBalanced(groups,id,Number(event.target.value));setGroups(updated);setError("");}
                 catch(e){setError(e instanceof Error?e.message:"Cannot move learner");}
               }}>
                 {groups.map((g,i)=><option key={i} value={i}>{g.name}</option>)}
               </Select>
-            </label>:null}
-            {groups.length>1?<label className="block min-w-0 md:w-36 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Swap with
+            </Label>:null}
+            {groups.length>1?<Label className="block min-w-0 md:w-36">Swap with
               <Select aria-label={"Swap "+(learner?.displayName??"learner")+" with learner in team"} disabled={!plannerEditable} value="" onChange={event=>{
                 const other=groups[Number(event.target.value)]?.membershipIds[0];
                 if(!other)return;
@@ -644,7 +645,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
                 <option value="">Choose team</option>
                 {groups.map((g,i)=>i===index?null:<option key={i} value={i}>{g.name} (first learner)</option>)}
               </Select>
-            </label>:null}
+            </Label>:null}
           </li>;
         })}</ul>
         {team.membershipIds.length>(groupRowLimits[index]??20)?<Button type="button"

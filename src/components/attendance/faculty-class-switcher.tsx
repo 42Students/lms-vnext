@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import { Label } from "@/components/ui/label";
 
 type Section={deliveryId:string;sectionName:string;sectionCode:string};
 export function FacultyClassSwitcher({currentDeliveryId,sections}:{
@@ -36,7 +37,7 @@ export function FacultyClassSwitcher({currentDeliveryId,sections}:{
  return <>
   <form onSubmit={submit} aria-label="Teaching section selector"
     className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-3">
-   <label className="grid min-w-[160px] flex-1 gap-1 text-sm font-semibold text-body">
+   <Label stack className="min-w-[160px] flex-1">
     Class
     <Select aria-label="Select Class" value={selection}
       onChange={event=>setSelection(event.target.value)}
@@ -46,7 +47,7 @@ export function FacultyClassSwitcher({currentDeliveryId,sections}:{
       {section.sectionName} ({section.sectionCode})
      </option>)}
     </Select>
-   </label>
+   </Label>
    <Button type="submit" variant="secondary"
     disabled={!selection||selection===currentDeliveryId}
     className="min-h-11 md:min-h-9">View class</Button>

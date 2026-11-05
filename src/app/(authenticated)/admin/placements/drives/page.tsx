@@ -21,6 +21,7 @@ import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { adminDriveDirectoryHref, adminDriveDirectoryQuerySchema, adminDriveStatus, adminDriveIsExpired, adminDriveIstDate, adminDriveEffectiveDeadline } from "@/modules/placements/admin-drive-directory-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export default async function SuperAdminDrivesPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -181,12 +182,12 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     </div>
     <form action="/admin/placements/student-lookup" method="get"
       aria-label="Search student placement status" className="mt-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
-      <label className="min-w-0 flex-1">
+      <Label className="min-w-0 flex-1">
         <span className="sr-only">Student name, roll number or email</span>
         <Input type="search" name="q" minLength={2} maxLength={150}
           required placeholder="Search a student by name or email"
           className="min-h-11 w-full md:min-h-9"/>
-      </label>
+      </Label>
       <Button variant="secondary" type="submit" className="min-h-11 shrink-0 md:min-h-9">Search student</Button>
     </form>
     <p className="mt-2 text-xs text-body">Search is limited to the college selected above. Open the matching student to review placement history.</p>

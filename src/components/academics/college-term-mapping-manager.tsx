@@ -16,6 +16,7 @@ import { CollegeTermStaffingReport } from "./college-term-staffing-report";
 import { TERM_MAPPING_COPY, collegeTermCourseAddSchema, collegeTermCourseUpdateSchema, collegeTermMappingErrorMessage, parseTermCourseCreditsDraft } from "@/modules/academics/college-term-mapping-model";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type MappingRead = {
   terms: readonly { id: string; name: string; termNumber: number; programId: string; programName: string; departmentId: string; isActive: boolean }[];
@@ -306,7 +307,7 @@ export function CollegeTermMappingManager({ data, readOnly = false }: { data: Ma
     <p className="text-xs text-muted-foreground">Drag the reorder handle or use Up/Down to change course order. Changes are saved for this semester only.</p>
     <div className="grid min-w-0 gap-3 sm:grid-cols-2">
       <div className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-        <label htmlFor="mapping-program">Program</label>
+        <Label htmlFor="mapping-program">Program</Label>
         <Input type="search" aria-label="Search programs" placeholder="Search programs"
           value={programQuery} onChange={event => setProgramQuery(event.target.value)} disabled={pending} />
         <Select id="mapping-program" required disabled={pending} value={programId} onChange={event => {
@@ -318,7 +319,7 @@ export function CollegeTermMappingManager({ data, readOnly = false }: { data: Ma
         {fieldErrors.program ? <span role="alert" className="text-xs text-[var(--lms-error)]">{fieldErrors.program}</span> : null}
       </div>
       <div className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-        <label htmlFor="mapping-semester">Semester</label>
+        <Label htmlFor="mapping-semester">Semester</Label>
         <Input type="search" aria-label="Search semesters" placeholder="Search semesters"
           value={semesterQuery} onChange={event => setSemesterQuery(event.target.value)} disabled={pending || !programId} />
         <Select id="mapping-semester" required disabled={pending || !programId} value={termId} onChange={event => {
@@ -333,7 +334,7 @@ export function CollegeTermMappingManager({ data, readOnly = false }: { data: Ma
     {termId && editableTerm ? <div className="min-w-0 border-t border-border pt-4">
       <form onSubmit={prepare} className="grid min-w-0 gap-3">
       <div className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-        <label htmlFor="mapping-course-search">Courses to Add</label>
+        <Label htmlFor="mapping-course-search">Courses to Add</Label>
         <Input id="mapping-course-search" type="search" autoComplete="off"
           placeholder="Select courses to add" aria-label="Search courses by name or code"
           value={courseQuery} onChange={event => setCourseQuery(event.target.value)}
@@ -353,26 +354,26 @@ export function CollegeTermMappingManager({ data, readOnly = false }: { data: Ma
         <div role="group" aria-label="Courses to Add" aria-invalid={!!fieldErrors.courses}
           className="max-h-44 min-h-20 space-y-1 overflow-y-auto rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
           {filteredCourses.length ? filteredCourses.map(course =>
-            <label key={course.id} className="flex min-h-9 cursor-pointer items-center gap-2 rounded px-2 py-1 font-normal text-foreground hover:bg-muted">
+            <Label variant="choice" key={course.id} className="flex min-h-9 cursor-pointer items-center gap-2 rounded px-2 py-1 hover:bg-muted">
               <Checkbox className="h-4 w-4 accent-[var(--lms-primary)]"
                 disabled={pending || refreshing || mappingStale || draggedId !== null} checked={selectedIds.includes(course.id)}
                 onChange={event => toggleCourse(course.id, event.target.checked)} />
               <span>{course.name} ({course.code || "—"})</span>
-            </label>) : <p className="p-2 text-sm font-normal text-muted-foreground">No matching courses.</p>}
+            </Label>) : <p className="p-2 text-sm font-normal text-muted-foreground">No matching courses.</p>}
         </div>
         <span className="text-xs font-normal text-muted-foreground">
           Selecting a different program or semester keeps your unsaved choices as a draft for this semester.
         </span>
         {fieldErrors.courses ? <span role="alert" className="text-xs text-[var(--lms-error)]">{fieldErrors.courses}</span> : null}
       </div>
-      <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Course Type
+      <Label stack className="min-w-0">Course Type
         <Select value={courseType} disabled={pending || refreshing || mappingStale || draggedId !== null}
           onChange={event => setCourseType(event.target.value as "CORE" | "ELECTIVE")}
           className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground md:min-h-[var(--lms-control-height)]">
           <option value="CORE">{TERM_MAPPING_COPY.core}</option>
           <option value="ELECTIVE">{TERM_MAPPING_COPY.elective}</option>
         </Select>
-      </label>
+      </Label>
       {mappingStale?<Alert tone="warning" role="alert">The semester course list changed. Refresh semester courses before adding or editing selections.</Alert>:null}
       {availableCourses.length===0?<p className="text-sm text-muted-foreground">No unmapped courses available for this semester.</p>:null}
       <div className="flex items-end sm:justify-end">
@@ -512,7 +513,7 @@ export function CollegeTermMappingManager({ data, readOnly = false }: { data: Ma
           updateMapping(editingRow.id, editing.credits, Number(editing.position),
             { type: editing.type, isMandatory: editing.isMandatory });
         }}>
-        <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Credits
+        <Label stack>Credits
           <Input type="number" min={0} max={30} step={1} required
             value={editing.credits}
             onChange={event => {
@@ -521,8 +522,8 @@ export function CollegeTermMappingManager({ data, readOnly = false }: { data: Ma
             }}
             className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 sm:max-w-[50%] md:min-h-[var(--lms-control-height)]" />
           {fieldErrors.credits ? <span role="alert" className="text-xs text-[var(--lms-error)]">{fieldErrors.credits}</span> : null}
-        </label>
-        <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Course Type
+        </Label>
+        <Label stack>Course Type
           <Select value={editing.type} disabled={pending}
             onChange={event => {
               const type = event.target.value as "CORE" | "ELECTIVE";
@@ -531,19 +532,19 @@ export function CollegeTermMappingManager({ data, readOnly = false }: { data: Ma
             <option value="CORE">{TERM_MAPPING_COPY.core}</option>
             <option value="ELECTIVE">{TERM_MAPPING_COPY.elective}</option>
           </Select>
-        </label>
-        <label className="flex items-center gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label className="flex items-center gap-2">
           <Checkbox checked={editing.isMandatory} disabled={pending || editing.type !== "CORE"}
             onChange={event => setEditing({ ...editing, isMandatory: event.target.checked })}
             className="h-4 w-4 accent-[var(--lms-primary)]" />
           Mandatory course
-        </label>
-        <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Display Order
+        </Label>
+        <Label stack>Display Order
           <Input type="number" min={1} max={orderedPeers(editingRow).length} step={1} required
             value={editing.position}
             onChange={event => setEditing({ ...editing, position: event.target.value })}
             className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 sm:max-w-[50%] md:min-h-[var(--lms-control-height)]" />
-        </label>
+        </Label>
         {error ? <p role="alert" className="text-sm text-[var(--lms-error)]">Course mapping was not updated. {error}</p> : null}
         <div className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button type="button" variant="secondary" disabled={pending} onClick={cancelEditing}>Cancel</Button>

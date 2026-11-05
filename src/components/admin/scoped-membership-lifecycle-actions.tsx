@@ -5,6 +5,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Label } from "@/components/ui/label";
 
 export function ScopedMembershipLifecycleActions({membershipId,displayName,status,roleLabel}:{
  membershipId:string;displayName:string;status:string;roleLabel?:"Student"|"Faculty";
@@ -87,11 +88,11 @@ export function ScopedMembershipLifecycleActions({membershipId,displayName,statu
     Suspend
    </Button>
    {open?<div role="region" aria-label={"Suspend "+personLabel} className="min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]">
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Reason for suspension
+    <Label stack className="min-w-0">Reason for suspension
      <Textarea value={reason} maxLength={1000} rows={2}
       onChange={event=>setReason(event.target.value)}
       className="min-h-24 w-full"/>
-    </label>
+    </Label>
     <p className="text-xs text-muted-foreground">
       This action is reversible within the college; unlike the legacy Delete Student flow, no attendance, grade, identity or historical record is permanently erased.
       Suspends only this college membership. Active device sessions for this person

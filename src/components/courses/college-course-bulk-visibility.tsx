@@ -8,6 +8,7 @@ import {Alert} from "@/components/ui/alert";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch} from "@/lib/api-fetch";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Course={id:string;name:string;enabled:boolean;updatedAt:string};
 const MAX_SELECTED=100;
@@ -147,11 +148,11 @@ export function CollegeCourseBulkVisibility({courses,collegeId,collegeName="this
   </div>
   <p className="text-xs text-muted-foreground">Selection persists while browsing {collegeName} pages in this session. Only authorised Courses can be changed; historical lessons and assessments are retained.</p>
   <div role="group" aria-label="Select courses for bulk visibility" className="grid max-h-40 grid-cols-1 gap-1 overflow-y-auto sm:grid-cols-2 md:grid-cols-3">
-   {courses.map(course=><label key={course.id} className="flex min-h-9 items-center gap-2 text-xs">
+   {courses.map(course=><Label variant="choice" key={course.id} className="flex min-h-9 items-center gap-2">
     <Checkbox checked={selectedSet.has(course.id)} disabled={busy||(!selectedSet.has(course.id)&&selectedRows.length>=MAX_SELECTED)}
      onChange={event=>toggle(course,event.target.checked)}/>
     <span className="min-w-0 truncate" title={course.name}>{course.name}</span>
-   </label>)}
+   </Label>)}
   </div>
   {message?<Alert tone={warning?"warning":"success"} role="status">{message}</Alert>:null}
   <ConfirmDialog open={confirmTarget!==null} onOpenChange={open=>{if(!busy&&!open)setConfirmTarget(null);}}

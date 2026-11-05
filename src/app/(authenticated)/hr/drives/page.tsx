@@ -32,6 +32,7 @@ import {RecruiterRequestCancelButton} from "@/components/hr/recruiter-request-ca
 import {RecruiterRequestFeedback} from "@/components/hr/recruiter-request-feedback";
 import {hrDriveSessionStorageKey} from "@/modules/placements/hr-unsent-draft-storage-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Params = { collegeId?: string | string[]; view?: string | string[]; tab?:string|string[]; q?: string | string[];
  employment?:string|string[]; mode?:string|string[]; deadline?:string|string[]; page?:string|string[];sort?:string|string[] };
@@ -248,25 +249,25 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       <details open={query.data.employment!=="ALL"||query.data.mode!=="ALL"||query.data.deadline!=="ALL"||query.data.sort!=="RECENT"} className="order-last min-w-0 w-full basis-full border-t border-border pt-2">
         <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text focus-ring md:min-h-9">More filters</summary>
         <div className="mt-2 grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-4">
-      <label className="grid min-w-0 w-full  gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Employment
+      <Label stack className="min-w-0 w-full">Employment
         <Select name="employment" defaultValue={query.data.employment} className="min-h-11 w-full md:min-h-9">
           <option value="ALL">All</option><option value="FULL_TIME">Full-time</option><option value="INTERNSHIP">Internship</option><option value="CONTRACT">Contract</option>
-        </Select></label>
-      <label className="grid min-w-0 w-full  gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Work mode
+        </Select></Label>
+      <Label stack className="min-w-0 w-full">Work mode
         <Select name="mode" defaultValue={query.data.mode} className="min-h-11 w-full md:min-h-9">
           <option value="ALL">All</option><option value="ONSITE">On-site</option><option value="HYBRID">Hybrid</option><option value="REMOTE">Remote</option>
-        </Select></label>
-      <label className="grid min-w-0 w-full  gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline
+        </Select></Label>
+      <Label stack className="min-w-0 w-full">Deadline
         <Select name="deadline" defaultValue={query.data.deadline} className="min-h-11 w-full md:min-h-9">
           <option value="ALL">Any</option><option value="TODAY">Today (IST)</option><option value="SOON">Within 7 days</option><option value="PAST">Recorded deadline passed</option><option value="UNKNOWN">Not recorded</option>
-        </Select></label>
-      <label className="grid min-w-0 w-full  gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
+        </Select></Label>
+      <Label stack className="min-w-0 w-full">Sort
         <Select name="sort" defaultValue={query.data.sort} className="min-h-11 w-full md:min-h-9">
           <option value="RECENT">Newest first</option>
           <option value="DEADLINE">Deadline first</option>
           <option value="TITLE">Title A–Z</option>
         </Select>
-      </label>
+      </Label>
 
         </div>
       </details>

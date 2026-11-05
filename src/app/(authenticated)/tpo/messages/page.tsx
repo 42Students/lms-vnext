@@ -29,6 +29,7 @@ import {
   tpoMessagesQuerySchema,
 } from "@/modules/placements/tpo-messages-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type SearchParams = {
   tab?: string | string[];
@@ -242,7 +243,7 @@ export default async function TpoMessagesPage({
                 </Link>)}
             </nav>
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-muted-foreground">Search recruiter or drive</label>
+              <Label>Search recruiter or drive</Label>
               <TpoInboxSearch value={query.q} placeholder="Search recruiter or drive"/>
             </div>
             <p className="flex items-center justify-between gap-2 text-xs text-muted-foreground">

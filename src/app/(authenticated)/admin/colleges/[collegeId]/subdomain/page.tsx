@@ -16,14 +16,15 @@ import {ManagedCollegeSubdomain} from "@/components/admin/managed-college-subdom
 import {getManagedCollegeSubdomain} from "@/modules/tenant-domains/managed-subdomain-service";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 function CollegeWebAddressLoading() {
  return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Loading web address">
   <PageHeader title="Web address"/>
   <div className="min-w-0 rounded-lg border border-border bg-surface p-4">
-   <div className="h-5 w-32 animate-pulse rounded bg-muted"/>
-   <div className="mt-4 h-4 w-3/4 animate-pulse rounded bg-muted"/>
-   <div className="mt-4 h-10 w-full max-w-md animate-pulse rounded bg-muted"/>
+   <SkeletonBlock className="h-5 w-32" />
+   <SkeletonBlock className="mt-4 h-4 w-3/4" />
+   <SkeletonBlock className="mt-4 h-10 w-full max-w-md" />
   </div>
  </div>;
 }

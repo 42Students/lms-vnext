@@ -4,6 +4,7 @@ import Link from "next/link";
 import { collegeHiringAnalyticsHref } from "@/modules/placements/college-hiring-analytics-model";
 import {Input} from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 type FilterKey = "seasonId" | "jobId" | "departmentId" | "programId" | "cohortId" | "from" | "to";
 type Filters = Partial<Record<FilterKey, string>>;
@@ -18,13 +19,13 @@ export function CollegeHiringDateFilters({ filters }: { filters: Filters }) {
       .filter(key => Boolean(filters[key]))
       .map(key => <input key={key} type="hidden" name={key} value={filters[key]} />)}
     {(["from", "to"] as const).map(key =>
-      <label key={key} className="grid min-w-0 gap-1 text-sm font-semibold text-body">
+      <Label stack key={key} className="min-w-0">
         {key === "from" ? "From date" : "To date"}
         <Input name={key} type="date" defaultValue={filters[key] ?? ""}
           aria-label={key === "from" ? "From date (optional)" : "To date (optional)"}
           onChange={event => event.currentTarget.form?.requestSubmit()}
           />
-      </label>)}
+      </Label>)}
     <Link href={collegeHiringAnalyticsHref(base)}
       className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
       Clear dates

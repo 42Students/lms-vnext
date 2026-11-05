@@ -9,6 +9,7 @@ import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 import { allowedMentorTaskTransition } from "@/modules/projects/mentor-task-transition-model";
 import {mentorTaskQuickActionLabel} from "@/modules/projects/mentor-task-quick-action-copy";
+import { Label } from "@/components/ui/label";
 const options=["TODO","IN_PROGRESS","BLOCKED"] as const;
 export function MentorTaskStatusTransition(props:{
   projectId:string;taskId:string;status:string;sprintStatus:string;updatedAt:string;
@@ -48,21 +49,21 @@ export function MentorTaskStatusTransition(props:{
   }
   return <>
     <div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:flex-wrap md:items-end">
-      <label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] md:w-48">Task state
+      <Label stack className="min-w-0 w-full md:w-48">Task state
         <Select aria-label={"Next task state for task "+props.taskId} value={selected}
           onChange={event=>{setSelected(event.target.value);setError(null);}}
           disabled={pending} className="min-h-11 w-full min-w-0 md:min-h-9">
           {options.map(value=><option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
         </Select>
-      </label>
+      </Label>
       {selected==="BLOCKED"&&!props.blockerReason?.trim()?
-        <label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] md:min-w-64 md:max-w-xl md:flex-1">
+        <Label stack className="min-w-0 w-full md:min-w-64 md:max-w-xl md:flex-1">
           What's blocking this task?
           <Input type="text" value={newBlockerReason} maxLength={2000}
             onChange={event=>setNewBlockerReason(event.target.value)}
             aria-label={"Blocker note for task "+props.taskId} disabled={pending}
             className="min-h-11 w-full min-w-0 md:min-h-9"/>
-        </label>:null}
+        </Label>:null}
       <Button variant="secondary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" aria-label={"Review status change: "+mentorTaskQuickActionLabel(selected)} disabled={!valid||pending||
         (selected==="BLOCKED"&&!props.blockerReason?.trim()&&!newBlockerReason.trim())}
         onClick={()=>{setError(null);setConfirm(true);}}>{mentorTaskQuickActionLabel(selected)}</Button>

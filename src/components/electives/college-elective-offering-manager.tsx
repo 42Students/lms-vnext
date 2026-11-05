@@ -10,6 +10,7 @@ import { useState } from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import { useToast } from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Delivery = { id: string; courseId: string; course: string; code: string; section: string };
 type Group = { id: string; name: string; capacity: number | null };
@@ -195,22 +196,22 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
             An active course delivery is required for learner access. Faculty assignments and learner allocations
             are managed on the offering&apos;s Roster & faculty page.
           </p>
-          <label className="mt-2 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
+          <Label className="mt-2 block">Course
             <Select className="mt-[var(--lms-space-2)] min-h-11 w-full md:min-h-9"
               value={deliveryId} onChange={event => {setDeliveryId(event.target.value);setDirty(true);}}>
               <option value="">Select course and class</option>
               {selectable.map(row => <option key={row.id} value={row.id}>
                 {row.course} ({row.code}) · {row.section}</option>)}
             </Select>
-          </label>
-          {!editing && <label className="mt-2 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Group (optional)
+          </Label>
+          {!editing && <Label className="mt-2 block">Group (optional)
             <Select className="mt-[var(--lms-space-2)] min-h-11 w-full md:min-h-9"
               value={groupId} onChange={event => {setGroupId(event.target.value);setDirty(true);}}>
               <option value="">Create elective group automatically</option>
               {data.groups.map(group => <option key={group.id} value={group.id}>{group.name}</option>)}
             </Select>
-          </label>}
-          <label className="mt-2 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity
+          </Label>}
+          <Label className="mt-2 block">Capacity
             <Input type="number" min="1" step="1"
               value={capacity} onChange={event => {setCapacity(event.target.value);setDirty(true);}}
               placeholder="Leave blank for unlimited"
@@ -218,7 +219,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
             {editing?.capacity===null && capacity==="" ? <span role="status" className="mt-1 block text-xs text-muted-foreground">
               Existing capacity is unlimited. Leave the field blank to keep unlimited seats.
             </span> : null}
-          </label>
+          </Label>
           {selectable.length === 0 && <p role="status" className="mt-2 text-sm leading-[22px]">
             Create an active elective course delivery for this program before adding an offering.</p>}
           <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap">

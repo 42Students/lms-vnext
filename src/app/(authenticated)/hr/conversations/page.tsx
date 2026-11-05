@@ -28,6 +28,7 @@ import {RecruiterGeneralDrawer} from "@/components/hr/recruiter-general-drawer";
 import {RecruiterConversationWorkspace} from "@/components/hr/recruiter-conversation-workspace";
 import {selectRecruiterWorkspaceThread} from "@/modules/placements/hr-conversation-inbox-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 const HR_CONVERSATION_KINDS=[{value:"ALL",label:"All threads"},{value:"GENERAL",label:"General"},{value:"DRIVE",label:"Hiring drives"}] as const;
 type Query={collegeId?:string|string[];q?:string|string[];page?:string|string[];unreadOnly?:string|string[];sort?:string|string[];scope?:string|string[];thread?:string|string[];view?:string|string[]};
 
@@ -179,11 +180,11 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     {!generalThread && (!generalLookup || generalLookup.ok)?<p className="mt-2 text-sm text-muted-foreground">Questions that are not about one drive go here.</p>:null}
     {!generalThread && (!generalLookup || generalLookup.ok)?<form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
       <Input name="collegeId" type="hidden" value={result.collegeId}/>
-      <label className="mb-3 grid min-w-0 gap-1 text-sm font-semibold text-foreground">
+      <Label stack className="mb-3 min-w-0">
         Message to placement cell
         <Textarea name="message" rows={3} minLength={1} maxLength={4000} required
           placeholder="Write a message to begin this conversation..." className="min-w-0"/>
-      </label>
+      </Label>
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Send message</Button>
     </form>:null}
    </section>
@@ -227,13 +228,13 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     <Input type="hidden" name="collegeId" value={result.collegeId}/>
     <Input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
     <Input type="hidden" name="scope" value={parsed.data.scope}/>
-    <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] max-md:w-full">Order
+    <Label stack className="min-w-0 max-md:w-full">Order
      <Select name="sort" defaultValue={parsed.data.sort} className="mt-1">
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
      </Select>
-    </label>
-    <label className={"min-w-0 w-full flex-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-[220px] "+inboxStyles["searchField"]}>Search by drive or message
-     <Input name="q" type="search" maxLength={120} placeholder="⌕ Search by drive or message" defaultValue={parsed.data.q} className="mt-1 min-h-11 w-full md:min-h-9"/></label>
+    </Label>
+    <Label className={"min-w-0 w-full flex-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-[220px] "+inboxStyles["searchField"]}>Search by drive or message
+     <Input name="q" type="search" maxLength={120} placeholder="⌕ Search by drive or message" defaultValue={parsed.data.q} className="mt-1 min-h-11 w-full md:min-h-9"/></Label>
     <Button type="submit" variant="secondary" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Search</Button>
    </form> :
     <details className="min-w-0 border-b border-border pb-3">
@@ -242,13 +243,13 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     <Input type="hidden" name="collegeId" value={result.collegeId}/>
     <Input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
     <Input type="hidden" name="scope" value={parsed.data.scope}/>
-    <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] max-md:w-full">Order
+    <Label stack className="min-w-0 max-md:w-full">Order
      <Select name="sort" defaultValue={parsed.data.sort} className="mt-1">
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
      </Select>
-    </label>
-    <label className={"min-w-0 w-full flex-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-[220px] "+inboxStyles["searchField"]}>Search by drive or message
-     <Input name="q" type="search" maxLength={120} placeholder="⌕ Search by drive or message" defaultValue={parsed.data.q} className="mt-1 min-h-11 w-full md:min-h-9"/></label>
+    </Label>
+    <Label className={"min-w-0 w-full flex-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-[220px] "+inboxStyles["searchField"]}>Search by drive or message
+     <Input name="q" type="search" maxLength={120} placeholder="⌕ Search by drive or message" defaultValue={parsed.data.q} className="mt-1 min-h-11 w-full md:min-h-9"/></Label>
     <Button type="submit" variant="secondary" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Search</Button>
    </form>
     </details>}

@@ -8,6 +8,7 @@ import {Button} from "@/components/ui/button";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export function TpoDeleteDraftAction({jobId,updatedAt}:{jobId:string;updatedAt:string}){
  const router=useRouter(),{run}=useGuardedAction({timeoutMs:35000});
  const [reviewed,setReviewed]=useState(false),[pending,setPending]=useState(false);
@@ -33,11 +34,11 @@ export function TpoDeleteDraftAction({jobId,updatedAt}:{jobId:string;updatedAt:s
  return <section className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3" aria-label="Delete unpublished draft">
   <Heading level={3}>Delete this draft?</Heading>
   <p className="text-sm text-body">It was never published, so no student has seen it. It is removed from your drives.</p>
-  <label className="flex items-start gap-2 text-[13px] text-[var(--lms-neutral-400)]"><Checkbox
+  <Label className="flex items-start gap-2"><Checkbox
    checked={reviewed} disabled={pending} onChange={event=>setReviewed(event.target.checked)}
    className="mt-1 h-4 w-4 accent-primary"/>
    I reviewed this unpublished drive and understand it will leave the active list.
-  </label>
+  </Label>
   <Button variant="secondary" type="button" disabled={!reviewed||pending} onClick={()=>void archive()}
    >
    {pending?"Removing draft…":"Delete draft"}</Button>

@@ -11,6 +11,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import { Label } from "@/components/ui/label";
 
 export function OrganizationActions({
   organizationId,
@@ -156,12 +157,12 @@ export function OrganizationActions({
           </div>
         }
       >
-        <label
+        <Label
           htmlFor={`organization-name-${organizationId}`}
-          className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+          className="mb-[6px] block"
         >
           Organization name
-        </label>
+        </Label>
         <Input
           className="min-h-11 md:min-h-9"
           id={`organization-name-${organizationId}`}

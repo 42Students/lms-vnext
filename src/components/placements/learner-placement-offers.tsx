@@ -24,6 +24,8 @@ import {Textarea} from "@/components/ui/textarea";
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 type OfferAcceptImpact={
  offerId:string;offerStatus:string;expiresAt:string|null;blockedByAnotherAcceptedOffer:boolean;
@@ -585,18 +587,18 @@ export function LearnerPlacementOffers({
           <p className="text-sm text-body">
             Recorded response deadline: {formatWhen(extensionOffer.expiresAt)} (IST)
           </p>
-          <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+          <Label className="block text-[length:var(--lms-font-sm)]">
             Requested new deadline (IST)
             <Input type="datetime-local" value={extensionAt}
               onChange={event=>setExtensionAt(event.target.value)}
               className="mt-1 w-full"/>
-          </label>
-          <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label className="block text-[length:var(--lms-font-sm)]">
             Reason
             <Textarea rows={3} maxLength={2000} value={extensionReason}
               onChange={event=>setExtensionReason(event.target.value)}
               className="mt-1 w-full"/>
-          </label>
+          </Label>
           {extensionError?<p role="alert" className="text-sm text-error">{extensionError}</p>:null}
           <p className="text-xs text-muted-foreground">
             The placement team reviews this request. The original offer remains unchanged until approval.
@@ -626,9 +628,9 @@ export function LearnerPlacementOffers({
             Recorded CTC: {offerCtcLpa(declineOffer)!==null?"₹"+offerCtcLpa(declineOffer)+" LPA":"Not specified"}.
             The server rechecks the status and deadline on confirmation.
           </p>
-          <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]" htmlFor="offer-decline-reason">
+          <Label className="block text-[length:var(--lms-font-sm)]" htmlFor="offer-decline-reason">
             Reason (optional, up to 2000 characters)
-          </label>
+          </Label>
           <Textarea id="offer-decline-reason" rows={3} maxLength={2000} value={declineReason}
             onChange={(event) => setDeclineReason(event.target.value)}
             className="w-full" />
@@ -659,7 +661,7 @@ export function LearnerPlacementOffers({
             <p>Response deadline: {formatWhen(preview.expiresAt) ?? "No expiry specified"}</p>
             {acceptImpactBusy?<div role="status" aria-live="polite" className="space-y-2" aria-label="Checking acceptance impacts">
               <p className="text-sm text-body">Checking the applications and offers this acceptance would change…</p>
-              <div className="h-4 w-4/5 animate-pulse rounded bg-muted"/><div className="h-4 w-3/5 animate-pulse rounded bg-muted"/><div className="h-4 w-2/3 animate-pulse rounded bg-muted"/>
+              <SkeletonBlock className="h-4 w-4/5" /><SkeletonBlock className="h-4 w-3/5" /><SkeletonBlock className="h-4 w-2/3" />
             </div>:null}
             {acceptImpactError?<div role="alert" className="space-y-2 text-sm text-error">
               <p className="font-semibold">We couldn&apos;t check what accepting will change</p>

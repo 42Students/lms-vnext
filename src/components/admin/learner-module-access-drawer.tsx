@@ -11,6 +11,7 @@ import Link from "next/link";
 import {StudentRuleEditor} from "@/components/admin/student-rule-editor";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Learner={membershipId:string;displayName:string|null;rollNumber:string|null};
 type Rule={module:"projects"|"electives";label:string;stored:boolean|null;locked:boolean;blocked:boolean};
 type TraceStep={level:string;inChain:boolean;source:"PERSISTED"|"SOURCE_DEFAULT"|"NONE";
@@ -176,7 +177,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
     setRoster({page:1,total:0,totalPages:1});
    }}>Student overrides</Button>
   </div>
-  <label className="relative mt-[var(--lms-space-3)] grid min-w-0 max-w-[min(320px,calc(100vw-120px))] gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+  <Label stack className="relative mt-[var(--lms-space-3)] min-w-0 max-w-[min(320px,calc(100vw-120px))]">
    Why can&apos;t a student see a module? Search…
    <Input type="search" maxLength={100} value={search} onChange={event=>change(event.target.value)}
     placeholder="Why can't a student see a module? Search…" autoComplete="off"
@@ -186,7 +187,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
      className="pointer-events-none absolute bottom-3 right-3 text-muted-foreground">
      <circle cx={11} cy={11} r={7}/><path d="m16 16 5 5"/>
    </svg>
-  </label>
+  </Label>
   {loading?<p role="status" className="mt-2 text-sm text-body leading-[22px]">Searching learners…</p>:null}
   {search.trim().length>1&&completedSearch===search.trim()&&!loading&&!suggestions.length&&!message?
    <p className="mt-2 text-xs text-body leading-5">No matching learners in this college.</p>:null}

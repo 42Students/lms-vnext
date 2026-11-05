@@ -26,6 +26,7 @@ import { OPTIONAL_MODULE_KEYS } from "@/modules/module-access/service";
 import { placementFeatureEffects } from "@/modules/platform-settings/placement-feature-controls-model";
 import {adminControlScopeTag} from "@/modules/module-access/admin-control-overview-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type SearchParams = Record<
   string,
@@ -140,7 +141,7 @@ export default async function SuperAdminFeaturesPage({
           method="get"
           className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap sm:items-end"
         >
-          <label className="grid min-w-0 w-full flex-1 md:min-w-60 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0 w-full flex-1 md:min-w-60">
             Find college
             <Input
               name="q"
@@ -150,54 +151,54 @@ export default async function SuperAdminFeaturesPage({
               placeholder="College name or code"
               className="w-full"
             />
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort colleges
+          </Label>
+          <Label stack>Sort colleges
             <Select name="sort" defaultValue={result.sort} className="min-h-11 md:min-h-9">
               <option value="NAME">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="CODE">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack>
             Colleges per page
             <Select name="pageSize" defaultValue={String(result.pageSize)} className="min-h-11 md:min-h-9">
               <option value="20">20</option>
               <option value="50">50</option>
               <option value="100">100</option>
             </Select>
-          </label>
+          </Label>
           <Disclosure title="More college filters"
             defaultOpen={Boolean(result.moduleFilter||result.stateFilter!=="ALL"||result.lockFilter!=="ALL"||result.presenceFilter!=="ANY"||result.recentFilter!=="ALL"||result.searchField!=="ALL")}
             className="min-w-0 sm:w-full"
             contentClassName="grid min-w-0 gap-3 pb-3 pt-2 sm:grid-cols-2 xl:grid-cols-3">
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Explicit college rule for
+          <Label stack>Explicit college rule for
             <Select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 md:min-h-9">
               <option value="">Any college</option><option value="projects">Projects</option><option value="placements">Placements</option><option value="electives">Electives</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored college value
+          </Label>
+          <Label stack>Stored college value
             <Select name="storedState" defaultValue={result.stateFilter} className="min-h-11 md:min-h-9">
               <option value="ALL">Any value</option><option value="ON">Stored On</option><option value="OFF">Stored Off</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">College rule lock
+          </Label>
+          <Label stack>College rule lock
             <Select name="locks" defaultValue={result.lockFilter} className="min-h-11 md:min-h-9">
               <option value="ALL">Any lock</option><option value="LOCKED">Stored locked only</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">College rule presence
+          </Label>
+          <Label stack>College rule presence
             <Select name="presence" defaultValue={result.presenceFilter} className="min-h-11 md:min-h-9">
               <option value="ANY">Any college</option><option value="HAS_RULE">Has stored rule</option><option value="NO_RULE">No stored rule</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored rule last updated
+          </Label>
+          <Label stack>Stored rule last updated
             <Select name="recent" defaultValue={result.recentFilter} className="min-h-11 md:min-h-9">
               <option value="ALL">Any date</option><option value="7D">Last 7 days</option><option value="30D">Last 30 days</option><option value="90D">Last 90 days</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search in
+          </Label>
+          <Label stack>Search in
             <Select name="searchField" defaultValue={result.searchField} className="min-h-11 md:min-h-9">
               <option value="ALL">Name and code</option><option value="NAME">College name</option><option value="CODE">College code</option>
             </Select>
-          </label>
+          </Label>
           </Disclosure>
           <Button
             type="submit"

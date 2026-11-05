@@ -11,6 +11,7 @@ import {
   TPO_INVITATION_COPY,
 } from "@/modules/placements/tpo-batch-invitation-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Props = {
   batchId: string;
@@ -119,7 +120,7 @@ export function TpoBatchInvitationControl(props: Props) {
     const sameDeadline = date === (props.deadline?.slice(0,10) ?? "");
     return <section aria-label="Registration deadline" className="min-w-0 space-y-3 border-y border-border py-4">
       <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">{deadlinePassed ? "Registration closed" : "Registration is open"}</Heading>
-      <label htmlFor={deadlineId} className="block text-sm font-semibold text-body">Register by</label>
+      <Label htmlFor={deadlineId} className="block">Register by</Label>
       <Input className="min-h-11 w-full sm:max-w-xs md:min-h-9" id={deadlineId} aria-label="Registration deadline" type="date"
         value={date} min={props.minDate} onChange={event => setDate(event.target.value)}
         />
@@ -138,11 +139,11 @@ export function TpoBatchInvitationControl(props: Props) {
       {!deadlinePassed&&props.invitable>0?<fieldset id="batch-reminder" className="space-y-2 border-t border-border pt-3">
         <legend className="text-sm font-semibold">Remind eligible students</legend>
         <p className="text-sm leading-[22px]">Eligible students of this batch who have not chosen Placements, Higher studies or Not interested get a reminder with the deadline.</p>
-        <label className="flex min-h-11 min-w-0 cursor-pointer items-start gap-3 rounded-[var(--lms-control-radius)] px-2 py-2 text-sm leading-6 text-body hover:bg-primary-subtle">
+        <Label variant="choice" className="flex min-h-11 min-w-0 cursor-pointer items-start gap-3 rounded-[var(--lms-control-radius)] px-2 py-2 hover:bg-primary-subtle">
           <Checkbox checked={remindReview} disabled={busy}
             onChange={event=>setRemindReview(event.target.checked)}/>
           I reviewed the recipients. Send a reminder in the app; no SMS or email is claimed.
-        </label>
+        </Label>
         <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy||!remindReview}
           onClick={()=>void remind()}
           >
@@ -161,7 +162,7 @@ export function TpoBatchInvitationControl(props: Props) {
   }
   return <section className="min-w-0 space-y-3 border-y border-border py-4" aria-label="Invite batch">
     <Heading level={2} size="base" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Invite {props.eligible} eligible {props.eligible === 1 ? "student" : "students"} to register</Heading>
-    <label className="block text-sm font-semibold text-body" htmlFor={invitationId}>{TPO_INVITATION_COPY.dateLabel}</label>
+    <Label className="block" htmlFor={invitationId}>{TPO_INVITATION_COPY.dateLabel}</Label>
     <Input className="min-h-11 w-full sm:max-w-xs md:min-h-9" id={invitationId} aria-label="Registration deadline" type="date" value={date} min={props.minDate}
       onChange={event => setDate(event.target.value)}
        />

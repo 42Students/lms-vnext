@@ -7,6 +7,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Alert} from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Preview={jobTitle:string;companyName:string;verifiedDomain:string|null;canInvite:boolean;
  publicLinkAvailable:boolean};
@@ -69,20 +70,20 @@ export function TpoDriveRecruiterReviewInvite({jobId}:{jobId:string}){
    {!result?<div className="space-y-3">
     {preview?.verifiedDomain?<p className="text-xs text-body">Verified work domain: @{preview.verifiedDomain}</p>:
      <Alert tone="warning">This company has no verified work domain. The reviewer cannot be invited until it is verified.</Alert>}
-    <label className="grid gap-1 text-sm font-semibold">Reviewer name
-     <Input value={name} maxLength={150} onChange={e=>setName(e.target.value)} disabled={busy}/></label>
-    <label className="grid gap-1 text-sm font-semibold">Company work email
-     <Input type="email" value={email} maxLength={150} onChange={e=>setEmail(e.target.value)} disabled={busy}/></label>
-    <label className="grid gap-1 text-sm font-semibold">Message (optional)
-     <Textarea value={note} maxLength={1000} rows={3} onChange={e=>setNote(e.target.value)} disabled={busy}/></label>
-    <label className="flex gap-2 text-sm"><Checkbox checked={publicLink}
+    <Label stack>Reviewer name
+     <Input value={name} maxLength={150} onChange={e=>setName(e.target.value)} disabled={busy}/></Label>
+    <Label stack>Company work email
+     <Input type="email" value={email} maxLength={150} onChange={e=>setEmail(e.target.value)} disabled={busy}/></Label>
+    <Label stack>Message (optional)
+     <Textarea value={note} maxLength={1000} rows={3} onChange={e=>setNote(e.target.value)} disabled={busy}/></Label>
+    <Label variant="choice" className="flex gap-2"><Checkbox checked={publicLink}
      onChange={e=>setPublicLink(e.target.checked)} disabled={busy}/>
-     Include public drive link</label>
+     Include public drive link</Label>
     {publicLink&&!preview?.publicLinkAvailable?
      <p className="text-xs text-muted-foreground">No authorized public link exists for this drive. A secure reviewer invitation will be included instead.</p>:null}
-    <label className="flex gap-2 text-sm"><Checkbox checked={sendEmail}
+    <Label variant="choice" className="flex gap-2"><Checkbox checked={sendEmail}
      onChange={e=>setSendEmail(e.target.checked)} disabled={busy}/>
-     Send invitation email where delivery is configured</label>
+     Send invitation email where delivery is configured</Label>
     <Button type="button" disabled={busy||!preview?.canInvite||name.trim().length<2||!email.includes("@")}
      onClick={()=>void send()}>{busy?"Issuing…":"Invite reviewer"}</Button>
    </div>:<div className="space-y-3 text-sm" role="status">
@@ -91,8 +92,8 @@ export function TpoDriveRecruiterReviewInvite({jobId}:{jobId:string}){
       "Secure invitation created. Copy the email below and send it manually."}</Alert>
     {result.publicLinkUnavailable?<p className="text-xs text-muted-foreground">Public link not included because none is available for this drive.</p>:null}
     <p className="font-semibold">{result.email}</p>
-    <label className="grid gap-1 font-semibold">Invitation message
-     <Textarea readOnly value={result.manualLetter} rows={9}/></label>
+    <Label stack>Invitation message
+     <Textarea readOnly value={result.manualLetter} rows={9}/></Label>
     <div className="flex flex-wrap gap-2">
      <Button type="button" variant="secondary" onClick={()=>navigator.clipboard?.writeText(
       result.manualLetter.replace(result.secureInvitePath,

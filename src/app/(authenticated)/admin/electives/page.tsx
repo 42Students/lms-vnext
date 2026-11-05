@@ -19,6 +19,7 @@ import {adminElectiveQuerySchema} from "@/modules/electives/admin-directory-mode
 import {listSuperAdminElectives} from "@/modules/electives/admin-directory-service";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export const dynamic="force-dynamic";
 // Server-side listing defaults to 20 rows per page.
@@ -121,30 +122,30 @@ export default async function SuperAdminElectivesPage({
    </div>
    <form method="get" action="/admin/electives" aria-label="Filter elective slots"
     className="grid w-full min-w-0 items-end gap-2 sm:grid-cols-2 lg:grid-cols-[minmax(120px,1fr)_150px_180px_110px_auto]">
-    <label className="grid min-w-0 gap-1 text-sm font-semibold">Search slots
+    <Label stack className="min-w-0">Search slots
      <Input name="q" defaultValue={data.query.q} maxLength={100}
       placeholder="Search slots" className="min-h-11 md:min-h-9"/>
-    </label>
-    <label className="grid gap-1 text-sm font-semibold">Status
+    </Label>
+    <Label stack>Status
      <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
       <option value="ACTIVE">Active only</option>
       <option value="ALL">Incl. archived</option>
       <option value="ARCHIVED">Archived only</option>
      </Select>
-    </label>
-    <label className="grid gap-1 text-sm font-semibold">Program
+    </Label>
+    <Label stack>Program
      <Select name="programId" defaultValue={data.query.programId??""} className="min-h-11 md:min-h-9">
       <option value="">Program</option>
       {data.programs.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
      </Select>
-    </label>
-    <label className="grid gap-1 text-sm font-semibold">Semester
+    </Label>
+    <Label stack>Semester
      <Select name="semesterNumber" defaultValue={data.query.semesterNumber??""} className="min-h-11 md:min-h-9">
       <option value="">All</option>
       {Array.from({length:12},(_,i)=>i+1).map(num=>
        <option key={num} value={num}>Sem {num}</option>)}
      </Select>
-    </label>
+    </Label>
     <Button type="submit" className="min-h-11 w-full md:min-h-9 sm:w-auto">Search</Button>
    </form>
    <Link href={link(current)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Refresh</Link>

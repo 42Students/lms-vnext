@@ -18,6 +18,7 @@ import {ShareEmailCodeButton} from "./email-code-button";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 export const dynamic="force-dynamic";
 export const metadata={robots:{index:false,follow:false},title:"Shared applicants · 42Students",other:{referrer:"no-referrer"}};
@@ -101,10 +102,10 @@ export default async function CompanySharePage({
   </section>
   <form action={"/company-share/"+encodeURIComponent(token)} method="get"
     className="flex min-w-0 flex-col items-stretch gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:flex-row md:flex-wrap md:items-end">
-    <label className="grid w-full min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto">Search learner name
+    <Label stack className="w-full min-w-0 md:w-auto">Search learner name
      <Input name="q" type="search" defaultValue={result.search} maxLength={80}
       className="min-h-11 w-full md:min-h-9 md:w-64" placeholder="Name contains..." />
-    </label>
+    </Label>
     <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply search</Button>
     <TextLink href={companyShareApplicantHref(token,1,"")} className="inline-flex min-h-11 items-center justify-center text-sm md:min-h-9">Clear</TextLink>
   </form>

@@ -23,6 +23,7 @@ import {
 } from "@/modules/admin-ui/program-directory";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 const PROGRAM_SIZE_KEY = "admin-programs-page-size";
 const FALLBACK_PROGRAM_SIZE_KEY = "42lms-program-page-size";
@@ -223,7 +224,7 @@ export function AdminProgramDirectory({
         ) : null}
         <div className="mt-4 grid min-w-0 grid-cols-1 gap-4">
           <div>
-            <label htmlFor="admin-program-department" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department</label>
+            <Label htmlFor="admin-program-department" className="mb-[6px] block">Department</Label>
             <Input type="search" className="mb-2 min-h-11 md:min-h-9" value={departmentSearch}
               onChange={event=>setDepartmentSearch(event.target.value)}
               aria-label="Search departments" placeholder="Search departments" maxLength={100}/>
@@ -241,7 +242,7 @@ export function AdminProgramDirectory({
             {fieldErrors.department?<p id="admin-program-department-error" role="alert" className="mt-1 text-xs text-error">{fieldErrors.department}</p>:null}
           </div>
           <div>
-            <label htmlFor="admin-program-name" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program Name</label>
+            <Label htmlFor="admin-program-name" className="mb-[6px] block">Program Name</Label>
             <Input className="min-h-11 md:min-h-9" id="admin-program-name" value={name} maxLength={255} required
               onChange={(event) => {setName(event.target.value);setFieldErrors(({name: _name,...rest})=>rest);}}
               aria-invalid={Boolean(fieldErrors.name)} aria-describedby={fieldErrors.name?"admin-program-name-error":undefined}
@@ -249,13 +250,13 @@ export function AdminProgramDirectory({
             {fieldErrors.name?<p id="admin-program-name-error" role="alert" className="mt-1 text-xs text-error">{fieldErrors.name}</p>:null}
           </div>
           <div>
-            <label htmlFor="admin-program-code" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program code (optional)</label>
+            <Label htmlFor="admin-program-code" className="mb-[6px] block">Program code (optional)</Label>
             <p className="mb-1 text-xs text-muted-foreground">Leave blank to generate a suggested code; the server checks uniqueness for the whole department.</p>
             <Input className="min-h-11 md:min-h-9" id="admin-program-code" value={code} maxLength={64}
               onChange={(event) => setCode(event.target.value)} placeholder="CSE" />
           </div>
           <div>
-            <label htmlFor="admin-program-duration" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Duration (Years)</label>
+            <Label htmlFor="admin-program-duration" className="mb-[6px] block">Duration (Years)</Label>
             <div className="flex min-w-0 items-stretch">
               <Input className="min-h-11 min-w-0 flex-1 rounded-r-none md:min-h-9" id="admin-program-duration" type="number" value={durationYears}
                onChange={(event) => {setDurationYears(event.target.value);setFieldErrors(({duration: _duration,...rest})=>rest);}}
@@ -285,7 +286,7 @@ export function AdminProgramDirectory({
         {refreshPending?<p role="status" aria-live="polite" className="text-sm text-muted-foreground">Refreshing programs…</p>:null}
         <div className="flex min-w-0 flex-col gap-3 print:hidden sm:flex-row sm:items-end sm:justify-between">
           <div className="w-full min-w-0 md:max-w-xl md:flex-1">
-            <label htmlFor="admin-program-search" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search programs or departments</label>
+            <Label htmlFor="admin-program-search" className="mb-[6px] block">Search programs or departments</Label>
             <Input type="search" className="min-h-11 md:min-h-9" id="admin-program-search" value={search}
               onChange={(event) => { setSearch(event.target.value); setPage(1); }}
               placeholder="Search programs or departments" />

@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {BUG_STATUSES,type BugStatus} from "@/modules/bug-tracker/workflow";
 import {auditFindingStatusPayload,canChangeAuditFindingStatus} from "@/modules/bug-tracker/audit-finding-status-action-model";
+import { Label } from "@/components/ui/label";
 export function AuditFindingStatusAction({publicId,current,version}:{publicId:string;current:string;version:number}){
  const router=useRouter();
  const [status,setStatus]=useState<BugStatus>(current as BugStatus);
@@ -40,12 +41,12 @@ export function AuditFindingStatusAction({publicId,current,version}:{publicId:st
   finally{inFlight.current=false;setPending(false);}
  }
  return <div className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Triage status
+   <Label stack className="min-w-0">Triage status
     <Select value={status} disabled={pending||stale} className="min-h-11 w-full md:min-h-9" onChange={e=>{setStatus(e.target.value as BugStatus);setFeedback("");setReview(false);}}
     >
       {BUG_STATUSES.map(item=><option key={item} value={item}>{item}</option>)}
     </Select>
-   </label>
+   </Label>
    <Button size="sm" variant="primary" aria-haspopup="dialog" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={stale||!canChangeAuditFindingStatus(current,status,pending)} onClick={()=>setReview(true)}>Review status</Button>
    <p className="min-w-0 text-xs text-muted-foreground sm:col-span-2">Current: {current} · Selected: {status}</p>
    {feedback?<div className="flex min-w-0 flex-wrap items-center gap-2 sm:col-span-2">

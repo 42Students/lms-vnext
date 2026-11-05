@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {learnerInterviewWithdrawalInputSchema,type LearnerInterviewWithdrawalTarget} from "@/modules/placements/learner-interview-withdrawal-model";
 import {Textarea} from "@/components/ui/textarea";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export function LearnerInterviewWithdrawalRequest({withdrawalRequest:target}:{withdrawalRequest:LearnerInterviewWithdrawalTarget}){
   const router=useRouter();
   const [review,setReview]=useState(false),[reason,setReason]=useState("");
@@ -37,10 +38,10 @@ export function LearnerInterviewWithdrawalRequest({withdrawalRequest:target}:{wi
     {target.pending||submitted ? <p role="status" className="text-sm text-body leading-[22px]">
       Withdrawal requested; awaiting the placement team&apos;s decision. <Link className="font-semibold text-primary-text underline focus-visible:underline" href="/learn/my-placements/support?status=PENDING&type=APPLICATION_WITHDRAWAL">Review request</Link>
     </p> : review ? <div className="space-y-3">
-      <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">Reason for requesting withdrawal
+      <Label className="block">Reason for requesting withdrawal
         <Textarea value={reason} maxLength={2000} minLength={3} required rows={3} disabled={pending} aria-invalid={Boolean(error)} aria-describedby={error?"learner-interview-withdrawal-error":undefined} onChange={event=>setReason(event.target.value)}
           className="mt-2 w-full" />
-      </label>
+      </Label>
       {error?<p role="alert" id="learner-interview-withdrawal-error" className="text-sm text-error leading-[22px]">{error}</p>:null}
       <div className="flex flex-wrap gap-2">
         <Button className="min-h-11 md:min-h-9 w-full md:w-auto" disabled={pending||reason.trim().length<3} onClick={()=>void submit()}>{pending?"Submitting…":"Confirm withdrawal request"}</Button>

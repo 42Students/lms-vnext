@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { listCollegeDrives } from "@/modules/placements/college-drive-read-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export default async function CollegePlacementsPage({searchParams}:{
   searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -127,11 +128,11 @@ export default async function CollegePlacementsPage({searchParams}:{
         <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Active drives</Heading>
         <form method="get" role="search" aria-label="Search active drives"
           className="flex min-w-0 flex-wrap items-end gap-2 sm:justify-between">
-          <label className="grid min-w-0 w-full gap-1 text-sm font-semibold sm:w-[240px]">
+          <Label stack className="min-w-0 w-full sm:w-[240px]">
             <span className="sr-only">Search by drive or company</span>
             <Input type="search" name="q" maxLength={100} defaultValue={q}
              placeholder="Search by drive or company"/>
-          </label>
+          </Label>
           {returnTo?<input type="hidden" name="returnTo" value={returnTo}/>:null}
           <Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
           {q?<Link href={"/college/placements"+(returnTo?"?returnTo="+encodeURIComponent(returnTo):"")}

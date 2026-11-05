@@ -15,6 +15,7 @@ import { filterLearnerProjectActivity, learnerProjectActivityCategories,
   learnerProjectActivityPageHref, parseLearnerProjectActivityFilters, learnerProjectActivityCategorySchema } from "@/modules/projects/learner-project-activity-filter-model";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type ActivityRow = {
   id: string; eventType: string; summary: string; occurredAt: Date;
@@ -45,32 +46,32 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
       </summary>
     <form method="get" action={route} className="grid min-w-0 grid-cols-1 gap-3 pb-5 pt-3 md:grid-cols-2 lg:grid-cols-5">
       <input type="hidden" name="tab" value="activity" />
-      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Activity type
+      <Label>Activity type
         <Select name="activityCategory" defaultValue={category}
           className="mt-[6px] min-h-11 w-full border border-border px-3 text-[var(--lms-font-base)] font-normal md:min-h-9">
           {learnerProjectActivityCategories.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}
         </Select>
-      </label>
-      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">From (IST)
+      </Label>
+      <Label>From (IST)
         <Input type="date" name="activityFrom" defaultValue={parsed.success ? parsed.data.from : ""}
           className="mt-[6px] min-h-11 w-full border border-border px-3 text-[var(--lms-font-base)] font-normal md:min-h-9" />
-      </label>
-      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Through (IST)
+      </Label>
+      <Label>Through (IST)
         <Input type="date" name="activityTo" defaultValue={parsed.success ? parsed.data.to : ""}
           className="mt-[6px] min-h-11 w-full border border-border px-3 text-[var(--lms-font-base)] font-normal md:min-h-9" />
-      </label>
+      </Label>
       <Button type="submit" className="min-h-11 self-end md:min-h-9">Apply</Button>
       <Link data-unskin="" href={route + "?tab=activity"} className="inline-flex min-h-11 md:min-h-9 items-center justify-center self-end rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-semibold text-[var(--lms-body-text)] bg-surface hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:underline">Clear</Link>
     </form>
     </details>
     {parsed.success && pageRows.length > 0 ? (
       <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-        <label className="min-w-0 flex-1 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Find in this activity page
+        <Label className="min-w-0 flex-1">Find in this activity page
           <Input type="search" maxLength={100} value={textQuery}
             onChange={event=>setTextQuery(event.target.value)}
             placeholder="Search summary, subject or actor"
             className="mt-1.5 min-h-11 md:min-h-9" />
-        </label>
+        </Label>
         {textQuery ? <Button type="button" onClick={()=>setTextQuery("")}
           variant="secondary" className="min-h-11 md:min-h-9">Clear text search</Button> : null}
       </div>

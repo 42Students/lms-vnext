@@ -6,6 +6,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Company = {
   name: string; status: string; isTrusted: boolean;
@@ -64,14 +65,14 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
       <p className="border-b border-[var(--lms-canvas-border)] pb-3 text-sm text-body">
         Status: <strong>{company.status}</strong> · Trusted: <strong>{company.isTrusted ? "Yes" : "No"}</strong>
       </p>
-      <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+      <Label className="block">
         Reason for change
         <Textarea
           value={reason} onChange={(event) => {setReviewAction(null);setReason(event.target.value);}}
           disabled={busy} maxLength={500} rows={3}
           className="mt-2 block w-full"
         />
-      </label>
+      </Label>
       <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap">
         {company.status === "ACTIVE" ? (
           <>

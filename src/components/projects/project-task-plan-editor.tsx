@@ -12,6 +12,7 @@ import { projectMutation } from "./project-api";
 import { useProjectEditorDiscardGuard } from "./project-editor-discard-guard";
 import type { ProjectTaskPlanRow } from "@/modules/projects/project-task-plan-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type SourceTask = ProjectTaskPlanRow & {
   status: string;
@@ -148,12 +149,12 @@ export function ProjectTaskPlanEditor({ projectId, tasksToken, tasks, sprints }:
         Completed and in-review tasks cannot be edited in the plan.</p> : null}
     </div>
     {open ? <div className="space-y-3">
-      {tasks.length > 12 ? <label className="block text-sm font-semibold text-body">
+      {tasks.length > 12 ? <Label className="block">
         Find an item in this section
         <Input type="search" className="mt-1" value={search}
           placeholder="Find by task title or key"
           onChange={event => setSearch(event.target.value)} />
-      </label> : null}
+      </Label> : null}
       <p role="status" className="text-xs text-body">
         Showing {visible.length} of {tasks.length} tasks · {changed.length} unsaved edit{changed.length === 1 ? "" : "s"}.
       </p>
@@ -169,24 +170,24 @@ export function ProjectTaskPlanEditor({ projectId, tasksToken, tasks, sprints }:
             {rowDirty ? " · Edited" : ""}
           </summary>
           <fieldset disabled={pending || Boolean(locked)} className="grid min-w-0 gap-3 py-3 md:grid-cols-2">
-            <label className="text-xs font-semibold text-body">Key
+            <Label>Key
               <Input className="mt-1" maxLength={120} value={row.key}
                 onChange={event => setField(row.id, "key", event.target.value)} />
-            </label>
-            <label className="text-xs font-semibold text-body">Priority
+            </Label>
+            <Label>Priority
               <Select className="mt-1" value={row.priority}
                 onChange={event => setField(row.id, "priority",
                   event.target.value as ProjectTaskPlanRow["priority"])}>
                 <option value="LOW">Low</option><option value="MEDIUM">Medium</option>
                 <option value="HIGH">High</option><option value="CRITICAL">Critical</option>
               </Select>
-            </label>
-            <label className="text-xs font-semibold text-body md:col-span-2">Title
+            </Label>
+            <Label className="md:col-span-2">Title
               <Input className="mt-1" required maxLength={200} value={row.title}
                 placeholder="e.g. Draft submission checklist"
                 onChange={event => setField(row.id, "title", event.target.value)} />
-            </label>
-            <label className="text-xs font-semibold text-body">Sprint
+            </Label>
+            <Label>Sprint
               <Select className="mt-1" value={row.sprintId ?? ""}
                 onChange={event => setField(row.id, "sprintId", event.target.value || null)}>
                 <option value="">Backlog (no sprint)</option>
@@ -195,8 +196,8 @@ export function ProjectTaskPlanEditor({ projectId, tasksToken, tasks, sprints }:
                 {row.sprintId && !eligibleSprints.some(sprint => sprint.id === row.sprintId)
                   ? <option value={row.sprintId} disabled>Unavailable sprint</option> : null}
               </Select>
-            </label>
-            <label className="text-xs font-semibold text-body">Estimate
+            </Label>
+            <Label>Estimate
               <Select className="mt-1" value={row.estimatePoints === null ? "" : String(row.estimatePoints)}
                 onChange={event => setField(row.id, "estimatePoints",
                   event.target.value === "" ? null : Number(event.target.value))}>
@@ -207,8 +208,8 @@ export function ProjectTaskPlanEditor({ projectId, tasksToken, tasks, sprints }:
                   ![0, 1, 2, 3, 5, 8, 13, 21, 34, 55].includes(row.estimatePoints)
                   ? <option value={row.estimatePoints}>{row.estimatePoints} pts (existing)</option> : null}
               </Select>
-            </label>
-            <label className="text-xs font-semibold text-body">Type
+            </Label>
+            <Label>Type
               <Select className="mt-1" value={row.taskType ?? ""}
                 onChange={event => setField(row.id, "taskType",
                   (event.target.value || null) as ProjectTaskPlanRow["taskType"])}>
@@ -216,19 +217,19 @@ export function ProjectTaskPlanEditor({ projectId, tasksToken, tasks, sprints }:
                 <option value="STORY">Story</option><option value="BUG">Bug</option>
                 <option value="CHORE">Chore</option><option value="SPIKE">Spike</option>
               </Select>
-            </label>
-            <label className="text-xs font-semibold text-body">Due (label, not calendar date)
+            </Label>
+            <Label>Due (label, not calendar date)
               <Input className="mt-1" maxLength={160} value={row.dueLabel ?? ""}
                 placeholder="e.g. Before sprint 1"
                 onChange={event => setField(row.id, "dueLabel", event.target.value || null)} />
-            </label>
+            </Label>
             {(["description", "acceptanceCriteria", "approach"] as const).map(field =>
-              <label key={field} className="text-xs font-semibold text-body md:col-span-2">
+              <Label key={field} className="md:col-span-2">
                 {field === "description" ? "Description" :
                   field === "acceptanceCriteria" ? "Done when (optional)" : "Approach (optional)"}
                 <Textarea className="mt-1" value={row[field] ?? ""} maxLength={4000} rows={3}
                   onChange={event => setField(row.id, field, event.target.value || null)} />
-              </label>)}
+              </Label>)}
             <div className="md:col-span-2">
               <Button size="sm" variant="ghost" disabled={!rowDirty || pending}
                 aria-label={"Undo changes for "+(row.title||"Task "+(index+1))}

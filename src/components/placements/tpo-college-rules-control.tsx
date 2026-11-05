@@ -9,6 +9,7 @@ import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {useToast} from "@/components/ui/toast";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import { Label } from "@/components/ui/label";
 
 type Rules = {
   countsAsPlacedAt: string;
@@ -169,18 +170,18 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
         Custom thresholds and response times
        </summary>
        <div className="grid gap-3 border-t border-border py-3 sm:grid-cols-2">
-        <label className="grid gap-2 text-sm font-semibold text-body">Custom offer uplift (%)
+        <Label stack>Custom offer uplift (%)
          <Input type="number" min={TPO_RULE_LIMITS.upliftPct.min}
           max={TPO_RULE_LIMITS.upliftPct.max} step={1} value={form.upliftPct}
           disabled={busy} onChange={event=>update("upliftPct",event.target.value)}
           className="min-h-11 md:min-h-9"/>
-        </label>
-        <label className="grid gap-2 text-sm font-semibold text-body">Custom response period (hours)
+        </Label>
+        <Label stack>Custom response period (hours)
          <Input type="number" min={TPO_RULE_LIMITS.minResponseHours.min}
           max={TPO_RULE_LIMITS.minResponseHours.max} step={1} value={form.minResponseHours}
           disabled={busy} onChange={event=>update("minResponseHours",event.target.value)}
           className="min-h-11 md:min-h-9"/>
-        </label>
+        </Label>
        </div>
       </details>
       <p className="text-sm text-body">The placed numbers (Home, Students, Reports) follow your chosen placed trigger after you save. For example, an internship never counts as placed, and a qualifying Dream drive may follow separate eligibility rules.</p>

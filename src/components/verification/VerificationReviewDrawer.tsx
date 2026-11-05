@@ -19,6 +19,8 @@ import {canEditVerificationDecision} from "@/modules/verification/review-edit-gu
 import type {VerificationQueueCard} from "./VerificationWorkspace";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 type HistoryItem={id:string;action:string;actorKind:string;actorName:string|null;
  note:string|null;occurredAt:string;priorVersion:number;nextVersion:number};
@@ -89,7 +91,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
    </div>}
    {loading?<div role="status" aria-label="Loading student verification details" className="space-y-3 py-6">
     <p className="text-[14px] text-[var(--lms-muted-text)]">Loading submitted details…</p>
-    {Array.from({length:6},(_,i)=><div key={i} aria-hidden="true" className="h-6 animate-pulse rounded bg-muted"/>)}
+    {Array.from({length:6},(_,i)=><SkeletonBlock key={i} className="h-6" />)}
    </div>:null}
    {error?<div role="alert" className="my-3 min-w-0 space-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-error)] bg-[var(--lms-neutral-50)] p-3 text-[14px] break-words"><p>{error}</p>
     {canRetryVerificationReview(error,loading)&&<Button variant="secondary" type="button" onClick={retryReview}
@@ -212,10 +214,10 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
        onClick={()=>setReason("")}>Write my own reason</Button>
      </div>
      <p className="text-sm text-[var(--lms-body-text)]">The student sees your reason and fixes it on their profile.</p>
-     <label className="grid gap-1 text-sm font-semibold">Or write what needs to change
+     <Label stack>Or write what needs to change
       <Textarea rows={3} value={additional} onChange={event=>setAdditional(event.target.value)}
        maxLength={500} placeholder="Or write what needs to change" disabled={saving}/>
-     </label>
+     </Label>
      {error?<p role="alert" className="text-sm text-warning">{error}</p>:null}
     </div>
    </Dialog>

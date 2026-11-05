@@ -5,6 +5,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
+import { Label } from "@/components/ui/label";
 export function TpoTeamAwayForm({until}:{until:string|null}){
  const pending=useRef(false),router=useRouter();
  const [date,setDate]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
@@ -27,10 +28,10 @@ export function TpoTeamAwayForm({until}:{until:string|null}){
    if(!date)return;const parsed=new Date(date+"+05:30");
    if(!Number.isFinite(parsed.getTime())){setError("Choose when you will be back.");return;}
    void submit(parsed.toISOString());}}>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Away until (IST)
+  <Label stack>Away until (IST)
    <Input type="datetime-local" value={date} disabled={busy} onChange={event=>setDate(event.target.value)}
     className="min-h-11 md:min-h-9" />
-  </label>
+  </Label>
   {error?<InlineNotice tone="error" message={error}/>:null}
   {notice?<InlineNotice tone="success" message={notice}/>:null}
   <div className="flex flex-wrap gap-2">

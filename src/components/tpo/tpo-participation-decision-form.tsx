@@ -12,6 +12,7 @@ import {
   type TpoMembershipDecisionSnapshot,
   type TpoParticipationChange,
 } from "@/modules/placements/tpo-participation-model";
+import { Label } from "@/components/ui/label";
 
 type Status = TpoParticipationChange["status"];
 
@@ -72,7 +73,7 @@ export function TpoParticipationDecisionForm({
 
   return (
     <form onSubmit={submit} className="min-w-0 space-y-5">
-      <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+      <Label stack>
         Learner-level eligibility
         <Select
           value={status}
@@ -84,11 +85,11 @@ export function TpoParticipationDecisionForm({
           <option value="ELIGIBLE">Eligible for placements</option>
           <option value="INELIGIBLE">Ineligible for placements</option>
         </Select>
-      </label>
+      </Label>
 
       {status === "INELIGIBLE" ? (
         <div className="grid gap-2 text-sm font-semibold text-body">
-          <label htmlFor="tpo-participation-reason">Reason (required)</label>
+          <Label htmlFor="tpo-participation-reason">Reason (required)</Label>
           <div role="group" aria-label="Ineligibility reason presets" className="flex flex-wrap gap-2">
             {TPO_INELIGIBLE_REASONS.map(preset=><Button variant="secondary" type="button" key={preset}
               disabled={pending} onClick={()=>setReason(preset)}
@@ -111,7 +112,7 @@ export function TpoParticipationDecisionForm({
       ) : null}
 
       {status !== "NOT_DECIDED" ? (
-        <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+        <Label stack>
           Internal note (optional)
           <Textarea
             rows={3}
@@ -121,7 +122,7 @@ export function TpoParticipationDecisionForm({
             disabled={pending}
             
           />
-        </label>
+        </Label>
       ) : null}
 
       <details className="min-w-0 border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm leading-6 text-body">

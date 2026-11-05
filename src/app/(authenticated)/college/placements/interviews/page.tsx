@@ -20,6 +20,7 @@ import {CollegeInterviewRefresh} from "@/components/placements/college-interview
 import {CollegeInterviewNotice} from "@/components/placements/college-interview-notice";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 export const dynamic="force-dynamic";
 type Params=Record<string,string|string[]|undefined>;
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
@@ -114,9 +115,9 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
    <SummaryStrip label="Interview summary" steps={[{label:"Scheduled",value:data.summary?.scheduled??0},{label:"Today",value:data.summary?.today??0},{label:"Companies",value:data.summary?.companies??0},{label:"Conflicts",value:data.summary?.conflicts??0}]}/>
    <form method="get" role="search" aria-label="Interview appointment filters" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,2fr)_auto]">
     <input type="hidden" name="pageSize" value={String(valid.data.pageSize)}/>
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search student, company or role
+    <Label stack>Search student, company or role
      <Input type="search" name="q" defaultValue={valid.data.q} maxLength={100} placeholder="Search..." />
-    </label>
+    </Label>
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
       <Button variant="primary" type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Apply filters</Button>
       <Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center justify-center text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] focus-ring">Clear filters</Link>
@@ -125,31 +126,31 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
       defaultOpen={Boolean(valid.data.companyId || valid.data.departmentId || valid.data.status!=="ALL" || valid.data.mode!=="ALL" || valid.data.type!=="ALL" || valid.data.sort!=="UPCOMING")}
       className="md:col-span-2">
       <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-3)] md:grid-cols-2 lg:grid-cols-3">
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
+    <Label stack className="min-w-0">Company
      <Select name="companyId" defaultValue={valid.data.companyId??""} >
       <option value="">All companies</option>{data.companies.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
      </Select>
-    </label>
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
+    </Label>
+    <Label stack>Department
      <Select name="departmentId" defaultValue={valid.data.departmentId??""} >
       <option value="">All departments</option>{data.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
      </Select>
-    </label>
+    </Label>
     {([{name:"type",label:"Type",values:["ALL","SCREENING","TECHNICAL","HR","MANAGERIAL","FINAL","INTERVIEW","GD"]},
       {name:"status",label:"Status",values:["ALL","ACTIVE","SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED","COMPLETED","NO_SHOW","CANCELLED"]},
       {name:"mode",label:"Mode",values:["ALL","ON_CAMPUS","VIRTUAL"]}]
-    ).map(filter=><label key={filter.name} className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{filter.label}
+    ).map(filter=><Label stack key={filter.name}>{filter.label}
      <Select name={filter.name} defaultValue={String(valid.data[filter.name as "type"|"status"|"mode"])}
       >
       {filter.values.map(value=><option key={value} value={value}>{value==="ALL"?"All":value.replaceAll("_"," ")}</option>)}
-     </Select></label>)}
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
+     </Select></Label>)}
+    <Label stack>Sort
      <Select name="sort" defaultValue={valid.data.sort} >
       <option value="EARLIEST">Date ↑ Earliest</option><option value="LATEST">Date ↓ Latest</option>
       <option value="JOB">Job title</option><option value="STATUS">Status</option>
       <option value="STUDENT">Student</option>
      </Select>
-    </label>
+    </Label>
       </div>
     </Disclosure>
    </form>
@@ -159,7 +160,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
       {data.summary.today>0?" · "+data.summary.today+" today":""}
     </p>
     {data.companies.length>2?<form action="/college/placements/interviews" method="get" className="inline-flex items-center gap-2">
-      <label htmlFor="interview-company">Company:</label>
+      <Label htmlFor="interview-company">Company:</Label>
       <Select id="interview-company" name="companyId" defaultValue={valid.data.companyId??""} aria-label="Filter by company">
         <option value="">All companies</option>{data.companies.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
       </Select><Button type="submit" variant="secondary">Apply</Button>
@@ -182,7 +183,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
       </form>
     </span>
     <form action="/college/placements/interviews" method="get" className="inline-flex items-center gap-2">
-      <label htmlFor="interview-page-size">Per page</label>
+      <Label htmlFor="interview-page-size">Per page</Label>
       <Select id="interview-page-size" name="pageSize" defaultValue={String(valid.data.pageSize)}>
         {[10,20,50,100].map(size=><option key={size} value={size}>{size}</option>)}
       </Select>

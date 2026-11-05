@@ -13,6 +13,7 @@ import {
 } from "@/modules/admin-ui/college-department-insights-model";
 import type { listCollegeDepartmentInsights } from "@/modules/admin-ui/college-department-insights-service";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type Data = Awaited<ReturnType<typeof listCollegeDepartmentInsights>>;
 
@@ -64,12 +65,12 @@ export function CollegeDepartmentInsights({
     />
     <section aria-label="Department filters" className="border-b border-border pb-4">
       <form method="get" action={path} className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,2fr)_auto_auto]">
-        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label stack className="min-w-0">
           Department Name
           <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
             placeholder="Search your college"
             />
-        </label>
+        </Label>
         <Button variant="primary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
         {data.query.q ? <Link href={path} className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline underline-offset-4 focus-ring md:min-h-9 md:w-auto">Clear</Link> : null}
       </form>

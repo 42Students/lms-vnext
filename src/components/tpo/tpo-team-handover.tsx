@@ -6,6 +6,7 @@ import { Select } from "@/components/ui/select";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
+import { Label } from "@/components/ui/label";
 type Member={membershipId:string;displayName:string};
 export function TpoTeamHandover({sourceMembershipId,sourceName,members}:{
  sourceMembershipId:string;sourceName:string;members:Member[];
@@ -36,14 +37,14 @@ export function TpoTeamHandover({sourceMembershipId,sourceName,members}:{
   finally{pending.current=false;setBusy(false);}
  }
  return <section aria-label={"Hand over "+sourceName+"'s placement work"} className="mt-3 min-w-0 space-y-2 pt-3">
-  <label className="grid gap-[6px] text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Who takes over?
+  <Label stack>Who takes over?
    <Select value={target} onChange={event=>setTarget(event.target.value)} disabled={busy}
     className="min-h-11 md:min-h-9">
     <option value="">Choose an active placement team member</option>
     {members.filter(member=>member.membershipId!==sourceMembershipId).map(member=>
      <option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
    </Select>
-  </label>
+  </Label>
   <Button type="button" variant="secondary" disabled={!target||busy} onClick={()=>void handover()}
    className="min-h-11 md:min-h-9">
    {busy?"Handing over…":"Hand over work"}

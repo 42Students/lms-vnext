@@ -9,6 +9,7 @@ import {projectMutation} from "./project-api";
 import {mentorPullEligible,mentorPullSelectedPoints} from "@/modules/projects/mentor-sprint-backlog-pull-model";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export type MentorSprintBacklogChoice={
  id:string;title:string;status:string;updatedAt:string;estimatePoints:number|null;
@@ -72,7 +73,7 @@ export function MentorSprintBacklogPull({projectId,sprintId,sprintTitle,
        remain saved if a later one fails.</p>
      {remaining.length?<ul className="max-h-64 space-y-2 overflow-y-auto">
        {remaining.map(task=><li key={task.id}>
-         <label className="flex min-h-11 items-start gap-2">
+         <Label variant="choice" className="flex min-h-11 items-start gap-2">
            <Checkbox className="mt-1" disabled={busy}
              checked={selected.includes(task.id)}
              onChange={event=>setSelected(old=>event.target.checked?
@@ -85,7 +86,7 @@ export function MentorSprintBacklogPull({projectId,sprintId,sprintTitle,
              {failed.includes(task.id)?<small className="block text-error">
                Not moved · task may have changed</small>:null}
            </span>
-         </label>
+         </Label>
        </li>)}
      </ul>:<p>No eligible backlog tasks in the loaded project workspace.</p>}
      {planned.moreEligible>0?<p className="text-xs text-muted-foreground">

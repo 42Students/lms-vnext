@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { authoringLocalDateTime } from "@/modules/courses/faculty-authoring-datetime-model";
 import { courseApiError } from "./learner-course-api";
 import { facultyContentPatch, facultyContentDraftChanged, facultyContentMayChangeOpen, facultyContentSaveReceiptMatches, facultyContentMaySave, type EditableContent } from "@/modules/courses/faculty-content-edit-model";
+import { Label } from "@/components/ui/label";
 
 type Item = {
   id: string;
@@ -124,43 +125,43 @@ export function FacultyContentEditor({ item,compact=false }: { item: Item;compac
         </Button>}
       >
         <form id={"faculty-content-edit-" + item.id} onSubmit={save} className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
-          <label className="block min-w-0 leading-4 font-semibold md:col-span-2 text-[13px] text-[var(--lms-neutral-400)]">
+          <Label className="block min-w-0 md:col-span-2">
             Title
             <Input className="mt-[6px]" value={title} onChange={(event) => setTitle(event.target.value)} maxLength={255} required />
-          </label>
-          <label className="block min-w-0 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label className="block min-w-0">
             Points
             <Input className="mt-[6px]" type="number" min={0} max={1000}
               value={points} onChange={(event)=>setPoints(event.target.value)} required/>
-          </label>
-          <label className="block min-w-0 leading-4 font-semibold md:col-span-2 text-[13px] text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label className="block min-w-0 md:col-span-2">
             Notes
             <Textarea className="mt-[6px] min-h-24" value={notes} onChange={(event) => setNotes(event.target.value)} maxLength={5000} />
-          </label>
-          {item.contentType !== "VIDEO" ? <label className="block min-w-0 leading-4 font-semibold md:col-span-2 text-[13px] text-[var(--lms-neutral-400)]">
+          </Label>
+          {item.contentType !== "VIDEO" ? <Label className="block min-w-0 md:col-span-2">
             {item.contentType === "YOUTUBE" ? "YouTube URL" : item.contentType === "LIVE_CLASS" ? "Meeting URL" : "Resource URL"}
             <Input className="mt-[6px]" type="url" value={url} onChange={(event) => setUrl(event.target.value)}
               required={item.contentType !== "RESOURCE"} placeholder="https://…" />
-          </label>:null}
+          </Label>:null}
           {item.contentType === "YOUTUBE" ? (
-            <label className="block min-w-0 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+            <Label className="block min-w-0">
               Actual video duration (seconds)
               <Input className="mt-[6px]" type="number" min={1} max={86400} value={duration}
                 onChange={(event) => setDuration(event.target.value)} required />
-            </label>
+            </Label>
           ) : null}
           {item.contentType === "LIVE_CLASS" ? (
             <div className="grid min-w-0 gap-3 md:col-span-2 md:grid-cols-2">
-              <label className="leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+              <Label>
                 Start (IST)
                 <Input className="mt-[6px]" type="datetime-local" value={starts}
                   onChange={(event) => setStarts(event.target.value)} required />
-              </label>
-              <label className="leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+              </Label>
+              <Label>
                 End (IST)
                 <Input className="mt-[6px]" type="datetime-local" value={ends}
                   onChange={(event) => setEnds(event.target.value)} required />
-              </label>
+              </Label>
             </div>
           ) : null}
           {error ? <div className="md:col-span-2"><Alert tone="error">{error}</Alert></div> : null}

@@ -17,6 +17,7 @@ import {
 import { SEMESTER_COPY } from "@/modules/academics/semester-copy";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type ProgramOption = { id: string; name: string; code: string };
 type SemesterRow = {
@@ -132,7 +133,7 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
         </p>
       ) : (
         <form noValidate onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-3)]">
-          <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack>
             {SEMESTER_COPY.programLabel}
             <Select ref={programRef} required value={programId} aria-invalid={Boolean(createErrors.program)} aria-describedby={createErrors.program ? "semester-program-error" : undefined}
               onChange={e => { setProgramId(e.target.value); setCreateErrors(current => { const next = { ...current }; delete next.program; return next; }); }}
@@ -143,21 +144,21 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
               </option>)}
             </Select>
             {createErrors.program ? <span role="alert" id="semester-program-error" className="text-xs text-error">{createErrors.program}</span> : null}
-          </label>
-          <label className="grid max-w-[220px] gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="max-w-[220px]">
             {SEMESTER_COPY.numberLabel}
             <Input ref={numberRef} required type="number" min={1} max={12} step={1} value={termNumber}
               aria-invalid={Boolean(createErrors.number)} aria-describedby={createErrors.number ? "semester-number-error" : undefined} placeholder={SEMESTER_COPY.numberPlaceholder}
               onChange={e => { setTermNumber(e.target.value); setCreateErrors(current => { const next = { ...current }; delete next.number; return next; }); }}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
-          </label>
-          <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack>
             {SEMESTER_COPY.nameLabel}
             <Input ref={createNameRef} required maxLength={255} value={name} aria-invalid={Boolean(createErrors.name)} aria-describedby={createErrors.name ? "semester-name-error" : undefined}
               onChange={e => { setName(e.target.value); setCreateErrors(current => { const next = { ...current }; delete next.name; return next; }); }}
               placeholder={SEMESTER_COPY.namePlaceholder}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
-          </label>
+          </Label>
           {createErrors.name ? <p role="alert" id="semester-name-error" className="text-xs text-error">{createErrors.name}</p> : null}
           {createErrors.number ? <p role="alert" id="semester-number-error" className="text-xs text-error">{createErrors.number}</p> : null}
           <p className="border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-xs text-body md:col-span-2 leading-5">
@@ -304,15 +305,15 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
           </div> : null}
           
           
-          <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack>
             {SEMESTER_COPY.nameLabel}
             <Input ref={editNameRef} required maxLength={255} value={name} aria-invalid={Boolean(editFieldErrors.name)}
               onChange={e => { setName(e.target.value); setEditFieldErrors({}); }}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground" />
             {editFieldErrors.name ? <span role="alert" className="text-xs text-error">{editFieldErrors.name}</span> : null}
-          </label>
+          </Label>
           <div className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
-            <label htmlFor={"semester-credits-" + row.id}>Total Credits</label>
+            <Label htmlFor={"semester-credits-" + row.id}>Total Credits</Label>
             <Input id={"semester-credits-" + row.id} value={row.totalCredits ?? "Calculated from course mappings"}
               readOnly disabled aria-label="Total Credits (calculated from mapped courses)"
               title="Credits are calculated from the courses mapped to this semester" />

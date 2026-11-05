@@ -9,6 +9,7 @@ import { LEARNER_COURSE_SEARCH_PLACEHOLDER } from "@/modules/courses/learner-cou
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 type LearnerCourse = {
   deliveryId: string;
@@ -67,9 +68,9 @@ export function LearnerTopbarTools() {
         if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
       }}>
       <div className="relative hidden min-w-0 flex-1 sm:block">
-        <label className="sr-only" htmlFor={searchId}>
+        <Label className="sr-only" htmlFor={searchId}>
           Search Courses
-        </label>
+        </Label>
         <Input
           id={searchId}
           value={query}

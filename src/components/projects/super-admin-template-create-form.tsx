@@ -15,6 +15,7 @@ import {initialSuperAdminTemplateDraft,type TemplateCreateRelease,
 } from "@/modules/projects/super-admin-template-create-model";
 import {projectMutation} from "@/components/projects/project-api";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 function move<T>(list:readonly T[],index:number,step:-1|1):T[]{
  const dest=index+step;if(dest<0||dest>=list.length)return [...list];
@@ -125,7 +126,7 @@ export function SuperAdminTemplateCreateForm(){
  return <form onSubmit={event=>void submit(event)} noValidate className="grid min-w-0 gap-4">
   <p className="m-0 text-sm text-body">The draft starts with one release, one sprint and one task. Review and publish after creation.</p>
   <div className="grid min-w-0 gap-4 md:grid-cols-2">
-   {fields.map(field=><label key={field.key} className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+   {fields.map(field=><Label stack key={field.key} className="min-w-0">
     {field.label}<Input required={field.required} maxLength={field.limit} disabled={saving}
      value={values[field.key]} onChange={event=>edit(field.key,field.key==="slug"?event.target.value.toLowerCase():event.target.value)}
      pattern={field.key==="slug"?"[a-z0-9]+(?:-[a-z0-9]+)*":undefined}
@@ -133,74 +134,74 @@ export function SuperAdminTemplateCreateForm(){
      className="w-full"/>
     {field.key==="slug"?<span id="template-slug-hint" className="text-xs text-muted-foreground">80 characters maximum; lowercase letters, numbers and hyphens only.</span>:
      field.key==="title"?<span id="template-title-hint" className="text-xs text-muted-foreground">200 characters maximum.</span>:null}
-   </label>)}
+   </Label>)}
   </div>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Custom summary (optional)
+  <Label stack className="min-w-0">Custom summary (optional)
    <Textarea maxLength={160} disabled={saving} value={values.summary} onChange={event=>edit("summary",event.target.value)}
     className="w-full"/>
    <span className="text-xs font-normal text-muted-foreground">Defaults to the first Goal line or title (160 characters).</span>
-  </label>
-  {values.summary.trim()?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason for custom summary
+  </Label>
+  {values.summary.trim()?<Label stack className="min-w-0">Reason for custom summary
    <Input maxLength={300} disabled={saving} value={values.summaryOverrideReason}
     onChange={event=>edit("summaryOverrideReason",event.target.value)}
     placeholder="Why does this need a different summary?"/>
-  </label>:null}
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Goal (optional)
+  </Label>:null}
+  <Label stack className="min-w-0">Goal (optional)
    <Textarea rows={3} maxLength={2000} disabled={saving} value={values.goal} onChange={event=>edit("goal",event.target.value)}
     className="w-full"/>
-  </label>
+  </Label>
   <details className="min-w-0 border-y border-border py-3">
    <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-ring">Overview and submission</summary>
    <fieldset className="mt-3 grid min-w-0 gap-3 md:grid-cols-2">
     <legend className="sr-only">Overview and submission</legend>
     {([{key:"courseLabel",label:"Course label"},{key:"phase",label:"Phase"}] as const)
-      .map(item=><label key={item.key} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{item.label}
+      .map(item=><Label stack key={item.key}>{item.label}
        <Input maxLength={160} disabled={saving} value={values[item.key]}
         onChange={e=>edit(item.key,e.target.value)}
-        className="w-full"/></label>)}
+        className="w-full"/></Label>)}
     {([{key:"deliverables",label:"Deliverables (one per line)"},
        {key:"definitionOfDone",label:"Definition of done (one per line)"},
        {key:"personas",label:"Personas (one per line)"},
        {key:"submissionInstructions",label:"Submission instructions"}] as const).map(item=>
-      <label key={item.key} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
+      <Label stack key={item.key} className="md:col-span-2">
        {item.label}
        <Textarea rows={3} value={values[item.key]} onChange={e=>edit(item.key,e.target.value)}
         maxLength={4000} disabled={saving}
         className="w-full"/>
-      </label>)}
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submission type
+      </Label>)}
+    <Label stack>Submission type
       <Select disabled={saving} value={values.submissionType}
        onChange={e=>edit("submissionType",e.target.value)}
        className="w-full">
        <option value="LINK">Link</option><option value="FILE">File upload</option>
        <option value="TEXT">Text</option>
       </Select>
-    </label>
+    </Label>
    </fieldset>
   </details>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First task priority
+  <Label stack>First task priority
    <Select disabled={saving} value={values.priority} onChange={event=>edit("priority",event.target.value)} className="w-full">
     <option value="LOW">Low</option><option value="MEDIUM">Medium</option><option value="HIGH">High</option><option value="CRITICAL">Critical</option>
    </Select>
-  </label>
+  </Label>
   <details className="min-w-0 border-y border-border py-3">
    <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-ring">Additional descriptions</summary>
    <div className="mt-3 grid min-w-0 gap-4">
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First task acceptance criteria (optional)
+  <Label stack>First task acceptance criteria (optional)
    <Textarea maxLength={4000} disabled={saving} value={values.acceptanceCriteria} onChange={event=>edit("acceptanceCriteria",event.target.value)} className="w-full"/>
-  </label>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First release description (optional)
+  </Label>
+  <Label stack>First release description (optional)
    <Textarea maxLength={4000} disabled={saving} value={values.releaseDescription} onChange={event=>edit("releaseDescription",event.target.value)} className="w-full"/>
-  </label>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First sprint description (optional)
+  </Label>
+  <Label stack>First sprint description (optional)
    <Textarea maxLength={4000} disabled={saving} value={values.sprintDescription} onChange={event=>edit("sprintDescription",event.target.value)} className="w-full"/>
-  </label>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First task description (optional)
+  </Label>
+  <Label stack>First task description (optional)
    <Textarea maxLength={4000} disabled={saving} value={values.taskDescription} onChange={event=>edit("taskDescription",event.target.value)} className="w-full"/>
-  </label>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Overview description (optional)
+  </Label>
+  <Label stack>Overview description (optional)
    <Textarea maxLength={4000} disabled={saving} value={values.overviewDescription} onChange={event=>edit("overviewDescription",event.target.value)} className="w-full"/>
-  </label>
+  </Label>
    </div>
   </details>
   <details className="min-w-0 border-y border-border py-3">
@@ -208,12 +209,12 @@ export function SuperAdminTemplateCreateForm(){
    <fieldset className="mt-3 min-w-0 space-y-3">
    <legend className="sr-only">Starting resource link (optional)</legend>
    <p className="text-xs text-muted-foreground">Add a public HTTP(S) resource. Both title and URL are required when adding one.</p>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Resource title
+   <Label stack className="min-w-0">Resource title
     <Input maxLength={200} disabled={saving} value={values.resourceTitle} onChange={event=>edit("resourceTitle",event.target.value)} className="w-full"/>
-   </label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Resource URL
+   </Label>
+   <Label stack className="min-w-0">Resource URL
     <Input type="url" maxLength={2048} disabled={saving} value={values.resourceUrl} onChange={event=>edit("resourceUrl",event.target.value)} className="w-full"/>
-   </label>
+   </Label>
    </fieldset>
   </details>
   <section className="space-y-3 border-t border-border pt-4" aria-label="Additional releases">
@@ -221,12 +222,12 @@ export function SuperAdminTemplateCreateForm(){
    {!releases.length?<p className="text-sm text-body">No additional releases yet.</p>:null}
    {releases.map((row,index)=><fieldset key={row.key} disabled={saving} className="space-y-2 border-b border-border pb-3">
     <legend className="text-sm font-semibold">Release {index+2}</legend>
-    <label className="block text-sm font-semibold">Title
+    <Label className="block">Title
      <Input value={row.title} maxLength={200} onChange={e=>patchRelease(index,{title:e.target.value})}/>
-    </label>
-    <label className="block text-sm font-semibold">Description
+    </Label>
+    <Label className="block">Description
      <Textarea value={row.description} maxLength={4000} onChange={e=>patchRelease(index,{description:e.target.value})}/>
-    </label>
+    </Label>
     <p className="text-xs text-body">Key: {row.key}</p>
     <div className="flex flex-wrap gap-2">
      <Button type="button" variant="secondary" size="sm" disabled={index===0}
@@ -252,25 +253,25 @@ export function SuperAdminTemplateCreateForm(){
    {sprints.map((row,index)=><fieldset key={row.key} disabled={saving} className="space-y-2 border-b border-border pb-3">
     <legend className="text-sm font-semibold">Sprint {index+2}</legend>
     <div className="grid gap-3 md:grid-cols-2">
-     <label className="text-sm font-semibold">Title
+     <Label>Title
       <Input value={row.title} maxLength={200} onChange={e=>patchSprint(index,{title:e.target.value})}/>
-     </label>
-     <label className="text-sm font-semibold">Release
+     </Label>
+     <Label>Release
       <Select value={row.releaseKey} onChange={e=>patchSprint(index,{releaseKey:e.target.value})}>
        {allReleases.map(item=><option key={item.key} value={item.key}>{item.title||item.key}</option>)}
       </Select>
-     </label>
+     </Label>
     </div>
-    <label className="block text-sm font-semibold">Due label
+    <Label className="block">Due label
      <Input value={row.dueLabel} maxLength={160} onChange={e=>patchSprint(index,{dueLabel:e.target.value})}/>
-    </label>
-    <label className="block text-sm font-semibold">Sprint goal
+    </Label>
+    <Label className="block">Sprint goal
      <Textarea value={row.goal} maxLength={1000}
       onChange={e=>patchSprint(index,{goal:e.target.value})}/>
-    </label>
-    <label className="block text-sm font-semibold">Description
+    </Label>
+    <Label className="block">Description
      <Textarea value={row.description} maxLength={4000} onChange={e=>patchSprint(index,{description:e.target.value})}/>
-    </label>
+    </Label>
     <p className="text-xs text-body">Key: {row.key}</p>
     <div className="flex flex-wrap gap-2">
      <Button type="button" variant="secondary" size="sm" disabled={index===0}
@@ -296,45 +297,45 @@ export function SuperAdminTemplateCreateForm(){
    {tasks.map((row,index)=><fieldset key={row.key} disabled={saving} className="space-y-2 border-b border-border pb-3">
     <legend className="text-sm font-semibold">Task {index+2}</legend>
     <div className="grid gap-3 md:grid-cols-2">
-     <label className="text-sm font-semibold">Title
+     <Label>Title
       <Input value={row.title} maxLength={200} onChange={e=>patchTask(index,{title:e.target.value})}/>
-     </label>
-     <label className="text-sm font-semibold">Sprint
+     </Label>
+     <Label>Sprint
       <Select value={row.sprintKey??""} onChange={e=>patchTask(index,{sprintKey:e.target.value||null})}>
        <option value="">Backlog (no sprint)</option>
        {allSprints.map(item=><option key={item.key} value={item.key}>{item.title||item.key}</option>)}
       </Select>
-     </label>
-     <label className="text-sm font-semibold">Priority
+     </Label>
+     <Label>Priority
       <Select value={row.priority} onChange={e=>patchTask(index,{
        priority:e.target.value as TemplateCreateTask["priority"]})}>
        <option value="LOW">Low</option><option value="MEDIUM">Medium</option>
        <option value="HIGH">High</option><option value="CRITICAL">Critical</option>
       </Select>
-     </label>
-     <label className="text-sm font-semibold">Task type
+     </Label>
+     <Label>Task type
       <Select value={row.taskType??"STORY"} onChange={e=>patchTask(index,{
        taskType:e.target.value as NonNullable<TemplateCreateTask["taskType"]>})}>
        <option value="STORY">Story</option><option value="BUG">Bug</option>
        <option value="CHORE">Chore</option><option value="SPIKE">Spike</option>
       </Select>
-     </label>
-     <label className="text-sm font-semibold">Due label
+     </Label>
+     <Label>Due label
       <Input value={row.dueLabel??""} maxLength={160}
        onChange={e=>patchTask(index,{dueLabel:e.target.value})}/>
-     </label>
+     </Label>
     </div>
-    <label className="block text-sm font-semibold">Description
+    <Label className="block">Description
      <Textarea value={row.description} maxLength={4000} onChange={e=>patchTask(index,{description:e.target.value})}/>
-    </label>
-    <label className="block text-sm font-semibold">Acceptance criteria
+    </Label>
+    <Label className="block">Acceptance criteria
      <Textarea value={row.acceptanceCriteria} maxLength={4000}
       onChange={e=>patchTask(index,{acceptanceCriteria:e.target.value})}/>
-    </label>
-    <label className="block text-sm font-semibold">Approach
+    </Label>
+    <Label className="block">Approach
      <Textarea value={row.approach??""} maxLength={4000}
       onChange={e=>patchTask(index,{approach:e.target.value})}/>
-    </label>
+    </Label>
     <p className="text-xs text-body">Key: {row.key}</p>
     <div className="flex flex-wrap gap-2">
      <Button type="button" variant="secondary" size="sm" disabled={index===0}
@@ -356,23 +357,23 @@ export function SuperAdminTemplateCreateForm(){
    {!resources.length?<p className="text-sm text-body">No additional resources yet.</p>:null}
    {resources.map((row,index)=><fieldset key={row.key} disabled={saving} className="space-y-2 border-b border-border pb-3">
     <legend className="text-sm font-semibold">Resource {index+2}</legend>
-    <label className="block text-sm font-semibold">Title
+    <Label className="block">Title
      <Input value={row.title} maxLength={200} onChange={e=>patchResource(index,{title:e.target.value})}/>
-    </label>
-    <label className="block text-sm font-semibold">Resource type
+    </Label>
+    <Label className="block">Resource type
      <Select value={row.type??"LINK"} onChange={e=>patchResource(index,{
       type:e.target.value as NonNullable<TemplateCreateResource["type"]>})}>
       <option value="LINK">Link</option><option value="PDF">PDF</option>
       <option value="DOCUMENT">Document</option><option value="SLIDES">Slides</option>
       <option value="VIDEO">Video</option><option value="FILE">File</option>
      </Select>
-    </label>
-    <label className="block text-sm font-semibold">URL
+    </Label>
+    <Label className="block">URL
      <Input type="url" value={row.url} maxLength={2048} onChange={e=>patchResource(index,{url:e.target.value})}/>
-    </label>
-    <label className="block text-sm font-semibold">Description
+    </Label>
+    <Label className="block">Description
      <Textarea value={row.description} maxLength={4000} onChange={e=>patchResource(index,{description:e.target.value})}/>
-    </label>
+    </Label>
     <p className="text-xs text-body">Key: {row.key}</p>
     <div className="flex flex-wrap gap-2">
      <Button type="button" variant="secondary" size="sm" disabled={index===0}

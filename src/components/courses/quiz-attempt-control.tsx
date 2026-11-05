@@ -16,6 +16,7 @@ import {
 } from "./learner-interaction-model";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type QuizQuestion = {
   id: string;
@@ -406,9 +407,9 @@ export function QuizAttemptControl({
                       const ChoiceControl = question.type === "SINGLE_CHOICE" ? Radio : Checkbox;
 
                       return (
-                        <label
+                        <Label variant="choice"
                           key={option.id}
-                          className="flex min-h-11 min-w-0 cursor-pointer items-start gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-3 text-sm text-body transition-colors hover:border-primary hover:bg-primary-subtle focus-within:border-primary focus-within:focus-outline motion-reduce:transition-none"
+                          className="flex min-h-11 min-w-0 cursor-pointer items-start gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-3 transition-colors hover:border-primary hover:bg-primary-subtle focus-within:border-primary focus-within:focus-outline motion-reduce:transition-none"
                         >
                           <ChoiceControl
                             name={`quiz-${quizId}-${question.id}`}
@@ -424,7 +425,7 @@ export function QuizAttemptControl({
                           <span>
                             {option.text}
                           </span>
-                        </label>
+                        </Label>
                       );
                     },
                   )}

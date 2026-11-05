@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { electiveSlotDraftFromRow, electiveSlotFormErrorsFromIssues } from "@/modules/electives/college-slot-mutation-model";
 import { useRef, useState, useTransition, type FormEvent } from "react";
+import { Label } from "@/components/ui/label";
 
 export type SlotFormRow = {
   id: string;
@@ -36,9 +37,9 @@ type Options = {
 
 const fieldClass = "min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground";
 function Field({ label, error, children }: { label: string; error?: string | undefined; children: React.ReactNode }) {
-  return <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}{children}
+  return <Label stack className="min-w-0">{label}{children}
     {error ? <span role="alert" className="text-xs text-error">{error}</span> : null}
-  </label>;
+  </Label>;
 }
 
 export function CollegeSlotManager({ options, row }: {

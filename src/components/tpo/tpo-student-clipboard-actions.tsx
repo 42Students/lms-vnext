@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import {useState} from "react";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import {matchTpoStudentRolls,tpoStudentClipboardTsv} from "@/modules/placements/tpo-student-clipboard-model";
+import { Label } from "@/components/ui/label";
 
 export function TpoStudentClipboardActions({rows,selected,onSelect}:{
  rows:readonly TpoStudentRow[];selected:readonly string[];onSelect:(ids:string[])=>void;
@@ -35,9 +36,9 @@ export function TpoStudentClipboardActions({rows,selected,onSelect}:{
    </Button>
   </div>
   {open?<div className="space-y-2">
-   <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Roll numbers (one per line, space or comma separated)
+   <Label stack>Roll numbers (one per line, space or comma separated)
     <Textarea rows={3} maxLength={15000} value={text} className="min-h-11" onChange={e=>setText(e.target.value)}
-     /></label>
+     /></Label>
    <Button variant="primary" type="button" className="min-h-11 md:min-h-9" disabled={!text.trim()} onClick={paste}
     >
     Select matching students on this page

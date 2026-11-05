@@ -5,6 +5,7 @@ import {ScrollCue} from "@/components/ui/scroll-cue";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 import {EmptyState} from "@/components/ui/empty-state";
+import { Label } from "@/components/ui/label";
 
 type Learner={membershipId:string;name:string|null;rollNumber:string|null;
  sectionId:string;sectionName:string;sectionCode:string};
@@ -86,11 +87,11 @@ export function ElectiveEligibleSelection({slotId,students,clearAfterAllocation=
     empty={<EmptyState title="No eligible learners" description="No eligible students match these filters."/>}
     columns={[
      {key:"select",header:"Select",mobilePriority: "action" as const,cell:(row:Learner)=>
-      <label className="flex min-h-11 min-w-11 items-center justify-center">
+      <Label variant="choice" className="flex min-h-11 min-w-11 items-center justify-center">
        <Checkbox checked={chosen.has(row.membershipId)}
         onChange={event=>toggle(row.membershipId,event.currentTarget.checked)}
         aria-label={"Select "+(row.name??row.rollNumber??"student")+" for allocation"}/>
-      </label>},
+      </Label>},
      {key:"name",header:"Student",mobilePriority: "primary" as const,
       cell:(row:Learner)=>row.name??row.membershipId},
      {key:"roll",header:"Roll No.",mobilePriority: "secondary" as const,

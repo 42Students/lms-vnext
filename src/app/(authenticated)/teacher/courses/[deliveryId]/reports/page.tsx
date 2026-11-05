@@ -7,6 +7,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { parseFacultyReportsHubLocation, facultyReportHubHref } from "@/modules/courses/faculty-reports-hub-model";
 import { getFacultyReportsHub } from "@/modules/courses/faculty-reports-hub-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Search = { kind?: string | string[]; page?: string | string[] };
 const reportLink = "inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:text-[var(--lms-primary-text)] focus-ring sm:w-auto md:min-h-9";
@@ -73,14 +74,14 @@ export default async function FacultyReportsHubPage({
     <section aria-labelledby="published-reports-heading" className="min-w-0 space-y-4">
       <Heading level={2} size="lg" id="published-reports-heading" className="leading-7 text-[var(--lms-heading)]">Published assessment reports</Heading>
       <form method="get" className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,16rem)_auto_auto] sm:items-end sm:justify-start">
-        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label stack className="min-w-0">
           Assessment type
           <Select name="kind" defaultValue={data.query.kind} className="min-h-11 w-full md:min-h-9">
             <option value="ALL">All</option>
             <option value="ASSIGNMENT">Assignments</option>
             <option value="QUIZ">Quizzes</option>
           </Select>
-        </label>
+        </Label>
         <Button type="submit" variant="primary" className="w-full sm:w-auto">Filter</Button>
         {data.query.kind !== "ALL" ? <Link
           href={facultyReportHubHref({ ...data.query, kind: "ALL", page: 1 })}

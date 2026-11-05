@@ -12,6 +12,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {useToast} from "@/components/ui/toast";
 import {projectMutation} from "./project-api";
 import {mentorEstimateLabel,mentorEstimateOptions} from "@/modules/projects/mentor-estimation-unit-model";
+import { Label } from "@/components/ui/label";
 
 export function MentorTaskCreate({
   projectId,sprintId,updatedAt,estimationUnit,sprints=[],learners=[],primary=false,
@@ -85,7 +86,7 @@ export function MentorTaskCreate({
         </Button>
       </div>}>
       <div className="grid gap-4">
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint
+        <Label stack className="min-w-0">Sprint
           <Select value={selectedSprintId} disabled={busy} onChange={event=>{
             setSelectedSprintId(event.target.value);setStatus("TODO");
           }} className="min-h-11 w-full md:min-h-9">
@@ -94,32 +95,32 @@ export function MentorTaskCreate({
               {item.title} ({item.status.replaceAll("_"," ").toLowerCase()})
             </option>)}
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Task title
+        </Label>
+        <Label stack className="min-w-0">Task title
           <Input value={title} maxLength={200} required onChange={e=>setTitle(e.target.value)} />
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description
+        </Label>
+        <Label stack className="min-w-0">Description
           <Textarea value={description} maxLength={4000} onChange={e=>setDescription(e.target.value)} />
-        </label>
+        </Label>
         <details className="min-w-0 border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]" open={Boolean(approach||criteria)||undefined}>
           <summary className="min-h-11 w-fit cursor-pointer text-[13px] font-semibold leading-5 text-[var(--lms-link-text)] focus-ring">Approach and done criteria</summary>
           <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)]">
-            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Approach (optional)
+            <Label stack className="min-w-0">Approach (optional)
               <Textarea value={approach} maxLength={4000} onChange={event=>setApproach(event.target.value)} />
-            </label>
-            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Done when (optional)
+            </Label>
+            <Label stack className="min-w-0">Done when (optional)
               <Textarea value={criteria} maxLength={4000} onChange={e=>setCriteria(e.target.value)} />
-            </label>
+            </Label>
           </div>
         </details>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Priority
+        <Label stack className="min-w-0">Priority
           <Select value={priority} onChange={e=>setPriority(e.target.value as typeof priority)}
             className="min-h-11 w-full md:min-h-9">
             <option value="LOW">Low</option><option value="MEDIUM">Medium</option>
             <option value="HIGH">High</option><option value="CRITICAL">Critical</option>
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+        </Label>
+        <Label stack className="min-w-0">Status
           <Select value={status} disabled={busy||!selectedSprintId}
             onChange={event=>setStatus(event.target.value as typeof status)}
             className="min-h-11 w-full md:min-h-9">
@@ -129,24 +130,24 @@ export function MentorTaskCreate({
               <option value="BLOCKED">Blocked</option>
             </>:null}
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Estimate ({mentorEstimateLabel(1,estimationUnit).replace(/^1 /,"")})
+        </Label>
+        <Label stack className="min-w-0">Estimate ({mentorEstimateLabel(1,estimationUnit).replace(/^1 /,"")})
           <Select value={estimate} onChange={e=>setEstimate(e.target.value)}
             className="min-h-11 w-full md:min-h-9">
             <option value="">Not estimated</option>
             {mentorEstimateOptions(estimationUnit).map(value=>
               <option key={value} value={String(value)}>{mentorEstimateLabel(value,estimationUnit)}</option>)}
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
+        </Label>
+        <Label stack className="min-w-0">Type
           <Select value={taskType} onChange={e=>setTaskType(e.target.value)}
             className="min-h-11 w-full md:min-h-9">
             <option value="">Not specified</option><option value="STORY">Story</option>
             <option value="BUG">Bug</option><option value="CHORE">Chore</option>
             <option value="SPIKE">Spike</option>
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assignee
+        </Label>
+        <Label stack className="min-w-0">Assignee
           <Select value={assigneeMembershipId} disabled={busy}
             onChange={event=>setAssigneeMembershipId(event.target.value)}
             className="min-h-11 w-full md:min-h-9">
@@ -155,14 +156,14 @@ export function MentorTaskCreate({
               {member.displayName??"Learner"}
             </option>)}
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Due date
+        </Label>
+        <Label stack className="min-w-0">Due date
           <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/>
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What&apos;s blocking this task?
+        </Label>
+        <Label stack className="min-w-0">What&apos;s blocking this task?
           <Textarea value={blockerReason} maxLength={4000}
             onChange={e=>setBlockerReason(e.target.value)}/>
-        </label>
+        </Label>
         {status==="BLOCKED"&&!blockerReason.trim()?<p role="alert" className="text-[13px] leading-5 text-[var(--lms-error-text)]">
           Explain what is blocking this task before creating it.
         </p>:null}

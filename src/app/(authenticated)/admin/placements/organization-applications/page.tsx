@@ -10,6 +10,7 @@ import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {searchOrganizationPlacementApplications} from "@/modules/placements/organization-application-search-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export const dynamic="force-dynamic";
 type Params=Record<string,string|string[]|undefined>;
@@ -62,22 +63,22 @@ export default async function OrganizationApplicationsPage({searchParams}:{
    </section>
   </div>
   <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 sm:grid-cols-2 lg:grid-cols-4">
-   <label className="grid gap-2 text-[13px] font-semibold">Search applications
+   <Label stack>Search applications
     <Input name="search" maxLength={120} defaultValue={result.search}
      placeholder="Learner, drive, company, status"/>
-   </label>
-   <label className="grid gap-2 text-[13px] font-semibold">Status
+   </Label>
+   <Label stack>Status
     <Select name="status" defaultValue={result.status}>
      {statusOptions.map(status=><option key={status} value={status}>{status}</option>)}
     </Select>
-   </label>
-   <label className="grid gap-2 text-[13px] font-semibold">Sort by
+   </Label>
+   <Label stack>Sort by
     <Select name="sort" defaultValue={result.sort}>
      <option value="SCORE">Score then applied date</option>
      <option value="NEWEST">Newest applications</option>
      <option value="NAME">Learner name</option>
     </Select>
-   </label>
+   </Label>
    <Button type="submit" className="min-h-11 w-full md:min-h-9">Search</Button>
   </form>
   <div className="flex flex-wrap items-center justify-between gap-3 text-sm">

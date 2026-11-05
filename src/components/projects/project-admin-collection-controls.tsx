@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Pagination } from "@/components/ui/pagination";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 export type ProjectAdminCollectionQuery = {
   view?:"cards"|"table";
@@ -125,7 +126,7 @@ export function ProjectAdminFilters({
       role="search"
       className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]"
     >
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+      <Label stack className="min-w-0">
         Search
         <span className="flex items-center gap-1">
           <Input
@@ -142,8 +143,8 @@ export function ProjectAdminFilters({
             ×
           </Button>:null}
         </span>
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+      </Label>
+      <Label stack className="min-w-0">
         Workspace status
         <Select
           name="status"
@@ -162,7 +163,7 @@ export function ProjectAdminFilters({
             </option>
           ))}
         </Select>
-      </label>
+      </Label>
       {legacyWorkspaces?<p className="text-xs text-muted-foreground">
         Ready and Blocked use saved workspace phase and blocker signals.
         <Link href={atRiskHref} className="ml-1 font-semibold text-primary-text underline">
@@ -175,7 +176,7 @@ export function ProjectAdminFilters({
       {query.sort&&query.sort!=="SUBMITTED_DESC"?
         <input type="hidden" name="sort" value={query.sort}/>:null}
       {includeRiskSort ? (
-        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+        <Label stack className="min-w-0">
           Sort by
           <Select name="riskSort" defaultValue={query.riskSort??"INACTIVE"}
             onChange={event=>updateUrl("riskSort",event.target.value)}
@@ -186,10 +187,10 @@ export function ProjectAdminFilters({
             <option value="WORKSPACE">Workspace</option>
             <option value="WORKSPACE_DESC">Workspace (Z–A)</option>
           </Select>
-        </label>
+        </Label>
       ) : null}
       {includeSubmissionStatus ? (
-        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+        <Label stack className="min-w-0">
           Submission status
           <Select
             name="submissionStatus"
@@ -204,9 +205,9 @@ export function ProjectAdminFilters({
               </option>
             ))}
           </Select>
-        </label>
+        </Label>
       ) : null}
-      {fixedRiskPageSize?<input type="hidden" name="pageSize" value="25"/>:<label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+      {fixedRiskPageSize?<input type="hidden" name="pageSize" value="25"/>:<Label stack className="min-w-0">
         Rows
         <Select
           name="pageSize"
@@ -220,7 +221,7 @@ export function ProjectAdminFilters({
             </option>
           ))}
         </Select>
-      </label>}
+      </Label>}
       <Button
         type="submit"
         className="min-h-11 w-full md:min-h-9"

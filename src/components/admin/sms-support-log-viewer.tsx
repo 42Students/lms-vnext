@@ -6,6 +6,7 @@ import {Input} from "@/components/ui/input";
 import {DataTable} from "@/components/ui/data-table";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {Select} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 /** Support-only response: no full phone, recipient HMAC, provider payload,
  * template substitutions or credentials can leave the server. */
@@ -64,20 +65,20 @@ export function SmsSupportLogViewer(){
   <Alert tone="info">{NOTICE} This log never reveals the full recipient number, a message body or a provider token.</Alert>
   <form className="grid gap-3 md:grid-cols-[minmax(0,220px)_minmax(0,280px)_minmax(0,100px)_auto] md:items-end"
    onSubmit={event=>{event.preventDefault();if(canSearch)void load(0,filters);}}>
-   <label htmlFor="sms-support-suffix" className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Recipient (last four digits)
+   <Label stack htmlFor="sms-support-suffix">Recipient (last four digits)
     <Input id="sms-support-suffix" value={suffix} onChange={event=>setSuffix(event.target.value)}
       autoComplete="off" inputMode="numeric" maxLength={32} placeholder="1234" aria-invalid={!canSearch}/>
-   </label>
-   <label htmlFor="sms-support-purpose" className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Purpose
+   </Label>
+   <Label stack htmlFor="sms-support-purpose">Purpose
     <Input id="sms-support-purpose" value={purpose} maxLength={100}
       onChange={event=>setPurpose(event.target.value)} placeholder="Search purpose"/>
-   </label>
-   <label htmlFor="sms-support-page-size" className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Rows per page
+   </Label>
+   <Label stack htmlFor="sms-support-page-size">Rows per page
     <Select id="sms-support-page-size" 
      value={size} onChange={event=>setSize(Number(event.target.value))}>
      <option value={50}>50</option><option value={100}>100</option><option value={200}>200</option>
     </Select>
-   </label>
+   </Label>
    <Button variant="primary" type="submit" disabled={loading||!canSearch}
     className="min-h-11 md:min-h-9">{loading?"Loading…":"Filter"}</Button>
   </form>

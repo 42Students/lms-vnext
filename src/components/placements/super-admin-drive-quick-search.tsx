@@ -9,6 +9,7 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
+import { Label } from "@/components/ui/label";
 
 export type QuickDrive = {
   id: string; title: string; companyName: string; status: string;
@@ -43,17 +44,17 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
     <Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">View all drives →</Link>
     </div>
     <div className="flex flex-wrap items-end gap-3">
-      <label className="grid min-w-52 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">Search by drive or company
+      <Label stack className="min-w-52 flex-1">Search by drive or company
         <Input type="search" value={query} onChange={e=>updateQuery(e.target.value)} maxLength={100}
           placeholder="Search by drive or company"
           className="min-h-11 w-full sm:min-h-9" />
-      </label>
-      <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">Status
+      </Label>
+      <Label stack>Status
         <Select value={filter} onChange={e=>setFilter(e.target.value as "ALL"|"ACTIVE")}
           className="min-h-11 w-full sm:min-h-9">
           <option value="ACTIVE">Active drives</option><option value="ALL">All drives</option>
         </Select>
-      </label>
+      </Label>
     </div>
     <p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-5">
       Showing {Math.min(matching.length,60)} of {matching.length} matching drives in this {jobs.length}-drive sampled list. Use View all drives for the complete directory.

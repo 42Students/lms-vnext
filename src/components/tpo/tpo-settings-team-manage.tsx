@@ -7,6 +7,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {Dialog} from "@/components/ui/dialog";
 import {apiFetch} from "@/lib/api-fetch";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Candidate={membershipId:string;displayName:string;hasTpoRole:boolean};
 const endpoint="/api/placements/tpo/settings/team";
@@ -50,7 +51,7 @@ export function TpoSettingsTeamManage({candidates,activeIds,available}:{
   {open?<div role="dialog" aria-modal="true" aria-label="Add a team member"
     className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
    <Heading level={3} size="base">Add a team member</Heading>
-   <label className="block text-sm font-semibold" htmlFor="tpo-faculty-search">Faculty member</label>
+   <Label className="block" htmlFor="tpo-faculty-search">Faculty member</Label>
    <Input id="tpo-faculty-search" value={query} disabled={busy} onChange={event=>{setQuery(event.target.value);setSelected("");}}
     placeholder="Search by name"/>
    <div className="max-h-48 space-y-1 overflow-y-auto" role="listbox" aria-label="Available faculty members">

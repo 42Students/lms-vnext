@@ -13,6 +13,7 @@ import type {
   HrRelationshipOption,
   HrCollegeOption,
 } from "./super-admin-hr-types";
+import { Label } from "@/components/ui/label";
 
 export function SuperAdminHrAccountDialog({
   account,
@@ -175,29 +176,29 @@ export function SuperAdminHrAccountDialog({
         className="space-y-4"
       >
         <div className="grid min-w-0 gap-[var(--lms-space-3)]">
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">First name
+          <Label stack>First name
             <Input className="min-h-11 md:min-h-9" id={`${id}-first-name`} autoComplete="given-name" value={firstName}
               minLength={1} maxLength={100} required disabled={pending}
               aria-invalid={fieldError?.field==="firstName"}
               onChange={event=>{setFirstName(event.target.value);setFieldError(null);}}
               onBlur={()=>{if(!firstName.trim())setFieldError({field:"firstName",message:"First name is required"});}}/>
             {fieldError?.field==="firstName"?<span role="alert" className="text-xs text-error">{fieldError.message}</span>:null}
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Last name
+          </Label>
+          <Label stack>Last name
             <Input className="min-h-11 md:min-h-9" id={`${id}-last-name`} autoComplete="family-name" value={lastName}
               maxLength={100} disabled={pending}
               onChange={event=>setLastName(event.target.value)}/>
-          </label>
+          </Label>
         </div>
 
         <div className="grid min-w-0 gap-[var(--lms-space-3)]">
           <div>
-            <label
+            <Label
               htmlFor={`${id}-phone`}
-              className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[var(--lms-space-2)] block"
             >
               Mobile (login)
-            </label>
+            </Label>
             <Input className="min-h-11 md:min-h-9"
               id={`${id}-phone`}
               type="tel"
@@ -218,12 +219,12 @@ export function SuperAdminHrAccountDialog({
           </div>
 
           <div>
-            <label
+            <Label
               htmlFor={`${id}-email`}
-              className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[var(--lms-space-2)] block"
             >
               Email
-            </label>
+            </Label>
             <Input className="min-h-11 md:min-h-9"
               id={`${id}-email`}
               type="email"
@@ -241,39 +242,39 @@ export function SuperAdminHrAccountDialog({
 
         {creating ? (
           <div>
-            <label className="mb-3 flex min-h-11 items-center gap-2 text-sm text-body">
+            <Label variant="choice" className="mb-3 flex min-h-11 items-center gap-2">
               <Checkbox checked={createCompany} disabled={pending}
                 onChange={event=>{setCreateCompany(event.target.checked);setRelationshipId("");
                   setAdditionalRelationshipIds([]);}}/>
               Company not listed? Create a company by name
-            </label>
+            </Label>
             {createCompany?<div className="mb-[var(--lms-space-4)] space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)]">
-              <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Company name
+              <Label stack>Company name
                 <Input className="min-h-11 md:min-h-9" value={newCompanyName} minLength={2} maxLength={150} required
                   onChange={event=>setNewCompanyName(event.target.value)} disabled={pending}/>
-              </label>
-              <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">First college
+              </Label>
+              <Label stack>First college
                 <Select className="min-h-11 md:min-h-9" required value={newCompanyCollegeId} disabled={pending||optionsLoading}
                   onChange={event=>setNewCompanyCollegeId(event.target.value)}>
                   <option value="">Select a college</option>
                   {colleges.map(c=><option key={c.collegeId} value={c.collegeId}>{c.collegeName}</option>)}
                 </Select>
-              </label>
-              <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Company domain (optional)
+              </Label>
+              <Label stack>Company domain (optional)
                 <Input className="min-h-11 md:min-h-9" value={newCompanyDomain} placeholder="company.com" maxLength={253}
                   disabled={pending} onChange={event=>setNewCompanyDomain(event.target.value)}/>
-              </label>
+              </Label>
               <p className="text-xs text-muted-foreground">
                 A new company will be linked to this college before the recruiter is created.
                 If recruiter creation fails, this company stays available for retry.
               </p>
             </div>:null}
-            {!createCompany?<><label
+            {!createCompany?<><Label
               htmlFor={`${id}-relationship`}
-              className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[var(--lms-space-2)] block"
             >
               Company
-            </label>
+            </Label>
 
             <Select className="min-h-11 md:min-h-9"
               id={`${id}-relationship`}
@@ -311,13 +312,13 @@ export function SuperAdminHrAccountDialog({
                 {relationships.filter(option =>
                   option.companyRelationshipId!==companyRelationshipId &&
                   option.companyId===relationships.find(item=>item.companyRelationshipId===companyRelationshipId)?.companyId
-                ).map(option=><label key={option.companyRelationshipId} className="flex min-h-11 items-center gap-2 text-sm text-body">
+                ).map(option=><Label variant="choice" key={option.companyRelationshipId} className="flex min-h-11 items-center gap-2">
                   <Checkbox disabled={pending}
                     checked={additionalRelationshipIds.includes(option.companyRelationshipId)}
                     onChange={event=>setAdditionalRelationshipIds(old=>
                       event.target.checked?[...old,option.companyRelationshipId]:old.filter(x=>x!==option.companyRelationshipId))}
                   />{option.collegeName}
-                </label>)}
+                </Label>)}
                   </div>
                 </details>
               </fieldset>
@@ -377,12 +378,12 @@ export function SuperAdminHrAccountDialog({
         )}
 
         <div>
-          <label
+          <Label
             htmlFor={`${id}-title`}
-            className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]"
+            className="mb-[var(--lms-space-2)] block"
           >
             Designation
-          </label>
+          </Label>
           <Input className="min-h-11 md:min-h-9"
             id={`${id}-title`}
             value={title}
@@ -397,12 +398,12 @@ export function SuperAdminHrAccountDialog({
 
         {!creating ? (
           <div>
-            <label
+            <Label
               htmlFor={`${id}-status`}
-              className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[var(--lms-space-2)] block"
             >
               Recruiter status
-            </label>
+            </Label>
             <Select className="min-h-11 md:min-h-9"
               id={`${id}-status`}
               value={status}

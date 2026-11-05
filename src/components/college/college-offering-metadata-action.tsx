@@ -7,6 +7,7 @@ import {Alert} from "@/components/ui/alert";
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 import {useRef,useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
+import { Label } from "@/components/ui/label";
 export function CollegeOfferingMetadataAction({offering}:{
   offering:{id:string;courseName:string;type:"CORE"|"ELECTIVE";credits:number|null;
     displayOrder:number;updatedAt:string};
@@ -58,18 +59,18 @@ export function CollegeOfferingMetadataAction({offering}:{
             {pending?"Saving…":"Confirm edit"}</Button>
         </div>}>
         <div className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
-        <label className="grid min-w-0 gap-[6px] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">Offering type
+        <Label stack className="min-w-0 md:col-span-2">Offering type
           <Select value={type} disabled={pending} onChange={e=>setType(e.target.value as "CORE"|"ELECTIVE")}>
             <option value="CORE">Core</option><option value="ELECTIVE">Elective</option>
-          </Select></label>
-        <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Credits (optional)
+          </Select></Label>
+        <Label stack className="min-w-0">Credits (optional)
           <Input type="number" min={1} max={30} value={credits} disabled={pending}
             onChange={e=>setCredits(e.target.value)}/>
-        </label>
-        <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Display order
+        </Label>
+        <Label stack className="min-w-0">Display order
           <Input type="number" min={0} max={10000} required value={displayOrder} disabled={pending}
             onChange={e=>setDisplayOrder(e.target.value)}/>
-        </label>
+        </Label>
         {error?<div className="min-w-0 md:col-span-2"><Alert tone="error">{error}</Alert></div>:null}
         </div>
     </Dialog>

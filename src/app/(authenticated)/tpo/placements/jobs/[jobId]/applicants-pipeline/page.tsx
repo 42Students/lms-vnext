@@ -18,6 +18,7 @@ import { getTpoApplicantPipeline } from "@/modules/placements/tpo-applicant-pipe
 import {tpoApplicationFilterError} from "@/modules/placements/tpo-applications-url-guard";
 type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];query?:string|string[];page?:string|string[];channel?:string|string[];eligibility?:string|string[];flag?:string|string[];sort?:string|string[];submittedWithin?:string|string[];columns?:string|string[]}>};
 import {parseTpoApplicantPipelineLink,tpoApplicantPipelineResetHref} from "@/modules/placements/tpo-applicant-pipeline-model";
+import { Label } from "@/components/ui/label";
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function TpoApplicantPipelinePage({params,searchParams}:Props){
  const context=await getCurrentRequestContext();
@@ -75,44 +76,44 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
   <form action={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} method="get"
    className="grid min-w-0 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]" aria-label="Filter applicants pipeline">
    {columns&&<input type="hidden" name="columns" value={columns}/>}
-   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stage
+   <Label stack className="min-w-0">Stage
     <Select name="stage" defaultValue={data.stage} className="block min-h-11 w-full">
      {stages.map(s=><option key={s} value={s}>{s}</option>)}
-    </Select></label>
-   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll, branch, batch, email, phone or role
+    </Select></Label>
+   <Label stack className="min-w-0">Name, roll, branch, batch, email, phone or role
     <Input name="search" defaultValue={data.search} maxLength={100}
-     className="block min-h-11 w-full"/></label>
+     className="block min-h-11 w-full"/></Label>
    <Button type="submit" className="min-h-11 w-full lg:w-auto">Apply</Button>
    <details className="group col-span-full" open={data.channel !== "ALL" || data.eligibility !== "ALL" || data.flag !== "ALL" || data.sort !== "NEWEST" || data.submittedWithin !== "ALL"}>
     <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-ring [&::-webkit-details-marker]:hidden">Filter applicants <span aria-hidden="true" className="ml-2">⌄</span></summary>
     <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-5">
-   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Application channel
+   <Label stack className="min-w-0">Application channel
     <Select name="channel" defaultValue={data.channel} className="block min-h-11 w-full">
      <option value="ALL">All channels</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
-    </Select></label>
-   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Eligibility evidence
+    </Select></Label>
+   <Label stack className="min-w-0">Eligibility evidence
     <Select name="eligibility" defaultValue={data.eligibility} className="block min-h-11 w-full">
      <option value="ALL">All evidence states</option><option value="ELIGIBLE">Eligible</option>
      <option value="ELIGIBLE_WITH_MISSING_EVIDENCE">Eligible · evidence missing</option>
-    </Select></label>
-   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applicant flags
+    </Select></Label>
+   <Label stack className="min-w-0">Applicant flags
     <Select name="flag" defaultValue={data.flag} className="block min-h-11 w-full">
      <option value="ALL">Any flag</option>
      <option value="WITHDRAWAL_REQUESTED">Withdrawal requested</option>
      <option value="NO_SHOW">No-show</option>
      <option value="PLACED_ELSEWHERE">Accepted another offer</option>
      <option value="ADDED_BY_COLLEGE">Added by college</option>
-    </Select></label>
-   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order by
+    </Select></Label>
+   <Label stack className="min-w-0">Order by
     <Select name="sort" defaultValue={data.sort} className="block min-h-11 w-full">
      <option value="NEWEST">Recently submitted</option><option value="OLDEST">Earliest submitted</option>
      <option value="LEARNER_NAME">Learner name</option>
-    </Select></label>
-   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submitted window
+    </Select></Label>
+   <Label stack className="min-w-0">Submitted window
     <Select name="submittedWithin" defaultValue={data.submittedWithin} className="block min-h-11 w-full">
      <option value="ALL">Any submission date</option><option value="LAST_7_DAYS">Last 7 × 24 hours</option>
      <option value="LAST_30_DAYS">Last 30 × 24 hours</option>
-    </Select></label>
+    </Select></Label>
     </div>
    </details>
   </form>

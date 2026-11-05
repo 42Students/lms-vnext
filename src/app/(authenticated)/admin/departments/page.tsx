@@ -16,6 +16,7 @@ import {
 } from "@/modules/departments/service";
 import type { DepartmentDirectoryRow } from "@/modules/admin-ui/department-directory";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export default async function SuperAdminDepartmentsPage({
   searchParams,
@@ -30,12 +31,12 @@ export default async function SuperAdminDepartmentsPage({
   const recoveryChooser=<section aria-label="Deleted Items" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
     <Heading level={2} size="base" className="text-[var(--lms-heading)]">Deleted Items</Heading>
     <form method="get" action="/admin/departments" className="flex flex-wrap items-end gap-3">
-      <label className="grid min-w-0 gap-2 text-sm font-semibold text-body">
+      <Label stack className="min-w-0">
         Entity type
         <Select name="type" defaultValue={selectedType}>
           {RECOVERY_ENTITY_TYPES.map(item=><option key={item.value} value={item.value}>{item.label}</option>)}
         </Select>
-      </label>
+      </Label>
       <Button type="submit" variant="secondary">View</Button>
     </form>
     {!validType?<Alert tone="warning">Unknown deleted item type. Select a supported entity type.</Alert>:null}

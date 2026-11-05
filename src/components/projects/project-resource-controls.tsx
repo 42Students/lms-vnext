@@ -17,6 +17,7 @@ import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 import {canSaveMentorResourceEntry,mentorResourceEffectiveStatus} from
  "@/modules/projects/mentor-resource-entry-model";
+import { Label } from "@/components/ui/label";
 
 type CanonicalResourceType="FILE"|"LINK"|"DOCUMENT"|"CODE"|"NOTE"|"ENVIRONMENT";
 type LegacyResourceType="PDF"|"DOC"|"PPT"|"VIDEO";
@@ -89,7 +90,7 @@ function ResourceForm({
 }) {
   return (
     <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-      <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
+      <Label className="min-w-0 md:col-span-2">
         <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Title <span aria-hidden="true" className="text-error">*</span>
         </span>
@@ -101,8 +102,8 @@ function ResourceForm({
             onTitle(event.target.value)
           }
         />
-      </label>
-      <label>
+      </Label>
+      <Label>
         <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           {["FILE","DOCUMENT","PDF","DOC","PPT"].includes(metadata.resourceType)?
             "File or document URL (optional)":"URL"}
@@ -117,8 +118,8 @@ function ResourceForm({
             onUrl(event.target.value)
           }
         />
-      </label>
-      <label className="md:col-span-2">
+      </Label>
+      <Label className="md:col-span-2">
         <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Description
         </span>
@@ -130,7 +131,7 @@ function ResourceForm({
             onDescription(event.target.value)
           }
         />
-      </label>
+      </Label>
       {!isLearner && ["FILE","DOCUMENT","PDF","DOC","PPT"].includes(metadata.resourceType)?
         <p className="md:col-span-2 text-xs text-muted-foreground">
           Saving this metadata does not upload a file. If the URL and description
@@ -139,7 +140,7 @@ function ResourceForm({
       {!isLearner ? <details className="min-w-0 md:col-span-2 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-2)]" open={metadata.status!=="ACTIVE"||metadata.resourceType!=="LINK"||metadata.pinned||Boolean(metadata.accessNotes||metadata.sprintId||metadata.taskId)}>
         <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-ring">Resource details</summary>
         <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-4)]">
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
+        <Label stack className="min-w-0">Type
           <Select value={metadata.resourceType}
             onChange={event=>onMetadata({...metadata,resourceType:event.target.value as ResourceMetadata["resourceType"]})}
             className="w-full">
@@ -147,50 +148,50 @@ function ResourceForm({
             {(["LINK","PDF","DOC","PPT","VIDEO","FILE","DOCUMENT","CODE","NOTE","ENVIRONMENT"] as const).map(value=>
               <option key={value} value={value}>{["DOC","PPT","PDF"].includes(value)?value:value[0]+value.slice(1).toLowerCase()}</option>)}
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+        </Label>
+        <Label stack className="min-w-0">Status
           <Select value={metadata.status}
             onChange={event=>onMetadata({...metadata,status:event.target.value as ResourceMetadata["status"]})}
             className="w-full">
             <option value="ACTIVE">Active</option><option value="DRAFT">Draft</option>
             <option value="ARCHIVED">Archived</option>
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Related sprint
+        </Label>
+        <Label stack className="min-w-0">Related sprint
           <Select value={metadata.sprintId}
             onChange={event=>onMetadata({...metadata,sprintId:event.target.value,taskId:""})}
             className="w-full">
             <option value="">No sprint</option>
             {sprints.map(option=><option key={option.id} value={option.id}>{option.label}</option>)}
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Related task
+        </Label>
+        <Label stack className="min-w-0">Related task
           <Select value={metadata.taskId}
             onChange={event=>onMetadata({...metadata,taskId:event.target.value})}
             className="w-full">
             <option value="">No task</option>
             {tasks.map(option=><option key={option.id} value={option.id}>{option.label}</option>)}
           </Select>
-        </label>
-        <label className="flex items-center gap-2 text-sm font-semibold text-body">
+        </Label>
+        <Label className="flex items-center gap-2">
           <Checkbox checked={metadata.pinned}
             onChange={event=>onMetadata({...metadata,pinned:event.target.checked})}/> Pinned
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Access notes
+        </Label>
+        <Label stack className="min-w-0">Access notes
           <Input maxLength={4000} placeholder="e.g. Requires college email to view" value={metadata.accessNotes}
             onChange={event=>onMetadata({...metadata,accessNotes:event.target.value})}/>
-        </label>
+        </Label>
         </div>
       </details> : null}
-      {!isLearner ? <label className="grid min-w-0 md:col-span-2 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      {!isLearner ? <Label stack className="min-w-0 md:col-span-2">
         Visible to
         <Select value={visibility} onChange={event => onVisibility(event.target.value as "TEAM" | "MENTOR_ONLY")}
           className="w-full">
           <option value="TEAM">Everyone</option>
           <option value="MENTOR_ONLY">Mentors only</option>
         </Select>
-      </label> : null}
-      {!isLearner ? <label className="flex items-center gap-2 text-sm font-semibold text-body md:col-span-2">
+      </Label> : null}
+      {!isLearner ? <Label className="flex items-center gap-2 md:col-span-2">
         <Checkbox
           checked={required}
           onChange={(event) =>
@@ -198,7 +199,7 @@ function ResourceForm({
           }
         />
         Required resource
-      </label> : null}
+      </Label> : null}
     </div>
   );
 }

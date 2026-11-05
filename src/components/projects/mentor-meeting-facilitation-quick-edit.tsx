@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Fields=Partial<MentorMeetingFacilitation>;
 
@@ -67,16 +68,16 @@ export function MentorMeetingFacilitationQuickEdit({projectId,meetingId,
      ["notes","Meeting notes"],["wentWell","Went well"],
      ["retroDidntGoWell","Didn't go well"],["improve","Could improve"],
      ["nextTime","Next sprint actions"],["followUpNotes","Follow-up notes"],
-   ] as const).map(([key,label])=><label key={key}
-     className="block text-sm font-semibold">
+   ] as const).map(([key,label])=><Label key={key}
+     className="block">
       {label}
       <Textarea rows={2} maxLength={4000} disabled={busy}
         className="mt-1" value={facilitation[key]}
         onChange={event=>update(key,event.target.value)}/>
-   </label>)}
+   </Label>)}
    {facilitation.attendees.length>0?<fieldset className="space-y-2">
     <legend className="font-semibold">Who attended?</legend>
-    {facilitation.attendees.map((person,index)=><label key={person.membershipId??index}
+    {facilitation.attendees.map((person,index)=><Label variant="choice" key={person.membershipId??index}
       className="flex items-center gap-2">
       <Checkbox checked={person.attended} disabled={busy}
         onChange={event=>setFacilitation(old=>({...old,
@@ -84,7 +85,7 @@ export function MentorMeetingFacilitationQuickEdit({projectId,meetingId,
             ...entry,attended:event.target.checked}:entry),
         }))}/>
       <span>{person.name}</span>
-    </label>)}
+    </Label>)}
    </fieldset>:<p>No attendee list was recorded. Add attendees in the
      full project meeting editor before marking attendance.</p>}
    <fieldset className="space-y-3">
@@ -93,7 +94,7 @@ export function MentorMeetingFacilitationQuickEdit({projectId,meetingId,
        <p className="text-sm text-muted-foreground">No action items recorded. Add one below.</p>:null}
      {facilitation.actionItemRows.map((item,index)=><div key={index}
        className="grid gap-2 rounded border border-border p-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,12rem)_auto]">
-       <label className="grid gap-1 text-sm font-semibold">
+       <Label stack>
          Action {index+1}
          <Input type="text" required maxLength={500} disabled={busy}
            className="min-h-11 min-w-0 rounded border border-border p-2"
@@ -103,8 +104,8 @@ export function MentorMeetingFacilitationQuickEdit({projectId,meetingId,
                text:event.target.value,
              }),
            }))}/>
-       </label>
-       <label className="grid gap-1 text-sm font-semibold">
+       </Label>
+       <Label stack>
          Owner (recorded text)
          <Input type="text" maxLength={160} disabled={busy}
            className="min-h-11 min-w-0 rounded border border-border p-2"
@@ -114,9 +115,9 @@ export function MentorMeetingFacilitationQuickEdit({projectId,meetingId,
                owner:event.target.value||null,
              }),
            }))}/>
-       </label>
+       </Label>
        <div className="flex flex-wrap items-end gap-2">
-         <label className="flex min-h-11 items-center gap-2 text-sm">
+         <Label variant="choice" className="flex min-h-11 items-center gap-2">
            <Checkbox checked={item.complete} disabled={busy}
              aria-label={"Complete action "+(index+1)}
              onChange={event=>setFacilitation(old=>({...old,
@@ -125,7 +126,7 @@ export function MentorMeetingFacilitationQuickEdit({projectId,meetingId,
                }),
              }))}/>
            Done
-         </label>
+         </Label>
          <Button type="button" size="sm" variant="secondary" disabled={busy}
            aria-label={"Remove action "+(index+1)}
            onClick={()=>setFacilitation(old=>({...old,
@@ -142,7 +143,7 @@ export function MentorMeetingFacilitationQuickEdit({projectId,meetingId,
        <p role="status" className="text-xs text-muted-foreground">
          Maximum {MENTOR_MEETING_MAX_ACTION_ITEMS} action items reached.</p>:null}
    </fieldset>
-   <label className="block text-sm font-semibold">
+   <Label className="block">
      Follow-up state
      <Select value={facilitation.followUpStatus} disabled={busy}
        className="ml-2 rounded border border-border p-2"
@@ -152,7 +153,7 @@ export function MentorMeetingFacilitationQuickEdit({projectId,meetingId,
        {["NOT_PLANNED","OPEN","IN_PROGRESS","DONE","BLOCKED"].map(value=>
         <option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
      </Select>
-   </label>
+   </Label>
    <p className="text-xs text-muted-foreground">Saving changes records an
      auditable event. The meeting time, invitation status and outcome text are
      not modified by this form.</p>

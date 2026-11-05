@@ -5,6 +5,7 @@ import {Alert} from "@/components/ui/alert";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Message={
  id:string;contentText:string;sequence:number;parentDiscussionId:string|null;
@@ -135,11 +136,11 @@ export function LessonContentDiscussion({contentId,deliveryId}:{
     <span>Replying to a comment in this lesson</span>
     <Button type="button" size="sm" variant="ghost" disabled={busy} onClick={()=>setParentId(null)}>Cancel reply</Button>
    </div>:null}
-   <label className="grid gap-1 text-sm font-semibold text-body">Comment
+   <Label stack>Comment
     <Textarea rows={3} value={draft} maxLength={MAX_LENGTH} disabled={busy}
      onChange={event=>setDraft(event.target.value)}
      placeholder="Add a comment about this lesson content"/>
-   </label>
+   </Label>
    <div className="flex flex-wrap items-center justify-between gap-2">
     <span className="text-xs text-muted-foreground" role="status">{draft.trim().length} / {MAX_LENGTH}</span>
     <Button type="button" size="sm" loading={busy}

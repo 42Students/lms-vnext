@@ -21,6 +21,7 @@ import {Banner} from "@/components/ui/banner";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[];page?:string|string[];q?:string|string[];joining?:string|string[];kind?:string|string[];expiry?:string|string[];minCtcLpa?:string|string[];maxCtcLpa?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -72,9 +73,9 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
   <form method="get" action={root+"/offers"} className="min-w-0 space-y-3 border-b border-border pb-4" aria-label="Filter offers">
    <Input type="hidden" name="status" value={data.status}/>
    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-end">
-   <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search learner, email, roll, batch, branch or role
+   <Label stack className="min-w-0 flex-1">Search learner, email, roll, batch, branch or role
     <Input type="search" name="q" maxLength={100} defaultValue={searchQuery} placeholder="Name or offer role" className="w-full min-w-0"/>
-   </label><Button type="submit" className="min-h-11 w-full px-6 sm:w-auto md:min-h-9">Search</Button>
+   </Label><Button type="submit" className="min-h-11 w-full px-6 sm:w-auto md:min-h-9">Search</Button>
    {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"||parsed.data.minCtcLpa!==undefined||parsed.data.maxCtcLpa!==undefined?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link hover:underline sm:w-auto focus-ring md:min-h-9">Clear filters</Link>:null}
    </div>
    <details className="group min-w-0 border-t border-border pt-3">
@@ -82,19 +83,19 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
       Filters <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
     </summary>
     <div className="grid min-w-0 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-3">
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Joining outcome
+   <Label stack className="min-w-0">Joining outcome
     <Select name="joining" defaultValue={parsed.data.joining} >
      <option value="ALL">All joining outcomes</option><option value="PENDING">Accepted / pending</option>
      <option value="JOINED">Confirmed joined</option><option value="DEFERRED">Deferred</option>
      <option value="DID_NOT_JOIN">Did not join</option>
     </Select>
-   </label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Offer type
+   </Label>
+   <Label stack className="min-w-0">Offer type
     <Select name="kind" defaultValue={parsed.data.kind} >
      <option value="ALL">All kinds</option><option value="OFFER">Offer</option><option value="LOI">Letter of intent</option>
     </Select>
-   </label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Response deadline
+   </Label>
+   <Label stack className="min-w-0">Response deadline
     <Select name="expiry" defaultValue={parsed.data.expiry}
       >
      <option value="ALL">Any response deadline</option>
@@ -103,17 +104,17 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
      <option value="OPEN">More than 7 days left</option>
      <option value="UNKNOWN">No expiry recorded</option>
     </Select>
-   </label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum package (LPA)
+   </Label>
+   <Label stack className="min-w-0">Minimum package (LPA)
     <Input type="number" name="minCtcLpa" min={0} max={1000} step="0.01"
       defaultValue={parsed.data.minCtcLpa??""}
       className="w-full md:w-36"/>
-   </label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum package (LPA)
+   </Label>
+   <Label stack className="min-w-0">Maximum package (LPA)
     <Input type="number" name="maxCtcLpa" min={0} max={1000} step="0.01"
       defaultValue={parsed.data.maxCtcLpa??""}
       className="w-full md:w-36"/>
-   </label>
+   </Label>
     </div>
    </details>
   </form>

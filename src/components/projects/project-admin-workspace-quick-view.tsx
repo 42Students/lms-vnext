@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { Heading } from "@/components/ui/heading";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 type Summary = {
  id:string;title:string;summary:string|null;status:string;
@@ -92,8 +93,7 @@ export function ProjectAdminWorkspaceQuickView({item,href}:{
     </div>
     {loading?<div role="status" aria-live="polite" className="space-y-2 text-sm text-body">
      <p>Loading workspace details…</p>
-     {Array.from({length:6},(_,i)=><div key={i} aria-hidden="true"
-       className="h-7 animate-pulse rounded bg-[var(--lms-neutral-50)]"/>)}
+     {Array.from({length:6},(_,i)=><SkeletonBlock key={i} className="h-7" />)}
     </div>:null}
     {error?<div role="alert" className="border-y border-warning-border p-3 text-sm text-body">
      <p>{error}</p>

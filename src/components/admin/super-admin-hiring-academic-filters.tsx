@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {Select} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 type Option={id:string;name:string};
 export function SuperAdminHiringAcademicFilters({
@@ -20,8 +21,8 @@ export function SuperAdminHiringAcademicFilters({
   {key:"cohortId",label:"Batch",options:batches,value:cohortId,
    change:(value:string)=>setCohortId(value)},
  ] as const;
- return <>{items.map(item=><label key={item.key}
-  className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+ return <>{items.map(item=><Label stack key={item.key}
+  className="min-w-0">
   {item.label}
   <Select name={item.key} value={item.value} onChange={event=>item.change(event.target.value)}
    className="min-w-0">
@@ -30,5 +31,5 @@ export function SuperAdminHiringAcademicFilters({
     <option value={item.value}>Current selected {item.label.toLowerCase()}</option>:null}
    {item.options.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
   </Select>
- </label>)}</>;
+ </Label>)}</>;
 }

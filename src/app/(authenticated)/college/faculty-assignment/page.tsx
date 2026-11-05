@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Search = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) =>
@@ -114,19 +115,19 @@ export default async function CollegeFacultyAssignmentPage({
         Export filtered faculty assignments CSV
       </Link>
       <FilterBar title="Filters" activeCount={Number(Boolean(query.q)) + Number(Boolean(query.courseCode)) + Number(Boolean(query.sectionCode)) + Number(query.status !== "ACTIVE") + Number(query.role !== "ALL")}
-        search={<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        search={<Label stack className="min-w-0">
           Faculty, course or class
           <Input name="q" type="search" form="college-faculty-assignment-filters"
             defaultValue={query.q} maxLength={100} className="min-h-11 min-w-0 md:min-h-9"/>
-        </label>}
+        </Label>}
         action={<Button type="submit" form="college-faculty-assignment-filters" className="min-h-11 md:min-h-9">Filter</Button>}>
         <form id="college-faculty-assignment-filters" action="/college/faculty-assignment" method="get"
           className="grid min-w-0 items-end gap-[8px] md:grid-cols-2 xl:grid-cols-4">
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0">
             Exact course code
             <Input name="courseCode" defaultValue={query.courseCode ?? ""} maxLength={64}/>
-          </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0">
             Class
             <Input name="sectionCode" list="college-faculty-class-codes"
               defaultValue={query.sectionCode??""} placeholder="All classes (enter exact class code)" maxLength={64}/>
@@ -136,14 +137,14 @@ export default async function CollegeFacultyAssignmentPage({
             {options.deliveriesTruncated?<span className="text-xs font-normal text-muted-foreground">
               First 200 active deliveries shown; a selected class outside this list is retained.
             </span>:null}
-          </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0">
             Assignment lifecycle
             <Select name="status" defaultValue={query.status}>
               <option value="ACTIVE">Active</option><option value="ENDED">Ended</option><option value="ALL">All</option>
             </Select>
-          </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0">
             {FACULTY_ASSIGNMENT_COPY.roleLabel}
             <Select name="role" defaultValue={query.role}>
               <option value="ALL">All roles</option>
@@ -151,7 +152,7 @@ export default async function CollegeFacultyAssignmentPage({
               <option value="CO_TEACHER">{FACULTY_ASSIGNMENT_ROLE_LABELS["CO_TEACHER"]}</option>
               <option value="TA">{FACULTY_ASSIGNMENT_ROLE_LABELS["TA"]}</option>
             </Select>
-          </label>
+          </Label>
           <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap xl:col-span-4">
             <Button type="submit" className="min-h-11 w-full md:hidden">Filter</Button>
             <Link href="/college/faculty-assignment"

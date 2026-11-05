@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export type FacultyCalendarItem={id:string;title:string;sectionName:string;courseCode:string|null;
  startsAt:string;location:string|null;deliveryId:string|null};
 function istDay(instant:string):string{
@@ -58,7 +59,7 @@ export function FacultyPrototypeSchedule({events,nowIso,minDate,maxDate}:{
     </p></div>
    <div className="flex flex-wrap gap-2" role="group" aria-label="Calendar views">
     {(["Week","Day","Month"] as const).map(v=><Button variant="chip" key={v} type="button" aria-pressed={view===v} onClick={()=>setView(v)}>{v}</Button>)}
-    <label className="sr-only" htmlFor="faculty-calendar-course">Filter class schedule by course</label>
+    <Label className="sr-only" htmlFor="faculty-calendar-course">Filter class schedule by course</Label>
     <Select id="faculty-calendar-course" value={course} onChange={e=>setCourse(e.target.value)}
      className="min-h-11 rounded-lg border border-[color:var(--lms-border)] bg-surface px-3 text-sm">
      <option value="all">All courses</option>

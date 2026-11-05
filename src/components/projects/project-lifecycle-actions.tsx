@@ -11,6 +11,7 @@ import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 import { FriendlyFetchError } from "@/lib/api-fetch";
 import { friendlyApiError } from "@/lib/friendly-error";
+import { Label } from "@/components/ui/label";
 
 function useProjectAction() {
   const router = useRouter();
@@ -140,7 +141,7 @@ export function TaskLifecycleActions({
 
   return (
     <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:items-end">
-      <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:min-w-40">
+      <Label stack className="min-w-0 flex-1 sm:min-w-40">
         <span className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Task state
         </span>
@@ -159,7 +160,7 @@ export function TaskLifecycleActions({
             </option>
           ))}
         </Select>
-      </label>
+      </Label>
       <Button
         size="sm"
         variant="primary"
@@ -321,7 +322,7 @@ export function TaskReviewActions({
         }
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)]">
-          <label className="min-w-0">
+          <Label className="min-w-0">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Decision
             </span>
@@ -342,8 +343,8 @@ export function TaskReviewActions({
                 Request changes
               </option>
             </Select>
-          </label>
-          <label className="min-w-0">
+          </Label>
+          <Label className="min-w-0">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Feedback
             </span>
@@ -359,7 +360,7 @@ export function TaskReviewActions({
                 setFeedback(event.target.value)
               }
             />
-          </label>
+          </Label>
         </div>
       </Dialog>
     </>

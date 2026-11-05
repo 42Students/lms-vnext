@@ -15,6 +15,7 @@ import {HrNotificationReadButton} from "@/components/hr/hr-notification-read-but
 import {listHrNotifications} from "@/modules/placements/hr-notifications-service";
 import {groupHrNotificationPage} from "@/modules/placements/hr-notification-groups-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export default async function HrMessagesPage({searchParams}:{
  searchParams:Promise<{collegeId?:string|string[];unreadOnly?:string|string[];page?:string|string[];q?:string|string[]}>
 }) {
@@ -72,7 +73,7 @@ export default async function HrMessagesPage({searchParams}:{
    <form action="/hr/notifications" method="get" role="search" aria-label="Search recruiter notifications" className="flex min-w-0 flex-wrap items-end gap-2 max-md:flex-col max-md:items-stretch">
      <Input type="hidden" name="collegeId" value={result.collegeId} />
      <Input type="hidden" name="unreadOnly" value={query.data.unreadOnly} />
-     <label htmlFor="hr-notification-search" className="sr-only">Search drive titles</label>
+     <Label htmlFor="hr-notification-search" className="sr-only">Search drive titles</Label>
      <Input id="hr-notification-search" type="search" name="q" defaultValue={query.data.q} maxLength={120}
        placeholder="Search drive titles" className="min-h-11 min-w-0 w-full md:min-h-9 md:max-w-sm md:flex-1" />
      <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>

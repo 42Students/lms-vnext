@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {createdOrganizationStepHref} from "@/modules/colleges/admin-tenant-organization-step";
+import { Label } from "@/components/ui/label";
 
 export function OrganizationCreateForm({ advanceToCollege = false }: { advanceToCollege?: boolean } = {}) {
   const router = useRouter();
@@ -67,12 +68,12 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
       className="flex min-w-0 flex-col items-stretch gap-4 pt-4 print:hidden"
     >
       <div className="min-w-0 flex-1">
-        <label
+        <Label
           htmlFor="organization-name"
-          className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+          className="mb-1.5 block"
         >
           Organization Name<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
-        </label>
+        </Label>
         <Input
           id="organization-name"
           value={name}

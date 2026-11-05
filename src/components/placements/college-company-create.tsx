@@ -12,6 +12,7 @@ import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { collegeCompanyDraftPayload } from "@/modules/placements/college-company-create-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 /** COL-placements-14: create or reuse a canonical company and attach a
  * college-specific relationship. Editing a shared global identity stays
@@ -138,52 +139,52 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
    <form id={formId} onSubmit={submit}
      className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] sm:grid-cols-2">
     <Heading level={3} className="text-foreground sm:col-span-2">Identity</Heading>
-    <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Company name
+    <Label stack className="min-w-0">Company name
       <Input required minLength={2} maxLength={150} placeholder="e.g. Infosys Limited" value={name}
         aria-invalid={Boolean(fieldErrors.name)}
         onChange={e=>{setName(e.target.value);setFieldErrors(current=>{const next={...current};delete next.name;return next;});}}
         className={field} />
       {fieldErrors.name?<span role="alert" className="text-xs font-normal text-error">{fieldErrors.name}</span>:null}
-    </label>
-    <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Website (HTTPS, optional)
+    </Label>
+    <Label stack className="min-w-0">Website (HTTPS, optional)
       <Input type="url" pattern="https://.*" maxLength={500} value={websiteUrl} aria-invalid={Boolean(fieldErrors.websiteUrl)}
         onChange={e=>{setWebsiteUrl(e.target.value);setFieldErrors(current=>{const next={...current};delete next.websiteUrl;return next;});}}
         placeholder="https://example.com" className={field}/>
       {fieldErrors.websiteUrl?<span role="alert" className="text-xs font-normal text-error">{fieldErrors.websiteUrl}</span>:null}
-    </label>
-    <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Company email domain (optional)
+    </Label>
+    <Label stack className="min-w-0">Company email domain (optional)
       <Input value={primaryDomain} maxLength={255} aria-invalid={Boolean(fieldErrors.primaryDomain)}
         onChange={e=>{setPrimaryDomain(e.target.value);setFieldErrors(current=>{const next={...current};delete next.primaryDomain;return next;});}}
         placeholder="example.com" className={field}/>
       {fieldErrors.primaryDomain?<span role="alert" className="text-xs font-normal text-error">{fieldErrors.primaryDomain}</span>:null}
-    </label>
+    </Label>
     <Heading level={3} className="text-foreground sm:col-span-2">Contact</Heading>
-    <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Contact person
+    <Label stack className="min-w-0">Contact person
       <Input value={contactPersonName} maxLength={150} placeholder="Recruiter contact name"
         onChange={e=>setContactPersonName(e.target.value)} className={field}/>
-    </label>
-    <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Contact email
+    </Label>
+    <Label stack className="min-w-0">Contact email
       <Input value={contactEmail} type="email" maxLength={150}
         placeholder="recruiter@company.com" aria-invalid={Boolean(fieldErrors.contactEmail)}
         onChange={e=>{setContactEmail(e.target.value);setFieldErrors(current=>{const next={...current};delete next.contactEmail;return next;});}}
         className={field}/>
       {fieldErrors.contactEmail?<span role="alert" className="text-xs font-normal text-error">{fieldErrors.contactEmail}</span>:null}
-    </label>
-    <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Contact phone
+    </Label>
+    <Label stack className="min-w-0">Contact phone
       <Input value={contactPhone} type="tel" maxLength={30}
         aria-invalid={Boolean(fieldErrors.contactPhone)}
         onChange={e=>{setContactPhone(e.target.value);setFieldErrors(current=>{const next={...current};delete next.contactPhone;return next;});}}
         className={field}/>
       {fieldErrors.contactPhone?<span role="alert" className="text-xs font-normal text-error">{fieldErrors.contactPhone}</span>:null}
-    </label>
+    </Label>
     <Heading level={3} className="text-foreground sm:col-span-2">Internal</Heading>
     <div className="min-w-0 space-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-3 sm:col-span-2">
-      <label className="grid min-w-0 gap-2 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+      <Label stack className="min-w-0">
         Internal notes
         <span className="text-xs font-normal text-muted-foreground">Visible only to your placement team, not to students.</span>
         <Textarea value={internalNotes} rows={2} maxLength={2000}
           onChange={e=>setInternalNotes(e.target.value)} />
-      </label>
+      </Label>
       <p className="text-right text-xs text-muted-foreground">{internalNotes.length}/2000</p>
     </div>
     <p className="text-sm text-muted-foreground sm:col-span-2 leading-[22px]">

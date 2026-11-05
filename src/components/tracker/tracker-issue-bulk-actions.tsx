@@ -10,6 +10,7 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useToast} from "@/components/ui/toast";
 import {BUG_STATUSES,type BugStatus} from "@/modules/bug-tracker/workflow";
+import { Label } from "@/components/ui/label";
 
 type Row={publicId:string;version:number;status:string};
 export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
@@ -82,29 +83,29 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
       {selecting?<span role="status" className="text-sm">{selected.length} selected</span>:null}
     </div>
     {selecting?<div className="min-w-0 space-y-[var(--lms-space-4)]">
-      <label className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold md:min-h-9">
+      <Label className="inline-flex min-h-11 items-center gap-2 md:min-h-9">
         <Checkbox disabled={busy||rows.length===0} aria-label="All on this page"
           checked={rows.length>0&&rows.every(row=>selected.includes(row.publicId))}
           indeterminate={rows.some(row=>selected.includes(row.publicId))&&!rows.every(row=>selected.includes(row.publicId))}
           onChange={event=>setSelected(event.target.checked?rows.map(row=>row.publicId):[])} />
         All on this page
-      </label>
+      </Label>
       <div role="group" aria-label="Issues on this page" className="grid min-w-0 max-h-64 grid-cols-1 gap-0 overflow-y-auto overscroll-contain border-y border-border md:grid-cols-2 md:gap-x-[var(--lms-space-4)]">
-        {rows.map(row=><label key={row.publicId} tabIndex={busy?-1:0}
+        {rows.map(row=><Label variant="choice" key={row.publicId} tabIndex={busy?-1:0}
           onKeyDown={event=>{if(event.target===event.currentTarget&&(event.key==="Enter"||event.key===" ")){event.preventDefault();toggle(row.publicId);}}}
-          className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] border-b border-border/50 py-[var(--lms-space-2)] text-sm md:min-h-9">
+          className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] border-b border-border/50 py-[var(--lms-space-2)] md:min-h-9">
           <Checkbox aria-label={"Select "+row.publicId} checked={selected.includes(row.publicId)} disabled={busy}
             onChange={()=>toggle(row.publicId)}/>
           {row.publicId} <span className="text-muted-foreground">({row.status.toLowerCase().replaceAll("_"," ")})</span>
-        </label>)}
+        </Label>)}
       </div>
       <div className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,220px)_auto]">
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Set status to…
+        <Label stack className="min-w-0">Set status to…
           <Select value={status} onChange={event=>setStatus(event.target.value as BugStatus)}
             disabled={busy} className="min-h-11 md:min-h-9">
             {BUG_STATUSES.map(item=><option key={item} value={item}>{item.replaceAll("_"," ")}</option>)}
           </Select>
-        </label>
+        </Label>
         <Button variant="primary" type="button" aria-haspopup="dialog" disabled={busy||selected.length===0} loading={busy} className="min-h-11 w-full md:min-h-9 md:w-auto md:justify-self-start" onClick={()=>void apply()}
          >
           {busy?"Updating…":"Apply"}

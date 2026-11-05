@@ -10,6 +10,7 @@ import {
 } from "@/modules/courses/faculty-profile-teaching-model";
 import { getOwnFacultyTeachingSection } from "@/modules/courses/faculty-profile-teaching-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export const dynamic="force-dynamic";
 type Params={search?:string|string[];page?:string|string[]};
@@ -51,11 +52,11 @@ export default async function FacultyTeachingProfilePage({
     </section>
     <form role="search" aria-label="profile teaching filters" method="get" action="/teacher/profile/teaching"
       className="grid min-w-0 gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
-      <label className="grid min-w-0 w-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search current teaching
+      <Label stack className="min-w-0 w-full">Search current teaching
         <Input name="search" type="search" defaultValue={data.query.search}
           placeholder="Course, Section or academic period" maxLength={120}
           className="min-h-11 md:min-h-[var(--lms-control-height)] w-full"/>
-      </label>
+      </Label>
       <Button type="submit" variant="primary" className="w-full sm:w-auto">
         Search
       </Button>

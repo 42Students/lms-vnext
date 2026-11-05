@@ -19,6 +19,7 @@ import {SuperAdminTemplateArchiveControl} from "@/components/projects/super-admi
 import { can } from "@/modules/permissions/policy";
 import { templateDirectoryHref, parseSuperAdminTemplateDirectoryQuery } from "@/modules/projects/super-admin-template-directory-model";
 import { listSuperAdminTemplateDirectory } from "@/modules/projects/super-admin-template-directory-service";
+import { Label } from "@/components/ui/label";
 const statuses=["ALL","DRAFT","PUBLISHED","ARCHIVED"] as const;
 function tone(status:string){
  return status==="PUBLISHED"?"success" as const:status==="ARCHIVED"?"neutral" as const:"warning" as const;
@@ -61,14 +62,14 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
   <section aria-label="Templates" className="min-w-0 space-y-4">
   <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-   <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4 sm:w-[240px]">Search title or slug
+   <Label stack className="w-full min-w-0 sm:w-[240px]">Search title or slug
     <SuperAdminTemplateAutoSearch defaultValue={data.query.q}/>
-   </label>
-   <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4 sm:max-w-48">Lifecycle status
+   </Label>
+   <Label stack className="min-w-0 flex-1 sm:max-w-48">Lifecycle status
     <Select name="status" defaultValue={data.query.status} className="min-h-11 w-full min-w-0 md:min-h-9">
      {statuses.map(x=><option key={x} value={x}>{x==="ALL"?"All statuses":x.charAt(0)+x.slice(1).toLowerCase()}</option>)}
     </Select>
-   </label>
+   </Label>
    <Button type="submit" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Filter</Button>
   </form>
   <ListToolbar label="Templates" viewCount={data.total}

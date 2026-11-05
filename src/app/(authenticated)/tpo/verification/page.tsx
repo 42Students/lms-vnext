@@ -12,6 +12,7 @@ import {Button} from "@/components/ui/button";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {Select} from "@/components/ui/select";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export const dynamic="force-dynamic";
 
@@ -76,28 +77,28 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
    <details>
     <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-primary-text md:min-h-9">Filter the queue</summary>
     <div className="grid min-w-0 grid-cols-1 gap-3 pb-4 sm:grid-cols-2 lg:grid-cols-4">
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+   <Label stack>Status
     <Select name="tab" defaultValue={query.tab} className="min-h-11 md:min-h-9">
      <option value="WAITING">Waiting</option><option value="SENT_BACK">Sent back</option><option value="VERIFIED">Verified</option>
     </Select>
-   </label>
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
+   </Label>
+   <Label stack>Section
     <Select name="kind" defaultValue={query.kind} className="min-h-11 md:min-h-9">
      <option value="ALL">All sections</option><option value="EDUCATION">Education</option><option value="IDENTITY">Identity</option>
     </Select>
-   </label>
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Student or roll number
+   </Label>
+   <Label stack>Student or roll number
     <Input name="search" type="search" defaultValue={query.search} maxLength={100} placeholder="Search name or student number" className="min-h-11 min-w-0 w-full md:min-h-9" />
-   </label>
+   </Label>
    <details className="min-w-0 sm:col-span-2 lg:col-span-4">
     <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">More filters</summary>
     <div className="grid min-w-0 grid-cols-1 gap-3 py-3 sm:grid-cols-2 lg:grid-cols-4">
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Request kind
+   <Label stack>Request kind
     <Select name="waitingState" defaultValue={query.waitingState} className="min-h-11 md:min-h-9">
      <option value="ALL">First check or update</option><option value="SUBMITTED">First check</option><option value="UPDATE_PENDING">Update</option>
     </Select>
-   </label>
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Waiting since
+   </Label>
+   <Label stack>Waiting since
     <Select name="waitingSince" defaultValue={query.waitingSince}
      className="min-h-11 md:min-h-9"
      disabled={query.tab!=="WAITING"}>
@@ -106,24 +107,24 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
      <option value="WEEK">This week</option>
      <option value="OVER_WEEK">Over a week</option>
     </Select>
-   </label>
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+   </Label>
+   <Label stack>Batch
     <Select name="batchId" defaultValue={query.batchId??""} className="min-h-11 md:min-h-9">
      <option value="">All batches</option>
      {directory?.batches.map(item=><option key={item.id} value={item.id}>{item.program} · {item.name}</option>)}
     </Select>
-   </label>
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Branch
+   </Label>
+   <Label stack>Branch
     <Select name="branchId" defaultValue={query.branchId??""} className="min-h-11 md:min-h-9">
      <option value="">All branches</option>
      {branches.map(([id,name])=><option key={id} value={id}>{name}</option>)}
     </Select>
-   </label>
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Page size
+   </Label>
+   <Label stack>Page size
     <Select name="pageSize" defaultValue={query.pageSize} className="min-h-11 md:min-h-9">
      <option value="25">25</option><option value="50">50</option><option value="100">100</option><option value="1000">First 1,000 (legacy view)</option>
     </Select>
-   </label>
+   </Label>
     </div>
    </details>
    <Button type="submit" className="min-h-11 w-full md:min-h-9">Apply filters</Button>

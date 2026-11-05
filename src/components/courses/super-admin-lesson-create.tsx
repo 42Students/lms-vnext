@@ -11,6 +11,7 @@ import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {apiFetch} from "@/lib/api-fetch";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Path={id:string;courseName:string;cohortName:string;periodName:string};
  export function SuperAdminLessonCreate({paths}:{paths:readonly Path[]}){
@@ -70,7 +71,7 @@ type Path={id:string;courseName:string;cohortName:string;periodName:string};
  return <section aria-label="Create New Lesson" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)]">
   <Heading level={2} size="lg" className="mb-[var(--lms-space-4)] text-[var(--lms-heading)]">Create New Lesson</Heading>
   <form aria-label="Create New Lesson" noValidate onSubmit={event=>void submit(event)} className="mt-[var(--lms-space-4)] grid min-w-0 gap-[var(--lms-space-3)]">
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
+  <Label stack className="min-w-0">Course
    <Input type="search" value={courseSearch} onChange={event=>setCourseSearch(event.target.value)}
      placeholder="Search courses" aria-label="Search courses" disabled={pending}
      className="min-h-11 w-full md:min-h-9"/>
@@ -84,25 +85,25 @@ type Path={id:string;courseName:string;cohortName:string;periodName:string};
       </option>)}
    </Select>
    {fieldErrors.path?<span className="text-xs text-error" role="alert">{fieldErrors.path}</span>:null}
-  </label>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson Name
+  </Label>
+  <Label stack className="min-w-0">Lesson Name
    <Input maxLength={255} placeholder="e.g., Introduction to Arrays" value={name} disabled={pending}
     onChange={event=>{setName(event.target.value);setFieldErrors(({name: _name,...rest})=>rest);}}
     aria-invalid={Boolean(fieldErrors.name)}
     className="min-h-11 w-full md:min-h-9"/>
    {fieldErrors.name?<span className="text-xs text-error" role="alert">{fieldErrors.name}</span>:null}
-  </label>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description (optional)
+  </Label>
+  <Label stack className="min-w-0">Description (optional)
    <Textarea maxLength={5000} rows={2} value={description}
     onChange={event=>setDescription(event.target.value)}
     className="min-h-11 w-full md:min-h-9"/>
-  </label>
+  </Label>
   <p className="text-xs text-muted-foreground">A new lesson is appended to its course. You can reorder lessons after saving. Content is a separate, individually validated step; creating the lesson does not create or publish any resource, assignment or quiz.</p>
-  <label className="flex min-h-11 items-center gap-2 text-sm font-semibold">
+  <Label className="flex min-h-11 items-center gap-2">
    <Checkbox disabled={pending} checked={visibleToStudents}
     onChange={event=>setVisibleToStudents(event.target.checked)}/>
    Visible to students
-  </label>
+  </Label>
   <p className="text-xs text-muted-foreground">Off hides this lesson and its content from students; staff still see it.</p>
   {error?<Alert tone="error" title="Lesson was not created">{error}
    <Button type="button" size="sm" variant="ghost" onClick={()=>setError(null)}>Dismiss</Button>

@@ -27,6 +27,7 @@ import {listColleges} from "@/modules/colleges/service";
 import {findCompanyNameIdentityConflicts} from "@/modules/placements/company-curation-name-conflicts";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 export default async function SuperAdminCompaniesPage({
   searchParams,
@@ -183,68 +184,68 @@ export default async function SuperAdminCompaniesPage({
       initialDeleted={data.query.status==="ALL"&&data.query.companyStatus==="ALL"}/>
      <form method="get" className="grid min-w-0 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_auto]">
       <Input type="hidden" name="view" value={view} />
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Company
+      <Label stack>Company
         <Input type="search" name="q" defaultValue={data.query.q} placeholder="Search by name or industry"
           className="min-h-11 md:min-h-9" />
-      </label>
+      </Label>
       <Disclosure title="More filters" className="min-w-0 order-last md:col-span-2"
         contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-3">
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Search in
+      <Label stack>Search in
         <Select name="searchField" defaultValue={data.query.searchField} className="min-h-11 md:min-h-9">
           <option value="ALL">Name, other name or domain</option><option value="NAME">Name or other name</option><option value="DOMAIN">Any company domain</option>
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Relationship
+      </Label>
+      <Label stack>Relationship
         <Select name="status" defaultValue={data.query.status}
           className="min-h-11 md:min-h-9">
           <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Company status
+      </Label>
+      <Label stack>Company status
         <Select name="companyStatus" defaultValue={data.query.companyStatus} className="min-h-11 md:min-h-9">
           <option value="MATCH">Match relationship filter</option><option value="ACTIVE">Active company</option>
           <option value="ARCHIVED">Archived company</option><option value="ALL">Any company status</option>
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Trust state
+      </Label>
+      <Label stack>Trust state
         <Select name="trust" defaultValue={data.query.trust} className="min-h-11 md:min-h-9">
           <option value="ALL">All</option><option value="TRUSTED">Trusted</option><option value="UNTRUSTED">Not trusted</option>
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Global verification
+      </Label>
+      <Label stack>Global verification
         <Select name="verified" defaultValue={data.query.verified}
           className="min-h-11 md:min-h-9">
           <option value="ALL">All companies</option><option value="NOT_VERIFIED">Only not verified</option>
           <option value="VERIFIED">Verified by 42</option>
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">College
+      </Label>
+      <Label stack>College
         <Select name="collegeId" defaultValue={data.query.collegeId ?? ""} className="min-h-11 md:min-h-9">
           <option value="">All permitted colleges</option>
           {availableColleges.map(college=><option key={college.id} value={college.id}>{college.name}</option>)}
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Order
+      </Label>
+      <Label stack>Order
         <Select name="sort" defaultValue={data.query.sort} className="min-h-11 md:min-h-9">
           <option value="LAST_ACTIVE">Last active (newest)</option><option value="NAME">Company name (A–Z)</option><option value="DRIVES">Drives (most)</option><option value="RECENT">Recently changed relationship</option>
         </Select>
-      </label>
+      </Label>
       {data.query.companyId ? <Input type="hidden" name="companyId" value={data.query.companyId}/> : null}
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Relationship owner
+      <Label stack>Relationship owner
         <Select name="owner" defaultValue={data.query.owner} className="min-h-11 md:min-h-9">
           <option value="ALL">Any owner assignment</option><option value="ASSIGNED">Owner assigned</option><option value="UNASSIGNED">Needs an owner</option>
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Company website
+      </Label>
+      <Label stack>Company website
         <Select name="website" defaultValue={data.query.website} className="min-h-11 md:min-h-9">
           <option value="ALL">Any website state</option><option value="HAS_WEBSITE">Website recorded</option><option value="MISSING_WEBSITE">Website missing</option>
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Relationship changed
+      </Label>
+      <Label stack>Relationship changed
         <Select name="changedWithin" defaultValue={data.query.changedWithin} className="min-h-11 md:min-h-9">
           <option value="ALL">Any time</option><option value="7">Past 7 days</option><option value="30">Past 30 days</option><option value="90">Past 90 days</option>
         </Select>
-      </label>
+      </Label>
       </Disclosure>
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto self-end px-4 md:col-start-2 md:row-start-1">Filter</Button>
     </form>

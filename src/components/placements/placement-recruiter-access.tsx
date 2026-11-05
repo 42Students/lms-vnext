@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export type RecruiterRelationshipChoice = {
   relationshipId: string;
@@ -184,7 +185,7 @@ export function PlacementRecruiterAccess({
       </div>
 
       <div className="grid min-w-0 gap-3 border-b border-border py-4 sm:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.7fr)_auto]">
-        <label className="min-w-0">
+        <Label className="min-w-0">
           <span className="mb-1 block text-xs font-semibold text-body">
             Employer relationship
           </span>
@@ -217,9 +218,9 @@ export function PlacementRecruiterAccess({
               ))
             )}
           </Select>
-        </label>
+        </Label>
 
-        <label className="min-w-0">
+        <Label className="min-w-0">
           <span className="mb-1 block text-xs font-semibold text-body">
             Recruiter email
           </span>
@@ -234,9 +235,9 @@ export function PlacementRecruiterAccess({
             placeholder="recruiter@company.com"
             disabled={pending !== null}
           />
-        </label>
+        </Label>
 
-        <label className="min-w-0">
+        <Label className="min-w-0">
           <span className="mb-1 block text-xs font-semibold text-body">
             Title
           </span>
@@ -250,7 +251,7 @@ export function PlacementRecruiterAccess({
             placeholder="Talent Partner"
             disabled={pending !== null}
           />
-        </label>
+        </Label>
 
         <div className="flex min-w-0 items-end sm:col-span-2 xl:col-span-1">
           <Button

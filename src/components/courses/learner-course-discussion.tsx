@@ -26,6 +26,7 @@ import {
 } from "./learner-course-discussion-model";
 import {Textarea} from "@/components/ui/textarea";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type DiscussionCursor = { beforeCreatedAt: string; beforeId: string };
 
@@ -762,9 +763,9 @@ export function LearnerCourseDiscussion({
             <Button type="button" variant="ghost" className="min-h-11 !text-[var(--lms-primary-text)] underline md:min-h-9"
               onClick={() => setReplyTo(null)}>Cancel reply</Button>
           </div> : null}
-          <label className={moderate?"sr-only":"text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"} htmlFor="course-discussion-message">
+          <Label className={moderate?"sr-only":"text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"} htmlFor="course-discussion-message">
             Write a message
-          </label>
+          </Label>
           <Textarea
             id="course-discussion-message"
             value={draft}

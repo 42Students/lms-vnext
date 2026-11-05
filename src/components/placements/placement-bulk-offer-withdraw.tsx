@@ -8,6 +8,7 @@ import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import type { BulkOfferWithdrawalResult } from "@/modules/placements/bulk-offer-withdrawal-model";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Choice = {
   id: string;
@@ -117,7 +118,7 @@ export function PlacementBulkOfferWithdraw({
         <>
           <div tabIndex={0} role="group" aria-label="Offers eligible for withdrawal, scroll for more" className="max-h-64 min-h-0 min-w-0 space-y-1 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
             {available.map((item) => (
-              <label key={item.id} className="flex min-h-11 min-w-0 cursor-pointer flex-wrap items-center gap-2 px-2 py-1 text-[13px]">
+              <Label key={item.id} className="flex min-h-11 min-w-0 cursor-pointer flex-wrap items-center gap-2 px-2 py-1">
                 <Checkbox
                   checked={selected.includes(item.id)}
                   onChange={(event) => change(item.id, event.target.checked)}
@@ -126,10 +127,10 @@ export function PlacementBulkOfferWithdraw({
                 />
                 <span className="min-w-0 flex-1 break-words font-medium text-foreground">{item.label}</span>
                 <span className="text-muted-foreground">{item.status}</span>
-              </label>
+              </Label>
             ))}
           </div>
-          <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+          <Label className="block">
             Withdrawal reason (required)
             <Textarea
               value={reason}
@@ -139,7 +140,7 @@ export function PlacementBulkOfferWithdraw({
               disabled={busy}
               className="mt-2 w-full"
             />
-          </label>
+          </Label>
           <div className="flex flex-col items-stretch gap-3 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <span className="font-medium text-body">{selected.length} / 50 offers selected</span>
             <Button variant="danger"

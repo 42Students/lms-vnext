@@ -22,6 +22,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import {CollegeApplicationsDebouncedSearch} from "@/components/placements/college-applications-debounced-search";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 export default async function CollegeDriveApplicationsPage({ params, searchParams }: {
   params: Promise<{jobId:string}>;
@@ -136,9 +137,9 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
         href:driveApplicationsHref(jobId,{...query,stage,page:1}),
       }))}/>
     <form method="get" role="search" aria-label="Application filters" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,2fr)_auto]">
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search by name or email
+      <Label stack className="min-w-0">Search by name or email
         <CollegeApplicationsDebouncedSearch initialValue={query.q} placeholder="Search by name or email"/>
-      </label>
+      </Label>
       <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
         <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Filter</Button>
         {(query.q || query.status!=="ALL" || query.screening!=="ALL" || query.source!=="ALL" || query.departmentId || query.programId || query.cohortId) ?
@@ -147,21 +148,21 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       <Disclosure title="Advanced filters" className="md:col-span-2"
         defaultOpen={Boolean(query.status!=="ALL" || query.screening!=="ALL" || query.source!=="ALL" || query.departmentId || query.programId || query.cohortId)}>
         <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-3)] md:grid-cols-2 lg:grid-cols-3">
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Application
+      <Label stack className="min-w-0">Application
         <Select name="status" defaultValue={query.status} >
           {["ALL","SUBMITTED","WITHDRAWN"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Screening
+      </Label>
+      <Label stack className="min-w-0">Screening
         <Select name="screening" defaultValue={query.screening} >
           {["ALL","PENDING","HOLD","SHORTLISTED","REJECTED","UNRECORDED"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Source
+      </Label>
+      <Label stack className="min-w-0">Source
         <Select name="source" defaultValue={query.source} >
           {["ALL","INTERNAL","EXTERNAL"].map(item=><option key={item} value={item}>{item==="ALL"?"All sources":item}</option>)}
         </Select>
-      </label>
+      </Label>
       <CollegeApplicationDependentFilters key={[query.departmentId,query.programId,query.cohortId].join(":")}
         initial={{...(query.departmentId!==undefined?{departmentId:query.departmentId}:{}),...(query.programId!==undefined?{programId:query.programId}:{}),...(query.cohortId!==undefined?{cohortId:query.cohortId}:{})}}
         departments={filters.departments} programs={filters.programs} cohorts={filters.cohorts} />

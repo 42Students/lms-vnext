@@ -15,6 +15,7 @@ import {useRouter} from "next/navigation";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type Funnel=Awaited<ReturnType<typeof getCollegeHiringFunnel>>;
 const order=["APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED",
@@ -94,34 +95,34 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
      <form method="get" className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 lg:grid-cols-5">
     <input type="hidden" name="seasonId" value={selectedSeasonId??""}/>
     <input type="hidden" name="jobId" value={selectedJobId??""}/>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
+    <Label stack>Department
      <Select name="departmentId" value={department} onChange={event=>{setDepartment(event.target.value);setProgram("");}} className="min-h-11 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] text-[14px] focus-ring md:min-h-9 sm:text-sm">
       <option value="">All departments</option>
       {data.filters.departments.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
      </Select>
-    </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+    </Label>
+    <Label stack>Program
      <Select name="programId" value={program} onChange={event=>setProgram(event.target.value)} className="min-h-11 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] text-[14px] focus-ring md:min-h-9 sm:text-sm">
       <option value="">All programs</option>
       {permittedPrograms.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
      </Select>
-    </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+    </Label>
+    <Label stack>Batch
      <Select name="cohortId" defaultValue={q.cohortId??""} className="min-h-11 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] text-[14px] focus-ring md:min-h-9 sm:text-sm">
       <option value="">All batches</option>
       {data.filters.cohorts.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
      </Select>
-    </label>
+    </Label>
     <fieldset className="grid min-w-0 gap-3 sm:grid-cols-2 md:col-span-2 lg:col-span-2" aria-label="Applied date range">
      <legend className="sr-only">Applied between these dates</legend>
-     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applied from
+     <Label stack>Applied from
       <Input type="date" name="from" value={from} max={to||undefined} onChange={event=>setFrom(event.target.value)}
        aria-label="Applied from" className="min-h-11 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] text-[14px] md:min-h-9"/>
-     </label>
-     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applied to
+     </Label>
+     <Label stack>Applied to
       <Input type="date" name="to" value={to} min={from||undefined} onChange={event=>setTo(event.target.value)}
        aria-label="Applied to" className="min-h-11 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] text-[14px] md:min-h-9"/>
-     </label>
+     </Label>
     </fieldset>
     <div className="flex min-w-0 flex-col items-stretch gap-2 md:col-span-2 md:flex-row md:items-center lg:col-span-5">
      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply filters</Button>

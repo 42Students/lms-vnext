@@ -16,6 +16,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoOfferExpiryWatchlist } from "@/modules/placements/tpo-offer-expiry-service";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 type Query = { days?: string | string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoOffersExpiryPage({ searchParams }: { searchParams: Promise<Query> }) {
@@ -39,13 +40,13 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
       ) : null}
       <form action="/tpo/reports/offers-expiry" method="get"
         className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-        <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Expiring in the next N calendar days
+        <Label className="block min-w-0">Expiring in the next N calendar days
           <Select name="days" defaultValue={String(data.days)}
             className="mt-2 block min-h-11 w-full md:min-h-9">
             {[1, 3, 7, 14, 30, 60, 90].map((value) =>
               <option key={value} value={value}>{value} days</option>)}
           </Select>
-        </label>
+        </Label>
         <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">
           Apply window
         </Button>

@@ -8,6 +8,7 @@ import {recruiterJoiningReportMessage,recruiterJoiningReportSchema}
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export function RecruiterJoiningReportForm({
  collegeId,jobId,jobTitle,offerId,candidate,currentOutcome,
@@ -34,7 +35,7 @@ export function RecruiterJoiningReportForm({
    {currentOutcome&&currentOutcome!=="PENDING"?"Official outcome: "+currentOutcome.replaceAll("_"," "):
     "Official joining status has not been recorded."}
   </p>
-  <label className="grid gap-1 text-sm font-medium text-foreground">
+  <Label stack>
    Reported outcome
    <Select value={status} onChange={event=>{setStatus(event.target.value as typeof status);setConfirm(false);}}
     className="min-h-11">
@@ -42,20 +43,20 @@ export function RecruiterJoiningReportForm({
     <option value="DEFERRED">Deferred</option>
     <option value="DID_NOT_JOIN">Did not join</option>
    </Select>
-  </label>
-  {status!=="DID_NOT_JOIN"?<label className="grid gap-1 text-sm font-medium text-foreground">
+  </Label>
+  {status!=="DID_NOT_JOIN"?<Label stack>
    {status==="JOINED"?"Actual joining date":"Revised joining date"}
    <Input type="date" required value={reportedDate} onChange={event=>{setReportedDate(event.target.value);setConfirm(false);}}/>
-  </label>:null}
-  <label className="grid gap-1 text-sm font-medium text-foreground">
+  </Label>:null}
+  <Label stack>
    {status==="DID_NOT_JOIN"?"Reason for not joining":"Notes (optional)"}
    <Textarea rows={2} value={reason} required={status==="DID_NOT_JOIN"} maxLength={1000}
     onChange={event=>{setReason(event.target.value);setConfirm(false);}}/>
-  </label>
-  <label className="flex min-h-11 items-start gap-2 py-2 text-xs text-body">
+  </Label>
+  <Label variant="choice" className="flex min-h-11 items-start gap-2 py-2">
    <Checkbox className="mt-1" checked={confirm} onChange={event=>setConfirm(event.target.checked)}/>
    Send this report to the college placement cell for verification. It will not overwrite the official outcome.
-  </label>
+  </Label>
   <Button variant="secondary" size="md" type="submit" disabled={!ready}>
    Send joining report
   </Button>

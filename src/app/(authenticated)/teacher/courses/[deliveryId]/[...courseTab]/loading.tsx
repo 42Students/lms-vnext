@@ -1,6 +1,7 @@
 "use client";
 import {usePathname} from "next/navigation";
 import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 /** The legacy CourseTabSkeleton changed with the active tab. Keep these
  * purely decorative shapes stable while data and membership scope load. */
@@ -23,13 +24,13 @@ export default function Loading(){
     </div>:
     roster||attendance?
     <div className="space-y-2">
-     <div className="h-9 animate-pulse rounded bg-muted"/>
-     {Array.from({length:5},(_,i)=><div key={i} className="h-10 animate-pulse rounded bg-muted/70"/>)}
+     <SkeletonBlock className="h-9" />
+     {Array.from({length:5},(_,i)=><SkeletonBlock key={i} className="h-10" />)}
     </div>:
     tree?<div className="space-y-2">
      {Array.from({length:4},(_,i)=><div key={i} className="flex gap-3">
-       <div className="h-9 w-9 shrink-0 animate-pulse rounded bg-muted"/>
-       <div className="h-9 flex-1 animate-pulse rounded bg-muted/70"/>
+       <SkeletonBlock className="h-9 w-9 shrink-0" />
+       <SkeletonBlock className="h-9 flex-1" />
       </div>)}
     </div>:null}
   </div>

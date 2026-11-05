@@ -9,6 +9,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
+import { Label } from "@/components/ui/label";
 type Deadline={id:string;updatedAt:string;applicationDeadline:string|null};
 
 /** TPO-drives-15, TPO-drives-45: first deadlines work and every failure is recoverable. */
@@ -64,12 +65,12 @@ export function TpoDriveDeadlineForm({job}:{job:Deadline}){
    {job.applicationDeadline?<p className="border-b border-border pb-3 text-sm font-semibold text-body">Current deadline: {
     new Date(job.applicationDeadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>:null}
    <div className="grid min-w-0 gap-4 sm:grid-cols-2 sm:items-start">
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">New application deadline (IST)
+    <Label stack className="min-w-0">New application deadline (IST)
      <Input required type="datetime-local" name="newDeadline" defaultValue={initial}
-      className="min-h-11 w-full min-w-0 md:min-h-9"/></label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">Reason (immutable audit)
+      className="min-h-11 w-full min-w-0 md:min-h-9"/></Label>
+    <Label stack className="min-w-0">Reason (immutable audit)
      <Textarea required name="reason" minLength={10} maxLength={1000} rows={3}
-      className="min-h-24 w-full min-w-0"/></label>
+      className="min-h-24 w-full min-w-0"/></Label>
    </div>
    <p className="max-w-xl text-xs leading-5 text-body">
     Extending the deadline notifies applicants who see this drive. Your explanation is kept in the permanent change history.

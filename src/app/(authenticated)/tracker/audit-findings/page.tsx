@@ -25,6 +25,7 @@ import {AuditFindingFilterMemory} from "@/components/tracker/audit-finding-filte
 import {FINDING_STATUSES,FINDING_SEVERITIES,FINDING_KINDS,parseIndependentFindingFilters,independentFindingHref} from "@/modules/bug-tracker/independent-audit-findings-model";
 import {independentAuditFindingsReady,listIndependentAuditFindings,readIndependentFindingSyncState} from "@/modules/bug-tracker/independent-audit-findings-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export const dynamic="force-dynamic";
 export const metadata={title:"Audit findings · 42 Tracker"};
 export default async function IndependentFindingsPage({searchParams}:{
@@ -131,13 +132,13 @@ export default async function IndependentFindingsPage({searchParams}:{
    }))}/>
   <form data-audit-findings-filters="true" role="search" aria-label="tracker audit findings filters" method="get" className="grid min-w-0 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-[minmax(0,1fr)_auto]">
    <Input type="hidden" name="view" value={parsed.view}/>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
-    <Input name="q" defaultValue={parsed.q} maxLength={120} placeholder="Search title, summary, id, file"/></label>
+   <Label>Search
+    <Input name="q" defaultValue={parsed.q} maxLength={120} placeholder="Search title, summary, id, file"/></Label>
    <div className="flex min-w-0 items-center gap-3 max-md:[&>button]:flex-1">
-    <label className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">Per page
+    <Label className="flex items-center gap-2">Per page
      <Select name="size" defaultValue={String(parsed.size??50)} aria-label="Findings per page" className="min-h-11 md:min-h-9">
       {[25,50,100,200].map(size=><option key={size} value={size}>{size}</option>)}
-     </Select></label>
+     </Select></Label>
     <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Search</Button>
     <Link href="/tracker/audit-findings?view=OPEN" className="inline-flex min-h-11 items-center font-semibold text-link md:min-h-9 focus-ring">Clear</Link>
    </div>
@@ -145,7 +146,7 @@ export default async function IndependentFindingsPage({searchParams}:{
     className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2 md:col-span-2 lg:col-span-3">
     <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">More filters</summary>
     <div className="mt-2 grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-3">
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Area (multiple)
+   <Label>Area (multiple)
     <Select name="area" multiple size={4} defaultValue={parsed.area.split(",").filter(Boolean)} aria-label="Filter findings by areas">
      {[
       "login","course","lesson-content","quiz","assignment","attendance","classroom",
@@ -153,19 +154,19 @@ export default async function IndependentFindingsPage({searchParams}:{
       "student-placements","college-admin","super-admin","groups-electives",
       "people-accounts","reports","tracker","mobile","platform","security","other",
      ].map(area=><option key={area} value={area}>{area}</option>)}
-    </Select></label>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status (multiple)
+    </Select></Label>
+   <Label>Status (multiple)
     <Select name="status" multiple size={4} defaultValue={parsed.statuses}>
      {FINDING_STATUSES.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}
-    </Select></label>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Severity (multiple)
+    </Select></Label>
+   <Label>Severity (multiple)
     <Select name="severity" multiple size={4} defaultValue={parsed.severities}>
      {FINDING_SEVERITIES.map(v=><option key={v} value={v}>{v}</option>)}
-    </Select></label>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Kind (multiple)
+    </Select></Label>
+   <Label>Kind (multiple)
     <Select name="kind" multiple size={4} defaultValue={parsed.kinds}>
      {FINDING_KINDS.map(v=><option key={v} value={v}>{v}</option>)}
-    </Select></label>
+    </Select></Label>
     </div>
    </details>
   </form>

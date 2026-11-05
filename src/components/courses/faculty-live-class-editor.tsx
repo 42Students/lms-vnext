@@ -16,6 +16,7 @@ import {facultyLiveMutationSuccess} from "@/modules/courses/faculty-live-success
 import {FacultyIstQuarterHourPicker} from "@/components/courses/faculty-ist-quarter-hour-picker";
 import {FACULTY_IST_NOTE,facultyIstQuarterHourIssue} from "@/modules/courses/faculty-ist-quarter-hour-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Choice={id:string;title:string;deliveryId:string};
 type Session={
@@ -111,7 +112,7 @@ export function FacultyLiveClassEditor({
         </p>
       </div>
       <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label stack className="min-w-0">
           Action
           <Select value={action} disabled={pending}
             onChange={event => changeAction(event.target.value as typeof action)}>
@@ -119,9 +120,9 @@ export function FacultyLiveClassEditor({
             <option value="EDIT">Reschedule / edit</option>
             <option value="CANCEL">Cancel</option>
           </Select>
-        </label>
+        </Label>
         {action === "CREATE" ? (
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0">
             Lesson
             <Select value={lessonId} disabled={pending || !choices.length}
               onChange={event => { setLessonId(event.target.value); setError(null); }}>
@@ -130,9 +131,9 @@ export function FacultyLiveClassEditor({
                 {item.title} · Section {item.deliveryId.slice(0, 8)}
               </option>)}
             </Select>
-          </label>
+          </Label>
         ) : (
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0">
             Published session
             <Select value={selectedId} disabled={pending || !sessions.length}
               onChange={event => preloadSession(event.target.value)}>
@@ -141,22 +142,22 @@ export function FacultyLiveClassEditor({
                 {facultyLiveSessionOption(item)}
               </option>)}
             </Select>
-          </label>
+          </Label>
         )}
         {action !== "CANCEL" ? (
           <>
-            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <Label stack className="min-w-0">
               Title
               <Input value={title} maxLength={160} required disabled={pending}
                 onChange={event => { setTitle(event.target.value); setError(null); }} />
-            </label>
-            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            </Label>
+            <Label stack className="min-w-0">
               HTTPS meeting link
               <Input type="url" value={meetingUrl} required disabled={pending}
                 placeholder="https://..."
                 error={Boolean(meetingUrl && !/^https:\/\//i.test(meetingUrl.trim()))}
                 onChange={event => { setMeetingUrl(event.target.value); setError(null); }} />
-            </label>
+            </Label>
             <div className="min-w-0 md:col-span-2">
               <div className="grid min-w-0 gap-[var(--lms-space-4)]">
                 <FacultyIstQuarterHourPicker label="Start" value={startsAt}

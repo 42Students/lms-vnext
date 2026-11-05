@@ -21,6 +21,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {TPO_BUILTIN_JOB_TYPES} from "@/modules/placements/tpo-builtin-job-types";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type ApplicationMode =
   | "INTERNAL"
@@ -530,7 +531,7 @@ export function PlacementDraftEditForm({
         className="grid min-w-0 gap-4 py-4"
       >
         <div className="grid min-w-0 gap-4 sm:grid-cols-2">
-          <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="sm:col-span-2">
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Job Title
             </span>
@@ -543,8 +544,8 @@ export function PlacementDraftEditForm({
               placeholder="e.g., Software Engineer"
               defaultValue={value.job.title}
             />
-          </label>
-          <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label className="sm:col-span-2">
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Job Description
             </span>
@@ -557,8 +558,8 @@ export function PlacementDraftEditForm({
                 value.job.description
               }
             />
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Job type
             </span>
@@ -577,8 +578,8 @@ export function PlacementDraftEditForm({
               {value.job.jobTypeLabel&&!availableJobTypes.some(type=>type.label===value.job.jobTypeLabel)?
                 <option value={value.job.jobTypeLabel}>{value.job.jobTypeLabel} (historic)</option>:null}
             </Select>
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Work mode
             </span>
@@ -591,8 +592,8 @@ export function PlacementDraftEditForm({
               <option value="HYBRID">Hybrid</option>
               <option value="REMOTE">Remote</option>
             </Select>
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Locations
             </span>
@@ -605,8 +606,8 @@ export function PlacementDraftEditForm({
                 value.job.locations.join(", ")
               }
             />
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Openings
             </span>
@@ -619,8 +620,8 @@ export function PlacementDraftEditForm({
                 value.job.openings ?? ""
               }
             />
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Minimum CTC (LPA)
             </span>
@@ -636,8 +637,8 @@ export function PlacementDraftEditForm({
                   : value.job.minimumAnnualCtcInr / 100_000
               }
             />
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Maximum CTC (LPA)
             </span>
@@ -653,8 +654,8 @@ export function PlacementDraftEditForm({
                   : value.job.maximumAnnualCtcInr / 100_000
               }
             />
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Application mode
             </span>
@@ -671,9 +672,9 @@ export function PlacementDraftEditForm({
               <option value="HYBRID">LMS or employer form</option>
               <option value="EXTERNAL_ONLY">Employer form only</option>
             </Select>
-          </label>
+          </Label>
           <p className="text-xs text-muted-foreground sm:col-span-2">Audience visibility stays within the selected college and authorized memberships. It is independent of Application mode (LMS form, employer form, or both).</p>
-          <label>
+          <Label>
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Employer application URL
             </span>
@@ -688,8 +689,8 @@ export function PlacementDraftEditForm({
                 value.job.externalApplicationUrl ?? ""
               }
             />
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Application deadline
             </span>
@@ -699,20 +700,20 @@ export function PlacementDraftEditForm({
               type="datetime-local"
               defaultValue={toLocalInput(value.job.applicationDeadline)}
             />
-          </label>
+          </Label>
         </div>
         <section aria-labelledby="draft-important-dates" className="min-w-0 space-y-3 border-t border-border pt-4">
           <Heading level={3} size="sm" id="draft-important-dates">Important dates</Heading>
           <p className="text-xs text-muted-foreground">Other milestones (e.g. Screening round, Technical round) — optional. These appear on the Interview Calendar (admin) and Career Calendar (learners).</p>
           {dateRows.map(row=><div key={row.id} className="grid min-w-0 gap-2 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
-            <label className="text-[13px] font-semibold">Label
+            <Label>Label
               <Input className={inputClass} maxLength={100} value={row.label} placeholder="e.g. Screening round, Technical round"
                onChange={e=>{setDateRows(items=>items.map(item=>item.id===row.id?{...item,label:e.target.value}:item));markDirty();}}/>
-            </label>
-            <label className="text-[13px] font-semibold">Date
+            </Label>
+            <Label>Date
               <Input className={inputClass} type="date" value={row.date}
                onChange={e=>{setDateRows(items=>items.map(item=>item.id===row.id?{...item,date:e.target.value}:item));markDirty();}}/>
-            </label>
+            </Label>
             <Button type="button" variant="ghost" disabled={dateRows.length<=1}
               title={dateRows.length<=1?"At least one row required":"Remove date"}
               onClick={()=>{setDateRows(items=>items.filter(item=>item.id!==row.id));markDirty();}}>Remove</Button>
@@ -725,20 +726,20 @@ export function PlacementDraftEditForm({
             Additional posting details and assessment
           </summary>
           <div className="grid min-w-0 gap-4 py-3 sm:grid-cols-2">
-           <label className="sm:col-span-2 text-[13px] font-semibold">Responsibilities
+           <Label className="sm:col-span-2">Responsibilities
             <Textarea name="responsibilities" rows={3} maxLength={15000}
              defaultValue={value.job.legacyPostingDetails?.responsibilities??""} className={textareaClass}/>
-           </label>
-           <label className="text-[13px] font-semibold">Assessment URL (optional)
+           </Label>
+           <Label>Assessment URL (optional)
             <Input type="url" name="assessmentUrl" maxLength={2048}
              defaultValue={value.job.legacyPostingDetails?.assessmentUrl??""}
              placeholder="https://..." className={inputClass}/>
-           </label>
-           <label className="text-[13px] font-semibold">Assessment deadline (IST)
+           </Label>
+           <Label>Assessment deadline (IST)
             <Input type="datetime-local" name="assessmentDeadline"
              defaultValue={toLocalInput(value.job.legacyPostingDetails?.assessmentDeadline??null)}
              className={inputClass}/>
-           </label>
+           </Label>
            <p className="sm:col-span-2 text-xs text-muted-foreground">The assessment link and deadline are separate from the employer application URL. Assessment must follow the application deadline; existing expired dates may remain unchanged when editing unrelated terms.</p>
            
           </div>
@@ -750,31 +751,31 @@ export function PlacementDraftEditForm({
           {([["preferredDegree","Preferred degree",value.job.legacyPostingDetails?.candidatePreferences?.preferredDegree??""],
              ["specialization","Specialization",value.job.legacyPostingDetails?.candidatePreferences?.specialization??""],
              ["preferredCity","Preferred city",value.job.legacyPostingDetails?.candidatePreferences?.city??""]] as const).map(([name,label,initial])=>
-            <label key={name} className="text-[13px] font-semibold">{label}
+            <Label key={name}>{label}
              <Input name={name} defaultValue={initial} maxLength={160} className={inputClass}/>
-            </label>)}
-          <label className="text-[13px] font-semibold">Graduation year (1990–2050)
+            </Label>)}
+          <Label>Graduation year (1990–2050)
            <Input type="number" name="graduationYear" min={1990} max={2050} step={1}
             defaultValue={value.job.legacyPostingDetails?.candidatePreferences?.graduationYear??""}
             className={inputClass}/>
-          </label>
-          <label className="text-[13px] font-semibold">Minimum GPA (0–10)
+          </Label>
+          <Label>Minimum GPA (0–10)
            <Input type="number" name="advisoryMinGpa" min={0} max={10} step="0.01"
             defaultValue={value.job.legacyPostingDetails?.candidatePreferences?.minGpa??""}
             className={inputClass}/>
-          </label>
+          </Label>
           <div className="sm:col-span-2 space-y-2 border-t border-border pt-3">
             <Heading level={4} size="sm">Custom eligibility rules</Heading>
             <p className="text-xs text-muted-foreground">Add display-only rules (e.g. Work permit, Experience). These do not gate applications. Max 20.</p>
             {ruleRows.map(row=><div key={row.id} className="grid min-w-0 gap-2 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
-              <label className="text-[13px] font-semibold">Label
+              <Label>Label
                 <Input className={inputClass} maxLength={160} value={row.label} placeholder="Label (e.g. Work permit)"
                  onChange={e=>{setRuleRows(items=>items.map(item=>item.id===row.id?{...item,label:e.target.value}:item));markDirty();}}/>
-              </label>
-              <label className="text-[13px] font-semibold">Value
+              </Label>
+              <Label>Value
                 <Input className={inputClass} maxLength={500} value={row.value} placeholder="Value (e.g. Required)"
                  onChange={e=>{setRuleRows(items=>items.map(item=>item.id===row.id?{...item,value:e.target.value}:item));markDirty();}}/>
-              </label>
+              </Label>
               <Button type="button" variant="ghost" disabled={ruleRows.length<=1}
                title={ruleRows.length<=1?"At least one row required":"Remove rule"}
                onClick={()=>{setRuleRows(items=>items.filter(item=>item.id!==row.id));markDirty();}}>Remove</Button>
@@ -794,7 +795,7 @@ export function PlacementDraftEditForm({
           </p>
 
           <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-3">
-           <label className="grid gap-1 text-[13px] font-semibold">Department
+           <Label stack>Department
             <Select className={inputClass} value={selectedDepartment} onChange={event=>{
              setSelectedDepartment(event.target.value);setProgramFilter("");setCohortFilter("");
              setSelectedProgramIds(event.target.value?
@@ -804,8 +805,8 @@ export function PlacementDraftEditForm({
              <option value="">All departments</option>
              {departments.map(name=><option key={name} value={name}>{name}</option>)}
             </Select>
-           </label>
-           <label className="grid gap-1 text-[13px] font-semibold">Program
+           </Label>
+           <Label stack>Program
             <Select className={inputClass} value={programFilter} onChange={event=>{
              setProgramFilter(event.target.value);setCohortFilter("");
              setSelectedProgramIds(event.target.value?[event.target.value]:
@@ -816,8 +817,8 @@ export function PlacementDraftEditForm({
              <option value="">All programs</option>
              {visiblePrograms.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}
             </Select>
-           </label>
-           <label className="grid gap-1 text-[13px] font-semibold">Batch
+           </Label>
+           <Label stack>Batch
             <Select className={inputClass} value={cohortFilter} onChange={event=>{
              setCohortFilter(event.target.value);
              setSelectedCohortIds(event.target.value?[event.target.value]:[]);
@@ -826,18 +827,18 @@ export function PlacementDraftEditForm({
              <option value="">All batches</option>
              {visibleCohorts.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
             </Select>
-           </label>
+           </Label>
           </div>
           <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-3">
-            <label className="text-[13px] font-semibold">Find programs
+            <Label>Find programs
              <Input className={inputClass} type="search" value={programSearch} placeholder="Search programs" onChange={e=>setProgramSearch(e.target.value)}/>
-            </label>
-            <label className="text-[13px] font-semibold">Find batches
+            </Label>
+            <Label>Find batches
              <Input className={inputClass} type="search" value={cohortSearch} placeholder="Search batches" onChange={e=>setCohortSearch(e.target.value)}/>
-            </label>
-            <label className="text-[13px] font-semibold">Find classes
+            </Label>
+            <Label>Find classes
              <Input className={inputClass} type="search" value={sectionSearch} placeholder="Search classes" onChange={e=>setSectionSearch(e.target.value)}/>
-            </label>
+            </Label>
           </div>
           <div className="mt-4 grid min-w-0 gap-4 sm:grid-cols-2">
             <fieldset className="min-w-0 border-t border-border py-3">
@@ -852,9 +853,9 @@ export function PlacementDraftEditForm({
                 <div className="grid gap-2">
                   {visiblePrograms.map(
                     (program) => (
-                      <label
+                      <Label variant="choice"
                         key={program.id}
-                        className="flex items-start gap-2 text-sm text-body"
+                        className="flex items-start gap-2"
                       >
                         <Checkbox
                           checked={selectedProgramIds.includes(
@@ -874,7 +875,7 @@ export function PlacementDraftEditForm({
                             {program.departmentName}
                           </span>
                         </span>
-                      </label>
+                      </Label>
                     ),
                   )}
                 </div>
@@ -896,9 +897,9 @@ export function PlacementDraftEditForm({
                 <div className="grid gap-2">
                   {visibleCohorts.map(
                     (cohort) => (
-                      <label
+                      <Label variant="choice"
                         key={cohort.id}
-                        className="flex items-start gap-2 text-sm text-body"
+                        className="flex items-start gap-2"
                       >
                         <Checkbox
                           checked={selectedCohortIds.includes(
@@ -919,7 +920,7 @@ export function PlacementDraftEditForm({
                             {cohort.status}
                           </span>
                         </span>
-                      </label>
+                      </Label>
                     ),
                   )}
                 </div>
@@ -930,11 +931,11 @@ export function PlacementDraftEditForm({
              <p className="text-xs text-muted-foreground">Class-level selection further narrows the chosen program and batch. Clear selections to include all classes.</p>
              {visibleSections.length===0?<p className="mt-2 text-sm text-muted-foreground">No active classes are available for this academic scope.</p>:
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
-               {visibleSections.map(section=><label key={section.id} className="flex items-center gap-2 text-sm">
+               {visibleSections.map(section=><Label variant="choice" key={section.id} className="flex items-center gap-2">
                 <Checkbox checked={selectedSectionIds.includes(section.id)}
                  onChange={()=>{toggleId(section.id,selectedSectionIds,setSelectedSectionIds);markDirty();}}/>
                 <span>{section.name} · {section.code} ({section.cohortName})</span>
-               </label>)}
+               </Label>)}
               </div>}
            </fieldset>
           </div>
@@ -950,7 +951,7 @@ export function PlacementDraftEditForm({
               ["minDiplomaPercentage", "Minimum diploma %", value.policy.minDiplomaPercentage, "0.01"],
               ["minUndergraduatePercentage", "Minimum UG %", value.policy.minUndergraduatePercentage, "0.01"],
             ].map(([name,label,current,step]) => (
-              <label key={String(name)}>
+              <Label key={String(name)}>
                 <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   {label}
                 </span>
@@ -966,9 +967,9 @@ export function PlacementDraftEditForm({
                       : String(current)
                   }
                 />
-              </label>
+              </Label>
             ))}
-            <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <Label className="sm:col-span-2">
               <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Passing years
               </span>
@@ -978,8 +979,8 @@ export function PlacementDraftEditForm({
                 defaultValue={value.policy.allowedPassingYears.join(", ")}
                 placeholder="2026, 2027"
               />
-            </label>
-            <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            </Label>
+            <Label className="sm:col-span-2">
               <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Missing evidence
               </span>
@@ -997,7 +998,7 @@ export function PlacementDraftEditForm({
                   Require complete evidence
                 </option>
               </Select>
-            </label>
+            </Label>
           </div>
           </div>
         </details>

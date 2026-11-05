@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {isVerifiedHrReplyReceipt,hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 /** Never carry a recruiter draft across two different employer-college threads. */
 export function RecruiterConversationReplyForm({threadId,quoteId,quoteLabel,historyAvailable=true}:{
  threadId:string;quoteId?:string|null;quoteLabel?:string|null;historyAvailable?:boolean;
@@ -112,14 +113,14 @@ function RecruiterConversationReplyFormState({threadId,quoteId,quoteLabel,histor
     <span>Discussing change request: {quoteLabel??selectedQuote}</span>
     <Button type="button" size="sm" variant="secondary" disabled={sending} onClick={()=>setSelectedQuote(null)}>Remove quote</Button>
   </div>:null}
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
+  <Label stack className="min-w-0">Message
    <Textarea ref={inputRef} value={body} onChange={event=>setBody(event.target.value)}
     onKeyDown={event=>{if(event.key==="Enter"&&(event.ctrlKey||event.metaKey)){event.preventDefault();formRef.current?.requestSubmit();}}}
     rows={3} maxLength={4000} disabled={sending||!historyAvailable}
     aria-invalid={body.trim().length>4000}
     className="min-h-28 w-full"
     placeholder="Write to placement cell"/>
-  </label>
+  </Label>
   <p className="text-xs text-muted-foreground leading-5">
    <span className={body.trim().length>4000?"font-semibold text-error":undefined}>{body.trim().length}/4000 characters</span> · Press Ctrl or Cmd+Enter to send. Replies stay in this employer-college thread and are reauthorized when sent.
   </p>

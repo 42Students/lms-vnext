@@ -24,6 +24,7 @@ import {listArchivedColleges} from "@/modules/colleges/service";
 import {organizationCreatedIstDate} from "@/modules/organizations/organization-created-date-model";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type OrganizationRow = Awaited<
   ReturnType<typeof listOrganizations>
@@ -128,7 +129,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
             <Heading level={2} size="base" className="text-[var(--lms-heading)]">Existing Organizations</Heading>
             <div className="flex flex-wrap items-center gap-2">
               <form method="get" role="search" aria-label="Search organizations" className="flex flex-wrap items-center gap-2">
-                <label htmlFor="organization-search" className="sr-only">Search organizations</label>
+                <Label htmlFor="organization-search" className="sr-only">Search organizations</Label>
                 <Input id="organization-search" type="search" name="q" defaultValue={q}
                   maxLength={100} placeholder="Search organizations" className="min-h-11 w-full sm:w-[200px] md:min-h-9"/>
                 <input type="hidden" name="pageSize" value={pageSize}/>
@@ -148,7 +149,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
               <span>{matching.length?(page-1)*pageSize+1:0}–{Math.min(page*pageSize,matching.length)} of {matching.length}</span>
               <form method="get" className="flex items-center gap-2">
                 <input type="hidden" name="q" value={q}/>
-                <label htmlFor="org-page-size" className="text-xs">Rows per page</label>
+                <Label htmlFor="org-page-size">Rows per page</Label>
                 <Select id="org-page-size" name="pageSize" defaultValue={String(pageSize)}>
                   {[10,25,50,100].map(size=><option key={size} value={size}>{size}</option>)}
                 </Select>
@@ -166,13 +167,13 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
             <p className="mt-1 text-xs text-muted-foreground">Restoring a parent does not automatically restore its children. Select an entity type to inspect authorized archived records.</p>
           </div>
           <form method="get" className="flex flex-wrap items-end gap-2">
-            <label className="grid gap-1 text-sm font-semibold text-body">Entity type
+            <Label stack>Entity type
               <Select name="type" defaultValue={selectedRestoreType}>
                 {RECOVERY_ENTITY_TYPES.map(entity=><option value={entity.value} key={entity.value}>
                   {entity.label}
                 </option>)}
               </Select>
-            </label>
+            </Label>
             <Button type="submit" variant="secondary" size="sm">View</Button>
           </form>
         </div>

@@ -8,6 +8,7 @@ import {
   DRIVE_PAY_CATEGORY_REASON_REQUIRED,drivePayCategoryFromMaxCtcLpa,isDrivePayCategory,
   type DrivePayCategory,
 } from "@/modules/placements/drive-pay-category-model";
+import { Label } from "@/components/ui/label";
 
 /** What the submitted form says about the pay category. Read from FormData:
  * `categoryOverride` (checkbox), `legacyJobCategory` and `categoryOverrideReason`. */
@@ -41,14 +42,14 @@ export function DrivePayCategoryField({maxCtcLpa,initialCategory=null,initialRea
    <div className="flex min-w-0 flex-wrap items-center gap-3 text-sm text-body">
     <p className="m-0">Category: <strong className="rounded-full border border-border px-2 py-0.5 text-foreground">
      {DRIVE_PAY_CATEGORY_LABEL[shown]}</strong>{override?"":" worked out from the CTC"}</p>
-    <label className="flex min-h-11 items-center gap-2 font-semibold md:min-h-9">
+    <Label className="flex min-h-11 items-center gap-2 md:min-h-9">
      <Checkbox name="categoryOverride" data-skip-backup="true" checked={override} disabled={disabled}
       onChange={event=>{setOverride(event.target.checked);onChange?.();}}/>
      Override
-    </label>
+    </Label>
    </div>
    {override?<div className="grid min-w-0 gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-    <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">Category
+    <Label className="block">Category
      <Select name="legacyJobCategory" data-skip-backup="true" value={category} disabled={disabled} className={inputClassName}
       onChange={event=>{
        if(isDrivePayCategory(event.target.value))setCategory(event.target.value);
@@ -56,12 +57,12 @@ export function DrivePayCategoryField({maxCtcLpa,initialCategory=null,initialRea
       }}>
       {DRIVE_PAY_CATEGORIES.map(value=><option key={value} value={value}>{DRIVE_PAY_CATEGORY_LABEL[value]}</option>)}
      </Select>
-    </label>
-    <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">Why
+    </Label>
+    <Label className="block">Why
      <Input name="categoryOverrideReason" data-skip-backup="true" required maxLength={DRIVE_PAY_CATEGORY_REASON_MAX}
       defaultValue={initialReason} disabled={disabled} className={inputClassName}
       onChange={()=>onChange?.()}/>
-    </label>
+    </Label>
    </div>:null}
   </section>;
 }

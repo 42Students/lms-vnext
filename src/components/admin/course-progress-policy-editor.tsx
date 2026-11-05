@@ -7,6 +7,7 @@ import {Input} from "@/components/ui/input";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {useToast} from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type SettingReceipt = {
   key:string;
@@ -89,7 +90,7 @@ export function CourseProgressPolicyEditor({
       </StatusBadge>
     </div>
     <p className="text-sm leading-6 text-body">Platform-wide: applies to every college.</p>
-    <label className="grid max-w-xs gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    <Label stack className="max-w-xs">
       In progress lower bound
       <span className="flex items-center gap-2">
         <Input type="number" min={0} max={99} step={1} inputMode="numeric"
@@ -97,7 +98,7 @@ export function CourseProgressPolicyEditor({
           onChange={event=>{setValue(event.target.value);setError("");}} />
         <span className="font-semibold text-body">%</span>
       </span>
-    </label>
+    </Label>
     <p className="text-sm leading-6 text-body">Below this percentage a video counts as not started.</p>
     {!valid?<p role="alert" className="text-xs text-error-text">Enter a whole number from 0 to 99.</p>:null}
     {error?<p role="alert" className="text-sm text-error-text">{error}</p>:null}

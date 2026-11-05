@@ -26,6 +26,7 @@ import { storageApiError } from "@/modules/courses/learner-storage-ui-model";
 import { uploadFacultyLessonThumbnail, uploadFacultyLessonVideo } from "./faculty-video-transfer";
 import { FacultyVideoPreview } from "./faculty-video-preview";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Action = (signal: AbortSignal) => Promise<void>;
 type VideoConfirmation = {kind: "DELETE"; video: ManagedVideo} | {kind: "REPLACE"; video: ManagedVideo; file: File};
@@ -296,25 +297,25 @@ export function FacultyLessonVideoManager({
      title="Upload New Video" description="Choose an approved local video file. External video URL imports are retired." dismissible={!busy}
      className="w-full sm:w-[min(600px,100vw)]">
     <div className="grid min-w-0 items-end gap-3 sm:grid-cols-2">
-      <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Video Title
+      <Label>Video Title
         <Input className="mt-[6px]" value={title} maxLength={255} required placeholder="Enter Video Title"
          onChange={event=>setTitle(event.target.value)}/>
-      </label>
-      <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Duration (seconds, optional)
+      </Label>
+      <Label>Duration (seconds, optional)
         <Input className="mt-[6px]" type="number" min={1} max={86400} value={duration} onChange={event=>setDuration(event.target.value)}/>
-      </label>
+      </Label>
       {file&&detectedVideoDuration.current?<p role="status" className="text-xs text-muted-foreground sm:col-span-2">
         Video duration detected: {detectedVideoDuration.current} seconds. You may edit this value.
       </p>:null}
-      <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Points (lesson content)
+      <Label>Points (lesson content)
         <Input className="mt-[6px]" type="number" min={0} max={1000}
           value={contentPoints} onChange={event=>setContentPoints(event.target.value)}/>
-      </label>
-      <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Upload Video
+      </Label>
+      <Label>Upload Video
         <Input type="file" className="mt-[6px] block min-h-11 w-full min-w-0 text-xs md:min-h-9"
           accept={acceptAttributeFor("lesson-video")} disabled={busy}
           onChange={event=>{setFile(event.target.files?.[0]??null);event.currentTarget.value="";}}/>
-      </label>
+      </Label>
     </div>
     <div className="mt-4 flex flex-wrap justify-end gap-2">
      <Button variant="secondary" type="button" disabled={busy} onClick={()=>setUploadDrawerOpen(false)}>Cancel</Button>
@@ -383,7 +384,7 @@ export function FacultyLessonVideoManager({
             </Button>
             </div>
             <div className="grid min-w-0 items-start gap-3 pt-3 sm:grid-cols-2">
-            <div className="min-w-0 text-[13px] leading-4 font-semibold text-body"><label htmlFor={`video-title-${video.id}`}>Video title</label>
+            <div className="min-w-0 text-[13px] leading-4 font-semibold text-body"><Label htmlFor={`video-title-${video.id}`}>Video title</Label>
               <Input id={`video-title-${video.id}`} className="mt-[6px] w-full min-w-0" maxLength={255}
                 disabled={busy||!canEdit||Boolean(video.lessonContentId)}
                 value={titleDraft[video.id]??video.title}
@@ -392,18 +393,18 @@ export function FacultyLessonVideoManager({
                 disabled={busy||!canEdit||Boolean(video.lessonContentId)}
                 onClick={()=>saveTitle(video)}>Update Video</Button>
             </div>
-            <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Replace video
+            <Label>Replace video
               <Input type="file" className="mt-[6px] block min-h-11 w-full min-w-0 max-w-full text-xs md:min-h-9" disabled={busy||!canEdit||!facultyVideoMayReplace(video)}
                 accept={acceptAttributeFor("lesson-video")}
                 onChange={event=>{const next=event.target.files?.[0];if(next)setConfirmation({kind:"REPLACE",video,file:next});event.currentTarget.value="";}}/>
-            </label>
-            <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Thumbnail
+            </Label>
+            <Label>Thumbnail
               <Input type="file" className="mt-[6px] block min-h-11 w-full min-w-0 max-w-full text-xs md:min-h-9" disabled={busy||!canEdit}
                 accept={acceptAttributeFor("lesson-video-thumbnail")}
                 onChange={event=>{thumbnail(video,event.target.files?.[0]??null);event.currentTarget.value="";}}/>
               <span className="block text-xs text-muted-foreground">{video.thumbnailStatus==="READY"?"Thumbnail ready":video.thumbnailStatus==="UPLOADING"?"Checking thumbnail":"No thumbnail"}</span>
-            </label>
-            <div className="min-w-0 text-[13px] leading-4 font-semibold text-body"><label htmlFor={`video-duration-${video.id}`}>Duration (seconds)</label>
+            </Label>
+            <div className="min-w-0 text-[13px] leading-4 font-semibold text-body"><Label htmlFor={`video-duration-${video.id}`}>Duration (seconds)</Label>
               <Input disabled={busy||!canEdit||Boolean(video.lessonContentId)} id={`video-duration-${video.id}`} type="number" className="mt-[6px] w-full min-w-0" min={1} max={86400}
                 value={durationDraft[video.id]??String(video.durationSeconds??"")}
                 onChange={event=>setDurationDraft(draft=>({...draft,[video.id]:event.target.value}))}/>
@@ -447,14 +448,14 @@ export function FacultyLessonVideoManager({
      }} title="Update Video" description={video.title} dismissible={!busy}
       className="w-full sm:w-[min(600px,100vw)]">
       <div className="space-y-4">
-       <label className="grid gap-2 text-sm font-semibold">Video Title
+       <Label stack>Video Title
         <Input maxLength={255} placeholder="Enter Video Title" value={editedTitle} disabled={busy}
          onChange={event=>setTitleDraft(old=>({...old,[video.id]:event.target.value}))}/>
-       </label>
-       <label className="grid gap-2 text-sm font-semibold">Duration (seconds)
+       </Label>
+       <Label stack>Duration (seconds)
         <Input type="number" min={1} max={86400} value={editedDuration} disabled={busy}
          onChange={event=>setDurationDraft(old=>({...old,[video.id]:event.target.value}))}/>
-       </label>
+       </Label>
        <div className="flex flex-wrap justify-end gap-2">
         <Button variant="secondary" disabled={busy} onClick={()=>{
          setTitleDraft(old=>({...old,[video.id]:video.title}));

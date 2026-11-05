@@ -15,6 +15,7 @@ import {FacultyLessonVideoManager} from "./faculty-lesson-video-manager";
 import { Radio } from "@/components/ui/radio";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Existing={id:string;lessonId:string;offeringId:string;lessonName:string;courseCode:string;deliveryId:string|null;title:string;contentType:string;externalUrl:string|null;notes:string|null;
  durationSeconds:number|null;startsAt:string|null;endsAt:string|null;status:string;sequence:number;visibleToStudents:boolean};
@@ -347,7 +348,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  }
  const editorFields=(
   <div className="grid min-w-0 max-w-3xl gap-4 md:grid-cols-2">
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
+   <Label>Course
     <Input type="search" className="mt-[6px] mb-2" aria-label="Search courses"
       value={courseSearch} onChange={event=>setCourseSearch(event.target.value)} placeholder="Search course"/>
     <Select value={authorCourseId} disabled={Boolean(editing)}
@@ -360,30 +361,30 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
        (course.name+" "+course.code).toLocaleLowerCase().includes(courseSearch.trim().toLocaleLowerCase()))
        .map(course=><option key={course.id} value={course.id}>{course.name} · {course.code}</option>)}
     </Select>
-   </label>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson
+   </Label>
+   <Label>Lesson
     <Select className="mt-[6px]" value={selectedLesson?lessonId:""}
      onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}} disabled={Boolean(editing)}>
      {editing&&!selectedLesson?<option value="">Saved Lesson outside authoring picker</option>:null}
      {lessons.filter(lesson=>lesson.offeringId===authorCourseId).map(lesson=><option key={lesson.id} value={lesson.id}>
       {lesson.courseCode} · {lesson.course} · {lesson.name}</option>)}
-    </Select></label>
+    </Select></Label>
    {editing&&!selectedLesson?<p role="status" className="text-xs text-muted-foreground md:col-span-2 leading-5">
     This saved Lesson is outside the first 250 authoring choices. Its Course and Section association cannot be changed; metadata can still be edited.
    </p>:null}
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
+   <Label>Section
     <Select value={deliveryId} disabled={Boolean(editing)} onChange={e=>setDeliveryId(e.target.value)}
       className="mt-1">
      <option value="">All sections taking this course</option>
      {allowedDeliveries.map(row=><option key={row.deliveryId} value={row.deliveryId}>
       {row.sectionName} ({row.sectionCode})</option>)}
-    </Select></label>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Content Title
+    </Select></Label>
+   <Label>Content Title
     <Input required maxLength={255} className="mt-[6px]" placeholder="e.g., Introduction Video"
-     value={title} onChange={e=>setTitle(e.target.value)}/></label>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{kind==="YOUTUBE"?"YouTube URL":kind==="RESOURCE"?"HTTPS resource link (optional with notes)":"Meeting Link"}
+     value={title} onChange={e=>setTitle(e.target.value)}/></Label>
+   <Label>{kind==="YOUTUBE"?"YouTube URL":kind==="RESOURCE"?"HTTPS resource link (optional with notes)":"Meeting Link"}
     <Input type="url" maxLength={2048} required={kind!=="RESOURCE"&&!editing} className="mt-[6px]"
-     value={url} onChange={e=>setUrl(e.target.value)} placeholder={editing?"Leave blank to keep saved link":"https://"}/></label>
+     value={url} onChange={e=>setUrl(e.target.value)} placeholder={editing?"Leave blank to keep saved link":"https://"}/></Label>
    {kind==="RESOURCE"&&!editing&&materialsEnabled?<fieldset className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3 md:col-span-2">
     <legend className="px-2 text-sm font-semibold">Resource materials ({resourceLinks.length}/20)</legend>
     <p className="text-xs text-muted-foreground">Add multiple HTTPS links with individual titles and notes. All links are saved together with the new Resource.</p>
@@ -395,15 +396,15 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
      </li>)}
     </ol>:null}
     <div className="grid gap-2 sm:grid-cols-2">
-     <label className="text-xs font-semibold">Link title
+     <Label>Link title
       <Input maxLength={255} value={materialDraft.title}
-       onChange={event=>setMaterialDraft(old=>({...old,title:event.target.value}))}/></label>
-     <label className="text-xs font-semibold">HTTPS link
+       onChange={event=>setMaterialDraft(old=>({...old,title:event.target.value}))}/></Label>
+     <Label>HTTPS link
       <Input type="url" maxLength={2048} value={materialDraft.externalUrl}
-       onChange={event=>setMaterialDraft(old=>({...old,externalUrl:event.target.value}))}/></label>
-     <label className="text-xs font-semibold sm:col-span-2">Link notes (optional)
+       onChange={event=>setMaterialDraft(old=>({...old,externalUrl:event.target.value}))}/></Label>
+     <Label className="sm:col-span-2">Link notes (optional)
       <Textarea rows={2} maxLength={2000} value={materialDraft.notes}
-       onChange={event=>setMaterialDraft(old=>({...old,notes:event.target.value}))}/></label>
+       onChange={event=>setMaterialDraft(old=>({...old,notes:event.target.value}))}/></Label>
     </div>
     <Button type="button" variant="secondary" size="sm" disabled={busy||resourceLinks.length>=20}
      onClick={()=>{
@@ -423,13 +424,13 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
       setResourceLinks(rows=>[...rows,entry]);setMaterialDraft({title:"",externalUrl:"",notes:""});setError("");
      }}>Add link to Resource</Button>
    </fieldset>:null}
-   {kind==="RESOURCE"?<label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Notes
+   {kind==="RESOURCE"?<Label>Notes
      <Textarea rows={3} maxLength={5000} value={notes} onChange={e=>setNotes(e.target.value)}
        className="mt-1"/>
-    </label>:kind==="YOUTUBE"?<label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Video length (seconds)
+    </Label>:kind==="YOUTUBE"?<Label>Video length (seconds)
     <Input type="number" required placeholder="Actual video duration" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}
-     className="mt-1"/></label>:<>
-    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Time Zone
+     className="mt-1"/></Label>:<>
+    <Label>Time Zone
      <Select value={timeZone} onChange={event=>{
        const next=event.target.value as MeetingZone;
        if(next===timeZone)return;
@@ -443,31 +444,31 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
       {MEETING_ZONES.map(zone=><option key={zone} value={zone}>{zone}</option>)}
      </Select>
      <span className="mt-1 block text-xs text-muted-foreground">Changing Time Zone preserves the scheduled instant and converts the displayed dates.</span>
-    </label>
-    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start Date
+    </Label>
+    <Label>Start Date
       <Input type="date" required value={start.split("T")[0]??""}
        onChange={event=>setStart(event.target.value+"T"+(start.split("T")[1]||"09:00"))}
        className="mt-1"/>
       <span className="mt-2 block">Start Time</span>
       <Input type="time" required step={900} value={start.split("T")[1]??""}
        onChange={event=>setStart((start.split("T")[0]||dateInput(new Date().toISOString()).split("T")[0])+"T"+event.target.value)}
-       className="mt-1"/></label>
-    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End Date
+       className="mt-1"/></Label>
+    <Label>End Date
       <Input type="date" required value={end.split("T")[0]??""}
        onChange={event=>setEnd(event.target.value+"T"+(end.split("T")[1]||"10:00"))}
        className="mt-1"/>
       <span className="mt-2 block">End Time</span>
       <Input type="time" required step={900} value={end.split("T")[1]??""}
        onChange={event=>setEnd((end.split("T")[0]||dateInput(new Date().toISOString()).split("T")[0])+"T"+event.target.value)}
-       className="mt-1"/></label>
+       className="mt-1"/></Label>
    </>}
-   <label className="flex items-center gap-2 text-sm md:col-span-2">
+   <Label variant="choice" className="flex items-center gap-2 md:col-span-2">
     <Checkbox checked={visibleToStudents} disabled={busy}
      onChange={e=>setVisibleToStudents(e.target.checked)}/>
     Visible to students
-   </label>
+   </Label>
    {kind==="RESOURCE"&&!editing&&materialsEnabled?<div className="space-y-2 md:col-span-2">
-    <label className="grid gap-2 text-sm font-semibold">Upload files
+    <Label stack>Upload files
      <Input type="file" multiple disabled={busy} accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv,.png,.jpg,.jpeg,.webp"
       className="block w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm"
       onChange={event=>{
@@ -479,7 +480,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
         setError("Resources support no more than 20 files and links.");return;}
        setResourceFiles(old=>[...old,...files]);setError("");
       }}/>
-    </label>
+    </Label>
     {resourceFiles.map((file,index)=><div key={index} className="flex items-center justify-between gap-2 text-xs">
      <span className="truncate">{file.name} · {Math.ceil(file.size/1024)} KB</span>
      <Button type="button" size="sm" variant="ghost" disabled={busy}
@@ -495,17 +496,17 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     </div>:null}
     <p className="text-xs text-muted-foreground">After saving the Resource, selected files upload via verified private grants. Scanner-pending files remain unavailable to learners.</p>
    </div>:null}
-   {kind==="RESOURCE"&&!editing&&materialsEnabled?<label className="flex items-start gap-2 text-sm md:col-span-2">
+   {kind==="RESOURCE"&&!editing&&materialsEnabled?<Label variant="choice" className="flex items-start gap-2 md:col-span-2">
     <Checkbox checked={addFileAfterCreate} disabled={busy}
      onChange={event=>setAddFileAfterCreate(event.target.checked)}/>
     <span><strong>Upload files after creating this Resource</strong>
      <span className="mt-1 block text-xs text-muted-foreground">Create the Resource first, then add scanned private files in the materials editor below. Files stay unavailable to learners until verified.</span>
     </span>
-   </label>:null}
-   {kind==="RESOURCE"&&editing?<label className="flex items-center gap-2 text-sm md:col-span-2">
+   </Label>:null}
+   {kind==="RESOURCE"&&editing?<Label variant="choice" className="flex items-center gap-2 md:col-span-2">
     <Checkbox checked={removeLink} onChange={e=>setRemoveLink(e.target.checked)}/>
     Remove existing resource link
-   </label>:null}
+   </Label>:null}
    <div className="flex flex-col-reverse gap-2 border-t border-border pt-3 md:col-span-2 md:flex-row md:justify-end">
     <Button type="button" variant="primary" loading={busy} disabled={busy} onClick={()=>void save()}>
      {busy?"Saving…":editing?"Save Changes":kind==="RESOURCE"?"Add Resource":"Add Content"}</Button>
@@ -571,32 +572,32 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   {kind==="YOUTUBE"&&lessons.length>0?<section aria-label="Video content type" className="min-w-0 space-y-3 border-b border-border pb-4">
    <fieldset className="flex flex-wrap items-center gap-4 border-0 p-0" aria-label="Video type">
     <legend className="mb-2 text-[13px] font-semibold text-body">Video type</legend>
-    <label className="inline-flex min-h-9 items-center gap-2 text-sm">
+    <Label variant="choice" className="inline-flex min-h-9 items-center gap-2">
      <Radio name="college-content-video-type" value="UPLOAD"
       checked={videoMode==="UPLOAD"} onChange={()=>{setVideoMode("UPLOAD");setOpen(false);}}/>
      Video (Upload)
-    </label>
-    <label className="inline-flex min-h-9 items-center gap-2 text-sm">
+    </Label>
+    <Label variant="choice" className="inline-flex min-h-9 items-center gap-2">
      <Radio name="college-content-video-type" value="YOUTUBE"
       checked={videoMode==="YOUTUBE"} onChange={()=>setVideoMode("YOUTUBE")}/>
      YouTube Video
-    </label>
+    </Label>
    </fieldset>
    {videoMode==="UPLOAD"?<>
-    <label className="grid gap-1 text-[13px] font-semibold text-body">Course and Lesson
+    <Label stack>Course and Lesson
      <Select aria-label="Lesson to upload video" value={lessonId}
       onChange={event=>{setLessonId(event.target.value);setDeliveryId("");}}>
       {lessons.map(lesson=><option value={lesson.id} key={lesson.id}>
        {lesson.courseCode} · {lesson.name}</option>)}
      </Select>
-    </label>
-    <label className="grid gap-1 text-[13px] font-semibold text-body">Audience
+    </Label>
+    <Label stack>Audience
      <Select value={deliveryId} aria-label="Video audience" onChange={event=>setDeliveryId(event.target.value)}>
       <option value="">All currently eligible Sections for this Course</option>
       {allowedDeliveries.map(section=><option key={section.deliveryId} value={section.deliveryId}>
        {section.sectionName} · {section.sectionCode}</option>)}
      </Select>
-    </label>
+    </Label>
     <p className="text-xs text-muted-foreground">Upload MP4, WebM, MOV or AVI with a short-lived signed grant. Video upload progress and processing status appear below. The file is unavailable to learners until verification finishes; failed replacements keep the previous file.</p>
     <FacultyLessonVideoManager key={lessonId+":"+(deliveryId||"shared")} lessonId={lessonId}
      deliveryId={deliveryId||null} nextContentSequence={nextOverride[lessonId]??selectedLesson?.nextSequence??0}/>
@@ -619,26 +620,26 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    {listMore?<p role="status" className="text-xs text-muted-foreground leading-5">
     Showing page {listPage} of saved items. More content is available through the next page.
    </p>:null}
-   <label className="flex min-h-11 items-center gap-2 text-sm">
+   <Label variant="choice" className="flex min-h-11 items-center gap-2">
     <Checkbox checked={allKindsForReorder} onChange={event=>{
      const enabled=event.target.checked;setAllKindsForReorder(enabled);
      applyExistingFilters({existingOrderAll:enabled?"true":""});
     }}/>
     Include all types when reordering this Lesson (other types cannot be edited here)
-   </label>
+   </Label>
    <Button variant="link" size="inline" type="button" disabled={existingBusy} onClick={()=>
      loadExisting(new URLSearchParams(window.location.search))}>
      {existingBusy?"Refreshing…":"Retry / Refresh content list"}
    </Button>
    {existingError?<p role="alert" className="text-sm text-error">{existingError}</p>:null}
-   <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Search Existing Content
+   <Label stack>Search Existing Content
     <Input type="search" maxLength={100} value={listQuery} onChange={event=>setListQuery(event.target.value)}
      onBlur={()=>applyExistingFilters({existingSearch:listQuery.trim()})}
      onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();applyExistingFilters({existingSearch:listQuery.trim()});}}}
      placeholder="Content title, Lesson or Course code"
      className="min-h-11 md:min-h-9 max-w-2xl rounded border border-border bg-background p-2"/>
-   </label>
-   <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Course
+   </Label>
+   <Label stack>Course
     <Select value={listCourseId} onChange={event=>{setListCourseId(event.target.value);setListLessonId("");setListSectionId("");applyExistingFilters({existingCourse:event.target.value,existingLesson:"",existingSection:""});}}
       className="min-h-11 md:min-h-9 max-w-2xl rounded border border-border bg-background p-2">
      <option value="">All courses</option>
@@ -646,16 +647,16 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
        {id:lesson.offeringId,name:lesson.courseCode+" · "+lesson.course}])).values()]
        .map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
     </Select>
-   </label>
-   <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Lesson
+   </Label>
+   <Label stack>Lesson
     <Select value={listLessonId} onChange={event=>{setListLessonId(event.target.value);setListSectionId("");applyExistingFilters({existingLesson:event.target.value,existingSection:""});}}
      className="min-h-11 md:min-h-9 max-w-2xl rounded border border-border bg-background p-2">
      <option value="">All Lessons</option>
      {lessons.filter(row=>!listCourseId||row.offeringId===listCourseId).map(row=>
        <option key={row.id} value={row.id}>{row.courseCode} · {row.name}</option>)}
     </Select>
-   </label>
-   <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Section
+   </Label>
+   <Label stack>Section
     <Select value={listSections.some(row=>row.deliveryId===listSectionId)?listSectionId:""}
      onChange={e=>{setListSectionId(e.target.value);applyExistingFilters({existingSection:e.target.value});}}
      className="min-h-11 md:min-h-9 max-w-2xl rounded border border-border bg-background p-2">
@@ -663,7 +664,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
      {listSections.map(row=><option key={row.deliveryId} value={row.deliveryId}>
       {row.sectionName} ({row.sectionCode})</option>)}
     </Select>
-   </label>
+   </Label>
    {listSectionId?<p className="text-xs text-muted-foreground leading-5">
     Showing shared offering items and content specific to the selected Section.
     The Order field below is the authored default order, not a Section-specific override.

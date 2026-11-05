@@ -32,6 +32,7 @@ import type {BulkReviewOutcome} from "@/modules/verification/bulk-outcome";
 import {describeBulkReviewOutcomeRows} from "@/modules/verification/bulk-outcome";
 import type {VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page,total,hasMore,pageSize,query,tpoCanVerify,truncated=false,batchChoices,branchChoices,classChoices,programChoices}:{
  rows:VerificationQueueCard[];counts:Record<VerificationTab,number>;
  activeTab:VerificationTab;initialKind:"ALL"|"EDUCATION"|"IDENTITY";page:number;total:number;hasMore:boolean;pageSize:number;
@@ -193,22 +194,22 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
             {reason}
           </Button>)}
     </div>}
-    {bulkAction==="SEND_BACK"&&<label className="block text-sm">Correction reason for every selected request
+    {bulkAction==="SEND_BACK"&&<Label variant="choice" className="block">Correction reason for every selected request
      <Textarea disabled={bulkBusy} value={bulkReason} maxLength={500} onChange={event=>setBulkReason(event.target.value)}
       className="mt-1 min-h-24 w-full" rows={3} placeholder="Or write what needs to change"/>
      <span className="mt-1 block text-xs leading-[20px]">A shared reason of at least 3 characters is required and will be recorded for each learner.</span>
      {bulkReason.trim().length<3?<span role="alert" className="mt-1 block text-xs text-error">Say what needs to change</span>:null}
-    </label>}
+    </Label>}
     {bulkAction==="SEND_BACK"&&<Button variant="secondary" type="button" disabled={bulkBusy||selectedRows.length===0||bulkReason.trim().length<3}
       onClick={()=>void executeBulk("SEND_BACK",bulkReason)} >
       {bulkBusy?"Sending decisions…":"Confirm send back selected"}</Button>}
     {bulkAction==="VERIFY"&&<>
      <Heading level={3} size="base" className="leading-[24px] text-[var(--lms-heading)]">Verify without opening</Heading>
      <p className="text-sm leading-[22px]">Only do this when you have checked these students&apos; documents another way (for example against the college&apos;s own records). Each one is recorded with your name.</p>
-     <label className="flex items-start gap-2 text-sm">
+     <Label variant="choice" className="flex items-start gap-2">
        <Checkbox checked={acknowledged} onChange={event=>setAcknowledged(event.target.checked)}/>
        I have checked their documents another way (for example the college&apos;s own records).
-     </label>
+     </Label>
      <p className="text-xs text-muted-foreground leading-[20px]">A missing marksheet or ID document blocks blind verification. The server rechecks document receipts before any decision.</p>
      <Button variant="secondary" type="button" disabled={bulkBusy||!acknowledged||(preview?.eligible.length??0)===0}
       onClick={()=>void executeBulk("VERIFY")}
@@ -237,12 +238,12 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   {bulkError&&<Banner tone="error">Bulk review issue: {bulkError}. Check the per-row outcome before retrying; earlier successful decisions remain recorded.</Banner>}
   <section aria-label="Verification queue controls" className="grid min-w-0 gap-3 border-t border-[var(--lms-canvas-border)] pt-3 text-[13px] leading-[22px] sm:grid-cols-2 md:flex md:flex-wrap md:items-center">
    <Button variant="secondary" type="button" disabled={bulkBusy} className="min-h-11 sm:min-h-9" onClick={()=>{if(canNavigateCollegeVerificationQueue(bulkBusy))router.refresh();}}>Refresh</Button>
-   <label className="grid min-w-0 gap-1">Sort by <Select value={query["sort"]??"OLDEST"} onChange={event=>navigate({sort:event.target.value,page:"1"})} className="w-full md:w-auto">
+   <Label stack className="min-w-0">Sort by <Select value={query["sort"]??"OLDEST"} onChange={event=>navigate({sort:event.target.value,page:"1"})} className="w-full md:w-auto">
     <option value="OLDEST">Oldest first</option><option value="NEWEST">Newest first</option><option value="NAME">Learner name A–Z</option>
-   </Select></label>
-   <label className="grid min-w-0 gap-1">Requests per page <Select value={pageSize} onChange={event=>navigate({pageSize:event.target.value,page:"1"})} className="w-full md:w-auto">
+   </Select></Label>
+   <Label stack className="min-w-0">Requests per page <Select value={pageSize} onChange={event=>navigate({pageSize:event.target.value,page:"1"})} className="w-full md:w-auto">
     <option value="10">10</option><option value="25">25</option><option value="50">50</option>
-   </Select></label>
+   </Select></Label>
    <span className="min-w-0 break-words sm:col-span-2 md:col-span-1">Showing {rows.length} of {total} requests in the selected view</span>
    <ActionPagination label="Verification pagination" page={page}
     pageCount={Math.max(1,page+(hasMore?1:0))} hasMore={hasMore} disabled={bulkBusy}

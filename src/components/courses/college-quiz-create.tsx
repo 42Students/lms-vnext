@@ -13,6 +13,7 @@ import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
+import { Label } from "@/components/ui/label";
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
 function currentTimeMs(){return Date.now();}
@@ -167,7 +168,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
  }
  return <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
   <div className="grid min-w-0 gap-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] md:items-end">
-   <label className="grid gap-1 text-sm font-semibold">Course for new quiz
+   <Label stack>Course for new quiz
     <Input type="search" value={courseSearch} placeholder="Search courses" aria-label="Search courses"
       onChange={event=>setCourseSearch(event.target.value)} className="min-h-11 md:min-h-9"/>
     <Select value={courseId} disabled={busy} onChange={event=>{
@@ -178,14 +179,14 @@ export function CollegeQuizCreate({lessons,deliveries}:{
         .toLocaleLowerCase("en-IN").includes(courseSearch.trim().toLocaleLowerCase("en-IN")))
         .map(item=><option value={item.id} key={item.id}>{item.code} · {item.name}</option>)}
     </Select>
-   </label>
-   <label className="grid gap-1 text-sm font-semibold">Lesson for new quiz
+   </Label>
+   <Label stack>Lesson for new quiz
     <Select value={lessonId} disabled={busy||!courseId}
       onChange={event=>{setLessonId(event.target.value);setDeliveryId("");}} className="min-h-11 md:min-h-9">
       <option value="">Lesson for new quiz</option>
       {eligibleLessons.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
     </Select>
-   </label>
+   </Label>
    <Button variant="primary" type="button" disabled={!courseId||!lessonId||busy} onClick={()=>{setError("");setNotice("");setOpened(true);}}
     className="min-h-11 w-full md:min-h-9 md:w-auto">
     <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none" className="mr-2 inline-block">
@@ -202,47 +203,47 @@ export function CollegeQuizCreate({lessons,deliveries}:{
    className="!w-[min(820px,94vw)] !max-w-[820px]" dismissible={!busy}>
    <div className="min-w-0 space-y-4">
    <div className="grid min-w-0 gap-4 md:grid-cols-2">
-    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Lesson for new quiz
+    <Label stack>Lesson for new quiz
      <Select value={lessonId} disabled={busy||!courseId} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
       className="min-h-11 md:min-h-9">
       <option value="">Select lesson</option>
       {eligibleLessons.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
-     </Select></label>
-    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Audience
+     </Select></Label>
+    <Label stack>Audience
      <Select value={deliveryId} disabled={busy} onChange={e=>setDeliveryId(e.target.value)}
       className="min-h-11 md:min-h-9">
       <option value="">All currently eligible sections</option>
       {sections.map(x=><option key={x.deliveryId} value={x.deliveryId}>
        {x.sectionName} ({x.sectionCode})</option>)}
-     </Select></label>
-    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Quiz title
+     </Select></Label>
+    <Label stack>Quiz title
      <Input maxLength={255} required placeholder="Example: Java basics checkpoint" value={title} disabled={busy}
-      onChange={e=>setTitle(e.target.value)} className="min-h-11 md:min-h-9"/></label>
-    <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Deadline (IST)
+      onChange={e=>setTitle(e.target.value)} className="min-h-11 md:min-h-9"/></Label>
+    <Label stack>Deadline (IST)
      <DateInput mode="datetime-local" value={dueAt} disabled={busy} required step={300}
       onChange={e=>setDueAt(e.target.value)} className="min-h-11 md:min-h-9"/>
      {!dueAt?<span className="text-xs text-warning">Set a due date</span>:null}
-   </label>
-    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Maximum attempts
+   </Label>
+    <Label stack>Maximum attempts
      <Input type="number" min={1} max={20} value={maxAttempts} disabled={busy}
-      onChange={e=>setMaxAttempts(e.target.value)} className="min-h-11 md:min-h-9"/></label>
-    <label className="grid gap-[6px] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">Description
+      onChange={e=>setMaxAttempts(e.target.value)} className="min-h-11 md:min-h-9"/></Label>
+    <Label stack className="md:col-span-2">Description
      <Textarea rows={2} maxLength={5000} value={description} disabled={busy}
-      onChange={e=>setDescription(e.target.value)} className="min-h-11 md:min-h-9"/></label>
+      onChange={e=>setDescription(e.target.value)} className="min-h-11 md:min-h-9"/></Label>
    </div>
    <p role="status" className="text-xs text-muted-foreground">Audience: {deliveryId?
     sections.find(section=>section.deliveryId===deliveryId)?.sectionName??"Invalid Section":
     "All currently eligible Sections in the Course Offering"} · {publishNow?"Publish now":"Save as draft"}.</p>
    <div className="grid min-w-0 gap-2 text-sm sm:grid-cols-3">
-    <div><label className="flex min-h-11 items-center gap-2">
+    <div><Label variant="choice" className="flex min-h-11 items-center gap-2">
       <Checkbox checked={publishNow} disabled={busy} onChange={e=>setPublishNow(e.target.checked)}/>Publish now
-     </label><p className="text-xs text-muted-foreground">Learners can see the quiz when published.</p></div>
-    <div><label className="flex min-h-11 items-center gap-2">
+     </Label><p className="text-xs text-muted-foreground">Learners can see the quiz when published.</p></div>
+    <div><Label variant="choice" className="flex min-h-11 items-center gap-2">
       <Checkbox checked={shuffleQuestions} disabled={busy} onChange={e=>setShuffleQuestions(e.target.checked)}/>Shuffle questions
-     </label><p className="text-xs text-muted-foreground">Each learner gets questions in a different order.</p></div>
-    <div><label className="flex min-h-11 items-center gap-2">
+     </Label><p className="text-xs text-muted-foreground">Each learner gets questions in a different order.</p></div>
+    <div><Label variant="choice" className="flex min-h-11 items-center gap-2">
       <Checkbox checked={shuffleOptions} disabled={busy} onChange={e=>setShuffleOptions(e.target.checked)}/>Shuffle options
-     </label><p className="text-xs text-muted-foreground">Shuffle the answer options for each learner.</p></div>
+     </Label><p className="text-xs text-muted-foreground">Shuffle the answer options for each learner.</p></div>
    </div>
    <p role="status" className="text-sm text-muted-foreground">{questions.length} question(s) ·
     {questions.reduce((sum,question)=>sum+question.points,0)} total points · Max 100 questions and 10,000 points.</p>
@@ -251,26 +252,26 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     <div className="grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_7rem]">
      <fieldset className="flex flex-wrap items-center gap-3">
       <legend className="text-xs font-semibold text-muted-foreground">Type</legend>
-      <label className="flex min-h-11 items-center gap-2 text-xs md:min-h-9">
+      <Label variant="choice" className="flex min-h-11 items-center gap-2 md:min-h-9">
        <ChoiceInput type="radio" name={"question-type-"+i} checked={question.type==="SINGLE_CHOICE"}
         disabled={busy} onChange={()=>replaceQuestion(i,{...question,type:"SINGLE_CHOICE",
          options:question.options.map((o,j)=>({...o,correct:j===0}))})}/>Single choice
-      </label>
-      <label className="flex min-h-11 items-center gap-2 text-xs md:min-h-9">
+      </Label>
+      <Label variant="choice" className="flex min-h-11 items-center gap-2 md:min-h-9">
        <ChoiceInput type="radio" name={"question-type-"+i} checked={question.type==="MULTIPLE_CHOICE"}
         disabled={busy} onChange={()=>replaceQuestion(i,{...question,type:"MULTIPLE_CHOICE",
          options:question.options.map((o,j)=>({...o,correct:j===0}))})}/>Multiple choice
-      </label>
+      </Label>
      </fieldset>
      <Input type="number" min={1} max={100} aria-label="Question points" disabled={busy}
       value={question.points} onChange={e=>replaceQuestion(i,{...question,points:Number(e.target.value)})}
       className="min-h-11 w-full sm:w-28 md:min-h-9"/>
     </div>
-    <label className="block text-xs font-semibold">Question
+    <Label className="block">Question
     <Textarea value={question.prompt} maxLength={5000} disabled={busy} placeholder="Question prompt"
      aria-label={"Question "+(i+1)+" prompt"} onChange={e=>replaceQuestion(i,{...question,prompt:e.target.value})}
-     className="min-h-24 w-full"/></label>
-    {question.options.map((option,j)=><label key={j} className="flex min-h-11 min-w-0 flex-wrap items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+     className="min-h-24 w-full"/></Label>
+    {question.options.map((option,j)=><Label key={j} className="flex min-h-11 min-w-0 flex-wrap items-center gap-2">
      <ChoiceInput type={question.type==="SINGLE_CHOICE"?"radio":"checkbox"}
       name={"quiz-correct-"+i} checked={option.correct} disabled={busy}
       aria-label={"Correct answer "+(j+1)} onChange={e=>replaceQuestion(i,{...question,
@@ -282,7 +283,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
      {question.options.length>2?<Button variant="danger" type="button" disabled={busy} onClick={()=>replaceQuestion(i,{
       ...question,options:question.options.filter((_,k)=>k!==j)})}
       className="min-h-11 text-xs font-semibold md:min-h-9">Remove</Button>:null}
-    </label>)}
+    </Label>)}
     <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
      <Button variant="ghost" type="button" disabled={busy||i===0} onClick={()=>moveQuestion(i,-1)}
       className="min-h-11 w-full text-sm font-semibold text-primary-text disabled:opacity-50 sm:w-auto md:min-h-9">Move question up</Button>
@@ -300,10 +301,10 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     onClick={()=>setQuestions(rows=>[...rows,empty()])}
     className="min-h-11 md:min-h-9">
     + Add question</Button>
-   <label className="flex min-h-11 items-center gap-2 text-sm">
+   <Label variant="choice" className="flex min-h-11 items-center gap-2">
     <Checkbox disabled={busy} checked={keepOpen} onChange={event=>setKeepOpen(event.target.checked)}/>
     Create another quiz after saving
-   </label>
+   </Label>
    {error?<Banner tone="error" role="alert">{error}</Banner>:null}
    <div className="sticky bottom-0 z-(--lms-z-raised) flex min-w-0 flex-col gap-2 border-t border-border bg-surface py-3 md:flex-row md:items-center">
     <Button variant="primary" type="button" loading={busy} disabled={busy} onClick={()=>void create()} className="min-h-11 w-full md:min-h-9 md:w-auto"

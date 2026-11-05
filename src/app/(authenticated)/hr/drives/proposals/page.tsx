@@ -14,6 +14,7 @@ import {hrDriveProposalHistoryQuerySchema} from "@/modules/placements/hr-drive-p
 import {listHrDriveProposals} from "@/modules/placements/hr-drive-proposal-history-service";
 import {hrSentProposalHistoryHref,hrSentProposalExportHref} from "@/modules/placements/hr-drive-proposal-history-links";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export default async function RecruiterDriveProposalHistory({
  searchParams,
@@ -44,16 +45,16 @@ export default async function RecruiterDriveProposalHistory({
   </section>:data.status==="NO_ACCESS"?<EmptyState title="No active college access" description="No active recruiter college access."/>:<>
    <form action="/hr/drives/proposals" method="get" role="search" aria-label="Search sent drive proposals" className="flex min-w-0 flex-col gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 md:flex-row md:items-end">
     <Input type="hidden" name="collegeId" value={data.collegeId??""}/>
-    <label className="min-w-0 flex-[1_1_12rem] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search by role title
+    <Label className="min-w-0 flex-[1_1_12rem]">Search by role title
      <Input name="q" type="search" maxLength={100} defaultValue={input.data.q}
        className="w-full mt-[6px] block" placeholder="Role title" />
-    </label>
-    <label className="min-w-0 w-full text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-44">Order
+    </Label>
+    <Label className="min-w-0 w-full md:w-44">Order
       <Select name="sort" defaultValue={input.data.sort} className="mt-[6px] block">
         <option value="LATEST">Most recent</option>
         <option value="OLDEST">Oldest first</option>
       </Select>
-    </label>
+    </Label>
     <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
    </form>
    {data.items.length?<Link

@@ -18,6 +18,7 @@ import {serializeTpoEligibilityPreviewCsv} from "@/modules/placements/tpo-eligib
 import {parseTpoEligibilitySheetCsv} from "@/modules/placements/tpo-eligibility-sheet-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 type ImportRow=ReturnType<typeof parseTpoEligibilitySheetCsv>[number];
 type Preview={rows:ImportRow[];ready:number;skipped:number;preview:{
  index:number;status:"matched"|"unusable";reason:string|null;membershipId:string|null;expectedVersion:string|null;
@@ -116,10 +117,10 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    <p className="text-xs text-muted-foreground leading-[20px]">For Excel files, use Save As → CSV (UTF-8) before import.</p>
    <TextLink download="eligibility-import-template.csv" href="data:text/csv;charset=utf-8,studentCode%2Cdecision%2Creason%0A" className="lms-inline-link inline-flex min-h-11 items-center text-sm md:min-h-9 print:hidden">Download a template</TextLink></details>
   </div>
-  <details className="min-w-0 border-b border-border pb-2"><summary className="min-h-11 cursor-pointer text-sm font-semibold text-link">Paste CSV contents</summary><label className="block text-[13px] print:hidden">CSV contents
+  <details className="min-w-0 border-b border-border pb-2"><summary className="min-h-11 cursor-pointer text-sm font-semibold text-link">Paste CSV contents</summary><Label className="block print:hidden">CSV contents
    <Textarea className="mt-1 min-h-32 w-full min-w-0 font-mono text-xs"
     value={csv} onChange={e=>{setCsv(e.target.value);setPreview(null);setNotice("");setAcknowledged(false);setSkippedByUser([]);setChosenName("");}} disabled={busy} maxLength={1500000}/>
-  </label></details>
+  </Label></details>
   {preview?<div className="space-y-2">
    <p role="status" className="text-sm font-semibold leading-[22px]">{preview.ready} matched; {preview.skipped} cannot use.</p>
    {unresolved>0?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-warning-text leading-[22px]">{unresolved} row(s) need attention before you can confirm. Pick a suggestion or skip the row.</p>:null}
@@ -146,10 +147,10 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
       <Button variant="secondary" size="sm" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy||skippedByUser.includes(i)}
        onClick={()=>setSkippedByUser(current=>current.includes(i)?current:[...current,i])}>
        {skippedByUser.includes(i)?"Row skipped":"Skip row"}</Button>:
-      <label className="inline-flex min-h-11 items-center gap-2 text-sm">
+      <Label variant="choice" className="inline-flex min-h-11 items-center gap-2">
        <Checkbox checked={!skippedByUser.includes(i)} disabled={busy}
         onChange={event=>setSkippedByUser(current=>event.target.checked?current.filter(x=>x!==i):[...current,i])}/>Include
-      </label>},
+      </Label>},
     ]}/>
    {previewPages>1?<nav aria-label="Import preview pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-xs print:hidden">
     <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={busy||previewPage===1} onClick={()=>setPreviewPage(p=>Math.max(1,p-1))} >Previous</Button>
@@ -161,13 +162,13 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
     <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={busy} onClick={()=>setDiscardPending(true)} >Discard review</Button>
    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy} onClick={()=>void copyPreview()} >Copy preview outcomes CSV</Button>
    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy} onClick={()=>void previewChanges()} >Preview import</Button></div></details>
-   <label className="flex min-h-11 items-start gap-2 text-sm text-body print:hidden">
+   <Label variant="choice" className="flex min-h-11 items-start gap-2 print:hidden">
      <Checkbox className="mt-1"
        checked={acknowledged} disabled={busy}
        onChange={event=>setAcknowledged(event.target.checked)}/>
      I reviewed the matched learners and understand that applying these decisions will be audited.
      Unusable rows must be explicitly skipped before the matched decisions can be saved.
-   </label>
+   </Label>
 
   </div>:null}
   {error?<InlineNotice tone="error" message={error}/>:null}

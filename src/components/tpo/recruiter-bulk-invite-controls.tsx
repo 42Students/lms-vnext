@@ -3,6 +3,7 @@ import {useState} from "react";
 import {bulkInviteDisposition,type TpoBulkInviteCandidate} from "@/modules/placements/tpo-bulk-invite-preview-model";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 type Entry={id:string;name:string;email:string;url:string|null;reason:string|null;emailed:boolean};
 export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
  collegeId:string;rows:readonly TpoBulkInviteCandidate[];onUpdated:()=>void;
@@ -81,10 +82,10 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
    {eligible.length>100?<p role="alert" className="text-sm">Select at most 100 eligible recruiters.</p>:null}
    {results.length>0?<div aria-live="polite" className="space-y-2">
     <p className="text-sm">{results.filter(item=>item.url).length} links · No invitation emails sent · {failed.length} failed</p>
-    {linkLines?<><label className="block text-[13px]">Fresh links
+    {linkLines?<><Label className="block">Fresh links
       <Textarea readOnly value={linkLines} rows={5} className="mt-1 min-h-11 w-full"
        onFocus={event=>event.currentTarget.select()}/>
-     </label><Button variant="secondary" type="button" className="min-h-11 md:min-h-9" 
+     </Label><Button variant="secondary" type="button" className="min-h-11 md:min-h-9" 
       onClick={()=>void copy(linkLines)}>Copy invite links</Button></>:null}
     {failed.length?<><ul>{failed.map(item=><li key={item.id} className="text-sm">{item.name}: {item.reason}</li>)}</ul>
      {retryableFailed.length?<Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={busy} 

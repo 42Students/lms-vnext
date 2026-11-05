@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { recruiterInvitePreviewDisposition,RECRUITER_INVITE_LOAD_ERROR_HEADING } from "@/modules/placements/recruiter-invite-preview-disposition-model";
+import { Label } from "@/components/ui/label";
 
 type Invite = {
   collegeName: string;
@@ -336,7 +337,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       </div>
 
       <div className="mt-5 space-y-3">
-        <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        <Label className="block">
           Work email
           <Input id="invite-email" type="email" readOnly={Boolean(invite.contactEmail) || codeSent}
             value={invite.contactEmail??requestedEmail} autoComplete="email" required
@@ -349,33 +350,33 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
              "Enter your company work email. We will check it against the linked employer and send a verification code."}
           </span>
           {errorFor("email")?<span id="invite-email-error" role="alert" className="mt-1 block text-xs font-normal text-[var(--lms-error)]">{errorFor("email")}</span>:null}
-        </label>
-        <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Your name
+        </Label>
+        <Label className="block">Your name
          <Input id="invite-name" required maxLength={100} autoComplete="name" value={name}
            aria-invalid={Boolean(errorFor("name"))} aria-describedby={errorFor("name")?"invite-name-error":undefined}
            onChange={event=>{setName(event.target.value);clearField("name");}}
            className="mt-1 min-h-11 w-full md:min-h-9"/>
          {errorFor("name")?<span id="invite-name-error" role="alert" className="mt-1 block text-xs font-normal text-[var(--lms-error)]">{errorFor("name")}</span>:null}
-        </label>
-        <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Designation (optional)
+        </Label>
+        <Label className="block">Designation (optional)
          <Input maxLength={100} value={designation} onChange={event=>setDesignation(event.target.value)}
            className="mt-1 min-h-11 w-full md:min-h-9"/>
-        </label>
-        <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Mobile (optional)
+        </Label>
+        <Label className="block">Mobile (optional)
          <Input id="invite-mobile" type="tel" autoComplete="tel" maxLength={14} value={mobile}
            aria-invalid={Boolean(errorFor("mobile"))} aria-describedby={errorFor("mobile")?"invite-mobile-error":undefined}
            onChange={event=>{setMobile(event.target.value);clearField("mobile");}}
            className="mt-1 min-h-11 w-full md:min-h-9"/>
          <span className="mt-1 block text-xs font-normal text-muted-foreground">Only for the placement cell to call you. You never sign in with it.</span>
          {errorFor("mobile")?<span id="invite-mobile-error" role="alert" className="mt-1 block text-xs font-normal text-[var(--lms-error)]">{errorFor("mobile")}</span>:null}
-        </label>
+        </Label>
         {!codeSent?(
           <Button type="button" className="min-h-11 w-full md:min-h-9" loading={busy} onClick={()=>void sendCode()}>
             {busy?"Sending…":"Send me a code"}
           </Button>
         ):(
           <>
-            <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+            <Label className="block">
               Code sent to {codeSentTo || invite.contactEmail}
               <Input id="invite-code" type="text" inputMode="numeric" autoComplete="one-time-code"
                 pattern="[0-9]{6}" maxLength={6} value={code}
@@ -383,7 +384,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
                 onChange={event=>{setCode(event.target.value);clearField("code");}}
                 className="mt-2 min-h-11 w-full md:min-h-9"/>
               {errorFor("code")?<span id="invite-code-error" role="alert" className="mt-1 block text-xs font-normal text-[var(--lms-error)]">{errorFor("code")}</span>:null}
-            </label>
+            </Label>
             <Button className="min-h-11 w-full md:min-h-9" type="button" loading={busy}
               onClick={()=>void acceptCode()}>{busy?"Joining…":"Join "+invite.collegeName+" placements"}</Button>
             <Button className="min-h-11 w-full justify-start text-link underline md:min-h-9" variant="link" type="button" disabled={busy} onClick={()=>void sendCode()}>Send a new code</Button>
@@ -404,10 +405,10 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         </Button>:<div className="space-y-3 rounded-lg border border-border p-3">
           <p className="text-sm font-semibold text-foreground">Not hiring this season</p>
           <p className="text-xs text-body">The placement cell may contact you next season. You can leave a brief note.</p>
-          <label className="grid gap-1 text-xs font-medium text-muted-foreground">Note (optional)
+          <Label stack>Note (optional)
             <Textarea rows={2} maxLength={200} value={notHiringNote}
              onChange={event=>setNotHiringNote(event.target.value)} />
-          </label>
+          </Label>
           <div className="flex flex-wrap gap-2">
             <Button type="button" disabled={busy} onClick={()=>void answer("not-hiring")}>
               {busy?"Saving…":"Confirm not hiring"}

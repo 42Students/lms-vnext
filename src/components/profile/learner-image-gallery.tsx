@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {learnerGalleryConfirmationError} from "@/modules/profile-verification/learner-image-gallery-parity-model";
 import { Img } from "@/components/ui/img";
+import { Label } from "@/components/ui/label";
 
 type Image = { id: string; imageId: string | number; displayOrder: number; isActive: boolean };
 export function LearnerImageGallery({ membershipId }: { membershipId?: string }) {
@@ -142,9 +143,9 @@ export function LearnerImageGallery({ membershipId }: { membershipId?: string })
         </li>)}
       </ul>}
     {canUpload ? <div className="max-w-lg space-y-2 rounded-xl border border-border bg-surface p-3">
-      <label htmlFor="gallery-upload" className="block text-sm font-medium">
+      <Label htmlFor="gallery-upload" className="block">
         Add a profile photo
-      </label>
+      </Label>
       <Input id="gallery-upload" type="file" accept="image/jpeg,image/png"
         disabled={busy} onChange={event => {
           setSelectedFile(event.currentTarget.files?.[0] ?? null);

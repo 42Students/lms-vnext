@@ -9,6 +9,7 @@ import { learnerBoardEmptyState, learnerBoardActiveFilterCount } from "@/modules
 import { LEARNER_BOARD_STATUS_LABELS, learnerBoardStatusFilterHref, type LearnerBoardStatusCounts } from "@/modules/projects/learner-board-summary-model";
 import { LEARNER_BOARD_PRIORITY_LABELS, learnerBoardPriorityFilterHref, type LearnerBoardPriorityCounts } from "@/modules/projects/learner-board-priority-model";
 import type { LearnerBoardSort } from "@/modules/projects/learner-board-sort-model";
+import { Label } from "@/components/ui/label";
 export function LearnerProjectBoardSearch({
   projectId, search, priority, status, taskSort, mine, sprintId, sprints, releaseId, releases, shown, total, statusCounts, priorityCounts,
 }: {projectId:string;search:string;priority:string;status:string;taskSort:LearnerBoardSort;mine:boolean;sprintId:string;sprints:readonly {id:string;title:string}[];releaseId:string;releases:readonly {id:string;title:string}[];shown:number;total:number;statusCounts:LearnerBoardStatusCounts;priorityCounts:LearnerBoardPriorityCounts}) {
@@ -19,12 +20,12 @@ export function LearnerProjectBoardSearch({
       <form action={"/learn/projects/"+encodeURIComponent(projectId)}
         method="get" className="grid gap-3 py-3 md:grid-cols-2 xl:grid-cols-3">
         <input type="hidden" name="tab" value="board" />
-        <label className="flex-1 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        <Label className="flex-1">
           Search tasks
           <Input name="taskSearch" type="search" maxLength={100} defaultValue={search}
             placeholder="Task title or details" className="mt-[6px] min-h-11 md:min-h-9" />
-        </label>
-        <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label>
           Priority
           <Select name="priority" defaultValue={priority}
             className="mt-[6px] min-h-11 md:min-h-9">
@@ -34,8 +35,8 @@ export function LearnerProjectBoardSearch({
             <option value="HIGH">High</option>
             <option value="CRITICAL">Critical</option>
           </Select>
-        </label>
-        <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label>
           Status
           <Select name="taskStatus" defaultValue={status}
             className="mt-[6px] min-h-11 md:min-h-9">
@@ -46,22 +47,22 @@ export function LearnerProjectBoardSearch({
             <option value="IN_REVIEW">In review</option>
             <option value="DONE">Done</option>
           </Select>
-        </label>
-        <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Task order
+        </Label>
+        <Label>Task order
           <Select name="taskSort" defaultValue={taskSort} className="mt-[6px] min-h-11 md:min-h-9">
             <option value="DEFAULT">Project order</option><option value="PRIORITY">Highest priority first</option>
             <option value="RECENT">Recently updated</option><option value="TITLE">Title A–Z</option>
           </Select>
-        </label>
-        <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label>
           Sprint
           <Select name="sprintId" defaultValue={sprintId}
             className="mt-[6px] min-h-11 md:min-h-9">
             <option value="">All sprints</option>
             {sprints.map(sprint => <option key={sprint.id} value={sprint.id}>{sprint.title}</option>)}
           </Select>
-        </label>
-        <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label>
           Release
           <Select name="releaseId" defaultValue={releaseId}
             className="mt-[6px] min-h-11 md:min-h-9">
@@ -70,12 +71,12 @@ export function LearnerProjectBoardSearch({
               <option key={release.id} value={release.id}>{release.title}</option>
             ))}
           </Select>
-        </label>
-        <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Assignee
+        </Label>
+        <Label>Assignee
           <Select name="assignee" defaultValue={mine ? "mine" : ""} className="mt-[6px] min-h-11 md:min-h-9">
             <option value="">Everyone</option><option value="mine">Mine</option>
           </Select>
-        </label>
+        </Label>
         <Button type="submit" className="min-h-11 md:min-h-9">Apply</Button>
         <Link href={base} className="inline-flex min-h-9 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body max-md:min-h-11">Clear all</Link>
       </form>

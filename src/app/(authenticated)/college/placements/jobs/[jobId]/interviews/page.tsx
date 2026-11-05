@@ -18,6 +18,7 @@ import {CollegeDriveScheduleRefresh} from "@/components/placements/college-drive
 import {collegeInterviewConflictIds} from "@/modules/placements/college-interview-conflicts-model";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {CollegeInterviewsCapture,CollegeInterviewsStaleFallback} from "@/components/placements/college-interviews-last-good";
+import { Label } from "@/components/ui/label";
 
 export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   params:Promise<{jobId:string}>;
@@ -147,17 +148,17 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       {query.appointmentSearch?<input type="hidden" name="appointmentSearch" value={query.appointmentSearch}/>:null}
       {query.appointmentSort!=="DATE_ASC"?<input type="hidden" name="appointmentSort" value={query.appointmentSort}/>:null}
       {query.appointmentPageSize!==20?<input type="hidden" name="appointmentPageSize" value={query.appointmentPageSize}/>:null}
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round kind
+      <Label stack className="min-w-0">Round kind
         <Select name="kind" defaultValue={query.kind} >
           <option value="ALL">Interview and GD</option><option value="INTERVIEW">Interview</option><option value="GD">GD</option>
         </Select>
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+      </Label>
+      <Label stack className="min-w-0">Status
         <Select name="status" defaultValue={query.status} >
           {["ALL","PENDING","SCHEDULED","COMPLETED","CANCELLED"].map(status=>
             <option key={status} value={status}>{status}</option>)}
         </Select>
-      </label>
+      </Label>
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center"><Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Filter</Button>
       {(query.kind!=="ALL" || query.status!=="ALL") ? <Link href={driveInterviewsHref(jobId,{...query,kind:"ALL",status:"ALL",page:1})} className="inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link> : null}</div>
     </form>
@@ -167,7 +168,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       {query.kind!=="ALL"?<input type="hidden" name="kind" value={query.kind}/>:null}
       {query.status!=="ALL"?<input type="hidden" name="status" value={query.status}/>:null}
       {query.applicationId?<input type="hidden" name="applicationId" value={query.applicationId}/>:null}
-      <label className="grid min-w-0 gap-2 text-[13px] font-semibold">Appointment status
+      <Label stack className="min-w-0">Appointment status
         <Select name="appointmentStatus" defaultValue={query.appointmentStatus??"ALL"}>
           <option value="ALL">All statuses</option>
           <option value="ACTIVE">Active</option>
@@ -175,28 +176,28 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
           <option value="COMPLETED">Completed</option>
           <option value="CANCELLED">Cancelled</option>
         </Select>
-      </label>
-      <label className="grid min-w-0 gap-2 text-[13px] font-semibold">Interview mode
+      </Label>
+      <Label stack className="min-w-0">Interview mode
         <Select name="appointmentMode" defaultValue={query.appointmentMode??"ALL"}>
           <option value="ALL">All modes</option><option value="ON_CAMPUS">In-person</option>
           <option value="VIRTUAL">Online</option>
         </Select>
-      </label>
-      <label className="grid min-w-0 gap-2 text-[13px] font-semibold">Application
+      </Label>
+      <Label stack className="min-w-0">Application
         <Input name="appointmentSearch" maxLength={120} defaultValue={query.appointmentSearch??""}
           placeholder="Search..."/>
-      </label>
-      <label className="grid min-w-0 gap-2 text-[13px] font-semibold">Sort interviews
+      </Label>
+      <Label stack className="min-w-0">Sort interviews
         <Select name="appointmentSort" aria-label="Sort interviews" defaultValue={query.appointmentSort}>
           <option value="DATE_ASC">Date earliest</option><option value="DATE_DESC">Date latest</option>
           <option value="JOB">Job title</option><option value="STATUS">Status</option>
         </Select>
-      </label>
-      <label className="grid min-w-0 gap-2 text-[13px] font-semibold">Per page
+      </Label>
+      <Label stack className="min-w-0">Per page
         <Select name="appointmentPageSize" defaultValue={String(query.appointmentPageSize)}>
           {[10,20,50,100].map(size=><option key={size} value={size}>{size}</option>)}
         </Select>
-      </label>
+      </Label>
       <div className="flex flex-wrap items-end gap-3">
         <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Filter interviews</Button>
         <Link href={driveInterviewsHref(jobId,{...query,appointmentStatus:"ALL",

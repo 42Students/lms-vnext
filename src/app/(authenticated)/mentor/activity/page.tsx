@@ -14,6 +14,7 @@ import { getMentorPortfolioActivity } from "@/modules/projects/mentor-portfolio-
 import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import {mentorPortfolioActivityExportHref} from "@/modules/projects/mentor-portfolio-activity-export-model";
 import { mentorActivityQuerySchema, mentorPortfolioHref, mentorActivityImportanceLabel } from "@/modules/projects/mentor-portfolio-model";
+import { Label } from "@/components/ui/label";
 
 type Params = { search?:string|string[];assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; order?: string | string[]; window?: string | string[]; importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 
@@ -52,60 +53,60 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
       <form action="/mentor/activity" method="get" role="search" aria-label="Mentor project activity filters"
         className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
         <div className="grid min-w-0 items-end gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project title
+          <Label stack>Assigned project title
             <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
               placeholder="Search your project names" className="min-h-11 md:min-h-9 w-full min-w-0" />
-          </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded event group
+          </Label>
+          <Label stack>Recorded event group
             <Select name="view" defaultValue={data.query.view}
               className="min-h-11 md:min-h-9 max-w-full">
               <option value="ALL">All event groups</option>
               <option value="PROJECT">Project lifecycle</option><option value="REVIEWS">Review decisions</option><option value="DELIVERIES">Final delivery history</option>
               <option value="MEETINGS">Meeting decisions</option><option value="TASKS">Task events</option><option value="EVALUATIONS">Recorded evaluations</option><option value="SPRINTS">Sprint changes</option><option value="ASSIGNMENTS">Mentor assignments</option><option value="RESOURCES">Resources</option><option value="TEAM">Team membership</option>
             </Select>
-          </label>
+          </Label>
           <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply</Button>
         </div>
         <Disclosure title="More filters" defaultOpen={hasAdvancedFilters}
           className="min-w-0" contentClassName="min-w-0 pt-3 pb-2">
           <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3">
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded importance
+          <Label stack>Recorded importance
             <Select name="importance" defaultValue={data.query.importance}
               className="min-h-11 md:min-h-9 max-w-full">
               <option value="ALL">All importance</option><option value="LOW">Low</option>
               <option value="NORMAL">Normal</option><option value="HIGH">High</option>
               <option value="CRITICAL">Critical</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project
+          </Label>
+          <Label stack>Assigned project
             <Select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 md:min-h-9 max-w-full">
               <option value="">All assigned projects</option>
               {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">My assignment
+          </Label>
+          <Label stack>My assignment
             <Select name="assignment" defaultValue={data.query.assignment} className="min-h-11 md:min-h-9 max-w-full">
               <option value="ALL">All assigned projects</option><option value="PRIMARY">Primary Mentor</option>
               <option value="SUPPORTING">Supporting Mentor</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded within
+          </Label>
+          <Label stack>Recorded within
             <Select name="window" defaultValue={data.query.window} className="min-h-11 md:min-h-9 max-w-full">
               <option value="ALL">All recorded dates</option><option value="PAST_7_DAYS">Past 7 days</option><option value="PAST_30_DAYS">Past 30 days</option><option value="PAST_90_DAYS">Past 90 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Chronology
+          </Label>
+          <Label stack>Chronology
             <Select name="order" defaultValue={data.query.order} className="min-h-11 md:min-h-9 max-w-full">
               <option value="NEWEST">Newest recorded first</option><option value="OLDEST">Oldest recorded first</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project lifecycle
+          </Label>
+          <Label stack>Project lifecycle
             <Select name="projectStatus" defaultValue={data.query.projectStatus} className="min-h-11 md:min-h-9 max-w-full">
               <option value="ALL">All assigned projects</option><option value="PLANNED">Planned</option>
               <option value="ACTIVE">Active</option><option value="COMPLETED">Completed</option>
               <option value="ARCHIVED">Archived</option>
             </Select>
-          </label>
+          </Label>
             <PageSizeSelect label="Page size" name="pageSize" defaultValue={String(data.pageSize)} options={[20,50]} />
           </div>
         </Disclosure>

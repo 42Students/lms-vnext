@@ -22,6 +22,7 @@ import {
 import { trackerReportSchema } from "@/modules/bug-tracker/report-input-model";
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
+import { Label } from "@/components/ui/label";
 
 const field = "mt-1 w-full";
 const label = "block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]";
@@ -308,33 +309,33 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       {dirty?<p className="text-xs text-muted-foreground leading-[20px]">Unsaved changes are kept on this device until your report is submitted.</p>:null}
       {error ? <InlineNotice tone="error" message={error}/> : null}
       <div className="grid gap-4 md:grid-cols-3">
-        <label className={label}>Reporter
+        <Label className={label}>Reporter
           <Input className={field} name="reporterName" required maxLength={120}
             placeholder="Your signed-in account display name"
             autoComplete="name" value={draft.reporterName}
             onChange={event=>patch("reporterName",event.target.value)}/>
           <span className="mt-1 block text-xs font-normal text-muted-foreground">Must match your signed-in account. Other names cannot submit on your behalf.</span>
         {fieldErrors["reporterName"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["reporterName"]}</span>:null}
-        </label>
-        <label className={label}>Account used
+        </Label>
+        <Label className={label}>Account used
           <Select className={field} name="accountRole" required value={draft.accountRole} onChange={event=>patch("accountRole",event.target.value)}>
             <option value="" disabled>Select account</option>
             {ACCOUNT_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </Select>
         {fieldErrors["accountRole"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["accountRole"]}</span>:null}
-        </label>
-        <label className={label}>Environment
+        </Label>
+        <Label className={label}>Environment
           <Select className={field} name="environment" required value={draft.environment} onChange={event=>patch("environment",event.target.value)}>
             <option value="" disabled>Select environment</option>
             {ENVIRONMENT_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </Select>
         {fieldErrors["environment"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["environment"]}</span>:null}
-        </label>
+        </Label>
       </div>
       <fieldset className="grid min-w-0 gap-3 border-y border-border py-4">
         <legend className="px-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Where did this happen?</legend>
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          <label className={label}>Page
+          <Label className={label}>Page
             <Select className={field} required value={page} onChange={event => {
               setDraft(current=>({...current,page:event.target.value,screen:"",section:""}));
             }}>
@@ -342,8 +343,8 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
               {LOCATION_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
             </Select>
             {fieldErrors["page"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["page"]}</span>:null}
-          </label>
-          <label className={label}>Screen
+          </Label>
+          <Label className={label}>Screen
             <Select className={field} required={Boolean(selectedPage?.children?.length)}
               disabled={!selectedPage?.children?.length}
               value={screen} onChange={event => setDraft(current=>({...current,screen:event.target.value,section:""}))}>
@@ -351,8 +352,8 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
               {selectedPage?.children?.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
             </Select>
             {fieldErrors["screen"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["screen"]}</span>:null}
-          </label>
-          <label className={label}>Section
+          </Label>
+          <Label className={label}>Section
             <Select className={field} name="section" key={page + ":" + screen}
               required={Boolean(selectedScreen?.children?.length)} disabled={!selectedScreen?.children?.length} value={draft.section}
               onChange={event=>patch("section",event.target.value)}>
@@ -360,24 +361,24 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
               {selectedScreen?.children?.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
             </Select>
             {fieldErrors["section"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["section"]}</span>:null}
-          </label>
+          </Label>
         </div>
       </fieldset>
       <div className="grid gap-4 md:grid-cols-3">
-        <label className={label + " md:col-span-2"}>What kind of issue?
+        <Label className={label + " md:col-span-2"}>What kind of issue?
           <Select className={field} name="issueType" required value={draft.issueType} onChange={event=>patch("issueType",event.target.value)}>
             <option value="" disabled>Search issue type</option>
             {ISSUE_TYPE_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </Select>
-        </label>
-        <label className={label}>Severity
+        </Label>
+        <Label className={label}>Severity
           <Select className={field} name="severity" value={draft.severity} onChange={event=>patch("severity",event.target.value)} required>
             {SEVERITY_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </Select>
         {fieldErrors["severity"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["severity"]}</span>:null}
-        </label>
+        </Label>
       </div>
-      <label className={label}>What went wrong?
+      <Label className={label}>What went wrong?
         <Textarea className={field + " max-h-80 resize-y overflow-y-auto"} style={{minHeight:144}} name="description" required maxLength={4000} rows={5}
           value={draft.description} onChange={event=>{
             patch("description",event.target.value);
@@ -388,7 +389,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           placeholder="Example: I opened Lesson 3 and the lesson content kept loading without showing anything." />
         <span className="mt-1 block text-xs font-normal text-muted-foreground" aria-live="polite">{draft.description.length}/4000 characters</span>
         {fieldErrors["description"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["description"]}</span>:null}
-      </label>
+      </Label>
       <section className="min-w-0 space-y-2 border-b border-border pb-4" aria-label="Screenshots and optional evidence">
         <Heading level={2} size="sm" className="text-[var(--lms-heading)]">Screenshots</Heading>
         <div className="rounded-[var(--lms-control-radius)] border border-dashed border-border bg-[var(--lms-neutral-50)] p-4 text-sm text-muted-foreground"
@@ -415,12 +416,12 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           </ul>:null}
           <p role="status" className="mt-2">{screenshotStatus}</p>
         </div>
-        <label className={label + " mt-2"}>Evidence link
+        <Label className={label + " mt-2"}>Evidence link
           <Input className={field} name="evidenceLink" type="url" maxLength={1000} placeholder="https://…" value={draft.evidenceLink} onChange={event=>patch("evidenceLink",event.target.value)}/>
           <span className="mt-1 block text-xs font-normal text-muted-foreground">
             Optional — use this for a screen recording, Drive file, or other useful http/https link.
           </span>
-        </label>
+        </Label>
         <p className="text-xs text-muted-foreground">For privacy, never publish private screenshots via an unrestricted URL.</p>
       </section>
       {canSearchSimilar ? <>

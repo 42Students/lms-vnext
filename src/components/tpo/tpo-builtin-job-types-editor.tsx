@@ -8,6 +8,7 @@ import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {TPO_BUILTIN_JOB_TYPES} from "@/modules/placements/tpo-builtin-job-types";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Stored={label:string;active:boolean;countsAsPlaced:boolean|null;isBuiltin:boolean;updatedAt:string};
 export function TpoBuiltinJobTypesEditor({stored,customActive}:{stored:readonly Stored[];customActive:number}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
@@ -41,11 +42,11 @@ export function TpoBuiltinJobTypesEditor({stored,customActive}:{stored:readonly 
    columns={[
     {key:"jobType",header:"Job type",mobilePriority:"primary",cell:row=><span className="font-medium">{row.label} <span className="text-xs text-muted-foreground">Built-in</span></span>},
     {key:"placed",header:"Counts as placed",mobilePriority:"secondary",cell:row=>row.countsAsPlaced?"Yes":"No"},
-    {key:"enabled",header:"In the drive form",mobilePriority:"action",cell:row=><label className="inline-flex min-h-11 md:min-h-9 items-center gap-2 py-1">
+    {key:"enabled",header:"In the drive form",mobilePriority:"action",cell:row=><Label variant="choice" className="inline-flex min-h-11 md:min-h-9 items-center gap-2 py-1">
      <Checkbox checked={row.override?.active??true} disabled={busy||((row.override?.active??true)&&activeCount<=1)}
       aria-label={row.label+" in the drive form"} onChange={event=>void change(row.label,event.target.checked,row.override?.updatedAt??"none")}/>
      {(row.override?.active??true)?"On":"Off"}
-    </label>},
+    </Label>},
    ]}/>
   <p className="text-xs text-muted-foreground">Internship never counts as placed; Internship + full-time counts once the full-time offer is made. Drive consumers must load the authoritative college choice list.</p>
   {error?<div role="alert" className="space-y-2 border border-border p-3 text-sm text-error">

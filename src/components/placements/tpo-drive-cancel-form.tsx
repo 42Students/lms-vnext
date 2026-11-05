@@ -11,6 +11,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 const CANCEL_REASONS = [
   "Company withdrew",
@@ -102,7 +103,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
                 </FilterChip>
               ))}
             </div>
-            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+            <Label stack className="min-w-0">
               Reason shown to students
               <Textarea
                 required
@@ -115,17 +116,17 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
                 disabled={pending}
                 className="min-h-11 w-full md:min-h-9"
               />
-            </label>
+            </Label>
             <p className="text-xs text-body leading-[20px]">Students see the reason. You can choose a reason above or write your own.</p>
           </div>
           <p className="text-xs text-body leading-[20px]">If the drive or counts change after this preview, the cancellation is rejected.</p>
           {error ? <InlineNotice tone="error" role="alert" message={error}/> : null}
-          <label className="flex items-start gap-[6px] text-[13px] text-[var(--lms-neutral-400)]">
+          <Label className="flex items-start gap-[6px]">
             <Checkbox checked={reviewed} onChange={event=>setReviewed(event.target.checked)}
               disabled={pending} className="mt-1 h-4 w-4 accent-primary"/>
             I reviewed the affected applications, rounds and offers. I understand cancellation
             will notify affected learners and cannot be silently undone.
-          </label>
+          </Label>
           <Button variant="primary" type="submit" disabled={pending || !reviewed} className="min-h-11 w-full px-5 md:min-h-9 md:w-auto">
             {pending ? "Cancelling…" : "Review and cancel drive"}
           </Button>

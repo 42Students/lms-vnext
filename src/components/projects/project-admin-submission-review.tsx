@@ -10,6 +10,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {adminDeliveryToast,canAdminSettleDelivery,type AdminDeliveryAction} from "@/modules/projects/admin-submission-review-model";
+import { Label } from "@/components/ui/label";
 
 export function ProjectAdminSubmissionReview({projectId,submissionId,status,locked,projectStatus,workspaceTitle,allowLock,historical=false}:{
  projectId:string;submissionId:string;status:string;locked:boolean;projectStatus:string;workspaceTitle?:string;allowLock:boolean;historical?:boolean;
@@ -135,7 +136,7 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
         !canAdminSettleDelivery(currentStatus,currentLocked,projectStatus,"LOCK")}
       onClick={()=>setConfirmLock(true)}>Lock submission</Button>:null}
    </div>}>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Feedback for the learner
+   <Label stack className="min-w-0">Feedback for the learner
     <Textarea maxLength={6000} value={feedback} disabled={pending}
       onChange={event=>setFeedback(event.target.value)} rows={4}
       className="w-full"
@@ -143,7 +144,7 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
     <span className="text-xs font-normal leading-5 text-body">
       Feedback is optional when accepting or locking; requesting changes requires an explanation.
     </span>
-   </label>
+   </Label>
    <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-body">
      <span>Review status:</span>
      <StatusBadge tone={currentLocked?"neutral":

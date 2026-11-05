@@ -15,6 +15,7 @@ import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type VersionedCollegeProfile=CollegeOwnProfileInput&{profileDocumentVersion:number};
 const fieldStyle = "min-h-11 w-full md:min-h-9";
@@ -23,13 +24,13 @@ function Field({ label, value, onChange, type = "text", hint, disabled=false, ma
   label: string; value: string; onChange: (value: string) => void;
   type?: string; hint?: string; disabled?:boolean; maxLength?:number; placeholder?:string;
 }) {
-  return <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+  return <Label stack className="min-w-0">
     {label}
     <Input className={fieldStyle} type={type} value={value} maxLength={maxLength}
       disabled={disabled} placeholder={placeholder}
       onChange={event => onChange(event.target.value)} />
     {hint && <span className="text-xs font-normal text-muted-foreground">{hint}</span>}
-  </label>;
+  </Label>;
 }
 
 export function CollegeAdminProfileEditor({ initial, email, phone, college, readOnly = false }: {
@@ -312,7 +313,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
             <Field label="Name" value={profile.displayName} onChange={v => top("displayName", v)} disabled={editableSection!=="personal"} />
             <Field label="Role / Title" value={profile.roleTitle} onChange={v => top("roleTitle", v)} disabled={editableSection!=="personal"} />
-            <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Gender
+            <Label stack className="min-w-0">Gender
               <Select aria-label="Gender" className={fieldStyle} value={profile.personalDetails?.gender??""}
                 disabled={editableSection!=="personal"} onChange={e=>personal("gender",e.target.value)}>
                 <option value="">Select Gender</option>
@@ -321,16 +322,16 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
                 {profile.personalDetails?.gender&&!["Male","Female","Other","Prefer not to say"].includes(profile.personalDetails.gender)?
                   <option value={profile.personalDetails.gender}>{profile.personalDetails.gender}</option>:null}
               </Select>
-            </label>
-            <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date of Birth
+            </Label>
+            <Label stack className="min-w-0">Date of Birth
               <Input type="date" aria-label="Date of Birth" className={fieldStyle}
                 value={profile.personalDetails?.dateOfBirth??""}
                 disabled={editableSection!=="personal"}
                 onChange={e=>personal("dateOfBirth",e.target.value)} />
               <span className="text-xs font-normal text-muted-foreground">DD-MM-YYYY: {profile.personalDetails?.dateOfBirth?
                 profile.personalDetails.dateOfBirth.split("-").reverse().join("-"):"Not specified"}</span>
-            </label>
-            <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Blood Group
+            </Label>
+            <Label stack className="min-w-0">Blood Group
               <Select aria-label="Blood Group" className={fieldStyle} value={profile.personalDetails?.bloodGroup??""}
                 disabled={editableSection!=="personal"} onChange={e=>personal("bloodGroup",e.target.value)}>
                 <option value="">Select Blood Group</option>
@@ -339,11 +340,11 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
                 {profile.personalDetails?.bloodGroup&&!["A+","A-","B+","B-","AB+","AB-","O+","O-"].includes(profile.personalDetails.bloodGroup)?
                   <option value={profile.personalDetails.bloodGroup}>{profile.personalDetails.bloodGroup}</option>:null}
               </Select>
-            </label>
-            <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">About
+            </Label>
+            <Label stack className="min-w-0 md:col-span-2">About
               <Textarea rows={3} maxLength={1000} className={fieldStyle}
                 value={profile.about} disabled={readOnly||editableSection!=="personal"} onChange={e => top("about", e.target.value)} />
-            </label>
+            </Label>
             <div className="min-w-0 md:col-span-2">
               <Field label="Profile photo (HTTPS link)" value={profile.photoUrl}
                 onChange={v => top("photoUrl", v)} disabled={readOnly||editableSection!=="personal"} maxLength={500} hint="Paste a secure image link. Direct photo upload requires the storage service." />
@@ -373,16 +374,16 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
           {cardHeader("address","Address")}
           <p className="text-xs text-muted-foreground">Current and Permanent addresses are saved independently. City, State and Pincode below are shared profile defaults.</p>
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
-            <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Current Address
+            <Label stack className="min-w-0">Current Address
               <Textarea rows={2} maxLength={2000} className={fieldStyle}
                 disabled={editableSection!=="address"} value={profile.address.currentAddress??profile.address.line1}
                 onChange={e=>detail("address","currentAddress",e.target.value)}/>
-            </label>
-            <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Permanent Address
+            </Label>
+            <Label stack className="min-w-0">Permanent Address
               <Textarea rows={2} maxLength={2000} className={fieldStyle}
                 disabled={editableSection!=="address"} value={profile.address.permanentAddress??profile.address.line2}
                 onChange={e=>detail("address","permanentAddress",e.target.value)}/>
-            </label>
+            </Label>
           </div>
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
             {([

@@ -11,6 +11,7 @@ import { useToast } from "@/components/ui/toast";
 import { safeTpoBrandLogoUrl } from "@/modules/placements/tpo-branding-model";
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
+import { Label } from "@/components/ui/label";
 
 export type BrandingFormValues = {
   logoUrl: string | null;
@@ -305,12 +306,12 @@ export function CollegeBrandingForm({
             Shown at the top of the sign-in card, next to the college name. Without a logo, the college’s initials are shown in the brand colour. Square image works best.
             Choose a square image at least 200 × 200 pixels in the college logo cropper above; the cropped upload is staged until Save succeeds.
           </p>
-          <label className="grid max-w-[620px] gap-1 text-xs font-semibold text-body">
+          <Label stack className="max-w-[620px]">
             Public logo URL (optional fallback)
             <Input type="url" value={values.logoUrl??""} onChange={event=>set("logoUrl",event.target.value)}
               placeholder="https://cdn.example.edu/logo.png" disabled={!canEdit||fetching||Boolean(loadError)}
               aria-invalid={Boolean(errors["logoUrl"])} />
-          </label>
+          </Label>
           {errors["logoUrl"]?<Alert tone="error">{errors["logoUrl"]}</Alert>:null}
         </section>
         <div className="space-y-3" aria-label="Login preview">
@@ -364,7 +365,7 @@ export function CollegeBrandingForm({
 
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           {(["primaryColor", "secondaryColor"] as const).map((key) => (
-            <label key={key} className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <Label key={key} className="block min-w-0">
               <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 {key === "primaryColor" ? "Primary colour" : "Secondary colour"}
               </span>
@@ -390,7 +391,7 @@ export function CollegeBrandingForm({
               {errors[key] ? (
                 <Alert tone="error" className="mt-2">{errors[key]}</Alert>
               ) : null}
-            </label>
+            </Label>
           ))}
         </div>
         <p className="m-0 text-xs text-muted-foreground leading-[20px]">
@@ -411,7 +412,7 @@ export function CollegeBrandingForm({
             contentClassName="min-w-0 pt-[var(--lms-space-3)]">
             <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
               {group.fields.map(field => (
-                <label key={field.key} className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                <Label key={field.key} className="block min-w-0">
                   <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                     {field.label}
                   </span>
@@ -423,7 +424,7 @@ export function CollegeBrandingForm({
                     className="min-h-11 md:min-h-9" />
                   {field.hint ? <span className="mt-[var(--lms-space-2)] block text-xs leading-5 text-muted-foreground">{field.hint}</span> : null}
                   {errors[field.key] ? <Alert tone="error" className="mt-[var(--lms-space-2)]">{errors[field.key]}</Alert> : null}
-                </label>
+                </Label>
               ))}
             </div>
           </Disclosure>;

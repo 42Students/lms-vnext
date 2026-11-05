@@ -2,6 +2,7 @@
 import { Input } from "@/components/ui/input";
 import {useEffect,useRef} from "react";
 import {useRouter} from "next/navigation";
+import { Label } from "@/components/ui/label";
 
 /** TPO-inbox-team-19: search Team conversations after two characters. */
 export function TpoTeamSearch({value}:{value:string}){
@@ -22,7 +23,7 @@ export function TpoTeamSearch({value}:{value:string}){
    if(timer.current)clearTimeout(timer.current);
   };
  },[]);
- return <label className="block min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+ return <Label className="block min-w-0">
   Search conversations
   <Input ref={ref} type="search" name="q" maxLength={120} defaultValue={value}
    placeholder="Search (press /)"
@@ -39,5 +40,5 @@ export function TpoTeamSearch({value}:{value:string}){
      router.replace("/tpo/messages?"+params.toString(),{scroll:false});
     },250);
    }}/>
- </label>;
+ </Label>;
 }

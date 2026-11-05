@@ -9,6 +9,7 @@ import {Badge} from "@/components/ui/badge";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type ResponseBody={error?:string;version?:string};
 function saveError(body:ResponseBody){
@@ -42,11 +43,11 @@ export function TpoSmsCapEditor({initial,version}: {initial:number;version:strin
    "Round scheduled or changed","Offer released, expiring, expired or withdrawn",
    "Drive cancelled","Application deadline today","Debarred or marked absent",
   ].map(label=><Badge key={label} tone="neutral">{label}</Badge>)}</div>
-  <label className="block text-[13px] font-semibold print:hidden leading-4 text-[var(--lms-neutral-400)]">Monthly limit on optional SMS
+  <Label className="block print:hidden">Monthly limit on optional SMS
    <Input type="number" min={0} max={100000} step={1} value={value} disabled={busy}
     onChange={event=>setValue(event.target.value===""?-1:Number(event.target.value))}
     className="mt-2 min-h-11 w-40 md:min-h-9 print:hidden"/>
-  </label>
+  </Label>
   <p className="hidden text-sm print:block leading-[22px]">Optional SMS monthly limit: {value}</p>
   <p className="text-xs text-muted-foreground leading-[20px]">SMS used this month: unavailable until delivery usage is connected. Saving a limit does not enable SMS delivery.</p>
   <Button type="button" onClick={()=>void save()} disabled={busy||saved===value||value<0||value>100000||!Number.isInteger(value)}
@@ -76,12 +77,12 @@ export function TpoEmailSignatureEditor({initial,version}:{initial:string;versio
  }
  return <section className="space-y-4 border-t border-border pt-5">
   <Heading level={2} size="base" className="hidden print:block leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Email signature preview</Heading>
-  <label className="block text-[13px] font-semibold print:hidden leading-4 text-[var(--lms-neutral-400)]">Email signature
+  <Label className="block print:hidden">Email signature
    <Textarea rows={3} maxLength={300} value={value} disabled={busy}
     placeholder={"Training and Placement Cell\nYour college's name"}
     onChange={event=>setValue(event.target.value)}
     className="mt-2 w-full"/>
-  </label>
+  </Label>
   <p className="text-right text-xs text-muted-foreground print:hidden leading-[20px]">{value.length}/300</p>
   <div className="border-y border-dashed border-border py-4">
    <p className="mb-2 text-sm text-muted-foreground leading-[22px]">How the end of an invite looks</p>
@@ -118,11 +119,11 @@ export function TpoRecruiterApprovalEditor({initial,version}:{initial:boolean;ve
  }
  return <section className="space-y-3 border-t border-border pt-5">
   <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">How recruiters work with you</Heading>
-  <label className="flex items-start gap-3 text-sm font-semibold">
+  <Label className="flex items-start gap-3">
    <Checkbox checked={approval} disabled={busy}
     onChange={event=>setApproval(event.target.checked)} className="mt-1 h-5 w-5"/>
    <span>Approve each drive a recruiter requests</span>
-  </label>
+  </Label>
   <p className="text-xs text-muted-foreground leading-[20px]">{approval?"On: a request waits for your approval before you set dates and publish it.":"Off: a request is approved as it arrives (unless the recruiter is still waiting for verification). You still set dates and publish."}</p>
   <Button type="button" onClick={()=>void save()} disabled={busy||saved===approval}
    className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden">Save</Button>
@@ -154,13 +155,13 @@ export function TpoRecruiterDurationEditor({initial,version}:{initial:number;ver
  }
  return <section className="space-y-3 border-t border-border pt-5">
   <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Recruiter access lasts</Heading>
-  <label className="block text-[13px] print:hidden font-semibold leading-4 text-[var(--lms-neutral-400)]">Access granted to a recruiter lasts
+  <Label className="block print:hidden">Access granted to a recruiter lasts
    <Select value={[3,6,12,24].includes(months)?months:6}
     onChange={event=>setMonths(Number(event.target.value))} disabled={busy}
     className="mt-2 min-h-11 md:min-h-9">
     {[3,6,12,24].map(value=><option key={value} value={value}>{value} months</option>)}
    </Select>
-  </label>
+  </Label>
   <p className="hidden text-sm print:block leading-[22px]">New recruiter access duration: {months} months</p>
   <p className="text-xs text-muted-foreground leading-[20px]">This duration is applied to new recruiter grants. Existing access expires on its recorded date. No end date is unavailable until a corresponding grant-expiry policy is approved.</p>
   <Button type="button" onClick={()=>void save()} disabled={busy||saved===months}

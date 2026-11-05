@@ -8,6 +8,7 @@ import {Select} from "@/components/ui/select";
 import {Alert} from "@/components/ui/alert";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {academicSetupErrorMessage} from "@/modules/academics/academic-setup-error-copy";
+import { Label } from "@/components/ui/label";
 
 /** Only the existing scoped service can authorize and persist a move.
  * The picker is a suggestion, never a source of tenant authorization. */
@@ -60,14 +61,14 @@ export function CourseDepartmentMoveAction({
           disabled={pending||!target||target===course.departmentId}
           onClick={()=>void move()}>Move department</Button>
       </div>}>
-      <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+      <Label stack>
         New department
         <Select value={target} disabled={pending}
           onChange={event=>{setTarget(event.target.value);setError("");}}>
           <option value="">Choose a department</option>
           {options.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
         </Select>
-      </label>
+      </Label>
       {error?<Alert tone="error" role="alert" className="mt-3">{error}</Alert>:null}
     </Dialog>
   </>;

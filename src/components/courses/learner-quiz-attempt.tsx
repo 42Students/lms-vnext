@@ -38,6 +38,7 @@ import { normalizeLearnerQuizDraftForQuestions } from "@/modules/courses/learner
 import { StatusBadge } from "@/components/ui/status-badge";
 import { friendlyApiError } from "@/lib/friendly-error";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type QuizPayload = {
   quiz: {
@@ -617,7 +618,7 @@ export function LearnerQuizAttempt() {
                   const checked = (answers[current.id] ?? []).includes(option.id);
                   const ChoiceControl = current.type === "MULTIPLE_CHOICE" ? Checkbox : Radio;
                   return (
-                    <label key={option.id} className="flex min-w-0 cursor-pointer items-start gap-3 rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-form-bg)] p-4 transition-colors duration-[var(--lms-motion-fast)] hover:border-primary focus-within:border-primary focus-within:focus-outline motion-reduce:transition-none">
+                    <Label variant="choice" key={option.id} className="flex min-w-0 cursor-pointer items-start gap-3 rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-form-bg)] p-4 transition-colors duration-[var(--lms-motion-fast)] hover:border-primary focus-within:border-primary focus-within:focus-outline motion-reduce:transition-none">
                       <ChoiceControl
                         name={current.id}
                         checked={checked}
@@ -628,7 +629,7 @@ export function LearnerQuizAttempt() {
                         <span aria-hidden="true" className="mr-2 font-semibold">{String.fromCharCode(97+index%26)}.</span>
                         {option.text}
                       </span>
-                    </label>
+                    </Label>
                   );
                 })}
               </div>

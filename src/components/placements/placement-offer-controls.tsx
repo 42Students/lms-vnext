@@ -17,6 +17,7 @@ import { useToast } from "@/components/ui/toast";
 import { PlacementBulkOfferWithdraw } from "./placement-bulk-offer-withdraw";
 import { TpoOfferLifecyclePanel } from "./tpo-offer-lifecycle-panel";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type OfferStatus =
   | "ISSUED"
@@ -466,7 +467,7 @@ export function PlacementOfferControls({
                 item.offerReady &&
                 draft ? (
                   <div className="grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-4">
-                    <label>
+                    <Label>
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Record type
                       </span>
@@ -487,8 +488,8 @@ export function PlacementOfferControls({
                         <option value="OFFER">Offer</option>
                         <option value="LOI">Letter of intent</option>
                       </Select>
-                    </label>
-                    <label>
+                    </Label>
+                    <Label>
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Role title
                       </span>
@@ -520,8 +521,8 @@ export function PlacementOfferControls({
                           )
                         }
                       />
-                    </label>
-                    <label>
+                    </Label>
+                    <Label>
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Annual CTC (INR)
                       </span>
@@ -555,8 +556,8 @@ export function PlacementOfferControls({
                           )
                         }
                       />
-                    </label>
-                    <label>
+                    </Label>
+                    <Label>
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Planned joining
                       </span>
@@ -589,8 +590,8 @@ export function PlacementOfferControls({
                           )
                         }
                       />
-                    </label>
-                    <label>
+                    </Label>
+                    <Label>
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Offer expires
                       </span>
@@ -623,7 +624,7 @@ export function PlacementOfferControls({
                           )
                         }
                       />
-                    </label>
+                    </Label>
                     <div className="md:col-span-2 lg:col-span-4">
                       <Button
                         size="sm"
@@ -663,7 +664,7 @@ export function PlacementOfferControls({
 
                 {accepted && draft ? (
                   <div className="grid min-w-0 gap-3 border-b border-border py-4 md:grid-cols-2 lg:grid-cols-4">
-                    <label>
+                    <Label>
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Joining outcome
                       </span>
@@ -705,8 +706,8 @@ export function PlacementOfferControls({
                           Did not join
                         </option>
                       </Select>
-                    </label>
-                    <label>
+                    </Label>
+                    <Label>
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Actual/new date
                       </span>
@@ -739,8 +740,8 @@ export function PlacementOfferControls({
                           )
                         }
                       />
-                    </label>
-                    <label>
+                    </Label>
+                    <Label>
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Outcome reason
                       </span>
@@ -773,8 +774,8 @@ export function PlacementOfferControls({
                         }
                         placeholder="Required for deferred / did not join"
                       />
-                    </label>
-                    <label>
+                    </Label>
+                    <Label>
                       <span className="mb-1 block text-xs font-semibold text-body">
                         Correction reason
                       </span>
@@ -807,7 +808,7 @@ export function PlacementOfferControls({
                         }
                         placeholder="Required when correcting a recorded outcome"
                       />
-                    </label>
+                    </Label>
                     <div className="md:col-span-2 lg:col-span-4">
                       <Button
                         size="sm"
@@ -845,13 +846,13 @@ export function PlacementOfferControls({
         </div>}>
         <div className="space-y-4">
           <p className="text-sm text-body leading-[22px]">This notifies the learner and recalculates held-offer eligibility. History is retained.</p>
-          <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">Reason<Select className={inputClass} value={withdrawReason}
+          <Label stack className="text-[length:var(--lms-font-sm)]">Reason<Select className={inputClass} value={withdrawReason}
             onChange={e=>setWithdrawReason(e.target.value)}>
             {["Company withdrew the offer","Hiring freeze","Duplicate offer issued","Offer details were incorrect","Other"].map(v=><option key={v}>{v}</option>)}
-          </Select></label>
-          <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">Additional details
+          </Select></Label>
+          <Label stack className="text-[length:var(--lms-font-sm)]">Additional details
            <Textarea className={inputClass} maxLength={500} value={withdrawDetail} onChange={e=>setWithdrawDetail(e.target.value)}/>
-          </label>
+          </Label>
 
         </div>
       </Dialog>:null}

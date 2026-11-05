@@ -54,6 +54,7 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Table} from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type SearchParams = {
   journeyState?: string | string[];
@@ -460,68 +461,68 @@ export default async function TpoStudentsPage({
         <Input type="hidden" name="programId" value={query.programId??""}/>
         <Input type="hidden" name="everyone" value={query.everyone?"YES":"NO"}/>
         <Input type="hidden" name="classId" value={query.classId??""}/>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stage
+        <Label>Stage
           <Select name="legacyStage" defaultValue={query.legacyStage??""}
             className="mt-[6px] block min-h-11 md:min-h-9">
             <option value="">All stages</option>
             {(["ELIGIBLE","INVITED","REGISTERED","VERIFIED","PLACED"] as const).map(stage=>
               <option key={stage} value={stage}>{stage.charAt(0)+stage.slice(1).toLowerCase()}</option>)}
           </Select>
-        </label>
-        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Interviewed with (company)
+        </Label>
+        <Label stack>Interviewed with (company)
           <Input type="search" name="interviewedWith" maxLength={100}
            defaultValue={query.interviewedWith??""} placeholder="Company name"
            className="w-40"/>
-        </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Debarred
+        </Label>
+        <Label>Debarred
           <Select name="debarred" defaultValue={query.debarred===undefined?"":query.debarred?"YES":"NO"}
             className="mt-[6px] block min-h-11 md:min-h-9">
             <option value="">Any</option><option value="YES">Debarred</option><option value="NO">Not debarred</option>
           </Select>
-        </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Needs attention
+        </Label>
+        <Label>Needs attention
           <Select name="needsAttention" defaultValue={query.needsAttention===undefined?"":query.needsAttention?"YES":"NO"}
             className="mt-[6px] block min-h-11 md:min-h-9">
             <option value="">Any</option><option value="YES">Needs attention</option><option value="NO">No attention flags</option>
           </Select>
-        </label>
-        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Furthest round reached (minimum)
+        </Label>
+        <Label stack>Furthest round reached (minimum)
           <Input type="number" name="minRoundReached" min={0} max={10000} step={1}
            defaultValue={query.minRoundReached??""} className="w-28"/>
-        </label>
+        </Label>
         <Disclosure title="Profile strength filters" className="w-full min-w-0 border-b border-border px-0 py-3">
          <p className="mt-2 text-xs text-muted-foreground">Projects here are self-reported profile entries, not verified Projects workspace outcomes or released grades.</p>
          <div className="mt-3 flex flex-wrap gap-3">
-          <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Gender
+          <Label stack>Gender
            <Select name="gender" defaultValue={query.gender??""} className="min-h-11 md:min-h-9 p-2">
             <option value="">Any</option>{(["Male","Female","Other"] as const).map(v=><option key={v}>{v}</option>)}
            </Select>
-          </label>
-          <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Skill name
+          </Label>
+          <Label stack>Skill name
            <Input type="search" name="skillName" defaultValue={query.skillName??""} maxLength={100}
             placeholder="e.g. Java" />
-          </label>
-          <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Birth year
+          </Label>
+          <Label stack>Birth year
            <Input name="birthYear" type="number" min={1900} max={2100} defaultValue={query.birthYear??""} className="w-28"/>
-          </label>
+          </Label>
           {([["minSkills","Skills"],["minProjects","Projects"],["minCertifications","Certifications"],["minExperiences","Experience entries"]] as const).map(([key,label])=>
-           <label key={key} className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum {label}
+           <Label stack key={key}>Minimum {label}
             <Input type="number" name={key} min={0} max={100} defaultValue={query[key]??""} className="w-28"/>
-           </label>)}
-          <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Profile links
+           </Label>)}
+          <Label stack>Profile links
            <Select name="hasProfileLinks" defaultValue={query.hasProfileLinks===undefined?"":query.hasProfileLinks?"YES":"NO"} className="min-h-11 md:min-h-9 p-2">
             <option value="">Any</option><option value="YES">Provided</option><option value="NO">Not provided</option>
            </Select>
-          </label>
+          </Label>
           {([["hasResume","Resume"],["hasCodingProfiles","Coding profiles"]] as const).map(([key,label])=>
-           <label key={key} className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
+           <Label stack key={key}>{label}
             <Select name={key} defaultValue={query[key]===undefined?"":query[key]?"YES":"NO"} className="min-h-11 md:min-h-9 p-2">
              <option value="">Any</option><option value="YES">Provided</option><option value="NO">Not provided</option>
             </Select>
-           </label>)}
+           </Label>)}
          </div>
         </Disclosure>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Profile verified
+        <Label>Profile verified
           <Select name="profileStatus" defaultValue={query.profileStatus??""}
             className="mt-[6px] block min-h-11 md:min-h-9">
             <option value="">All verification states</option>
@@ -530,25 +531,25 @@ export default async function TpoStudentsPage({
             <option value="SENT_BACK">Sent back</option>
             <option value="NOT_VERIFIED">Not verified</option>
           </Select>
-        </label>
+        </Label>
         {([
           ["minCgpa","CGPA from",query.minCgpa],
           ["maxCgpa","CGPA to",query.maxCgpa],
         ] as const).map(([name,label,value])=>
-         <label key={name} className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
+         <Label stack key={name}>{label}
           <Input type="number" name={name} min={0} max={10} step="0.01"
            defaultValue={value??""} placeholder="Any"
            className="w-28"/>
-         </label>)}
+         </Label>)}
         {([
           ["maxActiveBacklogs","Max active backlogs",query.maxActiveBacklogs],
           ["maxPastBacklogs","Max past backlogs",query.maxPastBacklogs],
         ] as const).map(([name,label,value])=>
-         <label key={name} className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
+         <Label stack key={name}>{label}
           <Input type="number" name={name} min={0} max={100} step={1}
            defaultValue={value??""} placeholder="Any"
            className="w-28"/>
-         </label>)}
+         </Label>)}
         <Disclosure title="Academic marks and passing year filters" className="w-full min-w-0 border-b border-border px-0 py-3">
           <div className="mt-3 flex flex-wrap gap-3">
             {([
@@ -556,65 +557,65 @@ export default async function TpoStudentsPage({
               ["minTwelfthPct","12th % from",query.minTwelfthPct],
               ["minDiplomaPct","Diploma % from",query.minDiplomaPct],
               ["minUgPct","UG % from",query.minUgPct],
-            ] as const).map(([key,label,value])=><label key={key} className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
+            ] as const).map(([key,label,value])=><Label stack key={key}>{label}
               <Input type="number" min={0} max={100} step="0.01" name={key} defaultValue={value??""}
-               className="w-28"/></label>)}
-            <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Passing year
+               className="w-28"/></Label>)}
+            <Label stack>Passing year
               <Input name="passingYear" type="number" min={1950} max={2100} defaultValue={query.passingYear??""}
-                className="w-28"/></label>
-            <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum gap years
+                className="w-28"/></Label>
+            <Label stack>Maximum gap years
               <Input name="maxGapYears" type="number" min={0} max={100} defaultValue={query.maxGapYears??""}
-                className="w-28"/></label>
+                className="w-28"/></Label>
             {([
               ["marksVerified","Marks verified",query.marksVerified],
               ["isLateralEntry","Lateral entry",query.isLateralEntry],
-            ] as const).map(([key,label,value])=><label key={key} className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
+            ] as const).map(([key,label,value])=><Label stack key={key}>{label}
               <Select name={key} defaultValue={value===undefined?"":value?"YES":"NO"}
                 className="min-h-11 md:min-h-9 p-2">
                 <option value="">Any</option><option value="YES">Yes</option><option value="NO">No</option>
-              </Select></label>)}
+              </Select></Label>)}
           </div>
         </Disclosure>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">CGPA recorded
+        <Label>CGPA recorded
           <Select name="cgpaRecorded" defaultValue={query.cgpaRecorded===undefined?"":query.cgpaRecorded?"YES":"NO"}
             className="mt-[6px] block min-h-11 md:min-h-9">
             <option value="">Any</option><option value="YES">Recorded</option>
             <option value="NO">No recorded CGPA</option>
           </Select>
-        </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Offer waiting on answer
+        </Label>
+        <Label>Offer waiting on answer
           <Select name="offerWaiting" defaultValue={query.offerWaiting===undefined?"":query.offerWaiting?"YES":"NO"}
             className="mt-[6px] block min-h-11 md:min-h-9">
             <option value="">Any</option>
             <option value="YES">Yes</option><option value="NO">No</option>
           </Select>
-        </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">After college
+        </Label>
+        <Label>After college
           <Select name="afterCollege" defaultValue={query.afterCollege??""}
             className="mt-[6px] block min-h-11 md:min-h-9">
             <option value="">All outcomes</option>
             {AFTER_COLLEGE_OUTCOMES.map(outcome=>
               <option key={outcome} value={outcome}>{AFTER_COLLEGE_LABELS[outcome]}</option>)}
           </Select>
-        </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+        </Label>
+        <Label>Batch
           <Select name="batchId" defaultValue={query.batchId??""}
             className="mt-[6px] block min-h-11 md:min-h-9">
             <option value="">All active batches</option>
             {batchDirectory.batches.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
           </Select>
-        </label>
+        </Label>
         {([
           ["minApplications","Applications from",query.minApplications],
           ["maxApplications","Applications to",query.maxApplications],
           ["minOffers","Offers from",query.minOffers],
           ["maxOffers","Offers to",query.maxOffers],
         ] as const).map(([name,label,value])=>
-         <label key={name} className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
+         <Label stack key={name}>{label}
           <Input type="number" name={name} min={0} max={10000} step={1}
            defaultValue={value??""} placeholder="Any"
            className="w-28"/>
-         </label>)}
+         </Label>)}
         <Button variant="secondary" type="submit" className="min-h-11 w-full px-4 md:w-auto md:min-h-9">Show students</Button>
       </form>
       </Disclosure>
@@ -657,30 +658,30 @@ export default async function TpoStudentsPage({
         <form aria-label="Student cohort selectors" method="get" action="/tpo/students"
           className="flex min-w-0 flex-wrap items-end gap-3">
           {query.search?<input type="hidden" name="search" value={query.search}/>:null}
-          <label className="grid w-full max-w-[360px] gap-1 text-xs font-semibold text-muted-foreground">Batch
+          <Label stack className="w-full max-w-[360px]">Batch
             <Select name="batchId" defaultValue={query.batchId??""} className="min-h-11 md:min-h-9">
               <option value="">All active batches</option>
               {batchDirectory.batches.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
             </Select>
-          </label>
-          <label className="grid w-full max-w-[220px] gap-1 text-xs font-semibold text-muted-foreground">Program
+          </Label>
+          <Label stack className="w-full max-w-[220px]">Program
             <Select name="programId" defaultValue={query.programId??""} className="min-h-11 md:min-h-9">
               <option value="">All programs</option>
               {programChoices.map(([id,name])=><option key={id} value={id}>{name}</option>)}
             </Select>
-          </label>
-          <label className="grid w-full max-w-[240px] gap-1 text-xs font-semibold text-muted-foreground">Department
+          </Label>
+          <Label stack className="w-full max-w-[240px]">Department
             <Select name="branchId" defaultValue={query.branchId??""} className="min-h-11 md:min-h-9">
               <option value="">All departments</option>
               {data.branches.map(item=><option key={item.branchId} value={item.branchId}>{item.branchName}</option>)}
             </Select>
-          </label>
-          <label className="grid w-full max-w-[220px] gap-1 text-xs font-semibold text-muted-foreground">Class
+          </Label>
+          <Label stack className="w-full max-w-[220px]">Class
             <Select name="classId" defaultValue={query.classId??""} className="min-h-11 md:min-h-9">
               <option value="">All classes</option>
               {data.classChoices.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
             </Select>
-          </label>
+          </Label>
           <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">Show students</Button>
         </form>
         <div role="group" aria-label="Student placement journey"
@@ -754,7 +755,7 @@ export default async function TpoStudentsPage({
           className="grid min-w-0 gap-3 border-y border-border py-4 md:grid-cols-2 lg:grid-cols-4"
         >
           {first(raw.columns)&&<Input type="hidden" name="columns" value={first(raw.columns)?.slice(0,800)}/>}
-          <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="flex flex-col gap-2">
             Journey
             <Select
               name="journeyState"
@@ -768,9 +769,9 @@ export default async function TpoStudentsPage({
                 </option>
               ))}
             </Select>
-          </label>
+          </Label>
 
-          <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="flex flex-col gap-2">
             Branch
             <Select
               name="branchId"
@@ -784,22 +785,22 @@ export default async function TpoStudentsPage({
                 </option>
               ))}
             </Select>
-          </label>
+          </Label>
 
-          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+          <Label className="flex flex-col gap-1">
             Search
             <TpoDebouncedStudentSearch initial={query.search??""} />
-          </label>
+          </Label>
 
-          <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="flex flex-col gap-2">
             Roster
             <Select name="everyone" defaultValue={query.everyone?"YES":"NO"} className="min-h-11 md:min-h-9">
               <option value="NO">In placements</option>
               <option value="YES">Everyone at this college</option>
             </Select>
-          </label>
+          </Label>
 
-          <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="flex flex-col gap-2">
             Page size
             <Select
               name="pageSize"
@@ -810,7 +811,7 @@ export default async function TpoStudentsPage({
               <option value="50">50 students</option>
               <option value="100">100 students</option>
             </Select>
-          </label>
+          </Label>
 
           <div className="md:col-span-2 lg:col-span-4">
             <Button variant="primary"

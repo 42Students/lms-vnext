@@ -18,6 +18,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { courseApiError } from "./learner-course-api";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 async function requestJson(
   path: string,
@@ -127,7 +128,7 @@ export function CreateLearningPathPanel({
         this Offering.
       </p>
       <div className="mt-4 grid gap-4">
-        <label>
+        <Label>
           <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
             Title
           </span>
@@ -139,8 +140,8 @@ export function CreateLearningPathPanel({
             maxLength={255}
             required
           />
-        </label>
-        <label>
+        </Label>
+        <Label>
           <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
             Description
           </span>
@@ -154,7 +155,7 @@ export function CreateLearningPathPanel({
             maxLength={5000}
             placeholder="Optional path description"
           />
-        </label>
+        </Label>
       </div>
       <div className="mt-[var(--lms-space-4)] flex justify-stretch md:justify-end [&>button]:w-full md:[&>button]:w-auto">
         <Button
@@ -300,7 +301,7 @@ export function LearningPathActions({
         }
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)]">
-          <label>
+          <Label>
             <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
               Title
             </span>
@@ -311,8 +312,8 @@ export function LearningPathActions({
               }
               maxLength={255}
             />
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
               Description
             </span>
@@ -325,7 +326,7 @@ export function LearningPathActions({
               }
               maxLength={5000}
             />
-          </label>
+          </Label>
         </div>
       </Dialog>
 
@@ -423,7 +424,7 @@ export function CreateLessonForm({
         Add Lesson
       </p>
       <div className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto]">
-        <label>
+        <Label>
           <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
             Name
           </span>
@@ -435,8 +436,8 @@ export function CreateLessonForm({
             maxLength={255}
             required
           />
-        </label>
-        <label>
+        </Label>
+        <Label>
           <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
             Description
           </span>
@@ -450,7 +451,7 @@ export function CreateLessonForm({
             maxLength={5000}
             placeholder="Optional"
           />
-        </label>
+        </Label>
         <Button
           type="submit"
           disabled={
@@ -566,19 +567,19 @@ export function LessonActions({
         </div>}
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)]">
-          <label>
+          <Label>
             <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">Name</span>
             <Input value={name} onChange={event=>setName(event.target.value)} maxLength={255}
               aria-invalid={!validName} aria-describedby={!validName ? "lesson-name-error" : undefined}/>
             {!validName?<span id="lesson-name-error" role="alert" className="mt-1 block text-xs text-error">
               {name.trim() ? "Maximum 255 characters" : "Enter lesson name"}
             </span>:null}
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">Description</span>
             <Textarea value={description} onChange={event=>setDescription(event.target.value)} maxLength={5000}/>
-          </label>
-          {lesson.learningPathId&&eligibleDestinations.length>0?<label>
+          </Label>
+          {lesson.learningPathId&&eligibleDestinations.length>0?<Label>
             <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">Course</span>
             <Select value={targetLearningPathId} disabled={pending}
               onChange={event=>setTargetLearningPathId(event.target.value)}>
@@ -590,13 +591,13 @@ export function LessonActions({
               Moving a lesson with class-specific content, learner progress or submissions
               may be blocked to protect existing records.
             </span>
-          </label>:null}
-          {lesson.visibleToStudents!==undefined?<label className="flex min-h-11 items-center gap-3 text-sm font-semibold text-body">
+          </Label>:null}
+          {lesson.visibleToStudents!==undefined?<Label className="flex min-h-11 items-center gap-3">
             <Checkbox className="h-4 w-4 accent-[var(--lms-primary)]"
              checked={visibleToStudents} disabled={pending}
              onChange={event=>setVisibleToStudents(event.target.checked)}/>
             Visible to students
-          </label>:null}
+          </Label>:null}
           <p className="text-xs text-muted-foreground">
            The lesson order remains unchanged. Use Reorder to adjust its sequence.
           </p>
@@ -629,13 +630,13 @@ export function LessonActions({
           );
         }}>
         <div className="space-y-2">
-          <label className="block text-sm font-semibold text-body">
+          <Label className="block">
             Type the lesson name to confirm: <strong>{lesson.name}</strong>
             <Input value={typedArchiveName} autoComplete="off" disabled={pending}
               onChange={event=>setTypedArchiveName(event.target.value)}
               aria-label={"Type lesson name to confirm deleting "+lesson.name}
               className="mt-2" />
-          </label>
+          </Label>
           {archiveFailure?<p role="alert" className="text-sm text-error">
             Lesson was not archived. {archiveFailure}
           </p>:null}

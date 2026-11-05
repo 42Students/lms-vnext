@@ -22,6 +22,7 @@ import {
   checkedAssignmentFileDeclaration, refreshStagedAssignmentFile, uploadStagedAssignmentFile,
 } from "./assignment-staged-file-transfer";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export function AssignmentFileSubmissionControl({
   assignmentId, deliveryId, onBusyChange, onSubmitted, multipartEnabled=false,pdfOnly=false,uploadsAllowed=true,allowedMethods=ALL_ASSIGNMENT_METHODS,
@@ -186,12 +187,12 @@ export function AssignmentFileSubmissionControl({
   return <section aria-label="Assignment file submission" className="mt-4 min-w-0 space-y-3">
     <Heading level={3} size="sm" className="text-foreground">{multipartEnabled?"Combined assignment submission":"File Upload"}</Heading>
     {uploadsAllowed?<p className="text-xs text-muted-foreground">{limitsSummary("assignment-submission")} Up to {MAX_ASSIGNMENT_FILES_PER_SUBMISSION} files.</p>:null}
-    {uploadsAllowed?<label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Choose a file to upload
+    {uploadsAllowed?<Label className="block">Choose a file to upload
       <Input type="file" multiple accept={pdfOnly?".pdf":acceptAttributeFor("assignment-submission")}
         disabled={loading || busy || staged.length >= MAX_ASSIGNMENT_FILES_PER_SUBMISSION}
         className="mt-2 min-h-11 max-w-full md:min-h-9"
         onChange={event => { select(event.currentTarget.files); event.currentTarget.value = ""; }} />
-    </label>:null}
+    </Label>:null}
     {uploadsAllowed?<details className="min-w-0 text-xs text-muted-foreground">
       <summary className="min-h-11 cursor-pointer py-3 font-semibold md:min-h-9 md:py-2">Google Drive import is not configured.</summary>
       <p className="max-w-prose pb-2">To add a file from Google Drive, download it to your device first, then use Choose a file to upload. The uploaded file must pass private-storage security checks.</p>
@@ -225,11 +226,11 @@ export function AssignmentFileSubmissionControl({
       disabled={busy||loading}/>:null}
     {staged.length||hasWrittenOrLinkParts ? <div className="min-w-0 space-y-3 border-t border-border pt-4">
       {hasPending ? <p role="status" className="text-sm text-muted-foreground">Files must pass security checks before final submission.</p> : null}
-      <label className="flex min-h-11 items-start gap-2 text-sm text-body">
+      <Label variant="choice" className="flex min-h-11 items-start gap-2">
         <Checkbox checked={confirmed} disabled={busy || hasPending} className="mt-1"
           onChange={event => setConfirmed(event.target.checked)} />
         <span>I confirm this is my final assignment submission and cannot be replaced after it is recorded.</span>
-      </label>
+      </Label>
       <Button type="button" loading={busy&&!activeName} disabled={busy || loading || !confirmed || !maySubmit} onClick={submit} className="min-h-11 w-full sm:w-auto md:min-h-9">
         {busy && !activeName ? "Submitting…" : "Submit Your Work"}
       </Button>

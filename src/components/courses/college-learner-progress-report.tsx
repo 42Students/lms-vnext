@@ -12,6 +12,7 @@ import styles from "./college-learner-progress-report.module.css";
 import { StatTile } from "@/components/ui/stat-tile";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Result=Awaited<ReturnType<typeof getCollegeLearnerProgressReport>>;
 
@@ -44,14 +45,14 @@ export function CollegeLearnerProgressReport({data,showHeading=true}:{data:Resul
     Select a Class and Course to see each student&apos;s progress.</p>
   </div>
   <form action="/college/course-progress" method="get" className="grid min-w-0 items-end gap-[var(--lms-space-3)] rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 print:hidden md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
-   <label className="grid min-w-0 w-full flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48 md:w-auto">Class
+   <Label stack className="min-w-0 w-full flex-1 md:min-w-48 md:w-auto">Class
     <Select value={sectionId} onChange={event=>{setSectionId(event.target.value);setOfferingId("");}}
      className="min-h-11 md:min-h-9">
      <option value="">Class</option>
      {[...sections].map(([id,name])=><option key={id} value={id}>{name}</option>)}
     </Select>
-   </label>
-   <label className="grid min-w-0 w-full flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48 md:w-auto">Course
+   </Label>
+   <Label stack className="min-w-0 w-full flex-1 md:min-w-48 md:w-auto">Course
     <Select value={offeringId} onChange={event=>{
      const choice=courses.find(item=>item.offeringId===event.target.value);
      setOfferingId(event.target.value);setPage(1);
@@ -64,7 +65,7 @@ export function CollegeLearnerProgressReport({data,showHeading=true}:{data:Resul
       {item.courseCode} · {item.courseName}
      </option>)}
     </Select>
-   </label>
+   </Label>
    <Input type="hidden" name="deliveryId" value={deliveryId}/>
    <Button type="submit" disabled={!deliveryId||pending} loading={pending}
     className="min-h-11 w-full md:min-h-9">
@@ -130,12 +131,12 @@ export function CollegeLearnerProgressReport({data,showHeading=true}:{data:Resul
    {report.rows.length>0?<nav aria-label="Learner progress pages"
      className="flex flex-wrap items-center gap-3 border-y border-border py-3 text-sm">
      <span>Page {currentPage} of {pageCount} · {report.rows.length} learners</span>
-     <label className="flex items-center gap-2">Rows per page
+     <Label variant="choice" className="flex items-center gap-2">Rows per page
       <Select value={String(pageSize)} onChange={event=>{setPageSize(Number(event.target.value));setPage(1);}}
        className="min-h-11 w-24 md:min-h-9">
        <option value="20">20</option><option value="50">50</option><option value="100">100</option>
       </Select>
-     </label>
+     </Label>
      <Button type="button" variant="secondary" disabled={currentPage<=1}
       onClick={()=>setPage(currentPage-1)}>Previous</Button>
      <Button type="button" variant="secondary" disabled={currentPage>=pageCount}

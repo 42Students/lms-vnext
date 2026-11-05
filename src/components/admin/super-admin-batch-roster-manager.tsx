@@ -8,6 +8,7 @@ import {DataTable} from "@/components/ui/data-table";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Alert} from "@/components/ui/alert";
 import {EmptyState} from "@/components/ui/empty-state";
+import { Label } from "@/components/ui/label";
 type Student={learnerEnrollmentId:string;memberId:string;name:string|null;email:string|null;roll:string|null;classId:string|null};
 type ClassRow={id:string;name:string;code:string;capacity:number|null;status:string;learnerCount:number;academicPeriodId:string};
 export function SuperAdminBatchRosterManager({students,classes}:{students:readonly Student[];classes:readonly ClassRow[]}){
@@ -49,17 +50,17 @@ export function SuperAdminBatchRosterManager({students,classes}:{students:readon
  }
  return <section aria-label="Batch student roster" aria-busy={Boolean(moving)} className="min-w-0 space-y-4 border-b border-border pb-4">
   <div className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:grid-cols-2 print:hidden">
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search name, roll no. or email
+   <Label stack>Search name, roll no. or email
     <Input type="search" maxLength={120} value={search} onChange={e=>setSearch(e.target.value)}
      className="min-h-11 w-full md:min-h-9"/>
-   </label>
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
+   </Label>
+   <Label stack>Class
     <Select value={source} onChange={e=>setSource(e.target.value)}
      className="min-h-11 w-full md:min-h-9">
       <option value="ALL">All classes</option><option value="UNASSIGNED">Not in a class</option>
       {classes.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
     </Select>
-   </label>
+   </Label>
   </div>
   <p role="status" aria-live="polite" className="m-0 break-words text-xs leading-5 text-muted-foreground">{found.length} of {students.length} active batch learner assignments</p>
   {error?<Alert tone="error">{error}</Alert>:null}

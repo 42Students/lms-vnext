@@ -14,6 +14,7 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {listHrRoundEditorRows} from "@/modules/placements/hr-round-editor-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 const KINDS=[["TALK","Discussion"],["TEST","Test"],["VENDOR_TEST","Vendor test"],["GD","Group discussion"],["INTERVIEW","Interview"]] as const;
 export default async function HrRoundsEditorPage({params}:{
  params:Promise<{jobId:string}>;
@@ -42,22 +43,22 @@ export default async function HrRoundsEditorPage({params}:{
     <div className="mt-3 min-w-0">
    <form action={endpoint} method="post" className="grid min-w-0 gap-3 md:grid-cols-2">
     <Input type="hidden" name="action" value="CREATE"/>
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round name
+    <Label stack className="min-w-0">Round name
      <Input name="name" required maxLength={100} className="w-full"/>
-    </label>
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round kind
+    </Label>
+    <Label stack className="min-w-0">Round kind
      <Select name="kind" required defaultValue="INTERVIEW" className="w-full">
       {KINDS.map(([value,label])=><option key={value} value={value}>{label}</option>)}
      </Select>
-    </label>
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mode
+    </Label>
+    <Label stack className="min-w-0">Mode
      <Select name="mode" defaultValue="" className="w-full">
       <option value="">Not scheduled</option><option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option>
      </Select>
-    </label>
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Duration (minutes)
+    </Label>
+    <Label stack className="min-w-0">Duration (minutes)
      <Input name="durationMinutes" type="number" min={1} max={1440} className="w-full"/>
-    </label>
+    </Label>
     <Button type="submit" className="min-h-11 w-full md:min-h-9 md:col-span-2 md:w-auto md:justify-self-start">Add round</Button>
    </form>
     </div>
@@ -88,19 +89,19 @@ export default async function HrRoundsEditorPage({params}:{
      <form action={endpoint} method="post" className="mt-3 grid min-w-0 gap-3 md:grid-cols-2">
       <Input type="hidden" name="action" value="UPDATE"/><Input type="hidden" name="roundId" value={round.id}/>
       <Input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name
+      <Label stack className="min-w-0">Name
        <Input name="name" required defaultValue={round.name} maxLength={100} className="w-full"/>
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Kind
+      </Label>
+      <Label stack className="min-w-0">Kind
        <Select name="kind" defaultValue={round.kind} className="w-full">
         {KINDS.map(([value,label])=><option key={value} value={value}>{label}</option>)}
        </Select>
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mode
+      </Label>
+      <Label stack className="min-w-0">Mode
        <Select name="mode" defaultValue={round.mode??""} className="w-full">
         <option value="">Not scheduled</option><option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option>
        </Select>
-      </label>
+      </Label>
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto md:justify-self-start">Save changes</Button>
      </form>
      </details>:<p className="text-sm text-muted-foreground">Managed by placement cell, contains interview slots/results, or is no longer pending; editing is disabled.</p>}

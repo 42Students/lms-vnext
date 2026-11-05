@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import {Alert} from "@/components/ui/alert";
 import { DEPARTMENT_COPY } from "@/modules/admin-ui/department-copy";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export function DepartmentCreateForm({collegeId}:{collegeId:string}) {
   void collegeId; // College identity is scoped by the server request context.
@@ -74,9 +75,9 @@ export function DepartmentCreateForm({collegeId}:{collegeId:string}) {
         {DEPARTMENT_COPY.createCardTitle}
       </Heading>
       <div className="min-w-0 w-full flex-1">
-        <label htmlFor="department-name" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label htmlFor="department-name" className="mb-[6px] block">
           {DEPARTMENT_COPY.nameLabel}<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
-        </label>
+        </Label>
         <Input className="min-h-11 md:min-h-9" id="department-name"
           value={name} onChange={event=>{setName(event.target.value);setFieldError("");}}
           aria-invalid={Boolean(fieldError)}

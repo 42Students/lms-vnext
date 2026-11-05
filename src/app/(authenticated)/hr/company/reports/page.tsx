@@ -28,6 +28,7 @@ import {
 import {buildRecruiterReportFunnel} from "@/modules/placements/recruiter-company-funnel-model";
 import {hrCompanyReportPageSignals} from "@/modules/placements/hr-report-page-signals-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type SearchParams = {
   collegeId?: string | string[];
@@ -243,7 +244,7 @@ export default async function RecruiterCompanyReportsPage({
             value={collegeId}
           />
 
-          <label className="grid w-full min-w-0 gap-[6px] md:w-auto md:min-w-44 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="w-full min-w-0 md:w-auto md:min-w-44">
             Drive status
             <Select
               name="status"
@@ -260,9 +261,9 @@ export default async function RecruiterCompanyReportsPage({
                 Closed
               </option>
             </Select>
-          </label>
+          </Label>
 
-          <label className="grid w-full min-w-0 gap-[6px] md:w-auto md:min-w-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="w-full min-w-0 md:w-auto md:min-w-32">
             Rows per page
             <Select
               name="pageSize"
@@ -273,7 +274,7 @@ export default async function RecruiterCompanyReportsPage({
               <option value="25">25</option>
               <option value="50">50</option>
             </Select>
-          </label>
+          </Label>
 
           <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply filters</Button>
 

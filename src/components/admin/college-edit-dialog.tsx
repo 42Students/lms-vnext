@@ -12,6 +12,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
+import { Label } from "@/components/ui/label";
 
 export type EditableCollege = {
   id: string;
@@ -216,20 +217,20 @@ export function CollegeEditDialog({
 
 
           <div className="md:col-span-2 grid gap-2 text-sm text-muted-foreground">
-            <label className="grid gap-1">Organization
+            <Label stack>Organization
               <Input value="Assigned organization (immutable)" readOnly disabled aria-label="Organization ownership cannot be changed"/>
-            </label>
-            <label className="grid gap-1">Unique ID
+            </Label>
+            <Label stack>Unique ID
               <Input value={college.code} readOnly disabled aria-label={"Unique ID for "+college.name}/>
-            </label>
+            </Label>
           </div>
           <div className="md:col-span-2">
-            <label
+            <Label
               htmlFor={`college-name-${college.id}`}
-              className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[var(--lms-space-2)] block"
             >
               College name
-            </label>
+            </Label>
             <Input
               className="min-h-11 md:min-h-9" id={`college-name-${college.id}`}
               autoComplete="organization"
@@ -242,12 +243,12 @@ export function CollegeEditDialog({
             />
           </div>
           <div>
-            <label
+            <Label
               htmlFor={`college-city-${college.id}`}
-              className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[var(--lms-space-2)] block"
             >
               City
-            </label>
+            </Label>
             <Input
               className="min-h-11 md:min-h-9" id={`college-city-${college.id}`}
               autoComplete="address-level2"
@@ -260,12 +261,12 @@ export function CollegeEditDialog({
             />
           </div>
           <div>
-            <label
+            <Label
               htmlFor={`college-state-${college.id}`}
-              className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[var(--lms-space-2)] block"
             >
               State
-            </label>
+            </Label>
             <Input
               className="min-h-11 md:min-h-9" id={`college-state-${college.id}`}
               autoComplete="address-level1"
@@ -282,17 +283,16 @@ export function CollegeEditDialog({
            ["Address line 2",addressLine2,setAddressLine2,255],
            ["Landmark",landmark,setLandmark,255],
            ["Pin Code",postalCode,setPostalCode,32],
-          ] as const).map(([field,value,setter,maxLength])=><label key={field}
-           className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{field}
+          ] as const).map(([field,value,setter,maxLength])=><Label stack key={field}>{field}
            <Input className="min-h-11 md:min-h-9" value={value} disabled={pending} onChange={event=>setter(event.target.value)} maxLength={maxLength}/>
-          </label>)}
+          </Label>)}
           <div className="md:col-span-2">
-            <label
+            <Label
               htmlFor={`college-country-${college.id}`}
-              className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[var(--lms-space-2)] block"
             >
               Country
-            </label>
+            </Label>
             <Input
               className="min-h-11 md:min-h-9" id={`college-country-${college.id}`}
               disabled={pending}

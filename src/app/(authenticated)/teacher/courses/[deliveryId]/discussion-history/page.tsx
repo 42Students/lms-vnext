@@ -11,6 +11,7 @@ import {
   parseFacultyDiscussionHistoryLocation,facultyDiscussionHistoryHref,
 } from "@/modules/courses/faculty-discussion-history-model";
 import { getFacultyDiscussionHistory } from "@/modules/courses/faculty-discussion-history-service";
+import { Label } from "@/components/ui/label";
 
 type Params={action?:string|string[];page?:string|string[]};
 export default async function FacultyDiscussionHistoryPage({
@@ -32,7 +33,7 @@ export default async function FacultyDiscussionHistoryPage({
         Discussions
       </Link>} />
     <form role="search" aria-label="discussion history filters" method="get" className="grid min-w-0 gap-[8px] border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded action
+      <Label stack className="min-w-0">Recorded action
         <Select name="action" defaultValue={data.query.action}
           className="min-h-11 md:min-h-[var(--lms-control-height)]">
           <option value="ALL">All moderation and reply actions</option>
@@ -40,7 +41,7 @@ export default async function FacultyDiscussionHistoryPage({
           <option value="DELETE">Deletions</option>
           <option value="REPLY">Faculty replies</option>
         </Select>
-      </label>
+      </Label>
       <Button type="submit" variant="primary" className="w-full sm:w-auto">Filter</Button>
       <Link href={facultyDiscussionHistoryHref({...data.query,action:"ALL",page:1})}
         className="inline-flex min-h-11 items-center justify-center px-3 text-sm font-semibold text-primary-text underline hover:text-primary-text focus-ring">Clear</Link>

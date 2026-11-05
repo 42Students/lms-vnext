@@ -24,6 +24,7 @@ import {parseSuperAdminLearningQuery} from "@/modules/admin-ui/super-admin-learn
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 export default async function SuperAdminLessonsPage({
   searchParams,
@@ -130,18 +131,18 @@ export default async function SuperAdminLessonsPage({
           <input type="hidden" name="pageSize" value={pageSize}/>
           {allCourses?<input type="hidden" name="allCourses" value="true"/>:null}
       <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+      <Label stack className="min-w-0">Search
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q} placeholder="Search lessons"
           className="min-h-11 md:min-h-9" />
-      </label>
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+      </Label>
+      <Label stack className="min-w-0">Status
         <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
           <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
         </Select>
-      </label>
+      </Label>
         <Button type="submit" className="min-h-11 w-full self-end sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Filter</Button>
       </div>
-      <label className="grid min-w-0 gap-2 text-sm font-semibold text-[var(--lms-neutral-400)]">
+      <Label stack className="min-w-0">
         Course
         <Select aria-label="Filter lessons by course" name="courseCode"
           defaultValue={data.query.courseCode??""} className="min-h-11 md:min-h-9">
@@ -150,7 +151,7 @@ export default async function SuperAdminLessonsPage({
             {item.name} ({item.code})
           </option>)}
         </Select>
-      </label>
+      </Label>
       <div className="flex flex-wrap items-center gap-2">
         {!allCourses?<Link href={viewAllHref}
           className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
@@ -166,7 +167,7 @@ export default async function SuperAdminLessonsPage({
       <details className="min-w-0" open={Boolean(data.query.cohortCode)}>
         <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Filters</summary>
         <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2">
-          <label className="grid gap-2 text-sm font-semibold text-[var(--lms-neutral-400)]">
+          <Label stack>
             Choose batch
             <Select name="cohortCode" defaultValue={data.query.cohortCode??""}
               className="min-h-11 w-full md:min-h-9">
@@ -175,7 +176,7 @@ export default async function SuperAdminLessonsPage({
                 {item.name} ({item.code})
               </option>)}
             </Select>
-          </label>
+          </Label>
         </div>
       </details>
       <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary)] hover:underline focus-ring md:min-h-9" href="/admin/lessons">Clear filters</Link>
@@ -282,7 +283,7 @@ export default async function SuperAdminLessonsPage({
           {data.query.courseCode?<input type="hidden" name="courseCode" value={data.query.courseCode}/>:null}
           {data.query.cohortCode?<input type="hidden" name="cohortCode" value={data.query.cohortCode}/>:null}
           {allCourses?<input type="hidden" name="allCourses" value="true"/>:null}
-          <label htmlFor="lessons-page-size" className="font-semibold">Rows per page</label>
+          <Label htmlFor="lessons-page-size">Rows per page</Label>
           <Select id="lessons-page-size" name="pageSize" defaultValue={String(pageSize)}
             className="min-h-11 md:min-h-9">
             {[10,25,50,100].map(size=><option key={size} value={String(size)}>{size}</option>)}

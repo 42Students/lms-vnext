@@ -16,6 +16,7 @@ import {
   mentorTaskReviewQuerySchema, mentorTaskReviewTargetHref,
   mentorTaskReviewMobileLayout,
 } from "@/modules/projects/mentor-task-review-model";
+import { Label } from "@/components/ui/label";
 
 type Params = {
   assignment?: string | string[];
@@ -70,62 +71,62 @@ export default async function MentorTaskReviewsPage({
     </section> : <>
       <form role="search" aria-label="mentor task reviews filters" method="get" action="/mentor/task-reviews"
         className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label stack>
           Task or project
           <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
             className="min-h-11 md:min-h-9"
             placeholder="Search pending task reviews" />
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project
+        </Label>
+        <Label stack>Assigned project
           <Select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 md:min-h-9 max-w-full">
             <option value="">All assigned projects</option>
             {data.projects.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
           </Select>
-        </label>
+        </Label>
         <div className="flex min-w-0 flex-wrap items-center gap-2 md:col-span-1">
           <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
           {hasFilters?<Link href="/mentor/task-reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-ring lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
         </div>
         <Disclosure title="More task review filters" defaultOpen={hasAdvancedFilters} className="md:col-span-3" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-3">
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label stack>
           Page size
           <Select name="pageSize" defaultValue={String(data.pageSize)}
             className="min-h-11 md:min-h-9">
             <option value="20">20</option><option value="50">50</option>
           </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">My Mentor assignment
+        </Label>
+        <Label stack>My Mentor assignment
           <Select name="assignment" defaultValue={data.query.assignment}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All current assignments</option>
             <option value="PRIMARY">Primary Mentor</option>
             <option value="SUPPORTING">Supporting Mentor</option>
           </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Priority
+        </Label>
+        <Label stack>Priority
           <Select name="priority" defaultValue={data.query.priority}
             className="min-h-11 md:min-h-9">
             {(["ALL","CRITICAL","HIGH","MEDIUM","LOW"] as const).map(priority=>
               <option key={priority} value={priority}>{priority}</option>)}
           </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submission version
+        </Label>
+        <Label stack>Submission version
           <Input type="number" name="version" min={1} max={100000}
             defaultValue={data.query.version ?? ""} placeholder="All versions"
             className="min-h-11 min-w-0 w-full max-w-full md:min-h-9 md:w-32" />
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Waiting since
+        </Label>
+        <Label stack>Waiting since
           <Select name="age" defaultValue={data.query.age} className="min-h-11 md:min-h-9">
             <option value="ALL">Any submission age</option><option value="LAST_7_DAYS">Past 7 days</option><option value="OLDER_THAN_7_DAYS">Over 7 days old</option><option value="OLDER_THAN_30_DAYS">Over 30 days old</option>
           </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Review order
+        </Label>
+        <Label stack>Review order
           <Select name="order" defaultValue={data.query.order}
             className="min-h-11 md:min-h-9">
             <option value="NEWEST">Newest first</option>
             <option value="OLDEST">Oldest first</option><option value="PRIORITY">Critical priority first</option>
           </Select>
-        </label>
+        </Label>
         </Disclosure>
 
       </form>

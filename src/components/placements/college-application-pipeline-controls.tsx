@@ -18,6 +18,7 @@ import {driveApplicationsHref,type DriveApplicationsQuery} from "@/modules/place
 import {CollegeApplicationDetailDrawer,type CollegeApplicationDetail} from "./college-application-detail-drawer";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge, applicationStatusTone } from "@/components/ui/status-badge";
+import { Label } from "@/components/ui/label";
 type Row={id:string;name:string|null;email:string|null;collegeName:string;ageDays:number;
  source:string;submittedAt:Date|string;rollNumber:string|null;roleTitle:string;
  status:string;screening:string|null;screeningScore?:number|null;partialScore?:number|null;
@@ -236,10 +237,10 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   {key:"name",header:"Learner Name",mobilePriority:"primary",
    cell:row=><span className="font-semibold text-foreground">{row.name?.trim()||"—"}</span>},
   {key:"selected",header:"Select",mobilePriority:"action",cell:row=>
-   <label className="inline-flex min-h-11 items-center gap-2 text-sm">
+   <Label variant="choice" className="inline-flex min-h-11 items-center gap-2">
     <Checkbox aria-label={"Select "+(row.name??row.id)}
      disabled={row.status!=="SUBMITTED"||busy||allMatching}
-     checked={selected.includes(row.id)} onChange={()=>toggle(row.id)}/> Select</label>},
+     checked={selected.includes(row.id)} onChange={()=>toggle(row.id)}/> Select</Label>},
 
   {key:"email",header:"Email",mobilePriority:"secondary",cell:row=>row.email?.trim()||"—"},
   {key:"college",header:"College",mobilePriority:"secondary",cell:row=>row.collegeName?.trim()||"—"},
@@ -326,9 +327,9 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
  ];
  return <section className="space-y-4">
   <div className="grid min-w-0 grid-cols-1 items-center gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] text-sm md:grid-cols-2 lg:grid-cols-[auto_auto_auto_minmax(0,1fr)_auto]">
-   <label className="flex items-center gap-2"><Checkbox checked={allPage}
+   <Label variant="choice" className="flex items-center gap-2"><Checkbox checked={allPage}
     disabled={busy||!eligible.length} onChange={e=>{setAllMatching(false);setSelected(e.target.checked?eligible.map(r=>r.id):[]);}} />
-    Select all {eligible.length} on this page</label>
+    Select all {eligible.length} on this page</Label>
    <strong role="status" aria-live="polite">{selectedCount} selected</strong>
    {total>eligible.length?<Button type="button" disabled={busy||total>3000}
     variant="secondary" onClick={()=>{setAllMatching(true);setSelected([]);}} >
@@ -382,11 +383,11 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
     onClick={()=>void openDetail(failedDetailId)}>Retry details</Button>:null}
    <Button type="button" variant="secondary" onClick={()=>router.refresh()}>Reload applications</Button>
   </div>:null}
-  {legacyShortlisted?<label className="flex min-h-11 flex-wrap items-center gap-2 text-sm text-body">
+  {legacyShortlisted?<Label variant="choice" className="flex min-h-11 flex-wrap items-center gap-2">
    <Checkbox checked={showLegacyExtraColumns} disabled={busy}
      onChange={event=>setShowLegacyExtraColumns(event.currentTarget.checked)} aria-label="Show Roll, Role and Screening columns"/>
    Show additional Roll, Role and Screening columns
-  </label>:null}
+  </Label>:null}
   <DataTable columns={legacyShortlisted?
     (["name","email","college","source","status","date","age","score","actions","selected",
       ...(showLegacyExtraColumns?["roll","role","screening"]:[])] as string[])
@@ -415,41 +416,41 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
     className="max-h-28 overflow-y-auto overscroll-contain pb-4 text-sm [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1rem),transparent_100%)]">{selected.slice(0,8).map(id=>
       <li key={id}>{rowMap.get(id)?.name??id}</li>)}
      {selected.length>8?<li>and {selected.length-8} more</li>:null}</ul>
-    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+    <Label stack>
       {action==="CORRECT"?"Reason (required for correction)":"Reason (optional)"}
       <Textarea rows={3} required={action==="CORRECT"} minLength={action==="CORRECT"?10:undefined}
        maxLength={target==="REJECTED"?500:1000}
        placeholder={target==="REJECTED"?"e.g. Does not meet requirements":"Optional details for the audit history"}
        value={reason} onChange={e=>setReason(e.target.value)}
-       className="w-full text-base sm:text-sm"/></label>
+       className="w-full text-base sm:text-sm"/></Label>
     {action==="MOVE"&&target==="ASSESSMENT"?<div className="space-y-2">
-      <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+      <Label stack>
        Assessment URL (optional)
        <Input type="url" maxLength={2048} placeholder="https://..."
         value={assessmentUrl} onChange={event=>setAssessmentUrl(event.target.value)}
         disabled={busy} className="w-full text-base sm:text-sm"/>
-      </label>
-      <label className="flex min-h-11 items-center gap-2 text-sm text-body">
+      </Label>
+      <Label variant="choice" className="flex min-h-11 items-center gap-2">
        <Checkbox checked={saveAssessmentUrlToJob} disabled={busy||!assessmentUrl.trim()}
         onChange={event=>setSaveAssessmentUrlToJob(event.target.checked)}/>
        Save link to job
-      </label>
+      </Label>
       <p className="text-xs text-muted-foreground">The secure link is stored for successfully moved candidates. Saving it to the job also updates its assessment metadata.</p>
      </div>:null}
     {target==="INTERVIEW"?<p className="text-sm text-body">Moving a candidate to Interview does not schedule an appointment. Use Schedule Interview in the applicant row after the update.</p>:null}
     {target==="OFFERED"||target==="HIRED"?<p className="text-sm text-body">An existing issued offer is required for Offered, and accepted offer plus confirmed joining are required for Hired. This action does not create an offer or joining outcome.</p>:null}
-    <label className="flex min-h-11 items-start gap-2 text-sm text-body">
+    <Label variant="choice" className="flex min-h-11 items-start gap-2">
      <Checkbox checked={notifyLearnerInApp} disabled={busy}
       onChange={event=>setNotifyLearnerInApp(event.target.checked)}/>
      Notify learners in-app after applying the stage change
-    </label>
-    <label className="flex min-h-11 items-start gap-2 text-xs text-muted-foreground">
+    </Label>
+    <Label variant="choice" className="flex min-h-11 items-start gap-2">
      <Checkbox checked={false} disabled aria-label="Notify candidates by email (unavailable)"/>
      <span><strong className="block text-foreground">Notify candidates by email (not available)</strong>
       In-app notifications use the independent choice above. Email requires an approved placement-stage template,
       recipient preference and suppression checks, and a durable audited outbox. The stage move
       never silently sends unapproved email.</span>
-    </label>
+    </Label>
     {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
     {staleConflict?<Button type="button" variant="secondary" disabled={busy}
       onClick={()=>router.refresh()}>Refresh current stages before retrying</Button>:null}

@@ -14,6 +14,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {trySaveReportCsv} from "./report-interactive-table-download-model";
 import {reportTableCsv,reportTableTsv,type ReportCell} from "./report-interactive-table-export-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Cell=ReportCell;
 const stringValue=(value:Cell)=>value===null?"":String(value);
@@ -67,13 +68,13 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
    :"Could not export shown rows. Try copying the report or refresh and try again.");
  }
  const advancedControls = (<>
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Rows shown
+    <Label stack>Rows shown
      <Select value={limit} onChange={e=>setLimit(Number(e.target.value))}
       className="min-h-11 md:min-h-9">
       {[25,50,100,500,1000].map(n=><option key={n} value={n}>{n}</option>)}
       {![25,50,100,500,1000].includes(limit)?<option value={limit}>{limit}</option>:null}
      </Select>
-    </label>
+    </Label>
     <Dropdown mobileSheet align="end" label="Report column filters" trigger={"Column filters ("+Object.values(columnFilters).filter(v=>v.trim()).length+")"}>
      <div role="region" aria-label="Report column filters, scroll for more" tabIndex={0} className="max-h-[min(70dvh,480px)] min-h-0 space-y-2 overflow-y-auto overscroll-contain pb-[max(0.5rem,env(safe-area-inset-bottom))] [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)]">
       <Button variant="secondary" type="button" onClick={event=>{
@@ -83,12 +84,12 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
       }} size="sm" className="min-h-11 md:min-h-9 print:hidden">
        Close filters
       </Button>
-      {headings.map((heading,index)=><label key={index} className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+      {headings.map((heading,index)=><Label stack key={index}>
        {heading}
        <Input type="search" maxLength={100} value={columnFilters[index]??""}
         onChange={event=>{setColumnFilters(current=>({...current,[index]:event.target.value}));setLimit(100);}}
         className="min-h-11 md:min-h-9" />
-      </label>)}
+      </Label>)}
      </div>
     </Dropdown>
     <Dropdown mobileSheet align="end" label="Report visible columns" trigger={"Columns ("+(headings.length-hidden.length)+"/"+headings.length+")"}>
@@ -101,14 +102,14 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
       }} size="sm" className="min-h-11 md:min-h-9 print:hidden">
        Close columns
       </Button>
-      {headings.map((heading,index)=><label key={index}
+      {headings.map((heading,index)=><Label key={index}
        className={"flex min-h-11 items-center gap-2 rounded-lg px-2 py-1 text-xs transition-[background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none "+
         (!hidden.includes(index)&&hidden.length===headings.length-1
           ? "cursor-not-allowed opacity-50" : "hover:bg-primary-subtle active:bg-primary-subtle")}>
        <Checkbox checked={!hidden.includes(index)}
         disabled={!hidden.includes(index)&&hidden.length===headings.length-1}
         onChange={e=>{setHidden(current=>e.target.checked?current.filter(n=>n!==index):[...current,index]);if(!e.target.checked&&sort===index){setSort(null);setDescending(false);}}}/>
-       {heading}</label>)}
+       {heading}</Label>)}
      </fieldset>
     </Dropdown>
     <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" onClick={()=>void copy()} disabled={showing.length===0} aria-label={"Copy "+showing.length+" shown report rows"} size="sm">Copy shown</Button>
@@ -120,10 +121,10 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
   <Heading level={2} size="base" id={headingId} className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-7 lg:text-[20px] lg:leading-[30px]">{title}</Heading>
   {rows.length===0?<EmptyState title="No report rows" description={emptyDescription}/>:<>
    <div data-report-toolbar className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-3">
-    <label className="grid min-w-0 w-full max-w-xl gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Search table
+    <Label stack className="min-w-0 w-full max-w-xl">Search table
      <Input type="search" maxLength={100} value={search} onChange={e=>{setSearch(e.target.value);setLimit(100);}}
       className="min-h-11 md:min-h-9" placeholder="Search shown report rows"/>
-    </label>
+    </Label>
     <Disclosure title="Table tools" defaultOpen={!compactControls && headings.length<=3} className="min-w-0 print:hidden" contentClassName="min-w-0 pt-2">
       <div className="grid min-w-0 grid-cols-1 items-end gap-3 sm:grid-cols-2 xl:grid-cols-4">{advancedControls}</div>
     </Disclosure>
@@ -132,7 +133,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
     {showing.length} shown of {ordered.length} matching rows ({rows.length} total). Sort with a column heading or the mobile sort control.
    </p>
    <div data-report-toolbar className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-end gap-2 md:hidden">
-    <label className="grid flex-1 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Sort rows by
+    <Label stack className="flex-1">Sort rows by
      <Select value={sort??""} onChange={event=>{
        setSort(event.target.value===""?null:Number(event.target.value));
        setDescending(false);
@@ -140,7 +141,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
       <option value="">Original order</option>
       {displayedColumns.map(col=><option key={col.index} value={col.index}>{col.heading}</option>)}
      </Select>
-    </label>
+    </Label>
     <FilterChip type="button" disabled={sort===null} aria-label="Descending order" aria-pressed={descending}
      onClick={()=>setDescending(value=>!value)} className="min-h-11 md:min-h-9 print:hidden">
      {descending?"Descending":"Ascending"}

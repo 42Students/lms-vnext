@@ -13,6 +13,7 @@ import { getTpoDueFollowupQueue } from "@/modules/placements/tpo-followup-queue-
 import { tpoFollowupQueueHref,tpoFollowupQueueExportHref } from "@/modules/placements/tpo-followup-queue-model";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 export const dynamic = "force-dynamic";
 const FOLLOWUP_SCOPES=["MINE","TEAM"] as const;
@@ -65,10 +66,10 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
       </div>
       <form action="/tpo/follow-ups" method="get" className="grid min-w-0 grid-cols-1 gap-3 border-t border-border pt-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
         <input type="hidden" name="scope" value={scope}/><input type="hidden" name="window" value={window}/>
-        <label className="min-w-0 flex-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Find recruiter or company
+        <Label className="min-w-0 flex-1">Find recruiter or company
           <Input type="search" name="q" maxLength={100} defaultValue={q} placeholder="Search recorded lead or company name"
             className="mt-[6px] min-h-11 w-full border border-border px-3"/>
-        </label><Button type="submit" className="min-h-11 w-full sm:w-auto">Search</Button>
+        </Label><Button type="submit" className="min-h-11 w-full sm:w-auto">Search</Button>
         {q?<Link href={tpoFollowupQueueHref({scope,window})} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)]">Clear</Link>:null}
       </form>
       <p className="text-sm text-body leading-[22px]">{scope==="MINE"?"Only open due follow-ups assigned to your persisted TPO membership.":"Open due follow-ups for the placement team; this includes all owners."}</p>

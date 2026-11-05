@@ -22,6 +22,7 @@ import { CollegeApplicationPipelineControls } from "@/components/placements/coll
 import { listCollegeDriveApplicationFilters } from "@/modules/placements/college-drive-applications-options-service";
 import { SuperAdminDriveApplicationsCsvControl } from "@/components/admin/super-admin-drive-applications-csv-control";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 function adminHref(...args: Parameters<typeof driveApplicationsHref>) {
  return driveApplicationsHref(...args).replace("/college/placements/","/admin/placements/");
@@ -181,75 +182,75 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       {query.attention!=="ALL"?<Input type="hidden" name="attention" value={query.attention}/>:null}
       {preserved?<Input type="hidden" name="returnTo" value={returnTo}/>:null}
       <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Name, email, roll or role
+      <Label stack className="min-w-0">Name, email, roll or role
         <Input name="q" defaultValue={query.q} maxLength={100} className="min-h-11 w-full md:min-h-9" />
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Application
+      </Label>
+      <Label stack className="min-w-0">Application
         <Select name="status" defaultValue={query.status} className="min-h-11 w-full md:min-h-9">
           {["ALL","SUBMITTED","WITHDRAWN"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">Sort applications
+      </Label>
+      <Label stack className="min-w-0">Sort applications
         <Select name="sort" defaultValue={query.sort??"AGE_ASC"} className="min-h-11 w-full md:min-h-9">
           <option value="AGE_ASC">Age: youngest first</option><option value="AGE_DESC">Age: oldest first</option>
           <option value="SCORE_ASC">Match Score: lowest first</option><option value="SCORE_DESC">Match Score: highest first</option>
           <option value="SUBMITTED_DESC">Recently applied first</option>
         </Select>
-      </label>
+      </Label>
       <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Filter</Button>
       </div>
       <details className="min-w-0" open={true}>
         <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Filters</summary>
         <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 lg:grid-cols-3">
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Screening
+      <Label stack className="min-w-0">Screening
         <Select name="screening" defaultValue={query.screening} className="min-h-11 w-full md:min-h-9">
           {["ALL","PENDING","HOLD","SHORTLISTED","REJECTED","UNRECORDED"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Source
+      </Label>
+      <Label stack className="min-w-0">Source
         <Select name="source" defaultValue={query.source} className="min-h-11 w-full md:min-h-9">
           {["ALL","INTERNAL","EXTERNAL"].map(item=><option key={item} value={item}>{item==="ALL"?"All sources":item}</option>)}
         </Select>
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Department
+      </Label>
+      <Label stack className="min-w-0">Department
         <Select name="departmentId" defaultValue={query.departmentId??""} className="min-h-11 w-full md:min-h-9">
           <option value="">All departments</option>
           {query.departmentId&&!(filters?.departments??[]).some(item=>item.id===query.departmentId)&&
             <option value={query.departmentId}>Selected department</option>}
           {(filters?.departments??[]).map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
         </Select>
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Program
+      </Label>
+      <Label stack className="min-w-0">Program
         <Select name="programId" defaultValue={query.programId??""} className="min-h-11 w-full md:min-h-9">
           <option value="">All programs</option>
           {query.programId&&!(filters?.programs??[]).some(item=>item.id===query.programId)&&
             <option value={query.programId}>Selected program</option>}
           {(filters?.programs??[]).map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
         </Select>
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Batch
+      </Label>
+      <Label stack className="min-w-0">Batch
         <Select name="cohortId" defaultValue={query.cohortId??""} className="min-h-11 w-full md:min-h-9">
           <option value="">All batches</option>
           {query.cohortId&&!(filters?.cohorts??[]).some(item=>item.id===query.cohortId)&&
             <option value={query.cohortId}>Selected batch</option>}
           {(filters?.cohorts??[]).map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
         </Select>
-      </label>
-      <label className="grid gap-1.5 text-[13px] font-semibold text-body">Applied after (IST)
+      </Label>
+      <Label stack>Applied after (IST)
        <Input name="appliedFrom" type="date" defaultValue={query.appliedFrom??""}/>
-      </label>
-      <label className="grid gap-1.5 text-[13px] font-semibold text-body">Applied before (IST)
+      </Label>
+      <Label stack>Applied before (IST)
        <Input name="appliedTo" type="date" defaultValue={query.appliedTo??""}/>
-      </label>
-      <label className="grid gap-1.5 text-[13px] font-semibold text-body">Minimum assessment score (%)
+      </Label>
+      <Label stack>Minimum assessment score (%)
        <Input name="minScore" type="number" min={0} max={100} step={1} defaultValue={query.minScore??""}/>
-      </label>
-      <label className="grid gap-1.5 text-[13px] font-semibold text-body">Maximum assessment score (%)
+      </Label>
+      <Label stack>Maximum assessment score (%)
        <Input name="maxScore" type="number" min={0} max={100} step={1} defaultValue={query.maxScore??""}/>
-      </label>
-      <label className="grid gap-1.5 text-[13px] font-semibold text-body">Skills
+      </Label>
+      <Label stack>Skills
        <Input name="skills" type="search" maxLength={100} defaultValue={query.skills} placeholder="Profile skill"/>
-      </label>
+      </Label>
       <p className="text-xs text-muted-foreground sm:col-span-2 lg:col-span-3">
        Score filters use applied round evidence, not unavailable automated screening scores.
        Applicants without a recorded round score are excluded when a score range is set.

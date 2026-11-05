@@ -7,6 +7,7 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type LeadChoice = {
   id: string;
@@ -175,7 +176,7 @@ export function RecruiterBulkStageControls({
         <>
           <div className="max-h-52 space-y-1 overflow-y-auto rounded-md border border-border p-2">
             {available.map((row) => (
-              <label key={row.id} className="flex min-h-11 md:min-h-9 items-center gap-2 px-1 py-1 text-sm">
+              <Label variant="choice" key={row.id} className="flex min-h-11 md:min-h-9 items-center gap-2 px-1 py-1">
                 <Checkbox
                   checked={chosenIds.includes(row.id)}
                   onChange={(event) => choose(row.id, event.target.checked)}
@@ -186,11 +187,11 @@ export function RecruiterBulkStageControls({
                 <span className="text-muted-foreground">
                   {row.companyName ?? "Unlinked company"} · {row.manualStage.replaceAll("_", " ")}
                 </span>
-              </label>
+              </Label>
             ))}
           </div>
           <div className="flex flex-wrap items-end gap-3">
-            <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+            <Label>
               New manual stage
               <Select
                 value={action}
@@ -205,10 +206,10 @@ export function RecruiterBulkStageControls({
                 <option value="NEW">Restore to New</option>
                 <option value="NOT_NOW">Not Now</option>
               </Select>
-            </label>
+            </Label>
             {action === "NOT_NOW" ? (
               <>
-                <label className="min-w-44 flex-1 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+                <Label className="min-w-44 flex-1">
                   Reason (required)
                   <Input
                     value={reason}
@@ -217,8 +218,8 @@ export function RecruiterBulkStageControls({
                     disabled={busy}
                     className={fieldClass + " mt-1 w-full"}
                   />
-                </label>
-                <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+                </Label>
+                <Label>
                   Revisit date (optional)
                   <Input
                     type="date"
@@ -228,7 +229,7 @@ export function RecruiterBulkStageControls({
                     disabled={busy}
                     className={fieldClass + " mt-1 block"}
                   />
-                </label>
+                </Label>
               </>
             ) : null}
             <Button className="min-h-11 md:min-h-9"

@@ -12,6 +12,7 @@ import {recruiterSelectionRangeWarning} from "@/modules/placements/recruiter-sel
 import {parseRecruiterSelectionCsv,recruiterSelectionCsvTemplate}
  from "@/modules/placements/recruiter-selection-csv-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Candidate={id:string;name:string};
 type Kind="OFFER"|"LETTER_OF_INTENT";
@@ -170,39 +171,39 @@ export function RecruiterSelectionComposer({jobId,collegeId,candidates,minCtcInr
   {csvStatus?<p role="status" className="text-sm text-success">{csvStatus}</p>:null}
   {open&&!disabled?<div className="space-y-4 border-t border-border pt-4">
    <div className="grid gap-3 sm:grid-cols-2">
-    <label className="grid gap-1 text-sm font-semibold text-body">Selection kind
+    <Label stack>Selection kind
      <Select value={kind} onChange={event=>{setKind(event.target.value as Kind);nonce.current=null;}}>
       <option value="OFFER">Offer</option>
       <option value="LETTER_OF_INTENT">Letter of Intent</option>
      </Select>
-    </label>
-    <label className="grid gap-1 text-sm font-semibold text-body">CTC (LPA)
+    </Label>
+    <Label stack>CTC (LPA)
      <Input type="number" inputMode="decimal" min="0.01" max="999.99" step="0.01"
       value={ctcLpa} onChange={event=>{setCtcLpa(event.target.value);nonce.current=null;}}
       aria-invalid={!validCtc}/>
-    </label>
+    </Label>
    </div>
    {warning?<p role="status" className="text-sm text-warning-text">{warning}</p>:null}
-   <label className="grid gap-1 text-sm font-semibold text-body">Package details (optional)
+   <Label stack>Package details (optional)
     <Textarea value={packageDescription} maxLength={500}
      onChange={event=>{setPackageDescription(event.target.value);nonce.current=null;}}
      rows={3}/>
-   </label>
+   </Label>
    <div className="space-y-2">
     <p className="text-sm font-semibold text-body">Select applicants ({chosen.length} selected)</p>
-    <label className="flex min-h-11 items-center gap-2 text-sm">
+    <Label variant="choice" className="flex min-h-11 items-center gap-2">
      <Checkbox checked={candidates.length>0&&chosen.length===candidates.length}
       indeterminate={chosen.length>0&&chosen.length<candidates.length}
       onChange={event=>{setSelected(event.target.checked?candidates.map(item=>item.id):[]);nonce.current=null;}}/>
      Select all eligible applicants
-    </label>
+    </Label>
     <div className="max-h-56 overflow-y-auto rounded-lg border border-border">
-     {candidates.map(candidate=><label key={candidate.id}
-      className="flex min-h-11 items-center gap-2 border-b border-border px-3 py-2 text-sm last:border-b-0">
+     {candidates.map(candidate=><Label variant="choice" key={candidate.id}
+      className="flex min-h-11 items-center gap-2 border-b border-border px-3 py-2 last:border-b-0">
       <Checkbox checked={chosen.includes(candidate.id)}
        onChange={event=>changeSelection(candidate.id,event.target.checked)}/>
       {candidate.name}
-     </label>)}
+     </Label>)}
     </div>
    </div>
    <section aria-label="Import applicant IDs from Excel" className="space-y-2 border-t border-border pt-3">
@@ -214,10 +215,10 @@ export function RecruiterSelectionComposer({jobId,collegeId,candidates,minCtcInr
     </p>
     <div className="flex flex-wrap gap-3">
      <Button type="button" variant="secondary" onClick={downloadTemplate}>Download Excel-compatible template</Button>
-     <label className="grid gap-1 text-xs font-medium text-body">Upload Excel or CSV
+     <Label stack>Upload Excel or CSV
       <Input type="file" accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" disabled={busy||importing}
        onChange={event=>{void importList(event.target.files?.[0]);event.target.value="";}}/>
-     </label>
+     </Label>
     </div>
    </section>
    <p className="text-xs text-muted-foreground">Selections go to your college placement cell for review. This action does not issue or release offers.</p>

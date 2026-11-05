@@ -7,6 +7,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useId, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Label } from "@/components/ui/label";
 
 export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
   membershipId: string; name: string; status: "ACTIVE" | "SUSPENDED" | "ENDED";
@@ -113,12 +114,12 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
         the original faculty identity. Reassign outstanding teaching or projects first; suspension
         blocks this college membership and can be reversed by an authorized administrator.
       </p>:null}
-      {action==="DEACTIVATE"?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason
+      {action==="DEACTIVATE"?<Label stack className="min-w-0">Reason
           <Input id={reasonId} maxLength={500} minLength={3} required value={reason} disabled={busy}
             aria-describedby={`${reasonId}-hint`} aria-invalid={Boolean(error)}
             onChange={e=>{setReason(e.target.value);if(error)setError("");}} className="min-h-11 w-full md:min-h-9"/>
           <span id={`${reasonId}-hint`} className="text-xs font-normal leading-5 text-body">At least 3 characters are required.</span>
-        </label>:null}
+        </Label>:null}
         {error?<Alert tone="error">{error} {error.includes("Sign in again")?<Link href="/login" className="font-semibold underline">Sign in</Link>:null}</Alert>:null}
       </div> : null}
     </ConfirmDialog>

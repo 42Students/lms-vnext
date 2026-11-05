@@ -11,6 +11,7 @@ import {LoadingState} from "@/components/ui/loading-state";
 import {Checkbox} from "@/components/ui/checkbox";
 import {useToast} from "@/components/ui/toast";
 import { Radio } from "@/components/ui/radio";
+import { Label } from "@/components/ui/label";
 
 type Candidate={membershipId:string;displayName:string|null;email:string|null};
 type Member=Candidate&{role:string;id:string};
@@ -116,27 +117,27 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
    description="Add learners to this workspace, or explicitly choose to replace existing students. All changes are saved together.">
    <div className="space-y-4">
     <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-end">
-     <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search learners
+     <Label stack className="min-w-0 flex-1">Search learners
       <Input value={search} onChange={event=>setSearch(event.target.value)}
        onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();void find();}}}
        maxLength={120} placeholder="Search by student name"/>
-     </label>
+     </Label>
      <Button type="button" variant="secondary" className="w-full sm:w-auto" loading={searching} disabled={searching||busy||!loaded} onClick={()=>void find()}>
       {searching?"Searching…":"Search"}
      </Button>
     </div>
     <fieldset className="flex flex-wrap gap-3 rounded border border-border p-3">
      <legend className="text-xs font-semibold">Update mode</legend>
-     <label className="flex items-center gap-2 text-sm">
+     <Label variant="choice" className="flex items-center gap-2">
       <Radio name="roster-mode" checked={mode==="ADD"}
        onChange={()=>{setMode("ADD");setSelected([]);}} disabled={busy}/>
       Add learners (keep existing)
-     </label>
-     <label className="flex items-center gap-2 text-sm">
+     </Label>
+     <Label variant="choice" className="flex items-center gap-2">
       <Radio name="roster-mode" checked={mode==="REPLACE"}
        onChange={()=>{setMode("REPLACE");setSelected([...initial]);}} disabled={busy}/>
       Replace existing roster
-     </label>
+     </Label>
     </fieldset>
     {loaded?<div role="status" className="min-w-0 space-y-1 text-sm text-body">
       <p>Already in this workspace: {initial.length} learner{initial.length===1?"":"s"}.
@@ -150,13 +151,13 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
     </div>:null}
     {loaded?<fieldset disabled={busy} tabIndex={0} className="max-h-64 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] px-[var(--lms-space-2)] focus-ring">
      <legend className="px-[var(--lms-space-2)] text-[13px] font-semibold leading-5">Learners ({effectiveIds.length} total after save; {selected.length} selected in this editor)</legend>
-     {visibleOptions.slice((currentPage-1)*50,currentPage*50).map(option=><label key={option.membershipId} className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] py-[var(--lms-space-2)] text-[13px] leading-5">
+     {visibleOptions.slice((currentPage-1)*50,currentPage*50).map(option=><Label key={option.membershipId} className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] py-[var(--lms-space-2)]">
       <Checkbox className="size-4" checked={selected.includes(option.membershipId)}
        onChange={event=>setSelected(previous=>event.target.checked?
         ((mode==="REPLACE"?previous.length:initial.length+previous.length)>=500
           ?previous:[...previous,option.membershipId]):previous.filter(id=>id!==option.membershipId))}/>
       <span className="min-w-0 break-words">{option.displayName??option.email??"Learner"}</span>
-     </label>)}
+     </Label>)}
      {!visibleOptions.length?<p className="text-sm text-muted-foreground leading-[22px]">No eligible learners available.</p>:null}
     </fieldset>:searching?<LoadingState label="Loading eligible learners…"/>:error?<p role="alert" className="text-[13px] leading-5 text-[var(--lms-error-text)]">{error}</p>:null}
     {loaded&&visibleOptions.length>50?<div className="flex flex-wrap items-center gap-2 text-sm">
@@ -167,9 +168,9 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
       onClick={()=>setPage(n=>Math.min(lastPage,n+1))}>Next</Button>
     </div>:null}
     {searchErrors?<p role="alert" className="text-sm text-error">{searchErrors}</p>:null}
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role label (optional)
+    <Label stack>Role label (optional)
      <Input value={roleLabel} onChange={event=>setRoleLabel(event.target.value)} maxLength={120} placeholder="Project Contributor"/>
-    </label>
+    </Label>
     <p className="max-w-prose border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[13px] leading-5 text-[var(--lms-body-text)]">{mode==="ADD"?"Add learners preserves all existing members and their earlier work.":
      "Replace roster ends access for unchecked existing learners after confirmation; past work is retained."}
      Class-managed teams must be changed through the class team workspace.</p>

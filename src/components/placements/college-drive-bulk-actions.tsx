@@ -5,6 +5,7 @@ import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import {useRouter} from "next/navigation";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Drive={id:string;title:string;status:string;companyName:string};
 type Preview={eligible:number;ignored:number;excluded:number;pendingLettersWithdrawn:number};
 type Result={updated:number;skipped:number;results:{jobId:string;status:string;reason:string}[]};
@@ -51,13 +52,13 @@ export function CollegeDriveBulkActions({drives}:{drives:Drive[]}){
   </div>:null}
   <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
    <Heading level={2} className="sr-only">Bulk drives</Heading>
-   <label className="flex min-h-11 items-center gap-[6px] text-sm">
+   <Label variant="choice" className="flex min-h-11 items-center gap-[6px]">
     <Checkbox disabled={!eligible.length||busy}
      checked={eligible.length>0&&eligible.every(row=>selected.includes(row.id))}
      onChange={e=>{setSelected(e.target.checked?eligible.map(row=>row.id).slice(0,25):[]);
       setPreview(null);setResult(null);}}/>
     Select all eligible on this page ({eligible.length})
-   </label>
+   </Label>
    <span role="status" className="text-sm">{selected.length} selected</span>
    <Select aria-label="Drive bulk action" value={action} onChange={e=>{setAction(e.target.value as "OPEN"|"CLOSE");setSelected([]);setPreview(null);setResult(null);setError("");}}
     className="w-full sm:w-auto">
@@ -66,7 +67,7 @@ export function CollegeDriveBulkActions({drives}:{drives:Drive[]}){
    <Button variant="primary" type="button" disabled={!canProcess} className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>void send("PREVIEW")}>Preview change</Button>
   </div>
   <div className="grid max-h-52 min-w-0 gap-2 overflow-y-auto sm:grid-cols-2 lg:grid-cols-3">
-   {drives.map(row=><label key={row.id} title={!eligibleIds.has(row.id)?whyDisabled(row):undefined} className="flex min-h-11 min-w-0 items-center gap-[6px] rounded-[var(--lms-control-radius)] border border-border p-2 text-xs">
+   {drives.map(row=><Label variant="choice" key={row.id} title={!eligibleIds.has(row.id)?whyDisabled(row):undefined} className="flex min-h-11 min-w-0 items-center gap-[6px] rounded-[var(--lms-control-radius)] border border-border p-2">
      <Checkbox checked={selected.includes(row.id)}
       disabled={busy||!eligibleIds.has(row.id)||(!selected.includes(row.id)&&selected.length>=25)}
       aria-label={"Select "+row.title+" ("+row.companyName+")"}
@@ -80,7 +81,7 @@ export function CollegeDriveBulkActions({drives}:{drives:Drive[]}){
           className="block text-muted-foreground">
           {!eligibleIds.has(row.id)?whyDisabled(row):"Maximum 25 drives selected on this page"}
          </span>:null}</span>
-    </label>)}
+    </Label>)}
   </div>
   <p className="text-xs text-muted-foreground">Select up to 25 eligible drives on the current page. For more, change pages and repeat. Open is available for closed drives; drafts must pass publish preflight in the drive workspace. Closing stops scheduled rounds and withdraws still-issued offers. It does not archive or delete a drive; archive requires a separate impact preview.</p>
   {preview?<div className="space-y-3 rounded border border-border p-4 text-sm" role="group" aria-label="Bulk action impact">

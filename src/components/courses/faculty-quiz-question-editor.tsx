@@ -13,6 +13,7 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { courseApiError } from "./learner-course-api";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type OptionDraft = {
   key: number;
@@ -479,7 +480,7 @@ export function FacultyQuizQuestionEditor({
                     ) : null}
                   </div>
 
-                  <label className="mt-3 block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                  <Label className="mt-3 block min-w-0">
                     Prompt
                     <Textarea
                       className="mt-[6px]"
@@ -496,10 +497,10 @@ export function FacultyQuizQuestionEditor({
                       }
                       maxLength={5000}
                     />
-                  </label>
+                  </Label>
 
                   <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-[minmax(0,1fr)_8rem]">
-                    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                    <Label>
                       Question type
                       <Select
                         className="mt-[6px]"
@@ -521,8 +522,8 @@ export function FacultyQuizQuestionEditor({
                           Multiple choice
                         </option>
                       </Select>
-                    </label>
-                    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                    </Label>
+                    <Label>
                       Points
                       <Input
                         className="mt-[6px]"
@@ -543,7 +544,7 @@ export function FacultyQuizQuestionEditor({
                           )
                         }
                       />
-                    </label>
+                    </Label>
                   </div>
 
                   <div className="mt-4 space-y-2">

@@ -11,6 +11,7 @@ import {Input} from "@/components/ui/input";
 import {Alert} from "@/components/ui/alert";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {EmptyState} from "@/components/ui/empty-state";
+import { Label } from "@/components/ui/label";
 type Candidate={applicationId:string;name:string;email?:string|null;roleTitle:string;offerReady:boolean;alreadyOffered:boolean};
 type RoleOption={id:string;title:string;annualCtcInr:number|null};
 type Selection={id:string;applicationId:string;name:string;roleTitle:string;annualCtcInr:number|null;status:string;recordedAt:string;offerReady:boolean;releasedOfferId:string|null};
@@ -93,23 +94,23 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
       {chosen.length} selections · {selections.filter(s=>chosen.includes(s.id)&&s.offerReady).length} ready to verify · {selections.filter(s=>chosen.includes(s.id)&&!s.offerReady).length} need review.
       Successful releases issue official offers and notify learners.
     </Alert>:null}
-    {mode==="RECORD"?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Package from this drive
+    {mode==="RECORD"?<Label stack className="min-w-0">Package from this drive
      <Select defaultValue=""
       onChange={e=>{const option=roleOptions.find(o=>o.id===e.target.value);
         if(option){setRole(option.title);setLpa(option.annualCtcInr==null?"":String(option.annualCtcInr/100000));}}}>
       <option value="">Choose a role package or enter manually</option>
       {roleOptions.map(o=><option value={o.id} key={o.id}>{o.title}{o.annualCtcInr==null?"":" · ₹"+(o.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"}</option>)}
-     </Select></label>:null}
+     </Select></Label>:null}
     {mode==="RECORD"?<div className="grid gap-3 md:grid-cols-2">
-     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role<Input required value={role} onChange={e=>setRole(e.target.value)}
-      maxLength={200} /></label>
-     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Package (LPA, optional)<Input type="number" min={0} max={1000} step="0.01"
-      value={lpa} onChange={e=>setLpa(e.target.value)} /></label>
+     <Label stack className="min-w-0">Role<Input required value={role} onChange={e=>setRole(e.target.value)}
+      maxLength={200} /></Label>
+     <Label stack className="min-w-0">Package (LPA, optional)<Input type="number" min={0} max={1000} step="0.01"
+      value={lpa} onChange={e=>setLpa(e.target.value)} /></Label>
     </div>:null}
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find student
+    <Label stack className="min-w-0">Find student
      <Input type="search" value={search} onChange={e=>setSearch(e.target.value)} maxLength={100}
       placeholder="Search name, email or role" />
-    </label>
+    </Label>
     <div className="flex flex-col gap-2 text-sm sm:flex-row sm:flex-wrap sm:items-center">
       <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="ghost" type="button" disabled={pending} onClick={()=>setChosen(previous=>[
        ...new Set([...previous,...(mode==="RECORD"?visibleRecordable.map(x=>x.applicationId):visibleReleasable.map(x=>x.id))])].slice(0,100))}>
@@ -121,10 +122,10 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
      <legend className="font-semibold">Students ({chosen.length} selected, maximum 100)</legend>
      {(mode==="RECORD"?visibleRecordable.map(c=>({id:c.applicationId,name:c.name,note:c.roleTitle})):
        visibleReleasable.map(s=>({id:s.id,name:s.name,note:s.roleTitle+(s.offerReady?"":" · Needs eligibility review")})))
-       .map(item=><label key={item.id} className="flex min-h-11 min-w-0 items-center gap-3 px-2 text-sm hover:bg-muted md:min-h-9">
+       .map(item=><Label variant="choice" key={item.id} className="flex min-h-11 min-w-0 items-center gap-3 px-2 hover:bg-muted md:min-h-9">
         <Checkbox checked={chosen.includes(item.id)} disabled={pending} onChange={()=>toggle(item.id)}/>
         <span className="min-w-0 break-words">{item.name} · {item.note}</span>
-       </label>)}
+       </Label>)}
     </fieldset>
     {error?<InlineNotice tone="error" message={error}/>:null}
     {report.length?<div role="status" tabIndex={0} aria-label="Selection release results, scroll for more" className="max-h-32 min-h-0 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 text-sm [mask-image:linear-gradient(to_bottom,black_0%,black_85%,transparent_100%)]">

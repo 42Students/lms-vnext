@@ -2,6 +2,7 @@
 import {useEffect} from "react";
 import {useRouter} from "next/navigation";
 import {usePathname} from "next/navigation";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 /** Legacy placement-settings deep links used tab= and #hash bookmarks. */
 const LEGACY_TABS:Record<string,string>={
@@ -23,10 +24,10 @@ export function TpoLegacySettingsRedirect({tab}:{tab?:string}){
  },[tab,router]);
  return <section role="status" aria-live="polite" className="min-w-0 space-y-4 py-3 text-sm text-[var(--lms-body-text)]">
    <span className="sr-only">Opening settings…</span>
-   <div aria-hidden="true" className="h-7 w-48 animate-pulse rounded bg-muted"/>
+   <SkeletonBlock className="h-7 w-48" />
    <div aria-hidden="true" className="grid gap-2 md:grid-cols-[13.5rem_minmax(0,1fr)]">
-    <div className="space-y-2">{Array.from({length:5},(_,index)=><div key={index} className="h-9 animate-pulse rounded bg-muted"/>)}</div>
-    <div className="space-y-3">{Array.from({length:8},(_,index)=><div key={index} className="h-8 animate-pulse rounded bg-muted"/>)}</div>
+    <div className="space-y-2">{Array.from({length:5},(_,index)=><SkeletonBlock key={index} className="h-9" />)}</div>
+    <div className="space-y-3">{Array.from({length:8},(_,index)=><SkeletonBlock key={index} className="h-8" />)}</div>
    </div>
   </section>;
 }

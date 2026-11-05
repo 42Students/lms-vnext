@@ -6,6 +6,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import { Label } from "@/components/ui/label";
 type Decision="ELIGIBLE"|"INELIGIBLE"|"NOT_DECIDED";
 export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,finished}:{
  batchId:string;classId:string;initial:string;expectedVersion:string;finished:boolean;
@@ -38,18 +39,18 @@ export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,f
  }
  return <div className="min-w-0 space-y-2">
   <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold">Who is in
+   <Label stack className="min-w-0">Who is in
     <Select value={choice} onChange={e=>{setChoice(e.target.value as Decision);setError("");}} disabled={busy||finished}
      className="min-h-11 w-full min-w-0 md:min-h-9">
      <option value="NOT_DECIDED">Follows the batch</option>
      <option value="ELIGIBLE">Eligible</option>
      <option value="INELIGIBLE">Ineligible</option>
     </Select>
-   </label>
-  {choice==="INELIGIBLE"?<label className="grid min-w-0 gap-[6px] text-[13px]">Reason
+   </Label>
+  {choice==="INELIGIBLE"?<Label stack className="min-w-0">Reason
    <Textarea className="min-h-20 w-full min-w-0" value={reason} onChange={e=>setReason(e.target.value)} maxLength={200} rows={2}
     disabled={busy||finished} placeholder="Reason for ineligible decision"/>
-  </label>:null}
+  </Label>:null}
   </div>
   {error?<InlineNotice tone="error" message={error}/>:null}
   <Button type="button" onClick={review} disabled={busy||finished||!changed}

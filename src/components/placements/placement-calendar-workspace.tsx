@@ -49,6 +49,7 @@ import { placementRoundKinds } from "@/modules/placements/validation";
 import { TPO_CALENDAR_CHIP_CHOICES, filterTpoCalendarChipEvents, parseTpoCalendarChips, toggleTpoCalendarChip, tpoCalendarChipCount, type TpoCalendarChip } from "@/modules/placements/tpo-calendar-kind-chips";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type CalendarAudience = "TPO" | "COLLEGE_ADMIN" | "SUPER_ADMIN";
 
@@ -1001,15 +1002,15 @@ export async function PlacementCalendarWorkspace({
             value={state.view}
           />
 
-          <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+          <Label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)]">
             Date
             <CalendarDateSelect
               href={calendarHref(basePath,audience,state,{})}
               value={state.anchor}
             />
-          </label>
+          </Label>
 
-          <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+          <Label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)]">
             Company
             <CalendarCompanySelect
               href={calendarHref(basePath,audience,state,{company:""})}
@@ -1017,7 +1018,7 @@ export async function PlacementCalendarWorkspace({
               companies={[...new Set(countSourceEvents.map(event=>event.companyName).filter(
                 (name):name is string=>Boolean(name)))].sort((a,b)=>a.localeCompare(b,"en-IN"))}
             />
-          </label>
+          </Label>
 
           {isTpo&&countSourceEvents.length>0?<details aria-label="Quick company filters" open={Boolean(state.company)} className="min-w-0 sm:col-span-2 lg:col-span-3">
     <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-link-text)] focus-ring">Companies in this period</summary>
@@ -1034,19 +1035,19 @@ export async function PlacementCalendarWorkspace({
      Company choices reflect this visible period; the source may have additional matches outside it.
     </p>:null}
           {isTpo ? (
-            <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+            <Label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)]">
               Event type
               <CalendarEventKindSelect
                 href={calendarHref(basePath,audience,state,{})}
                 selected={state.kind??""}
                 options={EVENT_FILTERS}
               />
-            </label>
+            </Label>
           ) : (
             <details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(state.job || state.jobId || (state.roundKind && state.roundKind!=="INTERVIEW"))}>
               <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring">Filters</summary>
               <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2">
-              <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+              <Label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)]">
                 Round type
                 <Select
                   name="roundKind"
@@ -1062,10 +1063,10 @@ export async function PlacementCalendarWorkspace({
                     </option>
                   ))}
                 </Select>
-              </label>
+              </Label>
 
               {state.jobId?<Input type="hidden" name="jobId" value={state.jobId}/>:null}
-              <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+              <Label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)]">
                 Job
                 <Input
                   type="search"
@@ -1075,7 +1076,7 @@ export async function PlacementCalendarWorkspace({
                   placeholder="Search job title"
                   className="w-full"
                 />
-              </label>
+              </Label>
               </div>
             </details>
           )}

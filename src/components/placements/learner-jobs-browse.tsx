@@ -27,6 +27,7 @@ import {Tabs} from "@/components/ui/tabs";
 import { Pagination } from "@/components/ui/pagination";
 import {LearnerSaveDriveButton} from "./learner-save-drive-button";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 const PAGE_SIZE = 20;
 
@@ -213,7 +214,7 @@ export function LearnerJobsBrowse({
       {navigating?<p role="status" className="text-xs text-body">Updating drives…</p>:null}
       <section className="pt-3" aria-label="Find placement drives">
         <div className="grid min-w-0 gap-3 md:grid-cols-[minmax(220px,2fr)_repeat(3,minmax(130px,1fr))] md:items-start">
-          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="min-w-0">
             Search
             <Input type="search" value={search} maxLength={100}
               onChange={event=>setSearch(event.target.value)}
@@ -222,7 +223,7 @@ export function LearnerJobsBrowse({
             <span className="mt-1 block text-xs font-normal text-muted-foreground">
               {search.length}/100 characters · Search is limited to 100 characters.
             </span>
-          </label>
+          </Label>
           <Button ref={mobileFilterButton} variant="secondary" type="button"
             aria-expanded={mobileOpen} aria-controls="learner-drive-filters"
             onClick={()=>setMobileOpen(prev=>!prev)}
@@ -239,7 +240,7 @@ export function LearnerJobsBrowse({
               <Heading level={3} size="base" className="text-foreground">Filter drives</Heading>
               <Button type="button" variant="secondary" onClick={closeMobileFilters}>Done</Button>
             </div>
-            <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <Label className="min-w-0 flex-1">
               Sort
               <Select value={filters.sort} aria-label="Sort placement drives"
                 onChange={event=>updateQuery({sort:event.target.value})} className={selectClass}>
@@ -248,8 +249,8 @@ export function LearnerJobsBrowse({
                 <option value="ctc">Highest CTC</option>
                 <option value="title">Role A–Z</option>
               </Select>
-            </label>
-            <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            </Label>
+            <Label className="min-w-0 flex-1">
               Type
               <Select value={filters.employmentType} aria-label="Type"
                 onChange={event=>updateQuery({type:event.target.value})} className={selectClass}>
@@ -258,8 +259,8 @@ export function LearnerJobsBrowse({
                   {type.includes("_")?humanize(type):type} ({employmentCounts.get(type)??0})
                 </option>)}
               </Select>
-            </label>
-            <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            </Label>
+            <Label className="min-w-0 flex-1">
               Location
               <Select value={filters.location} aria-label="Location"
                 onChange={event=>updateQuery({loc:event.target.value})} className={selectClass}>
@@ -268,7 +269,7 @@ export function LearnerJobsBrowse({
                   {location} ({locationCounts.get(location.toLowerCase())??0})
                 </option>)}
               </Select>
-            </label>
+            </Label>
           </div>
         </div>
         <div className="mt-3 flex min-w-0 flex-wrap items-center gap-2">
@@ -284,7 +285,7 @@ export function LearnerJobsBrowse({
               (filters.closingSoon?"!border-[var(--lms-primary)] !bg-[var(--lms-primary-subtle)] !text-primary-text":"!border-border !bg-surface !text-body hover:!border-[var(--lms-primary)]")}>
             Closing soon <span className="text-xs opacity-80">{closingCount}</span>
           </Button>
-          <label className="inline-flex min-h-11 flex-wrap items-center gap-2 text-xs font-semibold text-body md:ml-auto md:min-h-9">
+          <Label className="inline-flex min-h-11 flex-wrap items-center gap-2 md:ml-auto md:min-h-9">
             Availability
             <Select className="min-h-9 w-auto max-w-full" value={filters.availability}
               onChange={event=>updateQuery({availability:event.target.value})}>
@@ -293,7 +294,7 @@ export function LearnerJobsBrowse({
               <option value="not-open">Not open to you ({availabilityCounts["not-open"]})</option>
               <option value="closed">Expired ({availabilityCounts.closed})</option>
             </Select>
-          </label>
+          </Label>
           <Button variant="link" type="button" onClick={resetFilters}
             className="min-h-11 px-2 md:min-h-9">Clear filters</Button>
         </div>

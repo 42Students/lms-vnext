@@ -6,6 +6,7 @@ import {Select} from "@/components/ui/select";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Learner={membershipId:string;name:string;rollNumber:string|null};
 
@@ -54,7 +55,7 @@ export function CollegeCourseRetakeAction({learners,offeringId,deliveryId,course
       without deleting any previous attempt history.
     </p>
     <div className="flex flex-wrap items-end gap-3">
-      <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold text-body">
+      <Label stack className="min-w-52 flex-1">
         Learner
         <Select value={learnerMembershipId} disabled={busy}
           onChange={event=>{setLearnerMembershipId(event.target.value);setSuccess("");setError("");}}>
@@ -63,7 +64,7 @@ export function CollegeCourseRetakeAction({learners,offeringId,deliveryId,course
             {item.name}{item.rollNumber?" · "+item.rollNumber:""}
           </option>)}
         </Select>
-      </label>
+      </Label>
       <Button type="button" variant="primary" disabled={!learner||busy} loading={busy}
         onClick={()=>setConfirmOpen(true)}>Start next attempt</Button>
     </div>

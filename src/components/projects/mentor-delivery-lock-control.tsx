@@ -5,6 +5,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 import {Button} from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 export function MentorDeliveryLockControl({projectId,submissionId,status,lockedAt,updatedAt}:{
  projectId:string;submissionId:string;status:string;lockedAt:Date|null;updatedAt:Date|string;
 }){
@@ -29,9 +30,9 @@ export function MentorDeliveryLockControl({projectId,submissionId,status,lockedA
   <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" aria-expanded={open} aria-controls={"mentor-delivery-lock-details-"+submissionId} onClick={()=>setOpen(v=>!v)}
    >Lock submission</Button>
   {open?<div id={"mentor-delivery-lock-details-"+submissionId} role="region" aria-label="Lock submission details" className="space-y-2">
-    <label className="block text-[13px] font-semibold">Why are you locking this delivery?
+    <Label className="block">Why are you locking this delivery?
      <Textarea required maxLength={4000} value={reason} onChange={e=>setReason(e.target.value)}
-      className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[length:var(--lms-font-base)] focus-ring"/></label>
+      className="mt-1 min-h-20 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-2 text-[length:var(--lms-font-base)] focus-ring"/></Label>
     <Button type="button" className="min-h-11 md:min-h-9" disabled={busy||!reason.trim()} onClick={()=>void lock()}
      >
       {busy?"Locking…":"Confirm lock"}</Button>

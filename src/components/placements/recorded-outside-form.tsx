@@ -2,32 +2,33 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 export function RecordedOutsideForm({collegeId,choices}:{
  collegeId:string;choices:readonly {id:string;name:string}[];
 }){
  return <form method="post" action="/api/placements/recorded-outside" className="grid min-w-0 gap-4 md:grid-cols-2">
   <Input type="hidden" name="collegeId" value={collegeId}/>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company relationship
+  <Label stack className="min-w-0">Company relationship
    <Select name="companyRelationshipId" required defaultValue="" className="w-full">
     <option value="" disabled>Choose an authorized company</option>
     {choices.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
    </Select>
-  </label>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">External drive title
+  </Label>
+  <Label stack className="min-w-0">External drive title
    <Input name="title" required minLength={3} maxLength={200} className="w-full"/>
-  </label>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">When it happened (IST)
+  </Label>
+  <Label stack className="min-w-0">When it happened (IST)
    <Input name="occurredAt" required type="datetime-local" className="w-full"/>
-  </label>
+  </Label>
   <details className="min-w-0 border-t border-border pt-2 md:col-span-2">
    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text focus-ring md:min-h-9">Optional reference and notes</summary>
    <div className="mt-2 grid min-w-0 gap-3 md:grid-cols-2">
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">External reference (optional HTTPS)
+  <Label stack className="min-w-0">External reference (optional HTTPS)
    <Input name="externalReferenceUrl" type="url" maxLength={2000} placeholder="https://..." className="w-full"/>
-  </label>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Private staff notes, no learner details
+  </Label>
+  <Label stack className="min-w-0 md:col-span-2">Private staff notes, no learner details
    <Textarea name="notes" maxLength={1000} rows={3} className="w-full"/>
-  </label>
+  </Label>
 
    </div>
   </details>

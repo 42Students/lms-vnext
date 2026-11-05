@@ -24,6 +24,7 @@ import { isLearnerAssignmentHttpsLink } from "@/modules/courses/learner-assignme
 import { learnerAssignmentFinalConfirmation } from "@/modules/courses/learner-assignment-confirmation-model";
 import {ALL_ASSIGNMENT_METHODS,normalizeAssignmentMethods,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type SubmissionType = "TEXT" | "LINK" | "FILE";
 
@@ -317,14 +318,14 @@ export function AssignmentSubmissionControl({
             "This assignment requires a PDF or file, but private uploads are unavailable. Ask your Faculty or college administrator to enable private file storage."}
         </Alert> : null}
         {submissionType==="LINK"&&methodsEnabled&&mayLink?
-          <label className="mt-3 grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Link type
+          <Label stack className="mt-3">Link type
             <Select value={linkKind} disabled={submitting}
               className="min-h-11 md:min-h-9"
               onChange={event=>setLinkKind(event.target.value as typeof linkKind)}>
               {allowedMethods.includes("REPOSITORY_LINK")?<option value="REPOSITORY_LINK">Repository Link</option>:null}
               {allowedMethods.includes("EXTERNAL_LINK")?<option value="EXTERNAL_LINK">Website / External Link</option>:null}
             </Select>
-          </label>:null}
+          </Label>:null}
         {submissionType === "FILE" ? <AssignmentFileSubmissionControl
           assignmentId={assignmentId} deliveryId={deliveryId} onBusyChange={setSubmitting} multipartEnabled={multipartEnabled} allowedMethods={allowedMethods} uploadsAllowed={fileUploadsEnabled&&mayUpload} pdfOnly={methodsEnabled&&!allowedMethods.includes("FILE_UPLOAD")&&allowedMethods.includes("PDF_UPLOAD")}
           onSubmitted={() => { setSuccess(true);setFormDirty(false);setDrawerOpen(false); showToast({tone:"success",title:"Assignment submitted successfully."}); router.refresh(); }} /> : submissionType === "TEXT" ? (
@@ -335,19 +336,19 @@ export function AssignmentSubmissionControl({
         ) : (
           <section aria-label="Submission links" className="mt-4 space-y-3">
             <Heading level={3} size="sm" className="text-foreground">{linkKind==="REPOSITORY_LINK"?"Repository Links":"Website / External Links"}</Heading>
-            <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+            <Label stack>
               {linkKind==="REPOSITORY_LINK"?"Repository Link":"Website / External Link"} 1
               <Input type="url" inputMode="url" maxLength={2048} value={submissionUrl}
                onChange={event=>setSubmissionUrl(event.target.value)}
                placeholder="Paste the link" required/>
-            </label>
+            </Label>
             {additionalLinks.map((value,index)=><div key={index} className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-end">
-              <label className="grid min-w-0 flex-1 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+              <Label stack className="min-w-0 flex-1">
                 {linkKind==="REPOSITORY_LINK"?"Repository Link":"Website / External Link"} {index+2}
                 <Input type="url" inputMode="url" maxLength={2048} value={value}
                  onChange={event=>setAdditionalLinks(old=>old.map((part,i)=>i===index?event.target.value:part))}
                  placeholder="Paste the link" aria-label={"Submission link "+(index+2)}/>
-              </label>
+              </Label>
               <Button type="button" variant="danger" disabled={submitting}
                aria-label={"Remove link "+(index+2)}
                onClick={()=>setAdditionalLinks(old=>old.filter((_,i)=>i!==index))}>Remove</Button>

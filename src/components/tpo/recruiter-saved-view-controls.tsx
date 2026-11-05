@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import {useEffect,useState} from "react";
 import type {EngageColumn} from "@/modules/placements/tpo-recruiter-table-view-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type SavedView={
  id:string;name:string;note:string|null;query_json:Record<string,string>;
  columns_json:EngageColumn[];pinned:boolean;updated_at:string;
@@ -104,7 +105,7 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
         ★ {view.name}
       </Button>)}
     </nav>:null}
-    <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Open saved view
+    <Label className="block">Open saved view
      <Select className="mt-[6px] min-h-11 w-full max-w-sm rounded-[var(--lms-control-radius)] border border-border px-3 md:min-h-9"
       value={selected} onChange={e=>{
        setSelected(e.target.value);setDeleteReview(null);
@@ -114,10 +115,10 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
       <option value="">Choose a view</option>
       {views.map(view=><option key={view.id} value={view.id}>{view.pinned?"★ ":""}{view.name}</option>)}
      </Select>
-    </label>
+    </Label>
     {active?<div className="grid min-w-0 grid-cols-1 gap-3 border-t border-border pt-3 md:grid-cols-2 xl:grid-cols-3">
-     <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rename view<Input maxLength={100} className="mt-[6px] min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border px-3 md:min-h-9" value={editingName} onChange={e=>setEditingName(e.target.value)}/></label>
-     <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Note<Input maxLength={500} className="mt-[6px] min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border px-3 md:min-h-9" value={editingNote} onChange={e=>setEditingNote(e.target.value)}/></label>
+     <Label className="min-w-0">Rename view<Input maxLength={100} className="mt-[6px] min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border px-3 md:min-h-9" value={editingName} onChange={e=>setEditingName(e.target.value)}/></Label>
+     <Label className="min-w-0">Note<Input maxLength={500} className="mt-[6px] min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border px-3 md:min-h-9" value={editingNote} onChange={e=>setEditingNote(e.target.value)}/></Label>
      <Button variant="secondary" type="button" className={button} onClick={()=>open(active)}>Open</Button>
      <Button variant="secondary" type="button" className={button} disabled={busy||!editingName.trim()} onClick={()=>void apply("UPDATE",active)}>Update filters and columns</Button>
      <Button variant="secondary" type="button" className={button} disabled={busy||(!active.pinned&&views.filter(view=>view.pinned).length>=5)} onClick={()=>void apply("PIN",active)}>

@@ -36,6 +36,7 @@ import {getCollegeBranding} from "@/modules/colleges/branding-service";
 import {parseTenantLifecycleSearchParams} from "@/modules/colleges/admin-tenant-lifecycle-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 export const dynamic="force-dynamic";
 type Tab="STRUCTURE"|"LAUNCH";
@@ -219,11 +220,11 @@ export default async function SuperAdminTenantSetup({
       <form action="/admin/tenants/setup" method="get" role="search"
        className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-end">
        <input type="hidden" name="tab" value="structure"/>
-       <label className="flex min-w-0 flex-1 flex-col gap-1.5 text-sm font-semibold text-body">
+       <Label className="flex min-w-0 flex-1 flex-col gap-1.5">
         Search colleges
         <Input name="q" type="search" maxLength={100} defaultValue={directoryFilters.q}
          placeholder="Search college, organization or Unique ID"/>
-       </label>
+       </Label>
        <Button type="submit" variant="secondary">Search</Button>
        <Link href="/admin/tenants/setup?tab=structure"
         className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline md:min-h-9">Clear</Link>

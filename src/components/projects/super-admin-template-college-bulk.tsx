@@ -12,6 +12,7 @@ import {Disclosure} from "@/components/ui/disclosure";
 import {PopoverPanel} from "@/components/ui/popover";
 import {Input} from "@/components/ui/input";
 import { Table } from "@/components/ui/table";
+import { Label } from "@/components/ui/label";
 
 type College={
  id:string;name:string;code?:string;location?:string|null;
@@ -130,14 +131,14 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
     <Banner tone="info">Publish this template before assigning it to colleges.</Banner>
    ) : null}
    <div className="flex min-w-0 flex-wrap items-end gap-2">
-    <label className="w-full text-[13px] font-semibold text-body sm:w-[240px]">
+    <Label className="w-full sm:w-[240px]">
       Search college
       <Input type="search" value={filter}
        placeholder="Search colleges..."
        aria-label="Search colleges"
        className="mt-1 w-full"
        onChange={event=>setFilter(event.target.value)}/>
-    </label>
+    </Label>
     {filter?<Button type="button" size="sm" variant="secondary"
       onClick={()=>setFilter("")}>Clear search</Button>:null}
     <span role="status" className="text-xs text-body">
@@ -156,7 +157,7 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
        {selected.length} selected across pages
       </span>
       <div className="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:flex-row">
-       <label className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold md:min-h-9">
+       <Label className="inline-flex min-h-11 items-center gap-2 md:min-h-9">
         <Checkbox disabled={pending||!allowed.length}
          checked={allowed.length>0&&allowed.every(row=>selected.includes(row.id))}
          onChange={event=>{
@@ -168,7 +169,7 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
            :current.filter(row=>!allowed.some(candidate=>candidate.id===row.id)));
          }}/>
         Select all on page
-       </label>
+       </Label>
        <Button type="button" variant="ghost" size="sm"
         className="min-h-11 w-full sm:w-auto md:min-h-9"
         disabled={pending||!selected.length}

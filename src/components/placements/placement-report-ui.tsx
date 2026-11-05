@@ -10,6 +10,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import type { PlacementReportMetrics } from "@/modules/placements/report-model";
 import type { getPlacementReportWorkspace } from "@/modules/placements/report-service";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 export type PlacementReportWorkspace = Awaited<
   ReturnType<typeof getPlacementReportWorkspace>
@@ -67,7 +68,7 @@ export function ReportFilters({
       className="grid min-w-0 gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:grid-cols-2 print:hidden"
     >
       <form action={path} method="get" className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-        <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label className="min-w-0 flex-1">
           Placement season
           <Select
             name="seasonId"
@@ -85,7 +86,7 @@ export function ReportFilters({
               </option>
             ))}
           </Select>
-        </label>
+        </Label>
         <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
           type="submit"
           disabled={workspace.seasons.length === 0}
@@ -103,7 +104,7 @@ export function ReportFilters({
             value={workspace.selectedSeasonId}
           />
         ) : null}
-        <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label className="min-w-0 flex-1">
           Job
           <Select
             name="jobId"
@@ -118,7 +119,7 @@ export function ReportFilters({
               </option>
             ))}
           </Select>
-        </label>
+        </Label>
         <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
           type="submit"
           disabled={workspace.noSeason}
@@ -182,38 +183,38 @@ export function ReportDimensionFilters({workspace,path,options}:{
   className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-3">
    {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
    {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
-   <label className="text-[13px] font-semibold">Batch
+   <Label>Batch
     <Select name="batchId" defaultValue={selected(0)} className="mt-1 w-full">
      <option value="">All batches</option>
      {options.batches.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
     </Select>
-   </label>
-   <label className="text-[13px] font-semibold">Branch
+   </Label>
+   <Label>Branch
     <Select name="branch" defaultValue={selected(1)} className="mt-1 w-full">
      <option value="">All branches</option>
      {options.branches.map(value=><option key={value} value={value}>{value}</option>)}
     </Select>
-   </label>
-   <label className="text-[13px] font-semibold">Company
+   </Label>
+   <Label>Company
     <Select name="company" defaultValue={selected(2)} className="mt-1 w-full">
      <option value="">All companies</option>
      {options.companies.map(value=><option key={value} value={value}>{value}</option>)}
     </Select>
-   </label>
-   <label className="text-[13px] font-semibold">Drive mode
+   </Label>
+   <Label>Drive mode
     <Select name="mode" defaultValue={selected(3)} className="mt-1 w-full">
      <option value="">All drive modes</option>
      <option value="ON_CAMPUS">On campus</option>
      <option value="OFF_CAMPUS">Off campus</option>
     </Select>
-   </label>
-   <label className="text-[13px] font-semibold">Category
+   </Label>
+   <Label>Category
     <Select name="category" defaultValue={selected(4)} className="mt-1 w-full">
      <option value="">All categories</option>
      <option value="REGULAR">Regular</option>
      <option value="DREAM">Dream</option>
     </Select>
-   </label>
+   </Label>
    <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Apply filters</Button>
   </form>;
 }

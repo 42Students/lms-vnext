@@ -7,6 +7,7 @@ import {Alert} from "@/components/ui/alert";
 import {useRouter} from "next/navigation";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 type Managed={ready:boolean;baseDomain:string|null;currentHost:string|null};
 export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;initial:Managed}){
  const router=useRouter(),hintId=useId(),[state,setState]=useState(initial),[label,setLabel]=useState(
@@ -144,7 +145,7 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
       </svg>
     </TextLink>
    </div>:null}
-   <label className="grid min-w-0 max-w-[560px] gap-1 text-[13px] font-semibold text-body">
+   <Label stack className="min-w-0 max-w-[560px]">
     Subdomain
     <div className="flex min-w-0 flex-wrap items-center gap-2">
      <div className="flex min-h-11 min-w-0 flex-[1_1_220px] overflow-hidden rounded-[var(--lms-control-radius)] border border-border md:min-h-9">
@@ -175,7 +176,7 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
        "text-xs font-normal text-error":"text-xs font-normal text-muted-foreground"}>
      Use 3 to 30 lowercase letters, numbers or hyphens, starting and ending with a letter or number.
     </span>
-   </label>
+   </Label>
    {dirty?<p role="status" className="text-xs text-warning-text">
      Unsaved web-address edits. Leaving the page or switching colleges discards the typed label.
    </p>:null}

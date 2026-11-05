@@ -14,6 +14,7 @@ import { projectMutation } from "./project-api";
 import { mentorMeetingCeremonyLabel, mentorMeetingScheduleError, parseMentorMeetingVenueAgenda } from "@/modules/projects/mentor-meeting-form-model";
 import {emptyMentorMeetingFacilitation,mentorMeetingFacilitationSchema} from "@/modules/projects/mentor-meeting-facilitation-model";
 import {projectMeetingTransitionPayload} from "@/modules/projects/project-meeting-transition-payload-model";
+import { Label } from "@/components/ui/label";
 
 type Meeting = {
   id: string;
@@ -77,7 +78,7 @@ function MeetingFields({
 }) {
   return (
     <div className="grid min-w-0 gap-[var(--lms-space-4)]">
-      <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <Label className="min-w-0">
         <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Title
         </span>
@@ -89,8 +90,8 @@ function MeetingFields({
             onTitle(event.target.value)
           }
         />
-      </label>
-      <label>
+      </Label>
+      <Label>
         <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           {isRequest?"Agenda / reason":"Agenda"}
         </span>
@@ -101,9 +102,9 @@ function MeetingFields({
             onAgenda(event.target.value)
           }
         />
-      </label>
+      </Label>
       <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2">
-        <label>
+        <Label>
           <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {isRequest?"Preferred start time":"Start"}
           </span>
@@ -121,8 +122,8 @@ function MeetingFields({
             value={startsAt.slice(11)} disabled={!startsAt.slice(0, 10)}
             onChange={(event) => onStartsAt(startsAt.slice(0, 10) + "T" + event.target.value)}
           />
-        </label>
-        <label>
+        </Label>
+        <Label>
           <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {isRequest?"Preferred end time":"End"}
           </span>
@@ -139,7 +140,7 @@ function MeetingFields({
             value={endsAt.slice(11)} disabled={!endsAt.slice(0, 10)}
             onChange={(event) => onEndsAt(endsAt.slice(0, 10) + "T" + event.target.value)}
           />
-        </label>
+        </Label>
       </div>
       <p className="text-xs font-semibold text-body">Times are in Asia/Kolkata (IST). Choose times in five-minute increments.</p>
     </div>
@@ -549,7 +550,7 @@ export function ScheduleProjectMeetingControl({
             onEndsAt={setEndsAt}
             onTimeZone={setTimeZone}
           />
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0">
             Status
             <Select value={meetingStatus} onChange={event=>
               setMeetingStatus(event.target.value as "DRAFT"|"SCHEDULED"|"RESCHEDULED")}>
@@ -563,8 +564,8 @@ export function ScheduleProjectMeetingControl({
             {meetingStatus==="DRAFT"?<span className="text-xs text-muted-foreground">
               Drafts are visible to mentors only; no invitations are sent.
             </span>:null}
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Ceremony
             </span>
@@ -591,8 +592,8 @@ export function ScheduleProjectMeetingControl({
                 </option>
               ))}
             </Select>
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Meeting link
             </span>
@@ -608,14 +609,14 @@ export function ScheduleProjectMeetingControl({
                 )
               }
             />
-          </label>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0">
             Physical venue (or use a meeting link)
             <Input type="text" value={location} maxLength={200}
               placeholder="Lab 2, Room 304" onChange={event=>setLocation(event.target.value)}/>
-          </label>
+          </Label>
           <div className="grid gap-3 sm:grid-cols-2">
-            <label>
+            <Label>
               <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Linked sprint
               </span>
@@ -639,8 +640,8 @@ export function ScheduleProjectMeetingControl({
                   </option>
                 ))}
               </Select>
-            </label>
-            <label>
+            </Label>
+            <Label>
               <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Linked task
               </span>
@@ -671,7 +672,7 @@ export function ScheduleProjectMeetingControl({
                     </option>
                   ))}
               </Select>
-            </label>
+            </Label>
           </div>
           <details open className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]">
             <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-4 text-[var(--lms-link-text)] focus-ring">Meeting notes, retrospective and follow-ups</summary>
@@ -682,12 +683,12 @@ export function ScheduleProjectMeetingControl({
               ["nextTime","Retrospective: Actions for next sprint"],["followUpNotes","Follow-up notes"],
             ] as const).filter(([field])=>meetingType==="RETRO" ||
               !["wentWell","retroDidntGoWell","improve","nextTime"].includes(field)).map(([field,label])=>
-              <label key={field} className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              <Label stack key={field} className="min-w-0">
                 {label}
                 <Textarea value={facilitation[field]} maxLength={4000}
                   onChange={event=>setFacilitation(prev=>({...prev,[field]:event.target.value}))}/>
-              </label>)}
-            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              </Label>)}
+            <Label stack className="min-w-0">
               Attendees (one name per line)
               <Textarea rows={3} maxLength={16000}
                 value={facilitation.attendees.map(item=>item.name).join("\n")}
@@ -697,8 +698,8 @@ export function ScheduleProjectMeetingControl({
                  setFacilitation(prev=>({...prev,attendees:names.map(name=>
                   prev.attendees.find(item=>item.name===name)??{name,membershipId:null,attended:true})}));
                 }}/>
-            </label>
-            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            </Label>
+            <Label stack className="min-w-0">
               Action items (one per line)
               <Textarea rows={3} maxLength={40000}
                 value={facilitation.actionItemRows.map(item=>item.text).join("\n")}
@@ -709,8 +710,8 @@ export function ScheduleProjectMeetingControl({
                   prev.actionItemRows.find(item=>item.text===text)??
                   {text,owner:null,dueAt:null,complete:false})}));
                 }}/>
-            </label>
-            {meetingType==="RETRO"?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            </Label>
+            {meetingType==="RETRO"?<Label stack className="min-w-0">
               Retrospective actions (one per line)
               <Textarea rows={3} maxLength={40000}
                 value={facilitation.retroActions.map(item=>item.text).join("\n")}
@@ -721,12 +722,12 @@ export function ScheduleProjectMeetingControl({
                   prev.retroActions.find(item=>item.text===text)??
                   {text,owner:null,dueAt:null,complete:false})}));
                 }}/>
-            </label>:null}
+            </Label>:null}
             {meetingType==="RETRO"&&facilitation.retroActions.length>0?
               <div className="min-w-0 space-y-2" aria-label="Linked retrospective action tasks">
                 <p className="text-xs font-semibold text-body">Link retrospective actions to project tasks</p>
-                {facilitation.retroActions.map((item,index)=><label key={index}
-                  className="grid min-w-0 gap-1 text-xs text-body">
+                {facilitation.retroActions.map((item,index)=><Label stack key={index}
+                  className="min-w-0">
                   <span className="break-words">{item.text}</span>
                   <Select value={item.linkedTaskId??""}
                     onChange={event=>setFacilitation(prev=>({
@@ -741,18 +742,18 @@ export function ScheduleProjectMeetingControl({
                   {item.taskKey?<span className="text-muted-foreground">
                     Legacy promoted task: {item.taskKey} (verify its mapped task before linking)
                   </span>:null}
-                </label>)}
+                </Label>)}
               </div>:null}
-            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <Label stack className="min-w-0">
               Outcome
               <Textarea value={outcome} maxLength={4000} onChange={event=>setOutcome(event.target.value)}/>
-            </label>
-            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            </Label>
+            <Label stack className="min-w-0">
               Follow-up at (IST)
               <Input type="datetime-local" value={followUpAt}
                 onChange={event=>setFollowUpAt(event.target.value)}/>
-            </label>
-            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            </Label>
+            <Label stack className="min-w-0">
               Follow-up status
               <Select value={facilitation.followUpStatus}
                 onChange={event=>setFacilitation(prev=>({...prev,
@@ -763,7 +764,7 @@ export function ScheduleProjectMeetingControl({
                 <option value="DONE">Done</option>
                 <option value="BLOCKED">Blocked</option>
               </Select>
-            </label>
+            </Label>
             </fieldset>
           </details>
           {error ? (
@@ -962,7 +963,7 @@ export function ProjectMeetingTransitionActions({
           </div>
         }
       >
-        {!withdrawing?<label>
+        {!withdrawing?<Label>
           <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {open === "COMPLETE"
               ? "Outcome"
@@ -979,7 +980,7 @@ export function ProjectMeetingTransitionActions({
               setNote(event.target.value)
             }
           />
-        </label>:null}
+        </Label>:null}
       </Dialog>
       <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
         title="Discard meeting note?" description="You have unsaved project changes. Leave this page and discard them?"

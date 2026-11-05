@@ -10,6 +10,7 @@ import { DateInput } from "@/components/ui/date-input";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {CollegeQuizQuestionsEditor} from "./college-quiz-questions-editor";
+import { Label } from "@/components/ui/label";
 type Quiz={id:string;title:string;status:string;dueAt:Date|null};
 function istInput(date:Date|null){
  if(!date)return "";
@@ -141,27 +142,27 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
   </Dialog>
   {quiz.status==="DRAFT"?<CollegeQuizQuestionsEditor quizId={quiz.id}/>:null}
   {editing?<div className="grid gap-2 border-y border-border py-3">
-   <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Quiz title
+   <Label stack>Quiz title
     <Input required maxLength={255} value={title} disabled={busy}
-     onChange={e=>setTitle(e.target.value)} className="min-h-11 md:min-h-9"/></label>
-   <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Description
+     onChange={e=>setTitle(e.target.value)} className="min-h-11 md:min-h-9"/></Label>
+   <Label stack>Description
     <Textarea maxLength={10000} rows={3} value={description} disabled={busy}
      onChange={e=>setDescription(e.target.value)} className="min-h-11 md:min-h-9"/>
-   </label>
-   {quiz.status==="DRAFT"&&!metadataOnly?<label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Maximum attempts
+   </Label>
+   {quiz.status==="DRAFT"&&!metadataOnly?<Label stack>Maximum attempts
     <Input type="number" min={1} max={20} value={maxAttempts} disabled={busy}
      onChange={e=>setMaxAttempts(Number(e.target.value))} className="min-h-11 md:min-h-9"/>
-   </label>:null}
-   <label className="grid gap-1 text-xs font-semibold text-body">Deadline (IST)
+   </Label>:null}
+   <Label stack>Deadline (IST)
     <DateInput mode="datetime-local" value={due} disabled={busy||quiz.status!=="DRAFT"||metadataOnly} onChange={e=>setDue(e.target.value)}
-     className="min-h-11 md:min-h-9"/></label>
+     className="min-h-11 md:min-h-9"/></Label>
    {quiz.status==="DRAFT"&&!metadataOnly?<div className="grid gap-2 text-xs font-semibold">
-    <label className="flex min-h-11 items-center gap-2"><Checkbox checked={shuffleQuestions}
+    <Label variant="choice" className="flex min-h-11 items-center gap-2"><Checkbox checked={shuffleQuestions}
      disabled={busy} onChange={e=>setShuffleQuestions(e.target.checked)}/>
-     Shuffle question order per learner</label>
-    <label className="flex min-h-11 items-center gap-2"><Checkbox checked={shuffleOptions}
+     Shuffle question order per learner</Label>
+    <Label variant="choice" className="flex min-h-11 items-center gap-2"><Checkbox checked={shuffleOptions}
      disabled={busy} onChange={e=>setShuffleOptions(e.target.checked)}/>
-     Shuffle answer options per learner</label>
+     Shuffle answer options per learner</Label>
    </div>:null}
    {(quiz.status!=="DRAFT"||metadataOnly)?<p className="text-xs text-muted-foreground leading-5">
     This quiz may already have learner submissions. Only the title and description can be changed after attempts;

@@ -10,6 +10,7 @@ import {getMentorRiskReadiness} from "@/modules/projects/mentor-risk-readiness-s
 import {mentorRiskReadinessHref,mentorRiskReadinessQuerySchema}
   from "@/modules/projects/mentor-risk-readiness-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Search={focus?:string|string[];taskPriority?:string|string[];page?:string|string[]};
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
@@ -65,21 +66,21 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
       </p>
       <FilterBar title="Filters"><form method="get" action={base+"/risk-readiness"} role="search" aria-label="Risk readiness filters"
         className="grid min-w-0 items-end gap-[8px] border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Show
+        <Label stack>Show
           <Select name="focus" defaultValue={data.query.focus}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All evidence</option><option value="RISK">Attention only</option>
             <option value="READINESS">Readiness gaps only</option>
           </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Task priority
+        </Label>
+        <Label stack>Task priority
           <Select name="taskPriority" defaultValue={data.query.taskPriority}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All task priorities</option>
             <option value="CRITICAL">Critical</option><option value="HIGH">High</option>
             <option value="MEDIUM">Medium</option><option value="LOW">Low</option>
           </Select>
-        </label>
+        </Label>
         <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">
           Filter
         </Button>

@@ -5,6 +5,7 @@ import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import {useEffect,useState} from "react";
 import {Button} from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 type Question={id:string;type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;
  options:{id:string;text:string;correct?:boolean}[]};
@@ -46,18 +47,18 @@ export function FacultyQuizLearnerPreview({quizId,deliveryId}:{
    <p className="text-xs text-muted-foreground">Preview only. No learner attempts are created.</p>
    {loading?<p role="status" className="text-sm">Loading quiz…</p>:null}
    {error?<Alert tone="error">{error}</Alert>:null}
-   {preview?<><label className="flex min-h-11 items-center gap-2 text-[13px] md:min-h-[var(--lms-control-height)]">
+   {preview?<><Label className="flex min-h-11 items-center gap-2 md:min-h-[var(--lms-control-height)]">
     <Checkbox checked={answers} onChange={e=>setAnswers(e.target.checked)}/>
     Show answer key (faculty only)
-   </label>
+   </Label>
    {preview.questions.map((q,i)=><fieldset key={q.id} className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
     <legend className="font-semibold text-sm">Question {i+1} · {q.points} points</legend>
     <p className="whitespace-pre-wrap break-words text-sm">{q.prompt}</p>
-    {q.options.map(o=><label key={o.id} className="flex gap-2 text-sm">
+    {q.options.map(o=><Label variant="choice" key={o.id} className="flex gap-2">
      <ChoiceInput type={q.type==="SINGLE_CHOICE"?"radio":"checkbox"} disabled name={"preview-"+q.id}/>
      <span>{o.text}</span>
      {answers&&o.correct?<span className="text-success">(Correct)</span>:null}
-    </label>)}
+    </Label>)}
    </fieldset>)}
    {!preview.questions.length?<EmptyState title="No quiz questions yet." />:null}
    </>:null}

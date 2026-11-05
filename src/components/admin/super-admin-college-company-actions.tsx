@@ -11,6 +11,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useToast} from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
  const router=useRouter();
  const {pending,run}=useGuardedAction();
@@ -109,54 +110,54 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
    <form noValidate onSubmit={submit} className="min-w-0 space-y-4">
     <fieldset className="min-w-0 space-y-3" disabled={pending}>
      <legend className="font-semibold text-[var(--lms-heading)]">Identity</legend>
-     <label className={labelClass}>Company name
+     <Label className={labelClass}>Company name
       <Input required minLength={2} maxLength={100} value={name} onChange={e=>setName(e.target.value)}
        placeholder="Company name" className={fieldClass}/>
-     </label>
-     <label className={labelClass}>Industry
+     </Label>
+     <Label className={labelClass}>Industry
       <Input maxLength={100} value={industry} onChange={e=>setIndustry(e.target.value)}
        placeholder="e.g. IT Services" className={fieldClass}/>
       <span className="text-xs font-normal text-muted-foreground">Industry is saved only when a new canonical company is created.</span>
-     </label>
-     <label className={labelClass}>Description
+     </Label>
+     <Label className={labelClass}>Description
       <Textarea rows={3} maxLength={2000} value={about} onChange={e=>setAbout(e.target.value)} className={fieldClass}/>
       <span className="text-right text-xs font-normal text-muted-foreground">{about.length}/2000</span>
-     </label>
-     <label className={labelClass}>Company email domain
+     </Label>
+     <Label className={labelClass}>Company email domain
       <Input maxLength={255} placeholder="example.com" value={primaryDomain} onChange={e=>setPrimaryDomain(e.target.value)} className={fieldClass}/>
-     </label>
-     <label className={labelClass}>Website (HTTPS)
+     </Label>
+     <Label className={labelClass}>Website (HTTPS)
       <Input type="url" maxLength={500} placeholder="https://..." value={websiteUrl} onChange={e=>setWebsiteUrl(e.target.value)} className={fieldClass}/>
       <span className="text-xs font-normal leading-5 text-muted-foreground">A company is kept once across colleges by its website or company email domain: add at least one of them.</span>
-     </label>
-     <label className={labelClass}>Company logo (HTTPS)
+     </Label>
+     <Label className={labelClass}>Company logo (HTTPS)
       <Input type="url" maxLength={500} placeholder="https://..."
        value={logoPublicUrl} onChange={e=>setLogoPublicUrl(e.target.value)} className={fieldClass}/>
       <span className="text-xs font-normal leading-5 text-muted-foreground">Saved on a new company identity only. An existing shared company keeps its verified logo.</span>
-     </label>
+     </Label>
     </fieldset>
     <fieldset className="min-w-0 space-y-3 border-t border-border pt-3" disabled={pending}>
      <legend className="font-semibold text-[var(--lms-heading)]">Contact</legend>
-     <label className={labelClass}>Recruiter contact name
+     <Label className={labelClass}>Recruiter contact name
       <Input maxLength={150} value={contactName} onChange={e=>setContactName(e.target.value)} className={fieldClass}/>
-     </label>
-     <label className={labelClass}>Contact email
+     </Label>
+     <Label className={labelClass}>Contact email
       <Input type="email" maxLength={150} placeholder="recruiter@company.com" value={contactEmail} onChange={e=>setContactEmail(e.target.value)} className={fieldClass}/>
-     </label>
-     <label className={labelClass}>Phone
+     </Label>
+     <Label className={labelClass}>Phone
       <Input type="tel" maxLength={30} placeholder="+91 98765 43210" value={contactPhone}
        onChange={e=>setContactPhone(e.target.value)} className={fieldClass}/>
-     </label>
+     </Label>
     </fieldset>
     <fieldset className="min-w-0 space-y-2 border-t border-border pt-3" disabled={pending}>
      <legend className="flex items-center gap-2 font-semibold text-[var(--lms-heading)]">
        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
        Internal only
      </legend>
-     <label className={labelClass}>Notes
+     <Label className={labelClass}>Notes
       <Textarea rows={3} maxLength={2000} value={notes} onChange={e=>setNotes(e.target.value)} className={fieldClass}/>
       <span className="text-right text-xs font-normal text-muted-foreground">{notes.length}/2000</span>
-     </label>
+     </Label>
      <p className="text-xs text-muted-foreground">Contacts and notes are only available to authorized staff at this college.</p>
     </fieldset>
     {error?<Alert role="alert" tone="error">{error}</Alert>:null}

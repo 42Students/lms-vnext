@@ -24,6 +24,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {CollegeDrivesCapture,CollegeDrivesStaleFallback} from "@/components/placements/college-drives-last-good";
+import { Label } from "@/components/ui/label";
 
 export default async function CollegeDrivesPage({ searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -144,49 +145,49 @@ export default async function CollegeDrivesPage({ searchParams }: {
       </div>} />
     <form method="get" role="search" aria-label="Drive filters" className="grid md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 min-w-0 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-md:grid-cols-1">
       <CollegeDrivesQuickFilters q={query.q} status={query.status}/>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Season
+      <Label stack>Season
         <Select name="seasonId" defaultValue={query.seasonId ?? ""}>
           <option value="">All seasons</option>
           {data.seasons.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
+      </Label>
+      <Label stack>Company
         <Select name="relationshipId" defaultValue={query.relationshipId ?? ""}
          >
           <option value="">All companies</option>
           {data.companies.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
         </Select>
-      </label>
+      </Label>
       <details className="min-w-0 border-t border-border pt-2 md:col-span-2 lg:col-span-4 xl:col-span-6"
         open={Boolean(query.deadlineAfter||query.deadlineBefore||query.minimumApplicants||query.sort!=="TITLE")||undefined}>
         <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-ring md:min-h-9">Advanced filters</summary>
         <div className="grid min-w-0 gap-[var(--lms-space-3)] pt-3 md:grid-cols-2 lg:grid-cols-4">
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline from
+      <Label stack>Deadline from
         <DateInput mode="date" name="deadlineAfter" defaultValue={query.deadlineAfter??""}
           />
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline on or before
+      </Label>
+      <Label stack>Deadline on or before
         <DateInput mode="date" name="deadlineBefore" defaultValue={query.deadlineBefore??""}
           />
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">At least N applicants
+      </Label>
+      <Label stack>At least N applicants
         <Input type="number" name="minimumApplicants" min={0} max={100000}
           defaultValue={query.minimumApplicants??""}
           />
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
+      </Label>
+      <Label stack>Sort
         <Select name="sort" defaultValue={query.sort}>
           <option value="TITLE">Title A–Z</option><option value="DEADLINE">Deadline first</option>
           <option value="NEWEST">Newest created</option><option value="APPLICANTS">Most applicants</option>
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)]">
+      </Label>
+      <Label stack>
         Rows per page
         <Select name="pageSize" defaultValue={String(query.pageSize)}>
           <option value="10">10</option><option value="20">20</option>
           <option value="50">50</option><option value="100">100</option>
         </Select>
-      </label>
+      </Label>
         </div>
       </details>
       <Button type="submit" className="w-full self-end md:w-auto">Filter</Button>

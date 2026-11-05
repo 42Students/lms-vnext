@@ -13,6 +13,7 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {buildTpoTeamFormData} from "@/modules/placements/tpo-team-form-payload";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Member={membershipId:string;displayName:string};
 async function postForm(url:string,values:Record<string,string|readonly string[]>){
@@ -97,7 +98,7 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
  }
  return <form onSubmit={event=>void create(event)} className="mt-4 grid gap-3 border-t border-border pt-4">
   <Heading level={3} className="text-foreground">Start a placement team conversation</Heading>
-  <label className="grid gap-[6px] text-[13px] font-semibold">Conversation type
+  <Label stack>Conversation type
    <Select value={kind} disabled={busy} onChange={event=>{
     setKind(event.target.value as typeof kind);setAdditional([]);setContextId("");createKey.current=null;
    }} className="min-h-11 md:min-h-9">
@@ -106,17 +107,17 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
     <option value="DRIVE">Drive discussion</option>
     <option value="COMPANY">Company discussion</option>
    </Select>
-  </label>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Team member
+  </Label>
+  <Label stack>Team member
    <Select required value={recipient} onChange={event=>updateDraft(event.target.value,topic)} disabled={busy}
     className="min-h-11 md:min-h-9">
     <option value="">Choose an active placement team colleague</option>
     {members.map(member=><option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
    </Select>
-  </label>
+  </Label>
   {kind!=="DIRECT"?<fieldset className="grid gap-2 border-b border-border pb-3">
    <legend className="text-[13px] font-semibold">Additional team members</legend>
-   <label className="grid gap-1 text-sm font-semibold">Find a colleague
+   <Label stack>Find a colleague
      <Input value={memberQuery} disabled={busy} role="combobox" aria-expanded={memberChoices.length>0}
        aria-controls="tpo-team-member-choices" aria-autocomplete="list"
        aria-activedescendant={memberChoices[highlighted] ? "tpo-team-member-"+memberChoices[highlighted].membershipId : undefined}
@@ -130,7 +131,7 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
         }
        }}
        placeholder="Search placement team members"/>
-   </label>
+   </Label>
    <div id="tpo-team-member-choices" role="listbox" aria-label="Team colleagues"
      className="max-h-48 space-y-1 overflow-y-auto">
    {memberChoices.map((member,index)=>
@@ -146,21 +147,21 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
    </div>
    <p className="text-xs text-muted-foreground">Private conversation · Only selected active teammates can view this discussion.</p>
   </fieldset>:null}
-  {(kind==="DRIVE"||kind==="COMPANY")?<label className="grid gap-2 text-[13px] font-semibold">
+  {(kind==="DRIVE"||kind==="COMPANY")?<Label stack>
    {kind==="DRIVE"?"Drive ID":"Company relationship ID"}
    <Input value={contextId} maxLength={36} required disabled={busy}
      onChange={event=>{setContextId(event.target.value);createKey.current=null;}}
      placeholder="Paste the ID from the authorized workspace"/>
-  </label>:null}
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Topic
+  </Label>:null}
+  <Label stack>Topic
    <Input required value={topic} onChange={event=>updateDraft(recipient,event.target.value)} maxLength={200} disabled={busy}
     className="min-h-11 md:min-h-9" placeholder={kind==="DRIVE"?"Drive coordination":kind==="COMPANY"?"Company coordination":kind==="TOPIC"?"Topic or student discussion":"Private coordination"}/>
-  </label>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First message (optional)
+  </Label>
+  <Label stack>First message (optional)
    <Textarea value={firstMessage} maxLength={4000} rows={3} disabled={busy}
     onChange={event=>updateDraft(recipient,topic,event.target.value)}
     className="w-full" placeholder="Tell the team what this is about"/>
-  </label>
+  </Label>
   <p className="text-xs text-muted-foreground">Only named, currently active placement team members can take part. Contexts are rechecked by the server.</p>
   {error?<InlineNotice tone="error" role="alert" message={error}/>:null}
   <Button type="submit" disabled={busy||!recipient||!topic.trim()||
@@ -248,7 +249,7 @@ export function TpoTeamReplyComposer({threadId,actorUserId,kind,mentionMembers=[
  return <form onSubmit={event=>{event.preventDefault();void send();}}
   className="space-y-3 border-b border-border py-4">
   <Heading level={2} className="text-foreground">Reply privately</Heading>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
+  <Label stack>Message
    <Textarea required value={body} maxLength={4000} rows={4} disabled={busy}
     onChange={event=>changeBody(event.target.value)}
     onKeyDown={event=>{
@@ -257,29 +258,29 @@ export function TpoTeamReplyComposer({threadId,actorUserId,kind,mentionMembers=[
      }
     }}
     className="w-full" placeholder="Share a private team update"/>
-  </label>
+  </Label>
   {kind!=="DIRECT"&&mentionMembers.length>0?<details className="border-b border-border pb-3">
    <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold">Mention teammates ({mentioned.length})</summary>
    <p className="mb-2 text-xs text-body">Adding a person outside this private conversation requires confirmation. They can then read its history.</p>
-   <label className="grid gap-1 text-sm">Find teammate
+   <Label variant="choice" className="grid gap-1">Find teammate
     <Input type="search" value={memberSearch} disabled={busy} maxLength={100}
      onChange={event=>setMemberSearch(event.target.value)}
      placeholder="Search your placement team"/>
-   </label>
+   </Label>
    <div className="mt-2 max-h-48 overflow-y-auto" role="group" aria-label="People to mention">
-    {matchingMembers.map(member=><label key={member.membershipId}
-     className="flex min-h-11 items-center gap-2 border-b border-border px-2 text-sm">
+    {matchingMembers.map(member=><Label variant="choice" key={member.membershipId}
+     className="flex min-h-11 items-center gap-2 border-b border-border px-2">
      <Checkbox checked={mentioned.includes(member.membershipId)} disabled={busy}
       onChange={event=>toggleMention(member.membershipId,event.target.checked)}/>
      {member.displayName}
-    </label>)}
+    </Label>)}
    </div>
   </details>:null}
-  <label className={"flex min-h-11 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm transition-colors duration-[var(--lms-motion-fast)] focus-within:focus-outline "+(markDecision?"bg-primary-subtle":"hover:bg-[var(--lms-neutral-50)]")}>
+  <Label className={"flex min-h-11 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm transition-colors duration-[var(--lms-motion-fast)] focus-within:focus-outline "+(markDecision?"bg-primary-subtle":"hover:bg-[var(--lms-neutral-50)]")}>
    <Checkbox checked={markDecision} disabled={busy}
     onChange={event=>{setMarkDecision(event.target.checked);sendKey.current=null;}}/>
    Mark as decision
-  </label>
+  </Label>
   {markDecision?<p role="status" className="text-xs text-muted-foreground">Will be pinned as a decision</p>:null}
   <p className="text-xs text-muted-foreground" aria-live="polite">Enter to send · Shift+Enter for a new line · {body.length}/4000</p>
   {error?<InlineNotice tone="error" role="alert" message={error}/>:null}

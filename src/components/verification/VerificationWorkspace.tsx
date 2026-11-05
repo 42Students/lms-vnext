@@ -19,6 +19,8 @@ import {collegeVerificationLegacyCopy} from "@/modules/verification/college-lega
 import type {VerificationRecord} from "@/modules/profile-verification/domain";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 export type VerificationQueueCard = Pick<VerificationRecord,
  "learnerMembershipId"|"section"|"status"|"submittedAt"|"version"> & {
@@ -48,7 +50,7 @@ function VerificationTableSkeleton(){
   <Table aria-hidden="true" className="min-w-[960px]">
    <thead><tr>{["Student","Roll","Batch","Branch","Section","Status","Marksheets","Submitted","By","Review"].map(name=><th key={name} className="border-b border-border px-3 py-3 text-left text-xs">{name}</th>)}</tr></thead>
    <tbody>{[0,1,2,3,4].map(n=><tr key={n}>{Array.from({length:10},(_,i)=>
-    <td key={i} className="border-b border-border px-3 py-3"><div className="h-4 w-20 animate-pulse rounded bg-border"/></td>)}</tr>)}</tbody>
+    <td key={i} className="border-b border-border px-3 py-3"><SkeletonBlock className="h-4 w-20" /></td>)}</tr>)}</tbody>
   </Table>
  </div>;
 }
@@ -94,26 +96,26 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
    }))}
   />
   <div className="flex flex-wrap gap-2">
-   {!disableLocalSearch&&<label className="min-w-0 flex-1 text-sm">Search learners
+   {!disableLocalSearch&&<Label variant="choice" className="min-w-0 flex-1">Search learners
     <Input aria-label="Search learners" className="mt-1 w-full"
      value={query} onChange={e=>setQuery(e.target.value)} placeholder="Student, roll, batch or branch"/>
-   </label>}
-   <label className="text-sm">Kind
+   </Label>}
+   <Label variant="choice">Kind
     <Select aria-label="Kind" value={kind} onChange={e=>onKindChange?onKindChange(e.target.value as typeof kind):setKind(e.target.value as typeof kind)}
      className="mt-1 w-full">
      <option value="ALL">All</option><option value="EDUCATION">Education</option><option value="IDENTITY">Identity</option>
     </Select>
-   </label>
+   </Label>
   </div>
 
   {!loading&&!error&&visible.length>0?<div className="flex flex-wrap items-end gap-2 print:hidden" role="group" aria-label="Verification table actions">
-   <label className="grid gap-1 text-xs font-semibold">Sort
+   <Label stack>Sort
     <Select value={tableSort} onChange={event=>setTableSort(event.target.value as typeof tableSort)}>
      <option value="OLDEST">Oldest first</option>
      <option value="NEWEST">Newest first</option>
      <option value="NAME">Student name</option>
     </Select>
-   </label>
+   </Label>
    {onSelectionChange?<Button variant="secondary" type="button" disabled={selectionDisabled}
      onClick={()=>{
       const eligible=visible.filter(row=>["SUBMITTED","UPDATE_PENDING"].includes(row.status)).slice(0,20);
@@ -209,11 +211,11 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
      {allowCollegeStudentLinks&&<Link href={collegeVerificationStudentHref(row.learnerMembershipId)} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Open Student profile</Link>}
      {allowCollegeContactLinks&&<Link href={collegeRoleContactHref(row.learnerMembershipId)} className="ml-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">View masked contact</Link>}
      {onSelectionChange&&(row.status==="SUBMITTED"||row.status==="UPDATE_PENDING")&&
-      <label className="mt-2 flex items-center gap-2 text-sm">
+      <Label variant="choice" className="mt-2 flex items-center gap-2">
        <Checkbox disabled={selectionDisabled} aria-label={"Select "+row.learnerName+" "+row.section}
         checked={selectedKeys?.has(verificationSelectionKey(row))??false}
         onChange={e=>{if(!selectionDisabled)onSelectionChange(row,e.target.checked);}}/>Select for bulk review
-      </label>}
+      </Label>}
      <p className="text-sm text-muted-foreground leading-[22px]">{row.section==="EDUCATION"?"Education":"Identity"} · {row.batchName??"No batch"} · {row.branchName??"No branch"}</p>
      {row.section==="EDUCATION"&&row.marksheets?<p className="mt-2 text-xs leading-[20px]" aria-label="Marksheet completeness">
       Marksheets: {row.marksheets.missing===0&&row.marksheets.expected>0

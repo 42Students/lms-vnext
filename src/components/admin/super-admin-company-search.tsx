@@ -5,6 +5,7 @@ import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import Link from "next/link";
 import {Input} from "@/components/ui/input";
 import {Checkbox} from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 /** Legacy 300ms company search; cancels pending navigation on continued typing. */
 export function SuperAdminCompanySearch({mode,initialQuery,initialVerified,initialDeleted}:{
@@ -37,21 +38,21 @@ export function SuperAdminCompanySearch({mode,initialQuery,initialVerified,initi
   return ()=>clearTimeout(timer);
  },[query,showDeleted,onlyUnverified,currentQuery,currentDeleted,currentOnly,mode,pathname,router,search]);
  return <div className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)]">
-  <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-[300px]">
+  <Label stack className="w-full min-w-0 sm:w-[300px]">
    Search
    <Input type="search" value={query} maxLength={100}
     placeholder={mode==="GLOBAL"?"Search a name, other name or domain":"Search by name or industry"}
     onChange={e=>setQuery(e.target.value)}
     aria-label={mode==="GLOBAL"?"Search a name, other name or domain":"Search companies by name or industry"}
     className="min-h-11 w-full md:min-h-9"/>
-  </label>
-  {mode==="GLOBAL"?<label className="inline-flex min-h-11 cursor-pointer items-center gap-2 text-sm md:min-h-9">
+  </Label>
+  {mode==="GLOBAL"?<Label variant="choice" className="inline-flex min-h-11 cursor-pointer items-center gap-2 md:min-h-9">
    <Checkbox checked={onlyUnverified} onChange={e=>setOnlyUnverified(e.target.checked)}/>
    Only not verified
-  </label>:<label className="inline-flex min-h-11 cursor-pointer items-center gap-2 text-sm md:min-h-9">
+  </Label>:<Label variant="choice" className="inline-flex min-h-11 cursor-pointer items-center gap-2 md:min-h-9">
    <Checkbox checked={showDeleted} onChange={e=>setShowDeleted(e.target.checked)}/>
    Show deleted
-  </label>}
+  </Label>}
   <Link href={"/admin/companies?view="+mode} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9">
    Clear
   </Link>

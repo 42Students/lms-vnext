@@ -6,6 +6,7 @@ import { Tabs } from "@/components/ui/tabs";
 import Link from "next/link";
 import { usePathname,useRouter } from "next/navigation";
 import { tpoDriveTabs,tpoDriveMoreTabs } from "@/modules/placements/tpo-drive-tab-model";
+import { Label } from "@/components/ui/label";
 
 /** Keep the same drive navigation and active state on every nested workflow. */
 export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
@@ -24,13 +25,13 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
   return (
     <nav aria-label="Drive workspace sections"
       className="min-w-0 border-b border-border pb-0">
-      <label className="grid gap-[6px] text-[13px] font-semibold md:hidden">Workspace section
+      <Label stack className="md:hidden">Workspace section
         <Select aria-label="Drive workspace section" value={selected}
           onChange={event=>router.push(event.target.value)}
           className="min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
           {tabs.map(tab=><option key={tab.href} value={tab.href}>{tab.label}</option>)}
         </Select>
-      </label>
+      </Label>
       <div className="hidden min-w-0 items-center gap-3 md:flex">
       <Tabs ariaLabel="Drive workspace primary sections" value={selected}
         className="min-w-0 flex-1"

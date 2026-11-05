@@ -23,6 +23,7 @@ import {ProjectDeliveryFileUploader} from "./project-delivery-file-uploader";
 import {savedDeliverySubmissionReadiness} from "@/modules/projects/saved-delivery-submission-readiness";
 import {finalDeliveryUserError} from "@/modules/projects/final-delivery-user-error";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Submission = {
   id: string;
@@ -361,7 +362,7 @@ export function LearnerFinalDeliveryControl({
           onSubmit={save}
           className="grid min-w-0 gap-[var(--lms-space-4)]"
         >
-          <label>
+          <Label>
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Summary (short)
             </span>
@@ -374,8 +375,8 @@ export function LearnerFinalDeliveryControl({
               }
               placeholder="Short summary of what was submitted"
             />
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Primary link
             </span>
@@ -390,11 +391,11 @@ export function LearnerFinalDeliveryControl({
                 )
               }
             />
-          </label>
+          </Label>
           <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-2)]">
           <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-ring">Demo URL · Notes</summary>
           <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-4)]">
-          <label>
+          <Label>
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Demo URL
             </span>
@@ -407,8 +408,8 @@ export function LearnerFinalDeliveryControl({
                 setDemoUrl(event.target.value)
               }
             />
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Notes
             </span>
@@ -420,7 +421,7 @@ export function LearnerFinalDeliveryControl({
                 setNotes(event.target.value)
               }
             />
-          </label>
+          </Label>
           </div>
           </details>
           <div className="grid min-w-0 gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
@@ -436,13 +437,13 @@ export function LearnerFinalDeliveryControl({
             <details className="min-w-0">
              <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-ring">Add link</summary>
              <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)]">
-            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
+            <Label stack className="min-w-0">Title
               <Input value={linkName} maxLength={255} onChange={event=>setLinkName(event.target.value)}/>
-            </label>
-            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">URL
+            </Label>
+            <Label stack className="min-w-0">URL
               <Input type="url" value={linkUrl} maxLength={2048}
                 onChange={event=>setLinkUrl(event.target.value)}/>
-            </label>
+            </Label>
             <Button type="button" size="sm" variant="secondary" disabled={pending||
                 attachments.length>=10||!linkName.trim()||!/^https?:\/\//.test(linkUrl)}
               onClick={()=>{setAttachments(rows=>[...rows,{kind:"LINK",name:linkName.trim(),
@@ -622,13 +623,13 @@ export function FinalReviewControl({
         }
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)]">
-          {mode!=="MENTOR" ? <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          {mode!=="MENTOR" ? <Label stack className="min-w-0">
             Decision
             <Select value={decision} onChange={event=>setDecision(event.target.value as "APPROVED"|"CHANGES_REQUESTED")}>
               <option value="APPROVED">Accept</option>
               <option value="CHANGES_REQUESTED">Request changes</option>
             </Select>
-          </label> : null}
+          </Label> : null}
           {staleReview?<div role="alert" className="space-y-[var(--lms-space-2)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-[var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
             <p>This submission may have changed since you opened this review. Refresh before accepting, requesting changes, or locking.</p>
             <Button type="button" variant="secondary" disabled={pending}
@@ -652,7 +653,7 @@ export function FinalReviewControl({
               </Button>
             )}
           </div>:null}
-          <label>
+          <Label>
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Feedback
             </span>
@@ -668,7 +669,7 @@ export function FinalReviewControl({
                   : "Optional approval note…"
               }
             />
-          </label>
+          </Label>
         </div>
       </Dialog>
       <ConfirmDialog open={confirmReview} onOpenChange={next=>{if(!pending){setConfirmReview(next);if(!next)setOpen(true);}}}
@@ -824,7 +825,7 @@ export function ProjectEvaluationControl({
               className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]"
             >
               <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-[minmax(0,1fr)_7rem_7rem]">
-                <label>
+                <Label>
                   <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                     Criterion
                   </span>
@@ -838,8 +839,8 @@ export function ProjectEvaluationControl({
                       })
                     }
                   />
-                </label>
-                <label>
+                </Label>
+                <Label>
                   <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                     Score
                   </span>
@@ -854,8 +855,8 @@ export function ProjectEvaluationControl({
                       })
                     }
                   />
-                </label>
-                <label>
+                </Label>
+                <Label>
                   <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                     Max
                   </span>
@@ -870,9 +871,9 @@ export function ProjectEvaluationControl({
                       })
                     }
                   />
-                </label>
+                </Label>
               </div>
-              <label className="mt-3 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              <Label className="mt-3 block">
                 <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   Feedback
                 </span>
@@ -886,7 +887,7 @@ export function ProjectEvaluationControl({
                     })
                   }
                 />
-              </label>
+              </Label>
               {rows.length > 1 ? (
                 <Button
                   type="button"
@@ -923,7 +924,7 @@ export function ProjectEvaluationControl({
             Add criterion
           </Button>
 
-          <label>
+          <Label>
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Overall summary
             </span>
@@ -934,7 +935,7 @@ export function ProjectEvaluationControl({
                 setSummary(event.target.value)
               }
             />
-          </label>
+          </Label>
 
           {error ? (
             <p

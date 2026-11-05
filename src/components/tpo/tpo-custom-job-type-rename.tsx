@@ -5,6 +5,7 @@ import { InlineNotice } from "@/components/ui/inline-notice";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
+import { Label } from "@/components/ui/label";
 export function TpoCustomJobTypeRename({id,label,version}:{id:string;label:string;version:string}){
  const router=useRouter();
  const {askConfirm,dialog}=useConfirmFlow();
@@ -29,10 +30,10 @@ export function TpoCustomJobTypeRename({id,label,version}:{id:string;label:strin
   finally{setBusy(false);}
  }
  return <div className="min-w-0 space-y-1">
-  <label className="text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Custom job type name
+  <Label>Custom job type name
    <Input value={name} maxLength={40} disabled={busy} onChange={e=>setName(e.target.value)}
     className="mt-1 min-h-11 md:min-h-9 min-w-0 text-sm"/>
-  </label>
+  </Label>
   <Button variant="secondary" type="button" disabled={busy||!changed||name.trim().length<2} onClick={()=>void save()}
    className="min-h-11 md:min-h-9 text-xs">Rename</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}

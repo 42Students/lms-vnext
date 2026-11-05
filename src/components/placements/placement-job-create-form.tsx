@@ -27,6 +27,7 @@ import {driveEligibilityPresetValue,type DriveEligibilityPreset} from "@/modules
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 export type PlacementAcademicTargetingChoice = {
   programs: Array<{
@@ -1165,7 +1166,7 @@ export function PlacementJobCreateForm({
           Every drive belongs to the current operating season. Historical seasons remain read-only.
         </p>
         <div className="grid gap-3 pt-4">
-          <label className="grid gap-1 text-sm font-semibold text-foreground">
+          <Label stack>
             Clone a past drive
             <Select value={copyJobId} className={inputClass}
               disabled={loadingCopy||pending||Boolean(partialJobId)}
@@ -1175,7 +1176,7 @@ export function PlacementJobCreateForm({
                 {role.companyName} · {role.title} ({tpoDriveStatusLabel(role.status)})
               </option>)}
             </Select>
-          </label>
+          </Label>
           {loadingCopy?<p role="status" className="text-sm text-body">Loading the past drive…</p>:null}
           {!clonableDrives.length?<p className="text-xs text-muted-foreground">No past drives to copy yet. Or just fill it in below.</p>:null}
           <p className="text-xs text-body">New drives start in the current placement season; past applicants, dates and rounds are not copied.</p>
@@ -1249,14 +1250,14 @@ export function PlacementJobCreateForm({
 
           {companyMode === "EXISTING" ? (
             <div className="space-y-3">
-              <label className="block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+              <Label className="block">
                 Find employer by name or website domain
                 <Input type="search" value={companySearch} maxLength={100}
                   onChange={event=>setCompanySearch(event.target.value)}
                   placeholder="Search your companies"
                   className={inputClass+" mt-2"}/>
-              </label>
-              <label>
+              </Label>
+              <Label>
               <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Company Name
               </span>
@@ -1290,7 +1291,7 @@ export function PlacementJobCreateForm({
                   </option>
                 ))}
               </Select>
-            </label>
+            </Label>
             {companySearch.trim()&&!companies.some(company=>
               (company.name+" "+(company.primaryDomain??"")+" "+(company.otherNames??[]).join(" ")+" "+(company.domains??[]).join(" ")).toLowerCase().includes(companySearch.trim().toLowerCase()))?
               <p role="status" className="text-xs text-body">No matching college employer. Check spelling or choose New employer.</p>:null}
@@ -1308,7 +1309,7 @@ export function PlacementJobCreateForm({
             </div>
           ) : (
             <div className="grid min-w-0 gap-4 sm:grid-cols-2">
-              <label>
+              <Label>
                 <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   Company Name
                 </span>
@@ -1320,8 +1321,8 @@ export function PlacementJobCreateForm({
                   required
                   maxLength={150}
                 />
-              </label>
-              <label>
+              </Label>
+              <Label>
                 <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   Primary domain
                 </span>
@@ -1332,8 +1333,8 @@ export function PlacementJobCreateForm({
                   onChange={event=>setNewEmployerDomain(event.target.value)}
                   placeholder="example.com"
                 />
-              </label>
-              <label>
+              </Label>
+              <Label>
                 <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   Website
                 </span>
@@ -1344,7 +1345,7 @@ export function PlacementJobCreateForm({
                   maxLength={500}
                   placeholder="https://example.com"
                 />
-              </label>
+              </Label>
               {matchingEmployer?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm">
                 <p className="font-semibold">This may already be {matchingEmployer.name}</p>
                 <p className="mt-1 text-xs text-body">Reuse the existing college employer to keep recruiter and drive history together.</p>
@@ -1353,12 +1354,12 @@ export function PlacementJobCreateForm({
                   Use {matchingEmployer.name}
                 </Button>
               </div>:null}
-              <label className="flex items-center gap-2 self-end pb-2 text-sm text-body">
+              <Label variant="choice" className="flex items-center gap-2 self-end pb-2">
                 <Checkbox
                   name="companyTrusted"
                 />
                 Mark relationship as trusted
-              </label>
+              </Label>
             </div>
           )}
         </div>
@@ -1374,7 +1375,7 @@ export function PlacementJobCreateForm({
           </p>
         </div>
         <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] pt-[var(--lms-space-4)] sm:grid-cols-2 md:grid-cols-3">
-          <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="sm:col-span-2">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Job Title
             </span>
@@ -1388,8 +1389,8 @@ export function PlacementJobCreateForm({
               maxLength={100}
               placeholder="e.g., Software Engineer"
             />
-          </label>
-          <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label className="sm:col-span-2">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Job Description
             </span>
@@ -1401,8 +1402,8 @@ export function PlacementJobCreateForm({
               maxLength={15000}
               placeholder="Role, responsibilities, requirements and hiring context."
             />
-          </label>
-          <label className="sm:col-span-2 grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="sm:col-span-2">
             Optional JD file (PDF or Word · 5 MB maximum)
             <Input type="file" accept=".pdf,.doc,.docx" className={inputClass}
              onChange={event=>{
@@ -1421,8 +1422,8 @@ export function PlacementJobCreateForm({
               "No file selected. You can attach it after saving in Edit drive."}
              The attachment uses private signed storage and never creates a public document link.
             </span>
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Job Type
             </span>
@@ -1435,8 +1436,8 @@ export function PlacementJobCreateForm({
                 <option key={type.label} value={type.label}>{type.label}</option>)}
             </Select>
             <span className="mt-1 block text-xs text-muted-foreground">Job types are managed in Settings &gt; Job types. A switched-off type remains on existing drives but cannot be selected for new drives.</span>
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Mode
             </span>
@@ -1456,8 +1457,8 @@ export function PlacementJobCreateForm({
                 driveMode==="OFF_CAMPUS"?"Students apply on the company's site; you track them here.":
                 "Students apply here; rounds at your college or online."}
             </span>
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Work mode
             </span>
@@ -1477,8 +1478,8 @@ export function PlacementJobCreateForm({
               </option>
             </Select>
             <span className="mt-1 block text-xs text-muted-foreground">These describe work location, not a pool or campus-hosted interview event. Pool reporting time and travel arrangements must be coordinated separately.</span>
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Location
             </span>
@@ -1487,8 +1488,8 @@ export function PlacementJobCreateForm({
               name="locations"
               placeholder="e.g. Bangalore, Remote"
             />
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Openings
             </span>
@@ -1500,8 +1501,8 @@ export function PlacementJobCreateForm({
               max={100000}
               step={1}
             />
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Application mode
             </span>
@@ -1525,8 +1526,8 @@ export function PlacementJobCreateForm({
               </option>
             </Select>
             <span className="mt-1 block text-xs text-muted-foreground">Hybrid accepts LMS or employer applications. Employer-form-only applications are completed outside LMS; on-campus slot scheduling is not set up by this selection.</span>
-          </label>
-          {applicationMode!=="INTERNAL"||driveMode==="OFF_CAMPUS"?<label>
+          </Label>
+          {applicationMode!=="INTERNAL"||driveMode==="OFF_CAMPUS"?<Label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
               Company application link
             </span>
@@ -1537,9 +1538,9 @@ export function PlacementJobCreateForm({
               placeholder="Required for hybrid/external-only"
             />
             <span className="mt-1 block text-xs text-muted-foreground">Use the HTTPS company registration link. Off-campus drives require this link.</span>
-          </label>:null}
+          </Label>:null}
           <div>
-            <label>
+            <Label>
               <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Application deadline
               </span>
@@ -1561,7 +1562,7 @@ export function PlacementJobCreateForm({
                   if(formRef.current)saveBrowserDraft(formRef.current);
                 }}
               />
-            </label>
+            </Label>
             <span id="drive-deadline-ist-help" className="mt-1 block text-xs text-body">Times are in IST (Asia/Kolkata). A newly selected date defaults to 11:59 PM; you can change the time.</span>
             <Button variant="secondary" type="button" aria-controls="tpo-drive-application-deadline"
               className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9"
@@ -1591,7 +1592,7 @@ export function PlacementJobCreateForm({
         <div className="grid min-w-0 gap-4 pt-4 sm:grid-cols-2 md:grid-cols-3">
 
           <p className="sm:col-span-2 -mt-2 text-xs text-muted-foreground">Default package · main job role. Salary amounts are in LPA unless labelled otherwise.</p>
-          <label>
+          <Label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Minimum CTC (LPA)
             </span>
@@ -1604,8 +1605,8 @@ export function PlacementJobCreateForm({
               step="0.5"
             />
             <span className="mt-1 block text-xs text-muted-foreground">CTC Range, e.g. 6–10 LPA; use minimum and maximum fields.</span>
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Maximum CTC (LPA)
             </span>
@@ -1618,22 +1619,22 @@ export function PlacementJobCreateForm({
               step="0.5"
               onChange={event=>setMaxLpaText(event.target.value)}
             />
-          </label>
-          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Fixed CTC (LPA)
-          </span><Input className={inputClass} name="fixedLpa" type="number" min={0} max={1000} step="0.5"/></label>
-          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </span><Input className={inputClass} name="fixedLpa" type="number" min={0} max={1000} step="0.5"/></Label>
+          <Label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Variable CTC (LPA)
-          </span><Input className={inputClass} name="variableLpa" type="number" min={0} max={1000} step="0.5"/></label>
-          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </span><Input className={inputClass} name="variableLpa" type="number" min={0} max={1000} step="0.5"/></Label>
+          <Label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Stipend per month (INR)
-          </span><Input className={inputClass} name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}/></label>
-          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </span><Input className={inputClass} name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}/></Label>
+          <Label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Joining bonus (LPA)
-          </span><Input className={inputClass} name="joiningBonusLpa" type="number" min={0} max={1000} step="0.5"/></label>
-          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </span><Input className={inputClass} name="joiningBonusLpa" type="number" min={0} max={1000} step="0.5"/></Label>
+          <Label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Duration (months)
-          </span><Input className={inputClass} name="stipendMonths" type="number" min={1} max={120} step={1}/></label>
+          </span><Input className={inputClass} name="stipendMonths" type="number" min={1} max={120} step={1}/></Label>
           <div className="grid gap-1 rounded-lg border border-border bg-muted/30 p-3 text-sm">
             <span className="font-semibold">Visibility</span>
             <span className="text-body">College only · this drive stays within the selected college workspace.</span>
@@ -1642,16 +1643,16 @@ export function PlacementJobCreateForm({
           <div className="grid gap-3 border-t border-border pt-3 sm:col-span-2">
             {extraPackages.map((pkg,index)=>(
               <div key={pkg.id} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-2 lg:grid-cols-3">
-                <label className="grid min-w-0 gap-1 text-xs font-semibold">Package name
+                <Label stack className="min-w-0">Package name
                   <Input className={inputClass} maxLength={200} placeholder="e.g. Digital, Ninja"
                     aria-label={"Package "+(index+2)+" name"} value={pkg.name}
                     onChange={event=>setExtraPackages(rows=>rows.map(row=>row.id===pkg.id?{...row,name:event.target.value}:row))}/>
-                </label>
-                <label className="grid min-w-0 gap-1 text-xs font-semibold">CTC (LPA)
+                </Label>
+                <Label stack className="min-w-0">CTC (LPA)
                   <Input className={inputClass} type="number" min={0} max={1000} step="0.5"
                     aria-label={"Package "+(index+2)+" CTC in LPA"} value={pkg.ctcLpa}
                     onChange={event=>setExtraPackages(rows=>rows.map(row=>row.id===pkg.id?{...row,ctcLpa:event.target.value}:row))}/>
-                </label>
+                </Label>
                 {([
                   ["fixedLpa","Fixed (LPA)",1000,"0.5"],
                   ["variableLpa","Variable (LPA)",1000,"0.5"],
@@ -1659,13 +1660,13 @@ export function PlacementJobCreateForm({
                   ["stipendPerMonthInr","Stipend / month (INR)",10000000,"1"],
                   ["stipendMonths","Duration (months)",120,"1"],
                 ] as const).map(([field,label,max,step])=>(
-                  <label key={field} className="grid min-w-0 gap-1 text-xs font-semibold">{label}
+                  <Label stack key={field} className="min-w-0">{label}
                     <Input className={inputClass} type="number" min={field==="stipendMonths"?1:0}
                       max={max} step={step} value={pkg[field]}
                       aria-label={"Package "+(index+2)+" "+label}
                       onChange={event=>setExtraPackages(rows=>rows.map(row=>
                         row.id===pkg.id?{...row,[field]:event.target.value}:row))}/>
-                  </label>
+                  </Label>
                 ))}
                 <Button variant="secondary" type="button" className="self-end text-danger"
                   aria-label={"Remove package "+(index+2)}
@@ -1686,10 +1687,10 @@ export function PlacementJobCreateForm({
           </div>
           <DrivePayCategoryField inputClassName={inputClass} onChange={markDirty}
             maxCtcLpa={highestPackageLpa}/>
-          <label className="flex items-center gap-3 text-sm font-semibold text-body">
+          <Label className="flex items-center gap-3">
             <Checkbox name="isDream" className="h-4 w-4 accent-primary"/>
             Dream drive (college held-offer cap exception)
-          </label>
+          </Label>
         </div>
       </section>
 
@@ -1702,34 +1703,34 @@ export function PlacementJobCreateForm({
         <div className="grid gap-4 pt-4 sm:grid-cols-2">
           <fieldset className="sm:col-span-2 grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
             <legend className="px-1 text-sm font-semibold">Pool drive logistics (optional, staff-reviewed)</legend>
-            <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">Host college
+            <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">Host college
               <Input name="poolHostCollege" maxLength={160} className={inputClass} />
-            </label>
-            <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">Reporting time (IST)
+            </Label>
+            <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">Reporting time (IST)
               <Input name="poolReportingTime" type="datetime-local" className={inputClass} />
-            </label>
-            <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">Travel instructions
+            </Label>
+            <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">Travel instructions
               <Textarea name="poolTravelNote" maxLength={1000} rows={2} className={inputClass} />
-            </label>
+            </Label>
             <p className="text-xs text-muted-foreground">Pool logistics are informational and do not create a round, venue booking or student travel authorization.</p>
           </fieldset>
           <fieldset className="sm:col-span-2 grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
             <legend className="px-1 text-sm font-semibold">Separate employer registration</legend>
-            <label className="flex min-h-11 min-w-0 items-center gap-2 break-words py-2 text-sm">
+            <Label variant="choice" className="flex min-h-11 min-w-0 items-center gap-2 break-words py-2">
               <Checkbox name="studentsRegisterSeparately" /> Students also register on the company's portal
-            </label>
-            <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">Portal name
+            </Label>
+            <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">Portal name
               <Input name="portalName" maxLength={160} className={inputClass} />
-            </label>
-            <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">Portal link (HTTPS)
+            </Label>
+            <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">Portal link (HTTPS)
               <Input name="portalUrl" type="url" maxLength={2000} placeholder="https://..." className={inputClass} />
-            </label>
+            </Label>
             <p className="text-xs text-muted-foreground">This records the employer's separate portal; it does not automatically register students. Keep the application mode and primary employer URL consistent.</p>
           </fieldset>
-          <label className="grid gap-2 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">Responsibilities
+          <Label stack className="text-[length:var(--lms-font-sm)] sm:col-span-2">Responsibilities
             <Textarea name="responsibilities" rows={6} maxLength={15000} className={textareaClass} placeholder="Responsibilities, duties and expectations"/>
-          </label>
-          <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Assessment URL
+          </Label>
+          <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">Assessment URL
             <Input name="assessmentUrl" type="url" maxLength={2048} className={inputClass} placeholder="https://..."
               onChange={event=>setAssessmentUrlLength(event.target.value.length)}/>
             <div className="flex items-center justify-between gap-2">
@@ -1745,31 +1746,31 @@ export function PlacementJobCreateForm({
                   if(formRef.current)saveBrowserDraft(formRef.current);
                 }}>Clear</Button>
             </div>
-          </label>
-          <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Assessment deadline (IST)
+          </Label>
+          <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">Assessment deadline (IST)
             <Input name="assessmentDeadline" type="datetime-local" className={inputClass}/>
-          </label>
+          </Label>
           <fieldset className="grid gap-3 sm:col-span-2">
             <legend className="text-sm font-semibold text-foreground">Important dates</legend>
             <p className="text-xs text-muted-foreground">Add up to 20 dates. The Application deadline field above is reserved.</p>
             {importantDateRows.map(row=>(
               <div key={row.id} className="grid items-end gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto]">
-                <label className="grid min-w-0 gap-1 text-xs font-semibold">Label
+                <Label stack className="min-w-0">Label
                   <Input aria-label="Important date label" maxLength={100} placeholder="e.g. Screening round, Technical round"
                     value={row.label} onChange={event=>setImportantDateRows(current=>current.map(item=>item.id===row.id?{...item,label:event.target.value}:item))}
                     className={inputClass}/>
-                </label>
-                <label className="grid min-w-0 gap-1 text-xs font-semibold">Date (IST)
+                </Label>
+                <Label stack className="min-w-0">Date (IST)
                   <Input aria-label="Important date" type="date" value={row.date}
                     onChange={event=>setImportantDateRows(current=>current.map(item=>item.id===row.id?{...item,date:event.target.value}:item))}
                     className={inputClass}/>
-                </label>
-                <label className="grid min-w-0 gap-1 text-xs font-semibold">Type
+                </Label>
+                <Label stack className="min-w-0">Type
                   <Input aria-label="Important date type" maxLength={80} value={row.type}
                     placeholder="e.g. Interview, Assessment"
                     onChange={event=>setImportantDateRows(current=>current.map(item=>item.id===row.id?{...item,type:event.target.value}:item))}
                     className={inputClass}/>
-                </label>
+                </Label>
                 <Button type="button" variant="secondary" disabled={importantDateRows.length<=1}
                   title={importantDateRows.length<=1?"At least one row required":"Remove important date"}
                   aria-label="Remove important date"
@@ -1783,36 +1784,36 @@ export function PlacementJobCreateForm({
               Add date{importantDateRows.length>=20?" (max 20)":""}
             </Button>
           </fieldset>
-          <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Preferred degree
+          <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">Preferred degree
             <Input name="preferredDegree" maxLength={160} className={inputClass}/>
-          </label>
-          <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Specialization
+          </Label>
+          <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">Specialization
             <Input name="preferredSpecialization" maxLength={160} className={inputClass}/>
-          </label>
-          <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Graduation year
+          </Label>
+          <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">Graduation year
             <Input name="preferredGraduationYear" type="number" min={1990} max={2050} className={inputClass}/>
-          </label>
-          <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Minimum GPA (informational)
+          </Label>
+          <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">Minimum GPA (informational)
             <Input name="preferredMinimumGpa" type="number" min={0} max={10} step="0.01" className={inputClass}/>
-          </label>
-          <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Preferred city
+          </Label>
+          <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">Preferred city
             <Input name="preferredCity" maxLength={160} className={inputClass}/>
-          </label>
+          </Label>
           <fieldset className="grid gap-3 sm:col-span-2">
             <legend className="text-sm font-semibold text-foreground">Custom eligibility rules</legend>
             <p className="text-xs text-muted-foreground">Add your own rules (e.g. Work permit, Experience). Displayed to students, informational only. Max 20.</p>
             {customRuleRows.map(row=>(
               <div key={row.id} className="grid items-end gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-                <label className="grid min-w-0 gap-1 text-xs font-semibold">Rule label
+                <Label stack className="min-w-0">Rule label
                   <Input aria-label="Rule label" maxLength={160} placeholder="Label (e.g. Work permit)"
                     value={row.label} onChange={event=>setCustomRuleRows(current=>current.map(item=>item.id===row.id?{...item,label:event.target.value}:item))}
                     className={inputClass}/>
-                </label>
-                <label className="grid min-w-0 gap-1 text-xs font-semibold">Rule value
+                </Label>
+                <Label stack className="min-w-0">Rule value
                   <Input aria-label="Rule value" maxLength={200} placeholder="Value (e.g. Required)"
                     value={row.value} onChange={event=>setCustomRuleRows(current=>current.map(item=>item.id===row.id?{...item,value:event.target.value}:item))}
                     className={inputClass}/>
-                </label>
+                </Label>
                 <Button type="button" variant="secondary" disabled={customRuleRows.length<=1}
                   title={customRuleRows.length<=1?"At least one row required":"Remove custom rule"}
                   aria-label="Remove custom rule"
@@ -1837,7 +1838,7 @@ export function PlacementJobCreateForm({
           </p>
         </div>
         <div className="grid min-w-0 gap-[var(--lms-space-4)] pt-[var(--lms-space-4)]">
-          <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Department · Target Audience
+          <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">Department · Target Audience
             <Select className={inputClass} value={departmentFilter} onChange={event=>{
               setDepartmentFilter(event.target.value);setSelectedProgramIds([]);
               setSelectedCohortIds([]);setSelectedSectionIds([]);
@@ -1849,7 +1850,7 @@ export function PlacementJobCreateForm({
               Department selection targets every active program in that department.
               Choose specific programs, batches and classes below to narrow the audience.
             </span>
-          </label>
+          </Label>
           <div className="grid gap-4 lg:grid-cols-2">
             <fieldset className="min-w-0 border-t border-border px-0 py-4">
               <legend className="px-1 text-xs font-semibold text-body">
@@ -1866,7 +1867,7 @@ export function PlacementJobCreateForm({
                 <div className="grid gap-2">
                   {visiblePrograms.map(
                     (program) => (
-                      <label key={program.id} className="flex min-h-11 min-w-0 items-start gap-2 break-words py-2 text-sm text-body"
+                      <Label variant="choice" key={program.id} className="flex min-h-11 min-w-0 items-start gap-2 break-words py-2"
                       >
                         <Checkbox
                           checked={selectedProgramIds.includes(
@@ -1889,7 +1890,7 @@ export function PlacementJobCreateForm({
                             {program.departmentName}
                           </span>
                         </span>
-                      </label>
+                      </Label>
                     ),
                   )}
                 </div>
@@ -1911,7 +1912,7 @@ export function PlacementJobCreateForm({
                 <div className="grid gap-2">
                   {visibleCohorts.map(
                     (cohort) => (
-                      <label key={cohort.id} className="flex min-h-11 min-w-0 items-start gap-2 break-words py-2 text-sm text-body"
+                      <Label variant="choice" key={cohort.id} className="flex min-h-11 min-w-0 items-start gap-2 break-words py-2"
                       >
                         <Checkbox
                           checked={selectedCohortIds.includes(
@@ -1935,7 +1936,7 @@ export function PlacementJobCreateForm({
                             {cohort.status}
                           </span>
                         </span>
-                      </label>
+                      </Label>
                     ),
                   )}
                 </div>
@@ -1950,19 +1951,19 @@ export function PlacementJobCreateForm({
               Class targeting uses the persisted section whitelist.
             </p>
             <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] sm:grid-cols-2">
-              {visibleSections.slice(0,500).map(section=><label key={section.id}
-                className="flex min-h-11 min-w-0 items-center gap-2 break-words py-2 text-sm">
+              {visibleSections.slice(0,500).map(section=><Label variant="choice" key={section.id}
+                className="flex min-h-11 min-w-0 items-center gap-2 break-words py-2">
                 <Checkbox checked={selectedSectionIds.includes(section.id)}
                  disabled={!selectedSectionIds.includes(section.id)&&selectedSectionIds.length>=100}
                  onChange={()=>toggleId(section.id,selectedSectionIds,setSelectedSectionIds)}/>
                 {section.name} · {section.cohortName}
-              </label>)}
+              </Label>)}
               {!visibleSections.length?<p className="text-sm text-muted-foreground">No active classes in this selection.</p>:null}
               {visibleSections.length>500?<p className="text-sm text-muted-foreground">Showing first 500 classes. Narrow your program and batch selection to target later classes.</p>:null}
               {selectedSectionIds.length>=100?<p className="text-sm text-muted-foreground">Maximum 100 classes selected. Deselect a class to choose another.</p>:null}
             </div>
           </fieldset>
-          <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Eligibility preset
+          <Label className="block text-[length:var(--lms-font-sm)]">Eligibility preset
             <Select className={inputClass} value={eligibilityPreset} onChange={event=>setEligibilityPreset(event.target.value as DriveEligibilityPreset)}>
               <option value="OPEN">Open to all</option>
               <option value="CGPA_6">CGPA 6.0+</option>
@@ -1971,7 +1972,7 @@ export function PlacementJobCreateForm({
               <option value="PCT_70">70% throughout</option>
             </Select>
             <span className="mt-1 block text-xs font-normal text-muted-foreground">Check your college CGPA-to-percentage rule before choosing a percentage threshold.</span>
-          </label>
+          </Label>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
             ["minCgpa", "Minimum CGPA", "0.01"],
@@ -2002,7 +2003,7 @@ export function PlacementJobCreateForm({
             ["minPctThroughout","Percentage throughout","0.01"],
           ].map(
             ([name, label, step]) => (
-              <label key={name}>
+              <Label key={name}>
                 <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   {label}
                 </span>
@@ -2016,10 +2017,10 @@ export function PlacementJobCreateForm({
                   key={eligibilityPreset+":"+name}
                   defaultValue={driveEligibilityPresetValue(eligibilityPreset,name)}
                 />
-              </label>
+              </Label>
             ),
           )}
-          <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="sm:col-span-2">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Passing years
             </span>
@@ -2028,13 +2029,13 @@ export function PlacementJobCreateForm({
               name="passingYears"
               placeholder="2026, 2027"
             />
-          </label>
-          <label className="flex items-center gap-2 text-sm font-semibold text-body sm:col-span-2">
+          </Label>
+          <Label className="flex items-center gap-2 sm:col-span-2">
             <Checkbox name="requireVerifiedEvidence" className="h-4 w-4 accent-primary"/>
             Verified marks only
-          </label>
+          </Label>
           <p className="sm:col-span-2 text-xs leading-5 text-muted-foreground">College-verified marks only: unverified evidence and missing marks must be reviewed by the college. Missing marks are displayed as Not provided, not a failed threshold.</p>
-          <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="sm:col-span-2">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Missing evidence
             </span>
@@ -2050,7 +2051,7 @@ export function PlacementJobCreateForm({
                 Require complete evidence
               </option>
             </Select>
-          </label>
+          </Label>
           </div>
         </div>
       </section>
@@ -2058,7 +2059,7 @@ export function PlacementJobCreateForm({
       <section aria-label="Skills the company wants" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <Heading level={2} size="base" className="mb-3 text-foreground">Skills the company wants</Heading>
           <div className="grid gap-2 sm:col-span-2">
-            <label htmlFor="drive-skills-input" className="text-sm font-semibold text-foreground">Skills the company wants</label>
+            <Label htmlFor="drive-skills-input">Skills the company wants</Label>
             <p className="text-xs text-muted-foreground">Type a skill and press Enter. Applicants get a skill match, but skills never decide who can apply. Up to 30 skills, 50 characters each.</p>
             <input type="hidden" name="skillsWanted" value={wantedSkills.join(", ")} readOnly />
             {wantedSkills.length>0?<div className="flex flex-wrap gap-2" aria-label="Skills selected">
@@ -2085,7 +2086,7 @@ export function PlacementJobCreateForm({
 
       <section aria-label="Planned rounds" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <Heading level={2} className="text-foreground">Rounds</Heading>
-        <label className="mt-3 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+        <Label className="mt-3 block text-[length:var(--lms-font-sm)]">
           Round template
           <Select name="roundPreset" value={roundPreset}
             onChange={event=>{
@@ -2094,7 +2095,7 @@ export function PlacementJobCreateForm({
             {Object.entries(TPO_DRIVE_ROUND_PRESETS).map(([key,preset])=>
               <option key={key} value={key}>{preset.label}</option>)}
           </Select>
-        </label>
+        </Label>
         <div className="mt-3 flex flex-wrap gap-2" aria-label="Round presets">
           {Object.entries(TPO_DRIVE_ROUND_PRESETS).filter(([key])=>key!=="NONE").map(([key,preset])=>(
             <Button key={key} variant="secondary" type="button"

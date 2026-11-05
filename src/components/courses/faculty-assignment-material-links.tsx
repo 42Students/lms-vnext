@@ -12,6 +12,7 @@ import {friendlyApiError} from "@/lib/friendly-error";
 import {facultyAssignmentMaterialLinkSchema} from "@/modules/courses/learner-assignment-materials-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 type Material={id:string;title:string;href:string};
 export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled=false}:{
  deliveryId:string;assignmentId:string;disabled?:boolean;
@@ -79,14 +80,14 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
   </ul>
   {!disabled?<Disclosure title="Add link" className="min-w-0" contentClassName="pb-[var(--lms-space-4)]">
    <div className="grid min-w-0 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Resource title
+   <Label stack className="min-w-0">Resource title
     <Input value={title} onChange={e=>setTitle(e.target.value)} maxLength={160}
      className="min-h-11 w-full md:min-h-[var(--lms-control-height)]"/>
-   </label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Secure resource link
+   </Label>
+   <Label stack className="min-w-0">Secure resource link
     <Input value={externalUrl} onChange={e=>setExternalUrl(e.target.value)} type="url" maxLength={2048}
      placeholder="https://" className="min-h-11 w-full md:min-h-[var(--lms-control-height)]"/>
-   </label>
+   </Label>
    <Button variant="primary" type="button" loading={pending} disabled={pending||loading||links.length>=20||!parsed.success}
     onClick={()=>{if(parsed.success)void act({action:"ADD",link:parsed.data});}}
     className="w-full md:w-auto md:justify-self-end md:col-span-2" size="md">Add link</Button>

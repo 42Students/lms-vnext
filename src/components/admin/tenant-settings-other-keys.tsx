@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { LEGACY_TENANT_SETTING_MAP } from "@/modules/platform-settings/legacy-setting-specs";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Entry = {key:string;value:string;version:number};
 const KEY_PATTERN = /^[A-Za-z][A-Za-z0-9._-]*$/;
@@ -137,12 +138,12 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeadi
      <strong>Keys are matched exactly, and only at the scope that reads them</strong>
      <p className="mt-1">A typo creates a new unused key rather than an error — the backend keeps using its default. Copy the key from the code that reads it, and make sure you are on the right scope.</p>
     </Alert>
-    <label className="grid gap-2 text-sm font-semibold">Key
+    <Label stack>Key
      <Input value={key} autoFocus maxLength={120} autoComplete="off"
       placeholder="e.g. course.watchedThresholdPercent"
       aria-invalid={invalidKey} aria-describedby="other-key-help"
       onChange={event=>{setKey(event.target.value);setMessage("");}}/>
-    </label>
+    </Label>
     <p id="other-key-help" className="text-xs text-body">Letters, digits, dot, dash and underscore only. The current protected API additionally requires the key to start with a letter; do not use secrets.</p>
     {invalidKey?<p role="alert" className="text-xs text-error">Start with a letter; use letters, digits, dots, dashes or underscores only.</p>:null}
     {documentedSpec?<p role="status" className="text-xs text-warning-text">
@@ -150,10 +151,10 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeadi
       ? "That key is read at "+documentedSpec.scope+" scope — storing it here has no effect."
       : "This key belongs to the documented settings above; edit it there instead."}
     </p>:null}
-    <label className="grid gap-2 text-sm font-semibold">Value
+    <Label stack>Value
      <Textarea rows={2} value={value} maxLength={4096} placeholder="Value"
       onChange={event=>{setValue(event.target.value);setMessage("");}}/>
-    </label>
+    </Label>
     <p className="text-xs text-body">The legacy form allowed blank values; the protected stored-only API currently requires a non-empty value. Blank restores defaults for documented settings.</p>
     {message&&messageTone==="error"?<Alert tone="error">{message}</Alert>:null}
    </div>

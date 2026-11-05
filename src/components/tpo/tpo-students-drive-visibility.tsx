@@ -13,6 +13,7 @@ import {useTpoStudentsSelection} from "./tpo-students-selection";
 import {tpoDriveVisibilitySelection,tpoDriveVisibilityValid} from "@/modules/placements/tpo-drive-visibility-bulk-model";
 import {mapTpoBulkBounded} from "@/modules/placements/tpo-bulk-bounded-execution";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Learner={id:string;name:string};
 type Drive={id:string;name:string;status:string};
 type PreviousOverride={id:string;decision:"INCLUDE"|"EXCLUDE";reason:string};
@@ -125,26 +126,26 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
   {!picked.length?<p role="status" className="text-sm text-warning-text">Pick at least one student</p>:null}
   {picked.length>0&&!jobId?<p role="status" className="text-sm text-body">Choose the drive</p>:null}
   <div className="grid min-w-0 gap-3 md:grid-cols-2">
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive
+   <Label stack className="min-w-0">Drive
     <Select className="min-h-11 w-full min-w-0 md:min-h-9" value={jobId} disabled={pending} onChange={e=>{setJobId(e.target.value);setResults([]);}}
      >
      <option value="">Choose a drive</option>
      {drives.map(job=><option key={job.id} value={job.id}>{job.name} · {job.status}</option>)}
     </Select>
-   </label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Action
+   </Label>
+   <Label stack className="min-w-0">Action
     <Select className="min-h-11 w-full min-w-0 md:min-h-9" aria-describedby={decision==="CLEAR"?clearWarningId:undefined} value={decision} disabled={pending} onChange={e=>{setDecision(e.target.value as typeof decision);setResults([]);}}
      >
      <option value="INCLUDE">Show / Include</option>
      <option value="EXCLUDE">Hide / Exclude</option>
      <option value="CLEAR">Clear active override</option>
     </Select>
-   </label>
+   </Label>
   </div>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason
+  <Label stack className="min-w-0">Reason
    <Textarea className="w-full min-w-0" value={reason} disabled={pending} onChange={e=>setReason(e.target.value)} maxLength={500}
     />
-  </label>
+  </Label>
   {decision==="CLEAR"?<p id={clearWarningId} className="text-sm text-warning-text">Clearing an override returns to ordinary eligibility rules. It does not restore an older override or undo an application.</p>:null}
   <Button variant="primary" type="button" aria-haspopup="dialog" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={!valid||pending} onClick={()=>setConfirm(true)}
    >

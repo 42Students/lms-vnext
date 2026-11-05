@@ -14,6 +14,7 @@ import {mentorBoardReviewHref,mentorBoardReviewQuerySchema}
 import {getMentorBoardReview} from "@/modules/projects/mentor-board-review-service";
 import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Params={status?:string|string[];priority?:string|string[];
   sprintId?:string|string[];search?:string|string[];page?:string|string[]};
 export default async function MentorBoardReviewPage({
@@ -47,31 +48,31 @@ export default async function MentorBoardReviewPage({
       </section>:<>
       <FilterBar title="Filters"><form method="get" action={base+"/board-review"} role="search" aria-label="Task board review filters"
         className="grid min-w-0 items-end gap-[8px] border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-[repeat(4,minmax(0,1fr))_auto_auto]">
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search tasks or sprints
+        <Label stack>Search tasks or sprints
           <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
             className="min-h-11 w-full md:min-h-9"/>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+        </Label>
+        <Label stack>Status
           <Select name="status" defaultValue={data.query.status}
             className="min-h-11 w-full md:min-h-9">
             {(["ALL","TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"] as const).map(state=>
               <option key={state} value={state}>{state.replaceAll("_"," ")}</option>)}
           </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Priority
+        </Label>
+        <Label stack>Priority
           <Select name="priority" defaultValue={data.query.priority??"ALL"}
             className="min-h-11 w-full md:min-h-9">
             {(["ALL","LOW","MEDIUM","HIGH","CRITICAL"] as const).map(value=>
               <option key={value} value={value}>{value}</option>)}
           </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint
+        </Label>
+        <Label stack>Sprint
           <Select name="sprintId" defaultValue={data.query.sprintId??"ALL"}
             className="min-h-11 w-full md:min-h-9">
             <option value="ALL">All sprints</option>
             {data.sprints.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
           </Select>
-        </label>
+        </Label>
         <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
           Filter
         </Button>

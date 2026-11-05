@@ -9,6 +9,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {Dialog} from "@/components/ui/dialog";
 import {isVerifiedHrRoundMutation,hrRoundEditorHasUnsavedChanges} from "@/modules/placements/hr-round-editor-model";
+import { Label } from "@/components/ui/label";
 
 type Kind="TALK"|"TEST"|"VENDOR_TEST"|"GD"|"INTERVIEW";
 type Row={id:string;name:string;kind:string;mode:string|null;status:string;
@@ -107,17 +108,17 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
     dismissible={!pending} title={active?"Change round":"Add a round at the end"}>
     <form onSubmit={(e:FormEvent<HTMLFormElement>)=>{e.preventDefault();void submit(active?"UPDATE":"CREATE");}}
      className="grid min-w-0 grid-cols-1 gap-3">
-     <label className="grid min-w-0 gap-[6px] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name
+     <Label stack className="min-w-0 md:col-span-2">Name
       <Input required maxLength={100} placeholder="For example: Managerial round" value={name} aria-invalid={Boolean(nameError)}
        aria-describedby={nameError?"round-name-error":undefined}
        onChange={e=>{setName(e.target.value);setNameError("");}} className="w-full"/>
       {nameError?<span id="round-name-error" role="alert" className="text-xs font-normal text-error">{nameError}</span>:null}
-     </label>
-     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
+     </Label>
+     <Label stack>Type
       <Select value={kind} onChange={e=>setKind(e.target.value as Kind)} className="w-full">
        {kinds.map(([id,label])=><option value={id} key={id}>{label}</option>)}
-      </Select></label>
-     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Where
+      </Select></Label>
+     <Label stack className="min-w-0">Where
       <Select value={mode} onChange={e=>setMode(e.target.value)} className="w-full">
        <option value="">Decide later</option>
        <option value="ON_CAMPUS">On campus</option>
@@ -126,7 +127,7 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
       <span className="text-xs font-normal text-muted-foreground">
        The placement cell will set the date and venue for this round.
       </span>
-     </label>
+     </Label>
      {error?<div className="md:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
      {active?<details className="min-w-0 border-t border-border pt-3 md:col-span-2"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-body focus-ring md:min-h-9">Remove</summary><Button type="button" disabled={pending} onClick={()=>setConfirmRemove(true)}
        variant="secondary" className="mt-2 min-h-11 w-full border-error text-error md:w-auto md:min-h-9">Remove</Button></details>:null}

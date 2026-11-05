@@ -11,6 +11,7 @@ import {mentorReviewOverviewSchema,mentorReviewOverviewHref} from "@/modules/pro
 import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import {getMentorDeliveryReviewOverview} from "@/modules/projects/mentor-review-overview-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Search={status?:string|string[];feedback?:string|string[];version?:string|string[];page?:string|string[]};
 export default async function MentorReviewOverviewPage({
  params,searchParams,
@@ -37,26 +38,26 @@ export default async function MentorReviewOverviewPage({
   Delivery workspace</Link>}/>
  <FilterBar title="Filters"><form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"} role="search" aria-label="Delivery review filters"
  className="grid min-w-0 items-end gap-[8px] border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-[repeat(3,minmax(0,1fr))_auto_auto]">
-  <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Delivery status
+  <Label stack>Delivery status
    <Select name="status" defaultValue={data.query.status}
     className="min-h-11 md:min-h-9">
     {(["ALL","DRAFT","SUBMITTED","APPROVED","CHANGES_REQUESTED"] as const).map(status=>
      <option key={status} value={status}>{status.replaceAll("_"," ")}</option>)}
    </Select>
-  </label>
-  <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Written feedback
+  </Label>
+  <Label stack>Written feedback
    <Select name="feedback" defaultValue={data.query.feedback}
     className="min-h-11 md:min-h-9">
     <option value="ALL">Any</option>
     <option value="WITH">Recorded</option>
     <option value="WITHOUT">Not recorded</option>
    </Select>
-  </label>
-  <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Exact delivery version
+  </Label>
+  <Label stack>Exact delivery version
    <Input type="number" name="version" min={1} max={1000000}
     defaultValue={data.query.version??""}
     placeholder="All versions" className="min-h-11 md:min-h-9"/>
-  </label>
+  </Label>
   <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
    Filter
   </Button>

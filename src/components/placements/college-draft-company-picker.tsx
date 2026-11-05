@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
+import { Label } from "@/components/ui/label";
 
 type CompanyChoice={relationshipId:string;name:string};
 export function CollegeDraftCompanyPicker({
@@ -38,13 +39,13 @@ export function CollegeDraftCompanyPicker({
   }finally{setBusy(false);}
  }
  return <div className="mt-3 space-y-[var(--lms-space-3)]" aria-label="Company chooser">
-  <label className="grid gap-[6px] text-sm font-semibold">
+  <Label stack>
    Company Name <span className="font-normal text-muted-foreground">(required)</span>
    <Input type="search" value={name} maxLength={120} disabled={busy}
     placeholder="Search existing companies" autoComplete="off"
     onChange={event=>{setName(event.target.value);setSelectedId(null);setSaved(false);setError("");}}
     aria-invalid={!linked} aria-describedby="drive-company-choice-help"/>
-  </label>
+  </Label>
   <p id="drive-company-choice-help" className="text-xs text-muted-foreground">
    Choose a verified company relationship below. Free-typed company text is unlinked and cannot be saved.
    {truncated?" Showing the first 100 companies; use the directory for other choices.":""}

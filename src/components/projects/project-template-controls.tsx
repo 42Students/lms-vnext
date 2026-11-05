@@ -11,6 +11,7 @@ import { templateAssignmentRevocationNotice } from "@/modules/projects/template-
 import {projectTemplateGlobalActions} from "@/modules/projects/template-global-actions-model";
 import { projectMutation } from "./project-api";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 export function CreateProjectTemplateControl() {
   const router = useRouter();
@@ -142,7 +143,7 @@ export function CreateProjectTemplateControl() {
           onSubmit={submit}
           className="grid gap-4"
         >
-          <label>
+          <Label>
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-body">
               Template title
             </span>
@@ -154,8 +155,8 @@ export function CreateProjectTemplateControl() {
                 setTitle(event.target.value)
               }
             />
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-body">
               Slug
             </span>
@@ -171,10 +172,10 @@ export function CreateProjectTemplateControl() {
               }
               placeholder="campus-project"
             />
-          </label>
+          </Label>
           <details className="border-t border-[var(--lms-canvas-border)] pt-3">
             <summary className="cursor-pointer py-2 text-[13px] font-semibold text-body">Additional template details</summary>
-          <label className="mt-3 block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="mt-3 block min-w-0">
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-body">
               Summary
             </span>
@@ -185,8 +186,8 @@ export function CreateProjectTemplateControl() {
                 setSummary(event.target.value)
               }
             />
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-body">
               Goal
             </span>
@@ -197,10 +198,10 @@ export function CreateProjectTemplateControl() {
                 setGoal(event.target.value)
               }
             />
-          </label>
+          </Label>
           </details>
           <div className="grid min-w-0 gap-3 border-t border-[var(--lms-canvas-border)] pt-4 md:grid-cols-2 lg:grid-cols-3">
-            <label>
+            <Label>
               <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-body">
                 Release
               </span>
@@ -214,8 +215,8 @@ export function CreateProjectTemplateControl() {
                   )
                 }
               />
-            </label>
-            <label>
+            </Label>
+            <Label>
               <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-body">
                 Sprint
               </span>
@@ -229,8 +230,8 @@ export function CreateProjectTemplateControl() {
                   )
                 }
               />
-            </label>
-            <label>
+            </Label>
+            <Label>
               <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-body">
                 First task
               </span>
@@ -244,7 +245,7 @@ export function CreateProjectTemplateControl() {
                   )
                 }
               />
-            </label>
+            </Label>
           </div>
           {error ? (
             <p
@@ -530,16 +531,16 @@ export function ProjectTemplateActions({
             onClick={()=>void duplicate()}>{pending==="Duplicate template"?"Duplicating…":"Duplicate template"}</Button>
         </div>}>
         <div className="grid gap-3">
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New title
+          <Label stack className="min-w-0">New title
             <Input maxLength={200} value={copyTitle} onChange={e=>setCopyTitle(e.target.value)}/>
-          </label>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New slug
+          </Label>
+          <Label stack className="min-w-0">New slug
             <Input maxLength={64} pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
               value={copySlug} onChange={e=>setCopySlug(e.target.value.toLowerCase())}/>
-          </label>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New summary
+          </Label>
+          <Label stack className="min-w-0">New summary
             <Textarea maxLength={2000} value={copySummary} onChange={e=>setCopySummary(e.target.value)}/>
-          </label>
+          </Label>
         </div>
       </Dialog>
       <Dialog open={confirmLifecycle!==null} onOpenChange={open=>{if(!open)setConfirmLifecycle(null);}}

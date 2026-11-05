@@ -10,6 +10,7 @@ import {DataTable} from "@/components/ui/data-table";
 import {apiFetch} from "@/lib/api-fetch";
 import {Textarea} from "@/components/ui/textarea";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Row={applicationId:string;name:string;roleTitle:string;annualCtcInr:number|null;rank:number;
  reasons:string[];canPromote:boolean;promotionStatus:string|null};
 type Preview={storageReady:boolean;freeSeats:number|null;activeOffers:number;rows:Row[];next:Row|null;previewToken:string};
@@ -42,9 +43,9 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
   {preview.next&&preview.storageReady?<div className="min-w-0 space-y-3 border-b border-border pb-4">
    <Heading level={2} size="base" className="break-words leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Offer to next waitlisted: {preview.next.name} (rank {preview.next.rank})</Heading>
    <p className="text-sm text-body leading-[22px]">Review the ranked queue before release. The offer issuer rechecks held-offer rules, eligibility and response deadline.</p>
-   <label className="grid min-w-0 gap-[6px] text-[13px]">Reason for promotion
+   <Label stack className="min-w-0">Reason for promotion
     <Textarea rows={2} minLength={3} maxLength={500} value={reason} onChange={e=>{setReason(e.target.value);setError("");}} className="min-h-24 w-full min-w-0"
-     /></label>
+     /></Label>
    <Button variant="primary" type="button" disabled={busy||reason.trim().length<3} onClick={()=>setConfirmOpen(true)}
     className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
     {busy?"Verifying…":"Verify and release next offer"}</Button>

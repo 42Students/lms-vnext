@@ -14,6 +14,7 @@ import {
   projectApiError,
   projectMutation,
 } from "./project-api";
+import { Label } from "@/components/ui/label";
 
 type ProjectMemberRole = "LEARNER" | "MENTOR";
 
@@ -174,7 +175,7 @@ export function AddProjectMemberControl({
         description={learnerOnly?"Only active Learner memberships from this college are eligible.":"Only active memberships from this college with the selected Learner or Mentor role are eligible."}
       >
         <form onSubmit={submit} className="grid min-w-0 gap-[var(--lms-space-4)]">
-          <label>
+          <Label>
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Project role
             </span>
@@ -194,7 +195,7 @@ export function AddProjectMemberControl({
               <option value="LEARNER">Learner</option>
               {!learnerOnly?<option value="MENTOR">Mentor</option>:null}
             </Select>
-          </label>
+          </Label>
           <div className="min-w-0">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Find eligible member
@@ -223,7 +224,7 @@ export function AddProjectMemberControl({
               </Button>
             </div>
           </div>
-          <label>
+          <Label>
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Member
             </span>
@@ -255,8 +256,8 @@ export function AddProjectMemberControl({
                 ))
               )}
             </Select>
-          </label>
-          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label className="min-w-0">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Responsibility label
             </span>
@@ -272,9 +273,9 @@ export function AddProjectMemberControl({
                   : "e.g. Team lead"
               }
             />
-          </label>
+          </Label>
           {role === "MENTOR" ? (
-            <label className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)]">
+            <Label className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-3)]">
               <Checkbox
                 checked={isPrimary}
                 onChange={(event) =>
@@ -282,7 +283,7 @@ export function AddProjectMemberControl({
                 }
               />
               Primary mentor
-            </label>
+            </Label>
           ) : null}
           {error ? (
             <p role="alert" className="m-0 text-sm font-semibold text-error leading-[22px]">
@@ -492,11 +493,11 @@ export function MentorLearnerTeamActions({projectId,member}:{
       title={"Edit "+(member.displayName??"learner")+"'s project responsibility"}>
       <form onSubmit={event=>{event.preventDefault();void save(label);}}
         className="space-y-3">
-        <label className="block text-sm font-semibold">Saved responsibility
+        <Label className="block">Saved responsibility
           <Input value={label} maxLength={120} disabled={pending}
             onChange={event=>setLabel(event.target.value)}
             aria-label="Responsibility label" />
-        </label>
+        </Label>
         <p className="text-xs text-muted-foreground">This is a project label,
           not a new platform permission. Only one student lead is allowed.</p>
         {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

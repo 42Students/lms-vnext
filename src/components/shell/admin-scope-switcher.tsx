@@ -7,6 +7,7 @@ import type {AdminScopeChoices} from "@/modules/admin-scope/service";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import {useToast} from "@/components/ui/toast";
+import { Label } from "@/components/ui/label";
 
 /** Restores the old device-local tenant lock. This is only a UI safety latch:
  * the server still authorizes the exact persisted college on every request. */
@@ -98,14 +99,14 @@ export function AdminScopeSwitcher({choices,scope}:{
  return <div className="grid w-full min-w-0 max-w-72 gap-2">
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
    <span className="text-xs font-semibold text-muted-foreground">Tenant scope</span>
-   <label className="inline-flex min-h-9 items-center gap-2 text-xs font-semibold text-body">
+   <Label className="inline-flex min-h-9 items-center gap-2">
     <Input type="checkbox" checked={locked} disabled={!lockLoaded||pending}
      onChange={event=>updateLock(event.target.checked)}
      aria-label="Tenant lock" className="size-4 shrink-0"/>
     Tenant lock {locked?"on":"off"}
-   </label>
+   </Label>
   </div>
-  <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">
+  <Label stack className="min-w-0">
    Organization
    <Select value={currentOrganization} disabled={pending||!lockLoaded||locked}
     aria-label="Select organization"
@@ -118,15 +119,15 @@ export function AdminScopeSwitcher({choices,scope}:{
     {choices.organizations.map(item=><option key={item.id} value={item.id}>
      {item.name}</option>)}
    </Select>
-  </label>
+  </Label>
   <details className="group min-w-0">
    <summary className="flex min-h-9 cursor-pointer items-center text-sm font-semibold text-body focus-ring max-md:min-h-11">Search colleges</summary>
-   <label htmlFor={searchId} className="sr-only">Search colleges</label>
+   <Label htmlFor={searchId} className="sr-only">Search colleges</Label>
    <Input id={searchId} type="search" value={search}
     onChange={event=>setSearch(event.target.value)} placeholder="Search colleges"
     className="mt-2 w-full"/>
   </details>
-  <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">
+  <Label stack className="min-w-0">
    College
    <Select value={currentCollege} disabled={pending||!lockLoaded||locked}
     aria-label="Select college" aria-busy={pending}
@@ -137,7 +138,7 @@ export function AdminScopeSwitcher({choices,scope}:{
     {visibleColleges.map(item=><option key={item.id} value={item.id}>
       {item.organizationName} · {item.name}</option>)}
    </Select>
-  </label>
+  </Label>
   <p className="min-w-0 break-words text-xs text-muted-foreground">
    {chosenCollege?chosenCollege.name+" · "+chosenCollege.organizationName:
     currentOrganization?choices.organizations.find(item=>item.id===currentOrganization)?.name??"Selected organization":

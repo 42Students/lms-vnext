@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export type TpoCampaignSidebarRow={
  campaign_id:string;title:string;subject:string;status:string;
  created_at:Date|string;createdByUserId:string;
@@ -43,7 +44,7 @@ export function TpoCampaignPrototypeSidebar({
    <Link href="/tpo/recruiters/campaigns/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-on-primary">
     New email
    </Link>
-   <label className="sr-only" htmlFor="tpo-campaign-search">Search emails</label>
+   <Label className="sr-only" htmlFor="tpo-campaign-search">Search emails</Label>
    <Input id="tpo-campaign-search" type="search" placeholder="Search emails"
     value={search} onChange={event=>setSearch(event.target.value)}
     className="min-h-11 w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground"/>

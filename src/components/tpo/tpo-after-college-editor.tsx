@@ -12,6 +12,7 @@ import {
   afterCollegeOptions,AFTER_COLLEGE_LABELS,MANUAL_AFTER_COLLEGE_OUTCOMES, type AfterCollegeOutcome,
 } from "@/modules/placements/tpo-after-college-model";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 type AfterCollegeValue={outcome:AfterCollegeOutcome;outcomeLabel:string|null;outcomeDetail:string|null};
 const equal=(a:AfterCollegeValue,b:AfterCollegeValue)=>
@@ -60,7 +61,7 @@ export function TpoAfterCollegeEditor({
   });
  }
  return <div className="min-w-0 space-y-2" aria-label={"After college for "+learnerName}>
-  <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4">
+  <Label stack className="min-w-0">
    After college
    <Select value={draft.outcome} disabled={!available||pending}
     onChange={event=>setDraft({outcome:event.target.value as AfterCollegeOutcome,outcomeLabel:null,outcomeDetail:null})}
@@ -69,9 +70,9 @@ export function TpoAfterCollegeEditor({
      <option value={draft.outcome} disabled>{AFTER_COLLEGE_LABELS[draft.outcome]} · Automatic</option>:null}
     {afterCollegeOptions().map(option=><option value={option.value} key={option.value}>{option.label}</option>)}
    </Select>
-  </label>
+  </Label>
   {MANUAL_AFTER_COLLEGE_OUTCOMES.includes(draft.outcome)?<>
-   <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold">
+   <Label stack className="min-w-0">
     College outcome label (optional)
     <Select value={draft.outcomeLabel??""} disabled={!available||pending}
      onChange={event=>setDraft({...draft,outcomeLabel:event.target.value||null})}
@@ -81,14 +82,14 @@ export function TpoAfterCollegeEditor({
       <option value={draft.outcomeLabel} disabled>{draft.outcomeLabel} (no longer configured)</option>:null}
      {availableLabels.map(row=><option key={row.label} value={row.label}>{row.label}</option>)}
     </Select>
-   </label>
-   <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold">
+   </Label>
+   <Label stack className="min-w-0">
     Destination detail (optional, staff only)
     <Textarea value={draft.outcomeDetail??""} maxLength={200} rows={2}
      disabled={!available||pending} placeholder="Course, exam or destination details"
      onChange={event=>setDraft({...draft,outcomeDetail:event.target.value||null})}
      className="min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm text-foreground"/>
-   </label>
+   </Label>
    <p className="text-xs text-muted-foreground">Details are visible only in authorized placement-cell records.</p>
   </>:null}
   <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">

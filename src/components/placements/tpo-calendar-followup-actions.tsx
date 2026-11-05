@@ -10,6 +10,7 @@ import { useState, type FormEvent } from "react";
 import {tpoCalendarFollowupSuccess,tpoCalendarFollowupError,type TpoFollowupAction} from "@/modules/placements/tpo-calendar-followup-messages";
 import { calendarLocalIstToOffset } from "@/modules/placements/tpo-calendar-followup-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export type TpoCalendarLeadOption = {
   id: string;
@@ -117,7 +118,7 @@ export function TpoCalendarCreateFollowup({
         </p>
       ) : (
         <form onSubmit={onSubmit} className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <label className="flex flex-col gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+          <Label className="flex flex-col gap-2 text-[length:var(--lms-font-sm)]">
             Recruiter lead
             <Input type="search" value={leadQuery} className={inputClass}
               placeholder="Search name, company or email" aria-label="Search recruiter leads"
@@ -135,15 +136,15 @@ export function TpoCalendarCreateFollowup({
             {search.length>=2&&matchingLeads.length===0 ? (
               <span role="status" className="text-xs text-muted-foreground">No matching recruiter leads.</span>
             ) : null}
-          </label>
-          <label className="flex flex-col gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label className="flex flex-col gap-2 text-[length:var(--lms-font-sm)]">
             Due date and time (IST)
             <Input name="dueAt" type="datetime-local" required className={inputClass} />
-          </label>
-          <label className="flex flex-col gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label className="flex flex-col gap-2 text-[length:var(--lms-font-sm)]">
             Note (optional)
             <Input name="note" maxLength={500} className={inputClass} />
-          </label>
+          </Label>
           <div className="flex items-end">
             <Button type="submit" disabled={busy || !leadId} className="min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
               {busy ? "Saving…" : "Create follow-up"}
@@ -229,11 +230,11 @@ export function TpoCalendarMoveFollowup({
         title="Move this follow-up" description="Choose the new due date and time in IST."
         dismissible={!busy}>
         <form onSubmit={onSubmit} className="grid gap-4">
-          <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+          <Label stack>
             Due date and time (IST)
             <Input name="dueAt" type="datetime-local" key={currentIst}
               defaultValue={currentIst} required className={inputClass} />
-          </label>
+          </Label>
           {message && message !== tpoCalendarFollowupSuccess("MOVE")
             ? <InlineNotice tone="error" message={message} /> : null}
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">

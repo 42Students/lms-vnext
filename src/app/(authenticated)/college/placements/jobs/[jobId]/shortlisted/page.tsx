@@ -31,6 +31,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { CollegeShortlistedLastGood } from "@/components/placements/college-shortlisted-last-good";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 /**
  * Legacy Shortlisted workbench. Pipeline stage (ASSESSMENT by default) is the
@@ -202,18 +203,18 @@ export default async function CollegeDriveShortlistedPage({
     <form method="get" role="search" aria-label="Shortlisted application filters"
       className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-4">
       <input type="hidden" name="stage" value={query.stage} />
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <Label stack className="min-w-0">
         Name, email, roll or role
         <Input name="q" type="search" maxLength={100} defaultValue={query.q} className="min-h-11 min-w-0 md:min-h-9 focus-ring" />
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      </Label>
+      <Label stack className="min-w-0">
         Source
         <Select name="source" defaultValue={query.source} className="min-h-11 min-w-0 md:min-h-9 focus-ring">
           <option value="ALL">All sources</option>
           <option value="INTERNAL">Internal</option>
           <option value="EXTERNAL">External</option>
         </Select>
-      </label>
+      </Label>
       {filters ? <CollegeApplicationDependentFilters
         initial={{...(query.departmentId!==undefined?{departmentId:query.departmentId}:{}),...(query.programId!==undefined?{programId:query.programId}:{}),...(query.cohortId!==undefined?{cohortId:query.cohortId}:{})}}
         departments={filters.departments} programs={filters.programs} cohorts={filters.cohorts}/> :

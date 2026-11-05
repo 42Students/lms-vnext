@@ -12,6 +12,7 @@ import {OtherTenantSettings} from "@/components/admin/tenant-settings-other-keys
 import {LEGACY_TENANT_SETTING_SPECS,type LegacyTenantSettingSpec} from "@/modules/platform-settings/legacy-setting-specs";
 import {useToast} from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Entry={key:string;value:string;version:number};
 type Result={key:string;status:"SAVED"|"DELETED"|"FAILED";message:string;version?:number};
 function validateValue(spec:LegacyTenantSettingSpec,raw:string):string|null{
@@ -199,7 +200,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
    <fieldset disabled={!ready||saving} className="min-w-0">
     <legend className="sr-only">{group}</legend>
     <div className="grid min-w-0 gap-3 md:grid-cols-2">
-    {keys.filter(spec=>spec.group===group).map(spec=><label key={spec.key} className={"grid min-w-0 gap-[6px] border-b border-border py-3 text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4 "+(spec.type==="textarea"?"md:col-span-2":"")}>
+    {keys.filter(spec=>spec.group===group).map(spec=><Label key={spec.key} className={"grid min-w-0 gap-[6px] border-b border-border py-3 text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4 "+(spec.type==="textarea"?"md:col-span-2":"")}>
      <span className="flex flex-wrap items-center gap-2 font-semibold">{spec.label}{spec.dangerous?<StatusBadge tone="error">High impact</StatusBadge>:null}</span>
      <span className="break-all font-mono text-xs text-muted-foreground">{spec.key}</span>
      {spec.dangerous||spec.key.startsWith("otp.")||
@@ -238,7 +239,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
       className="text-xs font-semibold text-error">{invalidKeys.get(spec.key)}</span>:null}
      {"min" in spec&&spec.min!==undefined?<span className="text-xs text-muted-foreground">
        Range {spec.min}–{"max" in spec?spec.max:undefined}</span>:null}
-    </label>)}
+    </Label>)}
     </div>
    </fieldset>
   </Disclosure>)}

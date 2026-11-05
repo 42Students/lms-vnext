@@ -8,6 +8,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch} from "@/lib/api-fetch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Table } from "@/components/ui/table";
+import { Label } from "@/components/ui/label";
 type Student={membershipId:string;displayName:string|null};
 type Role={id:string;title:string};
 export function TpoNonApplicantActions({jobId,roles,students,canAdd,reminder}:{
@@ -56,11 +57,11 @@ export function TpoNonApplicantActions({jobId,roles,students,canAdd,reminder}:{
  }
  return <section aria-label="Registered non-applicant actions" className="space-y-3">
   <div className="flex flex-wrap items-end gap-3">
-   <label className="grid gap-1 text-sm font-semibold">Role to apply for
+   <Label stack>Role to apply for
     <Select value={roleId} onChange={e=>setRoleId(e.target.value)} disabled={busy}>
      {roles.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
     </Select>
-   </label>
+   </Label>
    <Button type="button" disabled={busy||!canAdd||!roleId||!selected.length}
     onClick={()=>setConfirm("ADD")}>Apply on behalf ({selected.length})</Button>
    <Button variant="secondary" type="button"

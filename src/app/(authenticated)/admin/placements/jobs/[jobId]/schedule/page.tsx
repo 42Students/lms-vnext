@@ -19,6 +19,7 @@ import { getCollegeRoundSlotAppointments } from "@/modules/placements/college-ro
 import { CollegeInterviewAppointments } from "@/components/placements/college-interview-appointments";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 function adminInterviewsHref(...args:Parameters<typeof driveInterviewsHref>){
  return driveInterviewsHref(...args)
@@ -200,51 +201,51 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
       <input type="hidden" name="appointmentPage" value="1"/>
       {conflictsOnly?<input type="hidden" name="conflictsOnly" value="1"/>:null}
       <input type="hidden" name="page" value="1"/>
-      <label className="grid min-w-0 gap-2 text-sm font-semibold text-muted-foreground">
+      <Label stack className="min-w-0">
         Search
         <Input type="search" name="appointmentSearch" maxLength={120}
           placeholder="Search..." defaultValue={query.appointmentSearch??""}
           className="min-h-11 md:min-h-9"/>
-      </label>
+      </Label>
       {query.applicationId?<Input type="hidden" name="applicationId" value={query.applicationId}/>:null}
-      <label className="grid gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
+      <Label stack>Type
         <Select name="kind" defaultValue={query.kind} className="min-w-0">
           <option value="ALL">Interview and GD</option><option value="INTERVIEW">Interview</option><option value="GD">GD</option>
         </Select>
-      </label>
-      <label className="grid gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+      </Label>
+      <Label stack>Status
         <Select name="status" defaultValue={query.status} className="min-w-0">
           {["ALL","PENDING","SCHEDULED","COMPLETED","CANCELLED"].map(status=>
             <option key={status} value={status}>{status}</option>)}
         </Select>
-      </label>
-      <label className="grid gap-2 text-sm font-semibold text-muted-foreground">Mode
+      </Label>
+      <Label stack>Mode
         <Select name="appointmentMode" defaultValue={query.appointmentMode??"ALL"} className="min-h-11 md:min-h-9">
           <option value="ALL">All modes</option>
           <option value="ON_CAMPUS">In person</option>
           <option value="VIRTUAL">Online</option>
         </Select>
-      </label>
-      <label className="grid gap-2 text-sm font-semibold text-muted-foreground">Candidate status
+      </Label>
+      <Label stack>Candidate status
         <Select name="appointmentStatus" defaultValue={query.appointmentStatus??"ALL"} className="min-h-11 md:min-h-9">
           <option value="ALL">All</option>
           <option value="UPCOMING">Upcoming</option>
           <option value="COMPLETED">Completed</option>
           <option value="CANCELLED">Cancelled / No Show</option>
         </Select>
-      </label>
-      <label className="grid gap-2 text-sm font-semibold text-muted-foreground">Sort
+      </Label>
+      <Label stack>Sort
         <Select name="appointmentSort" defaultValue={query.appointmentSort} className="min-h-11 md:min-h-9">
           <option value="DATE_ASC">Date (earliest first)</option>
           <option value="DATE_DESC">Date (latest first)</option>
           <option value="JOB">Job title</option><option value="STATUS">Status</option>
         </Select>
-      </label>
-      <label className="grid gap-2 text-sm font-semibold text-muted-foreground">Rows per page
+      </Label>
+      <Label stack>Rows per page
         <Select name="appointmentPageSize" defaultValue={String(query.appointmentPageSize)} className="min-h-11 md:min-h-9">
           {[10,20,50,100].map(size=><option key={size} value={String(size)}>{size}</option>)}
         </Select>
-      </label>
+      </Label>
       <div className="flex flex-wrap gap-2 sm:col-span-2 xl:col-span-4">
         <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
         <Link href={resetHref}

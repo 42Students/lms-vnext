@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export function TpoRecruiterGrantForm({ companies }: {
   companies: readonly { relationshipId: string; name: string }[];
@@ -52,23 +53,23 @@ export function TpoRecruiterGrantForm({ companies }: {
       ) : (
         <>
           <div className="grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-3">
-            <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Company
+            <Label stack className="min-w-0">Company
               <Select value={relationshipId} disabled={busy}
                 onChange={(event) => {setRelationshipId(event.target.value);setError(null);setSuccess(null);}}
                 className="min-h-11 w-full md:min-h-9">
                 {companies.map((company) => <option key={company.relationshipId} value={company.relationshipId}>{company.name}</option>)}
               </Select>
-            </label>
-            <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Existing user email
+            </Label>
+            <Label stack>Existing user email
               <Input type="email" value={email} disabled={busy}
                 onChange={(event) => {setEmail(event.target.value);setError(null);setSuccess(null);}}
                 className="min-h-11 md:min-h-9" required />
-            </label>
-            <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Recruiter title (optional)
+            </Label>
+            <Label stack>Recruiter title (optional)
               <Input type="text" value={title} maxLength={160} disabled={busy}
                 onChange={(event) => {setTitle(event.target.value);setError(null);setSuccess(null);}}
                 className="min-h-11 md:min-h-9" />
-            </label>
+            </Label>
           </div>
           <Button variant="primary" type="button" disabled={busy || !relationshipId || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())} onClick={() => setConfirmOpen(true)}
             className="min-h-11 w-full md:w-auto md:min-h-9">
@@ -125,12 +126,12 @@ export function TpoRecruiterRevoke({ grantId, expectedUpdatedAt, displayName }: 
       title={"Remove "+displayName+"\'s access?"}
       description="They will no longer be able to use this college\'s recruiter workspace."
       confirmLabel="Remove" confirmVariant="danger" pending={busy} onConfirm={()=>void revoke()}>
-      <label className="grid gap-2 text-sm font-semibold text-body">
+      <Label stack>
         Reason for removal (optional)
         <Input type="text" maxLength={500} value={reason} disabled={busy}
           onChange={event=>setReason(event.target.value)}
           className="w-full min-w-0" />
-      </label>
+      </Label>
       {error?<InlineNotice tone="error" message={error}/>:null}
     </ConfirmDialog>
   </div>;
@@ -164,14 +165,14 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName,ended=
   finally{setBusy(false);}
  }
  return <div className="mt-2 grid min-w-0 gap-2 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-  <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">{ended?"Give access again":"Extend access"}
+  <Label stack className="min-w-0">{ended?"Give access again":"Extend access"}
    <Select value={months} disabled={busy}
     onChange={e=>setMonths(Number(e.target.value) as 3|6|12|24)}
     className="min-h-11 w-full md:min-h-9">
     <option value={3}>3 months</option><option value={6}>6 months</option><option value={12}>12 months</option>
     <option value={24}>24 months</option>
    </Select>
-  </label>
+  </Label>
   <Button type="button" variant="secondary" disabled={busy} onClick={()=>setConfirmOpen(true)}
    className="min-h-11 md:min-h-9 text-xs">
    {busy?"Saving…":ended?"Give access again…":"Extend…"}

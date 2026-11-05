@@ -12,6 +12,7 @@ import {tpoRequestFailedRowsTsv} from "@/modules/placements/tpo-request-failed-r
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Row={id:string;studentName:string;requestType:string;expectedUpdatedAt:string;proofMissing?:boolean};
 const PROOF_SKIP_NOTE="No proof attached: open it to decide";
@@ -155,24 +156,24 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
       const checked=selected.includes(row.id);
       const proofBlocked=action==="APPROVE"&&Boolean(row.proofMissing);
       const unavailable=pending||auditRetry!==null||proofBlocked||(!checked&&(selected.length>=MAX_BULK_REQUESTS||(chosenKind!==null&&chosenKind!==row.requestType)));
-      return <label key={row.id} className="flex min-h-11 min-w-0 cursor-pointer items-center gap-[var(--lms-space-3)] px-[var(--lms-space-2)] py-[var(--lms-space-2)] text-[var(--lms-font-base)] leading-5 hover:bg-[var(--lms-neutral-50)] focus-within:bg-[var(--lms-neutral-50)]">
+      return <Label variant="choice" key={row.id} className="flex min-h-11 min-w-0 cursor-pointer items-center gap-[var(--lms-space-3)] px-[var(--lms-space-2)] py-[var(--lms-space-2)] hover:bg-[var(--lms-neutral-50)] focus-within:bg-[var(--lms-neutral-50)]">
        <Checkbox checked={checked} disabled={unavailable} onChange={event=>toggle(row,event.target.checked)}/>
        <span className="min-w-0 break-words text-[var(--lms-body-text)]">{row.studentName} <span className="text-[var(--lms-muted-text)]">· {row.requestType.replaceAll("_"," ")}</span>{proofBlocked?<span className="block text-xs text-[var(--lms-warning-text)]">{PROOF_SKIP_NOTE}</span>:null}</span>
-      </label>;
+      </Label>;
      })}
     </div>
     <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] sm:flex-row sm:items-end">
-     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-48 sm:shrink-0">
+     <Label stack className="min-w-0 sm:w-48 sm:shrink-0">
       Decision
       <Select value={action} disabled={pending||auditRetry!==null} onChange={event=>{setAction(event.target.value as "APPROVE"|"REJECT");setAcknowledged(false);}}>
        <option value="APPROVE">Approve</option><option value="REJECT">Reject</option>
       </Select>
-     </label>
-     {action==="REJECT"?<label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+     </Label>
+     {action==="REJECT"?<Label stack className="min-w-0 flex-1">
       Rejection reason (required)
       <Textarea value={reason} disabled={pending||auditRetry!==null} minLength={3} maxLength={2000} rows={3}
        onChange={event=>{setReason(event.target.value);setAcknowledged(false);}}/>
-     </label>:null}
+     </Label>:null}
     </div>
     <div className="flex justify-stretch sm:justify-end">
      <Button type="button" className="w-full sm:w-auto" disabled={!valid||pending||auditRetry!==null}
@@ -202,10 +203,10 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
      className="max-h-40 min-h-0 list-disc divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-1)] pl-[var(--lms-space-5)] pr-[var(--lms-space-2)] text-[var(--lms-font-base)] leading-5 [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)] focus-ring">
      {chosen.map(row=><li key={row.id} className="min-w-0 break-words py-[var(--lms-space-2)]">{row.studentName}</li>)}
     </ul>
-    <label className="flex min-h-11 cursor-pointer items-start gap-[var(--lms-space-3)] text-[var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
+    <Label variant="choice" className="flex min-h-11 cursor-pointer items-start gap-[var(--lms-space-3)]">
      <Checkbox checked={acknowledged} disabled={pending} onChange={event=>setAcknowledged(event.target.checked)} className="mt-[2px]"/>
      <span className="min-w-0">I have reviewed these requests and understand the decisions cannot be undone here.</span>
-    </label>
+    </Label>
    </div>
   </Dialog>
   {outcomes.length>0?<div role="status" aria-live="polite" className="mt-[var(--lms-space-4)] space-y-[var(--lms-space-3)] text-[var(--lms-font-base)] leading-5">

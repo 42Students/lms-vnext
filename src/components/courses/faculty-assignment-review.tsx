@@ -30,6 +30,7 @@ import {
   assignmentSubmissionActions,
 } from "./faculty-assessment-operation-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Submission = FacultySubmissionReviewRow;
 const SUBMISSION_FILTERS = ["ALL","UNGRADED","GRADED","LATE"] as const;
@@ -426,7 +427,7 @@ export function SubmissionGradeCard({
         onSubmit={saveGrade}
         className="mt-[var(--lms-space-4)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-[10rem_minmax(0,1fr)]"
       >
-        <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label className="min-w-0">
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Points
           </span>
@@ -451,8 +452,8 @@ export function SubmissionGradeCard({
           <span className="mt-1 block text-xs font-semibold text-body">
             {submission.gradePublished?"Published grade":isSubmissionGraded(submission)?"Graded, not published":"Not graded"}
           </span>
-        </label>
-        <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label className="min-w-0">
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Feedback
           </span>
@@ -471,7 +472,7 @@ export function SubmissionGradeCard({
               ? "Required: explain why the published grade is changing"
               : "Optional feedback for the learner"}
           />
-        </label>
+        </Label>
 
         <div className="grid min-w-0 grid-cols-1 items-center gap-[var(--lms-space-2)] sm:flex sm:flex-wrap md:col-span-2">
           {submission.gradePublished&&!gradeEditing?<Button type="button" variant="secondary"
@@ -758,7 +759,7 @@ export function FacultyAssignmentReview({
 
       {!loading && submissions && submissions.length>0 ? (
         <nav aria-label="Submission student navigation" className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] md:flex md:flex-wrap">
-          <label className="col-span-2 grid min-w-0 flex-1 gap-[var(--lms-space-1)] text-[13px] font-semibold leading-4 md:min-w-48 text-[var(--lms-neutral-400)]">
+          <Label stack className="col-span-2 min-w-0 flex-1 md:min-w-48">
             Students ({submissions.filter(isSubmissionGraded).length}/{submissions.length} graded on this page · {pagination?.total??submissions.length} total)
             <Select className="min-h-11 text-[var(--lms-font-base)] md:hidden"
               value={selectedSubmissionId??submissions[0]?.id??""}
@@ -768,7 +769,7 @@ export function FacultyAssignmentReview({
                 {learnerLabel(item)} · {isSubmissionGraded(item)?"Graded":"Pending"}
               </option>)}
             </Select>
-          </label>
+          </Label>
           <Button type="button" size="md" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-[var(--lms-control-height)]"
             disabled={mutationBusy||bulkBusy||submissions.findIndex(item=>item.id===selectedSubmissionId)<=0}
             onClick={()=>{if(!mutationInFlight.current&&!bulkInFlight.current)setSelectedSubmissionId(current=>submissions[Math.max(0,submissions.findIndex(item=>item.id===current)-1)]?.id??current);}}>

@@ -11,6 +11,7 @@ import {projectMutation} from "./project-api";
 import { Radio } from "@/components/ui/radio";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type UnfinishedTask={id:string;title:string;status:string;updatedAt:string};
 
@@ -101,7 +102,7 @@ export function MentorSprintSignOff({
                 ...(nextSprint?[{destination:"NEXT" as const,label:nextSprint.title}]:[]),
                 {destination:"BACKLOG" as const,label:"Backlog"},
                 {destination:"DROP" as const,label:"Drop it"},
-              ]).map(choice=><label key={choice.destination}
+              ]).map(choice=><Label key={choice.destination}
                 className={destinationFor(task.id)===choice.destination?"is-selected":""}>
                 <Radio name={"carry-"+task.id}
                   checked={destinationFor(task.id)===choice.destination}
@@ -109,28 +110,28 @@ export function MentorSprintSignOff({
                     ...previous,[task.id]:choice.destination,
                   }));setDropConfirmed(false);}} disabled={pending}/>
                 {choice.label}
-              </label>)}
+              </Label>)}
             </fieldset>
           </li>)}</ul>
-          {dropping>0?<label className="prototype-mentor-signoff-next">
+          {dropping>0?<Label className="prototype-mentor-signoff-next">
             <Checkbox checked={dropConfirmed} disabled={pending}
               onChange={event=>setDropConfirmed(event.target.checked)}/>
             I understand that {dropping} dropped task{dropping===1?" is":"s are"} archived
             from the board, with their history retained.
-          </label>:null}
+          </Label>:null}
         </div>:null}
-        <label>
+        <Label>
           A note to the team, shown in sprint activity (optional)
           <Textarea maxLength={1000} rows={3} value={note}
             onChange={event=>setNote(event.target.value)}
             placeholder="How did this sprint go? What should the team carry forward?"
             disabled={pending}/>
-        </label>
-        {nextSprint?<label className="prototype-mentor-signoff-next">
+        </Label>
+        {nextSprint?<Label className="prototype-mentor-signoff-next">
           <Checkbox checked={startNext} disabled={pending}
             onChange={event=>setStartNext(event.target.checked)}/>
           Start next sprint: {nextSprint.title}
-        </label>:null}
+        </Label>:null}
         {error?<p role="alert" className="text-error">{error}</p>:null}
         <div className="prototype-mentor-signoff-actions">
           <Button type="button" variant="secondary" disabled={pending}

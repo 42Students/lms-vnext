@@ -18,6 +18,7 @@ import { CoursesServiceError } from "@/modules/courses/errors";
 import { Tabs } from "@/components/ui/tabs";
 import { listFacultyContacts } from "@/modules/courses/faculty-contacts-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 const tabs = {
   allContacts: {
@@ -164,14 +165,14 @@ export default async function FacultyContactsPage({
         />
         <form method="GET" action={baseHref} className="flex min-w-0 items-end gap-2">
           {result.search ? <input type="hidden" name="q" value={result.search} /> : null}
-          <label className="flex flex-col gap-1 text-xs font-semibold text-[var(--lms-neutral-400)]">
+          <Label className="flex flex-col gap-1">
             Rows per page
             <Select name="pageSize" defaultValue={String(result.pageSize)} className="min-h-11 md:min-h-9">
               <option value="10">10</option>
               <option value="20">20</option>
               <option value="50">50</option>
             </Select>
-          </label>
+          </Label>
           <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Apply</Button>
         </form>
       </div>

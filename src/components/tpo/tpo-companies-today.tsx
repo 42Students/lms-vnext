@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type LeadContext={id:string;stage:string;designation:string|null;emailNorm:string|null;ownerName:string|null};
 type CompanyAttention={items:Array<{
@@ -338,18 +339,18 @@ export function TpoCompaniesToday({
           aria-pressed={nextPlan===value}
           className={nextPlan===value?styles.outcomeActive:styles.outcome}
           onClick={()=>setNextPlan(value)}>{label}</Button>)}
-       {nextPlan==="CUSTOM"?<label className={styles.noteLabel}>Follow up at (IST)
+       {nextPlan==="CUSTOM"?<Label className={styles.noteLabel}>Follow up at (IST)
           <Input type="datetime-local" value={customLocal} disabled={pending}
            onChange={event=>setCustomLocal(event.target.value)}
            className="min-h-11 rounded-lg border border-[color:var(--lms-neutral-300)] bg-surface p-2 text-[14px]"/>
-         </label>:null}
+         </Label>:null}
        {!current.canContact?<p className={styles.sub}>Further outreach to this contact is unavailable under current CRM rules.</p>:null}
      </fieldset>
-     <label className={styles.noteLabel}>Outcome note (required)
+     <Label className={styles.noteLabel}>Outcome note (required)
        <Textarea maxLength={500} rows={4} value={note} disabled={pending}
          onChange={e=>setNote(e.target.value)}
          placeholder="What happened? This is saved in the recruiter history."/>
-     </label>
+     </Label>
      <div className={styles.actions}>
       <Button variant="primary" type="button" disabled={pending||!note.trim()}
        onClick={()=>setConfirm("DONE")}>Done & next</Button>

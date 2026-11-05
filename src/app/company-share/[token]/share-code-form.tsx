@@ -2,6 +2,7 @@
 import {useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 /** Six visible positions, one real accessible text input. Paste/autofill stays
  * atomic instead of fighting six different input focus/clipboard states. */
@@ -10,9 +11,9 @@ export function ShareCodeForm({action}:{action:string}){
  const input=useRef<HTMLInputElement>(null);
  const valid=/^[A-Z0-9]{6}$/.test(code);
  return <form method="post" action={action} className="min-w-0 space-y-3">
-  <label htmlFor="company-share-code" className="block text-sm font-semibold text-foreground">
+  <Label htmlFor="company-share-code" className="block">
    Enter the code from your placement cell
-  </label>
+  </Label>
   <p id="company-share-code-help" className="text-sm text-body">
    The six-character code came with this link. It keeps students' details safe.
   </p>

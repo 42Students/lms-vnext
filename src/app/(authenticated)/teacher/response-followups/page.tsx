@@ -14,6 +14,7 @@ import {
 import { getFacultyResponseFollowUps } from "@/modules/courses/faculty-response-followup-service";
 import {facultyFollowUpCsvHref} from "@/modules/courses/faculty-followup-export";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Params = Record<string,string|string[]|undefined>;
 
@@ -39,21 +40,21 @@ export default async function FacultyResponseFollowUpsPage({
       </Link>} />
     <form action="/teacher/response-followups" method="get"
       className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+      <Label stack>Search
         <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
           placeholder="Course, Section or assessment"
           className="min-h-11 max-md:text-[16px] md:min-h-9" />
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment type
+      </Label>
+      <Label stack>Assessment type
         <Select name="kind" defaultValue={data.query.kind}
           className="min-h-11 md:min-h-9">
           <option value="ALL">All</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>
         </Select>
-      </label>
+      </Label>
       <Disclosure title="More filters" defaultOpen={Boolean(data.query.deliveryId || data.query.sort !== "RECENT_DUE" || data.query.pageSize !== 5)} className="min-w-0 sm:col-span-2 lg:col-span-4" contentClassName="grid min-w-0 gap-3 py-3 md:grid-cols-2 lg:grid-cols-3">
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Teaching Section
+      <Label stack>Teaching Section
         <Select name="deliveryId" defaultValue={data.query.deliveryId ?? ""}
           className="min-h-11 md:min-h-9">
           <option value="">All current Sections</option>
@@ -61,21 +62,21 @@ export default async function FacultyResponseFollowUpsPage({
             {section.courseCode} · {section.courseName} · {section.sectionName}
           </option>)}
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
+      </Label>
+      <Label stack>Sort
         <Select name="sort" defaultValue={data.query.sort}
           className="min-h-11 md:min-h-9">
           <option value="RECENT_DUE">Most recently due</option>
           <option value="OLDEST_DUE">Oldest overdue first</option>
           <option value="TITLE">Assessment title</option>
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessments per page
+      </Label>
+      <Label stack>Assessments per page
         <Select name="pageSize" defaultValue={data.query.pageSize}
           className="min-h-11 md:min-h-9">
           <option value="5">5</option><option value="10">10</option>
         </Select>
-      </label>
+      </Label>
       </Disclosure>
       <Button type="submit" variant="primary" className="w-full sm:w-auto">
         Filter

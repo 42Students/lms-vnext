@@ -2,6 +2,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import {ALL_ASSIGNMENT_METHODS,ASSIGNMENT_METHOD_LABELS,type AssignmentMethod}
  from "@/modules/courses/assignment-submission-methods";
+import { Label } from "@/components/ui/label";
 export function FacultyAssignmentMethodPicker({methods,onChange,disabled}:{
  methods:readonly AssignmentMethod[];onChange:(next:AssignmentMethod[])=>void;disabled:boolean;
 }){
@@ -11,15 +12,15 @@ export function FacultyAssignmentMethodPicker({methods,onChange,disabled}:{
    Choose how learners may submit. File and PDF uploads require the private storage service.
   </p>
   <div className="grid gap-2 md:grid-cols-2">
-   {ALL_ASSIGNMENT_METHODS.map(method=><label key={method}
-    className="flex min-h-11 items-center gap-2 text-[13px] text-body md:min-h-9 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50">
+   {ALL_ASSIGNMENT_METHODS.map(method=><Label key={method}
+    className="flex min-h-11 items-center gap-2 md:min-h-9 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50">
     <Checkbox  checked={methods.includes(method)}
      onChange={e=>{
       const next=e.target.checked?[...methods,method]:methods.filter(item=>item!==method);
       if(next.length)onChange(next);
      }}/>
     {ASSIGNMENT_METHOD_LABELS[method]}
-   </label>)}
+   </Label>)}
   </div>
   <p className="text-xs text-muted-foreground">
    At least one submission method must remain available.

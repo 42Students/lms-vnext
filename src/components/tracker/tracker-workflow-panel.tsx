@@ -19,6 +19,7 @@ import {
 } from "@/modules/bug-tracker/workflow";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 export type TrackerWorkflowIssue = {
   publicId: string;
@@ -129,51 +130,51 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
         <p className="mt-1 text-sm text-body">Super Admin only. Status changes save immediately; engineering details are saved separately. Version {issue.version}; stale writes are rejected.</p>
       </div>
       <div className="grid min-w-0 gap-4 sm:grid-cols-2">
-        <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        <Label stack className="min-w-0">
           Status
           <Select className="w-full min-w-0" disabled={pending} value={status} onChange={(e) => changeStatus(e.target.value)}>
             {BUG_STATUSES.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
           {pending ? <span role="status" className="text-xs text-muted-foreground">Updating status…</span> : null}
-        </label>
+        </Label>
       </div>
       <details className="min-w-0 border-t border-border pt-3">
         <summary className="min-h-11 cursor-pointer text-base font-semibold text-primary-text focus-ring">Engineering details</summary>
         <p className="mb-4 text-sm text-body">Root cause, fix commits, regression coverage and production verification</p>
         <div className="grid min-w-0 gap-4 sm:grid-cols-2">
-        <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        <Label stack className="min-w-0">
           Resolution
           <Select className="w-full min-w-0" disabled={pending} value={resolution} onChange={(e) => setResolution(e.target.value)}>
             <option value="">No resolution</option>
             {BUG_RESOLUTIONS.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label stack className="min-w-0">
           Affected layer
           <Select className="w-full min-w-0" disabled={pending} value={affectedLayer} onChange={(e) => setAffectedLayer(e.target.value)}>
             <option value="">Not set</option>
             {BUG_AFFECTED_LAYERS.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label stack className="min-w-0">
           Regression test
           <Select className="w-full min-w-0" disabled={pending} value={regressionTestStatus} onChange={(e) => setRegressionTestStatus(e.target.value)}>
             {BUG_REGRESSION_TEST_STATUSES.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
-        </label>
+        </Label>
         <details className="min-w-0 sm:col-span-2">
           <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-ring">Commit evidence</summary>
           <div className="grid min-w-0 gap-4 pt-2 sm:grid-cols-2">
-        <label className="min-w-0 font-semibold sm:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        <Label className="min-w-0 sm:col-span-2">
           Root cause
           <Textarea className="mt-[6px] w-full min-w-0" value={rootCause} maxLength={4000} onChange={(e) => setRootCause(e.target.value)} />
-        </label>
-        <label className="min-w-0 font-semibold sm:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label className="min-w-0 sm:col-span-2">
           Fix notes
           <Textarea className="mt-[6px] w-full min-w-0" value={fixNotes} maxLength={4000} onChange={(e) => setFixNotes(e.target.value)} />
-        </label>
+        </Label>
         <div className="min-w-0 text-sm font-semibold text-body">
-          <label htmlFor="tracker-workflow-frontend-sha">Frontend commit SHA</label>
+          <Label htmlFor="tracker-workflow-frontend-sha">Frontend commit SHA</Label>
           <Input id="tracker-workflow-frontend-sha" className="mt-[6px] min-w-0 w-full" value={frontendCommitSha} maxLength={64} onChange={(e) => setFrontendCommitSha(e.target.value)} />
           {frontendCommitSha.trim().length >= 7 && !/^[a-f0-9]{7,40}$/i.test(frontendCommitSha.trim()) ?
             <p role="status" className="mt-1 text-xs font-normal text-muted-foreground">Enter 7–40 hexadecimal SHA characters to enable the commit link.</p> : null}
@@ -181,7 +182,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
             rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center md:min-h-9">View on GitHub ↗</TextLink>:null}
         </div>
         <div className="min-w-0 text-sm font-semibold text-body">
-          <label htmlFor="tracker-workflow-backend-sha">Backend commit SHA</label>
+          <Label htmlFor="tracker-workflow-backend-sha">Backend commit SHA</Label>
           <Input id="tracker-workflow-backend-sha" className="mt-[6px] min-w-0 w-full" value={backendCommitSha} maxLength={64} onChange={(e) => setBackendCommitSha(e.target.value)} />
           {backendCommitSha.trim().length >= 7 && !/^[a-f0-9]{7,40}$/i.test(backendCommitSha.trim()) ?
             <p role="status" className="mt-1 text-xs font-normal text-muted-foreground">Enter 7–40 hexadecimal SHA characters to enable the commit link.</p> : null}
@@ -190,10 +191,10 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
         </div>
           </div>
         </details>
-        <label className="flex min-h-11 min-w-0 items-center gap-3 text-sm font-semibold text-body md:min-h-9">
+        <Label className="flex min-h-11 min-w-0 items-center gap-3 md:min-h-9">
           <Checkbox checked={productionVerified} onChange={(e) => setProductionVerified(e.target.checked)} />
           Production verified
-        </label>
+        </Label>
       </div>
         <Button disabled={pending} loading={pending} onClick={save} className="mt-4 min-h-11 w-full sm:w-auto md:min-h-9">
           {pending ? "Saving…" : "Save details"}
@@ -205,9 +206,9 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
           <Heading level={3} size="base" className="m-0 text-foreground">Ready for retest</Heading>
           <p className="text-sm font-semibold text-body">Does it work now?</p>
           <p className="text-sm text-body">Check the same flow once more. One click sends it back to engineering or closes it.</p>
-          <label className="grid min-w-0 gap-1 text-sm font-semibold">Retest notes (optional)
+          <Label stack className="min-w-0">Retest notes (optional)
             <Textarea className="w-full min-w-0" value={retestNote} disabled={pending} maxLength={1000} placeholder="What did you observe?" onChange={(e) => setRetestNote(e.target.value)} />
-          </label>
+          </Label>
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
             <Button variant="danger" disabled={pending} loading={pending} onClick={() => retest("FAIL")} className="min-h-11 w-full md:min-h-9 md:w-auto">Still broken</Button>
             <Button disabled={pending} loading={pending} onClick={() => retest("PASS")} className="min-h-11 w-full md:min-h-9 md:w-auto">Works now</Button>

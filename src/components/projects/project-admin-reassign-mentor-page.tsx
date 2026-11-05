@@ -20,6 +20,7 @@ import { listProjectMentorCandidates } from "@/modules/projects/member-service";
 import { listCollegeProjectMentorWorkload, listCollegeReassignmentWorkspaces } from "@/modules/projects/mentor-reassignment-workload-service";
 import Link from "next/link";
 import {ProjectMentorWorkloadTable} from "./project-mentor-workload-table";
+import { Label } from "@/components/ui/label";
 
 export async function ProjectAdminReassignMentorPage({
   collegeId,
@@ -111,11 +112,11 @@ export async function ProjectAdminReassignMentorPage({
         {query.status?<Input type="hidden" name="status" value={query.status}/>:null}
         {query.fromMentorId?<Input type="hidden" name="fromMentorId" value={query.fromMentorId}/>:null}
         <Input type="hidden" name="pageSize" value={query.pageSize}/>
-        <label className="grid flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        <Label stack className="flex-1">
           Search eligible mentors by name or email (across the college)
           <Input type="search" name="mentorSearch" maxLength={100} defaultValue={mentorSearch}
             placeholder="Enter mentor name or email" className="w-full"/>
-        </label>
+        </Label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9">Find mentor</Button>
         {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:border-primary hover:bg-primary-subtle focus-ring md:min-h-9 hover:underline">Clear mentor search</Link>:null}
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground md:col-span-full">
@@ -136,7 +137,7 @@ export async function ProjectAdminReassignMentorPage({
         {query.q ? <Input type="hidden" name="q" value={query.q} /> : null}
         {query.status ? <Input type="hidden" name="status" value={query.status} /> : null}
         {query.pageSize ? <Input type="hidden" name="pageSize" value={query.pageSize} /> : null}
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        <Label stack>
           Current mentor
           <Select name="fromMentorId" defaultValue={fromMentorId ?? ""}
             className="w-full min-w-[240px]">
@@ -146,7 +147,7 @@ export async function ProjectAdminReassignMentorPage({
               {mentor.displayName ?? mentor.email ?? "Mentor"}
             </option>)}
           </Select>
-        </label>
+        </Label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9">Apply mentor filter</Button>
         {fromMentorId ? <Link href={basePath + "/reassign-mentor"} className="text-sm font-semibold underline">Clear current mentor</Link> : null}
       </form>

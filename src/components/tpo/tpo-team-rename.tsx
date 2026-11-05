@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
+import { Label } from "@/components/ui/label";
 export function TpoTeamRename({threadId,currentTopic}:{threadId:string;currentTopic:string}){
  const router=useRouter();
  const busyRef=useRef(false);
@@ -29,10 +30,10 @@ export function TpoTeamRename({threadId,currentTopic}:{threadId:string;currentTo
   <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
    onClick={()=>setOpen(value=>!value)} aria-expanded={open}>Rename conversation</Button>
   {open?<form onSubmit={event=>void save(event)} className="space-y-3 border-t border-border pt-3">
-   <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Conversation name
+   <Label stack>Conversation name
     <Input required maxLength={200} value={topic} onChange={event=>setTopic(event.target.value)}
      disabled={busy} className="min-h-11 md:min-h-9"/>
-   </label>
+   </Label>
    {error?<InlineNotice tone="error" message={error}/>:null}
    <div className="flex gap-2">
     <Button type="submit" disabled={busy||!topic.trim()}

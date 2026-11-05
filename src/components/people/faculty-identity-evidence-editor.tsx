@@ -5,6 +5,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 type Purpose="AADHAAR"|"PAN";
 type Grant={objectKey:string;uploadUrl:string;requiredHeaders:Record<string,string>};
 type Saved={saved:boolean;version:number;receiptId:string;kind:Purpose};
@@ -119,7 +120,7 @@ export function FacultyIdentityEvidenceEditor({
     <strong className="text-sm">{item.label}</strong>
     <span className="text-xs">{item.id?"On file":"Not uploaded"}</span>
    </div>
-   <label className="block text-xs font-medium">Upload or replace {item.label}
+   <Label className="block">Upload or replace {item.label}
     <Input type="file" accept="application/pdf,image/png,image/jpeg,image/webp"
      disabled={blocked} className="mt-1 block max-w-full text-xs"
      onChange={event=>{
@@ -127,7 +128,7 @@ export function FacultyIdentityEvidenceEditor({
       if(file)void begin(item.kind,file);
       event.currentTarget.value="";
      }}/>
-   </label>
+   </Label>
    {item.id?<div className="flex flex-wrap gap-2">
     <Button type="button" variant="secondary" disabled={blocked}
      onClick={()=>void open(item.kind,item.id!)}>Request private link</Button>

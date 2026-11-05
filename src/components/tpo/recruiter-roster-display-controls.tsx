@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { ENGAGE_COLUMNS, type EngageColumn, type EngageSort } from "@/modules/placements/tpo-recruiter-table-view-model";
+import { Label } from "@/components/ui/label";
 
 export function RecruiterRosterDisplayControls({
   columns, onColumns, sort, onSort, ascending, onAscending, showColumns = true,
@@ -22,7 +23,7 @@ export function RecruiterRosterDisplayControls({
       aria-label="Recruiter table display"
       className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border py-3 sm:grid-cols-[minmax(0,15rem)_auto_auto] sm:justify-start"
     >
-      <label className="block min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+      <Label className="block min-w-0">
         Sort by
         <Select
           className="mt-1 block min-h-11 w-full min-w-0 md:min-h-9"
@@ -35,12 +36,12 @@ export function RecruiterRosterDisplayControls({
           <option value="NAME">Name</option>
           <option value="DRIVES">Company drives</option>
         </Select>
-      </label>
+      </Label>
 
-      <label className="flex min-h-11 w-full cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-medium text-body hover:bg-primary-subtle sm:w-auto md:min-h-9">
+      <Label className="flex min-h-11 w-full cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] px-2 hover:bg-primary-subtle sm:w-auto md:min-h-9">
         <Checkbox checked={ascending} onChange={event => onAscending(event.target.checked)} />
         Ascending
-      </label>
+      </Label>
 
       {showColumns ? (
         <Dropdown
@@ -74,7 +75,7 @@ export function RecruiterRosterDisplayControls({
               className="max-h-[min(50dvh,24rem)] min-w-0 space-y-1 overflow-y-auto overscroll-contain"
             >
               {ENGAGE_COLUMNS.map(column => (
-                <label
+                <Label
                   key={column}
                   className={"flex min-h-11 min-w-0 items-center gap-3 rounded-[var(--lms-control-radius)] px-2 py-2 text-sm transition-colors motion-reduce:transition-none " +
                     (column === "Contact" ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:bg-primary-subtle")}
@@ -87,7 +88,7 @@ export function RecruiterRosterDisplayControls({
                       : columns.filter(value => value !== column))}
                   />
                   <span className="min-w-0 break-words">{column}</span>
-                </label>
+                </Label>
               ))}
             </div>
           </div>

@@ -8,6 +8,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {splitHrRecruiterName} from "@/modules/placements/hr-recruiter-name-fields-model";
 import {hrProfileSaveErrorFeedback,hrProfileDetailsSaveReceiptSchema,recruiterProfileFieldErrors} from "@/modules/placements/recruiter-profile-details-model";
+import { Label } from "@/components/ui/label";
 export function RecruiterProfileDetailsEditor({initialName,initialFirstName,initialLastName,initialTitle,initialPhone,
  userUpdatedAt,profileUpdatedAt,contactReady}:{
  initialName:string|null;initialFirstName?:string|null;initialLastName?:string|null;
@@ -155,7 +156,7 @@ export function RecruiterProfileDetailsEditor({initialName,initialFirstName,init
   </div>
   <div className="grid min-w-0 gap-4 md:grid-cols-2">
    {([["firstName","First name"],["lastName","Last name"],["title","Designation"],["phone","Mobile"]] as const).map(([key,label])=>
-    <label key={key} className={`grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] ${key==="title"||key==="phone"?"md:col-span-2":""}`}>
+    <Label key={key} className={`grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] ${key==="title"||key==="phone"?"md:col-span-2":""}`}>
      {label}{key==="lastName"?<span className="ml-1 text-xs font-normal">(optional)</span>:null}
      <Input name={key} type={key==="phone"?"tel":"text"} autoComplete={key==="firstName"?"given-name":key==="lastName"?"family-name":key==="phone"?"tel":"organization-title"}
       value={form[key]} required={key==="firstName"} pattern={key==="phone"?"[+0-9() .-]*":undefined}
@@ -167,7 +168,7 @@ export function RecruiterProfileDetailsEditor({initialName,initialFirstName,init
        Optional. Enter 10 digits, +91, or a leading 0. Spaces and hyphens are accepted.
       </span>:null}
      {fieldErrors[key]?<span id={`recruiter-profile-${key}-error`} className="text-xs font-normal text-error">{fieldErrors[key]}</span>:null}
-    </label>)}
+    </Label>)}
   </div>
   {!contactReady?<div role="status" className="flex flex-wrap items-center gap-2 text-xs text-body">
    Mobile editing is temporarily unavailable. You can still save your name and designation.

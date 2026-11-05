@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import {useRef,useState,type FormEvent} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useRouter} from "next/navigation";
+import { Label } from "@/components/ui/label";
 export function TpoInterviewRescheduleForm({round}:{
  round:{id:string;updatedAt:string;scheduledAt:string|null;mode:string|null;venue:string|null;meetingUrl:string|null}
 }){
@@ -44,18 +45,18 @@ export function TpoInterviewRescheduleForm({round}:{
   event.preventDefault();if(!pending)setConfirmOpen(true);
  }
  return <><Disclosure title="Confirm interview reschedule" className="min-w-0 border-y border-border py-2" contentClassName="pt-3"><form ref={formRef} onSubmit={askToReschedule} onChange={()=>setError(null)} className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
-  <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New interview time (IST)
-   <Input required type="datetime-local" name="localDateTime" defaultValue={initial} className={field}/></label>
-  <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mode
+  <Label className="min-w-0">New interview time (IST)
+   <Input required type="datetime-local" name="localDateTime" defaultValue={initial} className={field}/></Label>
+  <Label>Mode
    <Select name="mode" value={mode} onChange={e=>setMode(e.target.value)} className={field}>
     <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option>
-   </Select></label>
-  {mode==="ON_CAMPUS"?<label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Venue (for on-campus)
-   <Input name="venue" value={venue} onChange={e=>setVenue(e.target.value)} className={field} maxLength={500}/></label>:null}
-  {mode==="VIRTUAL"?<label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting URL (for virtual)
-   <Input name="meetingUrl" type="url" value={meetingUrl} onChange={e=>setMeetingUrl(e.target.value)} className={field}/></label>:null}
-  <label className="min-w-0 sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason (audited)
-   <Textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={field}/></label>
+   </Select></Label>
+  {mode==="ON_CAMPUS"?<Label className="min-w-0">Venue (for on-campus)
+   <Input name="venue" value={venue} onChange={e=>setVenue(e.target.value)} className={field} maxLength={500}/></Label>:null}
+  {mode==="VIRTUAL"?<Label className="min-w-0">Meeting URL (for virtual)
+   <Input name="meetingUrl" type="url" value={meetingUrl} onChange={e=>setMeetingUrl(e.target.value)} className={field}/></Label>:null}
+  <Label className="min-w-0 sm:col-span-2">Reason (audited)
+   <Textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={field}/></Label>
   {error?<div className="min-w-0 sm:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
   <Button variant="primary" type="submit" disabled={pending} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 font-semibold text-on-primary disabled:opacity-50 sm:col-span-2 sm:w-auto">
     {pending?"Rescheduling…":"Confirm interview reschedule"}</Button>

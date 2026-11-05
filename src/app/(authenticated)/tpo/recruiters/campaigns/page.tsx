@@ -18,6 +18,7 @@ import {CAMPAIGN_DRAFT_UNAVAILABLE,CAMPAIGN_DELIVERY_UNAVAILABLE} from "@/module
 import {tpoCampaignHistoryTime,tpoCampaignHistoryStatus} from "@/modules/messaging/tpo-campaign-history-copy";
 import {TPO_CAMPAIGN_RECIPIENT_CAP_COPY,TPO_CAMPAIGN_PROVIDER_DISABLED_COPY} from "@/modules/messaging/tpo-campaign-legacy-compat";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type PageProps = {searchParams:Promise<{page?:string|string[];purpose?:string|string[]}>};
 function first(value:string|string[]|undefined){return Array.isArray(value)?value[0]:value;}
@@ -85,10 +86,10 @@ export default async function CampaignHistory({searchParams}:PageProps){
    To send one, select recruiters in the table and choose Act, then Send an email.
   </p>
   <form role="search" aria-label="recruiters campaigns filters" method="get" action="/tpo/recruiters/campaigns" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
-   <label className="min-w-0 text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Purpose
+   <Label className="min-w-0">Purpose
     <Input name="purpose" maxLength={120} defaultValue={first(params.purpose)??""}
      placeholder="Filter by purpose" className="mt-[6px] block min-h-11 md:min-h-9 border border-border px-3"/>
-   </label>
+   </Label>
    <Button variant="secondary" type="submit" className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-3 text-sm sm:w-auto md:min-h-9">Apply</Button>
    <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 items-center justify-center text-sm text-link underline lms-inline-link md:min-h-9">Clear</Link>
   </form>

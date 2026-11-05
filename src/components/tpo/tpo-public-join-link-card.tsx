@@ -9,6 +9,7 @@ import {
   PUBLIC_JOIN_LINK_COPY, type TpoPublicJoinLinkStatus,
 } from "@/modules/placements/tpo-public-join-link-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export function TpoPublicJoinLinkCard({
   initial, scope, companyId, companyName,
@@ -222,21 +223,21 @@ export function TpoPublicJoinLinkCard({
             Make a new link to copy it for invitations; the old one then stops working.
           </p>:null}
           {!isCompany&&status.link?<div className="space-y-2 border-t border-border pt-3">
-            <label className="flex min-h-11 items-center gap-3 text-sm font-semibold text-body">
+            <Label className="flex min-h-11 items-center gap-3">
               <Checkbox checked={postDirect===true} disabled={busy||postDirect===null}
                 onChange={()=>void togglePostDirect()}/>
               Anyone with a verified business email may post
-            </label>
+            </Label>
             <p className="text-sm text-body">{postDirect
               ? "On: drive requests may arrive as drafts without your approval. You still publish them. Only while the link is on."
               : "Off: their drive requests wait for your approval, like everyone else's."}</p>
             {postError?<p role="alert" className="text-sm text-error">{postError} <Button type="button" variant="ghost" onClick={()=>void retryStatus()}>Retry</Button></p>:null}
           </div>:null}
-          {status.link?<label className="mt-3 flex min-h-11 items-center gap-3 text-sm text-body">
+          {status.link?<Label variant="choice" className="mt-3 flex min-h-11 items-center gap-3">
             <Checkbox checked={status.link.enabled} disabled={busy}
               onChange={()=>void toggleLink()}/>
             {status.link.enabled?"Link is on":"Link is off"}
-          </label>:null}
+          </Label>:null}
           <Button
             type="button" disabled={busy || (isCompany && !status.domain)}
             onClick={()=>{if(status.link)setReplaceOpen(true);else void makeLink();}}

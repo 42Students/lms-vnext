@@ -17,6 +17,7 @@ import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {useToast} from "@/components/ui/toast";
 import {FriendlyFetchError} from "@/lib/api-fetch";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Task={id:string;title:string;status:string;sprintId:string|null;carriedFromSprintId?:string|null;updatedAt:Date;
  priority:string;estimatePoints:number|null;
  description:string|null;approach:string|null;acceptanceCriteria:string|null;
@@ -109,47 +110,47 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       }
       finally{setBusy(false);}
     }} className="grid gap-3 border-t border-border pt-3 md:grid-cols-2">
-      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Title<Input required maxLength={200} value={title}
+      <Label>Title<Input required maxLength={200} value={title}
         onChange={e=>setTitle(e.target.value)}
-        className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-ring"/></label>
-      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Priority<Select value={priority}
+        className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-ring"/></Label>
+      <Label>Priority<Select value={priority}
         onChange={e=>setPriority(e.target.value)}
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-ring">
         {["LOW","MEDIUM","HIGH","CRITICAL"].map(v=><option key={v} value={v}>{v}</option>)}
-      </Select></label>
+      </Select></Label>
       <Disclosure title="Additional task details" className="min-w-0 md:col-span-2" contentClassName="grid min-w-0 gap-3 pt-3 md:grid-cols-2">
-      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Description<Textarea maxLength={4000}
+      <Label>Description<Textarea maxLength={4000}
         value={description} onChange={e=>setDescription(e.target.value)}
-        className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-ring"/></label>
-      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Approach (optional)<Textarea maxLength={4000}
+        className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-ring"/></Label>
+      <Label>Approach (optional)<Textarea maxLength={4000}
         value={approach} onChange={event=>setApproach(event.target.value)}
-        className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-ring"/></label>
-      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Done when<Textarea maxLength={4000}
+        className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-ring"/></Label>
+      <Label>Done when<Textarea maxLength={4000}
         value={criteria} onChange={e=>setCriteria(e.target.value)}
-        className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-ring"/></label>
-      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Estimate points
+        className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-ring"/></Label>
+      <Label>Estimate points
         <span className="mt-1 block text-xs font-normal text-body">Select a classic story-point estimate (1, 2, 3, 5, 8, 13) or enter a custom whole number (0–1000).</span>
         <Input type="number" list={draftId+"-estimates"} min={0} max={1000}
         value={points} onChange={e=>setPoints(e.target.value)}
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-ring"/>
         <datalist id={draftId+"-estimates"}>{[1,2,3,5,8,13].map(n=><option key={n} value={n}/>)}</datalist>
-      </label>
-      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Task type
+      </Label>
+      <Label>Task type
         <Select value={taskType} onChange={e=>setTaskType(e.target.value)}
           className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-ring">
           <option value="">Not specified</option>
           <option value="STORY">Story</option><option value="BUG">Bug</option>
           <option value="CHORE">Chore</option><option value="SPIKE">Spike</option>
         </Select>
-      </label>
-      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Due date
+      </Label>
+      <Label>Due date
         <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}
           className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-ring"/>
-      </label>
-      <label className="font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">What&apos;s blocking this task?
+      </Label>
+      <Label className="md:col-span-2">What&apos;s blocking this task?
         <Textarea value={blockerReason} maxLength={4000} onChange={e=>setBlockerReason(e.target.value)}
           className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-ring"/>
-      </label>
+      </Label>
       </Disclosure>
       <div className="flex min-w-0 flex-col gap-2 md:flex-row md:col-span-2"><Button variant="primary" type="submit"
         disabled={busy||!title.trim()||(points!==""&&
@@ -179,13 +180,13 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
           taskType={task.taskType} estimatePoints={task.estimatePoints}
           dueDate={task.dueDate} blockerReason={task.blockerReason}/>
       </div>:null}
-    {!readOnly?<label className="mt-2 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Pull into sprint
+    {!readOnly?<Label className="mt-2 block text-[length:var(--lms-font-sm)]">Pull into sprint
      <Select disabled={busy||targets.length===0} value="" onChange={e=>{const id=e.target.value;if(id)setMoveRequest({task,targetSprintId:id});}}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-base focus-ring">
       <option value="">Choose sprint</option>
       {targets.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
      </Select>
-    </label>:null}
+    </Label>:null}
    </article>)}
    {!backlog.length?<div><EmptyState title="No backlog tasks yet" description="Add backlog tasks, then pull them into a sprint when the plan is ready." /></div>:null}
   </div>

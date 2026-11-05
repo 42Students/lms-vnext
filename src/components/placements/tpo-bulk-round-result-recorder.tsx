@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {resolveBulkRoundLearnerTokens} from "@/modules/placements/tpo-bulk-round-result-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Row = {
   applicationId: string;
@@ -157,11 +158,11 @@ export function TpoBulkRoundResultRecorder({
             <legend className="text-sm font-semibold text-foreground">
               Select learners ({selected.length} / 25)
             </legend>
-            <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Find unmarked learner
+            <Label className="block text-[length:var(--lms-font-sm)]">Find unmarked learner
               <Input type="search" maxLength={100} value={search} onChange={event=>setSearch(event.target.value)}
                placeholder="Search name, roll or application ID"
                className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
-            </label>
+            </Label>
             <div className="flex min-w-0 flex-col gap-2 text-sm sm:flex-row sm:flex-wrap">
               <Button variant="secondary" type="button" disabled={busy} onClick={()=>setSelected(visible.slice(0,25).map(row=>row.applicationId))}
                 className="inline-flex min-h-11 w-full items-center justify-center px-4 font-semibold text-primary-text sm:w-auto md:min-h-9">Select first 25 unmarked</Button>
@@ -181,7 +182,7 @@ export function TpoBulkRoundResultRecorder({
             </Disclosure>
             <div tabIndex={0} role="group" aria-label="Unmarked learners, scroll for more" className="max-h-56 min-h-0 min-w-0 divide-y divide-border overflow-auto overscroll-contain border-y border-border px-2 [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)] print:max-h-none print:overflow-visible">
               {visible.map((row) => (
-                <label key={row.applicationId} className="flex min-h-11 min-w-0 items-center gap-3 px-2 text-sm text-body hover:bg-muted md:min-h-9">
+                <Label variant="choice" key={row.applicationId} className="flex min-h-11 min-w-0 items-center gap-3 px-2 hover:bg-muted md:min-h-9">
                   <Checkbox
                     checked={selected.includes(row.applicationId)}
                     onChange={(event) => toggle(row.applicationId, event.target.checked)}
@@ -189,12 +190,12 @@ export function TpoBulkRoundResultRecorder({
                     className="h-4 w-4 accent-primary"
                   />
                   <span className="min-w-0 break-words">{row.displayName}</span>
-                </label>
+                </Label>
               ))}
             </div>
             {visible.length===0?<p role="status" className="py-3 text-sm text-muted-foreground leading-[22px]">No unmarked learners match this search.</p>:null}
           </fieldset>
-          <label className="block text-[length:var(--lms-font-sm)] font-semibold print:hidden leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+          <Label className="block text-[length:var(--lms-font-sm)] print:hidden">
             Staged outcome
             <Select
               value={outcome}
@@ -207,23 +208,23 @@ export function TpoBulkRoundResultRecorder({
               <option value="HOLD">Waitlisted (HOLD)</option>
               <option value="ABSENT">Marked absent (ABSENT)</option>
             </Select>
-          </label>
+          </Label>
           <details className="group min-w-0 border-y border-border py-2 print:hidden">
            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">Everyone I did not mark <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
           <fieldset className="space-y-2 px-2 py-3">
             <legend className="text-sm font-semibold text-foreground">Everyone I did not mark</legend>
-            <label className="flex items-start gap-2 text-sm text-body">
+            <Label variant="choice" className="flex items-start gap-2">
               <Checkbox disabled={busy||available.length>25}
                 checked={failUnselected}
                 onChange={e=>setFailUnselected(e.target.checked)}
                 className="mt-1 h-4 w-4 accent-primary"/>
               Stage Not cleared for every other unmarked applicant ({unselected.length})
-            </label>
+            </Label>
             <p className="text-xs text-body leading-[20px]">Opt in explicitly. All affected learners receive an audited staged result, but nothing is published until Apply results. This bulk action is limited to 25 total applicants; for larger rosters use the reviewed import.</p>
           </fieldset>
           </details>
           {(outcome !== "PASS" || failUnselected) ? (
-            <label className="block text-[length:var(--lms-font-sm)] font-semibold print:hidden leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+            <Label className="block text-[length:var(--lms-font-sm)] print:hidden">
               Learner-facing message (required)
               <Textarea
                 value={message}
@@ -233,15 +234,15 @@ export function TpoBulkRoundResultRecorder({
                 disabled={busy}
                 className="mt-1 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 font-normal text-foreground"
               />
-            </label>
+            </Label>
           ) : null}
-          {outcome==="HOLD"?<label className="block text-[length:var(--lms-font-sm)] font-semibold print:hidden leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+          {outcome==="HOLD"?<Label className="block text-[length:var(--lms-font-sm)] print:hidden">
             First waitlist rank (in checkbox selection order)
             <Input type="number" min={1} max={100000} value={firstWaitlistRank}
               onChange={e=>setFirstWaitlistRank(Number(e.target.value))}
               className="mt-1 block min-h-11 w-full sm:w-40 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"/>
             <span className="mt-1 block text-xs font-normal text-body">Chosen learners are assigned consecutive ranks. Check existing waitlisted results to avoid duplicate ranks.</span>
-          </label>:null}
+          </Label>:null}
           {selected.length>0?<Alert tone="info">
             <p className="font-semibold">Result staging preview</p>
             <p>{pendingTotal} total staged outcomes · {selected.length} explicitly selected · {failUnselected?unselected.length:0} additional Not cleared.</p>

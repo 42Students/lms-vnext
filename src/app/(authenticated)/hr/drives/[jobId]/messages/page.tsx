@@ -12,6 +12,7 @@ import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getRecruiterDriveConversations} from "@/modules/placements/hr-drive-conversation-service";
 import {TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export default async function DriveConversationsPage({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
@@ -43,11 +44,11 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
      <form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
       <Input type="hidden" name="collegeId" value={result.workspace.college.id}/>
       <Input type="hidden" name="jobId" value={result.workspace.job.id}/>
-      <label className="mb-3 grid min-w-0 gap-1 text-sm font-semibold text-foreground">
+      <Label stack className="mb-3 min-w-0">
         Message about this drive
         <Textarea name="message" rows={3} minLength={1} maxLength={4000} required
           placeholder="Write your first message to the placement cell..." className="min-w-0"/>
-      </label>
+      </Label>
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Send message</Button>
      </form>
     </details>
@@ -55,11 +56,11 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
     action={<form method="post" action="/api/placements/recruiter/conversations/open" className="w-full md:w-auto">
      <Input type="hidden" name="collegeId" value={result.workspace.college.id}/>
      <Input type="hidden" name="jobId" value={result.workspace.job.id}/>
-     <label className="mb-3 grid min-w-0 gap-1 text-sm font-semibold text-foreground">
+     <Label stack className="mb-3 min-w-0">
        Message about this drive
        <Textarea name="message" rows={3} minLength={1} maxLength={4000} required
          placeholder="Write your first message..." className="min-w-0"/>
-     </label>
+     </Label>
      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Send message</Button>
     </form>} />}
   </section>

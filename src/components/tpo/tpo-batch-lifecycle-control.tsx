@@ -7,6 +7,7 @@ import {useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import { Label } from "@/components/ui/label";
 type State={invitedAt:string|null;finishedAt:string|null;expectedVersion:string};
 export function TpoBatchLifecycleControl({batchId,state}:{batchId:string;state:State|null}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
@@ -35,12 +36,12 @@ export function TpoBatchLifecycleControl({batchId,state}:{batchId:string;state:S
   <p className="text-sm text-body">{action==="FINISH"?
    "It leaves the working set: hidden from Placement eligibility by default and left out of counts. Its students can't apply on their own; you can still add them to a drive.":
    "It comes back into the working set and its eligible students can use placements again."}</p>
-  <label className="flex min-h-11 items-start gap-2 text-sm text-body">
+  <Label variant="choice" className="flex min-h-11 items-start gap-2">
    <Checkbox checked={reviewed} disabled={busy}
     onChange={event=>setReviewed(event.target.checked)}
     className="mt-1 h-4 w-4 accent-primary"/>
    I reviewed the batch and understand this change will be audited.
-  </label>
+  </Label>
   <Button variant="secondary" type="button" disabled={disabled} onClick={()=>void submit()}
    className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
    {busy?"Updating…":action==="FINISH"?"Mark finished":"Reopen batch"}

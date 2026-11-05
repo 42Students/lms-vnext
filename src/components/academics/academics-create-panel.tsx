@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Option = {
   id: string;
@@ -56,12 +57,12 @@ function FieldLabel({
   children: React.ReactNode;
 }) {
   return (
-    <label
+    <Label
       htmlFor={htmlFor}
-      className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+      className="mb-1.5 block"
     >
       {children}
-    </label>
+    </Label>
   );
 }
 

@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { projectMutation } from "./project-api";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Props = {
   templateId: string;
@@ -247,7 +248,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
           Template releases and sprints use relative due labels rather than fixed dates, so workspaces created later can retain the same plan. Task type, due label, approach and backlog items are saved together.
         </p>
         {draft.releases.length === 0 ? <p className="text-sm leading-[22px]">No releases saved yet.</p> : null}
-        {draft.releases.map((release, index) => <label key={release.key} className={label}>
+        {draft.releases.map((release, index) => <Label key={release.key} className={label}>
           Release {index + 1} title
           <Input className={field} maxLength={200} required disabled={pending}
             aria-invalid={Boolean(rowErrors["releases:"+index])}
@@ -259,7 +260,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
             }}/>
           {rowErrors["releases:"+index]?<span role="alert" className="mt-1 block text-xs text-danger-text">
             {rowErrors["releases:"+index]}</span>:null}
-        </label>)}
+        </Label>)}
         <Button type="button" variant="secondary" size="sm" disabled={pending || draft.releases.length >= 50}
           onClick={() => setDraft(current => ({
             ...current, releases: [...current.releases, {
@@ -273,12 +274,12 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
           {rowErrors["sprints:"+index]?<p role="alert" className="text-sm text-danger-text">
             {rowErrors["sprints:"+index]}</p>:null}
           <div className="grid min-w-0 gap-3 md:grid-cols-2">
-            <label className={label}>Key (optional)
+            <Label className={label}>Key (optional)
               <Input className={field} maxLength={64} value={sprint.key}
                 placeholder="Auto-generated from title if left blank"
                 disabled={pending} onChange={event => updateSprint(index, { key: event.target.value })}/>
-            </label>
-            <label className={label}>Release (required)
+            </Label>
+            <Label className={label}>Release (required)
               <Select className={field} disabled={pending} required
                 aria-invalid={!sprint.releaseKey||
                   !draft.releases.some(item=>item.key===sprint.releaseKey)}
@@ -287,28 +288,28 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
                 {draft.releases.map(release => <option key={release.key} value={release.key}>
                   {release.key}</option>)}
               </Select>
-            </label>
-            <label className={label}>Title
+            </Label>
+            <Label className={label}>Title
               <Input className={field} required maxLength={200} disabled={pending}
                 placeholder="e.g. Discovery and design" aria-invalid={!sprint.title.trim()}
                 value={sprint.title} onChange={event => updateSprint(index, { title: event.target.value })}/>
-            </label>
-            <label className={label}>Due (optional)
+            </Label>
+            <Label className={label}>Due (optional)
               <Input className={field} maxLength={160} disabled={pending}
                 placeholder="e.g. Before sprint 1" value={sprint.dueLabel ?? ""}
                 onChange={event => updateSprint(index, { dueLabel: event.target.value || undefined })}/>
-            </label>
+            </Label>
           </div>
-          <label className={label}>Sprint goal (optional)
+          <Label className={label}>Sprint goal (optional)
             <Textarea className={field} maxLength={1000} disabled={pending}
               value={sprint.goal ?? ""} onChange={event =>
                 updateSprint(index, { goal: event.target.value || undefined })}/>
-          </label>
-          <label className={label}>Description
+          </Label>
+          <Label className={label}>Description
             <Textarea className={field} maxLength={4000} disabled={pending}
               value={sprint.description ?? ""} onChange={event =>
                 updateSprint(index, { description: event.target.value || undefined })}/>
-          </label>
+          </Label>
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
             <Button type="button" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto" variant="secondary" disabled={pending}
               onClick={() => setDraft(current => moveTemplateSprint(current, sprint.key, -1))}>Move up</Button>
@@ -328,11 +329,11 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
           <Link className="font-semibold text-primary-text hover:underline focus-visible:underline"
             href={"/admin/projects/templates/" + encodeURIComponent(props.templateId) + "/sprints"}>Add sprints</Link>.
         </Banner> : null}
-        {draft.tasks.length>12?<label className={label}>Find a task
+        {draft.tasks.length>12?<Label className={label}>Find a task
           <Input className={field} value={taskSearch} type="search"
             placeholder="Search title, key or sprint"
             onChange={event=>{setTaskSearch(event.target.value);setTaskPage(1);}}/>
-        </label>:null}
+        </Label>:null}
         {visibleTasks.map(({task,index}) => <fieldset key={task.key+":"+index}
           className="grid min-w-0 gap-3 border-b border-border py-4">
           <legend className="px-1 text-[var(--lms-font-sm)] font-semibold text-foreground">
@@ -351,73 +352,73 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
           {!collapsedTaskIds.includes(task.key)?<div id={"template-task-fields-"+index}
             className="grid min-w-0 gap-3">
           <div className="grid gap-3 md:grid-cols-2">
-            <label className={label}>Key (optional)
+            <Label className={label}>Key (optional)
               <Input className={field} maxLength={64} disabled={pending}
                 value={task.key} placeholder="Auto-generated when saved"
                 onChange={event => updateTask(index, { key: event.target.value })}/>
               {!task.key.trim()?<span className="mt-1 block text-xs font-normal text-body">
                 Preview: {nextTemplatePlanKey(draft.tasks.map(item=>item.key).filter(Boolean),"task")} (auto-generated when saved).
               </span>:null}
-            </label>
-            <label className={label}>Sprint
+            </Label>
+            <Label className={label}>Sprint
               <Select className={field} disabled={pending} value={task.sprintKey??""}
                 onChange={event => updateTask(index, { sprintKey: event.target.value||null })}>
                 <option value="">Backlog (no sprint)</option>
                 {draft.sprints.map(sprint => <option key={sprint.key} value={sprint.key}>
                   {sprint.title}</option>)}
               </Select>
-            </label>
-            <label className={label}>Title
+            </Label>
+            <Label className={label}>Title
               <Input className={field} required maxLength={200} disabled={pending}
                 aria-invalid={!task.title.trim()}
                 value={task.title} placeholder="e.g. Draft submission checklist"
                 onChange={event => updateTask(index, { title: event.target.value })}/>
-            </label>
-            <label className={label}>Type
+            </Label>
+            <Label className={label}>Type
               <Select className={field} value={task.taskType??"STORY"} disabled={pending}
                 onChange={event=>updateTask(index,{taskType:event.target.value as Task["taskType"]})}>
                 <option value="STORY">Story</option><option value="BUG">Bug</option>
                 <option value="CHORE">Chore</option><option value="SPIKE">Spike</option>
               </Select>
-            </label>
-            <label className={label}>Due (optional)
+            </Label>
+            <Label className={label}>Due (optional)
               <Input className={field} maxLength={160} disabled={pending}
                 placeholder="e.g. Before sprint 1" value={task.dueLabel??""}
                 onChange={event=>updateTask(index,{dueLabel:event.target.value||undefined})}/>
-            </label>
-            <label className={label}>Priority
+            </Label>
+            <Label className={label}>Priority
               <Select className={field} value={task.priority} disabled={pending}
                 onChange={event => updateTask(index, { priority: event.target.value as Task["priority"] })}>
                 {(["LOW", "MEDIUM", "HIGH", "CRITICAL"] as const).map(priority =>
                   <option key={priority} value={priority}>{priority[0] + priority.slice(1).toLowerCase()}</option>)}
               </Select>
-            </label>
-            <label className={label}>Estimate (optional)
+            </Label>
+            <Label className={label}>Estimate (optional)
               <Select className={field} disabled={pending} value={String(task.estimatePoints??"")}
                 onChange={event=>updateTask(index,{estimatePoints:event.target.value?Number(event.target.value):undefined})}>
                 <option value="">Not yet estimated</option>
                 {([1,2,3,5,8,13] as const).map(points=><option key={points} value={String(points)}>
                   {points} pt{points===1?"":"s"}</option>)}
               </Select>
-            </label>
+            </Label>
           </div>
-          <label className={label}>Description
+          <Label className={label}>Description
             <Textarea className={field} maxLength={4000} disabled={pending}
               value={task.description ?? ""} placeholder="What this task involves" onChange={event =>
                 updateTask(index, { description: event.target.value || undefined })}/>
-          </label>
-          <label className={label}>Approach (optional)
+          </Label>
+          <Label className={label}>Approach (optional)
             <Textarea className={field} maxLength={4000} disabled={pending}
               placeholder="The worked, how-to-do-this guidance for this task"
               value={task.approach??""}
               onChange={event=>updateTask(index,{approach:event.target.value||undefined})}/>
-          </label>
-          <label className={label}>Done when (optional)
+          </Label>
+          <Label className={label}>Done when (optional)
             <Textarea className={field} maxLength={4000} disabled={pending}
               placeholder="The concrete condition that makes this task finished — not a restatement of the description"
               value={task.acceptanceCriteria ?? ""} onChange={event =>
                 updateTask(index, { acceptanceCriteria: event.target.value || undefined })}/>
-          </label>
+          </Label>
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
             <Button type="button" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto" variant="secondary" disabled={pending}
               onClick={() => setDraft(current => moveTemplateTask(current, task.key, -1))}>Move up</Button>

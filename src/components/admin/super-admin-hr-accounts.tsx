@@ -40,6 +40,7 @@ import {
   hrAccountStatusTone,
 } from "./super-admin-hr-types";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type DialogState =
   | { kind: "create" }
@@ -706,7 +707,7 @@ export function SuperAdminHrAccounts({
         action="/admin/recruiters"
         className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] print:hidden lg:grid-cols-[minmax(0,1fr)_minmax(0,12rem)_auto_auto_auto_auto]"
       >
-        <label className="col-span-2 grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold lg:col-span-1 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        <Label stack className="col-span-2 min-w-0 lg:col-span-1">
           Search
           <Input
             className="min-h-11 md:min-h-9" name="q"
@@ -715,9 +716,9 @@ export function SuperAdminHrAccounts({
             maxLength={120}
             placeholder="Name, mobile or email"
           />
-        </label>
+        </Label>
 
-        <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        <Label stack className="min-w-0">
           Status
           <Select
             className="min-h-11 md:min-h-9" name="status"
@@ -728,11 +729,11 @@ export function SuperAdminHrAccounts({
             <option value="ARCHIVED">Suspended</option>
             <option value="DISABLED">Disabled</option>
           </Select>
-        </label>
+        </Label>
 
         <Disclosure title="Rows per page" className="min-w-0"
           contentClassName="pb-2 pt-2">
-        <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        <Label stack className="min-w-0">
           Rows per page
           <Select
             className="min-h-11 md:min-h-9" name="pageSize"
@@ -742,7 +743,7 @@ export function SuperAdminHrAccounts({
             <option value="50">50</option>
             <option value="100">100</option>
           </Select>
-        </label>
+        </Label>
 
         </Disclosure>
 

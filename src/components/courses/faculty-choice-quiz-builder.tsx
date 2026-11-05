@@ -19,6 +19,7 @@ import {authoringLocalDateTime,authoringDueInstant}
 import {facultyAuthoringQuestionsFromResponse,facultyQuizShuffleSettingsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizCanRetryDetails,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation,facultyBeginQuizWrite,facultyQuizDraftReview,facultyQuizCanSaveChanges,facultyQuizMayResetDraft,facultyQuizCanCopyToDraft,facultyQuizCopyTitle,facultyQuizNormalizeQuestions,facultyQuizMatchesSearch,facultyQuizQuestionIssue,facultyQuizAnswerSummary,facultyInsertQuizQuestionAfter,facultyMoveQuizQuestionToEdge,facultyInsertQuizOptionAfter,facultyQuizOptionRemovalNeedsConfirmation,facultyQuizQuestionRemovalPrompt,facultyQuizApplyPastedOptions,facultyQuizLoadedBankIssue,facultyQuizRetryNeedsConfirmation,facultyQuizTitleConflict,facultyQuizReviewIssues,facultyQuizShouldDisplayQuestion,facultyQuizReadErrorMessage,facultyQuizOptionRemovalPrompt,facultyQuizReadyToPublish}
  from "@/modules/courses/faculty-quiz-builder-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Option={id?:string;clientKey?:string;text:string;correct:boolean;sequence:number};
 let nextDraftOptionKey=0;
 const draftOptionKey=()=>`draft-option-${++nextDraftOptionKey}`;
@@ -224,41 +225,41 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes,initialLess
  return <section className="min-w-0 w-full max-w-full space-y-4 max-md:[&_button]:min-h-11">
   <Heading level={2} size="base" className="text-[var(--lms-heading)]">Choice-question quiz builder</Heading>
   <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find a quiz
+  <Label stack className="min-w-0">Find a quiz
    <Input type="search" value={quizSearch} onChange={e=>setQuizSearch(e.target.value)}
     placeholder="Title or state" className="min-h-11 min-w-0 max-w-full md:min-h-9"/>
-  </label>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Quiz
+  </Label>
+  <Label stack className="min-w-0">Quiz
    <Select value={selected} disabled={pending} onChange={e=>chooseWithDraftProtection(e.target.value)}
     className="min-h-11 min-w-0 max-w-full md:min-h-9">
     <option value="">Create new draft</option>
     {visibleQuizzes.map(q=><option key={q.id} value={q.id}>{q.title} ({q.status})</option>)}
-   </Select></label>
+   </Select></Label>
   </div>
   {quizSearch.trim()&&visibleQuizzes.length===0?<EmptyState title="No matching quizzes" description="Clear the search to see all Section quizzes."/>:null}
   {chosen?<p className="text-xs text-body">State: {chosen.status}; published quizzes and attempted quizzes cannot change their questions.</p>:null}
   {facultyQuizCanCopyToDraft(chosen?.status,questions.length>0,pending,detailsFailed)?
    <Button variant="secondary" type="button" onClick={()=>copyToNewDraft()} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold">Copy as new draft</Button>:null}
-  {!chosen?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson
+  {!chosen?<Label stack className="min-w-0">Lesson
    <Select value={lessonId} onChange={e=>{setConfirmed(false);setDirtyDraft(true);setLessonId(e.target.value);}}
     className="min-h-11 min-w-0 max-w-full md:min-h-9">
     {lessons.map(l=><option key={l.id} value={l.id}>{l.name}</option>)}
-   </Select></label>:null}
+   </Select></Label>:null}
   <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Quiz title
+  <Label stack className="min-w-0">Quiz title
    <Input value={title} disabled={!metadataEditable} maxLength={255} onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,title,e.target.value));setDirtyDraft(true);setTitle(e.target.value);}}
-    className="min-h-11 min-w-0 max-w-full md:min-h-9"/></label>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 md:col-span-2 text-[var(--lms-neutral-400)]">Instructions
+    className="min-h-11 min-w-0 max-w-full md:min-h-9"/></Label>
+  <Label stack className="min-w-0 md:col-span-2">Instructions
    <Textarea value={description} disabled={!metadataEditable} maxLength={10000} rows={2}
     onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,description,e.target.value));setDirtyDraft(true);setDescription(e.target.value);}}
-    className="min-w-0 max-w-full"/></label>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Due date (IST, required before publishing)
+    className="min-w-0 max-w-full"/></Label>
+  <Label stack className="min-w-0">Due date (IST, required before publishing)
    <Input type="datetime-local" disabled={!metadataEditable} value={dueAt} onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,dueAt,e.target.value));setDirtyDraft(true);setDueAt(e.target.value);}}
-    className="min-h-11 min-w-0 max-w-full md:min-h-9"/></label>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum attempts
+    className="min-h-11 min-w-0 max-w-full md:min-h-9"/></Label>
+  <Label stack className="min-w-0">Maximum attempts
    <Input type="number" disabled={!editable} min={1} max={20} value={maxAttempts}
     onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,maxAttempts,Number(e.target.value)));setDirtyDraft(true);setMaxAttempts(Number(e.target.value));}}
-    className="min-h-11 min-w-0 max-w-full md:min-h-9"/></label>
+    className="min-h-11 min-w-0 max-w-full md:min-h-9"/></Label>
   </div>
   <fieldset disabled={!editable} className="space-y-2 border-y border-border py-3">
     <legend className="text-sm font-semibold">Quiz order</legend>
@@ -287,21 +288,21 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes,initialLess
      className="min-w-0 space-y-2 border-b border-border py-3">
      <legend className="text-sm font-semibold">Question {index+1} · {question.points} point(s)</legend>
      <p className="whitespace-pre-wrap break-words text-sm text-body">{question.prompt||"Question prompt not entered"}</p>
-     {question.options.map((option,i)=><label key={option.id??option.clientKey??i}
-      className="flex items-start gap-2 text-sm text-body">
+     {question.options.map((option,i)=><Label variant="choice" key={option.id??option.clientKey??i}
+      className="flex items-start gap-2">
       {question.type === "SINGLE_CHOICE" ? <Radio 
        name={"preview-question-"+index} disabled/> : <NativeCheckbox 
        name={"preview-question-"+index} disabled/>}
       <span>{option.text||"Option not entered"}</span>
       {previewAnswers&&option.correct?<span className="text-xs font-semibold text-success">(Correct)</span>:null}
-     </label>)}
+     </Label>)}
     </fieldset>)}
    </div>:null}
   </section>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find a question
+  <Label stack className="min-w-0">Find a question
    <Input type="search" value={questionSearch} onChange={e=>setQuestionSearch(e.target.value)}
     placeholder="Question number, prompt, or option" className="min-h-11 min-w-0 max-w-full md:min-h-9"/>
-  </label>
+  </Label>
   <Checkbox label="Show only questions needing correction" checked={invalidOnly}
      onChange={e=>setInvalidOnly(e.target.checked)}/>
   {matchingQuestions.length===0?<EmptyState title="No questions match these review filters" description="Clear the search or invalid-only filter to view the entire bank."/>:null}
@@ -310,29 +311,29 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes,initialLess
    <legend className="text-sm font-semibold">Question {i+1}</legend>
    {facultyQuizQuestionIssue(q)?<p role="status" className="text-xs text-error">Review question {i+1}: {facultyQuizQuestionIssue(q)}</p>:
     <p className="text-xs text-body">Question {i+1} is ready to save.</p>}
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Prompt
+   <Label stack className="min-w-0">Prompt
     <Textarea value={q.prompt} maxLength={5000} rows={2}
      onChange={e=>updateQuestion(i,old=>({...old,prompt:e.target.value}))}
-     className="min-w-0 max-w-full"/></label>
+     className="min-w-0 max-w-full"/></Label>
    <div className="grid min-w-0 grid-cols-2 gap-3">
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
+    <Label stack className="min-w-0">Type
      <Select value={q.type}
       onChange={e=>updateQuestion(i,old=>({...old,...facultyChangeQuizChoiceType(old,e.target.value as Question["type"])}))}
       className="min-h-11 min-w-0 max-w-full md:min-h-9">
       <option value="SINGLE_CHOICE">Single choice</option>
       <option value="MULTIPLE_CHOICE">Multiple choice</option>
-     </Select></label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Points
+     </Select></Label>
+    <Label stack className="min-w-0">Points
      <Input type="number" min={1} max={100} value={q.points}
       onChange={e=>updateQuestion(i,old=>({...old,points:Number(e.target.value)}))}
-      className="min-h-11 md:min-h-9 w-24 rounded-[var(--lms-control-radius)] border border-border p-2 text-base md:text-sm"/></label>
+      className="min-h-11 md:min-h-9 w-24 rounded-[var(--lms-control-radius)] border border-border p-2 text-base md:text-sm"/></Label>
    </div>
    <p className="text-xs text-body" role="status">{facultyQuizAnswerSummary(q)}</p>
    {q.options.map((o,j)=><div key={o.id??o.clientKey??j} className="grid min-w-0 grid-cols-2 items-end gap-2 border-b border-border pb-3 sm:flex sm:flex-wrap sm:items-center">
-    <label className="col-span-2 min-w-0 text-[13px] font-semibold leading-4 sm:flex-[1_1_12rem] text-[var(--lms-neutral-400)]">Option {j+1}
+    <Label className="col-span-2 min-w-0 sm:flex-[1_1_12rem]">Option {j+1}
      <Input value={o.text} maxLength={2000}
       onChange={e=>updateQuestion(i,old=>({...old,options:old.options.map((x,k)=>k===j?{...x,text:e.target.value}:x)}))}
-      className="mt-1 block min-h-11 md:min-h-9 min-w-0 w-full max-w-full rounded-[var(--lms-control-radius)] border border-border p-2 text-base md:text-sm"/></label>
+      className="mt-1 block min-h-11 md:min-h-9 min-w-0 w-full max-w-full rounded-[var(--lms-control-radius)] border border-border p-2 text-base md:text-sm"/></Label>
     <Checkbox label="Correct" checked={o.correct}
        onChange={e=>updateQuestion(i,old=>({...old,options:facultyToggleQuizAnswer(old,j,e.target.checked)}))}/>
     <Button variant="secondary" type="button" disabled={j===0} onClick={()=>updateQuestion(i,old=>({...old,options:facultyMoveQuizOption(old.options,j,j-1)}))}
@@ -449,10 +450,10 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes,initialLess
         setError(null);setPasteQuestionIndex(null);
        }}>Paste choices</Button>
    </>}>
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Answer choices
+   <Label stack>Answer choices
      <Textarea value={pastedChoices} onChange={event=>setPastedChoices(event.target.value)}
        rows={8} maxLength={40000} aria-label="Answer choices" />
-   </label>
+   </Label>
    {error?<Alert tone="error" className="mt-3">{error}</Alert>:null}
  </Dialog>
  <ConfirmDialog open={confirmRequest!==null} onOpenChange={open=>{if(!open&&!pending)dismissConfirm();}}

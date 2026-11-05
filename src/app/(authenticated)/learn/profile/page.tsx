@@ -22,6 +22,7 @@ import {LearnerVerificationLiveRefresh} from "@/components/profile/learner-verif
 import { LearnerDefaultResumePicker } from "@/components/profile/learner-default-resume-picker";
 import { listLearnerDefaultResumes } from "@/modules/placements/learner-default-resume-service";
 import { Heading } from "@/components/ui/heading";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 type ProfileParams={section?:string|string[]};
 function ProfileLoading() {
@@ -32,12 +33,12 @@ function ProfileLoading() {
       <div className="flex items-center gap-4">
         <span className="h-16 w-16 shrink-0 animate-pulse rounded-full bg-muted"/>
         <div className="w-full space-y-3">
-          <div className="h-5 w-1/3 animate-pulse rounded bg-muted"/>
-          <div className="h-4 w-1/2 animate-pulse rounded bg-muted"/>
+          <SkeletonBlock className="h-5 w-1/3" />
+          <SkeletonBlock className="h-4 w-1/2" />
         </div>
       </div>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        {[1,2,3,4].map(key=><div key={key} className="h-16 animate-pulse rounded bg-muted"/>)}
+        {[1,2,3,4].map(key=><SkeletonBlock key={key} className="h-16" />)}
       </div>
     </div>
   </div>;

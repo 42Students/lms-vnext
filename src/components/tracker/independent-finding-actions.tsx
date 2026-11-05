@@ -13,6 +13,7 @@ import {FINDING_STATUSES,FINDING_SEVERITIES} from "@/modules/bug-tracker/indepen
 import {FINDING_COMMIT_REPOS} from "@/modules/bug-tracker/independent-finding-actions-model";
 import {canTransitionIndependentFinding,type IndependentFindingStatus} from "@/modules/bug-tracker/independent-finding-transition-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Action="STATUS"|"SEVERITY"|"ASSIGNEE"|"DUPLICATE"|"FIX_COMMIT"|"COMMENT";
 export function IndependentFindingActions({externalId,version,status,severity,currentAssignee,candidates=[],onUpdated}:{externalId:string;version:number;status:string;severity:string;currentAssignee:string|null;candidates?:readonly {id:string;externalId:string;title:string}[];onUpdated?:()=>void}){
  const router=useRouter(),lock=useRef(false);
@@ -89,44 +90,44 @@ export function IndependentFindingActions({externalId,version,status,severity,cu
  return <section className="min-w-0 max-w-3xl space-y-3 border-b border-border pb-4" aria-label="Finding actions">
   <Heading level={2} className="text-foreground">Update finding</Heading>
   <div className="grid min-w-0 gap-3 md:grid-cols-2">
-  <label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Action
+  <Label stack className="min-w-0 w-full">Action
    <Select value={action} disabled={pending} onChange={e=>{setAction(e.target.value as Action);setError(null);setConfirmOpen(false);}}
     className="min-h-11 text-sm md:min-h-9">
     {(["STATUS","SEVERITY","ASSIGNEE","DUPLICATE","FIX_COMMIT","COMMENT"] as const).map(value=><option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
    </Select>
-  </label>
-  {action==="STATUS"?<label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+  </Label>
+  {action==="STATUS"?<Label stack className="min-w-0 w-full">Status
    <Select value={nextStatus} disabled={pending} onChange={e=>setNextStatus(e.target.value)} className="min-h-11 text-sm md:min-h-9">
     {FINDING_STATUSES.map(value=><option key={value} value={value}
       disabled={!canTransitionIndependentFinding(status as IndependentFindingStatus,value,"Reason supplied")}>
       {value.replaceAll("_"," ")}</option>)}
-   </Select></label>:null}
-  {action==="SEVERITY"?<label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Severity
+   </Select></Label>:null}
+  {action==="SEVERITY"?<Label stack className="min-w-0 w-full">Severity
    <Select value={nextSeverity} disabled={pending} onChange={e=>setNextSeverity(e.target.value)} className="min-h-11 text-sm md:min-h-9">
     {FINDING_SEVERITIES.map(value=><option key={value}>{value}</option>)}
-   </Select></label>:null}
-  {action==="ASSIGNEE"?<label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned to
+   </Select></Label>:null}
+  {action==="ASSIGNEE"?<Label stack className="min-w-0 w-full">Assigned to
    <Input value={assignee} disabled={pending} maxLength={100} placeholder="Name or agent" onChange={e=>setAssignee(e.target.value)} className="min-h-11 text-sm md:min-h-9"/>
-   </label>:null}
-  {action==="DUPLICATE"?<label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Duplicate of finding ID
+   </Label>:null}
+  {action==="DUPLICATE"?<Label stack className="min-w-0 w-full">Duplicate of finding ID
    <Input value={duplicateOf} list="finding-duplicate-candidates" disabled={pending}
     onChange={e=>setDuplicateOf(e.target.value)}
     placeholder="Select a matching finding"
     className="min-h-11 text-sm md:min-h-9"/>
    <datalist id="finding-duplicate-candidates">{candidates.map(item=><option key={item.id}
      value={item.externalId}>{item.title}</option>)}</datalist>
-   </label>:null}
+   </Label>:null}
   {action==="FIX_COMMIT"?<div className="grid min-w-0 gap-3 md:col-span-2 md:grid-cols-2">
-   <label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Repository
+   <Label stack className="min-w-0 w-full">Repository
     <Select value={repo} disabled={pending} onChange={e=>setRepo(e.target.value as (typeof FINDING_COMMIT_REPOS)[number])} className="min-h-11 text-sm md:min-h-9">
      {FINDING_COMMIT_REPOS.map(value=><option key={value} value={value}>{value}</option>)}
-    </Select></label>
-   <label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Commit SHA
-    <Input value={sha} disabled={pending} maxLength={40} onChange={e=>setSha(e.target.value)} className="min-h-11 text-sm md:min-h-9"/></label>
+    </Select></Label>
+   <Label stack className="min-w-0 w-full">Commit SHA
+    <Input value={sha} disabled={pending} maxLength={40} onChange={e=>setSha(e.target.value)} className="min-h-11 text-sm md:min-h-9"/></Label>
    </div>:null}
-  {(action==="COMMENT"||action==="STATUS")?<label className="grid min-w-0 w-full gap-[6px] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{action==="COMMENT"?"Comment":"Note or reason"}
+  {(action==="COMMENT"||action==="STATUS")?<Label stack className="min-w-0 w-full md:col-span-2">{action==="COMMENT"?"Comment":"Note or reason"}
     <Textarea rows={2} maxLength={4000} value={note} disabled={pending} placeholder={action==="COMMENT"?"Add to the history":"Say why"} onChange={e=>setNote(e.target.value)} className="min-h-11 text-sm md:min-h-9"/>
-   </label>:null}
+   </Label>:null}
   </div>
   <div className="flex min-w-0 flex-col gap-2 md:items-end">
   <Button variant="primary" type="button" aria-haspopup="dialog" onClick={()=>void submit()} loading={pending} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||(action==="ASSIGNEE"&&assignee.trim()===(currentAssignee??""))||(action==="SEVERITY"&&nextSeverity===severity)||(action==="STATUS"&&nextStatus===status)}>{pending?"Saving…":submitLabel}</Button>

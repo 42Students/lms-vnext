@@ -17,6 +17,7 @@ import { ReportTable, reportNumber } from "@/components/placements/placement-rep
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoSeasonPipeline } from "@/modules/placements/tpo-season-pipeline-service";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type Search = { seasonId?: string | string[]; jobId?: string | string[] };
 function first(input: string | string[] | undefined) {
@@ -60,7 +61,7 @@ export default async function TpoSeasonPipelinePage({
       <form action="/tpo/reports/season-pipeline" method="get"
         aria-label="Season pipeline filters"
         className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label stack className="min-w-0">
           Placement season
           <Select name="seasonId" defaultValue={report.season?.id ?? ""}
             disabled={!report.seasons.length}
@@ -70,8 +71,8 @@ export default async function TpoSeasonPipelinePage({
               <option key={s.id} value={s.id}>{s.name} · {s.code}</option>
             ))}
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label stack className="min-w-0">
           Drive
           <Select name="jobId" defaultValue={report.selectedJobId ?? ""}
             disabled={!report.season}
@@ -81,7 +82,7 @@ export default async function TpoSeasonPipelinePage({
               <option key={job.id} value={job.id}>{job.companyName} · {job.title}</option>
             ))}
           </Select>
-        </label>
+        </Label>
         <Button type="submit" disabled={!report.season}
           className="min-h-11 w-full md:min-h-9 md:w-auto">
           Apply filters

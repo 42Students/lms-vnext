@@ -6,6 +6,7 @@ import type {FacultyProfileDocument} from "@/modules/people/faculty-profile-docu
 import { Input } from "@/components/ui/input";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 type Purpose="EDUCATION_CERTIFICATE"|"CERTIFICATION"|"EXPERIENCE_CERTIFICATE"|"OFFER_LETTER";
 type Item={purpose:Purpose;entryId:string;label:string;receiptId:string|null};
 type Changed={purpose:Purpose;entryId:string;receiptId:string|null;version:number};
@@ -139,7 +140,7 @@ export function FacultyProfileAttachments({document,version,pending,onChanged}:{
      <strong className="text-sm">{item.label}</strong>
      <span className="text-xs">{item.receiptId?"On file":"Not uploaded"}</span>
     </div>
-    <label className="block text-xs font-medium">Upload or replace
+    <Label className="block">Upload or replace
      <Input type="file" disabled={locked} accept="application/pdf,image/png,image/jpeg,image/webp"
       className="mt-1 block max-w-full text-xs"
       onChange={event=>{
@@ -147,7 +148,7 @@ export function FacultyProfileAttachments({document,version,pending,onChanged}:{
        if(file)void upload(item,file);
        event.currentTarget.value="";
       }}/>
-    </label>
+    </Label>
     {item.receiptId?<div className="flex flex-wrap gap-2">
       <Button type="button" variant="secondary" disabled={locked}
        onClick={()=>void open(item)}>Request private link</Button>

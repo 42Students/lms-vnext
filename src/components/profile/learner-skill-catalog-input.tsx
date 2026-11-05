@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {useEffect,useId,useRef,useState} from "react";
 import { Input } from "@/components/ui/input";
 import { PopoverListbox } from "@/components/ui/popover";
+import { Label } from "@/components/ui/label";
 
 export type CatalogSkillItem={id:string;name:string;displayName:string;category:string|null};
 export type CatalogSkillSelection={skill:string;skillId?:string;proficiency?:string};
@@ -108,7 +109,7 @@ export function LearnerSkillCatalogInput({value,onChange,disabled=false,showPopu
   onBlur={event=>{
    if(!event.currentTarget.contains(event.relatedTarget)){setPopupOpen(false);setActiveIndex(-1);}
   }}>
-  <label htmlFor={id} className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Skill</label>
+  <Label htmlFor={id} className="block">Skill</Label>
   <Input id={id} value={value} maxLength={160} disabled={disabled} autoComplete="off"
    onFocus={()=>setPopupOpen(true)}
    onChange={event=>{selectedSkill.current=null;setSelectionFeedback("");setPopupOpen(true);setStatus(event.target.value.trim().length>80?"too_long":"loading");setItems([]);setActiveIndex(-1);onChange(event.target.value);}}

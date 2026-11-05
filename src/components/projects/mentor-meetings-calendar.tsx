@@ -24,6 +24,7 @@ import styles from "./mentor-meetings-calendar.module.css";
 import { Select } from "@/components/ui/select";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 const PAST_PREVIEW = 20;
 const validTime=(raw:string)=>raw.trim().length>0&&Number.isFinite(Date.parse(raw));
@@ -363,7 +364,7 @@ export function MentorMeetingsCalendar({
             {kind.label}
           </Button>)}
         </div>
-        <label className="block p-3 text-xs font-semibold">Show
+        <Label className="block p-3">Show
           <Select aria-label="Meeting period and notes" value={listScope}
             className="ml-2 rounded border border-border bg-surface px-2 py-2"
             onChange={event=>{
@@ -376,7 +377,7 @@ export function MentorMeetingsCalendar({
           <small className="ml-2 font-normal text-muted-foreground">
             {matchingMeetings.length} of {meetings.length} loaded meetings
           </small>
-        </label>
+        </Label>
         <Heading level={2}>{listScope==="ASKED"?"Meeting requests":"Upcoming"}</Heading>
         {upcoming.length ? upcoming.map(item=><Button variant="menu-item" key={item.id}
           type="button"

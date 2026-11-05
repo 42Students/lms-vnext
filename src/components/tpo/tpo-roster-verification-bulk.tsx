@@ -13,6 +13,7 @@ import {collegeBulkReviewPayload} from "@/modules/verification/bulk-client-paylo
 import {describeBulkReviewOutcomeRows,type BulkReviewOutcome} from "@/modules/verification/bulk-outcome";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Action="VERIFY"|"SEND_BACK";
 export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly VerificationQueueCard[];scope?:"roster"|"verification"}){
@@ -85,24 +86,24 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
    Education: {educationWaiting} waiting · Identity: {identityWaiting} waiting.
    Selecting a learner's Education section does not also select Identity.
   </p>
-  <label className="flex min-h-11 items-center gap-2 text-sm print:hidden">
+  <Label variant="choice" className="flex min-h-11 items-center gap-2 print:hidden">
    <Checkbox  disabled={busy} checked={waiting.length>0&&waiting.slice(0,20).every(row=>selected.includes(verificationSelectionKey(row)))}
     onChange={event=>{setSelected(event.target.checked?waiting.slice(0,20).map(verificationSelectionKey):[]);invalidate();}}/>
    Select first {Math.min(20,waiting.length)} waiting section(s)
-  </label>
+  </Label>
   <div className="grid max-h-64 min-w-0 grid-cols-1 gap-2 overflow-y-auto overscroll-contain pr-1 md:grid-cols-2 print:hidden">
-   {waiting.map(row=>{const key=verificationSelectionKey(row);return <label key={key} className="flex min-h-11 min-w-0 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm hover:bg-primary-subtle focus-within:focus-outline">
+   {waiting.map(row=>{const key=verificationSelectionKey(row);return <Label variant="choice" key={key} className="flex min-h-11 min-w-0 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 hover:bg-primary-subtle focus-within:focus-outline">
     <Checkbox  disabled={busy||selected.length>=20&&!selected.includes(key)}
      checked={selected.includes(key)} onChange={()=>toggle(key)}/>
     <span className="min-w-0 break-words">{row.learnerName} · {row.section==="EDUCATION"?"Education":"Identity"}{row.missingMarksheet||row.missingIdentityProof?" · Missing document":""}</span>
-   </label>;})}
+   </Label>;})}
   </div>
-  <label className="grid gap-[6px] text-[13px] print:hidden font-semibold leading-4 text-[var(--lms-neutral-400)]">Action
+  <Label stack className="print:hidden">Action
    <Select  disabled={busy} value={action}
     onChange={event=>{setAction(event.target.value as Action);invalidate();}}>
     <option value="VERIFY">Verify selected</option><option value="SEND_BACK">Send back for correction</option>
    </Select>
-  </label>
+  </Label>
   {action==="SEND_BACK"?<div className="space-y-2">
    <div className="flex flex-wrap gap-2">
     {(checked.every(row=>row.section==="IDENTITY")
@@ -113,10 +114,10 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
       <Button variant="secondary" type="button" key={item} aria-pressed={reason===item} disabled={busy} onClick={()=>{setReason(item);invalidate();}}
        >{item}</Button>)}
    </div>
-   <label className="grid gap-[6px] text-[13px] print:hidden font-semibold leading-4 text-[var(--lms-neutral-400)]">Correction reason (shown to students)
+   <Label stack className="print:hidden">Correction reason (shown to students)
     <Textarea  rows={3} minLength={3} maxLength={500}
      value={reason} disabled={busy} onChange={event=>{setReason(event.target.value);invalidate();}}/>
-   </label>
+   </Label>
   </div>:null}
   <Button variant="secondary" type="button" aria-expanded={preview} aria-controls={preview?previewId:undefined} disabled={busy||guardedPending||checked.length===0||action==="SEND_BACK"&&reason.trim().length<3}
    onClick={()=>{setPreview(true);setError("");setOutcomes([]);}}
@@ -124,9 +125,9 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
   {preview?<section id={previewId} aria-label="Review selected profile decisions" className="space-y-3 border-t border-border bg-primary-subtle px-3 py-4 md:px-4">
    <Heading level={3}>Review {eligible.length} eligible, {skipped.length} left out</Heading>
    {skipped.length?<p className="text-sm text-warning-text leading-[22px]">{skipped.map(row=>row.learnerName+" ("+row.section+")").join(", ")}: a required document is missing.</p>:null}
-   {action==="VERIFY"?<label className="flex gap-2 text-sm"><Checkbox  checked={ack} disabled={busy} onChange={event=>setAck(event.target.checked)}/>
+   {action==="VERIFY"?<Label variant="choice" className="flex gap-2"><Checkbox  checked={ack} disabled={busy} onChange={event=>setAck(event.target.checked)}/>
     I have checked their documents another way (for example the college&apos;s own records).
-   </label>:null}
+   </Label>:null}
    <Button variant="primary" type="button" disabled={busy||guardedPending||eligible.length===0||action==="VERIFY"&&!ack}
      onClick={()=>void runGuarded(save)}>
     {busy?"Saving…":action==="VERIFY"?"Confirm verify selected":"Confirm send back selected"}

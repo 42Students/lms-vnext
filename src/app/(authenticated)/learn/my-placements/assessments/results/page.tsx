@@ -16,6 +16,7 @@ import {
 } from "@/modules/placements/learner-assessment-results-model";
 import { getOwnLearnerAssessmentResults } from "@/modules/placements/learner-assessment-results-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 const views: readonly { id: LearnerAssessmentResultsView; label: string }[] = [
   { id: "all", label: "All results" },
@@ -82,12 +83,12 @@ export default async function LearnerAssessmentResultsPage({
       <Tabs ariaLabel="Filter published assessment results" renderPanel={false} value={view} items={views.map(option=>({value:option.id,label:option.label,count:results.counts[option.id],href:href(option.id)}))}/>
       <form method="get" role="search" aria-label="Placement assessment results filters" className="flex min-w-0 flex-col items-stretch gap-2 border-b border-border pb-4 sm:flex-row sm:items-end sm:gap-[8px]">
         {view!=="all" ? <Input type="hidden" name="view" value={view}/> : null}
-        <label className="min-w-0 flex-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+        <Label className="min-w-0 flex-1">
           Search published results
           <Input type="search" name="q" defaultValue={q} maxLength={100}
             placeholder="Company, role or round"
             className="mt-1 min-h-11 md:min-h-[var(--lms-control-height)]"/>
-        </label>
+        </Label>
         <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]">
           Search
         </Button>

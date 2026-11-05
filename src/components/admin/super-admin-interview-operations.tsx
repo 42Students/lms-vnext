@@ -14,6 +14,7 @@ import {bookingConflicts,calendarMode,superAdminInterviewCsv,type SuperAdminCale
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 export function SuperAdminInterviewOperations({events,today,truncated=false}:{events:SuperAdminCalendarRound[];today:string;truncated?:boolean}){
  const [kind,setKind]=useState("ALL"),[status,setStatus]=useState("ALL");
  const [mode,setMode]=useState("ALL"),[department,setDepartment]=useState("ALL"),[conflictsOnly,setConflictsOnly]=useState(false);
@@ -50,12 +51,12 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
  const csv=useMemo(()=>superAdminInterviewCsv(exported),[exported]);
  const unique=(values:string[])=>[...new Set(values)].sort();
  const choices=(label:string,items:string[],value:string,change:(v:string)=>void)=>
-  <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">{label}
+  <Label stack className="min-w-0">{label}
    <Select className="min-h-11 md:min-h-9" value={value}
     onChange={e=>change(e.target.value)}>
     <option value="ALL">All</option>{items.map(i=><option key={i} value={i}>{i}</option>)}
    </Select>
-  </label>;
+  </Label>;
  const dateInIst=(iso:string)=>new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(iso));
  const inIst=(iso:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(iso));
  return <section aria-label="Interview operations" className="min-w-0 space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)]">
@@ -74,41 +75,41 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
   </dl>
   <div className="min-w-0 space-y-[var(--lms-space-3)] print:hidden">
    <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] sm:grid-cols-2">
-    <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-body">Type
+    <Label stack className="min-w-0">Type
       <Select value={kind} onChange={e=>{setKind(e.target.value);setPage(1);}} className="min-h-11 md:min-h-9">
        <option value="ALL">All types</option>
        {(["SCREENING","TECHNICAL","HR","MANAGERIAL","FINAL"] as const).map(type=><option key={type} value={type}>{type==="HR"?"HR":type.charAt(0)+type.slice(1).toLowerCase()}</option>)}
       </Select>
-     </label>
+     </Label>
     {choices("Status",unique(events.map(x=>x.status)),status,change(setStatus))}
    </div>
-   <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-body">Search candidates, jobs or companies
+   <Label stack className="min-w-0">Search candidates, jobs or companies
     <Input type="search" value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}}
      maxLength={120} placeholder="Search interviews" className="min-h-11 md:min-h-9"/>
-   </label>
+   </Label>
    <details className="min-w-0" open={mode!=="ALL"||department!=="ALL"||sort!=="DATE_ASC"||conflictsOnly}>
     <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Filters</summary>
     <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 lg:grid-cols-3">
-     <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-body">Mode
+     <Label stack className="min-w-0">Mode
        <Select value={mode} onChange={e=>{setMode(e.target.value);setPage(1);}} className="min-h-11 md:min-h-9">
         <option value="ALL">All modes</option>
         <option value="Virtual">Online</option>
         <option value="On campus">In-person</option>
        </Select>
-      </label>
+      </Label>
      {choices("Department",unique(events.map(x=>x.departmentName??"Not recorded")),department,change(setDepartment))}
-     <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-body">Sort by
+     <Label stack className="min-w-0">Sort by
        <Select value={sort} onChange={e=>{setSort(e.target.value);setPage(1);}} className="min-h-11 md:min-h-9">
         <option value="DATE_ASC">Date ↑ Earliest</option>
         <option value="DATE_DESC">Date ↓ Latest</option>
         <option value="JOB_TITLE">Job title</option>
         <option value="STATUS">Status</option>
        </Select>
-     </label>
-     <label className="flex min-h-11 items-center gap-2 text-sm text-body">
+     </Label>
+     <Label variant="choice" className="flex min-h-11 items-center gap-2">
       <Checkbox checked={conflictsOnly} onChange={e=>{setConflictsOnly(e.target.checked);setPage(1);}}/>
       Possible conflicts only
-     </label>
+     </Label>
     </div>
    </details>
    <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>{
@@ -175,11 +176,11 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
     <nav aria-label="Interview pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
      <p className="text-sm text-body">Showing {filtered.length?((currentPage-1)*pageSize+1):0}–{Math.min(currentPage*pageSize,filtered.length)} of {filtered.length} appointments</p>
      <div className="flex flex-wrap items-center gap-2">
-      <label className="text-sm text-body">Rows per page
+      <Label variant="choice">Rows per page
        <Select value={String(pageSize)} onChange={e=>{setPageSize(Number(e.target.value));setPage(1);}} className="ml-2 min-h-11 md:min-h-9">
         {[10,20,50,100].map(n=><option key={n} value={n}>{n}</option>)}
        </Select>
-      </label>
+      </Label>
       <Button type="button" variant="secondary" disabled={currentPage<=1} onClick={()=>setPage(n=>Math.max(1,n-1))}>Previous</Button>
       <span className="text-sm tabular-nums">{currentPage}/{totalPages}</span>
       <Button type="button" variant="secondary" disabled={currentPage>=totalPages} onClick={()=>setPage(n=>Math.min(totalPages,n+1))}>Next</Button>

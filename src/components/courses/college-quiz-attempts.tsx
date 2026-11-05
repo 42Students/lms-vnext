@@ -7,6 +7,8 @@ import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
 import {Disclosure} from "@/components/ui/disclosure";
 import {StatusBadge} from "@/components/ui/status-badge";
+import { Label } from "@/components/ui/label";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
 type Answer={id:string;promptSnapshot:string;questionType:string;pointsPossible:number;pointsAwarded:number;
@@ -33,9 +35,9 @@ function QuizAttemptsSkeleton(){
   <p className="sr-only">Loading quiz submissions…</p>
   <ul aria-hidden="true" className="divide-y divide-border">
    {Array.from({length:6},(_,index)=><li key={index} className="flex items-center justify-between gap-3 py-3">
-    <div className="grid flex-1 gap-2"><div className="h-4 w-36 animate-pulse rounded bg-border"/>
-     <div className="h-3 w-52 max-w-full animate-pulse rounded bg-border"/></div>
-    <div className="h-6 w-14 animate-pulse rounded bg-border"/>
+    <div className="grid flex-1 gap-2"><SkeletonBlock className="h-4 w-36" />
+     <SkeletonBlock className="h-3 w-52 max-w-full" /></div>
+    <SkeletonBlock className="h-6 w-14" />
    </li>)}
   </ul>
  </div>;
@@ -94,7 +96,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
   [item.learnerDisplayName??"",item.learnerRollNumber??"",item.learnerEmail??""]
     .some(value=>value.toLocaleLowerCase().includes(search)));
  return <div role="region" className="min-w-0 space-y-3" aria-label="Quiz submissions">
-  {options.length>1?<label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+  {options.length>1?<Label stack>
    Section
    <Select value={chosen?.deliveryId??""} disabled={loading} onChange={event=>{
     setDeliveryId(event.target.value);setPage(1);setLearnerSearch("");
@@ -104,7 +106,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
     </option>)}
    </Select>
    <span className="text-xs font-normal text-muted-foreground">View one authorized Section at a time.</span>
-  </label>:null}
+  </Label>:null}
   {error?<Alert tone="error" className="flex-row flex-wrap items-center gap-2">
    <span>{error}</span>
    <Button variant="secondary" type="button" onClick={()=>setRetryKey(value=>value+1)}>Retry</Button>
@@ -114,11 +116,11 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
    {page===1?"No submissions yet":"No further submissions on this page."}
   </p>:null}
   {!loading&&!error&&attempts.length>0?<>
-   <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+   <Label stack>
     Search submissions on this page
     <Input type="search" value={learnerSearch} onChange={event=>setLearnerSearch(event.target.value)}
      placeholder="Student name or roll" className="min-h-11 md:min-h-9"/>
-   </label>
+   </Label>
    {search&&visible.length===0?<p role="status" className="text-sm text-muted-foreground">No students match your search.</p>:null}
    <ul className="divide-y divide-border">
     {visible.map(item=><li key={item.id} className="min-w-0 py-3">

@@ -2,6 +2,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
+import { Label } from "@/components/ui/label";
 export function TpoCompanyTrustSwitch({companyId,initialTrusted,updatedAt}:{companyId:string;initialTrusted:boolean;updatedAt:string}){
  const router=useRouter(),pending=useRef(false);
  const [trusted,setTrusted]=useState(initialTrusted),[version,setVersion]=useState(updatedAt);
@@ -30,11 +31,11 @@ export function TpoCompanyTrustSwitch({companyId,initialTrusted,updatedAt}:{comp
   finally{window.clearTimeout(timer);pending.current=false;setBusy(false);}
  }
  return <div className="mt-4 space-y-2">
-  <label className="flex min-h-11 md:min-h-9 items-center gap-3 text-sm font-semibold">
+  <Label className="flex min-h-11 md:min-h-9 items-center gap-3">
    <Checkbox checked={trusted} disabled={busy}
     onChange={()=>void toggle()} aria-label="Trusted company"/>
    Trusted
-  </label>
+  </Label>
   <p className="text-xs text-muted-foreground">Trust is a college decision, not platform verification. Direct publishing also requires an active recruiter grant and college policy approval.</p>
   {message?<p role={message.startsWith("Couldn't")?"alert":"status"} className="text-sm">{message}</p>:null}
  </div>;

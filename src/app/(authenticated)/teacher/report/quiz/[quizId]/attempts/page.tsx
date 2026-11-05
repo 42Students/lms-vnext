@@ -13,6 +13,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { facultyQuizAttemptsQuerySchema,facultyQuizAttemptSearchSchema,facultyQuizAttemptsHref } from "@/modules/courses/faculty-quiz-attempts-model";
 import { getFacultyQuizAttemptDrilldown } from "@/modules/courses/faculty-quiz-attempts-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Query={deliveryId?:string|string[];page?:string|string[];order?:string|string[];q?:string|string[];view?:string|string[]};
 export default async function FacultyQuizAttemptPage({
@@ -86,11 +87,11 @@ export default async function FacultyQuizAttemptPage({
       <Input type="hidden" name="deliveryId" value={data.query.deliveryId} />
       {data.query.order!=="NEWEST"?<Input type="hidden" name="order" value={data.query.order}/>:null}
       {data.query.view!=="ALL"?<Input type="hidden" name="view" value={data.query.view}/>:null}
-      <label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <Label stack className="min-w-0 w-full">
         Search learner attempts
         <Input type="search" name="q" defaultValue={data.query.q} maxLength={120}
           placeholder="Learner Name" className="min-h-11 md:min-h-[var(--lms-control-height)] w-full max-md:text-[16px]" />
-      </label>
+      </Label>
       <Button type="submit" variant="primary" className="w-full sm:w-auto">Search</Button>
       <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,data.query.order,"",data.query.view)}
         className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)] focus-ring hover:text-[var(--lms-primary-text)]">Clear</Link>

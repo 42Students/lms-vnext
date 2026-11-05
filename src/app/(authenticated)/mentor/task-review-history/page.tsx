@@ -15,6 +15,7 @@ import {
 } from "@/modules/projects/mentor-task-history-model";
 import { getMentorTaskReviewHistory } from "@/modules/projects/mentor-task-history-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Params={decision?:string|string[];priority?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
@@ -51,38 +52,38 @@ export default async function MentorTaskReviewHistoryPage({
     </section> : <>
       <FilterBar title="Filters" activeCount={Number(Boolean(data.query.search))+Number(data.query.decision!=="ALL")+Number(data.query.priority!=="ALL")+Number(data.query.order!=="NEWEST")}><form role="search" aria-label="mentor task review history filters" action="/mentor/task-review-history" method="get"
         className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Task or project
+        <Label stack>Task or project
           <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
             className="min-h-11 md:min-h-9" />
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Decision
+        </Label>
+        <Label stack>Decision
           <Select name="decision" defaultValue={data.query.decision}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All reviews</option>
             <option value="APPROVED">Approved</option>
             <option value="CHANGES_REQUESTED">Changes requested</option>
           </Select>
-        </label>
+        </Label>
         <div className="flex min-w-0 flex-wrap items-center gap-2 md:col-span-1">
           <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
           {hasFilters?<Link href="/mentor/task-review-history" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-ring lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
         </div>
         <Disclosure title="More review history filters" defaultOpen={hasAdvancedFilters} className="md:col-span-3" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2">
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Task priority
+        <Label stack>Task priority
           <Select name="priority" defaultValue={data.query.priority}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All priorities</option><option value="LOW">Low</option>
             <option value="MEDIUM">Medium</option><option value="HIGH">High</option>
             <option value="CRITICAL">Critical</option>
           </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Review chronology
+        </Label>
+        <Label stack>Review chronology
           <Select name="order" defaultValue={data.query.order}
             className="min-h-11 md:min-h-9">
             <option value="NEWEST">Most recently reviewed</option>
             <option value="OLDEST">Earliest reviewed first</option>
           </Select>
-        </label>
+        </Label>
         </Disclosure>
 
       </form></FilterBar>

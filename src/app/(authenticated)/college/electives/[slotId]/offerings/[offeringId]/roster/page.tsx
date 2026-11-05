@@ -26,6 +26,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 const uuid = z.string().uuid();
 const ROSTER_PAGE_SIZE = 50;
@@ -243,17 +244,17 @@ export default async function ElectiveRoster({
     {archived && <Alert tone="warning" role="status">Archived offerings are read-only. The roster remains visible for reference.</Alert>}
     <section id="allocate" className="min-w-0 scroll-mt-24 space-y-[var(--lms-space-3)]" aria-label="Elective offering roster">
       <form method="get" className="flex min-w-0 flex-wrap items-end gap-3">
-        <label className="min-w-0 flex-1 text-sm font-semibold">Search students
+        <Label className="min-w-0 flex-1">Search students
           <Input name="q" defaultValue={search} placeholder="Search students" maxLength={100} className="mt-1 w-full min-w-0" />
-        </label>
-        <label className="text-sm font-semibold">State
+        </Label>
+        <Label>State
           <Select name="state" defaultValue={state} className="mt-1 min-w-36">
             <option value="ACTIVE">Enrolled</option>
             <option value="WAITLISTED">Waitlisted</option>
             <option value="REMOVED">Removed</option>
             <option value="ALL">All</option>
           </Select>
-        </label>
+        </Label>
         <Button type="submit" variant="secondary">Search</Button>
         <Link href={back} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Refresh / Reset</Link>
         <TextLink href={"data:text/csv;charset=utf-8," + encodeURIComponent("\uFEFF" + csv)}
@@ -296,17 +297,17 @@ export default async function ElectiveRoster({
                     {targets.map(target => <option key={target.offeringId} value={target.offeringId}>
                       {target.courseName} ({target.courseCode})</option>)}
                   </Select>
-                  <label className="inline-flex min-h-11 items-center gap-2">
+                  <Label variant="choice" className="inline-flex min-h-11 items-center gap-2">
                     <Checkbox name="confirm" value="yes" required /> Confirm
-                  </label>
+                  </Label>
                   <Button type="submit" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">Move</Button>
                 </form>}
                 <form action={mutate} className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:items-center">
                   <Input type="hidden" name="action" value="REMOVE" />
                   <Input type="hidden" name="membershipId" value={member.membershipId} />
-                  <label className="inline-flex min-h-11 items-center gap-2">
+                  <Label variant="choice" className="inline-flex min-h-11 items-center gap-2">
                     <Checkbox name="confirm" value="yes" required aria-label={"Confirm removal of "+(member.displayName??"this student")} /> Confirm removal
-                  </label>
+                  </Label>
                   <Button type="submit" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">Remove</Button>
                 </form>
               </div> : "—" },
@@ -328,38 +329,38 @@ export default async function ElectiveRoster({
       </div>)}
       {!archived && <form action={changeFaculty} className="grid min-w-0 items-end gap-[var(--lms-space-3)] rounded border border-border p-3 md:grid-cols-2">
         <Input type="hidden" name="action" value="PLAN"/>
-        <label className="grid min-w-0 gap-2 text-sm font-semibold">Primary faculty
+        <Label stack className="min-w-0">Primary faculty
           <Select name="primaryMembershipId" className="min-w-0 w-full" defaultValue="">
             <option value="">Keep current primary</option>
             {faculty.map(item=><option key={item.id} value={item.id}>{item.name??item.id}</option>)}
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-2 text-sm font-semibold">Co-teacher
+        </Label>
+        <Label stack className="min-w-0">Co-teacher
           <Select name="coTeacherMembershipId" className="min-w-0 w-full" defaultValue="">
             <option value="">No additional co-teacher</option>
             {faculty.map(item=><option key={item.id} value={item.id}>{item.name??item.id}</option>)}
           </Select>
-        </label>
-        <label className="inline-flex min-h-11 items-center gap-2 text-sm">
+        </Label>
+        <Label variant="choice" className="inline-flex min-h-11 items-center gap-2">
           <Checkbox name="confirm" value="yes" required /> Confirm faculty selection
-        </label>
+        </Label>
         <Button type="submit" disabled={faculty.length===0} className="min-h-11 w-full md:min-h-9">Save faculty selection</Button>
         <p className="col-span-full text-xs text-muted-foreground">Existing faculty remain assigned. End an existing primary before choosing another. The two assignments are checked separately; refresh if one fails.</p>
       </form>}
       {!archived && <form action={changeFaculty} className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
         <Input type="hidden" name="action" value="ASSIGN" />
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] max-md:w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty
+        <Label stack className="min-w-0 max-md:w-full">Faculty
           <Select name="membershipId" required defaultValue="" className="w-full max-w-full">
             <option value="" disabled>Choose faculty</option>
             {faculty.map(item => <option key={item.id} value={item.id}>{item.name ?? item.id}</option>)}
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] max-md:w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
+        </Label>
+        <Label stack className="min-w-0 max-md:w-full">Role
           <Select name="role" className="w-full max-w-full">
             <option value="PRIMARY">Primary</option>
             <option value="CO_TEACHER">Co-Teacher</option>
           </Select>
-        </label>
+        </Label>
         <Button type="submit" disabled={faculty.length === 0} className="min-h-11 w-full md:min-h-9 md:w-auto">
           Assign faculty
         </Button>

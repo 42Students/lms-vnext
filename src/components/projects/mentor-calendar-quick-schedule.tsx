@@ -14,6 +14,7 @@ import {mentorQuickGoogleScheduleFeedback} from
  "@/modules/projects/mentor-quick-google-schedule-feedback";
 import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 type Choice={id:string;title:string;updatedAt:string;
   sprints:readonly {id:string;title:string;sequence:number;status:string}[]};
@@ -124,13 +125,13 @@ export function MentorCalendarQuickSchedule({projects,googleConnected}:{
       onOpenChange={next=>{if(!pending)setOpen(next);}}
       description="Choose an assigned project and IST time. Add a real join link, save a draft, or create a Google Meet in one action when consent is saved.">
       <form onSubmit={submit} className="prototype-mentor-calendar-quick-form">
-        <label>Team or project
+        <Label>Team or project
           <Select value={selected} onChange={event=>{setSelected(event.target.value);setLinkedSprintId("");}}
             disabled={pending} required>
             {projects.map(row=><option key={row.id} value={row.id}>{row.title}</option>)}
           </Select>
-        </label>
-        <label>Meeting type
+        </Label>
+        <Label>Meeting type
           <Select value={meetingType} disabled={pending}
             onChange={event=>setMeetingType(event.target.value as MeetingType)}>
             <option value="GENERAL">General</option>
@@ -139,8 +140,8 @@ export function MentorCalendarQuickSchedule({projects,googleConnected}:{
             <option value="REVIEW">Sprint review</option>
             <option value="RETRO">Retrospective</option>
           </Select>
-        </label>
-        <label>Linked sprint (optional)
+        </Label>
+        <Label>Linked sprint (optional)
           <Select value={linkedSprintId} disabled={pending}
             onChange={event=>setLinkedSprintId(event.target.value)}>
             <option value="">No linked sprint</option>
@@ -148,44 +149,44 @@ export function MentorCalendarQuickSchedule({projects,googleConnected}:{
               Sprint {item.sequence} · {item.title} ({item.status.toLowerCase()})
             </option>)}
           </Select>
-        </label>
-        <label>Meeting title
+        </Label>
+        <Label>Meeting title
           <Input required value={title} maxLength={200} disabled={pending}
             onChange={event=>setTitle(event.target.value)} placeholder="Weekly sprint review"/>
-        </label>
-        <label>Agenda
+        </Label>
+        <Label>Agenda
           <Textarea value={agenda} maxLength={4000} disabled={pending}
             onChange={event=>setAgenda(event.target.value)}
             rows={2} placeholder="What should the team discuss?"/>
-        </label>
+        </Label>
         <div className="prototype-mentor-calendar-quick-dates">
-          <label>Starts (IST)
+          <Label>Starts (IST)
             <Input required type="datetime-local" value={start} disabled={pending}
               onChange={event=>setStart(event.target.value)}/>
-          </label>
-          <label>Ends (IST)
+          </Label>
+          <Label>Ends (IST)
             <Input required type="datetime-local" value={end} disabled={pending}
               onChange={event=>setEnd(event.target.value)}/>
-          </label>
+          </Label>
         </div>
-        <label>Meeting link (optional for in-person or draft meetings)
+        <Label>Meeting link (optional for in-person or draft meetings)
           <Input value={meetingUrl} type="url" maxLength={500} disabled={pending}
             onChange={event=>setMeetingUrl(event.target.value)}
             placeholder="https://meet.google.com/…"/>
-        </label>
-        <label>Physical venue (optional for an online meeting)
+        </Label>
+        <Label>Physical venue (optional for an online meeting)
           <Input value={venue} type="text" maxLength={200} disabled={pending}
             onChange={event=>setVenue(event.target.value)}
             placeholder="Lab 2, Room 304"/>
-        </label>
+        </Label>
         {!meetingUrl.trim()&&!venue.trim()&&googleConnected?
           <div className="space-y-2 rounded border border-border p-3">
-            <label className="flex min-h-11 items-center gap-2 text-sm">
+            <Label variant="choice" className="flex min-h-11 items-center gap-2">
               <Checkbox className="size-5" checked={useGoogle}
                 disabled={pending} onChange={event=>setUseGoogle(event.target.checked)}/>
               Generate a Google Meet link and invite the active team on save
-            </label>
-            {useGoogle?<label className="block text-sm">Repeat on Google Calendar
+            </Label>
+            {useGoogle?<Label variant="choice" className="block">Repeat on Google Calendar
               <Select className="ml-2 min-h-11 rounded border border-border bg-background p-2"
                 value={repeat} disabled={pending}
                 onChange={event=>setRepeat(event.target.value as "once"|"4"|"8")}>
@@ -193,7 +194,7 @@ export function MentorCalendarQuickSchedule({projects,googleConnected}:{
                 <option value="4">Weekly × 4</option>
                 <option value="8">Weekly × 8</option>
               </Select>
-            </label>:null}
+            </Label>:null}
             <p className="text-xs text-muted-foreground">
               Saved consent is not proof of a live grant. Google creates the event
               only after the draft is saved. If sync fails, the draft remains

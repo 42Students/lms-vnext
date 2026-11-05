@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 type LearnerChoice = { membershipId: string; displayName: string; rollNumber: string };
 type LearnerPage = { learners: LearnerChoice[]; hasMore: boolean; nextOffset: number | null };
@@ -99,15 +100,15 @@ export function ProjectLearnerPicker({ collegeId, selected, onChange, disabled =
     </div> : null}
     <div tabIndex={0} aria-label="College learner search results"
       className="max-h-52 divide-y divide-border overflow-y-auto border-y border-border">
-      {rows.map(item => <label key={item.membershipId}
-        className="flex min-h-11 min-w-0 items-center gap-2 py-2 text-sm text-body">
+      {rows.map(item => <Label variant="choice" key={item.membershipId}
+        className="flex min-h-11 min-w-0 items-center gap-2 py-2">
         <Checkbox checked={selected.includes(item.membershipId)}
           disabled={disabled || (selected.length >= 500 && !selected.includes(item.membershipId))}
           onChange={event => toggle(item.membershipId, event.target.checked)} />
         <span className="min-w-0 break-words">{item.displayName}
           {item.rollNumber ? " · " + item.rollNumber : ""}
         </span>
-      </label>)}
+      </Label>)}
       {loading ? <p role="status" className="px-2 py-3 text-sm text-body">Searching learners…</p> : null}
       {!loading && !rows.length && !error ? <p className="px-2 py-3 text-sm text-body">
         No learners match this search.

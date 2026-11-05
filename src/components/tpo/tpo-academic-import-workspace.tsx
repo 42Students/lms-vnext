@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { parseTpoAcademicImportCsv,parseTpoLegacyAcademicImportCsv,
   type TpoLegacyAcademicStagingRow } from "@/modules/placements/tpo-academic-preview-import-model";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type AcademicRow = ReturnType<typeof parseTpoAcademicImportCsv>[number];
 type AcademicWriteRow={
@@ -194,12 +195,12 @@ export function TpoAcademicImportWorkspace() {
       </ButtonLink>
       <FileUpload className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Drop a CSV or XLSX file here, or click to choose" accept=".csv,.xlsx,text/csv" maxBytes={10_000_000}
          disabled={busy} onFiles={files => void upload(files?.[0] ?? null)}/>
-      <details className="border-t border-border pt-3 print:hidden"><summary className="min-h-11 cursor-pointer py-3 text-[13px] font-semibold md:min-h-9">Or paste CSV rows</summary><label className="block min-w-0 text-[13px] font-semibold leading-4">Or paste CSV rows
+      <details className="border-t border-border pt-3 print:hidden"><summary className="min-h-11 cursor-pointer py-3 text-[13px] font-semibold md:min-h-9">Or paste CSV rows</summary><Label className="block min-w-0">Or paste CSV rows
         <Textarea value={csv} onChange={event => {
           setCsv(event.target.value); setPreview(null); setError(""); setNotice("");
         }} rows={5} maxLength={5_000_000}
           className="mt-1.5 min-h-32 w-full min-w-0 font-mono text-sm" />
-      </label></details>
+      </Label></details>
       <Button variant="secondary" loading={busy} className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" disabled={busy} type="button" onClick={() => void validate()}
         >
         {busy ? "Checking…" : "Preview import"}
@@ -233,18 +234,18 @@ export function TpoAcademicImportWorkspace() {
               {"issue" in row && typeof row.issue==="string"?<span className="block text-xs text-error">{row.issue}</span>:null}
             </span>},
           ]}/>
-        <label className="flex min-h-11 items-center gap-2 text-sm print:hidden">
+        <Label variant="choice" className="flex min-h-11 items-center gap-2 print:hidden">
           <Checkbox disabled={busy} checked={preview.filter(row => row.match === "WILL_UPDATE")
             .every(row => !excluded.includes(row.studentCode))}
             onChange={event => setExcluded(event.target.checked
               ? preview.filter(row => row.match !== "WILL_UPDATE").map(row => row.studentCode)
               : preview.map(row => row.studentCode))} />
           Select all matched students
-        </label>
-        {unresolved?<label className="flex min-h-11 items-center gap-2 text-sm">
+        </Label>
+        {unresolved?<Label variant="choice" className="flex min-h-11 items-center gap-2">
           <Checkbox checked={skipAcknowledged} disabled={busy} onChange={event=>setSkipAcknowledged(event.target.checked)}/>
           I reviewed the unmatched students and agree to skip those rows ({preview.filter(row=>row.match==="CANT_MATCH").length}).
-        </label>:null}
+        </Label>:null}
         <Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" disabled={busy || (unresolved&&!skipAcknowledged) || preview.every(row => excluded.includes(row.studentCode))}
           onClick={() => setConfirmOpen(true)}
           >

@@ -14,6 +14,7 @@ import {
 } from "@/components/courses/learner-assessment-overview";
 import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 type AssignmentSearchParams = { course?: string | string[]; page?:string|string[] };
 
@@ -28,8 +29,8 @@ function AssignmentsLoading() {
       <ul className="space-y-3" aria-hidden="true">
         {Array.from({ length: 5 }, (_, index) => (
           <li key={index} className="rounded-lg border border-border p-4">
-            <div className="h-5 w-2/5 animate-pulse rounded bg-muted" />
-            <div className="mt-3 h-4 w-3/5 animate-pulse rounded bg-muted" />
+            <SkeletonBlock className="h-5 w-2/5" />
+            <SkeletonBlock className="mt-3 h-4 w-3/5" />
           </li>
         ))}
       </ul>

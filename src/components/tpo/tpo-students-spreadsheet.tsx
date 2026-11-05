@@ -27,6 +27,7 @@ import type {TpoFilterField} from "./tpo-grid-filter-panel";
 import {TpoAfterCollegeEditor} from "./tpo-after-college-editor";
 import { TpoAfterCollegeBulkEditor } from "./tpo-after-college-bulk-editor";
 import {AFTER_COLLEGE_OUTCOMES,AFTER_COLLEGE_LABELS,afterCollegeDisplay,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
+import { Label } from "@/components/ui/label";
 
 /** Spreadsheet viewport is browser-only; authorization and export remain with the page. */
 const TpoGrid = dynamic<TpoSpreadsheetGridProps<TpoStudentRow>>(
@@ -253,29 +254,29 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   {downloadError?<p role="alert" className="text-xs text-error leading-[20px]">{downloadError}</p>:null}
   <Disclosure title="Bulk Add a note" className="border-y border-border py-3 [&>summary]:font-semibold">
    <p className="mt-2 text-xs text-muted-foreground leading-[20px]">Choose up to 100 students on this visible roster page; no student is added outside your current filtered page.</p>
-   <label className="mt-3 flex min-h-11 items-center gap-2 text-sm"><Checkbox 
+   <Label variant="choice" className="mt-3 flex min-h-11 items-center gap-2"><Checkbox 
      checked={rows.length>0&&rows.every(r=>noteSelection.includes(r.membershipId))}
      indeterminate={rows.some(r=>noteSelection.includes(r.membershipId))&&
       !rows.every(r=>noteSelection.includes(r.membershipId))}
-     onChange={e=>setNoteSelection(e.target.checked?rows.slice(0,100).map(r=>r.membershipId):[])} />Select visible page</label>
+     onChange={e=>setNoteSelection(e.target.checked?rows.slice(0,100).map(r=>r.membershipId):[])} />Select visible page</Label>
    <div className="my-3 grid max-h-44 min-w-0 grid-cols-1 gap-2 overflow-y-auto overscroll-contain md:grid-cols-2 xl:grid-cols-3">
-    {rows.map(row=><label className="flex min-h-11 min-w-0 items-center gap-2 break-words text-sm" key={row.membershipId}>
+    {rows.map(row=><Label variant="choice" className="flex min-h-11 min-w-0 items-center gap-2 break-words" key={row.membershipId}>
      <Checkbox  checked={noteSelection.includes(row.membershipId)}
        disabled={!noteSelection.includes(row.membershipId)&&noteEligibleIds.length>=100}
        onChange={e=>setNoteSelection(ids=>e.target.checked?[...ids,row.membershipId]:ids.filter(id=>id!==row.membershipId))}/>
-     {row.displayName}</label>)}
+     {row.displayName}</Label>)}
    </div>
    <p className="text-sm leading-[22px]">{noteEligibleIds.length} selected on this page (maximum 100)</p>
    <TpoStudentNoteEditor membershipIds={noteEligibleIds} afterSave={()=>setNoteSelection([])}/>
   </Disclosure>
-  <label className="flex min-h-11 min-w-0 flex-wrap items-center gap-3 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort visible roster page
+  <Label className="flex min-h-11 min-w-0 flex-wrap items-center gap-3">Sort visible roster page
    <Select value={pageSort} onChange={e=>setPageSort(e.target.value as typeof pageSort)}
     >
     <option value="NAME">Name</option><option value="APPLICATIONS_DESC">Applications · most</option>
     <option value="APPLICATIONS_ASC">Applications · fewest</option>
     <option value="OFFERS_DESC">Offers · most</option><option value="OFFERS_ASC">Offers · fewest</option>
    </Select>
-  </label>
+  </Label>
   <div className="grid min-w-0 items-start gap-4 xl:grid-cols-[minmax(0,1fr)_300px]" data-testid="tpo.students.prototype-roster">
   <GridWorkspace rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
   defaultVisibleKeys={legacyVisibleColumns}

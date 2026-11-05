@@ -11,6 +11,7 @@ import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 import { useProjectEditorDiscardGuard } from "./project-editor-discard-guard";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type MeetingRow = {
   id: string;status:string;title:string;agenda:string|null;
@@ -184,17 +185,17 @@ export function ProjectMeetingPlanEditor({ projectId, meetingsToken, meetings, s
         <legend className="text-sm font-semibold text-foreground">
           {row.title || "Meeting " + (index + 1)}
         </legend>
-        <label className="block text-[13px] font-semibold text-body">Title
+        <Label className="block">Title
           <Input className="mt-1" required maxLength={200} value={row.title}
             aria-invalid={!row.title.trim()} placeholder="e.g. Weekly sync"
             onChange={event => update(row.id, "title", event.target.value)} />
-        </label>
+        </Label>
         <div className="grid min-w-0 gap-3 md:grid-cols-2">
-          <label className="text-[13px] font-semibold text-body">Meeting key
+          <Label>Meeting key
             <Input className="mt-1" maxLength={120} value={row.key}
               onChange={event=>update(row.id,"key",event.target.value)}/>
-          </label>
-          <label className="text-[13px] font-semibold text-body">Ceremony
+          </Label>
+          <Label>Ceremony
             <Select className="mt-1" value={row.meetingType}
               onChange={event=>update(row.id,"meetingType",event.target.value)}>
               <option value="GENERAL">General</option>
@@ -203,47 +204,47 @@ export function ProjectMeetingPlanEditor({ projectId, meetingsToken, meetings, s
               <option value="REVIEW">Review</option>
               <option value="RETRO">Retrospective</option>
             </Select>
-          </label>
+          </Label>
         </div>
-        <label className="block text-[13px] font-semibold text-body">Meeting URL
+        <Label className="block">Meeting URL
           <Input className="mt-1" type="url" maxLength={2048} value={row.meetingUrl??""}
             placeholder="https://…" onChange={event=>update(row.id,"meetingUrl",event.target.value||null)}/>
-        </label>
-        <label className="block text-[13px] font-semibold text-body">Notes
+        </Label>
+        <Label className="block">Notes
           <Textarea className="mt-1" maxLength={4000} value={row.notes??""}
             onChange={event=>update(row.id,"notes",event.target.value||null)}/>
-        </label>
-        <label className="block text-[13px] font-semibold text-body">Agenda (optional)
+        </Label>
+        <Label className="block">Agenda (optional)
           <Textarea className="mt-1" maxLength={4000} value={row.agenda ?? ""}
             placeholder="What this meeting covers"
             onChange={event => update(row.id, "agenda", event.target.value || null)} />
-        </label>
+        </Label>
         <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-          <label className="block text-[13px] font-semibold text-body">Date · IST
+          <Label className="block">Date · IST
             <Input className="mt-1" type="date" required
               value={row.startsAt.slice(0,10)}
               onChange={event=>changeTimePart(row.id,"startsAt","date",event.target.value)}/>
-          </label>
-          <label className="block text-[13px] font-semibold text-body">Start time · IST
+          </Label>
+          <Label className="block">Start time · IST
             <Input className="mt-1" type="time" required value={row.startsAt.slice(11,16)}
               onChange={event=>changeTimePart(row.id,"startsAt","time",event.target.value)}/>
-          </label>
-          <label className="block text-[13px] font-semibold text-body">End date · IST
+          </Label>
+          <Label className="block">End date · IST
             <Input className="mt-1" type="date" required value={row.endsAt.slice(0,10)}
               onChange={event=>changeTimePart(row.id,"endsAt","date",event.target.value)}/>
-          </label>
-          <label className="block text-[13px] font-semibold text-body">End time · IST
+          </Label>
+          <Label className="block">End time · IST
             <Input className="mt-1" type="time" required value={row.endsAt.slice(11,16)}
               onChange={event=>changeTimePart(row.id,"endsAt","time",event.target.value)}/>
-          </label>
-          <label className="block text-[13px] font-semibold text-body">Linked sprint
+          </Label>
+          <Label className="block">Linked sprint
             <Select className="mt-1" value={row.linkedSprintId ?? ""}
               onChange={event => update(row.id, "linkedSprintId", event.target.value || null)}>
               <option value="">No sprint</option>
               {sprints.map(sprint => <option key={sprint.id} value={sprint.id}>{sprint.title}</option>)}
             </Select>
-          </label>
-          <label className="block text-[13px] font-semibold text-body">Linked task
+          </Label>
+          <Label className="block">Linked task
             <Select className="mt-1" value={row.linkedTaskId ?? ""}
               onChange={event => update(row.id, "linkedTaskId", event.target.value || null)}>
               <option value="">No task</option>
@@ -253,7 +254,7 @@ export function ProjectMeetingPlanEditor({ projectId, meetingsToken, meetings, s
                 (!row.linkedSprintId || task.sprintId === row.linkedSprintId))
                 ? <option value={row.linkedTaskId} disabled>Unavailable task</option> : null}
             </Select>
-          </label>
+          </Label>
         </div>
         <Button size="sm" variant="ghost"
           disabled={pending || JSON.stringify(row) === JSON.stringify(baseline[index])}

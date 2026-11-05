@@ -17,6 +17,8 @@ import { useToast } from "@/components/ui/toast";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 function employerWebsiteHost(url:string|null){
  if(!url)return null;
@@ -447,7 +449,7 @@ export function PlacementEmployerRelationships({
                   History
                 </Button>
                 <div className="grid min-w-0 gap-3">
-                  <label>
+                  <Label>
                     <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
                       Relationship owner
                     </span>
@@ -494,9 +496,9 @@ export function PlacementEmployerRelationships({
                         </option>
                       ))}
                     </Select>
-                  </label>
+                  </Label>
 
-                  <label className="flex items-center gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+                  <Label className="flex items-center gap-[6px]">
                     <Checkbox
                       disabled={busy||item.companyStatus==="ARCHIVED"||item.relationshipStatus==="ARCHIVED"}
                       checked={draft.isTrusted}
@@ -516,7 +518,7 @@ export function PlacementEmployerRelationships({
                       }
                     />
                     Trusted employer relationship
-                  </label>
+                  </Label>
                 </div>
 
                 <div className="flex min-w-0 flex-wrap gap-2 border-t border-[var(--lms-canvas-border)] pt-3">
@@ -574,7 +576,7 @@ export function PlacementEmployerRelationships({
           <div role="status" aria-live="polite" className="space-y-3">
             <p className="text-sm text-body">Loading company history…</p>
             {[0, 1, 2].map((row) => (
-              <div key={row} aria-hidden="true" className="h-10 animate-pulse rounded-[var(--lms-control-radius)] bg-[var(--lms-neutral-50)]" />
+              <SkeletonBlock key={row} className="h-10" />
             ))}
           </div>
         ) : historyError ? (
@@ -660,31 +662,31 @@ export function PlacementEmployerRelationships({
               {historyEditing ? (
                 <form className="grid min-w-0 gap-3 sm:grid-cols-2"
                   onSubmit={(event) => { event.preventDefault(); void saveHistoryContact(); }}>
-                  <label className="grid min-w-0 gap-1 font-semibold text-body">
+                  <Label stack className="min-w-0">
                     Contact person
                     <Input value={historyDraft.contactPersonName} maxLength={150}
                       disabled={historySaving} placeholder="Recruiter contact name"
                       onChange={(event) => setHistoryDraft((current) => ({
                         ...current, contactPersonName: event.target.value,
                       }))} />
-                  </label>
-                  <label className="grid min-w-0 gap-1 font-semibold text-body">
+                  </Label>
+                  <Label stack className="min-w-0">
                     Contact email
                     <Input type="email" value={historyDraft.contactEmail} maxLength={150}
                       disabled={historySaving} placeholder="recruiter@company.com"
                       onChange={(event) => setHistoryDraft((current) => ({
                         ...current, contactEmail: event.target.value,
                       }))} />
-                  </label>
-                  <label className="grid min-w-0 gap-1 font-semibold text-body">
+                  </Label>
+                  <Label stack className="min-w-0">
                     Contact phone
                     <Input type="tel" value={historyDraft.contactPhone} maxLength={30}
                       disabled={historySaving} placeholder="Contact phone"
                       onChange={(event) => setHistoryDraft((current) => ({
                         ...current, contactPhone: event.target.value,
                       }))} />
-                  </label>
-                  <label className="grid min-w-0 gap-1 font-semibold text-body sm:col-span-2">
+                  </Label>
+                  <Label stack className="min-w-0 sm:col-span-2">
                     Internal notes
                     <span className="font-normal text-xs text-muted-foreground">
                       Visible only to your placement team, not to students.
@@ -697,7 +699,7 @@ export function PlacementEmployerRelationships({
                     <span className="text-right font-normal text-xs text-muted-foreground">
                       {historyDraft.internalNotes.length}/2000
                     </span>
-                  </label>
+                  </Label>
                   {historySaveError ? (
                     <p role="alert" className="text-sm text-error sm:col-span-2">
                       Company was not saved. {historySaveError}

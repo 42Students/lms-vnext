@@ -35,6 +35,7 @@ import {
 } from "@/modules/attendance/faculty-grid-model";
 import {SegmentedControl} from "@/components/ui/segmented-control";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Course = {
   deliveryId: string;
@@ -690,7 +691,7 @@ export function FacultyAttendanceWorkspace({
                 >
                   <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
                 </Button>
-                <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                <Label stack className="min-w-0">
                   <span className="sr-only">Jump to month</span>
                   <Input
                     aria-label="Jump to month"
@@ -702,7 +703,7 @@ export function FacultyAttendanceWorkspace({
                       if (/^\d{4}-(0[1-9]|1[0-2])$/.test(next)) setMonth(next);
                     }}
                   />
-                </label>
+                </Label>
                 <Button
                   size="md"
                   variant="secondary"
@@ -948,11 +949,11 @@ export function FacultyAttendanceWorkspace({
         <>
           {dateSessions.length === 0 ? (
             <div className="space-y-3">
-              <label className="block max-w-xs text-[13px] font-semibold text-muted-foreground">
+              <Label className="block max-w-xs">
                 Select Date
                 <Input type="date" aria-label="Select Date" className="mt-[6px] w-full" value={selectedDate}
                   onChange={event => chooseDate(event.target.value)} />
-              </label>
+              </Label>
               <EmptyState title="No class scheduled for this date"
                 description="Use Schedule Class to create a class session before marking attendance." />
               <Button type="button" variant="secondary" onClick={openScheduleDrawer}>Schedule Class</Button>
@@ -961,14 +962,14 @@ export function FacultyAttendanceWorkspace({
             <section className="take-attendance-panel border-b border-border pb-4">
               <div className="take-attendance-panel__header grid min-w-0 gap-[var(--lms-space-4)] lg:grid-cols-[minmax(16rem,24rem)_1fr]">
                 <div>
-                  <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                  <Label className="block">
                     Date
                     <Input type="date" aria-label="Select Date" className="mt-[6px]" value={selectedDate}
                       onChange={event=>chooseDate(event.target.value)}/>
-                  </label>
-                  <label htmlFor={sessionSelectId} className="mt-3 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                  </Label>
+                  <Label htmlFor={sessionSelectId} className="mt-3 block">
                     Class Start Time
-                  </label>
+                  </Label>
                   <Select
                     aria-label="Select Class"
                     id={sessionSelectId}
@@ -1151,7 +1152,7 @@ export function FacultyAttendanceWorkspace({
               </div>
 
               {selectedSession?.attendanceStatus==="MARKED"?(
-                <label className="mt-4 block space-y-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+                <Label className="mt-4 block space-y-2">
                   Correction explanation (required)
                   <Textarea value={correctionReason} maxLength={500} rows={3}
                     className="w-full text-[var(--lms-font-base)] font-normal"
@@ -1160,7 +1161,7 @@ export function FacultyAttendanceWorkspace({
                   <span className="block text-xs font-normal text-muted-foreground">
                     This explanation is retained in the activity audit without learner names.
                   </span>
-                </label>
+                </Label>
               ):null}
               {selectedSession?.attendanceStatus === "MARKED" ? (
                 <p role="status" className="mt-3 text-sm text-muted-foreground">
@@ -1356,7 +1357,7 @@ export function FacultyAttendanceWorkspace({
           onSubmit={createSession}
           className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)]"
         >
-          <label className="grid min-w-0 gap-2 font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0 md:col-span-2">
             Class title
             <Input
               className="w-full"
@@ -1369,29 +1370,29 @@ export function FacultyAttendanceWorkspace({
               maxLength={200}
               placeholder={workspace.course.courseName}
             />
-          </label>
-          <label className="grid min-w-0 gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0">
             Date
             <Input type="date" className="w-full" required
               value={startsAt.split("T")[0] || selectedDate}
               onChange={event => setScheduleWallTimes(
                 event.target.value, startsAt.split("T")[1] || "", endsAt.split("T")[1] || "",
               )}/>
-          </label>
+          </Label>
           <p className="text-xs font-normal text-muted-foreground md:col-span-2">Past dates remain selectable for checking your schedule, but class creation follows the server booking policy: the start time cannot be more than five minutes in the past unless the college has configured a different grace period.</p>
-          <label className="grid min-w-0 gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0">
             Course
             <Input className="w-full" value={workspace.course.courseName} disabled readOnly/>
-          </label>
-          <label className="grid min-w-0 gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0">
             Start Time (IST)
             <Input type="time" lang="en-US" className="w-full" required
               value={startsAt.split("T")[1] || ""}
               onChange={event => setScheduleWallTimes(
                 startsAt.split("T")[0] || selectedDate,event.target.value,endsAt.split("T")[1] || "",
               )}/>
-          </label>
-          <label className="grid min-w-0 gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0">
             End Time (IST)
             <Input type="time" lang="en-US" className="w-full" required
               value={endsAt.split("T")[1] || ""}
@@ -1399,8 +1400,8 @@ export function FacultyAttendanceWorkspace({
                 startsAt.split("T")[0] || selectedDate,startsAt.split("T")[1] || "",event.target.value,
               )}/>
             <span className="text-xs font-normal text-muted-foreground">Class duration must be 12 hours or less. An earlier end time uses the next day.</span>
-          </label>
-          <label className="grid min-w-0 gap-2 font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0 md:col-span-2">
             Location
             <Input
               className="w-full"
@@ -1411,7 +1412,7 @@ export function FacultyAttendanceWorkspace({
               maxLength={500}
               placeholder="Room / lab / online"
             />
-          </label>
+          </Label>
           {scheduleError ? (
             <p
               role="alert"

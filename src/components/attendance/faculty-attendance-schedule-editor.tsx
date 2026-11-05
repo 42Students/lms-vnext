@@ -12,6 +12,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {localDateTimeInput,validateFacultyScheduleWindow,facultyScheduleInstants} from
   "@/modules/attendance/faculty-schedule-editor-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Session={
   id:string;title:string;startsAt:string;endsAt:string;
@@ -98,35 +99,35 @@ export function FacultyAttendanceScheduleEditor({
       </p>
     </div>
     <div className="grid min-w-0 gap-4 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2">
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Action
+      <Label stack className="min-w-0">Action
         <Select value={action} onChange={e=>changeAction(e.target.value as typeof action)}
           disabled={busy} className="min-w-0 text-base md:text-sm">
           <option value="CREATE">Schedule</option>
           <option value="RESCHEDULE" disabled={eligible.length===0}>Reschedule</option>
         </Select>
-      </label>
-      {action==="RESCHEDULE"?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Unmarked session
+      </Label>
+      {action==="RESCHEDULE"?<Label stack className="min-w-0">Unmarked session
         <Select value={id} disabled={busy}
           onChange={e=>{const next=eligible.find(s=>s.id===e.target.value);if(next)applyExistingSession(next);}}
           className="min-w-0 text-base md:text-sm">
           {eligible.map(s=>
             <option key={s.id} value={s.id}>{s.title}</option>)}
         </Select>
-      </label>:null}
+      </Label>:null}
     </div>
     <div className="grid min-w-0 gap-4 md:grid-cols-2">
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 md:col-span-2 text-[var(--lms-neutral-400)]">Session title
+      <Label stack className="min-w-0 md:col-span-2">Session title
         <Input value={title} onChange={e=>setTitle(e.target.value)}
           disabled={busy} maxLength={160} className="min-w-0 text-base md:text-sm" />
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start (IST)
+      </Label>
+      <Label stack className="min-w-0">Start (IST)
         <Input type="datetime-local" value={startsAt} disabled={busy}
           onChange={e=>setStartsAt(e.target.value)} className="min-w-0 w-full text-base md:text-sm" />
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End (IST)
+      </Label>
+      <Label stack className="min-w-0">End (IST)
         <Input type="datetime-local" value={endsAt} disabled={busy}
           onChange={e=>setEndsAt(e.target.value)} className="min-w-0 w-full text-base md:text-sm" />
-      </label>
+      </Label>
     </div>
     <details key={action + (selected?.id ?? "")}
       className="min-w-0 border-y border-[var(--lms-canvas-border)] py-2">
@@ -134,14 +135,14 @@ export function FacultyAttendanceScheduleEditor({
         Additional session details
       </summary>
       <div className="grid min-w-0 gap-4 pb-3 pt-2">
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Location
+        <Label stack className="min-w-0">Location
           <Input value={location} onChange={e=>setLocation(e.target.value)}
             disabled={busy} maxLength={240} className="min-w-0 text-base md:text-sm" />
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description
+        </Label>
+        <Label stack className="min-w-0">Description
           <Textarea value={description} onChange={e=>setDescription(e.target.value)}
             disabled={busy} maxLength={1000} className="min-w-0 text-base md:text-sm" />
-        </label>
+        </Label>
       </div>
     </details>
     {unchanged?<p role="status" className="m-0 text-[13px] text-muted-foreground">No schedule details have changed.</p>:null}

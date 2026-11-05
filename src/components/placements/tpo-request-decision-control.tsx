@@ -11,6 +11,7 @@ import {FilterChip} from "@/components/ui/filter-chip";
 import {useToast} from "@/components/ui/toast";
 
 import {tpoRequestNeedsConfirmation} from "@/modules/placements/tpo-request-decision-copy";
+import { Label } from "@/components/ui/label";
 
 const rejectionReasons=[
   "Not eligible","Proof missing or unclear","Deadline has passed",
@@ -92,15 +93,15 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
           {rejectionReasons.map(choice=><FilterChip key={choice} type="button" disabled={pending||guardedPending}
             aria-pressed={reason===choice} onClick={()=>{setReason(choice);setError(null);}}>{choice}</FilterChip>)}
         </div>
-        {reason==="Other"?<label className="block text-[13px] font-semibold">Explain the rejection
+        {reason==="Other"?<Label className="block">Explain the rejection
           <Textarea value={note} onChange={e=>setNote(e.target.value)} minLength={3} maxLength={2000}
             disabled={pending||guardedPending} rows={3} className="mt-[var(--lms-space-2)] w-full"/>
-        </label>:null}
+        </Label>:null}
         {!valid&&reason?<p role="status" className="text-[13px] leading-5 text-[var(--lms-error-text)]">Enter a rejection reason of at least 3 characters.</p>:null}
-      </div>:mode==="APPROVE"?<label className="block text-[13px] font-semibold">Approval note (optional)
+      </div>:mode==="APPROVE"?<Label className="block">Approval note (optional)
         <Textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}
           disabled={pending||guardedPending} rows={3} className="mt-[var(--lms-space-2)] w-full"/>
-      </label>:null}
+      </Label>:null}
       {error?<InlineNotice tone="error" message={error}/>:null}
     </Dialog>
   </div>;

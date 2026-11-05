@@ -11,6 +11,7 @@ import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import styles from "./legacy-project-touch-actions.module.css";
+import { Label } from "@/components/ui/label";
 export function MentorMeetingNotesEditor(props:{
   projectId:string;meetingId:string;updatedAt:string;initialNotes:string|null;
 }){
@@ -52,11 +53,11 @@ export function MentorMeetingNotesEditor(props:{
       description="Record the outcome for this completed meeting. Changes replace the current text; an audit event records the edit, not the old text.">
       <form onSubmit={event=>{event.preventDefault();if(valid){setOpen(false);setConfirm(true);}}}
         className="grid gap-[var(--lms-space-3)]">
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Notes
+        <Label stack>Notes
           <Textarea value={notes} rows={7} maxLength={4000} required aria-describedby={helpId}
             onChange={event=>setNotes(event.target.value)}
             className="w-full min-w-0 max-w-full"/>
-        </label>
+        </Label>
         <p id={helpId} className="text-right text-xs text-muted-foreground">{notes.trim().length}/4000 characters</p>
         {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
         <div className="flex flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] sm:flex-row sm:justify-end">

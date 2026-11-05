@@ -10,6 +10,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {getCollegeApplicationRetentionReport} from "@/modules/placements/college-retention-report-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
 type Filters=Record<string,string|string[]|undefined>;
 const retentionFilters=z.strictObject({
@@ -38,10 +39,10 @@ export default async function CollegeRetentionPage({searchParams}:{searchParams:
    actions={<Link href="/college/hiring-dashboard" className="font-semibold text-link underline min-h-11 inline-flex items-center lms-inline-link md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring w-full md:w-auto justify-center">Analytics</Link>}/>
   <p role="status" className="text-sm text-muted-foreground">Data retention report retrieved · Threshold: {data.days} days.</p>
   <form method="get" className="flex flex-wrap items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-   <label className="grid min-w-0 gap-2 text-sm font-semibold text-body">Older than (days)
+   <Label stack className="min-w-0">Older than (days)
     <Input type="number" name="olderThanDays" min={1} max={3650} step={1}
       defaultValue={data.days} required className="w-44 min-h-11 md:min-h-9" />
-   </label>
+   </Label>
    <Button type="submit" variant="secondary">Apply</Button>
   </form>
   <section className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">

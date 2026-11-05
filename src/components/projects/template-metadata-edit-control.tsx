@@ -13,6 +13,7 @@ import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {projectTemplateBlueprintSchema,type ProjectTemplateBlueprint}
  from "@/modules/projects/validation";
 import {projectMutation} from "./project-api";
+import { Label } from "@/components/ui/label";
 type Props={
  templateId:string;title:string;summary:string|null;currentVersion:number;updatedAt:string;
  slug:string;blueprint:ProjectTemplateBlueprint;
@@ -143,62 +144,61 @@ export function TemplateMetadataEditControl(props:Props){
    }} title="Edit template overview" dismissible={!pending}
    description="Save creates an immutable template version; assigned workspaces retain their pinned version.">
    <form onSubmit={event=>void submit(event)} className="grid min-w-0 gap-3">
-    <label className="grid gap-1 text-sm font-semibold text-body">Title
+    <Label stack>Title
      <Input required maxLength={200} disabled={pending} value={values.title}
-      onChange={event=>edit("title",event.target.value)}/></label>
-    <label className="grid gap-1 text-sm font-semibold text-body">Template slug
+      onChange={event=>edit("title",event.target.value)}/></Label>
+    <Label stack>Template slug
      <Input value={props.slug} disabled aria-label="Immutable template slug"/>
      <span className="text-xs font-normal text-body">
       Slugs are stable identifiers. Duplicate the template to use a new slug.
      </span>
-    </label>
-    <label className="grid gap-1 text-sm font-semibold text-body">Summary
+    </Label>
+    <Label stack>Summary
      <Textarea maxLength={2000} disabled={pending} value={values.summary}
-      onChange={event=>edit("summary",event.target.value)}/></label>
+      onChange={event=>edit("summary",event.target.value)}/></Label>
     <div className="grid gap-3 md:grid-cols-2">
-     <label className="grid gap-1 text-sm font-semibold text-body">Course label
+     <Label stack>Course label
       <Input maxLength={160} disabled={pending} value={values.courseLabel}
-       onChange={event=>edit("courseLabel",event.target.value)}/></label>
-     <label className="grid gap-1 text-sm font-semibold text-body">Phase
+       onChange={event=>edit("courseLabel",event.target.value)}/></Label>
+     <Label stack>Phase
       <Input maxLength={80} disabled={pending} value={values.phase}
-       onChange={event=>edit("phase",event.target.value)}/></label>
+       onChange={event=>edit("phase",event.target.value)}/></Label>
     </div>
-    <label className="grid gap-1 text-sm font-semibold text-body">Project goal
+    <Label stack>Project goal
      <Textarea maxLength={2000} disabled={pending} value={values.goal}
-      onChange={event=>edit("goal",event.target.value)}/></label>
-    <label className="grid gap-1 text-sm font-semibold text-body">Overview description
+      onChange={event=>edit("goal",event.target.value)}/></Label>
+    <Label stack>Overview description
      <Textarea maxLength={4000} disabled={pending} value={values.description}
-      onChange={event=>edit("description",event.target.value)}/></label>
+      onChange={event=>edit("description",event.target.value)}/></Label>
     {([
      ["deliverables","Deliverables (one per line)"],
      ["definitionOfDone","Definition of done (one per line)"],
      ["personas","Personas (one per line)"],
-    ] as const).map(([key,label])=><label key={key}
-      className="grid gap-1 text-sm font-semibold text-body">{label}
+    ] as const).map(([key,label])=><Label stack key={key}>{label}
       <Textarea rows={3} disabled={pending} value={values[key]}
        onChange={event=>edit(key,event.target.value)}/>
-    </label>)}
+    </Label>)}
     <div className="grid gap-3 md:grid-cols-2">
-     <label className="grid gap-1 text-sm font-semibold text-body">Submission type
+     <Label stack>Submission type
       <Select disabled={pending} value={values.submissionType}
        onChange={event=>edit("submissionType",event.target.value)}>
        <option value="LINK">Link</option><option value="FILE">File</option>
        <option value="TEXT">Text</option>
-      </Select></label>
-     <label className="grid gap-1 text-sm font-semibold text-body">Change note
+      </Select></Label>
+     <Label stack>Change note
       <Input maxLength={1000} disabled={pending} value={changeNote}
        placeholder="Updated template overview"
-       onChange={event=>setChangeNote(event.target.value)}/></label>
+       onChange={event=>setChangeNote(event.target.value)}/></Label>
     </div>
-    <label className="grid gap-1 text-sm font-semibold text-body">Submission instructions
+    <Label stack>Submission instructions
      <Textarea maxLength={4000} disabled={pending}
       value={values.submissionInstructions}
-      onChange={event=>edit("submissionInstructions",event.target.value)}/></label>
-    <label className="flex items-start gap-2 text-sm text-body">
+      onChange={event=>edit("submissionInstructions",event.target.value)}/></Label>
+    <Label variant="choice" className="flex items-start gap-2">
      <Checkbox checked={confirmed} disabled={pending}
       onChange={event=>setConfirmed(event.target.checked)}/>
      I understand that this creates a new version without changing already-created workspaces.
-    </label>
+    </Label>
     {stale?<p role="alert" className="text-sm text-warning-text">
      Another version was saved while you were editing. Refresh to avoid overwriting it.
     </p>:null}

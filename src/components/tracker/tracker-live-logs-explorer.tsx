@@ -17,6 +17,8 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Dialog} from "@/components/ui/dialog";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 type Entry={id:string;time:string;event:string;message:string;path:string;requestId:string|null;component:string|null;
   knownErrorId?:string|null;muted?:boolean|null};
@@ -345,22 +347,22 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
       </div>
     </div>
     <div className="grid min-w-0 gap-3 md:grid-cols-[max-content_max-content_minmax(0,1fr)_auto] md:items-end">
-      <label className="grid w-full min-w-0 basis-full gap-[6px] text-[length:var(--lms-font-sm)] font-semibold md:w-auto md:basis-auto leading-4 text-[13px] text-[var(--lms-neutral-400)]">Time window
+      <Label stack className="w-full min-w-0 basis-full text-[length:var(--lms-font-sm)] md:w-auto md:basis-auto">Time window
         <Select value={windowMinutes} onChange={event=>setWindowMinutes(event.target.value)} className="min-h-11 w-full min-w-0 md:min-h-9">
           <option value="15">Last 15 minutes</option><option value="60">Last hour</option>
           <option value="360">Last 6 hours</option><option value="1440">Last 24 hours</option>
         </Select>
-      </label>
-      <label className="grid w-full min-w-0 basis-full gap-[6px] text-[length:var(--lms-font-sm)] font-semibold md:w-auto md:basis-auto leading-4 text-[13px] text-[var(--lms-neutral-400)]">Minimum severity
+      </Label>
+      <Label stack className="w-full min-w-0 basis-full text-[length:var(--lms-font-sm)] md:w-auto md:basis-auto">Minimum severity
         <Select value={minimumSeverity} onChange={event=>setMinimumSeverity(event.target.value as "ERROR"|"WARNING")} className="min-h-11 w-full min-w-0 md:min-h-9">
           <option value="ERROR">Error and above</option>
           <option value="WARNING">Warning and above</option>
         </Select>
-      </label>
-      <label className="grid w-full min-w-0 basis-full gap-[6px] text-[length:var(--lms-font-sm)] font-semibold md:min-w-44 md:basis-auto md:flex-1 leading-4 text-[13px] text-[var(--lms-neutral-400)]">Search logs
+      </Label>
+      <Label stack className="w-full min-w-0 basis-full text-[length:var(--lms-font-sm)] md:min-w-44 md:basis-auto md:flex-1">Search logs
         <Input type="search" maxLength={200} value={query} onChange={event=>setQuery(event.target.value)}
           placeholder="Search message, route, request ID…" className="min-h-11 w-full min-w-0 md:min-h-9"/>
-      </label>
+      </Label>
       <div className="flex flex-wrap items-center gap-2">
         <Button type="button" variant="primary" onClick={()=>void load()}
           loading={pending} disabled={pending||exporting}>Run query</Button>
@@ -372,15 +374,15 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
       </div>
     </div>
     <div className="flex min-w-0 flex-wrap items-center gap-5 text-sm">
-      <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 md:min-h-9">
+      <Label variant="choice" className="inline-flex min-h-11 cursor-pointer items-center gap-2 md:min-h-9">
         <Checkbox checked={groupSimilar} onChange={event=>setGroupSimilar(event.target.checked)} />
         Group similar
-      </label>
-      <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 md:min-h-9">
+      </Label>
+      <Label variant="choice" className="inline-flex min-h-11 cursor-pointer items-center gap-2 md:min-h-9">
         <Checkbox checked={autoRefresh} disabled={rateLimited}
           onChange={event=>setAutoRefresh(event.target.checked)} />
         Auto-refresh every 30 seconds
-      </label>
+      </Label>
       {lastSuccessfulAt?<span className="text-xs text-muted-foreground">
         Last loaded {lastSuccessfulAt.toLocaleTimeString("en-IN",{timeZone:"Asia/Kolkata"})} IST
       </span>:null}
@@ -403,16 +405,16 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
       </Button>
      </div>
      <div className="mt-3 grid min-w-0 gap-3 border-t border-border pt-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-end">
-       <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">
+       <Label stack className="min-w-0">
          From date (IST)
          <Input type="date" value={rangeStart} onChange={event=>setRangeStart(event.target.value)}
            className="min-h-11 w-full md:min-h-9"/>
-       </label>
-       <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">
+       </Label>
+       <Label stack className="min-w-0">
          To date (IST)
          <Input type="date" value={rangeEnd} onChange={event=>setRangeEnd(event.target.value)}
            className="min-h-11 w-full md:min-h-9"/>
-       </label>
+       </Label>
        <Button variant="secondary" type="button" onClick={downloadFullRange}
          disabled={configured!==true} className="min-h-11 w-full sm:w-auto md:min-h-9">
          Export full date range
@@ -432,7 +434,7 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
       Retry
     </Button>:null}
     {initialLoading?<div aria-live="polite" aria-busy="true" className="space-y-3">
-      {[0,1,2].map(i=><div key={i} className="h-20 animate-pulse rounded-lg bg-[var(--lms-neutral-50)]"/>)}
+      {[0,1,2].map(i=><SkeletonBlock key={i} className="h-20" />)}
     </div>:items.length?<ol aria-live="polite" aria-busy={pending} className="min-w-0 divide-y divide-border border-y border-border">
       {grouped.map(({item,count})=><li key={item.id} id={"log-"+encodeURIComponent(item.id)}
         className="min-w-0 py-3 text-sm">
@@ -522,11 +524,11 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
       description="This updates the stored error signature for every matching log. It does not erase log records."
       confirmLabel={muteTarget?.muted?"Unmute":"Mute error"} pending={mutating}
       onConfirm={()=>void toggleKnownErrorMute()}>
-      {!muteTarget?.muted?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+      {!muteTarget?.muted?<Label stack className="text-[length:var(--lms-font-sm)]">
         Reason (optional)
         <Input value={muteReason} maxLength={255} onChange={event=>setMuteReason(event.target.value)}
          />
-      </label>:null}
+      </Label>:null}
     </ConfirmDialog>
     <Dialog open={reportOpen} onOpenChange={setReportOpen} title="Report for Claude"
      footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:justify-end">

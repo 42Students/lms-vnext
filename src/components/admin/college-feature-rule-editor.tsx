@@ -12,6 +12,7 @@ import {Disclosure} from "@/components/ui/disclosure";
 import {useToast} from "@/components/ui/toast";
 import {collegeRulePayload,isCollegeRuleDirty,collegeRuleReceipt,collegeRuleSelection,parseCollegeRuleRecheck,type CollegeModule,type CollegeChoice,type ObservedCollegeRule} from "@/modules/module-access/admin-college-rule-ui-model";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked,effectiveEnabled=false,collegeLabel="selected college"}:{collegeId:string;module:CollegeModule;stored:ObservedCollegeRule;ancestorLocked:boolean;effectiveEnabled?:boolean;collegeLabel?:string}){
  const router=useRouter();
  const {showToast}=useToast();
@@ -166,12 +167,12 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
   </div>
   <Disclosure title="Advanced rule: inheritance and lock" contentClassName="pt-3">
   <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:items-end">
-   <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">College stored value
+   <Label stack className="min-w-0">College stored value
     <Select className="min-h-11 w-full sm:min-h-9" aria-label={moduleLabel+" stored rule for "+collegeId} value={choice} disabled={busy||impactBusy||confirm}
      onChange={e=>{setChoice(e.target.value as CollegeChoice);setFeedback("");}}>
      <option value="INHERIT">Inherit</option><option value="ON" disabled={ancestorLocked}>On</option><option value="OFF" disabled={ancestorLocked}>Off</option>
     </Select>
-   </label>
+   </Label>
    <div className="flex min-h-11 min-w-0 items-center sm:min-h-9">
     <Switch label={"Lock "+moduleLabel+" rule for selected college"} checked={locked}
      disabled={busy||impactBusy||confirm||ancestorLocked||choice==="INHERIT"} onChange={e=>{setLocked(e.target.checked);setFeedback("");}}/>
@@ -220,15 +221,15 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
     </div>:null}
     {students!==null?<p className="m-0 break-words text-sm font-semibold leading-5 text-body">Active learners in this college: {students.toLocaleString("en-IN")}</p>:
      <Alert tone="warning">Student population could not be confirmed. The change will not be saved.</Alert>}
-    {students!==null&&students>=100?<label className="flex min-h-11 min-w-0 items-start gap-3 py-2 text-sm leading-5 text-body">
+    {students!==null&&students>=100?<Label variant="choice" className="flex min-h-11 min-w-0 items-start gap-3 py-2">
       <Checkbox checked={acknowledgedPopulation} disabled={busy}
        onChange={e=>setAcknowledgedPopulation(e.target.checked)}/>
       <span className="min-w-0 break-words">I understand this may change access for {students.toLocaleString("en-IN")} active learners.</span>
-    </label>:null}
-    {impactCounts===null?<label className="flex min-h-11 min-w-0 items-start gap-3 py-2 text-sm leading-5 text-body">
+    </Label>:null}
+    {impactCounts===null?<Label variant="choice" className="flex min-h-11 min-w-0 items-start gap-3 py-2">
       <Checkbox checked={ackUnknown} disabled={busy} onChange={e=>setAckUnknown(e.target.checked)}/>
       <span className="min-w-0 break-words">Impact counts are unavailable. I reviewed the live work that may be affected before proceeding.</span>
-    </label>:null}
+    </Label>:null}
     {impact?<Alert tone={impactCounts===null?"warning":"info"}>{impact}</Alert>:null}
    </div>
   </ConfirmDialog>

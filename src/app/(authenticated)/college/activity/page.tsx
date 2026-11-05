@@ -18,6 +18,7 @@ import {collegeActivityActor,collegeActivityItem,collegeActivityAction} from "@/
 import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type RawSearch = Record<string, string | string[] | undefined>;
 
@@ -133,7 +134,7 @@ export default async function CollegeActivityPage({
       <form action="/college/activity" method="get" className="grid min-w-0 gap-[var(--lms-space-2)] md:grid-cols-2 lg:grid-cols-4">
         {data.query.view ? <input type="hidden" name="view" value={data.query.view}/> : null}
         {data.query.category ? <input type="hidden" name="category" value={data.query.category}/> : null}
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label stack>
           Module
           <Select name="module" defaultValue={data.query.module ?? ""}
             className="min-h-11 md:min-h-9">
@@ -141,8 +142,8 @@ export default async function CollegeActivityPage({
             {ACTIVITY_MODULES.map(v =>
               <option key={v} value={v}>{v}</option>)}
           </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label stack>
           Importance
           <Select name="importance" defaultValue={data.query.importance ?? ""}
             className="min-h-11 md:min-h-9">
@@ -150,57 +151,57 @@ export default async function CollegeActivityPage({
             {ACTIVITY_IMPORTANCE.map(v =>
               <option key={v} value={v}>{v}</option>)}
           </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label stack>
           Event type
           <Input name="eventType" defaultValue={data.query.eventType ?? ""}
             maxLength={120} placeholder="identity.membership.suspended"
             className="min-h-11 md:min-h-9" />
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label stack>
           Search audit summary or entity
           <Input name="q" defaultValue={data.query.q ?? ""} maxLength={100}
             placeholder="Summary, entity or action text"
             className="min-h-11 md:min-h-9" />
-        </label>
+        </Label>
         <details className="min-w-0 md:col-span-2 lg:col-span-4" open={Boolean(data.query.actorUserId || data.query.actorName || data.query.subjectType || data.query.subjectId || data.query.from || data.query.to || (data.query.pageSize && data.query.pageSize !== "50"))}>
           <summary className="flex min-h-11 cursor-pointer items-center text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)] focus-ring">Activity log filters</summary>
           <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2 lg:grid-cols-4">
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label stack>
           Actor user UUID
           <Input name="actorUserId" defaultValue={data.query.actorUserId ?? ""}
             placeholder="Optional actor UUID"
             className="min-h-11 md:min-h-9" />
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label stack>
           Actor display name
           <Input name="actorName" defaultValue={data.query.actorName ?? ""} maxLength={100}
             placeholder="Search recorded actor name"
             className="min-h-11 md:min-h-9" />
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label stack>
           Entity type
           <Input name="subjectType" defaultValue={data.query.subjectType ?? ""}
             maxLength={80} placeholder="course_lesson"
             className="min-h-11 md:min-h-9" />
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label stack>
           Entity identifier
           <Input name="subjectId" defaultValue={data.query.subjectId ?? ""}
             maxLength={500} placeholder="Persisted entity identifier"
             className="min-h-11 md:min-h-9" />
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label stack>
           From date (IST)
           <DateInput name="from" mode="date" defaultValue={data.query.from ?? ""}
             className="min-h-11 md:min-h-9" />
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label stack>
           To date (IST)
           <DateInput name="to" mode="date" defaultValue={data.query.to ?? ""}
             className="min-h-11 md:min-h-9" />
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label stack>
           Events per page
           <Select name="pageSize" defaultValue={data.query.pageSize ?? "50"}
             className="min-h-11 md:min-h-9">
@@ -208,7 +209,7 @@ export default async function CollegeActivityPage({
             <option value="25">25 events</option>
             <option value="50">50 events</option>
           </Select>
-        </label>
+        </Label>
           </div>
         </details>
         <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-end md:col-span-2 lg:col-span-4">

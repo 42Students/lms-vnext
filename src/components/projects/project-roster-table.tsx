@@ -9,6 +9,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { ProjectMemberActions } from "./project-team-controls";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export type ProjectRosterRow = {
   id: string;
@@ -54,13 +55,13 @@ export function ProjectRosterTable({ projectId, rows }: {
     </div>
     <div className="flex min-w-0 flex-wrap items-end justify-between gap-3">
       <div className="min-w-0 flex-1 sm:max-w-80">
-        <label htmlFor="project-roster-search" className="mb-1 block text-xs font-semibold text-body">Search project members</label>
+        <Label htmlFor="project-roster-search" className="mb-1 block">Search project members</Label>
         <Input id="project-roster-search" type="search" value={search} maxLength={120}
           placeholder="Search member name or ID" aria-label="Search project members"
           onChange={event=>{setSearch(event.target.value);setPage(1);}}/>
       </div>
       <div className="min-w-40">
-        <label htmlFor="project-roster-role" className="mb-1 block text-xs font-semibold text-body">Member type</label>
+        <Label htmlFor="project-roster-role" className="mb-1 block">Member type</Label>
         <Select id="project-roster-role" aria-label="Filter project members by type" value={role}
           onChange={event=>{setRole(event.target.value as "ALL"|"LEARNER"|"FACULTY");setPage(1);}}>
           <option value="ALL">All members</option>

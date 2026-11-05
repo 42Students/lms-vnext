@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
+import { Label } from "@/components/ui/label";
 export function RecruiterDesignationEditor({initialTitle,updatedAt}:{initialTitle:string|null;updatedAt:string}) {
  const router=useRouter();
  const [title,setTitle]=useState(initialTitle??"");
@@ -30,7 +31,7 @@ export function RecruiterDesignationEditor({initialTitle,updatedAt}:{initialTitl
  }
  return <div className="md:col-span-2">
   <form onSubmit={event=>void save(event)} className="space-y-2">
-   <label htmlFor="hr-recruiter-designation" className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Designation</label>
+   <Label htmlFor="hr-recruiter-designation" className="block">Designation</Label>
    <div className="flex flex-wrap gap-2">
     <Input id="hr-recruiter-designation" value={title} onChange={event=>setTitle(event.target.value)}
        maxLength={160} className="min-w-48 flex-1"/>

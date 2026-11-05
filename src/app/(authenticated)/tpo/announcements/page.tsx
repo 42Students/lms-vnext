@@ -40,6 +40,7 @@ import {tpoNoticeDeliveryVerified} from "@/modules/announcements/tpo-notice-deli
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];targetIds?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[];mine?:string|string[];noticeSuccess?:string|string[];notice?:string|string[];compose?:string|string[]}>};
 
 // Only confirmed persisted delivery starts the 30-second undo window.
@@ -120,35 +121,35 @@ export default async function TpoAnnouncements({searchParams}:Props){
       initialTarget={first(raw.targetId)??""}
       initialTargets={query.success?query.data.targetIds??[]:[]} options={targetOptions}/>
     <TpoNoticeLiveReach targetedReady={targetedReady}/>
-    <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
+    <Label stack>Title
      <Input name="title" required maxLength={200} placeholder="Omega pre-placement talk on Monday"
       className="min-h-11 md:min-h-[var(--lms-control-height)]" />
-    </label>
-    <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Announcement
+    </Label>
+    <Label stack>Announcement
      <Textarea name="message" required maxLength={8000} rows={5}
       placeholder="What, when, where, and what they should do. Links starting with https:// become clickable."
       aria-describedby="tpo-notice-create-count" />
-    </label>
+    </Label>
     <TpoNoticeMessageCount formId="tpo-notice-create" outputId="tpo-notice-create-count"/>
     <details open className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
      <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-[var(--lms-body-text)] md:min-h-[var(--lms-control-height)] focus-ring">Button (optional)</summary>
      <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-[36%_minmax(0,1fr)]">
-     <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button label
+     <Label stack>Button label
       <Input name="buttonLabel" maxLength={60} placeholder="Register"
        className="min-h-11 md:min-h-[var(--lms-control-height)]"/>
-     </label>
-     <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button link
+     </Label>
+     <Label stack>Button link
       <Input name="buttonUrl" type="url" pattern="https://.*" maxLength={500}
        placeholder="https://forms.gle/…" title="The link has to start with https://"
        className="min-h-11 md:min-h-[var(--lms-control-height)]"/>
-     </label>
+     </Label>
      </div>
     </details>
-    <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Show until (IST, optional)
+    <Label stack>Show until (IST, optional)
       <DateInput mode="datetime-local" name="showUntil" min={formMinDateTime} className="min-h-11 md:min-h-[var(--lms-control-height)]"/>
-    </label>
+    </Label>
     <p className="text-xs text-muted-foreground">After this, students no longer see it. You still do.</p>
-    <label className="flex items-center gap-2 text-[var(--lms-font-sm)] font-semibold leading-4"><Checkbox name="pinned" /> Pin it to the top</label>
+    <Label className="flex items-center gap-2"><Checkbox name="pinned" /> Pin it to the top</Label>
     <p className="text-xs text-muted-foreground">Students get a notice in the app. You can undo for 30 seconds after sending. Email and SMS are unavailable.</p>
     <TpoNoticeLiveSubmitControls minDateTime={formMinDateTime}
      targetedReady={targetedReady} deliveryReady={deliveryReady}/>
@@ -228,58 +229,58 @@ export default async function TpoAnnouncements({searchParams}:Props){
      <TpoNoticeComposerDialog mode="EDIT">
       <form id={"tpo-notice-edit-"+row.id} method="post" action={"/api/placements/tpo/announcements/"+row.id+"/edit"} className="grid min-w-0 gap-4">
        <Input type="hidden" name="expectedVersion" value={row.version}/>
-       <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
+       <Label stack>Title
         <Input name="title" required maxLength={200} defaultValue={row.title}
          placeholder="Omega pre-placement talk on Monday"
          className="min-h-11 md:min-h-[var(--lms-control-height)]"/>
-       </label>
-       <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Announcement
+       </Label>
+       <Label stack>Announcement
         <Textarea name="message" rows={5} required maxLength={8000} defaultValue={row.message}
          placeholder="What, when, where, and what they should do. Links starting with https:// become clickable."
          aria-describedby={"tpo-notice-edit-"+row.id+"-count"}/>
-       </label>
+       </Label>
        <TpoNoticeMessageCount formId={"tpo-notice-edit-"+row.id} outputId={"tpo-notice-edit-"+row.id+"-count"}/>
        <details open className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
         <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-[var(--lms-body-text)] md:min-h-[var(--lms-control-height)] focus-ring">Button (optional)</summary>
         <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-[36%_minmax(0,1fr)]">
-        <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button label
+        <Label stack>Button label
          <Input name="buttonLabel" maxLength={60} defaultValue={row.buttonLabel??""}
           className="min-h-11 md:min-h-[var(--lms-control-height)]"/>
-        </label>
-        <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button link
+        </Label>
+        <Label stack>Button link
          <Input name="buttonUrl" type="url" pattern="https://.*" maxLength={500}
           defaultValue={row.buttonUrl??""} title="The link has to start with https://"
           className="min-h-11 md:min-h-[var(--lms-control-height)]"/>
-        </label>
+        </Label>
         </div>
        </details>
-       <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Send at (IST)
+       <Label stack>Send at (IST)
         <DateInput mode="datetime-local" name="sendAt" disabled={!deliveryReady}
          defaultValue={row.scheduledAt?new Date(new Date(row.scheduledAt).getTime()+330*60000).toISOString().slice(0,16):""}
          className="min-h-11 md:min-h-[var(--lms-control-height)]"/>
-       </label>
-       <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Show until (IST)
+       </Label>
+       <Label stack>Show until (IST)
         <DateInput mode="datetime-local" name="showUntil"
          defaultValue={row.expiresAt?new Date(new Date(row.expiresAt).getTime()+330*60000).toISOString().slice(0,16):""}
          className="min-h-11 md:min-h-[var(--lms-control-height)]"/>
-       </label>
+       </Label>
        <p className="text-xs text-muted-foreground">After this, students no longer see it. You still do.</p>
-       <label className="flex items-center gap-2 text-[var(--lms-font-sm)] text-[var(--lms-neutral-400)] font-semibold leading-4">
+       <Label className="flex items-center gap-2">
         <Checkbox name="pinned" defaultChecked={row.isPinned}/> Pin it to the top
-       </label>
-       <label className="flex items-start gap-2 text-[var(--lms-font-sm)] text-[var(--lms-neutral-400)] font-semibold leading-4">
+       </Label>
+       <Label className="flex items-start gap-2">
         <Checkbox name="notifyChanged" className="mt-1"/>
         <span>Tell them it changed (a short notice to the same students)
          <span className="block text-xs text-muted-foreground">Notify only people who received the original announcement. Leave unchecked to edit without another notification.</span>
         </span>
-       </label>
+       </Label>
        {targetedReady&&targetOptions&&row.scheduledAt&&
         new Date(row.scheduledAt).getTime()>Date.now()?<fieldset
          className="grid gap-2 rounded-[var(--lms-control-radius)] border border-border p-3">
          <legend className="text-sm font-semibold">Change audience (before sending)</legend>
-         <label className="flex items-center gap-2 text-[var(--lms-font-sm)] font-semibold leading-4">
+         <Label className="flex items-center gap-2">
           <Checkbox name="changeAudience"/> Change audience for this scheduled notice
-         </label>
+         </Label>
          <p className="text-xs text-muted-foreground leading-5">
           Select the box only to replace the saved audience. Choose the new audience below;
           the new recipients are selected when you save. The old audience is retained if

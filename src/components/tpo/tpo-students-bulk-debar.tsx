@@ -14,6 +14,7 @@ import {useTpoStudentsSelection} from "./tpo-students-selection";
 import {validateTpoBulkDebarDraft} from "@/modules/placements/tpo-bulk-debar-model";
 import {mapTpoBulkBounded} from "@/modules/placements/tpo-bulk-bounded-execution";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Learner={id:string;name:string;debarred:boolean};
 type DebarRow={id:string;active:boolean};
 type Result={id:string;name:string;status:"saved"|"skipped"|"failed";detail:string};
@@ -97,25 +98,25 @@ export function TpoStudentsBulkDebar({learners}:{learners:readonly Learner[]}){
   {outsideSelection>0?<InlineNotice tone="info" message={
    "Your selection includes "+outsideSelection+" learner(s) from another page or filter. Only the "+picked.length+" visible selected learners are included in this action."
   }/>:null}
-  <label className="grid w-full min-w-0 gap-[6px] md:max-w-xs text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Action
+  <Label stack className="w-full min-w-0 md:max-w-xs">Action
    <Select value={action} disabled={pending} onChange={e=>setAction(e.target.value as "DEBAR"|"LIFT")} className="min-h-11 w-full min-w-0 md:min-h-9">
     <option value="DEBAR">Debar</option><option value="LIFT">Lift</option>
    </Select>
-  </label>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason (required)
+  </Label>
+  <Label stack className="min-w-0">Reason (required)
    <Textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={500} disabled={pending} className="min-h-20 w-full min-w-0"/>
-  </label>
+  </Label>
   {action==="DEBAR"?<>
-   <label className="grid w-full min-w-0 gap-[6px] md:max-w-xs text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Until
+   <Label stack className="w-full min-w-0 md:max-w-xs">Until
     <Select value={duration} disabled={pending} onChange={e=>setDuration(e.target.value as "DATE"|"DRIVES"|"MANUAL")} className="min-h-11 w-full min-w-0 md:min-h-9">
      <option value="DATE">A specific date (IST)</option><option value="DRIVES">A number of drives</option><option value="MANUAL">Lifted by placement team</option>
     </Select>
-   </label>
-   {duration==="DATE"?<label className="grid w-full min-w-0 gap-[6px] md:max-w-xs text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Last date
+   </Label>
+   {duration==="DATE"?<Label stack className="w-full min-w-0 md:max-w-xs">Last date
     <Input type="date" disabled={pending} value={untilDate} onChange={e=>setUntilDate(e.target.value)} className="min-h-11 w-full min-w-0 md:min-h-9"/>
-   </label>:duration==="DRIVES"?<label className="grid w-full min-w-0 gap-[6px] md:max-w-xs text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Number of drives
+   </Label>:duration==="DRIVES"?<Label stack className="w-full min-w-0 md:max-w-xs">Number of drives
     <Input type="number" min={1} max={10000} disabled={pending} value={untilDrives} onChange={e=>setUntilDrives(e.target.value)} className="min-h-11 w-full min-w-0 md:min-h-9"/>
-   </label>:null}
+   </Label>:null}
   </>:null}
   {!check.ok&&picked.length>0?<InlineNotice tone="error" message={check.message}/>:null}
   <Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={!check.ok||pending} onClick={()=>setConfirm(true)}

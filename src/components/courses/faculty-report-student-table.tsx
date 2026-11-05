@@ -6,6 +6,7 @@ import {DataTable} from "@/components/ui/data-table";
 import type {FacultyReportStudentRow} from "@/modules/courses/faculty-report-students";
 import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 const avatarTints=[
  {bg:"var(--lms-primary-subtle)",fg:"var(--lms-button-primary)"},{bg:"var(--lms-purple-surface)",fg:"var(--lms-purple-text)"},
@@ -51,7 +52,7 @@ export function FacultyReportStudentTable({rows,title,emptyMessage="No learners 
      {filtered.length} {filtered.length===1?"student":"students"} · Highest scores first
     </p>
    </div>
-   {rows.length>8?<label className="w-full min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:max-w-sm">
+   {rows.length>8?<Label className="w-full min-w-0 sm:max-w-sm">
     <span className="sr-only">Search students</span>
     <div className="relative mt-[6px]">
      <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" stroke="currentColor"
@@ -65,7 +66,7 @@ export function FacultyReportStudentTable({rows,title,emptyMessage="No learners 
       <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="size-3"><path d="M3 3l10 10M13 3 3 13"/></svg>
      </Button>:null}
     </div>
-   </label>:null}
+   </Label>:null}
   </div>
   {rows.length===0?<EmptyState title={emptyMessage}/>:
    filtered.length===0?<div role="status" aria-live="polite"><EmptyState title={missing}/></div>:

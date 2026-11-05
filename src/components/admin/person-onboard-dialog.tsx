@@ -23,6 +23,7 @@ import { Alert } from "@/components/ui/alert";
 import { LEGACY_FACULTY_TYPES } from "@/modules/people/college-faculty-type-model";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import { Label } from "@/components/ui/label";
 
 function roleLabel(role: MembershipRole) {
   return role
@@ -249,25 +250,25 @@ export function PersonOnboardDialog({
             {forcedRole==="FACULTY"?"Faculty was not registered.":"Admin user was not created"} {onboardError}
           </Alert>:null}
           {forcedRole?<div className={"grid min-w-0 gap-[var(--lms-space-4)] "+(forcedRole==="FACULTY"?"md:col-span-2":"md:col-span-3")+" md:grid-cols-2"}>
-            <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First Name
+            <Label stack>First Name
               <Input ref={firstNameRef} className="min-h-11 md:min-h-9" value={firstName} maxLength={120} required autoComplete="given-name"
                 aria-describedby={fieldError?.field==="firstName"?"onboard-first-error":undefined}
                 aria-invalid={fieldError?.field==="firstName"} onChange={e=>{setFirstName(e.target.value);setFieldError(null);}} placeholder="First name"/>
               {fieldError?.field==="firstName"?<span id="onboard-first-error" role="alert" className="text-xs text-error">{fieldError.message}</span>:null}
-            </label>
-            <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Last Name
+            </Label>
+            <Label stack>Last Name
               <Input ref={lastNameRef} className="min-h-11 md:min-h-9" value={lastName} maxLength={120} required autoComplete="family-name"
                 aria-describedby={fieldError?.field==="lastName"?"onboard-last-error":undefined}
                 aria-invalid={fieldError?.field==="lastName"} onChange={e=>{setLastName(e.target.value);setFieldError(null);}} placeholder="Last name"/>
               {fieldError?.field==="lastName"?<span id="onboard-last-error" role="alert" className="text-xs text-error">{fieldError.message}</span>:null}
-            </label>
+            </Label>
           </div>:<div className="min-w-0">
-            <label
+            <Label
               htmlFor={`onboard-name-${collegeId}`}
-              className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[var(--lms-space-2)] block"
             >
               Display name
-            </label>
+            </Label>
             <Input ref={displayNameRef} className="min-h-11 md:min-h-9" autoComplete="name"
               id={`onboard-name-${collegeId}`}
               value={displayName}
@@ -280,12 +281,12 @@ export function PersonOnboardDialog({
           </div>
 }
           <div>
-            <label
+            <Label
               htmlFor={`onboard-phone-${collegeId}`}
-              className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[var(--lms-space-2)] block"
             >
               Phone
-            </label>
+            </Label>
             <Input ref={phoneRef} className="min-h-11 md:min-h-9"
               id={`onboard-phone-${collegeId}`}
               value={phoneE164}
@@ -299,12 +300,12 @@ export function PersonOnboardDialog({
               forcedRole?<p className="mt-1 text-xs text-muted-foreground">Mobile number must be 10 digits</p>:null}
           </div>
           <div>
-            <label
+            <Label
               htmlFor={`onboard-email-${collegeId}`}
-              className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[var(--lms-space-2)] block"
             >
               Email · optional
-            </label>
+            </Label>
             <Input ref={emailRef} className="min-h-11 md:min-h-9" autoComplete="email"
               id={`onboard-email-${collegeId}`}
               type="email"
@@ -318,7 +319,7 @@ export function PersonOnboardDialog({
           </div>
           {forcedRole==="FACULTY" ? <fieldset className="grid min-w-0 gap-[var(--lms-space-3)] border-y border-border py-[var(--lms-space-4)] md:col-span-2">
             <legend className="text-[var(--lms-font-sm)] font-semibold text-body">Faculty details</legend>
-            <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Department
+            <Label stack>Department
               <Select required disabled={pending || departments.length===0} value={departmentId}
                 aria-invalid={fieldError?.field==="department"}
                 aria-describedby={fieldError?.field==="department"?"onboard-department-error":undefined}
@@ -327,11 +328,11 @@ export function PersonOnboardDialog({
                 {departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
               </Select>
               {fieldError?.field==="department"?<span id="onboard-department-error" role="alert" className="text-xs text-error">{fieldError.message}</span>:null}
-            </label>
+            </Label>
             {departments.length===0?<p role="alert" className="text-xs text-error">
               Departments unavailable. Refresh the faculty roster after verifying your selected college.
             </p>:null}
-            <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Faculty Type
+            <Label stack>Faculty Type
               <Select required disabled={pending} value={facultyType}
                 aria-invalid={fieldError?.field==="facultyType"}
                 aria-describedby={fieldError?.field==="facultyType"?"onboard-faculty-type-error":undefined}
@@ -340,28 +341,28 @@ export function PersonOnboardDialog({
                 {LEGACY_FACULTY_TYPES.map(type=><option key={type} value={type}>{type}</option>)}
               </Select>
               {fieldError?.field==="facultyType"?<span id="onboard-faculty-type-error" role="alert" className="text-xs text-error">{fieldError.message}</span>:null}
-            </label>
-            <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Gender
+            </Label>
+            <Label stack>Gender
               <Select disabled={pending} value={gender} onChange={event=>setGender(event.target.value)}>
                 {["","Male","Female","Other","Prefer not to say"].map(value=>
                   <option key={value} value={value}>{value||"Not specified"}</option>)}
               </Select>
-            </label>
-            <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Date of Birth
+            </Label>
+            <Label stack>Date of Birth
               <Input type="date" disabled={pending} value={dateOfBirth} onChange={event=>setDateOfBirth(event.target.value)}/>
-            </label>
-            <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Address
+            </Label>
+            <Label stack>Address
               <Textarea rows={2} maxLength={1000} disabled={pending} value={address} onChange={event=>setAddress(event.target.value)}/>
-            </label>
-            <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Bio
+            </Label>
+            <Label stack>Bio
               <Textarea rows={3} maxLength={3000} disabled={pending} value={bio} onChange={event=>setBio(event.target.value)}/>
-            </label>
+            </Label>
             <p className="text-[var(--lms-font-sm)] font-semibold text-body">Additional assignment</p>
-            <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body md:min-h-9">
+            <Label className="flex min-h-11 items-center gap-2 md:min-h-9">
               <Checkbox checked={registerAsMentor} disabled={pending}
                 onChange={event=>setRegisterAsMentor(event.target.checked)}/>
               Mentor
-            </label>
+            </Label>
             <p className="text-xs text-muted-foreground">A mentor receives the Mentor membership role in addition to Faculty.</p>
           </fieldset> : null}
           {profileIncomplete?<p role="alert" className="md:col-span-2 text-sm text-error">
@@ -382,7 +383,7 @@ export function PersonOnboardDialog({
             </div>
             <div className="divide-y divide-border border-y border-border">
               {MEMBERSHIP_ROLES.map((role) => (
-                <label
+                <Label variant="choice"
                   key={role}
                   className="flex min-h-11 cursor-pointer items-center justify-between gap-[var(--lms-space-3)] px-[var(--lms-space-3)] py-[var(--lms-space-2)] hover:bg-[var(--lms-primary-subtle)] md:min-h-9"
                 >
@@ -395,7 +396,7 @@ export function PersonOnboardDialog({
                     onChange={() => toggleRole(role)}
                     className="size-5"
                   />
-                </label>
+                </Label>
               ))}
             </div>
             {roles.length === 0 ? (

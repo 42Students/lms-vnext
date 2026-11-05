@@ -9,6 +9,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type PlacementRoleOptionItem = {
   id: string;
@@ -389,7 +390,7 @@ export function PlacementRoleOptions({
               Eligibility and drive rounds remain shared; the application itself is bound to this exact role.
             </p>
           <div className="grid gap-3 lg:grid-cols-3">
-            <label>
+            <Label>
               <span className="mb-1 block text-xs font-semibold text-body">
                 Role title
               </span>
@@ -404,8 +405,8 @@ export function PlacementRoleOptions({
                   }))
                 }
               />
-            </label>
-            <label>
+            </Label>
+            <Label>
               <span className="mb-1 block text-xs font-semibold text-body">
                 Employment
               </span>
@@ -433,8 +434,8 @@ export function PlacementRoleOptions({
                   Contract
                 </option>
               </Select>
-            </label>
-            <label>
+            </Label>
+            <Label>
               <span className="mb-1 block text-xs font-semibold text-body">
                 Work mode
               </span>
@@ -460,8 +461,8 @@ export function PlacementRoleOptions({
                   Remote
                 </option>
               </Select>
-            </label>
-            <label className="lg:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            </Label>
+            <Label className="lg:col-span-2">
               <span className="mb-1 block text-xs font-semibold text-body">
                 Locations
               </span>
@@ -477,8 +478,8 @@ export function PlacementRoleOptions({
                   }))
                 }
               />
-            </label>
-            <label>
+            </Label>
+            <Label>
               <span className="mb-1 block text-xs font-semibold text-body">
                 Openings
               </span>
@@ -495,8 +496,8 @@ export function PlacementRoleOptions({
                   }))
                 }
               />
-            </label>
-            <label>
+            </Label>
+            <Label>
               <span className="mb-1 block text-xs font-semibold text-body">
                 Minimum CTC (INR)
               </span>
@@ -515,8 +516,8 @@ export function PlacementRoleOptions({
                   }))
                 }
               />
-            </label>
-            <label>
+            </Label>
+            <Label>
               <span className="mb-1 block text-xs font-semibold text-body">
                 Maximum CTC (INR)
               </span>
@@ -535,7 +536,7 @@ export function PlacementRoleOptions({
                   }))
                 }
               />
-            </label>
+            </Label>
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
             <Button

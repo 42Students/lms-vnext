@@ -15,6 +15,7 @@ import {listTpoBatchRegistrationRoster} from "@/modules/placements/tpo-batch-reg
 import {TPO_REGISTRATION_CHOICES} from "@/modules/placements/tpo-batch-registration-summary-model";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 export const dynamic="force-dynamic";
 export default async function BatchRegistrations({params,searchParams}:{
  params:Promise<{batchId:string}>;
@@ -38,22 +39,22 @@ export default async function BatchRegistrations({params,searchParams}:{
   <TpoBatchWorkspaceTabs batchId={batchId} active="registrations" />
   {!data.ready?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm">Registration storage is unavailable. No learner choices were loaded.</p>:<>
    <form role="search" aria-label="registrations filters" action={"/tpo/batches/"+batchId+"/registrations"} method="get" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2">
-    <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find learner
+    <Label className="min-w-0">Find learner
      <Input type="search" name="q" maxLength={100} defaultValue={data.filters.q}
       className="min-h-11 w-full md:min-h-9 mt-[6px] block"/>
-    </label>
-    <label className="min-w-0 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Choice
+    </Label>
+    <Label className="min-w-0">Choice
      <Select name="choice" defaultValue={data.filters.choice}
       className="min-h-11 w-full md:min-h-9 mt-[6px] block">
       <option value="ALL">All choices</option><option value="UNRECORDED">Not recorded</option>
       {TPO_REGISTRATION_CHOICES.map(choice=><option value={choice} key={choice}>{choice.replaceAll("_"," ")}</option>)}
      </Select>
-    </label>
+    </Label>
     <Disclosure title="Recorded source · Last recorded update · Order · Rows per page" className="min-w-0 sm:col-span-2" defaultOpen={Boolean(data.filters.source!=="ALL"||data.filters.recency!=="ALL"||data.filters.order!=="NAME_ASC"||data.filters.pageSize!==25)} contentClassName="pt-3"><div className="grid min-w-0 gap-3 sm:grid-cols-2">
-    <label className="min-w-0 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded source<Select name="source" defaultValue={data.filters.source} className="min-h-11 w-full md:min-h-9 mt-[6px] block"><option value="ALL">Any source</option><option value="SELF">Learner self-service</option><option value="TPO">Placement cell</option><option value="BACKFILL">Backfill</option><option value="UNRECORDED">Not recorded</option></Select></label>
-    <label className="min-w-0 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Last recorded update<Select name="recency" defaultValue={data.filters.recency} className="min-h-11 w-full md:min-h-9 mt-[6px] block"><option value="ALL">Any date</option><option value="UPDATED_7_DAYS">Within 7 days</option><option value="OLDER_30_DAYS">Older than 30 days</option><option value="NO_RECORD">No recorded choice</option></Select></label>
-    <label className="min-w-0 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order<Select name="order" defaultValue={data.filters.order} className="min-h-11 w-full md:min-h-9 mt-[6px] block"><option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="UPDATED_NEWEST">Recently updated first</option><option value="UPDATED_OLDEST">Oldest updates first</option></Select></label>
-    <label className="min-w-0 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page<Select name="pageSize" defaultValue={String(data.filters.pageSize)} className="min-h-11 w-full md:min-h-9 mt-[6px] block"><option value="25">25</option><option value="50">50</option><option value="100">100</option></Select></label>
+    <Label className="min-w-0">Recorded source<Select name="source" defaultValue={data.filters.source} className="min-h-11 w-full md:min-h-9 mt-[6px] block"><option value="ALL">Any source</option><option value="SELF">Learner self-service</option><option value="TPO">Placement cell</option><option value="BACKFILL">Backfill</option><option value="UNRECORDED">Not recorded</option></Select></Label>
+    <Label className="min-w-0">Last recorded update<Select name="recency" defaultValue={data.filters.recency} className="min-h-11 w-full md:min-h-9 mt-[6px] block"><option value="ALL">Any date</option><option value="UPDATED_7_DAYS">Within 7 days</option><option value="OLDER_30_DAYS">Older than 30 days</option><option value="NO_RECORD">No recorded choice</option></Select></Label>
+    <Label className="min-w-0">Order<Select name="order" defaultValue={data.filters.order} className="min-h-11 w-full md:min-h-9 mt-[6px] block"><option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="UPDATED_NEWEST">Recently updated first</option><option value="UPDATED_OLDEST">Oldest updates first</option></Select></Label>
+    <Label className="min-w-0">Rows per page<Select name="pageSize" defaultValue={String(data.filters.pageSize)} className="min-h-11 w-full md:min-h-9 mt-[6px] block"><option value="25">25</option><option value="50">50</option><option value="100">100</option></Select></Label>
     </div></Disclosure>
     <Button type="submit" className="min-h-11 w-full md:min-h-9 sm:w-auto sm:justify-self-start">Filter</Button>
    </form>

@@ -16,6 +16,7 @@ import type { listKnownErrorsForAdmin } from "@/modules/log-alerts/admin-service
 import Link from "next/link";
 import {knownErrorSafeSummary,knownErrorSafeSql} from "@/modules/log-alerts/known-error-safe-summary";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type KnownError = Awaited<ReturnType<typeof listKnownErrorsForAdmin>>[number];
 
@@ -101,30 +102,30 @@ function KnownErrorCard({ item }: { item: KnownError }) {
       </div>
       <Disclosure title="Triage and diagnostic actions" className="border-t border-border" contentClassName="space-y-3 px-2 pb-3">
       <div className="grid min-w-0 gap-3 md:grid-cols-3">
-        <label className="block min-w-0 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        <Label className="block min-w-0">
           Triage note
           <Input
             className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9" value={note} maxLength={500}
             onChange={(event) => setNote(event.target.value)}
             placeholder="Reason / owner update"
           />
-        </label>
-        <label className="block min-w-0 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label className="block min-w-0">
           Fix commit (optional)
           <Input
             className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9" value={commit} maxLength={64}
             onChange={(event) => setCommit(event.target.value)}
             placeholder="Git commit SHA"
           />
-        </label>
-        <label className="block min-w-0 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label className="block min-w-0">
           Tracker issue ID
           <Input
             className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9" value={issuePublicId} maxLength={32}
             onChange={(event) => setIssuePublicId(event.target.value)}
             placeholder="e.g. BT-123"
           />
-        </label>
+        </Label>
       </div>
       <div role="group" aria-label="Known error triage actions" className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap">
         <Button size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" variant="secondary" disabled={pending}
@@ -209,13 +210,13 @@ function KnownErrorCard({ item }: { item: KnownError }) {
             </Button>
           </div>}>
         <div className="min-w-0 space-y-3">
-          <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="block">
             Reason (optional)
             <Input className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9" value={muteReason} maxLength={255}
               onChange={(event) => setMuteReason(event.target.value)}
               placeholder="Why this error is expected"
             />
-          </label>
+          </Label>
         </div>
       </Dialog>
       {item.issuePublicId ? (

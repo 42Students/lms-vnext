@@ -13,6 +13,7 @@ import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Workspace = {
   id: string;
@@ -347,7 +348,7 @@ export function ProjectMentorReassignment({
           Both mentor teams and learners receive project notifications.
         </p>
         <div className="mt-[var(--lms-space-4)] grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0">
             Search mentors
             <Input
               type="search"
@@ -361,8 +362,8 @@ export function ProjectMentorReassignment({
               placeholder="Search by mentor name"
               className="w-full"
             />
-          </label>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0">
             New mentor
             <Select
               aria-invalid={targetAttempted&&!mentorMembershipId}
@@ -386,7 +387,7 @@ export function ProjectMentorReassignment({
                 </option>
               ))}
             </Select>
-          </label>
+          </Label>
           <nav aria-label="Mentor search results pages"
             className="flex flex-wrap items-center gap-2 text-xs text-body md:col-span-2">
             <Button type="button" variant="secondary" size="sm"
@@ -406,7 +407,7 @@ export function ProjectMentorReassignment({
           {!mentorLoading&&search.trim()&&!visibleMentors.length?
             <p className="text-xs text-body md:col-span-2">
               No matching eligible mentors. Try another name or email.</p>:null}
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0">
             Role label
             <Input
               disabled={pending}
@@ -423,7 +424,7 @@ export function ProjectMentorReassignment({
               Changing the role label updates this mentor even when the membership is unchanged.
               Leave blank for Project Mentor.
             </span>
-          </label>
+          </Label>
         </div>
 
 

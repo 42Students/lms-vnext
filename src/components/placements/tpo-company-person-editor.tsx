@@ -7,6 +7,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Person = {
   id: string;
@@ -82,7 +83,7 @@ export function TpoCompanyPersonEditor({
         Existing phone-only contacts can still be edited
         once an email is provided. No messages are sent.
       </p>
-      <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Contact
+      <Label className="block">Contact
         <Select value={selected} onChange={event => select(event.target.value)}
           className="mt-1 block min-h-11 w-full md:min-h-9">
           <option value="NEW">Add new person</option>
@@ -90,22 +91,22 @@ export function TpoCompanyPersonEditor({
             <option key={item.id} value={item.id}>{item.name}</option>
           ))}
         </Select>
-      </label>
+      </Label>
       <div className="grid gap-3 md:grid-cols-2">
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name
+        <Label>Name
           <Input value={name} maxLength={150} onChange={event => {setReviewing(false);setName(event.target.value);}}
             className="mt-1 block min-h-11 w-full md:min-h-9" />
-        </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Email
+        </Label>
+        <Label>Email
           <Input type="email" value={email} maxLength={150}
             onChange={event => {setReviewing(false);setEmail(event.target.value);}}
             className="mt-1 block min-h-11 w-full md:min-h-9" />
-        </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Designation (optional)
+        </Label>
+        <Label>Designation (optional)
           <Input value={designation} maxLength={100}
             onChange={event => {setReviewing(false);setDesignation(event.target.value);}}
             className="mt-1 block min-h-11 w-full md:min-h-9" />
-        </label>
+        </Label>
       </div>
       {reviewing?<Alert tone="info">
         {current?"Save edits to this linked company contact?":"Add this contact person to the selected company?"}

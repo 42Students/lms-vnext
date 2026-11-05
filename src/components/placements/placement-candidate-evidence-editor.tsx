@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
+import { Label } from "@/components/ui/label";
 
 type AcademicEvidence = {
   cgpa: number | null;
@@ -237,11 +238,11 @@ export function PlacementCandidateEvidenceEditor({
     ["passingYear", "Passing year", evidence?.passingYear, "1", "2200"],
   ] as const;
   const renderEvidenceField = ([name,label,value,step,max]: typeof evidenceFields[number]) => (
-    <label key={name} className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    <Label key={name} className="min-w-0">
       <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">{label}</span>
       <Input className="min-h-11 w-full md:min-h-9" name={name} type="number" min={0}
         max={max} step={step} defaultValue={value==null?"":String(value)} />
-    </label>
+    </Label>
   );
 
   return (
@@ -292,7 +293,7 @@ export function PlacementCandidateEvidenceEditor({
 
             <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {evidenceFields.slice(0,3).map(renderEvidenceField)}
-              <label className="flex min-h-11 min-w-0 items-center gap-2 self-end py-2 text-[var(--lms-font-sm)] font-semibold text-body">
+              <Label className="flex min-h-11 min-w-0 items-center gap-2 self-end py-2">
                 <Checkbox
                   checked={lateralEntry}
                   onChange={(event) =>
@@ -302,10 +303,10 @@ export function PlacementCandidateEvidenceEditor({
                   }
                 />
                 Lateral entry
-              </label>
+              </Label>
 
               {lateralEntry ? (
-                <label>
+                <Label>
                   <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">
                     Diploma %
                   </span>
@@ -321,9 +322,9 @@ export function PlacementCandidateEvidenceEditor({
                       ""
                     }
                   />
-                </label>
+                </Label>
               ) : (
-                <label>
+                <Label>
                   <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">
                     12th %
                   </span>
@@ -339,7 +340,7 @@ export function PlacementCandidateEvidenceEditor({
                       ""
                     }
                   />
-                </label>
+                </Label>
               )}
             </div>
             <Disclosure title="Other academic details" className="border-t border-border py-3">

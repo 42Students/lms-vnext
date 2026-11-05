@@ -11,6 +11,7 @@ import {VerificationReviewDrawer} from "./VerificationReviewDrawer";
 import {TpoRosterVerificationBulk} from "@/components/tpo/tpo-roster-verification-bulk";
 import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
 import {filterTpoVerificationRows,defaultTpoVerificationFilters,type TpoVerificationLocalFilters} from "@/modules/verification/tpo-queue-local-filters";
+import { Label } from "@/components/ui/label";
 
 /** Same locked review, private receipt and stale-version path as College Admin. */
 export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:VerificationQueueCard[];counts?:Record<VerificationTab,number>;serverTab:VerificationTab;serverKind:"ALL"|"EDUCATION"|"IDENTITY"}){
@@ -87,19 +88,19 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
    <span className="w-full text-xs text-muted-foreground">Counts on this server-filtered page only. Select a shortcut again to clear it.</span>
   </div>:null}
   <section aria-label="Verification filters" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2">
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Marksheets
+   <Label>Marksheets
     <Select value={filters.marksheets} onChange={e=>update("marksheets",e.target.value as TpoVerificationLocalFilters["marksheets"])}
      className="mt-1 block min-h-11 w-full min-w-0 md:min-h-9">
      <option value="ANY">All marksheet states</option><option value="MISSING">Some missing</option><option value="PRESENT">All uploaded</option>
     </Select>
-   </label>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Needs a closer look
+   </Label>
+   <Label>Needs a closer look
     <Select value={filters.attention} onChange={e=>update("attention",e.target.value as TpoVerificationLocalFilters["attention"])}
      className="mt-1 block min-h-11 w-full md:min-h-9">
      <option value="ALL">All requests</option><option value="MISSING_DOCUMENT">Missing document</option>
      <option value="WAITING_OVER_WEEK">Waiting over a week</option>
     </Select>
-   </label>
+   </Label>
    <p className="text-xs text-muted-foreground sm:col-span-2">Showing {visible.length} of {rows.length} records from the server-filtered authorized page. Status, section, batch and branch filters apply before pagination.</p>
   </section>
   {serverTab==="WAITING"&&visible.length>0?

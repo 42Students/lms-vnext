@@ -12,6 +12,7 @@ import {getMentorReports} from "@/modules/projects/mentor-reports-service";
 import {mentorReportsQuerySchema,mentorReportsHref}
   from "@/modules/projects/mentor-reports-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Search={taskCoverage?:string|string[];status?:string|string[];attention?:string|string[];assignment?:string|string[];order?:string|string[];
   search?:string|string[];page?:string|string[]};
 const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
@@ -55,22 +56,22 @@ export default async function MentorReportsPage({searchParams}:{
         <form role="search" aria-label="mentor reports filters" method="get" action="/mentor/reports"
           className="min-w-0 space-y-3 border-b border-border pb-4">
           <div className="grid min-w-0 items-end gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-            <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project title
+            <Label stack>Project title
               <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
                 className="min-h-11 md:min-h-9"/>
-            </label>
-            <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+            </Label>
+            <Label stack>Status
               <Select name="status" defaultValue={data.query.status}
                 className="min-h-11 md:min-h-9">
                 {(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"] as const).map(value=>
                   <option key={value} value={value}>{value}</option>)}
               </Select>
-            </label>
+            </Label>
             <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
           </div>
           <Disclosure title="Filters" defaultOpen={data.query.attention!=="ALL"||data.query.taskCoverage!=="ALL"||data.query.assignment!=="ALL"||data.query.order!=="UPDATED"} className="min-w-0" contentClassName="min-w-0 pt-3 pb-2">
             <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-4">
-            <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Attention
+            <Label stack>Attention
               <Select name="attention" defaultValue={data.query.attention}
                 className="min-h-11 md:min-h-9">
                 <option value="ALL">All</option>
@@ -80,22 +81,22 @@ export default async function MentorReportsPage({searchParams}:{
                 <option value="MEETING_SOON">Meeting soon</option>
                 <option value="NONE">No currently recorded attention</option>
               </Select>
-            </label>
-            <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded tasks
+            </Label>
+            <Label stack>Recorded tasks
               <Select name="taskCoverage" defaultValue={data.query.taskCoverage} className="min-h-11 md:min-h-9">
                 <option value="ALL">All tasks</option><option value="NO_TASKS">No tracked tasks</option>
                 <option value="OPEN_TASKS">Unfinished tasks</option><option value="ALL_DONE">All registered tasks done</option>
               </Select>
-            </label>
-            <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mentor assignment
+            </Label>
+            <Label stack>Mentor assignment
               <Select name="assignment" defaultValue={data.query.assignment}
                 className="min-h-11 md:min-h-9">
                 <option value="ALL">All assigned projects</option>
                 <option value="PRIMARY">Primary Mentor</option>
                 <option value="SUPPORTING">Supporting Mentor</option>
               </Select>
-            </label>
-            <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Report order
+            </Label>
+            <Label stack>Report order
               <Select name="order" defaultValue={data.query.order}
                 className="min-h-11 md:min-h-9">
                 <option value="UPDATED">Recently updated</option>
@@ -103,7 +104,7 @@ export default async function MentorReportsPage({searchParams}:{
                 <option value="TITLE_ZA">Project title Z–A</option>
                 <option value="TASK_PROGRESS">Least registered task progress first</option>
               </Select>
-            </label>
+            </Label>
             </div>
           </Disclosure>
           {(data.query.status!=="ALL"||data.query.attention!=="ALL"||data.query.taskCoverage!=="ALL"||data.query.assignment!=="ALL"||data.query.order!=="UPDATED"||Boolean(data.query.search))?<Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-ring">Clear</Link>:null}

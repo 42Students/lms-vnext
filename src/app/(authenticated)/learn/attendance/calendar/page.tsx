@@ -21,6 +21,7 @@ import {
 } from "@/modules/attendance/learner-attendance-calendar-model";
 import { getOwnLearnerAttendanceCalendar } from "@/modules/attendance/learner-attendance-calendar-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export const dynamic = "force-dynamic";
 type Params = {month?:string|string[];deliveryId?:string|string[];status?:string|string[]};
@@ -79,11 +80,11 @@ export default async function LearnerAttendanceCalendarPage({
       </Link>} />
     <FilterBar title="Filters"><form action="/learn/attendance/calendar" method="get"
       className="grid min-w-0 gap-3 pb-4 md:grid-cols-3">
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Month
+      <Label stack>Month
         <DateInput mode="month" name="month" defaultValue={data.query.month}
           className="min-h-11 md:min-h-9" />
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
+      </Label>
+      <Label stack>Course
         <Select name="deliveryId" defaultValue={data.query.deliveryId}
           className="min-h-11 w-full md:min-h-9">
           <option value="ALL">All accessible Courses</option>
@@ -92,15 +93,15 @@ export default async function LearnerAttendanceCalendarPage({
               {course.courseCode} · {course.courseName}
             </option>)}
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+      </Label>
+      <Label stack>Status
         <Select name="status" defaultValue={data.query.status}
           className="min-h-11 w-full md:min-h-9">
           <option value="ALL">All status types</option>
           {Object.entries(statusNames).map(([value,label])=>
             <option key={value} value={value}>{label}</option>)}
         </Select>
-      </label>
+      </Label>
       <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3 md:col-span-3">
         <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">
           Apply filters

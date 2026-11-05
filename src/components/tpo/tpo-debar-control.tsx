@@ -15,6 +15,7 @@ import {
   type TpoMembershipDecisionSnapshot,
 } from "@/modules/placements/tpo-participation-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Feedback = { tone: "error" | "success"; message: string } | null;
 
@@ -113,7 +114,7 @@ export function TpoDebarControl({
       {!unrelatedRestriction ? (
         <form onSubmit={submit} className="mt-5 space-y-4">
           {!debarred ? (
-            <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+            <Label stack>
               Reason for Debar (required)
               <Input
                 type="text"
@@ -128,10 +129,10 @@ export function TpoDebarControl({
                 placeholder="Reason for restricting placement applications"
                 className="min-h-11 w-full md:min-h-9"
               />
-            </label>
+            </Label>
           ) : null}
 
-          <label className="flex min-h-11 items-start gap-3 text-sm text-body">
+          <Label variant="choice" className="flex min-h-11 items-start gap-3">
             <Checkbox
               checked={confirmed}
               disabled={pending}
@@ -144,7 +145,7 @@ export function TpoDebarControl({
                 ? "I confirm that the Debar-labelled learner override will be removed; the inherited class/batch decision may still block applications."
                 : "I confirm that this learner will be marked Ineligible and blocked from submitting new placement applications until this membership override is changed."}
             </span>
-          </label>
+          </Label>
 
           <Button variant="primary"
             type="submit"

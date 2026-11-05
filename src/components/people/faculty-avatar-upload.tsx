@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import { Img } from "@/components/ui/img";
+import { Label } from "@/components/ui/label";
 
 type AvatarSnapshot={preview:string|null;version:number};
 
@@ -101,16 +102,16 @@ export function FacultyAvatarUpload({initialVersion,initials}:{initialVersion:nu
      referrerPolicy="no-referrer" onError={()=>{setPreview(null);setNotice("Profile photo expired. Refresh to load it again.");}}/>:
      <span aria-label="Profile initials">{initials}</span>}
   </div>
-  <label className="block font-semibold text-[var(--lms-heading)]">Change profile image
+  <Label className="block">Change profile image
    <Input className="mt-2 block w-full max-w-xs text-sm" type="file"
     accept="image/png,image/jpeg,image/webp" disabled={pending||importing}
     onChange={event=>{const file=event.currentTarget.files?.[0];
      if(file)void upload(file);event.currentTarget.value="";}}/>
-  </label>
+  </Label>
   <Button variant="link" size="inline" type="button"
    aria-expanded={showLink} onClick={()=>setShowLink(value=>!value)}>Import from image link</Button>
   {showLink?<div className="flex max-w-sm flex-col gap-2">
-   <label className="text-xs font-semibold" htmlFor="faculty-avatar-link">HTTPS image URL</label>
+   <Label htmlFor="faculty-avatar-link">HTTPS image URL</Label>
    <Input id="faculty-avatar-link" type="url" value={link} onChange={event=>setLink(event.target.value)}
     maxLength={2048} placeholder="https://example.com/profile.jpg" disabled={pending||importing}
     className="w-full min-w-0"/>

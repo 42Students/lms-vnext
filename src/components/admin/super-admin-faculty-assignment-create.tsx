@@ -15,6 +15,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {COURSE_TEACHING_ROLES,type CourseTeachingRole} from "@/modules/courses/constants";
 import {facultyAssignmentRoleLabel} from "@/modules/courses/college-courses-copy";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Delivery={id:string;sectionId:string;courseCode:string;courseName:string;sectionName:string;
   cohortName:string;academicPeriodName:string;endedAt:Date|null;programName?:string};
@@ -101,41 +102,41 @@ export function SuperAdminFacultyAssignmentCreate({
    {notice?<Alert tone="success">{notice}</Alert>:null}
    <form onSubmit={e=>void submit(e)} className="grid min-w-0 gap-3 border-b border-border pb-5 sm:grid-cols-2">
     <p className="md:col-span-2 text-sm text-body leading-[22px]">Select a course and class in the current college. Only active faculty can be assigned. Choose 1–10 active deliveries from the same semester; the batch is atomic. Imported date-only start and end values are historical metadata, not editable overrides to the active delivery.</p>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+    <Label stack>Program
      <Select required className={inputClass} value={programName} disabled={!programs.length}
       onChange={event=>{setProgramName(event.target.value);setBatchName("");setSectionId("");
        setPeriodName("");setDeliveryId("");setOtherDeliveryIds([]);}}>
       <option value="">Select a program</option>
       {programs.map(value=><option key={value} value={value}>{value}</option>)}
      </Select>
-    </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+    </Label>
+    <Label stack>Batch
      <Select required disabled={!programName} className={inputClass} value={batchName}
        onChange={e=>{setBatchName(e.target.value);setSectionId("");setPeriodName("");setDeliveryId("");setOtherDeliveryIds([]);}}>
        <option value="">Select a batch</option>
        {batchNames.map(name=><option key={name} value={name}>{name}</option>)}
      </Select>
-    </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class / Section
+    </Label>
+    <Label stack>Class / Section
      <Select required disabled={!batchName} className={inputClass} value={sectionId}
        onChange={e=>{setSectionId(e.target.value);setPeriodName("");setDeliveryId("");setOtherDeliveryIds([]);}}>
        <option value="">Select a class</option>
        {classOptions.map(([id,name])=><option key={id} value={id}>{name}</option>)}
      </Select>
-    </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester
+    </Label>
+    <Label stack>Semester
      <Select required disabled={!sectionId} className={inputClass} value={periodName}
        onChange={e=>{setPeriodName(e.target.value);setDeliveryId("");setOtherDeliveryIds([]);}}>
        <option value="">Select a semester</option>
        {periodOptions.map(name=><option key={name} value={name}>{name}</option>)}
      </Select>
-    </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic Year
+    </Label>
+    <Label stack>Academic Year
      <Input readOnly value={academicYear} placeholder="YYYY-YY" className={inputClass}
        title="Academic year is derived from the active semester and class delivery"/>
      <span className="text-xs font-normal leading-5 text-muted-foreground">Year is tied to the selected active semester. Historical years require a matching course delivery.</span>
-    </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty
+    </Label>
+    <Label stack>Faculty
      <Input type="search" value={facultyQuery} placeholder="Search faculty" aria-label="Search faculty"
        onChange={e=>setFacultyQuery(e.target.value)}/>
      <Select required className={inputClass} value={membershipId} onChange={e=>setMembershipId(e.target.value)}>
@@ -144,8 +145,8 @@ export function SuperAdminFacultyAssignmentCreate({
        {item.displayName}
       </option>)}
      </Select>
-    </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
+    </Label>
+    <Label stack>Course
      <Select required disabled={!periodName} className={inputClass} value={deliveryId}
        onChange={e=>{setDeliveryId(e.target.value);setOtherDeliveryIds([]);}}>
        <option value="">Select one or more courses</option>
@@ -153,7 +154,7 @@ export function SuperAdminFacultyAssignmentCreate({
          {item.courseCode} · {item.courseName}
        </option>)}
      </Select>
-    </label>
+    </Label>
     {selected?<fieldset className="grid gap-2 border-b border-border pb-3 md:col-span-2">
       <legend className="px-1 text-[var(--lms-font-sm)] font-semibold text-foreground">Course(s)</legend>
       <p className="text-xs text-body leading-5">Select several courses to assign this lecturer to all of them at once. The chosen course is always included. Select up to 9 additional courses for the same class and semester.</p>
@@ -161,21 +162,21 @@ export function SuperAdminFacultyAssignmentCreate({
         onChange={e=>setCourseQuery(e.target.value)} />
       <div role="region" aria-label="Available courses in the selected class" tabIndex={0}
         className="grid min-w-0 max-h-48 gap-2 overflow-y-auto overscroll-contain md:grid-cols-2 [mask-image:linear-gradient(to_bottom,black_90%,transparent)]">
-        {visibleCourses.map(item=><label key={item.id} className="flex min-h-11 items-center gap-2 text-sm">
+        {visibleCourses.map(item=><Label variant="choice" key={item.id} className="flex min-h-11 items-center gap-2">
           <Checkbox checked={item.id===deliveryId||otherDeliveryIds.includes(item.id)}
             disabled={pending||item.id===deliveryId||(!otherDeliveryIds.includes(item.id)&&deliveryIds.length>=10)}
             onChange={e=>setOtherDeliveryIds(values=>e.target.checked?[...values,item.id]:values.filter(id=>id!==item.id))}/>
           {item.courseCode} · {item.courseName}
-        </label>)}
+        </Label>)}
       </div>
     </fieldset>:null}
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
+    <Label stack>Role
      <Select className={inputClass} value={role} onChange={e=>setRole(e.target.value as CourseTeachingRole)}>
       {COURSE_TEACHING_ROLES.map(value=><option key={value} value={value}>
        {facultyAssignmentRoleLabel(value)}
       </option>)}
      </Select>
-    </label>
+    </Label>
     {truncated?<div role="status" className="space-y-2 text-xs text-muted-foreground leading-5 sm:col-span-2">
      <p>Only the first 500 active faculty members are available here. Use the course workspace to find others.</p>
      <Button type="button" variant="secondary" disabled={pending} onClick={()=>router.refresh()}>Retry options</Button>
@@ -297,61 +298,61 @@ export function SuperAdminTeachingRoleEdit({
      onClick={()=>void save()}>{pending?"Saving…":"Save Changes"}</Button>
    </div>}>
    <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-    <label className={label}>Faculty
+    <Label className={label}>Faculty
      <Select required className={cls} value={membershipId} disabled={pending||!active}
       onChange={e=>setMembershipId(e.target.value)}>
       <option value="">Select faculty</option>
       {faculty.map(item=><option key={item.membershipId} value={item.membershipId}>{item.displayName}</option>)}
      </Select>
-    </label>
-    <label className={label}>Program
+    </Label>
+    <Label className={label}>Program
      <Select required className={cls} value={program} disabled={pending||!active}
       onChange={e=>{setProgram(e.target.value);setBatch("");setSection("");setPeriod("");setDeliveryId("");}}>
       <option value="">Select a program</option>
       {programs.map(value=><option key={value} value={value}>{value}</option>)}
      </Select>
-    </label>
-    <label className={label}>Batch
+    </Label>
+    <Label className={label}>Batch
      <Select required className={cls} value={batch} disabled={pending||!active||!program}
       onChange={e=>{setBatch(e.target.value);setSection("");setPeriod("");setDeliveryId("");}}>
       <option value="">Select a batch</option>
       {batches.map(value=><option key={value} value={value}>{value}</option>)}
      </Select>
-    </label>
-    <label className={label}>Class / Section
+    </Label>
+    <Label className={label}>Class / Section
      <Select required className={cls} value={section} disabled={pending||!active||!batch}
       onChange={e=>{setSection(e.target.value);setPeriod("");setDeliveryId("");}}>
       <option value="">Select a class</option>
       {classes.map(([id,name])=><option key={id} value={id}>{name}</option>)}
      </Select>
-    </label>
-    <label className={label}>Semester
+    </Label>
+    <Label className={label}>Semester
      <Select required className={cls} value={period} disabled={pending||!active||!section}
       onChange={e=>{setPeriod(e.target.value);setDeliveryId("");}}>
       <option value="">Select a semester</option>
       {periods.map(value=><option key={value} value={value}>{value}</option>)}
      </Select>
-    </label>
-    <label className={label}>Course
+    </Label>
+    <Label className={label}>Course
      <Select required className={cls} value={deliveryId} disabled={pending||!active||!period}
       onChange={e=>setDeliveryId(e.target.value)}>
       <option value="">Select a course</option>
       {courses.map(item=><option key={item.id} value={item.id}>{item.courseCode} · {item.courseName}</option>)}
      </Select>
-    </label>
-    <label className={label}>Academic Year
+    </Label>
+    <Label className={label}>Academic Year
      <Input readOnly value={academicYear} className={cls} title="Derived from the active course delivery"/>
-    </label>
-    <label className={label}>Teaching role
+    </Label>
+    <Label className={label}>Teaching role
      <Select className={cls} value={role} disabled={pending||!active}
       onChange={e=>setRole(e.target.value as CourseTeachingRole)}>
       {COURSE_TEACHING_ROLES.map(value=><option key={value} value={value}>{facultyAssignmentRoleLabel(value)}</option>)}
      </Select>
-    </label>
-    <label className="flex items-center gap-2 text-sm font-semibold text-foreground sm:col-span-2">
+    </Label>
+    <Label className="flex items-center gap-2 sm:col-span-2">
      <Checkbox checked={active} disabled={pending} onChange={e=>setActive(e.target.checked)}/>
      Active
-    </label>
+    </Label>
    </div>
    <p className="mt-3 text-xs text-muted-foreground">Each choice must resolve to an actual current course delivery. Changes are authorized for the selected college, checked for conflicts and recorded in the activity log. Switching Active off ends this association without deleting history.</p>
    {!chosen&&active?<Alert tone="warning">Choose a current course and class before saving.</Alert>:null}

@@ -18,6 +18,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 export default async function CollegeBatchStudentsPage({
   params, searchParams,
@@ -77,18 +78,18 @@ export default async function CollegeBatchStudentsPage({
       description={batch.program + " · Search the batch roster and move students to another class."}
       actions={<PageBackLink href="/college/batches" label="Back to batches" />} />
     <FilterBar title="Filters" activeCount={Number(Boolean(q)) + Number(Boolean(sectionId))}
-      search={<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll or email
+      search={<Label stack className="min-w-0">Name, roll or email
         <Input type="search" name="q" form="batch-students-roster-filters" defaultValue={q} maxLength={100} />
-      </label>}
+      </Label>}
       action={<Button type="submit" form="batch-students-roster-filters" className="min-h-11 min-w-24 md:min-h-9">Search</Button>}>
       <form id="batch-students-roster-filters" method="get" className="grid min-w-0 items-end gap-[8px] md:max-w-[320px]">
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section
+        <Label stack className="min-w-0">Class/Section
           <Select name="sectionId" defaultValue={sectionId ?? ""}>
             <option value="">All classes</option>
             {classes.map(item => <option key={item.id} value={item.id}>
               {item.name} ({item.capacity ?? "No cap"} seats)</option>)}
           </Select>
-        </label>
+        </Label>
         <Button type="submit" className="min-h-11 w-full md:hidden">Search</Button>
       </form>
     </FilterBar>

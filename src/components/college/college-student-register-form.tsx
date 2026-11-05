@@ -13,6 +13,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {legacyPersonName,indianMobileToE164} from "@/modules/people/college-onboard-mobile-model";
+import { Label } from "@/components/ui/label";
 
 type Choices = {
   programs: {id:string;name:string}[];
@@ -87,48 +88,48 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
     });
   }
   return <>{confirmation}<form onSubmit={event=>{void submit(event);}} className="grid min-w-0 max-w-4xl gap-4 sm:grid-cols-2">
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">First Name
+    <Label stack>First Name
       <Input name="firstName" autoComplete="given-name" placeholder="Enter first name" maxLength={120} value={firstName} onChange={e=>setFirstName(e.target.value)} className={field} aria-invalid={Boolean(fieldErrors["firstName"])} aria-describedby={fieldErrors["firstName"]?"register-first-error":undefined}/>
       {fieldErrors["firstName"]?<span id="register-first-error" role="alert" className="text-xs text-error">{fieldErrors["firstName"]}</span>:null}
-    </label>
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Last Name
+    </Label>
+    <Label stack>Last Name
       <span className="text-xs font-normal text-muted-foreground">Optional</span>
       <Input name="lastName" autoComplete="family-name" placeholder="Enter last name" maxLength={120} value={lastName} onChange={e=>setLastName(e.target.value)} className={field} aria-invalid={Boolean(fieldErrors["lastName"])} aria-describedby={fieldErrors["lastName"]?"register-last-error":undefined}/>
       {fieldErrors["lastName"]?<span id="register-last-error" role="alert" className="text-xs text-error">{fieldErrors["lastName"]}</span>:null}
-    </label>
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Mobile Number
+    </Label>
+    <Label stack>Mobile Number
       <span className="text-xs font-normal text-muted-foreground">Used for OTP login</span>
       <Input name="mobile" type="tel" autoComplete="tel-national" inputMode="numeric" maxLength={10} placeholder="10-digit mobile" value={phoneE164}
         onChange={e=>{const digits=e.target.value.replace(/\D/g,"");setPhone(digits.replace(/^91(?=\d{10}$)/,"").slice(0,10));}} className={field}
         aria-invalid={Boolean(fieldErrors["mobile"])} aria-describedby={fieldErrors["mobile"]?"register-mobile-error":undefined}/>
       {fieldErrors["mobile"]?<span id="register-mobile-error" role="alert" className="text-xs text-error">{fieldErrors["mobile"]}</span>:null}
-    </label>
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Email
+    </Label>
+    <Label stack>Email
       <Input type="email" maxLength={320} value={email} onChange={e=>setEmail(e.target.value)} className={field}/>
-    </label>
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Roll Number
+    </Label>
+    <Label stack>Roll Number
       <span className="text-xs font-normal text-muted-foreground">Optional</span>
       <Input name="rollNumber" maxLength={128} placeholder="e.g., 22CS101" value={rollNumber} onChange={e=>setRoll(e.target.value)} className={field}
         aria-invalid={Boolean(fieldErrors["rollNumber"])} aria-describedby={fieldErrors["rollNumber"]?"register-roll-error":undefined}/>
       {fieldErrors["rollNumber"]?<span id="register-roll-error" role="alert" className="text-xs text-error">{fieldErrors["rollNumber"]}</span>:null}
-    </label>
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Program
+    </Label>
+    <Label stack>Program
       <Select name="programId" disabled={choices.programs.length===0} value={programId} onChange={e=>{setProgramId(e.target.value);setCohortId("");setSectionId("");}} className={field}
         aria-invalid={Boolean(fieldErrors["programId"])} aria-describedby={fieldErrors["programId"]?"register-program-error":undefined}>
         <option value="">Choose program</option>
         {choices.programs.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}
       </Select>
       {fieldErrors["programId"]?<span id="register-program-error" role="alert" className="text-xs text-error">{fieldErrors["programId"]}</span>:null}
-    </label>
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Batch
+    </Label>
+    <Label stack>Batch
       <Select name="cohortId" disabled={!programId||availableBatches.length===0} value={cohortId} onChange={e=>{setCohortId(e.target.value);setSectionId("");}} className={field}
         aria-invalid={Boolean(fieldErrors["cohortId"])} aria-describedby={fieldErrors["cohortId"]?"register-batch-error":undefined}>
         <option value="">Choose batch</option>
         {availableBatches.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}
       </Select>
       {fieldErrors["cohortId"]?<span id="register-batch-error" role="alert" className="text-xs text-error">{fieldErrors["cohortId"]}</span>:null}
-    </label>
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Class/Section
+    </Label>
+    <Label stack>Class/Section
       <Select name="sectionId" value={sectionId} onChange={e=>setSectionId(e.target.value)} disabled={!cohortId||availableClasses.length===0} className={field}
         aria-invalid={Boolean(fieldErrors["sectionId"])} aria-describedby={fieldErrors["sectionId"]?"register-class-error":undefined}>
         <option value="">Assign class later</option>
@@ -139,29 +140,29 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
       <span className="text-xs font-normal text-muted-foreground">
         New batch-first enrollment: class placement is optional when no class is assigned yet.
       </span>
-    </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] sm:col-span-2">College
+    </Label>
+    <Label stack className="sm:col-span-2">College
       <Input readOnly aria-label="Selected college" value={choices.collegeName??"Current selected college"} className={field}/>
       <span className="text-xs font-normal text-muted-foreground">Determined by your selected college workspace; cannot be changed for this registration.</span>
-    </label>
+    </Label>
     {choices.programs.length===0?<Alert tone="warning">No active programs are available for the selected college. Registration is unavailable until academic options are configured.</Alert>:null}
     <details className="group min-w-0 border-t border-border pt-4 sm:col-span-2">
       <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text md:min-h-9">Gender · Date of Birth · Address</summary>
       <div className="grid min-w-0 gap-4 pt-3 sm:grid-cols-2">
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Gender
+    <Label stack>Gender
       <Select value={gender} onChange={e=>setGender(e.target.value as typeof gender)} className={field}>
         {["","Male","Female","Other","Prefer not to say"].map(g=><option key={g} value={g}>{g||"Not specified"}</option>)}
       </Select>
-    </label>
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Date of Birth
+    </Label>
+    <Label stack>Date of Birth
       <div className="flex items-center gap-2"><Input type="date" value={dateOfBirth} onChange={e=>setDob(e.target.value)} className={field}/>
       {dateOfBirth?<Button type="button" variant="ghost" onClick={()=>setDob("")} aria-label="Clear date of birth">Clear</Button>:null}</div>
       <span className="text-xs font-normal text-muted-foreground">Example: 2005-08-21. Optional.</span>
-    </label>
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2 text-[13px]">Address
+    </Label>
+    <Label stack className="sm:col-span-2">Address
       <Textarea maxLength={1000} rows={3} value={address} onChange={e=>setAddress(e.target.value)}
         className="min-w-0"/>
-    </label>
+    </Label>
       </div>
     </details>
     <div className="sticky bottom-0 z-(--lms-z-raised) flex min-w-0 flex-col gap-2 border-t border-border bg-surface py-3 sm:col-span-2 md:flex-row md:flex-wrap md:items-center">

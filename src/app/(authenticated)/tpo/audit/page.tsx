@@ -35,6 +35,7 @@ import {
 } from "@/modules/placements/tpo-audit-service";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 
 type SearchParams = {
@@ -321,7 +322,7 @@ export default async function TpoAuditPage({
           action="/tpo/audit"
           className="mt-3 grid min-w-0 grid-cols-1 gap-[8px] sm:grid-cols-2 lg:grid-cols-4"
         >
-          <div className="contents">          <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <div className="contents">          <Label stack>
             About
             <Select
               name="kind"
@@ -340,9 +341,9 @@ export default async function TpoAuditPage({
                 </option>
               ))}
             </Select>
-          </label>
+          </Label>
 
-          <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack>
             From (IST)
             <DateInput mode="date"
               name="from"
@@ -350,9 +351,9 @@ export default async function TpoAuditPage({
               defaultValue={query.from ?? ""}
               className="min-h-11 md:min-h-9"
             />
-          </label>
+          </Label>
 
-          <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack>
             To (IST)
             <DateInput mode="date"
               name="to"
@@ -360,9 +361,9 @@ export default async function TpoAuditPage({
               defaultValue={query.to ?? ""}
               className="min-h-11 md:min-h-9"
             />
-          </label>
+          </Label>
 
-          <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack>
             Search
             <Input
               type="search"
@@ -372,15 +373,15 @@ export default async function TpoAuditPage({
               placeholder="Search"
               className="min-h-11 md:min-h-9"
             />
-          </label>
+          </Label>
 
           </div>
           <Disclosure title="Who · Rows per page" className="min-w-0 border-0 sm:col-span-2 lg:col-span-4" defaultOpen={Boolean(query.who || pageSize!==25)} contentClassName="pt-3">
             <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-          <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Who
+          <Label stack>Who
             <Input type="search" name="who" maxLength={100} defaultValue={query.who}
               placeholder="Actor name contains…" className="min-h-11 md:min-h-9"/>
-          </label>
+          </Label>
           <PageSizeSelect name="pageSize" defaultValue={String(pageSize)} options={[25,50,100]} />
             </div>
           </Disclosure>

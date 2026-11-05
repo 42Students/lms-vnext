@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import { Img } from "@/components/ui/img";
+import { Label } from "@/components/ui/label";
 
 type AvatarSnapshot = {preview:string|null;version:number};
 const endpoint="/api/placements/tpo/profile/avatar";
@@ -106,7 +107,7 @@ export function TpoProfileAvatar({name,initials}:{name:string;initials:string}){
   <Button variant="link" size="inline" type="button" className="text-left"
    disabled={busy} aria-expanded={showLink} onClick={()=>setShowLink(!showLink)}>Use an image link</Button>
   {showLink?<div className="w-full min-w-[220px] max-w-[340px] space-y-2">
-   <label htmlFor="tpo-avatar-link" className="block text-xs font-semibold">HTTPS image URL</label>
+   <Label htmlFor="tpo-avatar-link" className="block">HTTPS image URL</Label>
    <Input id="tpo-avatar-link" type="url" maxLength={2048} value={link}
     onChange={event=>setLink(event.target.value)} placeholder="https://example.com/photo.jpg" disabled={busy}/>
    <Button type="button" size="sm" variant="secondary" disabled={busy||!link.trim()}

@@ -22,6 +22,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementReportWorkspace } from "@/modules/placements/report-service";
 import {filterTpoReportGallery,tpoReportGallerySearchSchema,tpoReportGalleryGroupSchema,TPO_REPORT_GALLERY_GROUPS,countVisibleTpoReportCards} from "@/modules/placements/tpo-report-gallery-filter-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -355,20 +356,20 @@ export default async function TpoReportsPage({
         className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] lg:items-end" aria-label="Filter reports">
         {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
         {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
-        <label className="grid min-w-0 flex-1 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label stack className="min-w-0 flex-1">
           Find a report
           <Input type="search" name="q" maxLength={80} defaultValue={parsedSearch.data}
             placeholder="Report name or purpose"
             className="min-h-11 md:min-h-9 w-full"/>
-        </label>
-        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Report category
+        </Label>
+        <Label stack>Report category
           <Select name="group" defaultValue={parsedGroup.data}
             className="min-h-11 md:min-h-9">
             {TPO_REPORT_GALLERY_GROUPS.map(group=><option key={group} value={group}>
               {group==="ALL"?"All report categories":group}
             </option>)}
           </Select>
-        </label>
+        </Label>
         <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Search</Button>
         <Link href={reportHref("/tpo/reports",workspace)}
           className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">

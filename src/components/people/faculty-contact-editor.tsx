@@ -7,6 +7,7 @@ import {Input} from "@/components/ui/input";
 import {facultyContactEditSchema} from "@/modules/people/faculty-profile-document";
 import {facultyProfileSaveReceipt} from "@/modules/people/faculty-profile-save-response";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Contact={contactMobile:string;contactPhone:string;contactMail:string};
 type Field=keyof Contact;
@@ -70,8 +71,8 @@ export function FacultyContactEditor({initial,initialVersion}:{
   className="max-w-2xl min-w-0 space-y-4 border-t border-border pt-4">
   <Heading level={3} size="base" className="text-[var(--lms-heading)]">Edit contacts</Heading>
   <div className="grid gap-4 sm:grid-cols-2">
-   {fields.map(field=><label key={field.name}
-    className="min-w-0 space-y-1.5 text-sm font-semibold text-body">
+   {fields.map(field=><Label key={field.name}
+    className="min-w-0 space-y-1.5">
     <span className="block">{field.label}</span>
     <Input name={field.name} type={field.type} inputMode={field.type==="tel"?"numeric":undefined}
      autoComplete={field.name==="contactMobile"?"tel":field.name==="contactMail"?"email":"off"}
@@ -79,7 +80,7 @@ export function FacultyContactEditor({initial,initialVersion}:{
      value={draft[field.name]} disabled={pending}
      onChange={event=>{setDraft(old=>({...old,[field.name]:event.target.value}));setError(null);setSuccess(null);}}/>
     <span className="block text-xs font-normal text-muted-foreground">{field.hint}</span>
-   </label>)}
+   </Label>)}
   </div>
   {error?<p role="alert" className="text-sm font-semibold text-danger">{error}</p>:null}
   {success?<p role="status" className="text-sm font-semibold text-success">{success}</p>:null}

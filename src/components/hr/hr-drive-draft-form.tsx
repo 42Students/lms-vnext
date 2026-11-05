@@ -29,6 +29,7 @@ import {hrDraftCompensationWarnings} from "@/modules/placements/hr-draft-compens
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 const HR_DRAFT_PREVIEW_FIELDS=[
  ["minimumAnnualCtcInr","Minimum CTC"],
@@ -441,43 +442,43 @@ export function HrDriveDraftForm({
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <Heading level={2} className="text-foreground">1 · The role</Heading>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
-          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] md:col-span-2 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0 text-[length:var(--lms-font-sm)] md:col-span-2">
             Role title
             <Input className="w-full" data-draft-field="title" aria-invalid={Boolean(fieldErrors["title"])} placeholder="e.g. Software Engineer" aria-describedby={fieldErrors["title"] ? "hr-title-error" : undefined}
               value={draft.title} maxLength={200}
               onChange={(event) => { setFieldErrors(current => ({ ...current, title: "" }));
                 setDraft((current) => ({ ...current, title: event.target.value })); }} />
             {fieldErrors["title"] ? <span role="alert" id="hr-title-error" className="text-xs text-error">{fieldErrors["title"]}</span> : null}
-          </label>
-          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] md:col-span-2 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0 text-[length:var(--lms-font-sm)] md:col-span-2">
             Description (optional)
             <Textarea className="min-h-28" rows={4} value={draft.description} maxLength={5000}
               onChange={(event) => setDraft((current) => ({ ...current, description: event.target.value }))} />
-          </label>
-          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">
             Location (optional)
             <Input className="w-full" value={draft.location} maxLength={180}
               onChange={(event) => setDraft((current) => ({ ...current, location: event.target.value }))} />
-          </label>
-          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">
             Employment type
             <Select className="w-full" value={draft.employmentType}
               onChange={(event) => setDraft((current) => ({ ...current, employmentType: event.target.value as HrDriveDraft["employmentType"] }))}>
               {selectOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
             </Select>
-          </label>
-          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">
             Mode
             <Select className="w-full" value={draft.driveMode??"ON_CAMPUS"}
               onChange={event=>setDraft(current=>({...current,driveMode:event.target.value as HrDriveDraft["driveMode"],
                 ...(event.target.value!=="OFF_CAMPUS"?{externalApplicationUrl:""}:{})}))}>
               {LEGACY_HR_DRIVE_MODES.map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
             </Select>
-          </label>
+          </Label>
           {draft.driveMode==="POOL"?<p className="md:col-span-2 text-xs text-muted-foreground" role="status">
             Pool drives require placement-cell review; the source pool classification is retained when approved.
           </p>:null}
-          {draft.driveMode==="OFF_CAMPUS"?<label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] md:col-span-2 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+          {draft.driveMode==="OFF_CAMPUS"?<Label stack className="min-w-0 text-[length:var(--lms-font-sm)] md:col-span-2">
             Application website (HTTPS)
             <Input className="w-full" type="url" inputMode="url" maxLength={2000}
               placeholder="https://example.com/apply" value={draft.externalApplicationUrl??""}
@@ -485,17 +486,17 @@ export function HrDriveDraftForm({
             <span className="text-xs text-muted-foreground">
               The placement cell reviews the application website before publishing.
             </span>
-          </label>:null}
-          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+          </Label>:null}
+          <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">
             Work mode
             <Select className="w-full" value={draft.workMode}
               onChange={(event) => setDraft((current) => ({ ...current, workMode: event.target.value as HrDriveDraft["workMode"] }))}>
               {workModes.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
             </Select>
-          </label>
+          </Label>
         </div>
         <div className="mt-3 grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
-          <label htmlFor="hr-jd-url">Job description link (optional)</label>
+          <Label htmlFor="hr-jd-url">Job description link (optional)</Label>
           <Input id="hr-jd-url" type="url" inputMode="url" maxLength={2000}
             data-draft-field="jdUrl" aria-invalid={Boolean(fieldErrors["jdUrl"])}
             aria-describedby={fieldErrors["jdUrl"] ? "hr-jd-url-error" : "hr-jd-url-help"}
@@ -511,7 +512,7 @@ export function HrDriveDraftForm({
             Use a public HTTPS link, or upload a private PDF/Word file below. Private files require a verified scan and a short-lived authorized link.
           </span>
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            <label htmlFor="hr-jd-upload" className="text-sm font-semibold">Upload a PDF or Word file (optional, up to 5 MB)</label>
+            <Label htmlFor="hr-jd-upload">Upload a PDF or Word file (optional, up to 5 MB)</Label>
             <Input id="hr-jd-upload" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
               disabled={submitting || jdUploading} className="max-w-full text-sm"
               onChange={event => { const file = event.currentTarget.files?.[0];
@@ -535,30 +536,30 @@ export function HrDriveDraftForm({
           Enter the overall compensation, then add packages for different offers if needed.
         </p>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-3">
-          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">
             {draft.employmentType==="INTERNSHIP"?"CTC after the internship (LPA, optional)":"CTC (LPA)"}
             <Input className="w-full" type="number" min={0} step={HR_DRIVE_CTC_STEP} data-draft-field="ctcLpa" aria-invalid={Boolean(fieldErrors["ctcLpa"])}
               inputMode="decimal" value={draft.ctcLpa??""} aria-describedby={fieldErrors["ctcLpa"] ? "hr-ctc-error" : undefined}
               onChange={event=>{setFieldErrors(current=>({...current,ctcLpa:""}));
                 setDraft(current=>({...current,ctcLpa:event.target.value}));}}/>
             {fieldErrors["ctcLpa"] ? <span role="alert" id="hr-ctc-error" className="text-xs text-error">{fieldErrors["ctcLpa"]}</span> : null}
-          </label>
-          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">
             Fixed (optional)
             <Input className="w-full" type="number" min={0} step={HR_DRIVE_PACKAGE_MONEY_STEP} inputMode="decimal" value={draft.fixedLpa??""}
               onChange={event=>setDraft(current=>({...current,fixedLpa:event.target.value}))}/>
-          </label>
-          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">
             Variable (optional)
             <Input className="w-full" type="number" min={0} step={HR_DRIVE_PACKAGE_MONEY_STEP} inputMode="decimal" value={draft.variableLpa??""}
               onChange={event=>setDraft(current=>({...current,variableLpa:event.target.value}))}/>
-          </label>
+          </Label>
           <p className="text-xs text-muted-foreground md:col-span-3">Fixed and variable LPA must not exceed total CTC. Spin controls use legacy increments; entered hundredths are preserved.</p>
-          {draft.employmentType!=="FULL_TIME"&&draft.employmentType!=="CONTRACT"?<label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+          {draft.employmentType!=="FULL_TIME"&&draft.employmentType!=="CONTRACT"?<Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">
             Stipend per month (₹)
             <Input className="w-full" inputMode="numeric" value={draft.stipendMonthlyInr??""}
               onChange={event=>setDraft(current=>({...current,stipendMonthlyInr:event.target.value}))}/>
-          </label>:null}
+          </Label>:null}
         </div>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-3">
           {([
@@ -569,14 +570,14 @@ export function HrDriveDraftForm({
             ["bondMonths", "Bond months"],
             ["bondAmountInr", "Bond amount (₹)"],
           ] as const).map(([field, label]) => (
-            <label key={field} className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+            <Label stack key={field} className="min-w-0 text-[length:var(--lms-font-sm)]">
               {label}
               <Input className="w-full" data-draft-field={field} aria-invalid={Boolean(fieldErrors[field])}
                 inputMode="decimal" value={draft[field]}
                 onChange={(event) => { setFieldErrors(current=>({...current,[field]:""}));
                   setDraft((current) => ({ ...current, [field]: event.target.value })); }} />
               {fieldErrors[field] ? <span role="alert" className="text-xs text-error">{fieldErrors[field]}</span> : null}
-            </label>
+            </Label>
           ))}
         </div>
         <div className="mt-4 space-y-3 border-t border-border pt-4">
@@ -602,8 +603,8 @@ export function HrDriveDraftForm({
                   ["variableLpa",LEGACY_HR_DRIVE_FORM_LABELS.variable],
                   ["joiningBonusLpa",LEGACY_HR_DRIVE_FORM_LABELS.joiningBonus],
                   ["stipendMonthlyInr",LEGACY_HR_DRIVE_FORM_LABELS.stipend],
-                ] as const).map(([field,label])=><label key={field}
-                  className="grid min-w-0 gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+                ] as const).map(([field,label])=><Label stack key={field}
+                  className="min-w-0">
                   {label}
                   <Input type={field==="name"?"text":"number"}
                     min={field==="name"?undefined:0}
@@ -613,8 +614,8 @@ export function HrDriveDraftForm({
                       ...current,payPackages:(current.payPackages??[]).map((row,i)=>
                         i===index?{...row,[field]:event.target.value}:row),
                     }))}/>
-                </label>)}
-                <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+                </Label>)}
+                <Label stack className="min-w-0">
                   {LEGACY_HR_DRIVE_FORM_LABELS.duration}
                   <Input type="number" min={1} max={120} step={1}
                     value={typeof item.internshipMonths==="string"||typeof item.internshipMonths==="number"?item.internshipMonths:""}
@@ -623,7 +624,7 @@ export function HrDriveDraftForm({
                         i===index?{...row,internshipMonths:event.target.value?
                           Number(event.target.value):undefined}:row),
                     }))}/>
-                </label>
+                </Label>
               </div>
               <Button className="mt-3" variant="secondary" type="button"
                 onClick={()=>setDraft(current=>({...current,
@@ -641,7 +642,7 @@ export function HrDriveDraftForm({
         <Heading level={2} className="text-foreground">3 · Who can apply</Heading>
         <p className="mt-2 text-sm text-body">Leave optional filters blank to request no additional restrictions. The placement cell still verifies eligibility before students can apply.</p>
         <div className="mt-3 grid min-w-0 gap-4 md:grid-cols-2">
-          <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+          <Label stack>
             Minimum CGPA
             <Input type="number" min={0} max={10} step={0.1} inputMode="decimal"
               data-draft-field="minimumCgpa" aria-invalid={Boolean(fieldErrors["minimumCgpa"])}
@@ -649,8 +650,8 @@ export function HrDriveDraftForm({
               onChange={event=>{setFieldErrors(current=>({...current,minimumCgpa:""}));
                 setDraft(current=>({...current,minimumCgpa:event.target.value}));}}/>
             {fieldErrors["minimumCgpa"] ? <span role="alert" className="text-xs text-error">{fieldErrors["minimumCgpa"]}</span> : null}
-          </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack>
             Maximum active backlogs
             <Input type="number" min={0} step={1} inputMode="numeric"
               data-draft-field="maximumActiveBacklogs" value={draft.maximumActiveBacklogs}
@@ -658,10 +659,10 @@ export function HrDriveDraftForm({
               onChange={event=>{setFieldErrors(current=>({...current,maximumActiveBacklogs:""}));
                 setDraft(current=>({...current,maximumActiveBacklogs:event.target.value}));}}/>
             {fieldErrors["maximumActiveBacklogs"] ? <span role="alert" className="text-xs text-error">{fieldErrors["maximumActiveBacklogs"]}</span> : null}
-          </label>
+          </Label>
         </div>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
-          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">
             Branches
             <Input className="w-full" data-draft-field="branches" aria-invalid={!branchDraftReady} list="recruiter-eligible-branches"
               value={branchInput} placeholder="All branches"
@@ -687,9 +688,9 @@ export function HrDriveDraftForm({
               <span role="alert" className="text-xs text-error">
                 Enter at most {HR_DRIVE_BRANCH_LIMIT} branches without dropping any selection.
               </span>:null}
-          </label>
+          </Label>
           <div className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
-            <label htmlFor="hr-passing-year-add">Passing years</label>
+            <Label htmlFor="hr-passing-year-add">Passing years</Label>
             <div className="flex min-w-0 flex-wrap items-center gap-2">
               <Input id="hr-passing-year-add" className="min-w-0 flex-1" data-draft-field="passingYears"
                 aria-invalid={Boolean(fieldErrors["passingYears"]||fieldErrors["passingYear"])}
@@ -773,7 +774,7 @@ export function HrDriveDraftForm({
         <div className="mt-4 min-w-0 space-y-3">
           {draft.rounds.map((round, index) => (
             <div key={index} className="grid min-w-0 gap-3 border-b border-border py-4 last:border-b-0 md:grid-cols-2 lg:grid-cols-[170px_minmax(0,1fr)_auto]">
-              <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+              <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">
                 Kind
                 <Select className="w-full" value={round.kind}
                   onChange={(event) => setDraft((current) => ({
@@ -782,15 +783,15 @@ export function HrDriveDraftForm({
                   }))}>
                   {roundKinds.map((kind) => <option key={kind} value={kind}>{roundKindLabels[kind]}</option>)}
                 </Select>
-              </label>
-              <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+              </Label>
+              <Label stack className="min-w-0 text-[length:var(--lms-font-sm)]">
                 Round name
                 <Input className="w-full" maxLength={100} value={round.name} placeholder={"Round " + (index + 1) + " name"}
                   onChange={(event) => setDraft((current) => ({
                     ...current, rounds: current.rounds.map((item, i) => i === index
                       ? { ...item, name: event.target.value } : item),
                   }))} />
-              </label>
+              </Label>
               <div className="flex min-w-0 flex-wrap items-end gap-2 md:col-span-2 lg:col-span-1 lg:justify-end">
                 <Button type="button" disabled={index===0} aria-label={"Move "+round.name+" earlier"}
                   variant="secondary"

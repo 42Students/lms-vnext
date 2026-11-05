@@ -47,6 +47,7 @@ import { combineHrCalendarDays, hrResultsDueHref, selectHrMobileCalendarDays } f
 import {hrNextCalendarEvent} from "@/modules/placements/hr-calendar-next-event-model";
 import {HR_CALENDAR_CATEGORIES,hrCalendarCategorySchema,filterHrCalendarDays,type HrCalendarCategory} from "@/modules/placements/hr-calendar-category-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export const dynamic = "force-dynamic";
 
@@ -420,12 +421,12 @@ export default async function HrCalendarPage({
                     <Input type="hidden" name="view" value={view} />
                     {selectedCollegeId?<Input type="hidden" name="collegeId" value={selectedCollegeId}/>:null}
                     <Input type="hidden" name="category" value={category} />
-                    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                    <Label stack className="min-w-0">
                       Jump to date
                       <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
                       <DateInput mode="date" key={anchor} name="date" defaultValue={anchor}
                         required className="w-full" />
-                    </label>
+                    </Label>
                     <Button type="submit" className="min-h-11 md:min-h-9">Go to date</Button>
                   </form>
                 </details>

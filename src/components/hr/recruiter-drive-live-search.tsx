@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 /** The old recruiter drive search updated while typing; results stay server-scoped. */
 export function RecruiterDriveLiveSearch({initialQuery,currentHref}:{
@@ -23,13 +24,13 @@ export function RecruiterDriveLiveSearch({initialQuery,currentHref}:{
     return ()=>window.clearTimeout(timer);
   },[query,initialQuery,currentHref,router]);
   return <div className="flex min-w-0 w-full flex-1 items-end gap-2 md:w-auto md:min-w-[180px]">
-    <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    <Label stack className="min-w-0 flex-1">
       Search by role
       <Input type="search" name="q" value={query} maxLength={100}
         onChange={e=>setQuery(e.target.value)}
         aria-label="Search drives by role"
         placeholder="Search by role" className="min-h-11 w-full md:min-h-9"/>
-    </label>
+    </Label>
     {query?<Button variant="link" size="inline" type="button" onClick={()=>setQuery("")}
       aria-label="Clear drive search">Clear</Button>:null}
   </div>;

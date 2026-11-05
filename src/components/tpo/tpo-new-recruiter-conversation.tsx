@@ -12,6 +12,7 @@ import {useRouter} from "next/navigation";
 import {useToast} from "@/components/ui/toast";
 import {TPO_QUICK_REPLIES} from "@/modules/placements/tpo-message-draft-model";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type Recruiter={userId:string;displayName:string|null;companyName:string};
 export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
@@ -101,10 +102,10 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
    </div>}>
     <form id={formId} onSubmit={event=>{event.preventDefault();void create();}} className="space-y-3">
      <p className="text-sm text-body">Choose a recruiter with active college access. This creates their General thread; select a drive thread for job-specific changes.</p>
-     <label className="block text-xs font-semibold text-muted-foreground">Search active recruiters
+     <Label className="block">Search active recruiters
        <Input type="search" value={recruiterSearch} onChange={event=>setRecruiterSearch(event.target.value)} placeholder="Search recruiter or company" className="mt-1 min-h-11 md:min-h-9"/>
-     </label>
-     <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Recruiter
+     </Label>
+     <Label className="block">Recruiter
       <Select ref={selectRef} aria-label="Recruiter" required value={id}
        onChange={e=>{setId(e.target.value);setCreatedThreadId(null);setError("");}} disabled={busy}
        className="mt-1 min-h-11 w-full border px-2">
@@ -113,7 +114,7 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
         {(r.displayName?.trim()||"Unnamed recruiter")+" · "+r.companyName}
        </option>)}
       </Select>
-     </label>
+     </Label>
      {recruiters.length===0?<InlineNotice tone="info" message="No recruiters have verified, active placement access."/>:null}
      <Disclosure title="Quick replies" className="border-t border-border" contentClassName="px-2 pb-2">
       <div role="group" aria-label="Quick replies" className="flex flex-wrap gap-2">
@@ -122,7 +123,7 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
        className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">{reply}</Button>)}
       </div>
      </Disclosure>
-     <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Message
+     <Label className="block">Message
       <Textarea aria-label="New message" placeholder="Write a message" required maxLength={4000}
        disabled={busy} className="mt-1 min-h-28 w-full min-w-0 border p-3 text-base md:text-sm"
        value={message} onChange={event=>editMessage(event.target.value)}
@@ -132,7 +133,7 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
          event.preventDefault();if(id&&message.trim())void create();
         }
        }}/>
-     </label>
+     </Label>
      <p className="text-xs text-muted-foreground leading-[20px]" aria-live="polite">
       Enter or Ctrl/Cmd+Enter to send · Shift+Enter for a new line · {message.length}/4000
      </p>

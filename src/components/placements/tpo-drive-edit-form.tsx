@@ -21,6 +21,7 @@ import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-erro
 import {DrivePayCategoryField,readDrivePayCategoryFields} from "./drive-pay-category-field";
 import {isDrivePayCategory} from "@/modules/placements/drive-pay-category-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Draft=Awaited<ReturnType<typeof getTpoDriveEditState>>;
 function optionalNumber(v:FormDataEntryValue|null){const s=String(v??"").trim();return s===""?null:Number(s);}
 export function TpoDriveEditForm({job}:{job:Draft}){
@@ -307,7 +308,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    if(field.name==="maximumAnnualCtcInr")setMaxCtcInr(field.value);
   }
  }} className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
-  <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Role<Input required name="title" defaultValue={job.title} minLength={3} maxLength={100} placeholder="e.g. Systems Engineer" className={cls}/></label>
+  <Label className="block text-[length:var(--lms-font-sm)]">Role<Input required name="title" defaultValue={job.title} minLength={3} maxLength={100} placeholder="e.g. Systems Engineer" className={cls}/></Label>
   <section aria-label="Employer relationship" className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 py-3">
    <Heading level={3} size="sm" className="text-foreground">Company</Heading>
    <p className="mt-1 text-base font-semibold text-foreground">{job.companyName??"Add the company"}</p>
@@ -321,7 +322,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     View linked company and role details
    </Link>
   </section>
-  <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={3} className={cls}/></label>
+  <Label className="block text-[length:var(--lms-font-sm)]">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={3} className={cls}/></Label>
   <section aria-label="Selection rounds preview" className="min-w-0 space-y-2 border-b border-border pb-3">
    <Heading level={3} size="sm" className="text-foreground">Selection rounds</Heading>
    {job.rounds.length===0?<p className="text-xs text-body">No selection rounds configured.</p>:
@@ -350,15 +351,15 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    <p role="status" className="text-xs text-body">
     {jdHasFile?"Verified job description attached.":"No job description attached."}
    </p>
-   <label className="grid gap-1 text-xs font-semibold text-muted-foreground">Reason for attachment change
+   <Label stack>Reason for attachment change
     <Input value={jdReason} maxLength={1000} disabled={jdBusy||pending}
      onChange={event=>setJdReason(event.target.value)}/>
-   </label>
-   <label className="grid gap-1 text-xs font-semibold text-muted-foreground">Attach job description
+   </Label>
+   <Label stack>Attach job description
     <Input type="file" accept=".pdf,.doc,.docx" disabled={jdBusy||pending||jdReason.trim().length<10}
      onChange={event=>{const file=event.target.files?.[0];event.target.value="";
       if(file)void uploadJd(file);}}/>
-   </label>
+   </Label>
    {jdUnconfirmedKey?<div className="space-y-2">
     <p role="status" className="text-xs text-warning">
      File uploaded but not yet verified. Retry confirmation without uploading it again.
@@ -372,30 +373,30 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     disabled={jdBusy||pending||jdReason.trim().length<10}
     onClick={()=>setJdRemoveOpen(true)}>Remove attached document</Button>:null}
   </section>
-  <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Location (comma-separated)<Input name="locations" defaultValue={job.locations.join(", ")} className={cls}/></label>
+  <Label className="block text-[length:var(--lms-font-sm)]">Location (comma-separated)<Input name="locations" defaultValue={job.locations.join(", ")} className={cls}/></Label>
   <section aria-label="Drive job details" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
    <Heading level={2} className="mb-3 text-foreground">The drive</Heading>
    <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-    <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">Job type
+    <Label className="block">Job type
      <Select name="employmentType" defaultValue={job.employmentType} className={cls}>
       <option value="FULL_TIME">Full-time</option><option value="INTERNSHIP">Internship</option>
       <option value="CONTRACT">Contract</option>
      </Select>
-    </label>
-    <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">Work mode
+    </Label>
+    <Label className="block">Work mode
      <Select name="workMode" defaultValue={job.workMode} className={cls}>
       <option value="ONSITE">Onsite</option><option value="HYBRID">Hybrid</option><option value="REMOTE">Remote</option>
      </Select>
-    </label>
-    <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">Mode
+    </Label>
+    <Label className="block">Mode
      <Select name="recruiterDriveMode" defaultValue={job.recruiterDriveMode} className={cls}>
       <option value="ON_CAMPUS">On campus</option><option value="OFF_CAMPUS">Off campus (company&apos;s site)</option>
      </Select>
-    </label>
-    <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] sm:col-span-2 xl:col-span-3">College job type label (optional)
+    </Label>
+    <Label className="block sm:col-span-2 xl:col-span-3">College job type label (optional)
      <Input name="jobTypeLabel" maxLength={40} defaultValue={job.jobTypeLabel??""}
       placeholder="e.g. Full-time, Internship" className={cls}/>
-    </label>
+    </Label>
    </div>
   </section>
   <details className="group min-w-0 border-y border-border py-3">
@@ -403,39 +404,39 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     Compensation and openings <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
    </summary>
    <div className="grid min-w-0 gap-4 pt-3 sm:grid-cols-2 xl:grid-cols-3">
-   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Openings<Input type="number" min={1} max={100000} name="openings" defaultValue={job.openings??""} className={cls}/></label>
-   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Minimum annual CTC (INR)<Input type="number" min={0} max={100000000} name="minimumAnnualCtcInr" defaultValue={job.minimumAnnualCtcInr??""} className={cls}/></label>
-   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Maximum annual CTC (INR)<Input type="number" min={0} max={100000000} name="maximumAnnualCtcInr" defaultValue={job.maximumAnnualCtcInr??""} className={cls}/></label>
-   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Fixed CTC (LPA)
-    <Input name="fixedCtcLpa" type="number" min={0} max={1000} step="0.01" defaultValue={job.fixedCtcLpa??""} className={cls}/></label>
-   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Variable CTC (LPA)
-    <Input name="variableCtcLpa" type="number" min={0} max={1000} step="0.01" defaultValue={job.variableCtcLpa??""} className={cls}/></label>
-   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Stipend per month (INR)
+   <Label className="block text-[length:var(--lms-font-sm)]">Openings<Input type="number" min={1} max={100000} name="openings" defaultValue={job.openings??""} className={cls}/></Label>
+   <Label className="block text-[length:var(--lms-font-sm)]">Minimum annual CTC (INR)<Input type="number" min={0} max={100000000} name="minimumAnnualCtcInr" defaultValue={job.minimumAnnualCtcInr??""} className={cls}/></Label>
+   <Label className="block text-[length:var(--lms-font-sm)]">Maximum annual CTC (INR)<Input type="number" min={0} max={100000000} name="maximumAnnualCtcInr" defaultValue={job.maximumAnnualCtcInr??""} className={cls}/></Label>
+   <Label className="block text-[length:var(--lms-font-sm)]">Fixed CTC (LPA)
+    <Input name="fixedCtcLpa" type="number" min={0} max={1000} step="0.01" defaultValue={job.fixedCtcLpa??""} className={cls}/></Label>
+   <Label className="block text-[length:var(--lms-font-sm)]">Variable CTC (LPA)
+    <Input name="variableCtcLpa" type="number" min={0} max={1000} step="0.01" defaultValue={job.variableCtcLpa??""} className={cls}/></Label>
+   <Label className="block text-[length:var(--lms-font-sm)]">Stipend per month (INR)
     <Input name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}
-      defaultValue={job.stipendPerMonthInr??""} className={cls}/></label>
+      defaultValue={job.stipendPerMonthInr??""} className={cls}/></Label>
   </div>
   </details>
   <DrivePayCategoryField inputClassName={cls}
    maxCtcLpa={maxCtcInr.trim()!==""&&Number.isFinite(Number(maxCtcInr))?Number(maxCtcInr)/100000:null}
    initialCategory={isDrivePayCategory(job.legacyJobCategory)&&job.legacyCategoryOverrideReason?job.legacyJobCategory:null}
    initialReason={job.legacyCategoryOverrideReason??""}/>
-  <label className="flex min-h-11 min-w-0 items-center gap-3 text-sm font-semibold text-body">
+  <Label className="flex min-h-11 min-w-0 items-center gap-3">
     <Checkbox name="isDream" defaultChecked={job.isDream} className="h-4 w-4 accent-primary"/>
     Dream drive — held-offer limit exception
-  </label>
+  </Label>
   <fieldset className="min-w-0 space-y-2 border-y border-border py-3">
    <legend className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">Eligible batches</legend>
    <p className="text-xs leading-5 text-body">Choose batches allowed to apply. No selection means all batches, subject to the other eligibility rules. A live update does not change role options or scheduled rounds.</p>
    {job.availableBatches.length?<div className="grid max-h-52 gap-2 overflow-y-auto sm:grid-cols-2">
-    {job.availableBatches.map(batch=><label key={batch.id}
-      className="flex min-h-11 min-w-0 items-start gap-2 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm text-body">
+    {job.availableBatches.map(batch=><Label variant="choice" key={batch.id}
+      className="flex min-h-11 min-w-0 items-start gap-2 rounded-[var(--lms-control-radius)] border border-border p-2">
      <Checkbox name="allowedCohortIds" value={batch.id}
        defaultChecked={job.allowedCohortIds.includes(batch.id)}
        className="mt-0.5 h-4 w-4 shrink-0 accent-primary"/>
      <span className="min-w-0 break-words">{batch.name} · {batch.program}
        {batch.status!=="ACTIVE"?<span className="block text-xs text-warning">Previously targeted · inactive</span>:null}
      </span>
-    </label>)}
+    </Label>)}
    </div>:<p className="text-sm text-muted-foreground">No active batches. Current targeting is unchanged until a batch is available.</p>}
   </fieldset>
   <fieldset className="min-w-0 space-y-2 border-b border-border pb-3">
@@ -443,24 +444,24 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    <p className="text-xs leading-5 text-body">Select the allowed branches. No selection means all
     programs in the eligible batches. Only programs from this college can be saved.</p>
    {job.availablePrograms.length?<div className="grid max-h-56 gap-2 overflow-y-auto sm:grid-cols-2">
-    {job.availablePrograms.map(program=><label key={program.id}
-     className="flex min-h-11 min-w-0 items-start gap-2 rounded border border-border p-2 text-sm">
+    {job.availablePrograms.map(program=><Label variant="choice" key={program.id}
+     className="flex min-h-11 min-w-0 items-start gap-2 rounded border border-border p-2">
      <Checkbox name="allowedProgramIds" value={program.id}
       defaultChecked={job.allowedProgramIds.includes(program.id)}
       className="mt-1 shrink-0"/>
      <span className="min-w-0 break-words">{program.departmentName} · {program.name}
       {program.status!=="ACTIVE"?<span className="block text-xs text-warning">Previously selected · inactive</span>:null}
      </span>
-    </label>)}
+    </Label>)}
    </div>:<p role="status" className="text-xs text-muted-foreground">No college programs available; saved branch targeting is preserved.</p>}
   </fieldset>
   <section aria-label="Eligibility marks and passing years" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
    <Heading level={2} size="base" className="text-foreground">Eligibility</Heading>
    <p className="text-xs leading-5 text-body">Marks follow the Students page: verified first; otherwise student-submitted values are flagged as not verified. Use verified marks only to require confirmed evidence.</p>
-   <label className="flex min-h-11 items-center gap-3 text-sm font-semibold">
+   <Label className="flex min-h-11 items-center gap-3">
     <Checkbox name="verifiedMarksOnly" defaultChecked={job.verifiedMarksOnly} className="h-4 w-4 accent-primary"/>
     Require verified marks only
-   </label>
+   </Label>
    <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
     {([
      ["minTenthPctBasisPoints","10th minimum (%)",job.minTenthPctBasisPoints],
@@ -468,15 +469,15 @@ export function TpoDriveEditForm({job}:{job:Draft}){
      ["minDiplomaPctBasisPoints","Diploma minimum (%)",job.minDiplomaPctBasisPoints],
      ["minUndergraduatePctBasisPoints","Undergraduate minimum (%)",job.minUndergraduatePctBasisPoints],
      ["minPostgraduatePctBasisPoints","Postgraduate minimum (%)",job.minPostgraduatePctBasisPoints],
-    ] as const).map(([name,label,value])=><label key={name} className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">{label}
+    ] as const).map(([name,label,value])=><Label key={name} className="block">{label}
      <Input name={name} type="number" min={0} max={100} step="0.01"
       defaultValue={value===null?"":value/100} className={cls}/>
-    </label>)}
+    </Label>)}
    </div>
-   <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">Passing years
+   <Label className="block">Passing years
     <Input name="allowedPassingYears" defaultValue={job.allowedPassingYears.join(", ")}
      placeholder="e.g. 2026, 2027" className={cls}/>
-   </label>
+   </Label>
    <p className="text-xs leading-5 text-muted-foreground">Separate years with commas. Leave blank for no passing-year restriction.</p>
    <div className="border-t border-border pt-3 text-sm">
     <p className="font-semibold text-foreground">Departments and branches</p>
@@ -495,36 +496,36 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   </section>
   <fieldset className="space-y-3 border-y border-border py-3">
    <legend className="text-sm font-semibold text-foreground">Employer's external registration portal</legend>
-   <label className="flex min-h-11 items-center gap-2 text-sm text-body">
+   <Label variant="choice" className="flex min-h-11 items-center gap-2">
     <Checkbox name="studentsRegisterSeparately"
      defaultChecked={job.legacyPostingDetails?.portal?.studentsRegisterSeparately??false}/>
     Students also register on the company portal
-   </label>
+   </Label>
    <div className="grid gap-3 sm:grid-cols-2">
-    <label className="grid gap-1 text-xs font-semibold text-muted-foreground">Portal name
+    <Label stack>Portal name
      <Input name="portalName" maxLength={160}
       defaultValue={job.legacyPostingDetails?.portal?.name??""} className={cls}/>
-    </label>
-    <label className="grid gap-1 text-xs font-semibold text-muted-foreground">Portal link (HTTPS)
+    </Label>
+    <Label stack>Portal link (HTTPS)
      <Input name="portalUrl" type="url" maxLength={2000}
       defaultValue={job.legacyPostingDetails?.portal?.url??""} placeholder="https://..." className={cls}/>
-    </label>
+    </Label>
    </div>
    {!job.legacyPostingDetails?<p className="text-xs text-warning">
     This historical drive has no editable portal metadata. Its existing portal fields remain unchanged.</p>:null}
   </fieldset>
   <div className="grid min-w-0 gap-4 sm:grid-cols-2">
-   <label className="block text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Application deadline (IST)
+   <Label className="block text-[length:var(--lms-font-sm)]">Application deadline (IST)
     <DateInput name="applicationDeadline" mode="datetime-local"
       defaultValue={job.applicationDeadline?new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(job.applicationDeadline)).replace(" ","T"):""}
       className={cls}/>
-   </label>
-   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Minimum CGPA for eligibility
+   </Label>
+   <Label className="block text-[length:var(--lms-font-sm)]">Minimum CGPA for eligibility
     <Input name="minCgpa" type="number" min={0} max={10} step="0.01"
       defaultValue={job.minCgpaHundredths===null?"":job.minCgpaHundredths/100} className={cls}/>
-   </label>
+   </Label>
   </div>
-    <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Reason for edit (audited)<Textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={cls}/></label>
+    <Label className="block text-[length:var(--lms-font-sm)]">Reason for edit (audited)<Textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={cls}/></Label>
   <section aria-label="Drive edit status" className="space-y-2 text-sm">
    <p role="status" className="inline-flex items-center gap-2 text-body">
     <span aria-hidden="true" className={dirty?"h-2 w-2 rounded-full bg-warning":"h-2 w-2 rounded-full bg-success"}/>

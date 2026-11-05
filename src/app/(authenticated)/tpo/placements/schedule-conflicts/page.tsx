@@ -12,6 +12,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoScheduleConflicts } from "@/modules/placements/tpo-schedule-conflicts-service";
 import { tpoScheduleConflictsQuerySchema } from "@/modules/placements/tpo-schedule-conflicts-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type SearchParams = { days?: string | string[] };
 const dateTime = new Intl.DateTimeFormat("en-IN", {
@@ -63,7 +64,7 @@ export default async function TpoScheduleConflictsPage({
         actions={<Link href="/tpo/placements" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link hover:underline focus-ring sm:w-auto md:min-h-9">← Placement operations</Link>}
       />
       <form method="get" className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,14rem)_auto] sm:items-end">
-        <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+        <Label>
           Upcoming window
           <Select name="days" defaultValue={String(data.days)}
             className="mt-[6px] block min-h-11 md:min-h-9 border border-border px-3 text-sm font-normal">
@@ -71,7 +72,7 @@ export default async function TpoScheduleConflictsPage({
               <option key={days} value={days}>{days} days</option>
             ))}
           </Select>
-        </label>
+        </Label>
         <Button variant="primary" type="submit"
           className="w-full min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary sm:w-auto">
           Apply

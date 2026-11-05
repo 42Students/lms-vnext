@@ -11,6 +11,7 @@ import {useState} from "react";
 import {filterTpoBlockedDates,tpoBlockedDatesEmptyMessage} from "@/modules/placements/tpo-blocked-date-filter-model";
 import {groupTpoBlockedDays} from "@/modules/placements/tpo-blocked-range-display";
 import {tpoIndiaCalendarDay} from "@/modules/placements/tpo-local-date-model";
+import { Label } from "@/components/ui/label";
 type BlockedDay={id:string;day:string;reason:string;updatedAt:string};
 export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
  const router=useRouter(),[startDay,setStartDay]=useState(""),[endDay,setEndDay]=useState(""),[reason,setReason]=useState("");
@@ -42,17 +43,17 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
   <form className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,2fr)_auto]"
    onSubmit={e=>{e.preventDefault();if(!validRange||busy)return;
     void request("/api/placements/tpo/settings/blocked-dates","POST",{startDay,endDay,reason:reason.trim()||"Blocked"});}}>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">From
+   <Label stack className="min-w-0">From
     <Input type="date" required min={today} value={startDay} disabled={busy}
      onChange={e=>{setStartDay(e.target.value);if(endDay&&endDay<e.target.value)setEndDay(e.target.value);}}
-     className="min-h-11 w-full md:min-h-9"/></label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Until
+     className="min-h-11 w-full md:min-h-9"/></Label>
+   <Label stack className="min-w-0">Until
     <Input type="date" required min={startDay||today} value={endDay} disabled={busy}
      onChange={e=>setEndDay(e.target.value)}
-     className="min-h-11 w-full md:min-h-9"/></label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Label (optional)
+     className="min-h-11 w-full md:min-h-9"/></Label>
+   <Label stack className="min-w-0">Label (optional)
     <Input value={reason} disabled={busy} maxLength={500} onChange={e=>setReason(e.target.value)}
-     placeholder="Blocked" className="min-h-11 w-full md:min-h-9"/></label>
+     placeholder="Blocked" className="min-h-11 w-full md:min-h-9"/></Label>
    
    <Button type="submit" className="min-h-11 w-full md:min-h-9 xl:w-auto self-end"
     disabled={busy||!validRange||(reason.trim().length>0&&reason.trim().length<3)}>Block dates</Button>
@@ -63,15 +64,15 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
   </form>
   <Disclosure title="Filter blocked dates" className="min-w-0" contentClassName="pt-[var(--lms-space-2)]">
    <div className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] md:grid-cols-2">
-    <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Filter by month
+    <Label stack className="min-w-0">Filter by month
       <Input type="month" value={month} onChange={e=>setMonth(e.target.value)}
         className="min-h-11 md:min-h-9 w-full"/>
-    </label>
-    <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Search reasons
+    </Label>
+    <Label stack className="min-w-0">Search reasons
       <Input type="search" maxLength={100} value={search} onChange={e=>setSearch(e.target.value)}
         placeholder="Reason or YYYY-MM-DD"
         className="min-h-11 md:min-h-9 w-full"/>
-    </label>
+    </Label>
    </div>
   </Disclosure>
   <p role="status" className="text-xs text-muted-foreground">Showing {visible.length} of {items.length} blocked days across {ranges.length} displayed ranges · Maximum 90 days per range</p>

@@ -10,6 +10,7 @@ import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 export type MentorEvidenceGalleryItem={
   index:number;name:string;type:string;href:string|null;
@@ -56,7 +57,7 @@ export function MentorEvidenceGallery({items}:{items:readonly MentorEvidenceGall
           onClick={()=>setPdfPage(old=>Math.max(1,old-1))}>
           Previous page
         </Button>
-        <label>Page
+        <Label>Page
           <Input type="number" min={1} max={999} value={pdfPage}
             className="ml-2 w-20 rounded border border-border p-2"
             onChange={event=>{
@@ -64,18 +65,18 @@ export function MentorEvidenceGallery({items}:{items:readonly MentorEvidenceGall
               if(Number.isSafeInteger(value))
                 setPdfPage(Math.min(999,Math.max(1,value)));
             }}/>
-        </label>
+        </Label>
         <Button variant="secondary" size="md" type="button" disabled={pdfPage>=999}
           onClick={()=>setPdfPage(old=>Math.min(999,old+1))}>
           Next page
         </Button>
-        <label>Zoom
+        <Label>Zoom
           <Select value={pdfZoom} className="ml-2 rounded border border-border p-2"
             onChange={event=>setPdfZoom(Number(event.target.value))}>
             {[50,75,100,125,150,200].map(value=>
               <option key={value} value={value}>{value}%</option>)}
           </Select>
-        </label>
+        </Label>
         <p className="text-xs text-muted-foreground">
           Page and zoom controls depend on your browser's PDF viewer.
         </p>

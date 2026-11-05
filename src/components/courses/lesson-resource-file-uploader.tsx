@@ -7,6 +7,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Alert} from "@/components/ui/alert";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type FileMaterial={
  id:string;kind:string;title:string;originalName:string|null;uploadStatus:string;
@@ -202,7 +203,7 @@ export function LessonResourceFileUploader({
    <div className="space-y-2 border-t border-border pt-3">
     <Heading level={5} size="sm">Upload file material</Heading>
     <p className="text-xs text-muted-foreground">PDF, Office, CSV, text, images or ZIP; up to 50 MB per file. Files remain private until scanned and verified.</p>
-    <label className="grid gap-1 text-xs font-semibold">File
+    <Label stack>File
      <Input type="file" accept={extensions.map(extension=>"."+extension).join(",")} disabled={busy}
       onChange={event=>{
        const chosen=event.currentTarget.files?.[0]??null;
@@ -210,15 +211,15 @@ export function LessonResourceFileUploader({
        if(chosen)setDraft(previous=>({...previous,title:chosen.name.replace(/\.[^.]+$/,"")}));
        event.currentTarget.value="";
       }}/>
-    </label>
-    <label className="grid gap-1 text-xs font-semibold">Title
+    </Label>
+    <Label stack>Title
      <Input maxLength={255} disabled={busy} value={draft.title}
       onChange={event=>setDraft(previous=>({...previous,title:event.target.value}))}/>
-    </label>
-    <label className="grid gap-1 text-xs font-semibold">Notes (optional)
+    </Label>
+    <Label stack>Notes (optional)
      <Textarea maxLength={2000} rows={2} disabled={busy} value={draft.notes}
       onChange={event=>setDraft(previous=>({...previous,notes:event.target.value}))}/>
-    </label>
+    </Label>
     {file?<p className="text-xs text-muted-foreground">{file.name} · {Math.ceil(file.size/1024)} KB</p>:null}
     {busy&&file?<div role="status" className="space-y-1">
      <p className="text-xs">Upload {progress}%</p>

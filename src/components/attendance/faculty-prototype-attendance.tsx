@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type AttendanceMark="PRESENT"|"ABSENT";
 type Session=FacultyAttendanceWorkspaceData["sessions"][number];
@@ -166,7 +167,7 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
     <div><Heading level={2} size="base" className="text-[color:var(--lms-heading)]">{sessionLabel(selected.startsAt)} · {selected.location??"Room not assigned"}</Heading>
      <p className="faculty-proto-subtitle mt-1">{markedPresent} present, {markedAbsent} absent, {unmarked} not marked</p></div>
     <div className="flex flex-wrap gap-2">
-     <label className="sr-only" htmlFor="faculty-attendance-search">Find a student by name</label>
+     <Label className="sr-only" htmlFor="faculty-attendance-search">Find a student by name</Label>
      <Input id="faculty-attendance-search" value={search} onChange={e=>setSearch(e.target.value)}
       placeholder="Find a student by name" className="min-h-11 rounded-lg border border-[color:var(--lms-border)] bg-surface px-3 text-sm"/>
      <Button variant="secondary" type="button" onClick={()=>setMarks(new Map(scopeRecords.map(s=>[s.membershipId,"PRESENT" as const])))}
@@ -200,7 +201,7 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
     onClick={()=>setAllVisible(true)}>Show all {filtered.length} students</Button>:null}
    {selected.attendanceStatus==="MARKED"&&changed?
     <div className="border-t border-[color:var(--lms-border)] px-4 py-3">
-     <label htmlFor="faculty-attendance-correction-reason" className="block text-sm font-semibold">Reason for correcting recorded attendance</label>
+     <Label htmlFor="faculty-attendance-correction-reason" className="block">Reason for correcting recorded attendance</Label>
      <Textarea id="faculty-attendance-correction-reason" rows={2} value={correctionReason}
       onChange={e=>setCorrectionReason(e.target.value)} maxLength={500}
       className="mt-1 w-full rounded-lg border border-[color:var(--lms-border)] p-3 text-sm" placeholder="What changed in the recorded attendance?"/>

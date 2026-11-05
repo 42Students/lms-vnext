@@ -14,6 +14,7 @@ import { getMentorReviewQueue } from "@/modules/projects/mentor-portfolio-servic
 import { mentorPortfolioHref, mentorReviewQuerySchema } from "@/modules/projects/mentor-portfolio-model";
 import { singleValueMentorFilters } from "@/modules/projects/mentor-filter-query";
 import {mentorReviewExportHref} from "@/modules/projects/mentor-review-export-model";
+import { Label } from "@/components/ui/label";
 
 type Params = { assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; search?: string | string[]; order?: string | string[]; age?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 
@@ -52,45 +53,45 @@ export default async function MentorReviewsPage({
       <form role="search" aria-label="mentor reviews filters" action="/mentor/reviews" method="get"
         className="min-w-0 space-y-3 border-b border-border pb-4">
         <div className="grid min-w-0 items-end gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+          <Label stack>Search
             <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
               placeholder="Project title" className="min-h-11 md:min-h-9" />
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project
+          </Label>
+          <Label stack>Assigned project
             <Select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 md:min-h-9 max-w-full">
               <option value="">All assigned projects</option>
               {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
             </Select>
-          </label>
+          </Label>
           <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
         </div>
         <Disclosure title="Filters" defaultOpen={data.query.assignment!=="ALL"||data.query.order!=="NEWEST"||data.query.age!=="ALL"||data.query.projectStatus!=="ALL"||data.pageSize!==20}
           className="min-w-0" contentClassName="min-w-0 pt-3 pb-2">
           <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3">
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">My Mentor assignment
+          <Label stack>My Mentor assignment
             <Select name="assignment" defaultValue={data.query.assignment} className="min-h-11 md:min-h-9">
               <option value="ALL">All assigned projects</option><option value="PRIMARY">Primary Mentor</option>
               <option value="SUPPORTING">Supporting Mentor</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Review order
+          </Label>
+          <Label stack>Review order
             <Select name="order" defaultValue={data.query.order}
               className="min-h-11 md:min-h-9">
               <option value="NEWEST">Newest submitted first</option>
               <option value="OLDEST">Oldest submitted first</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submitted within
+          </Label>
+          <Label stack>Submitted within
             <Select name="age" defaultValue={data.query.age} className="min-h-11 md:min-h-9">
               <option value="ALL">Any age</option><option value="LAST_7_DAYS">Last 7 days</option><option value="LAST_30_DAYS">Last 30 days</option><option value="OLDER_THAN_7_DAYS">Waiting over 7 days</option><option value="OLDER_THAN_30_DAYS">Waiting over 30 days</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned Project lifecycle
+          </Label>
+          <Label stack>Assigned Project lifecycle
             <Select name="projectStatus" defaultValue={data.query.projectStatus} className="min-h-11 md:min-h-9">
               <option value="ALL">All current assignments</option><option value="PLANNED">Planned</option>
               <option value="ACTIVE">Active</option><option value="COMPLETED">Completed</option>
             </Select>
-          </label>
+          </Label>
             <PageSizeSelect label="Page size" name="pageSize"
           defaultValue={String(data.pageSize)} options={[20,50]} />
           </div>

@@ -16,6 +16,7 @@ import {planMentorNextSprintAssignments} from "@/modules/projects/mentor-next-sp
 import {nextMentorAllocatableSprint} from
   "@/modules/projects/mentor-next-allocatable-sprint-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Task={id:string;title:string;sprintId:string|null;carriedFromSprintId?:string|null;assigneeMembershipId:string|null;
  updatedAt:Date;status:string;priority:string;estimatePoints:number|null;
  sequence?:number;deletedAt?:Date|null};
@@ -205,38 +206,38 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
   </Button>
   {filtersOpen?<div id="mentor-allocation-filters"
     className="flex flex-wrap gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
-   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Release
+   <Label>Release
     <Select value={release} onChange={e=>{setRelease(e.target.value);setSprint("");
       remember("release",e.target.value);remember("sprint","");}}
       className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="">All releases</option>
      {releases.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
     </Select>
-   </label>
-   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Sprint
+   </Label>
+   <Label>Sprint
     <Select value={sprint} onChange={e=>{setSprint(e.target.value);remember("sprint",e.target.value);}}
       className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="">All sprints</option>
      {sprints.filter(item=>!release||item.releaseId===release).map(item=>
       <option key={item.id} value={item.id}>{item.title}</option>)}
     </Select>
-   </label>
-   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Priority
+   </Label>
+   <Label>Priority
     <Select value={priority} onChange={e=>{setPriority(e.target.value);remember("priority",e.target.value);}}
       className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="">All priorities</option>
      {["LOW","MEDIUM","HIGH","CRITICAL"].map(value=><option key={value} value={value}>{value}</option>)}
     </Select>
-   </label>
-   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Status
+   </Label>
+   <Label>Status
     <Select value={status} onChange={e=>{setStatus(e.target.value);remember("status",e.target.value);}}
       className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="">All statuses</option>
      {["TODO","IN_PROGRESS","IN_REVIEW","BLOCKED","DONE"].map(value=>
       <option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
     </Select>
-   </label>
-   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Assignment
+   </Label>
+   <Label>Assignment
     <Select value={assignmentScope}
       onChange={e=>{setAssignmentScope(e.target.value);remember("assignment",e.target.value);}}
       className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
@@ -246,7 +247,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
      {learners.map(member=><option value={member.membershipId} key={member.membershipId}>
       {member.displayName??"Learner"}</option>)}
     </Select>
-   </label>
+   </Label>
    <Button variant="link" type="button" onClick={()=>{
     setRelease("");setSprint("");setPriority("");setStatus("");setAssignmentScope("");
     ["release","sprint","priority","status","assignment"].forEach(key=>remember(key,""));
@@ -328,7 +329,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
          <p className="mt-1 text-xs font-semibold text-warning-text leading-[20px]">
            Reassign from former member
          </p>:null}
-       {!readOnly?<label className="mt-2 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Assign to
+       {!readOnly?<Label className="mt-2 block text-[length:var(--lms-font-sm)]">Assign to
         <Select aria-label={"Reassign "+task.title} disabled={busy||["DONE","IN_REVIEW"].includes(task.status)}
          value={task.assigneeMembershipId??""}
          onChange={event=>void assign(task.id,event.target.value||null)}
@@ -338,7 +339,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
            <option value={task.assigneeMembershipId} disabled>Former member (reassign)</option>:null}
          {learners.map(member=>
           <option key={member.membershipId} value={member.membershipId}>{member.displayName??"Learner"}</option>)}
-        </Select></label>:null}
+        </Select></Label>:null}
       </li>)}
       {!cards.length?<li><EmptyState title="No tasks" description="No tasks in this lane." /></li>:null}
      </ul>

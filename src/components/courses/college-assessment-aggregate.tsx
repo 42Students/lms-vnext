@@ -26,6 +26,7 @@ import {
   type CollegeAssessmentKind,
   type CollegeAssessmentListQuery,
 } from "@/modules/courses/college-assessment-aggregate-model";
+import { Label } from "@/components/ui/label";
 
 type Data = {
   kind: CollegeAssessmentKind;
@@ -96,13 +97,13 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
         <form method="get"
           action={isAssignment ? "/college/assignments" : "/college/quizzes"}
           className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)] [&>label]:min-w-[min(100%,13rem)]">
-          <label className="grid min-w-52 flex-1 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-52 flex-1">
             Search title
             <Input name="q" type="search" maxLength={100}
               defaultValue={data.query.q} placeholder="Assessment title"
               className="min-h-11 md:min-h-9" />
-          </label>
-          <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-40">
             Status
             <Select name="status" defaultValue={data.query.status}
               className="min-h-11 md:min-h-9">
@@ -112,60 +113,60 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
               {!isAssignment ? <option value="CLOSED">Closed</option> : null}
               <option value="ARCHIVED">Archived</option>
             </Select>
-          </label>
+          </Label>
           <CollegeAssessmentCourseSectionFilters courses={data.directoryCourses}
             sections={data.directorySections} initialCourseCode={data.query.courseCode??""}
             initialDeliveryId={data.query.deliveryId??""}/>
           <details open={Boolean((data.query.scope && data.query.scope !== "ALL") || data.query.cohortCode || data.query.programCode || data.query.periodCode || (data.query.duePresence && data.query.duePresence !== "ALL") || (data.query.dueWindow && data.query.dueWindow !== "ALL") || (!isAssignment && data.query.results !== "ALL"))} className="min-w-0 basis-full">
             <summary className="flex min-h-11 cursor-pointer items-center text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)] focus-ring">Assessment directory filters</summary>
             <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)]">
-          <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-40">
             Batch / cohort code (exact)
             <Input name="cohortCode" type="search" maxLength={64} defaultValue={data.query.cohortCode??""}
               className="min-h-11 md:min-h-9"/>
-          </label>
-          <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-40">
             Program code (exact)
             <Input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode??""}
               className="min-h-11 md:min-h-9"/>
-          </label>
-          <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-40">
             Audience scope
             <Select name="scope" defaultValue={data.query.scope}
               className="min-h-11 md:min-h-9">
               <option value="ALL">All scopes</option><option value="SHARED">Shared offering</option>
               <option value="SECTION">Section-specific</option>
             </Select>
-          </label>
-          {!isAssignment?<label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          {!isAssignment?<Label stack className="min-w-40">
             Quiz results
             <Select name="results" defaultValue={data.query.results}
               className="min-h-11 md:min-h-9">
               <option value="ALL">Any visibility</option><option value="PUBLISHED">Results published</option>
               <option value="HIDDEN">Results hidden</option>
             </Select>
-          </label>:null}
-          <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          </Label>:null}
+          <Label stack className="min-w-40">
             Due-date configuration
             <Select name="duePresence" defaultValue={data.query.duePresence}
               className="min-h-11 md:min-h-9">
               <option value="ALL">All deadlines</option><option value="SCHEDULED">Deadline configured</option>
               <option value="UNSCHEDULED">No deadline</option>
             </Select>
-          </label>
-          <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-40">
             Deadline window
             <Select name="dueWindow" defaultValue={data.query.dueWindow}
               className="min-h-11 md:min-h-9">
               <option value="ALL">Any deadline</option><option value="PAST">Deadline passed</option>
               <option value="FUTURE">Deadline upcoming</option>
             </Select>
-          </label>
-          <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-40">
             Academic period code
             <Input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode??""}
               className="min-h-11 md:min-h-9"/>
-          </label>
+          </Label>
 
             </div>
           </details>

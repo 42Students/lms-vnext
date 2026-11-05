@@ -13,6 +13,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { DataTable } from "@/components/ui/data-table";
 import { apiFetch } from "@/lib/api-fetch";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Option = { id: string; name: string };
 type ClassOption = Option & { cohortName: string; periodStart: string; periodEnd: string; updatedAt: string };
@@ -186,83 +187,83 @@ export function CollegeRecurringPreview({
       ) : (
         <form onSubmit={preview} onChange={()=>setDirty(true)} aria-busy={pending} className="min-w-0 space-y-[var(--lms-space-4)]">
           <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Session title
+          <Label stack className="min-w-0">Session title
             <Input disabled={pending} required maxLength={160} value={title} onChange={e=>setTitle(e.target.value)}
               className="min-h-11 min-w-0 md:min-h-9"/>
-          </label>
-          <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
+          </Label>
+          <Label stack>Class
             <Select disabled={pending} required value={sectionId} onChange={(e) => onClass(e.target.value)}
               className="min-h-11 min-w-0 md:min-h-9">
               <option value="">Select a class</option>
               {classes.map((c) => <option key={c.id} value={c.id}>{c.name} · {c.cohortName}</option>)}
             </Select>
-          </label>
+          </Label>
           {selected ? <p className="text-xs text-muted-foreground leading-[20px]">Academic period: {selected.periodStart} to {selected.periodEnd}</p> : null}
-          <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course (optional)
+          <Label stack>Course (optional)
             <Select value={deliveryId} onChange={e => setDeliveryId(e.target.value)}
               disabled={pending || !sectionId} className="min-h-11 min-w-0 md:min-h-9">
               <option value="">No course linked</option>
               {deliveries.filter(item => item.sectionId === sectionId).map(item =>
                 <option key={item.id} value={item.id}>{item.name} ({item.code})</option>)}
             </Select>
-          </label>
+          </Label>
           </div>
           <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-4">
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">From
+            <Label stack>From
               <Input disabled={pending} type="date" required value={from} min={selected?.periodStart} max={selected?.periodEnd}
                 onChange={(e) => setFrom(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
-            </label>
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">To (up to 200 matching sessions)
+            </Label>
+            <Label stack>To (up to 200 matching sessions)
               <Input disabled={pending} type="date" required value={to} min={from || selected?.periodStart} max={selected?.periodEnd}
                 onChange={(e) => setTo(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
-            </label>
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start (IST)
+            </Label>
+            <Label stack>Start (IST)
               <Input disabled={pending} type="time" required value={startTime} step={300} onChange={(e) => setStartTime(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
-            </label>
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End (IST)
+            </Label>
+            <Label stack>End (IST)
               <Input disabled={pending} type="time" required value={endTime} step={300} onChange={(e) => setEndTime(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
-            </label>
+            </Label>
           </div>
           <fieldset className="min-w-0 space-y-[var(--lms-space-3)]">
             <legend className="text-sm font-semibold text-body">Repeat on weekdays</legend>
             <p className="text-xs text-muted-foreground">Day names map to Sunday=0 through Saturday=6, in India Standard Time.</p>
-            <label className="flex min-h-11 items-center gap-2 text-sm font-medium">
+            <Label className="flex min-h-11 items-center gap-2">
              <Checkbox disabled={pending} checked={weekdays.length===7}
                onChange={e=>{setDirty(true);setWeekdays(e.target.checked?[0,1,2,3,4,5,6]:[]);}} />
              Every day
-            </label>
+            </Label>
             <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-2)] sm:grid-cols-4 lg:grid-cols-7">
               {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, index) => (
-                <label key={day} className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-[var(--lms-space-3)] text-sm text-body">
+                <Label variant="choice" key={day} className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-[var(--lms-space-3)]">
                   <Checkbox disabled={pending} checked={weekdays.includes(index)}
                     onChange={(e) => setWeekdays((current) => e.target.checked
                       ? [...current, index].sort()
                       : current.filter((n) => n !== index))} />
                   {day}
-                </label>
+                </Label>
               ))}
             </div>
             <p className="text-xs text-muted-foreground">Clear every weekday to repeat daily. Times use five-minute steps (IST).</p>
           </fieldset>
           <Disclosure title="Optional teaching details" defaultOpen={Boolean(facultyId || hallId)} className="min-w-0 border-b border-[var(--lms-canvas-border)]" contentClassName="min-w-0 py-3"><div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty (optional)
+            <Label stack>Faculty (optional)
               <Select disabled={pending} value={facultyId} onChange={(e) => setFacultyId(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9">
                 <option value="">No faculty selected</option>
                 {faculty.map((f) => <option key={f.id} value={f.id}>{f.displayName || "Unnamed faculty"}</option>)}
               </Select>
-            </label>
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lecture hall (optional)
+            </Label>
+            <Label stack>Lecture hall (optional)
               <Select disabled={pending} value={hallId} onChange={(e) => setHallId(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9">
                 <option value="">No lecture hall selected</option>
                 {halls.map((h) => <option key={h.id} value={h.id}>{h.name}</option>)}
               </Select>
-            </label>
+            </Label>
           </div></Disclosure>
           {invalidRange ? <Alert tone="error">{endTime <= startTime ? "End time must be after start time." : "To date cannot be earlier than From date."}</Alert> : null}
           <Button type="submit" loading={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending || invalidRange || !sectionId || !from || !to}>

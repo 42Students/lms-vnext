@@ -6,6 +6,7 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {Alert} from "@/components/ui/alert";
 import type {FacultyAssignmentResourceInput} from "@/modules/courses/faculty-assignment-authoring-model";
+import { Label } from "@/components/ui/label";
 
 type Draft=FacultyAssignmentResourceInput;
 type Kind=Draft["kind"];
@@ -125,23 +126,23 @@ export function FacultyAssignmentResourceDraftFields({
        onClick={()=>onChange(resources.filter((_,i)=>i!==index))}>Remove</Button>
      </div>
     </div>
-    <label className="grid gap-[6px] text-[13px] font-semibold">
+    <Label stack>
      Resource title
      <Input maxLength={255} value={item.title} required disabled={blocked}
       onChange={event=>replace(index,{...item,title:event.target.value})}/>
-    </label>
+    </Label>
     {item.kind==="INSTRUCTIONS"?
-     <label className="grid gap-[6px] text-[13px] font-semibold">Instructions
+     <Label stack>Instructions
       <Textarea value={item.body} maxLength={10000} rows={4}
        disabled={blocked} onChange={event=>replace(index,{...item,body:event.target.value})}/>
-     </label>:
+     </Label>:
      item.kind==="LINK"?
-     <label className="grid gap-[6px] text-[13px] font-semibold">HTTPS Link
+     <Label stack>HTTPS Link
       <Input value={item.externalUrl} type="url" maxLength={2048}
        placeholder="https://" disabled={blocked}
        onChange={event=>replace(index,{...item,externalUrl:event.target.value})}/>
-     </label>:
-     <label className="grid gap-[6px] text-[13px] font-semibold">
+     </Label>:
+     <Label stack>
       Upload private {item.kind==="PDF"?"PDF":"file"}
       <Input type="file" accept={item.kind==="PDF"?".pdf,application/pdf":undefined}
        disabled={blocked}
@@ -154,7 +155,7 @@ export function FacultyAssignmentResourceDraftFields({
        {item.privateObjectKey?"Private file attached (scan verification required)":
         "Choose a file before creating the assignment"}
       </span>
-     </label>}
+     </Label>}
    </div>)}
   <div className="flex flex-wrap gap-2" role="group" aria-label="Add resource type">
    {(["INSTRUCTIONS","PDF","FILE","LINK"] as const).map(kind=>

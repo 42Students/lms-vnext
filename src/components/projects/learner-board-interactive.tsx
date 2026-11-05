@@ -17,6 +17,7 @@ import {canLearnerMoveOwnTask} from "@/modules/projects/learner-task-status-poli
 import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
 import {learnerBoardTaskHref,type LearnerTaskBoardUrlFilters} from "@/modules/projects/learner-board-task-detail-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;templateKey:string;
  updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null};
 type Sprint={id:string;status:string;title:string};
@@ -138,7 +139,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
           task.templateKey.startsWith("learner-"+membershipId!.replaceAll("-","")+"-") ?
           <LearnerDeleteOwnTask projectId={projectId} taskId={task.id}/>:null}
         {task.sprintId===null && own && !readOnly ?
-          <label className="mt-2 block text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+          <Label className="mt-2 block">
             Pull into sprint
             <Select defaultValue="" disabled={busy||!sprints.some(s=>s.status==="ACTIVE")}
               onChange={event=>{if(event.target.value)void pull(task,event.target.value);}}
@@ -148,8 +149,8 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
             </Select>
             {!sprints.some(s=>s.status==="ACTIVE")?
               <span className="mt-1 block text-xs font-normal">Start a sprint before moving backlog tasks onto the board.</span>:null}
-          </label> : null}
-        {editable?<label className="mt-2 block text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+          </Label> : null}
+        {editable?<Label className="mt-2 block">
           Move {task.title}
           <Select aria-label={"Move "+task.title} value={task.status} disabled={busy}
            onChange={event=>void move(task.id,event.target.value as EditableStatus)}
@@ -158,7 +159,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
               .map(status=><option key={status} value={status} disabled={status===task.status}>
                {status==="TODO"?"To Do":status==="IN_PROGRESS"?"In Progress":"Blocked"}</option>)}
           </Select>
-        </label>:null}
+        </Label>:null}
        </li>;
      })}
      {!lane.tasks.length?<li><EmptyState title="No tasks" description="No tasks in this lane." /></li>:null}
@@ -179,11 +180,11 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
     setBlockedTarget(null);
     void move(targetId,"BLOCKED",note);
    }}>
-   <label className="block text-sm font-semibold">
+   <Label className="block">
     Blocker reason
     <Textarea value={blockerDraft} onChange={event=>setBlockerDraft(event.target.value)}
      maxLength={2000} required rows={4} className="mt-2 w-full" />
-   </label>
+   </Label>
   </ConfirmDialog>
  </section>;
 }

@@ -16,6 +16,7 @@ import {mentorSprintPlanningDefaults,type MentorSprintPlanningRow} from "@/modul
 import {MentorSprintBacklogPull,type MentorSprintBacklogChoice} from "./mentor-sprint-backlog-pull";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 /** Deliberate vNext granularity: each sprint mutation is a separate
  * version-checked transaction. A multi-sprint legacy Save plan is NOT atomic
@@ -97,7 +98,7 @@ export function MentorSprintCreate({
         </Button>
       </div>;
   const sprintForm=(<div className="grid min-w-0 gap-[var(--lms-space-4)]">
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Release
+        <Label stack className="min-w-0">Release
           <Select value={chosenReleaseId} disabled={busy} required aria-invalid={!chosenReleaseId}
             onChange={event=>{
               const choice=event.target.value;
@@ -111,7 +112,7 @@ export function MentorSprintCreate({
             {releases.filter(release=>release.status!=="SHIPPED").map(release=>
               <option key={release.id} value={release.id}>{release.title}</option>)}
           </Select>
-        </label>
+        </Label>
         {!chosenReleaseId?<p role="alert" className="text-xs text-error">Select a release before saving.</p>:null}
         {chosenReleaseId?<p className="text-xs text-muted-foreground">
           Suggested {suggested.title} in this release.
@@ -119,41 +120,41 @@ export function MentorSprintCreate({
           These are editable defaults; the server assigns the final sequence.
         </p>:null}
         <div className="grid min-w-0 gap-3 md:grid-cols-2">
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Key (optional)
+          <Label stack className="min-w-0">Key (optional)
             <Input maxLength={120} placeholder="Auto-generated from title if left blank"
               value={key} onChange={e=>setKey(e.target.value)}/>
-          </label>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Due (optional)
+          </Label>
+          <Label stack className="min-w-0">Due (optional)
             <Input maxLength={160} placeholder="e.g. Week 2"
               value={dueLabel} onChange={e=>setDueLabel(e.target.value)}/>
-          </label>
+          </Label>
         </div>
         {!key.trim()&&title.trim()?<p className="text-xs text-muted-foreground">
           Will be saved as: {sprintKeyPreview||"sprint"}
         </p>:null}
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
+        <Label stack className="min-w-0">Title
           <Input maxLength={200} placeholder="e.g. Kickoff & planning" aria-invalid={!title.trim()}
             value={title} onChange={e=>setTitle(e.target.value)} required />
           {!title.trim()?<span role="alert" className="text-xs text-error">Title is required</span>:null}
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description
+        </Label>
+        <Label stack className="min-w-0">Description
           <Textarea value={description} maxLength={4000}
             onChange={e=>setDescription(e.target.value)}
             placeholder="Optional description" />
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint goal (optional)
+        </Label>
+        <Label stack className="min-w-0">Sprint goal (optional)
           <Input maxLength={4000} value={goal} onChange={e=>setGoal(e.target.value)}
-            placeholder="One sentence: what this sprint is trying to achieve"/></label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What does done look like?
+            placeholder="One sentence: what this sprint is trying to achieve"/></Label>
+        <Label stack className="min-w-0">What does done look like?
           <Textarea maxLength={4000} value={done} onChange={e=>setDone(e.target.value)}
-            placeholder="Acceptance criteria — e.g. API returns paginated results and integration tests pass"/></label>
+            placeholder="Acceptance criteria — e.g. API returns paginated results and integration tests pass"/></Label>
         <div className="grid min-w-0 gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:grid-cols-3">
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start date
-            <Input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}/></label>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End date
-            <Input type="date" value={endDate} onChange={e=>setEndDate(e.target.value)}/></label>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Due date
-            <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/></label>
+          <Label stack className="min-w-0">Start date
+            <Input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}/></Label>
+          <Label stack className="min-w-0">End date
+            <Input type="date" value={endDate} onChange={e=>setEndDate(e.target.value)}/></Label>
+          <Label stack className="min-w-0">Due date
+            <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/></Label>
         </div>
         {!datesValid?<p role="alert" className="text-sm font-semibold text-error">
           Sprint end and due dates must not come before the start date.
@@ -232,11 +233,11 @@ export function MentorSprintTransition({
       title={label+"?"}
       description={action==="REOPEN"?"Reopening changes the Sprint status. Task moves are not reversed unless you explicitly restore an unchanged recent sign-off. Restoring fails safely if tasks have changed or the release has shipped.":"The Sprint status and project activity will change."}
       confirmLabel={label} pending={busy} onConfirm={transition}>
-      {action==="REOPEN"?<label className="flex items-start gap-2 text-sm">
+      {action==="REOPEN"?<Label variant="choice" className="flex items-start gap-2">
         <Checkbox checked={restoreCarry} disabled={busy}
           onChange={event=>setRestoreCarry(event.target.checked)}/>
         Restore tasks carried to the next Sprint, backlog or archive at this Sprint’s last sign-off (only if all are untouched).
-      </label>:null}
+      </Label>:null}
     </ConfirmDialog>
   </>;
 }

@@ -17,6 +17,7 @@ import {calendarLocalIstToOffset} from "@/modules/placements/tpo-calendar-follow
 import {tpoFollowupContactLinks} from "@/modules/placements/tpo-followup-queue-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type DueRow = {
   id: string;
@@ -149,7 +150,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
           </p>
         ) : (
           <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2">
-            <label className="block min-w-0 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+            <Label className="block min-w-0 text-[length:var(--lms-font-sm)]">
               Recruiter
               <Select className={"mt-1 " + field} value={leadId} disabled={pending}
                 onChange={(event) => {setLeadId(event.target.value);setError("");}}>
@@ -159,17 +160,17 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                   </option>
                 ))}
               </Select>
-            </label>
-            <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+            </Label>
+            <Label className="block text-[length:var(--lms-font-sm)]">
               Follow-up time (local)
               <Input type="datetime-local" className={"mt-1 " + field}
                 value={dueLocal} disabled={pending} onChange={(event) => {setDueLocal(event.target.value);setError("");}} />
-            </label>
-            <label className="block min-w-0 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+            </Label>
+            <Label className="block min-w-0 text-[length:var(--lms-font-sm)] sm:col-span-2">
               Preparation note (optional)
               <Textarea rows={2} maxLength={500} className={"mt-1 " + field}
                 value={createNote} disabled={pending} onChange={(event) => setCreateNote(event.target.value)} />
-            </label>
+            </Label>
             <Button variant="primary" type="button" disabled={pending || !leadId || !dueLocal}
               onClick={() => setConfirmCreate(true)} className={action}>
               {pending ? "Saving..." : "Review and confirm follow-up"}
@@ -219,7 +220,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                 {row.note ? <p className="whitespace-pre-wrap text-sm text-body">{row.note}</p> : null}
                 {activeId === row.id ? (
                   <div className="grid min-w-0 grid-cols-1 gap-3 border-l-2 border-primary bg-primary-subtle px-3 py-3 sm:grid-cols-2">
-                    <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+                    <Label className="block text-[length:var(--lms-font-sm)]">
                       Outcome
                       <Select value={outcome} disabled={pending}
                         onChange={(event) => setOutcome(event.target.value as Outcome)}
@@ -229,13 +230,13 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                         <option value="DECLINED">Declined</option>
                         <option value="OTHER">Other</option>
                       </Select>
-                    </label>
-                    <label className="block min-w-0 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+                    </Label>
+                    <Label className="block min-w-0 text-[length:var(--lms-font-sm)] sm:col-span-2">
                       Outcome note (required)
                       <Textarea maxLength={500} value={doneNote} disabled={pending}
                         onChange={(event) => {setDoneNote(event.target.value);setError("");}}
                         className={"mt-1 " + field} rows={2} />
-                    </label>
+                    </Label>
                     <Button variant="primary" type="button" onClick={() => setConfirmComplete(row)}
                       disabled={pending || !doneNote.trim()} className={action + " sm:col-span-2 sm:justify-self-start"}>
                       {pending ? "Recording..." : "Review and confirm Done"}

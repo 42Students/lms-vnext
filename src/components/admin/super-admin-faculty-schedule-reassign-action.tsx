@@ -10,6 +10,7 @@ import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import {Dialog} from "@/components/ui/dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import { Label } from "@/components/ui/label";
 
 type FacultyChoice={membershipId:string;displayName:string};
 
@@ -128,12 +129,12 @@ export function SuperAdminFacultyScheduleReassignAction({
         <Button variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={()=>setOpen(false)}>Close</Button>
         <Button className="min-h-11 md:min-h-9" disabled={pending||!target} onClick={()=>{setOpen(false);setConfirmOpen(true);}}>Reassign</Button>
       </div>}>
-      <label className="mb-3 grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)]">
+      <Label stack className="mb-3">
         Search replacement faculty
         <Input type="search" value={facultySearch} disabled={pending} placeholder="Search active faculty"
           onChange={event=>setFacultySearch(event.target.value)} className="min-h-11 md:min-h-9"/>
-      </label>
-      <label htmlFor={id} className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Replacement faculty</label>
+      </Label>
+      <Label htmlFor={id} className="mb-[6px] block">Replacement faculty</Label>
       <Select id={id} className="min-h-11 w-full md:min-h-9"
         value={replacementMembershipId} onChange={event=>setReplacementMembershipId(event.target.value)}>
         <option value="">Select faculty</option>

@@ -12,6 +12,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 type View={id:string;name:string;query:TpoBatchSavedFilter;pinned:boolean;createdAt:string};
 export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
  const router=useRouter(),params=useSearchParams();
@@ -77,11 +78,11 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
       disabled={busy||guarded} onClick={()=>void openSaved(view)} className="min-h-11 md:min-h-9"
       >{view.name}</Button>)}
    </div>:null}
-   <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">View name
+   <Label className="block min-w-0">View name
     <Input value={name} onChange={e=>{setName(e.target.value);setError("");setNotice("");}} maxLength={100}
-     className="mt-1 min-h-11 w-full md:min-h-9"/></label>
-   <label className="flex min-h-11 items-center gap-2 text-sm">
-    <Checkbox  checked={pinned} onChange={e=>setPinned(e.target.checked)}/>Pin view</label>
+     className="mt-1 min-h-11 w-full md:min-h-9"/></Label>
+   <Label variant="choice" className="flex min-h-11 items-center gap-2">
+    <Checkbox  checked={pinned} onChange={e=>setPinned(e.target.checked)}/>Pin view</Label>
    <div className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-2">
     <Button variant="primary" type="button" disabled={busy||guarded||!name.trim()} onClick={()=>void action({
      action:"CREATE",name:name.trim(),pinned,filters:current(),
@@ -92,11 +93,11 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
    </div>
    <ul className="grid min-w-0 grid-cols-1 gap-2">{views.map(view=><li key={view.id}
     className="grid min-w-0 grid-cols-1 gap-2 border-b border-border py-3 text-sm sm:grid-cols-[minmax(0,1fr)_auto_auto_auto] sm:items-center">
-    <label className="col-span-2 flex min-h-11 min-w-0 items-center gap-2 break-words sm:col-span-1">
+    <Label variant="choice" className="col-span-2 flex min-h-11 min-w-0 items-center gap-2 break-words sm:col-span-1">
      <Radio  name="selected-batch-view" checked={selected===view.id}
       onChange={()=>{setSelected(view.id);setName(view.name);setPinned(view.pinned);}}/>
      {view.name}{view.pinned?" · Pinned":""}
-    </label>
+    </Label>
     <Button variant="secondary" type="button" disabled={busy||guarded} onClick={()=>void openSaved(view)}
      className="min-h-11 w-full md:min-h-9">Open</Button>
     <ButtonLink variant="secondary" href={batchStudentViewExportHref(batchId,1,view.query)}

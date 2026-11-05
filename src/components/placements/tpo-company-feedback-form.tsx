@@ -7,6 +7,7 @@ import { useState } from "react";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export function TpoCompanyFeedbackForm({
   companyId,
@@ -61,7 +62,7 @@ export function TpoCompanyFeedbackForm({
         Internal note attached to an explicitly linked company contact. This does
         not send a message to the recruiter. Saving an activity moves a NEW CRM lead to CONTACTED.
       </p>
-      <label className="block text-sm font-semibold text-foreground">
+      <Label className="block">
         Linked contact
         <Select value={leadId} onChange={(event) => {setReviewing(false);setLeadId(event.target.value);}}
           className="mt-1 w-full">
@@ -69,13 +70,13 @@ export function TpoCompanyFeedbackForm({
             <option key={item.id} value={item.id}>{item.name}</option>
           ))}
         </Select>
-      </label>
-      <label className="block text-sm font-semibold text-foreground">
+      </Label>
+      <Label className="block">
         Feedback / meeting note
         <Textarea value={note} onChange={(event) => {setReviewing(false);setNote(event.target.value);}}
           rows={4} maxLength={2000}
           className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2" />
-      </label>
+      </Label>
       {reviewing?<div role="group" aria-label="Review recruiter feedback" className="border-t border-[var(--lms-canvas-border)] pt-3 text-sm">
         <p>Record this internal recruiter note? New CRM contacts become CONTACTED when an activity is logged.</p>
         <Button type="button" variant="link" className="mt-2 min-h-11 max-md:min-h-11" onClick={()=>setReviewing(false)}>Cancel review</Button>

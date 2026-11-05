@@ -19,6 +19,7 @@ import {
 } from "@/modules/courses/faculty-ist-month-model";
 import { getFacultyIstMonth } from "@/modules/courses/faculty-ist-month-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Params=Record<string,string|string[]|undefined>;
 
@@ -138,19 +139,19 @@ export default async function FacultyCalendarPage({
         </div>
       </div>
       <form method="get" action="/teacher/calendar" className="grid min-w-0 gap-3 border-b border-border py-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)_auto] lg:items-end">
-        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Month (IST)
+        <Label stack className="min-w-0">Month (IST)
     <DateInput mode="month" name="month" defaultValue={grid.query.month}
             min="1900-01" max="2099-12"
              />
-        </label>
-        {schedule.courses.length>1?<label aria-label="Filter calendar by course" className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
+        </Label>
+        {schedule.courses.length>1?<Label stack aria-label="Filter calendar by course" className="min-w-0">Course
           <Select name="deliveryId" defaultValue={selected??""} >
             <option value="">All my Sections</option>
             {schedule.courses.map(course=><option key={course.deliveryId} value={course.deliveryId}>
               {course.courseCode} · {course.courseName}
             </option>)}
           </Select>
-        </label>:null}
+        </Label>:null}
         <Button type="submit" variant="primary" className="w-full sm:col-span-2 lg:col-span-1 lg:w-auto">
           Apply
         </Button>

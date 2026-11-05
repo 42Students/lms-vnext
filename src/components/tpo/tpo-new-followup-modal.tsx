@@ -12,6 +12,7 @@ import {calendarDueAtToIstLocal,calendarLocalIstToOffset} from "@/modules/placem
 import {Dialog} from "@/components/ui/dialog";
 import {useToast} from "@/components/ui/toast";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import { Label } from "@/components/ui/label";
 type LeadChoice={id:string;name:string;companyName:string|null};
 const field="min-h-11 w-full md:min-h-9";
 export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
@@ -160,7 +161,7 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
    </div>}>
     <form id={formId} className="space-y-3" onSubmit={event=>{event.preventDefault();void save();}}>
      <div className="grid gap-2">
-      <label htmlFor={formId+"-recruiter-search"} className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">Recruiter</label>
+      <Label htmlFor={formId+"-recruiter-search"}>Recruiter</Label>
       <Input id={formId+"-recruiter-search"} type="search" maxLength={100} autoComplete="off"
        placeholder="Type a name or company" value={search}
        onChange={event=>{setSearch(event.target.value);setPage(1);setSearchError("");}}
@@ -192,13 +193,13 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
         onClick={()=>setPage(current=>current+1)}>Next</Button>
       </div>:null}
      </div>
-     <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">When (IST)
+     <Label stack>When (IST)
       <Input type="datetime-local" required step={300} min={earliest||undefined}
        value={when} onChange={event=>{setWhen(event.target.value);setError("");}}
        disabled={saving} className={field}/>
       {when&&formattedWhenIst(when)?<span className="text-xs text-muted-foreground">
        {formattedWhenIst(when)} IST · 5-minute intervals</span>:null}
-     </label>
+     </Label>
      <Disclosure title="Note (optional)" className="border-t border-border" contentClassName="px-2 pb-2">
       <Textarea aria-label="Note (optional)" rows={2} maxLength={500} value={note} onChange={event=>setNote(event.target.value)}
        disabled={saving} className={field}/>

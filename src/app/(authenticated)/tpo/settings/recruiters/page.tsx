@@ -47,6 +47,7 @@ import {tpoRecruiterGrantExportHref} from "@/modules/placements/tpo-recruiter-gr
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type SearchParams = {
   status?: string | string[];
@@ -199,7 +200,7 @@ export default async function TpoRecruiterAccessPage({
           method="get"
           className="mt-4 grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] xl:items-end"
         >
-          <label className="grid min-w-0 md:min-w-55 flex-1 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0 md:min-w-55 flex-1">
             Grant status
             <Select
               name="status"
@@ -221,14 +222,14 @@ export default async function TpoRecruiterAccessPage({
                 ),
               )}
             </Select>
-          </label>
+          </Label>
 
-          <label className="grid min-w-0 md:min-w-55 flex-1 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0 md:min-w-55 flex-1">
             Search name, designation or company
             <Input type="search" name="q" defaultValue={query.q} maxLength={80}
               placeholder="Recruiter, role or company"
               className="min-h-11 md:min-h-9" />
-          </label>
+          </Label>
           <Button
             type="submit"
             className="min-h-11 w-full sm:w-auto md:min-h-9"

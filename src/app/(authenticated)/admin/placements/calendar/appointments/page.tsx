@@ -9,6 +9,7 @@ import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
+import { Label } from "@/components/ui/label";
 
 const TYPES=["ALL","SCREENING","TECHNICAL","HR","MANAGERIAL","FINAL"] as const;
 const STATUSES=["ALL","ACTIVE","SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED",
@@ -70,21 +71,21 @@ export default async function SuperAdminCalendarAppointmentsPage({
     className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
     Calendar view</Link>}/>
   <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-[minmax(0,1.5fr)_repeat(3,minmax(0,1fr))_auto] xl:items-end">
-   <label className="grid gap-2 text-[13px] font-semibold text-body">Search
+   <Label stack>Search
     <Input type="search" name="q" maxLength={100} defaultValue={search}
-     placeholder="Job, company or candidate" className="min-h-11 md:min-h-9"/></label>
-   <label className="grid gap-2 text-[13px] font-semibold text-body">Type
+     placeholder="Job, company or candidate" className="min-h-11 md:min-h-9"/></Label>
+   <Label stack>Type
     <Select name="type" defaultValue={type} className="min-h-11 md:min-h-9">
      {TYPES.map(item=><option key={item} value={item}>{item==="ALL"?"All types":item}</option>)}
-    </Select></label>
-   <label className="grid gap-2 text-[13px] font-semibold text-body">Status
+    </Select></Label>
+   <Label stack>Status
     <Select name="status" defaultValue={status} className="min-h-11 md:min-h-9">
      {STATUSES.map(item=><option key={item} value={item}>{item==="ALL"?"All statuses":item==="RESCHEDULE_REQUESTED"?"Reschedule requested":item==="NO_SHOW"?"No show":item}</option>)}
-    </Select></label>
-   <label className="grid gap-2 text-[13px] font-semibold text-body">Mode
+    </Select></Label>
+   <Label stack>Mode
     <Select name="mode" defaultValue={mode} className="min-h-11 md:min-h-9">
      {MODES.map(item=><option key={item} value={item}>{item==="ALL"?"All modes":item==="ONLINE"?"Online":"In-person"}</option>)}
-    </Select></label>
+    </Select></Label>
    <Button type="submit" className="min-h-11 w-full md:min-h-9">Filter</Button>
    <Link href="/admin/placements/calendar/appointments"
     className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Reset</Link>

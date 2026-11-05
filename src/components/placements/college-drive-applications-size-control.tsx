@@ -2,6 +2,7 @@ import type {DriveApplicationsQuery} from "@/modules/placements/college-drive-ap
 import {DRIVE_APPLICATION_PAGE_SIZE_OPTIONS} from "@/modules/placements/college-drive-applications-model";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 /** Preserves all authorized filters when switching the legacy table page size.
  * The page number intentionally resets to one; selection is scoped to the
@@ -15,7 +16,7 @@ export function CollegeDriveApplicationsSizeControl({
     key!=="size"&&key!=="page"&&value!==undefined&&value!==null&&
     String(value)!==""&&String(value)!=="ALL")
     .map(([key,value])=><input key={key} type="hidden" name={key} value={String(value)}/>)}
-  <label htmlFor="applications-page-size" className="font-semibold">Show</label>
+  <Label htmlFor="applications-page-size">Show</Label>
   <Select id="applications-page-size" name="size"
     defaultValue={String(query.size??20)}
     >

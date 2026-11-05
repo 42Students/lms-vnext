@@ -3,6 +3,7 @@
 import { Children, useState, type ReactNode } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 type SprintRow = {
   id: string;
@@ -31,12 +32,12 @@ export function ProjectSprintRowList({
         (value ?? "").toLowerCase().includes(search.trim().toLowerCase())));
   return <div className="mt-4 min-w-0 space-y-3">
     {large ? <div className="space-y-2">
-      <label className="block text-xs font-semibold text-body">
+      <Label className="block">
         Find an item in this section
         <Input className="mt-1" value={search}
           placeholder="Find an item by title or content"
           onChange={event => setSearch(event.target.value)}/>
-      </label>
+      </Label>
       <p role="status" className="text-xs text-body">
         Showing {visible.length} of {rows.length} items. Expand only the items you need to edit.
       </p>

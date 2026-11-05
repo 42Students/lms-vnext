@@ -16,6 +16,7 @@ import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist
 import {parseTpoCompanyTeamDraft,tpoCompanyTeamDraftSendKey,type TpoCompanyTeamDraft} from "@/modules/placements/tpo-company-team-draft-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type TeamMessage={
  id:string;body:string;decision:boolean;authorMembershipId:string;authorName:string|null;
@@ -208,7 +209,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
     </li>)}
    </ol></ScrollCue>
    <form onSubmit={event=>void send(event)} className="grid min-w-0 gap-3 border-t border-border pt-4">
-    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+    <Label stack>
      Write to the team. @ to mention, # to link a drive, company or student.
      <Textarea required maxLength={4000} rows={3} className="min-h-24 min-w-0 w-full" value={body} disabled={busy}
        onChange={event=>updateDraft({body:event.target.value,decision,assignee,dueAt})}
@@ -216,10 +217,10 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
         event.preventDefault();event.currentTarget.form?.requestSubmit();
        }}}
        />
-    </label>
+    </Label>
     <details className="group min-w-0 border-b border-border pb-3 text-sm"><summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 py-2 font-semibold text-[var(--lms-link-text)] focus-ring [&::-webkit-details-marker]:hidden">Message options <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
     <div className="min-w-0 space-y-3 pt-2">
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mention a teammate
+    <Label stack className="min-w-0">Mention a teammate
       <Select disabled={busy} defaultValue="" 
         onChange={event=>{if(event.target.value){
           updateDraft({body:(body.trimEnd()+" @member:"+event.target.value+" ").slice(0,4000),decision,assignee,dueAt});
@@ -229,26 +230,26 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
         {data.members.filter(m=>m.membershipId!==actorMembershipId).map(m=>
           <option key={m.membershipId} value={m.membershipId}>{m.name}</option>)}
       </Select>
-    </label>
+    </Label>
     <p className="text-xs text-muted-foreground leading-[20px]">Use @team to notify the placement team or #drive:&lt;UUID&gt; and #company:&lt;UUID&gt; to link authorized records.</p>
     <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
-     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Ask someone (optional)
+     <Label stack>Ask someone (optional)
        <Select value={assignee} disabled={busy} onChange={event=>updateDraft({body,decision,assignee:event.target.value,dueAt:event.target.value?dueAt:""})}
         >
         <option value="">No ask attached</option>
         {data.members.filter(member=>member.membershipId!==actorMembershipId).map(member=>
          <option key={member.membershipId} value={member.membershipId}>{member.name}</option>)}
        </Select>
-     </label>
-     {assignee?<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">By (IST, optional)
+     </Label>
+     {assignee?<Label stack>By (IST, optional)
        <Input type="datetime-local" value={dueAt} onChange={event=>updateDraft({body,decision,assignee,dueAt:event.target.value})}
         />
-     </label>:null}
+     </Label>:null}
     </div>
-    <label className="flex min-h-11 items-center gap-2 text-sm">
+    <Label variant="choice" className="flex min-h-11 items-center gap-2">
       <Checkbox checked={decision} disabled={busy} onChange={event=>updateDraft({body,decision:event.target.checked,assignee,dueAt})}/>
       Mark as decision
-    </label>
+    </Label>
     </div>
     </details>
     <div className="flex min-w-0 flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
@@ -268,10 +269,10 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
        if(messageId&&editBody.trim())
          void mutate({action:"EDIT",messageId,body:editBody}).then(ok=>{if(ok)setEditing(null);});
      }}>
-       <label className="grid gap-2 text-sm font-semibold">Message
+       <Label stack>Message
          <Textarea className="min-h-24 min-w-0 w-full" required maxLength={4000} rows={4}
            disabled={busy} value={editBody} onChange={event=>setEditBody(event.target.value)}/>
-       </label>
+       </Label>
        <div className="flex flex-wrap justify-end gap-2">
          <Button variant="ghost" type="button" disabled={busy} onClick={()=>setEditing(null)}>Cancel</Button>
          <Button variant="primary" type="submit" loading={busy}

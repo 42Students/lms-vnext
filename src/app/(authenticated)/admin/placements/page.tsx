@@ -17,6 +17,7 @@ import { SuperAdminDriveDuplicate } from "@/components/placements/super-admin-dr
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AdminRetentionInlinePreview } from "@/components/placements/admin-retention-inline-preview";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 const secondaryActionClass =
   "inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[var(--lms-on-primary)] focus-ring md:min-h-9";
@@ -194,10 +195,10 @@ export default async function AdminPlacementsPage({ searchParams }: {
       <section aria-label="Student placement lookup" className="min-w-0 border-b border-border pb-4">
         <Heading level={2} className="mb-2 text-foreground">Find a student's placement status</Heading>
         <form method="get" action="/admin/placements/student-lookup" role="search" className="flex min-w-0 flex-col items-end gap-2 sm:flex-row">
-          <label className="grid min-w-0 w-full gap-1 text-sm text-body">Name, roll number or email
+          <Label variant="choice" className="grid min-w-0 w-full gap-1">Name, roll number or email
             <Input type="search" name="q" minLength={3} maxLength={150} required
              placeholder="Find one student in this college"/>
-          </label>
+          </Label>
           <Button type="submit" className="min-h-11 w-full shrink-0 sm:w-auto">Search students</Button>
         </form>
       </section>

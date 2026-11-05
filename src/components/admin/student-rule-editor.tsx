@@ -8,6 +8,7 @@ import {Button} from "@/components/ui/button";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Alert} from "@/components/ui/alert";
 import {studentRulePayload,studentRuleChangeSummary,parseStudentRuleRecheck,hasStudentRuleAcknowledgement,canReviewStudentRule,type EditableStudentModule,type StudentSelection,type ExpectedRule} from "@/modules/module-access/admin-student-rule-ui-model";
+import { Label } from "@/components/ui/label";
 export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,blocked}:{
  collegeId:string;membershipId:string;module:EditableStudentModule;
  stored:boolean|null;locked:boolean;blocked:boolean;
@@ -70,18 +71,18 @@ export function StudentRuleEditor({collegeId,membershipId,module,stored,locked,b
  return <section aria-label="Learner module rule" aria-busy={pending} className="mt-4 min-w-0 space-y-3 border-t border-border pt-3 print:hidden">
   {blocked?<Alert tone="warning">A broader locked rule prevents writing On/Off. You can still remove a stored membership override with Inherit.</Alert>:null}
   <div className="grid min-w-0 gap-3 sm:grid-cols-2 sm:items-end">
-   <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored override
+   <Label stack className="min-w-0">Stored override
     <Select value={choice} disabled={pending||confirming}
      onChange={e=>{setChoice(e.target.value as StudentSelection);setFeedback("");}}
      className="min-h-11 w-full sm:min-h-9">
      <option value="INHERIT">Inherit</option><option value="ON" disabled={blocked}>On</option><option value="OFF" disabled={blocked}>Off</option>
     </Select>
-   </label>
-   <label className="flex min-h-11 min-w-0 items-center gap-3 text-sm leading-5 text-body sm:min-h-9">
+   </Label>
+   <Label variant="choice" className="flex min-h-11 min-w-0 items-center gap-3 sm:min-h-9">
     <Checkbox checked={nextLocked} onChange={e=>{setNextLocked(e.target.checked);setFeedback("");}}
      disabled={blocked||pending||confirming||choice==="INHERIT"}/>
     <span className="min-w-0 break-words">Lock this membership rule</span>
-   </label>
+   </Label>
   </div>
   <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
    <Button className="min-h-11 w-full sm:min-h-9 sm:w-auto"

@@ -13,6 +13,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import type {TpoMembershipDecisionSnapshot} from "@/modules/placements/tpo-participation-model";
+import { Label } from "@/components/ui/label";
 type Decision="ELIGIBLE"|"INELIGIBLE"|"NOT_DECIDED";
 const LEGACY_INELIGIBLE_REASONS=[
  "Higher studies","Not interested in placements","Detained / year back",
@@ -46,12 +47,12 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
   });
  }
  return <div className="mt-[var(--lms-space-2)] flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap sm:items-end">
-  <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Learner override
+  <Label className="min-w-0 flex-1">Learner override
    <Select className="mt-[var(--lms-space-2)] min-h-11 w-full md:min-h-9" aria-label="Learner eligibility override" 
     value={decision} disabled={busy} onChange={event=>{setDecision(event.target.value as Decision);setReviewed(false);}}>
     <option value="NOT_DECIDED">Inherit class/batch</option><option value="ELIGIBLE">Eligible</option><option value="INELIGIBLE">Ineligible</option>
    </Select>
-  </label>
+  </Label>
   {decision==="INELIGIBLE"?<div className="min-w-0 flex-1 space-y-[var(--lms-space-2)]">
    <p className="break-words [overflow-wrap:anywhere] text-xs">Reason: {reason.trim()||"Not selected"}</p>
    <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy} onClick={()=>setReasonOpen(true)}>
@@ -73,19 +74,19 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
       onClick={()=>{setOther(true);setReason("");setReviewed(false);}}
       >Other</FilterChip>
     </div>
-    {other?<label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason
+    {other?<Label className="block">Reason
      <Textarea className="mt-1" autoFocus aria-label="Reason for ineligibility" placeholder="Why are they not in placements?"
        maxLength={200}
       value={reason} disabled={busy} onChange={event=>{setReason(event.target.value);setReviewed(false);}}/>
-    </label>:null}
+    </Label>:null}
     {other&&reason.trim().length>0&&!valid?<InlineNotice tone="error" message="Enter a reason of at least 3 characters."/>:null}
    </div></Dialog>
   </div>:null}
-  <label className="flex min-h-11 w-full items-start gap-2 text-xs leading-5 text-body">
+  <Label variant="choice" className="flex min-h-11 w-full items-start gap-2">
    <Checkbox className="mt-1" checked={reviewed} disabled={busy}
     onChange={event=>setReviewed(event.target.checked)}/>
    I reviewed this learner eligibility decision; it will be audited.
-  </label>
+  </Label>
   <Button variant="primary" type="button" onClick={()=>void save()} disabled={!valid||busy||!reviewed}
    className="min-h-11 w-full sm:w-auto md:min-h-9">
    {busy?"Saving…":"Save decision"}</Button>

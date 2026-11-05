@@ -21,6 +21,7 @@ import { authoringLocalDateTime, authoringDueInstant } from "@/modules/courses/f
 import { courseApiError } from "./learner-course-api";
 import { facultyAssessmentLimitEditable, facultyAssessmentLimitPatch, facultyAssessmentCanArchive, facultyAssessmentEditReceiptMatches, facultyAssessmentArchiveReceiptMatches } from "@/modules/courses/faculty-assessment-editor-model";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 type Kind = "ASSIGNMENT" | "QUIZ";
 
@@ -320,7 +321,7 @@ export function FacultyAssessmentEditor({
           {titleOnly?<Banner tone="info">
             Learner submissions exist. Deadline, points, audience, resources and submission methods are locked. You can still correct the title.
           </Banner>:null}
-          <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="block">
             Title
             <Input
               className="mt-[6px]"
@@ -331,9 +332,9 @@ export function FacultyAssessmentEditor({
               required
               maxLength={255}
             />
-          </label>
+          </Label>
 
-          <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="block">
             Description
             <Textarea
               className="mt-[6px]"
@@ -346,9 +347,9 @@ export function FacultyAssessmentEditor({
               }
               maxLength={10000}
             />
-          </label>
+          </Label>
 
-          <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="block">
             Due date (IST)
             <Input
               className="mt-[6px]"
@@ -359,9 +360,9 @@ export function FacultyAssessmentEditor({
                 setDueAt(event.target.value)
               }
             />
-          </label>
+          </Label>
 
-          <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="block">
             {assessment.kind === "ASSIGNMENT"
               ? "Maximum points"
               : "Maximum attempts"}
@@ -384,20 +385,20 @@ export function FacultyAssessmentEditor({
             />
             {!facultyAssessmentLimitEditable(assessment.kind,assessment.status) ?
               <span className="mt-1 block text-xs font-normal text-muted-foreground">The published Quiz attempt limit is locked. Quiz deadlines cannot change after learner attempts or closure.</span> : null}
-          </label>
+          </Label>
 
 
           {assessment.kind==="ASSIGNMENT"&&assessment.allowedMethods&&!titleOnly?
            <fieldset className="space-y-2 rounded-lg border border-border p-3">
             <legend className="text-sm font-semibold">Allowed submission methods</legend>
             {(Object.keys(ASSIGNMENT_METHOD_LABELS) as AssignmentMethod[]).map(method=>
-             <label key={method} className="flex min-h-11 items-center gap-2 text-sm">
+             <Label variant="choice" key={method} className="flex min-h-11 items-center gap-2">
               <Checkbox checked={methods.includes(method)} disabled={saving}
                onChange={event=>setMethods(current=>event.target.checked?
                 [...current,method]:current.filter(value=>value!==method))}
                className="size-4 accent-[var(--lms-primary)]"/>
               {ASSIGNMENT_METHOD_LABELS[method]}
-             </label>)}
+             </Label>)}
            </fieldset>:null}
           {assessment.kind==="ASSIGNMENT"&&assessment.deliveryId?
            <p className="text-sm leading-6">Files and lesson resources are managed separately in the

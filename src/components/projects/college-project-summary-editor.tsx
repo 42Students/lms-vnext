@@ -7,6 +7,7 @@ import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
+import { Label } from "@/components/ui/label";
 type Project={id:string;title:string;summary:string|null;status:string};
 export function CollegeProjectSummaryEditor({project}:{project:Project}){
  const router=useRouter(),[open,setOpen]=useState(false),[busy,setBusy]=useState(false);
@@ -34,19 +35,19 @@ export function CollegeProjectSummaryEditor({project}:{project:Project}){
   <Button variant="secondary" className="min-h-11 md:min-h-9" type="button" onClick={()=>setOpen(value=>!value)}>
    Edit workspace summary</Button>
   {open&&<div className="mt-3 grid gap-3">
-   <label className="text-[13px]">Workspace title
+   <Label>Workspace title
     <Input className="mt-1 w-full" maxLength={200}
-     value={title} onChange={e=>setTitle(e.target.value)}/></label>
-   <label className="text-[13px]">Summary
+     value={title} onChange={e=>setTitle(e.target.value)}/></Label>
+   <Label>Summary
     <Textarea className="mt-1 w-full" maxLength={4000}
-     value={summary} onChange={e=>setSummary(e.target.value)}/></label>
-   <label className="text-[13px]">Status
+     value={summary} onChange={e=>setSummary(e.target.value)}/></Label>
+   <Label>Status
     <Select className="mt-1 w-full" value={status}
      onChange={e=>setStatus(e.target.value)}>
      <option value={project.status}>{project.status}</option>
      {project.status==="PLANNED"&&<option value="ACTIVE">Active</option>}
      {project.status==="ACTIVE"&&<option value="COMPLETED">Completed</option>}
-    </Select></label>
+    </Select></Label>
    <p className="text-xs text-muted-foreground">Activating requires a Mentor; completing requires an approved final submission.</p>
    <div className="flex gap-2"><Button type="button" className=""
     disabled={busy||!title.trim()} onClick={()=>void save()}>{busy?"Saving…":"Save changes"}</Button>

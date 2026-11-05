@@ -7,6 +7,7 @@ import type {getFacultyCourseHomeSignals} from "@/modules/courses/faculty-course
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 function maskPhone(value:string){const digits=value.replace(/\D/g,"");return digits.length<6?"Call student":digits.slice(0,2)+"x".repeat(digits.length-4)+digits.slice(-2);}
 
 
@@ -64,7 +65,7 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
     <p className={"mt-1 text-3xl font-bold tabular-nums "+card.tone}>{card.value}</p>
    </div>)}</div>
   <div className="flex min-w-0 flex-wrap items-center gap-2">
-   <label htmlFor="faculty-student-directory-search" className="sr-only">Search students</label>
+   <Label htmlFor="faculty-student-directory-search" className="sr-only">Search students</Label>
    <Input id="faculty-student-directory-search" value={query} type="search"
     onChange={event=>setQuery(event.target.value)}
     className="h-11 min-w-0 flex-[1_1_220px] rounded-lg border border-[color:var(--lms-border)] px-4 text-sm"

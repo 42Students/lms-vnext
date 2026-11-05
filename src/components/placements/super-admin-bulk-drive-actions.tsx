@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api-fetch";
 import {beginDriveMutation,endDriveMutation} from "@/modules/placements/drive-mutation-client-lock";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Drive = {id: string; title: string; status: string; companyName: string};
 type Preview = {eligible: number; ignored: number; excluded: number; pendingLettersWithdrawn: number;
  recordedApplications?:number;recordedInterviews?:number;actionDescription?:string};
@@ -79,14 +80,14 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
         </div>
        </div>:null}
        <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap sm:items-center">
-      <label className="flex min-h-11 items-center gap-2 text-sm text-body">
+      <Label variant="choice" className="flex min-h-11 items-center gap-2">
         <Checkbox disabled={busy || !eligible.length}
           checked={eligible.length>0 && eligible.slice(0,100).every(d=>selected.includes(d.id))}
           onChange={e=>{setSelected(e.target.checked?eligible.slice(0,100).map(d=>d.id):[]);
             setPreview(null);setResult(null);}}/>
         Select up to 100 published or closed drives ({eligible.length} available)
-      </label>
-      <label className="flex min-w-0 flex-col items-start gap-[6px] text-[13px]">Action
+      </Label>
+      <Label className="flex min-w-0 flex-col items-start gap-[6px]">Action
         <Select value={action} aria-label="Bulk action" disabled={busy} onChange={e=>{
           setAction(e.target.value as "OPEN" | "CLOSE");
           setPreview(null);setResult(null);}}
@@ -94,7 +95,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
           <option value="CLOSE">Close selected</option>
           <option value="OPEN">Open closed drives</option>
         </Select>
-      </label>
+      </Label>
       <Button type="button" disabled={busy || !selected.length || selected.length>100}
         onClick={()=>void send(false)} className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
         Preview {selected.length} drive(s)
@@ -104,12 +105,12 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
     <div tabIndex={0} role="region" aria-label="Eligible drive list" aria-describedby={eligible.length>3?"bulk-drive-scroll-cue":undefined}
       className="grid max-h-56 min-w-0 gap-2 overflow-y-auto overscroll-contain border-y border-border py-2 sm:grid-cols-2 xl:grid-cols-3 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1rem),transparent_100%)]">
       {eligible.map(d=><div key={d.id} className="min-w-0 border-b border-border py-2">
-        <label className="flex min-h-11 min-w-0 items-start gap-2 text-sm">
+        <Label variant="choice" className="flex min-h-11 min-w-0 items-start gap-2">
           <Checkbox disabled={busy || (!selected.includes(d.id) && selected.length>=100)} checked={selected.includes(d.id)}
             onChange={()=>toggle(d.id)}/>
           <span className="min-w-0 break-words"><strong>{d.title}</strong><span className="block break-words text-muted-foreground">
             {d.companyName} · {d.status}</span></span>
-        </label>
+        </Label>
         <div className="flex flex-wrap items-center gap-3 pl-6 text-xs">
           <Link href={"/admin/placements/jobs/"+encodeURIComponent(d.id)+"/settings"}
             className="min-h-9 py-2 font-semibold text-link underline">Edit drive</Link>

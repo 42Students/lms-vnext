@@ -17,6 +17,7 @@ import {mentorActivityMatchesDateFilters,mentorActivityIstDayKey}
  from "@/modules/projects/mentor-activity-date-filter-model";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Event={id:string;eventType:string;importance:string;summary:string;actorDisplayName:string|null;subjectType?:string|null;occurredAt:string|Date;subjectLabel?:string|null;subjectId?:string|null;actorType?:string|null;actorUserId?:string|null;resourceKey?:string|null;sprintId?:string|null};
 const PAGE_SIZE = 10;
@@ -338,32 +339,32 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
     </Button>)}
   </div>:null}
   <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Search {resourceAudit?"resource or actor":"activity"}
+   <Label stack className="text-[length:var(--lms-font-sm)]">Search {resourceAudit?"resource or actor":"activity"}
     <Input type="search" value={search} onChange={event=>{setSearch(event.target.value);setPage(1);}}
      placeholder={resourceAudit?"Search resource or actor":"Search activity"} className="w-full"/>
-   </label>
-   {resourceAudit?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Resource change
+   </Label>
+   {resourceAudit?<Label stack className="text-[length:var(--lms-font-sm)]">Resource change
     <Select value={resourceAction} onChange={event=>{setResourceAction(event.target.value);setPage(1);}}
      className="w-full">
      <option value="ALL">All resource changes</option>
      {(["Added","Edited","Saved","Removed"] as const).map(action=><option key={action} value={action}>{action}</option>)}
     </Select>
-   </label>:null}
-   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Type
+   </Label>:null}
+   <Label stack className="text-[length:var(--lms-font-sm)]">Type
     <Select value={type} onChange={event=>{setType(event.target.value);setPage(1);}}
       className="w-full">
      <option value="">All activity</option>
      {categories.map(kind=><option key={kind} value={kind}>{mentorActivityLabel(kind)}</option>)}
     </Select>
-   </label>
-   {!resourceAudit?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">By person
+   </Label>
+   {!resourceAudit?<Label stack className="text-[length:var(--lms-font-sm)]">By person
      <Select value={actor} onChange={event=>void selectScopedHistory(event.target.value,sprint)}
        className="w-full">
        <option value="">By anyone</option>
        {actors.map(person=><option key={person.id} value={person.id}>{person.label}</option>)}
      </Select>
-   </label>:null}
-   {!resourceAudit&&sprints.length>0?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+   </Label>:null}
+   {!resourceAudit&&sprints.length>0?<Label stack className="text-[length:var(--lms-font-sm)]">
       In sprint
       <Select value={sprint} onChange={event=>void selectScopedHistory(actor,event.target.value)}
         className="w-full">
@@ -371,24 +372,24 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
         {[...sprints].sort((a,b)=>a.sequence-b.sequence).map(item=>
           <option key={item.id} value={item.id}>Sprint {item.sequence} · {item.title}</option>)}
       </Select>
-    </label>:null}
-    <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Date range
+    </Label>:null}
+    <Label stack className="text-[length:var(--lms-font-sm)]">Date range
     <Select value={range} onChange={event=>{setRange(event.target.value);setPage(1);}}
       className="w-full">
      <option value="ALL">All time</option><option value="1">Today</option>
      <option value="7">Last 7 days</option><option value="30">Last 30 days</option>
     </Select>
-   </label>
-   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">From date
+   </Label>
+   <Label stack className="text-[length:var(--lms-font-sm)]">From date
     <Input type="date" value={fromDate} max={toDate||mentorActivityIstDayKey(now)||undefined}
       onChange={event=>{setFromDate(event.target.value);setPage(1);}}
       className="w-full"/>
-   </label>
-   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">To date
+   </Label>
+   <Label stack className="text-[length:var(--lms-font-sm)]">To date
     <Input type="date" value={toDate} min={fromDate||undefined} max={mentorActivityIstDayKey(now)||undefined}
       onChange={event=>{setToDate(event.target.value);setPage(1);}}
       className="w-full"/>
-   </label>
+   </Label>
    <Button variant="secondary" type="button" onClick={resetFilters}
       className="">Clear filters</Button>
   </div>

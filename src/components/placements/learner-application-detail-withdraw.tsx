@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { learnerApplicationWithdrawalSchema } from "@/modules/placements/learner-withdrawal-model";
+import { Label } from "@/components/ui/label";
 
 export function LearnerApplicationDetailWithdraw({applicationId,requiresRequest=false}:{applicationId:string;requiresRequest?:boolean}) {
   const router=useRouter();
@@ -44,9 +45,9 @@ export function LearnerApplicationDetailWithdraw({applicationId,requiresRequest=
         <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} loading={pending} onClick={()=>void submit()}>{pending?"Saving…":requiresRequest?"Send withdrawal request":"Confirm withdrawal"}</Button>
       </div>}>
       <div className="min-w-0 space-y-2">
-      <label htmlFor="own-application-withdraw-reason" className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+      <Label htmlFor="own-application-withdraw-reason" className="block">
         Reason for withdrawal
-      </label>
+      </Label>
       <Textarea id="own-application-withdraw-reason" rows={4} maxLength={2000}
         value={reason} onChange={event=>setReason(event.target.value)}
         className="min-h-28 w-full min-w-0"

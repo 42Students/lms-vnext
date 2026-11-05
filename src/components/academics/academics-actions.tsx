@@ -17,6 +17,7 @@ import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { hasUnsavedCollegeProgramEdit, updateCollegeProgramSchema } from "@/modules/academics/college-program-mutation-model";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
+import { Label } from "@/components/ui/label";
 
 let programArchiveInFlight = false;
 
@@ -270,7 +271,7 @@ export function ProgramActions({
             <Button type="button" variant="secondary" disabled={pending}
               onClick={() => setEditError("")}>Dismiss</Button>
           </div> : null}
-          {departments.length ? <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          {departments.length ? <Label stack className="min-w-0">
             Department
             <Select value={departmentId} disabled={pending || programHasLinkedRecords}
               title={programHasLinkedRecords?"Department is fixed after semesters, batches or classes are linked.":undefined}
@@ -279,22 +280,22 @@ export function ProgramActions({
               {departments.map(department=><option key={department.id} value={department.id}>{department.name}</option>)}
             </Select>
             {editFieldErrors["departmentId"] ? <span role="alert" className="text-xs text-error">{editFieldErrors["departmentId"]}</span> : null}
-          </label> : null}
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label> : null}
+          <Label stack className="min-w-0">
             Program Name
             <Input value={name} maxLength={255} disabled={pending}
               aria-invalid={Boolean(editFieldErrors["name"])}
               onChange={event=>{setName(event.target.value);setEditFieldErrors(current=>({...current,name:""}));}}/>
             {editFieldErrors["name"] ? <span role="alert" className="text-xs text-error">{editFieldErrors["name"]}</span> : null}
-          </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0">
             {displayDurationYears?"Duration (Years)":"Duration (Terms)"}
             <Input type="number" min={1} max={displayDurationYears?10:24} step={1}
               disabled={pending} value={durationTerms} aria-invalid={Boolean(editFieldErrors["durationTerms"])}
               onChange={event=>{setDurationTerms(event.target.value);
                 setEditFieldErrors(current=>({...current,durationTerms:""}));}}/>
             {editFieldErrors["durationTerms"] ? <span role="alert" className="text-xs text-error">{editFieldErrors["durationTerms"]}</span> : null}
-          </label>
+          </Label>
         </div>
       </Dialog>
 
@@ -482,7 +483,7 @@ export function AcademicPeriodActions({
         }
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0">
             Name
             <Input
               value={name}
@@ -491,8 +492,8 @@ export function AcademicPeriodActions({
               }
               maxLength={255}
             />
-          </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0">
             Code
             <Input
               value={code}
@@ -501,8 +502,8 @@ export function AcademicPeriodActions({
               }
               maxLength={64}
             />
-          </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0">
             Start date
             <Input
               type="date"
@@ -513,8 +514,8 @@ export function AcademicPeriodActions({
                 )
               }
             />
-          </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0">
             End date
             <Input
               type="date"
@@ -523,7 +524,7 @@ export function AcademicPeriodActions({
                 setEndDate(event.target.value)
               }
             />
-          </label>
+          </Label>
         </div>
       </Dialog>
 
@@ -707,7 +708,7 @@ export function CohortActions({
         }
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0">
             Name
             <Input
               value={name}
@@ -716,8 +717,8 @@ export function CohortActions({
               }
               maxLength={255}
             />
-          </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0">
             Code
             <Input
               value={code}
@@ -726,8 +727,8 @@ export function CohortActions({
               }
               maxLength={64}
             />
-          </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
+          </Label>
+          <Label stack className="min-w-0 md:col-span-2">
             Expected end period
             <Select
               value={endPeriodId}
@@ -749,7 +750,7 @@ export function CohortActions({
                 </option>
               ))}
             </Select>
-          </label>
+          </Label>
         </div>
       </Dialog>
 
@@ -916,7 +917,7 @@ export function SectionActions({
         }
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0">
             Name
             <Input
               value={name}
@@ -925,8 +926,8 @@ export function SectionActions({
               }
               maxLength={255}
             />
-          </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0">
             Code
             <Input
               value={code}
@@ -935,8 +936,8 @@ export function SectionActions({
               }
               maxLength={64}
             />
-          </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
+          </Label>
+          <Label stack className="min-w-0 md:col-span-2">
             Capacity · blank for unlimited
             <Input
               type="number"
@@ -949,7 +950,7 @@ export function SectionActions({
               }
             />
             {!capacityValid?<span role="alert" className="text-xs text-error">Maximum must be a whole number from 1 to 200.</span>:null}
-          </label>
+          </Label>
         </div>
       </Dialog>
 

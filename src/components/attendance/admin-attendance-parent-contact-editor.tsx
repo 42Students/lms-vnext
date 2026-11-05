@@ -7,6 +7,7 @@ import {attendanceParentContactInputSchema} from "@/modules/attendance/parent-sm
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 export function AdminAttendanceParentContactEditor({collegeId,learners}:{collegeId:string;
  learners:readonly {membershipId:string;displayName:string|null}[]}){
  const [open,setOpen]=useState(false);
@@ -71,30 +72,30 @@ export function AdminAttendanceParentContactEditor({collegeId,learners}:{college
    className="w-full md:w-auto">Guardian attendance SMS</Button>
   {open?<div className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] text-sm sm:grid-cols-2">
    <p className="sm:col-span-2">Only record a separately verified parent or guardian phone with documented consent. Never use the learner&apos;s alternate contact as a parent number.</p>
-   <label>Student<Select className="mt-[6px] block w-full"
+   <Label>Student<Select className="mt-[6px] block w-full"
     value={membershipId} onChange={e=>setMembershipId(e.target.value)}>
     <option value="">Choose a learner</option>
     {learners.map(row=><option value={row.membershipId} key={row.membershipId}>
      {row.displayName?.trim()||row.membershipId.slice(0,8)}
     </option>)}
-   </Select></label>
-   <label>Verified parent phone (E.164)
+   </Select></Label>
+   <Label>Verified parent phone (E.164)
     <Input type="tel" value={phoneE164} maxLength={20} placeholder="+919876543210"
      onChange={e=>setPhoneE164(e.target.value)}
      className="mt-1 block w-full"/>
-   </label>
-   <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Consent evidence reference (no phone or personal secrets)
+   </Label>
+   <Label className="sm:col-span-2">Consent evidence reference (no phone or personal secrets)
     <Input value={evidence} maxLength={200} onChange={e=>setEvidence(e.target.value)}
      className="mt-1 block w-full"/>
-   </label>
-   <label className="flex items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+   </Label>
+   <Label className="flex items-center gap-2">
     <Checkbox checked={consent} onChange={e=>setConsent(e.target.checked)}/>
     Parent consent was recorded and confirmed
-   </label>
-   <label className="flex items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+   </Label>
+   <Label className="flex items-center gap-2">
     <Checkbox checked={verified} onChange={e=>setVerified(e.target.checked)}/>
     Parent phone verified independently
-   </label>
+   </Label>
    <Button variant="primary" type="button" loading={pending} disabled={!valid||pending} onClick={()=>void save()}
     className="min-h-11 w-full px-3 md:min-h-9">Save verified contact</Button>
    <Button variant="secondary" type="button" disabled={pending||retrying} onClick={()=>void retry()}

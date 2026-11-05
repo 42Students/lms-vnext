@@ -17,6 +17,7 @@ import {CollegeFacultyScheduleReassign} from "@/components/college/college-facul
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export default async function CollegeFacultyDetailPage({ params, searchParams }: {
   params: Promise<{ membershipId: string }>;
@@ -91,7 +92,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         <summary className="min-h-11 cursor-pointer py-3 font-semibold text-primary-text hover:text-[var(--lms-primary)] focus-ring md:min-h-9 md:py-2">Filter</summary>
         <form method="get" className="mt-3 grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
           action={`/college/faculty/${encodeURIComponent(membershipId)}`}>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-md:w-full">
+        <Label stack className="min-w-0 max-md:w-full">
           Assignment history
           <Select name="status" defaultValue={data.filter.status}
             >
@@ -99,8 +100,8 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             <option value="ACTIVE">Active only</option>
             <option value="ENDED">Ended only</option>
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] max-md:w-full">
+        </Label>
+        <Label stack className="min-w-0 max-md:w-full">
           Teaching role
           <Select name="role" defaultValue={data.filter.role}
             >
@@ -109,13 +110,13 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             <option value="CO_TEACHER">Co-Teacher</option>
             <option value="TA">Teaching Assistant</option>
           </Select>
-        </label>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+          <Label stack className="min-w-0">
             Rows per page
             <Select name="pageSize" defaultValue={String(data.pagination.pageSize)}>
               {[10,25,50,100,200].map(size=><option key={size} value={size}>{size}</option>)}
             </Select>
-          </label>
+          </Label>
           <Button type="submit" className="min-h-11 w-full md:min-h-9 lg:w-auto">Filter</Button>
         </form>
       </details>

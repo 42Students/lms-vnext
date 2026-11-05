@@ -10,6 +10,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { projectResourceAuditAction } from "@/modules/projects/project-resource-audit-model";
 import {formatProjectIstDateTime} from "@/modules/projects/project-date-time-format-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type ResourceEvent = {
   id: string;
@@ -111,14 +112,14 @@ export function ProjectResourceAuditList({ events }: { events: readonly Resource
       </div>)}
     </dl>
     <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(180px,240px)]">
-      <label className="min-w-0 text-xs font-semibold text-body">
+      <Label className="min-w-0">
         Search resource or actor
         <Input type="search" className="mt-1" placeholder="Search resource or actor"
           aria-label="Search resource audit" value={search} onChange={event => {
             setSearch(event.target.value); setPage(1);
           }} />
-      </label>
-      <label className="min-w-0 text-xs font-semibold text-body">
+      </Label>
+      <Label className="min-w-0">
         Action
         <Select className="mt-1" aria-label="Filter audit actions" value={actionFilter}
           onChange={event => { setActionFilter(event.target.value as ActionFilter); setPage(1); }}>
@@ -128,7 +129,7 @@ export function ProjectResourceAuditList({ events }: { events: readonly Resource
           <option value="UPSERT">Saved</option>
           <option value="DELETE">Removed</option>
         </Select>
-      </label>
+      </Label>
     </div>
     <DataTable columns={columns} rows={visible} mobileMode="scroll"
       getRowKey={row => row.event.id} caption="Resource activity"

@@ -13,6 +13,7 @@ import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {legacyResourceKinds,legacyResourceKind,makeResourceKey,
  type ProjectResourceLibraryRow} from "@/modules/projects/project-resource-library-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Persisted={
  id:string;title:string;description:string|null;url:string|null;required:boolean;
@@ -216,12 +217,12 @@ export function ProjectResourceLibraryEditor({projectId,token,resources}:{
     No resources yet. Add only the references the team will actually use.
    </p>:null}
    {large?<div className="space-y-2">
-    <label className="block text-xs font-semibold text-body">
+    <Label className="block">
      Find an item in this section
      <Input className="mt-1" type="search" value={search} maxLength={120}
       placeholder="Find an item by title or content"
       onChange={event=>setSearch(event.target.value)}/>
-    </label>
+    </Label>
     <p role="status" className="text-xs text-body">
      Showing {matching.length} of {shown.length} items. Expand only the items you need to edit.
     </p>
@@ -257,7 +258,7 @@ export function ProjectResourceLibraryEditor({projectId,token,resources}:{
     </div>
     <div id={"resource-library-fields-"+row.localId}>
     {(!large||expanded.includes(row.localId))?<div className="grid min-w-0 gap-3 md:grid-cols-2">
-     <label className="text-xs font-semibold text-body">Key
+     <Label>Key
       <Input className="mt-1" maxLength={120} required
        disabled={Boolean(row.id&&resources.some(resource=>resource.id===row.id&&
         (resource.legacyResourceKey||resource.templateKey)))}
@@ -268,57 +269,57 @@ export function ProjectResourceLibraryEditor({projectId,token,resources}:{
        Optional: leave the generated key as is or enter your own. Auto-generated from title if left blank.
        {row.title?" Preview: "+makeResourceKey(row.title):""}
       </span>}
-     </label>
-     <label className="text-xs font-semibold text-body">Type
+     </Label>
+     <Label>Type
       <Select className="mt-1" value={row.legacyKind}
        onChange={event=>edit(row.localId,"legacyKind",
         event.target.value as Draft["legacyKind"])}>
        {legacyResourceKinds.map(kind=><option key={kind} value={kind}>{kind}</option>)}
       </Select>
-     </label>
-     <label className="text-xs font-semibold text-body">Title <span aria-hidden="true" className="text-error">*</span>
+     </Label>
+     <Label>Title <span aria-hidden="true" className="text-error">*</span>
       <Input required className="mt-1" maxLength={200} aria-invalid={!row.title.trim()}
        value={row.title} onChange={event=>changeTitle(row,event.target.value)}/>
       {!row.title.trim()?<span role="alert" className="mt-1 block text-xs text-error">
        Item {index+1}: Title required</span>:null}
-     </label>
-     <label className="text-xs font-semibold text-body">URL (for a Link)
+     </Label>
+     <Label>URL (for a Link)
       <Input className="mt-1" type="url" maxLength={2048}
        aria-invalid={!httpUrl(row.url)} value={row.url??""} placeholder="https://..."
        onChange={event=>edit(row.localId,"url",event.target.value||null)}/>
-     </label>
-     <label className="text-xs font-semibold text-body md:col-span-2">Access notes
+     </Label>
+     <Label className="md:col-span-2">Access notes
       <Input className="mt-1" maxLength={4000} value={row.accessNotes??""}
        placeholder="e.g. Requires college email to view"
        onChange={event=>edit(row.localId,"accessNotes",event.target.value||null)}/>
-     </label>
-     <label className="text-xs font-semibold text-body md:col-span-2">Description
+     </Label>
+     <Label className="md:col-span-2">Description
       <Textarea className="mt-1" rows={2} maxLength={4000} value={row.description??""}
        placeholder="What this resource is for"
        onChange={event=>edit(row.localId,"description",event.target.value||null)}/>
-     </label>
-     <label className="text-xs font-semibold text-body">Status
+     </Label>
+     <Label>Status
       <Select className="mt-1" value={row.status}
        onChange={event=>edit(row.localId,"status",event.target.value as "ACTIVE"|"DRAFT")}>
        <option value="ACTIVE">Active</option><option value="DRAFT">Draft</option>
       </Select>
-     </label>
-     <label className="text-xs font-semibold text-body">Visible to
+     </Label>
+     <Label>Visible to
       <Select className="mt-1" value={row.visibility}
        onChange={event=>edit(row.localId,"visibility",
         event.target.value as "TEAM"|"MENTOR_ONLY")}>
        <option value="TEAM">Everyone</option>
        <option value="MENTOR_ONLY">Mentors only</option>
       </Select>
-     </label>
-     <label className="flex items-center gap-2 text-xs font-semibold text-body">
+     </Label>
+     <Label className="flex items-center gap-2">
       <Checkbox checked={row.pinned}
        onChange={event=>edit(row.localId,"pinned",event.target.checked)}/> Pinned
-     </label>
-     <label className="flex items-center gap-2 text-xs font-semibold text-body">
+     </Label>
+     <Label className="flex items-center gap-2">
       <Checkbox checked={row.required}
        onChange={event=>edit(row.localId,"required",event.target.checked)}/> Required resource
-     </label>
+     </Label>
     </div>:null}
     </div>
    </fieldset>)}

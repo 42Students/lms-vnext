@@ -10,6 +10,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}: {
   jobId: string; applicationId: string; expectedUpdatedAt: string;
 }) {
@@ -61,16 +62,16 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
   return <form onKeyDown={shortcuts} onSubmit={event => void submit(event)}
     className="min-w-0 space-y-4 border-b border-border pb-6">
     <Heading level={3} className="text-foreground">Review application</Heading>
-    <label className="grid min-w-0 gap-2 text-[13px] text-[var(--lms-neutral-400)]">Decision
+    <Label stack className="min-w-0">Decision
       <Select name="decision" value={decision} disabled={pending||saved} onChange={event=>{setDecision(event.target.value as "SHORTLISTED"|"REJECTED");setReviewed(false);}} className="mt-1 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
         <option value="SHORTLISTED">Shortlist</option>
         <option value="REJECTED">Reject</option>
       </Select>
-    </label>
-    <label className="grid min-w-0 gap-2 text-[13px] text-[var(--lms-neutral-400)]">Decision note (rejections are candidate-visible)
+    </Label>
+    <Label stack className="min-w-0">Decision note (rejections are candidate-visible)
       <Textarea required name="note" value={note} disabled={pending||saved} onChange={event=>{setNote(event.target.value);setReviewed(false);}} minLength={10} maxLength={1000} rows={3}
         className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"/>
-    </label>
+    </Label>
     {decision==="REJECTED"?<fieldset className="space-y-2 text-sm">
       <legend className="font-semibold">Common not-selected reasons</legend>
       <div className="grid min-w-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap">
@@ -79,18 +80,18 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
             onClick={()=>{setInternalReason(preset==="Other"?"":preset);setReviewed(false);}}
             className="min-h-11 w-full px-3 sm:w-auto md:min-h-9">{preset}</Button>)}
       </div>
-      <label className="block text-[13px]">Internal not-selected reason (not shown to the learner)
+      <Label className="block">Internal not-selected reason (not shown to the learner)
         <Textarea value={internalReason} maxLength={500} rows={2}
           onChange={event=>{setInternalReason(event.target.value);setReviewed(false);}}
           disabled={pending||saved} className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"/>
-      </label>
+      </Label>
       <p className="text-xs text-body">The decision note above is learner-visible. Internal reason presets stay private; do not copy confidential employer notes into the learner message.</p>
     </fieldset>:null}
-    <label className="flex min-w-0 items-start gap-2 break-words text-[13px] text-[var(--lms-neutral-400)]">
+    <Label className="flex min-w-0 items-start gap-2 break-words">
       <Checkbox checked={reviewed} disabled={pending||saved}
         onChange={event=>setReviewed(event.target.checked)} className="mt-1 h-4 w-4 accent-primary"/>
       I reviewed the applicant and the learner-visible reason. This screening decision is audited.
-    </label>
+    </Label>
     <p className="text-xs text-body">Shortcuts: S to shortlist, R to reject (outside form fields). Ctrl+Enter submits only after you review the decision.</p>
     <p className="text-xs text-body">Only pending or held submitted applicants can be reviewed. Refresh if another TPO made a decision.</p>
     {error ? <InlineNotice tone="error" message={error}/> : null}

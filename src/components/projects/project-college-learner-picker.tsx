@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type LearnerChoice={membershipId:string;displayName:string;rollNumber:string};
 
@@ -63,8 +64,8 @@ export function ProjectCollegeLearnerPicker({collegeId,selectedIds,onChange}:{
     <div className="max-h-52 min-w-0 divide-y divide-border overflow-y-auto border-y border-border">
       {rows.map(row=>{
         const checked=selectedIds.includes(row.membershipId);
-        return <label key={row.membershipId}
-          className="flex min-h-11 min-w-0 items-center gap-2 py-2 text-sm text-body">
+        return <Label variant="choice" key={row.membershipId}
+          className="flex min-h-11 min-w-0 items-center gap-2 py-2">
           <Checkbox checked={checked} disabled={!checked&&selectedIds.length>=500}
             onChange={event=>{
               const next=event.target.checked;
@@ -79,7 +80,7 @@ export function ProjectCollegeLearnerPicker({collegeId,selectedIds,onChange}:{
               }
             }}/>
           <span className="min-w-0 break-words">{row.displayName} · {row.rollNumber}</span>
-        </label>;
+        </Label>;
       })}
       {!loading&&!error&&!rows.length?<p className="p-2 text-sm text-body">
         No learners match the current search.</p>:null}

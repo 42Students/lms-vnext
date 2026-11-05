@@ -28,6 +28,7 @@ import {FacultyIstQuarterHourPicker} from "@/components/courses/faculty-ist-quar
 import {FACULTY_IST_NOTE,facultyIstQuarterHourIssue} from "@/modules/courses/faculty-ist-quarter-hour-model";
 import { facultyYouTubeLinkIssue,facultyLiveClassIssue } from "@/modules/courses/faculty-content-input-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 
 type Mode =
@@ -809,7 +810,7 @@ export function FacultyLessonAuthoring({
                 </Button>
               </div>:null}
             {success ? <Alert tone="success" className="mb-4">{success}</Alert> : null}
-            {mode==="ASSIGNMENT"||mode==="RESOURCE"?<label className="block min-w-0 text-[13px] font-semibold md:col-span-2">
+            {mode==="ASSIGNMENT"||mode==="RESOURCE"?<Label className="block min-w-0 md:col-span-2">
               <FieldLabel>Visibility</FieldLabel>
               <Select value={audience==="SECTION"?"CLASS":"SHARED"} disabled
                aria-label="Visibility (set by the authorized course scope)">
@@ -821,10 +822,10 @@ export function FacultyLessonAuthoring({
                 Choose a different scope in the college course workspace; a faculty
                 author cannot promote a class resource into a shared one.
               </span>
-             </label>:null}
+             </Label>:null}
             {mode==="ASSIGNMENT"?<Heading level={3} size="base" className="md:col-span-2">Assignment Details</Heading>:null}
             <div className="grid min-w-0 gap-4 md:grid-cols-2">
-              <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              <Label className="block">
                 <FieldLabel>
                   {mode==="ASSIGNMENT"?"Assignment Title":mode==="RESOURCE"?"Resource Title":"Content Title"}
                 </FieldLabel>
@@ -841,17 +842,17 @@ export function FacultyLessonAuthoring({
                   maxLength={255}
                   required
                 />
-              </label>
+              </Label>
 
               {(mode==="RESOURCE"||mode==="YOUTUBE"||mode==="LIVE_CLASS")?
-                <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                <Label className="block min-w-0">
                   <FieldLabel>Points</FieldLabel>
                   <Input type="number" min={0} max={1000} value={contentPoints}
                     onChange={event=>setContentPoints(event.target.value)} required/>
-                </label>:null}
+                </Label>:null}
 
               {mode === "YOUTUBE" ? (
-                <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                <Label className="block">
                   <FieldLabel>
                     Actual video duration (seconds)
                   </FieldLabel>
@@ -867,7 +868,7 @@ export function FacultyLessonAuthoring({
                     }
                     required
                   />
-                </label>
+                </Label>
               ) : null}
 
               {mode==="ASSIGNMENT"? <p className="text-xs text-muted-foreground md:col-span-2">
@@ -875,7 +876,7 @@ export function FacultyLessonAuthoring({
                 Only authorized Faculty can create and publish; learners cannot author lesson content.
               </p>:null}
               {mode === "QUIZ" ? (
-                <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                <Label className="block">
                   <FieldLabel>
                     Maximum attempts
                   </FieldLabel>
@@ -891,14 +892,14 @@ export function FacultyLessonAuthoring({
                     }
                     required
                   />
-                </label>
+                </Label>
               ) : null}
             </div>
 
             {mode === "RESOURCE" ||
             mode === "YOUTUBE" ||
             mode === "LIVE_CLASS" ? (
-              <label className="mt-4 block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              <Label className="mt-4 block min-w-0">
                 <FieldLabel>
                   {mode === "YOUTUBE"
                     ? "YouTube URL"
@@ -921,14 +922,14 @@ export function FacultyLessonAuthoring({
                     mode !== "RESOURCE"
                   }
                 />
-              </label>
+              </Label>
             ) : null}
 
-            {mode==="RESOURCE"&&url.trim()?<label className="mt-3 block text-[13px] font-semibold">
+            {mode==="RESOURCE"&&url.trim()?<Label className="mt-3 block">
               Link title (optional)
               <Input value={externalLinkTitle} maxLength={255} placeholder="Reading link"
                 onChange={event=>setExternalLinkTitle(event.target.value)}/>
-            </label>:null}
+            </Label>:null}
             {mode === "RESOURCE" ? (
               <p className="mt-3 text-xs leading-5 text-muted-foreground">
                 Resource materials support notes and individually titled HTTPS
@@ -939,10 +940,10 @@ export function FacultyLessonAuthoring({
             ) : null}
 
             {(mode==="RESOURCE"||mode==="YOUTUBE"||mode==="LIVE_CLASS")?
-              <label className="mt-4 flex min-h-11 items-center gap-3 text-sm leading-5 text-body">
+              <Label variant="choice" className="mt-4 flex min-h-11 items-center gap-3">
                 <Checkbox  checked={publishNow} onChange={event=>setPublishNow(event.target.checked)}/>
                 Publish now — make this learning item visible to eligible students
-              </label>:null}
+              </Label>:null}
             {mode === "LIVE_CLASS" ? (
               <div className="mt-4 space-y-2">
                 <div className="grid min-w-0 gap-4 xl:grid-cols-2">
@@ -971,7 +972,7 @@ export function FacultyLessonAuthoring({
 
             {mode==="ASSIGNMENT"? <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
   {mode === "ASSIGNMENT" ? (
-    <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    <Label className="block">
       <FieldLabel>
         Maximum points
       </FieldLabel>
@@ -989,20 +990,20 @@ export function FacultyLessonAuthoring({
       <span className="mt-1 block text-xs font-normal leading-5 text-muted-foreground">
         Leave blank for zero points, or enter a whole number from 1 to 1000.
       </span>
-    </label>
+    </Label>
   ) : null}
 
 
-              <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              <Label className="block min-w-0">
                 <FieldLabel>Due Date</FieldLabel>
                 <Input type="datetime-local" value={dueAt} onChange={event=>setDueAt(event.target.value)}/>
                 <span className="mt-1 block text-xs text-muted-foreground">Times are in IST. Leave blank when the assignment has no deadline.</span>
-              </label>
+              </Label>
              </div>:null}
-            {mode==="QUIZ"? <label className="mt-4 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            {mode==="QUIZ"? <Label className="mt-4 block">
               <FieldLabel>Due date (IST, required before publishing)</FieldLabel>
               <Input type="datetime-local" value={dueAt} onChange={event=>setDueAt(event.target.value)}/>
-             </label>:null}
+             </Label>:null}
 
             {mode==="ASSIGNMENT"?<div className="mt-4 rounded border border-border p-3 text-sm" aria-label="Assignment review summary">
               <Heading level={3}>Review assignment before saving</Heading>
@@ -1024,7 +1025,7 @@ export function FacultyLessonAuthoring({
               <summary className="flex min-h-11 cursor-pointer items-center py-2 text-[13px] font-semibold text-body focus-ring">
                 {mode === "ASSIGNMENT" || mode === "QUIZ" ? "Description (optional)" : "Notes (optional)"}
               </summary>
-            <label className="block min-w-0 pt-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <Label className="block min-w-0 pt-2">
               <FieldLabel>
                 {mode === "ASSIGNMENT" ||
                 mode === "QUIZ"
@@ -1045,7 +1046,7 @@ export function FacultyLessonAuthoring({
                     : 5000
                 }
               />
-            </label>
+            </Label>
             </details>
 
             {mode === "QUIZ" ? (
@@ -1090,7 +1091,7 @@ export function FacultyLessonAuthoring({
                         ) : null}
                       </div>
 
-                      <label className="mt-3 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                      <Label className="mt-3 block">
                         <FieldLabel>
                           Prompt
                         </FieldLabel>
@@ -1114,10 +1115,10 @@ export function FacultyLessonAuthoring({
                           maxLength={5000}
                           required
                         />
-                      </label>
+                      </Label>
 
                       <div className="mt-3 grid gap-3 md:grid-cols-2">
-                        <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                        <Label className="block">
                           <FieldLabel>
                             Answer type
                           </FieldLabel>
@@ -1163,8 +1164,8 @@ export function FacultyLessonAuthoring({
                               Multiple choice
                             </option>
                           </Select>
-                        </label>
-                        <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                        </Label>
+                        <Label className="block">
                           <FieldLabel>
                             Points
                           </FieldLabel>
@@ -1190,7 +1191,7 @@ export function FacultyLessonAuthoring({
                             }
                             required
                           />
-                        </label>
+                        </Label>
                       </div>
 
                       <div className="mt-4 space-y-2">

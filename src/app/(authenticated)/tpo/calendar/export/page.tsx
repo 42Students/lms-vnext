@@ -13,6 +13,7 @@ import {
 } from "@/modules/placements/tpo-calendar-export-model";
 import { getTpoCalendarRoundExport } from "@/modules/placements/tpo-calendar-export-service";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type SearchParams = { from?: string | string[]; to?: string | string[] };
 const first = (value: string | string[] | undefined) =>
@@ -43,16 +44,16 @@ export default async function TpoCalendarExportPage({
     <PageHeader eyebrow="TPO · Calendar" title="Export upcoming placement rounds"
       description="Download a formula-safe CSV from migrated scheduled round records. Date filters use IST calendar days; no ICS or external calendar sync." actions={<Link href="/tpo/calendar" className="inline-flex min-h-11 items-center justify-center font-semibold text-link hover:underline focus-ring md:min-h-9">← TPO calendar</Link>}/>
     <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-      <label className="block w-full min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">From (IST)
+      <Label className="block w-full min-w-0">From (IST)
         <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
     <Input type="date" name="from" required defaultValue={first(query.from) ?? today}
           className="mt-[6px] block min-h-11 w-full md:min-h-9" />
-      </label>
-      <label className="block w-full min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Through (IST)
+      </Label>
+      <Label className="block w-full min-w-0">Through (IST)
         <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
     <Input type="date" name="to" required defaultValue={first(query.to) ?? nextWeek}
           className="mt-[6px] block min-h-11 w-full md:min-h-9" />
-      </label>
+      </Label>
       <Button type="submit" className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
         Preview range
       </Button>

@@ -10,6 +10,7 @@ import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {workspaceBriefSchema,publishedWorkspaceBriefError,type WorkspaceBrief}
  from "@/modules/projects/workspace-brief-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Draft={goal:string;description:string;deliverables:string;conditions:string;personas:string};
 function fromBrief(value:WorkspaceBrief):Draft{
@@ -152,7 +153,7 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
    <section className="space-y-2 border-t border-border pt-4" aria-labelledby={headingId+"-goal"}>
     <Heading level={4} size="sm" id={headingId+"-goal"} className="text-foreground">Goal</Heading>
     <p className="text-xs text-body">Why the project exists, who it serves and what success should look like.</p>
-    <label className="block text-xs font-semibold text-body">
+    <Label className="block">
      Project goal / description
      <Textarea ref={goalRef} className={textClass} rows={4} maxLength={2000} value={draft.goal}
       aria-describedby={headingId+"-goal-help"}
@@ -162,17 +163,17 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
      <span id={headingId+"-goal-help"} className="mt-1 block text-xs font-normal text-body">
       Shown as “About this project” on the learner and mentor Overview tab.
      </span>
-    </label>
-    <label className="block text-xs font-semibold text-body">Description
+    </Label>
+    <Label className="block">Description
      <Textarea className={textClass} rows={3} maxLength={4000} value={draft.description}
       onChange={event=>update("description",event.target.value)}/>
-    </label>
+    </Label>
    </section>
    <div className="grid min-w-0 gap-5 lg:grid-cols-2">
     <section className="min-w-0 space-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4" aria-labelledby={headingId+"-deliverables"}>
      <Heading level={4} size="sm" id={headingId+"-deliverables"} className="text-foreground">Deliverables</Heading>
      <p className="text-xs text-body">The concrete outputs the team is expected to produce.</p>
-     <label className="block text-xs font-semibold text-body">Deliverables
+     <Label className="block">Deliverables
       <Textarea ref={deliverablesRef} className={textClass} rows={7}
        aria-invalid={requireDeliverables&&!list(draft.deliverables).length}
        aria-describedby={headingId+"-deliverables-help"} value={draft.deliverables}
@@ -184,14 +185,14 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
       </span>
       {requireDeliverables&&!list(draft.deliverables).length?
        <span role="alert" className="mt-1 block text-xs text-error">Add at least one deliverable.</span>:null}
-     </label>
+     </Label>
     </section>
     <section className="min-w-0 space-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4" aria-labelledby={headingId+"-dod"}>
      <Heading level={4} size="sm" id={headingId+"-dod"} className="text-foreground">Definition of done</Heading>
      <p className="text-xs text-body">
       The project-level conditions that mean the work is genuinely complete.
      </p>
-     <label className="block text-xs font-semibold text-body">Completion conditions
+     <Label className="block">Completion conditions
       <Textarea ref={conditionsRef} className={textClass} rows={7} value={draft.conditions}
        onInput={event=>resizeToLegacyRows(event.currentTarget,7,12)}
        placeholder={"All acceptance criteria pass\nDeployed to a public URL\nMentor sign-off recorded"}
@@ -199,13 +200,13 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
       <span className="mt-1 block text-xs font-normal text-body">
        One condition per line. Keep these verifiable rather than aspirational.
       </span>
-     </label>
+     </Label>
     </section>
    </div>
    <section className="space-y-2 border-t border-border pt-4" aria-labelledby={headingId+"-personas"}>
     <Heading level={4} size="sm" id={headingId+"-personas"} className="text-foreground">Personas & ownership</Heading>
     <p className="text-xs text-body">Explain the working roles students can take and what each one owns.</p>
-    <label className="block text-xs font-semibold text-body">Personas
+    <Label className="block">Personas
      <Textarea ref={personasRef} className={textClass} rows={4} value={draft.personas}
       onInput={event=>resizeToLegacyRows(event.currentTarget,4,10)}
       placeholder={"Frontend lead — owns the board UI and component structure\nBackend lead — owns the API and data model"}
@@ -213,7 +214,7 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
      <span className="mt-1 block text-xs font-normal text-body">
       One per line. Use a short role name followed by the ownership boundary.
      </span>
-    </label>
+    </Label>
    </section>
    <p className="text-xs text-body">
     This form uses the loaded workspace version as its optimistic edit token. Updates

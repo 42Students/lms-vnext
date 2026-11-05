@@ -5,6 +5,7 @@ import { Select } from "@/components/ui/select";
 import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export type MentorSprintDetailRow={
   id:string;sequence:number;title:string;release:string;
@@ -30,7 +31,7 @@ export function MentorSprintDetailTable({projectId,rows}:{
       <span>{matching.length} of {rows.length} recorded sprints</span>
     </div>
     <div className="mb-3 flex flex-wrap gap-3">
-      <label className="text-sm font-semibold">State
+      <Label>State
         <Select aria-label="Filter sprint state" value={status}
           onChange={event=>setStatus(event.target.value)}
           className="ml-2 min-h-11 rounded border border-border bg-surface px-2">
@@ -38,15 +39,15 @@ export function MentorSprintDetailTable({projectId,rows}:{
             <option key={value} value={value}>{value==="ALL"?"All states":
               value.replaceAll("_"," ").toLowerCase()}</option>)}
         </Select>
-      </label>
-      <label className="text-sm font-semibold">Release
+      </Label>
+      <Label>Release
         <Select aria-label="Filter sprint release" value={release}
           onChange={event=>setRelease(event.target.value)}
           className="ml-2 min-h-11 rounded border border-border bg-surface px-2">
           <option value="ALL">All releases</option>
           {releases.map(value=><option key={value} value={value}>{value}</option>)}
         </Select>
-      </label>
+      </Label>
       {(status!=="ALL"||release!=="ALL")?<Button variant="link" size="inline" type="button"
         onClick={()=>{setStatus("ALL");setRelease("ALL");}}>Clear filters</Button>:null}
     </div>

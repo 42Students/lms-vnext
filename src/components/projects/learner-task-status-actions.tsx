@@ -6,6 +6,7 @@ import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export function LearnerTaskStatusActions({projectId,task,currentMembershipId}:{
  projectId:string;currentMembershipId:string|null;
  task:{id:string;status:string;updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null};
@@ -60,10 +61,10 @@ export function LearnerTaskStatusActions({projectId,task,currentMembershipId}:{
  return <section aria-labelledby="learner-task-actions-heading" className="mt-[var(--lms-space-5)] min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
   <Heading level={3} id="learner-task-actions-heading">Task actions</Heading>
   {task.blockerReason?<p className="text-sm text-body">Blocker: {task.blockerReason}</p>:null}
-  {canBlock?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What is blocking this task?
+  {canBlock?<Label stack className="min-w-0">What is blocking this task?
    <Textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}
     />
-  </label>:null}
+  </Label>:null}
   <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row">
    {canStart?<Button type="button" disabled={pending} onClick={()=>void change("IN_PROGRESS")}
      className="w-full sm:w-auto" loading={pending}>Start work</Button>:null}

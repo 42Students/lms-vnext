@@ -8,6 +8,7 @@ import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {teachingReassignPrompt} from "@/modules/courses/college-teaching-reassign-model";
+import { Label } from "@/components/ui/label";
 
 export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldMembershipId,
   expectedUpdatedAt,faculty,deliveryId,deliveries}:{
@@ -124,12 +125,12 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
           onClick={()=>void submitEdit()}>{pending?"Saving…":"Save Changes"}</Button>
       </>}>
       <div className="grid min-w-0 gap-3">
-        <label className="grid gap-1 text-sm font-semibold">Faculty
+        <Label stack>Faculty
           <Select value={editMember} disabled={pending} onChange={event=>setEditMember(event.target.value)}>
             {faculty.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
           </Select>
-        </label>
-        <label className="grid gap-1 text-sm font-semibold">Course and class
+        </Label>
+        <Label stack>Course and class
           <Select value={editDelivery} disabled={pending||!editActive}
             onChange={event=>{
               const found=deliveries.find(item=>item.id===event.target.value);
@@ -142,29 +143,29 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
               {item.courseName} ({item.courseCode}) · {item.sectionName} · {item.academicYear}
             </option>)}
           </Select>
-        </label>
-        <label className="grid gap-1 text-sm font-semibold">Semester
+        </Label>
+        <Label stack>Semester
           <Input type="number" min={1} max={20} value={editSemester} disabled={pending||!editActive}
             onChange={event=>setEditSemester(event.target.value)}/>
-        </label>
-        <label className="grid gap-1 text-sm font-semibold">Academic Year
+        </Label>
+        <Label stack>Academic Year
           <Input maxLength={9} value={editYear} disabled={pending||!editActive}
             onChange={event=>setEditYear(event.target.value)} placeholder="YYYY-YY"/>
-        </label>
-        <label className="grid gap-1 text-sm font-semibold">Role
+        </Label>
+        <Label stack>Role
           <Select value={editRole} disabled={pending||!editActive}
             onChange={event=>setEditRole(event.target.value as typeof role)}>
             <option value="PRIMARY">Primary</option>
             <option value="CO_TEACHER">Co-teacher</option>
             <option value="TA">Teaching assistant</option>
           </Select>
-        </label>
-        <label className="grid gap-1 text-sm font-semibold">Active
+        </Label>
+        <Label stack>Active
           <Select value={editActive?"YES":"NO"} disabled={pending}
             onChange={event=>setEditActive(event.target.value==="YES")}>
             <option value="YES">Yes</option><option value="NO">No — end assignment</option>
           </Select>
-        </label>
+        </Label>
         <p className="text-xs text-muted-foreground">
           Course and class follow a verified delivery. Semester and year are historical labels;
           editing them does not change the academic period or enrolled students.
@@ -181,12 +182,12 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
           </Button>
 </>}>
         <p className="text-sm text-body">Replace {facultyName}; existing teaching history will be retained.</p>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Replacement Faculty
+        <Label stack className="min-w-0">Replacement Faculty
           <Select value={replacementMembershipId} disabled={pending} onChange={e=>{setReplacementMembershipId(e.target.value);setError("");}}>
             <option value="">Choose Faculty</option>
             {candidates.map(person=><option key={person.id} value={person.id}>{person.label}</option>)}
           </Select>
-        </label>
+        </Label>
         {replacementMembershipId?<Alert tone="info">{teachingReassignPrompt(facultyName,candidates.find(person=>person.id===replacementMembershipId)?.label??"Faculty",role)}</Alert>:null}
         {error?<Alert tone="error">{error}</Alert>:null}
         

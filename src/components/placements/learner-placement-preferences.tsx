@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Preferences = {
   preferredRoleTitles: string[];
@@ -171,7 +172,7 @@ export function LearnerPlacementPreferences({
         </p>
       </div>
       <div className="grid min-w-0 gap-4 py-4 sm:grid-cols-2">
-        <label>
+        <Label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Preferred role titles
           </span>
@@ -186,8 +187,8 @@ export function LearnerPlacementPreferences({
           <span className="mt-1 block text-xs text-muted-foreground">
             Separate multiple titles with commas.
           </span>
-        </label>
-        <label>
+        </Label>
+        <Label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Preferred locations
           </span>
@@ -201,7 +202,7 @@ export function LearnerPlacementPreferences({
             }
             placeholder="Hyderabad, Bengaluru, Remote"
           />
-        </label>
+        </Label>
         <div>
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Employment types
@@ -212,9 +213,9 @@ export function LearnerPlacementPreferences({
               ["INTERNSHIP", "Internship"],
               ["CONTRACT", "Contract"],
             ] satisfies Array<[string, string]>).map(([value, label]) => (
-              <label
+              <Label variant="choice"
                 key={value}
-                className="flex min-h-11 min-w-0 items-center gap-2 text-sm text-body"
+                className="flex min-h-11 min-w-0 items-center gap-2"
               >
                 <Checkbox
                   checked={employmentTypes.includes(
@@ -227,11 +228,11 @@ export function LearnerPlacementPreferences({
                   }
                 />
                 {label}
-              </label>
+              </Label>
             ))}
           </div>
         </div>
-        <label>
+        <Label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Work mode
           </span>
@@ -257,12 +258,12 @@ export function LearnerPlacementPreferences({
               Remote
             </option>
           </Select>
-        </label>
+        </Label>
       </div>
       <details className="min-w-0 border-t border-border py-3">
        <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Additional preferences</summary>
        <div className="grid min-w-0 gap-4 py-3 sm:grid-cols-2">
-        <label>
+        <Label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Shift preference
           </span>
@@ -288,8 +289,8 @@ export function LearnerPlacementPreferences({
               Flexible
             </option>
           </Select>
-        </label>
-        <label>
+        </Label>
+        <Label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Minimum CTC (LPA)
           </span>
@@ -307,8 +308,8 @@ export function LearnerPlacementPreferences({
             }
             placeholder="8"
           />
-        </label>
-        <label>
+        </Label>
+        <Label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Relocation
           </span>
@@ -331,12 +332,12 @@ export function LearnerPlacementPreferences({
               Prefer not to relocate
             </option>
           </Select>
-        </label>
+        </Label>
         <div className="grid gap-2">
           <span className="text-xs font-semibold text-body">
             Notifications
           </span>
-          <label className="flex min-h-11 min-w-0 items-center gap-2 text-sm text-body">
+          <Label variant="choice" className="flex min-h-11 min-w-0 items-center gap-2">
             <Checkbox
               checked={notifyMatchingJobs}
               onChange={(event) =>
@@ -346,8 +347,8 @@ export function LearnerPlacementPreferences({
               }
             />
             Matching opportunities
-          </label>
-          <label className="flex min-h-11 min-w-0 items-center gap-2 text-sm text-body">
+          </Label>
+          <Label variant="choice" className="flex min-h-11 min-w-0 items-center gap-2">
             <Checkbox
               checked={
                 notifyApplicationUpdates
@@ -359,7 +360,7 @@ export function LearnerPlacementPreferences({
               }
             />
             Application updates
-          </label>
+          </Label>
         </div>
        </div>
       </details>

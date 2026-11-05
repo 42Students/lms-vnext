@@ -9,6 +9,7 @@ import {
   type ApplicantNotesSnapshot,
 } from "@/modules/placements/applicant-notes-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 function formatIst(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -92,7 +93,7 @@ export function ApplicantNotesPanel({
         </p>
       ) : null}
       <form onSubmit={(e) => void submit(e)} className="space-y-3">
-        <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+        <Label className="block">
           Add a note
           <Textarea
             required
@@ -102,7 +103,7 @@ export function ApplicantNotesPanel({
             disabled={pending}
             className="mt-2 w-full"
           />
-        </label>
+        </Label>
         {error ? (
           <InlineNotice tone="error" message={error}/>
         ) : null}

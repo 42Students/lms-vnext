@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {TpoBatchUndoControl} from "./tpo-batch-undo-control";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Decision="ELIGIBLE"|"INELIGIBLE"|"NOT_DECIDED";
 export function TpoBatchDecisionControl({batchId,current}:{batchId:string;current:{
  status:string;reason:string|null;expectedVersion:string;
@@ -41,16 +42,16 @@ export function TpoBatchDecisionControl({batchId,current}:{batchId:string;curren
  return <section className="min-w-0 space-y-3 border-y border-[var(--lms-canvas-border)] py-4" aria-label="Batch eligibility decision">
   <Heading level={2}>Who is in placements?</Heading>
   <p className="text-sm text-muted-foreground">This sets the default for this whole cohort. More specific class and student decisions override it.</p>
-  <label className="block text-[13px]">Batch default decision
+  <Label className="block">Batch default decision
    <Select className="min-h-11 md:min-h-9" value={decision} disabled={pending}
      onChange={e=>setDecision(e.target.value as Decision)}>
     <option value="NOT_DECIDED">Not decided</option><option value="ELIGIBLE">Eligible</option><option value="INELIGIBLE">Ineligible</option>
    </Select>
-  </label>
-  {decision==="INELIGIBLE"?<label className="block text-[13px]">Reason required
+  </Label>
+  {decision==="INELIGIBLE"?<Label className="block">Reason required
    <Textarea  maxLength={200} value={reason}
     onChange={e=>setReason(e.target.value)} disabled={pending}/>
-  </label>:null}
+  </Label>:null}
   <Button type="button" onClick={()=>void submit()} disabled={pending||!valid}
    className="min-h-11 w-full sm:w-auto md:min-h-9">{pending?"Saving…":"Review and save batch decision"}</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}

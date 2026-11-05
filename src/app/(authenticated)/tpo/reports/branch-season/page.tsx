@@ -14,6 +14,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoBranchSeasonDashboard } from "@/modules/placements/tpo-branch-season-service";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 export default async function TpoBranchSeasonPage({
   searchParams,
@@ -50,7 +51,7 @@ export default async function TpoBranchSeasonPage({
       />
       {dashboard.seasons.length ? (
         <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-          <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="block min-w-0">
             Placement season
             <Select
               name="seasonId"
@@ -63,7 +64,7 @@ export default async function TpoBranchSeasonPage({
                 </option>
               ))}
             </Select>
-          </label>
+          </Label>
           <Button variant="secondary"
             type="submit"
             className="min-h-11 w-full sm:w-auto md:min-h-9"

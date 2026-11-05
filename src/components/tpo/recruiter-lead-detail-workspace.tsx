@@ -21,6 +21,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type Lead = {
   id: string;
@@ -566,11 +567,11 @@ export function RecruiterLeadDetailWorkspace({
               </dl>
               {!lead.recruiterUserId ? (
                 <div id="recruiter-invite" className="space-y-2 border-t border-border pt-3">
-                  <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Personal note (optional)
+                  <Label className="block">Personal note (optional)
                     <Textarea className="mt-[6px] min-w-0 min-h-11 md:min-h-9" rows={2}
                       maxLength={500} value={invitePersonalNote} disabled={saving}
                       onChange={event=>setInvitePersonalNote(event.target.value)}/>
-                  </label>
+                  </Label>
                   <Button type="button" variant="primary" className="min-h-11 md:min-h-9"
                     disabled={saving||!lead.emailNorm||!lead.companyRelationshipId||Boolean(lead.unsubscribedAt)}
                     onClick={() => void sendInviteEmail()}>
@@ -591,7 +592,7 @@ export function RecruiterLeadDetailWorkspace({
                   {lead.unsubscribedAt||lead.manualStage==="NOT_NOW"?
                     <p role="status" className="text-xs text-warning leading-[20px]">This person said they are not hiring from your college this season or unsubscribed.</p>:null}
                   {inviteLink ? (
-                    <label className="block text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+                    <Label className="block text-[length:var(--lms-font-sm)]">
                       Invite link
                       <Input
                         className="mt-[6px] font-mono text-xs"
@@ -599,16 +600,16 @@ export function RecruiterLeadDetailWorkspace({
                         readOnly
                         onFocus={event => event.currentTarget.select()}
                       />
-                    </label>
+                    </Label>
                   ) : null}
                   {inviteMessage ? <div className="space-y-2">
                     <p className="text-xs text-muted-foreground leading-[20px]">
                       Valid until {formatDateTimeIst(inviteExpiresAt)}.
                     </p>
-                    <label className="block text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">Invitation preview
+                    <Label className="block text-[length:var(--lms-font-sm)]">Invitation preview
                       <Textarea rows={8} readOnly value={inviteMessage} onFocus={event=>event.currentTarget.select()}
                         className="mt-1 whitespace-pre-wrap" />
-                    </label>
+                    </Label>
                     <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                       <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
                         onClick={()=>void navigator.clipboard.writeText(inviteMessage).then(
@@ -649,18 +650,18 @@ export function RecruiterLeadDetailWorkspace({
                   {ACTIVITY_TYPES.map(type=><FilterChip type="button" key={type} aria-pressed={logType===type}
                     onClick={()=>{setLogType(type);setLogOutcome("");}}>{type==="CALL"?"Call":type==="EMAIL"?"Email":type==="MEETING"?"Meeting":"Note"}</FilterChip>)}
                 </div>
-                <details className="border-b border-border pb-3"><summary className="cursor-pointer py-2 text-[13px] font-semibold max-md:flex max-md:min-h-11 max-md:items-center">Choose interaction type</summary><label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
+                <details className="border-b border-border pb-3"><summary className="cursor-pointer py-2 text-[13px] font-semibold max-md:flex max-md:min-h-11 max-md:items-center">Choose interaction type</summary><Label className="block">Type
                   <Select className="mt-[6px] min-w-0 min-h-11 md:min-h-9" value={logType}
                     onChange={e => {setLogType(e.target.value as typeof logType);setLogOutcome("");}}>
                     {ACTIVITY_TYPES.map(type => <option value={type} key={type}>{type}</option>)}
                   </Select>
-                </label></details>
+                </Label></details>
                 {logType==="CALL"?<div className="flex flex-wrap gap-2" role="group" aria-label="Call outcome">
                   {LEGACY_CALL_OUTCOMES.map(outcome=>
                    <FilterChip key={outcome} type="button" aria-pressed={logOutcome===outcome}
                     onClick={()=>setLogOutcome(outcome)}>{outcome}</FilterChip>)}
                 </div>:null}
-                <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Outcome
+                <Label className="block min-w-0">Outcome
                   {logType==="CALL"?<Select className="mt-[6px] min-w-0 min-h-11 md:min-h-9" required
                     value={logOutcome} onChange={e=>setLogOutcome(e.target.value)}>
                     <option value="">Choose a call outcome</option>
@@ -668,11 +669,11 @@ export function RecruiterLeadDetailWorkspace({
                       <option key={value} value={value}>{value}</option>)}
                   </Select>:<Input className="mt-[6px] min-w-0 min-h-11 md:min-h-9" maxLength={30}
                     value={logOutcome} onChange={e=>setLogOutcome(e.target.value)}/>}
-                </label>
-                <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What was said? (optional)
+                </Label>
+                <Label className="block min-w-0">What was said? (optional)
                   <Textarea className="mt-[6px] min-w-0 min-h-11 md:min-h-9" maxLength={2000} rows={3} value={logNote}
                     onChange={e => setLogNote(e.target.value)} />
-                </label>
+                </Label>
                 <Button variant="primary" className="w-full min-h-11 md:min-h-9 sm:w-auto" type="submit" disabled={saving||(logType==="CALL"&&!logOutcome)||(logType==="NOTE"&&!logNote.trim())}>
                   {saving ? "Saving…" : "Save"}
                 </Button>
@@ -738,18 +739,18 @@ export function RecruiterLeadDetailWorkspace({
                .map(([label,key])=><Button key={key} type="button" variant="secondary"
                 disabled={saving} onClick={()=>setFollowAt(nextFollowupPreset(key))}>{label}</Button>)}
              </div>
-             <label className="block text-sm font-semibold">Due date and time (IST)
+             <Label className="block">Due date and time (IST)
               <Input type="datetime-local" min={nextFollowupPreset("TOMORROW").slice(0,10)+"T00:00"}
                value={followAt} disabled={saving} onChange={event=>setFollowAt(event.target.value)}
                className="mt-2 min-h-11" required/>
-             </label>
+             </Label>
              {followAt?<p className="text-xs text-muted-foreground">
               Will be scheduled at {leadDueAtIst(followAt+":00+05:30")} IST
              </p>:null}
-             <label className="block text-sm font-semibold">Next step (optional)
+             <Label className="block">Next step (optional)
               <Input value={followNote} maxLength={500} disabled={saving}
                onChange={event=>setFollowNote(event.target.value)} className="mt-2 min-h-11"/>
-             </label>
+             </Label>
              {actionError?<Banner tone="error">{actionError}</Banner>:null}
              <div className="flex flex-wrap justify-end gap-2 border-t border-border pt-3">
               <Button type="button" variant="secondary" disabled={saving} onClick={()=>{
@@ -764,19 +765,19 @@ export function RecruiterLeadDetailWorkspace({
             title="Edit contact details" dismissible={!saving}>
               <form className="space-y-3" onSubmit={e => void saveEdit(e)}>
                 {(["name", "email", "phone", "designation", "companyName"] as const).map(name => (
-                  <label key={name} className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                  <Label key={name} className="block min-w-0">
                     {name === "companyName" ? "Company name" : name.charAt(0).toUpperCase() + name.slice(1)}
                     <Input className="mt-[6px] min-w-0 min-h-11 md:min-h-9" value={edit[name]}
                       autoFocus={name==="name"} required={name==="name"||name==="companyName"} type={name==="email"?"email":"text"}
                       onChange={e => setEdit(current => ({ ...current, [name]: e.target.value }))} />
-                  </label>
+                  </Label>
                 ))}
-                <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Found through
+                <Label className="block min-w-0">Found through
                   <Select className="mt-[6px] min-w-0 min-h-11 md:min-h-9" value={edit.source}
                     onChange={e => setEdit(current => ({ ...current, source: e.target.value }))}>
                     {SOURCES.map(([code, label]) => <option key={code} value={code}>{label}</option>)}
                   </Select>
-                </label>
+                </Label>
                 {actionError ? <p role="alert" className="text-destructive">{actionError}</p> : null}
                 {duplicateLead?<p role="status" className="text-sm leading-[22px]">
                  Contact already exists: <Link href={"/tpo/recruiters/"+encodeURIComponent(duplicateLead.id)}
@@ -792,14 +793,14 @@ export function RecruiterLeadDetailWorkspace({
           <Dialog open={notNowOpen && confirmation===null} onOpenChange={next=>{if(!next)closeNotNow();}}
             title="Not now" dismissible={!saving}>
               <form className="space-y-4" onSubmit={e => void markNotNow(e)}>
-                <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Why?
+                <Label className="block min-w-0">Why?
                   <Textarea className="mt-[6px] min-w-0 min-h-11 md:min-h-9" maxLength={255} rows={3}
                     value={notNowReason} autoFocus onChange={e => setNotNowReason(e.target.value)} />
-                </label>
-                <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Revisit on
+                </Label>
+                <Label className="block min-w-0">Revisit on
                   <Input className="mt-[6px] min-w-0 min-h-11 md:min-h-9" type="date" value={revisitDate}
                     onChange={e => setRevisitDate(e.target.value)} />
-                </label>
+                </Label>
                 {actionError ? <p role="alert" className="text-destructive">{actionError}</p> : null}
                 <div className="flex flex-col-reverse gap-2 border-t border-border pt-4 sm:flex-row sm:justify-end">
                   <Button variant="secondary" className="min-h-11 w-full md:min-h-9 sm:w-auto" type="button" disabled={saving} onClick={()=>closeNotNow()}>Cancel</Button>

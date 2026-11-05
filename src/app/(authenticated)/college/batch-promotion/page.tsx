@@ -24,6 +24,7 @@ import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Search = Record<string, string | string[] | undefined>;
 function first(value: string | string[] | undefined) {
@@ -134,19 +135,19 @@ export default async function CollegeBatchPromotionPage({
     <section aria-label="College batch directory" className="min-w-0 space-y-3">
       <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Batch Promotion</Heading>
       <form action="/college/batch-promotion" method="get" aria-label="Filter batches" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
-        <label className="grid min-w-[180px] flex-1 gap-2 text-sm font-semibold text-body">Program
+        <Label stack className="min-w-[180px] flex-1">Program
           <Select name="programId" defaultValue={parsed.data.programId??""}>
             <option value="">Filter by program</option>
             {options.programs.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
           </Select>
-        </label>
-        <label className="grid min-w-[180px] flex-1 gap-2 text-sm font-semibold text-body">Search batches
+        </Label>
+        <Label stack className="min-w-[180px] flex-1">Search batches
           <Input name="search" maxLength={120} defaultValue={batchSearch} placeholder="Search name, year, status or semester"/>
-        </label>
-        <label className="inline-flex min-h-11 items-center gap-2 text-sm text-body">
+        </Label>
+        <Label variant="choice" className="inline-flex min-h-11 items-center gap-2">
           <Checkbox name="showInactive" value="1" defaultChecked={showInactive} aria-label="Show completed and inactive batches" className="h-4 w-4 accent-[var(--lms-primary)]"/>
           {BATCH_PROMOTION_COPY.showCompleted} ({inactiveCount})
-        </label>
+        </Label>
         <Button type="submit" className="min-h-11 md:min-h-9">Refresh</Button>
       </form>
       <p className="text-xs text-muted-foreground">Graduation is a separate confirmed
@@ -178,11 +179,11 @@ export default async function CollegeBatchPromotionPage({
             {showInactive?<input type="hidden" name="showInactive" value="1"/>:null}
             {batchSearch?<input type="hidden" name="search" value={batchSearch}/>:null}
             {parsed.data.cohortId?<input type="hidden" name="cohortId" value={parsed.data.cohortId}/>:null}
-            <label className="flex items-center gap-2">Rows per page
+            <Label variant="choice" className="flex items-center gap-2">Rows per page
               <Select name="batchPageSize" defaultValue={batchSize} className="min-w-20">
                 {[10,20,50].map(size=><option key={size} value={size}>{size}</option>)}
               </Select>
-            </label>
+            </Label>
             <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Apply</Button>
           </form>
           {currentBatchPage>1?<Link href={currentUrl(currentBatchPage-1)} className="font-semibold text-link underline">Previous</Link>:null}
@@ -192,7 +193,7 @@ export default async function CollegeBatchPromotionPage({
     </section>
     <section className="min-w-0 pt-[var(--lms-space-2)]">
       <FilterBar title="Filters"><form method="get" action="/college/batch-promotion" className="grid min-w-0 items-end gap-[var(--lms-space-3)] max-md:[&_label]:w-full md:grid-cols-2 lg:grid-cols-4">
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label stack className="min-w-0">
           Program
           <Select name="programId" defaultValue={parsed.data.programId ?? ""}
             >
@@ -201,8 +202,8 @@ export default async function CollegeBatchPromotionPage({
               {program.name} ({program.code})
             </option>)}
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label stack className="min-w-0">
           Batch
           <Select name="cohortId" defaultValue={parsed.data.cohortId ?? ""}
             >
@@ -213,18 +214,18 @@ export default async function CollegeBatchPromotionPage({
             {preview && !options.cohorts.some(cohort => cohort.id === preview.batch.id) ?
               <option value={preview.batch.id}>{preview.batch.programName} · {preview.batch.name} ({preview.batch.status})</option> : null}
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label stack className="min-w-0">
           Academic year override (optional)
           <Input name="yearStart" type="text" inputMode="numeric" pattern="[0-9]{4}-[0-9]{2}"
             defaultValue={parsed.data.yearStart === undefined ? "" : formatPromotionAcademicYear(parsed.data.yearStart)}
             placeholder={preview?.plan.academicYearStart?formatPromotionAcademicYear(preview.plan.academicYearStart):"YYYY-YY"}
             />
-        </label>
-        <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-muted-foreground">
+        </Label>
+        <Label className="flex min-h-11 items-center gap-2">
           <Checkbox name="showCompleted" value="1" defaultChecked={showCompleted} />
           Show completed / inactive batches
-        </label>
+        </Label>
         <div className="flex min-w-0 items-end">
           <Button type="submit" className="min-h-11 w-full md:min-h-9">Preview</Button>
         </div>

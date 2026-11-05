@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { facultyCourseTabs, facultyCourseTabFromPath, facultyCourseTabHref } from "@/modules/courses/faculty-course-navigation";
+import { Label } from "@/components/ui/label";
 
 type FacultyTeachingSection = {
   deliveryId: string;
@@ -72,7 +73,7 @@ export function FacultyCourseTabNavigation({
       <div className="flex min-w-0 items-center justify-between gap-3">
         {/* The prototype places the sole back link in the shared course header. */}
         {teachingSections.length > 1 ? (
-          <label htmlFor="faculty-course-section" className="grid w-full min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-40">
+          <Label stack htmlFor="faculty-course-section" className="w-full min-w-0 sm:w-40">
             Class
             <Select
               id="faculty-course-section"
@@ -86,7 +87,7 @@ export function FacultyCourseTabNavigation({
                 <option key={section.deliveryId} value={section.deliveryId}>{section.label}</option>
               ))}
             </Select>
-          </label>
+          </Label>
         ) : null}
       </div>
       <details className="min-w-0 border-t border-border pt-2">

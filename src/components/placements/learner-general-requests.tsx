@@ -12,6 +12,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {tpoGeneralRequestInputSchema} from "@/modules/placements/tpo-general-request-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type History={id:string;kind:string;status:string;reason:string;requestedAt:string;decisionNote:string|null};
 type Kind="OFF_CAMPUS_OFFER"|"REGISTRATION_CHANGE"|"ABSENCE_DISPUTE"|"CORRECTION_WITH_PROOF"|"PLACEMENT_AFTER_PLACEMENT"|"OFFER_ACCEPTANCE_DISPUTE";
 const kinds:readonly [Kind,string][]=[
@@ -135,32 +136,32 @@ export function LearnerGeneralRequests({
    </>}>
   <div className="space-y-4">
   <p className="text-sm">Tell your placement cell about an off-campus offer, registration change, disputed absence, record correction or a request to apply after placement.</p>
-  <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">What do you need?<Select className={box} disabled={pending} value={kind}
+  <Label stack className="text-[length:var(--lms-font-sm)]">What do you need?<Select className={box} disabled={pending} value={kind}
    onChange={e=>{
     if(pending)return;
     if(dirty){setAfterDiscardKind(e.target.value as Kind);setError("");setDiscardOpen(true);return;}
     setKind(e.target.value as Kind);resetDraft();
    }}>
    {kinds.map(([id,name])=><option key={id} value={id}>{name}</option>)}
-  </Select></label>
-  {kind==="REGISTRATION_CHANGE"?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Change to
+  </Select></Label>
+  {kind==="REGISTRATION_CHANGE"?<Label stack className="text-[length:var(--lms-font-sm)]">Change to
    <Select className={box} value={target||"HIGHER_STUDIES"} onChange={e=>setTarget(e.target.value)}>
     {([["PLACEMENTS","Placements"],["HIGHER_STUDIES","Higher studies"],["NOT_INTERESTED","Not interested"]] as const).map(([key,label])=>
      <option key={key} value={key}>{label}</option>)}
    </Select>
-  </label>:
-   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">{kind==="OFF_CAMPUS_OFFER"?"Company":
+  </Label>:
+   <Label stack className="text-[length:var(--lms-font-sm)]">{kind==="OFF_CAMPUS_OFFER"?"Company":
     kind==="ABSENCE_DISPUTE"?"Application ID":kind==="OFFER_ACCEPTANCE_DISPUTE"?"Offer ID":kind==="CORRECTION_WITH_PROOF"?"Record field":"Requested drive ID"}
     <Input className={box} maxLength={kind==="OFF_CAMPUS_OFFER"?200:kind==="CORRECTION_WITH_PROOF"?140:200} placeholder={kind==="OFF_CAMPUS_OFFER"?"e.g. Acme Corp":undefined} value={target} onChange={e=>setTarget(e.target.value)}/>
-   </label>}
-  {kind!=="REGISTRATION_CHANGE"&&kind!=="OFFER_ACCEPTANCE_DISPUTE"?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+   </Label>}
+  {kind!=="REGISTRATION_CHANGE"&&kind!=="OFFER_ACCEPTANCE_DISPUTE"?<Label stack className="text-[length:var(--lms-font-sm)]">
    {kind==="OFF_CAMPUS_OFFER"?"CTC (LPA, optional)":
     kind==="ABSENCE_DISPUTE"?"Round ID":kind==="CORRECTION_WITH_PROOF"?"Corrected value":"Justification"}
    <Input className={box} type={kind==="OFF_CAMPUS_OFFER"?"number":"text"} min={kind==="OFF_CAMPUS_OFFER"?0:undefined} step={kind==="OFF_CAMPUS_OFFER"?0.01:undefined} placeholder={kind==="OFF_CAMPUS_OFFER"?"e.g. 8.5":undefined} maxLength={1000} value={aux} onChange={e=>setAux(e.target.value)}/>
-  </label>:target==="PLACEMENTS"?<label className="flex min-h-11 min-w-0 items-start gap-2 py-2 text-sm">
+  </Label>:target==="PLACEMENTS"?<Label variant="choice" className="flex min-h-11 min-w-0 items-start gap-2 py-2">
    <Checkbox checked={consent} onChange={e=>setConsent(e.target.checked)}/>
    I request placement registration and consent to the placement rules.
-  </label>:null}
+  </Label>:null}
   {["OFF_CAMPUS_OFFER","ABSENCE_DISPUTE","CORRECTION_WITH_PROOF"].includes(kind)?<div
    className="min-w-0 space-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-3">
    <div className="flex items-center gap-2 text-sm font-semibold text-body">
@@ -175,17 +176,17 @@ export function LearnerGeneralRequests({
       Use the HTTPS proof link below, or share the letter with your placement cell separately.
       A local file picker cannot upload an unverified or publicly exposed document.
     </p>}/>
-   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Proof link (HTTPS)
+   <Label stack className="text-[length:var(--lms-font-sm)]">Proof link (HTTPS)
    <Input className={box} type="url" placeholder="https://..." maxLength={2000} value={proofUrl}
      onChange={e=>{setProofUrl(e.target.value);setNotice("");setError("");}}/>
-  </label>
+  </Label>
   {proofUrl.trim()?<p role="status" className="text-xs text-body">
     Proof link supplied. The placement cell will review access and authenticity; no file has been uploaded.
   </p>:null}
  </div>:null}
-  <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Tell the placement cell why
+  <Label stack className="text-[length:var(--lms-font-sm)]">Tell the placement cell why
    <Textarea ref={reasonRef} className={box} rows={3} maxLength={900} value={reason} onChange={e=>{setReason(e.target.value);setError("");}} aria-invalid={error==="Please explain"} aria-describedby={error==="Please explain"?"learner-general-requests-error":undefined}/>
-  </label>
+  </Label>
   {error?<p role="alert" id="learner-general-requests-error" className="text-sm text-error">{error}</p>:null}
   </div>
   </Dialog>

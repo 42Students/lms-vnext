@@ -14,6 +14,7 @@ import {useRouter} from "next/navigation";
 import {CAMPAIGN_DELIVERY_UNAVAILABLE,CAMPAIGN_DRAFT_UNAVAILABLE,
   tpoCampaignDraftSchema,previewTpoCampaignText} from "@/modules/messaging/tpo-campaign-draft-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type SelectedAudiencePreview={
  selected:number;eligible:number;leftOut:number;unavailable:number;
  suppressed:{NO_EMAIL:number;UNSUBSCRIBED:number;BOUNCED:number;NOT_NOW:number;DUPLICATE:number};
@@ -117,16 +118,16 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     </div>:null}
     <p className="mt-2 text-xs text-muted-foreground">This is a preview, not a send. Recipient eligibility is checked again when saving the draft.</p>
    </section>:null}
-   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">To
+   <Label className="block text-[length:var(--lms-font-sm)]">To
     <Select className={field} value={selectedLeadIds.length?"ALL_ELIGIBLE":segment} disabled={selectedLeadIds.length>0} onChange={e=>setSegment(e.target.value as typeof segment)}>
      {SEGMENTS.map(item=><option key={item.value} value={item.value}>{item.label}</option>)}
     </Select>
-   </label>
+   </Label>
    {selectedLeadIds.length?<p className="text-xs text-muted-foreground">Audience is fixed to the selected leads from Engage. Return there to change the selection.</p>:null}
-   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Subject
+   <Label className="block text-[length:var(--lms-font-sm)]">Subject
     <Input value={subject} maxLength={200} aria-required="true" className={field}
      onChange={e=>setSubject(e.target.value)}/>
-   </label>
+   </Label>
    <section aria-label="Email quick-start templates" className="space-y-2">
     <Heading level={3} size="xs" className="uppercase tracking-wide text-muted-foreground">Quick-start email wording</Heading>
     <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
@@ -147,10 +148,10 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
      Insert company
     </Button>
    </div>
-   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Email
+   <Label className="block text-[length:var(--lms-font-sm)]">Email
     <Textarea value={body} maxLength={10000} aria-required="true" rows={8}
      className={field} onChange={e=>setBody(e.target.value)}/>
-   </label>
+   </Label>
    <p className="text-xs text-muted-foreground" aria-live="polite">{body.length} / 10,000 characters</p>
    <p className="text-xs text-muted-foreground">
      Write {`{name}`} or {`{company}`} and each person sees their own. Your signature and an unsubscribe link are added when sending is configured. This preview uses example text; provider delivery is not yet guaranteed.
@@ -164,16 +165,16 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
    </Disclosure>
    <Disclosure title="Advanced campaign settings" className="border-y border-border py-2" contentClassName="pt-3">
     <div className="space-y-3">
-     <label className="block text-[13px] font-semibold text-body">Campaign name (optional)
+     <Label className="block">Campaign name (optional)
       <Input value={title} maxLength={160} className={field} placeholder="Defaults to the email subject"
        onChange={e=>setTitle(e.target.value)}/>
-     </label>
+     </Label>
      <p className="text-xs text-muted-foreground">This is an internal label for the saved campaign. If left blank, the subject will be used.</p>
-     <label className="block text-[13px] font-semibold text-body">Approved campaign template key
+     <Label className="block">Approved campaign template key
       <Input value={templateKey} maxLength={160} required className={field}
        placeholder="recruiter-campaign" onChange={e=>setTemplateKey(e.target.value)}/>
       <span className="mt-1 block text-xs font-normal text-muted-foreground">Authentication or OTP templates cannot be used for recruitment campaigns.</span>
-     </label>
+     </Label>
     </div>
    </Disclosure>
    {!selectedLeadIds.length?<Link href={"/tpo/recruiters/campaigns/preview?segment="+segment}

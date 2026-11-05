@@ -13,6 +13,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export const dynamic="force-dynamic";
 const querySchema=z.string().trim().min(2).max(100);
 export default async function TpoRecordFinder({searchParams}:{searchParams:Promise<{q?:string|string[]}>}){
@@ -38,10 +39,10 @@ export default async function TpoRecordFinder({searchParams}:{searchParams:Promi
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader eyebrow="TPO" title="Find a student, recruiter or company" description="Search your college records. Search does not execute actions or navigate to arbitrary pages."/>
   <form action="/tpo/find" method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-   <label className="min-w-0 w-full flex-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto">Record name<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
+   <Label className="min-w-0 w-full flex-1 md:w-auto">Record name<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
     <Input type="search" name="q" defaultValue={rawText??""} minLength={2} maxLength={100} required
      className="mt-[6px] block min-h-11 w-full min-w-0 md:min-h-9" placeholder="Find a student, recruiter, company or drive"/>
-   </label><Button type="submit" className="min-h-11 w-full self-end sm:w-auto md:min-h-9">Find</Button>
+   </Label><Button type="submit" className="min-h-11 w-full self-end sm:w-auto md:min-h-9">Find</Button>
   </form>
   {invalid?<Alert tone="error" role="alert">Search must contain 2–100 characters.</Alert>:!text?<EmptyState title="Type a name or a roll number, for example 21CS001"/>:<>
    {!hasMatches?<EmptyState title={"No student, recruiter, company or drive matches \""+(rawText??"")+"\""}

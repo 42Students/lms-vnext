@@ -29,6 +29,7 @@ import {
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
@@ -414,16 +415,16 @@ export default async function ActivityPage({
       <form aria-label="Filter activity log" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-y border-border py-4 md:grid-cols-2 xl:grid-cols-4">
         <input type="hidden" name="view" value={selectedPreset} />
         {rawMode?<input type="hidden" name="mode" value="raw"/>:null}
-        {rawMode?<label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
+        {rawMode?<Label>Rows per page
           <Select name="size" defaultValue={String(pageSize)}>
             <option value="25">25</option><option value="50">50</option><option value="100">100</option>
           </Select>
-        </label>:null}
+        </Label>:null}
         {collegeOptionsFailed && one(params["collegeId"]) ? (
           <input type="hidden" name="collegeId" value={one(params["collegeId"])} />
         ) : null}
         {isSuperAdmin(context) && !selectedCollegeId && !collegeOptionsFailed ? (
-          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label>
             <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">College</span>
             <Select name="collegeId" defaultValue={one(params["collegeId"]) ?? ""} className={inputClass}>
               <option value="">Current admin safety scope</option>
@@ -431,9 +432,9 @@ export default async function ActivityPage({
                 {college.name} ({college.code})
               </option>)}
             </Select>
-          </label>
+          </Label>
         ) : null}
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label>
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             Module
           </span>
@@ -458,8 +459,8 @@ export default async function ActivityPage({
               ),
             )}
           </Select>
-        </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label>
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             Importance
           </span>
@@ -484,8 +485,8 @@ export default async function ActivityPage({
               ),
             )}
           </Select>
-        </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label>
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             From (IST)
           </span>
@@ -494,8 +495,8 @@ export default async function ActivityPage({
             name="from"
             defaultValue={defaultFrom}
           />
-        </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label>
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             To (IST)
           </span>
@@ -504,12 +505,12 @@ export default async function ActivityPage({
             name="to"
             defaultValue={one(params["to"])}
           />
-        </label>
+        </Label>
         <details open={Boolean(one(params["eventType"])||one(params["subjectType"])||one(params["subjectId"])||one(params["actorName"])||one(params["q"])||one(params["actorUserId"])) || undefined}
           className="group min-w-0 border-t border-[var(--lms-canvas-border)] md:col-span-2 xl:col-span-4">
           <summary className="flex min-h-11 cursor-pointer items-center justify-between text-sm font-semibold text-[var(--lms-body-text)] focus-ring">More filters<span aria-hidden="true">⌄</span></summary>
           <div className="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-4">
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label>
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             Event type
           </span>
@@ -521,8 +522,8 @@ export default async function ActivityPage({
             )}
             placeholder="placements.offer.issued"
           />
-        </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label>
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             Subject type
           </span>
@@ -534,21 +535,21 @@ export default async function ActivityPage({
             )}
             placeholder="placement_offer"
           />
-        </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label>
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">Subject / entity ID</span>
           <Input className={inputClass} name="subjectId" maxLength={500}
             defaultValue={one(params["subjectId"])} placeholder="Exact entity ID" />
-        </label>
+        </Label>
         {isSuperAdmin(context) ? <>
-          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">Actor name</span>
+          <Label><span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">Actor name</span>
             <Input type="search" className={inputClass} name="actorName" maxLength={100}
-              defaultValue={one(params["actorName"])} placeholder="Name contains…" /></label>
-          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">Event / entity search</span>
+              defaultValue={one(params["actorName"])} placeholder="Name contains…" /></Label>
+          <Label><span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">Event / entity search</span>
             <Input type="search" className={inputClass} name="q" maxLength={100}
-              defaultValue={one(params["q"])} placeholder="Summary, event or entity contains…" /></label>
+              defaultValue={one(params["q"])} placeholder="Summary, event or entity contains…" /></Label>
         </> : null}
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label>
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             Actor user ID
           </span>
@@ -560,7 +561,7 @@ export default async function ActivityPage({
             )}
             placeholder="Optional UUID"
           />
-        </label>
+        </Label>
           </div>
         </details>
         <div className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] md:col-span-2 xl:col-span-4">

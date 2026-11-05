@@ -18,6 +18,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type Choice = {
   membershipId: string;
@@ -831,12 +832,12 @@ export function SectionOperations({
           </div>}>
         <div className="grid min-w-0 items-start gap-[var(--lms-space-4)] pt-[var(--lms-space-3)] sm:grid-cols-1 md:grid-cols-2 [&_input]:min-w-0">
           <div>
-            <label
+            <Label
               htmlFor="schedule-title"
-              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[6px] block"
             >
               Title
-            </label>
+            </Label>
             <Input
               id="schedule-title"
               value={eventTitle}
@@ -847,12 +848,12 @@ export function SectionOperations({
             />
           </div>
           <div>
-            <label
+            <Label
               htmlFor="schedule-start"
-              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[6px] block"
             >
               Starts
-            </label>
+            </Label>
             <Input
               id="schedule-start"
               type="datetime-local"
@@ -863,12 +864,12 @@ export function SectionOperations({
             />
           </div>
           <div>
-            <label
+            <Label
               htmlFor="schedule-end"
-              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[6px] block"
             >
               Ends
-            </label>
+            </Label>
             <Input
               id="schedule-end"
               type="datetime-local"
@@ -879,12 +880,12 @@ export function SectionOperations({
             />
           </div>
           <div>
-            <label
+            <Label
               htmlFor="schedule-location"
-              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[6px] block"
             >
               Location
-            </label>
+            </Label>
             <Input
               id="schedule-location"
               value={eventLocation}
@@ -897,12 +898,12 @@ export function SectionOperations({
             />
           </div>
           <div>
-            <label
+            <Label
               htmlFor="schedule-course"
-              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[6px] block"
             >
               Course · optional
-            </label>
+            </Label>
             <Select
               id="schedule-course"
               value={eventDeliveryId}
@@ -926,12 +927,12 @@ export function SectionOperations({
             </Select>
           </div>
           <div>
-            <label
+            <Label
               htmlFor="schedule-faculty"
-              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[6px] block"
             >
               Faculty · optional
-            </label>
+            </Label>
             <Select
               id="schedule-faculty"
               value={eventFacultyId}

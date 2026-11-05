@@ -28,6 +28,7 @@ import { TpoBulkRoundResultRecorder } from "./tpo-bulk-round-result-recorder";
 import {tpoDriveDayRoundLinks} from "@/modules/placements/tpo-drive-day-navigation-model";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type RoundData = Awaited<
   ReturnType<typeof getTpoRoundDriveDay>
@@ -380,13 +381,13 @@ export function TpoRoundDriveDayReadOnly({
         </div>
         <form className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-end"
           onSubmit={event=>{event.preventDefault();prepareGate();}}>
-          <label className="min-w-0 flex-1 text-sm font-semibold text-body">
+          <Label className="min-w-0 flex-1">
             Roll number
             <Input autoFocus type="search" autoComplete="off" value={gateInput}
               disabled={locked||gateBusy||pasteBusy} placeholder="Roll number, then Enter"
               onChange={event=>{setGateInput(event.target.value);setGateError("");setGateCandidates([]);}}
               className="mt-1" />
-          </label>
+          </Label>
           <Button type="submit" disabled={locked||gateBusy||pasteBusy||!gateInput.trim()}>
             Mark present
           </Button>
@@ -645,12 +646,12 @@ export function TpoRoundDriveDayReadOnly({
           </p>
         </div>
 
-        <label className="mb-3 block max-w-xl text-sm font-semibold text-body">
+        <Label className="mb-3 block max-w-xl">
           Search by student name or roll number
           <Input type="search" value={rosterSearch}
             onChange={event=>setRosterSearch(event.target.value)}
             placeholder="Search roster" className="mt-1"/>
-        </label>
+        </Label>
         <p role="status" className="mb-3 text-xs text-muted-foreground">
           Showing {shownRows.length} of {data.rows.length} roster students.
         </p>
@@ -728,12 +729,12 @@ export function TpoRoundDriveDayReadOnly({
           </Button>
         </div>}>
         <div className="space-y-3">
-          <label className="block text-sm font-semibold text-body">
+          <Label className="block">
             Roll numbers
             <Textarea rows={5} autoFocus value={pasteText} disabled={pasteBusy}
               onChange={event=>setPasteText(event.target.value)} className="mt-1"
               placeholder="Paste one roll number per line"/>
-          </label>
+          </Label>
           <p className="text-xs text-body">
             {pastePreview.matched.length} matched · {pastePreview.unmatched.length} unmatched · {pastePreview.ambiguous.length} ambiguous · {pastePreview.duplicates} duplicates skipped.
           </p>

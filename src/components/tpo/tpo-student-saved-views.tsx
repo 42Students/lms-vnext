@@ -11,6 +11,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useEffect,useId,useState} from "react";
 import {useRouter,useSearchParams} from "next/navigation";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Selection={journeyState?:string;branchId?:string;batchId?:string;search?:string;
  pageSize:number;columns?:string};
 type View={id:string;name:string;query:Selection;pinned:boolean;createdAt:string;
@@ -88,11 +89,11 @@ export function TpoStudentSavedViews({embedded=false}:{embedded?:boolean}){
     {recent.map(view=><Button className="min-h-11 w-full break-words sm:w-auto md:min-h-9" variant="secondary" type="button" key={view.id} disabled={busy} onClick={()=>void use(view)}
      >{view.name}</Button>)}</div>:null}
    <Disclosure title="Save or update a view" className="border-t border-border" contentClassName="space-y-3 px-2 pb-3">
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">View name
+   <Label stack className="min-w-0">View name
     <Input className="w-full min-w-0" value={name} maxLength={100} disabled={busy} onChange={e=>setName(e.target.value)}
      />
-   </label>
-   <label className="flex min-h-11 min-w-0 items-center gap-2 text-sm"><Checkbox checked={pinned} disabled={busy} onChange={e=>setPinned(e.target.checked)}/>Pin view (up to 5)</label>
+   </Label>
+   <Label variant="choice" className="flex min-h-11 min-w-0 items-center gap-2"><Checkbox checked={pinned} disabled={busy} onChange={e=>setPinned(e.target.checked)}/>Pin view (up to 5)</Label>
    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
     <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="primary" type="button" disabled={busy||!name.trim()} onClick={()=>void send({
      action:"CREATE",name:name.trim(),filters:filterQuery(new URLSearchParams(params.toString())),pinned,
@@ -105,12 +106,12 @@ export function TpoStudentSavedViews({embedded=false}:{embedded?:boolean}){
    </Disclosure>
    <div className="max-h-64 min-w-0 divide-y divide-border overflow-auto overscroll-contain">
     {rows.map(view=><div key={view.id} className="flex min-h-11 min-w-0 flex-col items-stretch gap-2 py-3 sm:flex-row sm:items-center">
-     <label className="flex min-h-11 min-w-0 flex-1 items-center gap-3">
+     <Label variant="choice" className="flex min-h-11 min-w-0 flex-1 items-center gap-3">
       <Radio aria-label={"Select "+view.name} name="selected-view" disabled={busy} checked={selected===view.id}
        onChange={()=>{setSelected(view.id);setName(view.name);setPinned(view.pinned);}}/>
       <strong className="min-w-0 flex-1 break-words text-sm">{view.name}</strong>
       {view.pinned?<span className="shrink-0 text-xs text-muted-foreground">Pinned</span>:null}
-     </label>
+     </Label>
 
      <div className="flex min-w-0 items-center gap-2">
       <Button className="min-h-11 flex-1 sm:flex-none md:min-h-9" variant="secondary" type="button" disabled={busy} onClick={()=>void use(view)}>Open</Button>

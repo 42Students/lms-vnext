@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import {useEffect,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {splitHrRecruiterName,hrRecruiterNameFieldsSchema,joinHrRecruiterName} from "@/modules/placements/hr-recruiter-name-fields-model";
+import { Label } from "@/components/ui/label";
 export function RecruiterDisplayNameEditor({initialName,updatedAt}:{
  initialName:string|null;updatedAt:string;
 }) {
@@ -47,11 +48,11 @@ export function RecruiterDisplayNameEditor({initialName,updatedAt}:{
  }
  return <div className="min-w-0">
   <form onSubmit={event=>void save(event)} className="grid min-w-0 gap-3 sm:grid-cols-2">
-   <label htmlFor="hr-first-name" className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-start-1 sm:row-start-1">First name<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span></label>
+   <Label htmlFor="hr-first-name" className="sm:col-start-1 sm:row-start-1">First name<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span></Label>
    <Input id="hr-first-name" value={firstName} maxLength={100} required
     onChange={event=>setFirstName(event.target.value)}
     className="min-w-0 w-full sm:col-start-1 sm:row-start-2"/>
-   <label htmlFor="hr-last-name" className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-start-2 sm:row-start-1">Last name</label>
+   <Label htmlFor="hr-last-name" className="sm:col-start-2 sm:row-start-1">Last name</Label>
    <Input id="hr-last-name" value={lastName} maxLength={100}
     onChange={event=>setLastName(event.target.value)}
     className="min-w-0 w-full sm:col-start-2 sm:row-start-2"/>

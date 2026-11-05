@@ -35,6 +35,7 @@ import {FilterChip} from "@/components/ui/filter-chip";
 import {LearnerRoundConfirmAttendance} from "./learner-round-confirm-attendance";
 import {LearnerScheduleReschedule} from "./learner-schedule-reschedule";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 const views: CareerCalendarView[] = ["agenda", "month", "week", "day"];
 type EventFilter = LearnerCalendarUrlState["kind"];
@@ -223,7 +224,7 @@ export function LearnerCareerCalendar({
               : view === "day" ? prettyDay(anchor) : `${prettyDay(period.start)} – ${prettyDay(period.end)}`}
           </span>
         </div>
-        <label className="mt-3 block min-w-0 w-full max-w-xs text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label className="mt-3 block min-w-0 w-full max-w-xs">
           Jump to date (IST)
           <Input type="date" aria-label="Choose career calendar date"
             min="2000-01-01" max="2100-12-31" value={anchor}
@@ -232,7 +233,7 @@ export function LearnerCareerCalendar({
               if(day)changeCalendar({date:day});
             }}
             className="mt-1 min-h-[var(--lms-control-height)] max-md:min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
-        </label>
+        </Label>
         {surface==="schedule" ? <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 border-b border-border py-3 text-xs text-body" aria-label="Calendar legend">
           {([
             ["Your tests and interviews","bg-[color:var(--lms-primary-subtle)]"],

@@ -17,6 +17,7 @@ import {
 } from "@/modules/projects/mentor-team-coverage-model";
 import { getMentorTeamCoverage } from "@/modules/projects/mentor-team-coverage-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Params = {
   filter?: string | string[];
@@ -67,12 +68,12 @@ export default async function MentorTeamCoveragePage({
       : <>
         <FilterBar title="Filters" activeCount={Number(Boolean(data.query.search))+Number(data.query.filter!=="ALL")+Number(data.query.status!=="ALL")+Number(data.query.assignment!=="ALL")+Number(data.query.order!=="TITLE")}><form role="search" aria-label="mentor team coverage filters" method="get" action="/mentor/team-coverage"
           className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project search
+          <Label stack>Project search
             <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
               className="min-h-11 md:min-h-9"
               placeholder="Project name" />
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Team coverage
+          </Label>
+          <Label stack>Team coverage
             <Select name="filter" defaultValue={data.query.filter}
               className="min-h-11 md:min-h-9">
               <option value="ALL">All projects</option>
@@ -85,30 +86,30 @@ export default async function MentorTeamCoveragePage({
               <option value="NO_LEARNERS_NO_PRIMARY">No learners and no primary Mentor</option>
               <option value="SINGLE_MENTOR">Exactly one active Mentor</option>
             </Select>
-          </label>
+          </Label>
           <div className="flex min-w-0 flex-wrap items-center gap-2 md:col-span-1">
             <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
             {hasFilters?<Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-ring lms-inline-link">Clear</Link>:null}
           </div>
           <Disclosure title="More team coverage filters" defaultOpen={hasAdvancedFilters} className="md:col-span-3" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-3">
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project state
+          <Label stack>Project state
             <Select name="status" defaultValue={data.query.status}
               className="min-h-11 md:min-h-9">
               <option value="ALL">All current assignments</option>
               <option value="PLANNED">Planned</option><option value="ACTIVE">Active</option>
               <option value="COMPLETED">Completed</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">My Mentor assignment
+          </Label>
+          <Label stack>My Mentor assignment
             <Select name="assignment" defaultValue={data.query.assignment} className="min-h-11 md:min-h-9">
               <option value="ALL">All assignments</option><option value="PRIMARY">Primary Mentor</option><option value="SUPPORTING">Supporting Mentor</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Team-size order
+          </Label>
+          <Label stack>Team-size order
             <Select name="order" defaultValue={data.query.order} className="min-h-11 md:min-h-9">
               <option value="TITLE">Project title A–Z</option><option value="FEWEST_LEARNERS">Fewest learners first</option><option value="MOST_LEARNERS">Most learners first</option><option value="MOST_MENTORS">Most Mentors first</option><option value="FEWEST_MENTORS">Fewest Mentors first</option>
             </Select>
-          </label>
+          </Label>
           </Disclosure>
 
         </form></FilterBar>

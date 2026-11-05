@@ -15,6 +15,7 @@ import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {LEGACY_FACULTY_TYPES} from "@/modules/people/college-faculty-type-model";
+import { Label } from "@/components/ui/label";
 
 type Kind="FACULTY"|"LEARNER";
 function normalizeLegacyDateOfBirth(value:string):string {
@@ -128,17 +129,17 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
           <p className="md:col-span-2 text-xs text-muted-foreground">
             Canonical identity name, login phone and login email are managed separately to protect access to other memberships. Academic program and class moves use permission-checked enrollment actions; editing this profile never impersonates or deletes the person.
           </p>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name
+          <Label stack>Name
             <Input disabled={pending} value={person.name} readOnly className={field+" opacity-70"}/>
-          </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Login Mobile
+          </Label>
+          <Label stack>Login Mobile
             <Input disabled={pending} value={person.canonicalPhone} readOnly className={field+" opacity-70"}/>
-          </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Login Email
+          </Label>
+          <Label stack>Login Email
             <Input disabled={pending} value={person.canonicalEmail} readOnly className={field+" opacity-70"}/>
-          </label>
+          </Label>
           {kind==="FACULTY"?<>
-            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
+            <Label stack>Department
               <Select disabled={pending} className={field} value={person.primaryDepartmentId??""}
                 onChange={e=>patch("primaryDepartmentId",e.target.value)}>
                 <option value="">No department</option>
@@ -146,8 +147,8 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
                   <option value={person.primaryDepartmentId}>Current department</option>}
                 {departments.map(d=><option key={d.id} value={d.id}>{d.name}</option>)}
               </Select>
-            </label>
-            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty Type
+            </Label>
+            <Label stack>Faculty Type
               <Select disabled={pending} className={field} value={person.employmentType??""}
                 onChange={e=>patch("employmentType",e.target.value)}>
                 <option value="">Not specified</option>
@@ -155,48 +156,48 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
                   <option value={person.employmentType}>{person.employmentType} (existing)</option>}
                 {LEGACY_FACULTY_TYPES.map(type=><option key={type} value={type}>{type}</option>)}
               </Select>
-            </label>
-            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic title
+            </Label>
+            <Label stack>Academic title
               <Input disabled={pending} className={field} maxLength={128} value={person.academicTitle??""}
                 onChange={e=>patch("academicTitle",e.target.value)}/>
-            </label>
+            </Label>
           </>:<>
-            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Roll Number
+            <Label stack>Roll Number
               <Input disabled={pending} className={field} maxLength={128} value={person.rollNumber??""}
                 onChange={e=>patch("rollNumber",e.target.value)}/>
-            </label>
-            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Registration Number
+            </Label>
+            <Label stack>Registration Number
               <Input disabled={pending} className={field} maxLength={128} value={person.registrationNumber??""}
                 onChange={e=>patch("registrationNumber",e.target.value)}/>
-            </label>
+            </Label>
           </>}
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Gender
+          <Label stack>Gender
             <Select disabled={pending} className={field} value={person.gender} onChange={e=>patch("gender",e.target.value)}>
               {["","Male","Female","Other","Prefer not to say"].map(value=>
                 <option key={value} value={value}>{value||"Not specified"}</option>)}
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date of Birth
+          </Label>
+          <Label stack>Date of Birth
             <Input disabled={pending} className={field} type="date" value={person.dateOfBirth}
               onChange={e=>patch("dateOfBirth",e.target.value)}/>
-          </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Contact mobile
+          </Label>
+          <Label stack>Contact mobile
             <Input disabled={pending} className={field} maxLength={32} value={person.contactPhone}
               onChange={e=>patch("contactPhone",e.target.value)}/>
-          </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Contact email
+          </Label>
+          <Label stack>Contact email
             <Input disabled={pending} className={field} type="email" value={person.contactEmail}
               onChange={e=>patch("contactEmail",e.target.value)}/>
-          </label>
-          <label className="grid gap-[6px] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Address
+          </Label>
+          <Label stack className="md:col-span-2">Address
             <Textarea disabled={pending} className="min-w-0" rows={2} maxLength={1000}
               value={person.address} onChange={e=>patch("address",e.target.value)}/>
-          </label>
-          <label className="grid gap-[6px] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Bio / Description
+          </Label>
+          <Label stack className="md:col-span-2">Bio / Description
             <span className="text-xs font-normal text-muted-foreground">Brief description</span>
             <Textarea disabled={pending} className="min-w-0" rows={3} maxLength={3000}
               value={person.bio} onChange={e=>patch("bio",e.target.value)}/>
-          </label>
+          </Label>
           <div className="flex min-w-0 flex-col-reverse gap-2 border-t border-border pt-3 sm:flex-row sm:justify-end md:col-span-2 [&>button]:min-h-11 [&>button]:w-full sm:[&>button]:w-auto md:[&>button]:min-h-9">
             <Button variant="secondary" type="button" disabled={pending} onClick={close}
               className="min-h-11 md:min-h-9">Cancel</Button>

@@ -15,6 +15,7 @@ import { publicJoinFormSchema } from "@/modules/placements/public-join/form-mode
 import { publicRecruiterWorkEmailSchema } from "@/modules/placements/public-college-join-model";
 import { JOIN_ERROR_COPY,joinErrorMessage,joinFieldForCode,publicJoinResponseMessage,type JoinErrorField } from "@/modules/placements/public-join/error-copy";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type JoinField=JoinErrorField;
 function joinFieldForError(message:string):JoinField|null{
@@ -221,7 +222,7 @@ export function PublicRecruiterJoinForm({
             <form noValidate className="mt-4 min-w-0 space-y-4" aria-busy={pending} onSubmit={event=>{
              event.preventDefault(); if(sentTo)void join();else void sendCode();
             }}>
-              <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+              <Label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)]">
                 Work email
                 <Input ref={emailRef} type="email" required autoComplete="email" value={email} readOnly={Boolean(sentTo)}
                   aria-invalid={Boolean(fieldErrors.email)} aria-describedby={fieldErrors.email?"join-email-error":undefined}
@@ -233,23 +234,23 @@ export function PublicRecruiterJoinForm({
                     ? "Your " + companyLabel + " email. You'll sign in with it."
                     : "Your company email. Personal emails such as Gmail can't be used. You'll sign in with it."}
                 </span>
-              </label>
-              <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+              </Label>
+              <Label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)]">
                 Your name
                 <Input ref={nameRef} type="text" required autoComplete="name" value={name} maxLength={150}
                   aria-invalid={Boolean(fieldErrors.name)} aria-describedby={fieldErrors.name?"join-name-error":undefined}
                   onChange={event => {setName(event.target.value);clearField("name");}}
                   className="w-full min-w-0" />
                 {fieldErrors.name?<span id="join-name-error" role="alert" className="text-xs font-normal text-error">{fieldErrors.name}</span>:null}
-              </label>
+              </Label>
               <div className="min-w-0 space-y-4 border-t border-[var(--lms-canvas-border)] pt-3">
-              <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+              <Label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)]">
                 Designation (optional)
                 <Input type="text" value={designation} maxLength={150}
                   onChange={event => setDesignation(event.target.value)}
                   className="w-full min-w-0" />
-              </label>
-              <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+              </Label>
+              <Label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)]">
                 Mobile (optional)
                 <Input ref={phoneRef} type="tel" autoComplete="tel" value={phone} maxLength={14}
                   aria-invalid={Boolean(fieldErrors.phone)} aria-describedby={fieldErrors.phone?"join-phone-error":undefined}
@@ -259,11 +260,11 @@ export function PublicRecruiterJoinForm({
                 <span className="text-xs font-normal text-muted-foreground">
                   Only for the placement cell to call you. You never sign in with it.
                 </span>
-              </label>
+              </Label>
               </div>
               {scope === "COLLEGE"&&knownCompany?<p role="status" className="text-sm font-semibold">You are joining as {knownCompany}.</p>:null}
               {scope === "COLLEGE"&&!knownCompany&&sentTo ? (
-                <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+                <Label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)]">
                   Company name
                   <Input ref={companyNameRef} type="text" value={companyName} maxLength={200}
                     required={scope==="COLLEGE"&&!knownCompany} autoComplete="organization"
@@ -271,13 +272,13 @@ export function PublicRecruiterJoinForm({
                     onChange={event => {setCompanyName(event.target.value);clearField("companyName");}}
                     className="w-full min-w-0" />
                   {fieldErrors.companyName?<span id="join-company-error" role="alert" className="text-xs font-normal text-error">{fieldErrors.companyName}</span>:null}
-                </label>
+                </Label>
               ) : null}
               {!sentTo ? (
                 <Button type="submit" loading={pending} className="min-h-11 w-full md:min-h-9">Send me a code</Button>
               ) : (
                 <>
-                  <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+                  <Label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)]">
                     Code sent to {sentTo}
                     <Input ref={codeRef} value={code} required autoComplete="one-time-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6}
                       aria-invalid={Boolean(fieldErrors.code)} aria-describedby={fieldErrors.code?"join-code-error":undefined}
@@ -285,7 +286,7 @@ export function PublicRecruiterJoinForm({
                       className="w-full min-w-0" />
                     {fieldErrors.code?<span id="join-code-error" role="alert" className="text-xs font-normal text-error">{fieldErrors.code}</span>:null}
                     <span className="text-xs font-normal text-muted-foreground">This proves the email is yours.</span>
-                  </label>
+                  </Label>
                   <div className="flex min-w-0 flex-col items-stretch gap-2">
                     <Button type="submit" loading={pending} className="w-full">Join {college} placements</Button>
                     <Button variant="link" size="inline" type="button" disabled={pending} onClick={()=>void sendCode()} className="w-full text-center">Send a new code</Button>

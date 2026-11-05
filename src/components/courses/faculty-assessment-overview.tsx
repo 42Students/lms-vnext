@@ -23,6 +23,7 @@ import type { getFacultyAssessmentOverview } from "@/modules/courses/faculty-ass
 import { facultyCourseTabHref } from "@/modules/courses/faculty-course-navigation";
 import { FacultyAssessmentLifecycle } from "./faculty-assessment-lifecycle";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Overview = Awaited<ReturnType<typeof getFacultyAssessmentOverview>>;
 type Assessment = Overview["assignments"][number] | Overview["quizzes"][number];
@@ -85,7 +86,7 @@ export function FacultyAssessmentOverview({
   const assignmentsHeader=kind==="ASSIGNMENT"?
     <PageHeader title="My Assignments" actions={
       <div className="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:flex-row sm:items-end sm:gap-3">
-        <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-body sm:min-w-[212px]">
+        <Label stack className="min-w-0 sm:min-w-[212px]">
           All courses
           <Select aria-label="All courses" value={courseCode} onChange={event=>{
             setCourseCode(event.target.value);setPage(1);
@@ -95,7 +96,7 @@ export function FacultyAssessmentOverview({
               {course.code} · {course.name}
             </option>)}
           </Select>
-        </label>
+        </Label>
         <FacultyAssessmentCreate kind="ASSIGNMENT" lessons={overview.lessonChoices} />
       </div>
     }/>:null;
@@ -135,7 +136,7 @@ export function FacultyAssessmentOverview({
         </ul>
       </Disclosure>
       <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 lg:grid-cols-3">
-        {kind!=="ASSIGNMENT"?<label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        {kind!=="ASSIGNMENT"?<Label>
           Course
           <Select
             value={courseCode}
@@ -152,8 +153,8 @@ export function FacultyAssessmentOverview({
               </option>
             ))}
           </Select>
-        </label>:null}
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>:null}
+        <Label>
           Status
           <Select
             value={status}
@@ -169,8 +170,8 @@ export function FacultyAssessmentOverview({
             {kind === "QUIZ" ? <option value="CLOSED">Closed</option> : null}
             <option value="ARCHIVED">Archived</option>
           </Select>
-        </label>
-        <label className="min-w-0 text-[13px] font-semibold leading-4 sm:col-span-2 lg:col-span-1 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label className="min-w-0 sm:col-span-2 lg:col-span-1">
           Search assessments
           <Input
             className="mt-[6px]"
@@ -182,7 +183,7 @@ export function FacultyAssessmentOverview({
               setPage(1);
             }}
           />
-        </label>
+        </Label>
       </div>
 
       <p aria-live="polite" className="text-xs text-muted-foreground leading-[20px]">

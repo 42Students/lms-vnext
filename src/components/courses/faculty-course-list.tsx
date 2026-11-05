@@ -14,6 +14,7 @@ import { ScrollCue } from "@/components/ui/scroll-cue";
 import type { listFacultyCourseDeliveries, FacultyCourseAssignmentDiagnostic } from "@/modules/courses/faculty-course-service";
 import type { FacultyCourseCardSummary } from "@/modules/courses/faculty-course-card-summary-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Course = Awaited<
   ReturnType<
@@ -121,19 +122,19 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
         className="min-w-0 space-y-3 md:ml-auto">
         <FacultyCourseFilterAutoSubmit />
         <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <label className="grid gap-[6px] text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Search courses
+          <Label stack>Search courses
             <Input name="q" type="search" defaultValue={query.q} maxLength={120}
               placeholder="Search Courses..."
               className="text-[var(--lms-font-base)] max-md:text-[16px] md:text-sm" />
-          </label>
-          <label className="grid gap-[6px] text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Academic period
+          </Label>
+          <Label stack>Academic period
             <Select name="period" defaultValue={query.period}
               className="text-[var(--lms-font-base)] max-md:text-[16px] md:text-sm">
               <option value="">All assigned periods</option>
               {periods.map(period => <option key={period.id} value={period.id}>{period.name}</option>)}
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Section
+          </Label>
+          <Label stack>Section
             <Select aria-label="Filter by section" name="section" defaultValue={query.section}
               className="text-[var(--lms-font-base)] max-md:text-[16px] md:text-sm">
               <option value="">All sections ({sections.length})</option>
@@ -141,14 +142,14 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
                 {section.name} ({section.count})
               </option>)}
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Teaching role
+          </Label>
+          <Label stack>Teaching role
             <Select name="role" defaultValue={query.role}
               className="text-[var(--lms-font-base)] max-md:text-[16px] md:text-sm">
               <option value="">All assigned roles</option>
               {COURSE_TEACHING_ROLES.map(role => <option key={role} value={role}>{role.replaceAll("_"," ")}</option>)}
             </Select>
-          </label>
+          </Label>
         </div>
         <div className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap md:items-center">
           <noscript><Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply filters</Button></noscript>

@@ -14,6 +14,7 @@ import {Button} from "@/components/ui/button";
 import {SubjectEventHistory} from "@/components/activity/subject-event-history";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 function smsDate(value:Date){
  return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
@@ -98,11 +99,11 @@ export default async function SuperAdminAuditPage({searchParams}:{
     {isGlobal?<form method="get" action="/admin/audit" className="flex items-center gap-2">
      {Object.entries(raw).filter(([key,value])=>key!=="smsPage"&&key!=="smsSize"&&typeof value==="string")
       .map(([key,value])=><input key={key} type="hidden" name={key} value={value as string}/>)}
-     <label className="text-xs font-semibold text-muted-foreground">Rows per page
+     <Label>Rows per page
       <Select name="smsSize" aria-label="SMS attempts per page" defaultValue={String(currentSmsSize)}
        className="ml-2">
        {[50,100,200].map(size=><option key={size} value={size}>{size}</option>)}
-      </Select></label>
+      </Select></Label>
      <Button variant="secondary" type="submit" >Apply</Button>
     </form>:null}
    </div>

@@ -10,6 +10,7 @@ import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {projectMutation} from "./project-api";
 import {PROJECT_TASK_COMMENT_KINDS,PROJECT_TASK_COMMENT_KIND_LABELS,
  type ProjectTaskCommentKind,projectTaskActivityLabel} from "@/modules/projects/task-comment-kind-staged";
+import { Label } from "@/components/ui/label";
 type Comment={id:string;body:string;commentKind:string;createdAt:string;
  authorMembershipId:string;authorName:string|null;progressValue:number|null;
  taskStatusSnapshot:string|null};
@@ -77,7 +78,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost,blockerR
    {open?<div id={"project-task-comments-"+taskId} role="region" aria-label="Task comments"
      className="space-y-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]">
      <p className="text-xs text-muted-foreground leading-[20px]">Task activity timeline with notes and progress updates.</p>
-     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Filter comments
+     <Label stack className="min-w-0">Filter comments
        <Select value={filter} onChange={event=>setFilter(event.target.value as typeof filter)}
          className="w-full">
          <option value="ALL">All comments</option>
@@ -85,7 +86,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost,blockerR
            {PROJECT_TASK_COMMENT_KIND_LABELS[value]}
          </option>)}
        </Select>
-     </label>
+     </Label>
      {rows.length===0?<p role="status" className="text-sm text-muted-foreground leading-[22px]">No comments yet.</p>:null}
      {rows.length>0&&!rows.some(row=>filter==="ALL"||row.commentKind===filter)?
        <p role="status" className="text-sm text-muted-foreground leading-[22px]">No comments match this filter.</p>:null}
@@ -107,7 +108,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost,blockerR
          {row.progressValue!==null?" · Progress "+row.progressValue+"%":""}
         </p>:null}
    </article>)}
-     {canPost?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
+     {canPost?<Label stack className="min-w-0">Type
        <Select value={kind} disabled={busy}
          onChange={event=>{
            const selected=event.target.value as ProjectTaskCommentKind;
@@ -118,17 +119,17 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost,blockerR
            {PROJECT_TASK_COMMENT_KIND_LABELS[value]}
          </option>)}
        </Select>
-     </label>:null}
-     {canPost&&kind==="PROGRESS_UPDATE"?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Progress percentage (optional)
+     </Label>:null}
+     {canPost&&kind==="PROGRESS_UPDATE"?<Label stack className="min-w-0">Progress percentage (optional)
        <Input type="number" min={0} max={100} step={1} inputMode="numeric"
          value={progressDraft} disabled={busy} aria-label="Progress percentage"
          placeholder="0 to 100" onChange={event=>setProgressDraft(event.target.value)}/>
-     </label>:null}
-     {canPost?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
+     </Label>:null}
+     {canPost?<Label stack className="min-w-0">Message
        <Textarea maxLength={4000} value={body} disabled={busy}
          placeholder="Share a progress update or note..."
          onChange={e=>setBody(e.target.value)}/>
-     </label>:null}
+     </Label>:null}
      {canPost && !body.trim() ? <p className="text-xs text-muted-foreground leading-[20px]">
        Add a note before posting
      </p> : null}

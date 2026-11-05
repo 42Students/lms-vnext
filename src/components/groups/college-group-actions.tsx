@@ -10,6 +10,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { Alert } from "@/components/ui/alert";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { studyGroupConflictMessage } from "@/modules/groups/college-group-management-model";
+import { Label } from "@/components/ui/label";
 
 export type ManagedStudyGroup = {
   id: string;
@@ -149,18 +150,18 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
         <Button type="submit" form={editorFormId} loading={pending} className="min-h-11 flex-1 sm:flex-none md:min-h-9" disabled={pending}>{pending ? "Saving…" : "Save group"}</Button>
       </>}>
       <form id={editorFormId} onSubmit={(event) => { event.preventDefault(); save(); }} className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
-        <label className="block min-w-0 sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Group name
+        <Label className="block min-w-0 sm:col-span-2">Group name
           <Input required maxLength={150} value={draft.name}
             onChange={(event) => update("name", event.target.value)} className={inputClass} />
-        </label>
-        <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity (optional)
+        </Label>
+        <Label className="block min-w-0">Capacity (optional)
           <Input inputMode="numeric" type="number" min={1} max={10000} value={draft.capacity}
             onChange={(event) => update("capacity", event.target.value)} className={inputClass} />
-        </label>
-        <label className="block min-w-0 text-[13px] font-semibold leading-4 sm:col-span-2 text-[var(--lms-neutral-400)]">Description
+        </Label>
+        <Label className="block min-w-0 sm:col-span-2">Description
           <Textarea maxLength={1000} value={draft.description} rows={3}
             onChange={(event) => update("description", event.target.value)} className={inputClass} />
-        </label>
+        </Label>
         {error ? <Alert tone="error" className="sm:col-span-2">{error}</Alert> : null}
       </form>
     </Dialog>

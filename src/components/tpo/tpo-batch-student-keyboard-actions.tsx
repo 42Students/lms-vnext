@@ -5,6 +5,7 @@ import {useState,type KeyboardEvent} from "react";
 import {tpoBatchShortcut,tpoBatchVisibleSelection,tpoBatchSelectedClipboard}
  from "@/modules/placements/tpo-batch-keyboard-actions-model";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 type Row={id:string;name:string;rollNumber?:string|null};
 export function TpoBatchStudentKeyboardActions({rows,downloadHref}:{rows:readonly Row[];downloadHref?:string}){
  const [selected,setSelected]=useState<string[]>([]);
@@ -49,18 +50,18 @@ export function TpoBatchStudentKeyboardActions({rows,downloadHref}:{rows:readonl
     className="min-h-11 px-3 md:min-h-9">Copy selected</Button>
    {downloadHref?<ButtonLink variant="secondary" href={downloadHref}>Export filtered page CSV</ButtonLink>:null}
   </div>
-  <label className="flex min-h-11 items-center gap-2 text-sm">
+  <Label variant="choice" className="flex min-h-11 items-center gap-2">
    <Checkbox checked={rows.length>0&&valid.length===rows.length}
     onChange={event=>event.target.checked?selectVisible():setSelected([])}/>
    Select all learners on this page
-  </label>
+  </Label>
   <div className="grid max-h-44 min-w-0 grid-cols-1 gap-1 overflow-y-auto overscroll-contain md:grid-cols-2 print:max-h-none print:overflow-visible" aria-label="Visible batch learners">
-   {rows.map(row=><label key={row.id} className="flex min-h-11 min-w-0 items-center gap-2 break-words text-sm">
+   {rows.map(row=><Label variant="choice" key={row.id} className="flex min-h-11 min-w-0 items-center gap-2 break-words">
     <Checkbox checked={valid.includes(row.id)}
      onChange={event=>setSelected(ids=>event.target.checked?
       tpoBatchVisibleSelection(rows,[...ids,row.id]):ids.filter(id=>id!==row.id))}/>
     {row.name}{row.rollNumber?" · "+row.rollNumber:""}
-   </label>)}
+   </Label>)}
   </div>
   {message?<p role="status" className="text-xs">{message}</p>:null}
  </section>;

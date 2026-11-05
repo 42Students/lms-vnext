@@ -15,6 +15,7 @@ import {
 import { formatDuration } from "@/modules/storage/ui-models";
 import { playbackGrantRefreshDelay, resumePositionForGrant } from "@/modules/courses/learner-video-grant-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 /**
  * The private media URL is never saved in component state or storage.
@@ -233,7 +234,7 @@ export function LearnerVideoPlayer({
       className="aspect-video w-full rounded-[var(--lms-control-radius)] border border-border bg-foreground">
       Your browser does not support HTML video.
     </video>
-    <label className="flex flex-wrap items-center gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+    <Label className="flex flex-wrap items-center gap-2">
       Playback speed
       <Select aria-label="Playback speed" defaultValue="1"
         className="min-h-11 w-auto md:min-h-9"
@@ -245,7 +246,7 @@ export function LearnerVideoPlayer({
         {[0.5,0.75,1,1.25,1.5,2].map(rate=>
           <option key={rate} value={rate}>{rate}x</option>)}
       </Select>
-    </label>
+    </Label>
     {progressAvailable?<div className="space-y-2" role="status" aria-live="polite">
      <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
       <span className={"inline-flex items-center gap-1 rounded-full border px-2 py-1 font-semibold "+(isCompleted?"border-success text-success":"border-border text-body")}>

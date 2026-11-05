@@ -12,6 +12,7 @@ import { projectMutation } from "./project-api";
 import { FriendlyFetchError } from "@/lib/api-fetch";
 import { friendlyApiError } from "@/lib/friendly-error";
 import { useProjectEditorDiscardGuard } from "./project-editor-discard-guard";
+import { Label } from "@/components/ui/label";
 
 export function MentorSprintDetailsEdit({
   projectId,sprintId,title:originalTitle,
@@ -129,46 +130,46 @@ export function MentorSprintDetailsEdit({
       description="Edit sprint goals and dates. Dates are locked once a sprint is active.">
       <form onSubmit={review} className="grid min-w-0 gap-[var(--lms-space-4)]">
         <div className="grid gap-3 md:grid-cols-2">
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0">
             Sprint title
             <Input required maxLength={200} value={title} placeholder="e.g. Kickoff & planning"
               onChange={event=>setTitle(event.target.value)} />
-          </label>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0">
             Due label
             <Input value={dueLabel} maxLength={160} placeholder="e.g. Week 2"
               onChange={event=>setDueLabel(event.target.value)}/>
-          </label>
+          </Label>
         </div>
         <div className="grid gap-3 md:grid-cols-2">
-          <label className="grid gap-1 text-[13px] font-semibold text-body">
+          <Label stack>
             Sprint key
             <Input value={sprintKey??""} disabled aria-label="Stable sprint key"/>
-          </label>
-          <label className="grid gap-1 text-[13px] font-semibold text-body">
+          </Label>
+          <Label stack>
             Linked release
             <Input value={releaseTitle??"Release"} disabled/>
-          </label>
+          </Label>
         </div>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label stack className="min-w-0">
           Sprint description (optional)
           <Textarea maxLength={4000} value={description}
             onChange={event=>setDescription(event.target.value)} />
-        </label>
+        </Label>
         {estimationUnit?<p className="m-0 text-xs text-muted-foreground">Project estimation unit: {estimationUnit==="HOURS"?"Hours":estimationUnit==="POINTS"?"Points":estimationUnit}</p>:null}
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint goal
-          <Textarea maxLength={4000} placeholder="One sentence: what this sprint is trying to achieve." value={goal} onChange={e=>setGoal(e.target.value)}/></label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What does done look like?
+        <Label stack className="min-w-0">Sprint goal
+          <Textarea maxLength={4000} placeholder="One sentence: what this sprint is trying to achieve." value={goal} onChange={e=>setGoal(e.target.value)}/></Label>
+        <Label stack className="min-w-0">What does done look like?
           <Textarea maxLength={4000} placeholder="List acceptance criteria for this sprint."
-            value={done} onChange={e=>setDone(e.target.value)}/></label>
+            value={done} onChange={e=>setDone(e.target.value)}/></Label>
         
         <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-3">
           {([{label:"Start Date",value:start,set:setStart},
              {label:"End date",value:end,set:setEnd},
              {label:"Due date",value:due,set:setDue}]).map(row=>
-              <label key={row.label} className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{row.label}
+              <Label stack key={row.label} className="min-w-0">{row.label}
                 <Input type="date" value={row.value} disabled={status==="ACTIVE"}
-                  onChange={e=>row.set(e.target.value)}/></label>)}
+                  onChange={e=>row.set(e.target.value)}/></Label>)}
         </div>
         {error?<p role="alert" className="text-sm font-semibold text-error">{error}</p>:null}
         <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:flex-row md:justify-end">

@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Textarea} from "@/components/ui/textarea";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import { Label } from "@/components/ui/label";
 
 type InterviewNextStatus="COMPLETED"|"NO_SHOW";
 export function CollegeInterviewStatusActions({id,version,status}:{
@@ -61,7 +62,7 @@ export function CollegeInterviewStatusActions({id,version,status}:{
    confirmVariant={next==="NO_SHOW"?"danger":"primary"}
    confirmDisabled={reason.trim().length<3}
    onConfirm={()=>{void update();}}>
-   <label htmlFor={reasonId} className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">{reasonLabel}</label>
+   <Label htmlFor={reasonId} className="block">{reasonLabel}</Label>
    <Textarea id={reasonId} name="reason" value={reason} required minLength={3} rows={3}
     maxLength={2000} error={Boolean(reasonError)} aria-describedby={reasonError?reasonId+"-error":undefined}
     onBlur={()=>{if(reason.length>0&&reason.trim().length<3)setReasonError("Enter a reason of at least 3 characters.");}}

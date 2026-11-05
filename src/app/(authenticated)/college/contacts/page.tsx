@@ -23,6 +23,7 @@ import {listCollegeContactFilterOptions} from "@/modules/people/college-contacts
 import {contactRecordLinks} from "@/modules/people/college-contacts-links";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {CollegeContactsLiveSearch} from "./college-contacts-live-search";
+import { Label } from "@/components/ui/label";
 type RawSearch=Record<string,string|string[]|undefined>;
 const dateFormat=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
 const initials="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -118,10 +119,10 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="size-4"><circle cx="9" cy="8" r="3"/><path d="M3 19v-1a6 6 0 0 1 12 0v1M17 9a3 3 0 1 0-1-5.8M17 13a5 5 0 0 1 4 5v1"/></svg>
       {results.total} {results.total===1?"contact":"contacts"}
      </span>
-     <label className="min-w-[180px] flex-1 text-[var(--lms-font-sm)] font-semibold">
+     <Label className="min-w-[180px] flex-1">
       <span className="sr-only">Search contacts</span>
       <CollegeContactsLiveSearch value={filter.q}/>
-     </label>
+     </Label>
      {filter.q?<Link href={collegeContactsHref({...filter,q:"",page:1})} className="inline-flex min-h-9 items-center font-semibold text-link underline">Clear search</Link>:null}
     </div>}>
   <form id="college-contacts-filters" action="/college/contacts" method="get" aria-label="Filter college contacts" className="flex min-w-0 flex-wrap items-end gap-[8px]">
@@ -130,126 +131,126 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
 
    <Disclosure title="Advanced filters" defaultOpen={activeCollegeContactFilterCount(filter)>0} className="min-w-0 flex-auto basis-full [&>summary]:text-foreground">
     <div className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] md:grid-cols-2 lg:grid-cols-4">
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name begins with
+   <Label className="min-w-0 flex-1 basis-32">Name begins with
     <Select name="initial" defaultValue={filter.initial??""} className="mt-1 w-full">
      <option value="">Any letter</option>{initials.map(letter=><option key={letter} value={letter}>{letter}</option>)}
     </Select>
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Membership
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Membership
     <Select name="status" defaultValue={filter.status} className="mt-1 w-full">
      <option value="ACTIVE">Active</option><option value="SUSPENDED">Suspended</option>
      <option value="ENDED">Ended</option><option value="ALL">All statuses</option>
     </Select>
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Contact roles
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Contact roles
     <Select name="audience" defaultValue={filter.audience} className="mt-1 w-full">
      <option value="ALL">Any contact roles</option><option value="FACULTY_ONLY">Faculty only</option><option value="LEARNER_ONLY">Learner only</option><option value="DUAL">Faculty and learner</option>
     </Select>
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Contact profile availability
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Contact profile availability
     <Select name="profile" defaultValue={filter.profile} className="mt-1 w-full">
      <option value="ALL">Any</option><option value="PROFILED">Has role profile</option><option value="UNPROFILED">Missing role profile</option>
     </Select>
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Learner active enrollment
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Learner active enrollment
     <Select name="enrollment" defaultValue={filter.enrollment} className="mt-1 w-full">
      <option value="ALL">Any</option><option value="ACTIVE">active</option><option value="NONE">none</option>
     </Select>
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty current teaching
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Faculty current teaching
     <Select name="teaching" defaultValue={filter.teaching} className="mt-1 w-full">
      <option value="ALL">Any</option><option value="ASSIGNED">assigned</option><option value="NONE">none</option>
     </Select>
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Active Faculty teaching role
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Active Faculty teaching role
     <Select name="teachingRole" defaultValue={filter.teachingRole} className="mt-1 w-full">
      <option value="ALL">Any teaching role</option><option value="PRIMARY">Primary</option><option value="CO_TEACHER">Co-teacher</option><option value="TA">Teaching assistant</option>
     </Select>
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Learner roll number availability
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Learner roll number availability
     <Select name="rollPresence" defaultValue={filter.rollPresence} className="mt-1 w-full">
      <option value="ALL">Any</option><option value="PRESENT">present</option><option value="MISSING">missing</option>
     </Select>
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Learner registration availability
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Learner registration availability
     <Select name="registrationPresence" defaultValue={filter.registrationPresence} className="mt-1 w-full">
      <option value="ALL">Any</option><option value="PRESENT">present</option><option value="MISSING">missing</option>
     </Select>
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty academic-title availability
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Faculty academic-title availability
     <Select name="titlePresence" defaultValue={filter.titlePresence} className="mt-1 w-full">
      <option value="ALL">Any</option><option value="PRESENT">present</option><option value="MISSING">missing</option>
     </Select>
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty primary-department coverage
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Faculty primary-department coverage
     <Select name="departmentPresence" defaultValue={filter.departmentPresence} className="mt-1 w-full">
      <option value="ALL">Any</option><option value="ASSIGNED">assigned</option><option value="MISSING">missing</option>
     </Select>
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Learner active-class placement
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Learner active-class placement
     <Select name="classPresence" defaultValue={filter.classPresence} className="mt-1 w-full">
      <option value="ALL">Any</option><option value="ASSIGNED">assigned</option><option value="NONE">none</option>
     </Select>
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Active class
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Active class
     <Select name="sectionId" defaultValue={filter.sectionId??""} className="mt-1 w-full">
      <option value="">Any class</option>
      {filter.sectionId&&!choices.sections.some(x=>x.id===filter.sectionId)&&<option value={filter.sectionId}>Selected class (outside first 200)</option>}
      {choices.sections.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
     </Select>{choices.sectionsTruncated&&<span className="mt-1 block text-xs">First 200 classes shown.</span>}
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic program
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Academic program
     <Select name="programId" defaultValue={filter.programId??""} className="mt-1 w-full">
      <option value="">Any program</option>
      {filter.programId&&!choices.programs.some(x=>x.id===filter.programId)&&<option value={filter.programId}>Selected program (outside first 200)</option>}
      {choices.programs.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
     </Select>{choices.programsTruncated&&<span className="mt-1 block text-xs">First 200 programs shown.</span>}
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Cohort / batch
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Cohort / batch
     <Select name="cohortId" defaultValue={filter.cohortId??""} className="mt-1 w-full">
      <option value="">Any cohort</option>
      {filter.cohortId&&!choices.cohorts.some(x=>x.id===filter.cohortId)&&<option value={filter.cohortId}>Selected cohort (outside first 200)</option>}
      {choices.cohorts.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
     </Select>{choices.cohortsTruncated&&<span className="mt-1 block text-xs">First 200 cohorts shown.</span>}
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty academic title contains
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Faculty academic title contains
     <Input type="search" name="facultyTitleQ" maxLength={80} defaultValue={filter.facultyTitleQ??""} placeholder="e.g. Associate Professor" className="mt-1 w-full"/>
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty employment type
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Faculty employment type
     <Select name="employmentType" defaultValue={filter.employmentType??""} className="mt-1 w-full">
      <option value="">Any employment type</option>
      {filter.employmentType&&!choices.employmentTypes.includes(filter.employmentType)&&<option value={filter.employmentType}>Selected type (outside first 100)</option>}
      {choices.employmentTypes.map(value=><option key={value} value={value}>{value}</option>)}
     </Select>{choices.employmentTypesTruncated&&<span className="mt-1 block text-xs">First 100 types shown.</span>}
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty primary department
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Faculty primary department
     <Select name="facultyDepartmentId" defaultValue={filter.facultyDepartmentId??""} className="mt-1 w-full">
      <option value="">Any department</option>
      {filter.facultyDepartmentId&&!choices.departments.some(x=>x.id===filter.facultyDepartmentId)&&<option value={filter.facultyDepartmentId}>Selected department (outside first 200)</option>}
      {choices.departments.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
     </Select>{choices.departmentsTruncated&&<span className="mt-1 block text-xs">First 200 departments shown.</span>}
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Account status
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Account status
     <Select name="accountStatus" defaultValue={filter.accountStatus} className="mt-1 w-full">
      <option value="ALL">All accounts</option><option value="ACTIVE">Active account</option><option value="DISABLED">Disabled account</option>
     </Select>
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Joined on or after (IST)
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Joined on or after (IST)
     <DateInput mode="date" name="joinedFrom" defaultValue={filter.joinedFrom??""} className="mt-1 block min-h-11 w-full md:min-h-9"/>
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Joined through (IST)
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Joined through (IST)
     <DateInput mode="date" name="joinedThrough" defaultValue={filter.joinedThrough??""} className="mt-1 block min-h-11 w-full md:min-h-9"/>
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Sort
     <Select name="sort" defaultValue={filter.sort} className="mt-1 w-full">
      <option value="NAME">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="NEWEST">Newest joined</option><option value="OLDEST">Longest-serving</option>
     </Select>
-   </label>
-   <label className="min-w-0 flex-1 basis-32 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
+   </Label>
+   <Label className="min-w-0 flex-1 basis-32">Rows per page
     <Select name="pageSize" defaultValue={filter.pageSize} className="mt-1 w-full">
      <option value="10">10</option><option value="20">20</option><option value="50">50</option>{filter.pageSize===25?<option value="25">25 (saved view)</option>:null}
     </Select>
-   </label>
+   </Label>
     </div>
    </Disclosure>
    <Button variant="secondary" type="submit" className="min-h-11 w-full md:hidden">Search contacts</Button>

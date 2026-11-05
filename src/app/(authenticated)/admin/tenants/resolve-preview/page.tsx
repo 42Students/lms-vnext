@@ -9,6 +9,7 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export const dynamic="force-dynamic";
 
@@ -36,11 +37,11 @@ export default async function TenantResolvePreviewPage({
     Select the global Super Admin scope to preview host resolution. Organization and college safety scopes cannot inspect other tenants.
   </Alert>:<>
    <form method="get" action="/admin/tenants/resolve-preview" className="grid min-w-0 gap-3 border-b border-border pb-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-    <label className="grid min-w-0 gap-2 text-sm font-semibold text-foreground">
+    <Label stack className="min-w-0">
      Hostname
      <Input type="text" name="host" defaultValue={host} maxLength={253}
       autoComplete="off" placeholder="college.example.edu" required/>
-    </label>
+    </Label>
     <Button type="submit">Preview</Button>
    </form>
    {!valid||params["host"]!==undefined&&!host||host.length>253||failed?

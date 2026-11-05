@@ -2,6 +2,7 @@
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {useState} from "react";
+import { Label } from "@/components/ui/label";
 type Owner={membershipId:string;displayName:string|null};
 export function RecruiterInlineOwner({lead,onUpdated}:{
  lead:{id:string;name:string;ownerName:string|null;ownerMembershipId:string|null};
@@ -46,14 +47,14 @@ export function RecruiterInlineOwner({lead,onUpdated}:{
   </Button>
   {open?<div id={"recruiter-owner-editor-"+lead.id} role="group" aria-label={"Change owner for "+lead.name} className="min-w-0 space-y-2">
    {loading?<p role="status" className="text-xs">Loading…</p>:null}
-   <label className="block text-[13px]">Owner
+   <Label className="block">Owner
     <Select value={target} onChange={e=>setTarget(e.target.value)}
      className="min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface" disabled={loading}>
      <option value="">Select staff</option>
      {owners.map(item=><option key={item.membershipId} value={item.membershipId}>
       {item.displayName??"Placement staff"}</option>)}
     </Select>
-   </label>
+   </Label>
    <Button variant="primary" type="button" disabled={loading||!target} onClick={()=>void apply()}
     className="min-h-11 md:min-h-9 px-3">Assign</Button>
    <Button variant="ghost" type="button" onClick={()=>setOpen(false)} className="ml-2 min-h-11 md:min-h-9">Cancel</Button>

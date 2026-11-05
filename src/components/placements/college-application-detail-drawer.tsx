@@ -13,6 +13,7 @@ import {collegeInterviewIcs} from "@/modules/placements/college-interview-calend
 import { Checkbox } from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 type Event={from:string|null;to:string;reason:string|null;when:string;actorName?:string|null};
 type CandidateInterviews={
  rounds:Array<{id:string;name:string;status:string;kind:string}>;
@@ -409,11 +410,11 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
          </p>:null}
          {["ISSUED","ACCEPTED"].includes(o.status)?<div className="space-y-2">
           <p className="text-xs text-muted-foreground">Legacy forms accepted HTTP links. For applicant safety, only HTTPS offer-letter links can be attached. This stores the URL on the selected issued or accepted offer without changing its status.</p>
-          <label className="grid gap-2 text-[13px] text-body font-semibold leading-4">Offer-letter HTTPS link
+          <Label stack>Offer-letter HTTPS link
            <Input type="url" placeholder="https://... link to the offer letter document" value={letterInput[o.id]??o.offerLetterUrl??""}
             onChange={e=>setLetterInput(prev=>({...prev,[o.id]:e.target.value}))}
             />
-          </label>
+          </Label>
           <Button variant="secondary" type="button"
             disabled={savingLetter||
              (letterInput[o.id]??o.offerLetterUrl??"").trim()===(o.offerLetterUrl??"")} onClick={()=>void attachLetter(o.id)}
@@ -574,13 +575,13 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
    {amendsNoteId?<p className="text-sm text-body">
      Correcting an existing note. This creates a new audit version and preserves the previous text.
    </p>:null}
-   <label className="mt-3 grid gap-2 text-[13px] font-semibold text-body">
+   <Label stack className="mt-3">
     Internal Notes
     <Textarea rows={6} maxLength={2000} disabled={saving} value={note}
      placeholder="Add a factual, staff-only application note"
      onChange={event=>{setNote(event.target.value);setNoteError("");}}
      className="w-full"/>
-   </label>
+   </Label>
    <p className="mt-1 text-xs text-muted-foreground">{note.length}/2000 characters</p>
    {noteError?<p role="alert" className="mt-2 text-sm text-error">{noteError}</p>:null}
    <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-end">
@@ -605,19 +606,19 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
     description="Record the assessment link while moving this candidate. The stage change and link are saved together.">
     <div className="space-y-4">
       <p className="text-sm text-body">Candidate: {detail?.application.name??"Applicant"}</p>
-      <label className="grid gap-2 text-sm font-semibold">
+      <Label stack>
         Assessment URL (optional)
         <Input type="url" placeholder="https://..." maxLength={2048}
           value={assessmentUrl} disabled={movingToAssessment}
           onChange={event=>setAssessmentUrl(event.target.value)}/>
-      </label>
-      <label className="flex min-h-11 items-center gap-2 text-sm">
+      </Label>
+      <Label variant="choice" className="flex min-h-11 items-center gap-2">
         <Checkbox checked={saveAssessmentToJob}
           onChange={event=>setSaveAssessmentToJob(event.target.checked)}
           disabled={movingToAssessment||!assessmentUrl.trim()}
           className="size-4 accent-[var(--lms-primary)]"/>
         Save link to job
-      </label>
+      </Label>
       <p className="text-xs text-muted-foreground">Only HTTPS links are accepted. An empty URL leaves the existing link unchanged. The candidate receives an in-app update.</p>
       {assessmentError?<p role="alert" className="text-sm text-error">{assessmentError}</p>:null}
       <div className="flex flex-wrap justify-end gap-2">

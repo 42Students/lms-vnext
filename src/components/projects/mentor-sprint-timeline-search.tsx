@@ -4,19 +4,20 @@ import Link from "next/link";
 import {filterMentorSprintTimeline,type MentorSprintSearchItem}
   from "@/modules/projects/mentor-sprint-timeline-search-model";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export function MentorSprintTimelineSearch({items}:{items:readonly MentorSprintSearchItem[]}){
  const [query,setQuery]=useState("");
  const results=filterMentorSprintTimeline(items,query);
  return <div className="prototype-mentor-chart-card" role="search"
    aria-label="Find a sprint, release or task">
-   <label className="block font-semibold">
+   <Label className="block">
      Find a sprint, release or task
      <Input type="search" value={query} maxLength={120}
        onChange={event=>setQuery(event.target.value)}
        placeholder="Sprint 13, release or task title"
        className="mt-2 w-full rounded border border-border bg-surface px-3 py-2"/>
-   </label>
+   </Label>
    {query.trim()?<div className="mt-3" aria-live="polite">
      <p>{results.length} matching saved {results.length===1?"item":"items"}
        {results.length===30?" (first 30)":""}</p>

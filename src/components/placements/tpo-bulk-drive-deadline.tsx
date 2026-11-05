@@ -7,6 +7,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Select} from "@/components/ui/select";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
+import { Label } from "@/components/ui/label";
 type Row={id:string;title:string;updatedAt:string;applicationDeadline:string|null;extendable:boolean;reason:string};
 export function TpoBulkDriveDeadline({totalMatching}:{totalMatching:number}){
  const router=useRouter(),[scope,setScope]=useState<"SELECTED"|"PAGE">("SELECTED");
@@ -65,17 +66,17 @@ export function TpoBulkDriveDeadline({totalMatching}:{totalMatching:number}){
  return <section aria-label="Bulk deadline extension" className="min-w-0 space-y-3 border-t border-border pt-3">
   <p className="text-sm font-semibold">Set or extend deadlines for selected drives</p>
   <div className="grid min-w-0 gap-2 sm:grid-cols-3">
-   <label className="grid gap-1 text-xs">Scope<Select value={scope} onChange={e=>setScope(e.target.value as "SELECTED"|"PAGE")}>
+   <Label stack>Scope<Select value={scope} onChange={e=>setScope(e.target.value as "SELECTED"|"PAGE")}>
     <option value="SELECTED">Selected drives</option><option value="PAGE">All visible on this page</option>
-   </Select></label>
-   <label className="grid gap-1 text-xs">Deadline (IST)<Input type="datetime-local" value={deadline}
-    onChange={e=>setDeadline(e.target.value)}/></label>
+   </Select></Label>
+   <Label stack>Deadline (IST)<Input type="datetime-local" value={deadline}
+    onChange={e=>setDeadline(e.target.value)}/></Label>
    <Button type="button" disabled={busy||!deadline||reason.trim().length<10}
     onClick={event=>void preview(event)}>{busy?"Checking…":"Preview deadline changes"}</Button>
   </div>
-  <label className="grid gap-1 text-xs">Audit reason
+  <Label stack>Audit reason
    <Textarea maxLength={1000} rows={2} value={reason} onChange={e=>setReason(e.target.value)}/>
-  </label>
+  </Label>
   {totalMatching>25?<p className="text-xs text-muted-foreground">All-visible scope is limited to this page (maximum 25 drives), not all {totalMatching} matches.</p>:null}
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
   <ConfirmDialog open={confirm} onOpenChange={next=>{if(!busy)setConfirm(next);}}

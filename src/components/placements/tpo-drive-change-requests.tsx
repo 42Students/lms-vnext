@@ -16,6 +16,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {useToast} from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Party="TPO"|"COMPANY";
 type Item={id:string;proposerParty:string;targetParty:string;mode:string;field:string;legacyField?:string|null;
  proposedValue:string;reason:string;status:string;createdByUserId:string;createdByName?:string|null;
@@ -146,16 +147,16 @@ export function TpoDriveChangeRequests({jobId,party,requests,initialField,openIn
    <div className="min-w-0 space-y-3">
    <p className="text-sm text-body leading-[22px]">Both sides can discuss, accept, answer or decline. Accepting a proposal applies the agreed value to the drive; answering a named field updates it too.</p>
    <div className="grid gap-3 md:grid-cols-2">
-    {field&&field!=="OTHER"?<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">How
+    {field&&field!=="OTHER"?<Label stack>How
      <Select value={mode}
       onChange={e=>{setMode(e.target.value as "SUGGEST"|"ASK");setValue("");setFieldError("");}}
-      className="min-h-11 md:min-h-9"><option value="SUGGEST">Propose</option><option value="ASK">Ask</option></Select></label>:null}
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What should change
+      className="min-h-11 md:min-h-9"><option value="SUGGEST">Propose</option><option value="ASK">Ask</option></Select></Label>:null}
+    <Label stack>What should change
      <Select value={field} onChange={e=>{setField(e.target.value as typeof field);setValue("");setFieldError("");}}
       className="min-h-11 md:min-h-9">
-      <option value="">Choose a field</option>{fields.map(([id,label])=><option key={id} value={id}>{label}</option>)}</Select></label>
+      <option value="">Choose a field</option>{fields.map(([id,label])=><option key={id} value={id}>{label}</option>)}</Select></Label>
    </div>
-   {field&&field!=="OTHER"?<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+   {field&&field!=="OTHER"?<Label stack>
     {mode==="ASK"?"Your question":"New value"}
     {mode==="SUGGEST"&&field==="DEADLINE"?
       <Input type="datetime-local" value={value} onChange={e=>setValue(e.target.value)}
@@ -177,12 +178,12 @@ export function TpoDriveChangeRequests({jobId,party,requests,initialField,openIn
        maxLength={field==="ROLE_TITLE"||field==="LOCATION"?255:2000}
        rows={field==="DESCRIPTION"?5:3}
        className="min-h-11 md:min-h-9"/>}
-    </label>:null}
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    </Label>:null}
+   <Label stack>
     {field==="OTHER"?"Say what should change":"Why is this needed? (optional)"}
     <Textarea value={reason} onChange={e=>{setReason(e.target.value);setFieldError("");}}
      minLength={field==="OTHER"?3:undefined}
-     maxLength={1000} rows={2} className="min-h-11 md:min-h-9"/></label>
+     maxLength={1000} rows={2} className="min-h-11 md:min-h-9"/></Label>
    {fieldError?<p role="alert" className="text-xs text-error">{fieldError}</p>:null}
    <Button type="button" disabled={busy||!canSubmitRequest}
     onClick={()=>void send(createRequest)}
@@ -243,7 +244,7 @@ export function TpoDriveChangeRequests({jobId,party,requests,initialField,openIn
       {item.messages.map(message=><p key={message.id} className="break-words [overflow-wrap:anywhere] border-b border-[var(--lms-canvas-border)] bg-transparent py-3 text-sm leading-[22px]">
        <strong>{message.senderParty==="TPO"?"Placement cell":"Company"}:</strong> {message.body}
       </p>)}
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <Label stack>
        {item.mode==="ASK"&&item.targetParty===party?"Answer or discussion reply":"Reply or decision explanation"}
        {item.mode==="ASK"&&item.targetParty===party&&
         ["DEADLINE"].includes(item.legacyField??item.field)?
@@ -264,7 +265,7 @@ export function TpoDriveChangeRequests({jobId,party,requests,initialField,openIn
         <Textarea maxLength={2000} value={notes[item.id]??""}
          onChange={e=>setNotes(p=>({...p,[item.id]:e.target.value}))}
          rows={2} className="min-h-11 md:min-h-9"/>}
-      </label>
+      </Label>
       <div className="grid min-w-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap">
        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy||!(notes[item.id]??"").trim()}
         onClick={()=>void send({action:"COMMENT",requestId:item.id,body:(notes[item.id]??"").trim()})}
@@ -301,10 +302,10 @@ export function TpoDriveChangeRequests({jobId,party,requests,initialField,openIn
      <p className="text-xs text-muted-foreground">To change this answer, cancel and edit the field above before confirming.</p>
     </div>:null}
    {confirmation?.action==="DECLINE"?
-    <label className="mt-3 grid gap-1 text-sm font-semibold">Why decline?
+    <Label stack className="mt-3">Why decline?
      <Textarea rows={3} maxLength={1000} value={confirmation.note}
       onChange={e=>setConfirmation(previous=>previous?{...previous,note:e.target.value}:null)}/>
-    </label>:null}
+    </Label>:null}
    {error?<InlineNotice tone="error" message={error}/>:null}
   </ConfirmDialog>
  </div>;

@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 export function ProjectTaskAssigneeControl({projectId,taskId,taskTitle,assigneeMembershipId,updatedAt,learners}:{
   projectId:string;taskId:string;taskTitle?:string;assigneeMembershipId:string|null;updatedAt:string;
   learners:readonly {membershipId:string;displayName:string|null}[];
@@ -26,13 +27,13 @@ export function ProjectTaskAssigneeControl({projectId,taskId,taskTitle,assigneeM
   }
   if(!editing)return <Button variant="secondary" onClick={()=>setEditing(true)}>Assignee</Button>;
   return <div className="flex flex-wrap items-center gap-2">
-    <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">Assignee
+    <Label>Assignee
       <Select value={selected} disabled={pending} onChange={e=>setSelected(e.target.value)}
         aria-label={"Reassign "+(taskTitle??"task")+" to a team member"} className="ml-2 w-full min-w-0 max-w-full md:w-auto">
         <option value="">Unassigned</option>
         {learners.map(person=><option key={person.membershipId} value={person.membershipId}>{person.displayName ?? "Learner"}</option>)}
       </Select>
-    </label>
+    </Label>
     <Button disabled={pending||selected===(assigneeMembershipId??"")} onClick={()=>void save()}>Save changes</Button>
     <Button variant="secondary" disabled={pending} onClick={()=>setEditing(false)}>Cancel</Button>
     {error&&<p role="alert" className="text-xs text-error">{error}</p>}

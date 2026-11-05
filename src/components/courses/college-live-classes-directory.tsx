@@ -13,6 +13,7 @@ import {liveClassIstSchedule} from "@/modules/courses/college-live-classes-model
 import type {listCollegeContentAggregate} from "@/modules/courses/college-content-aggregate-service";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 type Data=Awaited<ReturnType<typeof listCollegeContentAggregate>>;
 /** Authorized source must provide this URL; never reconstruct it from IDs.
  * Treat invalid or credentialed URLs as unavailable.
@@ -35,29 +36,29 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
       visible:item.visibleToStudents?"Visible":"Hidden",details:liveClassIstSchedule(item.startsAt,item.endsAt)}))}/>}/>:null}
   <form method="get" action="/college/live-classes"
     className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] print:hidden">
-    <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    <Label stack className="min-w-0 flex-1">
       Session, lesson or course
       <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
         className="min-h-11 min-w-0 md:min-h-9"/>
-    </label>
+    </Label>
     <details className="min-w-0 border-t border-border pt-2 md:col-span-2 lg:col-span-4" open={Boolean(data.query.courseCode||data.query.deliveryId||data.query.scope!=="ALL"||data.view!=="ALL"||data.from||data.to)||undefined}>
       <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-ring md:min-h-9">Filters</summary>
       <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 lg:grid-cols-4">
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    <Label stack className="min-w-0">
       Course code (exact)
       <Input type="search" name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""}
         placeholder="e.g. CS101"
         className="min-h-11 min-w-0 md:min-h-9"/>
-    </label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    </Label>
+    <Label stack className="min-w-0">
       Publication
       <Select name="status" defaultValue={data.query.status}
         className="min-h-11 md:min-h-9">
         <option value="ALL">All statuses</option><option value="DRAFT">Draft</option>
         <option value="PUBLISHED">Published</option><option value="ARCHIVED">Archived</option>
       </Select>
-    </label>
-    <label className="grid min-w-48 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
+    </Label>
+    <Label stack className="min-w-48">Section
       <Select name="deliveryId" defaultValue={data.query.deliveryId??""}
         className="min-h-11 md:min-h-9">
         <option value="">All classes</option>
@@ -65,29 +66,29 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
           {option.courseCode} · {option.sectionName} ({option.sectionCode})
         </option>)}
       </Select>
-    </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Session audience
+    </Label>
+    <Label stack>Session audience
       <Select name="scope" defaultValue={data.query.scope}
         className="min-h-11 md:min-h-9">
         <option value="ALL">All audiences</option><option value="SHARED">Shared offering</option>
         <option value="SECTION">Section-specific</option>
       </Select>
-    </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Timing
+    </Label>
+    <Label stack>Timing
       <Select name="view" defaultValue={data.view}
         className="min-h-11 md:min-h-9">
         <option value="ALL">All sessions</option><option value="UPCOMING">Upcoming or ongoing</option>
         <option value="PAST">Past sessions</option>
       </Select>
-    </label>
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">From (IST)
+    </Label>
+    <Label stack>From (IST)
       <DateInput mode="date" name="from" defaultValue={data.from??""}
         className="min-h-11 md:min-h-9"/>
-    </label>
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Through (IST)
+    </Label>
+    <Label stack>Through (IST)
       <DateInput mode="date" name="to" defaultValue={data.to??""}
         className="min-h-11 md:min-h-9"/>
-    </label>
+    </Label>
       </div>
     </details>
     <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>

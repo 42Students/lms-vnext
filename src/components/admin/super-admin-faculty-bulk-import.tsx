@@ -12,6 +12,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Select } from "@/components/ui/select";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Result={row:number;name:string;status:"CREATED"|"FAILED"|"SKIPPED"|"PARTIAL";message:string};
 export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
@@ -148,7 +149,7 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
     The selected college department is the fallback when a CSV Department cell is blank. Named departments must match an active department in this college.
     Local preview does not check existing college accounts. The server validates each identity during creation; partial imports are possible.
   </p>
-  <label className="grid max-w-lg min-w-0 gap-1 text-sm font-semibold text-[var(--lms-neutral-400)]">
+  <Label stack className="max-w-lg min-w-0">
     Department for imported faculty
     <Select value={departmentId} onChange={event=>{
       setDepartmentId(event.target.value);setPreviewVersion(-1);setPreviewIssues([]);setResults([]);
@@ -156,7 +157,7 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
       <option value="">Choose department</option>
       {departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
     </Select>
-  </label>
+  </Label>
   {!departments.length?<Alert tone="warning">No active college departments are available.
     Set up or refresh departments before bulk faculty registration.</Alert>:null}
   <div className="flex min-w-0 flex-col items-stretch gap-3 print:hidden sm:flex-row sm:flex-wrap sm:items-center">

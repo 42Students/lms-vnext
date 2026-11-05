@@ -6,6 +6,7 @@ import {RecruiterConversationLiveRefresh} from "./recruiter-conversation-live-re
 import type {readRecruiterThreadMessages} from "@/modules/placements/tpo-messaging-service";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type InboxRow={id:string;jobId:string|null;jobTitle:string;unread:number;
  preview:{text:string}|null;lastMessageAt:Date|null;createdAt:Date};
@@ -64,7 +65,7 @@ export function RecruiterConversationWorkspace({
    <aside aria-label="Conversation inbox" className="min-w-0 overflow-hidden rounded-xl border border-border bg-surface">
     <form method="get" action="/hr/conversations" role="search" className="space-y-2 border-b border-border p-3">
      <input type="hidden" name="collegeId" value={collegeId}/>
-     <label htmlFor="recruiter-message-search" className="sr-only">Search by drive or message</label>
+     <Label htmlFor="recruiter-message-search" className="sr-only">Search by drive or message</Label>
      <Input id="recruiter-message-search" name="q" type="search"
       defaultValue={q} maxLength={120} placeholder="Search by drive or message"/>
      <div className="flex justify-between gap-3 text-xs">

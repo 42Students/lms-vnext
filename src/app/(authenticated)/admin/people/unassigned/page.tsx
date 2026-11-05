@@ -14,6 +14,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { adminUnassignedUsersHref, adminUnassignedUsersQuerySchema, unassignedIdentityScopeAllowed } from "@/modules/people/admin-unassigned-user-model";
 import { listSuperAdminUnassignedUsers } from "@/modules/people/admin-unassigned-user-service";
+import { Label } from "@/components/ui/label";
 export default async function UnassignedIdentityDirectory({ searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
@@ -73,12 +74,12 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
       description="Read-only identities with no college membership. Users with active, suspended or ended memberships are excluded. Personal contact and session information are excluded." actions={<Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)]">← Users & Roles</Link>} />
 
     <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_minmax(0,13rem)_auto]">
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name<Input type="search" name="q" maxLength={100}
-        defaultValue={data.query.q} className="min-h-11 min-w-0 text-base md:min-h-9 md:text-sm" /></label>
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Platform status<Select name="platformStatus" defaultValue={data.query.platformStatus}
-        className="min-h-11 min-w-0 text-base md:min-h-9 md:text-sm">{statuses.map(status => <option key={status}>{status}</option>)}</Select></label>
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">System role<Select name="role" defaultValue={data.query.role}
-        className="min-h-11 min-w-0 text-base md:min-h-9 md:text-sm">{roles.map(role => <option key={role}>{role}</option>)}</Select></label>
+      <Label stack className="min-w-0">Name<Input type="search" name="q" maxLength={100}
+        defaultValue={data.query.q} className="min-h-11 min-w-0 text-base md:min-h-9 md:text-sm" /></Label>
+      <Label stack className="min-w-0">Platform status<Select name="platformStatus" defaultValue={data.query.platformStatus}
+        className="min-h-11 min-w-0 text-base md:min-h-9 md:text-sm">{statuses.map(status => <option key={status}>{status}</option>)}</Select></Label>
+      <Label stack className="min-w-0">System role<Select name="role" defaultValue={data.query.role}
+        className="min-h-11 min-w-0 text-base md:min-h-9 md:text-sm">{roles.map(role => <option key={role}>{role}</option>)}</Select></Label>
       <Button type="submit" variant="primary" className="min-h-11 w-full self-end sm:col-span-2 lg:col-span-1 lg:min-h-9 lg:w-auto">Filter</Button>
     </form>
     <p role="status" className="text-xs text-muted-foreground">{data.total.toLocaleString("en-IN")} matching users · page {data.page} of {data.totalPages} · 30 per page</p>

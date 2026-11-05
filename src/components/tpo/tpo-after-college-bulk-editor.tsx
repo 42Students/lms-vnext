@@ -11,6 +11,7 @@ import {
   afterCollegeOptions,AFTER_COLLEGE_LABELS,MANUAL_AFTER_COLLEGE_OUTCOMES, type AfterCollegeOutcome,
 } from "@/modules/placements/tpo-after-college-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Entry = { outcome: AfterCollegeOutcome; expectedVersion: string };
 type Row = { membershipId: string; displayName: string };
@@ -96,30 +97,30 @@ export function TpoAfterCollegeBulkEditor({
     </p></details>
     {!available && <p role="status" className="text-sm text-warning">
       After college records are unavailable until the database table is registered.</p>}
-    <label className="inline-flex min-h-11 items-center gap-2 text-sm print:hidden">
+    <Label variant="choice" className="inline-flex min-h-11 items-center gap-2 print:hidden">
       <Checkbox disabled={!available || busy} checked={selectAll}
         onChange={event => setSelected(event.target.checked ? rows.map(row => row.membershipId) : [])} />
       Select all {rows.length} students on this page
-    </label>
+    </Label>
     <div className="max-h-56 min-w-0 divide-y divide-border overflow-auto overscroll-contain border-y border-border print:hidden">
-      {rows.map(row => <label key={row.membershipId}
-        className="flex min-h-11 min-w-0 items-center gap-3 break-words px-1 py-2 text-sm">
+      {rows.map(row => <Label variant="choice" key={row.membershipId}
+        className="flex min-h-11 min-w-0 items-center gap-3 break-words px-1 py-2">
         <Checkbox disabled={!available || busy} checked={ids.includes(row.membershipId)}
           onChange={event => setSelected(current => event.target.checked
             ? [...new Set([...current, row.membershipId])]
             : current.filter(id => id !== row.membershipId))} />
         <span>{row.displayName}</span>
-      </label>)}
+      </Label>)}
     </div>
     <div className="flex flex-col gap-3 border-t border-border pt-3 sm:flex-row sm:flex-wrap sm:items-end print:hidden">
-      <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 sm:flex-1">After college
+      <Label stack className="min-w-0 sm:flex-1">After college
         <Select value={outcome} onChange={event => setOutcome(event.target.value as AfterCollegeOutcome)}
           disabled={!available || busy} className="min-h-11 md:min-h-9">
           {!MANUAL_AFTER_COLLEGE_OUTCOMES.includes(outcome)?<option value={outcome} disabled>{AFTER_COLLEGE_LABELS[outcome]} · Automatic</option>:null}
           {afterCollegeOptions().map(option => <option key={option.value} value={option.value}>
             {option.label}</option>)}
         </Select>
-      </label>
+      </Label>
       <Button variant="primary" type="button" disabled={!available || busy || !ids.length}
         aria-haspopup="dialog" aria-expanded={confirmation==="SAVE"} onClick={() => setConfirmation("SAVE")}
         className="min-h-11 w-full md:min-h-9 sm:w-auto">

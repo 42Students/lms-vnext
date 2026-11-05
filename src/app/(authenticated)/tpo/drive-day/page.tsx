@@ -23,6 +23,7 @@ import { tpoDriveDayIssueSchema, filterTpoDriveDayIssues } from "@/modules/place
 import { getTpoLiveDriveDaySummary, getTpoDriveDayQueue } from "@/modules/placements/tpo-live-drive-day-service";
 import { TpoDriveDayTodayList } from "@/components/tpo/tpo-drive-day-today-list";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 function formatWhen(
   value: Date | null,
@@ -85,9 +86,9 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
         {!snapshot?<TpoDriveDayLoadWarning/>:null}
         <Heading level={2} size="lg">Rounds happening now</Heading>
         <form action="/tpo/drive-day" method="get" className="grid min-w-0 grid-cols-1 gap-[8px] sm:grid-cols-2 sm:items-end xl:grid-cols-[minmax(0,1fr)_auto_auto_auto]" aria-label="Filter drive day">
-          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search live rounds<Input name="q" type="search" maxLength={100} defaultValue={search.data} placeholder="Company, job or round" className="block min-h-11 md:min-h-[var(--lms-control-height)] mt-[6px]"/></label>
-          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Attendance focus<Select name="issue" defaultValue={issue.data} className="block min-h-11 md:min-h-[var(--lms-control-height)] mt-[6px]"><option value="ALL">All live rounds</option><option value="NO_SHOWS">Recorded no-shows</option><option value="PENDING">Attendance pending</option><option value="UNKNOWN">Attendance not recorded</option><option value="UNRESOLVED">Pending or unrecorded</option><option value="ALL_UNRECORDED">No attendance entries recorded</option></Select></label>
-          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Prioritize<Select name="sort" defaultValue={sort.data} className="block min-h-11 md:min-h-[var(--lms-control-height)] mt-[6px]"><option value="RECENT">Most recent scheduled</option><option value="PENDING_DESC">Most pending first</option><option value="NO_SHOW_DESC">Most no-shows first</option><option value="UNRESOLVED_DESC">Most unresolved first</option></Select></label>
+          <Label className="min-w-0">Search live rounds<Input name="q" type="search" maxLength={100} defaultValue={search.data} placeholder="Company, job or round" className="block min-h-11 md:min-h-[var(--lms-control-height)] mt-[6px]"/></Label>
+          <Label className="min-w-0">Attendance focus<Select name="issue" defaultValue={issue.data} className="block min-h-11 md:min-h-[var(--lms-control-height)] mt-[6px]"><option value="ALL">All live rounds</option><option value="NO_SHOWS">Recorded no-shows</option><option value="PENDING">Attendance pending</option><option value="UNKNOWN">Attendance not recorded</option><option value="UNRESOLVED">Pending or unrecorded</option><option value="ALL_UNRECORDED">No attendance entries recorded</option></Select></Label>
+          <Label className="min-w-0">Prioritize<Select name="sort" defaultValue={sort.data} className="block min-h-11 md:min-h-[var(--lms-control-height)] mt-[6px]"><option value="RECENT">Most recent scheduled</option><option value="PENDING_DESC">Most pending first</option><option value="NO_SHOW_DESC">Most no-shows first</option><option value="UNRESOLVED_DESC">Most unresolved first</option></Select></Label>
           <Button type="submit" className="min-h-11 w-full self-end bg-primary px-4 text-[var(--lms-on-primary)] md:min-h-[var(--lms-control-height)] xl:w-auto">Apply</Button>
         </form>
         <div className="flex flex-wrap gap-3"><Link href={tpoLiveCsvHref({q:search.data,issue:issue.data,sort:sort.data})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-[var(--lms-teal-deep)]">Export current live snapshot CSV</Link><Link href="/tpo/drive-day" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Reset focus</Link></div>

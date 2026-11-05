@@ -8,6 +8,7 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {Dialog} from "@/components/ui/dialog";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Student={membershipId:string;name:string;active:boolean};
 type Preview={membershipId:string;name:string;effective:boolean;
  winnerLevel:string;winnerLocked:boolean;
@@ -83,31 +84,31 @@ export function CollegeStudentBulkModuleAccess({students}:{
  return <section aria-label="Bulk student module access" className="space-y-3 border-b border-border pb-4">
    <Heading level={2} size="base" className="text-[var(--lms-heading)]">Bulk module access</Heading>
    <p className="text-xs leading-5 text-muted-foreground">Choose students on this college roster page, preview effective access, then Enable, Disable or Clear override / Inherit. Projects and Electives can be overridden per learner; Placements access remains a college-level policy.</p>
-   <label className="flex min-h-11 items-center gap-2 text-sm">
+   <Label variant="choice" className="flex min-h-11 items-center gap-2">
      <Checkbox checked={all} disabled={busy} onChange={event=>
        setSelected(event.target.checked?active.map(row=>row.membershipId):[])} />
      {all?"Clear selection":"Select all visible active students"} ({active.length})
-   </label>
+   </Label>
    <div className="grid max-h-44 gap-2 overflow-auto sm:grid-cols-2">
-     {active.map(row=><label key={row.membershipId} className="flex min-h-11 items-center gap-2 rounded border border-border px-2 text-sm">
+     {active.map(row=><Label variant="choice" key={row.membershipId} className="flex min-h-11 items-center gap-2 rounded border border-border px-2">
        <Checkbox disabled={busy} checked={selected.includes(row.membershipId)}
          aria-label={"Select "+row.name} onChange={event=>
            setChecked(row.membershipId,event.target.checked)} />
        <span className="min-w-0 truncate" title={row.name}>{row.name}</span>
-     </label>)}
+     </Label>)}
    </div>
    <div className="flex flex-wrap items-end gap-3">
-     <label className="grid gap-1 text-xs font-semibold">Module
+     <Label stack>Module
        <Select disabled={busy} value={module} onChange={e=>setModule(e.target.value as Module)}>
          <option value="projects">Projects</option><option value="electives">Electives</option>
        </Select>
-     </label>
-     <label className="grid gap-1 text-xs font-semibold">Access
+     </Label>
+     <Label stack>Access
        <Select disabled={busy} value={operation} onChange={e=>setOperation(e.target.value as Operation)}>
          <option value="ENABLE">Enable</option><option value="DISABLE">Disable</option>
          <option value="INHERIT">Clear override / Inherit</option>
        </Select>
-     </label>
+     </Label>
      <Button variant="secondary" disabled={busy||selected.length===0} type="button"
        onClick={()=>void loadPreview()}>Preview effective access</Button>
      <Button variant="primary" disabled={busy||selected.length===0||

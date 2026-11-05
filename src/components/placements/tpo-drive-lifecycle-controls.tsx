@@ -17,6 +17,7 @@ import {Select} from "@/components/ui/select";
 import {useToast} from "@/components/ui/toast";
 import { Radio } from "@/components/ui/radio";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Readiness = Awaited<ReturnType<typeof getTpoDriveLifecycleReadiness>>;
 type Action = "PUBLISH" | "CLOSE" | "REOPEN";
@@ -196,7 +197,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
               <p role="status" className="text-success">All required checks passed.</p>}
             {selected.action==="PUBLISH"?<p>{readiness.reach.eligible} eligible · {readiness.reach.excluded} excluded</p>:null}
           </div>
-          <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="block">
             Reason for {selected.action.toLowerCase()} (required)
             <Textarea
               value={reason}
@@ -207,7 +208,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
               className="mt-2 block w-full"
               placeholder="Tell them why"
             />
-          </label>
+          </Label>
           {selected.action==="PUBLISH"?<Alert tone="info">
             <p>{readiness.reach.eligible} students are eligible and will be told in the app.</p>
             <p>{readiness.reach.excluded} registered students are excluded or have turned off matching-job notices.</p>
@@ -216,19 +217,19 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
           </Alert>:null}
           {selected.action==="PUBLISH"?<fieldset className="space-y-1 text-sm">
             <legend>Tell students</legend>
-            <label className="flex gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><Radio name="publish-delivery"
+            <Label className="flex gap-2"><Radio name="publish-delivery"
               checked={!notifyByEmail} onChange={()=>setNotifyByEmail(false)}/>
-              App only</label>
-            <label className="flex gap-2 opacity-60 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><Radio name="publish-delivery"
+              App only</Label>
+            <Label className="flex gap-2 opacity-60"><Radio name="publish-delivery"
               checked={false} disabled/>
-              App and email (email delivery not configured)</label>
+              App and email (email delivery not configured)</Label>
           </fieldset>:null}
-          <label className="flex items-start gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="flex items-start gap-2">
             <Checkbox checked={acknowledged}
               onChange={event=>setAcknowledged(event.target.checked)} disabled={pending}
               className="mt-1 h-4 w-4 accent-primary"/>
             I reviewed the learner visibility and drive state consequences. This decision is audited.
-          </label>
+          </Label>
           <div className="flex gap-3">
             <Button
               type="button"
@@ -263,14 +264,14 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
             {pending?"Declining…":"Decline"}
           </Button>
         </div>}>
-        <label className="block text-sm font-semibold text-foreground">
+        <Label className="block">
           Reason
           <Select className="mt-2 w-full" value={declineReason}
             onChange={event=>setDeclineReason(event.target.value)}>
             <option value="">Tell them why</option>
             {DECLINE_REQUEST_REASONS.map(value=><option key={value} value={value}>{value}</option>)}
           </Select>
-        </label>
+        </Label>
       </Dialog>
       {success?<InlineNotice tone="success" message={success}/>:null}
       {announcementReady?<div className="mt-2">

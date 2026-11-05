@@ -20,6 +20,7 @@ import {
 } from "@/modules/placements/tpo-lead-csv-import-model";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 const template = "name,email,phone,companyName,designation,source\r\n" +
   "Example Recruiter,recruiter@example.org,,Example Company,HR,REFERRAL\r\n";
@@ -222,10 +223,10 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                         {existing.find(entry=>entry.row===item.row)?
                           <Link className="lms-inline-link ml-2 inline-flex min-h-11 items-center text-link underline focus-ring focus-visible:underline" href={"/tpo/recruiters/"+encodeURIComponent(existing.find(entry=>entry.row===item.row)!.leadId)}>Open</Link>:null}
                       </span>},
-                      {key:"include",header:"Include",mobilePriority:"action",cell:item=><label className="inline-flex min-h-11 items-center gap-2 text-sm"><Checkbox aria-label={"Include row "+item.row}
+                      {key:"include",header:"Include",mobilePriority:"action",cell:item=><Label variant="choice" className="inline-flex min-h-11 items-center gap-2"><Checkbox aria-label={"Include row "+item.row}
                         disabled={!item.lead||existingNumbers.has(item.row)||busy||Boolean(result)}
                         checked={Boolean(item.lead)&&!existingNumbers.has(item.row)&&!skipRows.includes(item.row)}
-                        onChange={event=>{setReviewReady(false);setSkipRows(previous=>event.target.checked?previous.filter(row=>row!==item.row):[...previous,item.row]);}}/> Include</label>},
+                        onChange={event=>{setReviewReady(false);setSkipRows(previous=>event.target.checked?previous.filter(row=>row!==item.row):[...previous,item.row]);}}/> Include</Label>},
                     ]}/>
                 </ScrollCue>
                 {reviewReady&&!result ? <p role="status" className="border-l-2 border-warning-border bg-warning-subtle px-4 py-3 text-sm text-body leading-[22px]">

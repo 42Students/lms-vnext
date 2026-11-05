@@ -15,6 +15,7 @@ import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 import { useProjectEditorDiscardGuard } from "./project-editor-discard-guard";
 import { ProjectCollegeLearnerPicker } from "./project-college-learner-picker";
+import { Label } from "@/components/ui/label";
 
 export type AssignedProjectTemplateChoice = {
   templateId: string;
@@ -307,7 +308,7 @@ export function CreateProjectControl({
 
   const form = (
         <form noValidate onSubmit={submit} className="grid min-w-0 grid-cols-1 items-start gap-4">
-          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="min-w-0">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Workspace title
             </span>
@@ -330,8 +331,8 @@ export function CreateProjectControl({
             {attempted&&!title.trim()?<span role="alert" className="mt-1 block text-xs text-error">
               Title is required
             </span>:null}
-          </label>
-          <label className="min-w-0 md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label className="min-w-0 md:col-span-2">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Summary
             </span>
@@ -344,8 +345,8 @@ export function CreateProjectControl({
               }
               placeholder="Short live workspace summary"
             />
-          </label>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+          </Label>
+          <Label stack className="min-w-0">Status
             <Select value={displayStatus} onChange={event=>{
               const next=event.target.value as typeof displayStatus;
               const previous=displayStatus;
@@ -370,8 +371,8 @@ export function CreateProjectControl({
                 ?"The workspace is saved as Planned, with Blocked recorded in Phase.":
                 "Archive is available after the workspace is created."}
             </span>
-          </label>
-          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label className="min-w-0">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Template
             </span>
@@ -405,8 +406,8 @@ export function CreateProjectControl({
             <span className="mt-1 block text-xs font-normal text-body">
               Search by template title. The assigned published version is pinned to the new workspace.
             </span>
-          </label>
-          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label className="min-w-0">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Slug (automatically suggested)
             </span>
@@ -424,8 +425,8 @@ export function CreateProjectControl({
             <span className="mt-1 block text-xs text-muted-foreground">
               Lowercase letters, numbers and hyphens only.
             </span>
-          </label>
-          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label className="min-w-0">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Primary mentor
             </span>
@@ -470,7 +471,7 @@ export function CreateProjectControl({
                 "Required — search by faculty name. Active workspaces must have a primary Mentor.":
                 "Optional while Planned; you can assign a primary Mentor later."}
             </span>
-          </label>
+          </Label>
           <div className="min-w-0 space-y-2 md:col-span-2">
             <Button type="button" variant="secondary" size="sm" disabled={pending}
               onClick={()=>{setShowClassSelector(v=>!v);setSectionId("");
@@ -482,7 +483,7 @@ export function CreateProjectControl({
               You can remove individual students after using the class shortcut.
             </p>
           </div>
-          {showClassSelector?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
+          {showClassSelector?<Label stack className="min-w-0">Class
             <Input type="search" value={classQuery} maxLength={120}
               placeholder="Search class name or code" aria-label="Search classes"
               onChange={event=>{setClassQuery(event.target.value);setClassPage(0);}}/>
@@ -501,39 +502,39 @@ export function CreateProjectControl({
                 disabled={pending||classes.length<100||classPage>=999}
                 onClick={()=>setClassPage(page=>Math.min(999,page+1))}>Next classes</Button>
             </span>
-          </label>:null}
+          </Label>:null}
           {showClassSelector&&classesError?<p role="alert" className="text-sm text-error md:col-span-2">Classes could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setClassesError(false);setClassesRetry(value=>value+1);}}>Try Again</Button></p>:null}
           <div className="grid min-w-0 gap-4 md:col-span-2 sm:grid-cols-2">
-            <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+            <Label>
               Phase
               <Input className="mt-1" maxLength={120} value={phase}
                 onChange={event => setPhase(event.target.value)} placeholder="Planning" />
-            </label>
-            <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+            </Label>
+            <Label>
               Progress (%)
               <Input className="mt-1" type="number" min={0} max={100}
                 value={progressPercent}
                 onChange={event => setProgressPercent(Math.max(0, Math.min(100,
                   Number(event.target.value) || 0)))} />
-            </label>
-            <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)] sm:col-span-2">
+            </Label>
+            <Label className="sm:col-span-2">
               Due Label
               <Input className="mt-1" maxLength={80} value={dueLabel}
                 onChange={event => setDueLabel(event.target.value)}
                 placeholder="e.g. Before the final review" />
-            </label>
-            <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+            </Label>
+            <Label>
               Blocker
               <Textarea className="mt-1" maxLength={4000} value={blocker}
                 onChange={event => setBlocker(event.target.value)}
                 placeholder="Optional blocker or dependency" />
-            </label>
-            <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+            </Label>
+            <Label>
               Next Action
               <Textarea className="mt-1" maxLength={4000} value={nextAction}
                 onChange={event => setNextAction(event.target.value)}
                 placeholder="Optional next step" />
-            </label>
+            </Label>
           </div>
           {!mentorMembershipId?<p className="text-xs text-warning md:col-span-2">
             {initialStatus === "ACTIVE" ? "A mentor is required before a workspace can be Active" :
@@ -557,12 +558,12 @@ export function CreateProjectControl({
             <div tabIndex={0} aria-label="Class learner roster" className="mt-3 max-h-40 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] focus-ring">
               {roster.filter(student => !rosterSearch.trim() ||
                 (student.displayName + " " + student.rollNumber).toLowerCase()
-                  .includes(rosterSearch.trim().toLowerCase())).map(student=><label key={student.membershipId} className="flex min-h-11 min-w-0 items-center gap-2 py-2 text-[13px] leading-5 text-body focus-within:focus-outline">
+                  .includes(rosterSearch.trim().toLowerCase())).map(student=><Label key={student.membershipId} className="flex min-h-11 min-w-0 items-center gap-2 py-2 focus-within:focus-outline">
                 <Checkbox checked={learnerMembershipIds.includes(student.membershipId)}
                   onChange={e=>setLearnerMembershipIds(old=>e.target.checked?
                     [...old,student.membershipId]:old.filter(id=>id!==student.membershipId))}/>
                 <span className="min-w-0 break-words">{student.displayName} · {student.rollNumber || student.membershipId}</span>
-              </label>)}
+              </Label>)}
               {loadedRosterSectionId===sectionId&&!roster.length?<p className="text-xs text-muted-foreground">No learners available.</p>:null}
             </div>
           </section>:null}

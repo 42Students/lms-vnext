@@ -15,6 +15,7 @@ import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-er
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Option = { id: string; label: string };
 type CourseTeachingRole = "PRIMARY" | "CO_TEACHER" | "TA";
@@ -158,35 +159,35 @@ export function CollegeFacultyAssignmentCreate({
     className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
     <Heading level={2} size="lg" className="text-[var(--lms-heading)]">{FACULTY_ASSIGNMENT_COPY.createTitle}</Heading>
     <form onSubmit={event => void submit(event)} className="mt-[var(--lms-space-3)] grid min-w-0 max-w-[1100px] gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-4">
-      <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+      <Label stack className="min-w-0">Program
         <Select required className={fieldClass} value={programId}
           onChange={event => resetParents("program", event.target.value)}>
           <option value="">Select program</option>
           {programs.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
         </Select>
-      </label>
-      <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+      </Label>
+      <Label stack className="min-w-0">Batch
         <Select required className={fieldClass} value={cohortId}
           onChange={event => resetParents("batch", event.target.value)}>
           <option value="">Select batch</option>
           {batches.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
         </Select>
-      </label>
-      <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section
+      </Label>
+      <Label stack className="min-w-0">Class/Section
         <Select required className={fieldClass} value={sectionId}
           onChange={event => resetParents("class", event.target.value)}>
           <option value="">Select class</option>
           {classes.map(([id, name]) => <option key={id} value={id}>{name}</option>)}
         </Select>
-      </label>
-      <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester
+      </Label>
+      <Label stack className="min-w-0">Semester
         <Select required className={fieldClass} value={semesterNumber}
           onChange={event => { setSemesterNumber(event.target.value); setSelected([]); }}>
           <option value="">Select semester</option>
           {semesters.map(term => <option key={term} value={term}>Semester {term}</option>)}
         </Select>
-      </label>
-      <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic Year
+      </Label>
+      <Label stack className="min-w-0">Academic Year
         <Input required className={fieldClass} value={academicYear} list="faculty-assignment-year-options"
           placeholder="YYYY-YY"
           maxLength={9}
@@ -197,49 +198,49 @@ export function CollegeFacultyAssignmentCreate({
         <span className="text-xs font-normal text-muted-foreground">
           Historic and future years can be entered, but assigning requires a matching saved course delivery.
         </span>
-      </label>
+      </Label>
       <div className="min-w-0 space-y-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
-        <label className="inline-flex min-h-11 items-center gap-2 md:min-h-9">
+        <Label variant="choice" className="inline-flex min-h-11 items-center gap-2 md:min-h-9">
           <Checkbox checked={multiFaculty} onChange={event=>{
             setMultiFaculty(event.target.checked);setSelectedFaculty([]);setError(null);}}/>
           Assign multiple faculty
-        </label>
-        {!multiFaculty?<label className="grid gap-2">Faculty
+        </Label>
+        {!multiFaculty?<Label stack>Faculty
           <Select required className={fieldClass} value={membershipId}
             onChange={event=>setMembershipId(event.target.value)}>
             <option value="">Select faculty</option>
             {faculty.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
           </Select>
-        </label>:<fieldset className="max-h-44 overflow-y-auto rounded-[var(--lms-control-radius)] border border-border p-2">
+        </Label>:<fieldset className="max-h-44 overflow-y-auto rounded-[var(--lms-control-radius)] border border-border p-2">
           <legend>Select faculty (maximum 10)</legend>
-          {faculty.map(item=><label key={item.id} className="flex min-h-11 items-center gap-2 text-sm">
+          {faculty.map(item=><Label variant="choice" key={item.id} className="flex min-h-11 items-center gap-2">
             <Checkbox checked={selectedFaculty.includes(item.id)}
               disabled={!selectedFaculty.includes(item.id)&&selectedFaculty.length>=10}
               onChange={event=>setSelectedFaculty(previous=>event.target.checked?
                 previous.includes(item.id)?previous:[...previous,item.id].slice(0,10):
                 previous.filter(id=>id!==item.id))}/>
             {item.label}
-          </label>)}
+          </Label>)}
         </fieldset>}
       </div>
-      <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{FACULTY_ASSIGNMENT_COPY.roleLabel}
+      <Label stack className="min-w-0">{FACULTY_ASSIGNMENT_COPY.roleLabel}
         <Select className={fieldClass} value={role}
           onChange={event => setRole(event.target.value as CourseTeachingRole)}>
           <option value="PRIMARY">{FACULTY_ASSIGNMENT_ROLE_LABELS["PRIMARY"]}</option>
           <option value="CO_TEACHER">{FACULTY_ASSIGNMENT_ROLE_LABELS["CO_TEACHER"]}</option>
           <option value="TA">{FACULTY_ASSIGNMENT_ROLE_LABELS["TA"]}</option>
         </Select>
-      </label>
+      </Label>
       <fieldset className="min-w-0 space-y-[var(--lms-space-3)] md:col-span-2 xl:col-span-4">
         <legend className="text-sm font-semibold">Select one or more courses ({selected.length} selected)</legend>
         <div className="max-h-[20rem] min-w-0 space-y-[var(--lms-space-2)] overflow-y-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-[var(--lms-space-3)]">
           {choices.length === 0 && <EmptyState title="No eligible courses" description="Select a program, batch and class to view eligible courses."/>}
-          {choices.map(item => <label key={item.id} className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] px-[var(--lms-space-2)] text-sm leading-5 hover:bg-[var(--lms-primary-subtle)]">
+          {choices.map(item => <Label variant="choice" key={item.id} className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] px-[var(--lms-space-2)] hover:bg-[var(--lms-primary-subtle)]">
             <Checkbox checked={selected.includes(item.id)}
               onChange={event => setSelected(previous => event.target.checked
                 ? [...previous, item.id] : previous.filter(id => id !== item.id))} />
             {item.courseName} ({item.courseCode}) · {item.academicYear}
-          </label>)}
+          </Label>)}
         </div>
       </fieldset>
       <div className="min-w-0 md:col-span-2 xl:col-span-4">

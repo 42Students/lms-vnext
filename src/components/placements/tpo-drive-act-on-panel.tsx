@@ -8,6 +8,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 type Action="CLOSE"|"CANCEL";
 type Preview={id:string;title:string;allowed:boolean;reason:string;
  expectedUpdatedAt:string|null;expectedCounts?:{applications:number;rounds:number;offers:number};
@@ -111,13 +112,13 @@ export function TpoDriveActOnPanel(){
     <div className="pt-2"><TpoBulkDriveReminder/></div>
    </details>
    <div className="grid min-w-0 items-end gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold">Action
+   <Label stack className="min-w-0">Action
     <Select className="min-h-11 w-full min-w-0 md:min-h-9" value={action} onChange={e=>{setAction(e.target.value as Action);setRows([]);setResults([]);setNotice("");setAcknowledged(false);}}
      >
      <option value="CLOSE">Close selected live drives</option>
      <option value="CANCEL">Cancel selected drives</option>
     </Select>
-   </label>
+   </Label>
    <Button variant="primary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={pending} loading={pending} onClick={e=>void preview(e)}
     >Preview applicable drives</Button>
    </div>
@@ -136,14 +137,14 @@ export function TpoDriveActOnPanel(){
       {action==="CLOSE"&&row.expectedCounts?<span className="block text-xs">Applications: {row.expectedCounts.applications}, rounds: {row.expectedCounts.rounds}, offers: {row.expectedCounts.offers}</span>:null}
      </span>
     </li>)}</ul>
-    <label className="grid min-w-0 max-w-xl gap-[6px] text-[13px] font-semibold">Reason (audited)
+    <Label stack className="min-w-0 max-w-xl">Reason (audited)
      <Textarea className="min-w-0 w-full" value={reason} onChange={e=>{setReason(e.target.value);setNotice("");}} rows={3} minLength={10} maxLength={1000}
       />
-    </label>
-    {action==="CLOSE"?<label className="flex min-h-11 items-start gap-2 text-sm font-medium leading-6">
+    </Label>
+    {action==="CLOSE"?<Label className="flex min-h-11 items-start gap-2">
       <Checkbox checked={acknowledged} onChange={event=>setAcknowledged(event.target.checked)}/>
       I understand that closing the selected drives is irreversible in this workflow. Applicants and offers can be affected; results remain in the audit history.
-     </label>:null}
+     </Label>:null}
     <Button variant="primary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={pending||!rows.some(row=>row.allowed)||reason.trim().length<10||(action==="CLOSE"&&!acknowledged)}
       onClick={()=>void apply()} >
      {pending?"Applying…":"Confirm selected action"}</Button>

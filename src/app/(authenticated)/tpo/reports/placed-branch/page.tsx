@@ -17,6 +17,7 @@ import { ReportTable, reportNumber } from "@/components/placements/placement-rep
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoPlacedStudentsByBranch } from "@/modules/placements/tpo-placed-branch-service";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 type Search = { seasonId?: string | string[]; jobId?: string | string[] };
 function first(input: string | string[] | undefined) { return Array.isArray(input) ? input[0] : input; }
 export default async function TpoPlacedByBranchPage({ searchParams }: { searchParams: Promise<Search> }) {
@@ -43,20 +44,20 @@ export default async function TpoPlacedByBranchPage({ searchParams }: { searchPa
       />
       <form action="/tpo/reports/placed-branch" method="get"
         className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2">
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Season
+        <Label>Season
           <Select name="seasonId" defaultValue={report.season?.id ?? ""}
             className="mt-2 min-h-11 md:min-h-9 w-full">
             {report.seasons.length === 0 ? <option value="">No season</option> : null}
             {report.seasons.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}
           </Select>
-        </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive
+        </Label>
+        <Label>Drive
           <Select name="jobId" defaultValue={report.selectedJobId ?? ""}
             className="mt-2 min-h-11 md:min-h-9 w-full">
             <option value="">All drives</option>
             {report.jobs.map((item) => <option key={item.id} value={item.id}>{item.companyName} · {item.title}</option>)}
           </Select>
-        </label>
+        </Label>
         <Button type="submit" className="min-h-11 w-full sm:col-span-2 sm:justify-self-start sm:w-auto md:min-h-9"
           disabled={!report.season}>Apply filters</Button>
       </form>

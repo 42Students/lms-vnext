@@ -6,6 +6,7 @@ import type {MentorEmailPreferenceState} from
  "@/modules/projects/mentor-email-preference-model";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export function MentorEmailPreferenceControls(props:MentorEmailPreferenceState){
  const router=useRouter();
@@ -38,12 +39,12 @@ export function MentorEmailPreferenceControls(props:MentorEmailPreferenceState){
  return <section aria-label="Mentor email notification preferences"
    className="space-y-3 rounded-lg border border-border p-3">
    <Heading level={3} size="sm">Project email notifications</Heading>
-   <label className="flex min-h-11 items-center gap-3 text-sm">
+   <Label variant="choice" className="flex min-h-11 items-center gap-3">
      <Checkbox checked={enabled} disabled={busy}
        onChange={event=>{setEnabled(event.target.checked);setMessage(null);}}
        className="size-5"/>
      Allow emails for final submissions and meeting requests
-   </label>
+   </Label>
    <p className="text-xs text-muted-foreground">
      This is off until you opt in. Task reviews, blocked alerts,
      college announcements and routine updates remain in-app.

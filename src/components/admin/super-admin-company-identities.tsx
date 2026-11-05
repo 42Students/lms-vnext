@@ -9,6 +9,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useToast} from "@/components/ui/toast";
 import {companyDomainSchema} from "@/modules/placements/company-curation-domain-model";
 import {displayCompanyAlias} from "@/modules/placements/company-curation-alias-model";
+import { Label } from "@/components/ui/label";
 export function SuperAdminCompanyIdentities({companyId,name,domains,aliases}:{
  companyId:string;name:string;domains:readonly string[];aliases:readonly string[];
 }){
@@ -94,14 +95,14 @@ export function SuperAdminCompanyIdentities({companyId,name,domains,aliases}:{
        </li>)}
       </ul>
       <form onSubmit={e=>void add(e,kind)} className="flex min-w-0 flex-wrap items-end gap-2">
-       <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+       <Label stack className="min-w-0 flex-1">
         {kind==="domains"?"Add domain":"Add Other name"}
         <Input name="value" value={entry} onChange={e=>{setEntry(e.target.value);setError("");}}
          maxLength={kind==="domains"?253:150} disabled={pending} required
          placeholder={kind==="domains"?"company.com or name@company.com":"TCS, L&T, an old or longer name"}
          aria-label={kind==="domains"?"Company domain or work email":"Company other name"}
          className="min-h-11 w-full md:min-h-9" />
-       </label>
+       </Label>
        <Button type="submit" loading={pending}
         disabled={pending||entry.trim().length<(kind==="aliases"?2:1)}
         className="min-h-11 md:min-h-9">Add</Button>

@@ -33,6 +33,7 @@ import { z } from "zod";
 import {parseBatchStudentSearchParams,batchStudentPageHref} from "@/modules/placements/tpo-batch-student-view-model";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 export const dynamic="force-dynamic";
 const pageSchema=z.coerce.number().int().min(1).max(100000).default(1);
 export default async function BatchStudents({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<{page?:string|string[];q?:string|string[];classId?:string|string[];decision?:string|string[];source?:string|string[];registration?:string|string[];order?:string|string[]}>}){
@@ -60,7 +61,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  <TpoBatchWorkspaceTabs batchId={batchId} active="students" students={registrationCounts.activeLearners}/>
  <form role="search" aria-label="students filters" action={"/tpo/batches/"+encodeURIComponent(batchId)+"/students"} method="get"
   className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] py-4 sm:grid-cols-2 xl:grid-cols-3">
-  <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
+  <Label className="min-w-0">Class
    <Select name="classId" defaultValue={filters.classId??""}
     className="block min-h-11 w-full mt-[6px]">
     <option value="">All classes</option>
@@ -68,12 +69,12 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
       .map(student=>[student.classId!,student.className??"Unnamed class"])).entries()]
      .map(([id,name])=>({id,name}))).map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
    </Select>
-  </label>
-  <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search names or roll numbers across the batch
+  </Label>
+  <Label className="min-w-0">Search names or roll numbers across the batch
    <Input type="search" name="q" defaultValue={filters.q} maxLength={100}
     className="min-h-11 w-full mt-[6px] block"/>
-  </label>
-  <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Eligibility decision
+  </Label>
+  <Label className="min-w-0">Eligibility decision
    <Select name="decision" defaultValue={filters.decision} className="min-h-11 w-full mt-[6px] block">
     <option value="ALL">All decisions</option>
     <option value="ELIGIBLE">Eligible</option>
@@ -81,9 +82,9 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
     <option value="NOT_DECIDED">Not decided</option>
     <option value="NEEDS_REVIEW">Ambiguous / needs review</option>
    </Select>
-  </label>
+  </Label>
   <Disclosure title="Decision source · Registration choice · Sort" defaultOpen={Boolean(filters.source!=="ALL"||filters.registration!=="ALL"||filters.order!=="NAME_ASC")} className="min-w-0 border-0 sm:col-span-2 xl:col-span-3" contentClassName="pt-3"><div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-  <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Decision source
+  <Label className="min-w-0">Decision source
    <Select name="source" defaultValue={filters.source} className="min-h-11 w-full mt-[6px] block">
     <option value="ALL">Any source</option>
     <option value="LEARNER">Learner override</option>
@@ -91,21 +92,21 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
     <option value="BATCH">Batch</option>
     <option value="NONE">No recorded decision</option>
    </Select>
-  </label>
-  <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Registration choice
+  </Label>
+  <Label className="min-w-0">Registration choice
    <Select name="registration" defaultValue={filters.registration} className="min-h-11 w-full mt-[6px] block">
     <option value="ALL">Any evidence</option>
     <option value="RECORDED">Choice recorded</option>
     <option value="UNRECORDED">No choice recorded</option>
    </Select>
-  </label>
-  <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
+  </Label>
+  <Label className="min-w-0">Sort
    <Select name="order" defaultValue={filters.order} className="min-h-11 w-full mt-[6px] block">
     <option value="NAME_ASC">Name A–Z</option>
     <option value="NAME_DESC">Name Z–A</option>
     <option value="REVIEW_FIRST">Needs review first</option>
    </Select>
-  </label>
+  </Label>
   </div></Disclosure>
   <Button type="submit" variant="primary" className="min-h-11 w-full md:w-auto">Filter</Button>
  </form>

@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { formatPromotionAcademicYear, promotionAcademicYearError } from "@/modules/academics/college-batch-promotion-model";
 import { BATCH_PROMOTION_COPY, promotionImpactMessage } from "@/modules/academics/college-batch-promotion-copy";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
+import { Label } from "@/components/ui/label";
 
 export function CollegePromotionConfirmation({
   cohortId, programId, expectedVersion, yearStart, targetTerm, learnerCount, academicYearStart,
@@ -139,14 +140,14 @@ export function CollegePromotionConfirmation({
           <li>Advance academic year to <strong>{formatPromotionAcademicYear(academicYearStart)}</strong> unless overridden</li>}
         {maxSemester!==undefined?<li>Program max semester: <strong>{maxSemester}</strong></li>:null}
       </ul>
-      <label className="grid gap-1 text-sm font-semibold text-foreground">
+      <Label stack>
         New academic year (YYYY-YY)
         <Input type="text" name="promotionYear" maxLength={7}
           inputMode="numeric" placeholder="2026-27"
           value={yearValue} aria-invalid={Boolean(yearError)}
           onChange={event=>{setYearValue(event.target.value);setYearError("");}} />
         {yearError?<span role="alert" className="text-xs text-error">{yearError}</span>:null}
-      </label>
+      </Label>
       {yearChanged?<div className="space-y-2 border border-border p-3 text-sm">
         <p>Refresh the promotion preview for the new academic year before confirming.
           The learner and assignment checks must run again.</p>

@@ -14,6 +14,7 @@ import { LoadingState } from "@/components/ui/loading-state";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
+import { Label } from "@/components/ui/label";
 
 type DepartmentOption = {
   id: string;
@@ -258,12 +259,12 @@ export function PersonProfileDialog({
                   Learner profile
                 </legend>
                 <div>
-                  <label
+                  <Label
                     htmlFor={`roll-${membershipId}`}
-                    className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+                    className="mb-[var(--lms-space-2)] block"
                   >
                     Roll number
-                  </label>
+                  </Label>
                   <Input className="min-h-11 md:min-h-9"
                     id={`roll-${membershipId}`}
                     value={rollNumber}
@@ -274,12 +275,12 @@ export function PersonProfileDialog({
                   />
                 </div>
                 <div>
-                  <label
+                  <Label
                     htmlFor={`registration-${membershipId}`}
-                    className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+                    className="mb-[var(--lms-space-2)] block"
                   >
                     Registration number
-                  </label>
+                  </Label>
                   <Input className="min-h-11 md:min-h-9"
                     id={`registration-${membershipId}`}
                     value={registrationNumber}
@@ -298,12 +299,12 @@ export function PersonProfileDialog({
                   Faculty profile
                 </legend>
                 <div className="md:col-span-2">
-                  <label
+                  <Label
                     htmlFor={`department-${membershipId}`}
-                    className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+                    className="mb-[var(--lms-space-2)] block"
                   >
                     Primary department
-                  </label>
+                  </Label>
                   <Select className="min-h-11 md:min-h-9"
                     id={`department-${membershipId}`}
                     value={primaryDepartmentId}
@@ -323,12 +324,12 @@ export function PersonProfileDialog({
                   </Select>
                 </div>
                 <div>
-                  <label
+                  <Label
                     htmlFor={`employment-${membershipId}`}
-                    className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+                    className="mb-[var(--lms-space-2)] block"
                   >
                     Employment type
-                  </label>
+                  </Label>
                   <Input className="min-h-11 md:min-h-9"
                     id={`employment-${membershipId}`}
                     value={employmentType}
@@ -340,12 +341,12 @@ export function PersonProfileDialog({
                   />
                 </div>
                 <div>
-                  <label
+                  <Label
                     htmlFor={`title-${membershipId}`}
-                    className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+                    className="mb-[var(--lms-space-2)] block"
                   >
                     Academic title
-                  </label>
+                  </Label>
                   <Input className="min-h-11 md:min-h-9"
                     id={`title-${membershipId}`}
                     value={academicTitle}

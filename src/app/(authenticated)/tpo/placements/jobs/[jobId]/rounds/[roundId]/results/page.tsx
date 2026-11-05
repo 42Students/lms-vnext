@@ -18,6 +18,7 @@ import {getTpoRoundResultTable} from "@/modules/placements/tpo-round-result-tabl
 import {tpoRoundResultViewSchema,filterTpoRoundResultRows} from "@/modules/placements/tpo-round-result-table-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 type Props={params:Promise<{jobId:string;roundId:string}>;searchParams:Promise<{q?:string|string[];status?:string|string[];outcome?:string|string[];role?:string|string[];page?:string|string[]}>};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function TpoRoundResultTablePage({params,searchParams}:Props){
@@ -88,24 +89,24 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
   <p className="text-sm text-body leading-[22px]">Staging results records a version and immutable audit. Applying staged outcomes to candidate progression requires a separate confirmed action. Applied outcomes are read-only here.</p>
   {data.truncated?<Alert tone="info">Showing roster page {data.page} of {data.totalPages}; counts above include every eligible application. Filter and stage within each page.</Alert>:null}
   <form method="get" className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-end" aria-label="Filter results">
-   <label className="min-w-0 flex-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Student, roll no. or role
+   <Label className="min-w-0 flex-1">Student, roll no. or role
     <Input name="q" type="search" maxLength={100} defaultValue={selected.data.q} className="mt-[6px] block min-h-11 w-full border border-border px-3 md:min-h-9"/>
-   </label>
-   <label className="min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Result state
+   </Label>
+   <Label className="min-w-0">Result state
     <Select name="status" defaultValue={selected.data.status} className="mt-[6px] block min-h-11 border border-border px-3 md:min-h-9">
      <option value="ALL">All</option><option value="NOT_RECORDED">Not recorded</option><option value="STAGED">Staged</option><option value="APPLIED">Applied</option>
     </Select>
-   </label>
-   <label className="min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Outcome
+   </Label>
+   <Label className="min-w-0">Outcome
     <Select name="outcome" defaultValue={chosenOutcome.data} className="mt-[6px] block min-h-11 border border-border px-3 md:min-h-9">
      <option value="ALL">All outcomes</option><option value="PASS">Passed</option><option value="FAIL">Not selected</option><option value="HOLD">Waitlisted</option><option value="ABSENT">Absent</option>
     </Select>
-   </label>
-   <label className="min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Role
+   </Label>
+   <Label className="min-w-0">Role
     <Select name="role" defaultValue={chosenRole.data} className="mt-[6px] block min-h-11 border border-border px-3 md:min-h-9">
      <option value="">All roles</option>{availableRoles.map(role=><option key={role} value={role}>{role}</option>)}
     </Select>
-   </label>
+   </Label>
    <Button type="submit" className="min-h-11 w-full rounded-[var(--lms-control-radius)] bg-primary px-4 text-primary-foreground sm:w-auto md:min-h-9">Filter</Button>
   </form>
   <p role="status" className="text-sm text-body leading-[1.6]">{visibleRows.length} of {data.rows.length} applications on this page match these filters. {data.counts.eligible} eligible applications across all pages.</p>

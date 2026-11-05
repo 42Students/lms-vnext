@@ -6,6 +6,7 @@ import type {TpoSpreadsheetGridProps} from "./tpo-spreadsheet-grid";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {exportTpoGridCsv} from "@/modules/placements/tpo-grid-model";
 import {GridWorkspace} from "./grid/grid-workspace";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 export type CompanyMemoryDriveRow={
  id:string;jobTitle:string;status:string;createdAt:string;applied:number|null;offers:number|null;
@@ -40,8 +41,8 @@ const TpoGrid=dynamic<TpoSpreadsheetGridProps<CompanyMemoryDriveRow>>(
  ()=>import("./grid/tpo-grid").then(module=>module.TpoGrid<CompanyMemoryDriveRow>),
  {ssr:false,loading:()=> <div role="status" aria-label="Loading company drives" className="space-y-2 border-y border-border py-4">
   <p className="text-sm text-muted-foreground">Loading company drives…</p>
-  <div aria-hidden="true" className="h-9 w-full animate-pulse rounded bg-muted"/>
-  <div aria-hidden="true" className="h-9 w-full animate-pulse rounded bg-muted"/>
+  <SkeletonBlock className="h-9 w-full" />
+  <SkeletonBlock className="h-9 w-full" />
  </div>},
 );
 

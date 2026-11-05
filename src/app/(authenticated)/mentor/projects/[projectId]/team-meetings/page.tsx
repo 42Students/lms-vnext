@@ -16,6 +16,7 @@ import {
   mentorTeamMeetingsHref,mentorTeamMeetingsQuerySchema,
 } from "@/modules/projects/mentor-team-meetings-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Params={status?:string|string[];type?:string|string[];outcome?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
 export default async function MentorTeamMeetingsPage({
@@ -69,7 +70,7 @@ export default async function MentorTeamMeetingsPage({
         <form role="search" aria-label="team meetings filters" method="get" action={mentorTeamMeetingsHref({...data.query,page:1}).split("?")[0]}
           className="min-w-0 space-y-3 border-b border-border pb-4">
           <div className="grid min-w-0 items-end gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting status
+          <Label stack>Meeting status
             <Select name="status" defaultValue={data.query.status}
               className="min-h-11 md:min-h-9">
               <option value="ALL">All</option><option value="REQUESTED">Requested</option>
@@ -77,38 +78,38 @@ export default async function MentorTeamMeetingsPage({
               <option value="COMPLETED">Completed</option>
               <option value="CANCELLED">Cancelled</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting title
+          </Label>
+          <Label stack>Meeting title
             <Input type="search" name="search" maxLength={100}
               defaultValue={data.query.search}
               className="min-h-11 md:min-h-9"/>
-          </label>
+          </Label>
             <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
           </div>
           <Disclosure title="Filters" defaultOpen={data.query.type!=="ALL"||data.query.outcome!=="ALL"||data.query.order!=="NEWEST"} className="min-w-0" contentClassName="min-w-0 pt-3 pb-2">
             <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3">
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting type
+          <Label stack>Meeting type
             <Select name="type" defaultValue={data.query.type}
               className="min-h-11 md:min-h-9">
               <option value="ALL">All types</option><option value="GENERAL">General</option>
               <option value="PLANNING">Planning</option><option value="STANDUP">Standup</option>
               <option value="REVIEW">Review</option><option value="RETRO">Retrospective</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded outcome
+          </Label>
+          <Label stack>Recorded outcome
             <Select name="outcome" defaultValue={data.query.outcome}
               className="min-h-11 md:min-h-9">
               <option value="ALL">All meetings</option><option value="RECORDED">With written outcome</option>
               <option value="NOT_RECORDED">Without written outcome</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting order
+          </Label>
+          <Label stack>Meeting order
             <Select name="order" defaultValue={data.query.order}
               className="min-h-11 md:min-h-9">
               <option value="NEWEST">Most recent first</option>
               <option value="OLDEST">Oldest first</option>
             </Select>
-          </label>
+          </Label>
             </div>
           </Disclosure>
           {filtered?<Link href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",outcome:"ALL",order:"NEWEST",search:"",page:1})}

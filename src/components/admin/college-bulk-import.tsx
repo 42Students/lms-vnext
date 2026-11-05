@@ -16,6 +16,7 @@ import {parseCollegeImportCsv,COLLEGE_IMPORT_TEMPLATE,LEGACY_COLLEGE_IMPORT_TEMP
 import {canApplyConfirmedCollegeBulkImport} from "@/modules/colleges/bulk-import-confirmation-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 type Result={line:number;code:string;name?:string;status:"CREATED"|"SKIPPED"|"FAILED";message:string};
 export function CollegeBulkImport({organizations}:{organizations:readonly {id:string;name:string}[]}){
  const versionRef=useRef(0),confirmedVersionRef=useRef(-1),inFlightRef=useRef(false);
@@ -113,17 +114,17 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
     </Button>
    </div>}>
    <div id="admin-college-bulk-import-panel" role="region" aria-label="Bulk Import" className="min-w-0 space-y-[var(--lms-space-3)]">
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">Organization
+   <Label stack className="print:hidden">Organization
     <Select className="min-h-11 w-full md:min-h-9" value={organizationId} disabled={busy}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setOrganizationId(e.target.value);setResults([]);setError("");}}>
      {organizations.map(o=><option key={o.id} value={o.id}>{o.name}</option>)}
-    </Select></label>
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">Columns: orgId, name, uniqueId, city, state (legacy); name, code, city, state, country (vNext)
+    </Select></Label>
+   <Label stack className="print:hidden">Columns: orgId, name, uniqueId, city, state (legacy); name, code, city, state, country (vNext)
     <Textarea rows={8} maxLength={150000} value={csv} disabled={busy}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setCsv(e.target.value);setResults([]);setError("");}}
      className="min-h-32 w-full min-w-0 font-mono text-sm leading-6" aria-invalid={Boolean(validation)} aria-describedby="admin-college-bulk-format"
      placeholder="name,code,city,state,country"/>
-   </label>
+   </Label>
    <div id="admin-college-bulk-format" className="space-y-2 text-sm text-muted-foreground print:hidden leading-[22px]">
     <p>Legacy columns: orgId, name, uniqueId, city, state. The new import keeps the verified organization selector and maps uniqueId to code. Header optional; up to 200 rows. Quoted commas, newlines and escaped quotes are supported.</p>
     <p>Converting an old LMS CSV? Map every numeric orgId to its verified vNext organization UUID, separate rows by organization and choose the matching organization above. Use <strong>uniqueId</strong> as the new <strong>code</strong>. Mixed-organization uploads are rejected rather than assigned to the wrong college.</p>

@@ -26,6 +26,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementReportWorkspace } from "@/modules/placements/report-service";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -90,20 +91,20 @@ export default async function TpoByCompanyReportPage({
       <form action="/tpo/reports/by-company" method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-end" aria-label="Filter by company">
         {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
         {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
-        <label className="grid min-w-0 w-full flex-1 gap-2 md:w-auto text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search company name
+        <Label stack className="min-w-0 w-full flex-1 md:w-auto">Search company name
           <Input type="search" name="q" maxLength={100} defaultValue={view.query.q} className="w-full"/>
-        </label><label className="grid min-w-0 w-full gap-2 md:w-auto text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded placement outcome
+        </Label><Label stack className="min-w-0 w-full md:w-auto">Recorded placement outcome
           <Select name="outcome" defaultValue={view.query.outcome}
             className="w-full">
             <option value="ALL">All companies</option><option value="HAS_PLACED">At least one placed learner</option>
             <option value="NO_PLACED">No placed learners recorded</option>
           </Select>
-        </label><label className="grid min-w-0 w-full gap-2 md:w-auto text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order companies
+        </Label><Label stack className="min-w-0 w-full md:w-auto">Order companies
           <Select name="sort" defaultValue={view.query.sort} className="w-full">
             <option value="NAME">Company name</option><option value="PLACED_DESC">Placed learners (high first)</option>
             <option value="ACCEPTED_DESC">Accepted offers (high first)</option><option value="APPLICATIONS_DESC">Submitted applications (high first)</option><option value="DRIVES_DESC">Recorded drives (high first)</option><option value="AVG_CTC_DESC">Average accepted full-time CTC (high first)</option><option value="HIGHEST_CTC_DESC">Highest accepted full-time CTC (high first)</option>
           </Select>
-        </label><Button type="submit" className="min-h-11 w-full rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary sm:w-auto md:min-h-[var(--lms-control-height)]">Apply</Button>
+        </Label><Button type="submit" className="min-h-11 w-full rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary sm:w-auto md:min-h-[var(--lms-control-height)]">Apply</Button>
       </form>
 
       <ReportMetrics metrics={workspace.report.metrics} />

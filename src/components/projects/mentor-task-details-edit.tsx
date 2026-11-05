@@ -14,6 +14,7 @@ import { FriendlyFetchError } from "@/lib/api-fetch";
 import { friendlyApiError } from "@/lib/friendly-error";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Props={
   projectId:string;taskId:string;title:string;description:string|null;
@@ -98,55 +99,55 @@ export function MentorTaskDetailsEdit(props:Props) {
   }
   const editor=(
       <form onSubmit={review} className="grid gap-4">
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
+        <Label stack className="min-w-0">Title
           <Input required maxLength={200} value={title}
             onChange={event=>setTitle(event.target.value)} />
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description
+        </Label>
+        <Label stack className="min-w-0">Description
           <Textarea maxLength={4000} value={description}
             onChange={event=>setDescription(event.target.value)} />
-        </label>
+        </Label>
         <details className="min-w-0 border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]">
           <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-5 text-[var(--lms-link-text)] focus-ring">Approach and done criteria</summary>
           <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)]">
-            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Approach (optional)
+            <Label stack className="min-w-0">Approach (optional)
               <Textarea maxLength={4000} value={approach} onChange={event=>setApproach(event.target.value)}/>
-            </label>
-            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Done when (optional)
+            </Label>
+            <Label stack className="min-w-0">Done when (optional)
               <Textarea maxLength={4000} value={criteria} onChange={event=>setCriteria(event.target.value)}/>
-            </label>
+            </Label>
           </div>
         </details>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Priority
+        <Label stack className="min-w-0">Priority
           <Select value={priority} onChange={event=>setPriority(event.target.value)}
             className="min-h-11 w-full md:min-h-9">
             <option value="LOW">Low</option><option value="MEDIUM">Medium</option>
             <option value="HIGH">High</option><option value="CRITICAL">Critical</option>
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Estimate
+        </Label>
+        <Label stack className="min-w-0">Estimate
           <Input type="number" min={0} max={1000} value={estimate}
             aria-invalid={!estimateValid} aria-describedby={!estimateValid?estimateErrorId:undefined}
             onChange={e=>setEstimate(e.target.value)}/>
-        </label>
+        </Label>
         {!estimateValid?<p id={estimateErrorId} role="alert" className="text-xs text-error">
           Estimate must be a whole number from 0 to 1000.
         </p>:null}
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
+        <Label stack className="min-w-0">Type
           <Select className="min-h-11 w-full md:min-h-9" value={taskType}
             onChange={e=>setTaskType(e.target.value)}>
             <option value="">Not specified</option><option value="STORY">Story</option>
             <option value="BUG">Bug</option><option value="CHORE">Chore</option>
             <option value="SPIKE">Spike</option>
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Due
+        </Label>
+        <Label stack className="min-w-0">Due
           <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/>
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Blocker note
+        </Label>
+        <Label stack className="min-w-0">Blocker note
           <Textarea maxLength={4000} value={blockerReason}
             onChange={e=>setBlockerReason(e.target.value)}/>
-        </label>
+        </Label>
         {error?<p role="alert" className="text-sm font-semibold text-error">{error}</p>:null}
         <div className="flex flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] sm:flex-row sm:justify-end">
           <Button type="button" variant="secondary" className="w-full sm:w-auto" onClick={guard.requestClose}>Cancel</Button>

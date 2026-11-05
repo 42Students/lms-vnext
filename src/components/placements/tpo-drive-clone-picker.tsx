@@ -3,6 +3,7 @@ import {useMemo,useState} from "react";
 import {Input} from "@/components/ui/input";
 import {TpoDriveCloneAction} from "./tpo-drive-clone-action";
 import {CollegeDriveDuplicateAction} from "./college-drive-duplicate-action";
+import { Label } from "@/components/ui/label";
 
 export type CloneableTpoDrive={
   id:string;title:string;status:string;
@@ -27,13 +28,13 @@ export function TpoDriveClonePicker({drives,collegeAdmin=false}:{drives:readonly
      Round dates, external links, booked interviews, applications, outcomes and offers are not.
      Review batches and passing years before publishing.
    </p>
-   <label className="block max-w-[360px] text-xs font-semibold text-body">
+   <Label className="block max-w-[360px]">
      <span className="mb-1 block">Find a past drive</span>
      <Input type="search" aria-label="Find a past drive" value={search}
        onChange={event=>setSearch(event.target.value)}
        maxLength={100} placeholder="Search job title or status"
        className="min-h-11 w-full md:min-h-9"/>
-   </label>
+   </Label>
    {filtered.length===0?<p role="status" className="text-sm text-muted-foreground">
      No completed drives match your search. Change the search or create a new draft below.
    </p>:<ul className="grid min-w-0 gap-3 md:grid-cols-2">

@@ -19,6 +19,7 @@ import { readAdminPromotionParams, summarizeAdminPromotion } from "@/modules/aca
 import { formatPromotionAcademicYear } from "@/modules/academics/college-batch-promotion-model";
 import { getPromotionTeachingForecast } from "@/modules/academics/college-promotion-teaching-forecast";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export default async function SuperAdminBatchPromotionPage({
   searchParams,
@@ -104,14 +105,14 @@ export default async function SuperAdminBatchPromotionPage({
       </Link>
     </div>
     <form method="get" role="search" aria-label="Batch promotion preview filters" className="grid min-w-0 items-end gap-[8px] border-b border-border pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-3">
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+      <Label stack>Program
         <Select name="programId" defaultValue={input.data.programId ?? ""}
           className="min-h-11 md:min-h-9">
           <option value="">All programs</option>
           {options.programs.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+      </Label>
+      <Label stack>Batch
         <Select name="cohortId" defaultValue={input.data.cohortId ?? ""}
           className="min-h-11 md:min-h-9">
           <option value="">Select a batch</option>
@@ -119,18 +120,18 @@ export default async function SuperAdminBatchPromotionPage({
           {preview && !visibleCohorts.some(b => b.id === preview.batch.id) ?
             <option value={preview.batch.id}>{preview.batch.programName} · {preview.batch.name} ({preview.batch.status})</option> : null}
         </Select>
-      </label>
+      </Label>
       <div className="order-last grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-4)] md:col-span-2 md:grid-cols-2 xl:col-span-3">
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic year start override
+      <Label stack>Academic year start override
         <Input name="yearStart" type="text" inputMode="numeric" maxLength={7} pattern="[0-9]{4}-[0-9]{2}"
           placeholder="2026-27" title="Use consecutive years, e.g. 2026-27"
           defaultValue={input.data.yearStart!==undefined?formatPromotionAcademicYear(input.data.yearStart):""}
           className="min-h-11 md:min-h-9" />
         <span className="text-xs font-normal text-muted-foreground">Leave blank to use the system-suggested academic year. Use consecutive years, e.g. 2026-27.</span>
-      </label>
-      <label className="flex min-h-11 items-center gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      </Label>
+      <Label className="flex min-h-11 items-center gap-2">
         <Checkbox name="showCompleted" value="1" defaultChecked={showCompleted}/> Show completed / inactive{options.cohorts.length-visibleCohorts.length>0?` (${options.cohorts.length-visibleCohorts.length})`:""}
-      </label>
+      </Label>
       </div>
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto self-end">Preview</Button>
     </form>

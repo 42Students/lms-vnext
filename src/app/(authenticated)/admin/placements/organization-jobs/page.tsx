@@ -9,6 +9,7 @@ import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {EmptyState} from "@/components/ui/empty-state";
 import {ErrorState} from "@/components/ui/error-state";
 import {StatusBadge} from "@/components/ui/status-badge";
+import { Label } from "@/components/ui/label";
 
 const hrefBase="/admin/placements/organization-jobs";
 type Row=Awaited<ReturnType<typeof searchOrganizationPlacementJobs>>["rows"][number];
@@ -69,30 +70,30 @@ export default async function SuperAdminOrganizationJobsPage({searchParams}:{
   <Link href="/admin/placements" className={actionClass}>← Back to Placements</Link>
   <form method="get" action={hrefBase}
    className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] bg-surface pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_auto]">
-   <label className="grid min-w-0 gap-1 text-sm font-semibold">
+   <Label stack className="min-w-0">
     Search jobs and companies
     <Input name="q" type="search" maxLength={120} defaultValue={params.q} placeholder="Job title or company" />
-   </label>
-   <label className="grid min-w-0 gap-1 text-sm font-semibold">
+   </Label>
+   <Label stack className="min-w-0">
     Status
     <Select name="status" defaultValue={params.status}>
      {["ALL","DRAFT","PUBLISHED","CLOSED","CANCELLED","ARCHIVED"].map(status=>
       <option key={status} value={status}>{status==="ALL"?"All statuses":status}</option>)}
     </Select>
-   </label>
-   <label className="grid min-w-0 gap-1 text-sm font-semibold">
+   </Label>
+   <Label stack className="min-w-0">
     Sort by
     <Select name="sort" defaultValue={params.sort}>
      <option value="NEWEST">Newest</option>
      <option value="OLDEST">Oldest</option>
      <option value="TITLE">Title</option>
     </Select>
-   </label>
+   </Label>
    <div className="flex items-end"><Button type="submit" className="min-h-11 w-full">Search</Button></div>
-   {!scoped?<label className="grid min-w-0 gap-1 text-sm font-semibold md:col-span-4">
+   {!scoped?<Label stack className="min-w-0 md:col-span-4">
     Organization ID (required for platform-wide administrators)
     <Input name="organizationId" defaultValue={organizationId} placeholder="Select an active organization UUID" />
-   </label>:null}
+   </Label>:null}
   </form>
   {!scoped&&!organizationId?<EmptyState title="Select an organization"
    description="Enter an authorized organization ID to search its placement jobs. Search never combines unrelated organizations."/>:null}

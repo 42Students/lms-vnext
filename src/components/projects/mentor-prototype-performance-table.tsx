@@ -14,6 +14,7 @@ import {orderMentorSprints} from "@/modules/projects/mentor-sprint-order-model";
 import {mentorSprintPointSparkline} from "@/modules/projects/mentor-member-points-sparkline-model";
 import { Select } from "@/components/ui/select";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Student={id:string;name:string;label:string};
 type FormerStudent={id:string;name:string};
@@ -110,7 +111,7 @@ export function MentorPrototypePerformanceTable({
     <section className="prototype-mentor-chart-card">
       <div className="prototype-mentor-card-title prototype-mentor-performance-filter-bar">
         <Heading level={2}>Who did what</Heading>
-        <label>In
+        <Label>In
           <Select value={range} onChange={event=>setRange(event.target.value)}>
             <option value="all">All (current task records)</option>
             <option value="whole">Whole project (sign-off history + current)</option>
@@ -124,7 +125,7 @@ export function MentorPrototypePerformanceTable({
               Sprint {sprint.sequence} · {sprint.title}
             </option>)}
           </Select>
-        </label>
+        </Label>
       </div>
       {range==="picked"?<fieldset className="mb-4 rounded-lg border border-border p-3"
         aria-label="Choose sprints for performance comparison">
@@ -137,14 +138,14 @@ export function MentorPrototypePerformanceTable({
           {sorted.map(sprint=>{
             const release=releases.find(item=>item.id===sprint.releaseId);
             const checked=pickedSprintIds.includes(sprint.id);
-            return <label key={sprint.id} className="flex min-h-9 items-center gap-2 text-sm">
+            return <Label variant="choice" key={sprint.id} className="flex min-h-9 items-center gap-2">
               <Checkbox checked={checked} onChange={event=>
                 setPickedSprintIds(previous=>event.target.checked
                   ?previous.includes(sprint.id)?previous:[...previous,sprint.id]
                   :previous.filter(id=>id!==sprint.id))}/>
               <span>{release?.title??"Release"} · Sprint {sprint.sequence}
                 {" "}<small>({sprint.status.toLowerCase()})</small></span>
-            </label>;
+            </Label>;
           })}
         </div>
         {pickedSprintIds.length===0?<p role="status" className="mt-2 text-sm">

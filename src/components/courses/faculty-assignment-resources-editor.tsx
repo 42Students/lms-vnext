@@ -11,6 +11,7 @@ import {Alert} from "@/components/ui/alert";
 import {
  facultyAssignmentResourcesSchema,type FacultyAssignmentResourceInput,
 } from "@/modules/courses/faculty-assignment-authoring-model";
+import { Label } from "@/components/ui/label";
 
 type Resource=FacultyAssignmentResourceInput;
 type ResourceKind=Resource["kind"];
@@ -254,23 +255,23 @@ export function FacultyAssignmentResourcesEditor({
           onClick={()=>remove(index)}>Remove</Button>
         </div>
        </div>
-       <label className="grid gap-[6px] text-[13px] font-semibold">Resource title
+       <Label stack>Resource title
         <Input maxLength={255} required disabled={busy} value={item.title}
          onChange={event=>change(index,{...item,title:event.target.value})}/>
-       </label>
+       </Label>
        {item.kind==="INSTRUCTIONS"?
-        <label className="grid gap-[6px] text-[13px] font-semibold">Instructions
+        <Label stack>Instructions
          <Textarea rows={5} maxLength={10000} required disabled={busy}
           value={item.body}
           onChange={event=>change(index,{...item,body:event.target.value})}/>
-        </label>:
+        </Label>:
         item.kind==="LINK"?
-        <label className="grid gap-[6px] text-[13px] font-semibold">HTTPS link
+        <Label stack>HTTPS link
          <Input type="url" maxLength={2048} required disabled={busy}
           placeholder="https://" value={item.externalUrl}
           onChange={event=>change(index,{...item,externalUrl:event.target.value})}/>
-        </label>:
-        <label className="grid gap-[6px] text-[13px] font-semibold">Private {item.kind==="PDF"?"PDF":"file"}
+        </Label>:
+        <Label stack>Private {item.kind==="PDF"?"PDF":"file"}
          <Input type="file" disabled={busy} accept={item.kind==="PDF"?
           ".pdf,application/pdf":undefined}
           onChange={event=>{
@@ -283,7 +284,7 @@ export function FacultyAssignmentResourcesEditor({
            "Private upload attached. File access requires malware-scan verification.":
            "Select a file to upload before saving."}
          </span>
-        </label>}
+        </Label>}
       </section>)}
      {drafts.length===0?<p className="text-sm text-muted-foreground">
       No instructions or resources yet.</p>:null}

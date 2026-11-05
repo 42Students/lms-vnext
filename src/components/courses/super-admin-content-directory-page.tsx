@@ -24,6 +24,7 @@ import {
 import { listSuperAdminContentDirectory,listSuperAdminContentSectionOptions } from "@/modules/courses/super-admin-content-directory-service";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 function publicHttpsHref(value:string|null){
  return safePublicCourseContentUrl(value);
@@ -152,11 +153,11 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
       deliveryId:data.query.deliveryId??"",scope:data.query.scope,
     }).filter(([,value])=>Boolean(value)).map(([key,value])=>
       <input key={key} type="hidden" name={key} value={value}/>)}
-    <label className="grid min-w-[12rem] flex-1 gap-1 text-sm font-semibold text-body">
+    <Label stack className="min-w-[12rem] flex-1">
       Find a course or lesson
       <Input name="lessonSearch" type="search" maxLength={100}
         defaultValue={lessonSearch} placeholder="Search course, code or lesson"/>
-    </label>
+    </Label>
     <Button type="submit" variant="secondary">Find lessons</Button>
   </form>
   {lessonsResult.status==="fulfilled"
@@ -189,47 +190,47 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
     </div>
   <form method="get" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
    <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+    <Label stack className="min-w-0">Search
      <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
       placeholder="Content, lesson or course" className="min-h-11 md:min-h-9"/>
-    </label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+    </Label>
+    <Label stack className="min-w-0">Status
      <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
       {statuses.map(status=><option key={status}>{status}</option>)}
      </Select>
-    </label>
-    <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Rows per page
+    </Label>
+    <Label stack className="min-w-0">Rows per page
       <Select name="pageSize" defaultValue={String(data.query.pageSize)} className="min-h-11 md:min-h-9">
         {ADMIN_CONTENT_PAGE_OPTIONS.map(n=><option key={n} value={n}>{n}</option>)}
       </Select>
-    </label>
+    </Label>
     <Button type="submit" className="min-h-11 w-full self-end sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Filter</Button>
    </div>
    <details className="min-w-0" open>
     <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Filters</summary>
     <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 xl:grid-cols-4">
-     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course / offering
+     <Label stack className="min-w-0">Course / offering
       <Select name="offeringId" defaultValue={data.query.offeringId??""} className="min-h-11 md:min-h-9">
        <option value="">Choose a course</option>{offerings.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
       </Select>
-     </label>
-     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson
+     </Label>
+     <Label stack className="min-w-0">Lesson
       <Select name="lessonId" defaultValue={data.query.lessonId??""} className="min-h-11 md:min-h-9">
        <option value="">Choose a lesson</option>{lessons.filter(x=>!data.query.offeringId||x.offeringId===data.query.offeringId).map(item=><option key={item.id} value={item.id}>{item.name} · {item.courseCode}</option>)}
       </Select>
-     </label>
-     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
+     </Label>
+     <Label stack className="min-w-0">Section
       <Select name="deliveryId" defaultValue={data.query.deliveryId??""} className="min-h-11 md:min-h-9">
        <option value="">All content in this lesson</option>{sections.filter(x=>!data.query.offeringId||x.offeringId===data.query.offeringId).map(item=><option key={item.id} value={item.id}>{item.courseCode} · {item.sectionName}</option>)}
       </Select>
-     </label>
-     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Audience
+     </Label>
+     <Label stack className="min-w-0">Audience
       <Select name="scope" defaultValue={data.query.scope} className="min-h-11 md:min-h-9">
        <option value="ALL">All audiences</option>
        <option value="SHARED">All currently eligible sections for this course</option>
        <option value="SECTION">One specific section</option>
       </Select>
-     </label>
+     </Label>
     </div>
    </details>
    <Link href={adminContentHref(kind,{})} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Clear filters</Link>

@@ -7,6 +7,7 @@ import {useEffect,useRef,useState} from "react";
 import {superAdminStudentBulkFailure} from "@/modules/module-access/super-admin-student-bulk-feedback";
 import {useRouter} from "next/navigation";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Learner={id:string;name:string};
 const MAX_SELECTED_STUDENTS=1000;
 export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:readonly Learner[];collegeId:string}){
@@ -142,13 +143,13 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
     </div>
   </div>:null}
   <p className="text-xs text-muted-foreground leading-5">Select at most 1,000 authorized students across roster pages. Each 25-person group is atomic; already completed groups remain committed if a later group fails. Selection is retained across this college's roster pages and filters for this browser session. Updates are saved in validated batches of 25 with a separate audit event for each group. Placements remains configured at college scope (not per student); Projects and Electives can be overridden here. Locked ancestor policies remain protected.</p>
-  <label className="flex min-h-11 items-center gap-2 text-sm text-body print:hidden">
+  <Label variant="choice" className="flex min-h-11 items-center gap-2 print:hidden">
    <Checkbox checked={allVisible}
     onChange={e=>toggleVisible(e.target.checked)} disabled={busy}/>
    {allVisible?"Clear":"Select"} all {capped.length} students on this visible page
-  </label>
+  </Label>
   <div role="region" aria-label="Bulk student selection" tabIndex={0} className="grid max-h-44 gap-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] md:grid-cols-2 focus-ring print:hidden">
-   {capped.map((learner,index)=><label key={learner.id}
+   {capped.map((learner,index)=><Label key={learner.id}
      className={"flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm text-body "+(selected.includes(learner.id)?"bg-[var(--lms-primary-subtle)]":"")}>
     <Checkbox checked={selected.includes(learner.id)} disabled={busy}
      aria-label={"Select "+learner.name}
@@ -175,16 +176,16 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
        });
      }}/>
     <span className="min-w-0 break-words">{learner.name}</span>
-   </label>)}
+   </Label>)}
   </div>
   <div className="grid min-w-0 grid-cols-1 items-end gap-3 text-sm print:hidden md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-   <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module<Select value={module} disabled={busy} onChange={e=>setModule(e.target.value as typeof module)}
+   <Label stack className="min-w-0">Module<Select value={module} disabled={busy} onChange={e=>setModule(e.target.value as typeof module)}
     className="min-h-11 w-full">
-    <option value="projects">Projects</option><option value="electives">Electives</option></Select></label>
-   <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Access<Select value={action} disabled={busy} onChange={e=>setAction(e.target.value as typeof action)}
+    <option value="projects">Projects</option><option value="electives">Electives</option></Select></Label>
+   <Label stack className="min-w-0">Access<Select value={action} disabled={busy} onChange={e=>setAction(e.target.value as typeof action)}
     className="min-h-11 w-full">
     <option value="ENABLE">Enable</option><option value="DISABLE">Disable</option>
-    <option value="INHERIT">Clear override / Inherit</option></Select></label>
+    <option value="INHERIT">Clear override / Inherit</option></Select></Label>
    <Button variant="primary" type="button" className="min-h-11 w-full md:w-auto" disabled={busy||!selected.length} onClick={()=>setConfirmOpen(true)}
     >{busy?"Saving…":"Review and apply"}</Button>
   </div>

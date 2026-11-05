@@ -10,6 +10,7 @@ import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {useTpoStudentsSelection} from "./tpo-students-selection";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Course={id:string;cohortId:string;name:string;code:string};
 type Result={id:string;status:"assigned"|"duplicate"|"skipped"};
 export function TpoStudentsAssignPrep(){
@@ -51,16 +52,16 @@ export function TpoStudentsAssignPrep(){
   {loading?<p role="status" className="text-sm text-body">Loading preparation courses…</p>:null}
   {!loading&&courses.length===0&&!error?<p role="status" className="text-sm text-body">No preparation courses are available for assignment.</p>:null}
   <div className="grid min-w-0 gap-3 md:grid-cols-2">
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Preparation course
+   <Label stack className="min-w-0">Preparation course
     <Select className="min-h-11 w-full min-w-0 md:min-h-9" value={offeringId} onChange={e=>{setOfferingId(e.target.value);setError("");}} disabled={pending||loading}
      >
      <option value="">Choose a course</option>
      {courses.map(course=><option key={course.id} value={course.id}>{course.name} · {course.code}</option>)}
     </Select>
-   </label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Due date and time (IST, optional)
+   </Label>
+   <Label stack className="min-w-0">Due date and time (IST, optional)
     <Input className="min-h-11 w-full min-w-0 md:min-h-9" type="datetime-local" disabled={pending} value={dueAt} onChange={e=>{setDueAt(e.target.value);setError("");}} />
-   </label>
+   </Label>
   </div>
   {dueAt&&!tpoPrepDueAtUtc(dueAt)?<InlineNotice tone="error" message="Choose a valid IST due date."/>:null}
   <Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||loading||!picked.length||!offeringId||Boolean(dueAt&&!tpoPrepDueAtUtc(dueAt))} onClick={()=>setConfirm(true)}

@@ -6,6 +6,7 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {OrganizationActions} from "@/components/admin/organization-actions";
 import {EmptyState} from "@/components/ui/empty-state";
+import { Label } from "@/components/ui/label";
 type Row={id:string;name:string;canManage:boolean};
 const PAGE_SIZE=25;
 /** The directory is scoped on the server before these rows reach the browser. */
@@ -24,11 +25,11 @@ export function TenantSetupOrganizationList({rows}:{rows:readonly Row[]}){
  ];
  return <div className="min-w-0 space-y-3">
   <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end">
-   <label className="flex min-w-0 flex-1 flex-col gap-1.5 text-[13px] font-semibold text-body">
+   <Label className="flex min-w-0 flex-1 flex-col gap-1.5">
     Search organizations
     <Input type="search" value={search} maxLength={100} placeholder="Search organizations"
      onChange={e=>{setSearch(e.target.value);setPage(1);}}/>
-   </label>
+   </Label>
    <Button variant="secondary" type="button" onClick={()=>router.refresh()}>Refresh</Button>
   </div>
   <p role="status" className="text-xs text-muted-foreground">{matching.length} of {rows.length} organizations · Page {currentPage} of {pages}</p>

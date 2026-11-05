@@ -8,6 +8,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {projectMutation} from "./project-api";
 import {useToast} from "@/components/ui/toast";
 import styles from "./legacy-project-touch-actions.module.css";
+import { Label } from "@/components/ui/label";
 
 export function MentorProjectCloseoutControl({
   projectId,expectedUpdatedAt,
@@ -41,12 +42,12 @@ export function MentorProjectCloseoutControl({
   }
   return <div className={"space-y-3 "+styles["legacy"]}>
     <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
-    {labels.map((label,i)=><label key={label}
-      className="flex min-h-11 min-w-0 items-start gap-3 py-[var(--lms-space-3)] text-sm text-body">
+    {labels.map((label,i)=><Label variant="choice" key={label}
+      className="flex min-h-11 min-w-0 items-start gap-3 py-[var(--lms-space-3)]">
       <Checkbox disabled={pending} checked={checks[i]??false}
         onChange={event=>setChecks(old=>old.map((v,j)=>i===j?event.target.checked:v))}
         className="mt-1 size-4 accent-[var(--lms-primary)]" />{label}
-    </label>)}
+    </Label>)}
     </div>
     <p role="status" className="text-xs text-muted-foreground">{checks.filter(Boolean).length} of 3 confirmations completed</p>
     <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>setConfirming(true)} disabled={pending||!checks.every(Boolean)}

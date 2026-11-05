@@ -8,6 +8,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {useToast} from "@/components/ui/toast";
 import {projectMutation} from "./project-api";
 import {mentorGoogleMeetingFollowUp} from "./mentor-google-meeting-follow-up";
+import { Label } from "@/components/ui/label";
 
 /** Selected Mentor calendar cancellation reuses the audited, version-checked
  * meeting decision transaction. A cancelled meeting is not silently erased.
@@ -57,12 +58,12 @@ export function MentorMeetingCancelInline(props:{
       title="Cancel this meeting?" confirmLabel="Confirm cancellation"
       description="Cancellation is permanent in the LMS. Active project members receive an in-app update; after saving, Google Calendar removal is attempted separately and may need a retry."
       pending={pending} onConfirm={()=>void cancel()}>
-      <label className="block text-sm">
+      <Label variant="choice" className="block">
         Note to the team (optional)
         <Textarea maxLength={2000} rows={3} disabled={pending}
           value={note} onChange={event=>setNote(event.target.value)}
           placeholder="Reason for cancelling"/>
-      </label>
+      </Label>
       {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     </ConfirmDialog>
   </>;

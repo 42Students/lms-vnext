@@ -19,6 +19,7 @@ import { listCollegeClasses } from "@/modules/academics/college-structure-direct
 import { listCollegeSectionOptions } from "@/modules/academics/college-section-mutation-service";
 import { collegeClassQuerySchema, collegeStructureHref, type CollegeClassQuery } from "@/modules/academics/college-structure-directory-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 const statuses = ["ALL", "ACTIVE", "ARCHIVED"] as const;
 const pageUrl = (query: CollegeClassQuery) => collegeStructureHref("CLASSES", query).replace("/college/classes", "/admin/classes");
@@ -78,23 +79,23 @@ export default async function SuperAdminClassesPage({ searchParams }: {
             programs={data.programs} cohorts={options?.cohorts??[]}
             selectedProgramId={data.query.programId??""}
             selectedCohortCode={data.query.cohortCode??""}/>
-          <label className="grid min-w-0 w-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search class, program, batch, capacity or description
+          <Label stack className="min-w-0 w-full">Search class, program, batch, capacity or description
             <Input name="q" type="search" placeholder="Search class, program, batch or capacity" defaultValue={data.query.q}
               className="min-h-11 md:min-h-9" />
-          </label>
+          </Label>
           <Disclosure title="More filters" defaultOpen={Boolean(data.query.status!=="ALL" || data.query.pageSize!==25 || data.query.cohortCode)}
             className="order-last min-w-0 md:col-span-2 xl:col-span-5"
             contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-3)] md:grid-cols-2">
-          <label className="grid min-w-0 w-full md:min-w-32 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+          <Label stack className="min-w-0 w-full md:min-w-32">Status
             <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
               {statuses.map(status=><option key={status} value={status}>{status==="ALL"?"All statuses":status}</option>)}
             </Select>
-          </label>
-          <label className="grid min-w-0 w-full md:min-w-32 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
+          </Label>
+          <Label stack className="min-w-0 w-full md:min-w-32">Rows per page
             <Select name="pageSize" defaultValue={data.query.pageSize} className="min-h-11 md:min-h-9">
               {[10,20,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
             </Select>
-          </label>
+          </Label>
           </Disclosure>
           <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
           <Button variant="secondary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Refresh</Button>

@@ -10,6 +10,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {TPO_SEASON_CREATE_REVIEW_COPY} from "@/modules/placements/tpo-season-write-model";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Season = {
   id: string;
@@ -78,14 +79,14 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
         <>
           <div className="grid min-w-0 gap-3 sm:grid-cols-2">
             {(["name", "code", "startDate", "endDate"] as const).map((key) => (
-              <label key={key} className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+              <Label stack key={key} className="min-w-0">
                 {key === "startDate" ? "Start date" : key === "endDate" ? "End date" : key === "name" ? "Season name" : "Season code"}
                 <Input type={key.endsWith("Date") ? "date" : "text"}
                   value={form[key]} disabled={busy}
                   onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))}
                   className="min-h-11 w-full min-w-0 md:min-h-9"
                   required />
-              </label>
+              </Label>
             ))}
           </div>
           <p className="text-xs leading-5 text-muted-foreground">{TPO_SEASON_CREATE_REVIEW_COPY.unavailable}</p>
@@ -121,12 +122,12 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
          <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3"><dt>Season code</dt><dd className="break-words">{form.code}</dd></div>
          <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3"><dt>Dates</dt><dd className="break-words">{form.startDate} – {form.endDate}</dd></div>
         </dl>
-        {!edit ? <label className="mt-3 flex items-start gap-2 text-sm text-body">
+        {!edit ? <Label variant="choice" className="mt-3 flex items-start gap-2">
           <Checkbox checked={acknowledged} disabled={busy}
             onChange={event=>{setAcknowledged(event.currentTarget.checked);setError(null);}}
             className="mt-1 size-4 shrink-0" />
           <span>{TPO_SEASON_CREATE_REVIEW_COPY.confirm}</span>
-        </label>:null}
+        </Label>:null}
         {error ? <InlineNotice tone="error" message={error} /> : null}
       </ConfirmDialog>
     </section>

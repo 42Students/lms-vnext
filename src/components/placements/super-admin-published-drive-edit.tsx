@@ -13,6 +13,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 import {beginDriveMutation,endDriveMutation} from "@/modules/placements/drive-mutation-client-lock";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Job={id:string;title:string;description:string;locations:string[];
  applicationDeadline:string|null;openings:number|null;minCtc:number|null;maxCtc:number|null;updatedAt:string;
  companyRelationshipId:string;assessmentUrl:string|null;assessmentDeadline:string|null;
@@ -261,11 +262,11 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
       setCustomRules(job.customEligibilityRules);setOpen(true);}}>
    {"Edit "+job.status.toLowerCase()+" drive"}</Button>:
    <form ref={formRef} className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] md:grid-cols-2 lg:grid-cols-3" onChange={()=>setDirty(true)} onSubmit={reviewSave}>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Job Title<Input name="title" autoFocus placeholder="e.g., Software Engineer" required minLength={3} maxLength={100}
-     defaultValue={job.title} className={cls}/></label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Application deadline (IST)<Input type="datetime-local" required
-     name="deadline" defaultValue={istLocal(job.applicationDeadline)} className={cls}/></label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company Name
+    <Label stack className="min-w-0">Job Title<Input name="title" autoFocus placeholder="e.g., Software Engineer" required minLength={3} maxLength={100}
+     defaultValue={job.title} className={cls}/></Label>
+    <Label stack className="min-w-0">Application deadline (IST)<Input type="datetime-local" required
+     name="deadline" defaultValue={istLocal(job.applicationDeadline)} className={cls}/></Label>
+    <Label stack className="min-w-0">Company Name
      <Input list="published-drive-companies" name="companySearch" className={cls} defaultValue={
        companies.find(c=>c.relationshipId===job.companyRelationshipId)?.name??""}
        onChange={event=>{
@@ -276,14 +277,14 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
      <datalist id="published-drive-companies">{companies.map(company=><option key={company.relationshipId} value={company.name}/>)}</datalist>
      <input type="hidden" name="companyRelationshipId" defaultValue={job.companyRelationshipId}/>
      <small className="font-normal text-muted-foreground">Choose a verified company in this college. Employer reassignment is blocked after any applications.</small>
-    </label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment URL
+    </Label>
+    <Label stack className="min-w-0">Assessment URL
       <Input type="url" name="assessmentUrl" maxLength={2048} defaultValue={job.assessmentUrl??""} className={cls}/>
-    </label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment deadline (IST)
+    </Label>
+    <Label stack className="min-w-0">Assessment deadline (IST)
       <Input type="datetime-local" name="assessmentDeadline" defaultValue={istLocal(job.assessmentDeadline)} className={cls}/>
-    </label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2 lg:col-span-3">Job Description
+    </Label>
+    <Label stack className="min-w-0 sm:col-span-2 lg:col-span-3">Job Description
       <div className="flex flex-wrap gap-1.5 py-1" role="toolbar" aria-label="Job Description formatting">
        {(["strong","em","p","li"] as const).map(tag=>
         <Button key={tag} type="button" variant="secondary" size="sm" disabled={pending}
@@ -292,8 +293,8 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
         </Button>)}
       </div>
       <Textarea name="description" required
-     maxLength={15000} defaultValue={job.description} rows={4} className={cls}/></label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2 lg:col-span-3">Responsibilities
+     maxLength={15000} defaultValue={job.description} rows={4} className={cls}/></Label>
+    <Label stack className="min-w-0 sm:col-span-2 lg:col-span-3">Responsibilities
      <div className="flex flex-wrap gap-1.5 py-1" role="toolbar" aria-label="Responsibilities formatting">
       {(["strong","em","p","li"] as const).map(tag=>
        <Button key={tag} type="button" variant="secondary" size="sm" disabled={pending}
@@ -301,43 +302,43 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
         {tag==="strong"?"Bold":tag==="em"?"Italic":tag==="p"?"Paragraph":"List item"}
        </Button>)}
      </div>
-     <Textarea name="responsibilities" maxLength={15000} rows={3} defaultValue={job.responsibilities} className={cls}/></label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Job Type
+     <Textarea name="responsibilities" maxLength={15000} rows={3} defaultValue={job.responsibilities} className={cls}/></Label>
+    <Label stack className="min-w-0">Job Type
      <Select name="jobTypeLabel" required defaultValue={job.jobTypeLabel} className={cls}>
       {jobTypes.map(type=><option key={type.label} value={type.label}>{type.label}</option>)}
       {job.jobTypeLabel&&!jobTypes.some(type=>type.label===job.jobTypeLabel)?
        <option value={job.jobTypeLabel}>{job.jobTypeLabel} (historic)</option>:null}
-     </Select></label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Employment type
+     </Select></Label>
+    <Label stack className="min-w-0">Employment type
      <Select name="employmentType" required defaultValue={job.employmentType} className={cls}>
       <option value="FULL_TIME">Full-time</option><option value="INTERNSHIP">Internship</option>
       <option value="CONTRACT">Contract</option>
-     </Select></label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Work mode
+     </Select></Label>
+    <Label stack className="min-w-0">Work mode
      <Select name="workMode" required defaultValue={job.workMode} className={cls}>
       <option value="ONSITE">Onsite</option><option value="HYBRID">Hybrid</option>
       <option value="REMOTE">Remote</option>
-     </Select></label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2 lg:col-span-3">Locations (comma-separated)<Input name="locations"
-     defaultValue={job.locations.join(", ")} className={cls}/></label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Openings<Input name="openings" type="number" min={1}
-     defaultValue={job.openings??""} className={cls}/></label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum annual CTC (INR)<Input name="minimumAnnualCtcInr"
-     type="number" min={0} defaultValue={job.minCtc??""} className={cls}/></label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum annual CTC (INR)<Input name="maximumAnnualCtcInr"
-     type="number" min={0} defaultValue={job.maxCtc??""} className={cls}/></label>
+     </Select></Label>
+    <Label stack className="min-w-0 sm:col-span-2 lg:col-span-3">Locations (comma-separated)<Input name="locations"
+     defaultValue={job.locations.join(", ")} className={cls}/></Label>
+    <Label stack className="min-w-0">Openings<Input name="openings" type="number" min={1}
+     defaultValue={job.openings??""} className={cls}/></Label>
+    <Label stack className="min-w-0">Minimum annual CTC (INR)<Input name="minimumAnnualCtcInr"
+     type="number" min={0} defaultValue={job.minCtc??""} className={cls}/></Label>
+    <Label stack className="min-w-0">Maximum annual CTC (INR)<Input name="maximumAnnualCtcInr"
+     type="number" min={0} defaultValue={job.maxCtc??""} className={cls}/></Label>
     <fieldset className="grid min-w-0 gap-3 border-t border-border pt-3 sm:col-span-2 lg:col-span-3 sm:grid-cols-2">
       <legend className="mb-3 text-sm font-semibold">Preferred candidate details (informational)</legend>
-      <label className="grid gap-1 text-xs font-semibold">Preferred Degree
-        <Input name="preferredDegree" maxLength={160} defaultValue={job.candidatePreferences.preferredDegree}/></label>
-      <label className="grid gap-1 text-xs font-semibold">Specialization
-        <Input name="specialization" maxLength={160} defaultValue={job.candidatePreferences.specialization}/></label>
-      <label className="grid gap-1 text-xs font-semibold">Graduation Year
-        <Input name="graduationYear" type="number" min={1990} max={2050} defaultValue={job.candidatePreferences.graduationYear??""}/></label>
-      <label className="grid gap-1 text-xs font-semibold">GPA (out of 10)
-        <Input name="minGpa" type="number" min={0} max={10} step="0.01" defaultValue={job.candidatePreferences.minGpa??""}/></label>
-      <label className="grid gap-1 text-xs font-semibold">City
-        <Input name="preferredCity" maxLength={160} defaultValue={job.candidatePreferences.city}/></label>
+      <Label stack>Preferred Degree
+        <Input name="preferredDegree" maxLength={160} defaultValue={job.candidatePreferences.preferredDegree}/></Label>
+      <Label stack>Specialization
+        <Input name="specialization" maxLength={160} defaultValue={job.candidatePreferences.specialization}/></Label>
+      <Label stack>Graduation Year
+        <Input name="graduationYear" type="number" min={1990} max={2050} defaultValue={job.candidatePreferences.graduationYear??""}/></Label>
+      <Label stack>GPA (out of 10)
+        <Input name="minGpa" type="number" min={0} max={10} step="0.01" defaultValue={job.candidatePreferences.minGpa??""}/></Label>
+      <Label stack>City
+        <Input name="preferredCity" maxLength={160} defaultValue={job.candidatePreferences.city}/></Label>
       <p className="self-end text-xs text-muted-foreground">Saved as legacy display preferences, not admission eligibility gates.</p>
     </fieldset>
 
@@ -345,17 +346,17 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
      <legend className="text-sm font-semibold text-[var(--lms-heading)]">Important dates</legend>
      <p className="text-xs text-muted-foreground">Add up to 20 labelled dates. Times use IST.</p>
      {importantDates.map((row,index)=><div key={index} className="grid min-w-0 gap-2 rounded-[var(--lms-control-radius)] border border-border p-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
-      <label className="grid min-w-0 gap-1 text-xs font-semibold">Label
+      <Label stack className="min-w-0">Label
        <Input required maxLength={120} value={row.label} className={cls}
         onChange={e=>updateImportantDate(index,"label",e.target.value)}/>
-      </label>
-      <label className="grid min-w-0 gap-1 text-xs font-semibold">Date and time (IST)
+      </Label>
+      <Label stack className="min-w-0">Date and time (IST)
        <Input type="datetime-local" required value={istLocal(row.at)} className={cls}
         onChange={e=>{
          try{updateImportantDate(index,"at",e.target.value?driveDeadlineIstToIso(e.target.value):"");}
          catch{setError("Enter a valid important date in IST.");}
         }}/>
-      </label>
+      </Label>
       <Button type="button" variant="secondary" disabled={pending} onClick={()=>{
        setImportantDates(rows=>rows.filter((_,i)=>i!==index));setDirty(true);
       }}>Remove</Button>
@@ -368,14 +369,14 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
      <legend className="text-sm font-semibold text-[var(--lms-heading)]">Custom eligibility rules (informational)</legend>
      <p className="text-xs text-muted-foreground">Custom rules appear in the job description. Enforceable eligibility remains in the saved college policy.</p>
      {customRules.map((row,index)=><div key={index} className="grid min-w-0 gap-2 rounded-[var(--lms-control-radius)] border border-border p-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
-      <label className="grid min-w-0 gap-1 text-xs font-semibold">Rule label
+      <Label stack className="min-w-0">Rule label
        <Input required maxLength={160} value={row.label} className={cls}
         onChange={e=>updateCustomRule(index,"label",e.target.value)}/>
-      </label>
-      <label className="grid min-w-0 gap-1 text-xs font-semibold">Value
+      </Label>
+      <Label stack className="min-w-0">Value
        <Input required maxLength={200} value={row.value} className={cls}
         onChange={e=>updateCustomRule(index,"value",e.target.value)}/>
-      </label>
+      </Label>
       <Button type="button" variant="secondary" disabled={pending} onClick={()=>{
        setCustomRules(rows=>rows.filter((_,i)=>i!==index));setDirty(true);
       }}>Remove</Button>
@@ -391,8 +392,8 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
      <p className="mt-1 text-body">Published eligibility targeting is locked to protect existing applicant policy and historical evaluations. Duplicate this drive as a draft to change the dependent academic audience; blank restrictions mean all eligible students within the selected college.</p>
      {job.targeting?<p className="mt-1 text-muted-foreground">Saved restrictions: {job.targeting.programs} programs · {job.targeting.cohorts} batches · {job.targeting.sections} classes.</p>:<p role="alert" className="text-error">Eligibility policy could not be verified.</p>}
     </div>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2 lg:col-span-3">Reason for edit
-     <Textarea name="reason" required minLength={10} maxLength={1000} rows={2} className={cls}/></label>
+    <Label stack className="min-w-0 sm:col-span-2 lg:col-span-3">Reason for edit
+     <Textarea name="reason" required minLength={10} maxLength={1000} rows={2} className={cls}/></Label>
     {error?<p role="alert" className="text-sm text-error sm:col-span-2 lg:col-span-3">{error}</p>:null}
     <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap sm:items-center sm:col-span-2 lg:col-span-3">
      <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||!canEdit}>

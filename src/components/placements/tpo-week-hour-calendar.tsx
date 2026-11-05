@@ -15,6 +15,7 @@ import {positionWeekEvents,type WeekGridEvent} from "@/modules/placements/tpo-we
 import {calendarLocalIstToOffset,calendarDueAtToIstLocal} from "@/modules/placements/tpo-calendar-followup-model";
 import {TpoCalendarMoveFollowup,type TpoCalendarLeadOption} from "./tpo-calendar-followup-actions";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
 function currentTimeMs(){return Date.now();}
@@ -158,10 +159,10 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
  return <section aria-label="TPO weekly time calendar" className="space-y-3">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <Heading level={2}>Week · 7 AM to 9 PM IST</Heading>
-   <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-body-text)] sm:w-64 text-[var(--lms-neutral-400)]">Find an event
+   <Label stack className="w-full min-w-0 sm:w-64">Find an event
     <Input type="search" value={filter} onChange={e=>setFilter(e.target.value)} maxLength={100}
      placeholder="Company or event"/>
-   </label>
+   </Label>
   </div>
   <details className="text-[13px] leading-5 text-[var(--lms-muted-text)]"><summary className="w-fit cursor-pointer font-semibold text-[var(--lms-link-text)] focus-ring max-md:flex max-md:min-h-11 max-md:items-center">How to use this calendar</summary><p className="mt-[var(--lms-space-2)] max-w-prose">Click an empty hour to add a recruiter follow-up, or drag an existing follow-up onto another hour to move it. Events with an unknown duration use a 30-minute visual marker; it is not a booked time range. Overlapping events share their time lane.</p></details>
   <div tabIndex={0} role="region" aria-label="Recruiter follow-up weekly calendar, scroll horizontally for more days" className={"overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_0%,black_94%,transparent_100%)] bg-surface focus-ring "+weekStyles["grid"]}>
@@ -235,20 +236,20 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
    <div className="space-y-3">
     {slot&&blocked.has(slot.slice(0,10))?<Alert tone="warning">This day is blocked for placement scheduling. Choose another date if possible.</Alert>:null}
     {!blockedDatesAvailable?<Alert tone="warning">Blocked-date settings could not be loaded. Scheduling is not confirmed conflict-free.</Alert>:null}
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date and time (IST)
+    <Label stack>Date and time (IST)
      <Input type="datetime-local" value={slot} onChange={e=>setSlot(e.target.value)}
-      className=""/></label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search recruiter lead
+      className=""/></Label>
+    <Label stack>Search recruiter lead
      <Input value={leadQuery} onChange={e=>{setLeadQuery(e.target.value);setLeadId("");}}
       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3" maxLength={120}/>
      <Select value={leadId} disabled={loadingLeads} required onChange={e=>setLeadId(e.target.value)}
       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3">
       <option value="">{loadingLeads?"Loading recruiters…":"Choose recruiter"}</option>
       {matches.map(lead=><option key={lead.id} value={lead.id}>{lead.name}{lead.companyName?" · "+lead.companyName:""}</option>)}
-     </Select></label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Note (optional)
+     </Select></Label>
+    <Label stack>Note (optional)
      <Textarea value={note} maxLength={500} onChange={e=>setNote(e.target.value)}
-      className=""/></label>
+      className=""/></Label>
     {message?<InlineNotice tone="error" message={message}/>:null}
     <div className="flex flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end">
      <Button variant="secondary" type="button" disabled={saving} onClick={()=>cancelDraft()}

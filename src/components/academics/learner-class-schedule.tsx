@@ -47,6 +47,7 @@ import {
 } from "./learner-schedule-model";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type CourseChoice = {
   deliveryId: string;
@@ -669,24 +670,24 @@ export function LearnerClassSchedule({
         {courseBasePath === "/learn/courses" ? (
           <Disclosure title="Filters" defaultOpen={Boolean(sessionSearch || sessionKind !== "ALL" || upcomingOnly)} className="border-b border-border" contentClassName="pb-2">
           <div className={styles.filters+" min-w-0"}>
-            <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find sessions
+            <Label className="min-w-0 flex-1">Find sessions
               <Input type="search" value={sessionSearch} maxLength={100}
                 onChange={event=>setSessionSearch(event.target.value)}
                 placeholder="Class title, faculty, location or course"
                 className="mt-1.5 min-h-11 w-full min-w-0 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-background px-3 text-sm font-normal text-foreground" />
-            </label>
+            </Label>
             {sessionSearch ? <Button variant="secondary" type="button" onClick={()=>setSessionSearch("")}
               >
               Clear search
             </Button> : null}
-            <label className="min-w-44 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Session kind
+            <Label className="min-w-44">Session kind
               <Select value={sessionKind} onChange={event=>setSessionKind(event.target.value as LearnerScheduleKind)}
                 className="mt-1.5 min-h-11 w-full min-w-0 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-background px-3 text-sm text-foreground">
                 <option value="ALL">All sessions</option>
                 <option value="COURSE">Course classes only</option>
                 <option value="SECTION">General section events</option>
               </Select>
-            </label>
+            </Label>
             <FilterChip type="button" aria-pressed={upcomingOnly}
               onClick={()=>setUpcomingOnly(value=>!value)}>
               Upcoming sessions only
@@ -706,7 +707,7 @@ export function LearnerClassSchedule({
           </Disclosure>
         ) : null}
         {sections.length > 1 ? (
-          <label className="mt-3 block max-w-sm border-t border-border pt-3 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="mt-3 block max-w-sm border-t border-border pt-3">
             Section
             <Select value={sectionId} onChange={event => setSectionId(event.target.value)}
               aria-label="Filter class schedule by section" className="mt-1.5 min-h-11 md:min-h-9 w-full">
@@ -715,7 +716,7 @@ export function LearnerClassSchedule({
                 {section.sectionName} · {section.academicPeriodName}
               </option>)}
             </Select>
-          </label>
+          </Label>
         ) : null}
         {courses.length > 1 ? (
           <div className={styles.courseFilter+" min-w-0"}>

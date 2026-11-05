@@ -16,6 +16,7 @@ import {
   mentorTeamHistoryQuerySchema,
 } from "@/modules/projects/mentor-team-history-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Raw = { view?: string | string[]; role?: string | string[]; primary?:string|string[]; order?:string|string[]; page?: string | string[] };
 const formatDate = (value: Date) => new Intl.DateTimeFormat("en-IN", {
@@ -61,26 +62,26 @@ export default async function MentorTeamHistoryPage({
         <FilterBar title="Filters"><form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"} role="search" aria-label="Team history filters"
           className="grid min-w-0 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-[repeat(3,minmax(0,1fr))_auto]">
           <Input type="hidden" name="view" value={data.query.view}/>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Registered role
+          <Label stack>Registered role
             <Select name="role" defaultValue={data.query.role}
               className="min-h-11 md:min-h-9">
               <option value="ALL">All roles</option>
               <option value="MENTOR">Mentors</option><option value="LEARNER">Learners</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Primary Mentor record
+          </Label>
+          <Label stack>Primary Mentor record
             <Select name="primary" defaultValue={data.query.primary}
               className="min-h-11 md:min-h-9">
               <option value="ALL">All team records</option><option value="PRIMARY">Recorded primary Mentors only</option>
             </Select>
-          </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assignment chronology
+          </Label>
+          <Label stack>Assignment chronology
             <Select name="order" defaultValue={data.query.order}
               className="min-h-11 md:min-h-9">
               <option value="OLDEST">Earliest started first</option>
               <option value="NEWEST">Most recent started first</option>
             </Select>
-          </label>
+          </Label>
           <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
             Filter role
           </Button>

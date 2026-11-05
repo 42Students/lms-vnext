@@ -13,6 +13,7 @@ import {mentorResourceDirectoryHref,parseMentorResourceDirectorySearch}
  from "@/modules/projects/mentor-resource-directory-model";
 import {mentorResourceDirectoryFilterLayout} from "@/modules/projects/mentor-resource-directory-layout-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Search={required?:string|string[];link?:string|string[];description?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
 export default async function MentorResourceDirectoryPage({params,searchParams}:{
  params:Promise<{projectId:string}>;searchParams:Promise<Search>;
@@ -47,41 +48,41 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
    <FilterBar title="Filters"><form method="get" action={base+"/resources-directory"} role="search" aria-label="Project resources filters"
     className={mentorResourceDirectoryFilterLayout+" !rounded-none !border-0 !bg-transparent !p-0 max-md:[&_label]:w-full [&_button]:max-md:w-full"}>
     <div className="grid min-w-0 w-full items-end gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Resource title or description
+    <Label stack>Resource title or description
      <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
       className="min-h-11 md:min-h-9"/>
-    </label>
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Requirement
+    </Label>
+    <Label stack>Requirement
      <Select name="required" defaultValue={data.query.required}
       className="min-h-11 md:min-h-9">
       <option value="ALL">All</option><option value="REQUIRED">Required</option>
       <option value="OPTIONAL">Optional</option>
      </Select>
-    </label>
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">HTTPS link availability
+    </Label>
+    <Label stack>HTTPS link availability
      <Select name="link" defaultValue={data.query.link}
       className="min-h-11 md:min-h-9">
       <option value="ALL">All</option><option value="HTTPS">Safe HTTPS link</option>
       <option value="UNAVAILABLE">No safe HTTPS link</option>
      </Select>
-    </label>
+    </Label>
     <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9">Filter</Button>
     </div>
     <Disclosure title="More filters" defaultOpen={advanced} className="min-w-0 w-full border-y border-border py-2" contentClassName="pt-3">
       <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description recorded
+    <Label stack>Description recorded
      <Select name="description" defaultValue={data.query.description}
       className="min-h-11 md:min-h-9">
       <option value="ALL">Any</option><option value="RECORDED">Has a description</option>
       <option value="MISSING">No written description</option>
      </Select>
-    </label>
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Resource order
+    </Label>
+    <Label stack>Resource order
      <Select name="order" defaultValue={data.query.order}
       className="min-h-11 md:min-h-9">
       <option value="SEQUENCE">Recorded sequence</option><option value="TITLE">Title (A–Z)</option>
      </Select>
-    </label>
+    </Label>
       </div>
     </Disclosure>
     {hasFilters?<Link href={base+"/resources-directory"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-ring hover:text-[var(--lms-primary-text)]">Clear</Link>:null}

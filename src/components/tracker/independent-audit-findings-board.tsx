@@ -13,6 +13,7 @@ import {IndependentFindingActions} from "@/components/tracker/independent-findin
 import {IndependentFindingCopyAction} from "@/components/tracker/independent-finding-copy-action";
 import {auditFindingHistoryActionLabel} from "@/modules/bug-tracker/audit-finding-source-event-model";
 import { Heading } from "@/components/ui/heading";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 type Finding=typeof db10AuditFindings.$inferSelect;
 type FindingEvent={id:string;action:string;toValue:unknown;note:string|null;createdAt:string;fromStatus:string|null;toStatus:string|null};
@@ -107,7 +108,7 @@ export function IndependentAuditFindingsBoard({rows,view}:{
    onOpenChange={open=>{if(!open)setSelected(null);}}>
    {loading?<div role="status" aria-live="polite" className="space-y-3">
     <p className="text-sm text-muted-foreground">Loading finding…</p>
-    {[1,2,3,4].map(n=><div key={n} className="h-8 animate-pulse rounded-md bg-[var(--lms-neutral-100)]"/>)}
+    {[1,2,3,4].map(n=><SkeletonBlock key={n} className="h-8" />)}
    </div>:null}
    {error?<div className="space-y-3"><Banner tone="error">{error}</Banner>
     <Button type="button" variant="secondary" onClick={()=>setRetry(x=>x+1)}>Retry</Button>

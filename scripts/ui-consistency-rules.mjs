@@ -22,6 +22,10 @@ export const RULES = {
   "raw-link": "Use the shared TextLink instead of a raw <a>.",
   "raw-image": "Use the shared Img/Avatar instead of a raw <img>.",
   "link-bare": 'TextLink variant="bare" has no standard look. Use TextLink, ButtonLink, or a real component.',
+  "raw-label": "Use the shared Label (variant field or choice) instead of a raw <label>.",
+  "raw-details": "Use the shared Disclosure instead of a raw <details>.",
+  "handrolled-skeleton": "Use SkeletonBlock or Skeleton instead of animate-pulse placeholders.",
+  "class-conflict": "Two classes from the same property group in one class list (e.g. p-2 p-4); keep only the one that wins.",
   "button-bare": 'Button variant="bare" has no standard look. Use primary/secondary/ghost/danger/link/chip/menu-item.',
   "hex-color": "Use a --lms-* color token instead of a hex literal.",
   "color-literal": "Use a --lms-* color token instead of rgb()/hsl()/named colors.",
@@ -115,6 +119,52 @@ function declarationsOf(source) {
   return decls;
 }
 
+
+// ---- class-conflict: two utilities of the same property group, same variant prefix, in one class list
+function splitClass(tok) {
+  let d = 0, idx = -1;
+  for (let i = 0; i < tok.length; i++) {
+    const c = tok[i];
+    if (c === "[" || c === "(") d++;
+    else if (c === "]" || c === ")") d--;
+    else if (c === ":" && d === 0) idx = i;
+  }
+  return idx < 0 ? ["", tok] : [tok.slice(0, idx + 1), tok.slice(idx + 1)];
+}
+const CONFLICT_GROUPS = [
+  ["padding", /^-?p-/], ["padding-x", /^-?px-/], ["padding-y", /^-?py-/], ["padding-t", /^-?pt-/], ["padding-b", /^-?pb-/], ["padding-l", /^-?pl-/], ["padding-r", /^-?pr-/],
+  ["margin", /^-?m-/], ["margin-x", /^-?mx-/], ["margin-y", /^-?my-/], ["margin-t", /^-?mt-/], ["margin-b", /^-?mb-/], ["margin-l", /^-?ml-/], ["margin-r", /^-?mr-/],
+  ["gap", /^gap-(?!x|y)/], ["font-size", /^text-(?:xs|sm|base|lg|xl|[2-9]xl|\[[0-9.]+(?:px|rem)\]|\[var\(--lms-font-[a-z0-9]+\)\]|\[length:[^\]]+\])$/],
+  ["font-weight", /^font-(?:thin|extralight|light|normal|medium|semibold|bold|extrabold|black)$/],
+  ["leading", /^leading-/], ["tracking", /^tracking-/], ["rounded", /^rounded(?:-(?:none|sm|md|lg|xl|2xl|3xl|full|\[[^\]]+\]|\(--[^)]+\)))?$/],
+  ["width", /^w-/], ["height", /^h-/], ["min-height", /^min-h-/], ["min-width", /^min-w-/], ["max-width", /^max-w-/], ["max-height", /^max-h-/],
+  ["display", /^(?:flex|grid|block|inline|inline-block|inline-flex|inline-grid|hidden|contents|table)$/],
+  ["flex-direction", /^flex-(?:row|col|row-reverse|col-reverse)$/], ["justify", /^justify-/], ["items", /^items-/],
+  ["position", /^(?:static|relative|absolute|fixed|sticky)$/], ["z", /^z-/], ["opacity", /^opacity-/], ["shadow", /^shadow(?:-|$)/],
+  ["bg-color", /^bg-(?:\[color:|surface|transparent|muted|primary|secondary|accent|card|background|white|black)/],
+  ["text-color", /^text-(?:\[color:|\[var\((?!--lms-font)|foreground|muted|primary|secondary|link|body|error|success|warning|info|on-primary|white|black)/],
+  ["border-color", /^border-(?:\[color:|transparent|border|primary|error|success|warning|input)/],
+  ["border-width", /^border(?:-[0-9])?$/],
+];
+function conflictsIn(body) {
+  const toks = body.split(/\s+/).filter(Boolean);
+  if (toks.length < 2 || !toks.every((t) => /^[A-Za-z0-9[\]:_().,%#!\/&>*=@-]+$/.test(t))) return [];
+  const seen = new Map(), out = [];
+  for (const t of toks) {
+    const [pre, util] = splitClass(t);
+    const u = util.replace(/^!/, "");
+    for (const [g, re] of CONFLICT_GROUPS) {
+      if (re.test(u)) {
+        const key = pre + "|" + g;
+        if (seen.has(key) && seen.get(key) !== t) out.push(seen.get(key) + " vs " + t);
+        seen.set(key, t);
+        break;
+      }
+    }
+  }
+  return out;
+}
+
 // ---------- scanning ----------
 /** Returns [{rule, line, snippet}] for one file. */
 export function scanFile(path, rawSource) {
@@ -137,6 +187,9 @@ export function scanFile(path, rawSource) {
       add("raw-control", m.index, m[0]);
     }
     for (const m of source.matchAll(/<h[2-6](?=[\s>/])/g)) add("raw-heading", m.index, m[0]);
+    for (const m of source.matchAll(/<label(?=[\s>])/g)) add("raw-label", m.index, m[0]);
+    for (const m of source.matchAll(/<details(?=[\s>])/g)) add("raw-details", m.index, m[0]);
+    for (const m of source.matchAll(/animate-pulse/g)) add("handrolled-skeleton", m.index, m[0]);
     for (const m of source.matchAll(/<a(?=[\s>])/g)) add("raw-link", m.index, m[0]);
     for (const m of source.matchAll(/<img(?=[\s>/])/g)) add("raw-image", m.index, m[0]);
   }
@@ -293,6 +346,11 @@ export function scanFile(path, rawSource) {
     T(/(?<![\w-])(?:[a-z0-9-]+:)*(?:outline(?:-offset)?|ring(?:-offset)?)-(?!none\b|hidden\b)(?:\[|[0-9]|inset\b)[^\s"'`]*/g, (m) => add("focus-style-off", m.index, m[0]));
     T(/(?<![\w-])(?:[a-z0-9-]+:)*text-\[(?:clamp|[0-9.]+(?:vw|vh|rem|em))[^\]]*\]/g, (m) => add("font-size-off-scale", m.index, m[0]));
     for (const m of source.matchAll(/<svg[^>]*?\b(?:width|height)="([0-9.]+)"/g)) { if (![12, 14, 16, 18, 20, 24, 32, 48, 64].includes(num(m[1])) && num(m[1]) < 40) add("icon-size-off", m.index, m[0].slice(0, 40)); }
+    for (const m of source.matchAll(/"([^"\n]*)"|'([^'\n]*)'|`([^`]*)`/g)) {
+      const body = m[1] ?? m[2] ?? m[3];
+      if (!body || body.length < 7 || !body.includes(" ")) continue;
+      for (const c of conflictsIn(body)) add("class-conflict", m.index, c);
+    }
     T(/(?:^|[\s"'`:])!(?=[a-z]+(?:-[a-z0-9[]|[[]))/g, (m) => add("important", m.index, source.slice(m.index, m.index + 24)));
   }
   return found;

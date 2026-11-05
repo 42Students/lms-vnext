@@ -14,6 +14,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Input} from "@/components/ui/input";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 type Request={id:string;kind:string;status:string;reason:string;payload:Record<string,unknown>;
  studentName:string|null;version:string;requestedAt:string;decidedAt:string|null;decisionNote:string|null};
 function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<string,unknown>}){
@@ -94,7 +95,7 @@ export function TpoGeneralRequestsPanel(){
   <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Other student requests · {total} matching</Heading>
   <p className="text-sm leading-[22px]">Off-campus offers, registration changes, attendance disputes, profile corrections, and requests after placement. Approval is enabled only where the database effect is fully supported; the others require a separate specialist workflow.</p>
   <div className="flex flex-wrap items-end gap-3">
-   <label className="grid min-w-40 gap-1 text-sm font-semibold">View requests
+   <Label stack className="min-w-40">View requests
     <Select value={status} disabled={loading||pending} onChange={event=>{
      setStatus(event.target.value as typeof status);invalidateQueue();
     }}>
@@ -102,8 +103,8 @@ export function TpoGeneralRequestsPanel(){
      <option value="APPROVED">Approved</option><option value="REJECTED">Rejected</option>
      <option value="CANCELLED">Cancelled</option>
     </Select>
-   </label>
-   <label className="grid min-w-44 gap-1 text-sm font-semibold">Request kind
+   </Label>
+   <Label stack className="min-w-44">Request kind
     <Select value={kind} disabled={loading||pending} onChange={event=>{
      setKind(event.target.value);invalidateQueue();
     }}>
@@ -115,7 +116,7 @@ export function TpoGeneralRequestsPanel(){
      <option value="OFFER_ACCEPTANCE_DISPUTE">Offer acceptance dispute</option>
      <option value="PLACEMENT_AFTER_PLACEMENT">Placement after placement</option>
     </Select>
-   </label>
+   </Label>
    <form role="search" aria-label="Find general student requests"
     className="flex min-w-52 flex-1 flex-wrap items-end gap-2" onSubmit={event=>{
      event.preventDefault();
@@ -125,10 +126,10 @@ export function TpoGeneralRequestsPanel(){
      if(normalized===searchQuery&&page===1){void load();return;}
      setSearchQuery(normalized);invalidateQueue();
     }}>
-    <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold">Student name or request reason
+    <Label stack className="min-w-40 flex-1">Student name or request reason
      <Input type="search" maxLength={100} value={draftQuery} disabled={loading||pending}
       onChange={event=>setDraftQuery(event.target.value)} placeholder="At least 2 characters"/>
-    </label>
+    </Label>
     <Button type="submit" variant="secondary" disabled={loading||pending}>Find</Button>
     {searchQuery?<Button type="button" variant="secondary" disabled={loading||pending} onClick={()=>{
      setDraftQuery("");setSearchQuery("");invalidateQueue();
@@ -180,15 +181,15 @@ export function TpoGeneralRequestsPanel(){
    <div className="min-w-0 space-y-3 break-words">
     <p className="text-sm leading-[22px]">{selection?.reason}</p>
     {selection?<TpoGeneralRequestFacts kind={selection.kind} payload={selection.payload}/>:null}
-   <label className="mt-3 grid gap-[6px] text-[13px]">Decision
+   <Label stack className="mt-3">Decision
     <Select value={action} onChange={e=>setAction(e.target.value as "APPROVE"|"REJECT")} >
      {approveSupported(selection?.kind??"")?<option value="APPROVE">Approve and apply</option>:null}
      <option value="REJECT">Decline with reason</option>
     </Select>
-   </label>
-   <label className="mt-3 grid gap-[6px] text-[13px]">Reason / decision note
+   </Label>
+   <Label stack className="mt-3">Reason / decision note
     <Textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}/>
-   </label>
+   </Label>
    {!approveSupported(selection?.kind??"")?<p className="text-sm leading-[22px]">A specialist review is required before this kind can be approved. No placement record will be silently changed.</p>:null}
    {selection&&error?<InlineNotice tone="error" message={error}/>:null}
    </div>

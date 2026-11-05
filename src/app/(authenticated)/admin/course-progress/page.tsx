@@ -20,6 +20,7 @@ import {requirePermission} from "@/modules/permissions/policy";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 export default async function SuperAdminCourseProgressPage({
   searchParams,
@@ -99,14 +100,14 @@ export default async function SuperAdminCourseProgressPage({
       <details className="border-t border-border pt-3">
         <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text">More filters</summary>
         <div className="grid gap-3 pt-2 sm:grid-cols-2">
-          <label className="grid gap-2 text-sm">Search offering
+          <Label variant="choice" className="grid gap-2">Search offering
             <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}/>
-          </label>
-          <label className="grid gap-2 text-sm">Offering status
+          </Label>
+          <Label variant="choice" className="grid gap-2">Offering status
             <Select name="status" defaultValue={data.query.status}>
              <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
             </Select>
-          </label>
+          </Label>
         </div>
       </details>
     </form>

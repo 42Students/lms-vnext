@@ -7,6 +7,7 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { recruiterSelectionRangeWarning } from "@/modules/placements/recruiter-selection-list-model";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 type Candidate = { applicationId: string; name: string };
 
@@ -80,48 +81,48 @@ export function HrSelectionProposalComposer({
         <fieldset className="space-y-2">
           <legend className="text-sm font-semibold">Eligible applicants</legend>
           {candidates.length ? candidates.map(candidate => (
-            <label key={candidate.applicationId} className="flex min-h-11 items-center gap-3 border-b border-border py-2 text-sm">
+            <Label variant="choice" key={candidate.applicationId} className="flex min-h-11 items-center gap-3 border-b border-border py-2">
               <Checkbox className="size-4 accent-[var(--lms-primary)]"
                 checked={selectedIds.includes(candidate.applicationId)}
                 onChange={event => toggle(candidate.applicationId, event.target.checked)} />
               <span className="min-w-0 break-words">{candidate.name || "Candidate"}</span>
-            </label>
+            </Label>
           )) : <p className="text-sm text-muted-foreground">
             No applicants on this page meet the selection readiness checks.
           </p>}
         </fieldset>
         <div className="grid gap-3 sm:grid-cols-2">
-          <label className="grid gap-1 text-sm font-semibold">Selection type
+          <Label stack>Selection type
             <Select value={kind} onChange={event =>
               setKind(event.target.value as "OFFER" | "LETTER_OF_INTENT")}>
               <option value="OFFER">Offer</option>
               <option value="LETTER_OF_INTENT">Letter of intent</option>
             </Select>
-          </label>
-          <label className="grid gap-1 text-sm font-semibold">CTC (LPA)
+          </Label>
+          <Label stack>CTC (LPA)
             <Input type="number" min="0.01" max="999.99" step="0.01"
               value={ctcLpa} onChange={event => {
                 setCtcLpa(event.target.value); setWarningAccepted(false); setStatus("");
               }} placeholder="e.g. 6.50" />
-          </label>
+          </Label>
         </div>
-        <label className="grid gap-1 text-sm font-semibold">Package details (optional)
+        <Label stack>Package details (optional)
           <Textarea rows={3} maxLength={500} value={packageDescription}
             onChange={event => setPackageDescription(event.target.value)} />
-        </label>
-        {warning ? <label className="flex items-start gap-2 text-sm text-body">
+        </Label>
+        {warning ? <Label variant="choice" className="flex items-start gap-2">
           <Checkbox checked={warningAccepted}
             onChange={event => setWarningAccepted(event.target.checked)} />
           <span>{warning} I have checked the amount.</span>
-        </label> : null}
+        </Label> : null}
         <Button type="button" variant="secondary"
           disabled={!selected.length || !validCtc || Boolean(warning && !warningAccepted)}
           onClick={() => void copyProposal()}>Copy selection draft</Button>
         {status ? <p role="status" aria-live="polite" className="text-sm text-body">{status}</p> : null}
-        {showManualCopy ? <label className="grid gap-1 text-sm font-semibold">
+        {showManualCopy ? <Label stack>
           Selection draft for manual copy
           <Textarea rows={9} readOnly value={proposal} />
-        </label> : null}
+        </Label> : null}
       </div>
     </details>
   );

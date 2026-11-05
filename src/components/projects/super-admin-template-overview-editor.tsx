@@ -9,6 +9,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 import {projectTemplateBlueprintSchema,type ProjectTemplateBlueprint} from "@/modules/projects/validation";
+import { Label } from "@/components/ui/label";
 const field="mt-1 w-full";
 const lines=(list?:string[])=>list?.join("\n")??"";
 const array=(value:string)=>value.split("\n").map(v=>v.trim()).filter(Boolean);
@@ -54,27 +55,27 @@ export function SuperAdminTemplateOverviewEditor({templateId,title,summary,versi
    {open?"Close Overview editor":"Edit Overview"}
   </Button>
   {open?<div className="grid gap-3 md:grid-cols-2">
-   <label className="text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Course label
-    <Input className={field} maxLength={160} value={courseLabel} onChange={e=>setCourseLabel(e.target.value)}/></label>
-   <label className="text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Phase
-    <Input className={field} maxLength={120} value={phase} onChange={e=>setPhase(e.target.value)}/></label>
-   <label className="font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">Goal
-    <Textarea className="mt-1 w-full min-h-16" maxLength={2000} value={goal} onChange={e=>setGoal(e.target.value)}/></label>
-   <label className="font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">Description
-    <Textarea className="mt-1 w-full min-h-20" maxLength={4000} value={description} onChange={e=>setDescription(e.target.value)}/></label>
+   <Label>Course label
+    <Input className={field} maxLength={160} value={courseLabel} onChange={e=>setCourseLabel(e.target.value)}/></Label>
+   <Label>Phase
+    <Input className={field} maxLength={120} value={phase} onChange={e=>setPhase(e.target.value)}/></Label>
+   <Label className="md:col-span-2">Goal
+    <Textarea className="mt-1 w-full min-h-16" maxLength={2000} value={goal} onChange={e=>setGoal(e.target.value)}/></Label>
+   <Label className="md:col-span-2">Description
+    <Textarea className="mt-1 w-full min-h-20" maxLength={4000} value={description} onChange={e=>setDescription(e.target.value)}/></Label>
    {([{label:"Deliverables (one per line)",value:deliverables,set:setDeliverables},
       {label:"Definition of done (one per line)",value:done,set:setDone},
       {label:"Personas (one per line)",value:personas,set:setPersonas}]).map(item=>
-    <label key={item.label} className="font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">{item.label}
+    <Label key={item.label} className="md:col-span-2">{item.label}
      <Textarea className="mt-1 w-full min-h-20" value={item.value} onChange={e=>item.set(e.target.value)}/>
-    </label>)}
-   <label className="text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Submission type
+    </Label>)}
+   <Label>Submission type
     <Select className={field} value={submissionType} onChange={e=>setSubmissionType(e.target.value as typeof submissionType)}>
      <option value="LINK">Link</option><option value="FILE">File upload</option><option value="TEXT">Text</option>
-    </Select></label>
-   <label className="font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">Submission instructions
+    </Select></Label>
+   <Label className="md:col-span-2">Submission instructions
     <Textarea className="mt-1 w-full min-h-20" maxLength={4000} value={instructions}
-     onChange={e=>setInstructions(e.target.value)}/></label>
+     onChange={e=>setInstructions(e.target.value)}/></Label>
    <div className="md:col-span-2"><Button type="button" variant="primary" disabled={pending}
      onClick={()=>void save()} >
      {pending?"Saving…":"Save as new version"}</Button></div>

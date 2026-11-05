@@ -6,6 +6,7 @@ import { InlineNotice } from "@/components/ui/inline-notice";
 import { useToast } from "@/components/ui/toast";
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { Label } from "@/components/ui/label";
 
 const KEY="42tracker_saved_issue_views_v1";
 const LEGACY_KEY="tracker_saved_filters";
@@ -133,12 +134,12 @@ export function TrackerIssueSavedViews({filters}:{filters:string}){
     {notice?<InlineNotice tone={notice.includes("tab only")?"info":"error"} message={notice}/>:null}
     <Dialog open={saving} onOpenChange={setSaving} title="Save this view">
       <form className="space-y-4" onSubmit={save}>
-        <label className="grid gap-1 text-sm font-semibold text-[var(--lms-heading)]">
+        <Label stack>
           View name
           <Input autoFocus value={name} onChange={event=>setName(event.target.value)}
             maxLength={40} placeholder="e.g. Open production bugs"
             className="min-h-11 w-full md:min-h-9"/>
-        </label>
+        </Label>
         <p className="text-xs text-muted-foreground">Save the current issue filters for quick access later. Up to 10 views.</p>
         <div className="flex flex-wrap justify-end gap-2">
           <Button type="button" variant="secondary" onClick={()=>setSaving(false)}>Cancel</Button>

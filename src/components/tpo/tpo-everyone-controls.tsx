@@ -9,6 +9,7 @@ import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export function TpoEveryoneControls({muted,actorUserId}:{muted:boolean;actorUserId:string}){
  const router=useRouter();
@@ -76,12 +77,12 @@ export function TpoEveryoneControls({muted,actorUserId}:{muted:boolean;actorUser
   <form onSubmit={event=>{event.preventDefault();void post();}}
    className="min-w-0 space-y-3 border-y border-border py-4">
    <Heading level={2}>Write to Everyone</Heading>
-   <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
+   <Label className="block">Message
     <Textarea aria-describedby={messageLengthId} className="mt-2 min-h-32 w-full min-w-0" name="body" required maxLength={4000} rows={4} value={message}
      onChange={event=>updateMessage(event.target.value)} disabled={busy}
      
      placeholder="Share an update with the placement team"/>
-   </label>
+   </Label>
    <p id={messageLengthId} aria-live="polite" className="text-xs text-muted-foreground">{message.length}/4000</p>
    <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy||!message.trim()}
     >

@@ -51,6 +51,7 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type Kind = "ASSESSMENT" | "INTERVIEW";
 /** Legacy /schedule view aliases retain their original meaning. The combined
@@ -388,7 +389,7 @@ export function LearnerCareerRoundsWorkspace({
         ) : null}
         <Disclosure title="Search employers or rounds" className="border-b border-border" contentClassName="pb-3">
         <div className="grid min-w-0 gap-3 md:grid-cols-3">
-          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label>
             Search employers or rounds
             <Input
               type="search" value={filters.search}
@@ -397,8 +398,8 @@ export function LearnerCareerRoundsWorkspace({
               placeholder="Search rounds…"
               className={selectClass}
             />
-          </label>
-          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label>
             Urgency
             <Select value={filters.urgency}
               onChange={(event) => setFilter("urgency", event.target.value as LearnerRoundBrowseFilters["urgency"])}
@@ -407,8 +408,8 @@ export function LearnerCareerRoundsWorkspace({
               <option value="today">Today</option>
               <option value="week">Within seven days</option>
             </Select>
-          </label>
-          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label>
             Order
             <Select value={filters.sort}
               onChange={(event) => setFilter("sort", event.target.value as LearnerRoundBrowseFilters["sort"])}
@@ -417,7 +418,7 @@ export function LearnerCareerRoundsWorkspace({
               <option value="latest">Latest first</option>
               <option value="company">Employer A–Z</option>
             </Select>
-          </label>
+          </Label>
         </div>
         <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3">
           <Button type="button" onClick={saveSearchInUrl}

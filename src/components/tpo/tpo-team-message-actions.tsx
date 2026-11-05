@@ -6,6 +6,7 @@ import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {Textarea} from "@/components/ui/textarea";
 import {Dialog} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 type Props={threadId:string;messageId:string;body:string;expectedBodyHash:string;canEdit:boolean};
 export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,canEdit}:Props){
  const router=useRouter(),pending=useRef(false);
@@ -40,10 +41,10 @@ export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,
     </Button>
    </div>}>
    <form id={editFormId} onSubmit={event=>{event.preventDefault();void submit("EDIT");}} className="min-w-0 space-y-2">
-    <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Edit message
+    <Label className="block min-w-0">Edit message
      <Textarea value={draft} maxLength={4000} required rows={3} disabled={busy}
       onChange={event=>{setDraft(event.target.value);setError("");}} className="mt-1 w-full min-w-0"/>
-    </label>
+    </Label>
     {error?<InlineNotice tone="error" message={error}/>:null}
    </form>
   </Dialog>

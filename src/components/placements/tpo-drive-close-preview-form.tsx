@@ -9,6 +9,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Preview={id:string;expectedUpdatedAt:string;counts:{applications:number;rounds:number;offers:number}};
 export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
  const router=useRouter(),[pending,setPending]=useState(false),[error,setError]=useState<string|null>(null);
@@ -64,11 +65,11 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
      <dt className="text-xs text-body">{label}</dt><dd className="break-words text-xl font-semibold tabular-nums sm:text-2xl">{n}</dd>
     </div>)}
   </dl>
-  <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Reason for closure (audited)
+  <Label stack className="min-w-0">Reason for closure (audited)
    <Textarea required name="reason" minLength={10} maxLength={1000} rows={3}
     disabled={pending} value={reasonText} onChange={event=>{setReasonText(event.target.value);setError(null);}}
     className="min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground"/>
-   <span className="text-xs font-normal text-muted-foreground">{reasonText.length}/1000 characters</span></label>
+   <span className="text-xs font-normal text-muted-foreground">{reasonText.length}/1000 characters</span></Label>
   <p className="text-xs text-body leading-[20px]">If the drive version or these counts change, closing is rejected and you must review the consequences again.</p>
   {error?<InlineNotice tone="error" message={error}/>:null}
   <Button type="submit" disabled={pending} className="min-h-11 w-full sm:w-auto md:min-h-9">

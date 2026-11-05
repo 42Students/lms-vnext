@@ -7,6 +7,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {beginDriveMutation,endDriveMutation} from "@/modules/placements/drive-mutation-client-lock";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Impact={activeApplications:number;affectedLearners:number;openRounds:number;
  issuedOffers:number;acceptedOffers:number};
 type Preview={jobId:string;title:string;status:string;expectedUpdatedAt:string;
@@ -74,10 +75,10 @@ export function SuperAdminDriveArchive({jobId,title}:{jobId:string;title:string}
     </dl>
     {preview.impact.acceptedOffers>0?<p role="alert" className="text-warning">
      Resolve accepted offers before deleting this drive.</p>:null}
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason (required)
+    <Label stack className="min-w-0">Reason (required)
      <Textarea required minLength={10} maxLength={1000} value={reason}
       onChange={e=>setReason(e.target.value)} rows={2}
-      className="w-full"/></label>
+      className="w-full"/></Label>
     <div className="flex flex-wrap gap-2">
      <Button type="button" variant="secondary" disabled={pending}
       onClick={()=>void inspect()}>Refresh impact preview</Button>

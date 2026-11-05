@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Choices={notifyMatchingJobs:boolean;notifyApplicationUpdates:boolean};
 
@@ -67,22 +68,22 @@ export function LearnerPlacementNotificationSettings({initial}:{
     </nav>
     <p className="mt-3 text-xs text-body">Legacy placement alerts are split into matching opportunities and application updates. Application updates include submitted, shortlisted, selected, rejected, waitlisted, offer issued and joining-status changes; academic and security notices remain independently enabled.</p>
     <div className="mt-4 divide-y divide-border border-t border-border">
-      <label className={"flex min-h-12 cursor-pointer items-start gap-3 px-1 py-4 transition-colors duration-[var(--lms-motion-fast)] focus-within:focus-outline has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 "+(matching?"bg-primary-subtle":"hover:bg-surface-subtle")}>
+      <Label className={"flex min-h-12 cursor-pointer items-start gap-3 px-1 py-4 transition-colors duration-[var(--lms-motion-fast)] focus-within:focus-outline has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 "+(matching?"bg-primary-subtle":"hover:bg-surface-subtle")}>
         <Checkbox checked={matching} onChange={e=>setMatching(e.target.checked)}
           disabled={pending} className="mt-1" />
         <span><span className="block font-semibold text-foreground">Matching opportunities</span>
           <span className="mt-1 block text-sm text-body">
             Choose whether to receive matching placement-job notifications.
           </span></span>
-      </label>
-      <label className={"flex min-h-12 cursor-pointer items-start gap-3 px-1 py-4 transition-colors duration-[var(--lms-motion-fast)] focus-within:focus-outline has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 "+(updates?"bg-primary-subtle":"hover:bg-surface-subtle")}>
+      </Label>
+      <Label className={"flex min-h-12 cursor-pointer items-start gap-3 px-1 py-4 transition-colors duration-[var(--lms-motion-fast)] focus-within:focus-outline has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 "+(updates?"bg-primary-subtle":"hover:bg-surface-subtle")}>
         <Checkbox checked={updates} onChange={e=>setUpdates(e.target.checked)}
           disabled={pending} className="mt-1" />
         <span><span className="block font-semibold text-foreground">Application updates</span>
           <span className="mt-1 block text-sm text-body">
             Choose whether to receive application-stage notifications.
           </span></span>
-      </label>
+      </Label>
     </div>
     <div className="mt-4 flex flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
       <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={!changed || pending} onClick={()=>setConfirm(true)}>

@@ -17,6 +17,7 @@ import {
   listCollegeGroups,
   type GroupListRow,
 } from "@/modules/groups/admin-read-service";
+import { Label } from "@/components/ui/label";
 
 const STATUS_TONE = {
   ACTIVE: "success",
@@ -94,7 +95,7 @@ export default async function CollegeGroupsPage({
         method="get"
         className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]"
       >
-        <label className="block min-w-0 w-full text-[var(--lms-font-sm)] text-[var(--lms-neutral-400)] font-semibold leading-4">
+        <Label className="block min-w-0 w-full">
           <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Type
           </span>
@@ -107,8 +108,8 @@ export default async function CollegeGroupsPage({
               </option>
             ))}
           </Select>
-        </label>
-        <label className="block min-w-0 w-full text-[var(--lms-font-sm)] text-[var(--lms-neutral-400)] font-semibold leading-4">
+        </Label>
+        <Label className="block min-w-0 w-full">
           <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Status
           </span>
@@ -120,7 +121,7 @@ export default async function CollegeGroupsPage({
               </option>
             ))}
           </Select>
-        </label>
+        </Label>
         <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">
           Apply
         </Button>

@@ -13,6 +13,7 @@ import {mentorMeetingHasDifferentRequestedWindow}
   from "@/modules/projects/mentor-meeting-form-model";
 import {fromIstLocalInput} from "@/modules/projects/mentor-meeting-reschedule-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 const displayIst=(instant:string)=>{
   const date=new Date(instant);
@@ -114,29 +115,29 @@ export function MentorMeetingRequestActions({meeting}:{
       onOpenChange={next=>{if(!next&&!busy)setAction(null);}}>
       <form onSubmit={submit} className="prototype-mentor-meeting-decision-form">
         {action!=="NO"?<>
-          <label>Start time (IST)
+          <Label>Start time (IST)
             <Input required type="datetime-local" value={startsAt} disabled={busy}
               onChange={event=>setStartsAt(event.target.value)}/>
-          </label>
-          <label>End time (IST)
+          </Label>
+          <Label>End time (IST)
             <Input required type="datetime-local" value={endsAt} disabled={busy}
               onChange={event=>setEndsAt(event.target.value)}/>
-          </label>
-          <label>Meeting join link (online meetings)
+          </Label>
+          <Label>Meeting join link (online meetings)
             <Input type="url" value={joinUrl} maxLength={500} disabled={busy}
               onChange={event=>setJoinUrl(event.target.value)}
               placeholder="https://meet.google.com/..."/>
-          </label>
-          <label>Physical meeting venue (in-person meetings)
+          </Label>
+          <Label>Physical meeting venue (in-person meetings)
             <Input type="text" value={venue} maxLength={200} disabled={busy}
               onChange={event=>setVenue(event.target.value)}
               placeholder="Lab 2, Room 304"/>
-          </label>
-        </>:<label>Note for the team (optional)
+          </Label>
+        </>:<Label>Note for the team (optional)
           <Textarea value={note} onChange={event=>setNote(event.target.value)}
             disabled={busy} maxLength={2000} rows={3}
             placeholder="Explain why this time doesn't work."/>
-        </label>}
+        </Label>}
         {error?<p role="alert">{error}</p>:null}
         <div className="prototype-mentor-meeting-decision-actions">
           <Button type="button" variant="secondary" disabled={busy}

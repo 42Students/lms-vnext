@@ -33,6 +33,7 @@ import {BoardColumn} from "@/components/ui/board-column";
 import { Input } from "@/components/ui/input";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;carriedFromSprintId?:string|null;createdAt:Date;updatedAt:Date;
  description:string|null;approach:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
  assigneeMembershipId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null};
@@ -243,12 +244,12 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    </div>
   </div>
   <div className="flex flex-wrap gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
-   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Release
+   <Label>Release
     <Select data-slot="select" value={release} onChange={e=>{setRelease(e.target.value);setSprint("");remember("release",e.target.value);remember("sprint","");}}
       className="ml-2 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="">All releases</option>{releases.map(r=><option key={r.id} value={r.id}>{r.title}</option>)}
-    </Select></label>
-   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Sprint
+    </Select></Label>
+   <Label>Sprint
     <Select data-slot="select" value={sprint} onChange={e=>{setSprint(e.target.value);remember("sprint",e.target.value);}}
       className="ml-2 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="">All sprints · {matching.length} matching tasks</option>
@@ -261,39 +262,39 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
             {" "}{sprintTaskCounts.get(s.id)??0} matching tasks
           </option>)}
       </optgroup>)}
-    </Select></label>
+    </Select></Label>
    <Disclosure title="More board filters" defaultOpen={Boolean(scope==="all"||priority||taskType||assignee||statusFilter)} className="w-full min-w-0" contentClassName="grid min-w-0 gap-3 pt-3 md:grid-cols-2 xl:grid-cols-4">
-   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Sprint scope
+   <Label>Sprint scope
     <Select data-slot="select" value={scope} aria-label="Board sprint scope"
       onChange={e=>{setScope(e.target.value==="all"?"all":"current");remember("scope",e.target.value);}}
       className="ml-2 min-h-11 md:min-h-9 rounded border border-border bg-surface p-2">
       <option value="current">Current sprint + backlog</option>
       <option value="all">All sprints (full history)</option>
     </Select>
-   </label>
-   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Priority
+   </Label>
+   <Label>Priority
     <Select data-slot="select" value={priority} onChange={e=>{setPriority(e.target.value);remember("priority",e.target.value);}}
      className="ml-2 min-h-11 md:min-h-9 rounded border border-border bg-surface p-2">
      <option value="">All priorities</option>
      {["LOW","MEDIUM","HIGH","CRITICAL"].map(v=><option key={v} value={v}>{v}</option>)}
     </Select>
-   </label>
-   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Task type
+   </Label>
+   <Label>Task type
     <Select data-slot="select" value={taskType} onChange={e=>{setTaskType(e.target.value);remember("taskType",e.target.value);}}
      className="ml-2 min-h-11 md:min-h-9 rounded border border-border bg-surface p-2">
      <option value="">All types</option>
      {["STORY","BUG","CHORE","SPIKE"].map(type=><option key={type} value={type}>{type}</option>)}
     </Select>
-   </label>
-   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Assignee
+   </Label>
+   <Label>Assignee
     <Select data-slot="select" value={assignee} onChange={e=>{setAssignee(e.target.value);remember("assignee",e.target.value);}}
      className="ml-2 min-h-11 md:min-h-9 rounded border border-border bg-surface p-2">
      <option value="">Everyone</option><option value="UNASSIGNED">Unassigned</option>
      {members.filter(m=>m.role==="LEARNER").map(m=>
       <option key={m.membershipId} value={m.membershipId}>{m.displayName??"Learner"}</option>)}
     </Select>
-   </label>
-   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Lane
+   </Label>
+   <Label>Lane
     <Select data-slot="select" value={statusFilter} onChange={e=>{setStatusFilter(e.target.value);remember("lane",e.target.value);}}
       className="ml-2 min-h-11 md:min-h-9 rounded border border-border bg-surface p-2">
       <option value="">All lanes</option>
@@ -301,7 +302,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       {editable.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}
       <option value="IN_REVIEW">In review</option><option value="DONE">Completed</option>
     </Select>
-   </label>
+   </Label>
    </Disclosure>
    {activeFilterCount>0?<Button variant="ghost" type="button" onClick={clearFilters}
     className="min-h-11 w-full md:w-auto">Clear all</Button>:null}
@@ -330,13 +331,13 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   {undo?<Button variant="ghost" type="button" disabled={busy} 
     onClick={()=>{const prior=undo;void move(prior.id,prior.status,true);}}>Undo last move</Button>:null}
   <div className="prototype-mentor-board-toolbar">
-    <label className="prototype-mentor-board-task-search">
+    <Label className="prototype-mentor-board-task-search">
       <span className="sr-only">Search project tasks</span>
       <Input type="search" value={taskQuery}
         onChange={event=>{setTaskQuery(event.target.value);setVisibleLimit(150);}}
         placeholder={"Find a task in all "+sprints.length+" sprints"}
         aria-label="Find a task by title, type, description or assignee" />
-    </label>
+    </Label>
     <div className="prototype-mentor-board-view-toggle" role="group" aria-label="Task presentation">
      <Button type="button" size="sm" variant={view==="board"?"primary":"secondary"}
        aria-pressed={view==="board"} onClick={()=>{setView("board");remember("view","board");}}>Board</Button>
@@ -381,11 +382,11 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       {task.carriedFromSprintId&&!task.sprintId?<p className="text-xs font-semibold text-warning-text">Carried over</p>:null}
       {task.assigneeMembershipId===null?<p className="text-xs font-semibold text-warning-text">Needs assigning</p>:null}
       {task.blockerReason?<p className="whitespace-pre-wrap text-xs text-warning-text">Blocked: {task.blockerReason}</p>:null}
-      {canMove?<label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Move task
+      {canMove?<Label className="block text-[length:var(--lms-font-sm)]">Move task
        <Select data-slot="select" aria-label={"Move "+task.title+" to lane"} value={task.status} disabled={busy} onChange={e=>void move(task.id,e.target.value)}
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
         {editable.map(x=><option key={x} value={x}>{x.replaceAll("_"," ")}</option>)}
-       </Select></label>:null}
+       </Select></Label>:null}
       {!readOnly&&["TODO","IN_PROGRESS","BLOCKED"].includes(task.status)?
         <MentorTaskDeleteControl projectId={projectId} taskId={task.id}
           title={task.title} updatedAt={task.updatedAt}/>:null}
@@ -535,7 +536,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
         </Button>:null}
       </div>:null}
       {!readOnly&&editable.includes(focused.status as typeof editable[number])?
-        <label className="prototype-mentor-board-detail-block">
+        <Label className="prototype-mentor-board-detail-block">
           Move to sprint or backlog
           <Select value={focused.sprintId??"BACKLOG"} disabled={busy}
             aria-label={"Move "+focused.title+" to another sprint"}
@@ -546,7 +547,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
               Sprint {item.sequence} · {item.title}
             </option>)}
           </Select>
-        </label>:null}
+        </Label>:null}
       {latestEvidence?<div className="prototype-mentor-board-detail-block">
         <Heading level={4}>Most recent task submission</Heading>
         <p>Version {latestEvidence.version} · {latestEvidence.status.replaceAll("_"," ")}</p>
@@ -602,11 +603,11 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     }}>
     {pendingAction?.kind==="STATUS"&&pendingAction.status==="BLOCKED"&&
       !tasks.find(row=>row.id===pendingAction.id)?.blockerReason?.trim()?
-      <label className="block text-sm font-semibold">Why is this task blocked?
+      <Label className="block">Why is this task blocked?
         <Textarea value={blockerNote} maxLength={2000} disabled={busy}
           onChange={event=>setBlockerNote(event.target.value)}
           required aria-label="Blocker reason" rows={3}/>
-      </label>:null}
+      </Label>:null}
   </ConfirmDialog>
   {selected&&tasks.find(task=>task.id===selected)?<MentorBoardTaskDetailDialog
     projectId={projectId} task={tasks.find(task=>task.id===selected)!}

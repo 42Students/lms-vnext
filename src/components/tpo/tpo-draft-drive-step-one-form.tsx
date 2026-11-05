@@ -11,6 +11,7 @@ import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist
 import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
 import {Button} from "@/components/ui/button";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
+import { Label } from "@/components/ui/label";
 
 type Company = { relationshipId: string; name: string };
 type Season = { id: string; name: string; startDate: string; endDate: string };
@@ -115,7 +116,7 @@ export function TpoDraftDriveStepOneForm({
         Active season: <strong>{season.name}</strong> ({season.startDate} to {season.endDate}).
         You can add other role options, compensation, targeting and rounds in the draft workspace.
       </p>
-      <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+      <Label className="block">
         Company relationship
         <Select className={cls} value={companyRelationshipId}
           onChange={(event) => setCompanyRelationshipId(event.target.value)} disabled={pending}>
@@ -123,21 +124,21 @@ export function TpoDraftDriveStepOneForm({
             <option key={company.relationshipId} value={company.relationshipId}>{company.name}</option>
           ))}
         </Select>
-      </label>
-      <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+      </Label>
+      <Label className="block">
         Initial role / drive title
         <Input className={cls} required minLength={3} maxLength={100}
           value={title} disabled={pending}
           onChange={(event) => setTitle(event.target.value)}/>
-      </label>
-      <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+      </Label>
+      <Label className="block">
         Role description
         <Textarea className={cls} required rows={4} maxLength={20000}
           value={description} disabled={pending}
           onChange={(event) => setDescription(event.target.value)}/>
-      </label>
+      </Label>
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        <Label className="block">
           Employment type
           <Select className={cls} value={employmentType} disabled={pending}
             onChange={(event) => setEmploymentType(event.target.value as typeof employmentType)}>
@@ -146,8 +147,8 @@ export function TpoDraftDriveStepOneForm({
             <option value="CONTRACT">Contract</option>
           </Select>
           <p className="mt-1 text-xs font-normal text-muted-foreground">Employment type describes the role; choose the college job type separately.</p>
-        </label>
-        <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label className="block">
           Work mode
           <Select className={cls} value={workMode} disabled={pending}
             onChange={(event) => setWorkMode(event.target.value as typeof workMode)}>
@@ -155,9 +156,9 @@ export function TpoDraftDriveStepOneForm({
             <option value="HYBRID">Hybrid</option>
             <option value="REMOTE">Remote</option>
           </Select>
-        </label>
+        </Label>
       </div>
-      <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+      <Label className="block">
         Job type
         <Select className={cls} value={jobTypeLabel} required
           disabled={pending || jobTypesState !== "ready" || jobTypes.length === 0}
@@ -179,12 +180,12 @@ export function TpoDraftDriveStepOneForm({
             }}>Retry</Button>{" "}
             <Link href="/tpo/settings/job-types" className="font-semibold text-primary-text underline">Job type settings</Link>
           </p> : null}
-      </label>
-      <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+      </Label>
+      <Label className="block">
         Application deadline (optional, IST)
         <Input className={cls} type="datetime-local" value={deadline}
           disabled={pending} onChange={(event) => setDeadline(event.target.value)}/>
-      </label>
+      </Label>
       {error ? <p role="alert" className="text-sm text-error leading-[22px]">{error}</p> : null}
       {unknownCreate?<p role="alert" className="text-sm text-body leading-[22px]">Review <Link href="/tpo/placements/lifecycle" className="text-primary-text underline">Drives</Link> before creating again. <Button type="button" variant="link" className="min-h-11 max-md:min-h-11" onClick={()=>setUnknownCreate(false)}>I checked for duplicates</Button></p>:null}
       <Button type="submit" disabled={pending || unknownCreate || !companyRelationshipId || jobTypesState !== "ready" || !jobTypeLabel}

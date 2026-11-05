@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Select } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 type Department = {id:string;name:string};
 type Program = {id:string;name:string;departmentId:string};
@@ -25,7 +26,7 @@ export function CollegeApplicationDependentFilters({
     programId ? cohort.programId===programId :
     !departmentId || allowedProgramIds.has(cohort.programId));
   return <>
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
+    <Label stack className="min-w-0">Department
       <Select name="departmentId" value={departmentId} onChange={event=>{
         setDepartmentId(event.target.value);setProgramId("");setCohortId("");
       }}>
@@ -34,8 +35,8 @@ export function CollegeApplicationDependentFilters({
           <option value={departmentId}>Selected department (not in current options)</option>:null}
         {departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
       </Select>
-    </label>
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+    </Label>
+    <Label stack className="min-w-0">Program
       <Select name="programId" value={programId} onChange={event=>{
         setProgramId(event.target.value);setCohortId("");
       }}>
@@ -44,14 +45,14 @@ export function CollegeApplicationDependentFilters({
           <option value={programId}>Selected program (not in current options)</option>:null}
         {availablePrograms.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
       </Select>
-    </label>
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+    </Label>
+    <Label stack className="min-w-0">Batch
       <Select name="cohortId" value={cohortId} onChange={event=>setCohortId(event.target.value)}>
         <option value="">All batches</option>
         {cohortId&&!availableCohorts.some(item=>item.id===cohortId)?
           <option value={cohortId}>Selected batch (not in current options)</option>:null}
         {availableCohorts.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
       </Select>
-    </label>
+    </Label>
   </>;
 }

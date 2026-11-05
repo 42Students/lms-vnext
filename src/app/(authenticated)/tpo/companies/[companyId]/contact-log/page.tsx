@@ -15,6 +15,7 @@ import {
   getTpoCompanyContactLog,
   tpoCompanyContactLogQuerySchema,
 } from "@/modules/placements/tpo-company-contact-log-service";
+import { Label } from "@/components/ui/label";
 
 type SearchParams = { page?: string | string[]; type?: string | string[] };
 function first(value: string | string[] | undefined) {
@@ -88,7 +89,7 @@ export default async function TpoCompanyContactLogPage({
             </Alert>
           )}
           <form method="get" action={path} className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,1fr)_auto]">
-            <label className="block w-full min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+            <Label className="block w-full min-w-0">
               Interaction type
               <Select
                 name="type"
@@ -99,7 +100,7 @@ export default async function TpoCompanyContactLogPage({
                   <option key={type} value={type}>{type === "ALL" ? "All types" : type}</option>
                 ))}
               </Select>
-            </label>
+            </Label>
             <Button
               type="submit" variant="secondary"
               className="min-h-11 w-full md:min-h-9 md:w-auto"

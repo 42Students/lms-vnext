@@ -34,6 +34,7 @@ import {
 } from "@/modules/attendance/admin-grid-model";
 import { Radio } from "@/components/ui/radio";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type DeliveryOption = {
   deliveryId: string;
@@ -453,7 +454,7 @@ export function AdminAttendanceWorkspace({
         }}
         className="grid min-w-0 items-end gap-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
       >
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label stack className="min-w-0">
           Class
           <Select className="w-full" value={sectionId}
             onChange={(event) => {
@@ -468,8 +469,8 @@ export function AdminAttendanceWorkspace({
               </option>
             ))}
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label stack className="min-w-0">
           Course
           <Select className="w-full" value={courseId}
             disabled={!sectionId}
@@ -486,8 +487,8 @@ export function AdminAttendanceWorkspace({
               </option>
             ))}
           </Select>
-        </label>
-        {termDeliveries.length>1?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        {termDeliveries.length>1?<Label stack className="min-w-0">
           Academic term
           <Select className="w-full" value={deliveryId||termDeliveries[0]?.deliveryId||""}
             onChange={event=>{setDeliveryId(event.target.value);navigate(data.month,sectionId,courseId,event.target.value);}}>
@@ -495,7 +496,7 @@ export function AdminAttendanceWorkspace({
               {item.academicPeriodName} · {item.sectionName}{item.isPast?" · past":""}{item.offeringType==="ELECTIVE"?" (elective)":""}
             </option>)}
           </Select>
-        </label>:null}
+        </Label>:null}
         <Button type="button" variant="ghost"
           className="min-h-11 justify-self-start px-0 text-sm font-semibold text-primary-text underline underline-offset-2 md:col-span-2 md:min-h-9 xl:col-span-3"
           onClick={() => {
@@ -797,21 +798,21 @@ export function AdminAttendanceWorkspace({
                 <legend className="text-sm font-semibold text-body">Attendance reason</legend>
                 <div className="flex flex-wrap gap-4">
                   {([["ABSENT","Absent"],["EXCUSED","Excused"],["MEDICAL","Medical"],["LATE","Late"]] as const).map(([value,label])=>
-                    <label key={value} className="inline-flex min-h-11 items-center gap-2 text-sm">
+                    <Label variant="choice" key={value} className="inline-flex min-h-11 items-center gap-2">
                       <Radio name="attendance-absence-reason" value={value}
                         checked={absenceReason===value} onChange={()=>setAbsenceReason(value)}
                         className="size-4 accent-[var(--lms-primary)]"/>
                       {label}
-                    </label>
+                    </Label>
                   )}
                 </div>
               </fieldset>
             ) : null}
-            <label className="grid gap-[6px] text-sm font-semibold text-body">
+            <Label stack>
               Correction note (optional)
               <Input maxLength={500} value={correctionNote} disabled={correcting||refreshing}
                 onChange={event=>setCorrectionNote(event.target.value)} />
-            </label>
+            </Label>
             <p className="text-xs text-muted-foreground">The current attendance record is re-read from the selected college immediately before editing. A changed record is rejected on save; refresh and retry to avoid overwriting someone else&apos;s correction.</p>
             <p className="text-xs text-muted-foreground">
               The Faculty correction window is {data.policy.correctionWindowHours} hours. College Admin corrections are not limited by it. Present corrections retain the learner’s attendance record and correction history. Note edits are also recorded.

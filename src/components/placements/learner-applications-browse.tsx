@@ -38,6 +38,7 @@ import { Tabs } from "@/components/ui/tabs";
 import { Pagination } from "@/components/ui/pagination";
 import {Textarea} from "@/components/ui/textarea";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 const PAGE_SIZE = 20;
 const viewOptions=[
@@ -300,14 +301,14 @@ export function LearnerApplicationsBrowse({
           }))} />
         </Disclosure>
         <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
-          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label>
             Company or role
             <Input type="search" value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search applications…" maxLength={100}
               className="mt-1 w-full" />
-          </label>
-          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label>
             Screening stage
             <Select
               value={filters.stage}
@@ -318,8 +319,8 @@ export function LearnerApplicationsBrowse({
                 <option value={stage} key={stage}>{humanize(stage)}</option>
               ))}
             </Select>
-          </label>
-          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label>
             Sort applications
             <Select
               value={sort}
@@ -330,7 +331,7 @@ export function LearnerApplicationsBrowse({
               <option value="stage">Screening stage A–Z</option>
               <option value="oldest">Oldest application</option>
             </Select>
-          </label>
+          </Label>
         </div>
         </div>
       </section>
@@ -621,7 +622,7 @@ export function LearnerApplicationsBrowse({
             <p className="break-words text-sm text-body">
               {withdrawTarget.companyName} · {withdrawTarget.jobTitle}
             </p>
-            <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+            <Label className="block text-[length:var(--lms-font-sm)]">
               Reason for withdrawal <span className="font-normal text-muted-foreground">{withdrawMode==="REQUEST"?"(required)":"(optional)"}</span>
               <Textarea
                 value={withdrawReason}
@@ -634,7 +635,7 @@ export function LearnerApplicationsBrowse({
                 className="mt-2 w-full"
                 placeholder="Briefly explain why you are withdrawing"
               />
-            </label>
+            </Label>
             <p id="withdrawal-reason-hint" className="text-xs text-muted-foreground">
               {withdrawMode==="REQUEST"?"3–900 characters.":"Optional; up to 900 characters."} Your reason is stored in application status history
               for the placement team; it is not shown on the public Learner timeline.

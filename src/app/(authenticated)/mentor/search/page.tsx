@@ -7,6 +7,7 @@ import {mentorUnifiedSearchQuery,mentorSearchPageSchema,searchMentorWorkspacePag
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Params={q?:string|string[];page?:string|string[]};
 export default async function MentorSearchPage({searchParams}:{
@@ -30,7 +31,7 @@ export default async function MentorSearchPage({searchParams}:{
   return <div className="prototype-mentor-search-page">
     <PageHeader title="Search" description="Search only projects and people you can access as a Mentor."/>
     <form method="get" action="/mentor/search" role="search" className="prototype-mentor-search-form">
-      <label htmlFor="mentor-unified-search">Find a team, project, student or task</label>
+      <Label htmlFor="mentor-unified-search">Find a team, project, student or task</Label>
       <div><Input autoFocus id="mentor-unified-search" name="q" type="search"
         minLength={1} maxLength={100} defaultValue={q} placeholder="Find a team, project, student or task"
         required/><Button variant="secondary" type="submit">Search</Button></div>

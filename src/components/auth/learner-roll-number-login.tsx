@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type StartResult = { attemptId: string; maskedContact: string; expiresInSeconds: number };
 export function LearnerRollNumberLogin() {
@@ -52,7 +53,7 @@ export function LearnerRollNumberLogin() {
       code at your registered contact. Your roll number is not a password.
     </p>
     {!attempt ? <form className="space-y-3" onSubmit={start}>
-      <label htmlFor="roll-login-roll" className="block text-sm font-semibold">Roll number</label>
+      <Label htmlFor="roll-login-roll" className="block">Roll number</Label>
       <Input id="roll-login-roll" required maxLength={128} value={rollNumber}
         autoComplete="username" onChange={event => setRollNumber(event.target.value)}
         className="w-full" />
@@ -62,7 +63,7 @@ export function LearnerRollNumberLogin() {
       </Button>
     </form> : <form className="space-y-3" onSubmit={verify}>
       <p className="text-sm" role="status">Code sent to {attempt.maskedContact}</p>
-      <label htmlFor="roll-login-code" className="block text-sm font-semibold">Verification code</label>
+      <Label htmlFor="roll-login-code" className="block">Verification code</Label>
       <Input id="roll-login-code" inputMode="numeric" autoComplete="one-time-code" required
         minLength={4} maxLength={8} pattern="[0-9]{4,8}" value={code}
         onChange={event => setCode(event.target.value)}

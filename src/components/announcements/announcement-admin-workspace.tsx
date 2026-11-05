@@ -16,6 +16,7 @@ import { announcementLocalTiming } from "@/modules/announcements/local-timing-mo
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 export type AnnouncementTarget = {
   type: "COLLEGE" | "PROGRAM" | "DEPARTMENT" | "LEARNER" | "FACULTY" | "CLASS";
@@ -318,7 +319,7 @@ export function AnnouncementAdminWorkspace({
           <p className="text-sm text-muted-foreground">Select a college scope before creating an announcement.</p>
         ) : (
           <div className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
-            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+            <Label stack className="min-w-0">
               Audience
               <Select
                 className="min-h-11 w-full md:min-h-9"
@@ -331,27 +332,27 @@ export function AnnouncementAdminWorkspace({
                   </option>
                 ))}
               </Select>
-            </label>
-            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+            </Label>
+            <Label stack className="min-w-0">
               Title
               <Input className="w-full" value={title} maxLength={255} onChange={(e) => setTitle(e.target.value)} />
-            </label>
-            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2 text-[13px]">
+            </Label>
+            <Label stack className="min-w-0 md:col-span-2">
               Message
               <Textarea rows={6} className="w-full" value={message} maxLength={10000} onChange={(e) => setMessage(e.target.value)} />
-            </label>
-            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+            </Label>
+            <Label stack className="min-w-0">
               Schedule · local time
               <Input className="w-full" type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} />
-            </label>
-            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+            </Label>
+            <Label stack className="min-w-0">
               Show until · local time
               <Input className="w-full" type="datetime-local" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} />
-            </label>
-            <label className="flex min-h-11 items-center gap-3 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            </Label>
+            <Label className="flex min-h-11 items-center gap-3">
               <Checkbox checked={pinned} onChange={(e) => setPinned(e.target.checked)} />
               Pin for recipients
-            </label>
+            </Label>
             {!createTiming.valid?<p role="alert" className="md:col-span-2 text-sm text-danger-text">Invalid timing: expiry must follow the schedule.</p>:null}
             <div className="md:col-span-2 flex min-w-0 justify-stretch md:justify-end [&>button]:w-full md:[&>button]:w-auto">
               <Button disabled={pending || !title.trim() || !message.trim() || !target || !createTiming.valid} onClick={requiresPublicationConsent?()=>setReviewPublish(true):create}>
@@ -480,11 +481,11 @@ export function AnnouncementAdminWorkspace({
       >
         {editing ? (
           <form id="announcement-edit-form" ref={editFormRef} className="grid gap-[var(--lms-space-4)]">
-            {requiresPublicationConsent?<label className="flex items-start gap-2 text-sm text-body">
+            {requiresPublicationConsent?<Label variant="choice" className="flex items-start gap-2">
               <Checkbox checked={editConsent} onChange={e=>setEditConsent(e.target.checked)} />
               I reviewed the audience and notice contents and consent to applying changes to recipients.
-            </label>:null}
-            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+            </Label>:null}
+            <Label stack className="min-w-0">
               Audience
               <Select
                 name="target"
@@ -507,27 +508,27 @@ export function AnnouncementAdminWorkspace({
                   </option>
                 ))}
               </Select>
-            </label>
-            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+            </Label>
+            <Label stack className="min-w-0">
               Title
               <Input name="title" defaultValue={editing.title} maxLength={editing.senderType === "SUPER_ADMIN" ? 200 : 255} className="w-full" />
-            </label>
-            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+            </Label>
+            <Label stack className="min-w-0">
               Message
               <Textarea rows={6} name="message" defaultValue={editing.message} maxLength={editing.senderType === "SUPER_ADMIN" ? 8000 : 10000} className="w-full" />
-            </label>
-            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+            </Label>
+            <Label stack className="min-w-0">
               Schedule · local time
               <Input name="scheduledAt" type="datetime-local" defaultValue={localInputValue(editing.scheduledAt)} className="w-full" />
-            </label>
-            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+            </Label>
+            <Label stack className="min-w-0">
               Show until · local time
               <Input name="expiresAt" type="datetime-local" defaultValue={localInputValue(editing.expiresAt)} className="w-full" />
-            </label>
-            <label className="flex items-center gap-3 text-sm font-semibold text-body">
+            </Label>
+            <Label className="flex items-center gap-3">
               <Checkbox name="isPinned" defaultChecked={editing.isPinned} />
               Pin for recipients
-            </label>
+            </Label>
           </form>
         ) : null}
       </Dialog>

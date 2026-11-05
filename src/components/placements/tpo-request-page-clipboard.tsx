@@ -7,6 +7,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {useState} from "react";
 import {DataTable} from "@/components/ui/data-table";
 import {Disclosure} from "@/components/ui/disclosure";
+import { Label } from "@/components/ui/label";
 export type TpoRequestClipboardRow={id:string;student:string;number:string|null;
  kind:string;company:string;asked:string;status:string;decided:string|null};
 export type TpoRequestClipboardColumn=Exclude<keyof TpoRequestClipboardRow,"id">;
@@ -74,20 +75,20 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
   <p className="text-sm font-semibold">Select and copy request rows</p>
   <p role="status" aria-live="polite" className="text-xs">{selectedRows.length} selected of {rows.length} on this page.</p>
   <div className="flex flex-wrap gap-3">
-   <label className="text-[13px]">Sort request rows
+   <Label>Sort request rows
     <Select className="ml-2 min-h-11 max-w-full text-base" value={sort}
      onChange={e=>setSort(e.target.value as typeof sort)}>
      <option value="ASKED_NEW">Asked · newest</option><option value="ASKED_OLD">Asked · oldest</option>
      <option value="DECIDED_NEW">Decided on · newest</option><option value="DECIDED_OLD">Decided on · oldest</option>
     </Select>
-   </label>
+   </Label>
    <Disclosure title="Choose columns" className="min-w-0 max-w-full rounded border border-border p-2 text-sm">
-    <div className="mt-2 flex flex-wrap gap-3">{options.map(option=><label key={option.key} className="flex min-h-11 items-center gap-2">
+    <div className="mt-2 flex flex-wrap gap-3">{options.map(option=><Label variant="choice" key={option.key} className="flex min-h-11 items-center gap-2">
       <Checkbox checked={visible.includes(option.key)}
        disabled={visible.length===1&&visible.includes(option.key)}
        onChange={e=>setVisible(keys=>e.target.checked?[...keys,option.key]:keys.filter(key=>key!==option.key))}/>
       {option.label}
-    </label>)}</div>
+    </Label>)}</div>
     <Button variant="secondary" type="button" className="mt-2 min-h-11" onClick={()=>setVisible(options.map(option=>option.key))}>Reset columns</Button>
    </Disclosure>
   </div>
@@ -102,13 +103,13 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
       checked={rows.length>0&&selectedRows.length===rows.length}
       onChange={event=>setSelected(event.target.checked?rows.map(row=>row.id):[])}/>,
      mobilePriority:"action" as const,
-     cell:row=><label className="inline-flex min-h-11 items-center gap-2">
+     cell:row=><Label variant="choice" className="inline-flex min-h-11 items-center gap-2">
       <Checkbox checked={selected.includes(row.id)}
        aria-label={"Select request from "+row.student}
        onChange={event=>setSelected(ids=>event.target.checked
         ?[...new Set([...ids,row.id])]:ids.filter(id=>id!==row.id))}/>
       <span className="text-xs text-body md:hidden">Select request</span>
-     </label>},
+     </Label>},
     ...columns.map((column,index)=>({
      key:column.key,
      header:column.label,
@@ -119,11 +120,11 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
     })),
    ]}
   />
-  <label className="flex min-h-11 items-center gap-2 text-sm">
+  <Label variant="choice" className="flex min-h-11 items-center gap-2">
    <Checkbox checked={rows.length>0&&selectedRows.length===rows.length}
     onChange={event=>setSelected(event.target.checked?rows.map(row=>row.id):[])}/>
    Select visible page
-  </label>
+  </Label>
   <Button variant="secondary" type="button" disabled={selectedRows.length===0} onClick={()=>void copy()}
    >Copy selected rows</Button>
   {notice?<InlineNotice tone="info" message={notice}/>:null}

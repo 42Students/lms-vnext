@@ -9,6 +9,7 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useToast} from "@/components/ui/toast";
+import { Label } from "@/components/ui/label";
 type Company={id:string;name:string;website:string|null;industry:string|null;
  about:string|null;logoPublicUrl:string|null;updatedAt:string};
 export function SuperAdminCompanyEdit({company}:{company:Company}){
@@ -60,21 +61,21 @@ export function SuperAdminCompanyEdit({company}:{company:Company}){
    </div>}>
    <form id={formId} onChange={()=>setDirty(true)} onSubmit={e=>void save(e)} className="space-y-3 print:hidden">
     {dirty?<p role="status" className="text-xs text-warning-text">You have unsaved company changes.</p>:null}
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name
+    <Label stack>Name
      <Input required minLength={2} maxLength={150} name="name" defaultValue={company.name} className={cls}/>
-    </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Website
+    </Label>
+    <Label stack>Website
      <Input type="url" name="website" maxLength={500} placeholder="https://" defaultValue={company.website??""} className={cls}/>
-    </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Logo link
+    </Label>
+    <Label stack>Logo link
      <Input type="url" name="logoPublicUrl" maxLength={500} placeholder="https://" defaultValue={company.logoPublicUrl??""} className={cls}/>
-    </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Industry
+    </Label>
+    <Label stack>Industry
      <Input name="industry" maxLength={100} defaultValue={company.industry??""} className={cls}/>
-    </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">About
+    </Label>
+    <Label stack>About
      <Textarea name="about" maxLength={2000} defaultValue={company.about??""} rows={3} className={cls}/>
-    </label>
+    </Label>
     <p className="text-xs text-muted-foreground">Global company edits update the canonical employer across linked college drives. Industry has a 100-character limit; About has a 2000-character limit.</p>
     {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
    </form>

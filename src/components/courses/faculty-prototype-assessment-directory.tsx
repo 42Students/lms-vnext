@@ -7,6 +7,7 @@ import {facultyAssessmentSectionOptions,facultyAssessmentRowsForSection} from "@
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export type AssessmentRow={
  key:string;kind:"Assignment"|"Quiz";deliveryId:string;title:string;courseCode:string;sectionName:string;
  dueAt:string|null;status:string;handedIn:number;eligible:number|null;toGrade:number|null;
@@ -57,7 +58,7 @@ export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices,initialK
      aria-pressed={kind===tab.value} onClick={()=>selectKind(tab.value)}>
      {tab.label} {tab.count}</Button>)}
    </nav>
-   <label className="sr-only" htmlFor="faculty-assessment-course">Filter by course</label>
+   <Label className="sr-only" htmlFor="faculty-assessment-course">Filter by course</Label>
    <Select id="faculty-assessment-course" value={course} onChange={e=>setCourse(e.target.value)}
     className="min-h-11 min-w-48 rounded-lg border border-[color:var(--lms-border)] bg-surface px-3 text-sm">
     <option value="all">All courses</option>

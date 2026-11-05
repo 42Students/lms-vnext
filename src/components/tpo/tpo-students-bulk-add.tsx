@@ -23,6 +23,7 @@ import {
   formatTpoStudentsBulkOutcome,
 } from "@/modules/placements/tpo-students-bulk-add-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Learner = {
   membershipId: string;
@@ -214,7 +215,7 @@ export function TpoStudentsBulkAdd({
           className="max-w-[48rem]"
           footer={<Button type="button" variant="secondary" disabled={busy||guardedPending}
             onClick={requestSetupClose}>Discard</Button>}>
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search open drives
+          <Label stack className="min-w-0">Search open drives
             <Input className="min-h-11 w-full min-w-0 md:min-h-9" type="search" value={driveSearch} onChange={event=>{
               const nextSearch=event.target.value;
               setDriveSearch(nextSearch);
@@ -226,10 +227,10 @@ export function TpoStudentsBulkAdd({
              }}
              
              placeholder="Search company or drive"/>
-          </label>
+          </Label>
           {visibleDrives.length===0?<p role="status" className="text-sm text-muted-foreground leading-[22px]">No open drives match your search.</p>:null}
           <div className="grid min-w-0 gap-3 md:grid-cols-2">
-            <label className="min-w-0 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+            <Label className="min-w-0">
               Published drive
               <Select className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9" 
                 value={driveId} disabled={busy}
@@ -241,8 +242,8 @@ export function TpoStudentsBulkAdd({
                   </option>
                 ))}
               </Select>
-            </label>
-            <label className="min-w-0 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+            </Label>
+            <Label className="min-w-0">
               Active role
               <Select className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9" 
                 value={roleOptionId} disabled={busy || roles.length === 0}
@@ -250,12 +251,12 @@ export function TpoStudentsBulkAdd({
                 {roles.length === 0 ? <option value="">Select a drive first</option> : null}
                 {roles.map((role) => <option key={role.id} value={role.id}>{role.title}</option>)}
               </Select>
-            </label>
+            </Label>
           </div>
           {roleError ? <InlineNotice tone="error" message={roleError}/> : null}
           <ScrollCue axis="y" label="Learners available for drive" className="min-w-0 border-y border-border" viewportClassName="max-h-80 space-y-0 overflow-auto overscroll-contain py-2">
             {learners.map((learner) => (
-              <label key={learner.membershipId} className="flex min-h-11 min-w-0 flex-wrap items-start gap-2 border-b border-border p-2 text-sm last:border-b-0 hover:bg-[var(--lms-neutral-50)]">
+              <Label variant="choice" key={learner.membershipId} className="flex min-h-11 min-w-0 flex-wrap items-start gap-2 border-b border-border p-2 last:border-b-0 hover:bg-[var(--lms-neutral-50)]">
                 <Checkbox  className="mt-1 shrink-0"
                   checked={selected.includes(learner.membershipId)}
                   disabled={busy || !drives.length}
@@ -267,20 +268,20 @@ export function TpoStudentsBulkAdd({
                 <span className="max-w-full break-words text-xs text-muted-foreground">
                   {learner.readinessSignal.replaceAll("_", " ").toLowerCase()}
                 </span>
-              </label>
+              </Label>
             ))}
           </ScrollCue>
           <Disclosure title="Include ineligible students" className="border-t border-border" contentClassName="space-y-3 px-2 pb-3">
-          <label className="flex min-h-11 items-start gap-2 text-sm">
+          <Label variant="choice" className="flex min-h-11 items-start gap-2">
             <Checkbox  className="mt-1 shrink-0" checked={includeIneligible} disabled={busy}
               onChange={event=>{setIncludeIneligible(event.target.checked);setError("");}}/>
             Add students who are not eligible anyway, with a recorded inclusion reason
-          </label>
-          {includeIneligible?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Required reason for inclusion
+          </Label>
+          {includeIneligible?<Label stack className="min-w-0">Required reason for inclusion
             <Textarea className="w-full min-w-0" value={overrideReason} disabled={busy} maxLength={500}
              onChange={event=>setOverrideReason(event.target.value)}
              />
-          </label>:null}
+          </Label>:null}
           </Disclosure>
           <div className="flex min-w-0 flex-col items-stretch gap-2 md:flex-row md:items-center md:justify-between">
             <span className="min-w-0 break-words text-sm text-body">{pageSelected.length} learner(s) selected</span>

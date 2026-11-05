@@ -17,6 +17,7 @@ import {
 import { getMentorProjectActivityHistory } from "@/modules/projects/mentor-project-activity-service";
 import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Params={importance?:string|string[];view?:string|string[];window?:string|string[];order?:string|string[];page?:string|string[];pageSize?:string|string[];meetingKey?:string|string[];meetingPage?:string|string[]};
 
@@ -65,15 +66,15 @@ export default async function MentorProjectActivityHistoryPage({
         action={"/mentor/projects/"+encodeURIComponent(projectId)+"/activity-history"}
         className={mentorProjectActivityMobileFilters+" !rounded-none !border-0 !bg-transparent !p-0 max-md:[&_label]:w-full"}>
         <div className="grid min-w-0 w-full items-end gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Event importance
+        <Label stack>Event importance
           <Select name="importance" defaultValue={data.query.importance}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All</option><option value="LOW">Low</option>
             <option value="NORMAL">Normal</option><option value="HIGH">High</option>
             <option value="CRITICAL">Critical</option>
           </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Event type
+        </Label>
+        <Label stack>Event type
           <Select name="view" defaultValue={data.query.view}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All recorded events</option>
@@ -83,7 +84,7 @@ export default async function MentorProjectActivityHistoryPage({
             <option value="TASKS">Task events</option>
             <option value="EVALUATIONS">Recorded evaluations</option><option value="SPRINTS">Sprint changes</option><option value="ASSIGNMENTS">Mentor assignments</option><option value="RESOURCES">Resources</option><option value="TEAM">Team membership</option>
           </Select>
-        </label>
+        </Label>
         {meetingKey?<input type="hidden" name="meetingKey" value={meetingKey}/>:null}
         <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Filter
@@ -91,7 +92,7 @@ export default async function MentorProjectActivityHistoryPage({
         </div>
         <Disclosure title="More filters" defaultOpen={advancedActive} className="min-w-0 w-full border-y border-border py-2" contentClassName="pt-3">
           <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded within
+        <Label stack>Recorded within
           <Select name="window" defaultValue={data.query.window}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All recorded events</option>
@@ -100,21 +101,21 @@ export default async function MentorProjectActivityHistoryPage({
             <option value="LAST_90_DAYS">Past 90×24 hours</option>
             <option value="OLDER_THAN_30_DAYS">Older than 30×24 hours</option>
           </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Chronology
+        </Label>
+        <Label stack>Chronology
           <Select name="order" defaultValue={data.query.order}
             className="min-h-11 md:min-h-9">
             <option value="NEWEST">Newest recorded first</option>
             <option value="OLDEST">Oldest recorded first</option>
           </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
+        </Label>
+        <Label stack>Rows per page
           <Select name="pageSize" defaultValue={String(data.query.pageSize)}
             className="min-h-11 md:min-h-9">
             <option value="20">20 events</option>
             <option value="50">50 events</option>
           </Select>
-        </label>
+        </Label>
           </div>
         </Disclosure>
         {filtered?<Link href={mentorProjectActivityHref({...data.query,importance:"ALL",view:"ALL",window:"ALL",order:"NEWEST",pageSize:20,page:1})}
@@ -178,11 +179,11 @@ export default async function MentorProjectActivityHistoryPage({
         <form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/activity-history"}
           className="flex min-w-0 flex-wrap items-end gap-2" role="search" aria-label="Filter meeting history">
           <input type="hidden" name="view" value="MEETINGS"/>
-          <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">
+          <Label stack className="min-w-0 flex-1">
             Meeting key
             <Input name="meetingKey" maxLength={120} defaultValue={meetingKey}
               placeholder="All project meetings"/>
-          </label>
+          </Label>
           <Button type="submit" variant="secondary">Filter</Button>
           {meetingKey?<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/activity-history?view=MEETINGS"}
             className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">

@@ -19,6 +19,7 @@ import {
 } from "@/modules/placements/tpo-students-service";
 import {Input} from "@/components/ui/input";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type SearchParams = {
   status?: string | string[];
@@ -275,7 +276,7 @@ export default async function TpoStudentRequestsPage({
         method="get"
         className="grid min-w-0 gap-3 border-y border-border py-4 sm:grid-cols-2 xl:grid-cols-3"
       >
-        <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label className="flex flex-col gap-2">
           Status
           <Select
             name="status"
@@ -289,9 +290,9 @@ export default async function TpoStudentRequestsPage({
               </option>
             ))}
           </Select>
-        </label>
+        </Label>
 
-        <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label className="flex flex-col gap-2">
           Search
           <Input
             name="search"
@@ -301,9 +302,9 @@ export default async function TpoStudentRequestsPage({
             placeholder="Student, roll, job or company"
             
           />
-        </label>
+        </Label>
 
-        <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label className="flex flex-col gap-2">
           Page size
           <Select
             name="pageSize"
@@ -314,7 +315,7 @@ export default async function TpoStudentRequestsPage({
             <option value="50">50 requests</option>
             <option value="100">100 requests</option>
           </Select>
-        </label>
+        </Label>
 
         {query.includeDecided?<><input type="hidden" name="includeDecided" value="1"/>
           <input type="hidden" name="decidedDays" value={query.decidedDays==="ALL"?"0":String(query.decidedDays)}/>

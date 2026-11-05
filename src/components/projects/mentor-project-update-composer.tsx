@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {projectMutation} from "./project-api";
 import { Textarea } from "@/components/ui/textarea";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export function MentorProjectUpdateComposer({projectId,readOnly}:{
   projectId:string;readOnly:boolean;
@@ -33,9 +34,9 @@ export function MentorProjectUpdateComposer({projectId,readOnly}:{
     <div className="prototype-mentor-card-title">
       <Heading level={2}>Post an update</Heading><span>Visible in this project’s activity and overview</span>
     </div>
-    <label htmlFor={"mentor-project-update-"+projectId} className="sr-only">
+    <Label htmlFor={"mentor-project-update-"+projectId} className="sr-only">
       Tell the team something
-    </label>
+    </Label>
     <Textarea id={"mentor-project-update-"+projectId} rows={3}
       value={message} onChange={event=>{setMessage(event.target.value);setPosted(false);}}
       maxLength={1000} readOnly={readOnly||pending}

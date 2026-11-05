@@ -28,6 +28,7 @@ import {
 } from "@/modules/platform-settings/service";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 export const dynamic = "force-dynamic";
 
@@ -211,14 +212,14 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         correctionWindowHours={attendancePolicy.policy.correctionWindowHours}
         maxCorrectionHours={attendancePolicy.maxCorrectionHours}/>:null}
       <form className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]" aria-label="Filter tenant settings">
-        <label className="grid min-w-48 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Setting or source
+        <Label stack className="min-w-48 flex-1">Setting or source
           <Input name="q" defaultValue={parsed.q} maxLength={100} className="min-h-11 md:min-h-9"/>
-        </label>
-        <label className="grid min-w-36 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
+        </Label>
+        <Label stack className="min-w-36">Section
           <Select name="section" defaultValue={parsed.section} className="min-h-11 md:min-h-9">
             <option value="ALL">All settings</option>{allSections.map(section=><option key={section.id} value={section.id}>{section.title}</option>)}
           </Select>
-        </label>
+        </Label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
         <Link href="/admin/settings" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-primary-text underline-offset-2 transition-colors duration-[var(--lms-motion-fast)] hover:underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-ring">Clear</Link>
       </form>

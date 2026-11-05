@@ -6,6 +6,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import type {AcademicModuleScope} from "@/modules/module-access/admin-descendant-rule-write";
+import { Label } from "@/components/ui/label";
 type Observed={enabled:boolean;locked:boolean}|null;
 export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string;scopes:readonly AcademicModuleScope[]}){
  const router=useRouter(),[scopeKey,setScopeKey]=useState(""),[module,setModule]=useState<"projects"|"placements"|"electives">("projects");
@@ -70,7 +71,7 @@ export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string
   finally{savingRef.current=false;setBusy(false);}
  }
  return <div className="mt-4 flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-end">
-  <label className="grid min-w-0 w-full flex-1 gap-[6px] md:min-w-48 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic scope
+  <Label stack className="min-w-0 w-full flex-1 md:min-w-48">Academic scope
    <Select className="min-h-11 md:min-h-9" value={scopeKey}
     onChange={e=>selectScope(e.target.value)}>
     <option value="">Select Department, Program, Batch or Class</option>
@@ -78,13 +79,13 @@ export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string
       {item.scopeType==="COHORT"?"BATCH":item.scopeType} · {item.label}
     </option>)}
    </Select>
-  </label>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module
+  </Label>
+  <Label stack className="min-w-0">Module
    <Select className="min-h-11 md:min-h-9" value={module}
     onChange={e=>{selectionRevision.current++;setModule(e.target.value as "projects"|"placements"|"electives");setStored(undefined);setMessage("");}}>
     <option value="projects">Projects</option><option value="placements">Placements</option><option value="electives">Electives</option>
    </Select>
-  </label>
+  </Label>
   <Button type="button" variant="secondary" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9" disabled={!scope||busy} onClick={()=>void recheck()}>{busy?"Rechecking…":"Recheck"}</Button>
   <Button type="button" variant="secondary" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9"
    disabled={busy} onClick={()=>{selectionRevision.current++;setStored(undefined);setMessage("");router.refresh();}}>Refresh</Button>
@@ -109,11 +110,11 @@ export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string
    {placementCellControlled?<p className="w-full text-sm font-semibold text-body">Placement cell decides · Academic scope toggles do not decide learner placement eligibility.</p>:null}
    {shadowed?<p role="status" className="w-full text-sm text-warning-text">Effective rule: locked by a higher-level scope (global, organization, college or academic parent). Unlock the winning ancestor scope before editing this descendant.</p>:null}
    {scope?<p className="w-full text-xs text-muted-foreground">Selected scope: {scope.label} · {scope.studentsInScope} active learners. Changes may affect the entire selected scope.</p>:null}
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored rule
+   <Label stack>Stored rule
    <Select value={choice} disabled={busy||shadowed||placementCellControlled} className="min-h-11 md:min-h-9" onChange={e=>setChoice(e.target.value)}>
     <option value="INHERIT">Inherit</option><option value="ON">On</option><option value="OFF">Off</option>
-   </Select></label>
-   <label className="flex min-h-11 md:min-h-9 items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><Checkbox checked={locked} disabled={choice==="INHERIT"||busy||shadowed||placementCellControlled} onChange={e=>setLocked(e.target.checked)}/>Lock (Super Admin only)</label>
+   </Select></Label>
+   <Label className="flex min-h-11 md:min-h-9 items-center gap-2"><Checkbox checked={locked} disabled={choice==="INHERIT"||busy||shadowed||placementCellControlled} onChange={e=>setLocked(e.target.checked)}/>Lock (Super Admin only)</Label>
    <p className="w-full text-xs text-muted-foreground">Inherit removes the stored override and follows the nearest unlocked parent rule. On and Off store an explicit rule. A locked ancestor always wins over descendant settings.</p>
    <Button type="button" className="min-h-11 md:min-h-9" disabled={busy||shadowed||placementCellControlled} onClick={()=>void save()}>Save rule</Button>
   </>}

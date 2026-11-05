@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {safeTpoFindResult, type TpoFindResult} from "@/components/shell/topbar/tpo-find-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Suggestion=TpoFindResult;
 const groups=["Recruiter Leads","Drives","Students","Companies"] as const;
@@ -40,12 +41,12 @@ export function TpoFourEntitySearch({initialQuery=""}:{initialQuery?:string}){
  },[term,retry]);
  return <section className="min-w-0 space-y-3 border-b border-border bg-surface px-3 py-4"
    aria-label="Search all placement records">
-  <label className="grid max-w-xl gap-2 text-sm font-semibold text-foreground">
+  <Label stack className="max-w-xl">
     Search recruiters, drives, students and companies
     <Input value={query} onChange={event=>setQuery(event.target.value.slice(0,100))}
       type="search" maxLength={100} placeholder="Search at least 2 characters"
       aria-label="Search recruiter leads, drives, students and companies"/>
-  </label>
+  </Label>
   <div className="flex flex-wrap items-center gap-3">
     <p role="status" className="text-xs text-muted-foreground">
       {term.length<2?"Enter at least 2 characters to search all four categories.":

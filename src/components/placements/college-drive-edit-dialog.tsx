@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 type JobView={title:string;description:string;updatedAt:string;status:string};
 function validJob(payload:unknown):JobView|null{
@@ -100,14 +101,14 @@ export function CollegeDriveEditDialog({jobId,title,fullEditorHref}:{
    {error?<p role="alert" className="mb-3 text-sm text-[var(--lms-error)]">{error}</p>:null}
    {initial?<form id={formId} onSubmit={event=>void submit(event)}
      className="grid min-w-0 gap-4" aria-label="Edit placement job">
-     <label className="grid gap-2 text-sm font-semibold">Job Title
+     <Label stack>Job Title
       <Input autoFocus required maxLength={100} value={draftTitle}
        onChange={event=>{setDraftTitle(event.target.value);setDirty(true);}}/>
-     </label>
-     <label className="grid gap-2 text-sm font-semibold">Job Description
+     </Label>
+     <Label stack>Job Description
       <Textarea required maxLength={5000} rows={8} value={draftDescription}
        onChange={event=>{setDraftDescription(event.target.value);setDirty(true);}}/>
-     </label>
+     </Label>
      <p className="text-xs text-muted-foreground">Editing a draft only. The full editor manages job type, target classes, preferences, eligibility, dates and publishing.</p>
     </form>:null}
   </Dialog>

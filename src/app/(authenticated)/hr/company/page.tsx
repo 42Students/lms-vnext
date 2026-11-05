@@ -31,6 +31,7 @@ import {hrTeamPageSchema,hrTeamPage} from "@/modules/placements/hr-team-paginati
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type PageProps = {
   searchParams: Promise<{
@@ -283,7 +284,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           <form action="/hr/company" method="get" role="search" aria-label="Recruiter team search" className="mt-3 flex min-w-0 flex-col items-stretch gap-2 md:flex-row md:items-center">
             <Input type="hidden" name="collegeId" value={result.grant.collegeId}/>
             <Input type="hidden" name="tab" value="team"/>
-            <label htmlFor="hr-team-query" className="sr-only">Search own-company team</label>
+            <Label htmlFor="hr-team-query" className="sr-only">Search own-company team</Label>
             <Input id="hr-team-query" type="search" name="q" defaultValue={teamQuery.data} maxLength={120}
               placeholder="Search name, designation or email"
               className="min-h-11 min-w-0 w-full md:min-h-9 md:max-w-sm md:flex-1"/>

@@ -7,6 +7,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Textarea } from "@/components/ui/textarea";
 import {friendlyApiError} from "@/lib/friendly-error";
 import { Alert } from "@/components/ui/alert";
+import { Label } from "@/components/ui/label";
 export function SuperAdminPlatformBlockAction({userId,status}:{userId:string;status:"ACTIVE"|"DISABLED"}){
  const router=useRouter();
  const lock=useRef(false);
@@ -36,11 +37,11 @@ export function SuperAdminPlatformBlockAction({userId,status}:{userId:string;sta
   <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Platform-wide account access</summary>
   <div className="min-w-0 pt-[var(--lms-space-2)]">
   <p className="max-w-3xl text-sm leading-6 text-body">Unlike college suspension, a platform block prevents login across every college. This action requires an audit reason.</p>
-  <label className="mt-[var(--lms-space-3)] grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Reason
+  <Label stack className="mt-[var(--lms-space-3)] min-w-0">Reason
    <Textarea value={reason} maxLength={1000} rows={2} disabled={pending}
     aria-describedby="platform-block-reason-help"
     onChange={event=>{setReason(event.target.value);setError(null);}} className="min-h-11 w-full md:min-h-9"/>
-  </label>
+  </Label>
   <p id="platform-block-reason-help" className="mt-1 max-w-prose text-xs leading-5 text-muted-foreground">Enter at least 4 characters for the audit reason.</p>
   <Button type="button" variant={status==="ACTIVE"?"danger":"secondary"} disabled={pending||reason.trim().length<4}
    onClick={()=>setConfirmOpen(true)} className="mt-[var(--lms-space-3)] min-h-11 w-full sm:w-auto md:min-h-9">

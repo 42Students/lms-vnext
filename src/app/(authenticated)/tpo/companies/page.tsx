@@ -18,6 +18,7 @@ import {
   tpoCompaniesQuerySchema,
 } from "@/modules/placements/tpo-companies-view-service";
 import {tpoCompanyFiltersShapeValid} from "@/modules/placements/tpo-company-url-validation";
+import { Label } from "@/components/ui/label";
 
 type PageProps = {
   searchParams: Promise<{
@@ -102,10 +103,10 @@ export default async function TpoCompanyMemoryPage({
     <form method="get" action="/tpo/companies" role="search" aria-label="Find a company"
       className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
      <input type="hidden" name="discover" value="1"/>
-     <label className="grid min-w-0 flex-1 gap-2 text-sm font-semibold">Company name or domain
+     <Label stack className="min-w-0 flex-1">Company name or domain
       <Input type="search" name="q" minLength={2} maxLength={120} defaultValue={q}
        placeholder="At least two characters" className="min-h-11"/>
-     </label>
+     </Label>
      <Button type="submit">Search companies</Button>
     </form>
     <p className="text-sm text-body">{results?
@@ -229,7 +230,7 @@ export default async function TpoCompanyMemoryPage({
           method="get"
           className="grid min-w-0 grid-cols-1 gap-[8px] border-b border-border py-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_auto_auto_auto]"
         >
-          <label className="flex flex-col gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="flex flex-col gap-2">
             Search companies
             <Input
               type="search"
@@ -239,9 +240,9 @@ export default async function TpoCompanyMemoryPage({
               placeholder="Company name or website"
               className="min-h-11"
             />
-          </label>
+          </Label>
 
-          <label className="flex flex-col gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="flex flex-col gap-2">
             Sort by
             <Select name="sort" defaultValue={query.sort}
               className="min-h-11">
@@ -250,8 +251,8 @@ export default async function TpoCompanyMemoryPage({
               <option value="DRIVES">Most drives</option>
               <option value="JOINS">Most confirmed joins</option>
             </Select>
-          </label>
-          <label className="flex flex-col gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label className="flex flex-col gap-2">
             Page size
             <Select
               name="pageSize"
@@ -262,7 +263,7 @@ export default async function TpoCompanyMemoryPage({
               <option value="50">50</option>
               <option value="100">100</option>
             </Select>
-          </label>
+          </Label>
 
           <Button
             type="submit"

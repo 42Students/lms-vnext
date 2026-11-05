@@ -49,6 +49,7 @@ import { learnerAssessmentSubmittedLinkHref } from "@/modules/courses/learner-as
 import { learnerAssessmentSort, LEARNER_ASSESSMENT_SORT_OPTIONS, type LearnerAssessmentSort } from "@/modules/courses/learner-assessment-sort-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type AssignmentResource = {
   id: string;
@@ -344,14 +345,14 @@ export function LearnerAssessmentOverview({
         }}
       />
       <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
-        <label className="w-full text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label className="w-full">
           <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search {kind === "ASSIGNMENT" ? "assignments" : "quizzes"}</span>
           <Input type="search" value={search} maxLength={100}
             onChange={event => {setSearch(event.target.value);setPage(1);}}
             placeholder="Title, lesson or course"
             className="min-h-11 md:min-h-9" />
-        </label>
-        <label className="w-full text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label className="w-full">
           <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Course
           </span>
@@ -375,10 +376,10 @@ export function LearnerAssessmentOverview({
               </option>
             ))}
           </Select>
-        </label>
+        </Label>
       </div>
       <Disclosure title="State · Sort" className="border-b border-border" contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pb-4 md:grid-cols-2">
-        <label className="min-w-0 w-full text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <Label className="min-w-0 w-full">
           <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">State</span>
           <Select className="min-h-11 md:min-h-9" value={stateFilter}
             onChange={event => {
@@ -389,8 +390,8 @@ export function LearnerAssessmentOverview({
               <option key={option.value} value={option.value}>{option.label}</option>
             ))}
           </Select>
-        </label>
-        <label className="w-full text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label className="w-full">
           <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort</span>
           <Select className="min-h-11 md:min-h-9" value={sort} onChange={event => {
             setSort(event.target.value as LearnerAssessmentSort);setPage(1);
@@ -399,7 +400,7 @@ export function LearnerAssessmentOverview({
               <option key={option.value} value={option.value}>{option.label}</option>
             ))}
           </Select>
-        </label>
+        </Label>
       </Disclosure>
 
       <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between">

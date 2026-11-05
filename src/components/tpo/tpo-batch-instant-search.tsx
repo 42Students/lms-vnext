@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 /** TPO-batches-12: keep all existing batch filters while search changes. */
 export function TpoBatchInstantSearch({value}:{value:string}){
@@ -19,7 +20,7 @@ export function TpoBatchInstantSearch({value}:{value:string}){
   },250);
   return ()=>window.clearTimeout(timer);
  },[draft,router,value]);
- return <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search batches
+ return <Label className="min-w-0 flex-1">Search batches
   <span className="mt-1 flex min-w-0 items-center gap-2">
    <Input type="search" name="q" value={draft} maxLength={100}
     onChange={event=>setDraft(event.target.value)} autoComplete="off"
@@ -29,5 +30,5 @@ export function TpoBatchInstantSearch({value}:{value:string}){
     
     className="min-h-11 md:min-h-9" aria-label="Clear batch search">Clear</Button>:null}
   </span>
- </label>;
+ </Label>;
 }

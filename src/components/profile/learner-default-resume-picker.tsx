@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type ResumeList = {
   selected: string | null;
@@ -201,13 +202,13 @@ export function LearnerDefaultResumePicker({ initial }: { initial: ResumeList })
       Select a valid resume before relying on it for placements.
     </p> : null}
     <div className="flex min-w-0 flex-wrap items-end gap-3">
-      <label className="min-w-0 text-sm font-semibold text-body">
+      <Label className="min-w-0">
         Upload resume (PDF, up to 10 MB)
         <Input type="file" accept="application/pdf,.pdf"
           className="mt-2 block max-w-full text-sm"
           disabled={working || Boolean(pendingKey)}
           onChange={event => setFile(event.currentTarget.files?.[0] ?? null)} />
-      </label>
+      </Label>
       <Button type="button" disabled={!file || working || Boolean(pendingKey)}
         onClick={() => void upload()}>
         {working ? "Working…" : "Upload resume"}

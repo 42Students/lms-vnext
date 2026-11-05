@@ -6,6 +6,7 @@ import {mentorCriteriaLines,toggleMentorCriterion} from
  "@/modules/projects/mentor-task-criteria-model";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export function MentorTaskCriteriaChecklist({projectId,task,editable}:{
  projectId:string;editable:boolean;
@@ -38,14 +39,14 @@ export function MentorTaskCriteriaChecklist({projectId,task,editable}:{
   <Heading level={4}>Acceptance criteria</Heading>
   {lines.length?<ul className="space-y-2">
    {lines.map(line=><li key={line.index}>
-     {line.checkable?<label className="flex items-start gap-2">
+     {line.checkable?<Label variant="choice" className="flex items-start gap-2">
        <Checkbox checked={line.checked}
          disabled={!editable||busy}
          onChange={()=>void toggle(line.index)}
          aria-label={"Criterion "+(line.index+1)+": "+line.text}
          className="mt-1"/>
        <span>{line.text}</span>
-     </label>:<span>{line.text}</span>}
+     </Label>:<span>{line.text}</span>}
    </li>)}
   </ul>:<p>No acceptance criteria recorded.</p>}
   {!editable&&lines.some(line=>line.checkable)?

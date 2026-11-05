@@ -21,6 +21,7 @@ import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-serv
 import {accreditationStudentCompleteness} from "@/modules/placements/tpo-accreditation-completeness";
 import {accreditationPackageLpa,accreditationOfferStatusLabel,accreditationJoiningLabel} from "@/modules/placements/tpo-accreditation-students-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -90,12 +91,12 @@ export default async function TpoAccreditationReportPage({
        <Heading level={2} size="lg" id="section-naac-5-2-1-placed-students" className="leading-[1.4] text-[var(--lms-heading)]">NAAC 5.2.1 · Placed students</Heading>
        <p role="status" className="text-sm leading-[1.6]">NAAC 5.2.1 lists the students of one batch. Pick the batch above.</p>
        <form role="search" aria-label="reports accreditation filters" method="get" className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+        <Label>Batch
          <Select name="batchId" defaultValue={selectedBatch?.id??""} className="mt-[6px] block min-h-11 md:min-h-9">
           <option value="">Pick a batch</option>
           {batches.batches.map(batch=><option key={batch.id} value={batch.id}>{batch.name}</option>)}
          </Select>
-        </label>
+        </Label>
         {report.selectedSeasonId&&<Input type="hidden" name="seasonId" value={report.selectedSeasonId}/>}
         {report.selectedJobId&&<Input type="hidden" name="jobId" value={report.selectedJobId}/>}
         <Button variant="secondary" type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Show students</Button>

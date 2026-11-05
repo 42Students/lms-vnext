@@ -11,6 +11,7 @@ import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export type EditableJobType = {
   id: string | null;
@@ -239,10 +240,10 @@ export function TpoUnifiedJobTypesEditor({ types }: { types: readonly EditableJo
           <div role="cell">
             {row.isBuiltin ? (row.countsAsPlaced ? "Yes" : "No") :
               <div role="radiogroup" aria-label={row.label + " counts as placed"} className="flex gap-3">
-                <label className="inline-flex items-center gap-1"><Radio name={"counts-" + row.key} checked={row.countsAsPlaced}
-                  disabled={busy} onChange={() => edit(row.key, { countsAsPlaced: true })}/>Yes</label>
-                <label className="inline-flex items-center gap-1"><Radio name={"counts-" + row.key} checked={!row.countsAsPlaced}
-                  disabled={busy} onChange={() => edit(row.key, { countsAsPlaced: false })}/>No</label>
+                <Label variant="choice" className="inline-flex items-center gap-1"><Radio name={"counts-" + row.key} checked={row.countsAsPlaced}
+                  disabled={busy} onChange={() => edit(row.key, { countsAsPlaced: true })}/>Yes</Label>
+                <Label variant="choice" className="inline-flex items-center gap-1"><Radio name={"counts-" + row.key} checked={!row.countsAsPlaced}
+                  disabled={busy} onChange={() => edit(row.key, { countsAsPlaced: false })}/>No</Label>
               </div>}
           </div>
           <span role="cell">{row.drives}</span>
@@ -276,10 +277,10 @@ export function TpoUnifiedJobTypesEditor({ types }: { types: readonly EditableJo
         <fieldset className="space-y-1 text-sm">
           <legend>Does an offer of this type count as placed?</legend>
           <div role="radiogroup" aria-label="New type counts as placed" className="flex gap-3">
-            <label className="inline-flex items-center gap-1"><Radio name="new-counts" checked={newPlaced === true}
-              disabled={busy} onChange={() => setNewPlaced(true)}/>Yes</label>
-            <label className="inline-flex items-center gap-1"><Radio name="new-counts" checked={newPlaced === false}
-              disabled={busy} onChange={() => setNewPlaced(false)}/>No</label>
+            <Label variant="choice" className="inline-flex items-center gap-1"><Radio name="new-counts" checked={newPlaced === true}
+              disabled={busy} onChange={() => setNewPlaced(true)}/>Yes</Label>
+            <Label variant="choice" className="inline-flex items-center gap-1"><Radio name="new-counts" checked={newPlaced === false}
+              disabled={busy} onChange={() => setNewPlaced(false)}/>No</Label>
           </div>
         </fieldset>
         <Button type="button" variant="secondary" onClick={add}

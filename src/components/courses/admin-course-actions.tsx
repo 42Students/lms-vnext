@@ -20,6 +20,7 @@ import { useToast } from "@/components/ui/toast";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
+import { Label } from "@/components/ui/label";
 
 function safeCourseCoverHref(input:string):string|null {
   if(!input.trim())return null;
@@ -298,13 +299,13 @@ export function CourseActions({
               alt={"Current course image for "+course.name}
               className="h-[100px] w-[180px] rounded-[var(--lms-control-radius)] border border-border object-cover"/>
           </div>:<p className="text-xs text-muted-foreground">This course has no image.</p>}
-          <label className="grid gap-2 text-sm font-semibold">Change / Upload image
+          <Label stack>Change / Upload image
             <Input type="file" accept="image/jpeg,image/png,image/webp"
               className="block w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm"
               disabled={imageBusy} onChange={event=>{
                 setImageFile(event.currentTarget.files?.[0]??null);setImageError("");
               }}/>
-          </label>
+          </Label>
           {imagePreview?<Image src={imagePreview} width={180} height={100} unoptimized
             alt="Selected replacement image preview" className="h-[100px] w-[180px] rounded border border-border object-cover"/>:null}
           <p className="text-xs text-muted-foreground">JPEG, PNG or WebP, up to 5 MiB. Upload uses a short-lived signed grant; scanner-pending files never replace the published image.</p>
@@ -381,7 +382,7 @@ export function CourseActions({
         }
       >
         <div className="grid gap-4">
-          <label>
+          <Label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Course Name
             </span>
@@ -399,19 +400,19 @@ export function CourseActions({
               }}
             />
             {nameFieldError?<span role="alert" className="mt-1 block text-xs text-error">{nameFieldError}</span>:null}
-          </label>
+          </Label>
           {allowMetadata?<div className="grid gap-3">
-            <label className="grid gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Short display name
+            <Label stack>Short display name
               <Input value={shortTitle} onChange={event=>setShortTitle(event.target.value)} maxLength={255} placeholder="e.g. DSA"/>
-            </label>
-            <label className="grid gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Official course code (optional)
+            </Label>
+            <Label stack>Official course code (optional)
               <Input value={officialCode} onChange={event=>setOfficialCode(event.target.value)} maxLength={40}
                 placeholder="Official course code (optional)"/>
-            </label>
+            </Label>
             <div className="grid gap-2">
-              <label htmlFor={"edit-course-cover-"+course.id} className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              <Label htmlFor={"edit-course-cover-"+course.id}>
                 Course image (optional)
-              </label>
+              </Label>
               <Input id={"edit-course-cover-"+course.id} type="url" maxLength={2048}
                 aria-invalid={Boolean(coverUrlError)}
                 value={coverUrl} placeholder="https://example.edu/course-cover.jpg"
@@ -430,10 +431,10 @@ export function CourseActions({
               {coverPreviewBroken?<p className="text-xs text-warning" role="alert">The course image could not be previewed.</p>:null}
               {coverUrlError?<p className="text-xs text-error" role="alert">{coverUrlError}</p>:null}
             </div>
-            <label className="grid gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Course takeaways (optional)
+            <Label stack>Course takeaways (optional)
               <Textarea value={takeaways} onChange={event=>setTakeaways(event.target.value)} maxLength={2000}/>
-            </label>
-            <label className="grid gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Card colour
+            </Label>
+            <Label stack>Card colour
               <div className="flex flex-wrap items-center gap-2">
                 {/* ui-consistency-allow-hex: native colour input needs a hex value */}
                 <Input type="color" aria-label="Choose card colour"
@@ -448,9 +449,9 @@ export function CourseActions({
               {cardColor&&!/^#[0-9A-Fa-f]{6}$/.test(cardColor)?
                 /* ui-consistency-allow-hex */
                 <span role="alert" className="text-xs text-error">Use a colour like #0a7c88</span>:null}
-            </label>
+            </Label>
           </div>:null}
-          {allowCode?<label>
+          {allowCode?<Label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Code
             </span>
@@ -461,8 +462,8 @@ export function CourseActions({
               }
               maxLength={64}
             />
-          </label>:null}
-          <label>
+          </Label>:null}
+          <Label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Course info
             </span>
@@ -477,7 +478,7 @@ export function CourseActions({
               placeholder="Enter Course Info"
               rows={3}
             />
-          </label>
+          </Label>
         </div>
         {editFailure?<Alert tone="error" className="mt-3">Course was not edited. {editFailure}</Alert>:null}
       </Dialog>
@@ -620,7 +621,7 @@ export function OfferingActions({
         }
       >
         <div className="grid gap-4">
-          <label>
+          <Label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Type
             </span>
@@ -641,8 +642,8 @@ export function OfferingActions({
                 Elective
               </option>
             </Select>
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Credits
             </span>
@@ -658,8 +659,8 @@ export function OfferingActions({
               }
               placeholder="Optional"
             />
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Display order
             </span>
@@ -674,7 +675,7 @@ export function OfferingActions({
                 )
               }
             />
-          </label>
+          </Label>
         </div>
       </Dialog>
 

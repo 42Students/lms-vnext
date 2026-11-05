@@ -25,6 +25,7 @@ import {
   getTpoMyNotifications,
 } from "@/modules/placements/tpo-my-notifications-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type SearchParams = {
   view?: string | string[];
@@ -195,7 +196,7 @@ export default async function TpoMyNotificationsPage({
           method="get"
           className="mt-[var(--lms-space-4)] grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]"
         >
-          <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] md:min-w-40 leading-4">
+          <Label stack className="min-w-0 md:min-w-40">
             Read status
             <Select
               name="view"
@@ -212,9 +213,9 @@ export default async function TpoMyNotificationsPage({
                 </option>
               ))}
             </Select>
-          </label>
+          </Label>
 
-          <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] md:min-w-28 leading-4">
+          <Label stack className="min-w-0 md:min-w-28">
             Page size
             <Select
               name="pageSize"
@@ -225,7 +226,7 @@ export default async function TpoMyNotificationsPage({
               <option value="50">50</option>
               <option value="100">100</option>
             </Select>
-          </label>
+          </Label>
 
           <Button
             type="submit"

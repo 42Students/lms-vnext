@@ -11,6 +11,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {Textarea} from "@/components/ui/textarea";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnded=false,quote}:{
  threadId:string;unread:boolean;actorUserId:string;accessEnded?:boolean;quote?:string;
 }){
@@ -100,14 +101,14 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
       onClick={()=>addQuickReply(reply)}>{reply}</Button>)}
    </div>
   <form aria-busy={busy} onSubmit={event=>{event.preventDefault();void post("messages");}} className="space-y-3">
-   <label className="block text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Message
+   <Label className="block">Message
     <Textarea ref={textareaRef} aria-describedby={draftHintId} className="mt-1 min-h-28 w-full"
       maxLength={4000} required disabled={accessEnded} aria-label="Message" placeholder="Write a message" value={body}
       onFocus={restoreDraft} onChange={e=>persistDraft(e.target.value)}
       onKeyDown={e=>{if(shouldSendTpoRecruiterReplyKey({key:e.key,shiftKey:e.shiftKey,
         altKey:e.altKey,isComposing:e.nativeEvent.isComposing})){
        e.preventDefault();if(body.trim()&&!busy&&!accessEnded)void post("messages");}}}/>
-   </label>
+   </Label>
    <p id={draftHintId} className="text-xs text-muted-foreground leading-[20px]" aria-live="polite">Enter to send · Shift+Enter for a new line · Ctrl/Cmd+Enter also sends · {body.length}/4000</p>
    <div className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:items-center">
     <Button variant="secondary" type="button" disabled={busy||accessEnded||!body.trim()} onClick={discardDraft}
@@ -134,7 +135,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
    </div>}>
    <div className="grid min-w-0 gap-4 md:grid-cols-[minmax(170px,230px)_minmax(0,1fr)]">
     <div className="min-w-0 space-y-2">
-     <label className="sr-only" htmlFor="tpo-message-template-search">Search message templates</label>
+     <Label className="sr-only" htmlFor="tpo-message-template-search">Search message templates</Label>
      <Input id="tpo-message-template-search" type="search" value={templateQuery}
       onChange={event=>setTemplateQuery(event.target.value)}
       placeholder="Search message templates" className="min-h-11 w-full md:min-h-9"/>

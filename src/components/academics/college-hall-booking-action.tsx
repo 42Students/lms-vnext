@@ -7,6 +7,7 @@ import {useRef,useState,useTransition,type FormEvent} from "react";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 type Classroom={id:string;name:string;cohortName:string;periodStart:string;periodEnd:string;updatedAt:string};
 type Faculty={id:string;displayName:string|null};
 export function CollegeHallBookingAction({hallId,classes,faculty}:{
@@ -47,24 +48,24 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
     <p className="mt-2 text-sm text-body">Dates and times use IST. A booking is only confirmed after rechecking persisted overlaps.</p>
     {classes.length===0?<p role="status">No active classes are available for booking.</p>:
       <form onSubmit={submit} className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
-        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
+        <Label stack>Class
           <Select className={field} required value={sectionId} onChange={e=>setSectionId(e.target.value)}>
             <option value="">Select class</option>
             {classes.map(c=><option key={c.id} value={c.id}>{c.name} · {c.cohortName}</option>)}
-          </Select></label>
-        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty (optional)
+          </Select></Label>
+        <Label stack>Faculty (optional)
           <Select className={field} value={facultyId} onChange={e=>setFacultyId(e.target.value)}>
             <option value="">None</option>{faculty.map(f=><option key={f.id} value={f.id}>{f.displayName||"Unnamed Faculty"}</option>)}
-          </Select></label>
-        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
-          <Input className={field} required maxLength={160} value={title} onChange={e=>setTitle(e.target.value)}/></label>
-        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date (IST)
+          </Select></Label>
+        <Label stack>Title
+          <Input className={field} required maxLength={160} value={title} onChange={e=>setTitle(e.target.value)}/></Label>
+        <Label stack>Date (IST)
           <DateInput className={field} required mode="date" min={selected?.periodStart} max={selected?.periodEnd}
-            value={date} onChange={e=>setDate(e.target.value)}/></label>
-        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Starts (IST)
-          <DateInput className={field} required mode="time" value={from} onChange={e=>setFrom(e.target.value)}/></label>
-        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Ends (IST)
-          <DateInput className={field} required mode="time" value={to} onChange={e=>setTo(e.target.value)}/></label>
+            value={date} onChange={e=>setDate(e.target.value)}/></Label>
+        <Label stack>Starts (IST)
+          <DateInput className={field} required mode="time" value={from} onChange={e=>setFrom(e.target.value)}/></Label>
+        <Label stack>Ends (IST)
+          <DateInput className={field} required mode="time" value={to} onChange={e=>setTo(e.target.value)}/></Label>
         <div className="md:col-span-2 lg:col-span-3">
           <Button variant="primary" type="submit" loading={pending} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||!sectionId||!title.trim()}>
             {pending?"Booking…":"Confirm booking"}</Button>

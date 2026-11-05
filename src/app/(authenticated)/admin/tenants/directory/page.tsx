@@ -18,6 +18,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
 import { parseTenantLifecycleSearchParams, tenantLifecycleHref } from "@/modules/colleges/admin-tenant-lifecycle-model";
 import { getSuperAdminTenantLifecycleDirectory } from "@/modules/colleges/admin-tenant-lifecycle-service";
+import { Label } from "@/components/ui/label";
 export default async function TenantDirectory({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }) {
@@ -78,22 +79,22 @@ export default async function TenantDirectory({searchParams}:{
     permitted safety scope before opening Launch setup.
   </Banner>
   <form className="grid gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-4">
-   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search college, code, city or organization
+   <Label stack>Search college, code, city or organization
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
      className="min-h-11 md:min-h-9"/>
-   </label>
-   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Organization
+   </Label>
+   <Label stack>Organization
     <Select name="organizationId" defaultValue={data.query.organizationId}
      className="min-h-11 md:min-h-9">
      <option value="">All permitted</option>
      {data.organizations.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
     </Select>
-   </label>
-   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">College status
+   </Label>
+   <Label stack>College status
     <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
      {statuses.map(status=><option key={status}>{status}</option>)}
     </Select>
-   </label>
+   </Label>
    <Button type="submit" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Filter</Button>
   </form>
   <p className="m-0 break-words text-xs text-muted-foreground">

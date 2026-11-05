@@ -15,6 +15,7 @@ import {
  tpoStudentNudgeInputSchema,type TpoStudentNudgeTemplate,
 } from "@/modules/placements/tpo-student-nudge-send-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Row={id:string;label:string;registered:boolean|null};
 export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
@@ -57,32 +58,32 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
   className="min-w-0 space-y-3 border-y border-border py-4">
   <Heading level={2}>Send a message</Heading>
   <p className="text-sm text-body">Choose up to 25 learners on this page. Messages are delivered in-app and audited.</p>
-  <label className="flex min-h-11 min-w-0 items-center gap-2 text-sm">
+  <Label variant="choice" className="flex min-h-11 min-w-0 items-center gap-2">
    <Checkbox checked={validSelected.length===Math.min(rows.length,25)}
     disabled={pending} onChange={e=>setSelected(e.target.checked?rows.slice(0,25).map(row=>row.id):[])} />
    Select first {Math.min(rows.length,25)} on this page
-  </label>
+  </Label>
   <ScrollCue axis="y" label="Students available for message" className="min-w-0 border-y border-border" viewportClassName="max-h-48 space-y-0 py-1">
-   {rows.map(row=><label key={row.id} className="flex min-h-11 min-w-0 items-start gap-3 border-b border-border px-2 py-2 text-sm last:border-b-0 hover:bg-[var(--lms-neutral-50)]">
+   {rows.map(row=><Label variant="choice" key={row.id} className="flex min-h-11 min-w-0 items-start gap-3 border-b border-border px-2 py-2 last:border-b-0 hover:bg-[var(--lms-neutral-50)]">
     <Checkbox checked={validSelected.includes(row.id)}
      disabled={pending||guardedPending||(!validSelected.includes(row.id)&&validSelected.length>=25)} className="mt-1 shrink-0"
      onChange={e=>setSelected(current=>e.target.checked?[...current,row.id]:current.filter(id=>id!==row.id))}/>
     <span className="min-w-0 flex-1 break-words">{row.label}{row.registered===false?<span className="ml-1 text-xs text-muted-foreground">(not in placements)</span>:null}</span>
-   </label>)}
+   </Label>)}
   </ScrollCue>
   <p role="status" className="min-w-0 break-words text-xs text-muted-foreground">{validSelected.length} selected;
    {outside} not registered for placements (messages still deliver).</p>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message template
+  <Label stack className="min-w-0">Message template
    <Select className="w-full min-w-0" value={template} disabled={pending||guardedPending} 
     onChange={e=>setChoice(e.target.value as TpoStudentNudgeTemplate)}>
     {Object.entries(tpoStudentNudgeLabels).map(([key,label])=><option key={key} value={key}>{label}</option>)}
    </Select>
-  </label>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
+  </Label>
+  <Label stack>Message
    <Textarea className="w-full min-w-0" rows={4} minLength={5} maxLength={1000} required
     
     disabled={pending||guardedPending} value={message} onChange={e=>{setMessage(e.target.value);setNotice("");}}/>
-  </label>
+  </Label>
   <Button type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||guardedPending||!validSelected.length||message.trim().length<5}
    onClick={()=>setConfirmOpen(true)}>{"Send to "+validSelected.length+" selected"}</Button>
   <Dialog open={confirmOpen} onOpenChange={value=>{if(!pending&&!guardedPending)setConfirmOpen(value);}}

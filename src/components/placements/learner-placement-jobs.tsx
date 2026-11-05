@@ -17,6 +17,7 @@ import {Textarea} from "@/components/ui/textarea";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type EligibilityStatus =
   | "ELIGIBLE"
@@ -492,10 +493,10 @@ function JobActions({
             </>
           }
         >
-          <label htmlFor={`withdraw-reason-${roleOption.id}`}
-            className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+          <Label htmlFor={`withdraw-reason-${roleOption.id}`}
+            className="block">
             Reason for withdrawal
-          </label>
+          </Label>
           <Textarea
             id={`withdraw-reason-${roleOption.id}`}
             value={withdrawReason}

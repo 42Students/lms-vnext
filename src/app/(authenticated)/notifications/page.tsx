@@ -16,6 +16,7 @@ import {
 } from "@/modules/activity/notification-service";
 import { parseNotificationCursor } from "@/modules/activity/notification-cursor";
 import { notificationContextPresentation,notificationFeedFailure } from "@/modules/activity/notification-context-model";
+import { Label } from "@/components/ui/label";
 
 type Params={
  view?:string;category?:string;beforeCreatedAt?:string;beforeId?:string;
@@ -126,10 +127,10 @@ export default async function NotificationsPage({searchParams}:{searchParams:Pro
    {category?<input type="hidden" name="category" value={category}/>:null}
    {params.classId?<input type="hidden" name="classId" value={params.classId}/>:null}
    {params.courseId?<input type="hidden" name="courseId" value={params.courseId}/>:null}
-   <label className="min-w-0 flex-1 text-sm font-semibold text-body">Search notifications
+   <Label className="min-w-0 flex-1">Search notifications
     <Input type="search" name="q" maxLength={100} defaultValue={query}
      placeholder="Search title or message" className="mt-1 w-full"/>
-   </label>
+   </Label>
    <Button type="submit">Search</Button>
    {query?<Link href={inbox+"?view="+view} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Clear</Link>:null}
   </form>

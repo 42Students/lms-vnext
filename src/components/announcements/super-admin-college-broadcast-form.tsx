@@ -10,6 +10,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {broadcastConsentSummary} from "@/modules/announcements/super-admin-college-broadcast-model";
 import {broadcastLocalTiming} from "@/modules/announcements/super-admin-broadcast-timing-model";
 import { Radio } from "@/components/ui/radio";
+import { Label } from "@/components/ui/label";
 type CollegeTarget={id:string;label:string};
 export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly CollegeTarget[]}){
  const router=useRouter();
@@ -77,21 +78,21 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
   <fieldset className="min-w-0 space-y-2" disabled={pending}>
    <legend className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">To</legend>
    <div className="flex flex-wrap gap-x-5 gap-y-2">
-    <label className="flex min-h-11 items-center gap-2 text-sm text-body md:min-h-9">
+    <Label variant="choice" className="flex min-h-11 items-center gap-2 md:min-h-9">
      <Radio name="broadcast-audience" value="ALL_COLLEGES" checked={mode==="ALL_COLLEGES"} onChange={()=>{setMode("ALL_COLLEGES");setSelected([]);setAudienceTouched(true);}} className="accent-[var(--lms-primary-text)]"/>
      Every placement cell ({colleges.length})
-    </label>
-    <label className="flex min-h-11 items-center gap-2 text-sm text-body md:min-h-9">
+    </Label>
+    <Label variant="choice" className="flex min-h-11 items-center gap-2 md:min-h-9">
      <Radio name="broadcast-audience" value="SELECTED_COLLEGES" checked={mode==="SELECTED_COLLEGES"} onChange={()=>{setMode("SELECTED_COLLEGES");setSelected([]);setAudienceTouched(true);}} className="accent-[var(--lms-primary-text)]"/>
      Some placement cells
-    </label>
+    </Label>
    </div>
   </fieldset>
   {mode==="SELECTED_COLLEGES"?<div className="min-w-0 space-y-2 border-t border-border pt-[var(--lms-space-3)]">
-   <label className="grid gap-2 text-[13px] font-semibold text-muted-foreground">Pick colleges
+   <Label stack>Pick colleges
     <Input type="search" autoComplete="off" disabled={pending} placeholder="Pick colleges"
      value={collegeSearch} onChange={e=>setCollegeSearch(e.target.value)}/>
-   </label>
+   </Label>
    {selected.length>0?<div role="group" className="flex flex-wrap gap-2" aria-label="Picked placement cells">
     {selected.map(id=><Button type="button" size="sm" variant="secondary" disabled={pending} key={id}
      onClick={()=>{setAudienceTouched(true);setSelected(prev=>prev.filter(item=>item!==id));}}
@@ -101,40 +102,40 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
     </div>:null}
    <fieldset className="max-h-52 min-w-0 space-y-[var(--lms-space-2)] overflow-y-auto rounded-[var(--lms-control-radius)] border border-border p-3">
     <legend className="sr-only">Select placement cells</legend>
-    {matchingColleges.map(item=><label key={item.id} className="flex min-h-11 items-center gap-3 text-sm text-body md:min-h-9">
+    {matchingColleges.map(item=><Label variant="choice" key={item.id} className="flex min-h-11 items-center gap-3 md:min-h-9">
      <Checkbox disabled={pending} checked={selected.includes(item.id)}
        onChange={e=>{setAudienceTouched(true);setSelected(prev=>e.target.checked?[...new Set([...prev,item.id])]:prev.filter(id=>id!==item.id));}}/>
      {item.label}
-    </label>)}
+    </Label>)}
     {matchingColleges.length===0?<p className="text-sm text-muted-foreground">No placement cells match this search.</p>:null}
    </fieldset>
    <p role="status" className="text-xs text-muted-foreground">{selected.length} placement {selected.length===1?"cell":"cells"} selected</p>
   </div>:null}
   {audienceTouched&&mode==="SELECTED_COLLEGES"&&selected.length===0?<p role="alert" className="text-sm text-danger-text">Pick at least one</p>:null}
   <p className="text-xs text-muted-foreground">Placement-cell messages use the legacy 200-character title and 8,000-character body limits.</p>
-  <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Title<Input disabled={pending} value={title} maxLength={200} aria-invalid={titleTouched&&!title.trim()} onBlur={()=>setTitleTouched(true)} onChange={e=>setTitle(e.target.value)}/></label>
+  <Label stack className="min-w-0">Title<Input disabled={pending} value={title} maxLength={200} aria-invalid={titleTouched&&!title.trim()} onBlur={()=>setTitleTouched(true)} onChange={e=>setTitle(e.target.value)}/></Label>
   {titleTouched&&!title.trim()?<p role="alert" className="text-sm text-danger-text">Give it a title</p>:null}
-  <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Announcement<Textarea rows={6} disabled={pending} value={message} maxLength={8000} aria-invalid={messageTouched&&!message.trim()} onBlur={()=>setMessageTouched(true)} onChange={e=>setMessage(e.target.value)} placeholder="Links starting with https:// become clickable."/></label>
+  <Label stack className="min-w-0">Announcement<Textarea rows={6} disabled={pending} value={message} maxLength={8000} aria-invalid={messageTouched&&!message.trim()} onBlur={()=>setMessageTouched(true)} onChange={e=>setMessage(e.target.value)} placeholder="Links starting with https:// become clickable."/></Label>
   {messageTouched&&!message.trim()?<p role="alert" className="text-sm text-danger-text">Write the announcement</p>:null}
   <p role="status" className="text-xs text-muted-foreground">Title {title.length}/200 · Announcement {message.length}/8000</p>
   <details className="min-w-0 border-t border-border pt-[var(--lms-space-3)]">
    <summary className="min-h-11 cursor-pointer py-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-foreground focus-ring">Button (optional)</summary>
    <fieldset className="min-w-0 space-y-[var(--lms-space-3)]"><legend className="sr-only">Button (optional)</legend>
-   <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Button label
+   <Label stack className="min-w-0">Button label
     <Input disabled={pending} value={buttonLabel} maxLength={60} onChange={e=>setButtonLabel(e.target.value)} placeholder="Read more"/>
-   </label>
-   <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">HTTPS link
+   </Label>
+   <Label stack className="min-w-0">HTTPS link
     <Input disabled={pending} type="url" value={buttonUrl} maxLength={500} onChange={e=>setButtonUrl(e.target.value)} placeholder="https://…"/>
-   </label>
+   </Label>
    <p className="text-xs text-muted-foreground">A button link must start with https://. Leave the label blank to use "Open".</p>
    <p role="status" className="text-xs text-muted-foreground">Button label {buttonLabel.length}/60 · HTTPS link {buttonUrl.length}/500</p>
    {buttonError?<p role="alert" className="text-sm text-danger-text">{buttonError}</p>:null}
    </fieldset>
   </details>
-  <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Show until (local)<Input disabled={pending} type="datetime-local" value={expiresAt} onChange={e=>setExpiresAt(e.target.value)}/></label>
-  <label className="flex min-h-11 items-center gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-h-9">
+  <Label stack className="min-w-0">Show until (local)<Input disabled={pending} type="datetime-local" value={expiresAt} onChange={e=>setExpiresAt(e.target.value)}/></Label>
+  <Label className="flex min-h-11 items-center gap-2 md:min-h-9">
    <Checkbox disabled={pending} checked={pinned} onChange={e=>setPinned(e.target.checked)}/> Pin it to the top
-  </label>
+  </Label>
   {!timing.valid?<p role="alert" className="text-sm text-danger-text">Give a date and time.</p>:null}
   {timing.expiresAt&&new Date(timing.expiresAt).getTime()<Date.now()-60_000?<p role="alert" className="text-sm text-danger-text">The end date has passed</p>:null}
   <p className="border-t border-border pt-[var(--lms-space-3)] text-sm font-semibold text-body">{broadcastConsentSummary(mode,count,false)}</p>

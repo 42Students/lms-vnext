@@ -24,6 +24,7 @@ import type { PersonMembershipView } from "@/modules/people/service";
 import { collegePeopleExportHref } from "@/modules/people/college-people-export-model";
 import { COLLEGE_LEGACY_PAGE_TITLES } from "@/modules/people/college-page-title-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Search = Record<string, string | string[] | undefined>;
 function collegePeopleManageHref(filter: CollegePeopleDirectoryFilter) {
@@ -136,11 +137,11 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
     </details>
     <section className="min-w-0" aria-label="People filters">
       <form action="/college/people/manage" method="get" role="search" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto_auto]" aria-label="Search people">
-        <label className="grid min-w-0 w-full flex-1 md:w-auto md:min-w-44 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, email or phone
+        <Label stack className="min-w-0 w-full flex-1 md:w-auto md:min-w-44">Name, email or phone
           <Input name="q" type="search" maxLength={100} defaultValue={filter.q}
             />
-        </label>
-        <label className="grid min-w-0 w-full gap-[6px] md:w-auto md:min-w-36 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
+        </Label>
+        <Label stack className="min-w-0 w-full md:w-auto md:min-w-36">Role
           <Select name="role" defaultValue={filter.role}
            >
             <option value="ALL">All roles</option>
@@ -150,8 +151,8 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
             <option value="MENTOR">Mentor</option>
             <option value="TPO">TPO</option>
           </Select>
-        </label>
-        <label className="grid min-w-0 w-full gap-[6px] md:w-auto md:min-w-36 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Membership
+        </Label>
+        <Label stack className="min-w-0 w-full md:w-auto md:min-w-36">Membership
           <Select name="status" defaultValue={filter.status}
            >
             <option value="ALL">All statuses</option>
@@ -159,7 +160,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
             <option value="SUSPENDED">Suspended</option>
             <option value="ENDED">Ended</option>
           </Select>
-        </label>
+        </Label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply</Button>
         <Link href="/college/people/manage" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-ring">Clear</Link>
       </form>

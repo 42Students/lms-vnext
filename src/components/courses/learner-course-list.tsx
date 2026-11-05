@@ -31,6 +31,7 @@ import { learnerCourseMatchesProgress, type LearnerCourseProgressFilter } from "
 import { learnerCourseMatchesTermState, type LearnerCourseTermState } from "@/modules/courses/learner-course-term-state-model";
 import { sortLearnerCourseCards, type LearnerCourseSortMode } from "@/modules/courses/learner-course-sort-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 
 const PAGE_SIZE = 48;
@@ -320,7 +321,7 @@ export function LearnerCourseList({
                 {filtersOpen ? (
                   <div id={filtersId} role="group" aria-label="Course filters"
                     className="absolute right-0 top-full z-(--lms-z-sticky-header) mt-2 w-[min(22rem,calc(100vw-3rem))] rounded-xl border border-border bg-surface p-4 shadow-lg">
-                    <label className="grid gap-2 text-sm font-semibold">
+                    <Label stack>
                       Semester
                       <Select value={selectedPeriodId}
                         onChange={event => {
@@ -335,18 +336,18 @@ export function LearnerCourseList({
                         }} aria-label="Select semester">
                         {periods.map(period => <option key={period.id} value={period.id}>{period.name}</option>)}
                       </Select>
-                    </label>
+                    </Label>
                     <details className="mt-4 border-t border-border pt-3">
                       <summary className="cursor-pointer text-sm font-semibold">More filters</summary>
                       <div className="mt-3 grid gap-3">
-                        <label className="grid gap-1 text-sm">Term access
+                        <Label variant="choice" className="grid gap-1">Term access
                           <Select value={termState} onChange={event => {setTermState(event.target.value as LearnerCourseTermState);setVisibleLimit(PAGE_SIZE);}}>
                             <option value="ALL">All term courses</option>
                             <option value="CURRENT">Currently active</option>
                             <option value="HISTORY">Past semester (read-only)</option>
                           </Select>
-                        </label>
-                        <label className="grid gap-1 text-sm">Learning progress
+                        </Label>
+                        <Label variant="choice" className="grid gap-1">Learning progress
                           <Select value={progressFilter} onChange={event => {setProgressFilter(event.target.value as LearnerCourseProgressFilter);setVisibleLimit(PAGE_SIZE);}}>
                             <option value="ALL">Any progress</option>
                             <option value="NOT_STARTED">Not started</option>
@@ -354,15 +355,15 @@ export function LearnerCourseList({
                             <option value="COMPLETED">Completed</option>
                             <option value="UNMEASURED">No tracked items</option>
                           </Select>
-                        </label>
-                        <label className="grid gap-1 text-sm">Sort Courses
+                        </Label>
+                        <Label variant="choice" className="grid gap-1">Sort Courses
                           <Select value={sortMode} onChange={event => {setSortMode(event.target.value as LearnerCourseSortMode);setSortWasChosen(true);setVisibleLimit(PAGE_SIZE);}}>
                             <option value="NAME">Course name</option>
                             <option value="PROGRESS">Least progress first</option>
                             <option value="DUE">Next assessment due</option>
                             <option value="RECENT">Most recently active</option>
                           </Select>
-                        </label>
+                        </Label>
                         <FilterChip type="button" aria-pressed={continueOnly}
                           onClick={() => {setContinueOnly(value => !value);setVisibleLimit(PAGE_SIZE);}}>
                           Continue learning only

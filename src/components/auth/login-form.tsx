@@ -12,6 +12,7 @@ import {safeReturnTo} from "@/lib/return-to";
 import {loginRetryWindowIst} from "@/modules/auth/login-retry-time-model";
 import { TextLink } from "@/components/ui/text-link";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Channel = "PHONE" | "EMAIL";
 
@@ -642,7 +643,7 @@ export function LoginForm({
           <div id="login-method-panel"
             role={allowedChannels.length>1?"tabpanel":undefined}
             aria-labelledby={allowedChannels.length>1?`login-tab-${channel.toLowerCase()}`:undefined}>
-          <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="block">
             <span className="mb-1 block text-sm font-medium text-foreground">
               {channel === "PHONE" ? (legacySuperAdmin?"Mobile Number":"Mobile number") : "Email"}
             </span>
@@ -669,7 +670,7 @@ export function LoginForm({
             {contactError ? (
               <span role="alert" id="login-contact-error" className="mt-1 block text-sm text-error">{contactError}</span>
             ) : null}
-          </label>
+          </Label>
           </div>
 
           <Button
@@ -707,7 +708,7 @@ export function LoginForm({
             </p>
           )}
 
-          <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="block">
             <span className="mb-1 block text-sm font-medium text-foreground">
               {attempt.requiresSecondFactor
                 ? "Code from the text message"
@@ -728,10 +729,10 @@ export function LoginForm({
               required
               autoFocus
             />
-          </label>
+          </Label>
 
           {attempt.requiresSecondFactor ? (
-            <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <Label className="block">
               <span className="mb-1 block text-sm font-medium text-foreground">
                 Code from the email
               </span>
@@ -750,14 +751,14 @@ export function LoginForm({
                 className="text-center text-lg tracking-[.16em]"
                 required
               />
-            </label>
+            </Label>
           ) : null}
 
           <p className="text-xs text-muted-foreground">The code is 4 to 6 digits. Codes expire after five minutes. You have up to five verification attempts; email resend limit is five.</p>
-          {legacySuperAdmin?<label className="flex min-h-11 items-center gap-2 text-sm text-body">
+          {legacySuperAdmin?<Label variant="choice" className="flex min-h-11 items-center gap-2">
            <Checkbox checked={acceptedTerms} onChange={event=>setAcceptedTerms(event.target.checked)}/>
            <span>By clicking here, I agree to 42 LMS&apos; <TextLink href="/assets/static/terms-and-conditions-view.html" rel="noopener noreferrer">Terms &amp; Conditions</TextLink>.</span>
-          </label>:null}
+          </Label>:null}
           <Button
             type="submit"
             className="min-h-11 w-full md:min-h-9"

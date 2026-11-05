@@ -6,6 +6,7 @@ import {Input} from "@/components/ui/input";
 import {useRouter} from "next/navigation";
 import {beginDriveMutation,endDriveMutation} from "@/modules/placements/drive-mutation-client-lock";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 /** Legacy picker displays YYYY-MM-DD HH:mm in the college's IST timezone. */
 function suggestedDeadlineInput(deadline:string|null){
  const original=deadline?Date.parse(deadline):NaN;
@@ -61,10 +62,10 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
     Editing an unrelated drive field does not require extending an unchanged past deadline.
     Important Dates are managed separately and are not automatically shifted.
   </p>
-  <label className="grid w-full max-w-md gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New application deadline (IST)
+  <Label stack className="w-full max-w-md">New application deadline (IST)
    <Input name="deadline" type="datetime-local" required aria-invalid={Boolean(error)} aria-describedby={error?"super-admin-deadline-error":undefined} className="w-full" value={dateDraft}
      onChange={event=>{setDateDraft(event.target.value);setError("");setSavedIso(null);}}/>
-  </label>
+  </Label>
   {error?<p role="alert" id="super-admin-deadline-error" className="text-sm text-error">{error}</p>:null}
   {savedIso?<p role="status" className="text-sm text-success">Deadline extended to {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(new Date(savedIso))}</p>:null}
   <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy}>

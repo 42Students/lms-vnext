@@ -8,6 +8,7 @@ import {Textarea} from "@/components/ui/textarea";
 
 import { useId, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { Label } from "@/components/ui/label";
 
 export function TpoCompanyCreateForm() {
   const router = useRouter();
@@ -125,35 +126,35 @@ export function TpoCompanyCreateForm() {
               Reuse an existing global employer when its identity matches; otherwise
               create a company and link it to your college.
             </p>
-            <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+            <Label className="block">
               Company name
               <Input className="mt-1 min-h-11 w-full md:min-h-9" required minLength={2} maxLength={200}
                 
                 value={form.name} disabled={pending}
                 onChange={(event) => {setReviewing(false);setError("");setForm((v) => ({ ...v, name: event.target.value }));}}/>
-            </label>
+            </Label>
             <Disclosure title="Optional website and domain" className="border-t border-border" contentClassName="space-y-3 px-2 pb-2">
-            <label className="block min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+            <Label className="block min-w-0">
               Website URL (optional)
               <Input className="mt-1 w-full min-w-0" type="url" maxLength={500}
                 placeholder="https://company.example"
                 
                 value={form.websiteUrl} disabled={pending}
                 onChange={(event) => {setReviewing(false);setError("");setForm((v) => ({ ...v, websiteUrl: event.target.value }));}}/>
-            </label>
-            <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+            </Label>
+            <Label className="block">
               Primary domain (optional)
               <Input className="mt-1 w-full min-w-0" maxLength={255} placeholder="company.example"
                 
                 value={form.primaryDomain} disabled={pending}
                 onChange={(event) => {setReviewing(false);setError("");setForm((v) => ({ ...v, primaryDomain: event.target.value }));}}/>
-            </label>
-              <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+            </Label>
+              <Label className="block">
                 Recruiter work email (optional)
                 <Input className="mt-1 w-full min-w-0" type="email" maxLength={150} placeholder="recruiter@company.example"
                   value={form.recruiterEmail} disabled={pending}
                   onChange={(event)=>{setReviewing(false);setConflict(null);setError("");setForm(v=>({...v,recruiterEmail:event.target.value}));}}/>
-              </label>
+              </Label>
             </Disclosure>
             {reviewing?<p role="status" className="break-words border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body leading-[22px]">
               Create or link {form.name.trim()} to this college?
@@ -162,12 +163,12 @@ export function TpoCompanyCreateForm() {
             </p>:null}
             {notTheSame?<>
               <InlineNotice tone="info" message="A distinct employer needs its own company domain or website. This choice cannot bypass a matching canonical company."/>
-              <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+              <Label className="block">
                 Why is this a different company{reviewedMatch?" from "+reviewedMatch.name:""}?
                 <Textarea className="mt-1 w-full min-w-0" rows={3} minLength={20} maxLength={500}
                   value={distinctReason} disabled={pending}
                   onChange={event=>{setReviewing(false);setError("");setDistinctReason(event.target.value);}}/>
-              </label>
+              </Label>
             </>:null}
             {conflict?<div role="alert" className="space-y-2 border-y border-border py-3">
               <p className="text-sm font-semibold text-[var(--lms-heading)]">{conflict.error==="PLACEMENT_COMPANY_IDENTITY_CONFLICT"?"Company identity needs review":"Matching company found"}</p>

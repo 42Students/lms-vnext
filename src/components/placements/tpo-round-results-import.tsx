@@ -14,6 +14,7 @@ import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 type Match={line:number;identity:string;applicationId:string;name:string;outcome:string;status:string|null};
 type Missing={line:number;identity:string;reason:string;suggestions:Array<{applicationId:string;name:string;roll:string|null}>};
 type Preview={previewToken:string;sourceRows:number;candidateCount:number;matched:Match[];
@@ -99,10 +100,10 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
            <option value="">Do not match this row</option>
            {row.suggestions.map(s=><option key={s.applicationId} value={s.applicationId}>{s.name}{s.roll?" · "+s.roll:""}</option>)}
          </Select>
-         <label className="flex min-h-11 items-center gap-2 text-sm print:hidden">
+         <Label variant="choice" className="flex min-h-11 items-center gap-2 print:hidden">
            <Checkbox checked={skips.includes(row.line)} disabled={busy}
              onChange={e=>{setSkips(p=>e.target.checked?[...p,row.line]:p.filter(n=>n!==row.line));if(e.target.checked)setOverrides(p=>({...p,[row.line]:""}));}}/> Skip row
-         </label>
+         </Label>
        </div>},
       ]}/>
    </div>:null}
@@ -111,16 +112,16 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    </Disclosure>
    <fieldset className="space-y-2 border-t border-border pt-3 text-sm print:hidden">
     <legend className="font-semibold">Students not in the file</legend>
-    <label className="flex gap-[6px]"><Radio checked={missingPolicy==="LEAVE_PENDING"}
-     onChange={()=>{setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}/> Leave pending (do not change their result)</label>
-    <label className="flex gap-[6px]"><Radio checked={missingPolicy==="MARK_NOT_CLEARED"}
-     onChange={()=>setMissingPolicy("MARK_NOT_CLEARED")}/> Mark everyone missing as Not cleared</label>
+    <Label className="flex gap-[6px]"><Radio checked={missingPolicy==="LEAVE_PENDING"}
+     onChange={()=>{setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}/> Leave pending (do not change their result)</Label>
+    <Label className="flex gap-[6px]"><Radio checked={missingPolicy==="MARK_NOT_CLEARED"}
+     onChange={()=>setMissingPolicy("MARK_NOT_CLEARED")}/> Mark everyone missing as Not cleared</Label>
     {missingPolicy==="MARK_NOT_CLEARED"?<div className="space-y-2 text-foreground">
      <p>This also stages Not cleared for {preview.notInFile.length} currently eligible applicants missing from the file. Unmatched source rows must be resolved. Students are not told until results are applied.</p>
-     <label className="flex items-center gap-[6px] text-[13px] font-semibold">
+     <Label className="flex items-center gap-[6px]">
       <Checkbox checked={confirmMissingFailure} onChange={e=>setConfirmMissingFailure(e.target.checked)}/>
       I reviewed the missing students and choose to stage Not cleared.
-     </label>
+     </Label>
     </div>:null}
    </fieldset>
    <Button variant="primary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden" disabled={busy||(missingPolicy==="MARK_NOT_CLEARED"&&!confirmMissingFailure)||

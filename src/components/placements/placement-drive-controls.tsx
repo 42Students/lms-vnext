@@ -19,6 +19,7 @@ import type { TpoDriveScheduleWarnings } from "@/modules/placements/tpo-drive-sc
 import {projectTpoRoundFacts} from "@/modules/placements/tpo-round-facts-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type RoundKind =
   | "TALK"
@@ -1083,7 +1084,7 @@ export function PlacementDriveControls({
                     </p>
                   ) : (
                     <Disclosure title="Screening decision" className="min-w-0" contentClassName="grid gap-3 pt-3">
-                      <label>
+                      <Label>
                         <FieldLabel>
                           Candidate message
                         </FieldLabel>
@@ -1111,8 +1112,8 @@ export function PlacementDriveControls({
                           }
                           placeholder="Shown to the learner for shortlist or rejection."
                         />
-                      </label>
-                      <label>
+                      </Label>
+                      <Label>
                         <FieldLabel>
                           Internal reason
                         </FieldLabel>
@@ -1140,7 +1141,7 @@ export function PlacementDriveControls({
                           }
                           placeholder="Placement-team note; not shown to the learner."
                         />
-                      </label>
+                      </Label>
                       <div className="flex flex-wrap gap-2">
                         <Button
                           size="sm"
@@ -1524,7 +1525,7 @@ export function PlacementDriveControls({
               schedule ? (
                 <Disclosure title={round.status==="SCHEDULED"?"Reschedule / manage round":"Schedule round"} className="mt-4 min-w-0" contentClassName="pt-3">
                   <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3">
-                    <label>
+                    <Label>
                       <FieldLabel>
                         Date & time
                       </FieldLabel>
@@ -1550,8 +1551,8 @@ export function PlacementDriveControls({
                           )
                         }
                       />
-                    </label>
-                    <label>
+                    </Label>
+                    <Label>
                       <FieldLabel>
                         Mode
                       </FieldLabel>
@@ -1581,8 +1582,8 @@ export function PlacementDriveControls({
                           Virtual
                         </option>
                       </Select>
-                    </label>
-                    <label>
+                    </Label>
+                    <Label>
                       <FieldLabel>
                         Results due
                       </FieldLabel>
@@ -1608,8 +1609,8 @@ export function PlacementDriveControls({
                           )
                         }
                       />
-                    </label>
-                    <label>
+                    </Label>
+                    <Label>
                       <FieldLabel>
                         Venue
                       </FieldLabel>
@@ -1633,8 +1634,8 @@ export function PlacementDriveControls({
                         }
                         placeholder="Main Auditorium"
                       />
-                    </label>
-                    <label>
+                    </Label>
+                    <Label>
                       <FieldLabel>
                         Meeting URL
                       </FieldLabel>
@@ -1661,8 +1662,8 @@ export function PlacementDriveControls({
                         }
                         placeholder="https://…"
                       />
-                    </label>
-                    <label>
+                    </Label>
+                    <Label>
                       <FieldLabel>
                         Cancellation reason
                       </FieldLabel>
@@ -1688,7 +1689,7 @@ export function PlacementDriveControls({
                         }
                         placeholder="Required only to cancel"
                       />
-                    </label>
+                    </Label>
                   </div>
                   <div className="mt-4 flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
                     <Button
@@ -1824,7 +1825,7 @@ export function PlacementDriveControls({
                           ) : (
                             <Disclosure title="Stage / apply result" className="mt-2 min-w-0" contentClassName="pt-3">
                               <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3">
-                                <label>
+                                <Label>
                                   <FieldLabel>
                                     Outcome
                                   </FieldLabel>
@@ -1867,8 +1868,8 @@ export function PlacementDriveControls({
                                       Absent
                                     </option>
                                   </Select>
-                                </label>
-                                <label>
+                                </Label>
+                                <Label>
                                   <FieldLabel>
                                     Score %
                                   </FieldLabel>
@@ -1901,8 +1902,8 @@ export function PlacementDriveControls({
                                       )
                                     }
                                   />
-                                </label>
-                                <label>
+                                </Label>
+                                <Label>
                                   <FieldLabel>
                                     Waitlist rank
                                   </FieldLabel>
@@ -1938,8 +1939,8 @@ export function PlacementDriveControls({
                                       )
                                     }
                                   />
-                                </label>
-                                <label>
+                                </Label>
+                                <Label>
                                   <FieldLabel>
                                     Reason category
                                   </FieldLabel>
@@ -1985,8 +1986,8 @@ export function PlacementDriveControls({
                                       Other
                                     </option>
                                   </Select>
-                                </label>
-                                <label className="md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                                </Label>
+                                <Label className="md:col-span-2">
                                   <FieldLabel>
                                     Candidate message
                                   </FieldLabel>
@@ -2018,8 +2019,8 @@ export function PlacementDriveControls({
                                     }
                                     placeholder="Required for fail, hold or absent"
                                   />
-                                </label>
-                                <label className="md:col-span-2 xl:col-span-3 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                                </Label>
+                                <Label className="md:col-span-2 xl:col-span-3">
                                   <FieldLabel>
                                     Internal comment
                                   </FieldLabel>
@@ -2050,7 +2051,7 @@ export function PlacementDriveControls({
                                       )
                                     }
                                   />
-                                </label>
+                                </Label>
                               </div>
                               <div className="mt-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
                                 <Button

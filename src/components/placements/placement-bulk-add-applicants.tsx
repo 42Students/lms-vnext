@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import type { BulkDriveResult } from "@/modules/placements/bulk-drive-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Learner = { membershipId: string; displayName: string };
 type Candidates = { learners: Learner[]; page: number; hasMore: boolean };
@@ -121,7 +122,7 @@ export function PlacementBulkAddApplicants({
         </p>
       ) : (
         <>
-          <label className="block max-w-md text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+          <Label className="block max-w-md">
             Apply learners to role
             <Select
               value={roleOptionId}
@@ -133,10 +134,10 @@ export function PlacementBulkAddApplicants({
                 <option key={role.id} value={role.id}>{role.title}</option>
               ))}
             </Select>
-          </label>
+          </Label>
 
           <div className="flex flex-wrap items-end gap-2">
-            <label className="flex-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+            <Label className="flex-1">
               Find learners by name
               <Input
                 value={search}
@@ -146,7 +147,7 @@ export function PlacementBulkAddApplicants({
                 placeholder="Search names"
                 className="mt-2 min-h-11 w-full md:min-h-9"
               />
-            </label>
+            </Label>
             <Button
               type="button"
               variant="secondary"
@@ -165,7 +166,7 @@ export function PlacementBulkAddApplicants({
           ) : (
             <div className="divide-y divide-border border-y border-border">
               {candidates.learners.map((candidate) => (
-                <label
+                <Label variant="choice"
                   key={candidate.membershipId}
                   className="flex min-h-11 cursor-pointer items-center gap-3 border-b border-border px-3 py-2 hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] focus-within:focus-outline has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50"
                 >
@@ -178,7 +179,7 @@ export function PlacementBulkAddApplicants({
                   <span className="text-sm font-medium text-foreground">
                     {candidate.displayName}
                   </span>
-                </label>
+                </Label>
               ))}
             </div>
           )}

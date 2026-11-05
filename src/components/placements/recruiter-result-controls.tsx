@@ -20,6 +20,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type ResultOutcome =
   | "PASS"
@@ -521,7 +522,7 @@ export function RecruiterResultControls({
                           className="grid min-w-0 scroll-mt-20 gap-4 py-4 lg:grid-cols-[minmax(12rem,1fr)_minmax(0,2fr)]"
                         >
                           <div>
-                            {canStage&&!applied?<label className="mb-2 flex items-center gap-2 text-xs text-body">
+                            {canStage&&!applied?<Label variant="choice" className="mb-2 flex items-center gap-2">
                               <Checkbox checked={(selected[round.id]??[]).includes(participant.applicationId)}
                                 onFocus={()=>setActiveRoundId(round.id)}
                                 onChange={event=>setSelected(old=>{
@@ -531,7 +532,7 @@ export function RecruiterResultControls({
                                     current.filter(id=>id!==participant.applicationId)};
                                 })}/>
                               Select for bulk results
-                            </label>:null}
+                            </Label>:null}
                             <p className="m-0 font-semibold text-foreground">
                               {participant.displayName ??
                                 "Candidate"}
@@ -576,7 +577,7 @@ export function RecruiterResultControls({
                             </p>
                           ) : canStage ? (
                             <div className="grid min-w-0 gap-3 md:grid-cols-2">
-                              <label>
+                              <Label>
                                 <span className="mb-1 block text-xs font-semibold text-body">
                                   Outcome
                                 </span>
@@ -618,9 +619,9 @@ export function RecruiterResultControls({
                                     Absent
                                   </option>
                                 </Select>
-                              </label>
+                              </Label>
 
-                              <label>
+                              <Label>
                                 <span className="mb-1 block text-xs font-semibold text-body">
                                   Score %
                                 </span>
@@ -653,11 +654,11 @@ export function RecruiterResultControls({
                                     )
                                   }
                                 />
-                              </label>
+                              </Label>
 
                               {draft.outcome ===
                               "HOLD" ? (
-                                <label>
+                                <Label>
                                   <span className="mb-1 block text-xs font-semibold text-body">
                                     Waitlist rank
                                   </span>
@@ -690,10 +691,10 @@ export function RecruiterResultControls({
                                       )
                                     }
                                   />
-                                </label>
+                                </Label>
                               ) : null}
 
-                              <label>
+                              <Label>
                                 <span className="mb-1 block text-xs font-semibold text-body">
                                   Reason category
                                 </span>
@@ -738,9 +739,9 @@ export function RecruiterResultControls({
                                     Other
                                   </option>
                                 </Select>
-                              </label>
+                              </Label>
 
-                              <label className="md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                              <Label className="md:col-span-2">
                                 <span className="mb-1 block text-xs font-semibold text-body">
                                   Candidate message
                                 </span>
@@ -771,7 +772,7 @@ export function RecruiterResultControls({
                                   maxLength={1000}
                                    placeholder="Required for fail, hold or absent outcomes."
                                 />
-                              </label>
+                              </Label>
 
                               <div className="flex flex-wrap items-center gap-3 md:col-span-2">
                                 <Button

@@ -14,6 +14,7 @@ import {
   canEditTpoRoundResult,
   TPO_RESULT_LABELS,
 } from "@/modules/placements/tpo-confirmed-round-result-model";
+import { Label } from "@/components/ui/label";
 
 type Outcome = keyof typeof TPO_RESULT_LABELS;
 type Snapshot = {
@@ -173,7 +174,7 @@ export function TpoRoundResultRecorder({
     <Disclosure title="Round result actions" className="mt-2 min-w-0" contentClassName="space-y-2 p-2 text-xs">
       {editable ? (
         <>
-          <label className="block font-semibold text-[var(--lms-neutral-400)]">
+          <Label className="block">
             Round outcome
             <Select
               aria-label={"Round outcome for " + row.displayName}
@@ -186,9 +187,9 @@ export function TpoRoundResultRecorder({
                 <option key={value} value={value}>{label}</option>
               ))}
             </Select>
-          </label>
+          </Label>
           {outcome === "HOLD" ? (
-            <label className="block font-semibold text-[var(--lms-neutral-400)]">
+            <Label className="block">
               Waitlist rank
               <Input
                 type="number"
@@ -199,9 +200,9 @@ export function TpoRoundResultRecorder({
                 disabled={busy}
                 className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-foreground"
               />
-            </label>
+            </Label>
           ) : null}
-          <label className="block font-semibold text-[var(--lms-neutral-400)]">
+          <Label className="block">
             Learner-facing message {outcome === "PASS" ? "(optional)" : "(required)"}
             <Textarea
               rows={2}
@@ -211,7 +212,7 @@ export function TpoRoundResultRecorder({
               disabled={busy}
               className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-foreground"
             />
-          </label>
+          </Label>
           <Button variant="primary"
             type="button"
             disabled={busy}

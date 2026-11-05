@@ -12,6 +12,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export function TpoCompanyInteractionForm({
   companyId,
@@ -87,7 +88,7 @@ export function TpoCompanyInteractionForm({
         All entries are permanent, actor-attributed history. No contact stage changes.
       </p>
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        <Label>
           Contact
           <Select value={leadId} onChange={(event) => {setReviewing(false);setLeadId(event.target.value);}}
             disabled={busy}
@@ -96,8 +97,8 @@ export function TpoCompanyInteractionForm({
               <option key={contact.id} value={contact.id}>{contact.name}</option>
             ))}
           </Select>
-        </label>
-        <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        </Label>
+        <Label>
           Interaction type
           <Select value={type}
             onChange={(event) => {setReviewing(false);setType(event.target.value as TpoCompanyInteractionKind);}}
@@ -107,20 +108,20 @@ export function TpoCompanyInteractionForm({
               <option key={kind} value={kind}>{kind}</option>
             ))}
           </Select>
-        </label>
+        </Label>
       </div>
-      <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+      <Label className="block">
         Outcome (optional)
         <Input value={outcome} onChange={(event) => {setReviewing(false);setOutcome(event.target.value);}}
           maxLength={30} disabled={busy}
           className="mt-1 block w-full" />
-      </label>
-      <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+      </Label>
+      <Label className="block">
         Notes (required)
         <Textarea value={note} onChange={(event) => {setReviewing(false);setNote(event.target.value);}}
           maxLength={2000} rows={3} disabled={busy}
           className="mt-1 block w-full" />
-      </label>
+      </Label>
       {reviewing?<div role="group" aria-label="Review company interaction" className="border-t border-[var(--lms-canvas-border)] pt-3 text-sm">
         <p>{interactionConfirmationSummary({type,contactName:contacts.find(c=>c.id===leadId)?.name??"contact"})}</p>
         <Button type="button" variant="link" className="mt-2 min-h-11 max-md:min-h-11" onClick={()=>setReviewing(false)}>Cancel review</Button>

@@ -15,6 +15,7 @@ import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 export default async function SuperAdminQuizzesPage({
   searchParams,
@@ -85,14 +86,14 @@ export default async function SuperAdminQuizzesPage({
       <form method="get" action="/admin/quizzes" className="flex min-w-0 flex-wrap items-end gap-3" aria-label="Filter quizzes by course">
        {Object.entries(query.data).filter(([key,value])=>key!=="courseCode"&&key!=="page"&&value!==undefined&&value!==""&&value!=="ALL")
         .map(([key,value])=><input key={key} type="hidden" name={key} value={String(value)}/>)}
-       <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] sm:max-w-[380px]">
+       <Label stack className="min-w-0 flex-1 sm:max-w-[380px]">
         Course
         <Select name="courseCode" defaultValue={query.data.courseCode??""}
          className="w-full">
          <option value="">All courses</option>
          {data.directoryCourses.map(course=><option key={course.code} value={course.code}>{course.code} · {course.name}</option>)}
         </Select>
-       </label>
+       </Label>
        <Button type="submit" >Apply</Button>
        {query.data.courseCode?<Link href="/admin/quizzes" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear</Link>:null}
       </form>

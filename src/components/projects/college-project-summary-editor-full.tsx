@@ -13,6 +13,7 @@ import {useEffect,useRef,useState} from "react";
 import {usePathname,useRouter} from "next/navigation";
 import Link from "next/link";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export type SummaryProject={
  id:string;collegeId:string;title:string;summary:string|null;status:string;updatedAt:Date;
  progressPercent:number;phase:string|null;dueLabel:string|null;courseLabel:string|null;sectionId:string|null;
@@ -169,14 +170,14 @@ export function CollegeProjectSummaryEditorFull({
    showToast({tone:"error",title:"Failed to update workspace"});
   }finally{setBusy(false);}
  }
- const field=(label:string,key:keyof typeof form,max:number)=><label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+ const field=(label:string,key:keyof typeof form,max:number)=><Label>
   {label}{key==="title"?<span aria-hidden="true"> *</span>:null}
   <Input className={style} maxLength={max} required={key==="title"}
     placeholder={key==="title"?"Campus Event Coordination":key==="phase"?"e.g. In progress":
       key==="dueLabel"?"e.g. Week 2":key==="courseLabel"?"e.g. Software engineering":undefined}
     aria-invalid={key==="title"&&!String(form.title).trim()}
     value={form[key]} onChange={e=>change(key,e.target.value)}/>
- </label>;
+ </Label>;
  return <section className="border-b border-border pb-5">
   <div className="flex flex-wrap items-center justify-between gap-3">
     <div>
@@ -192,7 +193,7 @@ export function CollegeProjectSummaryEditorFull({
     {field("Workspace title","title",160)}
     <p className="col-span-full text-xs text-muted-foreground" aria-live="polite">{form.title.length}/160 characters</p>
     <Heading level={3} className="col-span-full border-t border-border pt-3 text-foreground">Status</Heading>
-    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Status<Select className={style} aria-describedby="summary-status-help"
+    <Label>Status<Select className={style} aria-describedby="summary-status-help"
      value={form.status} onChange={e=>change("status",e.target.value)}>
       {[p.status,...(p.status==="PLANNED"?["ACTIVE"]:p.status==="ACTIVE"?["COMPLETED"]:[])].map(v=>
        <option key={v} value={v}>{v}</option>)}
@@ -200,19 +201,19 @@ export function CollegeProjectSummaryEditorFull({
     </Select><span id="summary-status-help" className="mt-1 block text-xs font-normal text-body">
       Use the Archive action to archive a workspace. Activation requires a mentor;
       completing requires an approved final submission.
-    </span></label>
-    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Progress %<Input className={style} type="number" min={0} max={100}
+    </span></Label>
+    <Label>Progress %<Input className={style} type="number" min={0} max={100}
      aria-describedby={hasTaskData?"project-summary-progress-help":undefined}
      disabled={hasTaskData} value={derivedProgress??form.progressPercent}
      onChange={e=>change("progressPercent",Number(e.target.value))}/>
      {hasTaskData?<span id="project-summary-progress-help" className="mt-1 block text-xs font-normal text-body">Progress is calculated from completed tasks and sprints while this workspace has execution work.</span>:null}
-    </label>
+    </Label>
     <Heading level={3} className="col-span-full border-t border-border pt-3 text-foreground">Schedule &amp; setup</Heading>
     <div className="col-span-full grid min-w-0 gap-3 md:grid-cols-3">
       {field("Phase","phase",80)}{field("Due label","dueLabel",80)}
       {field("Course label","courseLabel",160)}
     </div>
-    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Class
+    <Label>Class
      <Input className={style} type="search" value={classQuery}
        aria-label="Search classes" placeholder="Search by class name or code"
        maxLength={120} onChange={e=>setClassQuery(e.target.value)}/>
@@ -225,16 +226,16 @@ export function CollegeProjectSummaryEditorFull({
      </Select>
      {classesLoading?<span className="block text-xs text-body" role="status">Loading classes…</span>:null}
      {classesError?<span className="block text-xs text-error" role="alert">{classesError}</span>:null}
-    </label>
-    {(["startDate","endDate"] as const).map(key=><label key={key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+    </Label>
+    {(["startDate","endDate"] as const).map(key=><Label key={key}>
      {key==="startDate"?"Start date":"End date"}
      <Input className={style} type="date" value={form[key]} onChange={e=>change(key,e.target.value)}/>
-    </label>)}
-    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Sprint length (weeks)<Input className={style} type="number"
+    </Label>)}
+    <Label>Sprint length (weeks)<Input className={style} type="number"
      min={1} max={12} value={form.sprintLengthWeeks} onChange={e=>change("sprintLengthWeeks",e.target.value)}/>
       <span className="mt-1 block text-xs font-normal text-body">Use 1 to 12 weeks per sprint.</span>
-    </label>
-    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Estimation unit<Select className={style}
+    </Label>
+    <Label>Estimation unit<Select className={style}
      value={form.estimationUnit} onChange={e=>change("estimationUnit",e.target.value)}>
       <option value="POINTS">Points</option><option value="HOURS">Hours</option>
       {p.estimationUnit==="TASKS"?<option value="TASKS" disabled>Tasks (existing)</option>:null}
@@ -242,10 +243,10 @@ export function CollegeProjectSummaryEditorFull({
       {estimatedTaskCount>0?<span className="mt-1 block text-xs font-normal text-warning-text">
         {estimatedTaskCount} task{estimatedTaskCount===1?" has":"s have"} estimates; changing units is blocked.
       </span>:null}
-    </label>
+    </Label>
    </div>
    <Heading level={3} className="border-t border-border pt-3 text-foreground">Content</Heading>
-   {(["summary","blocker","nextAction"] as const).map(k=><label key={k} className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+   {(["summary","blocker","nextAction"] as const).map(k=><Label key={k} className="block text-[length:var(--lms-font-sm)]">
     {k==="summary"?"Summary":k==="blocker"?"Blocker":"Next action"}
     <Textarea className="mt-1 w-full min-h-24" maxLength={Math.max(4000,form[k].length)}
      rows={k==="summary"?3:4} placeholder={k==="summary"?"Short live workspace summary":undefined}
@@ -253,7 +254,7 @@ export function CollegeProjectSummaryEditorFull({
     {form[k].length>4000?<span className="mt-1 block text-xs text-warning-text" role="status">
       Historic field has {form[k].length} characters. It will not be shortened automatically; edit it to 4000 or fewer before saving.
     </span>:null}
-   </label>)}
+   </Label>)}
    <p className="text-xs text-muted-foreground">
      Activating requires a Mentor; completing requires an approved final submission.
      Historical In progress, Ready and Blocked stages remain in the Phase field

@@ -8,6 +8,7 @@ import { Select } from "@/components/ui/select";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { apiFetch } from "@/lib/api-fetch";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Member = { membershipId: string; displayName: string };
 
@@ -82,7 +83,7 @@ export function TpoTeamAssignUnowned({
       ) : null}
 
       <div className="grid min-w-0 max-w-3xl grid-cols-1 items-end gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+        <Label stack className="min-w-0">
           Who takes them?
           <Select
             disabled={busy || members.length === 0}
@@ -100,7 +101,7 @@ export function TpoTeamAssignUnowned({
               </option>
             ))}
           </Select>
-        </label>
+        </Label>
         <Button
           variant="primary"
           type="button"

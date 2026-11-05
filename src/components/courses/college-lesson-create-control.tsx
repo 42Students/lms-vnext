@@ -11,6 +11,7 @@ import {useRouter} from "next/navigation";
 import Link from "next/link";
 import {useState} from "react";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Offering={
  offeringId:string;courseName:string;courseCode:string;cohortName:string;
@@ -96,7 +97,7 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
    <Link href="/college/courses" className="font-semibold underline">Go to Courses</Link>
   </Alert>:null}
   {options.length?<div className="grid gap-3">
-   <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Course
+   <Label stack>Course
     <Input type="search" value={courseSearch} disabled={busy} onChange={event=>setCourseSearch(event.target.value)}
      placeholder="Search courses" aria-label="Search courses" className="min-h-11 md:min-h-9"/>
     <Select className="min-h-11 md:min-h-9" required aria-label="Select course"
@@ -107,28 +108,28 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
       {item.courseName} · {item.courseCode} · {item.cohortName} · {item.periodName}
      </option>)}
     </Select>
-   </label>
+   </Label>
    <p className="text-xs text-muted-foreground leading-5">
     {!chosen?"Select course":chosen.pathId||pathOverrides[chosen.offeringId]?
      "The Lesson will be added to this Course Offering’s active Learning Path.":
      "An active Learning Path will be created for this Course Offering before the Lesson."}
    </p>
-   <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Lesson Name
+   <Label stack>Lesson Name
     <Input value={name} onChange={event=>{setName(event.target.value);if(error==="Enter a lesson name")setError("");}}
      maxLength={255} placeholder="e.g., Introduction to Arrays"
      className="min-h-11 md:min-h-9" required/>
-   </label>
-   <label className="flex min-h-11 items-center gap-3 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+   </Label>
+   <Label className="flex min-h-11 items-center gap-3">
     <Checkbox checked={visibleToStudents} disabled={busy}
      onChange={event=>setVisibleToStudents(event.target.checked)}/>
     Visible to students
-   </label>
+   </Label>
    {!visibleToStudents?<p className="text-xs text-muted-foreground">This lesson will be hidden from students until you show it.</p>:null}
-   <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Description (optional)
+   <Label stack>Description (optional)
     <Textarea value={description} onChange={event=>setDescription(event.target.value)}
      maxLength={5000} rows={3}
      className="min-h-11 md:min-h-9"/>
-   </label>
+   </Label>
    <div className="flex min-w-0 flex-col items-stretch gap-2 md:flex-row md:flex-wrap md:items-center">
     <Button type="button" loading={busy} disabled={busy} onClick={()=>void create(false)}
      className="min-h-11 md:min-h-9">

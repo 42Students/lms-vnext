@@ -15,6 +15,7 @@ import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evide
 import {mentorResourceGroupKey,mentorResourceGroupLabel,mentorResourceGroupOrder} from "@/modules/projects/mentor-resource-groups-model";
 import {mentorResourceEarlierScope,mentorResourceLinkedScopeLabels,mentorResourceMatchesType} from "@/modules/projects/mentor-resource-directory-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type ResourceRow={
  id:string;title:string;description:string|null;url:string|null;required:boolean;
@@ -172,11 +173,11 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
       </div>)}
   </div>:null}
   <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-    {rows.length>12?<label className="grid min-w-40 flex-1 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Search
+    {rows.length>12?<Label stack className="min-w-40 flex-1 text-[length:var(--lms-font-sm)]">Search
       <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
        aria-label="Search resources" placeholder="Search title, key, notes, file name, or link" className=""/>
-    </label>:null}
-    <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Type
+    </Label>:null}
+    <Label stack className="text-[length:var(--lms-font-sm)]">Type
       <Select value={type} onChange={event=>setType(event.target.value)}
         className="">
        <option value="ALL">All types</option><option value="LINK">Links</option>
@@ -184,52 +185,52 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
        {(["FILE","DOCUMENT","CODE","NOTE","ENVIRONMENT"] as const).map(kind=>
          <option key={kind} value={kind}>{kind[0]+kind.slice(1).toLowerCase()}</option>)}
       </Select>
-    </label>
-    {mode!=="LEARNER"?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Visible to
+    </Label>
+    {mode!=="LEARNER"?<Label stack className="text-[length:var(--lms-font-sm)]">Visible to
       <Select value={visibility} onChange={event=>setVisibility(event.target.value)}
        className="">
         <option value="ALL">Everyone and mentors</option>
         <option value="TEAM">Everyone</option><option value="MENTOR_ONLY">Mentors only</option>
       </Select>
-    </label>:null}
+    </Label>:null}
     {mode!=="LEARNER"?<>
-      <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Status
+      <Label stack className="text-[length:var(--lms-font-sm)]">Status
         <Select value={status} onChange={event=>setStatus(event.target.value)}
           className="">
           <option value="ALL">All statuses</option><option value="ACTIVE">Active</option>
           <option value="DRAFT">Draft</option><option value="ARCHIVED">Archived</option>
         </Select>
-      </label>
-      <label className="flex min-h-11 items-center gap-2 text-xs font-semibold">
+      </Label>
+      <Label className="flex min-h-11 items-center gap-2">
         <Checkbox className="size-5" checked={pinned} onChange={event=>setPinned(event.target.checked)}/>
         Pinned only
-      </label>
-      {mode==="MENTOR"?<label className="flex min-h-11 items-center gap-2 text-xs font-semibold">
+      </Label>
+      {mode==="MENTOR"?<Label className="flex min-h-11 items-center gap-2">
         <Checkbox className="size-5" checked={groupBySprint}
           onChange={event=>setGroupBySprint(event.target.checked)}/>
         Show by sprint
-      </label>:null}
-      <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Sprint
+      </Label>:null}
+      <Label stack className="text-[length:var(--lms-font-sm)]">Sprint
         <Select value={sprint} onChange={event=>setSprint(event.target.value)}
           className="">
           <option value="">All sprints</option>
           {sprints.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
         </Select>
-      </label>
-      {mode==="MENTOR"?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Shared by · recorded creator
+      </Label>
+      {mode==="MENTOR"?<Label stack className="text-[length:var(--lms-font-sm)]">Shared by · recorded creator
         <Select value={sharer} onChange={event=>setSharer(event.target.value)}>
           <option value="ALL">Anyone</option>
           {sharerOptions.map(([id,name])=><option value={id} key={id}>{name}</option>)}
           <option value="UNKNOWN">Creator not recorded</option>
         </Select>
-      </label>:null}
-      <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Task
+      </Label>:null}
+      <Label stack className="text-[length:var(--lms-font-sm)]">Task
         <Select value={task} onChange={event=>setTask(event.target.value)}
           className="">
           <option value="">All tasks</option>
           {tasks.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
         </Select>
-      </label>
+      </Label>
     </>:null}
     <Button variant="secondary" type="button" onClick={()=>{setSearch("");setType("ALL");setVisibility("ALL");setStatus("ACTIVE");setPinned(false);setSprint("");setTask("");setSharer("ALL");setGroupBySprint(mode==="MENTOR");
          setShowEarlier(false);}}

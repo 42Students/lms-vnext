@@ -5,6 +5,7 @@ import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
 import {projectMutation} from "./project-api";
+import { Label } from "@/components/ui/label";
 
 /** The completed-meeting outcome is the only field writable through the
  * dedicated notes API. Structured attendance/actions remain in the project
@@ -40,11 +41,11 @@ export function MentorMeetingOutcomeQuickEdit({projectId,meetingId,recorded,
       onClick={()=>{setText(recorded??"");setError("");setEditing(true);}}>
       {recorded?"Edit recorded outcome":"Record meeting outcome"}
      </Button>:<>
-     <label className="block text-sm font-semibold">
+     <Label className="block">
        Outcome notes shared with the team
        <Textarea className="mt-1" rows={4} maxLength={4000} disabled={busy}
          value={text} onChange={event=>setText(event.target.value)}/>
-     </label>
+     </Label>
      {error?<p role="alert" className="text-error">{error}</p>:null}
      <div className="flex gap-2">
        <Button type="button" disabled={busy||!text.trim()||

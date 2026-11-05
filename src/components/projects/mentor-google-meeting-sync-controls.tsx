@@ -7,6 +7,7 @@ import type {MentorGoogleMeetingStatus} from
 import {MentorGoogleMeetingProviderStatus} from "./mentor-google-meeting-provider-status";
 import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 export function MentorGoogleMeetingSyncControls({projectId,meetingId,canEdit,draft=false,cancelled=false}:{
  projectId:string;meetingId:string;canEdit:boolean;draft?:boolean;cancelled?:boolean;
@@ -87,7 +88,7 @@ export function MentorGoogleMeetingSyncControls({projectId,meetingId,canEdit,dra
      meeting is saved as scheduled, Google receives the team invitation update.
    </p>
    {canEdit&&!cancelled?<div className="flex flex-wrap items-center gap-2">
-    <label className="text-sm">Repeat
+    <Label variant="choice">Repeat
      <Select value={repeat} disabled={busy}
       onChange={e=>setRepeat(e.target.value)}
       className="ml-2 min-h-11 rounded border border-border bg-background p-2">
@@ -95,15 +96,15 @@ export function MentorGoogleMeetingSyncControls({projectId,meetingId,canEdit,dra
       <option value="4">Weekly × 4</option>
       <option value="8">Weekly × 8</option>
      </Select>
-    </label>
-    <label className="text-sm">Invite
+    </Label>
+    <Label variant="choice">Invite
      <Select value={inviteMode} disabled={busy}
       onChange={e=>void selectInviteMode(e.target.value as "ALL"|"SELECTED")}
       className="ml-2 min-h-11 rounded border border-border bg-background p-2">
       <option value="ALL">Whole active team</option>
       <option value="SELECTED">Selected active members</option>
      </Select>
-    </label>
+    </Label>
     <Button size="sm" type="button" disabled={busy||
       inviteMode==="SELECTED"&&(!inviteOptions||selectedIds.length===0)}
       loading={busy} onClick={()=>void call("POST")}>
@@ -118,14 +119,14 @@ export function MentorGoogleMeetingSyncControls({projectId,meetingId,canEdit,dra
         <p role="status" className="text-sm">Loading current eligible members, or retry selection.</p>:
        inviteOptions.length===0?
         <p className="text-sm">No members with saved email addresses are available.</p>:
-        inviteOptions.map(person=><label key={person.membershipId}
-          className="flex min-h-11 items-center gap-2 text-sm">
+        inviteOptions.map(person=><Label variant="choice" key={person.membershipId}
+          className="flex min-h-11 items-center gap-2">
           <Checkbox className="size-5"
             checked={selectedIds.includes(person.membershipId)}
             onChange={e=>setSelectedIds(ids=>e.target.checked?
               [...ids,person.membershipId]:ids.filter(id=>id!==person.membershipId))}/>
           {person.displayName}
-        </label>)}
+        </Label>)}
     </fieldset>:null}
    {canEdit&&cancelled?<Button size="sm" variant="secondary" type="button"
      disabled={busy} loading={busy} onClick={()=>void call("DELETE")}>

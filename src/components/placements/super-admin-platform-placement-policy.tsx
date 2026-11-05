@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { PlacementPolicyKey } from "@/modules/placements/platform-placement-policy-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Field={key:PlacementPolicyKey;label:string;unit:string;value:number;defaultValue:number;version:number;
  min:number;max:number;step:number;isOverridden:boolean;updatedAt:string|null};
 export function SuperAdminPlatformPlacementPolicy({initial}:{initial:Field[]}) {
@@ -64,7 +65,7 @@ export function SuperAdminPlatformPlacementPolicy({initial}:{initial:Field[]}) {
   </div>
   <div className="grid min-w-0 gap-x-6 gap-y-[var(--lms-space-3)] sm:grid-cols-2">
    {fields.map(field=><div key={field.key} className="min-w-0 space-y-[var(--lms-space-2)] border-b border-border py-[var(--lms-space-3)]">
-     <label htmlFor={"policy-"+field.key} className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{field.label}</label>
+     <Label htmlFor={"policy-"+field.key} className="block">{field.label}</Label>
      <p className="text-xs text-muted-foreground">Default: {field.defaultValue} {field.unit} · Allowed: {field.min}–{field.max} {field.unit} · {field.isOverridden?"Overridden":"Using default"}</p>
      <div className="flex flex-wrap items-center gap-2">
       <Input id={"policy-"+field.key} type="number" min={field.min} max={field.max} step={field.step} aria-invalid={(() => {const n=Number(drafts[field.key]??String(field.value));return !Number.isFinite(n)||n<field.min||n>field.max;})()}

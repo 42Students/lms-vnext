@@ -18,6 +18,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {getTpoJoiningFollowups} from "@/modules/placements/tpo-joining-followup-service";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 type Search={seasonId?:string|string[];state?:string|string[]};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function TpoJoiningFollowupsPage({searchParams}:{searchParams:Promise<Search>}){
@@ -43,20 +44,20 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
    </div>}/>
   <form action="/tpo/reports/joining-followups" method="get"
    className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-end">
-    <label className="min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Season
+    <Label className="min-w-0">Season
      <Select name="seasonId" defaultValue={report.season?.id??""}
       className="mt-2 block min-h-11 sm:min-h-9 w-full">
       {report.seasons.length===0?<option value="">No season</option>:null}
       {report.seasons.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
-     </Select></label>
-    <label className="min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Follow-up
+     </Select></Label>
+    <Label className="min-w-0">Follow-up
      <Select name="state" defaultValue={report.state}
       className="mt-2 block min-h-11 sm:min-h-9 w-full">
       <option value="ALL">All open</option><option value="PENDING">Pending</option>
       <option value="DEFERRED">Deferred</option><option value="DATE_DUE">Dated and due</option>
       <option value="DATE_MISSING">Missing joining date</option>
       <option value="UPCOMING_7_DAYS">Joining next 7 days</option>
-     </Select></label>
+     </Select></Label>
     <Button type="submit" className="min-h-11 w-full sm:w-auto sm:min-h-9">Apply</Button>
   </form>
       <TpoReportPresentation />

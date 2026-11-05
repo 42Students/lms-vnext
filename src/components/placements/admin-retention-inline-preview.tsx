@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {Button} from "@/components/ui/button";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 type RetentionRow = {
   id: string;
@@ -78,7 +79,7 @@ export function AdminRetentionInlinePreview({ collegeId }: { collegeId: string }
     {open ? <div id="admin-retention-preview" className="mt-2 space-y-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-3 text-sm">
       {loading ? <div role="status" aria-label="Loading data retention report" className="space-y-2">
         <p>Loading data retention report…</p>
-        {[1, 2, 3].map(row => <div key={row} aria-hidden="true" className="h-7 animate-pulse rounded bg-muted" />)}
+        {[1, 2, 3].map(row => <SkeletonBlock key={row} className="h-7" />)}
       </div> : error ? <div role="alert" className="flex flex-wrap items-center gap-3">
         <p>Couldn&apos;t load the data retention report.</p>
         <Button variant="secondary" type="button" onClick={() => { setSample(null); setRetryKey(value => value + 1); }}

@@ -10,6 +10,7 @@ import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import type { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Operations = Awaited<ReturnType<typeof getPlacementTpoOperations>>;
 
@@ -52,10 +53,10 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
         <Heading level={2} size="base" className="m-0 text-foreground">Needs attention</Heading>
         <p className="mt-1 text-sm text-body">Highest-impact placement work across jobs, ordered by urgency.</p>
         {showDriveSearch?<form action="/admin/placements" method="get" className="mt-3 flex flex-wrap items-center gap-3 text-sm">
-          <label className="flex items-center gap-[6px]">Stale after
+          <Label variant="choice" className="flex items-center gap-[6px]">Stale after
             <Select name="staleDays" defaultValue={staleDays} className="min-w-0">
               {[3,7,14,30].map(n=><option key={n} value={n}>{n} days</option>)}
-            </Select></label>
+            </Select></Label>
           <Button type="submit" variant="secondary">Apply</Button>
         </form>:null}
       </div>

@@ -16,6 +16,7 @@ import {
 } from "@/modules/projects/mentor-sprint-progress-model";
 import { getMentorSprintProgress } from "@/modules/projects/mentor-sprint-progress-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Params = { order?:string|string[];taskAttention?:string|string[];projectId?:string|string[];state?: string | string[]; release?: string | string[]; search?: string | string[]; page?: string | string[] };
 function first(value: string | string[] | undefined) {
@@ -55,45 +56,45 @@ export default async function MentorSprintProgressPage({
     </section> : <>
       <FilterBar title="Filters" activeCount={Number(Boolean(data.query.search))+Number(Boolean(data.query.projectId))+Number(data.query.state!=="ALL")+Number(data.query.taskAttention!=="ALL")+Number(data.query.release!=="ALL")+Number(data.query.order!=="PROJECT")}><form role="search" aria-label="mentor sprint progress filters" action="/mentor/sprint-progress" method="get"
         className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+        <Label stack>Search
           <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
             placeholder="Sprint, release or project" className="min-h-11 md:min-h-9" />
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project
+        </Label>
+        <Label stack>Assigned project
           <Select name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 md:min-h-9">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
           </Select>
-        </label>
+        </Label>
         <div className="flex min-w-0 flex-wrap items-center gap-2 max-md:col-span-1 md:col-span-1">
           <Button type="submit" variant="primary" className="w-full min-h-11 md:w-auto md:min-h-9">Filter</Button>
           {hasFilters?<Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-ring lms-inline-link md:min-h-9">Clear</Link>:null}
         </div>
         <Disclosure title="More sprint filters" defaultOpen={hasAdvancedFilters} className="min-w-0 md:col-span-3" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-4">
-        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint status
+        <Label stack className="min-w-0">Sprint status
           <Select name="state" defaultValue={data.query.state}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All</option><option value="ACTIVE">Active</option>
             <option value="PLANNED">Planned</option><option value="COMPLETED">Completed</option>
           </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Registered task attention
+        </Label>
+        <Label stack>Registered task attention
           <Select name="taskAttention" defaultValue={data.query.taskAttention} className="min-h-11 md:min-h-9">
             <option value="ALL">All sprints</option><option value="BLOCKED">Has blocked tasks</option><option value="IN_REVIEW">Has submitted tasks in review</option><option value="DONE">Sprints with recorded Done tasks</option><option value="TODO">Sprints with recorded To Do tasks</option><option value="NO_TASKS">Sprints without recorded tasks</option>
           </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Release status
+        </Label>
+        <Label stack>Release status
           <Select name="release" defaultValue={data.query.release}
             className="min-h-11 md:min-h-9">
             <option value="ALL">All releases</option><option value="PLANNED">Planned</option>
             <option value="IN_PROGRESS">In progress</option><option value="SHIPPED">Shipped</option>
           </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint order
+        </Label>
+        <Label stack>Sprint order
           <Select name="order" defaultValue={data.query.order} className="min-h-11 md:min-h-9">
             <option value="PROJECT">Project and Sprint order</option><option value="ACTIVE_FIRST">Active Sprints first</option>
           </Select>
-        </label>
+        </Label>
         </Disclosure>
 
       </form></FilterBar>

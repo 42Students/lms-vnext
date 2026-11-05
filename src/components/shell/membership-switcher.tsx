@@ -6,6 +6,7 @@ import type { MembershipChoice } from "@/modules/identity/context-service";
 import { Select } from "@/components/ui/select";
 import {apiFetch} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import { Label } from "@/components/ui/label";
 
 function roleName(role: string) {
   return role
@@ -100,9 +101,9 @@ export function MembershipSwitcher({
 
   return (
     <div className="grid w-full min-w-0 max-w-60 gap-[var(--lms-space-2)]">
-      <label className="sr-only" htmlFor="membership-switcher">
+      <Label className="sr-only" htmlFor="membership-switcher">
         Switch workspace
-      </label>
+      </Label>
       <Select
         id="membership-switcher"
         value={active?.value ?? ""}

@@ -8,6 +8,7 @@ import {useRef,useState,type FormEvent} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useRouter} from "next/navigation";
 import {tpoRoundResultEntryFormSchema} from "@/modules/placements/tpo-round-result-entry-model";
+import { Label } from "@/components/ui/label";
 export function TpoRoundResultEntryForm({roundId,applicationId,currentResultId}:{
  roundId:string;applicationId:string;currentResultId:string|null;
 }){
@@ -52,23 +53,23 @@ export function TpoRoundResultEntryForm({roundId,applicationId,currentResultId}:
  return (
   <form onSubmit={submit} aria-busy={pending}
     className="grid min-w-0 max-w-3xl gap-[var(--lms-space-4)] md:grid-cols-2">
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+   <Label stack className="min-w-0">
     Outcome
     <Select name="outcome" value={outcome} disabled={pending||saved}
       onChange={event=>{setOutcome(event.target.value);setError(null);setFieldIssue(null);}}>
      <option value="PASS">Pass</option><option value="FAIL">Fail</option>
      <option value="HOLD">Hold (requires rank)</option><option value="ABSENT">Absent</option>
     </Select>
-   </label>
+   </Label>
    {outcome==="HOLD"?(
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    <Label stack className="min-w-0">
      Waitlist rank
      <Input name="waitlistRank" type="number" min="1" max="100000" step="1" required
        error={fieldIssue==="waitlistRank"} disabled={pending||saved}
        onChange={()=>{setFieldIssue(null);setError(null);}} />
-    </label>
+    </Label>
    ):null}
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
+   <Label stack className="min-w-0 md:col-span-2">
     {outcome==="PASS"?"Internal result note":"Candidate-visible feedback"}
     <Textarea name="note" rows={3} minLength={1} maxLength={1000} required
       error={fieldIssue==="note"} disabled={pending||saved}
@@ -76,7 +77,7 @@ export function TpoRoundResultEntryForm({roundId,applicationId,currentResultId}:
     <span className="text-xs font-normal leading-5 text-muted-foreground">
      {outcome==="PASS"?"This note stays internal.":"This feedback is visible to the candidate."}
     </span>
-   </label>
+   </Label>
    {error?(
     <div className="min-w-0 md:col-span-2">
      <InlineNotice tone="error" message={error} />

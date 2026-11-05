@@ -9,6 +9,7 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {getTpoPrepSelectionState} from "@/modules/placements/tpo-prep-selection-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type PrepSaveResult={changed:boolean;updatedAt:string};
 export function TpoPrepReadinessEditor({choices,initial,expectedVersion}:{choices:readonly {id:string;name:string;code:string}[];
@@ -55,10 +56,10 @@ export function TpoPrepReadinessEditor({choices,initial,expectedVersion}:{choice
  return <section className="min-w-0 space-y-3 border-t border-border pt-4">
   <Heading level={3} size="lg" className="text-foreground">Required preparation courses</Heading>
   <p className="text-sm text-muted-foreground">Select active courses from this college only. TPO Students derives preparation support from saved learner course completions when published course evidence is available; missing progress remains unclassified.</p>
-  <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find a preparation course
+  <Label className="block">Find a preparation course
    <Input type="search" value={search} onChange={e=>setSearch(e.target.value)} maxLength={100}
     placeholder="Search course name or code" className="mt-1 min-h-11 md:min-h-9 w-full"/>
-  </label>
+  </Label>
   <p className="text-xs text-muted-foreground">With none picked, nobody is marked as needing prep.</p>
   {missing.length>0?<Alert tone="warning">
    {missing.length} previously selected preparation course(s) are no longer active or available in this college.
@@ -70,18 +71,18 @@ export function TpoPrepReadinessEditor({choices,initial,expectedVersion}:{choice
    <legend className="text-sm">Courses used for readiness</legend>
    {choices.filter(course=>(course.name+" "+course.code).toLocaleLowerCase("en-IN").includes(search.trim().toLocaleLowerCase("en-IN"))).length===0?<p role="status" className="px-3 py-4 text-sm text-muted-foreground">No preparation courses match your search.</p>:null}
    {choices.filter(course=>(course.name+" "+course.code).toLocaleLowerCase("en-IN").includes(search.trim().toLocaleLowerCase("en-IN"))).map(course=>
-    <label key={course.id} className="flex min-h-11 md:min-h-9 min-w-0 items-center gap-2 border-b border-border px-3 text-sm hover:bg-surface-subtle focus-within:bg-primary-subtle">
+    <Label variant="choice" key={course.id} className="flex min-h-11 md:min-h-9 min-w-0 items-center gap-2 border-b border-border px-3 hover:bg-surface-subtle focus-within:bg-primary-subtle">
      <Checkbox checked={selected.includes(course.id)} onChange={e=>{
       setSelected(current=>e.target.checked?current.includes(course.id)?current:[...current,course.id]:
        current.filter(id=>id!==course.id));
      }}/><span className="min-w-0 break-words">{course.name} ({course.code})</span>
-    </label>)}
+    </Label>)}
   </fieldset>
-  <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum completed courses
+  <Label className="block">Minimum completed courses
    <Input type="number" min={0} max={selected.length} value={minimum} disabled={busy}
     onChange={e=>setMinimum(Number(e.target.value))}
     className="mt-1 min-h-11 md:min-h-9 w-full sm:w-28"/>
-  </label>
+  </Label>
   <Button type="button" disabled={busy||!dirty||!valid} onClick={()=>void save()}
    className="min-h-11 md:min-h-9 w-full sm:w-auto">
    {busy?"Saving…":"Save readiness policy"}

@@ -18,6 +18,7 @@ import {facultyCsvResponseBelongsToDraft} from "@/modules/people/college-faculty
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type Row={row:number;status:string;detail:string;membershipId?:string};
 type Report={preview:boolean;valid:number;invalid:number;structuralErrors:string[];results:Row[]};
@@ -86,12 +87,12 @@ export function CollegeFacultyCsvImport(){
         <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-ring md:min-h-9">CSV contents</summary>
         <div className="min-w-0 space-y-3 pt-3">
           <p className="break-words font-mono text-xs leading-5">{header}</p>
-          <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">CSV contents
+          <Label stack>CSV contents
         <Textarea rows={10} value={csv} disabled={pending} onChange={event=>{
           csvRevision.current++;
           setCsv(event.target.value);setReport(null);setConfirmed(false);setError("");
         }} className="font-mono text-xs"/>
-          </label>
+          </Label>
         </div>
       </details>
       {error&&<Alert tone="error">{error}</Alert>}
@@ -107,10 +108,10 @@ export function CollegeFacultyCsvImport(){
       </TextLink>
       {report.preview&&report.valid>0&&report.structuralErrors.length===0&&
       <div className="space-y-3">
-        <label className="flex min-h-11 items-center gap-2 text-sm print:hidden">
+        <Label variant="choice" className="flex min-h-11 items-center gap-2 print:hidden">
           <Checkbox checked={confirmed} onChange={event=>setConfirmed(event.target.checked)}/>
           I understand valid rows create real faculty memberships; partial failures require manual review.
-        </label>
+        </Label>
         <Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" loading={pending} disabled={pending||!confirmed} onClick={()=>run("IMPORT")}>
           {pending?"Registering…":"Confirm faculty registration"}
         </Button>

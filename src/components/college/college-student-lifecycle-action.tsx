@@ -6,6 +6,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useRouter } from "next/navigation";
 import { useId, useRef, useState, useTransition } from "react";
 import Link from "next/link";
+import { Label } from "@/components/ui/label";
 
 export function CollegeStudentLifecycleAction({ membershipId, name, status }: {
   membershipId: string; name: string; status: "ACTIVE" | "SUSPENDED" | "ENDED";
@@ -76,11 +77,11 @@ export function CollegeStudentLifecycleAction({ membershipId, name, status }: {
       confirmDisabled={suspend&&reason.trim().length<3}
       onConfirm={confirm}>
       <div className="min-w-0 space-y-[var(--lms-space-3)]">
-        {suspend?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason
+        {suspend?<Label stack className="min-w-0">Reason
           <Input id={reasonId} className="min-h-11 w-full md:min-h-9" required minLength={3} maxLength={500}
             aria-describedby={reasonId+"-hint"} value={reason} disabled={pending} onChange={event=>setReason(event.target.value)}/>
           <span id={reasonId+"-hint"} className="text-xs font-normal text-muted-foreground">At least 3 characters, up to 500.</span>
-        </label>:<p className="max-w-prose break-words text-sm leading-5 text-body">Restore access for this student membership?</p>}
+        </Label>:<p className="max-w-prose break-words text-sm leading-5 text-body">Restore access for this student membership?</p>}
         {error?<Alert tone="error">{error} {error.includes("Sign in again")?<Link href="/login" className="font-semibold underline">Sign in</Link>:null}</Alert>:null}
       </div>
     </ConfirmDialog>

@@ -13,6 +13,7 @@ import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { FRIENDLY_MESSAGES } from "@/lib/friendly-error";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 function roleLabel(roles: readonly string[]) {
   return roles
@@ -135,12 +136,12 @@ export function MembershipChooser({
               (membership.id===selectedId?"border-primary":"border-border")}
           >
             <div>
-              <label className="mb-3 flex min-h-11 items-center gap-2 text-sm font-semibold">
+              <Label className="mb-3 flex min-h-11 items-center gap-2">
                 <Radio name="membership" checked={selectedId===membership.id}
                   disabled={pending||membership.status!=="ACTIVE"}
                   onChange={()=>setSelectedId(membership.id)} />
                 Select {membership.collegeName}
-              </label>
+              </Label>
               <p className="m-0 text-base font-semibold text-foreground">
                 {membership.collegeName}
               </p>

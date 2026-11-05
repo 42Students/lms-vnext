@@ -4,6 +4,7 @@ import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 const sizes = [10, 25, 50, 100] as const;
 const preferenceKey = "lms.college.directory.pageSize";
@@ -27,7 +28,7 @@ export function CollegeDirectoryPageSize({ current }: { current: number }) {
     }
   }, [current, router]);
 
-  return <label className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+  return <Label variant="choice" className="inline-flex items-center gap-2">
     Show
     <Select aria-label="Rows per page" value={String(current)} disabled={pending}
       onChange={event => {
@@ -42,7 +43,7 @@ export function CollegeDirectoryPageSize({ current }: { current: number }) {
       {sizes.map(size => <option key={size} value={size}>{size}</option>)}
     </Select>
     per page
-  </label>;
+  </Label>;
 }
 
 export function CollegeDirectoryRefresh() {

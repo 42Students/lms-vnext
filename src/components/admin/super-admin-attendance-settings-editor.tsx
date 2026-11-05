@@ -8,6 +8,7 @@ import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {DEFAULT_ATTENDANCE_POLICY} from "@/modules/attendance/policy-validation";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresholdPercent,correctionWindowHours,maxCorrectionHours=168}:{
  collegeId:string;eligibilityThresholdPercent:number;correctionWindowHours:number;maxCorrectionHours?:number;
 }){
@@ -170,7 +171,7 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
  return <section aria-label="Attendance policy" className="min-w-0 max-w-3xl space-y-[var(--lms-space-3)] rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
   <Heading level={2} className="text-[var(--lms-heading)]">Attendance policy</Heading>
   <div className="grid gap-4 md:grid-cols-2 print:hidden">
-   <div className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4"><label htmlFor="attendance-policy-hours">Late marking allowed for</label>
+   <div className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4"><Label htmlFor="attendance-policy-hours">Late marking allowed for</Label>
     <Input id="attendance-policy-hours" type="number" min={1} max={maxCorrectionHours} step={1} value={hours}
      onChange={e=>{setHours(e.target.value);setMessage("");setFailed(false);}} aria-describedby="late-marking-help"
      aria-invalid={failed&&!withinRange}
@@ -183,7 +184,7 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
     </div>
     <span id="late-marking-help" className="max-w-prose text-xs font-normal leading-5 text-muted-foreground">How long after a class ends attendance can be marked or corrected (hours). The legacy tenant editor allowed up to 8,760 hours; this college allows up to {maxCorrectionHours} hours under its effective attendance policy. A higher value cannot be saved here.</span>
    </div>
-   <div className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4"><label htmlFor="attendance-policy-threshold">Minimum attendance</label>
+   <div className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4"><Label htmlFor="attendance-policy-threshold">Minimum attendance</Label>
     <Input id="attendance-policy-threshold" type="number" min={1} max={100} step={1} value={threshold}
      onChange={e=>{setThreshold(e.target.value);setMessage("");setFailed(false);}} aria-describedby="minimum-attendance-help"
      aria-invalid={failed&&!thresholdValid}

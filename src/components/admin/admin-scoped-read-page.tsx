@@ -20,6 +20,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import { readAdminQuery, superAdminReadHref, type SuperAdminReadResult, type SuperAdminReadRow } from "@/modules/admin-ui/super-admin-read-directory-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,renderBulkActions,peopleFilters,classOptions,applicationFilters,headingMode="page",backHref,headerActions,intro,compactReadLayout=false}:{
  title:string;path:string;description:string;headingMode?:"page"|"section";backHref?:string;headerActions?:ReactNode;intro?:ReactNode;compactReadLayout?:boolean;
  statuses:readonly string[];
@@ -200,17 +201,17 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-3 print:hidden">
     {directoryKind==="LEARNER"?<><input type="hidden" name="sortBy" value={data.query.sortBy}/><input type="hidden" name="sortOrder" value={data.query.sortOrder}/></>:null}
    {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
-   <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+   <Label stack className="min-w-0">Search
     <AdminScopedLiveSearch initial={data.query.q} path={path}
      placeholder={directoryKind==="LEARNER"?"Search students by name, email, roll number, or mobile...":directoryKind==="FACULTY"?"Search faculty by name, email, department, or type...":"Search by name or identifier"}
      popularSuggestions={data.items.slice(0,15).map(row=>row.title)}/>
-   </label>
-   <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+   </Label>
+   <Label stack className="min-w-0">Status
     <Select name="status" defaultValue={data.query.status}
      className="min-h-11 w-full md:min-h-9">
      {statuses.map(status=><option key={status} value={status}>{status==="ALL"?"Any status":humanStatus(status)}</option>)}
     </Select>
-   </label>
+   </Label>
    <Button type="submit" variant="primary" className="min-h-11 w-full self-end sm:col-span-2 lg:col-span-1 lg:min-h-9 lg:w-auto">Filter</Button>
    {applicationFilters?<details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(data.query.jobId||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.source!=="ALL"||data.query.channel!=="ALL"||data.query.pipelineStage!=="ALL")}>
     <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-ring lg:min-h-9">Filters</summary>
@@ -218,47 +219,47 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     {(["jobId","departmentId","programId","cohortId"] as const).map(key=>{
       const rows=key==="jobId"?applicationFilters.jobs:key==="departmentId"?applicationFilters.departments:key==="programId"?applicationFilters.programs:applicationFilters.batches;
       const label=key==="jobId"?"Job":key==="departmentId"?"Department":key==="programId"?"Program":"Batch";
-      return <label key={key} className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
+      return <Label stack key={key} className="min-w-0">{label}
         <Select name={key} defaultValue={data.query[key]??""} className="w-full">
           <option value="">All {label.toLowerCase()}s</option>{rows.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
         </Select>
-      </label>;
+      </Label>;
     })}
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Source
+    <Label stack className="min-w-0">Source
       <Select name="source" defaultValue={data.query.source} className="w-full">
         <option value="ALL">All sources</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
       </Select>
-    </label>
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Channel
+    </Label>
+    <Label stack className="min-w-0">Channel
       <Select name="channel" defaultValue={data.query.channel} className="w-full">
         <option value="ALL">All sources</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
       </Select>
-    </label>
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Hiring stage
+    </Label>
+    <Label stack className="min-w-0">Hiring stage
      <Select name="pipelineStage" defaultValue={data.query.pipelineStage} className="w-full">
        {["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED"].map(stage=><option value={stage} key={stage}>{stage==="ALL"?"All hiring stages":stage}</option>)}
      </Select>
-    </label>
+    </Label>
     </div>
    </details>:null}
    {peopleFilters ? <details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(directoryKind||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.sectionId||data.query.employmentType)}>
     <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-ring lg:min-h-9">Filters</summary>
     <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 xl:grid-cols-3">
     {peopleFilters.kind==="FACULTY"?<>
-     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
+     <Label stack className="min-w-0">Department
       <Select name="departmentId" defaultValue={data.query.departmentId??""} className="w-full">
        <option value="">All departments</option>
        {peopleFilters.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
       </Select>
-     </label>
-     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty type
+     </Label>
+     <Label stack className="min-w-0">Faculty type
       <Select name="employmentType" aria-label="Filter by faculty type" defaultValue={data.query.employmentType??""} className="min-h-11 w-full md:min-h-9">
        <option value="">All types</option>
        {facultyTypes.map(([value,label])=><option key={value} value={value}>{label}</option>)}
        {data.query.employmentType&&!facultyTypes.some(([code])=>code===data.query.employmentType)?
         <option value={data.query.employmentType}>{facultyTypeLabel(data.query.employmentType)}</option>:null}
       </Select>
-     </label>
+     </Label>
     </>:<AdminPeopleAcademicCascade
      departments={peopleFilters.departments} programs={peopleFilters.programs}
      batches={peopleFilters.batches} classes={peopleFilters.classes}
@@ -268,16 +269,16 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
       ...(data.query.sectionId!==undefined?{sectionId:data.query.sectionId}:{})}}/>}
     </div>
    </details>:null}
-   {classOptions?<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Filter by class
+   {classOptions?<Label stack className="min-w-0">Filter by class
      <Select name="sectionId" defaultValue={data.query.sectionId??""}
       className="min-h-11 w-full md:min-h-9">
       <option value="">All classes</option>
       {classOptions.map(cls=><option key={cls.id} value={cls.id}>{cls.name}</option>)}
-     </Select></label>:null}
-   {compactReadLayout?null:<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
+     </Select></Label>:null}
+   {compactReadLayout?null:<Label stack className="min-w-0">Rows per page
     <AdminScopedRowsPerPage initial={data.query.pageSize} path={path} scopeKey={context.adminScope.collegeId}
     className="min-h-11 w-full md:min-h-9"/>
-   </label>}
+   </Label>}
 
    {compactReadLayout?<details className="order-4 min-w-0 sm:col-span-2 lg:col-span-3">
      <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] focus-ring md:min-h-9">Rows per page</summary>

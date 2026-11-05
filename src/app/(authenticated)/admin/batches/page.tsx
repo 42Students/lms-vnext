@@ -18,6 +18,7 @@ import { listCollegeBatches } from "@/modules/academics/college-academic-directo
 import { listAcademicPeriods } from "@/modules/academics/period-service";
 import { collegeBatchDirectorySchema, academicDirectoryHref } from "@/modules/academics/college-academic-directory-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 const statuses = ["ALL", "ACTIVE", "INACTIVE", "COMPLETED", "PLANNED", "ARCHIVED"] as const;
 const pageUrl = (query: Parameters<typeof academicDirectoryHref>[1]) => academicDirectoryHref("BATCHES", query).replace("/college/batches", "/admin/batches");
@@ -63,34 +64,34 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
        <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <section aria-label="Filter managed batches" className="border-b border-border pb-4">
         <form action="/admin/batches" method="get" role="search" aria-label="Batch filters" className="grid min-w-0 items-end gap-[8px] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
-          <label className="grid min-w-0 w-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0 w-full">
             Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
               className="min-h-11 md:min-h-9">
               <option value="">All programs</option>
               {data.programs.map(program => <option key={program.id} value={program.id}>{program.name}</option>)}
             </Select>
-          </label>
-          <label className="grid min-w-0 w-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          </Label>
+          <Label stack className="min-w-0 w-full">
             Search batches
             <Input type="search" name="q" defaultValue={data.query.q}
               placeholder="Search batch, year, program or status"
               className="min-h-11 md:min-h-9"/>
-          </label>
+          </Label>
           <Disclosure title="More filters" defaultOpen={data.query.status!=="ALL" || data.query.pageSize!==25}
             className="order-last min-w-0 md:col-span-4" contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-3)] md:grid-cols-2">
-          <label className="grid min-w-0 w-full md:min-w-36 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack className="min-w-0 w-full md:min-w-36">
             Status
             <Select name="status" defaultValue={data.query.status}
               className="min-h-11 md:min-h-9">
               {statuses.map(status => <option key={status} value={status}>{status === "INACTIVE" ? "Inactive (planned / archived)" : legacyAcademicStatus(status, true)}</option>)}
             </Select>
-          </label>
-          <label className="grid min-w-0 w-full md:min-w-32 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
+          </Label>
+          <Label stack className="min-w-0 w-full md:min-w-32">Rows per page
             <Select name="pageSize" defaultValue={data.query.pageSize} className="min-h-11 md:min-h-9">
               {[10,25,50,100].map(n=><option value={n} key={n}>{n}</option>)}
             </Select>
-          </label>
+          </Label>
           </Disclosure>
           <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
           <Button variant="secondary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Refresh</Button>

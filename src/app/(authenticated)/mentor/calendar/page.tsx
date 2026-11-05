@@ -20,6 +20,7 @@ import {ProjectsServiceError} from "@/modules/projects/errors";
 import {singleValueMentorCalendarFilters} from "@/modules/projects/mentor-filter-query";
 import {mentorCalendarFiltersSchema,filterMentorCalendar}
   from "@/modules/projects/mentor-calendar-filter-model";
+import { Label } from "@/components/ui/label";
 export const dynamic="force-dynamic";
 type Search={sprint?:string|string[];join?:string|string[];projectId?:string|string[];attention?:string|string[];status?:string|string[];type?:string|string[];projectState?:string|string[];search?:string|string[];period?:string|string[]};
 export default async function MentorCalendarPage({searchParams}:{
@@ -101,34 +102,34 @@ export default async function MentorCalendarPage({searchParams}:{
       <p className="mb-3 text-xs text-body">Filter the Upcoming and Past meetings above;
         choose Filter to apply a new search.</p>
     <FilterBar title="Meeting filters" activeCount={activeCount}
-      search={<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+      search={<Label stack>Search
         <Input type="search" name="search" form="mentor-calendar-filters" maxLength={100}
           defaultValue={parsed.data.search} placeholder="Meeting or project"/>
-      </label>}>
+      </Label>}>
     <form id="mentor-calendar-filters" method="get" role="search" aria-label="Mentor meeting filters" action="/mentor/calendar"
       className="min-w-0 space-y-3 border-b border-border pb-4">
       <div className="grid min-w-0 items-end gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-      <label className="grid min-w-0 max-w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Action needed
+      <Label stack className="min-w-0 max-w-full">Action needed
         <Select name="attention" defaultValue={parsed.data.attention} className="min-h-11 md:min-h-9 w-full max-w-full">
           <option value="ALL">All meetings</option><option value="OVERDUE_REQUESTED">Past-dated meeting requests still awaiting response</option>
           <option value="SOON_SCHEDULED">Scheduled within 48 hours</option>
           <option value="MISSED_SCHEDULED">Past-day scheduled meetings without completion</option>
           <option value="NOTES_MISSING">Completed meetings with no recorded notes or outcome</option>
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">IST dates
+      </Label>
+      <Label stack>IST dates
         <Select name="period" defaultValue={parsed.data.period}
           className="min-h-11 md:min-h-9">
           <option value="ALL">All dates</option><option value="TODAY">Today</option>
           <option value="NEXT_7_DAYS">Next 7 IST days</option>
           <option value="PAST_7_DAYS">Previous 7 IST days</option>
         </Select>
-      </label>
+      </Label>
         <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 lg:w-auto">Filter</Button>
       </div>
       <Disclosure title="More filters" defaultOpen={advancedCount>0} contentClassName="pt-3" className="min-w-0">
         <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project
+      <Label stack>Assigned project
         <Select name="projectId" defaultValue={parsed.data.projectId??""}
           className="min-h-11 md:min-h-9 max-w-full">
           <option value="">All projects with meetings</option>
@@ -136,28 +137,28 @@ export default async function MentorCalendarPage({searchParams}:{
             .sort((a,b)=>a[1].localeCompare(b[1])||a[0].localeCompare(b[0]))
             .map(([id,title])=><option key={id} value={id}>{title}</option>)}
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint association
+      </Label>
+      <Label stack>Sprint association
         <Select name="sprint" defaultValue={parsed.data.sprint} className="min-h-11 md:min-h-9">
           <option value="ALL">All meetings</option><option value="LINKED">Linked to a recorded Sprint</option>
           <option value="UNLINKED">No linked Sprint</option>
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Join link
+      </Label>
+      <Label stack>Join link
         <Select name="join" defaultValue={parsed.data.join}
           className="min-h-11 md:min-h-9">
           <option value="ALL">All meetings</option><option value="HAS_SAFE_LINK">Valid join link</option>
           <option value="NO_SAFE_LINK">No safe join link</option>
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+      </Label>
+      <Label stack>Status
         <Select name="status" defaultValue={parsed.data.status}
           className="min-h-11 md:min-h-9">
           {(["ALL","DRAFT","REQUESTED","SCHEDULED","RESCHEDULED","COMPLETED","CANCELLED"] as const).map(status=>
             <option key={status} value={status}>{status.replaceAll("_"," ")}</option>)}
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting type
+      </Label>
+      <Label stack>Meeting type
         <Select name="type" defaultValue={parsed.data.type}
           className="min-h-11 md:min-h-9">
           <option value="ALL">All types</option>
@@ -165,15 +166,15 @@ export default async function MentorCalendarPage({searchParams}:{
           <option value="STANDUP">Standup</option><option value="REVIEW">Review</option>
           <option value="RETRO">Retrospective</option>
         </Select>
-      </label>
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project state
+      </Label>
+      <Label stack>Assigned project state
         <Select name="projectState" defaultValue={parsed.data.projectState}
           className="min-h-11 md:min-h-9">
           <option value="ALL">All project states</option>
           <option value="PLANNED">Planned</option><option value="ACTIVE">Active</option>
           <option value="COMPLETED">Completed</option><option value="ARCHIVED">Archived</option>
         </Select>
-      </label>
+      </Label>
         </div>
       </Disclosure>
       {activeCount>0?<Link href="/mentor/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring md:min-h-9">Clear</Link>:null}

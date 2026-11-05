@@ -20,6 +20,7 @@ import { listColleges } from "@/modules/colleges/service";
 import { MEMBERSHIP_ROLES, MEMBERSHIP_STATUSES, USER_PLATFORM_STATUSES } from "@/modules/identity/constants";
 import { adminUsersQuerySchema, adminUsersHref, adminPeopleSearchState } from "@/modules/people/admin-user-directory-model";
 import { listSuperAdminUsers } from "@/modules/people/admin-user-directory-service";
+import { Label } from "@/components/ui/label";
 export default async function SuperAdminUserDirectory({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }) {
@@ -128,29 +129,29 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    <Input type="hidden" name="tab" value={tabForm.hiddenTab} />
    <Input type="hidden" name="pageSize" value={size} />
    <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Search contacts
+    <Label stack className="min-w-0">Search contacts
      <Input type="search" name="q" maxLength={100} placeholder="Search contacts..." defaultValue={query.data.q} className="min-h-11 w-full md:min-h-9"/>
-    </label>
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Role
+    </Label>
+    <Label stack className="min-w-0">Role
      <Select name="role" disabled={!tabForm.showExplicitRoleFilter} defaultValue={query.data.role} className="min-h-11 w-full md:min-h-9">
       {roleOptions.map(x=><option key={x} value={x}>{x}</option>)}
      </Select>
-    </label>
+    </Label>
     <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Filter</Button>
    </div>
    <details className="min-w-0" open={query.data.membershipStatus!=="ALL" || query.data.platformStatus!=="ALL"}>
     <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Filters</summary>
     <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2">
-     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Membership
+     <Label stack className="min-w-0">Membership
       <Select name="membershipStatus" defaultValue={query.data.membershipStatus} className="min-h-11 w-full md:min-h-9">
        {membershipOptions.map(x=><option key={x} value={x}>{x}</option>)}
       </Select>
-     </label>
-     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Platform
+     </Label>
+     <Label stack className="min-w-0">Platform
       <Select name="platformStatus" defaultValue={query.data.platformStatus} className="min-h-11 w-full md:min-h-9">
        {platformOptions.map(x=><option key={x} value={x}>{x}</option>)}
       </Select>
-     </label>
+     </Label>
     </div>
    </details>
    <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>
@@ -163,11 +164,11 @@ export default async function SuperAdminUserDirectory({searchParams}:{
     {data.query.tab!=="ALL"?<input type="hidden" name="tab" value={data.query.tab}/>:null}
     {data.query.q?<input type="hidden" name="q" value={data.query.q}/>:null}
     {data.query.role!=="ALL"?<input type="hidden" name="role" value={data.query.role}/>:null}
-    <label className="grid gap-1 text-sm font-semibold">Rows per page
+    <Label stack>Rows per page
      <Select name="pageSize" defaultValue={String(size)}>
       {[10,20,50].map(value=><option key={value} value={value}>{value}</option>)}
      </Select>
-    </label>
+    </Label>
     <Button type="submit" variant="secondary">Apply</Button>
    </form>
   </div>

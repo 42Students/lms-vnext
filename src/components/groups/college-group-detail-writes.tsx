@@ -11,6 +11,7 @@ import {groupRuleCriteriaSchema} from "@/modules/groups/rule-evaluator";
 import {collegeGroupDetailActionLabel} from "@/modules/groups/college-group-detail-write-model";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type Waitlisted={membershipId:string;displayName:string|null;version:number;isLocked:boolean;waitlistPosition:number|null};
 export function CollegeGroupDetailWrites({
@@ -93,10 +94,10 @@ export function CollegeGroupDetailWrites({
       <summary className="min-h-11 cursor-pointer py-2 text-lg font-semibold text-foreground focus-ring md:min-h-9">Eligibility rule</summary>
       <div className="min-w-0 space-y-3 pt-3">
       <p className="text-sm text-body leading-[22px]">Edit the supported V1 criteria as JSON. At least one criterion is required. Saving does not run a refresh or change membership.</p>
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rule criteria
+      <Label stack className="min-w-0">Rule criteria
         <Textarea rows={9} spellCheck={false} value={ruleJson} onChange={e=>setRuleJson(e.target.value)}
           className="min-w-0 w-full font-mono text-xs" />
-      </label>
+      </Label>
       <Switch label="Enable rule auto-refresh setting (does not execute a refresh now)"
         checked={autoRefresh} disabled={busy} onChange={e=>setAutoRefresh(e.target.checked)}/>
       <div className="flex flex-wrap gap-2">

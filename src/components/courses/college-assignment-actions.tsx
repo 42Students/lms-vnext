@@ -12,6 +12,7 @@ import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker"
 import {FacultyAssignmentMaterialLinks} from "./faculty-assignment-material-links";
 import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
 import {ALL_ASSIGNMENT_METHODS,normalizeAssignmentMethods,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
+import { Label } from "@/components/ui/label";
 type Assignment={id:string;title:string;points:number;dueAt:Date|null;status:string;
  courseName?:string;lessonName?:string;submissionCount?:number};
 function istInput(value:Date|string|null){
@@ -168,25 +169,25 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
     Submitted work and student grades remain attached to the original lesson.
    </p>
    <div className="grid gap-3 sm:grid-cols-2">
-    <label className="grid gap-1 text-[13px] font-semibold text-muted-foreground">Course
+    <Label stack>Course
      <Input disabled value={assignment.courseName||"Assigned course (unchanged)"}/>
-    </label>
-    <label className="grid gap-1 text-[13px] font-semibold text-muted-foreground">Lesson
+    </Label>
+    <Label stack>Lesson
      <Input disabled value={assignment.lessonName||"Assigned lesson (unchanged)"}/>
-    </label>
+    </Label>
    </div>
-   <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Title
+   <Label stack>Title
     <Input maxLength={255} placeholder="e.g., Module 1 Project" disabled={busy} value={title} onChange={e=>setTitle(e.target.value)}
-     className="min-h-11 md:min-h-9"/></label>
-   <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Points
+     className="min-h-11 md:min-h-9"/></Label>
+   <Label stack>Points
     <Input type="number" min={0} max={1000} placeholder="Enter points" disabled={busy} value={points}
-     onChange={e=>setPoints(e.target.value)} className="min-h-11 md:min-h-9"/></label>
-   <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Deadline (IST)
+     onChange={e=>setPoints(e.target.value)} className="min-h-11 md:min-h-9"/></Label>
+   <Label stack>Deadline (IST)
     <Input type="datetime-local" disabled={busy} value={dueAt} onChange={e=>setDueAt(e.target.value)}
-     className="min-h-11 md:min-h-9"/></label>
-   <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Instructions
+     className="min-h-11 md:min-h-9"/></Label>
+   <Label stack>Instructions
     <Textarea value={description} disabled={busy} maxLength={10000} rows={3}
-     onChange={e=>setDescription(e.target.value)} className="min-h-24"/></label>
+     onChange={e=>setDescription(e.target.value)} className="min-h-24"/></Label>
    <FacultyAssignmentMethodPicker methods={methods} onChange={next=>{setMethods(next);setMethodsDirty(true);}} disabled={busy}/>
    {resourceDeliveryId?<FacultyAssignmentMaterialLinks key={assignment.id+":"+resourceDeliveryId}
     assignmentId={assignment.id} deliveryId={resourceDeliveryId} disabled={busy}/>:

@@ -4,6 +4,7 @@ import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {useEffect,useRef,type FormEvent} from "react";
 import Link from "next/link";
+import { Label } from "@/components/ui/label";
 
 export type ProjectParticipantListQuery = {
   search?: string;
@@ -77,7 +78,7 @@ export function ProjectParticipantListControls({
       className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4 [&_label]:min-w-0"
     >
       {mentor&&query.segment?<input type="hidden" name="segment" value={query.segment}/>:null}
-      <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+      <Label stack className="text-[length:var(--lms-font-sm)]">
         Search
         <Input
           name="search"
@@ -87,9 +88,9 @@ export function ProjectParticipantListControls({
           placeholder="Search project title, course or slug"
           className="min-h-11 w-full min-w-0 max-w-full text-base font-normal text-foreground sm:w-[300px] md:min-h-9 md:text-sm"
         />
-      </label>
+      </Label>
 
-      <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+      <Label stack className="text-[length:var(--lms-font-sm)]">
         Status
         <Select
           name="status"
@@ -108,10 +109,10 @@ export function ProjectParticipantListControls({
             ),
           )}
         </Select>
-      </label>
+      </Label>
 
       {mentor || learner ? (
-        <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+        <Label stack className="text-[length:var(--lms-font-sm)]">
           Attention
           <Select
             name="attention"
@@ -141,25 +142,25 @@ export function ProjectParticipantListControls({
               </>
             ) : null}
           </Select>
-        </label>
+        </Label>
       ) : null}
 
       <details className="w-full min-w-0" open={Boolean(query.assignment||query.work||(query.sort&&query.sort!=="RECENT")||(query.pageSize&&query.pageSize!==25))}>
         <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link md:min-h-9">More filters</summary>
         <div className="mt-2 grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-      {mentor ? (<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Sort
+      {mentor ? (<Label stack className="text-[length:var(--lms-font-sm)]">Sort
         <Select name="sort" defaultValue={query.sort ?? "RECENT"} className="w-full">
           <option value="RECENT">Recently updated</option><option value="TITLE">Title A–Z</option><option value="PROGRESS">Least recorded progress first</option><option value="PROGRESS_DESC">Most recorded progress first</option><option value="OPEN_TASKS">Most open tasks first</option><option value="TEAM_SIZE_DESC">Largest active team first</option><option value="TEAM_SIZE_ASC">Smallest active team first</option>
-        </Select></label>) : null}
-      {mentor ? (<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Assignment
+        </Select></Label>) : null}
+      {mentor ? (<Label stack className="text-[length:var(--lms-font-sm)]">Assignment
         <Select name="assignment" defaultValue={query.assignment ?? ""}
           className="w-full">
           <option value="">All Mentor assignments</option><option value="PRIMARY">Primary mentor</option><option value="SUPPORTING">Supporting mentor</option>
         </Select>
-      </label>) : null}
+      </Label>) : null}
 
       {mentor ? (
-        <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+        <Label stack className="text-[length:var(--lms-font-sm)]">
           Recorded task coverage
           <Select name="work" defaultValue={query.work ?? ""}
             className="w-full">
@@ -169,10 +170,10 @@ export function ProjectParticipantListControls({
             <option value="ALL_DONE">All recorded tasks done</option>
             <option value="HAS_DONE_TASKS">Some recorded tasks done</option>
           </Select>
-        </label>
+        </Label>
       ) : null}
       {learner ? (
-        <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+        <Label stack className="text-[length:var(--lms-font-sm)]">
           Work attention
           <Select name="work" defaultValue={query.work ?? ""}
             className="w-full">
@@ -180,10 +181,10 @@ export function ProjectParticipantListControls({
             <option value="BLOCKED">Has blocked tasks</option>
             <option value="NO_TASKS">No tracked tasks yet</option>
           </Select>
-        </label>
+        </Label>
       ) : null}
       {learner ? (
-        <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+        <Label stack className="text-[length:var(--lms-font-sm)]">
           Sort projects
           <Select name="sort" defaultValue={query.sort ?? "RECENT"}
             className="w-full">
@@ -191,9 +192,9 @@ export function ProjectParticipantListControls({
             <option value="TITLE">Title A–Z</option>
             <option value="PROGRESS">Least progress first</option>
           </Select>
-        </label>
+        </Label>
       ) : null}
-      <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+      <Label stack className="text-[length:var(--lms-font-sm)]">
         Rows
         <Select
           name="pageSize"
@@ -211,7 +212,7 @@ export function ProjectParticipantListControls({
             </option>
           ))}
         </Select>
-      </label>
+      </Label>
 
         </div>
       </details>

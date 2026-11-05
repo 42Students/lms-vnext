@@ -19,6 +19,7 @@ import {Button} from "@/components/ui/button";
 import {AdminCoursesLastGood} from "@/components/courses/admin-courses-last-good";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export default async function SuperAdminCoursesPage({searchParams}:{searchParams:Promise<{duplicate?:string|string[];q?:string|string[];sort?:string|string[];page?:string|string[];pageSize?:string|string[];create?:string|string[]}>}) {
   const context =
@@ -96,11 +97,11 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
           <p className="text-sm text-body">Read-only courses from authorized active colleges.
             Select a college in the header to create or edit courses. This view never changes your active scope.</p>
           <form action="/admin/courses" method="get" className="flex flex-wrap gap-2">
-            <label className="min-w-0 flex-1 text-xs font-semibold text-body">
+            <Label className="min-w-0 flex-1">
               Find course or code
               <Input type="search" name="q" defaultValue={rawQ} maxLength={100}
                 className="mt-1 w-full"/>
-            </label>
+            </Label>
             <Button variant="secondary" type="submit" className="self-end">Search</Button>
           </form>
           {!valid?<ErrorState title="Invalid course filters"

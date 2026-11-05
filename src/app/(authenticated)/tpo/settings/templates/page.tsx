@@ -7,6 +7,7 @@ import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import { requireTpoBatchActor } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { TPO_MANUAL_MESSAGE_TEMPLATES } from "@/modules/placements/tpo-communication-prep-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export const dynamic = "force-dynamic";
 export default async function TpoCommunicationTemplatesPage() {
@@ -18,9 +19,9 @@ export default async function TpoCommunicationTemplatesPage() {
     <p className="text-xs text-muted-foreground leading-5">No recipients are selected or contacted.</p>
     <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2">{TPO_MANUAL_MESSAGE_TEMPLATES.map(item=><section key={item.kind} className="min-w-0 space-y-3 border-t border-border pt-5">
       <Heading level={2} size="base" className="leading-6 md:text-lg md:leading-7">{item.label}</Heading>
-      <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">Subject<Input readOnly value={item.subject} className="mt-[6px] w-full min-h-11 md:min-h-9"/></label>
+      <Label className="block text-[length:var(--lms-font-sm)] print:hidden">Subject<Input readOnly value={item.subject} className="mt-[6px] w-full min-h-11 md:min-h-9"/></Label>
       <p className="hidden text-sm print:block leading-[22px]"><strong>Subject:</strong> {item.subject}</p>
-      <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">Draft text<Textarea readOnly value={item.body} rows={5} className="mt-[6px] w-full resize-y"/></label>
+      <Label className="block text-[length:var(--lms-font-sm)] print:hidden">Draft text<Textarea readOnly value={item.body} rows={5} className="mt-[6px] w-full resize-y"/></Label>
       <p className="hidden whitespace-pre-wrap break-words text-sm print:block leading-[22px]">{item.body}</p>
     </section>)}</div>
     <Link href="/tpo/batches" className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-link underline sm:w-auto sm:justify-start focus-ring md:min-h-9 print:hidden">Review batches and their actual deadlines</Link>

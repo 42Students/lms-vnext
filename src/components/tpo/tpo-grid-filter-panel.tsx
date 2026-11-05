@@ -10,6 +10,7 @@ import {updateTpoGridQuery} from "@/modules/placements/tpo-grid-model";
 import {activeTpoGridFilterCount,invalidTpoGridFilterValue,resolvedTpoGridFilterValue} from "@/modules/placements/tpo-grid-filter-state";
 import {clearTpoGridFilters} from "@/modules/placements/tpo-grid-filter-reset";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export type TpoFilterField={key:string;label:string;urlKey?:string;allValue?:string;options:readonly {value:string;label:string}[]};
 export function TpoGridFilterPanel({fields,mobileSheet=false,title="Filter students",autoOpenMobile=false,onAutoClose}:{fields:readonly TpoFilterField[];mobileSheet?:boolean;title?:string;autoOpenMobile?:boolean;onAutoClose?:()=>void}){
  const router=useRouter(),pathname=usePathname(),query=useSearchParams();
@@ -38,12 +39,12 @@ export function TpoGridFilterPanel({fields,mobileSheet=false,title="Filter stude
     aria-label={"Remove "+chip.label}>{chip.label} ×</FilterChip>)}
   </div>:null}
   <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-  {fields.map(field=><label key={field.key} className="grid min-w-0 content-start gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">{field.label}
+  {fields.map(field=><Label stack key={field.key} className="min-w-0 content-start">{field.label}
    <Select className="min-h-11 w-full min-w-0 text-[14px] md:min-h-9" value={resolvedTpoGridFilterValue(query.get(field.urlKey??"filter."+field.key),field)} onChange={event=>update(field,event.target.value)}>
     <option value={field.allValue??""}>All</option>{field.options.map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
    </Select>
    {invalidTpoGridFilterValue(query.get(field.urlKey??"filter."+field.key),field)&&<InlineNotice tone="error" message="Unknown saved filter value. Clear grid filters to recover."/>}
-  </label>)}
+  </Label>)}
   </div>
   {fields.some(field=>query.has(field.urlKey??"filter."+field.key))&&<Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button"
    onClick={()=>{const next=clearTpoGridFilters(new URLSearchParams(query.toString()),fields);router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});}}

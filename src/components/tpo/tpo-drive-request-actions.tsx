@@ -7,6 +7,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {TPO_DRIVE_REQUEST_DECISION_COPY} from "@/modules/placements/tpo-drive-request-decision-model";
 import {Button} from "@/components/ui/button";
 import {Dropdown} from "@/components/ui/dropdown";
+import { Label } from "@/components/ui/label";
 type Action="APPROVE_LATER"|"SEND_BACK"|"DECLINE";
 export function TpoDriveRequestActions({requestId,status}:{
   requestId:string;status:"REQUEST"|"SENT_BACK";
@@ -75,11 +76,11 @@ export function TpoDriveRequestActions({requestId,status}:{
         "This creates a draft. No students are told until you publish.":
         action==="SEND_BACK"?"Tell the recruiter what needs to change.":
         "Tell the recruiter why this request is not accepted."}</p>
-      <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason
+      <Label className="block">Reason
         <Textarea autoFocus value={reason} maxLength={1000} rows={3} disabled={busy||guardedPending}
           onChange={event=>setReason(event.target.value)}
           className="mt-1 block w-full border p-2"/>
-      </label>
+      </Label>
       <p className="text-xs text-body">The recruiter is notified in the app. Email delivery is not enabled.</p>
       <div className="flex flex-wrap gap-2">
         <Button type="submit" disabled={busy||guardedPending||reason.trim().length<3}

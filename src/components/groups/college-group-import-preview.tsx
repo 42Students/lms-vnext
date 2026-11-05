@@ -9,6 +9,7 @@ import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type ImportResult = {
   requested: number; added: number; waitlisted: number; errors: number;
@@ -138,11 +139,11 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       </Button>
       <details className="min-w-0 border-t border-border pt-3">
         <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-ring md:min-h-9">CSV contents</summary>
-        <label className="mt-3 grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">CSV contents
+        <Label stack className="mt-3 min-w-0">CSV contents
           <Textarea rows={8} maxLength={524288} value={csv}
             onChange={(event) => { csvRevision.current++; setCsv(event.target.value); setResult(null); setImported(null); setError(""); }}
             className="font-mono text-sm" />
-        </label>
+        </Label>
       </details>
       {error ? <Alert tone="error">{error}</Alert> : null}
     </form>
@@ -202,7 +203,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Add learners by ID or roll number</Heading>
       <p className="text-sm text-body">Enter up to 2,000 values, one per line or separated by commas.
         Only active learners of this college can be added.</p>
-      <label className="block space-y-2 text-sm font-semibold">Identifier type
+      <Label className="block space-y-2">Identifier type
         <Select value={manualKind} disabled={pending} onChange={event=>{
           setManualKind(event.target.value as typeof manualKind);setManualResult(null);
         }}>
@@ -210,11 +211,11 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
           <option value="MEMBERSHIP_ID">Membership ID</option>
           <option value="LEGACY_LEARNER_ID">Legacy learner ID</option>
         </Select>
-      </label>
-      <label className="block space-y-2 text-sm font-semibold">Learner identifiers
+      </Label>
+      <Label className="block space-y-2">Learner identifiers
         <Textarea rows={5} value={manualText} disabled={pending} maxLength={524288}
           onChange={event=>{setManualText(event.target.value);setManualResult(null);}}/>
-      </label>
+      </Label>
       <Button type="button" loading={pending} disabled={pending||!manualText.trim()}
         onClick={confirmManual}>Confirm manual import</Button>
       {manualResult ? <div className="min-w-0 space-y-3">

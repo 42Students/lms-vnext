@@ -19,6 +19,7 @@ import {CollegeQuizAttempts} from "@/components/courses/college-quiz-attempts";
 import { adminAssessmentHref, adminAssessmentStats } from "@/modules/courses/admin-assessment-directory-model";
 import type { listCollegeAssessmentAggregate } from "@/modules/courses/college-assessment-aggregate-service";
 import { Table } from "@/components/ui/table";
+import { Label } from "@/components/ui/label";
 
 type Data = Awaited<ReturnType<typeof listCollegeAssessmentAggregate>>;
 function formatDue(value: Date | null) {
@@ -35,34 +36,34 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
     {showHeader ? <PageHeader eyebrow="Super Admin · Courses" title={title}
       description={`${title} across the selected college. Submission/attempt counts reflect persisted rows, not distinct learners or completion rates.`} /> : null}
     <FilterBar title="Assessment filters"><form action={base} className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)] md:grid-cols-2 xl:grid-cols-3 print:hidden">
-      <label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Assessment title
+      <Label stack>Assessment title
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
           className="min-h-11 md:min-h-9" />
-      </label>
-      <label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Status
+      </Label>
+      <Label stack>Status
         <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
           <option value="ALL">All</option><option value="DRAFT">Draft</option>
           <option value="PUBLISHED">Published</option>
           {!assignment ? <option value="CLOSED">Closed</option> : null}
           <option value="ARCHIVED">Archived</option>
         </Select>
-      </label>
+      </Label>
       {/* The controlled course datalist and Section selector are populated from
           the tenant-authorized full directory, not this paginated page.
           Changing course clears the Section selector without a forged ID. */}
       <CollegeAssessmentCourseSectionFilters courses={data.directoryCourses}
         sections={data.directorySections} initialCourseCode={data.query.courseCode??""}
         initialDeliveryId={data.query.deliveryId??""}/>
-      <label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Audience
+      <Label stack>Audience
         <Select name="scope" defaultValue={data.query.scope} className="min-h-11 md:min-h-9">
           <option value="ALL">All scopes</option><option value="SHARED">Shared offering</option><option value="SECTION">Section-specific</option>
         </Select>
-      </label>
-      {!assignment?<label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Results
+      </Label>
+      {!assignment?<Label stack>Results
         <Select name="results" defaultValue={data.query.results} className="min-h-11 md:min-h-9">
          <option value="ALL">All results</option><option value="PUBLISHED">Released</option><option value="HIDDEN">Withheld</option>
         </Select>
-      </label>:null}
+      </Label>:null}
       <Button variant="primary" type="submit" className="min-h-11 self-end md:min-h-9">Search</Button>
     </form></FilterBar>
     <p className="m-0 break-words text-sm text-muted-foreground leading-[22px]">{data.total} matching records · on this page: {stats.published} published, {stats.activity} {assignment ? "submissions" : "attempts"}</p>

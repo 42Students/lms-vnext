@@ -12,6 +12,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrActivityQuerySchema} from "@/modules/placements/hr-job-activity-model";
 import {listRecruiterJobActivity} from "@/modules/placements/hr-job-activity-service";
+import { Label } from "@/components/ui/label";
 const HR_ACTIVITY_FILTER_KINDS=["ALL","PUBLISHED","CLOSED"] as const;
 export default async function HrJobActivityPage({searchParams}:{
  searchParams:Promise<{collegeId?:string|string[];kind?:string|string[];page?:string|string[];q?:string|string[]}>
@@ -60,7 +61,7 @@ export default async function HrJobActivityPage({searchParams}:{
       className="flex min-w-0 flex-1 flex-col gap-2 max-md:items-stretch md:flex-row md:items-center">
       <Input type="hidden" name="collegeId" value={result.collegeId}/>
       <Input type="hidden" name="kind" value={input.data.kind}/>
-      <label htmlFor="hr-activity-q" className="sr-only">Search authorized drive titles</label>
+      <Label htmlFor="hr-activity-q" className="sr-only">Search authorized drive titles</Label>
       <Input id="hr-activity-q" type="search" name="q" defaultValue={input.data.q} maxLength={120}
        placeholder="Search hiring drive titles" className="min-h-11 w-full min-w-0 md:min-h-9 md:max-w-sm md:flex-1"/>
       <Button variant="secondary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>

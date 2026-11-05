@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {parseTpoReminderPreview,tpoReminderReceiptMessage,type TpoReminderPreview} from "@/modules/placements/tpo-reminder-result-model";
+import { Label } from "@/components/ui/label";
 
 export function TpoRemindNonApplicants({jobId}:{jobId:string}){
  const [open,setOpen]=useState(false);const [preview,setPreview]=useState<TpoReminderPreview|null>(null);
@@ -56,9 +57,9 @@ export function TpoRemindNonApplicants({jobId}:{jobId:string}){
      These students will receive an in-app notification linking to the drive. Reminders are allowed once per drive each day before the deadline.</p>
     {preview.alreadySent?<InlineNotice tone="info" message={"Students were already reminded today ("+preview.day+")."}/>:null}
     {!preview.allowed?<InlineNotice tone="error" message={preview.reason??"Reminder unavailable."}/>:null}
-    <label className="flex min-h-11 min-w-0 items-start gap-3 break-words text-sm text-body">
+    <Label variant="choice" className="flex min-h-11 min-w-0 items-start gap-3 break-words">
      <Checkbox className="mt-1" checked={confirmed} disabled={busy||!preview.allowed||preview.alreadySent||!preview.count} onChange={e=>setConfirmed(e.target.checked)}/>
-     I reviewed the affected count and want to remind these students.</label>
+     I reviewed the affected count and want to remind these students.</Label>
     {error?<InlineNotice tone="error" message={error}/>:null}
 
    </div>

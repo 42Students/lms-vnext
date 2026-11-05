@@ -13,6 +13,7 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {useState,useTransition,useEffect,useMemo} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
+import { Label } from "@/components/ui/label";
 
 type Item={id:string;name:string;visibleToStudents:boolean;updatedAt:string};
 type Result={changed:{id:string;visibleToStudents:boolean;updatedAt:string}[];
@@ -147,7 +148,7 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
   <p className="mt-2 text-xs text-muted-foreground">
    Select Lessons across pages of the same Course/search filter (up to 100). Changing Course or search clears this selection. Saved visibility does not delete student progress.
   </p>
-  <label className="mt-2 flex min-h-11 items-center gap-2">
+  <Label variant="choice" className="mt-2 flex min-h-11 items-center gap-2">
    <Checkbox disabled={pending} checked={allChecked}
     onChange={event=>{
      selectRows(event.target.checked
@@ -156,16 +157,16 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
      setFailed([]);setMessage("");
     }}/>
    Select all on this page ({selected.length} selected across pages)
-  </label>
+  </Label>
   <ScrollCue axis="y" label="Lessons available for bulk visibility" className="mt-2" viewportClassName="max-h-48"><div className="grid gap-2 md:grid-cols-2">
-   {items.map(item=><label key={item.id} className="flex min-h-11 min-w-0 items-center gap-2">
+   {items.map(item=><Label variant="choice" key={item.id} className="flex min-h-11 min-w-0 items-center gap-2">
     <Checkbox checked={selected.includes(item.id)} disabled={pending}
      onChange={()=>toggle(item.id)}/>
     <span className="truncate" title={item.name}>{item.name}</span>
     <StatusBadge tone={(latestVisible[item.id]??item.visibleToStudents)?"success":"neutral"}>
      {(latestVisible[item.id]??item.visibleToStudents)?"Visible":"Hidden"}
     </StatusBadge>
-   </label>)}
+   </Label>)}
   </div></ScrollCue>
   <div className="mt-3 flex flex-wrap items-center gap-2">
    <span aria-live="polite" className="mr-2 text-sm font-semibold">{selected.length} selected</span>

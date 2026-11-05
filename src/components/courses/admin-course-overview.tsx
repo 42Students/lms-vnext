@@ -38,6 +38,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Img } from "@/components/ui/img";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type Workspace = Awaited<
   ReturnType<typeof getAdminCourseWorkspace>
@@ -568,28 +569,28 @@ export function AdminCourseOverview({
         </div>
         {catalogue && catalogueQuery ? <FilterBar title="Filters"
           activeCount={Number(Boolean(catalogueQuery.q)) + Number(catalogueQuery.sort !== "NAME_ASC")}
-          search={<label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          search={<Label stack className="min-w-0">
             Search courses
             <Input form="college-course-catalogue-filters" name="q" type="search" maxLength={100}
               defaultValue={catalogueQuery.q} placeholder="Search courses"
               className="min-h-11 min-w-0 md:min-h-9"/>
-          </label>}
+          </Label>}
           action={<Button type="submit" form="college-course-catalogue-filters" className="min-h-11 md:min-h-9">Filter</Button>}>
           <form id="college-course-catalogue-filters" method="get" action={courseBasePath}
             className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:grid-cols-2">
-            <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <Label stack className="min-w-0">
               Sort
               <Select name="sort" defaultValue={catalogueQuery.sort} className="min-h-11 md:min-h-9">
                 <option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option>
                 <option value="CODE_ASC">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
               </Select>
-            </label>
-            <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            </Label>
+            <Label stack className="min-w-0">
               Per page
               <Select name="pageSize" defaultValue={catalogueQuery.pageSize ?? "25"} className="min-h-11 md:min-h-9">
                 <option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option>
               </Select>
-            </label>
+            </Label>
             <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] md:flex-row md:flex-wrap md:col-span-2">
               <Button type="submit" className="min-h-11 w-full md:hidden">Filter</Button>
               <ButtonLink variant="secondary" href={courseBasePath.startsWith("/admin/") ? "/api/admin/courses/catalogue/export" + collegeCourseCatalogueExportHref(catalogueQuery).replace("/api/academics/college-course-export", "") : collegeCourseCatalogueExportHref(catalogueQuery)} download="courses.csv"

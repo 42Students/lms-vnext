@@ -12,6 +12,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {apiFetch} from "@/lib/api-fetch";
 import {facultyContentExternalHref} from "@/modules/courses/faculty-content-preview-model";
 import {parseAdminContentLocalMoment,type AdminContentTimeZone} from "@/modules/courses/super-admin-content-datetime-model";
+import { Label } from "@/components/ui/label";
 
 type Content={id:string;title:string;contentType:string;status:string;sequence:number;notes?:string|null;
  durationSeconds:number|null;startsAt:Date|null;endsAt:Date|null;deliveryId?:string|null};
@@ -165,23 +166,23 @@ export function SuperAdminContentActions({item}:{item:Content}){
    </>}>
    <fieldset disabled={busy} className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] sm:grid-cols-2">
     <p className="text-xs text-muted-foreground sm:col-span-2">Existing uploaded files and unrelated materials are retained. Replacing a private file requires a verified lesson-bound upload.</p>
-    <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold text-body">Title
-     <Input value={title} maxLength={255} onChange={e=>setTitle(e.target.value)}/></label>
-    <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold text-body">Order
-     <Input type="number" min={1} max={10001} value={order} onChange={e=>setOrder(e.target.value)}/></label>
+    <Label stack className="min-w-0">Title
+     <Input value={title} maxLength={255} onChange={e=>setTitle(e.target.value)}/></Label>
+    <Label stack className="min-w-0">Order
+     <Input type="number" min={1} max={10001} value={order} onChange={e=>setOrder(e.target.value)}/></Label>
     {["YOUTUBE","LIVE_CLASS","RESOURCE"].includes(item.contentType)?
-     <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold text-body">{item.contentType==="LIVE_CLASS"?"Meeting Link":item.contentType==="YOUTUBE"?"YouTube URL":"Link title (optional) / HTTPS link"}
+     <Label stack className="min-w-0">{item.contentType==="LIVE_CLASS"?"Meeting Link":item.contentType==="YOUTUBE"?"YouTube URL":"Link title (optional) / HTTPS link"}
       <Input type="url" maxLength={2048} value={replacementUrl} onChange={e=>setReplacementUrl(e.target.value)}
        placeholder={item.contentType==="YOUTUBE"?"https://www.youtube.com/watch?v=...":item.contentType==="LIVE_CLASS"?"e.g., https://zoom.us/j/... or https://meet.google.com/...":"https://example.org/reading"}/>
       <span className="text-xs font-normal text-muted-foreground">Leave blank to retain the saved link.</span>
-     </label>:null}
-    {item.contentType==="RESOURCE"?<label className="grid min-w-0 gap-1.5 text-[13px] font-semibold text-body">Notes
+     </Label>:null}
+    {item.contentType==="RESOURCE"?<Label stack className="min-w-0">Notes
      <Textarea rows={3} maxLength={5000} value={notes} onChange={e=>setNotes(e.target.value)}/>
-    </label>:null}
-    {item.contentType==="YOUTUBE"?<label className="grid min-w-0 gap-1.5 text-[13px] font-semibold text-body">Video length (seconds)
-     <Input type="number" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}/></label>:null}
+    </Label>:null}
+    {item.contentType==="YOUTUBE"?<Label stack className="min-w-0">Video length (seconds)
+     <Input type="number" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}/></Label>:null}
     {item.contentType==="LIVE_CLASS"?<>
-     <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold text-body">Time Zone
+     <Label stack className="min-w-0">Time Zone
       <Select value={timeZone} onChange={e=>{
        const zone=e.target.value as MeetingZone;
        if(startsAt!==localDate(item.startsAt,timeZone)||endsAt!==localDate(item.endsAt,timeZone)){
@@ -195,11 +196,11 @@ export function SuperAdminContentActions({item}:{item:Content}){
        <option value="America/Los_Angeles">America/Los_Angeles</option>
        <option value="Europe/London">Europe/London</option>
       </Select>
-     </label>
-     <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold text-body">Start Date and Time
-      <Input type="datetime-local" step={900} value={startsAt} onChange={e=>setStartsAt(e.target.value)}/></label>
-     <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold text-body">End Date and Time
-      <Input type="datetime-local" step={900} value={endsAt} onChange={e=>setEndsAt(e.target.value)}/></label>
+     </Label>
+     <Label stack className="min-w-0">Start Date and Time
+      <Input type="datetime-local" step={900} value={startsAt} onChange={e=>setStartsAt(e.target.value)}/></Label>
+     <Label stack className="min-w-0">End Date and Time
+      <Input type="datetime-local" step={900} value={endsAt} onChange={e=>setEndsAt(e.target.value)}/></Label>
      <p className="text-xs text-muted-foreground sm:col-span-2">Times use the selected meeting time zone. Invalid and ambiguous daylight-saving times cannot be saved.</p>
     </>:null}
     {item.contentType==="RESOURCE"?<div className="sm:col-span-2">

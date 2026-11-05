@@ -9,6 +9,7 @@ import { FacultyLessonAuthoring } from "@/components/courses/faculty-lesson-auth
 import { FacultyLessonVideoManager } from "@/components/courses/faculty-lesson-video-manager";
 import { Radio } from "@/components/ui/radio";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Lesson={id:string;name:string;courseName:string;courseCode:string;offeringId:string;nextContentSequence:number};
 type Section={id:string;offeringId:string;courseCode:string;courseName:string;sectionName:string};
@@ -52,33 +53,33 @@ export function SuperAdminContentAuthoring({kind,lessons,sections=[],allowVideoU
    Create a course offering, learning path and lesson before adding content.
   </p>:<>
    <div className="flex min-w-0 flex-wrap items-end gap-3">
-    <label className="grid min-w-[160px] flex-1 gap-1 text-[13px] font-semibold text-body">Course
+    <Label stack className="min-w-[160px] flex-1">Course
      <Select value={course?.id??""} onChange={event=>{
        setOfferingId(event.target.value);setLessonId("");setSectionId("");setResourceOpen(false);
       }} className="min-h-11 w-full md:min-h-9">
       {offerings.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
      </Select>
-    </label>
-    <label className="grid min-w-[160px] flex-1 gap-1 text-[13px] font-semibold text-body">Lesson
+    </Label>
+    <Label stack className="min-w-[160px] flex-1">Lesson
      <Select value={selected?.id??""} onChange={event=>{
       setLessonId(event.target.value);setSectionId("");setResourceOpen(false);
      }} className="min-h-11 w-full md:min-h-9">
       {courseLessons.map(item=><option value={item.id} key={item.id}>{item.name}</option>)}
      </Select>
-    </label>
+    </Label>
     <fieldset className="flex min-w-[220px] flex-[1.2] flex-wrap gap-2 border-0 p-0">
      <legend className="mb-1 text-[13px] font-semibold text-body">Audience</legend>
-     <label className="flex min-h-9 items-center gap-1.5 text-xs text-body">
+     <Label variant="choice" className="flex min-h-9 items-center gap-1.5">
       <Radio name={"content-audience-"+kind} checked={!deliveryId}
        onChange={()=>{setSectionId("");setResourceOpen(false);}}/>
       All currently eligible sections for this course
-     </label>
-     <label className="flex min-h-9 items-center gap-1.5 text-xs text-body">
+     </Label>
+     <Label variant="choice" className="flex min-h-9 items-center gap-1.5">
       <Radio name={"content-audience-"+kind} checked={Boolean(deliveryId)}
        disabled={!courseSections.length}
        onChange={()=>{setSectionId(courseSections[0]?.id??"");setResourceOpen(false);}}/>
       One specific section
-     </label>
+     </Label>
      {deliveryId?<Select value={deliveryId} onChange={event=>{
        setSectionId(event.target.value);setResourceOpen(false);
       }} className="min-h-11 w-full md:min-h-9" aria-label="Section">
@@ -123,16 +124,16 @@ export function SuperAdminContentAuthoring({kind,lessons,sections=[],allowVideoU
      <Heading level={2} size="lg" className="text-foreground">{heading}</Heading>
      {kind==="VIDEOS"?<fieldset className="flex flex-wrap gap-3" aria-label="Video type">
       <legend className="mb-2 text-[13px] font-semibold text-body">Video type</legend>
-      <label className="inline-flex min-h-9 items-center gap-2 text-sm">
+      <Label variant="choice" className="inline-flex min-h-9 items-center gap-2">
        <Radio name="super-admin-video-kind" value="UPLOAD"
         checked={videoMode==="UPLOAD"} disabled={!allowVideoUpload}
         onChange={()=>setVideoMode("UPLOAD")}/>Video (Upload)
-      </label>
-      <label className="inline-flex min-h-9 items-center gap-2 text-sm">
+      </Label>
+      <Label variant="choice" className="inline-flex min-h-9 items-center gap-2">
        <Radio name="super-admin-video-kind" value="YOUTUBE"
         checked={videoMode==="YOUTUBE"} onChange={()=>setVideoMode("YOUTUBE")}/>
        YouTube Video
-      </label>
+      </Label>
      </fieldset>:null}
      {author}
      {kind==="VIDEOS"&&selected&&videoMode==="UPLOAD"&&(allowVideoUpload?

@@ -24,6 +24,7 @@ import {
   verifiedMembershipRoleReceipt,
   verifiedMembershipLifecycleReceipt,
 } from "@/modules/people/membership-action-receipt";
+import { Label } from "@/components/ui/label";
 
 function roleLabel(role: MembershipRole) {
   return role
@@ -299,7 +300,7 @@ export function PersonMembershipActions({
             const pending = rolePending === role;
 
             return (
-              <label
+              <Label variant="choice"
                 key={role}
                 className="flex min-h-11 cursor-pointer items-center justify-between gap-[var(--lms-space-4)] px-[var(--lms-space-3)] py-[var(--lms-space-2)] transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-within:bg-[var(--lms-primary-subtle)] md:min-h-9 flex-wrap"
               >
@@ -320,7 +321,7 @@ export function PersonMembershipActions({
                 <span className="sr-only" role="status" aria-live="polite">
                   {pending ? "Updating role" : ""}
                 </span>
-              </label>
+              </Label>
             );
           })}
         </div>
@@ -336,10 +337,10 @@ export function PersonMembershipActions({
         pending={lifecyclePending}
         confirmDisabled={suspensionReason.trim().length<SUSPENSION_REASON_POLICY.min||suspensionReason.trim().length>SUSPENSION_REASON_POLICY.max||Boolean(rolePending)}
         onConfirm={()=>lifecycle({action:"SUSPEND",reason:suspensionReason.trim()})}>
-        <label htmlFor={`suspension-reason-${membershipId}`}
-          className="mb-[6px] block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+        <Label htmlFor={`suspension-reason-${membershipId}`}
+          className="mb-[6px] block">
           Suspension reason
-        </label>
+        </Label>
         <Textarea className="min-h-24 w-full"
           id={`suspension-reason-${membershipId}`}
           value={suspensionReason}

@@ -10,6 +10,7 @@ import { apiFetch } from "@/lib/api-fetch";
 import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { DEFAULT_ATTENDANCE_POLICY } from "@/modules/attendance/policy-validation";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type PolicyValues = {
   eligibilityThresholdPercent: number;
@@ -135,12 +136,12 @@ export function CollegeAttendancePolicyForm({
 
       <div className="grid min-w-0 items-start gap-[var(--lms-space-4)] sm:grid-cols-2">
         <div className="min-w-0">
-          <label
+          <Label
             htmlFor="attendance-eligibility-threshold"
-            className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+            className="mb-[6px] block"
           >
             Eligibility threshold (%)<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
-          </label>
+          </Label>
           <Input
             id="attendance-eligibility-threshold"
             name="eligibilityThresholdPercent"
@@ -166,12 +167,12 @@ export function CollegeAttendancePolicyForm({
         </div>
 
         <div className="min-w-0">
-          <label
+          <Label
             htmlFor="attendance-correction-window"
-            className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+            className="mb-[6px] block"
           >
             Correction window (hours)<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
-          </label>
+          </Label>
           <Input
             id="attendance-correction-window"
             name="correctionWindowHours"

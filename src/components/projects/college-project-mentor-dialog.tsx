@@ -11,6 +11,7 @@ import {useToast} from "@/components/ui/toast";
 import {apiFetch} from "@/lib/api-fetch";
 import {projectMutation} from "./project-api";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type Mentor={membershipId:string;displayName:string|null;email:string|null};
 type ReassignOutcome={reassignedCount:number;skippedCount:number;failures:{projectId:string;code:string}[]};
@@ -86,16 +87,16 @@ export function CollegeProjectMentorDialog({projectId,collegeId,currentMentorNam
    description="Choose an eligible mentor for this workspace. The outgoing primary mentor will be replaced.">
    <div className="space-y-4">
     <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] md:flex-row md:items-end">
-     <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search mentors
+     <Label stack className="min-w-0 flex-1">Search mentors
       <Input value={search} onChange={e=>{setSearch(e.target.value);setConfirming(false);}}
        onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();void load(search);}}}
        maxLength={120} placeholder="Search by faculty name"/>
-     </label>
+     </Label>
      <Button type="button" variant="secondary" className="w-full md:w-auto" loading={searching} disabled={searching||busy} onClick={()=>void load()}>
       {searching?"Searching…":"Search"}
      </Button>
     </div>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mentor
+    <Label stack>Mentor
      <Select value={mentorId} onChange={e=>{const id=e.target.value;setMentorId(id);setSelectedMentor(mentors.find(m=>m.membershipId===id)??(selectedMentor?.membershipId===id?selectedMentor:null));setMentorRequired(false);setConfirming(false);}} disabled={busy} aria-invalid={mentorRequired&&!mentorId}>
       <option value="">Select a mentor</option>
       {selectedMentor&&!mentors.some(m=>m.membershipId===selectedMentor.membershipId)?<option value={selectedMentor.membershipId}>{selectedMentor.displayName??selectedMentor.email??"Mentor"}</option>:null}
@@ -104,13 +105,13 @@ export function CollegeProjectMentorDialog({projectId,collegeId,currentMentorNam
       </option>)}
      </Select>
      {mentorRequired&&!mentorId?<span role="alert" className="text-[12px] text-error">Mentor is required</span>:null}
-    </label>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role label (optional)
+    </Label>
+    <Label stack>Role label (optional)
      <Input value={roleLabel} onChange={e=>setRoleLabel(e.target.value)} maxLength={120}
       title="Optional label shown on the project team roster; it does not change the mentor’s permissions."
       aria-describedby="mentor-role-label-help" placeholder="Project Mentor"/>
      <span id="mentor-role-label-help" className="text-xs font-normal leading-5 text-muted-foreground">This label appears beside the mentor on the roster; it does not change permissions.</span>
-    </label>
+    </Label>
     {!searching&&!error&&hasSearched&&mentors.length===0?<p role="status" className="text-[13px] leading-5 text-[var(--lms-muted-text)]">No eligible mentors found. Search by another name or email.</p>:null}
     <Banner tone="warning">
      Reassigning replaces the current mentor{currentMentorName?" ("+currentMentorName+")":""}:

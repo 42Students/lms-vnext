@@ -13,6 +13,7 @@ import {
   getCollegeHallAvailability,
 } from "@/modules/academics/college-hall-availability-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export const dynamic = "force-dynamic";
 
@@ -57,12 +58,12 @@ export default async function SuperAdminLectureHallAvailability({
       actions={<Link href="/admin/lecture-halls" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-ring active:text-[var(--lms-primary-text)] md:min-h-9 md:w-auto">Back to Lecture Halls</Link>} />
 
     <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] md:gap-[var(--lms-space-4)]">
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">From (IST)
+      <Label stack className="min-w-0">From (IST)
         <DateInput mode="date" name="from" required defaultValue={typeof raw["from"] === "string" ? raw["from"] : ""} className="w-full" />
-      </label>
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">To (IST)
+      </Label>
+      <Label stack className="min-w-0">To (IST)
         <DateInput mode="date" name="to" required defaultValue={typeof raw["to"] === "string" ? raw["to"] : ""} className="w-full" />
-      </label>
+      </Label>
       <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">View schedule</Button>
     </form>
 

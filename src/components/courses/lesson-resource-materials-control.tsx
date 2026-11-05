@@ -10,6 +10,7 @@ import {facultyContentExternalHref} from "@/modules/courses/faculty-content-prev
 import {LessonResourceFileUploader} from "./lesson-resource-file-uploader";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type Material={id:string;kind:string;title:string;notes:string|null;externalUrl:string|null;
  originalName:string|null;sizeBytes:number|null;sequence:number;uploadStatus:string};
@@ -162,18 +163,18 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
   </ul>
   {editable&&(activeMaterials.length<20||editing)?<div className="grid gap-2 rounded-xl border border-border bg-surface p-3">
    <p className="text-sm font-semibold text-foreground">{editing?"Edit link material":"Add link material"}</p>
-   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Title
+   <Label stack className="text-[length:var(--lms-font-sm)]">Title
     <Input value={draft.title} maxLength={255} onChange={e=>setDraft(v=>({...v,title:e.target.value}))}
      className="min-h-11 md:min-h-9" disabled={busy}/>
-   </label>
-   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">HTTPS link
+   </Label>
+   <Label stack className="text-[length:var(--lms-font-sm)]">HTTPS link
     <Input type="url" value={draft.externalUrl} maxLength={2048} onChange={e=>setDraft(v=>({...v,externalUrl:e.target.value}))}
      className="min-h-11 md:min-h-9" disabled={busy}/>
-   </label>
-   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Notes (optional)
+   </Label>
+   <Label stack className="text-[length:var(--lms-font-sm)]">Notes (optional)
     <Textarea value={draft.notes} maxLength={2000} onChange={e=>setDraft(v=>({...v,notes:e.target.value}))}
      rows={2} className="min-h-28" disabled={busy}/>
-   </label>
+   </Label>
    <div className="flex gap-2">
     <Button size="sm" type="button" className="min-h-11 md:min-h-9" loading={busy} disabled={busy} onClick={()=>void submit(editing?"EDIT_LINK":"ADD_LINK",editing??undefined)}>
      {busy?"Saving…":editing?"Save material":"Add material"}

@@ -5,6 +5,7 @@ import { InlineNotice } from "@/components/ui/inline-notice";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
+import { Label } from "@/components/ui/label";
 export function TpoCompanyTeamComposer({companyId,actorUserId}:{
  companyId:string;actorUserId:string;
 }){
@@ -52,11 +53,11 @@ export function TpoCompanyTeamComposer({companyId,actorUserId}:{
   }finally{pending.current=false;setBusy(false);}
  }
  return <form className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] pt-4" onSubmit={event=>{event.preventDefault();void submit();}}>
-  <label className="grid gap-[6px] text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Message
+  <Label stack>Message
    <Textarea required maxLength={4000} rows={4} value={body} disabled={busy}
     onChange={event=>update(event.target.value)}
     />
-  </label>
+  </Label>
   {error?<InlineNotice tone="error" message={error}/>:null}
   <p className="text-xs text-muted-foreground">Only active placement-team members in this college can read and reply.</p>
   <Button type="submit" className="min-h-11 w-full md:min-h-9 sm:w-auto" disabled={busy||!body.trim()}

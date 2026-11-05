@@ -9,6 +9,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Alert} from "@/components/ui/alert";
 import {apiFetch} from "@/lib/api-fetch";
 import { Table } from "@/components/ui/table";
+import { Label } from "@/components/ui/label";
 
 type Skill={id:string;name:string;proficiency:""|"Beginner"|"Intermediate"|"Advanced"|"Expert"};
 type Preferences={
@@ -84,14 +85,14 @@ export function AdminPlacementProfileEditor({membershipId,initialSkills,initialP
   <details className="border-b border-border pb-3" open>
    <summary className="cursor-pointer py-2 text-sm font-semibold">Job Preferences</summary>
    <div className="mt-3 grid max-w-xl gap-3">
-    <label className="grid gap-1 text-sm font-semibold">Preferred roles (comma separated)
+    <Label stack>Preferred roles (comma separated)
      <Input value={roleText} maxLength={1500} disabled={busy}
       onChange={event=>setRoleText(event.target.value)}/>
-    </label>
-    <label className="grid gap-1 text-sm font-semibold">Preferred employment city
+    </Label>
+    <Label stack>Preferred employment city
      <Input value={city} maxLength={120} disabled={busy}
       onChange={event=>setCity(event.target.value)}/>
-    </label>
+    </Label>
     <Button variant="secondary" type="button" className="justify-self-start" disabled={busy}
      onClick={()=>void commit({action:"SET_PREFERENCES",preferences:{
       ...(preferences??{}),rolePreferences:roleText.split(",").map(s=>s.trim()).filter(Boolean),
@@ -110,16 +111,16 @@ export function AdminPlacementProfileEditor({membershipId,initialSkills,initialP
     </Button>
    </div>}>
    <div className="grid gap-3">
-    <label className="grid gap-1 text-sm font-semibold">Skill
+    <Label stack>Skill
      <Input value={name} maxLength={120} disabled={busy}
       onChange={event=>setName(event.target.value)} required/>
-    </label>
-    <label className="grid gap-1 text-sm font-semibold">Proficiency
+    </Label>
+    <Label stack>Proficiency
      <Select value={proficiency} disabled={busy}
       onChange={event=>setProficiency(event.target.value as Skill["proficiency"])}>
       {["","Beginner","Intermediate","Advanced","Expert"].map(p=><option key={p} value={p}>{p||"Not specified"}</option>)}
      </Select>
-    </label>
+    </Label>
    </div>
   </Dialog>
   <ConfirmDialog open={remove!==null} onOpenChange={next=>{if(!next&&!busy)setRemove(null);}}

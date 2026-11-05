@@ -40,8 +40,8 @@
 .lms-legacy-loader-dots i {
  position:absolute;
  display:block;
- width:16px;
- height:16px;
+ width:14px;
+ height:14px;
  background:var(--lms-info-blue);
  border-radius:100%;
  transform:scale(.75);

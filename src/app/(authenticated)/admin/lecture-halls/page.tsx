@@ -19,6 +19,7 @@ import {
   superAdminLectureHallPages,
 } from "@/modules/academics/super-admin-lecture-hall-directory-model";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 /** SA-academics-people-26/27: all operations scoped to the selected active college. */
 export default async function SuperAdminLectureHallsPage({
@@ -54,9 +55,9 @@ export default async function SuperAdminLectureHallsPage({
       </Alert>
       <form method="get" action="/admin/lecture-halls" role="search"
         className="flex flex-wrap items-end gap-2">
-        <label className="grid flex-1 gap-1 text-sm">Search organization rooms
+        <Label variant="choice" className="grid flex-1 gap-1">Search organization rooms
           <Input type="search" name="q" defaultValue={q} maxLength={100}/>
-        </label>
+        </Label>
         <Button type="submit">Search</Button>
       </form>
       <section aria-label="Organization lecture halls" className="min-w-0 overflow-x-auto">
@@ -162,48 +163,48 @@ export default async function SuperAdminLectureHallsPage({
     <section aria-label="Lecture hall filters" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
       <form action="/admin/lecture-halls" method="get" aria-label="Filter lecture halls" className="min-w-0 space-y-[var(--lms-space-3)]">
         <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
-          <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search halls
+          <Label stack className="min-w-0">Search halls
             <Input type="search" name="q" maxLength={100} defaultValue={query.q}
               placeholder="Search halls" className="min-h-11 w-full md:min-h-9" />
-          </label>
-          <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+          </Label>
+          <Label stack className="min-w-0">Status
             <Select name="status" defaultValue={query.status} className="min-h-11 w-full md:min-h-9">
               <option value="ALL">All statuses</option><option value="ACTIVE">Active</option>
               <option value="ARCHIVED">Archived</option>
             </Select>
-          </label>
+          </Label>
           <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Search</Button>
         </div>
         <details className="group min-w-0" open={Boolean(query.departmentId || query.roomType !== "ALL" || query.pageSize !== 10 || query.minimumCapacity || query.maximumCapacity || query.upcoming !== "ALL") || undefined}>
           <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-ring md:min-h-9">Filters</summary>
           <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 lg:grid-cols-3">
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
+            <Label stack className="min-w-0">Department
               <Select name="departmentId" defaultValue={query.departmentId ?? ""} className="min-h-11 w-full md:min-h-9">
                 <option value="">All departments</option>
                 {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
               </Select>
-            </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Room type
+            </Label>
+            <Label stack className="min-w-0">Room type
               <Select name="roomType" defaultValue={query.roomType} className="min-h-11 w-full md:min-h-9">
                 <option value="ALL">All types</option><option value="CLASSROOM">Classroom</option>
                 <option value="LECTURE_HALL">Lecture Hall</option><option value="LAB">Laboratory</option>
                 <option value="SEMINAR_HALL">Seminar Hall</option><option value="AUDITORIUM">Auditorium</option>
                 <option value="CONFERENCE_ROOM">Conference Room</option>
               </Select>
-            </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum seats
+            </Label>
+            <Label stack className="min-w-0">Minimum seats
               <Input type="number" name="minimumCapacity" min={1} max={5000} step={1} defaultValue={query.minimumCapacity ?? ""} placeholder="Any capacity" className="min-h-11 w-full md:min-h-9" />
-            </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum seats
+            </Label>
+            <Label stack className="min-w-0">Maximum seats
               <Input type="number" name="maximumCapacity" min={1} max={5000} step={1} defaultValue={query.maximumCapacity ?? ""} placeholder="Any capacity" className="min-h-11 w-full md:min-h-9" />
-            </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Scheduled upcoming classes
+            </Label>
+            <Label stack className="min-w-0">Scheduled upcoming classes
               <Select name="upcoming" defaultValue={query.upcoming} className="min-h-11 w-full md:min-h-9">
                 <option value="ALL">Any scheduling</option>
                 <option value="YES">Upcoming classes scheduled</option>
                 <option value="NO">No upcoming scheduled classes</option>
               </Select>
-            </label>
+            </Label>
           </div>
         </details>
       </form>
@@ -246,7 +247,7 @@ export default async function SuperAdminLectureHallsPage({
           {Object.entries(query).filter(([key,value]) =>
             key !== "page" && key !== "pageSize" && value !== undefined && value !== "").map(([key,value]) =>
             <Input key={key} type="hidden" name={key} value={String(value)} />)}
-          <label htmlFor="admin-hall-page-size">Rows per page</label>
+          <Label htmlFor="admin-hall-page-size">Rows per page</Label>
           <Select id="admin-hall-page-size" name="pageSize" defaultValue={query.pageSize} className="min-h-9 w-20">
             {[10,25,50,100].map(size=><option key={size} value={size}>{size}</option>)}
           </Select>

@@ -9,6 +9,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useToast} from "@/components/ui/toast";
 import {apiFetch} from "@/lib/api-fetch";
+import { Label } from "@/components/ui/label";
 
 type Skill={id:string;name:string;proficiency:""|"Beginner"|"Intermediate"|"Advanced"|"Expert"};
 type Preferences={
@@ -96,17 +97,17 @@ export function AdminPlacementStudentProfileEditor({membershipId,skills:initialS
       </span>:null}
      </li>)}</ul>:<p className="text-sm text-muted-foreground">No skills recorded in the authorized learner profile.</p>}
     {!readOnly?editing!==null||name?<div className="grid gap-2 sm:grid-cols-[1fr_170px_auto]">
-     <label className="text-xs font-semibold">Skill
+     <Label>Skill
       <Input className="mt-1 w-full" maxLength={120} value={name} disabled={pending}
        onChange={event=>setName(event.target.value)}/>
-     </label>
-     <label className="text-xs font-semibold">Proficiency
+     </Label>
+     <Label>Proficiency
       <Select className="mt-1 w-full" value={proficiency} disabled={pending}
        onChange={event=>setProficiency(event.target.value as Skill["proficiency"])}>
        {(["","Beginner","Intermediate","Advanced","Expert"] as const).map(value=>
         <option key={value} value={value}>{value||"Not specified"}</option>)}
       </Select>
-     </label>
+     </Label>
      <div className="flex items-end gap-2">
       <Button disabled={pending||!name.trim()} onClick={saveSkill}>{editing===null?"Add":"Save"}</Button>
       <Button variant="secondary" disabled={pending} onClick={clearSkill}>Cancel</Button>
@@ -127,46 +128,46 @@ export function AdminPlacementStudentProfileEditor({membershipId,skills:initialS
      <p><strong>Job notifications:</strong> {preferences.jobNotificationsEnabled?"Enabled":"Disabled"}</p>
      <p><strong>PAP interest:</strong> {preferences.papInterest||"Not provided"}</p>
     </div>:<div className="grid gap-3 sm:grid-cols-2">
-     <label className="text-xs font-semibold">Roles (comma separated)
+     <Label>Roles (comma separated)
       <Input className="mt-1 w-full" value={roles} disabled={pending}
        onChange={event=>setRoles(event.target.value)}/>
-     </label>
-     <label className="text-xs font-semibold">Specific role
+     </Label>
+     <Label>Specific role
       <Input className="mt-1 w-full" maxLength={200} disabled={pending}
        value={preferences.specificRolePreference}
        onChange={event=>setPreferences(p=>({...p,specificRolePreference:event.target.value}))}/>
-     </label>
-     <label className="text-xs font-semibold">Preferred city
+     </Label>
+     <Label>Preferred city
       <Input className="mt-1 w-full" maxLength={120} disabled={pending}
        value={preferences.preferredEmploymentCity}
        onChange={event=>setPreferences(p=>({...p,preferredEmploymentCity:event.target.value}))}/>
-     </label>
-     <label className="text-xs font-semibold">Work shift
+     </Label>
+     <Label>Work shift
       <Select className="mt-1 w-full" disabled={pending} value={preferences.workShiftPreference}
        onChange={event=>setPreferences(p=>({...p,workShiftPreference:event.target.value as Preferences["workShiftPreference"]}))}>
        {(["","DAY","NIGHT","ROTATIONAL","FLEXIBLE","REMOTE"] as const).map(value=>
         <option key={value} value={value}>{value||"Not specified"}</option>)}
       </Select>
-     </label>
-     <label className="text-xs font-semibold">Exam slot
+     </Label>
+     <Label>Exam slot
       <Select className="mt-1 w-full" disabled={pending} value={preferences.examSlotPreference}
        onChange={event=>setPreferences(p=>({...p,examSlotPreference:event.target.value as Preferences["examSlotPreference"]}))}>
        {(["","Morning","Afternoon","Evening"] as const).map(value=>
         <option key={value} value={value}>{value||"Not specified"}</option>)}
       </Select>
-     </label>
-     <label className="text-xs font-semibold">PAP interest
+     </Label>
+     <Label>PAP interest
       <Select className="mt-1 w-full" disabled={pending} value={preferences.papInterest}
        onChange={event=>setPreferences(p=>({...p,papInterest:event.target.value as Preferences["papInterest"]}))}>
        {(["","Yes","No","Need more info"] as const).map(value=>
         <option key={value} value={value}>{value||"Not specified"}</option>)}
       </Select>
-     </label>
-     <label className="flex items-center gap-2 text-xs font-semibold sm:col-span-2">
+     </Label>
+     <Label className="flex items-center gap-2 sm:col-span-2">
       <Checkbox checked={preferences.jobNotificationsEnabled} disabled={pending}
        onChange={event=>setPreferences(p=>({...p,jobNotificationsEnabled:event.target.checked}))}/>
       Job notifications enabled
-     </label>
+     </Label>
     </div>}
     {!readOnly?<div className="flex flex-wrap gap-2">
      {editingPreferences?<><Button disabled={pending} onClick={savePreferences}>Save preferences</Button>

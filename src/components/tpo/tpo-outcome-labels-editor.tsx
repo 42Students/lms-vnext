@@ -8,6 +8,7 @@ import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {AFTER_COLLEGE_LABELS,CHOICE_AFTER_COLLEGE_OUTCOMES,type CustomAfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Label={id?:string|null;label:string;outcome:CustomAfterCollegeOutcome};
 function validate(label:string,labels:readonly Label[],index:number){
@@ -52,36 +53,36 @@ export function TpoOutcomeLabelsEditor({initial,version}:{initial:readonly Label
   {labels.length===0?<p className="text-sm text-muted-foreground">No labels yet.</p>:null}
   <ul className="space-y-3">{labels.map((row,index)=><li key={row.id??"draft-"+index}
    className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Label {index+1}
+   <Label className="min-w-0">Label {index+1}
     <Input value={row.label} maxLength={60} disabled={busy}
      onChange={event=>setLabels(rows=>rows.map((item,i)=>i===index?{...item,label:event.target.value}:item))}
      className="mt-1 min-h-11 md:min-h-9 w-full"/>
     {validate(row.label,labels,index)?<span className="block text-xs text-error">{validate(row.label,labels,index)}</span>:null}
-   </label>
-   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Counts as
+   </Label>
+   <Label className="min-w-0">Counts as
     <Select value={row.outcome} disabled={busy}
      onChange={event=>setLabels(rows=>rows.map((item,i)=>i===index?{...item,outcome:event.target.value as CustomAfterCollegeOutcome}:item))}
      className="mt-1 min-h-11 md:min-h-9 w-full">
      {CHOICE_AFTER_COLLEGE_OUTCOMES.map(value=><option key={value} value={value}>{AFTER_COLLEGE_LABELS[value]}</option>)}
     </Select>
-   </label>
+   </Label>
    <Button variant="secondary" type="button" disabled={busy} aria-label={"Remove "+row.label}
     onClick={()=>setLabels(rows=>rows.filter((_,i)=>i!==index))}
     className="min-h-11 w-full md:min-h-9 md:w-auto text-sm">Remove</Button>
   </li>)}</ul>
   <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New label
+   <Label className="min-w-0">New label
     <Input value={draft} onChange={event=>setDraft(event.target.value)} maxLength={60}
      placeholder="New label, e.g. Family business" disabled={busy}
      className="mt-1 min-h-11 md:min-h-9 w-full"/>
     {draft&&problem?<span className="block text-xs text-error">{problem}</span>:null}
-   </label>
-   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Counts as
+   </Label>
+   <Label className="min-w-0">Counts as
     <Select value={outcome} disabled={busy} onChange={e=>setOutcome(e.target.value as CustomAfterCollegeOutcome)}
      className="mt-1 min-h-11 md:min-h-9">
      {CHOICE_AFTER_COLLEGE_OUTCOMES.map(value=><option key={value} value={value}>{AFTER_COLLEGE_LABELS[value]}</option>)}
     </Select>
-   </label>
+   </Label>
    <Button variant="secondary" type="button" onClick={add} disabled={!draft.trim()||Boolean(problem)||busy||labels.length>=30}
     className="min-h-11 w-full md:min-h-9 md:w-auto text-sm">Add</Button>
   </div>

@@ -7,6 +7,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {parseRecruiterPrivateReviewReceipt,isConfirmedRecruiterPrivateReview,
  type RecruiterPrivateReviewReceipt} from "@/modules/placements/recruiter-private-rating-receipt-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Review=RecruiterPrivateReviewReceipt;
 const empty:Review={rating:null,note:"",updatedAt:null};
 type PrivateRatingEditorProps={jobId:string;applicationId:string};
@@ -72,19 +73,19 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
   className="mt-6 space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
   <Heading level={4} className="text-foreground">Your private rating</Heading>
   <p className="text-xs text-body">Only you can read or change this rating and note.</p>
-  <label className="grid gap-2 text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Your rating
+  <Label stack>Your rating
    <Select value={rating===null?"":String(rating)} disabled={!ready||pending}
     onChange={event=>setRating(event.target.value===""?null:Number(event.target.value))}
     className="w-full">
     <option value="">Not rated</option>
     {[1,2,3,4,5].map(value=><option key={value} value={value}>{value} / 5</option>)}
    </Select>
-  </label>
-  <label className="grid gap-2 text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Your note
+  </Label>
+  <Label stack>Your note
    <Textarea value={note} maxLength={1000} rows={3} disabled={!ready||pending}
     onChange={event=>setNote(event.target.value)}
     className="w-full"/>
-  </label>
+  </Label>
   <p className="text-xs text-muted-foreground">{note.length}/1000 characters</p>
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
   <div className="flex flex-wrap gap-2">

@@ -10,6 +10,7 @@ import type { ComponentPropsWithRef } from "react";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
+import { Label } from "@/components/ui/label";
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;
  options:{text:string;correct:boolean}[]};
 function CorrectAnswerInput({ multiple, ...props }: Omit<ComponentPropsWithRef<"input">, "type"> & { multiple: boolean }) {
@@ -94,7 +95,7 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
     <Textarea aria-label={"Question "+(i+1)+" prompt"} value={q.prompt} maxLength={5000} rows={2}
      onChange={e=>update(i,{...q,prompt:e.target.value})} disabled={busy}
      className="w-full text-xs"/>
-    {q.options.map((o,j)=><label key={j} className="flex min-h-11 min-w-0 items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    {q.options.map((o,j)=><Label key={j} className="flex min-h-11 min-w-0 items-center gap-2">
      <CorrectAnswerInput multiple={q.type==="MULTIPLE_CHOICE"} name={"correct-"+quizId+"-"+i}
       checked={o.correct} disabled={busy} onChange={e=>update(i,{...q,options:q.options.map((option,k)=>({
        ...option,correct:q.type==="SINGLE_CHOICE"?k===j:k===j?e.target.checked:option.correct}))})}/>
@@ -103,7 +104,7 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
       className="min-h-11 min-w-0 flex-1 md:min-h-9"/>
      {q.options.length>2?<Button variant="danger" type="button" className="min-h-11 md:min-h-9" disabled={busy}
       onClick={()=>update(i,{...q,options:q.options.filter((_,k)=>k!==j)})}>Remove</Button>:null}
-    </label>)}
+    </Label>)}
     <div className="flex flex-wrap gap-3 text-xs">
      <Button variant="ghost" type="button" disabled={busy||q.options.length>=20}
       onClick={()=>update(i,{...q,options:[...q.options,{text:"",correct:false}]})}

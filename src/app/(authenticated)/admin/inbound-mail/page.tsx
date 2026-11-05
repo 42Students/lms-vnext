@@ -10,6 +10,7 @@ import {requirePermission} from "@/modules/permissions/policy";
 import {listInboundMailForAdmin, INBOUND_ROUTING_METADATA_READY} from "@/modules/inbound-mail/admin-service";
 import {inboundMailListQuerySchema} from "@/modules/inbound-mail/message-model";
 import {InboundMailList} from "@/components/admin/inbound-mail-list";
+import { Label } from "@/components/ui/label";
 
 type Params=Record<string,string|string[]|undefined>;
 const one=(value:string|string[]|undefined)=>typeof value==="string"?value:undefined;
@@ -110,29 +111,29 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
   <form method="get" action="/admin/inbound-mail" role="search" aria-label="Search inbound mail"
     className="flex min-w-0 flex-1 flex-wrap items-end gap-2">
    <Input type="hidden" name="status" value={parsed.data.status}/>
-   <label className="min-w-0 w-full flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-[300px] sm:max-w-[300px]">
+   <Label className="min-w-0 w-full flex-1 sm:w-[300px] sm:max-w-[300px]">
     <span className="sr-only">Search sender, subject or text</span>
     <Input name="q" type="search" defaultValue={parsed.data.q} maxLength={120}
       aria-label="Search sender, subject or text"
       className="min-h-11 w-full md:min-h-9" placeholder="Search sender, subject or text"/>
-   </label>
+   </Label>
    <Button type="submit" className="min-h-11 shrink-0 md:min-h-9">Search</Button>
    {parsed.data.q?<Link href={next(1,true)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text focus-ring hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)] md:min-h-9 md:w-auto">Clear</Link>:null}
    <details className="w-full min-w-0 basis-full" open={Boolean(parsed.data.recipient||parsed.data.kind||parsed.data.routingStatus)}>
     <summary className="inline-flex min-h-11 cursor-pointer items-center text-[var(--lms-font-sm)] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-ring md:min-h-9">Recipient inbox · Status</summary>
     <div className="grid min-w-0 gap-[var(--lms-space-3)] pt-[var(--lms-space-3)] md:grid-cols-2">
-     <label className="min-w-0 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Recipient inbox
-      <Input type="email" name="recipient" defaultValue={parsed.data.recipient??""} maxLength={320} className="mt-[6px] min-w-0" placeholder="inbox@example.edu"/></label>
-     <label className="min-w-0 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Routing outcome
+     <Label className="min-w-0">Recipient inbox
+      <Input type="email" name="recipient" defaultValue={parsed.data.recipient??""} maxLength={320} className="mt-[6px] min-w-0" placeholder="inbox@example.edu"/></Label>
+     <Label className="min-w-0">Routing outcome
       <Select name="routingStatus" defaultValue={parsed.data.routingStatus??""} className="mt-[6px] w-full">
         <option value="">All routing outcomes</option>
         {(["POSTED","STORED","NO_THREAD","WRONG_SENDER","NOT_VERIFIED","EMPTY","ACCESS_ENDED","FAILED"] as const).map(item=>
           <option key={item} value={item}>{item.replaceAll("_"," ")}</option>)}
-      </Select></label>
-     <label className="min-w-0 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Message kind
+      </Select></Label>
+     <Label className="min-w-0">Message kind
       <Select name="kind" defaultValue={parsed.data.kind??""} className="mt-[6px] w-full">
         <option value="">All messages</option><option value="REPLY">Replies</option><option value="OTHER">Other mail</option>
-      </Select></label>
+      </Select></Label>
     </div>
    </details>
   </form>

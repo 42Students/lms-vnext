@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { projectApiError, projectMutation } from "./project-api";
+import { Label } from "@/components/ui/label";
 
 type TemplateOption = { templateId: string; title: string; version: number };
 
@@ -159,13 +160,13 @@ export function ProjectChangeTemplateControl({ projectId, status, expectedUpdate
           Replacement is blocked if work has started, tasks are assigned or existing records
           depend on the current plan. Nothing is changed if the operation is rejected.
         </p>
-        <label className="block text-[13px] font-semibold text-body">
+        <Label className="block">
           Search by template title
           <Input className="mt-1" value={search} maxLength={100}
             disabled={pending} placeholder="Search by template title"
             onChange={event => setSearch(event.target.value)} />
-        </label>
-        <label className="block text-[13px] font-semibold text-body">
+        </Label>
+        <Label className="block">
           Template
           <Select className="mt-1" disabled={pending || loading && options.length === 0}
             value={selected} onChange={event => setSelected(event.target.value)}>
@@ -174,21 +175,21 @@ export function ProjectChangeTemplateControl({ projectId, status, expectedUpdate
               {option.title + " (v" + option.version + ")"}
             </option>)}
           </Select>
-        </label>
+        </Label>
         {loading ? <p role="status" className="text-xs text-body">Searching templates…</p> : null}
         {!loading && !error && !options.length ?
           <p className="text-xs text-body">No published assigned templates matched the search.</p> : null}
         {error ? <p role="alert" className="text-sm font-semibold text-error">{error}</p> : null}
-        <label className="flex items-start gap-2 text-sm leading-6 text-body">
+        <Label variant="choice" className="flex items-start gap-2">
           <Checkbox checked={reapplyDefaults} disabled={pending}
             onChange={event => setReapplyDefaults(event.target.checked)} />
           Refill blank title/summary/overview from the new template
-        </label>
-        <label className="flex items-start gap-2 text-sm font-semibold leading-6 text-body">
+        </Label>
+        <Label className="flex items-start gap-2">
           <Checkbox checked={acknowledged} disabled={pending}
             onChange={event => setAcknowledged(event.target.checked)} />
           I understand that unstarted tasks, sprints and resources will be replaced.
-        </label>
+        </Label>
         <div className="flex flex-wrap justify-end gap-2 border-t border-border pt-3">
           <Button variant="secondary" disabled={pending} onClick={() => close(false)}>Cancel</Button>
           <Button loading={pending} disabled={pending || !selected || !acknowledged || loading}

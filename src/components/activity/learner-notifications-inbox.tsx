@@ -30,6 +30,7 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 
 function NotificationCategoryIcon({ category }: { category: LearnerNotificationCategory }) {
@@ -224,14 +225,14 @@ export function LearnerNotificationsInbox({
         </div>
       </div>
       <div className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
-        <label className="col-span-2 min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-1">
+        <Label className="col-span-2 min-w-0 md:col-span-1">
           Search notifications
           <Input type="search" value={search} maxLength={100}
             onChange={event=>setSearch(event.target.value)}
             onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();applySearch();}}}
             placeholder="Search title or message"
             className="mt-[var(--lms-space-2)] min-h-11 w-full md:min-h-[var(--lms-control-height)]"/>
-        </label>
+        </Label>
         <FilterChip type="button" aria-pressed={unread==="unread"}
           onClick={()=>selectUnread(unread==="unread"?"all":"unread")}
           className={"!min-h-11 w-full md:w-auto rounded-[8px] px-4 py-2 !text-[14px] !font-medium !leading-[1.3] "+

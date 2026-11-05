@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {LearnerRichResponseEditor} from "./learner-rich-response-editor";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export type AssignmentLinkPart={kind:"REPOSITORY_LINK"|"EXTERNAL_LINK";url:string;caption:string};
 
 export function AssignmentMultipartPartsEditor({text,onTextChange,links,onLinksChange,disabled,allowText=true,allowedLinkKinds=["REPOSITORY_LINK","EXTERNAL_LINK"]}:{
@@ -17,24 +18,24 @@ export function AssignmentMultipartPartsEditor({text,onTextChange,links,onLinksC
    ?"Written response and links (optional)":allowText?"Written response (optional)":"Submission links (optional)"}</Heading>
   {allowText?<LearnerRichResponseEditor value={text} onChange={onTextChange} disabled={disabled}/>:null}
   {allowedLinkKinds.length>0&&links.map((link,index)=><div key={index} className="grid gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
-   <label className="grid gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Link type
+   <Label stack>Link type
     <Select value={link.kind} disabled={disabled}
      className="min-h-11 md:min-h-9"
      onChange={e=>onLinksChange(links.map((item,i)=>i===index?{...item,kind:e.target.value as AssignmentLinkPart["kind"]}:item))}>
      {allowedLinkKinds.includes("REPOSITORY_LINK")?<option value="REPOSITORY_LINK">Repository Link</option>:null}
      {allowedLinkKinds.includes("EXTERNAL_LINK")?<option value="EXTERNAL_LINK">Website / External Link</option>:null}
     </Select>
-   </label>
-   <label className="grid gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">HTTPS link
+   </Label>
+   <Label stack>HTTPS link
     <Input type="url" maxLength={2048} value={link.url} disabled={disabled}
      className="min-h-11 md:min-h-9"
      onChange={e=>onLinksChange(links.map((item,i)=>i===index?{...item,url:e.target.value}:item))}/>
-   </label>
-   <label className="grid gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Caption
+   </Label>
+   <Label stack>Caption
     <Input maxLength={255} value={link.caption} disabled={disabled}
      className="min-h-11 md:min-h-9"
      onChange={e=>onLinksChange(links.map((item,i)=>i===index?{...item,caption:e.target.value}:item))}/>
-   </label>
+   </Label>
    <Button type="button" size="sm" variant="danger" className="min-h-11 md:min-h-9" disabled={disabled}
     onClick={()=>onLinksChange(links.filter((_,i)=>i!==index))}>Remove link</Button>
   </div>)}

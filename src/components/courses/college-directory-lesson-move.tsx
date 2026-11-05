@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import { Label } from "@/components/ui/label";
 type Destination={learningPathId:string;label:string};
 export function CollegeDirectoryLessonMove({lesson,destinations}:{
  lesson:{id:string;name:string;learningPathId:string;updatedAt:string};
@@ -37,13 +38,13 @@ export function CollegeDirectoryLessonMove({lesson,destinations}:{
   To move this lesson, include a different offering in your current directory filters.
  </p>;
  return <div className="min-w-0 space-y-1.5">
-  <label className="grid gap-1 text-xs font-semibold text-body">Move to another course or learning path
+  <Label stack>Move to another course or learning path
    <Select aria-label={"New learning path for "+lesson.name}
     value={target} disabled={busy} onChange={e=>setTarget(e.currentTarget.value)}>
     <option value="">Choose an eligible destination</option>
     {options.map(item=><option key={item.learningPathId} value={item.learningPathId}>{item.label}</option>)}
    </Select>
-  </label>
+  </Label>
   <Button type="button" variant="secondary" size="sm" disabled={busy||!target}
    onClick={()=>{setError("");setConfirm(true);}}>
    Move lesson

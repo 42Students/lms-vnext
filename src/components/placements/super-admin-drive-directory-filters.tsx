@@ -6,6 +6,7 @@ import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 type DriveStatusFilter="ALL"|"DRAFT"|"ACTIVE"|"CLOSED";
 
@@ -36,13 +37,13 @@ export function SuperAdminDriveDirectoryFilters({q:initialQ,status:initialStatus
  return <form action="/admin/placements/drives" method="get"
    aria-label="Filter placement drives" onSubmit={event=>{event.preventDefault();navigate({q});}}
    className="grid min-w-0 grid-cols-1 items-end gap-2 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-[minmax(0,260px)_minmax(0,120px)_minmax(0,148px)_auto_auto]">
-   <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+   <Label stack className="min-w-0">
      <span className="sr-only">Search jobs</span>
      <Input type="search" maxLength={100} name="q" placeholder="Search by job title or company"
        aria-label="Search jobs" value={q} onChange={event=>setQ(event.target.value)}
        className="min-h-11 w-full md:min-h-9"/>
-   </label>
-   <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+   </Label>
+   <Label stack className="min-w-0">
      <span className="sr-only">Filter by status</span>
      <Select name="status" value={initialStatus} aria-label="Filter by status"
        className="min-h-11 w-full md:min-h-9"
@@ -50,15 +51,15 @@ export function SuperAdminDriveDirectoryFilters({q:initialQ,status:initialStatus
        <option value="ALL">All</option><option value="DRAFT">Draft</option>
        <option value="ACTIVE">Active</option><option value="CLOSED">Closed</option>
      </Select>
-   </label>
-   <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+   </Label>
+   <Label stack className="min-w-0">
      <span className="sr-only">Jobs per page</span>
      <Select name="pageSize" value={String(initialSize)} aria-label="Jobs per page"
        className="min-h-11 w-full md:min-h-9"
        onChange={event=>navigate({q,pageSize:Number(event.target.value)})}>
        {[10,20,50,100].map(n=><option key={n} value={String(n)}>{n} / page</option>)}
      </Select>
-   </label>
+   </Label>
    <Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
    <Link href="/admin/placements/drives"
      className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 focus-ring">

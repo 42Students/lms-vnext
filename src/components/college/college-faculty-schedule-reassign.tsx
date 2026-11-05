@@ -7,6 +7,7 @@ import {LoadingState} from "@/components/ui/loading-state";
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
+import { Label } from "@/components/ui/label";
 type Faculty={id:string;name:string|null};
 type Receipt={total:number;reassigned:number;skipped:number;
  results:{id:string;title:string;status:"REASSIGNED"|"SKIPPED";reason:string}[]};
@@ -81,12 +82,12 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
       </Alert>:null}
       {loaded?<div className="min-w-0 space-y-[var(--lms-space-4)]">
         <p className="max-w-prose text-sm text-body">{upcoming} upcoming scheduled session(s) for {name}.</p>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assign to
+        <Label stack className="min-w-0">Assign to
           <Select value={selected} disabled={busy||truncated||Boolean(receipt)} onChange={e=>{setSelected(e.target.value);setError("");}}>
             <option value="">Choose a replacement faculty</option>
             {options.map(row=><option key={row.id} value={row.id}>{row.name??row.id}</option>)}
           </Select>
-        </label>
+        </Label>
         <p className="max-w-prose text-xs text-muted-foreground">Only future scheduled sessions are changed. Overlapping sessions are skipped; existing teaching history is retained.</p>
       </div>:null}
       {error?<div className="space-y-[var(--lms-space-3)]">

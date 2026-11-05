@@ -20,6 +20,7 @@ import {
 import { listCollegeCompanyDirectory } from "@/modules/placements/college-company-directory-service";
 import { parseCollegeCompaniesQuery, collegeCompaniesHref } from "@/modules/placements/college-company-directory-model";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 /** College-only employer relationships. Never render the Super Admin directory. */
 export default async function CollegeCompaniesPage({
@@ -90,33 +91,33 @@ export default async function CollegeCompaniesPage({
     </section>
     <CollegeCompanyCreate collegeId={collegeId}/>
     <FilterBar title="Filters" activeCount={Number(Boolean(query.q)) + Number(query.status !== "ACTIVE") + Number(query.sort !== "LAST_ACTIVE") + Number(query.pageSize !== 10) + Number(query.showDeleted === "1")}
-      search={<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      search={<Label stack className="min-w-0">
         Company
         <Input name="q" type="search" form="college-company-filters" maxLength={100}
           placeholder="Search by name or industry" defaultValue={query.q} className="min-h-11 w-full min-w-0 md:min-h-9 md:w-[260px]" />
         {query.q?<Link href={collegeCompaniesHref({...query,q:"",page:1})}
           className="text-xs font-semibold text-link underline">Clear search</Link>:null}
-      </label>}
+      </Label>}
       action={<Button variant="primary" type="submit" form="college-company-filters" className="min-h-11 md:min-h-9">Filter</Button>}>
       <form id="college-company-filters" method="get" className="grid min-w-0 gap-[8px] md:grid-cols-2 xl:grid-cols-4" aria-label="Filter companies">
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+        <Label stack className="min-w-0">Status
           <Select name="status" defaultValue={query.status}>
             <option value="ACTIVE">Active companies</option><option value="ARCHIVED">Archived companies</option>
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
+        </Label>
+        <Label stack className="min-w-0">Sort
           <Select name="sort" defaultValue={query.sort}>
             <option value="LAST_ACTIVE">Last active</option><option value="COMPANY">Company</option><option value="DRIVES">Drive count</option>
           </Select>
-        </label>
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
+        </Label>
+        <Label stack className="min-w-0">Rows per page
           <Select name="pageSize" defaultValue={query.pageSize}>
             {[10,20,50,100].map(size=><option key={size} value={size}>{size}</option>)}
           </Select>
-        </label>
-        <label className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] text-sm text-body">
+        </Label>
+        <Label variant="choice" className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)]">
           <Checkbox name="showDeleted" value="1" defaultChecked={query.showDeleted==="1"}/>Show deleted
-        </label>
+        </Label>
         <Button variant="primary" type="submit" className="min-h-11 w-full md:hidden">Filter</Button>
       </form>
     </FilterBar>

@@ -30,6 +30,7 @@ import { DataTable } from "@/components/ui/data-table";
 import {Input} from "@/components/ui/input";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type Course = {
   deliveryId: string;
@@ -290,7 +291,7 @@ export function LearnerAttendanceWorkspace({
       </p> : null}
       <section className="min-w-0 border-b border-border pb-4 pt-4 md:pb-6 md:pt-6">
         <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-end md:justify-between md:gap-4">
-          <label className="w-full max-w-sm font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          <Label className="w-full max-w-sm">
             Course
             <Select
               className="mt-[6px]"
@@ -310,7 +311,7 @@ export function LearnerAttendanceWorkspace({
                 </option>
               ))}
             </Select>
-          </label>
+          </Label>
 
           <div className="flex min-w-0 flex-wrap items-end gap-2">
             <Button className="max-md:min-h-11"
@@ -325,7 +326,7 @@ export function LearnerAttendanceWorkspace({
             >
               <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
             </Button>
-            <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+            <Label>
               <span className="sr-only">Jump to month</span>
               <Input
                 aria-label="Jump to month"
@@ -340,7 +341,7 @@ export function LearnerAttendanceWorkspace({
                   )
                 }
               />
-            </label>
+            </Label>
             {learnerAttendanceCanReturnToMonth(filters.month,defaultMonth) ? (
               <Button className="max-md:min-h-11" size="sm" variant="secondary"
                 onClick={() => changeMonth(parseMonth(defaultMonth))}>
@@ -400,19 +401,19 @@ export function LearnerAttendanceWorkspace({
           <p className="mt-1 text-xs text-muted-foreground leading-[20px]">{monthLabel} · Status filters affect only the session list, not attendance totals.</p>
         </div>
         <div className="grid min-w-0 w-full gap-3 sm:grid-cols-2 md:w-auto">
-        <label className="min-w-0 w-full font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Order
+        <Label className="min-w-0 w-full">Order
           <Select className="mt-[6px] min-h-11 md:min-h-9 w-full" value={historyOrder}
             onChange={event=>changeHistoryOrder(event.target.value as LearnerAttendanceOrder)}>
             <option value="NEWEST">Newest first</option>
             <option value="OLDEST">Oldest first</option>
           </Select>
-        </label>
-        <label className="min-w-0 w-full font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Show
+        </Label>
+        <Label className="min-w-0 w-full">Show
           <Select className="mt-[6px] min-h-11 md:min-h-9 w-full" value={historyFilter}
             onChange={event => changeHistoryFilter(event.target.value as LearnerAttendanceHistoryFilter)}>
             {LEARNER_ATTENDANCE_HISTORY_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </Select>
-        </label>
+        </Label>
         {(historyFilter !== "ALL" || historyOrder !== "NEWEST") ? (
           <Button className="max-md:min-h-11" variant="secondary" type="button" onClick={() => startTransition(() => {router.replace(learnerAttendanceHistoryResetHref(deliveryId,filters.month),{scroll:false});})}
             >

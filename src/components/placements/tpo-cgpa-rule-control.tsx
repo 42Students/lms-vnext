@@ -7,6 +7,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {useToast} from "@/components/ui/toast";
 import type {CgpaRule} from "@/modules/profile-verification/academic-marks";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 const OPTIONS:[
  CgpaRule,string
@@ -48,14 +49,14 @@ export function TpoCgpaRuleControl({initialRule}:{initialRule:CgpaRule}){
   <p className="text-sm text-body">Choose how a CGPA becomes a comparable percentage.
    Changing the rule recalculates verified percentages; original marks stay unchanged.</p>
   <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end">
-   <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+   <Label stack className="min-w-0 flex-1">
     CGPA percentage conversion
     <Select disabled={busy} value={selected}
      onChange={event=>setSelected(event.target.value as CgpaRule)}
      className="min-h-11 w-full md:min-h-9">
      {OPTIONS.map(([value,label])=><option key={value} value={value}>{label}</option>)}
     </Select>
-   </label>
+   </Label>
    <Button type="button" disabled={busy||selected===saved} loading={busy}
     className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>void save()}>
     Change

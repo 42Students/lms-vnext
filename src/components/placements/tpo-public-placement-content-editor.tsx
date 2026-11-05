@@ -9,6 +9,7 @@ import {useRouter} from "next/navigation";
 import {DEFAULT_PUBLIC_METRICS,PUBLIC_METRIC_LABELS,
  type PublicPlacementMetricKey} from "@/modules/placements/public-page/content-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 const ALL=Object.keys(PUBLIC_METRIC_LABELS) as PublicPlacementMetricKey[];
 export function TpoPublicPlacementContentEditor({initial}:{initial:{
  ready:boolean;about:string;metricKeys:PublicPlacementMetricKey[];updatedAt:string|null;
@@ -65,21 +66,21 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
  }
  return <section className="mt-6 space-y-4 border-t border-border pt-5" aria-label="Public placements content">
   <Heading level={2}>About your placements</Heading>
-  <label className="grid gap-[6px] text-[13px]">About your placements
+  <Label stack>About your placements
    <Textarea rows={4} maxLength={4000} value={about} disabled={!initial.ready||busy}
     onChange={e=>setAbout(e.target.value)}
     placeholder="A few lines companies read first: your programmes, batch sizes, when your season runs."
     className="min-h-28 w-full"/>
-  </label>
+  </Label>
   <p className="text-right text-xs text-muted-foreground" aria-live="polite">{about.length} / 4000</p>
   <fieldset className="space-y-3">
    <legend className="font-semibold">Numbers to show</legend>
    <p className="text-xs text-muted-foreground">Live, over the last 12 months. A number built on fewer than 5 students or offers is never shown.</p>
    <div className="grid min-w-0 gap-x-6 gap-y-1 sm:grid-cols-2">
-   {ALL.map(key=><label key={key} className="flex min-h-11 md:min-h-9 items-center gap-2 text-sm">
+   {ALL.map(key=><Label variant="choice" key={key} className="flex min-h-11 md:min-h-9 items-center gap-2">
     <Checkbox checked={metricKeys.includes(key)} disabled={!initial.ready||busy}
      onChange={()=>toggle(key)}/>{PUBLIC_METRIC_LABELS[key]}{hasPreview&&!visibleKeys.has(key)?" (not enough data yet)":""}
-   </label>)}
+   </Label>)}
    </div>
   </fieldset>
   <details className="min-w-0 border-t border-border pt-3">

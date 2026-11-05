@@ -23,6 +23,7 @@ import {
 } from "@/modules/projects/project-resource-files-ui-model";
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
+import { Label } from "@/components/ui/label";
 
 type FileResponse={file:ProjectResourceFile};
 type FileListResponse={files:ProjectResourceFile[]};
@@ -237,7 +238,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
   return <section aria-labelledby={"project-files-"+projectId} className="min-w-0 space-y-4 border-b border-border pb-[var(--lms-space-4)] [overflow-wrap:anywhere]">
     <Heading level={3} size="base" id={"project-files-"+projectId} className="m-0 text-[var(--lms-heading)]">Attached</Heading>
     {canUpload&&<form onSubmit={upload} className="min-w-0 space-y-3 border-b border-border pb-4">
-      <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]" htmlFor={"project-file-"+projectId}>Or upload a file</label>
+      <Label className="block" htmlFor={"project-file-"+projectId}>Or upload a file</Label>
       <Input ref={fileInputRef} id={"project-file-"+projectId} type="file" accept={acceptAttributeFor("project-resource")}
         disabled={busy||files.length>=PROJECT_FILE_LIMIT}
         onChange={event=>{setSelected(event.target.files?.[0]??null);setFeedback(null);}}
@@ -245,24 +246,24 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       <p className="text-xs text-muted-foreground leading-[20px]">{limitsSummary("project-resource")}</p>
       <Disclosure title="File details (optional)" defaultOpen={Boolean(uploadTitle||uploadDescription||linkedResourceId)} contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3">
       <div className="grid min-w-0 gap-3 md:grid-cols-2">
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
+        <Label>Title
           <Input className="mt-[6px] block w-full"
             maxLength={200} value={uploadTitle} onChange={event=>setUploadTitle(event.target.value)}
             disabled={busy} placeholder="Resource title"/>
-        </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description
+        </Label>
+        <Label>Description
           <Input className="mt-[6px] block w-full"
             maxLength={4000} value={uploadDescription} onChange={event=>setUploadDescription(event.target.value)}
             disabled={busy} placeholder="Short note about this resource"/>
-        </label>
+        </Label>
       </div>
-      {resources.length>0?<label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Related resource (optional)
+      {resources.length>0?<Label className="block">Related resource (optional)
         <Select value={linkedResourceId} disabled={busy} onChange={event=>setLinkedResourceId(event.target.value)}
           className="mt-1 block w-full">
           <option value="">New standalone file</option>
           {resources.map(item=><option key={item.id} value={item.id}>{item.title}{item.status==="DRAFT"?" (draft · private)":""}</option>)}
         </Select>
-      </label>:null}
+      </Label>:null}
       </Disclosure>
       {progress!==null&&<div role="status" className="text-xs text-body">
         Uploading… {progress}%
@@ -340,25 +341,25 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
                 disabled={pdfPage<=1} onClick={()=>setPdfPage(n=>Math.max(1,n-1))}>
                 Previous page
               </Button>
-              <label>Page
+              <Label>Page
                 <Input className="ml-2 w-20 rounded border border-border p-2"
                   type="number" min={1} max={999} value={pdfPage}
                   onChange={event=>{
                     const n=Number(event.target.value);
                     if(Number.isSafeInteger(n))setPdfPage(Math.max(1,Math.min(999,n)));
                   }}/>
-              </label>
+              </Label>
               <Button type="button" size="sm" variant="secondary"
                 disabled={pdfPage>=999} onClick={()=>setPdfPage(n=>Math.min(999,n+1))}>
                 Next page
               </Button>
-              <label>Zoom
+              <Label>Zoom
                 <Select className="ml-2 rounded border border-border p-2"
                   value={pdfZoom}
                   onChange={event=>setPdfZoom(Number(event.target.value))}>
                   {[50,75,100,125,150,200].map(n=><option key={n} value={n}>{n}%</option>)}
                 </Select>
-              </label>
+              </Label>
             </div>:null}
             {preview.kind==="PDF"?<iframe title={"Private PDF "+file.title}
               src={mentorPdfEmbedUrl(preview.url,pdfPage,pdfZoom)??undefined}
@@ -378,16 +379,16 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
           </Disclosure>:null}
           {editing===file.id&&canManage&&<form onSubmit={event=>void saveEdit(event,file)}
             className="mt-3 grid min-w-0 gap-3 border-t border-[var(--lms-canvas-border)] pt-3 md:grid-cols-2">
-            <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
+            <Label>Title
               <Input required maxLength={200} value={editTitle} disabled={busy}
                 onChange={event=>setEditTitle(event.target.value)}
                 className="mt-1 block w-full"/>
-            </label>
-            <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description
+            </Label>
+            <Label>Description
               <Input maxLength={4000} value={editDescription} disabled={busy}
                 onChange={event=>setEditDescription(event.target.value)}
                 className="mt-1 block w-full"/>
-            </label>
+            </Label>
             <div className="flex min-w-0 flex-col gap-2 md:flex-row md:col-span-2">
               <Button variant="primary" type="submit" loading={busy} disabled={busy||!editTitle.trim()}
                 className="min-h-11 w-full md:min-h-9 md:w-auto">Update resource</Button>

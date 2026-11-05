@@ -18,6 +18,7 @@ import {
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 function countText(value:number|null|undefined){return value==null?"—":String(value);}
 function usageChip(label:string,value:number|null|undefined){
@@ -54,7 +55,7 @@ export function DepartmentDirectory({
         <Heading level={2} size="base" className="m-0 text-[var(--lms-heading)]">{DEPARTMENT_COPY.existingTitle}</Heading>
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           <div className="relative min-w-0 w-full sm:w-[220px]">
-            <label htmlFor="department-directory-search" className="sr-only">Search departments</label>
+            <Label htmlFor="department-directory-search" className="sr-only">Search departments</Label>
             <Input id="department-directory-search" type="search" placeholder="Search departments"
               value={search} className="min-h-11 w-full pr-12 md:min-h-9"
               onChange={event=>{setSearch(event.target.value);setPage(1);}}/>
@@ -74,15 +75,15 @@ export function DepartmentDirectory({
           onClick={() => { setSearch(""); setPage(1); }}>Clear search</Button> : null}
         <Disclosure title="View options" className="min-w-0 sm:col-span-2"
           contentClassName="flex min-w-0 flex-col gap-3 pb-3 pt-2 sm:min-w-48">
-          <label htmlFor="department-directory-page-size"
-            className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <Label stack htmlFor="department-directory-page-size"
+            className="min-w-0">
             Rows per page
             <Select id="department-directory-page-size" value={pageSize}
               onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }}
               className="min-h-11 w-full md:min-h-9">
               {[10, 25, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
             </Select>
-          </label>
+          </Label>
 
         </Disclosure>
       </div>
@@ -131,13 +132,13 @@ export function DepartmentDirectory({
         <div className="flex flex-col items-stretch justify-between gap-3 text-sm text-muted-foreground print:hidden sm:flex-row sm:items-center">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
             <span>{(result.page-1)*pageSize+1}-{Math.min(result.page*pageSize,result.total)} of {result.total}</span>
-            <label className="inline-flex items-center gap-2 text-xs">Rows per page
+            <Label variant="choice" className="inline-flex items-center gap-2">Rows per page
               <Select value={pageSize} aria-label="Rows per page"
                 onChange={event=>{setPageSize(Number(event.target.value));setPage(1);}}
                 className="min-h-11 md:min-h-9">
                 {[10,25,50,100].map(size=><option key={size} value={size}>{size}</option>)}
               </Select>
-            </label>
+            </Label>
           </div>
           <div className="flex w-full flex-wrap items-center justify-between gap-[var(--lms-space-2)] sm:w-auto sm:justify-end">
             <Button

@@ -13,6 +13,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {tenantCreationScopeRequest} from "@/modules/colleges/admin-tenant-create-handoff";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export type OrganizationOption = {
   id: string;
@@ -154,12 +155,12 @@ export function CollegeCreateForm({
     >
       <Heading level={3} size="lg" className="text-[var(--lms-heading)]">Create New College</Heading>
       <div>
-        <label
+        <Label
           htmlFor="college-organization"
-          className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+          className="mb-1.5 block"
         >
           Organization
-        </label>
+        </Label>
         <Select
           className="min-h-11 md:min-h-9" id="college-organization"
           disabled={pending||organizations.length===0}
@@ -179,12 +180,12 @@ export function CollegeCreateForm({
         {fieldErrors.organizationId ? <p id="college-organization-error" role="alert" className="mt-1 text-xs text-error">{fieldErrors.organizationId}</p> : null}
       </div>
       <div>
-        <label
+        <Label
           htmlFor="college-name"
-          className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+          className="mb-1.5 block"
         >
           College Name
-        </label>
+        </Label>
         <Input
           className="min-h-11 md:min-h-9" id="college-name"
           disabled={pending}
@@ -199,9 +200,9 @@ export function CollegeCreateForm({
         {fieldErrors.name ? <p id="college-name-error" role="alert" className="mt-1 text-xs text-error">{fieldErrors.name}</p> : null}
       </div>
       <div>
-        <label
+        <Label
           htmlFor="college-code"
-          className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+          className="mb-1.5 block"
         >
           Unique ID / Code
           <details className="group relative ml-2 inline-block align-middle text-xs font-normal">
@@ -210,7 +211,7 @@ export function CollegeCreateForm({
             A short, permanent code for this college — shown in switchers and menus (e.g. “ROLE • NSRIT”). It’s separate from the web address you’ll add next, though people often reuse the same word for both. Once set, avoid changing it — other parts of the system reference it by this code, not by the college’s display name.
            </p>
           </details>
-        </label>
+        </Label>
         <Input
           className="min-h-11 md:min-h-9" id="college-code"
           aria-describedby={fieldErrors.code ? "college-code-help college-code-error" : "college-code-help"}
@@ -234,10 +235,10 @@ export function CollegeCreateForm({
           ["Address",addressLine1,setAddressLine1,255],["Address line 2",addressLine2,setAddressLine2,255],
           ["Landmark",landmark,setLandmark,255],["Pin Code",postalCode,setPostalCode,32],
           ["Country",country,setCountry,128],
-         ] as const).map(([label,value,setter,maxLength])=><label key={label} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+         ] as const).map(([label,value,setter,maxLength])=><Label stack key={label}>
           {label}<Input value={value} disabled={pending} placeholder={label==="Address"?"Full address":label} onChange={e=>setter(e.target.value)} maxLength={maxLength}
            className="min-h-11 w-full md:min-h-9"/>
-         </label>)}
+         </Label>)}
         </div>
        </Disclosure>
        <p id="college-code-help" className="text-xs text-muted-foreground leading-5">The Unique ID / Code is a short, permanent switcher and menu code; it is separate from the college web address. vNext normalizes this code to lowercase letters, numbers and hyphens, while legacy free-form Unique IDs may require a verified migration mapping.</p>

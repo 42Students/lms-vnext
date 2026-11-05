@@ -18,6 +18,7 @@ import {Button} from "@/components/ui/button";
 import {AdminProgressRetakeAction} from "@/components/courses/admin-progress-retake-action";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 export default async function SuperAdminStudentCourseProgressPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>
@@ -118,7 +119,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
     aria-label="Select a class for course progress"
     className="grid min-w-0 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto]">
     <input type="hidden" name="offeringId" value={offeringId}/>
-    <label className="grid gap-2 text-sm font-semibold text-[var(--lms-heading)]">
+    <Label stack>
       Class / taught course · active and past
       <Select name="deliveryId" defaultValue={requestedDelivery??""} className="min-h-11 md:min-h-9">
         <option value="">All currently active classes for this course</option>
@@ -126,7 +127,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
           {choice.className} · {choice.endedAt?"Past delivery":choice.activeTeacher?"Active teaching assignment":"No active teaching assignment"}
         </option>)}
       </Select>
-    </label>
+    </Label>
     <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">View class progress</Button>
     {classChoices.length===200?<p role="status" className="text-xs text-warning-text md:col-span-2">
       Showing the first 200 class deliveries. Use the course directory for other historic classes.
@@ -194,11 +195,11 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
       <input type="hidden" name="offeringId" value={offeringId}/>
       {requestedDelivery?<input type="hidden" name="deliveryId" value={requestedDelivery}/>:null}
       <input type="hidden" name="sort" value={sort}/>
-      <label className="grid gap-1 text-sm font-semibold">Rows per page
+      <Label stack>Rows per page
         <Select name="pageSize" defaultValue={String(pageSize)} className="min-h-11 md:min-h-9">
           {[20,50,100].map(value=><option key={value} value={value}>{value}</option>)}
         </Select>
-      </label>
+      </Label>
       <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">Apply</Button>
     </form>
   </div>

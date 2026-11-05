@@ -12,6 +12,7 @@ import {
 } from "@/modules/courses/faculty-course-health-model";
 import { getFacultyCourseAssessmentHealth } from "@/modules/courses/faculty-course-health-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Params = { kind?: string | string[]; page?: string | string[] };
 function first(value: string | string[] | undefined) {
@@ -53,14 +54,14 @@ export default async function FacultyCourseAssessmentHealthPage({
     </section>
     <form action={facultyCourseHealthHref({...data.query,page:1}).split("?")[0]}
       method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment type
+      <Label stack className="min-w-0">Assessment type
         <Select name="kind" defaultValue={data.query.kind}
           className="min-h-11 md:min-h-[var(--lms-control-height)]">
           <option value="ALL">All published assessments</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>
         </Select>
-      </label>
+      </Label>
       <Button type="submit" variant="primary" className="min-h-11 w-full sm:w-auto md:min-h-9">Filter</Button>
       <Link href={facultyCourseHealthHref({...data.query,kind:"ALL",page:1})}
         className="inline-flex min-h-11 items-center justify-center px-3 text-sm font-semibold text-primary-text hover:underline focus-ring md:min-h-9">Clear</Link>

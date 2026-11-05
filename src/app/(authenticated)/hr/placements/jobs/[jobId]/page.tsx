@@ -58,6 +58,7 @@ import {RecruiterPanelActions} from "@/components/hr/recruiter-panel-actions";
 import {Tabs} from "@/components/ui/tabs";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 function currentTimeMs(){return Date.now();}
 
@@ -654,12 +655,12 @@ export default async function HrPlacementJobPage({
             <Input type="hidden" name="stage" value={filters.stage}/>
             <Input type="hidden" name="page" value={String(filters.page)}/>
             <Input type="hidden" name="returnTo" value={returnTo}/>
-            <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">
+            <Label stack className="min-w-0 flex-1">
               Search this page by name, roll no. or shared email
               <Input type="search" name="applicantSearch"
                 defaultValue={applicantSearch} maxLength={100} placeholder="Search shared applicants"
                 className="min-h-11 w-full md:min-h-9"/>
-            </label>
+            </Label>
             <Button type="submit" variant="secondary">Search</Button>
             {applicantSearch ? <Link
               href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+returnQuery}
@@ -737,12 +738,12 @@ export default async function HrPlacementJobPage({
                 previousHref={focusedNavigation?.previous?focusedHref(focusedNavigation.previous):null}
                 nextHref={focusedNavigation?.next?focusedHref(focusedNavigation.next):null}/>}
               {focusedNavigation ? <nav aria-label="Step through shortlisted applicants" className="mt-4 flex flex-wrap items-center gap-3 text-sm">
-                <label className="flex min-w-40 flex-1 items-center gap-3">
+                <Label variant="choice" className="flex min-w-40 flex-1 items-center gap-3">
                   <span className="shrink-0 text-body">{focusedNavigation.index+1} of {focusedNavigation.total} shared applicants on this page</span>
                   <MetricBar role="progressbar" label="Focused review progress"
                     value={focusedNavigation.index+1} maximum={focusedNavigation.total} unit="applicants"
                     className={funnelStyles["reviewTrack"] ?? ""} />
-                </label>
+                </Label>
                 {focusedNavigation.previous ? <Link className="inline-flex min-h-9 max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-primary-text hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring" href={focusedHref(focusedNavigation.previous)}>Previous applicant</Link> : null}
                 {focusedNavigation.next ? <Link className="rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-primary-text inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] hover:bg-[color-mix(in_srgb,var(--lms-primary)_7%,transparent)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-ring" href={focusedHref(focusedNavigation.next)}>Next applicant</Link> : null}
               </nav> : null}

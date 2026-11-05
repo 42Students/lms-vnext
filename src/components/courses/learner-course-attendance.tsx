@@ -15,6 +15,7 @@ import { Alert } from "@/components/ui/alert";
 import { DataTable } from "@/components/ui/data-table";
 import type { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type AttendanceWorkspace = Awaited<
   ReturnType<typeof getLearnerAttendanceWorkspace>
@@ -307,7 +308,7 @@ export function LearnerCourseAttendance({
             >
               ←
             </Button>
-            <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:flex-initial">
+            <Label className="min-w-0 flex-1 sm:flex-initial">
               Month
               <Input
                 type="month"
@@ -338,7 +339,7 @@ export function LearnerCourseAttendance({
                 }}
                 className="mt-1.5 min-h-11 w-full md:min-h-9"
               />
-            </label>
+            </Label>
             {learnerCourseAttendanceMonthShortcutVisible(monthKey(month),currentMonth) ? (
               <Button size="sm" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
                 onClick={() => {

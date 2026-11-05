@@ -8,6 +8,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export type PlacementRequestQueueItem = {
   id: string;
@@ -299,7 +300,7 @@ export function PlacementRequestQueue({
 
               {item.status === "PENDING" ? (
                 <div className="mt-4 grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-                  <label>
+                  <Label>
                     <span className="mb-1 block text-xs font-semibold text-body">
                       Decision note
                     </span>
@@ -315,7 +316,7 @@ export function PlacementRequestQueue({
                         setValidationError(current=>({...current,[item.id]:""}));
                       }}
                     />
-                  </label>
+                  </Label>
                   {validationError[item.id]?<p role="alert" className="text-sm text-destructive lg:col-span-2 leading-[22px]">{validationError[item.id]}</p>:null}
                   <div className="grid grid-cols-2 gap-2 lg:flex lg:items-center">
                     <Button

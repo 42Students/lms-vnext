@@ -14,6 +14,7 @@ import {courseThumbnailUrlSchema} from "@/modules/courses/validation";
 import type {LegacyCourseMetadataField} from "@/modules/courses/legacy-course-metadata-preview";
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
+import { Label } from "@/components/ui/label";
 
 type CourseMetadata = {
  id:string;name:string;code:string;shortTitle:string|null;
@@ -312,24 +313,24 @@ export function AdminCourseDisplayEditor({
         <Button type="button" variant="secondary" onClick={()=>setReloadKey(k=>k+1)}>Retry</Button>
       </div>:null}
       {metadata?<div className="mt-4 grid gap-4 md:grid-cols-2">
-        <label className="grid gap-2 text-sm font-semibold">Course Name
+        <Label stack>Course Name
           <Input value={name} maxLength={255} required disabled={pending} onChange={e=>setName(e.target.value)}/>
-        </label>
-        <label className="grid gap-2 text-sm font-semibold">Official Course Code
+        </Label>
+        <Label stack>Official Course Code
           <Input value={code} maxLength={64} required disabled={pending} onChange={e=>setCode(e.target.value)}/>
-        </label>
-        <label className="grid gap-2 text-sm font-semibold">Short display name
+        </Label>
+        <Label stack>Short display name
           <Input value={shortTitle} maxLength={255} disabled={pending} onChange={e=>setShortTitle(e.target.value)}/>
-        </label>
-        <label className="grid gap-2 text-sm font-semibold">Official code (catalogue)
+        </Label>
+        <Label stack>Official code (catalogue)
           <Input value={officialCode} maxLength={40} disabled={pending} onChange={e=>setOfficialCode(e.target.value)}/>
-        </label>
-        <label className="grid gap-2 text-sm font-semibold">Course color
+        </Label>
+        <Label stack>Course color
           <Input value={cardColor} maxLength={16} placeholder="#1677FF" /* ui-consistency-allow-hex */ disabled={pending} onChange={e=>setCardColor(e.target.value)}/>
-        </label>
-        <label className="grid gap-2 text-sm font-semibold md:col-span-2">Course description
+        </Label>
+        <Label stack className="md:col-span-2">Course description
           <Textarea value={description} maxLength={5000} rows={3} disabled={pending} onChange={e=>setDescription(e.target.value)}/>
-        </label>
+        </Label>
       </div>:null}
       {metadata?.legacyFields?.some(field=>field.status!=="MISSING")?<Disclosure
         title="Imported legacy course metadata" className="mt-4 min-w-0"
@@ -349,7 +350,7 @@ export function AdminCourseDisplayEditor({
         </dl>
       </Disclosure>:null}
       <div className="mt-[var(--lms-space-4)] grid min-w-0 max-w-[920px] gap-[var(--lms-space-4)]">
-        <label className="block min-w-0 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] text-[13px] leading-4">
+        <Label className="block min-w-0">
           Introduction
           <Input
             className="mt-[var(--lms-space-2)] w-full"
@@ -359,9 +360,9 @@ export function AdminCourseDisplayEditor({
             disabled={pending}
             onChange={(event) => setIntroductionText(event.target.value)}
           />
-        </label>
+        </Label>
 
-        <label className="block min-w-0 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] text-[13px] leading-4">
+        <Label className="block min-w-0">
           What learners will take away
           <Textarea
             className="mt-[var(--lms-space-2)] min-h-32 w-full"
@@ -374,7 +375,7 @@ export function AdminCourseDisplayEditor({
           <span className="mt-1 block text-xs font-normal leading-5 text-muted-foreground">
             Order is preserved. Bullet and numbered prefixes are removed.
           </span>
-        </label>
+        </Label>
 
         <Disclosure
           title="Advanced formatting and thumbnail"
@@ -385,7 +386,7 @@ export function AdminCourseDisplayEditor({
           <p className="m-0 max-w-prose text-xs leading-5 text-muted-foreground">
             Rich HTML is sanitized to a strict attribute-free formatting allowlist before storage.
           </p>
-          <label className="block min-w-0 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] text-[13px] leading-4">
+          <Label className="block min-w-0">
             Rich description HTML
             <Textarea
               className="mt-[var(--lms-space-2)] min-h-40 w-full font-mono text-[var(--lms-font-base)]"
@@ -399,21 +400,21 @@ export function AdminCourseDisplayEditor({
               Scripts, images, links, attributes and unknown tags are escaped or
               stripped; simple formatting/list/table tags are retained.
             </span>
-          </label>
+          </Label>
           <div className="min-w-0 space-y-3">
             <Heading level={4} size="sm" className="text-[var(--lms-neutral-400)]">Course image</Heading>
             <p className="text-xs leading-5 text-muted-foreground">
               Choose a JPEG, PNG or WebP image up to 5 MiB. Upload directly to private storage,
               then check the receipt before it appears in the course.
             </p>
-            <label className="grid min-w-0 gap-2 text-sm font-semibold">
+            <Label stack className="min-w-0">
               Upload image
               <Input type="file" accept="image/jpeg,image/png,image/webp"
                 className="block w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm"
                 disabled={pending||imageBusy}
                 onChange={event=>{setImageFile(event.currentTarget.files?.[0]??null);
                   setImageError("");}}/>
-            </label>
+            </Label>
             <div className="flex flex-wrap gap-2">
               <Button type="button" variant="secondary" disabled={!imageFile||pending||imageBusy}
                 loading={imageBusy} onClick={()=>void uploadImage()}>
@@ -430,14 +431,14 @@ export function AdminCourseDisplayEditor({
                 :"Upload receipt issued. Complete the upload to make the image available."}
             </p>:null}
             {imageError?<p role="alert" className="text-sm text-error">{imageError}</p>:null}
-            <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+            <Label stack className="min-w-0">
               Thumbnail URL (legacy HTTPS link or uploaded image)
               <Input className="w-full" type={uploadedThumbnail?"text":"url"}
                 inputMode="url" value={thumbnailUrl} error={thumbnailIssue}
                 aria-describedby={thumbnailIssue?"course-thumbnail-issue":undefined}
                 placeholder="https://..." disabled={pending||imageBusy||uploadedThumbnail}
                 onChange={event=>setThumbnailUrl(event.target.value)}/>
-            </label>
+            </Label>
             {thumbnailUrl.trim()&&!thumbnailIssue?(
               <div className="min-w-0 space-y-2">
                 {/* The active private route never leaks a bucket/object key or signed URL. */}

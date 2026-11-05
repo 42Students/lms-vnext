@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 import { useProjectEditorDiscardGuard } from "./project-editor-discard-guard";
+import { Label } from "@/components/ui/label";
 
 type SprintRow = {
   id: string;
@@ -146,9 +147,9 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
         Only this release is updated; tasks, meetings and resources are unchanged.
       </p>
       {draft.length>12?<div className="space-y-1">
-        <label className="block text-xs font-semibold text-body" htmlFor={"sprint-plan-search-"+releaseId}>
+        <Label className="block" htmlFor={"sprint-plan-search-"+releaseId}>
           Find an item in this section
-        </label>
+        </Label>
         <Input id={"sprint-plan-search-"+releaseId} value={search}
           placeholder="Find an item by title or content"
           onChange={event=>setSearch(event.target.value)}/>
@@ -182,31 +183,31 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
               onClick={() => restore(row.id)}>Undo row</Button>
           </div>
           {rowOpen?<div id={"sprint-plan-fields-"+row.id} className="space-y-3">
-          <label className="block text-[13px] font-semibold text-body">Sprint title
+          <Label className="block">Sprint title
             <Input className="mt-1" required maxLength={200}
               aria-invalid={!row.title.trim()}
               value={row.title} onChange={event => change(row.id, "title", event.target.value)} />
             {!row.title.trim()?<span role="alert" className="text-xs text-error">
               Item {index+1}: Title required
             </span>:null}
-          </label>
+          </Label>
           <div className="grid gap-3 md:grid-cols-2">
-            <label className="text-[13px] font-semibold text-body">Key (optional)
+            <Label>Key (optional)
               <Input className="mt-1" maxLength={120} value={row.key}
                 aria-invalid={!row.key.trim()}
                 onChange={event=>change(row.id,"key",event.target.value)}/>
               {!row.key.trim()?<span role="alert" className="text-xs text-error">
                 Item {index+1}: Sprint key required
               </span>:null}
-            </label>
-            <label className="text-[13px] font-semibold text-body">Due (optional)
+            </Label>
+            <Label>Due (optional)
               <Input className="mt-1" maxLength={160} value={row.dueLabel??""}
                 onChange={event=>change(row.id,"dueLabel",event.target.value)}/>
-            </label>
+            </Label>
           </div>
           <div className="grid min-w-0 gap-3 md:grid-cols-2">
             {(["description", "goal", "definitionOfDone"] as const).map(field =>
-              <label key={field} className="block text-[13px] font-semibold text-body">
+              <Label key={field} className="block">
                 {field === "description" ? "Description" :
                   field === "goal" ? "Sprint goal (optional)" : "What does done look like?"}
                 <Textarea className="mt-1" maxLength={4000}
@@ -215,16 +216,16 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
                     field==="goal"?"One sentence: what this sprint is trying to achieve":undefined}
                   value={row[field] ?? ""}
                   onChange={event => change(row.id, field, event.target.value)} />
-              </label>)}
+              </Label>)}
           </div>
           <div className="grid min-w-0 gap-3 md:grid-cols-3">
             {(["startDate", "endDate", "dueDate"] as const).map(field =>
-              <label key={field} className="block text-[13px] font-semibold text-body">
+              <Label key={field} className="block">
                 {field === "startDate" ? "Start date" :
                   field === "endDate" ? "End date" : "Due date"}
                 <Input className="mt-1" type="date" value={row[field] ?? ""}
                   onChange={event => change(row.id, field, event.target.value)} />
-              </label>)}
+              </Label>)}
           </div>
           </div>:null}
         </fieldset>;

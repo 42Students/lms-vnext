@@ -13,6 +13,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Disclosure } from "@/components/ui/disclosure";
 import { useToast } from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export type PlacementSeasonItem = {
   id: string;
@@ -212,7 +213,7 @@ export function PlacementSeasonManager({
           onSubmit={create}
           className="grid min-w-0 gap-3 py-4 sm:grid-cols-2"
         >
-          <label>
+          <Label>
             <span className="mb-1 block text-xs font-semibold text-body">
               Season name
             </span>
@@ -222,8 +223,8 @@ export function PlacementSeasonManager({
               maxLength={160}
               placeholder="2026-27 Placements"
             />
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1 block text-xs font-semibold text-body">
               Code
             </span>
@@ -233,8 +234,8 @@ export function PlacementSeasonManager({
               maxLength={64}
               placeholder="2026-27"
             />
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1 block text-xs font-semibold text-body">
               Starts
             </span>
@@ -243,8 +244,8 @@ export function PlacementSeasonManager({
               type="date"
               required
             />
-          </label>
-          <label>
+          </Label>
+          <Label>
             <span className="mb-1 block text-xs font-semibold text-body">
               Ends
             </span>
@@ -253,7 +254,7 @@ export function PlacementSeasonManager({
               type="date"
               required
             />
-          </label>
+          </Label>
           <div className="sm:col-span-2">
             <Button
               type="submit"

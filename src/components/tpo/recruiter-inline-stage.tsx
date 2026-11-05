@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {useState} from "react";
+import { Label } from "@/components/ui/label";
 export function RecruiterInlineStage({lead,onUpdated}:{lead:{id:string;name:string;manualStage:string;stage:string};onUpdated:()=>void}){
  const [open,setOpen]=useState(false),[action,setAction]=useState<"CONTACTED"|"NOT_NOW">("CONTACTED");
  const [reason,setReason]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState("");
@@ -31,16 +32,16 @@ export function RecruiterInlineStage({lead,onUpdated}:{lead:{id:string;name:stri
    {lead.stage.replaceAll("_"," ")} · Edit
   </Button>
   {open?<div id={"recruiter-stage-editor-"+lead.id} role="group" aria-label={"Edit stage for "+lead.name} className="min-w-0 space-y-2">
-   <label className="block text-[13px]">Stage
+   <Label className="block">Stage
     <Select value={action} disabled={busy} onChange={e=>setAction(e.target.value as typeof action)}
      className="min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface">
      <option value="CONTACTED">Contacted</option><option value="NOT_NOW">Not now</option>
     </Select>
-   </label>
-   {action==="NOT_NOW"?<label className="block text-[13px]">Reason
+   </Label>
+   {action==="NOT_NOW"?<Label className="block">Reason
     <Input value={reason} maxLength={255} onChange={e=>setReason(e.target.value)}
      className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 md:min-h-9"/>
-   </label>:null}
+   </Label>:null}
    <Button variant="primary" type="button" disabled={busy} onClick={()=>void save()}
     className="min-h-11 md:min-h-9 px-3">Apply</Button>
    <Button variant="ghost" type="button" disabled={busy} onClick={()=>setOpen(false)}

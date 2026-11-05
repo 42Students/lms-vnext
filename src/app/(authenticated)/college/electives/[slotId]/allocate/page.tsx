@@ -21,6 +21,7 @@ import {Alert} from "@/components/ui/alert";
 import {EmptyState} from "@/components/ui/empty-state";
 import {ElectiveEligibleSelection} from "@/components/academics/elective-eligible-selection";
 import {ErrorState} from "@/components/ui/error-state";
+import { Label } from "@/components/ui/label";
 
 const uuid = z.string().uuid();
 const fieldStyle = "min-h-11 min-w-0 md:min-h-9";
@@ -230,48 +231,48 @@ export default async function CollegeElectiveAllocatePage({
       {input.reason ? " " + input.reason : ""}
     </Alert>}
     <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section
+      <Label stack className="min-w-0">Class/Section
         <Select name="section" className={fieldStyle} defaultValue={input.section ?? ""}>
           <option value="">All sections</option>
           {allSections.map(s => <option key={s.id} value={s.id}>{s.name} ({s.code})</option>)}
         </Select>
-      </label>
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll number or learner ID
+      </Label>
+      <Label stack className="min-w-0">Name, roll number or learner ID
         <Input name="q" type="search" maxLength={128} defaultValue={input.q ?? ""}
           className={fieldStyle} placeholder="Search eligible students" />
-      </label>
+      </Label>
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
     </form>
     <form action={allocate} className="space-y-4 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Allocation mode
+      <Label stack className="min-w-0">Allocation mode
         <Select name="allocationMode" defaultValue="SELECTED" className={fieldStyle}>
           <option value="SELECTED">Selected learners or pasted identifiers</option>
           <option value="SECTION">Whole section (up to 100 verified eligible learners)</option>
         </Select>
-      </label>
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section for whole-section allocation
+      </Label>
+      <Label stack className="min-w-0">Section for whole-section allocation
         <Select name="allocateSectionId" className={fieldStyle} defaultValue={input.section??""}>
           <option value="">Pick a class</option>
           {allSections.map(section=><option key={section.id} value={section.id}>{section.name} ({section.code})</option>)}
         </Select>
-      </label>
+      </Label>
       <p className="text-xs text-muted-foreground">Whole-section mode ignores the selected checkboxes and pasted IDs; the server verifies the selected section and all eligible learners before making any changes. Manual mode processes at most 100 unique learners per request. Commas, semicolons and whitespace separate pasted identifiers. If more than 100 are supplied, the request is rejected (not silently truncated); duplicates and existing assignments are reported as skipped.</p>
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Allocate selected to…
+      <Label stack className="min-w-0">Allocate selected to…
         <Select name="offeringGroup" required className={fieldStyle}>
           <option value="">Choose elective offering</option>
           {offerings.map(o => <option key={o.id} value={o.groupId}>
             {o.name} · {o.enrolled}/{o.seats ?? "unlimited"} seats
           </option>)}
         </Select>
-      </label>
+      </Label>
       {offerings.length === 0 && <EmptyState title="No elective offerings" description="Add a course offering to this slot before allocating learners."/>}
       <ElectiveEligibleSelection slotId={slotId} students={students}
          clearAfterAllocation={input.added!==undefined||input.waitlisted!==undefined||
            input.skipped!==undefined||input.failed!==undefined}/>
-       <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Or paste roll numbers / learner membership IDs
+       <Label stack className="min-w-0">Or paste roll numbers / learner membership IDs
         <Textarea name="identifiers" rows={3} maxLength={12000} className={fieldStyle}
           placeholder="One roll number or membership ID per line, comma separated also supported" />
-      </label>
+      </Label>
       <Button type="submit" disabled={!offerings.length} className="min-h-11 w-full md:min-h-9 md:w-auto">
         Allocate selected to…
       </Button>

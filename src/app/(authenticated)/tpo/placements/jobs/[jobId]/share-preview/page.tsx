@@ -20,6 +20,7 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type SearchParams = { page?: string | string[]; shareStatus?: string|string[]; sharePage?:string|string[]; q?:string|string[] };
 const first = (value: string | string[] | undefined) =>
@@ -76,10 +77,10 @@ export default async function TpoShortlistSharePreviewPage({
     <form action={path} method="get" className="flex min-w-0 flex-col gap-2 border-b border-[var(--lms-canvas-border)] pb-4 sm:flex-row sm:items-end sm:gap-3">
       {preservedHistory.shareStatus?<Input type="hidden" name="shareStatus" value={preservedHistory.shareStatus}/>:null}
       {preservedHistory.sharePage?<Input type="hidden" name="sharePage" value={preservedHistory.sharePage}/>:null}
-      <label className="grid min-w-0 flex-1 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search shortlisted learner
+      <Label stack className="min-w-0 flex-1">Search shortlisted learner
         <Input type="search" name="q" defaultValue={parsed.data.q} maxLength={80}
           placeholder="Learner Name" />
-      </label>
+      </Label>
       <Button type="submit" className="min-h-11 w-full px-6 sm:w-auto md:min-h-9">
         Search
       </Button>

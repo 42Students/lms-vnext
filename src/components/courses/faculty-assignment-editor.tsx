@@ -22,6 +22,7 @@ import {authoringDueInstant,authoringLocalDateTime,assignmentActionAvailable}
  from "@/modules/courses/faculty-authoring-datetime-model";
 import {facultyAssignmentDraftDirty,facultyAssignmentDraftIssue,facultyAssignmentCommandReceipt,facultyAssignmentMaySubmit,facultyAssignmentConfirmationOnEdit,facultyAssignmentSwitchNeedsConfirmation,facultyAssignmentArchiveWarning,facultyAssignmentPublishIssue,facultyAssignmentCanSaveDraft} from "@/modules/courses/faculty-assignment-editor-ui-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Existing={
  id:string;lessonId:string;title:string;description:string|null;dueAt:string|null;
  maxPoints:number;sequence:number;status:string;updatedAt:string;
@@ -159,33 +160,33 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
  }
  return <section className="min-w-0 space-y-[var(--lms-space-4)] max-md:[&_button]:min-h-11">
   <Heading level={2} size="base" className="text-[var(--lms-heading)]">Assignment authoring</Heading>
-  <label className="grid max-w-2xl min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Choose draft or create new
+  <Label stack className="max-w-2xl min-w-0">Choose draft or create new
    <Select value={selected} disabled={pending} onChange={e=>choose(e.target.value)}
     className="text-base md:text-sm">
     <option value="">New assignment</option>
     {assignments.map(x=><option key={x.id} value={x.id}>{x.title} ({x.status})</option>)}
    </Select>
-  </label>
+  </Label>
   {existing?<p className="text-xs text-body">Current state: {existing.status}. Published assignments can be edited until the first learner submission; archived assignments are read-only. An assignment with submissions cannot be archived.</p>:null}
   <div className="grid min-w-0 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
-  {!existing?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson
+  {!existing?<Label stack className="min-w-0">Lesson
    <Select value={lessonId} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,lessonId,next));setLessonId(next);}}
     className="text-base md:text-sm">
     {lessons.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
-   </Select></label>:null}
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 md:col-span-2 text-[var(--lms-neutral-400)]">Title
+   </Select></Label>:null}
+  <Label stack className="min-w-0 md:col-span-2">Title
    <Input value={title} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,title,next));setTitle(next);}} maxLength={255}
-    className="text-base md:text-sm" /></label>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 md:col-span-2 text-[var(--lms-neutral-400)]">Text instructions
+    className="text-base md:text-sm" /></Label>
+  <Label stack className="min-w-0 md:col-span-2">Text instructions
    <Textarea value={description} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,description,next));setDescription(next);}}
-    maxLength={10000} rows={4} className="text-base md:text-sm" /></label>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Due date (IST, required before publishing)
+    maxLength={10000} rows={4} className="text-base md:text-sm" /></Label>
+  <Label stack className="min-w-0">Due date (IST, required before publishing)
    <Input type="datetime-local" value={dueAt} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,dueAt,next));setDueAt(next);}}
-    className="text-base md:text-sm" /></label>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum points
+    className="text-base md:text-sm" /></Label>
+  <Label stack className="min-w-0">Maximum points
    <Input type="number" min={0} max={1000} value={maxPoints}
     onChange={e=>{const next=Number(e.target.value);setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,maxPoints,next));setMaxPoints(next);}}
-    className="text-base md:text-sm" /></label>
+    className="text-base md:text-sm" /></Label>
   </div>
   {methodsEnabled&&methodsLoading?<LoadingState label="Loading allowed methods…" />:null}
   {error?<Alert tone="error">{error}</Alert>:null}

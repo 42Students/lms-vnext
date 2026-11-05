@@ -17,6 +17,7 @@ import { facultyEducationFieldEdit } from "@/modules/people/faculty-education-ed
 import { facultyProfileRecordHasManagedDocument } from "@/modules/people/faculty-receipt-row-policy";
 import {restoreFacultyProfileRows,removeFacultyProfileDraftRow,duplicateFacultyProfileDraftRow,moveFacultyProfileDraftRow,facultyProfileRecordMatches,facultyProfileRepeatableIssue,toggleFacultyProfileCollapsed} from "@/modules/people/faculty-profile-repeatable-actions";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export type FacultyRepeatableField<T extends { id: string }> = {
   name: keyof T & string;
@@ -71,10 +72,10 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
         <p className="mt-1 text-sm text-muted-foreground leading-[22px]">{description}</p>
       </div>
       {rows.length === 0 ? <p className="text-sm text-muted-foreground leading-[22px]">No records added yet.</p> : null}
-      {rows.length>5?<label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find {title.toLowerCase()} records
+      {rows.length>5?<Label className="block">Find {title.toLowerCase()} records
         <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
           className="mt-[var(--lms-space-2)] min-h-11 md:min-h-9 w-full" placeholder="Search section fields"/>
-      </label>:null}
+      </Label>:null}
       {rows.length>5&&search.trim()?<div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
         <span role="status">{facultyProfileSearchSummary(rows.length,visibleRows.length)}</span>
         <Button variant="secondary" type="button"  onClick={()=>setSearch("")}>Clear search</Button>
@@ -95,7 +96,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                 const value = row[field.name];
                 const currentDegreeEndYear = section === "education" && field.name === "endYear" &&
                   "isCurrentlyPursuing" in row && row.isCurrentlyPursuing === true;
-                return <label key={field.name} className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                return <Label key={field.name} className="block min-w-0">
                   {field.label}
                   {field.kind === "checkbox" ? (
                     <Checkbox  className="ml-3" checked={value === true} disabled={pending}
@@ -112,7 +113,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                       disabled={pending || currentDegreeEndYear} required={field.required}
                       onChange={event => update(row.id, field.name, event.target.value)} />
                   )}
-                </label>;
+                </Label>;
               })}
             </div>:null}
             <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap [&>button]:w-full sm:[&>button]:w-auto">

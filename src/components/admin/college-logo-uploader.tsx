@@ -10,6 +10,7 @@ import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
+import { Label } from "@/components/ui/label";
 export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
  collegeId:string;currentUrl:string|null;canEdit:boolean;
 }){
@@ -152,11 +153,11 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
    </Card>
    <p className="min-w-0 text-sm text-muted-foreground leading-[22px]">Current college logo</p>
   </div>:null}
-  {canEdit?<><label className="block print:hidden text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Select logo to crop
+  {canEdit?<><Label className="block print:hidden">Select logo to crop
     <Input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/webp" disabled={busy}
      onChange={e=>select(e.target.files?.[0]??null)}
      className="mt-2 min-h-11 md:min-h-9 w-full"/>
-   </label>
+   </Label>
    {file&&preview?<div className="min-w-0 space-y-[var(--lms-space-4)] print:hidden">
     <p className="text-sm font-semibold text-body">Logo crop and preview</p>
     <div className="grid min-w-0 items-start gap-[var(--lms-space-4)] md:grid-cols-[208px_minmax(0,1fr)]">
@@ -165,15 +166,15 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
           style={{objectPosition:positionX+"% "+positionY+"%",transform:"scale("+zoom+")"}}/>
       </div>
       <div className="grid min-w-0 max-w-[480px] gap-[var(--lms-space-3)]">
-        <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Horizontal crop position ({positionX}%)
+        <Label stack className="min-w-0">Horizontal crop position ({positionX}%)
           <Input aria-label="Horizontal crop position" className="!min-h-11 !w-full !min-w-0 !border-0 !bg-transparent !px-0 accent-[var(--lms-primary)]" type="range" min={0} max={100} value={positionX} onChange={e=>setPositionX(Number(e.target.value))}/>
-        </label>
-        <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Vertical crop position ({positionY}%)
+        </Label>
+        <Label stack className="min-w-0">Vertical crop position ({positionY}%)
           <Input aria-label="Vertical crop position" className="!min-h-11 !w-full !min-w-0 !border-0 !bg-transparent !px-0 accent-[var(--lms-primary)]" type="range" min={0} max={100} value={positionY} onChange={e=>setPositionY(Number(e.target.value))}/>
-        </label>
-        <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Zoom ({Math.round(zoom*100)}%)
+        </Label>
+        <Label stack className="min-w-0">Zoom ({Math.round(zoom*100)}%)
           <Input aria-label="Crop zoom" className="!min-h-11 !w-full !min-w-0 !border-0 !bg-transparent !px-0 accent-[var(--lms-primary)]" type="range" min={1} max={2} step={0.1} value={zoom} onChange={e=>setZoom(Number(e.target.value))}/>
-        </label>
+        </Label>
       </div>
     </div>
     <Button type="button" disabled={busy} onClick={()=>void upload()}

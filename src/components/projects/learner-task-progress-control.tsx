@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 import { learnerTaskProgressSuccess } from "@/modules/projects/learner-task-progress-model";
+import { Label } from "@/components/ui/label";
 
 export function LearnerTaskProgressControl(props: {
   projectId: string; taskId: string; status: string;
@@ -59,12 +60,12 @@ export function LearnerTaskProgressControl(props: {
         onClick={() => void change({ action: "MOVE_DOWN" })}>Move down</Button>
     </div>
     {showBlocker ? <div id={blockerId} className="grid min-w-0 gap-3 border-t border-border pt-3">
-      <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">Blocker note
+      <Label>Blocker note
         <Textarea className="mt-1"
           value={blockerNote} maxLength={2000} disabled={pending} aria-invalid={blockerNote.trim().length > 0 && blockerNote.trim().length < 3}
           onChange={event => { setBlockerNote(event.target.value); setError(""); }}
           placeholder="Describe what's blocking this task."/>
-      </label>
+      </Label>
       <p className="text-xs leading-5 text-muted-foreground">{blockerNote.trim().length}/2000 characters · at least 3 characters required</p>
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
         <Button size="sm" className="w-full sm:w-auto" loading={pending} disabled={pending || blockerNote.trim().length < 3}

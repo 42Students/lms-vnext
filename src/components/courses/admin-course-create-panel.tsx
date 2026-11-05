@@ -24,6 +24,7 @@ import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import {collegeCourseDuplicatePrefill} from "@/modules/courses/college-course-duplicate-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { Label } from "@/components/ui/label";
 
 type Option = { id: string; name: string; code?: string };
 type CohortOption = Option & {
@@ -89,7 +90,7 @@ function safeCourseCoverHref(input:string):string|null{
   }catch{return null;}
 }
 function FieldLabel({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) {
-  return <label htmlFor={htmlFor} className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{children}</label>;
+  return <Label htmlFor={htmlFor} className="mb-[var(--lms-space-2)] block">{children}</Label>;
 }
 
 export function AdminCourseCreatePanel({
@@ -588,9 +589,9 @@ export function AdminCourseCreatePanel({
               </div>:null}
             {coverPreviewBroken?<p role="alert" className="mt-2 text-xs text-warning">Could not preview this image. Check the URL before saving.</p>:null}
             {createErrors.coverUrl?<p role="alert" className="mt-1 text-xs text-danger">{createErrors.coverUrl}</p>:null}
-            <label htmlFor="course-image-file" className="mt-3 block text-[13px] font-semibold text-body">
+            <Label htmlFor="course-image-file" className="mt-3 block">
               Upload course image
-            </label>
+            </Label>
             <Input id="course-image-file" type="file" accept="image/jpeg,image/png,image/webp"
               disabled={pending||imageBusy||Boolean(createdImageCourseId)}
               className="mt-2 block w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm"
@@ -631,10 +632,10 @@ export function AdminCourseCreatePanel({
             <Textarea id="course-description" rows={3} className="min-h-24" value={courseDescription} onChange={(event) => {setCourseDescription(event.target.value);setCreateErrors(previous=>{const updated={...previous};delete updated.description;return updated;});}} maxLength={5000} placeholder="Enter course description" required />
             {createErrors.description ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.description}</p> : null}
           </div>
-          <label className="md:col-span-2 flex min-h-11 items-center gap-3 text-sm text-body">
+          <Label variant="choice" className="md:col-span-2 flex min-h-11 items-center gap-3">
             <Checkbox checked={visibleToStudents} onChange={event=>setVisibleToStudents(event.target.checked)}/>
             Course visible to students
-          </label>
+          </Label>
           {!visibleToStudents?<p role="status" className="md:col-span-2 text-sm text-warning">
             Hidden from students. Only authorized staff can see this course until visibility is enabled.
           </p>:null}

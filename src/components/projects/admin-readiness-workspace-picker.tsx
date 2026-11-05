@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import styles from "./legacy-project-touch-actions.module.css";
+import { Label } from "@/components/ui/label";
 type Workspace={id:string;title:string;status:string};
 export function AdminReadinessWorkspacePicker({items,selected,action,collegeId,initialTotal}:{
  items:Workspace[];selected:string|null;action:string;collegeId:string;initialTotal:number;
@@ -55,15 +56,15 @@ export function AdminReadinessWorkspacePicker({items,selected,action,collegeId,i
  const startIndex=total===0?0:(current-1)*25+1,finish=Math.min(total,current*25);
  return <form method="get" action={action} className={"min-w-0 max-w-[420px] space-y-3 "+styles['legacy']}>
   {choice?<input type="hidden" name="workspaceId" value={choice}/>:null}
-  <label className="block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+  <Label className="block">
    Search workspaces by title or ID
    <Input type="search" maxLength={120} value={search}
     aria-label="Search workspaces by title or ID"
     onChange={e=>{setSearch(e.target.value);setPage(1)}}
     placeholder="Search workspaces by title or ID" className="mt-1 min-h-11 w-full md:min-h-9"/>
-  </label>
+  </Label>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  <label className="block text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)]">
+  <Label className="block">
    Select a project workspace
    <Select aria-label="Select a project workspace" value={choice}
     disabled={busy||Boolean(error)} className="mt-1 min-h-11 w-full md:min-h-9"
@@ -79,7 +80,7 @@ export function AdminReadinessWorkspacePicker({items,selected,action,collegeId,i
      {item.title} · {item.status} · {item.id.slice(0,8)}
     </option>)}
    </Select>
-  </label>
+  </Label>
   {!rows.length?<EmptyState title="No matching workspaces"
      description="No matching workspaces. Search the college directory or select another page."/>:null}
   <div className="flex min-w-0 flex-col gap-2 text-sm text-body md:flex-row md:items-center md:justify-between">

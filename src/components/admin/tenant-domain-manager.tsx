@@ -18,6 +18,7 @@ import { Dropdown } from "@/components/ui/dropdown";
 import { useToast } from "@/components/ui/toast";
 import { describePrimaryDomainSwitch, canConfirmPrimaryDomainDelete } from "@/modules/tenant-domains/admin-confirmation-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export type TenantDomainClientRow = {
   id: string;
@@ -278,12 +279,12 @@ export function TenantDomainManager({
         <form onSubmit={(event) => { event.preventDefault(); if (!creating && host.trim()) createDomain(); }}
           className="grid min-w-0 max-w-[920px] gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
           <div>
-            <label
+            <Label
               htmlFor="tenant-domain-host"
-              className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+              className="mb-[6px] block"
             >
               College hostname
-            </label>
+            </Label>
             <Input
               id="tenant-domain-host"
               className="min-h-11 w-full md:min-h-9"
@@ -500,14 +501,14 @@ export function TenantDomainManager({
         pending={Boolean(pendingAction)}
         onConfirm={()=>{if(editTarget)void runAction(editTarget,"edit");}}
       >
-        <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-body">
+        <Label stack className="min-w-0">
           Replacement hostname
           <Input value={editedHost} autoComplete="off" autoCapitalize="none"
             autoCorrect="off" spellCheck={false} maxLength={255}
             disabled={Boolean(pendingAction)}
             onChange={event=>{setEditedHost(event.target.value);setModalError("");}}
             className="min-h-11 w-full md:min-h-9" />
-        </label>
+        </Label>
         {modalError?<p role="alert" className="mt-2 text-sm text-error">{modalError}</p>:null}
       </ConfirmDialog>
 
@@ -536,11 +537,11 @@ export function TenantDomainManager({
           }
         }}
       >
-        {deleteTarget?.isPrimary ? <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type the full primary hostname
+        {deleteTarget?.isPrimary ? <Label stack className="min-w-0">Type the full primary hostname
           <Input type="text" autoComplete="off" spellCheck={false} value={deleteHostConfirmation}
             disabled={Boolean(pendingAction)} onChange={event => setDeleteHostConfirmation(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
-        </label> : null}
+        </Label> : null}
         {modalError ? <p role="alert" className="mt-[var(--lms-space-2)] break-words rounded-[8px] border border-[color-mix(in_srgb,var(--lms-error)_25%,transparent)] bg-[var(--lms-error-subtle)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5 text-[var(--lms-error-text)]">{modalError}</p> : null}
       </ConfirmDialog>
       {dirty?<p role="status" className="text-xs text-warning-text">Unsaved custom-domain changes. Save or discard them before switching colleges.</p>:null}

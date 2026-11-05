@@ -34,6 +34,7 @@ import {DescendantFeatureRuleEditor} from "@/components/admin/descendant-feature
 import {AcademicModuleScopeInventory} from "@/components/admin/academic-module-scope-inventory";
 import {listCollegeModuleScopeChoices} from "@/modules/module-access/admin-descendant-rule-write";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type SearchParams = Record<string,string|string[]|undefined>;
 
@@ -233,36 +234,36 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
 
       <form method="get" className="flex flex-wrap items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-md:flex-col max-md:items-stretch" aria-label="Filter stored module overrides">
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored descendant module
+        <Label stack>Stored descendant module
           <Select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 md:min-h-9">
             <option value="">All modules</option>
             {OPTIONAL_MODULE_KEYS.map(key => <option key={key} value={key}>{ADMIN_MODULE_LABELS[key]}</option>)}
           </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored scope
+        </Label>
+        <Label stack>Stored scope
           <Select name="scope" defaultValue={result.scopeFilter ?? ""} className="min-h-11 md:min-h-9">
             <option value="">All descendant scopes</option>
             {(["DEPARTMENT","PROGRAM","COHORT","SECTION","MEMBERSHIP"] as const).map(key =>
               <option key={key} value={key}>{MODULE_SCOPE_LABELS[key]}</option>)}
           </Select>
-        </label>
+        </Label>
         <Disclosure title="More override filters"
           defaultOpen={Boolean(result.lockFilter==="LOCKED" || result.stateFilter!=="ALL" || result.scopeIdFilter)}
           className="min-w-0"
           contentClassName="grid min-w-0 gap-3 pb-3 pt-2 sm:grid-cols-2 xl:grid-cols-3">
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lock state
+        <Label stack>Lock state
           <Select name="locks" defaultValue={result.lockFilter} className="min-h-11 md:min-h-9">
             <option value="ALL">All stored rules</option><option value="LOCKED">Locked rules only</option>
           </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored value
+        </Label>
+        <Label stack>Stored value
           <Select name="storedState" defaultValue={result.stateFilter} className="min-h-11 md:min-h-9">
             <option value="ALL">Any stored value</option><option value="ON">Stored On</option><option value="OFF">Stored Off</option>
           </Select>
-        </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Exact scope ID (optional)
+        </Label>
+        <Label stack>Exact scope ID (optional)
           <Input name="scopeId" type="text" defaultValue={result.scopeIdFilter ?? ""} placeholder="UUID; select scope type" maxLength={36} className="min-h-11 md:min-h-9"/>
-        </label>
+        </Label>
         </Disclosure>
         <Button type="submit" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9">Filter overrides</Button>
         <Link href={"/admin/features/" + encodeURIComponent(college.id)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-link focus-ring md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-[color:var(--lms-on-primary)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-[color:var(--lms-on-primary)]">Reset</Link>

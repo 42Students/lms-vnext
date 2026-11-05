@@ -9,6 +9,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {useToast} from "@/components/ui/toast";
 import {projectMutation} from "./project-api";
 import {FriendlyFetchError} from "@/lib/api-fetch";
+import { Label } from "@/components/ui/label";
 
 export function ProjectDeliveryReopenControl({projectId,submissionId,expectedUpdatedAt}:{
   projectId:string;submissionId:string;expectedUpdatedAt:string;
@@ -54,7 +55,7 @@ export function ProjectDeliveryReopenControl({projectId,submissionId,expectedUpd
         <Button variant="secondary" className="w-full sm:w-auto" disabled={pending} onClick={guard.requestClose}>Cancel</Button>
         <Button className="w-full sm:w-auto" loading={pending} disabled={pending||!reason.trim()} onClick={()=>void reopen()}>Reopen for revision</Button>
       </div>}>
-      <label htmlFor="reopen-review-feedback" className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Review feedback</label>
+      <Label stack htmlFor="reopen-review-feedback" className="min-w-0">Review feedback</Label>
       <Textarea id="reopen-review-feedback" required value={reason} maxLength={4000} rows={4}
         aria-describedby="reopen-feedback-help" disabled={pending}
         onChange={event=>{setReason(event.target.value);setError(null);}}

@@ -15,6 +15,7 @@ import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { LECTURE_HALL_COPY, ROOM_TYPE_LABELS } from "@/modules/academics/lecture-hall-copy";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 function HallPlusIcon(){return <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>;}
 function HallEditIcon(){return <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9M16 4a2.8 2.8 0 0 1 4 4L9 19l-5 1 1-5L16 4Z"/></svg>;}
@@ -265,7 +266,7 @@ export function LectureHallManager({
             {createError ? <Banner tone="error">{createError}</Banner> : null}
             <div>
               <div className="flex items-center justify-between gap-2">
-                <label className={field} htmlFor="create-hall-dept">{LECTURE_HALL_COPY.departmentLabel}</label>
+                <Label className={field} htmlFor="create-hall-dept">{LECTURE_HALL_COPY.departmentLabel}</Label>
                 {createDraft.departmentId?<Button type="button" size="sm" variant="ghost" disabled={pending} onClick={()=>setCreateDraft({...createDraft,departmentId:""})}>Clear</Button>:null}
               </div>
               <Select id="create-hall-dept" className="min-h-11 w-full md:min-h-9" value={createDraft.departmentId}
@@ -275,7 +276,7 @@ export function LectureHallManager({
               </Select>
             </div>
             <div>
-              <label className={field} htmlFor="create-hall-name">{LECTURE_HALL_COPY.nameLabel}</label>
+              <Label className={field} htmlFor="create-hall-name">{LECTURE_HALL_COPY.nameLabel}</Label>
               <Input id="create-hall-name" className="min-h-11 w-full md:min-h-9" maxLength={255} required
                 aria-invalid={Boolean(createError?.startsWith("Please enter room name") || createError?.startsWith("Room name must"))}
                 aria-describedby={createError?.startsWith("Please enter room name") || createError?.startsWith("Room name must") ? "create-hall-name-error" : undefined}
@@ -287,7 +288,7 @@ export function LectureHallManager({
             </div>
             <div className="grid min-w-0 grid-cols-2 gap-3">
               <div>
-                <label className={field} htmlFor="create-hall-type">{LECTURE_HALL_COPY.typeLabel}</label>
+                <Label className={field} htmlFor="create-hall-type">{LECTURE_HALL_COPY.typeLabel}</Label>
                 <Select id="create-hall-type" required className="min-h-11 w-full md:min-h-9" value={createDraft.roomType}
                   onChange={(event) => setCreateDraft({ ...createDraft, roomType: event.target.value })}>
                   <option value="">{LECTURE_HALL_COPY.typePlaceholder}</option>
@@ -295,13 +296,13 @@ export function LectureHallManager({
                 </Select>
               </div>
               <div>
-                <label className={field} htmlFor="create-hall-capacity">{LECTURE_HALL_COPY.capacityLabel}</label>
+                <Label className={field} htmlFor="create-hall-capacity">{LECTURE_HALL_COPY.capacityLabel}</Label>
                 <Input id="create-hall-capacity" className="min-h-11 w-full md:min-h-9" type="number" min={1} max={1000} required
                   value={createDraft.capacity} onChange={(event) => setCreateDraft({ ...createDraft, capacity: event.target.value })}/>
               </div>
             </div>
             <div>
-              <label className={field} htmlFor="create-hall-description">{LECTURE_HALL_COPY.descriptionLabel}</label>
+              <Label className={field} htmlFor="create-hall-description">{LECTURE_HALL_COPY.descriptionLabel}</Label>
               <Textarea id="create-hall-description" rows={2} className="w-full" maxLength={255}
                 placeholder={LECTURE_HALL_COPY.descriptionPlaceholder} value={createDraft.description}
                 onChange={(event) => setCreateDraft({ ...createDraft, description: event.target.value })}/>
@@ -318,7 +319,7 @@ export function LectureHallManager({
         <section aria-label="Existing Lecture Halls / Rooms" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
           <Heading level={2} size="base" className="mb-[var(--lms-space-3)] text-foreground">Existing Lecture Halls / Rooms</Heading>
           <div className="flex min-w-0 flex-wrap gap-2 print:hidden">
-            <label htmlFor="hall-search" className="sr-only">Search halls</label>
+            <Label htmlFor="hall-search" className="sr-only">Search halls</Label>
             <Input id="hall-search" type="search" value={search} onChange={event=>setSearch(event.target.value)} placeholder="Search halls" className="min-h-11 w-full md:min-h-9 md:w-44"/>
             <Button type="button" size="sm" variant="secondary" disabled={pending} loading={pending} onClick={()=>startTransition(()=>router.refresh())}>Refresh</Button>
             <Button type="button" size="sm" variant="secondary" disabled={pending||visibleHalls.length===0} onClick={exportCsv}>Export CSV</Button>
@@ -392,7 +393,7 @@ export function LectureHallManager({
             </Banner>
           ) : null}
           <div>
-            <label className={field} htmlFor="hall-name">{LECTURE_HALL_COPY.nameLabel}</label>
+            <Label className={field} htmlFor="hall-name">{LECTURE_HALL_COPY.nameLabel}</Label>
             <Input className="min-h-11 md:min-h-9" id="hall-name" value={draft.name} maxLength={255} required
               aria-invalid={Boolean(formError?.startsWith("Please enter room name") || formError?.startsWith("Room name must"))}
               aria-describedby={formError?.startsWith("Please enter room name") || formError?.startsWith("Room name must") ? "edit-hall-name-error" : undefined}
@@ -404,7 +405,7 @@ export function LectureHallManager({
           </div>
           <div className="grid min-w-0 grid-cols-2 gap-3">
             <div>
-              <label className={field} htmlFor="hall-type">{LECTURE_HALL_COPY.typeLabel}</label>
+              <Label className={field} htmlFor="hall-type">{LECTURE_HALL_COPY.typeLabel}</Label>
               <Select className="min-h-11 md:min-h-9" id="hall-type" required value={draft.roomType}
                 onChange={(e) => setDraft({ ...draft, roomType: e.target.value })}>
                 <option value="">{LECTURE_HALL_COPY.typePlaceholder}</option>
@@ -414,14 +415,14 @@ export function LectureHallManager({
               </Select>
             </div>
             <div>
-              <label className={field} htmlFor="hall-capacity">{LECTURE_HALL_COPY.capacityLabel}</label>
+              <Label className={field} htmlFor="hall-capacity">{LECTURE_HALL_COPY.capacityLabel}</Label>
               <Input className="min-h-11 md:min-h-9" id="hall-capacity" type="number" min={1} max={1000} required value={draft.capacity}
                 onChange={(e) => setDraft({ ...draft, capacity: e.target.value })} />
             </div>
           </div>
           <div>
             <div className="flex items-center justify-between gap-2">
-              <label className={field} htmlFor="hall-dept">{LECTURE_HALL_COPY.departmentLabel}</label>
+              <Label className={field} htmlFor="hall-dept">{LECTURE_HALL_COPY.departmentLabel}</Label>
               {draft.departmentId?<Button type="button" size="sm" variant="ghost" disabled={pending} onClick={()=>setDraft({...draft,departmentId:""})}>Clear</Button>:null}
             </div>
             <Select className="min-h-11 md:min-h-9" id="hall-dept" value={draft.departmentId}
@@ -433,7 +434,7 @@ export function LectureHallManager({
             </Select>
           </div>
           <div>
-            <label className={field} htmlFor="hall-desc">{LECTURE_HALL_COPY.descriptionLabel}</label>
+            <Label className={field} htmlFor="hall-desc">{LECTURE_HALL_COPY.descriptionLabel}</Label>
             <Textarea rows={2} className="w-full" id="hall-desc" value={draft.description} maxLength={255} placeholder={LECTURE_HALL_COPY.descriptionPlaceholder}
               onChange={(e) => setDraft({ ...draft, description: e.target.value })} />
           </div>

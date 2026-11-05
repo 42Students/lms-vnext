@@ -8,6 +8,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Release={id:string;title:string;description:string|null;targetDate?:string|null;status:string;updatedAt:Date};
 type Readiness={readyToShip:boolean;completedSprintCount:number;
  committedPoints:number;completedPoints:number};
@@ -120,16 +121,16 @@ export function MentorReleaseEditor({
   {open?<form id={editorId} aria-labelledby={editorId+"-heading"}
     onSubmit={event=>{event.preventDefault();void save();}} className="space-y-3 border-t border-border pt-3">
    <Heading level={3} size="sm" id={editorId+"-heading"} className="leading-[22px]">{release?"Edit release":"New release"}</Heading>
-   <label className="block text-[13px] font-semibold">Title
+   <Label className="block">Title
     <Input className="mt-1 min-h-11 w-full md:min-h-9" maxLength={200}
-     required value={title} onChange={e=>setTitle(e.target.value)}/></label>
-   <label className="block text-[13px] font-semibold">What ships in this release?
+     required value={title} onChange={e=>setTitle(e.target.value)}/></Label>
+   <Label className="block">What ships in this release?
     <Textarea className="mt-1 min-h-20 w-full"
-     value={description} onChange={e=>setDescription(e.target.value)}/></label>
-   <label className="block text-[13px] font-semibold">Target date (optional)
+     value={description} onChange={e=>setDescription(e.target.value)}/></Label>
+   <Label className="block">Target date (optional)
     <Input type="date" className="mt-1 min-h-11 w-full md:min-h-9"
      value={targetDate} onChange={e=>setTargetDate(e.target.value)}/>
-   </label>
+   </Label>
    <div className="sticky bottom-0 z-(--lms-z-raised) flex flex-wrap gap-2 border-t border-[var(--lms-canvas-border)] bg-surface py-3">
     <Button variant="primary" type="submit" disabled={pending||!title.trim()}
      className="min-h-11 w-auto px-3 py-2 md:min-h-9">

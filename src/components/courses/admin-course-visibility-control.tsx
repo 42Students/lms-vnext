@@ -5,6 +5,7 @@ import {useRouter} from "next/navigation";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Alert} from "@/components/ui/alert";
 import {apiFetch} from "@/lib/api-fetch";
+import { Label } from "@/components/ui/label";
 
 /** Legacy enabled is not course.status. Hiding a Course never archives its
  * offerings, lessons, assessment attempts or previously uploaded material. */
@@ -34,11 +35,11 @@ export function AdminCourseVisibilityControl({course}:{
   }finally{lock.current=false;setPending(false);}
  }
  return <div className="min-w-0 space-y-1">
-  <label className="inline-flex min-h-11 items-center gap-2 text-xs font-semibold md:min-h-9">
+  <Label className="inline-flex min-h-11 items-center gap-2 md:min-h-9">
    <Checkbox checked={visible} disabled={pending||course.status!=="ACTIVE"}
     onChange={event=>void toggle(event.target.checked)}/>
    Visible to students
-  </label>
+  </Label>
   <p className="max-w-48 text-xs text-muted-foreground">
    {!course.enabled?"This Course is disabled. Allowing display does not enable it.":
     visible?"Students see this Course when its term and lesson access allow it.":

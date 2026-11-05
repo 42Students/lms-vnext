@@ -14,6 +14,7 @@ import type {VerificationTab} from "@/modules/verification/queue-tabs";
 import {VerificationReviewDrawer} from "./VerificationReviewDrawer";
 import {verificationSelectionKey} from "@/modules/verification/selection-model";
 import {collegeBulkReviewPayload} from "@/modules/verification/bulk-client-payload";
+import { Label } from "@/components/ui/label";
 
 export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,initialKind,page,total,hasMore,query,truncated=false}:{
  collegeId:string;
@@ -120,12 +121,12 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    onApply={filters=>navigate({...filters,page:"1"})}/>
   <div className="flex flex-wrap items-center justify-between gap-3">
    <p className="text-sm text-muted-foreground">Select only eligible requests on this page. Bulk actions are limited to 20 per operation.</p>
-   <label className="text-sm font-semibold">Sort requests
+   <Label>Sort requests
     <Select value={sort} onChange={e=>setSort(e.target.value as typeof sort)} className="ml-2 min-h-11 md:min-h-9">
      <option value="OLDEST">Oldest first</option><option value="NEWEST">Newest first</option>
      <option value="NAME">Student name</option>
     </Select>
-   </label>
+   </Label>
   </div>
   <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts}
    denseTable sort={sort} preserveServerOrder={false}
@@ -165,12 +166,12 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    </div>
    <ul className="max-h-44 space-y-2 overflow-y-auto">
     {candidates.slice(0,50).map(row=><li key={verificationSelectionKey(row)}>
-      <label className="flex min-h-11 items-center gap-[var(--lms-space-2)] text-sm">
+      <Label variant="choice" className="flex min-h-11 items-center gap-[var(--lms-space-2)]">
        <Checkbox disabled={bulkBusy||(!selectedKeys.includes(verificationSelectionKey(row))&&selectedKeys.length>=20)}
         checked={selectedKeys.includes(verificationSelectionKey(row))}
         onChange={e=>{const key=verificationSelectionKey(row);setSelectedKeys(current=>e.target.checked?[...current,key]:current.filter(k=>k!==key));setBulkAction(null);}}/>
        {row.learnerName} · {row.section} {missingEvidence(row)?"(missing document)":""}
-      </label>
+      </Label>
     </li>)}
    </ul>
    </div>
@@ -181,13 +182,13 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    <div className="space-y-[var(--lms-space-2)]">
     <p className="text-sm">{applicable.length} ready, {skipped.length} left out because proof is missing. Decisions are individually rechecked by the server.</p>
     {skipped.length?<p className="text-xs text-warning-text">Skipped: {skipped.map(r=>r.learnerName).join(", ")}</p>:null}
-    {bulkAction==="SEND_BACK"?<label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason for sending back
+    {bulkAction==="SEND_BACK"?<Label className="block">Reason for sending back
      <Textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={500}
-      className="mt-2 w-full"/></label>:
-     <label className="flex items-start gap-2 text-sm">
+      className="mt-2 w-full"/></Label>:
+     <Label variant="choice" className="flex items-start gap-2">
       <Checkbox checked={acknowledged} onChange={e=>setAcknowledged(e.target.checked)}/>
       I have checked their documents by another method. Each verification will be recorded with my name.
-     </label>}
+     </Label>}
     <Button variant="primary" type="button" disabled={bulkBusy||!applicable.length||bulkAction==="VERIFY"&&!acknowledged||bulkAction==="SEND_BACK"&&reason.trim().length<3}
      onClick={()=>void submitBulk()} className="min-h-11 md:min-h-[var(--lms-control-height)]">
      {bulkBusy?"Processing…":"Confirm "+applicable.length+" selected"}

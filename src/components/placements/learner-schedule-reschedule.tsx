@@ -9,6 +9,7 @@ import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
 import {useToast} from "@/components/ui/toast";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
+import { Label } from "@/components/ui/label";
 export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meetingUrl}:{applicationId:string;roundId:string;mode:"ON_CAMPUS"|"VIRTUAL";venue:string|null;meetingUrl:string|null}){
  const router=useRouter();
  const {showToast}=useToast();
@@ -77,28 +78,28 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
   {<Dialog open={open} onOpenChange={value=>{if(!busy)setOpen(value)}} title="Ask to reschedule" dismissible={!busy}>
    <div className="grid gap-3">
    <p className="text-sm text-body">The placement cell must approve your suggested time. You can add flexible times as notes, but the current approval process also needs an exact future date and a contact location or meeting link.</p>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Why can't you make it?
+   <Label>Why can't you make it?
     <span className="ml-2 text-xs font-normal text-muted-foreground">Reason (3–900 characters)</span>
     <Textarea value={reason} onChange={e=>setReason(e.target.value)} minLength={3} maxLength={900} rows={3}
-      className="mt-1 min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-foreground outline-none focus:border-primary focus:focus-outline focus-ring"/></label>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Times that work for you (optional)
+      className="mt-1 min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-foreground outline-none focus:border-primary focus:focus-outline focus-ring"/></Label>
+   <Label>Times that work for you (optional)
     <Textarea rows={2} maxLength={200} value={preferredTimes} onChange={e=>setPreferredTimes(e.target.value)}
      className="mt-1 min-h-20 w-full" placeholder="e.g. Any time after 2 PM on 16 Oct"/>
-   </label>
-   <label className="text-sm">Preferred date and time (required for an approved new booking)
+   </Label>
+   <Label variant="choice">Preferred date and time (required for an approved new booking)
     <DateInput required mode="datetime-local" value={date} onChange={e=>setDate(e.target.value)}
-      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:focus-outline focus-ring md:min-h-9"/></label>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mode
+      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:focus-outline focus-ring md:min-h-9"/></Label>
+   <Label>Mode
     <Select value={nextMode} onChange={e=>setNextMode(e.target.value as typeof mode)}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:focus-outline focus-ring md:min-h-9">
      <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Online</option>
-    </Select></label>
-   {nextMode==="ON_CAMPUS"?<label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Suggested venue
+    </Select></Label>
+   {nextMode==="ON_CAMPUS"?<Label>Suggested venue
     <Input required value={nextVenue} maxLength={500} onChange={e=>setNextVenue(e.target.value)}
-      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:focus-outline focus-ring md:min-h-9"/></label>:
-    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Suggested meeting URL
+      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:focus-outline focus-ring md:min-h-9"/></Label>:
+    <Label>Suggested meeting URL
      <Input required type="url" value={nextUrl} maxLength={2000} onChange={e=>setNextUrl(e.target.value)}
-      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:focus-outline focus-ring md:min-h-9"/></label>}
+      className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:focus-outline focus-ring md:min-h-9"/></Label>}
    {requestReason.length>900?<p role="alert" className="text-xs text-error">Reason and preferred times must stay within 900 characters.</p>:null}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
    <div className="flex flex-wrap items-center justify-end gap-2">

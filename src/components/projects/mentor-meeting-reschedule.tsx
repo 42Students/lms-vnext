@@ -14,6 +14,7 @@ import {fromIstLocalInput,toIstLocalInput,mentorMeetingRescheduleSchema}
   from "@/modules/projects/mentor-meeting-reschedule-model";
 import {Input} from "@/components/ui/input";
 import styles from "./legacy-project-touch-actions.module.css";
+import { Label } from "@/components/ui/label";
 
 export function MentorMeetingReschedule(props:{
   projectId:string;meetingId:string;startsAt:string;endsAt:string;updatedAt:string;
@@ -69,18 +70,18 @@ export function MentorMeetingReschedule(props:{
         event.preventDefault();if(parsed.success&&changed){setOpen(false);setConfirm(true);}
       }} className="grid gap-4">
         <p id={helpId} className="text-sm text-body">Times are in Indian Standard Time (IST). End time must follow start time.</p>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start (IST)
+        <Label stack>Start (IST)
           <Input data-slot="input" type="datetime-local" required value={start}
             aria-invalid={!parsed.success} aria-describedby={!parsed.success?`${helpId} ${validationId}`:helpId}
             onChange={event=>{setStart(event.target.value);setError(null);}}
             className="min-h-11 min-w-0 max-w-full md:min-h-9"/>
-        </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End (IST)
+        </Label>
+        <Label stack>End (IST)
           <Input data-slot="input" type="datetime-local" required value={end}
             aria-invalid={!parsed.success} aria-describedby={!parsed.success?`${helpId} ${validationId}`:helpId}
             onChange={event=>{setEnd(event.target.value);setError(null);}}
             className="min-h-11 min-w-0 max-w-full md:min-h-9"/>
-        </label>
+        </Label>
         {!parsed.success?<p id={validationId} role="alert" className="text-sm text-foreground leading-[22px]">
           Select valid start/end times, with a duration up to 12 hours.</p>:null}
         {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}

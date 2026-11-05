@@ -17,6 +17,7 @@ import {
 } from "@/modules/projects/mentor-review-history-model";
 import { getMentorReviewHistory } from "@/modules/projects/mentor-review-history-service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Search = { projectState?:string|string[];window?:string|string[];order?:string|string[];version?:string|string[];projectId?:string|string[];decision?: string | string[]; search?: string | string[]; page?: string | string[] };
 const first = (value: string | string[] | undefined) =>
@@ -60,40 +61,40 @@ export default async function MentorReviewHistoryPage({
           className="min-w-0 space-y-3 border-b border-border pb-4">
         <Input type="hidden" name="decision" value={data.query.decision}/>
           <div className="grid min-w-0 items-end gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-            <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project title
+            <Label stack>Project title
               <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
                 className="min-h-11 md:min-h-9"/>
-            </label>
-            <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project
+            </Label>
+            <Label stack>Assigned project
               <Select name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 md:min-h-9">
                 <option value="">All assigned projects</option>
                 {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
               </Select>
-            </label>
+            </Label>
             <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
           </div>
           <Disclosure title="Filters" defaultOpen={data.query.projectState!=="ALL"||Boolean(data.query.version)||data.query.order!=="NEWEST"||data.query.window!=="ALL"} className="min-w-0" contentClassName="min-w-0 pt-3 pb-2">
             <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-4">
-            <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project lifecycle
+            <Label stack>Project lifecycle
               <Select name="projectState" defaultValue={data.query.projectState} className="min-h-11 md:min-h-9">
                 <option value="ALL">Any project state</option><option value="PLANNED">Planned</option>
                 <option value="ACTIVE">Active</option><option value="COMPLETED">Completed</option>
                 <option value="ARCHIVED">Archived</option>
               </Select>
-            </label>
-            <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Delivery submission version
+            </Label>
+            <Label stack>Delivery submission version
               <Input name="version" type="number" min={1} max={100000} defaultValue={data.query.version??""} placeholder="All versions" className="min-h-11 w-full max-w-full md:min-h-9 md:w-36"/>
-            </label>
-            <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Review chronology
+            </Label>
+            <Label stack>Review chronology
               <Select name="order" defaultValue={data.query.order} className="min-h-11 md:min-h-9">
                 <option value="NEWEST">Latest decision first</option><option value="OLDEST">Earliest decision first</option>
               </Select>
-            </label>
-            <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded decision within
+            </Label>
+            <Label stack>Recorded decision within
               <Select name="window" defaultValue={data.query.window} className="min-h-11 md:min-h-9">
                 <option value="ALL">All registered dates</option><option value="LAST_7_DAYS">Last 7 days</option><option value="LAST_30_DAYS">Last 30 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option>
               </Select>
-            </label>
+            </Label>
             </div>
           </Disclosure>
           {(data.query.decision!=="ALL"||Boolean(data.query.search)||Boolean(data.query.projectId)||data.query.projectState!=="ALL"||data.query.version!==undefined||data.query.order!=="NEWEST"||data.query.window!=="ALL")?<Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-sm text-link underline md:min-h-9 focus-ring">Clear</Link>:null}

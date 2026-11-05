@@ -7,6 +7,7 @@ import {useState} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 export function TpoTrustedDomainEditor({domains}:{domains:readonly string[]}){
  const router=useRouter();
  const [domain,setDomain]=useState(""),[busy,setBusy]=useState(false),[status,setStatus]=useState("");
@@ -38,9 +39,9 @@ export function TpoTrustedDomainEditor({domains}:{domains:readonly string[]}){
   <Heading level={2} size="base" className="leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">Explicit trusted email domains</Heading>
   <p className="text-xs text-muted-foreground leading-[20px]">Free-mail addresses cannot be trusted. Trust never replaces verification or recruiter access checks.</p>
   <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,12rem)] sm:items-end">
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Domain
+  <Label stack className="min-w-0">Domain
    <Input value={domain} onChange={event=>{setDomain(event.target.value);setStatus("");}} maxLength={253} placeholder="company.example"
-    className="min-h-11 w-full md:min-h-9"/></label>
+    className="min-h-11 w-full md:min-h-9"/></Label>
   <Button type="button" disabled={busy||domain.trim().length<4}
    onClick={()=>setReview({action:"TRUST",value:domain})}
    className="min-h-11 w-full min-w-0 truncate md:min-h-9">Trust @{domain.replace(/^@/,"")||"domain"}</Button>

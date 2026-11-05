@@ -12,6 +12,7 @@ import {safeGridClipboardCell} from "./grid/grid-export";
 import type {TpoSpreadsheetGridProps} from "./tpo-spreadsheet-grid";
 import {TPO_AUDIT_KIND_LABELS,formatTpoAuditEventType} from "@/modules/placements/tpo-audit-model";
 import type {TpoAuditRow} from "@/modules/placements/tpo-audit-service";
+import { Label } from "@/components/ui/label";
 /** Quartz receives only scoped audit rows already supplied to this view. */
 const TpoAuditQuartz=dynamic<TpoSpreadsheetGridProps<TpoAuditRow>>(
  ()=>import("./grid/tpo-grid").then(module=>module.TpoGrid<TpoAuditRow>),
@@ -203,27 +204,27 @@ export function TpoAuditGrid({rows,refreshHref}:{rows:readonly TpoAuditRow[];ref
      aria-label="Dismiss stale audit warning" onClick={()=>setStaleDismissed(true)}>Dismiss</Button>
   </div>:null}
   <div className="grid min-w-0 grid-cols-1 gap-3 border-y border-[var(--lms-canvas-border)] px-3 py-[12px] sm:grid-cols-2 lg:grid-cols-3">
-   <label className="min-w-0 flex-1 text-[13px] md:flex-none">What happened
+   <Label className="min-w-0 flex-1 md:flex-none">What happened
     <Input value={what} onChange={event=>setWhat(event.target.value)} type="search"
      maxLength={120} className="mt-1 block w-full min-w-0" />
-   </label>
-   <label className="min-w-0 flex-1 text-[13px] md:flex-none">Who
+   </Label>
+   <Label className="min-w-0 flex-1 md:flex-none">Who
     <Input value={who} onChange={event=>setWho(event.target.value)} type="search"
      maxLength={120} className="mt-1 block w-full min-w-0" />
-   </label>
-   <label className="min-w-0 flex-1 text-[13px] md:flex-none">When
+   </Label>
+   <Label className="min-w-0 flex-1 md:flex-none">When
     <Select value={oldestFirst?"oldest":"newest"}
      onChange={e=>setOldestFirst(e.target.value==="oldest")}
      className="mt-1 block w-full min-w-0">
      <option value="newest">Newest first</option><option value="oldest">Oldest first</option>
     </Select>
-   </label>
-   <label className="flex min-h-11 items-center gap-2 text-sm" title="Show extra audit columns">
+   </Label>
+   <Label variant="choice" className="flex min-h-11 items-center gap-2" title="Show extra audit columns">
     <Checkbox checked={showAbout} onChange={e=>setShowAbout(e.target.checked)} />About
-   </label>
-   <label className="flex min-h-11 items-center gap-2 text-sm">
+   </Label>
+   <Label variant="choice" className="flex min-h-11 items-center gap-2">
     <Checkbox checked={showDetail} onChange={e=>setShowDetail(e.target.checked)} />Detail
-   </label>
+   </Label>
    <Button variant="secondary" type="button" onClick={()=>void copy()}
     className="min-h-11">Copy rows</Button>
    <Button variant="secondary" type="button" onClick={()=>{setWho("");setWhat("");setOldestFirst(false);setSelected([]);setShowAbout(false);setShowDetail(false);}}

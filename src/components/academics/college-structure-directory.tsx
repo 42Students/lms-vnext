@@ -27,6 +27,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Label } from "@/components/ui/label";
 
 type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeClasses>>
@@ -83,18 +84,18 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
         </header>
         <CollegeDirectoryInstantFilters formId="college-structure-directory-filters" />
       <FilterBar title="Filters"
-        search={<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        search={<Label stack className="min-w-0">
           {classes ? "Class, batch or program" : "Elective, program or description"}
           <Input form="college-structure-directory-filters" type="search" name="q" maxLength={100} defaultValue={"q" in data.query ? data.query.q : undefined}
             className="min-h-11 min-w-0 md:min-h-9" placeholder={classes ? "Search classes" : "Search slots"} />
-        </label>}
+        </Label>}
         action={filtered ? <Link href={path}
           className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Clear filters</Link> : null}>
         <section aria-label={title + " filters"} className="min-w-0">
         <form id="college-structure-directory-filters" method="get" action={path} className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)]">
           {classes && data.kind === "CLASSES" ? <CollegeClassScopeFilters programs={data.programs} cohorts={classOptions?.cohorts ?? []}
             selectedProgram={data.query.programId} selectedBatch={data.query.cohortCode} /> : null}
-          {!classes ? <label className="grid w-full gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-[164px]">
+          {!classes ? <Label stack className="w-full sm:w-[164px]">
             Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
               className="min-h-11 w-full md:min-h-9">
@@ -105,8 +106,8 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
                 </option>
               ))}
             </Select>
-          </label> : null}
-          {!classes ? <label className="grid w-full gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-[164px]">
+          </Label> : null}
+          {!classes ? <Label stack className="w-full sm:w-[164px]">
             Status
             <Select name="status" defaultValue={data.query.status}
               className="min-h-11 w-full md:min-h-9">
@@ -114,9 +115,9 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
               <option value="ALL">Incl. archived</option>
               <option value="ARCHIVED">Archived only</option>
             </Select>
-          </label> : null}
+          </Label> : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid w-full gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-[164px]">
+            <Label stack className="w-full sm:w-[164px]">
               Semester
               <Select name="semesterNumber" defaultValue={String(data.query.semesterNumber ?? "")}
                 className="min-h-11 w-full md:min-h-9">
@@ -124,28 +125,28 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
                 {Array.from({length: 12}, (_, i) => i + 1).map(number =>
                   <option key={number} value={number}>Semester {number}</option>)}
               </Select>
-            </label>
+            </Label>
           ) : null}
           <Disclosure title={"More filters"} className="col-span-full border-t border-border pt-3">
             <div className="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <Label stack>
               Minimum slot credits
               <Input name="minimumCredits" type="number" min={0} max={500} step={1}
                 defaultValue={data.query.minimumCredits??""} placeholder="Any credits"
                 className="min-h-11 min-w-0 md:min-h-9"/>
-            </label>
+            </Label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <Label stack>
               Maximum slot credits
               <Input name="maximumCredits" type="number" min={0} max={500} step={1}
                 defaultValue={data.query.maximumCredits ?? ""} placeholder="No upper bound"
                 className="min-h-11 min-w-0 md:min-h-9"/>
-            </label>
+            </Label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <Label stack>
               Capacity configuration
               <Select name="capacityState" defaultValue={data.query.capacityState}
                 className="min-h-11 min-w-0 md:min-h-9">
@@ -153,26 +154,26 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
                 <option value="CONFIGURED">Configured seats</option>
                 <option value="UNSET">Not configured</option>
               </Select>
-            </label>
+            </Label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <Label stack>
               Maximum configured capacity
               <Input name="maximumCapacity" type="number" min={1} max={100000} step={1}
                 defaultValue={data.query.maximumCapacity??""} placeholder="No upper bound"
                 className="min-h-11 min-w-0 md:min-h-9"/>
-            </label>
+            </Label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <Label stack>
               Minimum configured capacity
               <Input name="minimumCapacity" type="number" min={1} max={100000} step={1}
                 defaultValue={data.query.minimumCapacity ?? ""} placeholder="Any capacity"
                 className="min-h-11 min-w-0 md:min-h-9" />
-            </label>
+            </Label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch status
+            <Label stack>Batch status
               <Select name="cohortStatus" defaultValue={data.query.cohortStatus ?? "ALL"} className="min-h-[var(--lms-control-height)]">
                 <option value="ALL">All batches</option>
                 <option value="PLANNED">Planned</option>
@@ -180,205 +181,205 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
                 <option value="COMPLETED">Completed</option>
                 <option value="ARCHIVED">Archived</option>
               </Select>
-            </label>
+            </Label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program status
+            <Label stack>Program status
               <Select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-[var(--lms-control-height)]">
                 <option value="ALL">All programs</option>
                 <option value="ACTIVE">Active</option>
                 <option value="ARCHIVED">Archived</option>
               </Select>
-            </label>
+            </Label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic period
+            <Label stack>Academic period
               <Select name="periodState" defaultValue={data.query.periodState ?? "ALL"} className="min-h-[var(--lms-control-height)]">
                 <option value="ALL">All slots</option>
                 <option value="LINKED">Linked to a period</option>
                 <option value="UNLINKED">No period assigned</option>
               </Select>
-            </label>
+            </Label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program status
+            <Label stack>Program status
               <Select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-[var(--lms-control-height)]">
                 <option value="ALL">All programs</option>
                 <option value="ACTIVE">Active programs</option>
                 <option value="ARCHIVED">Archived programs</option>
               </Select>
-            </label>
+            </Label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class academic period code
+            <Label stack>Class academic period code
               <Input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode ?? ""}
                 placeholder="Exact registered code" className="min-h-11 min-w-0 md:min-h-9" />
-            </label>
+            </Label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class code
+            <Label stack>Class code
               <Input name="classCode" type="search" maxLength={64} defaultValue={data.query.classCode ?? ""}
                 placeholder="Exact registered code" className="min-h-11 min-w-0 md:min-h-9" />
-            </label>
+            </Label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Number of choices
+            <Label stack>Number of choices
               <Select name="choiceMode" defaultValue={data.query.choiceMode ?? "ALL"} className="min-h-[var(--lms-control-height)]">
                 <option value="ALL">All slots</option>
                 <option value="FLEXIBLE">Minimum and maximum differ</option>
                 <option value="FIXED">Exact selection count</option>
               </Select>
-            </label>
+            </Label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course offerings
+            <Label stack>Course offerings
               <Select name="offeringState" defaultValue={data.query.offeringState ?? "ALL"} className="min-h-[var(--lms-control-height)]">
                 <option value="ALL">All slots</option>
                 <option value="HAS_ACTIVE">Has active course offerings</option>
                 <option value="NONE_ACTIVE">No active course offerings</option>
               </Select>
-            </label>
+            </Label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic year
+            <Label stack>Academic year
               <Select name="academicYearState" defaultValue={data.query.academicYearState ?? "ALL"} className="min-h-[var(--lms-control-height)]">
                 <option value="ALL">All slots</option>
                 <option value="RECORDED">Academic year recorded</option>
                 <option value="MISSING">No academic year recorded</option>
               </Select>
-            </label>
+            </Label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic period code
+            <Label stack>Academic period code
               <Input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode ?? ""}
                 placeholder="Exact linked period code" className="min-h-11 min-w-0 md:min-h-9" />
-            </label>
+            </Label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic period status
+            <Label stack>Academic period status
               <Select name="periodLifecycle" defaultValue={data.query.periodLifecycle} className="min-h-[var(--lms-control-height)]">
                 <option value="ALL">All periods</option>
                 <option value="PLANNED">Planned</option>
                 <option value="ACTIVE">Active</option>
                 <option value="CLOSED">Closed</option>
               </Select>
-            </label>
+            </Label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Exact program code
+            <Label stack>Exact program code
               <Input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode ?? ""} className="min-h-[var(--lms-control-height)]" />
-            </label>
+            </Label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class name
+            <Label stack>Class name
               <Input name="className" type="search" maxLength={255} defaultValue={data.query.className ?? ""} className="min-h-[var(--lms-control-height)]" />
-            </label>
+            </Label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch name
+            <Label stack>Batch name
               <Input name="cohortName" type="search" maxLength={255} defaultValue={data.query.cohortName ?? ""} className="min-h-[var(--lms-control-height)]" />
-            </label>
+            </Label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Saved section schedule
+            <Label stack>Saved section schedule
               <Select name="schedulePresence" defaultValue={data.query.schedulePresence} className="min-h-[var(--lms-control-height)]">
                 <option value="ALL">All classes</option>
                 <option value="HAS_EVENTS">With schedule events</option>
                 <option value="NO_EVENTS">No saved schedule events</option>
               </Select>
-            </label>
+            </Label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty assignments
+            <Label stack>Faculty assignments
               <Select name="facultyCoverage" defaultValue={data.query.facultyCoverage} className="min-h-[var(--lms-control-height)]">
                 <option value="ALL">All classes</option>
                 <option value="HAS_FACULTY">Has active Faculty assignments</option>
                 <option value="NO_FACULTY">No active Faculty assignments</option>
               </Select>
-            </label>
+            </Label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Courses
+            <Label stack>Courses
               <Select name="deliveryPresence" defaultValue={data.query.deliveryPresence} className="min-h-[var(--lms-control-height)]">
                 <option value="ALL">All classes</option>
                 <option value="HAS_DELIVERIES">Has course deliveries</option>
                 <option value="NO_DELIVERIES">No course deliveries</option>
               </Select>
-            </label>
+            </Label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Period start date on or after
+            <Label stack>Period start date on or after
               <Input name="periodStartsOnOrAfter" type="date" defaultValue={data.query.periodStartsOnOrAfter ?? ""} className="min-h-[var(--lms-control-height)]" />
-            </label>
+            </Label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Period end date on or before
+            <Label stack>Period end date on or before
               <Input name="periodEndsOnOrBefore" type="date" defaultValue={data.query.periodEndsOnOrBefore ?? ""} className="min-h-[var(--lms-control-height)]" />
-            </label>
+            </Label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department code
+            <Label stack>Department code
               <Input name="departmentCode" type="search" maxLength={64} defaultValue={data.query.departmentCode ?? ""} className="min-h-[var(--lms-control-height)]" />
-            </label>
+            </Label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Elective name
+            <Label stack>Elective name
               <Input name="slotName" type="search" maxLength={150} defaultValue={data.query.slotName ?? ""} className="min-h-[var(--lms-control-height)]" />
-            </label>
+            </Label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program code
+            <Label stack>Program code
               <Input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode ?? ""} className="min-h-[var(--lms-control-height)]" />
-            </label>
+            </Label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department code
+            <Label stack>Department code
               <Input name="departmentCode" type="search" maxLength={64} defaultValue={data.query.departmentCode ?? ""} className="min-h-[var(--lms-control-height)]" />
-            </label>
+            </Label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum required elective choices
+            <Label stack>Minimum required elective choices
               <Input name="minimumRequiredPicks" type="number" min={0} max={1000} step={1} defaultValue={data.query.minimumRequiredPicks ?? ""} className="min-h-[var(--lms-control-height)]" />
-            </label>
+            </Label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum allowed elective choices
+            <Label stack>Maximum allowed elective choices
               <Input name="maximumAllowedPicks" type="number" min={1} max={1000} step={1} defaultValue={data.query.maximumAllowedPicks ?? ""} className="min-h-[var(--lms-control-height)]" />
-            </label>
+            </Label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester from
+            <Label stack>Semester from
               <Input name="semesterFrom" type="number" min={1} max={24} step={1} defaultValue={data.query.semesterFrom ?? ""} className="min-h-[var(--lms-control-height)]" />
-            </label>
+            </Label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester through
+            <Label stack>Semester through
               <Input name="semesterThrough" type="number" min={1} max={24} step={1} defaultValue={data.query.semesterThrough ?? ""} className="min-h-[var(--lms-control-height)]" />
-            </label>
+            </Label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Linked academic-period lifecycle
+            <Label stack>Linked academic-period lifecycle
               <Select name="periodLifecycle" defaultValue={data.query.periodLifecycle} className="min-h-[var(--lms-control-height)]">
                 <option value="ALL">All linked and unlinked</option><option value="PLANNED">Planned</option><option value="ACTIVE">Active</option><option value="CLOSED">Closed</option>
               </Select>
-            </label>
+            </Label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Elective description availability
+            <Label stack>Elective description availability
               <Select name="descriptionPresence" defaultValue={data.query.descriptionPresence} className="min-h-[var(--lms-control-height)]">
                 <option value="ALL">Any description state</option><option value="RECORDED">Field is recorded</option><option value="MISSING">Field is missing</option>
               </Select>
-            </label>
+            </Label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Elective linked period starts on or after
+            <Label stack>Elective linked period starts on or after
               <Input name="periodStartsOnOrAfter" type="date" defaultValue={data.query.periodStartsOnOrAfter ?? ""} className="min-h-[var(--lms-control-height)]" />
-            </label>
+            </Label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Elective linked period ends on or before
+            <Label stack>Elective linked period ends on or before
               <Input name="periodEndsOnOrBefore" type="date" defaultValue={data.query.periodEndsOnOrBefore ?? ""} className="min-h-[var(--lms-control-height)]" />
-            </label>
+            </Label>
           ) : null}
             </div>
           </Disclosure>

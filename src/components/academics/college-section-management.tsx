@@ -18,6 +18,7 @@ import {
 } from "@/modules/academics/college-section-mutation-model";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type Cohort = { id: string; name: string; code: string; programName: string; programId: string };
 type Period = { id: string; name: string; code: string };
@@ -158,7 +159,7 @@ export function CollegeClassCreate({ cohorts, periods,
           </>}
       </p>
       : <form ref={formRef} noValidate onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)]">
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+        <Label stack>Program
           <Input type="search" aria-label="Search programs" placeholder="Search programs" value={programSearch} onChange={event=>setProgramSearch(event.target.value)} className="min-h-11 w-full md:min-h-9" />
           <Select required name="programId" aria-invalid={Boolean(fieldErrors["programId"])} value={programId} onChange={event=>{setProgramId(event.target.value);setCohortId("");}}
            className="min-h-11 w-full md:min-h-9">
@@ -166,8 +167,8 @@ export function CollegeClassCreate({ cohorts, periods,
            {uniquePrograms.map(program=><option key={program.id} value={program.id}>{program.name}</option>)}
           </Select>
           {fieldErrors["programId"] ? <span role="alert" className="text-xs text-error">{fieldErrors["programId"]}</span> : null}
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+        </Label>
+        <Label stack>Batch
           <Select required name="cohortId" disabled={!programId} aria-invalid={Boolean(fieldErrors["cohortId"])} value={cohortId} onChange={event => setCohortId(event.target.value)}
             className="min-h-11 w-full md:min-h-9">
             <option value="">{programId?"Select batch":"Select program first"}</option>
@@ -176,8 +177,8 @@ export function CollegeClassCreate({ cohorts, periods,
             </option>)}
           </Select>
           {fieldErrors["cohortId"] ? <span role="alert" className="text-xs text-error">{fieldErrors["cohortId"]}</span> : null}
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic period
+        </Label>
+        <Label stack>Academic period
           <Select required name="academicPeriodId" aria-invalid={Boolean(fieldErrors["academicPeriodId"])} value={academicPeriodId}
             onChange={event => setAcademicPeriodId(event.target.value)}
             className="min-h-11 w-full md:min-h-9">
@@ -187,32 +188,32 @@ export function CollegeClassCreate({ cohorts, periods,
             </option>)}
           </Select>
           {fieldErrors["academicPeriodId"] ? <span role="alert" className="text-xs text-error">{fieldErrors["academicPeriodId"]}</span> : null}
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class Name
+        </Label>
+        <Label stack>Class Name
           <Input required name="className" placeholder="e.g., CSE-A or Section 1" maxLength={255} value={name}
            aria-invalid={Boolean(fieldErrors["name"])} onChange={event => setName(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
           {fieldErrors["name"] ? <span role="alert" className="text-xs text-error">{fieldErrors["name"]}</span> : null}
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class code (optional; generated from name)
+        </Label>
+        <Label stack>Class code (optional; generated from name)
           <Input name="code" maxLength={64} value={code} onChange={event => setCode(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum students (1–200)
+        </Label>
+        <Label stack>Maximum students (1–200)
           <Input required name="capacity" aria-invalid={Boolean(fieldErrors["capacity"])} type="number" min={1} max={200} step={1} value={capacity}
             onChange={event => setCapacity(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
           {fieldErrors["capacity"] ? <span role="alert" className="text-xs text-error">{fieldErrors["capacity"]}</span> : null}
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum students (0–200)
+        </Label>
+        <Label stack>Minimum students (0–200)
           <Input name="minSize" aria-invalid={Boolean(fieldErrors["minSize"])} type="number" min={0} max={200} step={1} value={minSize}
             onChange={event => setMinSize(event.target.value)} className="min-h-11 w-full md:min-h-9" />
           {fieldErrors["minSize"] ? <span role="alert" className="text-xs text-error">{fieldErrors["minSize"]}</span> : null}
-        </label>
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description (optional)
+        </Label>
+        <Label stack className="min-w-0 md:col-span-2">Description (optional)
           <Textarea maxLength={2000} rows={2} placeholder="Optional description" value={description} onChange={e => setDescription(e.target.value)}
             className="min-h-24 w-full" />
-        </label>
+        </Label>
         <p className="text-xs text-muted-foreground md:col-span-2">Moving a student into a full section is refused.</p>
         <div className="flex justify-stretch border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:col-span-2 md:justify-end">
           <Button variant="primary" disabled={pending} type="submit" className="w-full md:w-auto">
@@ -412,7 +413,7 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
           faculty assignments or course deliveries. The server checks college and period scope.
         </p>
         {cohorts.length > 0 ? <>
-          <label className="grid gap-2 text-[13px] font-semibold text-muted-foreground">Program
+          <Label stack>Program
             <Select value={programId} onChange={event => {
               setProgramId(event.target.value);
               const first = cohorts.find(c => c.programId === event.target.value);
@@ -421,47 +422,47 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
               <option value="">Select program</option>
               {programs.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
             </Select>
-          </label>
-          <label className="grid gap-2 text-[13px] font-semibold text-muted-foreground">Batch
+          </Label>
+          <Label stack>Batch
             <Select value={cohortId} disabled={!programId} onChange={event => setCohortId(event.target.value)} className="min-h-11 md:min-h-9">
               <option value="">{programId?"Select batch":"Select program first"}</option>
               {cohorts.filter(c => !programId || c.programId === programId).map(c =>
                 <option key={c.id} value={c.id}>{c.name} ({c.code})</option>)}
             </Select>
-          </label>
+          </Label>
         </> : null}
-        {periods.length > 0 ? <label className="grid gap-2 text-[13px] font-semibold text-muted-foreground md:col-span-2">Academic period
+        {periods.length > 0 ? <Label stack className="md:col-span-2">Academic period
           <Select value={academicPeriodId} onChange={event => setAcademicPeriodId(event.target.value)}
             className="min-h-11 md:min-h-9">
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </Select>
-        </label> : null}
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section Name
+        </Label> : null}
+        <Label stack>Class/Section Name
           <Input required name="className" maxLength={255} placeholder="e.g., CSE-A or Section 1"
              aria-invalid={Boolean(editFieldErrors["name"])} value={name} onChange={e => setName(e.target.value)}
              className="min-h-11 w-full md:min-h-9" />
            {editFieldErrors["name"]?<span role="alert" className="text-xs text-error">{editFieldErrors["name"]}</span>:null}
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class code
+        </Label>
+        <Label stack>Class code
           <Input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
             className="min-h-11 w-full md:min-h-9" />
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum students (1–200)
+        </Label>
+        <Label stack>Maximum students (1–200)
           <Input required name="capacity" aria-invalid={Boolean(editFieldErrors["capacity"])} type="number"
              min={1} max={200} step={1} value={capacity} onChange={e => setCapacity(e.target.value)}
              className="min-h-11 w-full md:min-h-9" />
            {editFieldErrors["capacity"]?<span role="alert" className="text-xs text-error">{editFieldErrors["capacity"]}</span>:null}
-        </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum students (0–200)
+        </Label>
+        <Label stack>Minimum students (0–200)
           <Input name="minSize" aria-invalid={Boolean(editFieldErrors["minSize"])} type="number"
              min={0} max={200} step={1} value={minSize}
              onChange={e => setMinSize(e.target.value)} className="min-h-11 w-full md:min-h-9" />
            {editFieldErrors["minSize"]?<span role="alert" className="text-xs text-error">{editFieldErrors["minSize"]}</span>:null}
-        </label>
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Description
+        </Label>
+        <Label stack className="min-w-0 md:col-span-2">Description
           <Textarea placeholder="Optional description" rows={2} maxLength={2000} value={description} onChange={e => setDescription(e.target.value)}
             className="min-h-24 w-full" />
-        </label>
+        </Label>
         <p className="text-xs text-muted-foreground md:col-span-2">Active learner enrollments: {row.activeLearners === null ? "Unavailable" : row.activeLearners}.</p>
         {notice ? <p role="alert" className="text-sm text-body md:col-span-2">{notice}</p> : null}
         <div className="flex flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:col-span-2 md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
@@ -492,22 +493,22 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
         {!scheduleLoading&&scheduleItems.length===0?
           <p className="text-sm text-muted-foreground">No class sessions scheduled yet.</p>:null}
         <form onSubmit={event=>void createSchedule(event)} className="grid gap-3 sm:grid-cols-2">
-          <label className="text-sm font-semibold sm:col-span-2">Session title
+          <Label className="sm:col-span-2">Session title
             <Input required maxLength={255} value={scheduleTitle}
               onChange={event=>setScheduleTitle(event.target.value)} className="mt-1"/>
-          </label>
-          <label className="text-sm font-semibold">Start (IST)
+          </Label>
+          <Label>Start (IST)
             <Input required type="datetime-local" value={scheduleStart}
               onChange={event=>setScheduleStart(event.target.value)} className="mt-1"/>
-          </label>
-          <label className="text-sm font-semibold">End (IST)
+          </Label>
+          <Label>End (IST)
             <Input required type="datetime-local" value={scheduleEnd}
               min={scheduleStart} onChange={event=>setScheduleEnd(event.target.value)} className="mt-1"/>
-          </label>
-          <label className="text-sm font-semibold sm:col-span-2">Location (optional)
+          </Label>
+          <Label className="sm:col-span-2">Location (optional)
             <Input maxLength={500} value={scheduleLocation}
               onChange={event=>setScheduleLocation(event.target.value)} className="mt-1"/>
-          </label>
+          </Label>
           <div className="flex flex-wrap justify-end gap-2 sm:col-span-2">
             <Button variant="secondary" type="button" disabled={scheduleLoading} onClick={closeSchedule}>Close</Button>
             <Button type="submit" disabled={scheduleLoading||pending}>Add session</Button>

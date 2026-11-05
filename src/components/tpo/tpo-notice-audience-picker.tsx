@@ -5,6 +5,7 @@ import {Select} from "@/components/ui/select";
 import {Alert} from "@/components/ui/alert";
 import { Radio } from "@/components/ui/radio";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 type Audience="COLLEGE"|"PLACEMENTS"|"BATCHES"|"BRANCHES"|"DRIVE";
 type Option={id:string;label:string};
 export type TpoNoticeTargetOptions={
@@ -37,7 +38,7 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
     {([{value:"COLLEGE",label:"Whole college"},{value:"PLACEMENTS",label:"Students in placements"},
       {value:"BATCHES",label:"Selected batches"},{value:"BRANCHES",label:"Selected branches"},
       {value:"DRIVE",label:"Published drive"}] as const).map(option=>
-      <label key={option.value}
+      <Label key={option.value}
        className={"inline-flex min-h-11 cursor-pointer items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold md:min-h-9 "+
         (audience===option.value?"bg-[var(--lms-primary)] text-[color:var(--lms-on-primary)]":
           "text-body hover:bg-surface-subtle")}>
@@ -45,15 +46,15 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
           onChange={()=>{setAudience(option.value);setTarget("");setTargets([]);setSearch("");setValidationError("");}}
           className="sr-only"/>
         {option.label}
-      </label>)}
+      </Label>)}
    </div>
   </fieldset>
   {multiple&&options?<div className="grid min-w-0 gap-3 text-sm">
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find {targetKind==="batches"?"batches":"branches"}
+   <Label stack className="min-w-0">Find {targetKind==="batches"?"batches":"branches"}
     <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
      placeholder="Search options" className="min-h-11 md:min-h-9"/>
-   </label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Choose {targetKind==="batches"?"batches":"branches"}
+   </Label>
+   <Label stack className="min-w-0">Choose {targetKind==="batches"?"batches":"branches"}
     <Select aria-label="Selected audience groups" multiple required value={targets}
      aria-invalid={Boolean(validationError)} aria-describedby={validationError?"notice-audience-error":undefined}
      onInvalid={event=>{event.currentTarget.setCustomValidity(requiredMessage);setValidationError(requiredMessage);}}
@@ -68,7 +69,7 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
      className="min-h-28 max-w-full">
      {filtered.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
     </Select>
-   </label>
+   </Label>
    {validationError?<span id="notice-audience-error" role="alert" className="text-xs text-error">{validationError}</span>:null}
    {targets.map(id=><Input key={id} type="hidden" name="targetIds" value={id}/>)}
    {targets.length>0?<div className="flex min-w-0 flex-wrap gap-2" aria-label="Selected groups">
@@ -83,13 +84,13 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
    </span>
   </div>:null}
   {targetKind==="drives"&&options?<div className="grid min-w-0 gap-3 text-sm">
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find a drive
+   <Label stack className="min-w-0">Find a drive
     <Input type="search" value={search}
      onChange={event=>{setSearch(event.target.value);setTarget("");}}
      placeholder="Search published drives"
      className="min-h-11 md:min-h-9 max-w-full"/>
-   </label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Choose a drive
+   </Label>
+   <Label stack className="min-w-0">Choose a drive
     <Select name="targetId" required value={target}
      aria-invalid={Boolean(validationError)} aria-describedby={validationError?"notice-drive-error":undefined}
      onInvalid={event=>{event.currentTarget.setCustomValidity("Pick a drive");setValidationError("Pick a drive");}}
@@ -98,7 +99,7 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
      <option value="">{!available.length?emptyText:!filtered.length?"Nothing matches this search":"Pick a drive"}</option>
      {filtered.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
     </Select>
-   </label>
+   </Label>
    {validationError?<span id="notice-drive-error" role="alert" className="text-xs text-error">{validationError}</span>:null}
    {!available.length?<span role="status" className="text-xs text-muted-foreground">{emptyText}</span>:null}
   </div>:null}

@@ -32,6 +32,7 @@ import {
   type LearnerOfferView,
 } from "@/modules/placements/learner-offers-browse-model";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 const expiryTabs = [{id:"all",label:"All expiry states"},{id:"expired",label:"Issued, deadline passed"},{id:"undated",label:"Issued, no deadline recorded"}] as const;
 const joiningTabs = [
@@ -214,11 +215,11 @@ export default async function LearnerOffersPage({
         {kind !== "all" ? <Input type="hidden" name="kind" value={kind} /> : null}
         {joiningFilter!=="all"?<Input type="hidden" name="joining" value={joiningFilter}/>:null}
         {expiry!=="all"?<Input type="hidden" name="expiry" value={expiry}/>:null}
-        <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-foreground">
+        <Label className="flex min-w-0 flex-1 flex-col gap-1">
           Search my offers
           <Input name="q" type="search" maxLength={80} defaultValue={searchTerm}
             placeholder="Employer or role" className="min-h-11 min-w-0" />
-        </label>
+        </Label>
         <Button type="submit" className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:w-auto md:min-h-9">Search</Button>
         {searchTerm ? <Link href={learnerOfferStatusHref(view,{searchTerm:"",dueOnly,sort:order,kind,joining:joiningFilter,expiry})}
           className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm text-[var(--lms-link-text)] underline md:min-h-[var(--lms-control-height)]">Clear search</Link> : null}
@@ -240,14 +241,14 @@ export default async function LearnerOffersPage({
         {kind!=="all"?<Input type="hidden" name="kind" value={kind}/>:null}
         {joiningFilter!=="all"?<Input type="hidden" name="joining" value={joiningFilter}/>:null}
         {expiry!=="all"?<Input type="hidden" name="expiry" value={expiry}/>:null}
-        <label className="flex flex-col gap-1 text-sm font-medium text-foreground">
+        <Label className="flex flex-col gap-1">
           Sort my offers
           <Select name="sort" defaultValue={order} className="min-h-11">
             <option value="priority">Needs response first</option>
             <option value="newest">Newest issued</option>
             <option value="company">Company A–Z</option>
           </Select>
-        </label>
+        </Label>
         <Button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Apply sort</Button>
       </form>
       <nav aria-label="Recorded joining outcome" className={placementFilterNavClass}>

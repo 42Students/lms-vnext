@@ -18,6 +18,7 @@ import {FacultyAssignmentResourcesEditor} from "./faculty-assignment-resources-e
 import {type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
 import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
 import { Radio } from "@/components/ui/radio";
+import { Label } from "@/components/ui/label";
 const DEFAULT_ASSIGNMENT_METHODS: AssignmentMethod[] = ["WRITTEN_RESPONSE"];
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
@@ -154,7 +155,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    className="max-w-[720px]">
    <div role="region" aria-label="Create assignment draft" className="grid min-w-0 gap-3 sm:grid-cols-2">
     <p className="text-xs font-semibold text-muted-foreground sm:col-span-2">1. Course, Lesson and Section</p>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
+   <Label stack className="min-w-0">Course
     <Select value={offeringId} disabled={pending||courses.length===0} onChange={e=>{
       const next=e.target.value;setOfferingId(next);setFieldErrors(old=>(({course: _course, lesson: _lesson, section: _section, ...rest})=>rest)(old));
       setLessonId(lessons.find(lesson=>lesson.offeringId===next)?.id??"");
@@ -163,66 +164,66 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
      {courses.map(course=><option key={course.offeringId} value={course.offeringId}>
       {course.courseCode} · {course.course}
      </option>)}
-    </Select>{fieldErrors.course?<span role="alert" className="text-xs text-error">{fieldErrors.course}</span>:null}</label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson
+    </Select>{fieldErrors.course?<span role="alert" className="text-xs text-error">{fieldErrors.course}</span>:null}</Label>
+   <Label stack className="min-w-0">Lesson
     <Select value={lessonId} disabled={pending||!offeringId||availableLessons.length===0} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");setAudience("SHARED");setFieldErrors(old=>(({lesson: _lesson, section: _section, ...rest})=>rest)(old));}}
      className="min-h-11 w-full md:min-h-9">
      {availableLessons.map(lesson=><option key={lesson.id} value={lesson.id}>{lesson.name}</option>)}
-    </Select>{fieldErrors.lesson?<span role="alert" className="text-xs text-error">{fieldErrors.lesson}</span>:null}</label>
+    </Select>{fieldErrors.lesson?<span role="alert" className="text-xs text-error">{fieldErrors.lesson}</span>:null}</Label>
    <fieldset className="min-w-0 space-y-2 sm:col-span-2">
     <legend className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">Audience</legend>
     <div className="flex flex-wrap gap-4 text-sm">
-     <label className="flex items-center gap-2"><Radio name="assignment-audience"
-      checked={audience==="SHARED"} disabled={pending} onChange={()=>{setAudience("SHARED");setDeliveryId("");}}/>All currently eligible sections for this course</label>
-     <label className="flex items-center gap-2"><Radio name="assignment-audience"
+     <Label variant="choice" className="flex items-center gap-2"><Radio name="assignment-audience"
+      checked={audience==="SHARED"} disabled={pending} onChange={()=>{setAudience("SHARED");setDeliveryId("");}}/>All currently eligible sections for this course</Label>
+     <Label variant="choice" className="flex items-center gap-2"><Radio name="assignment-audience"
       checked={audience==="SECTION"} disabled={pending||!sections.length}
-      onChange={()=>{setAudience("SECTION");setDeliveryId(sections[0]?.deliveryId??"");}}/>Specific section</label>
+      onChange={()=>{setAudience("SECTION");setDeliveryId(sections[0]?.deliveryId??"");}}/>Specific section</Label>
     </div>
     <p className="text-xs text-muted-foreground">{sections.length} eligible Section(s) in this course offering</p>
    </fieldset>
    {audience==="SECTION"&&sections.length===0?<Alert tone="warning" role="alert"
       className="sm:col-span-2">Section list unavailable or no eligible sections
       for this course. Select another course, or retry sections after reloading.</Alert>:null}
-   {audience==="SECTION"?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2">Section
+   {audience==="SECTION"?<Label stack className="min-w-0 sm:col-span-2">Section
     <Select value={deliveryId} disabled={pending} onChange={e=>setDeliveryId(e.target.value)}
      className="min-h-11 w-full md:min-h-9">
      {sections.map(section=><option key={section.deliveryId} value={section.deliveryId}>
       {section.sectionName} ({section.sectionCode})
      </option>)}
-    </Select>{fieldErrors.section?<span role="alert" className="text-xs text-error">{fieldErrors.section}</span>:null}</label>:null}
+    </Select>{fieldErrors.section?<span role="alert" className="text-xs text-error">{fieldErrors.section}</span>:null}</Label>:null}
    <p className="border-t border-border pt-3 text-xs font-semibold text-muted-foreground sm:col-span-2">2. Assignment details</p>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
+   <Label stack className="min-w-0">Title
     <Input required maxLength={255} placeholder="e.g., Module 1 Project" value={title} disabled={pending} aria-invalid={Boolean(fieldErrors.title)} onChange={e=>{setTitle(e.target.value);setFieldErrors(old=>(({title: _title, ...rest})=>rest)(old));}}
-     className="min-h-11 w-full md:min-h-9"/></label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Points
+     className="min-h-11 w-full md:min-h-9"/></Label>
+   <Label stack className="min-w-0">Points
     <Input type="number" min={0} max={10000} placeholder="Enter points" value={points} disabled={pending} aria-invalid={Boolean(fieldErrors.points)}
      onChange={e=>{setPoints(e.target.value);setFieldErrors(old=>(({points: _points, ...rest})=>rest)(old));}}
-     className="min-h-11 w-full md:min-h-9"/></label>
+     className="min-h-11 w-full md:min-h-9"/></Label>
    <p className="text-xs text-muted-foreground sm:col-span-2" role="status">Audience: {deliveryId?
     sections.find(section=>section.deliveryId===deliveryId)?.sectionName??"Invalid Section":
     "All currently eligible Sections in the selected Course Offering"}.
     Draft assignments are hidden until they are published.</p>
    <Disclosure title="Instructions and submission settings" defaultOpen className="min-w-0 border-t border-border py-2 sm:col-span-2" contentClassName="pt-3">
     <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline (IST, optional until publishing)
+   <Label stack className="min-w-0">Deadline (IST, optional until publishing)
     <Input type="datetime-local" value={dueAt} disabled={pending}
      aria-label="Assignment deadline in India Standard Time"
      onChange={e=>setDueAt(e.target.value)}
-     className="min-h-11 w-full md:min-h-9"/></label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 sm:col-span-2 text-[var(--lms-neutral-400)]">Instructions
+     className="min-h-11 w-full md:min-h-9"/></Label>
+   <Label stack className="min-w-0 sm:col-span-2">Instructions
     <Textarea rows={4} placeholder="What the student needs to submit" maxLength={10000} value={description} disabled={pending}
      onChange={e=>setDescription(e.target.value)}
-     className="min-h-24 w-full"/></label>
+     className="min-h-24 w-full"/></Label>
 
    <div className="sm:col-span-2"><FacultyAssignmentMethodPicker methods={allowedMethods} onChange={setAllowedMethods} disabled={pending}/></div>
     </div>
    </Disclosure>
    <p className="border-t border-border pt-3 text-xs font-semibold text-muted-foreground sm:col-span-2">3. Resources and publishing</p>
    <p className="text-xs text-body sm:col-span-2">Save the draft first. Add verified private files and HTTPS links using the resource editor before publishing. Existing uploads are never silently discarded.</p>
-   <label className="flex min-h-11 min-w-0 items-center gap-2 text-sm sm:col-span-2">
+   <Label variant="choice" className="flex min-h-11 min-w-0 items-center gap-2 sm:col-span-2">
     <Checkbox checked={keepOpen} disabled={pending}
      onChange={event=>setKeepOpen(event.target.checked)}/>Create another assignment after saving
-   </label>
+   </Label>
    <div className="flex min-w-0 flex-col-reverse gap-2 sm:col-span-2 sm:flex-row sm:items-center sm:justify-end">
     <Button type="button" variant="secondary" disabled={pending} onClick={close}
      className="min-h-11 w-full sm:w-auto md:min-h-9">Cancel</Button>

@@ -10,6 +10,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {isTpoFindShortcut} from "@/modules/placements/tpo-find-shortcut-model";
 import {safeTpoFindResult, type TpoFindResult} from "@/components/shell/topbar/tpo-find-model";
 import {Input} from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 type Match=TpoFindResult;
 
@@ -80,13 +81,13 @@ export function TpoFindShortcut(){
   </Button>
   <Dialog open={open} onOpenChange={value=>{setOpen(value);if(value)requestAnimationFrame(()=>inputRef.current?.focus());}}
     title="Find a student, recruiter or company" description="Search records in your college. Use arrow keys to navigate, Enter to open and Esc to close.">
-   <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search records
+   <Label className="block">Search records
     <Input ref={inputRef} autoFocus value={query} onKeyDown={handleKeyDown}
       role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded={open}
       aria-controls="tpo-find-results" aria-activedescendant={active>=0&&active<showing.length?"tpo-find-result-"+active:undefined}
       onChange={event=>changeQuery(event.target.value)} placeholder="Type at least 2 characters"
       maxLength={100} className="mt-2 min-h-11 w-full min-w-0 md:min-h-9"/>
-   </label>
+   </Label>
    <PopoverListbox id="tpo-find-results" label="Matching records" aria-busy={loading} className="mt-3 !min-h-0 max-h-72 space-y-0 overflow-y-auto !border-0 !p-0 !shadow-none" onDismiss={() => setOpen(false)}>
     {query.trim().length<2?<div role="presentation" className="px-3 pb-2 pt-2 text-xs font-semibold text-muted-foreground">Recently opened</div>:null}
     {showing.map((row,index)=><Button variant="ghost" type="button" key={row.href}

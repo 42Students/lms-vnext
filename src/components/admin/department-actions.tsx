@@ -13,6 +13,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { DEPARTMENT_COPY } from "@/modules/admin-ui/department-copy";
+import { Label } from "@/components/ui/label";
 
 export function DepartmentActions({
   departmentId,
@@ -212,12 +213,12 @@ export function DepartmentActions({
           </div>
         }
       >
-        <label
+        <Label
           htmlFor={`department-name-${departmentId}`}
-          className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+          className="mb-[6px] block"
         >
           {DEPARTMENT_COPY.nameLabel}
-        </label>
+        </Label>
         <Input
           id={`department-name-${departmentId}`}
           value={nextName}

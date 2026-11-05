@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 export default function MentorProjectsLoading(){
  return <section role="status" aria-busy="true" className="space-y-4">
   <p className="font-semibold text-foreground">Checking Projects access…</p>
@@ -8,11 +9,11 @@ export default function MentorProjectsLoading(){
    {[0,1,2].map(index=><div key={index}
     className="min-h-48 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4"
     aria-hidden="true">
-     <div className="h-5 w-3/4 animate-pulse rounded bg-muted"/>
-     <div className="h-3 w-1/3 animate-pulse rounded bg-muted"/>
-     <div className="h-3 w-full animate-pulse rounded bg-muted"/>
-     <div className="h-3 w-5/6 animate-pulse rounded bg-muted"/>
-     <div className="h-8 w-24 animate-pulse rounded bg-muted"/>
+     <SkeletonBlock className="h-5 w-3/4" />
+     <SkeletonBlock className="h-3 w-1/3" />
+     <SkeletonBlock className="h-3 w-full" />
+     <SkeletonBlock className="h-3 w-5/6" />
+     <SkeletonBlock className="h-8 w-24" />
     </div>)}
   </div>
   <Link href="/mentor/notifications" className="inline-flex min-h-11 items-center text-link underline lms-inline-link">

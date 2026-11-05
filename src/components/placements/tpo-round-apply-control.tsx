@@ -11,6 +11,7 @@ import {Input} from "@/components/ui/input";
 import {Checkbox} from "@/components/ui/checkbox";
 import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 type Preview={ready:boolean;roundName?:string;staged:number;applied:number;
  outcomes:{PASS:number;FAIL:number;HOLD:number;ABSENT:number};destinations:{PASS:string;FAIL:string;HOLD:string;ABSENT:string};previewToken:string;
  rows:Array<{resultId:string;student:string;outcome:string;status:string;destination:string;rollNumber?:string|null;enteredBy?:string|null;reason?:string|null}>;
@@ -86,10 +87,10 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
     <div className="border-b border-border p-3 sm:border-r sm:border-b-0"><dt>Waitlisted</dt><dd className="font-semibold">{preview.outcomes.HOLD}</dd></div>
     <div className="p-3"><dt>Absent</dt><dd className="font-semibold">{preview.outcomes.ABSENT}</dd></div>
    </dl>
-   <label className="grid gap-1 text-sm font-semibold">Search student or results
+   <Label stack>Search student or results
     <Input type="search" value={previewSearch} onChange={event=>setPreviewSearch(event.target.value)}
      placeholder="Student, roll or reason" />
-   </label>
+   </Label>
    <div className="max-h-[360px] overflow-auto rounded-[var(--lms-control-radius)] border border-border">
     <Table className="min-w-[680px]">
      <thead className="sticky top-0 bg-surface-subtle"><tr>
@@ -114,11 +115,11 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
     >
     Export consequence preview (CSV)
    </Button>
-   <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm text-body">
+   <Label variant="choice" className="flex min-h-11 cursor-pointer items-center gap-3">
     <Checkbox checked={notifyLearners} disabled={busy} onChange={event=>setNotifyLearners(event.target.checked)}
      aria-label="Notify learners when round results are applied" />
     Notify students when results are applied
-   </label>
+   </Label>
    {!notifyLearners?<Alert tone="warning">Students will not receive an in-app notification about these applied results. Their application stages will still change.</Alert>:null}
    <p className="text-sm font-semibold text-warning-text">This is not an undo. Applied results cannot be edited.</p>
    {!preview.ready?<Alert tone="warning">Complete this evaluation round before applying results.</Alert>:null}

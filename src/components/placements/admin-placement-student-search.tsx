@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 type InlineIconProps = { size?: number; className?: string; "aria-hidden"?: boolean };
 function Search({size = 16, className = ""}: InlineIconProps) {
@@ -87,7 +88,7 @@ export function AdminPlacementStudentSearch({ collegeId, initialQuery, choices, 
   }
   return <div className="relative w-full max-w-[420px]">
     <form role="search" method="get" action={base} className="flex min-w-0 items-stretch gap-1.5">
-      <label className="sr-only" htmlFor={listId + "-input"}>Search a student by name or email</label>
+      <Label className="sr-only" htmlFor={listId + "-input"}>Search a student by name or email</Label>
       <div className="relative min-w-0 flex-1">
         {searching ? (
           <svg aria-hidden="true" viewBox="0 0 24 24" width={16} height={16}

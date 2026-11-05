@@ -12,6 +12,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Disclosure } from "@/components/ui/disclosure";
 import { useToast } from "@/components/ui/toast";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export type PlacementAcademicEvidenceValue = {
   cgpa: number | null;
@@ -183,11 +184,11 @@ export function LearnerPlacementAcademicEvidence({
     ["passingYear", "Passing year", evidence.passingYear, "1", "2200"],
   ] as const;
   const renderEvidenceField = ([name, label, value, step, max]: typeof evidenceFields[number]) => (
-    <label key={name} className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    <Label key={name} className="min-w-0">
       <span className="mb-1.5 block text-xs font-semibold text-body">{label}</span>
       <Input className={inputClass+" w-full"} name={name} type="number" min={0} max={max}
         step={step} disabled={locked} defaultValue={value===null?"":String(value)} />
-    </label>
+    </Label>
   );
 
   return (
@@ -223,7 +224,7 @@ export function LearnerPlacementAcademicEvidence({
       >
         <div className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {evidenceFields.slice(0,3).map(renderEvidenceField)}
-        <label className="flex min-h-11 min-w-0 items-center gap-2 self-end py-2 text-sm font-semibold text-body">
+        <Label className="flex min-h-11 min-w-0 items-center gap-2 self-end py-2">
           <Checkbox
             checked={lateralEntry}
             disabled={locked}
@@ -234,10 +235,10 @@ export function LearnerPlacementAcademicEvidence({
             }
           />
           Lateral entry
-        </label>
+        </Label>
 
         {lateralEntry ? (
-          <label>
+          <Label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Diploma %
             </span>
@@ -254,9 +255,9 @@ export function LearnerPlacementAcademicEvidence({
                 ""
               }
             />
-          </label>
+          </Label>
         ) : (
-          <label>
+          <Label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               12th %
             </span>
@@ -273,7 +274,7 @@ export function LearnerPlacementAcademicEvidence({
                 ""
               }
             />
-          </label>
+          </Label>
         )}
 
         </div>

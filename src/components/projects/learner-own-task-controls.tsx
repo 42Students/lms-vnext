@@ -7,6 +7,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
+import { Label } from "@/components/ui/label";
 type Sprint={id:string;title:string;status:string;updatedAt:Date};
 export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:Sprint[]}){
  const router=useRouter();
@@ -50,30 +51,30 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
     No sprint is active. You can add your task to the product backlog.</p>:null}
   {open?<form id="learner-own-task-form" onSubmit={e=>void save(e)}
    className="grid gap-3 border-t border-border py-4 sm:grid-cols-2">
-   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Task title
+   <Label>Task title
     <Input required maxLength={200} value={title} onChange={e=>setTitle(e.target.value)}
-     className="mt-1 min-h-11 md:min-h-9"/></label>
-   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Sprint
+     className="mt-1 min-h-11 md:min-h-9"/></Label>
+   <Label>Sprint
     <Select value={sprintId} onChange={e=>{setSprintId(e.target.value);setStatus("TODO")}}
      className="mt-1 min-h-11 md:min-h-9">
      <option value="">Leave blank for the backlog</option>
      {available.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
-    </Select></label>
-   <label className="font-semibold sm:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">Description
+    </Select></Label>
+   <Label className="sm:col-span-2">Description
     <Textarea maxLength={4000} value={description} onChange={e=>setDescription(e.target.value)}
-      className="mt-1"/></label>
-   <label className="font-semibold sm:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">Approach (optional)
+      className="mt-1"/></Label>
+   <Label className="sm:col-span-2">Approach (optional)
     <Textarea maxLength={4000} value={approach} onChange={e=>setApproach(e.target.value)}
-      className="mt-1"/></label>
-   <label className="font-semibold sm:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">Done when
+      className="mt-1"/></Label>
+   <Label className="sm:col-span-2">Done when
     <Textarea maxLength={4000} value={acceptance} onChange={e=>setAcceptance(e.target.value)}
-      className="mt-1"/></label>
-   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Priority
+      className="mt-1"/></Label>
+   <Label>Priority
     <Select value={priority} onChange={e=>setPriority(e.target.value)}
      className="mt-1 min-h-11 md:min-h-9">
      {["LOW","MEDIUM","HIGH","CRITICAL"].map(x=><option key={x} value={x}>{x}</option>)}
-    </Select></label>
-   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Status
+    </Select></Label>
+   <Label>Status
     <Select value={status} disabled={!sprintId}
       onChange={e=>setStatus(e.target.value as typeof status)}
       className="mt-1 min-h-11 md:min-h-9">
@@ -81,21 +82,21 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
       {sprintId?<><option value="IN_PROGRESS">In Progress</option>
         <option value="BLOCKED">Blocked</option></>:null}
     </Select>
-   </label>
-   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Type
+   </Label>
+   <Label>Type
     <Select value={type} onChange={e=>setType(e.target.value)}
      className="mt-1 min-h-11 md:min-h-9">
      <option value="">Not set</option>{["STORY","BUG","CHORE","SPIKE"].map(x=><option key={x} value={x}>{x}</option>)}
-    </Select></label>
-   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Estimate points
+    </Select></Label>
+   <Label>Estimate points
     <Input type="number" min={0} max={1000} value={estimate} onChange={e=>setEstimate(e.target.value)}
-     className="mt-1 min-h-11 md:min-h-9"/></label>
-   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Due date
+     className="mt-1 min-h-11 md:min-h-9"/></Label>
+   <Label>Due date
     <Input type="date" value={due} onChange={e=>setDue(e.target.value)}
-     className="mt-1 min-h-11 md:min-h-9"/></label>
-   <label className="font-semibold sm:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">What&apos;s blocking this task?
+     className="mt-1 min-h-11 md:min-h-9"/></Label>
+   <Label className="sm:col-span-2">What&apos;s blocking this task?
     <Textarea maxLength={4000} value={blockerReason} onChange={e=>setBlockerReason(e.target.value)}
-      className="mt-1"/></label>
+      className="mt-1"/></Label>
    {status==="BLOCKED"&&!blockerReason.trim()?
      <p role="alert" className="text-sm text-error sm:col-span-2">
        Explain what&apos;s blocking this task before saving.</p>:null}

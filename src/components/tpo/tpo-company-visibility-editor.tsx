@@ -9,6 +9,7 @@ import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 const labels={
  showCgpaExact:"Show the exact UG % (off shows a band such as 75-80%)",
  showTenthTwelfth:"Show 10th and 12th / diploma %",
@@ -45,7 +46,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
   <p className="text-xs text-muted-foreground">Your choices are saved in the college&apos;s sharing policy. Individual recruiter rights, consent and export permissions remain separate safeguards.</p>
 
   <div role="group" aria-label="Company sharing switches" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-3 sm:px-4">
-  {Object.entries(labels).slice(0,3).map(([key,label])=><label key={key} className="flex min-h-11 min-w-0 items-center justify-between gap-3 border-b border-border py-2 text-sm">
+  {Object.entries(labels).slice(0,3).map(([key,label])=><Label variant="choice" key={key} className="flex min-h-11 min-w-0 items-center justify-between gap-3 border-b border-border py-2">
    <span className="min-w-0 flex-1 break-words">{label}</span>
    <span className="relative inline-flex h-6 w-11 shrink-0 items-center">
     <Checkbox role="switch" aria-label={label} disabled={busy}
@@ -55,10 +56,10 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
     <span aria-hidden="true" className="h-6 w-11 rounded-full border border-border bg-muted transition-colors peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:focus-outline peer-disabled:opacity-50"/>
     <span aria-hidden="true" className="pointer-events-none absolute left-0.5 top-0.5 size-5 rounded-full bg-surface shadow transition-transform peer-checked:translate-x-5"/>
    </span>
-  </label>)}
+  </Label>)}
   </div>
   <Disclosure title="Additional sharing options" className="border-t border-border pt-3">
-    {Object.entries(labels).slice(3).map(([key,label])=><label key={key} className="flex min-h-11 items-center justify-between gap-3 border-b border-border py-2 text-sm">
+    {Object.entries(labels).slice(3).map(([key,label])=><Label variant="choice" key={key} className="flex min-h-11 items-center justify-between gap-3 border-b border-border py-2">
       <span className="min-w-0 flex-1 break-words">{label}</span>
    <span className="relative inline-flex h-6 w-11 shrink-0 items-center">
     <Checkbox role="switch" aria-label={label} disabled={busy}
@@ -68,7 +69,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
     <span aria-hidden="true" className="h-6 w-11 rounded-full border border-border bg-muted transition-colors peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:focus-outline peer-disabled:opacity-50"/>
     <span aria-hidden="true" className="pointer-events-none absolute left-0.5 top-0.5 size-5 rounded-full bg-surface shadow transition-transform peer-checked:translate-x-5"/>
    </span>
-    </label>)}
+    </Label>)}
   </Disclosure>
   <Disclosure title="How sharing works" className="min-w-0 border-t border-border pt-3" contentClassName="pt-2 text-sm"><ul className="list-disc space-y-1 pl-5">
   <li>Each time you share applicants you tick the columns: name, roll number, branch, UG %, 10th, 12th, email, phone, resume, project links, stage.</li>

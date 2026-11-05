@@ -12,6 +12,7 @@ import { projectReadinessLegacyCopy as copy } from "@/modules/projects/readiness
 import type { ReadinessOverrideState } from "@/modules/projects/readiness-override-model";
 import { Radio } from "@/components/ui/radio";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 export function ProjectReadinessOverrideForm({
   projectId,
@@ -133,7 +134,7 @@ export function ProjectReadinessOverrideForm({
               {value:"FORCE_UNLOCK" as const,label:copy.unlock},
               {value:"FORCE_BLOCK" as const,label:copy.block},
               ...(initialState&&initialState!=="CLEAR"?[{value:"CLEAR" as const,label:copy.clear}]:[]),
-            ]).map(option=><label key={option.value} htmlFor={overrideId+option.value} className="min-w-0">
+            ]).map(option=><Label key={option.value} htmlFor={overrideId+option.value} className="min-w-0">
               <Radio id={overrideId+option.value} name={overrideId+"-override"}
                 value={option.value} checked={state===option.value}
                 onChange={()=>chooseOverride(option.value)}
@@ -143,12 +144,12 @@ export function ProjectReadinessOverrideForm({
                 (state===option.value?"border-primary bg-primary text-[var(--lms-on-primary)]":"border-border bg-surface text-body hover:border-primary hover:bg-primary-subtle")}>
                 {option.label}
               </span>
-            </label>)}
+            </Label>)}
           </div>
         </fieldset>
         {Boolean(state) && state !== "CLEAR" ? (
           <div className="grid min-w-0 gap-[6px]">
-            <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]" htmlFor={overrideId+"note"}>{copy.note}</label>
+            <Label className="block" htmlFor={overrideId+"note"}>{copy.note}</Label>
             <Textarea
               id={overrideId+"note"}
               value={note}
@@ -166,8 +167,8 @@ export function ProjectReadinessOverrideForm({
             </p>
           </div>
         ) : state==="CLEAR"?<div className="space-y-2">
-          <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]"
-            htmlFor="project-readiness-cleared-note">Note</label>
+          <Label className="block"
+            htmlFor="project-readiness-cleared-note">Note</Label>
           <Textarea id="project-readiness-cleared-note" rows={3} maxLength={2000}
             value={note} disabled aria-describedby={overrideId+"clear-description"}/>
           <p id={overrideId+"clear-description"} className="text-xs text-body">

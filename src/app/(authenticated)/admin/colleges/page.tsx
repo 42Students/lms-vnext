@@ -26,6 +26,7 @@ import {canManageCollegeDirectoryRow} from "@/modules/colleges/admin-directory-a
 import { listColleges } from "@/modules/colleges/service";
 import { listOrganizations } from "@/modules/organizations/service";
 import { Heading } from "@/components/ui/heading";
+import { Label } from "@/components/ui/label";
 
 type CollegeRow = Awaited<ReturnType<typeof listColleges>>[number] & {canManage:boolean;organizationName:string};
 
@@ -300,26 +301,26 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
       <section aria-label="Existing Colleges" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-sm md:p-5">
        <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Existing Colleges</Heading>
       <form role="search" aria-label="Search colleges" className="grid min-w-0 items-end gap-[8px] border-y border-border py-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_auto_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto]" method="get">
-       <label className="flex min-w-0 w-full flex-1 flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48">Search colleges
+       <Label className="flex min-w-0 w-full flex-1 flex-col gap-[6px] md:min-w-48">Search colleges
         <Input type="search" name="q" defaultValue={q} maxLength={100} placeholder="Search colleges..." />
-       </label>
-       <label className="flex flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">State
+       </Label>
+       <Label className="flex flex-col gap-[6px]">State
         <Input name="state" defaultValue={state} maxLength={80} placeholder="All states"/>
-       </label>
-       <label className="flex flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">City
+       </Label>
+       <Label className="flex flex-col gap-[6px]">City
         <Input name="city" defaultValue={city} maxLength={100} placeholder="All cities"/>
-       </label>
-       {organizationsResult.ok?<label className="flex flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Organization
+       </Label>
+       {organizationsResult.ok?<Label className="flex flex-col gap-[6px]">Organization
         <Select name="orgId" defaultValue={orgId}>
           <option value="">All authorized organizations</option>
           {organizations.map(org=><option key={org.id} value={org.id}>{org.name}</option>)}
         </Select>
-       </label>:orgId?<Input type="hidden" name="orgId" value={orgId}/>:null}
-       <label className="flex flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
+       </Label>:orgId?<Input type="hidden" name="orgId" value={orgId}/>:null}
+       <Label className="flex flex-col gap-[6px]">Rows per page
         <Select name="pageSize" defaultValue={String(pageSize)}>
          {[10,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
         </Select>
-       </label>
+       </Label>
        <Button type="submit" className="w-full md:w-auto">Search</Button>
        <Link href="/admin/colleges" className="inline-flex min-h-11 items-center text-primary-text underline hover:text-primary-hover focus-ring md:min-h-9 underline-offset-4">Clear search</Link>
        <Link href={href(page)} className="inline-flex min-h-11 items-center text-primary-text underline hover:text-primary-hover focus-ring md:min-h-9 underline-offset-4">Refresh directory</Link>

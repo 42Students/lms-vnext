@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { SkeletonBlock } from "@/components/ui/skeleton-block";
 
 /** The old LMS shows six course-card skeletons before authenticated enrolment resolves. */
 export default function Loading() {
@@ -7,11 +8,11 @@ export default function Loading() {
     <div className="grid gap-8 [grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr))]" aria-hidden="true">
       {Array.from({length:6},(_,index)=><div key={index}
         className="overflow-hidden rounded-xl border border-[var(--lms-canvas-border)] bg-surface">
-        <div className="h-[140px] animate-pulse bg-muted"/>
+        <SkeletonBlock className="h-[140px]" />
         <div className="space-y-3 p-6">
-          <div className="h-5 w-4/5 animate-pulse rounded bg-muted"/>
-          <div className="h-4 w-2/5 animate-pulse rounded bg-muted"/>
-          <div className="h-4 w-3/5 animate-pulse rounded bg-muted"/>
+          <SkeletonBlock className="h-5 w-4/5" />
+          <SkeletonBlock className="h-4 w-2/5" />
+          <SkeletonBlock className="h-4 w-3/5" />
         </div>
       </div>)}
     </div>

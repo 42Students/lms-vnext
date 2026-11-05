@@ -4,6 +4,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {recruiterCompanyChangeRequest} from "@/modules/placements/recruiter-company-change-request-model";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 type Props={collegeId:string;companyName:string;kind:"PROFILE"|"TEAM";
  teammate?:{email:string|null;name:string|null}};
 export function RecruiterCompanyChangeRequest({collegeId,companyName,kind,teammate}:Props){
@@ -22,17 +23,17 @@ export function RecruiterCompanyChangeRequest({collegeId,companyName,kind,teamma
    <p className="text-xs text-body">{kind==="TEAM"?
     "Describe the access the placement cell should review for this teammate. Only the placement cell can approve and change grants.":
     "Describe the correction to your company's name, website, about details or hiring profile. The placement cell checks it before saving."}</p>
-   <label className="grid gap-1 text-xs font-medium text-foreground">
+   <Label stack>
     Requested change
     <Textarea value={detail} onChange={event=>{setDetail(event.target.value);setAck(false);}}
      rows={3} maxLength={1800} required placeholder={kind==="TEAM"?
       "Please review which drives this colleague may access and why…":
       "Please update our company website to…"} />
-   </label>
-   <label className="flex min-h-11 items-center gap-2 text-xs text-body">
+   </Label>
+   <Label variant="choice" className="flex min-h-11 items-center gap-2">
     <Checkbox checked={ack} onChange={event=>setAck(event.target.checked)}/>
     This request does not immediately change verified company information or teammate access.
-   </label>
+   </Label>
    <Button variant="secondary" size="md" type="submit" disabled={!ack||message===null}>
     Send to placement cell
    </Button>

@@ -9,6 +9,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Alert} from "@/components/ui/alert";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useToast} from "@/components/ui/toast";
+import { Label } from "@/components/ui/label";
 
 type CollegeContact={
  contactName:string|null;contactEmail:string|null;contactPhone:string|null;internalNotes:string|null;
@@ -151,52 +152,52 @@ export function SuperAdminCollegeCompanyEdit({relationshipId,company}:{
     </div>:<form onSubmit={submit} className="min-w-0 space-y-4">
      <fieldset disabled={pending||canonicalSaved} className="space-y-3">
       <legend className="text-sm font-semibold text-[var(--lms-heading)]">Identity</legend>
-      <label className={label}>Company name
+      <Label className={label}>Company name
        <Input required minLength={2} maxLength={150} value={shared.name} className={cls}
         onChange={event=>setGlobal("name",event.target.value)}/>
-      </label>
-      <label className={label}>Website (HTTPS)
+      </Label>
+      <Label className={label}>Website (HTTPS)
        <Input type="url" maxLength={500} value={shared.website} className={cls}
         onChange={event=>setGlobal("website",event.target.value)}/>
-      </label>
-      <label className={label}>Company logo (HTTPS)
+      </Label>
+      <Label className={label}>Company logo (HTTPS)
        <Input type="url" maxLength={500} value={shared.logoPublicUrl} className={cls}
         onChange={event=>setGlobal("logoPublicUrl",event.target.value)}/>
-      </label>
-      <label className={label}>Industry
+      </Label>
+      <Label className={label}>Industry
        <Input maxLength={160} value={shared.industry} className={cls}
         onChange={event=>setGlobal("industry",event.target.value)}/>
-      </label>
-      <label className={label}>Description
+      </Label>
+      <Label className={label}>Description
        <Textarea rows={3} maxLength={3000} value={shared.about} className={cls}
         onChange={event=>setGlobal("about",event.target.value)}/>
-      </label>
+      </Label>
       <p className="text-xs font-normal leading-5 text-muted-foreground">Changing shared identity updates this employer across every linked college; permission and revision are rechecked before saving.</p>
      </fieldset>
      <fieldset disabled={pending} className="space-y-3 border-t border-border pt-3">
       <legend className="text-sm font-semibold text-[var(--lms-heading)]">Contact</legend>
-      <label className={label}>Recruiter contact name
+      <Label className={label}>Recruiter contact name
        <Input maxLength={150} className={cls} value={details.contactName??""}
         onChange={event=>setField("contactName",event.target.value)}/>
-      </label>
-      <label className={label}>Contact email
+      </Label>
+      <Label className={label}>Contact email
        <Input type="email" maxLength={150} className={cls} value={details.contactEmail??""}
         onChange={event=>setField("contactEmail",event.target.value)}/>
-      </label>
-      <label className={label}>Phone
+      </Label>
+      <Label className={label}>Phone
        <Input type="tel" maxLength={30} className={cls} value={details.contactPhone??""}
         onChange={event=>setField("contactPhone",event.target.value)}/>
-      </label>
+      </Label>
      </fieldset>
      <fieldset disabled={pending} className="space-y-3 border-t border-border pt-3">
       <legend className="flex items-center gap-2 text-sm font-semibold text-[var(--lms-heading)]">
        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
        Internal only
       </legend>
-      <label className={label}>Notes
+      <Label className={label}>Notes
        <Textarea rows={4} maxLength={2000} className={cls} value={details.internalNotes??""}
         onChange={event=>setField("internalNotes",event.target.value)}/>
-      </label>
+      </Label>
       <p className="text-xs text-muted-foreground">Private contact details are visible to authorized staff of the selected college only.</p>
      </fieldset>
      {error?<Alert role="alert" tone="error">{error}</Alert>:null}
