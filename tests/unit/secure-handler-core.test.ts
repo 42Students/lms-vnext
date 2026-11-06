@@ -236,4 +236,32 @@ describe("secured(): step-up authentication", () => {
     expect(handler).not.toHaveBeenCalled();
     expect(events).toEqual([expect.objectContaining({ status: 401 })]);
   });
+
+  describe("write rate limit", () => {
+    it("answers 429 with Retry-After before the handler runs when the caller is over budget", async () => {
+      const handler = vi.fn(async () => Response.json({ ok: true }));
+      const { secured, events } = setup({ allowRequest: vi.fn(async () => false), rateKey: () => "ip:cookie" });
+      const res = (await secured(handler)(post())) as Response;
+      expect(res.status).toBe(429);
+      expect(res.headers.get("Retry-After")).toBe("60");
+      expect(handler).not.toHaveBeenCalled();
+      expect(events.at(-1)?.status).toBe(429);
+    });
+    it("limits only state-changing requests and uses the key prefix and budget it is given", async () => {
+      const allow = vi.fn(async () => true);
+      const { secured } = setup({ allowRequest: allow, rateKey: () => "k", mutationLimit: { limit: 5, windowMs: 1000 } });
+      const handler = async () => Response.json({});
+      await secured(handler)(new Request("https://a.test/api/x"));
+      expect(allow).not.toHaveBeenCalled();
+      await secured(handler)(post());
+      expect(allow).toHaveBeenCalledWith("w:k", 5, 1000);
+    });
+    it("skips limiting when no key can be derived", async () => {
+      const allow = vi.fn(async () => false);
+      const { secured } = setup({ allowRequest: allow, rateKey: () => null });
+      const res = (await secured(async () => Response.json({}))(post())) as Response;
+      expect(res.status).toBe(200);
+      expect(allow).not.toHaveBeenCalled();
+    });
+  });
 });

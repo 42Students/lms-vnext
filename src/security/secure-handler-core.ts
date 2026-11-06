@@ -39,6 +39,15 @@ export type SecuredDeps = {
   onPermitted?: (context: unknown) => void;
   /** Throws when the actor's sign-in is older than maxAgeSeconds (step-up authentication). */
   requireFreshAuth?: (context: unknown, maxAgeSeconds: number) => Promise<void>;
+  /**
+   * Abuse control for every state-changing request, keyed without resolving the session (so no handler's own order
+   * changes): returns false when the caller is over its budget. Absent = no limit.
+   */
+  allowRequest?: (key: string, limit: number, windowMs: number) => Promise<boolean>;
+  /** Stable bucket key for the caller (address plus a hash of the session cookie), or null to skip limiting. */
+  rateKey?: (request: Request) => string | null;
+  /** Writes per window for one key (default 600 per minute). */
+  mutationLimit?: { limit: number; windowMs: number };
   /** Maps a thrown session/authorization error to the platform's standard response. */
   onError?: (error: unknown) => Response;
 };
@@ -114,6 +123,17 @@ export function createSecured(deps: SecuredDeps) {
           const denied = Response.json({ error: "INVALID_ORIGIN" }, { status: 403, headers: { "x-request-id": requestId } });
           audit(403);
           return denied;
+        }
+        if (request && mutating && deps.allowRequest && deps.rateKey) {
+          const key = deps.rateKey(request);
+          const budget = deps.mutationLimit ?? { limit: 600, windowMs: 60_000 };
+          if (key && !(await deps.allowRequest("w:" + key, budget.limit, budget.windowMs))) {
+            const limited = Response.json({ error: "RATE_LIMITED" }, {
+              status: 429, headers: { "x-request-id": requestId, "Retry-After": String(Math.ceil(budget.windowMs / 1000)), "Cache-Control": "no-store" },
+            });
+            audit(429);
+            return limited;
+          }
         }
         if (options.permission || options.stepUp) {
           if (!deps.getContext || !deps.onError) throw new Error("permission and stepUp require getContext and onError.");
