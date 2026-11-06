@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -9,14 +10,14 @@ import {
   listAdminScopedPeopleSuggestions,
   recordAdminScopedFacultySelection,
 } from "@/modules/admin-ui/super-admin-scoped-people-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 const privateHeaders = { "Cache-Control": "private, no-store" };
 
-async function handleGET(request: Request) {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const params = new URL(request.url).searchParams;
     if (new Set(params.keys()).size !== [...params.keys()].length) {
       return Response.json({ error: "INVALID_QUERY" }, { status: 400 });
@@ -58,17 +59,13 @@ async function handleGET(request: Request) {
       return Response.json(data, { headers: privateHeaders });
     }
     return Response.json({ error: "INVALID_MODE" }, { status: 400 });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
-export const GET = secured(handleGET);
+  },
+);
 
-async function handlePOST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return Response.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-  try {
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const _p = await readBoundedJsonRequest(request, 8192);
     if (!_p.ok) return Response.json({ error: "INVALID_BODY" }, { status: 400 });
     const body: unknown = _p.value;
@@ -79,11 +76,7 @@ async function handlePOST(request: Request) {
     if (typeof id !== "string") {
       return Response.json({ error: "INVALID_MEMBERSHIP" }, { status: 400 });
     }
-    const context = await getCurrentRequestContext();
     const recorded = await recordAdminScopedFacultySelection(context, id);
     return Response.json({ recorded }, { status: recorded ? 200 : 404, headers: privateHeaders });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
-export const POST = secured(handlePOST);
+  },
+);

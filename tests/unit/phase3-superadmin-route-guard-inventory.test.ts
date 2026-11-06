@@ -30,6 +30,10 @@ const TWO_HOP_ALLOWED: Record<string, { delegate: string; reason: string }> = {
     delegate: "src/modules/tenant-domains/service.ts",
     reason: "same tenant-domains runtime to service.ts chain.",
   },
+  "src/app/api/admin/placements/organization-jobs/route.ts": {
+    delegate: "src/modules/placements/organization-application-search-service.ts",
+    reason: "route() resolves the actor; the job search resolves its scope in the application-search service, which requires Super Admin and the persisted placements.read grant.",
+  },
 };
 
 describe("Phase 3: Super Admin API route guard inventory", () => {

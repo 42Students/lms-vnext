@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
@@ -8,7 +9,6 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { updateCollegeTermMapping, removeCollegeTermMapping, CollegeTermMappingError } from "@/modules/academics/college-term-mapping-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 /** Legacy semester courses endpoint map (numeric term/course identifiers must
@@ -26,13 +26,12 @@ export const runtime = "nodejs";
  */
 const inUseMessage = "A current active batch offering is using this semester-course mapping. Remove the live offering before deleting this mapping.";
 
-async function handleGET(
-  _request: Request, { params }: { params: Promise<{ mappingId: string }> },
-) {
-  try {
-    const { mappingId: raw } = await params;
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor, params }) => {
+    const context = actor!;
+    const { mappingId: raw } = params;
     const mappingId = z.string().uuid().parse(raw);
-    const context = await getCurrentRequestContext();
     const member = await resolveActingCollege(context, "academics.read");
     const [row] = await getDb().select({
       id: programTermCourses.id,
@@ -70,48 +69,28 @@ async function handleGET(
       deleteWarning:activeOffering?inUseMessage:
         "Removing this course will remove it from the semester map; historical course and learner records are retained."},
       {headers:{"Cache-Control":"private, no-store"}});
-  } catch(error) { return apiErrorResponse(error); }
-}
-export const GET = secured(handleGET);
+  },
+);
 
-async function handleDELETE(
-  request: Request, { params }: { params: Promise<{ mappingId: string }> },
-) {
-  if (!isSameOriginRequest(request))
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  try {
-    const { mappingId } = await params;
-    const context = await getCurrentRequestContext();
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { mappingId } = params;
     const result = await removeCollegeTermMapping(context, mappingId, await request.json());
     return NextResponse.json({status:"OK",result,message:"Course removed from semester"},
       {headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {
-    if (error instanceof CollegeTermMappingError)
-      return NextResponse.json({ error: error.code,
-        message: error.code==="TERM_COURSE_IN_USE" ? inUseMessage :
-          "The semester mapping changed. Review its current state before retrying." },
-        { status: error.code.endsWith("NOT_FOUND") ? 404 : 409 });
-    return apiErrorResponse(error);
-  }
-}
-export const DELETE = secured(handleDELETE, { csrf: "enforce" });
+  },
+);
 
-async function handlePATCH(
-  request: Request, { params }: { params: Promise<{ mappingId: string }> },
-) {
-  if (!isSameOriginRequest(request))
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  try {
-    const { mappingId } = await params;
-    const context = await getCurrentRequestContext();
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { mappingId } = params;
     const mapping = await updateCollegeTermMapping(context, mappingId, await request.json());
     return NextResponse.json({ status:"OK", mapping,
       data:mapping,message:"Semester course updated",
       reorderHint:"Changing position resequences other courses within this semester." }, { headers: { "Cache-Control": "private, no-store" } });
-  } catch (error) {
-    if (error instanceof CollegeTermMappingError)
-      return NextResponse.json({ error: error.code }, { status: error.code.endsWith("NOT_FOUND") ? 404 : 409 });
-    return apiErrorResponse(error);
-  }
-}
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+  },
+);

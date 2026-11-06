@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -11,7 +12,6 @@ import {
   replaceProjectTemplateCollegeAssignments,
   getProjectTemplateDetail,
 } from "@/modules/projects/template-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -40,20 +40,11 @@ async function parseRequest(
   return bodySchema.parse(await request.json());
 }
 
-async function handlePOST(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-    const { templateId } = await params;
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { templateId } = params;
     const body = await parseRequest(request);
     const assignment =
       await assignProjectTemplateToCollege(
@@ -61,31 +52,18 @@ async function handlePOST(
         templateId,
         body.collegeId,
       );
-
     return NextResponse.json(
       { assignment },
       { status: 201 },
     );
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
-export const POST = secured(handlePOST);
+  },
+);
 
-async function handleDELETE(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-    const { templateId } = await params;
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { templateId } = params;
     const body = await parseRequest(request);
     const assignment =
       await revokeProjectTemplateFromCollege(
@@ -93,28 +71,23 @@ async function handleDELETE(
         templateId,
         body.collegeId,
       );
-
     return NextResponse.json({ assignment });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
-export const DELETE = secured(handleDELETE);
+  },
+);
 
 /** Compare and replace all currently assigned colleges, never append blindly. */
-async function handlePUT(request:Request,{params}:RouteContext){
- if(!isSameOriginRequest(request))
-  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const {templateId}=await params;
-  const context=await getCurrentRequestContext();
-  requirePermission(context,"project-template.assign");
-  if(context.adminScope?.collegeId)
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const {templateId}=params;
+    requirePermission(context,"project-template.assign");
+    if(context.adminScope?.collegeId)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  const body=bulkSchema.parse(await request.json());
-  const result=await replaceProjectTemplateCollegeAssignments(context,templateId,
+    const body=bulkSchema.parse(await request.json());
+    const result=await replaceProjectTemplateCollegeAssignments(context,templateId,
     body.collegeIds,body.expectedCollegeIds);
-  return NextResponse.json({
+    return NextResponse.json({
     ...result,beforeCollegeIds:[...body.expectedCollegeIds].sort(),
     afterCollegeIds:result.collegeIds,
     total:result.collegeIds.length,
@@ -122,20 +95,20 @@ async function handlePUT(request:Request,{params}:RouteContext){
     message:result.added.length||result.removed.length?
       "Template assignments updated":"Template assignments unchanged",
   },{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const PUT = secured(handlePUT, { csrf: "enforce" });
+  },
+);
 
 /** Read the baseline set to send back as expectedCollegeIds on PUT. */
-async function handleGET(_request:Request,{params}:RouteContext){
- try{
-  const {templateId}=await params;
-  const context=await getCurrentRequestContext();
-  requirePermission(context,"project-template.assign");
-  if(context.adminScope?.collegeId)
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor, params }) => {
+    const context = actor!;
+    const {templateId}=params;
+    requirePermission(context,"project-template.assign");
+    if(context.adminScope?.collegeId)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  const detail=await getProjectTemplateDetail(context,templateId);
-  return NextResponse.json({
+    const detail=await getProjectTemplateDetail(context,templateId);
+    return NextResponse.json({
     collegeIds:detail.assignments.map(item=>item.collegeId).sort(),
     assignments:detail.assignments.map(item=>({
       collegeId:item.collegeId,templateId:detail.template.id,
@@ -144,6 +117,5 @@ async function handleGET(_request:Request,{params}:RouteContext){
     templateId:detail.template.id,
     editHint:"Use this collegeIds list as expectedCollegeIds on PUT to prevent overwriting another administrator's edits.",
   },{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
+  },
+);

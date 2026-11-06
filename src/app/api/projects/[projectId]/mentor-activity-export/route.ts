@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
@@ -6,13 +7,14 @@ import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-q
 import {getMentorProjectActivityHistory}
   from "@/modules/projects/mentor-project-activity-service";
 import {mentorActivityCsv} from "@/modules/projects/mentor-project-activity-export-model";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
 /** Read-only, strict project and current Mentor scope; no external sending. */
-async function handleGET(request:Request,{params}:RouteContext){
-  try{
-    const {projectId}=await params;
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const {projectId}=params;
     const url=new URL(request.url);
     const filters=singleValueMentorExportFilters(url.searchParams,[
       "importance","view","window","order",
@@ -21,7 +23,6 @@ async function handleGET(request:Request,{params}:RouteContext){
     const query=mentorProjectActivityQuerySchema.parse({
       projectId,...filters,page:1,pageSize:50,
     });
-    const context=await getCurrentRequestContext();
     const first=await getMentorProjectActivityHistory(context,query);
     if(!first.enabled)return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403});
     const pages=Math.min(4,first.totalPages);
@@ -37,6 +38,5 @@ async function handleGET(request:Request,{params}:RouteContext){
         "Cache-Control":"private, no-store",
         "X-Export-Omitted":String(omitted)},
     });
-  }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
+  },
+);

@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { and, eq } from "drizzle-orm";
 import { z, ZodError } from "zod";
@@ -12,7 +13,6 @@ import {
   SemesterMutationError,
   updateCollegeSemester,
 } from "@/modules/academics/semester-mutation-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ semesterId: string }> };
@@ -63,32 +63,27 @@ function handledError(error: unknown) {
   return apiErrorResponse(error);
 }
 
-async function handleGET(_request: Request, { params }: RouteContext) {
-  try {
-    const { semesterId } = await params;
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor, params }) => {
+    const context = actor!;
+    const { semesterId } = params;
     const semester = await scopedSemester(context, semesterId);
     if (!semester) return NextResponse.json({
       error: "SEMESTER_NOT_FOUND", message: "Program structure not found.",
     }, { status: 404 });
     return NextResponse.json({ status: "OK", message: "OK", data: semester, semester },
       {headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) { return handledError(error); }
-}
-export const GET = secured(handleGET);
+  },
+);
 
-async function handlePATCH(request: Request, { params }: RouteContext) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-  try {
-    const { semesterId } = await params;
-    const context = await getCurrentRequestContext();
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { semesterId } = params;
     const url = new URL(request.url);
     const statusType = url.searchParams.get("statusType");
-    // Legacy updateStatus accepted programId/id/statusType in the URL. Resolve
-    // the scoped row and its optimistic token server-side; do not trust caller
-    // supplied name, program or timestamps for a status-only operation.
     if (statusType !== null) {
       if (statusType !== "ACTIVE" && statusType !== "INACTIVE") {
         return NextResponse.json({ error: "BAD_REQUEST", message: "Invalid status type." }, { status: 400 });
@@ -112,24 +107,16 @@ async function handlePATCH(request: Request, { params }: RouteContext) {
     const body: unknown = await request.json();
     const semester = await updateCollegeSemester(context, semesterId, body);
     return NextResponse.json({ status: "OK", message: "Semester updated successfully.", data: semester, semester });
-  } catch (error) {
-    return handledError(error);
-  }
-}
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+  },
+);
 
-async function handleDELETE(request: Request, { params }: RouteContext) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-  try {
-    const { semesterId } = await params;
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { semesterId } = params;
     const body: unknown = await request.json();
-    const context = await getCurrentRequestContext();
     const result = await deleteCollegeSemester(context, semesterId, body);
     return NextResponse.json({ status: "OK", message: "Deleted successfully.", data: result, result });
-  } catch (error) {
-    return handledError(error);
-  }
-}
-export const DELETE = secured(handleDELETE, { csrf: "enforce" });
+  },
+);

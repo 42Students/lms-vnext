@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {randomBytes} from "node:crypto";
 import {MENTOR_GOOGLE_OAUTH_RESPONSE_HEADERS} from
@@ -7,31 +8,27 @@ import {mentorGoogleConfig,mentorGoogleConsentUrl,mentorGooglePkceChallenge} fro
  "@/modules/projects/mentor-google-calendar-provider";
 import {mentorGoogleConnectionState} from
  "@/modules/projects/mentor-google-calendar-connection-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** An authenticated, explicit user navigation starts Google OAuth. A signed-in
  * Mentor alone may connect their own college-scoped calendar grant.
  */
-async function handleGET(request:Request){
- try{
-  const context=await getCurrentRequestContext();
-  const status=await mentorGoogleConnectionState(context);
-  const config=mentorGoogleConfig();
-  if(!status.available||!config||!context.membership)
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
+    const status=await mentorGoogleConnectionState(context);
+    const config=mentorGoogleConfig();
+    if(!status.available||!config||!context.membership)
    return NextResponse.redirect(new URL("/mentor/calendar?google=unavailable",request.url),
     {headers:MENTOR_GOOGLE_OAUTH_RESPONSE_HEADERS});
-  const nonce=randomBytes(32).toString("base64url");
-  const verifier=randomBytes(32).toString("base64url");
-  const response=NextResponse.redirect(
+    const nonce=randomBytes(32).toString("base64url");
+    const verifier=randomBytes(32).toString("base64url");
+    const response=NextResponse.redirect(
    mentorGoogleConsentUrl(config,nonce,mentorGooglePkceChallenge(verifier)),
    {headers:MENTOR_GOOGLE_OAUTH_RESPONSE_HEADERS});
-  response.cookies.set("mentor-google-oauth",nonce+"."+context.user.id+"."+
+    response.cookies.set("mentor-google-oauth",nonce+"."+context.user.id+"."+
    context.membership.id+"."+verifier,{path:"/api/mentor/calendar/google",httpOnly:true,
    sameSite:"lax",secure:process.env.NODE_ENV==="production",maxAge:600});
-  return response;
- }catch{
-  return NextResponse.redirect(new URL("/mentor/calendar?google=unavailable",request.url),
-    {headers:MENTOR_GOOGLE_OAUTH_RESPONSE_HEADERS});
- }
-}
-export const GET = secured(handleGET);
+    return response;
+  },
+);

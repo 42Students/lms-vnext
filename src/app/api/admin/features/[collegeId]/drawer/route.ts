@@ -1,10 +1,10 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getSuperAdminLearnerAccessTrace} from "@/modules/module-access/admin-trace-service";
 import {studentRuleCards} from "@/modules/module-access/admin-student-rule-model";
-import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const query=z.strictObject({
@@ -13,30 +13,29 @@ const query=z.strictObject({
  view:z.enum(["suggestions","overrides","locked"]).default("suggestions"),
  page:z.coerce.number().int().min(1).max(10000).default(1),
 });
-async function handleGET(request:Request,{params}:{params:Promise<{collegeId:string}>}){
- try{
-  const input:Record<string,string>={};
-  for(const [key,value] of new URL(request.url).searchParams){
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const input:Record<string,string>={};
+    for(const [key,value] of new URL(request.url).searchParams){
    if(Object.hasOwn(input,key)||!["q","membershipId","view","page"].includes(key))
     return NextResponse.json({error:"INVALID_FILTER"},{status:400});
    input[key]=value;
   }
-  const parsed=query.parse(input);
-  const context=await getCurrentRequestContext();
-  const {collegeId}=await params;
-  // A separate global-admin read reuses the established tenant, membership and
-  // permission gates; it never resolves a legacy numeric user ID.
-  const isOverrides=parsed.view!=="suggestions";
-  const firstIndex=(parsed.page-1)*15;
-  const firstPage=isOverrides?Math.floor(firstIndex/25)+1:1;
-  const first=await getSuperAdminLearnerAccessTrace(context,collegeId,{
+    const parsed=query.parse(input);
+    const {collegeId}=params;
+    const isOverrides=parsed.view!=="suggestions";
+    const firstIndex=(parsed.page-1)*15;
+    const firstPage=isOverrides?Math.floor(firstIndex/25)+1:1;
+    const first=await getSuperAdminLearnerAccessTrace(context,collegeId,{
    q:parsed.q??"",membershipId:parsed.membershipId,
    overridesOnly:isOverrides?(parsed.view==="locked"?"locked":"only"):"all",
    page:firstPage,
   });
-  if(!first)return NextResponse.json({error:"NOT_FOUND"},{status:404});
-  let learners=first.learners;
-  if(isOverrides){
+    if(!first)return NextResponse.json({error:"NOT_FOUND"},{status:404});
+    let learners=first.learners;
+    if(isOverrides){
    const offset=firstIndex%25;
    if(offset+15>25&&firstPage<first.totalPages){
     const second=await getSuperAdminLearnerAccessTrace(context,collegeId,{
@@ -46,8 +45,8 @@ async function handleGET(request:Request,{params}:{params:Promise<{collegeId:str
    }
    learners=learners.slice(offset,offset+15);
   }else learners=learners.slice(0,10);
-  const student=first.selected;
-  return NextResponse.json({
+    const student=first.selected;
+    return NextResponse.json({
    learners:learners.map(item=>({
     membershipId:item.membershipId,displayName:item.displayName,rollNumber:item.rollNumber,
    })),
@@ -73,6 +72,5 @@ async function handleGET(request:Request,{params}:{params:Promise<{collegeId:str
     })),
    }:null,
   },{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
+  },
+);

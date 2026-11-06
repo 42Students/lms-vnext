@@ -1,21 +1,18 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {updateProjectWorkspaceBrief} from "@/modules/projects/workspace-brief-service";
 import {z} from "zod";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-async function handlePATCH(request:Request,{params}:{params:Promise<{projectId:string}>}){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const {projectId}=await params;
-  const context=await getCurrentRequestContext();
-  const payload:unknown=await request.json();
-  // The historic overview JSON may contain opaque template facts, which
-  // remain DB-owned. Never trust caller-supplied unknown keys or a forged
-  // selected-college ID; the service locks the scoped project in one TX.
-  const legacy=z.strictObject({
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const {projectId}=params;
+    const payload:unknown=await request.json();
+    const legacy=z.strictObject({
    detailsToken:z.iso.datetime({offset:true}),
    overview:z.object({
     goal:z.string().optional(),description:z.string().optional(),
@@ -24,7 +21,7 @@ async function handlePATCH(request:Request,{params}:{params:Promise<{projectId:s
     personas:z.array(z.string()).optional(),
    }).passthrough(),
   }).safeParse(payload);
-  const input=legacy.success?{
+    const input=legacy.success?{
    expectedUpdatedAt:legacy.data.detailsToken,
    brief:{
     goal:legacy.data.overview.goal??"",
@@ -34,7 +31,6 @@ async function handlePATCH(request:Request,{params}:{params:Promise<{projectId:s
     personas:legacy.data.overview.personas??[],
    },
   }:payload;
-  return NextResponse.json(await updateProjectWorkspaceBrief(context,projectId,input));
- }catch(error){return apiErrorResponse(error);}
-}
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+    return NextResponse.json(await updateProjectWorkspaceBrief(context,projectId,input));
+  },
+);

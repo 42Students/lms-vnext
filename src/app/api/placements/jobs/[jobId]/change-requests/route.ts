@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -18,7 +19,6 @@ import {readTpoInternalConversation} from "@/modules/placements/tpo-team-convers
 import {postTpoInternalMessage} from "@/modules/placements/tpo-team-internal-reply-service";
 
 import {legacyDriveChangeStatus} from "@/modules/placements/tpo-drive-change-request-model";
-import { secured } from "@/security/secure-handler";
 
 /**
  * Legacy /api/v1/tpo compatibility map (G2-5-023-001/034):
@@ -82,11 +82,13 @@ async function scopedDriveThreads(context:Awaited<ReturnType<typeof getCurrentRe
 
 export const runtime="nodejs";export const dynamic="force-dynamic";
 type Props={params:Promise<{jobId:string}>};
-async function handleGET(req:Request,{params}:Props){
- try{const {jobId}=await params;
-  const context=await getCurrentRequestContext();
-  const url=new URL(req.url);
-  if(url.searchParams.get("view")==="internal-notes"){
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request: req, context: actor, params }) => {
+    const context = actor!;
+    const {jobId}=params;
+    const url=new URL(req.url);
+    if(url.searchParams.get("view")==="internal-notes"){
    const scoped=await scopedDriveThreads(context,jobId);
    const threadId=url.searchParams.get("threadId");
    if(!threadId)return NextResponse.json(scoped,{
@@ -100,20 +102,20 @@ async function handleGET(req:Request,{params}:Props){
    return NextResponse.json({...data,messages:data.messages.filter(row=>!row.removed)},{
     headers:{"Cache-Control":"private, no-store"}});
   }
-  const page=await getDriveChangeRequests(context,jobId,url.searchParams.get("cursor"));
-  return NextResponse.json({...page,requests:page.requests.map(request=>({
+    const page=await getDriveChangeRequests(context,jobId,url.searchParams.get("cursor"));
+    return NextResponse.json({...page,requests:page.requests.map(request=>({
    ...request,
    legacyStatus:legacyDriveChangeStatus(request.status,request.replyText),
   }))},{headers:{"Cache-Control":"private, no-store"}});
- }catch(e){return apiErrorResponse(e);}
-}
-export const GET = secured(handleGET);
-async function handlePOST(req:Request,{params}:Props){
- if(!isSameOriginRequest(req))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{const {jobId}=await params;
-  const context=await getCurrentRequestContext();
-  const body:unknown=await req.json().catch(()=>null);
-  if(body&&typeof body==="object"&&!Array.isArray(body)&&
+  },
+);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request: req, context: actor, params }) => {
+    const context = actor!;
+    const {jobId}=params;
+    const body:unknown=await req.json().catch(()=>null);
+    if(body&&typeof body==="object"&&!Array.isArray(body)&&
     (body as {kind?:unknown}).kind==="INTERNAL_NOTE"){
    const input=internalNoteSchema.parse(body);
    const scoped=await scopedDriveThreads(context,jobId);
@@ -129,15 +131,9 @@ async function handlePOST(req:Request,{params}:Props){
     messageId:created.id,notified:created.notified},
     {status:201,headers:{"Cache-Control":"private, no-store"}});
   }
-  const result=await mutateDriveChangeRequest(context,jobId,body);
-  return NextResponse.json({...result,
+    const result=await mutateDriveChangeRequest(context,jobId,body);
+    return NextResponse.json({...result,
    legacyStatus:result.status==="DECLINED"?"REPLIED":legacyDriveChangeStatus(result.status,null)},
    {headers:{"Cache-Control":"private, no-store"}});
- }catch(e){
-  if(e instanceof OpenDriveChangeConflict)
-   return NextResponse.json({error:e.code,message:e.legacyMessage},
-    {status:409,headers:{"Cache-Control":"private, no-store"}});
-  return apiErrorResponse(e);
- }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

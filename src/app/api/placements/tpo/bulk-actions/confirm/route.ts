@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {requireTpoJobCollege} from "@/modules/placements/tpo-job-write-base";
@@ -7,29 +8,15 @@ import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-
 import {TpoBulkApplicationsUnavailable} from "@/modules/placements/tpo-bulk-workflow-model";
 import {confirmTpoBulkAction,TpoBulkPreviewError}
  from "@/modules/placements/tpo-bulk-action-confirm-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-async function handlePOST(request:Request){
- if(!isSameOriginRequest(request))
-   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-   const body=await readTpoBulkRequestBody(request);
-   const context=await getCurrentRequestContext();
-   await requireTpoJobCollege(context);
-   const result=await confirmTpoBulkAction(
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
+    const body=await readTpoBulkRequestBody(request);
+    await requireTpoJobCollege(context);
+    const result=await confirmTpoBulkAction(
      context,body);
-   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){
-   if(error instanceof TpoBulkBodyError)
-     return NextResponse.json({error:error.message},{status:error.status,
-       headers:{"Cache-Control":"private, no-store"}});
-   if(error instanceof TpoBulkApplicationsUnavailable)
-     return NextResponse.json({error:"DB09_MIGRATIONS_PENDING"},{status:503,
-       headers:{"Cache-Control":"private, no-store"}});
-   if(error instanceof TpoBulkPreviewError)
-     return NextResponse.json({error:error.message},{status:409,
-       headers:{"Cache-Control":"private, no-store"}});
-   return apiErrorResponse(error);
- }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  },
+);

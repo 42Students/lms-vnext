@@ -1,8 +1,8 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {listHrNotifications} from "@/modules/placements/hr-notifications-service";
 import {apiErrorResponse} from "@/lib/api-error";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 
 /** Legacy RecruiterSelfController notifications crosswalk:
@@ -12,18 +12,19 @@ export const runtime="nodejs";
  * The drawer and bell both read scoped in-app notification receipts. The
  * mark-all writer verifies the same authorized employer/college drive set.
  */
-async function handleGET(request:Request){
- try{
-  const url=new URL(request.url);
-  const collegeId=url.searchParams.get("collegeId")??undefined;
-  const context=await getCurrentRequestContext();
-  const result=await listHrNotifications(context,{
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
+    const url=new URL(request.url);
+    const collegeId=url.searchParams.get("collegeId")??undefined;
+    const result=await listHrNotifications(context,{
    collegeId,
    unreadOnly:url.searchParams.get("unreadOnly")??"false",
    page:url.searchParams.get("page")??1,
    q:url.searchParams.get("q")??"",
   });
-  return NextResponse.json({...result,
+    return NextResponse.json({...result,
    feed:result.rows,
    unreadCount:result.unread,
    links:{
@@ -34,6 +35,5 @@ async function handleGET(request:Request){
     notifications:"/hr/notifications",
    },
   },{headers:{"Cache-Control":"private, no-store"}});
- }catch(e){return apiErrorResponse(e);}
-}
-export const GET = secured(handleGET);
+  },
+);

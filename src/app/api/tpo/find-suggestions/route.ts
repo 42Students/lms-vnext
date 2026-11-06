@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextRequest,NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -6,28 +7,28 @@ import {hasTpoTooling} from "@/modules/placements/tpo-workspace-access-model";
 import {findTpoPeopleAndCompanies} from "@/modules/placements/tpo-find-people-service";
 import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {getPlacementTpoOperations} from "@/modules/placements/tpo-operations-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const termSchema=z.string().trim().min(2).max(100);
 
 /** TPO-home-28: bounded, permission-scoped live record suggestions. */
-async function handleGET(request:NextRequest){
- try{
-  const parsed=termSchema.safeParse(new URL(request.url).searchParams.get("q")??"");
-  if(!parsed.success)return NextResponse.json({error:"Enter at least 2 characters."},{status:400});
-  const context=await getCurrentRequestContext();
-  if(!hasTpoTooling(context))return NextResponse.json({error:"Access denied"},{status:403});
-  const collegeId=context.membership!.collegeId;
-  const q=parsed.data;
-  const [people,batches,operations]=await Promise.all([
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
+    const parsed=termSchema.safeParse(new URL(request.url).searchParams.get("q")??"");
+    if(!parsed.success)return NextResponse.json({error:"Enter at least 2 characters."},{status:400});
+    if(!hasTpoTooling(context))return NextResponse.json({error:"Access denied"},{status:403});
+    const collegeId=context.membership!.collegeId;
+    const q=parsed.data;
+    const [people,batches,operations]=await Promise.all([
    findTpoPeopleAndCompanies(context,collegeId,q),
    listTpoBatches(context),
    getPlacementTpoOperations(context,collegeId),
   ]);
-  const term=q.toLocaleLowerCase();
-  const matches=(...parts:(string|null|undefined)[])=>parts.some(value=>value?.toLocaleLowerCase().includes(term));
-  const results=[
+    const term=q.toLocaleLowerCase();
+    const matches=(...parts:(string|null|undefined)[])=>parts.some(value=>value?.toLocaleLowerCase().includes(term));
+    const results=[
    ...people.students.slice(0,5).map(person=>({
     group:"Students",label:[person.name??"Student",person.rollNumber,person.branch].filter(Boolean).join(" · "),
     href:"/tpo/students?q="+encodeURIComponent(person.rollNumber??person.name??"")+"&student="+encodeURIComponent(person.id),
@@ -45,7 +46,6 @@ async function handleGET(request:NextRequest){
     .slice(0,5).map(item=>({group:"Drives",label:item.job.title+" · "+item.job.company.name,
      href:"/tpo/placements/jobs/"+encodeURIComponent(item.job.id)})),
   ];
-  return NextResponse.json({results},{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
+    return NextResponse.json({results},{headers:{"Cache-Control":"private, no-store"}});
+  },
+);

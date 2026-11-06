@@ -1,27 +1,28 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getLearnerPlacementRequestWorkspace} from "@/modules/placements/request-service";
 import {apiErrorResponse} from "@/lib/api-error";
 import {partitionLearnerPlacementSchedule} from "@/modules/placements/learner-placement-schedule-model";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Legacy learner /schedule adapter. Caller identity is session-owned; never
  * accept learnerId, collegeId, or applicationId as an authorization bypass. */
-async function handleGET(request:Request){
- try{
-  const url=new URL(request.url);
-  if([...url.searchParams.keys()].some(key=>key!=="view"))
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
+    const url=new URL(request.url);
+    if([...url.searchParams.keys()].some(key=>key!=="view"))
    return NextResponse.json({error:"INVALID_QUERY"},{status:400});
-  const requested=url.searchParams.get("view")??"ahead";
-  if(!["ahead","past","month","all"].includes(requested))
+    const requested=url.searchParams.get("view")??"ahead";
+    if(!["ahead","past","month","all"].includes(requested))
    return NextResponse.json({error:"INVALID_VIEW"},{status:400});
-  const context=await getCurrentRequestContext();
-  const own=await getLearnerPlacementRequestWorkspace(context);
-  const now=new Date();
-  const {ahead,past,undated}=partitionLearnerPlacementSchedule(own.rounds,now);
-  const filter=requested==="past"?past:requested==="ahead"?[...ahead,...undated]:own.rounds;
-  return NextResponse.json({
+    const own=await getLearnerPlacementRequestWorkspace(context);
+    const now=new Date();
+    const {ahead,past,undated}=partitionLearnerPlacementSchedule(own.rounds,now);
+    const filter=requested==="past"?past:requested==="ahead"?[...ahead,...undated]:own.rounds;
+    return NextResponse.json({
    status:"success",message:filter.length?"Schedule retrieved":"No scheduled rounds",
    data:filter.slice(0,500).map(row=>({
     applicationId:row.applicationId,jobId:row.jobId,roundId:row.roundId,
@@ -45,6 +46,5 @@ async function handleGET(request:Request){
    total:filter.length,truncated:filter.length>500,
    fromOwnMembership:true,
   },{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
+  },
+);

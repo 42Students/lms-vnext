@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { and, asc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
@@ -15,7 +16,6 @@ import {
   updateCollegeProgram,
   restoreCollegeProgram,
 } from "@/modules/academics/college-program-mutation-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ programId: string }> };
@@ -30,16 +30,15 @@ function handledError(error: unknown) {
 }
 
 /** Legacy program detail lookup. Read scope is validated before any details leave the DB. */
-async function handleGET(_request: Request, { params }: RouteContext) {
-  try {
-    const { programId: rawId } = await params;
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor, params }) => {
+    const context = actor!;
+    const { programId: rawId } = params;
     const programId=z.string().uuid().safeParse(rawId);
-    // Numeric imported IDs are never read as UUIDs; a scoped migration
-    // crosswalk must explicitly resolve any legacy bookmark first.
     if(!programId.success)return NextResponse.json({
       error:"PROGRAM_NOT_FOUND",message:"Program not found.",
     },{status:404});
-    const context = await getCurrentRequestContext();
     const scope = await loadProgramScope(programId.data, true);
     requirePermission(context, "academics.read", {
       organizationId: scope.organizationId,
@@ -54,7 +53,6 @@ async function handleGET(_request: Request, { params }: RouteContext) {
     }).from(programs).innerJoin(departments,eq(departments.id,programs.departmentId))
       .where(eq(programs.id,programId.data)).limit(1);
     if (!program) return NextResponse.json({ error: "PROGRAM_NOT_FOUND" }, { status: 404 });
-    // Resolve nested curriculum only within the authorized college's program.
     const terms=await getDb().select({
       id:programTerms.id,name:programTerms.name,termNumber:programTerms.termNumber,
       startDate:programTerms.startDate,endDate:programTerms.endDate,
@@ -107,17 +105,14 @@ async function handleGET(_request: Request, { params }: RouteContext) {
         // Old model used numeric program IDs; UUID is authoritative.
         id:program.id,departmentId:program.departmentId},
     },{headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) { return handledError(error); }
-}
-export const GET = secured(handleGET);
+  },
+);
 
-async function handlePATCH(request: Request, { params }: RouteContext) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-  try {
-    const { programId } = await params;
-    const context = await getCurrentRequestContext();
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { programId } = params;
     const parsedBody = await readBoundedJsonBody(request, 16_384);
     if (parsedBody.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: parsedBody.kind === "TOO_LARGE" ? 413 : 400,
@@ -128,17 +123,14 @@ async function handlePATCH(request: Request, { params }: RouteContext) {
       ? await restoreCollegeProgram(context, programId, body)
       : await updateCollegeProgram(context, programId, body);
     return NextResponse.json({ program, message: "OK" });
-  } catch (error) { return handledError(error); }
-}
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+  },
+);
 
-async function handleDELETE(request: Request, { params }: RouteContext) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-  try {
-    const { programId } = await params;
-    const context = await getCurrentRequestContext();
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { programId } = params;
     const parsedBody = await readBoundedJsonBody(request, 16_384);
     if (parsedBody.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: parsedBody.kind === "TOO_LARGE" ? 413 : 400,
@@ -146,10 +138,7 @@ async function handleDELETE(request: Request, { params }: RouteContext) {
     });
     const body: unknown = parsedBody.value;
     const program = await archiveCollegeProgram(context, programId, body);
-    // Soft archive is deliberate: unlike legacy hard delete, course and
-    // cohort references, history and activity records remain recoverable.
     return NextResponse.json({ program, message: "Program archived",
       retention: "Historical academic records are retained. Restore remains possible when dependencies allow." });
-  } catch (error) { return handledError(error); }
-}
-export const DELETE = secured(handleDELETE, { csrf: "enforce" });
+  },
+);

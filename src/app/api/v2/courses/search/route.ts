@@ -1,8 +1,8 @@
+import { route } from "@/security/route";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {searchAuthorizedCourseSuggestions} from "@/modules/courses/college-course-catalogue-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const noStore={"Cache-Control":"private, no-store"};
@@ -13,20 +13,18 @@ const querySchema=z.strictObject({
 
 /** Scoped SQL-backed v2 course search. Never expose raw legacy numeric course
  * IDs or serve an unscoped process-global cache to a tenant. */
-async function handleGET(request:Request){
-  try{
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const params=new URL(request.url).searchParams;
     const input=querySchema.parse({
       query:params.get("query")??"",
       limit:params.get("limit")??"15",
     });
-    const context=await getCurrentRequestContext();
     const courses=await searchAuthorizedCourseSuggestions(context,{
       q:input.query,limit:input.limit,
     });
     return Response.json({status:"success",data:courses},{headers:noStore});
-  }catch(error){
-    return apiErrorResponse(error);
-  }
-}
-export const GET = secured(handleGET);
+  },
+);

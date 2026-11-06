@@ -64,7 +64,7 @@ for (const p of files) {
     const customCatch = isCatch(st[0].catchClause) ? null : st[0].catchClause;
     const body = st[0].tryBlock.statements;
     const ctxIdx = body.findIndex((s) => ts.isVariableStatement(s) && /^await getCurrentRequestContext\(\)$/.test(s.declarationList.declarations[0].initializer?.getText() ?? ""));
-    if (ctxIdx !== 0) { ok = false; reason = "no-ctx-stmt"; break; }
+    if (ctxIdx < 0) { ok = false; reason = "no-ctx-stmt"; break; }
     const ctxName = body[ctxIdx].declarationList.declarations[0].name.getText();
     if (ctxName !== "context") { ok = false; reason = "ctx-name"; break; }
     const ctxDecls = body[ctxIdx].declarationList.declarations;

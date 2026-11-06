@@ -1,10 +1,10 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import { createPrivateReadGrant } from "@/modules/storage/private-object-storage";
 import { placementJobIdSchema } from "@/modules/placements/validation";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 const noStore = { "Cache-Control": "private, no-store" };
@@ -13,12 +13,13 @@ type Params = { params: Promise<{ jobId: string }> };
 /** Read only a published drive visible to this learner's scoped college,
  * current cohort and section. The upload owner is never inferred from a
  * client-supplied object key and the signed URL is never persisted. */
-async function handleGET(_request: Request, { params }: Params) {
-  try {
-    const { jobId } = await params;
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor, params }) => {
+    const context = actor!;
+    const { jobId } = params;
     if (!placementJobIdSchema.safeParse(jobId).success)
       return NextResponse.json({ error: "INVALID_JOB" }, { status: 400, headers: noStore });
-    const context = await getCurrentRequestContext();
     const rows = await listLearnerPlacementJobs(context, new Date(), jobId);
     const job = rows.find(row => row.job.id === jobId)?.job;
     if (!job || job.status !== "PUBLISHED" || !job.jobDescriptionObjectPath)
@@ -37,6 +38,5 @@ async function handleGET(_request: Request, { params }: Params) {
       readUrl: grant.readUrl, expiresAt: grant.expiresAt.toISOString(),
       contentType: grant.contentType,
     }, { headers: noStore });
-  } catch (error) { return apiErrorResponse(error); }
-}
-export const GET = secured(handleGET);
+  },
+);

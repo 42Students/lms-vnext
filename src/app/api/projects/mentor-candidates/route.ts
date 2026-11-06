@@ -1,17 +1,17 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { collegeIdSchema } from "@/modules/academics/validation";
 import { listProjectMentorCandidates } from "@/modules/projects/member-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-async function handleGET(request: Request) {
-  try {
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const url = new URL(request.url);
-    const context =
-      await getCurrentRequestContext();
     const collegeId = collegeIdSchema.parse(
       url.searchParams.get("collegeId"),
     );
@@ -25,10 +25,6 @@ async function handleGET(request: Request) {
           offset:Number(url.searchParams.get("offset")??"0"),
         },
       );
-
     return NextResponse.json({ mentors });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
-export const GET = secured(handleGET);
+  },
+);

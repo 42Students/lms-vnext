@@ -1,28 +1,20 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { parseTpoNotificationReadBody } from "@/modules/activity/tpo-notifications-model";
 import { markOwnTpoNotificationRead } from "@/modules/activity/tpo-notifications-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-async function handlePOST(
-  request: Request,
-  { params }: { params: Promise<{ notificationId: string }> },
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-  try {
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
     parseTpoNotificationReadBody(await request.text());
-    const context = await getCurrentRequestContext();
-    const { notificationId } = await params;
+    const { notificationId } = params;
     const notification = await markOwnTpoNotificationRead(context, notificationId);
     return NextResponse.json({ notification });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);
