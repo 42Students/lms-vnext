@@ -1,13 +1,14 @@
+import { route } from "@/security/route";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoPlacedStudentsByBranch } from "@/modules/placements/tpo-placed-branch-service";
 import { tpoPlacedBranchCsv } from "@/modules/placements/tpo-placed-branch-model";
-import { secured } from "@/security/secure-handler";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-async function handleGET(request: Request) {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const report = await getTpoPlacedStudentsByBranch(context,
       Object.fromEntries(new URL(request.url).searchParams.entries()));
     if (!report.season) {
@@ -28,10 +29,5 @@ async function handleGET(request: Request) {
         "X-Export-Truncated": String(exported.truncated),
       },
     });
-  } catch (caught) {
-    const response = apiErrorResponse(caught);
-    response.headers.set("Cache-Control", "private, no-store, max-age=0");
-    return response;
-  }
-}
-export const GET = secured(handleGET);
+  },
+);

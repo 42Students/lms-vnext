@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -22,7 +23,6 @@ import {
   getPlacementReportDetails,
   getPlacementReportWorkspace,
 } from "@/modules/placements/report-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -515,29 +515,23 @@ function leadsReportCsv(report: PlacementLeadsReport) {
   return placementReportCsv(headings, rows);
 }
 
-async function handleGET(request: Request) {
-  try {
-    const context = await getCurrentRequestContext();
-
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const collegeId = isSuperAdmin(context)
       ? context.adminScope?.collegeId ?? null
       : hasMembershipRole(context, "TPO")
         ? context.membership?.collegeId ?? null
         : null;
-
     if (!collegeId) {
       throw new AuthorizationError("placements.manage");
     }
-
     const query = exportQuerySchema.parse(
       Object.fromEntries(
         new URL(request.url).searchParams.entries(),
       ),
     );
-
-    // Separate migrated-only evidence path: the normal report workspace
-    // optionally touches staged registration persistence and is not a
-    // suitable accreditation source.
     if(query.kind==="accreditation-students"){
       if(!hasMembershipRole(context,"TPO")||!query.batchId)
         throw new AuthorizationError("placements.manage");
@@ -566,16 +560,13 @@ async function handleGET(request: Request) {
         },
       });
     }
-
     const workspace = await getPlacementReportWorkspace(context, {
       collegeId,
       seasonId: query.seasonId,
       jobId: query.jobId,
     });
-
     let csv: string;
     let filename: string;
-
     switch (query.kind) {
       case "placement-summary":
         csv = placementSummaryCsv(workspace);
@@ -642,7 +633,6 @@ async function handleGET(request: Request) {
         }
       }
     }
-
     return new Response(`﻿${csv}`, {
       status: 200,
       headers: {
@@ -653,10 +643,5 @@ async function handleGET(request: Request) {
         Vary: "Cookie",
       },
     });
-  } catch (error) {
-    const response = apiErrorResponse(error);
-    response.headers.set("Cache-Control", "private, no-store, max-age=0");
-    return response;
-  }
-}
-export const GET = secured(handleGET);
+  },
+);

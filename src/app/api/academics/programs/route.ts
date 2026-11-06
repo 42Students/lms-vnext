@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { z, ZodError } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -11,7 +12,6 @@ import {
   CollegeProgramMutationError,
   createCollegeProgram,
 } from "@/modules/academics/college-program-mutation-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -118,9 +118,10 @@ function programCreateFieldErrors(error: ZodError) {
   return fields;
 }
 
-async function handleGET(request: Request) {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const url = new URL(request.url);
     const mode=url.searchParams.get("mode");
     const departmentId=url.searchParams.get("departmentId") ?? url.searchParams.get("deptId");
@@ -133,9 +134,6 @@ async function handleGET(request: Request) {
       const legacy=legacyProgramSearch(programs,url.searchParams,url.searchParams.get("collegeId") ?? "");
       return NextResponse.json(legacy,{headers:{"Cache-Control":"private, no-store"}});
     }
-    // Explicit zero-based pagination preserves the historical page contract
-    // without exposing numeric-ID aliases or cross-college unscoped reads.
-    // Calls without pagination still receive the existing vNext {programs}.
     const page=parseLegacyProgramPage(url.searchParams);
     if(page===false)return NextResponse.json({error:"INVALID_PAGINATION",message:"Page must be a non-negative integer and size must be between 1 and 100."},{status:400});
     if(page){
@@ -151,18 +149,13 @@ async function handleGET(request: Request) {
       }},{headers:{"Cache-Control":"private, no-store"}});
     }
     return NextResponse.json({ programs });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
-export const GET = secured(handleGET);
+  },
+);
 
-async function handlePOST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-  try {
-    const context = await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const parsedBody = await readBoundedJsonBody(request, 16_384);
     if (parsedBody.kind !== "OK") return NextResponse.json({
       error: "INVALID_REQUEST", message: "Enter valid program details.",
@@ -174,35 +167,5 @@ async function handlePOST(request: Request) {
     return NextResponse.json(legacy
       ? {status:"OK",message:"Program created successfully",data:program}
       : { program }, { status: legacy?200:201 });
-  } catch (error) {
-    if (error instanceof CollegeProgramMutationError) {
-      const fieldErrors = error.code === "PROGRAM_NAME_CONFLICT"
-        ? { name: "Program name already exists in this department" }
-        : error.code === "PROGRAM_CODE_CONFLICT"
-          ? { code: "Program code already exists in this department" }
-          : {};
-      return NextResponse.json({
-        error: error.code,
-        fieldErrors,
-        message: error.code === "PROGRAM_NAME_CONFLICT"
-          ? "Program name already exists in this department"
-          : "Unable to save this program. Review its details.",
-      }, { status: error.code === "DEPARTMENT_NOT_FOUND" ? 404 : 409 });
-    }
-    if (error instanceof ZodError) {
-      return NextResponse.json({
-        error: "INVALID_REQUEST",
-        fieldErrors: new URL(request.url).searchParams.get("legacy") === "1"
-          ? (() => {
-              const fields=programCreateFieldErrors(error);
-              return {...fields,...(fields["departmentId"] ? {dept_id:fields["departmentId"]}:{}),
-                ...(fields["durationTerms"] ? {duration_years:fields["durationTerms"]}:{})};
-            })()
-          : programCreateFieldErrors(error),
-        message: "Please review the program details.",
-      }, { status: 400 });
-    }
-    return apiErrorResponse(error);
-  }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

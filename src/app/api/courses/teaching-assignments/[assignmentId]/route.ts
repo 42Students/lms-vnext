@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {and,eq} from "drizzle-orm";
 import {z} from "zod";
@@ -13,7 +14,6 @@ import {
   endCourseTeachingAssignment,
   changeCourseTeachingAssignmentRole,
 } from "@/modules/courses/teaching-assignment-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -37,53 +37,33 @@ type RouteContext = {
   params: Promise<{ assignmentId: string }>;
 };
 
-async function handleDELETE(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-    const { assignmentId } = await params;
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor, params }) => {
+    const context = actor!;
+    const { assignmentId } = params;
     const assignment =
       await endCourseTeachingAssignment(
         context,
         await scopedTeachingAssignmentId(context,assignmentId),
       );
-
     return NextResponse.json({
       assignment,active:false,endedAt:assignment.endedAt,
       message: "Association deactivated successfully.",
     });
-  } catch (error) {
-    // Legacy deactivation returned an empty 404 for a missing/already
-    // ended association. Keep other access failures in the normal API envelope.
-    if (error instanceof CoursesServiceError &&
-        error.code === "TEACHING_ASSIGNMENT_NOT_FOUND") {
-      return new Response(null, { status: 404 });
-    }
-    return apiErrorResponse(error);
-  }
-}
-export const DELETE = secured(handleDELETE);
+  },
+);
 
-async function handlePATCH(request:Request,{params}:RouteContext){
-  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
-  try{
-    const context=await getCurrentRequestContext();
-    const {assignmentId}=await params;
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const {assignmentId}=params;
     const body:unknown=await request.json();
     const parsed=changeCourseTeachingAssignmentRoleInputSchema.safeParse(body);
     if(!parsed.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
     const assignment=await changeCourseTeachingAssignmentRole(context,
       await scopedTeachingAssignmentId(context,assignmentId),parsed.data);
     return NextResponse.json({assignment});
-  }catch(error){return apiErrorResponse(error);}
-}
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+  },
+);

@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -6,7 +7,6 @@ import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import {
   CollegeSectionError, createCollegeSection,
 } from "@/modules/academics/college-section-mutation-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -15,11 +15,10 @@ export const runtime = "nodejs";
  * persisted tenant-scoped UUID membership authorization. No numeric legacy
  * class/college ID is trusted or mapped from the request body.
  */
-async function handlePOST(request: Request) {
-  if (!isSameOriginRequest(request))
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  try {
-    const context = await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const parsed = await readBoundedJsonBody(request, 16_384);
     if (parsed.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: parsed.kind === "TOO_LARGE" ? 413 : 400,
@@ -29,13 +28,5 @@ async function handlePOST(request: Request) {
     const section = await createCollegeSection(context, body);
     return NextResponse.json({ status: "OK", message: "OK", data: section },
       { status: 200, headers: { "Cache-Control": "private, no-store" } });
-  } catch (error) {
-    if (error instanceof CollegeSectionError) {
-      return NextResponse.json({ status: "ERROR", message: error.code, data: null },
-        { status: error.code === "CLASS_COHORT_NOT_FOUND" ? 404 : 409,
-          headers: { "Cache-Control": "private, no-store" } });
-    }
-    return apiErrorResponse(error);
-  }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

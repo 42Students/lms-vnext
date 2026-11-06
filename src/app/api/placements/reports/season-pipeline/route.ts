@@ -1,15 +1,16 @@
+import { route } from "@/security/route";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { exportTpoSeasonPipelineCsv } from "@/modules/placements/tpo-season-pipeline-model";
 import { getTpoSeasonPipeline } from "@/modules/placements/tpo-season-pipeline-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-async function handleGET(request: Request) {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const query = Object.fromEntries(new URL(request.url).searchParams.entries());
     const report = await getTpoSeasonPipeline(context, query);
     const result = exportTpoSeasonPipelineCsv(
@@ -26,10 +27,5 @@ async function handleGET(request: Request) {
         "X-Export-Truncated": String(result.truncated),
       },
     });
-  } catch (caught) {
-    const response = apiErrorResponse(caught);
-    response.headers.set("Cache-Control", "private, no-store, max-age=0");
-    return response;
-  }
-}
-export const GET = secured(handleGET);
+  },
+);

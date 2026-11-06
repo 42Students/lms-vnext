@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -6,7 +7,6 @@ import { listOwnPlacementApplications, withdrawPlacementApplication } from "@/mo
 import { z } from "zod";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { learnerApplicationWithdrawalSchema } from "@/modules/placements/learner-withdrawal-model";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -14,24 +14,12 @@ type RouteContext = {
   params: Promise<{ applicationId: string }>;
 };
 
-async function handlePOST(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-    const { applicationId } = await params;
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { applicationId } = params;
     const json: unknown = await request.json();
-    // The retired learner route accepted a job ID, while vNext uses an
-    // application UUID. Resolve old links only inside the learner's own
-    // persisted applications; never substitute an unscoped job lookup.
     const query = new URL(request.url).searchParams;
     const legacyByJob = query.get("by") === "job";
     const suppliedJobId = json && typeof json === "object" && !Array.isArray(json) &&
@@ -66,19 +54,5 @@ async function handlePOST(
     }
     const application = await withdrawPlacementApplication(context, resolvedId, input.reason);
     return NextResponse.json({ application, status: "OK", message: "Application withdrawn" });
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: "INVALID_WITHDRAWAL",
-        message: "Failed to withdraw. Please try again or contact support.",
-        fieldErrors: z.flattenError(error).fieldErrors }, { status: 400 });
-    }
-    if (error instanceof PlacementsServiceError &&
-        (error.code === "PLACEMENT_APPLICATION_INELIGIBLE" ||
-         error.code === "PLACEMENT_APPLICATION_ALREADY_WITHDRAWN")) {
-      return NextResponse.json({ error: error.code,
-        message: "Failed to withdraw. Please try again or contact support." }, { status: 409 });
-    }
-    return apiErrorResponse(error);
-  }
-}
-export const POST = secured(handlePOST);
+  },
+);

@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -8,7 +9,6 @@ import {
   createStaffNotification,
   listScopedAdminNotificationPage,
 } from "@/modules/activity/notification-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -41,9 +41,10 @@ function respondError(error: unknown) {
 }
 
 /** Authorised Super Admin browse; never reuse this route for personal inbox. */
-async function handleGET(request: Request) {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const params = new URL(request.url).searchParams;
     const organizationId = params.get("organizationId") || undefined;
     const collegeId = params.get("collegeId") || undefined;
@@ -63,19 +64,14 @@ async function handleGET(request: Request) {
       ...(pageSize !== undefined ? { pageSize } : {}),
     });
     return NextResponse.json(result);
-  } catch (error) {
-    return respondError(error);
-  }
-}
-export const GET = secured(handleGET);
+  },
+);
 
 /** Staff composition; service checks assignment and stored course/class. */
-async function handlePOST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-  try {
-    const context = await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const result = await createStaffNotification(context, await request.json());
     return NextResponse.json({
       ...result,
@@ -83,8 +79,5 @@ async function handlePOST(request: Request) {
         ? "Notification scheduled successfully"
         : "Notification created successfully",
     }, { status: 200 });
-  } catch (error) {
-    return respondError(error);
-  }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -7,7 +8,6 @@ import {
   createCourseAssignment,
   listCourseAssignments,
 } from "@/modules/courses/assignment-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 /** Legacy FacultyLessonContent ASSIGNMENT dispatch crosswalk:
@@ -19,10 +19,10 @@ export const runtime = "nodejs";
  */
 export const legacyAssignmentContentRoute="/api/courses/assignments" as const;
 
-async function handleGET(request: Request) {
-  try {
-    const context =
-      await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const url = new URL(request.url);
     const assignments =
       await listCourseAssignments(
@@ -34,46 +34,23 @@ async function handleGET(request: Request) {
           "includeArchived",
         ) === "true",
       );
-
     return NextResponse.json({ assignments });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
-export const GET = secured(handleGET);
+  },
+);
 
-async function handlePOST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context =
-      await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const body = await request.json();
     const assignment =
       await createCourseAssignment(
         context,
         body,
       );
-
     return NextResponse.json(
       { assignment, message: "Assignment saved" },
       { status: 201 },
     );
-  } catch (error) {
-    if (isDatabaseUnavailableError(error)) {
-      // Preserve the central request ID/status/retry headers while presenting
-      // the old LMS actionable offline-writer message.
-      const response=apiErrorResponse(error);
-      const body=await response.json() as Record<string,unknown>;
-      return NextResponse.json({...body,message:"Assignment writer unavailable"},
-        {status:503,headers:response.headers});
-    }
-    return apiErrorResponse(error);
-  }
-}
-export const POST = secured(handlePOST);
+  },
+);

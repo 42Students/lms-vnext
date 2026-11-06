@@ -60,7 +60,8 @@ for (const p of files) {
     if (st.length && isOriginGuard(st[0])) { origin = true; st.shift(); }
     if (origin && (name === "GET")) { ok = false; reason = "get-origin"; break; }
     if (!origin && name !== "GET") { ok = false; reason = "mutation-without-origin"; break; }
-    if (st.length !== 1 || !ts.isTryStatement(st[0]) || !st[0].catchClause || st[0].finallyBlock || !isCatch(st[0].catchClause)) { ok = false; reason = "shape"; break; }
+    if (st.length !== 1 || !ts.isTryStatement(st[0]) || !st[0].catchClause || st[0].finallyBlock) { ok = false; reason = "shape"; break; }
+    const customCatch = isCatch(st[0].catchClause) ? null : st[0].catchClause;
     const body = st[0].tryBlock.statements;
     const ctxIdx = body.findIndex((s) => ts.isVariableStatement(s) && /^await getCurrentRequestContext\(\)$/.test(s.declarationList.declarations[0].initializer?.getText() ?? ""));
     if (ctxIdx !== 0) { ok = false; reason = "no-ctx-stmt"; break; }

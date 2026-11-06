@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -8,47 +9,23 @@ import {VerificationStateError} from "@/modules/profile-verification/domain";
 import {reviewProfileVerification} from "@/modules/profile-verification/service";
 import {createProfileVerificationRepository} from "@/modules/profile-verification/repository";
 import {verifyPrivateDocumentReceipt} from "@/modules/profile-verification/private-receipts";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-async function handlePOST(request:Request){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const context=await getCurrentRequestContext();
-  await requireCollegeVerificationActor(context);
-  await requireVerificationTables();
-  // Legacy verify and send-back paths used numeric learner IDs. The
-  // membership-scoped UUID, section, expectedVersion and reason are a
-  // single validated body; the reviewer is derived from the active session.
-  const input=verificationReviewInput.parse(await request.json());
-  const record=await reviewProfileVerification(context,input,
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
+    await requireCollegeVerificationActor(context);
+    await requireVerificationTables();
+    const input=verificationReviewInput.parse(await request.json());
+    const record=await reviewProfileVerification(context,input,
    createProfileVerificationRepository(verifyPrivateDocumentReceipt));
-  // The locked writer persists an immutable activity event AND an in-app notification
-  // in the decision transaction. TODO(messaging): queue email/SMS intent via the
-  // shared src/modules/messaging delivery interface once its outbox lands on main.
-  const sectionLabel=record.section==="EDUCATION"?"Education":"Identity";
-  const message=input.action==="VERIFY"?sectionLabel+" verified":
+    const sectionLabel=record.section==="EDUCATION"?"Education":"Identity";
+    const message=input.action==="VERIFY"?sectionLabel+" verified":
    record.status==="VERIFIED"
     ?sectionLabel+" update sent back. The previous verified snapshot remains in effect."
     :sectionLabel+" sent back for changes";
-  return NextResponse.json({decision:{learnerMembershipId:record.learnerMembershipId,
+    return NextResponse.json({decision:{learnerMembershipId:record.learnerMembershipId,
    section:record.section,status:record.status,version:record.version},message},
    {headers:{"Cache-Control":"private, no-store"}});
- }catch(error){
-  if(error instanceof VerificationUnavailableError)
-   return NextResponse.json({error:error.message},{status:503});
-  if(error instanceof VerificationStateError){
-   const status=error.code==="NOT_ALLOWED"?404:
-     error.code==="REASON_REQUIRED"?400:error.code==="STALE_VERSION"?409:409;
-   const message=error.code==="STALE_VERSION"
-    ?"The student changed this after you opened it. Open it again to see what they sent."
-    :error.code==="REASON_REQUIRED"?"Say what needs to change"
-    :error.code==="INCOMPLETE_DOCUMENTS"?"Before sending: complete all required fields and documents"
-    :error.code==="NOT_ALLOWED"?"This verification record is not available."
-    :"Could not complete the review. Reload the student and try again.";
-   return NextResponse.json({error:error.code==="NOT_ALLOWED"?"NOT_FOUND":error.code,message},
-    {status,headers:{"Cache-Control":"private, no-store"}});
-  }
-  return apiErrorResponse(error);
- }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

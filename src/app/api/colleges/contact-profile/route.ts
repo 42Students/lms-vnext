@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -6,26 +7,15 @@ import {
   CollegeContactProfileError,
   updateOwnCollegeContactProfile,
 } from "@/modules/colleges/college-contact-profile-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-async function handlePATCH(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-  try {
-    const context = await getCurrentRequestContext();
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const raw: unknown = await request.json();
     const saved = await updateOwnCollegeContactProfile(context, raw);
     return NextResponse.json({ profile: saved });
-  } catch (error) {
-    if (error instanceof CollegeContactProfileError) {
-      return NextResponse.json({ error: error.code }, {
-        status: error.code === "COLLEGE_NOT_FOUND" ? 404 : 409,
-      });
-    }
-    return apiErrorResponse(error);
-  }
-}
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+  },
+);

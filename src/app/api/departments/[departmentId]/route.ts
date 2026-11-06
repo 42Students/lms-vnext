@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -8,7 +9,6 @@ import {
 import { apiErrorResponse } from "@/lib/api-error";
 import { ZodError } from "zod";
 import { DepartmentServiceError } from "@/modules/departments/service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -18,21 +18,11 @@ type RouteContext = {
   }>;
 };
 
-async function handlePATCH(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-    const { departmentId } = await params;
-
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { departmentId } = params;
     let body: unknown;
     try {
       body = await request.json();
@@ -42,62 +32,29 @@ async function handlePATCH(
         { status: 400 },
       );
     }
-
     const department = await renameDepartment(
       context,
       departmentId,
       body as { name: string },
     );
-
     return NextResponse.json({ status: "OK", department, data: department, message: "Department updated successfully" });
-  } catch (error) {
-    // The source controller treated update failures as 400; keep its
-    // validation feedback without changing vNext access/tenant protections.
-    if(error instanceof ZodError)
-      return NextResponse.json({error:"INVALID_REQUEST",
-        message:error.issues[0]?.message??"Please check the department name.",
-        fieldErrors:Object.fromEntries(error.issues.map(issue=>[String(issue.path[0]??"name"),issue.message]))},{status:400});
-    if(error instanceof DepartmentServiceError&&error.code==="DEPARTMENT_NAME_CONFLICT")
-      return NextResponse.json({error:error.code,
-        message:"A department with this name already exists."},{status:409});
-    const response = apiErrorResponse(error);
-    if (response.status >= 500) return NextResponse.json({ error: "DEPARTMENT_UPDATE_FAILED",
-      message: "Please try again or contact support" }, { status: response.status });
-    return response;
-  }
-}
-export const PATCH = secured(handlePATCH);
+  },
+);
 
 /** Legacy PUT maps to the same tenant-scoped UUID update as PATCH. */
 export const PUT = PATCH;
 
-async function handleDELETE(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context =
-      await getCurrentRequestContext();
-    const { departmentId } = await params;
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor, params }) => {
+    const context = actor!;
+    const { departmentId } = params;
     const department =
       await archiveDepartment(
         context,
         departmentId,
       );
-
-    // Retain the legacy success text for compatible toast consumers, while
-    // truthfully declaring the non-destructive archived state to modern ones.
     return NextResponse.json({ department, archived:true,
       message:"Department deleted successfully" });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
-export const DELETE = secured(handleDELETE);
+  },
+);

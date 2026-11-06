@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { z, ZodError } from "zod";
 import { parsePromotionAcademicYear } from "@/modules/academics/college-batch-promotion-model";
@@ -7,7 +8,6 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { CollegePromotionExecuteError, executeCollegeBatchPromotion } from "@/modules/academics/college-batch-promotion-execute";
 
 import { markCollegeBatchGraduated, CollegeBatchGraduationError } from "@/modules/academics/college-batch-graduation-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 /** Legacy /api/v1/batch/{numericId}/promote cannot authorize mutations by
@@ -17,12 +17,10 @@ export const runtime = "nodejs";
  * A stale preview never commits and must be refreshed before resubmission.
  */
 
-async function handlePOST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-  try {
-    const context = await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const body: unknown = await request.json();
     if (body && typeof body === "object" && !Array.isArray(body) &&
       "action" in body && body.action === "GRADUATE") {
@@ -49,26 +47,5 @@ async function handlePOST(request: Request) {
     const result = await executeCollegeBatchPromotion(context, promotionInput);
     return NextResponse.json({status:"OK",message:result.message,result,data:result},
       {headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {
-    if(error instanceof ZodError||error instanceof SyntaxError)
-      return NextResponse.json({error:"INVALID_PROMOTION_INPUT",
-        message:"Refresh the preview and confirm the next semester and academic year."},
-        {status:400});
-    if (error instanceof CollegeBatchGraduationError) {
-      return NextResponse.json({ error: error.code,
-        message: error.code === "BATCH_NOT_READY_TO_GRADUATE" ? "The batch must complete its final semester before graduation." : "The batch changed; refresh and try again." },
-        { status: error.code === "BATCH_NOT_FOUND" ? 404 : 409 });
-    }
-    if (error instanceof CollegePromotionExecuteError) {
-      return NextResponse.json(
-        { error: error.code, message: error.code === "PROMOTION_STALE" ?
-          "Batch was modified by another request. Please refresh and try again." :
-          error.code === "PROMOTION_BLOCKED" ? "Complete the curriculum and learner readiness checks before promoting this batch." :
-          error.code === "PROMOTION_PREVIEW_CHANGED" ? "Preview changed. Refresh and confirm the updated batch before continuing." : "Batch not found." },
-        { status: error.code === "BATCH_NOT_FOUND" ? 404 : 409 },
-      );
-    }
-    return apiErrorResponse(error);
-  }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

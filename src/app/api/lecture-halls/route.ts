@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -12,13 +13,13 @@ import {
   normalizeLegacyLectureHallCreate,
 } from "@/modules/academics/lecture-hall-service";
 import { lectureHallErrorResponse } from "./error-response";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-async function handleGET(request: Request) {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const search=new URL(request.url).searchParams;
     const legacy=search.get("legacy")==="1";
     const stats=search.get("stats")==="1";
@@ -27,9 +28,6 @@ async function handleGET(request: Request) {
     if (stats) {
       return NextResponse.json(await getLectureHallStatistics(context, collegeId ?? ""), responseOptions);
     }
-    // Old query/limit autocomplete and 0-based page/size are explicit
-    // adapters. UUID college scope remains mandatory; never accept numeric
-    // legacy identities as a request-time tenant selector.
     if (legacy && search.has("query")) {
       return NextResponse.json(await searchLectureHallsForPicker(context, {
         collegeId,
@@ -53,26 +51,18 @@ async function handleGET(request: Request) {
     if(search.has("deptId")&&!params["departmentId"])params["departmentId"]=search.get("deptId")??"";
     if(search.has("hallId")&&!params["id"])params["id"]=search.get("hallId")??"";
     const result=await listLectureHalls(context,params);
-
     if(legacy)return NextResponse.json({status:"success",message:"Lecture halls retrieved",
       data:result.items,total:result.pagination.total,
       pagination:result.pagination,collegeId:result.collegeId},
      {headers:{"Cache-Control":"private, no-store"}});
     return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {
-    if (error instanceof LectureHallError) return lectureHallErrorResponse(error);
-    return apiErrorResponse(error);
-  }
-}
-export const GET = secured(handleGET);
+  },
+);
 
-async function handlePOST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     let body: unknown;
     try {
       body = await request.json();
@@ -85,9 +75,5 @@ async function handlePOST(request: Request) {
             ? normalizeLegacyLectureHallCreate(body) : body) },
       { status: 201 },
     );
-  } catch (error) {
-    if (error instanceof LectureHallError) return lectureHallErrorResponse(error);
-    return apiErrorResponse(error);
-  }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

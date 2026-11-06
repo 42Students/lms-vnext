@@ -1,19 +1,18 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { placementTableExists } from "@/modules/placements/staged-tables";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { tpoCrmApiErrorResponse } from "@/lib/tpo-crm-api-error";
 import { getTpoCompanyMemory } from "@/modules/placements/tpo-company-memory-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-async function handleGET(request: Request) {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const url = new URL(request.url);
-    // Old /detail?name inferred the active TPO college from the session.
-    // An explicit college must match the authenticated membership scope.
     const collegeId=url.searchParams.get("collegeId")??
       context.membership?.collegeId??"";
     await requirePlacementManageScope(context,collegeId);
@@ -35,8 +34,5 @@ async function handleGET(request: Request) {
       countsHref:"/api/placements/tpo/companies/drives/counts",
       message:"Company details loaded",
     },{headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {
-    return tpoCrmApiErrorResponse(error);
-  }
-}
-export const GET = secured(handleGET);
+  },
+);

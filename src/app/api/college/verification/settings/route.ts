@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {eq} from "drizzle-orm";
 import {z} from "zod";
@@ -8,37 +9,29 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {profileVerificationSettings} from "@/db/schema/profile-verification";
 import {requireCollegeVerificationActor,requireVerificationTables,VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {setTpoProfileVerificationEnabled} from "@/modules/profile-verification/settings-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 const inputSchema=z.strictObject({tpoCanVerify:z.boolean()});
-async function handleGET(){
- try{
-  const context=await getCurrentRequestContext();
-  const scope=await requireCollegeVerificationActor(context);
-  await requireVerificationTables();
-  const [row]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor }) => {
+    const context = actor!;
+    const scope=await requireCollegeVerificationActor(context);
+    await requireVerificationTables();
+    const [row]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
    .from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,scope.collegeId)).limit(1);
-  return NextResponse.json({tpoCanVerify:row?.enabled??true},
+    return NextResponse.json({tpoCanVerify:row?.enabled??true},
    {headers:{"Cache-Control":"private, no-store"}});
- }catch(error){
-  if(error instanceof VerificationUnavailableError)return NextResponse.json({error:error.message},{status:503});
-  return apiErrorResponse(error);
- }
-}
-export const GET = secured(handleGET);
-async function handlePATCH(request:Request){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const context=await getCurrentRequestContext();
-  const scope=await requireCollegeVerificationActor(context);
-  await requireVerificationTables();
-  const input=inputSchema.parse(await request.json());
-  await setTpoProfileVerificationEnabled(context,scope.collegeId,input.tpoCanVerify);
-  return NextResponse.json({tpoCanVerify:input.tpoCanVerify},
+  },
+);
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
+    const scope=await requireCollegeVerificationActor(context);
+    await requireVerificationTables();
+    const input=inputSchema.parse(await request.json());
+    await setTpoProfileVerificationEnabled(context,scope.collegeId,input.tpoCanVerify);
+    return NextResponse.json({tpoCanVerify:input.tpoCanVerify},
    {headers:{"Cache-Control":"private, no-store"}});
- }catch(error){
-  if(error instanceof VerificationUnavailableError)return NextResponse.json({error:error.message},{status:503});
-  return apiErrorResponse(error);
- }
-}
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+  },
+);

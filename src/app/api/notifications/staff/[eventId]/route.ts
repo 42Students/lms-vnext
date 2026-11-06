@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -8,7 +9,6 @@ import {
   deleteStaffNotification,
   updateStaffNotification,
 } from "@/modules/activity/notification-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -47,38 +47,28 @@ function respondError(error: unknown) {
   return apiErrorResponse(error);
 }
 
-async function handlePATCH(request: Request, { params }: RouteContext) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-  try {
-    const context = await getCurrentRequestContext();
-    const { eventId } = await params;
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { eventId } = params;
     const result = await updateStaffNotification(context, eventId, await request.json());
     return NextResponse.json({
       ...result,
       message: "Notification updated successfully",
     });
-  } catch (error) {
-    return respondError(error);
-  }
-}
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+  },
+);
 
-async function handleDELETE(request: Request, { params }: RouteContext) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-  try {
-    const context = await getCurrentRequestContext();
-    const { eventId } = await params;
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor, params }) => {
+    const context = actor!;
+    const { eventId } = params;
     const result = await deleteStaffNotification(context, eventId);
     return NextResponse.json({
       ...result,
       message: "Notification deleted successfully",
     });
-  } catch (error) {
-    return respondError(error);
-  }
-}
-export const DELETE = secured(handleDELETE, { csrf: "enforce" });
+  },
+);
