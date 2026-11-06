@@ -27,6 +27,8 @@ export type RouteDeps<Context> = {
 type Common = {
   /** Validated against the query string; duplicate keys are rejected (parameter pollution). */
   query?: ZodType;
+  /** Query keys that may legitimately repeat (read with getAll from request.url). All other duplicates are rejected. */
+  repeatableQuery?: readonly string[];
 };
 
 export type UserRouteConfig<Permission extends string, B> = Common & {
@@ -112,7 +114,10 @@ export function createRoute<Context, Permission extends string = string>(deps: R
         const url = new URL(request.url);
         const query: Record<string, string> = {};
         for (const [key, value] of url.searchParams) {
-          if (Object.prototype.hasOwnProperty.call(query, key)) return jsonError(requestId, 400, "INVALID_REQUEST");
+          if (Object.prototype.hasOwnProperty.call(query, key)) {
+            if (config.repeatableQuery?.includes(key)) continue;
+            return jsonError(requestId, 400, "INVALID_REQUEST");
+          }
           query[key] = value;
         }
         if (config.query) config.query.parse(query);

@@ -88,3 +88,12 @@ describe("central route pipeline", () => {
     expect(await res.json()).toEqual({ id: "7" });
   });
 });
+
+describe("repeatable query keys", () => {
+  it("allows only the declared keys to repeat", async () => {
+    const { route } = setup();
+    const h = route({ auth: "user", permission: "service-enforced", repeatableQuery: ["tag"] }, async () => Response.json({}));
+    expect((await h(new Request("https://a.test/x?tag=1&tag=2"))).status).toBe(200);
+    expect((await h(new Request("https://a.test/x?a=1&a=2"))).status).toBe(400);
+  });
+});

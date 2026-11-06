@@ -15,7 +15,7 @@
    "route-not-on-wrapper": 1
   },
   "src/app/api/academics/cohorts/route.ts": {
-   "route-not-on-wrapper": 1
+   "service-enforced": 2
   },
   "src/app/api/academics/college-academic-export/batches/route.ts": {
    "route-not-on-wrapper": 1

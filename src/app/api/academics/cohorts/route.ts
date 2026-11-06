@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
-import { readBoundedJsonBody } from "@/lib/bounded-json-body";
+import { z } from "zod";
+import { route } from "@/security/route";
 import {
   createCohort,
   listCohorts,
@@ -10,51 +8,19 @@ import {
 
 export const runtime = "nodejs";
 
-export async function GET(request: Request) {
-  try {
-    const query = new URL(request.url).searchParams;
-    if (query.getAll("programId").length > 1) return NextResponse.json({
-      error: "INVALID_FILTERS",
-    }, { status: 400, headers: { "Cache-Control": "private, no-store" } });
-    const context = await getCurrentRequestContext();
-    const programId = query.get("programId") ?? "";
-    const cohorts = await listCohorts(
-      context,
-      programId,
-    );
-
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context, query }) => {
+    const cohorts = await listCohorts(context!, query.programId ?? "");
     return NextResponse.json({ cohorts });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
-export async function POST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-    const parsed = await readBoundedJsonBody(request, 16_384);
-    if (parsed.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
-      status: parsed.kind === "TOO_LARGE" ? 413 : 400,
-      headers: { "Cache-Control": "private, no-store" },
-    });
-    const body = parsed.value;
-    const cohort = await createCohort(
-      context,
-      body,
-    );
-
-    return NextResponse.json(
-      { cohort },
-      { status: 201 },
-    );
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+export const POST = route(
+  // The cohort service validates the body shape; the wrapper bounds its size and requires JSON.
+  { auth: "user", permission: "service-enforced", body: { schema: z.unknown(), maxBytes: 16_384 } },
+  async ({ context, body }) => {
+    const cohort = await createCohort(context!, body);
+    return NextResponse.json({ cohort }, { status: 201 });
+  },
+);

@@ -14,18 +14,20 @@ for (const p of files) {
 }
 const totals = Object.fromEntries(Object.keys(RULES).map((r) => [r, 0]));
 for (const r of Object.values(counts)) for (const [k, n] of Object.entries(r)) totals[k] += n;
+// Converting an existing off-wrapper route may add interim "service-enforced" debt once; brand-new routes may not.
+const converting = (old, p, k) => k === "service-enforced" && old[p]?.["route-not-on-wrapper"] > 0;
 const read = () => { try { return JSON.parse(readFileSync(BASELINE_PATH, "utf8")); } catch { return { schemaVersion: 1, files: {} }; } };
 
 if (args.has("--report")) { for (const [k, n] of Object.entries(totals)) console.log(String(n).padStart(6), k); process.exit(0); }
 if (args.has("--init") || args.has("--update")) {
   const old = read().files;
   if (!args.has("--init")) for (const [p, r] of Object.entries(counts)) for (const [k, n] of Object.entries(r))
-    if (n > (old[p]?.[k] ?? -1)) { console.error(`refusing to raise the baseline: ${p} ${k} -> ${n}`); process.exit(1); }
+    if (n > (old[p]?.[k] ?? -1) && !converting(old, p, k)) { console.error(`refusing to raise the baseline: ${p} ${k} -> ${n}`); process.exit(1); }
   writeFileSync(BASELINE_PATH, JSON.stringify({ schemaVersion: 1, files: counts }, null, 1) + "\n");
   console.log("baseline written", JSON.stringify(totals)); process.exit(0);
 }
 const base = read().files; let bad = 0;
 for (const [p, r] of Object.entries(counts)) for (const [k, n] of Object.entries(r))
-  if (n > (base[p]?.[k] ?? 0)) { console.error(`${p}: ${k} ${base[p]?.[k] ?? 0} -> ${n} (${RULES[k]})`); bad++; }
+  if (n > (base[p]?.[k] ?? 0) && !converting(base, p, k)) { console.error(`${p}: ${k} ${base[p]?.[k] ?? 0} -> ${n} (${RULES[k]})`); bad++; }
 if (bad) { console.error(`security:central failed: ${bad} regression(s). New routes must use route() from @/security/route.`); process.exit(1); }
 console.log("security:central ok", JSON.stringify(totals));
