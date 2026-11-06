@@ -240,7 +240,7 @@ describe("secured(): step-up authentication", () => {
   describe("write rate limit", () => {
     it("answers 429 with Retry-After before the handler runs when the caller is over budget", async () => {
       const handler = vi.fn(async () => Response.json({ ok: true }));
-      const { secured, events } = setup({ allowRequest: vi.fn(async () => false), rateKey: () => "ip:cookie" });
+      const { secured, events } = setup({ allowRequest: vi.fn(async () => false), rateBuckets: () => [{ key: "ip:cookie", limit: 600 }] });
       const res = (await secured(handler)(post())) as Response;
       expect(res.status).toBe(429);
       expect(res.headers.get("Retry-After")).toBe("60");
@@ -249,16 +249,24 @@ describe("secured(): step-up authentication", () => {
     });
     it("limits only state-changing requests and uses the key prefix and budget it is given", async () => {
       const allow = vi.fn(async () => true);
-      const { secured } = setup({ allowRequest: allow, rateKey: () => "k", mutationLimit: { limit: 5, windowMs: 1000 } });
+      const { secured } = setup({ allowRequest: allow, rateBuckets: () => [{ key: "k", limit: 5 }], mutationWindowMs: 1000 });
       const handler = async () => Response.json({});
       await secured(handler)(new Request("https://a.test/api/x"));
       expect(allow).not.toHaveBeenCalled();
       await secured(handler)(post());
       expect(allow).toHaveBeenCalledWith("w:k", 5, 1000);
     });
+    it("charges the coarser bucket first and stops at the first exhausted one", async () => {
+      const seen: string[] = [];
+      const allow = vi.fn(async (key: string) => { seen.push(key); return key !== "w:ip:1"; });
+      const { secured } = setup({ allowRequest: allow, rateBuckets: () => [{ key: "ip:1", limit: 3000 }, { key: "ck:1", limit: 600 }] });
+      const res = (await secured(async () => Response.json({}))(post())) as Response;
+      expect(res.status).toBe(429);
+      expect(seen).toEqual(["w:ip:1"]);
+    });
     it("skips limiting when no key can be derived", async () => {
       const allow = vi.fn(async () => false);
-      const { secured } = setup({ allowRequest: allow, rateKey: () => null });
+      const { secured } = setup({ allowRequest: allow, rateBuckets: () => [] });
       const res = (await secured(async () => Response.json({}))(post())) as Response;
       expect(res.status).toBe(200);
       expect(allow).not.toHaveBeenCalled();

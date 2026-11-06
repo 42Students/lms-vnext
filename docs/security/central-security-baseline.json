@@ -1698,6 +1698,9 @@
    "route-on-shim-only": 1,
    "sensitive-without-step-up": 1
   },
+  "src/app/api/placements/recruiter/calendar/ics/route.ts": {
+   "actor-owned": 1
+  },
   "src/app/api/placements/recruiter/conversations/[threadId]/acknowledge/route.ts": {
    "route-on-shim-only": 1
   },

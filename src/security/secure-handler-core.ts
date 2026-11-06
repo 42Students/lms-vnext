@@ -44,10 +44,13 @@ export type SecuredDeps = {
    * changes): returns false when the caller is over its budget. Absent = no limit.
    */
   allowRequest?: (key: string, limit: number, windowMs: number) => Promise<boolean>;
-  /** Stable bucket key for the caller (address plus a hash of the session cookie), or null to skip limiting. */
-  rateKey?: (request: Request) => string | null;
-  /** Writes per window for one key (default 600 per minute). */
-  mutationLimit?: { limit: number; windowMs: number };
+  /**
+   * Budgets to draw on, checked in order and each charged only if the earlier ones passed (so a caller who rotates the
+   * cookie value to get fresh buckets is stopped by the coarser address budget first). Empty = no limit.
+   */
+  rateBuckets?: (request: Request) => Array<{ key: string; limit: number }>;
+  /** Window for every bucket (default one minute). */
+  mutationWindowMs?: number;
   /** Maps a thrown session/authorization error to the platform's standard response. */
   onError?: (error: unknown) => Response;
 };
@@ -124,12 +127,15 @@ export function createSecured(deps: SecuredDeps) {
           audit(403);
           return denied;
         }
-        if (request && mutating && deps.allowRequest && deps.rateKey) {
-          const key = deps.rateKey(request);
-          const budget = deps.mutationLimit ?? { limit: 600, windowMs: 60_000 };
-          if (key && !(await deps.allowRequest("w:" + key, budget.limit, budget.windowMs))) {
+        if (request && mutating && deps.allowRequest && deps.rateBuckets) {
+          const windowMs = deps.mutationWindowMs ?? 60_000;
+          let over = false;
+          for (const bucket of deps.rateBuckets(request)) {
+            if (!(await deps.allowRequest("w:" + bucket.key, bucket.limit, windowMs))) { over = true; break; }
+          }
+          if (over) {
             const limited = Response.json({ error: "RATE_LIMITED" }, {
-              status: 429, headers: { "x-request-id": requestId, "Retry-After": String(Math.ceil(budget.windowMs / 1000)), "Cache-Control": "no-store" },
+              status: 429, headers: { "x-request-id": requestId, "Retry-After": String(Math.ceil(windowMs / 1000)), "Cache-Control": "no-store" },
             });
             audit(429);
             return limited;

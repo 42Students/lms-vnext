@@ -132,3 +132,29 @@ test("no guard evidence loss when a handler retains or strengthens its checks", 
   }`;
   assert.deepEqual(directGuardEvidenceRegressions(before, after), []);
 });
+
+test("central wrappers count as guard evidence only when they really guard", () => {
+  const evidence = (source) => extractApiMethods(source)[0];
+  const user = evidence(`export const POST = route({ auth: "user", permission: "x.y" }, async () => Response.json({}));`);
+  assert.equal(user.has_direct_session_evidence, true);
+  assert.equal(user.has_direct_origin_evidence, true);
+  // Public routes (either quote style), non-literal auth, and a method named route() on another object are not guards.
+  for (const source of [
+    `export const GET = route({ auth: 'public', permission: "service-enforced" }, async () => Response.json({}));`,
+    `export const GET = route({ auth: AUTH, permission: "service-enforced" }, async () => Response.json({}));`,
+    `export const GET = router.route({ auth: "user" }, async () => Response.json({}));`,
+    `export const POST = webhookRoute({ name: "x" }, async () => Response.json({}));`,
+  ]) {
+    const m = evidence(source);
+    assert.equal(m.has_direct_session_evidence, false, source);
+    assert.equal(m.has_direct_origin_evidence, false, source);
+  }
+});
+
+test("an Origin rejection must be a real condition, not a comment, string or bare read", () => {
+  const origin = (body) => extractApiMethods(`export async function POST(request: Request) { ${body} return new Response("ok"); }`)[0].has_direct_origin_evidence;
+  assert.equal(origin(`if (request.headers.has("origin")) return new Response("no", { status: 403 });`), true);
+  assert.equal(origin(`// if (request.headers.has("origin")) reject`), false);
+  assert.equal(origin(`const t = 'request.headers.has("origin")';`), false);
+  assert.equal(origin(`const o = request.headers.get("origin");`), false);
+});

@@ -57,6 +57,41 @@ function calledIdentifiers(node) {
   return [...result].sort();
 }
 
+/** The wrapper call itself when `node` is `name(...)` with a plain identifier callee (not `x.name()`), else null. */
+function wrapperCall(node, name) {
+  return node && ts.isCallExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === name ? node : null;
+}
+/** The literal value of the `auth` property in the wrapper's config object, or null when not a literal. */
+function configAuth(call) {
+  const config = call.arguments[0];
+  if (!config || !ts.isObjectLiteralExpression(config)) return null;
+  for (const prop of config.properties) {
+    if (ts.isPropertyAssignment(prop) && (ts.isIdentifier(prop.name) || ts.isStringLiteral(prop.name)) && prop.name.text === "auth") {
+      return ts.isStringLiteralLike(prop.initializer) ? prop.initializer.text : null;
+    }
+  }
+  return null;
+}
+/** True when a real condition (if / ternary) tests `<something>.headers.has("origin")`; comments and strings never count. */
+function rejectsBrowserOrigin(node) {
+  let found = false;
+  function isOriginCheck(item) {
+    let hit = false;
+    (function visit(n) {
+      if (ts.isCallExpression(n) && ts.isPropertyAccessExpression(n.expression) && n.expression.name.text === "has" &&
+          ts.isPropertyAccessExpression(n.expression.expression) && n.expression.expression.name.text === "headers" &&
+          n.arguments[0] && ts.isStringLiteralLike(n.arguments[0]) && n.arguments[0].text.toLowerCase() === "origin") hit = true;
+      ts.forEachChild(n, visit);
+    })(item);
+    return hit;
+  }
+  (function visit(n) {
+    if ((ts.isIfStatement(n) || ts.isConditionalExpression(n)) && isOriginCheck(ts.isIfStatement(n) ? n.expression : n.condition)) found = true;
+    ts.forEachChild(n, visit);
+  })(node);
+  return found;
+}
+
 /** Extract ACTUAL exported HTTP methods, including arrow functions and re-exports. */
 export function extractApiMethods(source, fileName = "route.ts") {
   const file = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
@@ -66,27 +101,31 @@ export function extractApiMethods(source, fileName = "route.ts") {
   function put(name, node, kind) {
     if (!METHODS.has(name)) return;
     let calls = calledIdentifiers(node);
-    let bodyText = node?.getText() ?? "";
+    const wrappedBodies = [];
     // secured(handleX): the guard calls live in the wrapped local function, so count them for this method.
     if (calls.includes("secured") && node) {
       const inner = new Set(calls);
       (function visit(item) {
         if (ts.isCallExpression(item) && ts.isIdentifier(item.expression) && item.expression.text === "secured") {
           for (const arg of item.arguments) {
-            if (ts.isIdentifier(arg) && localFunctions.has(arg.text)) { calledIdentifiers(localFunctions.get(arg.text)).forEach(c => inner.add(c)); bodyText += localFunctions.get(arg.text).getText(); }
+            if (ts.isIdentifier(arg) && localFunctions.has(arg.text)) { calledIdentifiers(localFunctions.get(arg.text)).forEach(c => inner.add(c)); wrappedBodies.push(localFunctions.get(arg.text)); }
           }
         }
         ts.forEachChild(item, visit);
       })(node);
       calls = [...inner].sort();
     }
-    // The central route() wrapper resolves the session and (for mutations) checks origin before the handler runs.
-    const central = (calls.includes("internalRoute") || calls.includes("webhookRoute")) || calls.includes("route") && !/auth:\s*"public"/.test(node.getText());
+    // route() (auth other than "public") resolves the session and, for mutations, checks Origin; internalRoute() rejects
+    // any Origin and demands a machine credential. webhookRoute() is signature-based and is credited with neither.
+    const routeCall = wrapperCall(node, "route");
+    const centralUser = Boolean(routeCall) && (() => { const auth = configAuth(routeCall); return auth !== null && auth !== "public"; })();
+    const centralMachine = Boolean(wrapperCall(node, "internalRoute"));
+    const originCheck = [node, ...[...new Set(wrappedBodies)]].some(n => n && rejectsBrowserOrigin(n));
     methods.set(name, {
       method: name,
       implementation: kind,
-      has_direct_session_evidence: central || calls.some(x => AUTH_CALLS.has(x)),
-      has_direct_origin_evidence: central || /headers\.has\(\s*["']origin["']\s*\)/.test(bodyText) || calls.some(x => ORIGIN_CALLS.has(x)),
+      has_direct_session_evidence: centralUser || centralMachine || calls.some(x => AUTH_CALLS.has(x)),
+      has_direct_origin_evidence: centralUser || centralMachine || originCheck || calls.some(x => ORIGIN_CALLS.has(x)),
       has_direct_permission_evidence: calls.some(x => PERMISSION_CALLS.has(x)),
       call_identifiers: calls,
       // Every method is unreviewed until its target resolution, permissions,

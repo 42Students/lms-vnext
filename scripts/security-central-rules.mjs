@@ -7,6 +7,7 @@ export const RULES = {
   "direct-db-in-route": "route imports getDb directly instead of going through the data layer",
   "tenant-table-without-rls": "table has a college_id column but no tenant RLS policy (run: node scripts/generate-rls-migration.mjs)",
   "service-enforced": "route declares permission 'service-enforced' (replace with a named permission)",
+  "actor-owned": "route declares permission 'actor-owned' (no registry permission; only for self-service routes whose authority is the actor's own identity or grants, reviewed individually)",
 };
 
 // Owner decision 2026-11-06: these need a sign-in no older than 15 minutes.
@@ -38,5 +39,6 @@ export function scanRoute(path, source) {
   for (const _ of source.matchAll(/\b(?:request|req)\.json\s*\(/g)) out.push({ rule: "raw-request-json" });
   if (/\bgetDb\b/.test(source) && /from\s+["']@\/db/.test(source)) out.push({ rule: "direct-db-in-route" });
   for (const _ of source.matchAll(/permission:\s*["']service-enforced["']/g)) out.push({ rule: "service-enforced" });
+  for (const _ of source.matchAll(/permission:\s*["']actor-owned["']/g)) out.push({ rule: "actor-owned" });
   return out;
 }
