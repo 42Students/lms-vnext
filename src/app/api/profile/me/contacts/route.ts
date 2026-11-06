@@ -5,7 +5,7 @@ import { updateOwnLearnerContacts } from "@/modules/people/learner-contact-servi
 export const runtime = "nodejs";
 
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "profile.self.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const result = await updateOwnLearnerContacts(context, await request.json());

@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { confirmTpoOwnNotificationRead } from "@/modules/placements/tpo-own-notification-service";
 export const runtime = "nodejs";
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     return NextResponse.json(await confirmTpoOwnNotificationRead(context, await request.json()));

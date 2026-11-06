@@ -15,7 +15,7 @@ export const runtime = "nodejs";
  * route changes state using a browser session.
  */
 export const PUT = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const body = await request.json();
@@ -42,7 +42,7 @@ export const GET = route(
 
 /** Compare-and-set only the chosen field; never overwrite a second unsaved draft. */
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     return NextResponse.json(await updateCollegeAttendancePolicyField(context,await request.json()));
@@ -53,7 +53,7 @@ export const PATCH = route(
  * A per-field Save intentionally keeps an explicit college override.
  */
 export const DELETE = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     return NextResponse.json(await resetCollegeAttendancePolicyOverride(

@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 
 /** COL-course-tabs-15: a deliberate POST, never a GET side effect. */
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const {lessonId}=params;

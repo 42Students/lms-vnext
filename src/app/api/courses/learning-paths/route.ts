@@ -25,7 +25,7 @@ export const GET = route(
 );
 
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const body = await request.json();

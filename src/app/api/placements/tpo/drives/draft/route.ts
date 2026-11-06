@@ -5,7 +5,7 @@ import { createTpoDraftDriveStepOne } from "@/modules/placements/tpo-draft-drive
 export const runtime = "nodejs";
 
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const result = await createTpoDraftDriveStepOne(context, await request.json());

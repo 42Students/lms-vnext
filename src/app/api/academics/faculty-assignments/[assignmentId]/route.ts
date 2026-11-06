@@ -7,7 +7,7 @@ import {
 export const runtime = "nodejs";
 
 export const DELETE = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const { assignmentId } = params;

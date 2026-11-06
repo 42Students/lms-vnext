@@ -8,7 +8,7 @@ export const runtime="nodejs";
  * [{id,sequence}]. The service locks current ACTIVE lessons, rejects stale
  * snapshots and writes one COURSES_LESSON_REORDERED activity event. */
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const moved=await reorderCollegeCourseLessons(context,await request.json());

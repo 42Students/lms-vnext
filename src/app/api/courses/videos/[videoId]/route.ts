@@ -8,7 +8,7 @@ import {
 export const runtime = "nodejs";
 
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { videoId } = params;
@@ -19,7 +19,7 @@ export const PATCH = route(
 );
 
 export const DELETE = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const { videoId } = params;

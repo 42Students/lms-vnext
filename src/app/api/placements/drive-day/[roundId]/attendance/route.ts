@@ -5,7 +5,7 @@ import { markDriveDayAttendance } from "@/modules/placements/drive-day-coordinat
 export const runtime = "nodejs";
 
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { roundId } = params;

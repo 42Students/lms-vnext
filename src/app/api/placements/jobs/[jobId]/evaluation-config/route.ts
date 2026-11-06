@@ -22,7 +22,7 @@ export const GET = route(
 );
 
 export const PUT = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { jobId } = params;

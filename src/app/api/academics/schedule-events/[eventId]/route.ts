@@ -8,7 +8,7 @@ import {
 export const runtime = "nodejs";
 
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { eventId } = params;

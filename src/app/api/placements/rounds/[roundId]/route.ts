@@ -21,7 +21,7 @@ export const GET = route(
 );
 
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { roundId } = params;

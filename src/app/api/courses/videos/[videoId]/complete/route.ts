@@ -5,7 +5,7 @@ import { completeVideoUpload } from "@/modules/courses/lesson-video-service";
 export const runtime = "nodejs";
 
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const { videoId } = params;

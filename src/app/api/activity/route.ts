@@ -16,7 +16,7 @@ function value(
 }
 
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "activity.read" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const params = new URL(

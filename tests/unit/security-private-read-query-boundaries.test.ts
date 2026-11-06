@@ -144,3 +144,10 @@ describe("own-recipient notifications query boundary", () => {
     expect(mocks.context).not.toHaveBeenCalled();
   });
 });
+
+// The route wrapper now names its permission; these tests use bare fake actors and exercise handler logic, so the
+// permission policy (covered by its own tests) is bypassed here.
+vi.mock("@/modules/permissions/policy", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/modules/permissions/policy")>()),
+  requirePermission: () => undefined,
+}));

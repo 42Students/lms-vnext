@@ -15,7 +15,7 @@ import { matchesCompanyDomain } from "@/modules/placements/public-join/domain-mo
 export const runtime = "nodejs";
 
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     if (!context.membership || !hasMembershipRole(context, "TPO")) {

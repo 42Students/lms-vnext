@@ -4,7 +4,7 @@ import {relinkDraftPlacementCompany} from "@/modules/placements/job-service";
 
 export const runtime="nodejs";
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const {jobId}=params;

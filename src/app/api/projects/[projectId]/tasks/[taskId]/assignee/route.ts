@@ -3,7 +3,7 @@ import {NextResponse} from "next/server";
 import {assignProjectTask} from "@/modules/projects/task-assignment-service";
 export const runtime="nodejs";
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "projects.manage" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const {projectId,taskId}=params;

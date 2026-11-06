@@ -19,7 +19,7 @@ export const GET = route(
 );
 
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { lessonId } = params;

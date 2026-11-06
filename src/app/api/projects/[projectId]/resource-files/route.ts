@@ -18,7 +18,7 @@ export const GET = route(
 );
 
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "projects.manage" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { projectId } = params;

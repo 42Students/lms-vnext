@@ -12,7 +12,12 @@ export function scanRoute(path, source) {
   if (!/^src\/app\/api\/.+\/route\.ts$/.test(path.split(String.fromCharCode(92)).join("/"))) return [];
   const out = [];
   const onWrapper = /from\s+["']@\/security\/(?:route|internal-route)["']/.test(source);
-  const onShim = /from\s+["']@\/security\/secure-handler["']/.test(source);
+  // A pure alias file (`export {GET} from "<other route>"`, `export const GET = imported;`) defines no handler of
+  // its own; the route it points at is the one that must be wrapped, and the guard checks that file.
+  const METHOD = "(?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)";
+  const definesHandler = new RegExp(`export\\s+(?:async\\s+)?function\\s+${METHOD}\\b|export\\s+const\\s+${METHOD}\\s*=\\s*(?:async\\b|\\(|function\\b|\\w+\\s*\\()`).test(source);
+  if (!definesHandler) return [];
+  const onShim =/from\s+["']@\/security\/secure-handler["']/.test(source);
   if (!onWrapper && onShim) out.push({ rule: "route-on-shim-only" });
   else if (!onWrapper) out.push({ rule: "route-not-on-wrapper" });
   for (const _ of source.matchAll(/\b(?:request|req)\.json\s*\(/g)) out.push({ rule: "raw-request-json" });

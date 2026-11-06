@@ -6,7 +6,7 @@ import { requireSuperAdminSelectedCollege } from "@/modules/admin-ui/super-admin
 export const runtime = "nodejs";
 
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.read" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const scope = requireSuperAdminSelectedCollege(context, "placements.read");

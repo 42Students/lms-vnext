@@ -5,7 +5,7 @@ import { issueVideoThumbnailUploadGrant } from "@/modules/courses/lesson-video-s
 export const runtime = "nodejs";
 
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { videoId } = params;
