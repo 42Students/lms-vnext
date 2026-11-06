@@ -13,6 +13,7 @@ function setup(over: Record<string, unknown> = {}) {
     readSecret: vi.fn((n: string) => (n === "WH_SECRET" ? SECRET : undefined)),
     readRaw: vi.fn(async (r: Request) => ({ kind: "OK" as const, text: await r.clone().text() })),
     claimDelivery: vi.fn(async (k: string) => (claimed.has(k) ? false : (claimed.add(k), true))),
+    releaseDelivery: vi.fn(async (k: string) => void claimed.delete(k)),
     now: () => NOW,
     onError: vi.fn(() => Response.json({ error: "E" }, { status: 500 })),
     newRequestId: () => "rid",
@@ -83,11 +84,51 @@ describe("webhook route pipeline", () => {
     expect(denied.at(-1)?.reason).toBe("REPLAY");
   });
 
-  it("uses the delivery id header as the replay key when configured", async () => {
+  it("keys the replay claim on the signature, so an unsigned header cannot create a fresh key", async () => {
     const { webhookRoute, deps } = setup();
-    const route = webhookRoute({ ...hmacCfg, deliveryIdHeader: "x-delivery" }, ok);
-    await route(post({ "x-sig": sig(raw), "x-delivery": "d-1" }));
-    expect(deps.claimDelivery).toHaveBeenCalledWith("webhook.test:d-1", 86_400);
+    const route = webhookRoute(hmacCfg, ok);
+    expect((await route(post({ "x-sig": sig(raw), "x-delivery-id": "a" }))).status).toBe(200);
+    expect((await route(post({ "x-sig": sig(raw), "x-delivery-id": "b" }))).status).toBe(409);
+    expect(deps.claimDelivery).toHaveBeenCalledWith("webhook.test:" + signWebhook(SECRET, raw), 86_400);
+  });
+
+  it("treats an upper-case copy of the same signature as the same delivery", async () => {
+    const { webhookRoute } = setup();
+    const route = webhookRoute(hmacCfg, ok);
+    expect((await route(post({ "x-sig": sig(raw) }))).status).toBe(200);
+    expect((await route(post({ "x-sig": "sha256=" + signWebhook(SECRET, raw).toUpperCase() }))).status).toBe(409);
+  });
+
+  it("token providers are deduplicated on a hash of the body", async () => {
+    const { webhookRoute } = setup();
+    const cfg = { name: "webhook.token", auth: { kind: "token" as const, header: "x-secret", secretEnv: "WH_SECRET" }, body: { schema, maxBytes: 1024 } };
+    const route = webhookRoute(cfg, ok);
+    expect((await route(post({ "x-secret": SECRET }))).status).toBe(200);
+    expect((await route(post({ "x-secret": SECRET }))).status).toBe(409);
+    expect((await route(post({ "x-secret": SECRET }, JSON.stringify({ id: 8 })))).status).toBe(200);
+  });
+
+  it("does not consume the claim for a body that fails the schema", async () => {
+    const { webhookRoute, deps } = setup();
+    const bad = JSON.stringify({ id: "x" });
+    expect((await webhookRoute(hmacCfg, ok)(post({ "x-sig": sig(bad) }, bad))).status).toBe(400);
+    expect(deps.claimDelivery).not.toHaveBeenCalled();
+  });
+
+  it("releases the claim when the handler throws or answers 5xx, so the provider's retry is accepted", async () => {
+    const { webhookRoute, deps } = setup();
+    let attempt = 0;
+    const route = webhookRoute(hmacCfg, async () => {
+      attempt += 1;
+      if (attempt === 1) throw new Error("boom");
+      if (attempt === 2) return Response.json({}, { status: 503 });
+      return Response.json({ ok: 1 });
+    });
+    expect((await route(post({ "x-sig": sig(raw) }))).status).toBe(500);
+    expect((await route(post({ "x-sig": sig(raw) }))).status).toBe(503);
+    expect((await route(post({ "x-sig": sig(raw) }))).status).toBe(200);
+    expect(deps.releaseDelivery).toHaveBeenCalledTimes(2);
+    expect((await route(post({ "x-sig": sig(raw) }))).status).toBe(409);
   });
 
   it("checks the signed timestamp and rejects stale deliveries", async () => {

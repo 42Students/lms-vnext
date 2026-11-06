@@ -5,8 +5,8 @@ import pg from "pg";
 
 const source = readFileSync(new URL("../src/security/shared-store-core.ts", import.meta.url), "utf8");
 const take = (name) => new RegExp("export const " + name + " = `([^`]*)`").exec(source)?.[1];
-const CLAIM = take("CLAIM_ONCE_SQL"), RATE = take("RATE_HIT_SQL"), SWEEP = take("SWEEP_SQL");
-if (!CLAIM || !RATE || !SWEEP) throw new Error("could not read the shared store statements");
+const CLAIM = take("CLAIM_ONCE_SQL"), RATE = take("RATE_HIT_SQL"), SWEEP = take("SWEEP_SQL"), RELEASE = take("RELEASE_SQL");
+if (!CLAIM || !RATE || !SWEEP || !RELEASE) throw new Error("could not read the shared store statements");
 
 const client = new pg.Client({ connectionString: process.env.DATABASE_URL });
 await client.connect();
@@ -21,6 +21,10 @@ try {
   check("a different key is independent", (await run(CLAIM, ["acc:claim-2", 60])).rowCount === 1);
   await run("UPDATE security_shared_store SET expires_at = now() - interval '1 second' WHERE key = 'acc:claim-1'");
   check("an expired claim can be taken again", (await run(CLAIM, ["acc:claim-1", 60])).rowCount === 1);
+
+  await run(RELEASE, ["acc:claim-2"]);
+  check("a released claim can be taken again (failed delivery retry)", (await run(CLAIM, ["acc:claim-2", 60])).rowCount === 1);
+  check("release does not delete a rate counter", (await run(RATE, ["acc:rate-0", 60000])).rows[0].count === 1 && ((await run(RELEASE, ["acc:rate-0"])).rowCount === 0));
 
   const counts = [];
   for (let i = 0; i < 4; i += 1) counts.push((await run(RATE, ["acc:rate-1", 60000])).rows[0].count);

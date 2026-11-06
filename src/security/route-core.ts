@@ -35,6 +35,8 @@ export type RouteDeps<Context> = {
   clientAddress?: (request: Request) => string;
   /** Throws when the actor's sign-in is older than maxAgeSeconds (step-up authentication). */
   requireFreshAuth?: (context: Context, maxAgeSeconds: number) => Promise<void>;
+  /** Per-address budget applied to every public route that does not set its own `rateLimit` (false opts out). */
+  defaultPublicLimit?: { limit: number; windowMs: number };
   /** Budget applied to every authenticated state-changing request that does not set its own `rateLimit`. */
   defaultMutationLimit?: { limit: number; windowMs: number };
   /** Runs the handler inside the actor's database scope (row-level security reads it). Optional so the core stays framework-free. */
@@ -118,6 +120,27 @@ function jsonError(requestId: string, status: number, error: string) {
   );
 }
 
+/**
+ * The route's shape, not the caller's URL: dynamic segments are replaced by a placeholder, so rotating an id
+ * cannot mint a fresh rate-limit bucket (and cannot grow the store without bound).
+ */
+export function routePattern(pathname: string, params: Record<string, string | string[]>): string {
+  const dynamic = new Set<string>();
+  for (const value of Object.values(params)) for (const part of Array.isArray(value) ? value : [value]) dynamic.add(part);
+  return pathname
+    .split("/")
+    .map((segment) => {
+      let decoded = segment;
+      try {
+        decoded = decodeURIComponent(segment);
+      } catch {
+        /* keep the raw segment */
+      }
+      return dynamic.has(decoded) ? ":p" : segment;
+    })
+    .join("/");
+}
+
 function rateLimited(requestId: string, windowMs: number) {
   return Response.json(
     { error: "RATE_LIMITED" },
@@ -168,10 +191,14 @@ export function createRoute<Context, Permission extends string = string>(deps: R
         if (config.query) config.query.parse(query);
 
         // Public routes are throttled by address before any work; authenticated routes by actor once known.
-        if (config.auth === "public" && config.rateLimit && deps.allowRequest && deps.clientAddress) {
-          const windowMs = config.rateLimit.windowMs ?? 60_000;
-          if (!(await deps.allowRequest(`pub:${request.method}:${new URL(request.url).pathname}:${deps.clientAddress(request)}`, config.rateLimit.limit, windowMs))) {
-            return rateLimited(requestId, windowMs);
+        const routeParams = routeContext?.params ? await routeContext.params : {};
+        const pattern = routePattern(url.pathname, routeParams);
+        if (config.auth === "public" && config.rateLimit !== false && deps.allowRequest && deps.clientAddress) {
+          const budget = config.rateLimit
+            ? { limit: config.rateLimit.limit, windowMs: config.rateLimit.windowMs ?? 60_000 }
+            : deps.defaultPublicLimit ?? null;
+          if (budget && !(await deps.allowRequest(`pub:${request.method}:${pattern}:${deps.clientAddress(request)}`, budget.limit, budget.windowMs))) {
+            return rateLimited(requestId, budget.windowMs);
           }
         }
 
@@ -188,7 +215,7 @@ export function createRoute<Context, Permission extends string = string>(deps: R
             ? { limit: config.rateLimit.limit, windowMs: config.rateLimit.windowMs ?? 60_000 }
             : mutating ? deps.defaultMutationLimit ?? null : null;
           if (budget && deps.allowRequest && deps.actorKey) {
-            if (!(await deps.allowRequest(config.rateLimit ? `user:${deps.actorKey(context)}:${request.method}:${new URL(request.url).pathname}` : `user:${deps.actorKey(context)}:writes`, budget.limit, budget.windowMs))) {
+            if (!(await deps.allowRequest(config.rateLimit ? `user:${deps.actorKey(context)}:${request.method}:${pattern}` : `user:${deps.actorKey(context)}:writes`, budget.limit, budget.windowMs))) {
               return rateLimited(requestId, budget.windowMs);
             }
           }
@@ -202,7 +229,7 @@ export function createRoute<Context, Permission extends string = string>(deps: R
           body = config.body.schema.parse(read.value);
         }
 
-        const params = routeContext?.params ? await routeContext.params : {};
+        const params = routeParams;
         const run = () => handler({ request, context, body, query, params, requestId });
         const response = await (context !== null && deps.runInScope ? deps.runInScope(context, run) : run());
         return withHeaders(response, requestId);

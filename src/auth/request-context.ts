@@ -15,7 +15,7 @@ import {
 } from "./e2e-identity";
 import { resolveRequestContext } from "@/modules/identity/context-service";
 import { MEMBERSHIP_ROLES, type MembershipRole } from "@/modules/identity/constants";
-import { bindTenantScope, runAsSystem, scopeFromActor, takeRequestValue } from "@/db/tenant-context";
+import { bindTenantScope, ensureTenantHolder, runAsSystem, scopeFromActor, takeRequestValue } from "@/db/tenant-context";
 import { resolveRequestTenant } from "@/modules/auth/request-tenant";
 import { isTenantAccessAllowed } from "@/modules/auth/tenant-access";
 import {
@@ -97,6 +97,8 @@ async function resolveCurrentRequestContext() {
 }
 
 export function getCurrentRequestContext() {
+  // Must run here, synchronously in the caller's context: see ensureTenantHolder.
+  ensureTenantHolder();
   // The route wrapper may already have resolved this actor to check its permission: reuse it exactly once.
   const offered = takeRequestValue<Awaited<ReturnType<typeof resolveAndBind>>>("request-context");
   return offered ? Promise.resolve(offered) : resolveAndBind();

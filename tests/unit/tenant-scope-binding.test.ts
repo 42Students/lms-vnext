@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
-import { bindTenantScope, currentTenantScope, runWithTenantHolder, runWithTenantScope } from "@/db/tenant-context";
+import { bindTenantScope, currentTenantScope, ensureTenantHolder, runWithTenantHolder, runWithTenantScope } from "@/db/tenant-context";
 import { createInternalRoute } from "@/security/internal-route-core";
 import { createWebhookRoute, signWebhook } from "@/security/webhook-route-core";
 import { runAsSystem } from "@/db/tenant-context";
@@ -23,15 +23,37 @@ describe("tenant scope binding outside API routes", () => {
     });
   });
 
-  it("a server component with no holder keeps the actor for the rest of its async chain", async () => {
+  it("a server component keeps the actor for the rest of its async chain, even when the actor is bound inside a callee after an await", async () => {
     await new Promise<void>((resolve, reject) => {
       // A fresh async context stands in for one server-component render.
       setImmediate(async () => {
         try {
           expect(currentTenantScope()).toBeUndefined();
-          bindTenantScope(scope("page"));
+          const resolveActor = async () => {
+            await Promise.resolve();
+            bindTenantScope(scope("page"));
+          };
+          ensureTenantHolder(); // what getCurrentRequestContext does synchronously, before resolving
+          await resolveActor();
           await Promise.resolve();
           expect(currentTenantScope()?.userId).toBe("page");
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+      });
+    });
+  });
+
+  it("without the holder, binding after an await in a callee does not reach the caller (why ensureTenantHolder exists)", async () => {
+    await new Promise<void>((resolve, reject) => {
+      setImmediate(async () => {
+        try {
+          await (async () => {
+            await Promise.resolve();
+            bindTenantScope(scope("lost"));
+          })();
+          expect(currentTenantScope()).toBeUndefined();
           resolve();
         } catch (e) {
           reject(e);

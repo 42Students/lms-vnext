@@ -39,6 +39,6 @@ describe("shared security store", () => {
   it("keeps the statement text the CI acceptance script runs (single source)", () => {
     expect(CLAIM_ONCE_SQL).toContain("RETURNING key");
     expect(RATE_HIT_SQL).toContain("RETURNING count");
-    expect(SWEEP_SQL).toContain("LIMIT 1000");
+    expect(SWEEP_SQL).toContain("LIMIT 5000");
   });
 });

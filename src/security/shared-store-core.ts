@@ -26,7 +26,9 @@ ON CONFLICT (key) DO UPDATE
       expires_at = CASE WHEN security_shared_store.window_start + ($2::int * interval '1 millisecond') <= now() THEN now() + ($2::int * interval '1 millisecond') ELSE security_shared_store.expires_at END
 RETURNING count`;
 
-export const SWEEP_SQL = `DELETE FROM security_shared_store WHERE key IN (SELECT key FROM security_shared_store WHERE expires_at < now() - interval '1 minute' LIMIT 1000)`;
+export const RELEASE_SQL = `DELETE FROM security_shared_store WHERE key = $1 AND kind = 'claim'`;
+
+export const SWEEP_SQL = `DELETE FROM security_shared_store WHERE key IN (SELECT key FROM security_shared_store WHERE expires_at < now() - interval '1 minute' LIMIT 5000)`;
 
 function bound(query: string, params: unknown[]): SQL {
   // $1/$2 placeholders -> drizzle parameters, in order of appearance.
@@ -50,6 +52,10 @@ export function createSharedStore(run: StoreRun) {
     async hit(key: string, limit: number, windowMs: number): Promise<boolean> {
       const result = await run(bound(RATE_HIT_SQL, [key, Math.max(1, Math.floor(windowMs))]));
       return Number(result.rows[0]?.["count"] ?? Number.MAX_SAFE_INTEGER) <= limit;
+    },
+    /** Forgets a claim so a retry of a failed delivery is accepted. */
+    async release(key: string): Promise<void> {
+      await run(bound(RELEASE_SQL, [key]));
     },
     /** Deletes long-expired rows (bounded batch). Safe to call from any scheduler. */
     async sweep(): Promise<void> {

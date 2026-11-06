@@ -267,3 +267,54 @@ describe("route step-up authentication", () => {
     expect(fresh).not.toHaveBeenCalled();
   });
 });
+
+describe("route rate-limit keys use the route shape", () => {
+  it("routePattern replaces dynamic segments and arrays, and keeps static ones", async () => {
+    const { routePattern } = await import("@/security/route-core");
+    expect(routePattern("/api/x/123/items/abc", { id: "123", itemId: "abc" })).toBe("/api/x/:p/items/:p");
+    expect(routePattern("/api/files/a/b/c", { path: ["a", "b", "c"] })).toBe("/api/files/:p/:p/:p");
+    expect(routePattern("/api/x/hello%20world", { name: "hello world" })).toBe("/api/x/:p");
+    expect(routePattern("/api/static/path", {})).toBe("/api/static/path");
+  });
+
+  it("rotating an id lands in the same bucket, for public and custom-limit routes", async () => {
+    const keys: string[] = [];
+    const route = createRoute({
+      getContext: async () => ({ user: { id: "u1" } }),
+      requirePermission: () => undefined,
+      isSameOrigin: () => true,
+      readJson: async () => ({ kind: "OK" as const, value: {} }),
+      onError: () => Response.json({}, { status: 500 }),
+      newRequestId: () => "rid",
+      allowRequest: (k: string) => (keys.push(k), true),
+      actorKey: (c: { user: { id: string } }) => c.user.id,
+      clientAddress: () => "9.9.9.9",
+      defaultPublicLimit: { limit: 120, windowMs: 60_000 },
+    } as never);
+    const pub = route({ auth: "public", publicReason: "r" }, async () => Response.json({}));
+    await pub(new Request("https://a.test/api/p/111"), { params: Promise.resolve({ id: "111" }) });
+    await pub(new Request("https://a.test/api/p/222"), { params: Promise.resolve({ id: "222" }) });
+    const custom = route({ auth: "user", permission: "service-enforced", rateLimit: { limit: 5 } }, async () => Response.json({}));
+    await custom(new Request("https://a.test/api/q/1", { method: "POST" }), { params: Promise.resolve({ id: "1" }) });
+    await custom(new Request("https://a.test/api/q/2", { method: "POST" }), { params: Promise.resolve({ id: "2" }) });
+    expect(keys).toEqual(["pub:GET:/api/p/:p:9.9.9.9", "pub:GET:/api/p/:p:9.9.9.9", "user:u1:POST:/api/q/:p", "user:u1:POST:/api/q/:p"]);
+  });
+
+  it("a public route with no rateLimit gets the default per-address budget; false opts out", async () => {
+    const calls: Array<[string, number]> = [];
+    const route = createRoute({
+      getContext: async () => ({}),
+      requirePermission: () => undefined,
+      isSameOrigin: () => true,
+      readJson: async () => ({ kind: "OK" as const, value: {} }),
+      onError: () => Response.json({}, { status: 500 }),
+      newRequestId: () => "rid",
+      allowRequest: (k: string, l: number) => (calls.push([k, l]), true),
+      clientAddress: () => "1.1.1.1",
+      defaultPublicLimit: { limit: 120, windowMs: 60_000 },
+    } as never);
+    await route({ auth: "public", publicReason: "r" }, async () => Response.json({}))(new Request("https://a.test/api/p"));
+    await route({ auth: "public", publicReason: "r", rateLimit: false }, async () => Response.json({}))(new Request("https://a.test/api/p"));
+    expect(calls).toEqual([["pub:GET:/api/p:1.1.1.1", 120]]);
+  });
+});

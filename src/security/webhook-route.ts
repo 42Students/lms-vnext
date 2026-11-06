@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedUtf8Body } from "@/lib/bounded-utf8-body";
 import { runAsSystem } from "@/db/tenant-context";
-import { claimDeliveryShared } from "@/security/shared-store";
+import { claimDeliveryShared, releaseDeliveryShared } from "@/security/shared-store";
 import { createWebhookRoute } from "@/security/webhook-route-core";
 
 /**
@@ -10,12 +10,23 @@ import { createWebhookRoute } from "@/security/webhook-route-core";
  * store (src/security/shared-store.ts) so replays are rejected across instances.
  */
 const seen = new Map<string, number>();
+const MAX_CLAIMS = 50_000;
+let sinceSweep = 0;
 export async function claimDeliveryInMemory(key: string, ttlSeconds: number, nowMs = Date.now()): Promise<boolean> {
-  for (const [k, expires] of seen) if (expires <= nowMs) seen.delete(k);
-  if (seen.has(key)) return false;
-  if (seen.size >= 50_000) return true; // bounded memory: when full, fail open on dedupe only (signature still required)
+  // Sweep expired claims every 500 calls (not every call), and evict the oldest when full: a flood of valid
+  // deliveries must never turn into "accept every replay".
+  if (++sinceSweep >= 500 || seen.size >= MAX_CLAIMS) {
+    sinceSweep = 0;
+    for (const [k, expires] of seen) if (expires <= nowMs) seen.delete(k);
+    while (seen.size >= MAX_CLAIMS) seen.delete(seen.keys().next().value as string);
+  }
+  const expires = seen.get(key);
+  if (expires !== undefined && expires > nowMs) return false;
   seen.set(key, nowMs + ttlSeconds * 1000);
   return true;
+}
+export async function releaseDeliveryInMemory(key: string): Promise<void> {
+  seen.delete(key);
 }
 
 /** The one way to define an inbound provider webhook. See docs/security/central-security-architecture.md (L10). */
@@ -27,6 +38,7 @@ export const webhookRoute = createWebhookRoute({
     return body.kind === "TOO_LARGE" ? { kind: "TOO_LARGE" } : { kind: "INVALID" };
   },
   claimDelivery: (key, ttl) => claimDeliveryShared(key, ttl, (k, t) => claimDeliveryInMemory(k, t)),
+  releaseDelivery: (key) => releaseDeliveryShared(key, releaseDeliveryInMemory),
   now: () => Math.floor(Date.now() / 1000),
   onError: apiErrorResponse,
   runInSystemScope: runAsSystem,

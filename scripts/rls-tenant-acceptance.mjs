@@ -72,29 +72,46 @@ try {
   const own = await asApp({ ...enforce, "app.college_id": A }, "INSERT INTO rls_probe (college_id) VALUES ($1) RETURNING id", [A]);
   check("enforce mode: college A can write its own row", own.rowCount === 1);
 
-  // 3. Global-read variant (migration 0334): platform-owned NULL-college rows are readable by every college,
-  //    writable only by platform/system scopes.
+  // 3. Global-read variant (migrations 0334 + 0336): platform-owned NULL-college rows are readable (SELECT only) by every
+  //    college; update, delete and insert stay strict, so only a platform or system scope can change a global row.
   const variantTables = await client.query(
-    `SELECT tablename, qual, with_check FROM pg_policies WHERE schemaname = 'public' AND policyname = 'tenant_isolation' AND tablename IN ('lms_groups','legacy_id_map')`);
-  check("lms_groups and legacy_id_map carry the global-read variant policy",
-    variantTables.rowCount === 2 && variantTables.rows.every((r) => /IS NULL/i.test(r.qual) && !/IS NULL/i.test(r.with_check ?? "")));
+    `SELECT tablename, policyname, cmd, qual, with_check FROM pg_policies WHERE schemaname = 'public' AND tablename IN ('lms_groups','legacy_id_map')`);
+  const policy = (table, name) => variantTables.rows.find((r) => r.tablename === table && r.policyname === name);
+  check("lms_groups and legacy_id_map: strict tenant_isolation plus a SELECT-only global_read policy",
+    ["lms_groups", "legacy_id_map"].every((t) => {
+      const strict = policy(t, "tenant_isolation");
+      const global = policy(t, "global_read");
+      return strict && global && !/IS NULL/i.test(strict.qual) && !/IS NULL/i.test(strict.with_check ?? "") && global.cmd === "SELECT" && /IS NULL/i.test(global.qual);
+    }));
   await client.query(`DROP TABLE IF EXISTS rls_probe_global`);
   await client.query(`CREATE TABLE rls_probe_global (id serial PRIMARY KEY, college_id uuid)`);
   await client.query(`ALTER TABLE rls_probe_global ENABLE ROW LEVEL SECURITY`);
-  await client.query(`CREATE POLICY tenant_isolation ON rls_probe_global USING (app_rls_allows("college_id") OR "college_id" IS NULL) WITH CHECK (app_rls_allows("college_id"))`);
-  await client.query(`GRANT SELECT, INSERT ON rls_probe_global TO rls_probe_user`);
+  await client.query(`CREATE POLICY tenant_isolation ON rls_probe_global USING (app_rls_allows("college_id")) WITH CHECK (app_rls_allows("college_id"))`);
+  await client.query(`CREATE POLICY global_read ON rls_probe_global FOR SELECT USING ("college_id" IS NULL)`);
+  await client.query(`GRANT SELECT, INSERT, UPDATE, DELETE ON rls_probe_global TO rls_probe_user`);
   await client.query(`GRANT USAGE ON SEQUENCE rls_probe_global_id_seq TO rls_probe_user`);
   await client.query(`INSERT INTO rls_probe_global (college_id) VALUES ($1), ($2), (NULL)`, [A, B]);
   const countGlobal = async (s) => (await asApp(s, "SELECT count(*)::int AS n FROM rls_probe_global")).rows[0].n;
   check("variant, college A: own row plus the global row", (await countGlobal({ ...enforce, "app.college_id": A })) === 2);
   check("variant, platform scope: all rows", (await countGlobal({ ...enforce, "app.platform": "on" })) === 3);
+  check("variant, inert mode: all rows", (await countGlobal({})) === 3);
   let globalDenied = false;
   try {
     await asApp({ ...enforce, "app.college_id": A }, "INSERT INTO rls_probe_global (college_id) VALUES (NULL)");
   } catch (error) {
     globalDenied = /row-level security/i.test(String(error.message));
   }
-  check("variant: a college cannot write a global row", globalDenied);
+  check("variant: a college cannot insert a global row", globalDenied);
+  const del = await asApp({ ...enforce, "app.college_id": A }, "DELETE FROM rls_probe_global WHERE college_id IS NULL");
+  check("variant: a college cannot DELETE a global row", del.rowCount === 0);
+  let takeover = false;
+  try {
+    const upd = await asApp({ ...enforce, "app.college_id": A }, "UPDATE rls_probe_global SET college_id = $1 WHERE college_id IS NULL", [A]);
+    takeover = upd.rowCount === 0;
+  } catch (error) {
+    takeover = /row-level security/i.test(String(error.message));
+  }
+  check("variant: a college cannot take over a global row by UPDATE", takeover);
   const globalSystem = await asApp({ ...enforce, "app.system": "seed" }, "INSERT INTO rls_probe_global (college_id) VALUES (NULL) RETURNING id");
   check("variant: a system scope can write a global row", globalSystem.rowCount === 1);
 } finally {

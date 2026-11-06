@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
+import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import type { ZodType } from "zod";
 import { credentialMatches } from "@/security/internal-route-core";
 
@@ -7,8 +7,13 @@ import { credentialMatches } from "@/security/internal-route-core";
  *
  * Order, fail-closed: browser Origin rejected -> bounded RAW body read (the signature covers the exact bytes)
  * -> authenticity (HMAC signature or shared token, constant-time, secret of at least 32 bytes) -> timestamp
- * tolerance (when the provider signs one) -> replay claim (a delivery id is accepted once) -> schema -> handler.
- * Nothing in the denial says which check failed, and nothing is parsed before authenticity is proven.
+ * tolerance (when the provider signs one) -> schema -> replay claim -> handler. Nothing in the denial says which
+ * check failed, and nothing is parsed before authenticity is proven.
+ *
+ * The replay key is derived ONLY from authenticated bytes: the HMAC signature (which covers the timestamp and body),
+ * or a hash of the body for shared-token providers. A header the provider does not sign (a delivery id an attacker can
+ * rewrite) is never trusted for deduplication. A claim is released when the handler throws or answers 5xx, so the
+ * provider's retry of a failed delivery is not refused as a duplicate.
  */
 
 export type WebhookDeps = {
@@ -17,6 +22,8 @@ export type WebhookDeps = {
   readRaw: (request: Request, maxBytes: number) => Promise<{ kind: "OK"; text: string } | { kind: "TOO_LARGE" } | { kind: "INVALID" }>;
   /** Atomically records a delivery key; resolves true only the first time it is seen within ttlSeconds. */
   claimDelivery: (key: string, ttlSeconds: number) => Promise<boolean>;
+  /** Forgets a claim (the handler failed, so the provider's retry must be accepted). Optional. */
+  releaseDelivery?: (key: string) => Promise<void>;
   now: () => number; // epoch seconds
   onError: (error: unknown) => Response;
   newRequestId: () => string;
@@ -42,8 +49,6 @@ export type WebhookRouteConfig<B> = {
   name: string;
   auth: WebhookAuth;
   body: { schema: ZodType<B>; maxBytes: number };
-  /** Header carrying a unique delivery id. Without it the signature itself is the replay key. */
-  deliveryIdHeader?: string;
   /** How long a delivery key is remembered (default 24h). */
   replayTtlSeconds?: number;
   /** Keep a route's existing denial body so providers/tests see no change. */
@@ -95,7 +100,7 @@ export function createWebhookRoute(deps: WebhookDeps) {
         const auth = config.auth;
         if (auth.kind === "token") {
           if (!credentialMatches(request.headers.get(auth.header), secret)) return deny("SIGNATURE");
-          replayKey = "";
+          replayKey = createHash("sha256").update(raw.text, "utf8").digest("hex");
         } else {
           let provided = request.headers.get(auth.header) ?? "";
           const prefix = auth.prefix ?? "";
@@ -113,13 +118,7 @@ export function createWebhookRoute(deps: WebhookDeps) {
           } else if (!hexEquals(provided, signWebhook(secret, signed))) {
             return deny("SIGNATURE");
           }
-          replayKey = provided;
-        }
-
-        const deliveryId = config.deliveryIdHeader ? request.headers.get(config.deliveryIdHeader) : null;
-        if (deliveryId || replayKey) {
-          const key = `${config.name}:${deliveryId ?? replayKey}`;
-          if (!(await deps.claimDelivery(key.slice(0, 200), ttl))) return deny("REPLAY", 409, { error: "DUPLICATE_DELIVERY" });
+          replayKey = provided.toLowerCase();
         }
 
         let json: unknown;
@@ -130,8 +129,20 @@ export function createWebhookRoute(deps: WebhookDeps) {
         }
         const parsed = config.body.schema.safeParse(json);
         if (!parsed.success) return deny("SCHEMA", 400, { error: "INVALID_REQUEST" });
+
+        const key = `${config.name}:${replayKey}`.slice(0, 200);
+        if (!(await deps.claimDelivery(key, ttl))) return deny("REPLAY", 409, { error: "DUPLICATE_DELIVERY" });
+        const release = () => deps.releaseDelivery?.(key).catch(() => undefined);
         const run = () => handler({ request, body: parsed.data, requestId });
-        return withHeaders(await (deps.runInSystemScope ? deps.runInSystemScope("webhook:" + config.name, run) : run()), requestId);
+        let response: Response;
+        try {
+          response = await (deps.runInSystemScope ? deps.runInSystemScope("webhook:" + config.name, run) : run());
+        } catch (error) {
+          await release();
+          throw error;
+        }
+        if (response.status >= 500) await release();
+        return withHeaders(response, requestId);
       } catch (error) {
         return withHeaders(deps.onError(error), requestId);
       }

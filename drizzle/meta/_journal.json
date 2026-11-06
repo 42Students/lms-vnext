@@ -2353,6 +2353,13 @@
       "when": 1793985531493,
       "tag": "0335_security_shared_store",
       "breakpoints": true
+    },
+    {
+      "idx": 336,
+      "version": "7",
+      "when": 1793985591493,
+      "tag": "0336_rls_global_read_select_only",
+      "breakpoints": true
     }
   ]
 }
