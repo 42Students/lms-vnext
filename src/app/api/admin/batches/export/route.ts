@@ -40,4 +40,4 @@ async function handleGET(request:Request){
    "academicYear","currentSemester","status","students"],rows,"batches.csv",records.length<total);
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = secured(handleGET, { stepUp: true });

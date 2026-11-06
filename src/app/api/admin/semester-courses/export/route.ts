@@ -36,4 +36,4 @@ async function handleGET(request:Request){
    rows,"semester-course-mapping.csv",matching.length>records.length);
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = secured(handleGET, { stepUp: true });

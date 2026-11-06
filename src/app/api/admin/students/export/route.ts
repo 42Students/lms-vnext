@@ -9,4 +9,4 @@ async function handleGET(request:Request){
   loader:(context,query)=>listAdminScopedPeople(context,"LEARNER",query),
  });
 }
-export const GET = secured(handleGET);
+export const GET = secured(handleGET, { stepUp: true });

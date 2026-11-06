@@ -180,12 +180,10 @@
    "route-on-shim-only": 1
   },
   "src/app/api/admin/batches/export/route.ts": {
-   "route-on-shim-only": 1,
-   "sensitive-without-step-up": 1
+   "route-on-shim-only": 1
   },
   "src/app/api/admin/classes/export/route.ts": {
-   "route-on-shim-only": 1,
-   "sensitive-without-step-up": 1
+   "route-on-shim-only": 1
   },
   "src/app/api/admin/colleges/[collegeId]/admins/[userId]/history/route.ts": {
    "route-on-shim-only": 1
@@ -269,12 +267,10 @@
   },
   "src/app/api/admin/faculty/bulk-import/route.ts": {
    "route-on-shim-only": 1,
-   "sensitive-without-step-up": 1,
    "direct-db-in-route": 1
   },
   "src/app/api/admin/faculty/export/route.ts": {
-   "route-on-shim-only": 1,
-   "sensitive-without-step-up": 1
+   "route-on-shim-only": 1
   },
   "src/app/api/admin/faculty/memberships/[membershipId]/retire/route.ts": {
    "route-on-shim-only": 1,
@@ -370,8 +366,7 @@
    "route-on-shim-only": 1
   },
   "src/app/api/admin/placements/applications/export/route.ts": {
-   "route-on-shim-only": 1,
-   "sensitive-without-step-up": 1
+   "route-on-shim-only": 1
   },
   "src/app/api/admin/placements/applications/refresh/route.ts": {
    "route-on-shim-only": 1
@@ -407,8 +402,7 @@
    "route-on-shim-only": 1
   },
   "src/app/api/admin/placements/shortlisted/export/route.ts": {
-   "route-on-shim-only": 1,
-   "sensitive-without-step-up": 1
+   "route-on-shim-only": 1
   },
   "src/app/api/admin/quizzes/export/route.ts": {
    "route-on-shim-only": 1
@@ -427,8 +421,7 @@
    "route-on-shim-only": 1
   },
   "src/app/api/admin/semester-courses/export/route.ts": {
-   "route-on-shim-only": 1,
-   "sensitive-without-step-up": 1
+   "route-on-shim-only": 1
   },
   "src/app/api/admin/semesters/export/route.ts": {
    "route-on-shim-only": 1
@@ -449,8 +442,7 @@
    "route-on-shim-only": 1
   },
   "src/app/api/admin/students/export/route.ts": {
-   "route-on-shim-only": 1,
-   "sensitive-without-step-up": 1
+   "route-on-shim-only": 1
   },
   "src/app/api/admin/students/module-access/bulk/route.ts": {
    "route-on-shim-only": 1
@@ -941,9 +933,6 @@
   },
   "src/app/api/courses/college/assignments/[deliveryId]/submissions/route.ts": {
    "service-enforced": 1
-  },
-  "src/app/api/courses/college/learner-progress/export/route.ts": {
-   "sensitive-without-step-up": 1
   },
   "src/app/api/courses/deliveries/[deliveryId]/assignments/[assignmentId]/materials/route.ts": {
    "route-on-shim-only": 1,
@@ -2361,7 +2350,6 @@
    "route-on-shim-only": 1
   },
   "src/app/api/placements/tpo/reports/by-company-page/export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/reports/engagement/route.ts": {

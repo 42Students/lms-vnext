@@ -51,4 +51,4 @@ async function handleGET(request:Request){
    "maxStudents","students","status"],rows,"classes.csv",false);
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = secured(handleGET, { stepUp: true });

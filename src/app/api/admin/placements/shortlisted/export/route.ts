@@ -8,4 +8,4 @@ async function handleGET(request:Request){
   filename:"shortlisted.csv",statuses,loader:(context,query)=>listSuperAdminShortlisted(context,query),
  });
 }
-export const GET = secured(handleGET);
+export const GET = secured(handleGET, { stepUp: true });

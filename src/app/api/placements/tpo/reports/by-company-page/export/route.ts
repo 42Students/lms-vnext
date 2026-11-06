@@ -11,7 +11,7 @@ import {NextResponse} from "next/server";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "service-enforced", stepUp: true },
   async ({ request, context: actor }) => {
     const context = actor!;
     if(!context.membership||!hasMembershipRole(context,"TPO")){

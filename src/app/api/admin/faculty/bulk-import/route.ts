@@ -78,4 +78,4 @@ async function handlePOST(request:Request){
       {headers:{"Cache-Control":"private, no-store"}});
   }catch(error){return apiErrorResponse(error);}
 }
-export const POST = secured(handlePOST);
+export const POST = secured(handlePOST, { csrf: "enforce", stepUp: true });
