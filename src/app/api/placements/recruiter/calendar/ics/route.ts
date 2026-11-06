@@ -14,7 +14,7 @@ const querySchema=z.strictObject({
 });
 
 export const GET = route(
-  { auth: "user", permission: "placements.recruiter.read" },
+  { auth: "user", permission: "actor-owned" },
   async ({ request, context: actor }) => {
     const context = actor!;
     if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)

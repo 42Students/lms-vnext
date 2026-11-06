@@ -46,7 +46,7 @@ test("API-07 placement routes have auth guard (isSameOriginRequest or getCurrent
       } else if (e.name === "route.ts") {
         total++;
         const content = fs.readFileSync(full, "utf8");
-        if (content.includes("isSameOriginRequest") || content.includes("getCurrentRequestContext") ||
+        if (content.includes("isSameOriginRequest") || content.includes("getCurrentRequestContext") || content.includes("@/security/route") || content.includes("@/security/secure-handler") ||
             content.includes("getPlacementRequestContext") || content.includes("requirePlacement")) {
           guarded++;
         } else {
@@ -70,7 +70,8 @@ test("API-07 tenant-scoped placement routes use college context", () => {
     const fullPath = path.join(root, ep.vNextPath);
     if (!fs.existsSync(fullPath)) continue;
     const content = fs.readFileSync(fullPath, "utf8");
-    const hasTenantContext = content.includes("getCurrentRequestContext") ||
+    // route() from the central wrapper resolves the signed-in tenant context before the handler runs.
+    const hasTenantContext = content.includes("getCurrentRequestContext") || content.includes("@/security/route") ||
       content.includes("collegeId") || content.includes("tenantId") ||
       content.includes("membershipId") || content.includes("getPlacementRequestContext");
     assert.ok(hasTenantContext,

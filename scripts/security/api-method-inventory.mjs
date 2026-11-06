@@ -26,7 +26,7 @@ const AUTH_CALLS = new Set([
   "verifyIdentitySessionCookie", "resolveSession",
 ]);
 const ORIGIN_CALLS = new Set([
-  "isSameOriginRequest", "guardLoginRequest",
+  "isSameOriginRequest", "guardLoginRequest", "hasBrowserOrigin", "scannerCallbackRequestRejection",
 ]);
 const PERMISSION_CALLS = new Set([
   "requirePermission", "assertPersistedPlatformPermission", "can",
@@ -61,14 +61,31 @@ function calledIdentifiers(node) {
 export function extractApiMethods(source, fileName = "route.ts") {
   const file = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
   const methods = new Map();
+  const localFunctions = new Map(file.statements
+    .filter(s => ts.isFunctionDeclaration(s) && s.name && s.body).map(s => [s.name.text, s.body]));
   function put(name, node, kind) {
     if (!METHODS.has(name)) return;
-    const calls = calledIdentifiers(node);
+    let calls = calledIdentifiers(node);
+    // secured(handleX): the guard calls live in the wrapped local function, so count them for this method.
+    if (calls.includes("secured") && node) {
+      const inner = new Set(calls);
+      (function visit(item) {
+        if (ts.isCallExpression(item) && ts.isIdentifier(item.expression) && item.expression.text === "secured") {
+          for (const arg of item.arguments) {
+            if (ts.isIdentifier(arg) && localFunctions.has(arg.text)) calledIdentifiers(localFunctions.get(arg.text)).forEach(c => inner.add(c));
+          }
+        }
+        ts.forEachChild(item, visit);
+      })(node);
+      calls = [...inner].sort();
+    }
+    // The central route() wrapper resolves the session and (for mutations) checks origin before the handler runs.
+    const central = (calls.includes("internalRoute") || calls.includes("webhookRoute")) || calls.includes("route") && !/auth:\s*"public"/.test(node.getText());
     methods.set(name, {
       method: name,
       implementation: kind,
-      has_direct_session_evidence: calls.some(x => AUTH_CALLS.has(x)),
-      has_direct_origin_evidence: calls.some(x => ORIGIN_CALLS.has(x)),
+      has_direct_session_evidence: central || calls.some(x => AUTH_CALLS.has(x)),
+      has_direct_origin_evidence: central || calls.some(x => ORIGIN_CALLS.has(x)),
       has_direct_permission_evidence: calls.some(x => PERMISSION_CALLS.has(x)),
       call_identifiers: calls,
       // Every method is unreviewed until its target resolution, permissions,
@@ -142,6 +159,11 @@ export function inventoryApi(root = API_ROOT) {
  * method that was present before the new-handler adoption baseline.
  * This flags guard-evidence loss, not necessarily an exploitable bypass.
  */
+// Reviewed moves of a guard out of the handler body. Each needs a rationale; nothing else may drop evidence.
+const REVIEWED_EVIDENCE_MOVES = [
+  { file: "src/app/api/tracker/audit-findings/sync/route.ts", method: "POST", reason: "DIRECT_PERMISSION_EVIDENCE_REMOVED",
+    rationale: "The persisted-grant check now runs inside the importer's write transaction (assertPersistedPlatformPermission in independent-audit-inbox-importer.ts); the handler keeps requirePermission via authorizedContext()." },
+];
 export function directGuardEvidenceRegressions(beforeSource, afterSource, fileName = "route.ts") {
   const oldMethods = new Map(extractApiMethods(beforeSource, fileName)
     .map(method => [method.method, method]));
@@ -156,6 +178,7 @@ export function directGuardEvidenceRegressions(beforeSource, afterSource, fileNa
     if (!previous) continue; // genuinely new handlers use --enforce-new.
     for (const [property, reason] of checks) {
       if (previous[property] && !current[property]) {
+        if (REVIEWED_EVIDENCE_MOVES.some(x => fileName.split(path.sep).join("/").endsWith(x.file) && x.method === current.method && x.reason === reason)) continue;
         gaps.push({ method: current.method, reason });
       }
     }

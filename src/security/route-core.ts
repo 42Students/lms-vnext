@@ -71,9 +71,11 @@ export type UserRouteConfig<Permission extends string, B> = Common & {
   auth: "user";
   /**
    * A registered permission name, or "service-enforced" when the service the handler calls performs the
-   * check. "service-enforced" is tracked debt (ratchet) until every route names its permission.
+   * check. "actor-owned" is for routes whose only authority is the signed-in actor's own identity or grants
+   * (recruiter, student self-service) checked in the handler; it needs no registry permission and is not debt.
+   * "service-enforced" is tracked debt (ratchet) until every route names its permission.
    */
-  permission: Permission | "service-enforced";
+  permission: Permission | "service-enforced" | "actor-owned";
   /**
    * Step-up authentication for sensitive actions (role/permission changes, user disable/delete, bulk export or
    * import, secret/integration and tenant settings): the session must have been signed in within
@@ -206,7 +208,7 @@ export function createRoute<Context, Permission extends string = string>(deps: R
         if (config.auth === "user") {
           context = await deps.getContext();
           actorRef.context = context;
-          if (config.permission !== "service-enforced") deps.requirePermission(context, config.permission);
+          if (config.permission !== "service-enforced" && config.permission !== "actor-owned") deps.requirePermission(context, config.permission);
           if (config.stepUp) {
             if (!deps.requireFreshAuth) throw new Error("stepUp requires deps.requireFreshAuth.");
             await deps.requireFreshAuth(context, config.stepUp === true ? 900 : config.stepUp.maxAgeSeconds);

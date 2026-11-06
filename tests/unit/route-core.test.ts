@@ -53,6 +53,13 @@ describe("central route pipeline", () => {
     expect(deps.requirePermission).not.toHaveBeenCalled();
   });
 
+  it("still authenticates but skips the registry check for actor-owned routes", async () => {
+    const { deps, route } = setup();
+    await route({ auth: "user", permission: "actor-owned" }, async () => Response.json({}))(new Request("https://a.test/x"));
+    expect(deps.getContext).toHaveBeenCalledTimes(1);
+    expect(deps.requirePermission).not.toHaveBeenCalled();
+  });
+
   it("maps unknown fields, invalid json and oversize bodies to client errors", async () => {
     const bad = setup({ readJson: vi.fn(async () => ({ kind: "OK", value: { name: "a", extra: 1 } })) });
     const h1 = bad.route({ auth: "user", permission: "service-enforced", body: { schema, maxBytes: 10 } }, async () => Response.json({}));
