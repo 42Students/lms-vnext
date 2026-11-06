@@ -11771,13 +11771,19 @@
       },
       "SEC-06-010": {
         "state": "PARTIAL_EVIDENCE",
-        "assessedAt": "2026-11-04",
+        "assessedAt": "2026-11-06",
         "evidence": [
           {
             "type": "EXECUTED_SCOPED_TEST",
             "commitSha": "24d241d84acba5861ce816a7cfb52cfdd0318915",
             "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41809840139",
             "scope": "Auditor flags privileged or BYPASSRLS runtime principals in model"
+          },
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "00a47eadecd9a51921223fd044190642298eb6b4",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/42167526938",
+            "scope": "CI build job ran the production standalone server as a NOSUPERUSER NOBYPASSRLS runtime role with no table ownership and no TRUNCATE; the app's own principal check accepted it and /ready returned healthy"
           }
         ],
         "nextProof": "Inspect live runtime grant/ownership and prove BYPASSRLS absent"
@@ -12219,10 +12225,40 @@
         "state": "UNASSESSED"
       },
       "SEC-12-010": {
-        "state": "UNASSESSED"
+        "state": "IMPLEMENTED_UNVERIFIED",
+        "assessedAt": "2026-11-06",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "8e5a8bf147837f24eb472ce516d7809b258dda62",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/42163137979",
+            "scope": "Response headers pinned by unit tests: HSTS max-age one year, nosniff, X-Frame-Options DENY, Referrer-Policy, COOP same-origin-allow-popups, X-Permitted-Cross-Domain-Policies none, CSP with frame-ancestors none"
+          }
+        ],
+        "nextProof": "Fetch the headers from the deployed dev host and confirm they are served unchanged by the ingress",
+        "remainingChecks": [
+          "Headers not yet observed on a deployed environment",
+          "HSTS includeSubDomains and preload need an owner decision (shared parent domain)",
+          "CSP still allows unsafe-inline for scripts (SEC-12-002)",
+          "Independent review"
+        ]
       },
       "SEC-12-011": {
-        "state": "UNASSESSED"
+        "state": "IMPLEMENTED_UNVERIFIED",
+        "assessedAt": "2026-11-06",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "8e5a8bf147837f24eb472ce516d7809b258dda62",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/42163137979",
+            "scope": "Permissions-Policy denies camera, microphone, geolocation, payment, usb, bluetooth, serial and interest-cohort, pinned by unit test"
+          }
+        ],
+        "nextProof": "Fetch the header from the deployed dev host and confirm no product feature needs a denied capability",
+        "remainingChecks": [
+          "Header not yet observed on a deployed environment",
+          "Independent review"
+        ]
       },
       "SEC-12-012": {
         "state": "UNASSESSED"
@@ -12609,10 +12645,35 @@
         "state": "UNASSESSED"
       },
       "SEC-18-004": {
-        "state": "UNASSESSED"
+        "state": "IMPLEMENTED_UNVERIFIED",
+        "assessedAt": "2026-11-06",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "8e5a8bf147837f24eb472ce516d7809b258dda62",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/42163137979",
+            "scope": "CODEOWNERS assigns an owner to src/security, src/db, drizzle, proxy, identity, storage, .github, docs/security, lockfile and Dockerfile (tests/security-governance-files.test.mjs)"
+          }
+        ],
+        "nextProof": "Enforce code-owner review through branch protection and confirm a review is requested on a security-path pull request",
+        "remainingChecks": [
+          "Branch protection must require code-owner review (SEC-18-002 is still open)",
+          "Add a second owner so review is independent of the author",
+          "Independent review of the ownership map"
+        ]
       },
       "SEC-18-005": {
-        "state": "UNASSESSED"
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-06",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "8e5a8bf147837f24eb472ce516d7809b258dda62",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/42163137979",
+            "scope": "Every workflow declares top-level least-privilege token permissions; no write-all and no top-level contents: write (schema-drift-capture write access narrowed to its one job)"
+          }
+        ],
+        "nextProof": "Review repository default workflow permissions, collaborator roles, deploy keys and the schema-drift workflow that pushes to main"
       },
       "SEC-18-006": {
         "state": "UNASSESSED"
@@ -12627,10 +12688,40 @@
         "state": "UNASSESSED"
       },
       "SEC-18-010": {
-        "state": "UNASSESSED"
+        "state": "IMPLEMENTED_UNVERIFIED",
+        "assessedAt": "2026-11-06",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "8e5a8bf147837f24eb472ce516d7809b258dda62",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/42163137948",
+            "scope": "CycloneDX SBOM generated from the production dependency tree and uploaded as a 90-day build artifact"
+          }
+        ],
+        "nextProof": "Attach the SBOM to each release and add the container image SBOM",
+        "remainingChecks": [
+          "SBOM covers npm production dependencies only, not the container image or OS packages",
+          "Release process must publish the SBOM with the release artifact",
+          "Independent review"
+        ]
       },
       "SEC-18-011": {
-        "state": "UNASSESSED"
+        "state": "IMPLEMENTED_UNVERIFIED",
+        "assessedAt": "2026-11-06",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "8e5a8bf147837f24eb472ce516d7809b258dda62",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/42163137948",
+            "scope": "npm audit --omit=dev --audit-level=high gate passes with zero high or critical production advisories; Dependabot configured for npm and GitHub Actions"
+          }
+        ],
+        "nextProof": "Triage the 12 moderate dev-tooling advisories (eslint-config-next, drizzle-kit, esbuild chain) with an owner exception or upgrades",
+        "remainingChecks": [
+          "12 moderate advisories in development tooling are unresolved and need an owner decision",
+          "Confirm Dependabot alerts and security updates are enabled in repository settings",
+          "Independent review"
+        ]
       },
       "SEC-18-012": {
         "state": "UNASSESSED"
@@ -12642,7 +12733,21 @@
         "state": "UNASSESSED"
       },
       "SEC-18-015": {
-        "state": "UNASSESSED"
+        "state": "IMPLEMENTED_UNVERIFIED",
+        "assessedAt": "2026-11-06",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "8e5a8bf147837f24eb472ce516d7809b258dda62",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/42163137948",
+            "scope": "Lockfile source check: every locked package comes from registry.npmjs.org with an integrity hash; npm ci --ignore-scripts installs reproducibly"
+          }
+        ],
+        "nextProof": "Run the same check on every pull request touching package files and confirm Docker builds use npm ci",
+        "remainingChecks": [
+          "Confirm the Dockerfile installs with npm ci from the lockfile",
+          "Independent review"
+        ]
       },
       "SEC-18-016": {
         "state": "UNASSESSED"
@@ -12651,13 +12756,43 @@
         "state": "UNASSESSED"
       },
       "SEC-18-018": {
-        "state": "UNASSESSED"
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-06",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "8e5a8bf147837f24eb472ce516d7809b258dda62",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/42163137979",
+            "scope": "SECURITY.md defines fix deadlines (critical 7, high 14, moderate 30, low 90 days) checked by tests/security-governance-files.test.mjs"
+          }
+        ],
+        "nextProof": "Owner confirms the proposed deadlines and exception process; track a first critical advisory (next RCE fixed 2026-11-06) against them"
       },
       "SEC-18-019": {
-        "state": "UNASSESSED"
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-06",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "8e5a8bf147837f24eb472ce516d7809b258dda62",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/42163137948",
+            "scope": "Lockfile source and integrity gate plus weekly Dependabot updates for npm and GitHub Actions; transitive advisories are included in npm audit"
+          }
+        ],
+        "nextProof": "Review transitive dependency changes in each Dependabot pull request and pin third-party GitHub Actions by commit SHA (currently 0 of 502 uses are pinned)"
       },
       "SEC-18-020": {
-        "state": "UNASSESSED"
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-06",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "8e5a8bf147837f24eb472ce516d7809b258dda62",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/42163137948",
+            "scope": "Production build fails on high or critical npm advisories and on non-registry or hash-less lockfile entries; next upgraded 16.3.8 to 16.4.5 to clear a critical RCE advisory"
+          }
+        ],
+        "nextProof": "Add an explicit deny list for known-bad packages and extend the gate to development tooling"
       },
       "SEC-18-021": {
         "state": "UNASSESSED"
@@ -13066,7 +13201,17 @@
         "state": "UNASSESSED"
       },
       "SEC-25-013": {
-        "state": "UNASSESSED"
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-06",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "8e5a8bf147837f24eb472ce516d7809b258dda62",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/42163137979",
+            "scope": "Written vulnerability response deadlines by severity in SECURITY.md, verified present by test"
+          }
+        ],
+        "nextProof": "Owner approval of the deadlines and a named person accountable for meeting them"
       },
       "SEC-25-014": {
         "state": "UNASSESSED"
