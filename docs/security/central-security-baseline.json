@@ -1767,7 +1767,7 @@
    "route-on-shim-only": 1
   },
   "src/app/api/placements/recruiter/notifications/[notificationId]/read/route.ts": {
-   "service-enforced": 1
+   "route-on-shim-only": 1
   },
   "src/app/api/placements/recruiter/notifications/drawer/route.ts": {
    "service-enforced": 1
@@ -1790,8 +1790,8 @@
    "raw-request-json": 1
   },
   "src/app/api/placements/recruiter/profile/route.ts": {
-   "direct-db-in-route": 1,
-   "service-enforced": 2
+   "route-on-shim-only": 1,
+   "direct-db-in-route": 1
   },
   "src/app/api/placements/recruiter/quick-search/route.ts": {
    "route-on-shim-only": 1
