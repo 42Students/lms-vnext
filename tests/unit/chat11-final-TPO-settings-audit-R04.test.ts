@@ -71,7 +71,7 @@ describe("TPO-settings-audit-R04 persisted audit saved views across devices",()=
   expect(ui).toContain("The result of this change is uncertain.");
   expect(ui).not.toContain("localStorage");
   expect(ui).toContain("sync across your signed-in devices");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("readTpoSettingsBody(request)");
   expect(route).toContain("private, no-store");
  });

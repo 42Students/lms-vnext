@@ -1,30 +1,14 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import { correctAdminAttendance } from "@/modules/attendance/admin-service";
 
 export const runtime = "nodejs";
 
-type RouteContext = {
-  params: Promise<{ scheduleEventId: string }>;
-};
-
-export async function PATCH(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context =
-      await getCurrentRequestContext();
-    const { scheduleEventId } = await params;
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { scheduleEventId } = params;
     const body = await request.json();
     const result =
       await correctAdminAttendance(
@@ -32,9 +16,6 @@ export async function PATCH(
         scheduleEventId,
         body,
       );
-
     return NextResponse.json({ result });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

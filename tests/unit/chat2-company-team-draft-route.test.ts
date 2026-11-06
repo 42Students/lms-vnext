@@ -4,7 +4,7 @@ const src=(p:string)=>readFileSync(p,"utf8");
 describe("Company Team posting routes and graceful draft retention",()=>{
  it("TPO-companies-05 rejects cross-origin writes before parsing or opening company records",()=>{
   const route=src("src/app/api/placements/tpo/companies/[companyId]/team/route.ts");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("tpoCompanyTeamPostSchema.safeParse");
   expect(route).toContain('error.code==="STORAGE_PENDING"');
   expect(route).toContain('error.code==="STALE"');

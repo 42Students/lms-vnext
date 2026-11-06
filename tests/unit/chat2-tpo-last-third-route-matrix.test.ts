@@ -25,7 +25,7 @@ describe("UX-tpo-LAST-THIRD-01: route-level security and resilient rendering",()
   expect(pages[41]?.[0]).toBe("/tpo/verification");
  });
  it("TPO route boundary denies unscoped or expired sessions before mounting any page",()=>{
-  expect(layout).toContain("getCurrentRequestContext()");
+  expect(layout).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   expect(layout).toContain("canOpenTpoWorkspace(context)");
   expect(layout).toContain("redirect(deniedPortalHome(context))");
   expect(layout).toContain("{children}");
@@ -53,14 +53,14 @@ describe("UX-tpo-LAST-THIRD-01: route-level security and resilient rendering",()
  });
  it.each(pages.filter(([route])=>route.startsWith("/tpo/reports/")))("UX-tpo-LAST-THIRD-01 / %s reads an authenticated report in the current scope",(route,file)=>{
   const source=read(file);
-  expect(source,route).toContain("getCurrentRequestContext");
+  expect(source,route).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
   expect(source,route).toMatch(/await [a-zA-Z]/);
   expect(source,route).toMatch(/hasMembershipRole|requireTpo|requirePlacementManageScope/);
  });
  it.each(pages.filter(([route])=>route.startsWith("/tpo/settings/")))("UX-tpo-LAST-THIRD-01 / %s retains a navigable settings section and scoped read",(route,file)=>{
   const source=read(file);
   expect(source,route).toContain("TpoSettingsNav");
-  expect(source,route).toContain("getCurrentRequestContext");
+  expect(source,route).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
  });
  it("legacy /tpo/settings index redirects through the centralized, allowlisted mapping",()=>{
   const index=read("src/app/(authenticated)/tpo/settings/page.tsx");

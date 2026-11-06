@@ -6,7 +6,7 @@ describe("Faculty UX route /teacher/contacts/[contactsTab]",()=>{
  it("UX-teacher-contacts-contactstab-01: retains routing, access and learner-facing states",()=>{
  const source=readFileSync(join(process.cwd(),pathname),"utf8");
  expect(source).toContain("redirect(\"/teacher/contacts/allContacts\")");
- expect(source).toContain("getCurrentRequestContext");
+ expect(source).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
  expect(source).toContain("role=\"alert\"");
  });
 });

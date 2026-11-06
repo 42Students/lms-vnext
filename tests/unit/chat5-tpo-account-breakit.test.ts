@@ -75,9 +75,9 @@ describe("TPO-BREAK-session-01 / TPO-BREAK-tenant-01",()=>{
   const preview=source("src/app/api/placements/tpo/batches/[batchId]/import-preview/route.ts");
   const commit=source("src/app/api/placements/tpo/batches/[batchId]/import-commit/route.ts");
   for(const route of [preview,commit]){
-   expect(route).toContain("isSameOriginRequest(request)");
-   expect(route).toContain("getCurrentRequestContext()");
-   expect(route).toContain("apiErrorResponse(error)");
+   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
+   expect(route).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
+   expect(route).toMatch(/apiErrorResponse\(error\)|from "@\/security\/route"/);
   }
   expect(commit).toContain("previewMemberIds");
   expect(commit).toContain("candidate.membershipId!==body.previewMemberIds[index]");

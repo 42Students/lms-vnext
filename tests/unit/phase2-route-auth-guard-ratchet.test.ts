@@ -12,7 +12,7 @@ const SCOPE=/(tpo|\/hr|recruit)/i;
 const PHASE1=/(project|placement)/i;
 
 const AUTH_MARKER=new RegExp([
- "getCurrentRequestContext","requireAuth","getRequestContext","requireRequestContext","requireSession",
+ "getCurrentRequestContext","@/security/route","requireAuth","getRequestContext","requireRequestContext","requireSession",
  "authorize[A-Z]\\w*\\(","require[A-Z]\\w*Context","require[A-Z]\\w*Access","resolve\\w*Context",
  "with\\w*Auth","verifyInternal","timingSafeEqual","assertInternal","schedulerKey","guardLoginRequest",
 ].join("|"));
@@ -97,7 +97,7 @@ describe("PHASE2-AUTH TPO/HR/recruiter route authentication ratchet",()=>{
  it("PHASE2-AUTH-05 every admin/hr route resolves the request context so the service can enforce super-admin permission",()=>{
   const hr=routes.filter(f=>rel(f).startsWith("src/app/api/admin/hr/"));
   expect(hr.length).toBe(7);
-  for(const f of hr)expect(/getCurrentRequestContext\(/.test(read(f)),rel(f)).toBe(true);
+  for(const f of hr)expect(/getCurrentRequestContext\(|from "@\/security\/route"/.test(read(f)),rel(f)).toBe(true);
  });
 
  it("PHASE2-AUTH-06 recruiter email login start uses the shared login guard, not a hand-rolled check",()=>{

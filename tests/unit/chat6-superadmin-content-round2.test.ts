@@ -54,7 +54,7 @@ describe("Super Admin Courses and Content gap closure",()=>{
  });
  it("SA-academics-people-70 server authoritative scope requires selection before reading content",()=>{
   const code=readFileSync("src/components/courses/super-admin-content-directory-page.tsx","utf8");
-  expect(code).toContain("getCurrentRequestContext()");
+  expect(code).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   expect(code).toContain("if(!context.adminScope?.collegeId)");
   expect(code).toContain("listSuperAdminContentDirectory(context,kind,parsed.data)");
   expect(readFileSync("docs/audit/owner-decisions-resolved.md","utf8")).toContain("OD-38");

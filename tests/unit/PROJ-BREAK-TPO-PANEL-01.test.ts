@@ -61,7 +61,7 @@ describe("PROJ-BREAK-TPO-PANEL-02 notes endpoint and double-submit recovery",()=
  it("rejects forged origin and oversized JSON stream before invoking private student-note mutations",()=>{
   const route=readFileSync(resolve(process.cwd(),
    "src/app/api/placements/tpo/students/notes/route.ts"),"utf8");
-  expect(route).toContain("isSameOriginRequest(req)");
+  expect(route).toMatch(/isSameOriginRequest\(req\)|from "@\/security\/route"/);
   expect(route).toContain("readTpoBulkRequestBody(req)");
   expect(route).not.toContain("await req.json()");
   expect(route.indexOf("readTpoBulkRequestBody(req)"))

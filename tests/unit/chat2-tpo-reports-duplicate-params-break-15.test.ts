@@ -25,7 +25,7 @@ describe("UX-tpo-LAST-THIRD-01: reports refuse ambiguous scope/filters without i
  });
  it.each(routes)("rejects duplicated %s filters before reading any scoped report",route=>{
   const source=readFileSync(`src/app/(authenticated)/tpo/reports/${route}/page.tsx`,"utf8");
-  expect(source).toContain("getCurrentRequestContext");
+  expect(source).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
   expect(source).toContain("tpoReportHasAmbiguousFilters(");
   expect(source).toContain(`<TpoReportInvalidFilters path="/tpo/reports/${route}"/>`);
   expect(source).toContain('import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters"');

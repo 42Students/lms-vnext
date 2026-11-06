@@ -12,7 +12,7 @@ describe("TPO-calendar-reports-06 complete follow-up from calendar",()=>{
  });
  it("uses same-origin, actor-college scope and CRM writer, not client-submitted collegeId",()=>{
   const api=readFileSync("src/app/api/placements/tpo/calendar/follow-ups/[followupId]/done/route.ts","utf8");
-  expect(api).toContain("isSameOriginRequest(request)");
+  expect(api).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(api).toContain('hasMembershipRole(context,"TPO")');
   expect(api).toContain("const collegeId=context.membership.collegeId");
   expect(api).toContain("requirePlacementManageScope(context,collegeId)");

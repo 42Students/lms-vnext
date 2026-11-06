@@ -24,7 +24,7 @@ describe("TPO-settings-audit-ROUTES-01: all settings routes require a TPO-scoped
  for(const [route,authorization,emptyOrState] of pages){
   it(`TPO-settings-audit-ROUTES-01 /${route} uses scoped server data and a recoverable or truthful state`,()=>{
    const page=readFileSync(dir+route+"/page.tsx","utf8");
-   expect(page,route).toContain("getCurrentRequestContext");
+   expect(page,route).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
    expect(page,route).toContain(authorization);
    expect(page,route).toContain('<TpoSettingsNav active="'+route+'"');
    expect(page,route).toContain(emptyOrState);

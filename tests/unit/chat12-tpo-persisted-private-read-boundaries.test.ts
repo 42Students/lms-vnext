@@ -13,7 +13,7 @@ describe("PROJ-BREAK-TPO-READ-07 expired/revoked role cannot open student and co
  for(const [path,access] of resources){
   it(`requires persisted actor before reading private student or company data: ${path}`,()=>{
    const src=read(path);
-   expect(src).toContain("getCurrentRequestContext");
+   expect(src).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
    const persisted=src.indexOf("await requireTpoBatchActor(context)");
    expect(persisted).toBeGreaterThanOrEqual(0);
    expect(persisted).toBeLessThan(src.indexOf(access));

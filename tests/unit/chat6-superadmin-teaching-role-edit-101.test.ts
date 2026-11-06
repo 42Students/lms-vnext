@@ -31,7 +31,7 @@ describe("SA-academics-people-101 role edit transactional contract",()=>{
  it("SA-academics-people-101 guards PATCH origin and offers create, edit, and end actions on the tab",()=>{
   const route=read("src/app/api/courses/teaching-assignments/[assignmentId]/route.ts");
   expect(route).toContain("export async function PATCH");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("await scopedTeachingAssignmentId(context,assignmentId),parsed.data");
   const page=read("src/app/(authenticated)/admin/faculty-assignment/page.tsx");
   expect(page).toContain("SuperAdminFacultyAssignmentCreate");

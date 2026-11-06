@@ -73,7 +73,7 @@ describe("chat-6 high priority auth login OTP session and deactivation adversari
  });
  it("AUTH-login-04 untrusted origin or invalid JSON cannot reach OTP delivery",()=>{
   const s=src("src/modules/auth/http.ts");
-  expect(s).toContain("isSameOriginRequest(request)");
+  expect(s).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(s).toContain("allowRequest");
   expect(s).toContain("schema.safeParse(json)");
   expect(s).toContain("UNKNOWN_TENANT_HOST");

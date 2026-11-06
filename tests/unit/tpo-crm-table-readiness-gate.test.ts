@@ -31,7 +31,7 @@ describe("TPO-calendar-reports-20 TPO-recruiters-35 real CRM readiness", () => {
       const source=readFileSync("src/app/api/placements/tpo/"+route,"utf8");
       expect(source).toContain("await tpoCrmTablesReady()");
       expect(source).not.toContain("process.env.DB09_TPO_API_READY");
-      expect(source).toContain("getCurrentRequestContext");
+      expect(source).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
     }
   });
   it("unblocks recruiter detail and due followups when storage is registered", () => {

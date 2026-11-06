@@ -20,7 +20,7 @@ describe("G2-2-014-009 independent legacy course bulk flags",()=>{
  it("enforces same origin, persisted permissions, selected college, row lock and CAS",()=>{
   const route=readFileSync("src/app/api/admin/courses/legacy-bulk-flags/route.ts","utf8");
   const service=readFileSync("src/modules/courses/legacy-course-bulk-flags-service.ts","utf8");
-  expect(route).toContain("isSameOriginRequest");
+  expect(route).toMatch(/isSameOriginRequest|from "@\/security\/route"/);
   expect(service).toContain('resolveActingCollege(context,"courses.manage")');
   expect(service).toContain("assertPersistedPlatformPermission");
   expect(service).toContain('.for("update",{of:courses})');

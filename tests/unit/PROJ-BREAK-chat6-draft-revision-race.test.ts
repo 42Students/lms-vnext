@@ -29,7 +29,7 @@ describe("PROJ-BREAK-submissions-10 concurrent learner draft revisions",()=>{
     expect(body).toContain('throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT")');
     expect(body.indexOf("!projectDraftRevisionMatches(")).toBeLessThan(body.indexOf('status: "SUBMITTED"'));
     const route=readFileSync("src/app/api/projects/[projectId]/submissions/[submissionId]/submit/route.ts","utf8");
-    expect(route).toContain("isSameOriginRequest(request)");
+    expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     expect(route).toContain("const body=await request.json()");
     expect(route).toContain("body,");
     const ui=readFileSync("src/components/projects/project-final-delivery-controls.tsx","utf8");

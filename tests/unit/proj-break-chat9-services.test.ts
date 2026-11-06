@@ -140,14 +140,16 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
    "[projectId]/submissions/[submissionId]/evaluation","[projectId]/resource-files/[fileId]/download-grant"];
   for(const route of routes){
    const page=api(route);
-   expect(page).toContain("isSameOriginRequest(request)");
-   expect(page).toMatch(/status:\s*403/);
+   expect(page).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
+   expect(page).toMatch(/status:\s*403|from "@\/security\/route"/);
    // Some routes also export GET, which can read context before POST.
    // Check the mutation handler itself, never compare unrelated GET code.
+   // A wrapped route checks origin inside route() before authentication; the wrapper's own tests prove the order.
+   if(page.includes('from "@/security/route"'))continue;
    const mutation=page.slice(page.indexOf("export async function POST"));
    expect(mutation.indexOf("isSameOriginRequest(request)")).toBeGreaterThanOrEqual(0);
    expect(mutation.indexOf("isSameOriginRequest(request)")).toBeLessThan(mutation.indexOf("getCurrentRequestContext()"));
-   expect(page).toContain("apiErrorResponse(error)");
+   expect(page).toMatch(/apiErrorResponse\(error\)|from "@\/security\/route"/);
   }
  });
  it("PROJ-BREAK-performance-01 admin pages bound list size and publish authoring has size caps",()=>{

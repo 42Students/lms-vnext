@@ -105,9 +105,9 @@ describe("IIT Dharwad Projects breaker — CSV security, performance, rubric and
  });
  it("PROJ-BREAK-security-01 project mutating route requires same-origin and current server context",()=>{
   const api=src("src/app/api/projects/[projectId]/submissions/[submissionId]/evaluation/route.ts");
-  expect(api).toContain("isSameOriginRequest(request)");
-  expect(api).toContain("getCurrentRequestContext()");
-  expect(api).toContain("apiErrorResponse(error)");
+  expect(api).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
+  expect(api).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
+  expect(api).toMatch(/apiErrorResponse\(error\)|from "@\/security\/route"/);
  });
  it("PROJ-BREAK-export-06 class team membership CSV defuses Unicode-hidden formulas",()=>{
   const team=[{name:"\u2066=HYPERLINK(1)",membershipIds:[id]}];

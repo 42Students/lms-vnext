@@ -19,7 +19,7 @@ describe("Super Admin faculty assignment copy and audited removal",()=>{
   expect(action).toContain("Delete teaching assignment?");
   expect(action).toContain("This removes the faculty from teaching the listed course.");
   expect(action).toContain('legacyCopy?"Remove teaching assignment":"End Assignment"');
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("endCourseTeachingAssignment");
   expect(service).toContain("endedAt: now");
   expect(source("docs/audit/owner-decisions-resolved.md")).toContain("OD-23");

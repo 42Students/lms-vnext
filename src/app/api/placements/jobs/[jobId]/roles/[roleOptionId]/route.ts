@@ -1,7 +1,5 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import {
   archivePlacementRoleOption,
   updatePlacementRoleOption,
@@ -9,29 +7,12 @@ import {
 
 export const runtime = "nodejs";
 
-type RouteContext = {
-  params: Promise<{
-    jobId: string;
-    roleOptionId: string;
-  }>;
-};
-
-export async function PATCH(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context =
-      await getCurrentRequestContext();
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
     const { jobId, roleOptionId } =
-      await params;
+      params;
     const role =
       await updatePlacementRoleOption(
         context,
@@ -40,27 +21,15 @@ export async function PATCH(
         await request.json(),
       );
     return NextResponse.json({ role });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
-export async function DELETE(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context =
-      await getCurrentRequestContext();
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor, params }) => {
+    const context = actor!;
     const { jobId, roleOptionId } =
-      await params;
+      params;
     const role =
       await archivePlacementRoleOption(
         context,
@@ -68,7 +37,5 @@ export async function DELETE(
         roleOptionId,
       );
     return NextResponse.json({ role });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

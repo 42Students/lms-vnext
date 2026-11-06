@@ -18,7 +18,7 @@ describe("Super Admin faculty assignment create",()=>{
   expect(service).toContain('COURSES_TEACHING_ASSIGNED');
   expect(service).toContain('recordActivityEventInTransaction');
   const route=src("src/app/api/courses/teaching-assignments/route.ts");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("createCourseTeachingAssignment");
   const page=src("src/app/(authenticated)/admin/faculty-assignment/page.tsx");
   expect(page).toContain("SuperAdminFacultyAssignmentCreate");

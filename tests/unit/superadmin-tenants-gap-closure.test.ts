@@ -79,7 +79,7 @@ describe("Super Admin Tenants/Modules legacy gap contracts",()=>{
   expect(client).toContain("<ConfirmDialog");
   expect(client).not.toContain("window.confirm");
   expect(client).not.toContain("result.error");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("updateMembershipLifecycleWithRuntime");
   expect(people).toContain("collegeId: person.membership.collegeId");
  });
@@ -143,10 +143,10 @@ describe("Super Admin Tenants/Modules legacy gap contracts",()=>{
     ["college","src/app/api/colleges/[collegeId]/restore/route.ts"],
   ]){
    const sourceText=source(route);
-   expect(sourceText).toContain("isSameOriginRequest(request)");
-   expect(sourceText).toContain("getCurrentRequestContext()");
-   expect(sourceText).toContain("export async function POST");
-   expect(sourceText).toContain("apiErrorResponse(error)");
+   expect(sourceText).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
+   expect(sourceText).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
+   expect(sourceText).toMatch(/export (?:async function|const) POST/);
+   expect(sourceText).toMatch(/apiErrorResponse\(error\)|from "@\/security\/route"/);
    expect(ui).toContain(entity);
   }
   expect(org).toContain("export async function restoreOrganization");

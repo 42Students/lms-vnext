@@ -57,7 +57,7 @@ describe("PROJ-BREAK-LEARNER-98 protected state-transition matrix for both learn
    "recordActivityEventInTransaction(tx, context",
    "notifyActiveProjectMembers(tx, taskEvent.id",
   ])expect(service).toContain(clause);
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route.indexOf("isSameOriginRequest(request)")).toBeLessThan(route.indexOf("request.json()"));
  });
  it("never presents an unsupported backward move, including undo or keyboard selector paths",()=>{

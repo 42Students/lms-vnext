@@ -1,7 +1,5 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import { updateCourseLessonInputSchema } from "@/modules/courses/validation";
 import {
   archiveCourseLesson,
@@ -10,28 +8,12 @@ import {
 
 export const runtime = "nodejs";
 
-type RouteContext = {
-  params: Promise<{ lessonId: string }>;
-};
-
-export async function PATCH(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-    const { lessonId } = await params;
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { lessonId } = params;
     const body: unknown = await request.json();
-    // Lessons remain children of an immutable learning path/offering in vNext.
-    // An implicit legacy course reassignment could strand child contents,
-    // submissions and learner progress. Reject a move instead of dropping it.
     if (body && typeof body === "object" &&
         ["courseId","offeringId","learningPathId"].some(key=>key in body)) {
       return NextResponse.json({
@@ -44,12 +26,9 @@ export async function PATCH(
       lessonId,
       updateCourseLessonInputSchema.parse(body),
     );
-
     return NextResponse.json({ lesson });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
 /** Legacy API bridge: DELETE /api/v1/lesson/delete/:id used a soft-delete
  * flag on both lesson and lesson content, while restore used a separate POST.
@@ -66,27 +45,15 @@ export async function PATCH(
  * Client notifications use the same-origin route and the existing toast,
  * not the old Spring/Axios API or a third-party messaging channel.
  */
-export async function DELETE(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-    const { lessonId } = await params;
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor, params }) => {
+    const context = actor!;
+    const { lessonId } = params;
     const lesson = await archiveCourseLesson(
       context,
       lessonId,
     );
-
     return NextResponse.json({ lesson });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

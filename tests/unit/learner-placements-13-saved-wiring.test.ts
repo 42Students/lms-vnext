@@ -5,7 +5,7 @@ const load=(path:string)=>readFileSync(new URL("../../"+path,import.meta.url),"u
 describe("LEARNER-placements-13 saved job request wiring",()=>{
  it("LEARNER-placements-13 both mutating HTTP handlers check same origin before writes",()=>{
   const source=load("src/app/api/placements/learner/saved-jobs/[jobId]/route.ts");
-  expect(source).toContain("isSameOriginRequest(request)");
+  expect(source).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(source).toContain("saveOwnPlacementJob(await getCurrentRequestContext(),jobId)");
   expect(source).toContain("unsaveOwnPlacementJob(await getCurrentRequestContext(),jobId)");
   expect(source).not.toContain("requirePlacementManageScope");

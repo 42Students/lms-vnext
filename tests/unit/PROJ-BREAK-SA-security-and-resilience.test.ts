@@ -105,11 +105,11 @@ describe("Super Admin Projects adversarial controls", () => {
 
   it("PROJ-BREAK-SA-04 keeps same-origin enforcement on Super Admin delivery mutations", () => {
     const route = read("src/app/api/projects/[projectId]/submissions/[submissionId]/lock/route.ts");
-    expect(route).toContain("isSameOriginRequest(request)");
+    expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     expect(route).toContain("readLimitedProjectLockInput(request)");
     expect(route.indexOf("isSameOriginRequest(request)")).toBeLessThan(route.indexOf("readLimitedProjectLockInput(request)"));
     expect(route.indexOf("readLimitedProjectLockInput(request)")).toBeLessThan(route.indexOf("getCurrentRequestContext()"));
-    expect(route).toContain("apiErrorResponse(error)");
+    expect(route).toMatch(/apiErrorResponse\(error\)|from "@\/security\/route"/);
     const service = read("src/modules/projects/admin-submission-review-service.ts");
     expect(service).toContain('z.strictObject({reason:z.string().trim().min(1).max(4000)})');
   });

@@ -35,7 +35,7 @@ describe("TPO-settings-audit-55 bounded recruiter and public join-link write bou
   ];
   for(const path of paths){
    const s=readFileSync(path,"utf8");
-   expect(s,path).toContain("isSameOriginRequest(request)");
+   expect(s,path).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
    expect(s,path).toContain("readTpoSettingsBody(request)");
    expect(s,path).toContain("TpoCommunicationBodyError");
    expect(s,path).toContain("BODY_TOO_LARGE");

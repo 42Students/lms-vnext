@@ -3,7 +3,7 @@ import type { ZodType } from "zod";
 /**
  * Central API route pipeline (docs/security/central-security-architecture.md, layers L2/L3/L4/L7/L9).
  *
- * The order is deliberate and fail-fast: origin (writes) -> authentication -> permission -> query ->
+ * The order is deliberate and fail-fast: origin (writes) -> query shape -> authentication -> permission ->
  * body -> handler. An unauthorised caller never gets its body read; a cross-origin write never reaches
  * authentication. Every outcome carries a request id and `Cache-Control: private, no-store`.
  *
@@ -73,7 +73,7 @@ const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 
 function jsonError(requestId: string, status: number, error: string) {
   return Response.json(
-    { error, requestId },
+    { error },
     { status, headers: { "Cache-Control": "private, no-store", "x-request-id": requestId } },
   );
 }
@@ -105,12 +105,6 @@ export function createRoute<Context, Permission extends string = string>(deps: R
           return jsonError(requestId, 403, "INVALID_ORIGIN");
         }
 
-        let context: Context | null = null;
-        if (config.auth === "user") {
-          context = await deps.getContext();
-          if (config.permission !== "service-enforced") deps.requirePermission(context, config.permission);
-        }
-
         const url = new URL(request.url);
         const query: Record<string, string> = {};
         for (const [key, value] of url.searchParams) {
@@ -121,6 +115,12 @@ export function createRoute<Context, Permission extends string = string>(deps: R
           query[key] = value;
         }
         if (config.query) config.query.parse(query);
+
+        let context: Context | null = null;
+        if (config.auth === "user") {
+          context = await deps.getContext();
+          if (config.permission !== "service-enforced") deps.requirePermission(context, config.permission);
+        }
 
         let body = undefined as B;
         if (config.body) {

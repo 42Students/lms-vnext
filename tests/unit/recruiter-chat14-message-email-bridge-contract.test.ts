@@ -141,7 +141,7 @@ describe("REC-calendar-messages-profile-R01 mail bridge deployment and scope",()
     "src/app/api/internal/placements/recruiter-message-reminders/route.ts"]){
     const sourceCode=source(file);
     expect(sourceCode).toContain("export async function POST(");
-    expect(sourceCode).toContain("isSameOriginRequest(request)");
+    expect(sourceCode).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     expect(sourceCode).not.toContain("export async function GET(");
   }
  });

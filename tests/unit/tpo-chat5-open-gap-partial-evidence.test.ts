@@ -62,7 +62,7 @@ describe("chat-5 OPEN gap regression baselines",()=>{
   expect(service).toContain("dedupeKey");
   expect(service).toContain("inAppNotifications");
   expect(service).toContain("activityEvents");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
  });
  it("TPO-batches-33 partial baseline — further implementation required",()=>{
   expect(file("src/modules/placements/tpo-batch-workspace-read-service.ts")).toContain("ilike");

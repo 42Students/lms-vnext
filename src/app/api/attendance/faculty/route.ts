@@ -1,7 +1,5 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import {
   createFacultyAttendanceSession,
   getFacultyAttendanceWorkspace,
@@ -9,9 +7,10 @@ import {
 
 export const runtime = "nodejs";
 
-export async function GET(request: Request) {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const url = new URL(request.url);
     const deliveryId = url.searchParams.get("deliveryId");
     if (!deliveryId) {
@@ -26,21 +25,13 @@ export async function GET(request: Request) {
         deliveryId,
       );
     return NextResponse.json({ workspace });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
-export async function POST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const body = await request.json();
     const session =
       await createFacultyAttendanceSession(
@@ -51,7 +42,5 @@ export async function POST(request: Request) {
       { session },
       { status: 201 },
     );
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

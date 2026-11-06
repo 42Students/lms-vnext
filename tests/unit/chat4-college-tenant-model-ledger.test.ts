@@ -97,7 +97,7 @@ describe("college/tenant directory module coverage ledger",()=>{
       expect(page).toContain("<ErrorState");
       expect(page).toContain("<DataTable");
       expect(page).toContain("min-h-11");
-      expect(page).toContain("getCurrentRequestContext()");
+      expect(page).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
       expect(page).toContain("Pagination");
     }
     expect(read("colleges")).toContain('canManageCollegeDirectoryRow(context,college)');

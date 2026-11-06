@@ -166,7 +166,7 @@ describe("UX-mentor-all-pages-scope-02 mentor page-state and scope coverage",()=
   for(const page of pages){
     it(`loads ${page.route} via its scoped service and preserves its distinct UI state`,()=>{
       const src=readFileSync(page.file,"utf8");
-      expect(src).toContain("getCurrentRequestContext");
+      expect(src).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
       expect(src).toContain(page.service);
       expect(src).toContain(page.state);
       if(page.route==="/mentor"){
@@ -194,7 +194,7 @@ describe("UX-mentor-all-pages-scope-02 mentor page-state and scope coverage",()=
   it("requires per-project authorization before showing the multi-tab workspace",()=>{
     const src=readFileSync("src/app/(authenticated)/mentor/projects/[projectId]/page.tsx","utf8");
     expect(src).toContain("requireProjectReadAccess");
-    expect(src).toContain("getCurrentRequestContext");
+    expect(src).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
     expect(src).toContain("MentorProjectTabs");
   });
   it("keeps the other mentor portfolio tabs behind a role guard or scoped service",()=>{

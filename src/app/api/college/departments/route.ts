@@ -1,7 +1,5 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import { createCollegeDepartment } from "@/modules/departments/college-department-mutation-service";
 
 export const runtime = "nodejs";
@@ -9,13 +7,12 @@ export const runtime = "nodejs";
  * SESSION_MISSING/SESSION_INVALID with the public sign-in-required message.
  * An API mutation must not redirect anonymous fetch clients to an HTML page.
  */
-export async function POST(request: Request) {
-  if (!isSameOriginRequest(request))
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  try {
-    const context = await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     return NextResponse.json({ department: await createCollegeDepartment(
       context, await request.json(),
     ) }, { status: 201 });
-  } catch (error) { return apiErrorResponse(error); }
-}
+  },
+);

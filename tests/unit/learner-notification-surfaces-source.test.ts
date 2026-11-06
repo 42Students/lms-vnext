@@ -44,7 +44,7 @@ describe("Learner notification and placement UI source guards", () => {
     expect(shared).toContain('context.membership?.roles.includes("LEARNER")');
     expect(shared).toContain("markOwnLearnerNotificationRead");
     expect(bulk).toContain("markAllOwnLearnerNotificationsRead");
-    expect(specific).toContain("isSameOriginRequest(request)");
+    expect(specific).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     expect(list).toContain('readEndpoint + "/" + encodeURIComponent(id) + "/read"');
     expect(list).toContain("item.actionLabel");
     expect(history).toContain("collegeId: membership.collegeId");
@@ -56,7 +56,7 @@ describe("Learner notification and placement UI source guards", () => {
       "src/app/api/learn/notifications/[notificationId]/read/route.ts",
       "src/app/api/notifications/read-all/route.ts",
     ]) {
-      expect(source(path)).toContain("isSameOriginRequest(request)");
+      expect(source(path)).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     }
   });
 });

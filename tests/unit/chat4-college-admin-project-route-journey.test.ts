@@ -7,7 +7,7 @@ const read = (p: string) => readFileSync(join(process.cwd(), p), "utf8");
 describe("PROJ-BREAK-COLLEGE-04 College Admin projects route journey", () => {
   it("PROJ-BREAK-COLLEGE-04-11 resolves an authorized college before any project list query", () => {
     const page = read("src/app/(authenticated)/college/projects/page.tsx");
-    expect(page).toContain("getCurrentRequestContext()");
+    expect(page).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
     expect(page).toContain("getProjectAdminCollegeId(context)");
     expect(page).toContain("if (!collegeId)");
     expect(page.indexOf("if (!collegeId)")).toBeLessThan(page.indexOf("parseCollegeProjectsQuery("));

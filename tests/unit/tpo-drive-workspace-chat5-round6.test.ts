@@ -19,7 +19,7 @@ describe("chat-5 Drive Workspace next 25+ OPEN gap evidence",()=>{
   expect(service).toContain("auditTpoJobChange");
   expect(service).toContain('status:"ARCHIVED"');
   expect(service).toContain('.for("update")');
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
  });
  it("TPO-drive-workspace-34 holds private reviewer reason apart from learner-visible feedback",()=>{
   const item=tpoApplicantReviewSchema.parse({confirmed:true,
@@ -33,7 +33,7 @@ describe("chat-5 Drive Workspace next 25+ OPEN gap evidence",()=>{
  });
  it("TPO-drive-workspace-R01 removes the obsolete environment gate from reviewed applicant writes",()=>{
   const route=source("src/app/api/placements/tpo/jobs/[jobId]/applicants/[applicationId]/review/route.ts");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).not.toContain("DB09_TPO_API_READY");
   expect(route).toContain("reviewTpoApplicant");
  });

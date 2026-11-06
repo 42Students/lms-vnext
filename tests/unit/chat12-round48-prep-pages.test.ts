@@ -8,6 +8,6 @@ it("TPO-students-10 exposes an assignment picker, same-cohort due-date writer, d
  expect(learner).toContain("<LearnerPrepAssignmentCards/>");
  expect(writer).toContain("Review prep assignments");
  expect(writer).toContain("duplicate");
- expect(src("src/app/api/placements/tpo/students/prep/route.ts")).toContain("isSameOriginRequest(request)");
+ expect(src("src/app/api/placements/tpo/students/prep/route.ts")).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
  expect(src("src/modules/placements/tpo-prep-assignment-service.ts")).toContain("onConflictDoNothing()");
 });

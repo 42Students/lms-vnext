@@ -38,7 +38,7 @@ describe("SA-ADMIN-PLACEMENT-SERVICE-MATRIX-01 all Super Admin placement directo
   expect(retention).toContain('requireSuperAdminSelectedCollege(context,"placements.read")');
   expect(retention).toContain("eq(collegeMemberships.collegeId,selected.collegeId)");
   expect(retention).toContain(".limit(201)");
-  expect(csv).toContain("getCurrentRequestContext()");
+  expect(csv).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   expect(csv).toContain("config.loader(context,");
   expect(csv).toContain("pageSize:SUPER_ADMIN_READ_PAGE_SIZE");
   expect(csv).toContain('"Cache-Control":"private, no-store"');

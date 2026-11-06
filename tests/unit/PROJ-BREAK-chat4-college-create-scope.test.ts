@@ -101,6 +101,6 @@ describe("College Admin Projects class-team creation adversarial scopes", () => 
     expect(service).toContain("getDb");
     const route = readFileSync("src/app/api/projects/class-team-workspaces/route.ts", "utf8");
     expect(route.indexOf("isSameOriginRequest(request)")).toBeLessThan(route.indexOf("request.json()"));
-    expect(route).toContain("apiErrorResponse(error)");
+    expect(route).toMatch(/apiErrorResponse\(error\)|from "@\/security\/route"/);
   });
 });

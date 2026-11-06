@@ -32,7 +32,7 @@ describe("Super Admin student CSV lifecycle",()=>{
   expect(service).toContain('eq(activityEvents.collegeId,selected.collegeId)');
   expect(service).toContain('eq(activityEvents.organizationId,selected.organizationId)');
   expect(service).toContain('eq(activityEvents.eventType,"IDENTITY_COLLEGE_STUDENT_CSV_IMPORT")');
-  expect(src("src/app/api/people/student-import/route.ts")).toContain("isSameOriginRequest(request)");
+  expect(src("src/app/api/people/student-import/route.ts")).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   const page=src("src/app/(authenticated)/admin/students/page.tsx");
   expect(page).toContain("Bulk Register Students");
   expect(page).toContain("<CollegeStudentCsvImport choices={choices}/>");

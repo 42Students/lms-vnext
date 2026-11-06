@@ -1,14 +1,14 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { apiErrorResponse } from "@/lib/api-error";
 import { getSuperAdminPlacementRetentionReport } from "@/modules/admin-ui/super-admin-placement-retention-service";
 import { requireSuperAdminSelectedCollege } from "@/modules/admin-ui/super-admin-selected-college";
 
 export const runtime = "nodejs";
 
-export async function GET(request: Request) {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const scope = requireSuperAdminSelectedCollege(context, "placements.read");
     const requestedCollege = new URL(request.url).searchParams.get("collegeId");
     if (!requestedCollege || requestedCollege !== scope.collegeId) {
@@ -26,7 +26,5 @@ export async function GET(request: Request) {
       truncated: report.truncated, cutoff: report.cutoff,
       totalStaleCount: report.truncated ? null : report.rows.length,
     }, { headers: { "Cache-Control": "private, no-store" } });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

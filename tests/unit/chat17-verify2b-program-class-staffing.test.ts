@@ -17,7 +17,7 @@ describe("legacy semester-class staffing independent of deliveries",()=>{
  });
  it("keeps route authenticated, read-only, no-store, and selected semester report accessible",()=>{
   const route=source("src/app/api/academics/semesters/[semesterId]/staffing/route.ts");
-  expect(route).toContain("getCurrentRequestContext()");
+  expect(route).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   expect(route).toContain("getCollegeTermStaffingReport(");
   expect(route).toContain('"Cache-Control":"private, no-store"');
   const manager=source("src/components/academics/college-term-mapping-manager.tsx");

@@ -1,7 +1,5 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import {
   createPlacementSeason,
   currentPlacementSeason,
@@ -24,19 +22,14 @@ export const TPO_SEASON_LEGACY_CROSSWALK = {
  openRegistration: "/api/placements/seasons/{seasonId}/open-registration",
 } as const;
 
-export async function GET(request: Request) {
-  try {
-    const context =
-      await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const requestUrl = new URL(request.url);
     const collegeId = requestUrl.searchParams.get("collegeId");
-    // The active college x role switcher remains authoritative. Legacy TPO
-    // callers may omit collegeId, but never select a foreign tenant by URL.
     const activeCollegeId=context.membership?.collegeId??context.adminScope?.collegeId;
     const scopedCollegeId=collegeId ?? activeCollegeId ?? "";
-    // Legacy GET /season/current selected the newest current season, without
-    // fetching history. The vNext model calls this ACTIVE; it must never create
-    // a default season as a side effect of a read.
     if (requestUrl.searchParams.get("current")==="true") {
       const season=await currentPlacementSeason(context,scopedCollegeId);
       return NextResponse.json({
@@ -53,22 +46,13 @@ export async function GET(request: Request) {
         ?"No seasons created. Create a placement season before opening registration."
         :null,
     },{headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
-export async function POST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context =
-      await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const season =
       await createPlacementSeason(
         context,
@@ -78,7 +62,5 @@ export async function POST(request: Request) {
       { season },
       { status: 201 },
     );
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

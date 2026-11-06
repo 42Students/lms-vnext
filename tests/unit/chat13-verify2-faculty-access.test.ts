@@ -13,7 +13,7 @@ describe("Lane 13 verification: faculty lifecycle and private staff profile", ()
     for (const route of [legacy, dedicated]) {
       expect(route).toContain("patchFacultyDocumentForAdmin(");
       expect(route).toContain("getFacultyDocumentForAdmin(");
-      expect(route).toContain("isSameOriginRequest(request)");
+      expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     }
     expect(service).toContain("assertPersistedPlatformPermission(tx,context,\"people.manage\",scope)");
     expect(service).toContain("profile_document_version=${version}");

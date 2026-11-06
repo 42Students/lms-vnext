@@ -17,6 +17,6 @@ describe("PR-S2-10 archived project restore",()=>{
     expect(service).toContain('eq(users.platformStatus,"ACTIVE")');
     expect(service).toContain('eq(projectInstances.status,"ARCHIVED")');
     expect(service).toContain("PROJECTS_PROJECT_RESTORED");
-    expect(route).toContain("isSameOriginRequest(request)");
+    expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   });
 });

@@ -1,9 +1,8 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { and, eq, inArray, or, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { programTermCourses, programTerms } from "@/db/schema";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { apiErrorResponse } from "@/lib/api-error";
 import {
   listLearnerCourseDeliveries,
 } from "@/modules/courses/learner-course-service";
@@ -30,9 +29,10 @@ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]
  * listLearnerCourseDeliveries. An independent teacher/admin roster endpoint
  * must handle staff-authorized byClass reads with its own permission check.
  */
-export async function GET(request:Request) {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const url = new URL(request.url);
     if (url.searchParams.has("studentId") || url.searchParams.has("classId")) {
       return NextResponse.json({ error:"ACCESS_DENIED",message:"Access denied" },
@@ -57,10 +57,7 @@ export async function GET(request:Request) {
     if(rawPeriod!==null && legacySemesterId!==null)
       return NextResponse.json({error:"AMBIGUOUS_SEMESTER_FILTER"},
         {status:400,headers});
-
     const courses=await listLearnerCourseDeliveries(context);
-    // Only derive choices from deliveries authorized to this learner; do not
-    // read or infer any other learner's class or private semester.
     const semesters=[...new Map(courses.map(course=>[
       course.academicPeriodId,{
         id:course.academicPeriodId,
@@ -98,8 +95,6 @@ export async function GET(request:Request) {
         .map(item=>item.programId+":"+item.courseId)
         .filter(key=>authorized.has(key)));
     }
-    // Foreign, soft-deleted and unmapped IDs use the existing unfiltered
-    // learner-authorized fallback; we never reveal if an external term exists.
     const legacyMatched=Boolean(legacyMatchedCourseKeys?.size);
     const selected=legacyMatched
       ? courses.filter(course=>legacyMatchedCourseKeys!.has(course.programId+":"+course.courseId))
@@ -118,7 +113,5 @@ export async function GET(request:Request) {
         semesterFallbackApplied:!legacyMatched,
       }:{}),
     },{headers});
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

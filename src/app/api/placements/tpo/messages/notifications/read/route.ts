@@ -1,13 +1,11 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import { confirmTpoOwnNotificationRead } from "@/modules/placements/tpo-own-notification-service";
 export const runtime = "nodejs";
-export async function POST(request: Request) {
-  if (!isSameOriginRequest(request)) return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  try {
-    const context = await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     return NextResponse.json(await confirmTpoOwnNotificationRead(context, await request.json()));
-  } catch (error) { return apiErrorResponse(error); }
-}
+  },
+);

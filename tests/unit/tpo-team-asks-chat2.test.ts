@@ -40,7 +40,7 @@ describe("Team asks permission and lifecycle",()=>{
   expect(service).toContain('eq(placementTpoTeamAsks.status,"OPEN")');
   expect(service).toContain('for("update")');
   expect(service).toContain("tpoTeamAskCanTransition");
-  for(const route of [create,change])expect(route).toContain("isSameOriginRequest(request)");
+  for(const route of [create,change])expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
  });
  it("TPO-inbox-team-29 notifies each actual assignment lifecycle event through scoped in-app notifications",()=>{
   const service=src("src/modules/placements/tpo-team-asks-service.ts");

@@ -21,7 +21,7 @@ describe("TPO batch-specific placement rules",()=>{
   expect(service).toContain("registrationDeadline:lifecycle?.registrationDeadline??null");
   expect(service).toContain("expectedVersion:input.expectedVersion");
   const route=source("src/app/api/placements/tpo/batches/[batchId]/rules/route.ts");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   const writer=source("src/modules/placements/batch-participation-service.ts");
   expect(writer).toContain("placements.batch.rules.changed");
  });

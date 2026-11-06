@@ -26,7 +26,7 @@ describe("TPO drive visibility overrides",()=>{
   expect(ui).toContain('method:"DELETE"');
   expect(ui).toContain("active membership, academic targeting and required verified evidence remain mandatory");
   expect(ui).toContain("Existing applications are preserved.");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("setEligibilityOverride(");
   expect(route).toContain("revokeEligibilityOverride(");
  });

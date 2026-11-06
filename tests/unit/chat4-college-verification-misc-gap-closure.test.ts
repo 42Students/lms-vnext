@@ -159,7 +159,7 @@ describe("chat-4 College Verification and Misc verification",()=>{
  it("COL-verification-misc-18 accepts approved extra Student groups surface under OD-38",()=>{
   const s=read("docs/audit/owner-decisions-resolved.md");
   expect(s).toContain("OD-38");
-  expect(read("src/app/(authenticated)/college/groups/page.tsx")).toContain("getCurrentRequestContext");
+  expect(read("src/app/(authenticated)/college/groups/page.tsx")).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
  });
  it("COL-verification-misc-20 documents which role edits profile contacts versus branding",()=>{
   expect(read("src/app/(authenticated)/college/branding/page.tsx")).toContain("Sign-in branding, domains and logo changes are controlled by a Super Admin.");

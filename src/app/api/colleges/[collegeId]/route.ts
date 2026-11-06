@@ -1,36 +1,18 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
 import { ADMIN_SCOPE_COOKIE_NAME } from "@/auth/admin-scope";
-import { isSameOriginRequest } from "@/auth/origin";
 import {
   archiveCollege,
   updateCollege,
 } from "@/modules/colleges/service";
-import { apiErrorResponse } from "@/lib/api-error";
 
 export const runtime = "nodejs";
 
-type RouteContext = {
-  params: Promise<{
-    collegeId: string;
-  }>;
-};
-
-export async function PATCH(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-    const { collegeId } = await params;
-
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { collegeId } = params;
     let body: unknown;
     try {
       body = await request.json();
@@ -40,17 +22,9 @@ export async function PATCH(
         { status: 400 },
       );
     }
-
-    // Legacy allowed moving a college or reusing its unique ID. In the
-    // membership-based tenant model these are identity invariants: changing
-    // them would reparent roles, domains and historical audit records.
-    // Require an explicitly authorized migration to a newly created college.
     if(!body||typeof body!=="object"||Array.isArray(body))
       return NextResponse.json({error:"INVALID_REQUEST",message:"Failed to update college. Please try again or contact support."},{status:400});
     const values=body as Record<string,unknown>;
-    // Legacy PUT accepted a full CollegeDTO. This PATCH accepts only mutable
-    // metadata; organization, unique ID and DNS ownership have separate,
-    // audited migration and verified-domain workflows.
     if(["organizationId","code","uniqueId","collegeCode"].some(key=>key in values))
       return NextResponse.json({
         error:"IMMUTABLE_COLLEGE_IDENTITY",
@@ -63,38 +37,20 @@ export async function PATCH(
       collegeId,
       values,
     );
-
     return NextResponse.json({status:"OK",message:"College updated successfully",data:college,college});
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
 
-export async function DELETE(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context =
-      await getCurrentRequestContext();
-    const { collegeId } = await params;
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor, params }) => {
+    const context = actor!;
+    const { collegeId } = params;
     const college = await archiveCollege(
       context,
       collegeId,
     );
-
-    // DELETE is intentionally a reversible soft archive, not physical
-    // deletion. Dependency checks are performed before the status mutation.
-    // Existing memberships and audit records remain held under this college;
-    // restoration requires a separately authorized explicit request.
     const response = NextResponse.json({
       status:"OK",message:"College archived successfully",
       legacyMessage:"College deleted successfully",data:college,college,
@@ -103,7 +59,6 @@ export async function DELETE(
       restoreRequiresReview:true,
       selectedCollegeScopeCleared:context.adminScope?.collegeId===college.id,
     });
-
     if (
       context.adminScope?.collegeId ===
       college.id
@@ -122,9 +77,6 @@ export async function DELETE(
         },
       );
     }
-
     return response;
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

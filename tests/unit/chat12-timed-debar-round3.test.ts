@@ -9,7 +9,7 @@ describe("TPO timed debarments wired to DB08",()=>{
  });
  it("TPO-students-06 scopes debar and lift to an authorized TPO and member with strict origin check",()=>{
   const route=src("src/app/api/placements/tpo/students/[membershipId]/debarments/route.ts");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("requireTpoBatchActor(ctx)");
   expect(route).toContain("rows.find(row=>row.id===body.debarmentId)");
   expect(route).toContain("createPlacementDebarment");

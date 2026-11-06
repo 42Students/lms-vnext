@@ -1,19 +1,15 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
 import { isSuperAdmin } from "@/modules/identity/context";
-import { apiErrorResponse } from "@/lib/api-error";
 import { hasAmbiguousQuerySelectors } from "@/lib/security-query-selectors";
 import { countOwnUnreadNotifications,listOwnNotifications } from "@/modules/activity/notification-service";
 
 export const runtime = "nodejs";
 
-export async function GET(
-  request: Request,
-) {
-  try {
-    const context =
-      await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const params = new URL(
       request.url,
     ).searchParams;
@@ -75,36 +71,32 @@ export async function GET(
           ...(courseId?{courseId}:{}),
         },
       );
-
     return NextResponse.json({
       notifications:rows,status:"success",message:"Notifications retrieved",data:rows,
     },{headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
 /** Legacy POST /search/notifications/refresh has no vNext write-equivalent:
  * the scoped inbox is read directly from committed DB rows, not a mutable
  * cross-tenant cache. Do not grant refresh rights or invent "Cache refreshed".
  */
-export async function POST(request:Request){
- if(!isSameOriginRequest(request))
-  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const context=await getCurrentRequestContext();
-  const params=new URL(request.url).searchParams;
-  if (hasAmbiguousQuerySelectors(params, ["view"], [], ["view"]))
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
+    const params=new URL(request.url).searchParams;
+    if (hasAmbiguousQuerySelectors(params, ["view"], [], ["view"]))
    return NextResponse.json({error:"INVALID_NOTIFICATION_QUERY"},
     {status:400,headers:{"Cache-Control":"private, no-store"}});
-  const view=params.get("view");
-  if(view!=="refresh")return NextResponse.json({error:"METHOD_NOT_ALLOWED"},{status:405});
-  if(!isSuperAdmin(context))
+    const view=params.get("view");
+    if(view!=="refresh")return NextResponse.json({error:"METHOD_NOT_ALLOWED"},{status:405});
+    if(!isSuperAdmin(context))
    return NextResponse.json({error:"FORBIDDEN"},{status:403});
-  return NextResponse.json({
+    return NextResponse.json({
    error:"NOTIFICATION_SEARCH_CACHE_RETIRED",
    message:"Notification search is live and scoped to each recipient. There is no cache to refresh.",
    refreshed:false,
   },{status:410,headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
+  },
+);

@@ -18,7 +18,7 @@ describe("chat-13 Super Admin /admin first-third route source audit", () => {
   for (const {route, path} of firstThird) {
     it("UX-admin-first-"+route.replaceAll("/", "-")+" requires authenticated context and no raw unresponsive tables", () => {
       const source = read(path);
-      expect(source).toContain("getCurrentRequestContext");
+      expect(source).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
       if(/<table(?:\s|>)/.test(source)){
         expect(source).toContain("overflow-x-auto");
         expect(source).toMatch(/min-w-\[/);

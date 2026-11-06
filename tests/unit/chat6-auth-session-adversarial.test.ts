@@ -65,7 +65,7 @@ describe("Chat-6 adversarial OTP, handoff and session lifecycle", () => {
     expect(allowRequest("login-verify:203.0.113.11",10,60_000,1_001)).toBe(true);
     expect(allowRequest("login-verify:203.0.113.10",10,60_000,61_001)).toBe(true);
     const shared = source("src/modules/auth/http.ts");
-    expect(shared).toContain("isSameOriginRequest(request)");
+    expect(shared).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     expect(shared).toContain("schema.safeParse(json)");
     expect(shared).toContain('error: "TOO_MANY_REQUESTS"');
     expect(shared).toContain('"Retry-After"');
@@ -138,7 +138,7 @@ describe("Chat-6 adversarial OTP, handoff and session lifecycle", () => {
     const all = source("src/app/api/auth/devices/route.ts");
     const one = source("src/app/api/auth/devices/[sessionId]/route.ts");
     const logout = source("src/app/api/auth/session/route.ts");
-    for(const file of [all,one,logout]) expect(file).toContain("isSameOriginRequest(request)");
+    for(const file of [all,one,logout]) expect(file).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     expect(all).toContain("listActiveSessions(session.userId)");
     expect(all).toContain("revokeOtherSessions(");
     expect(all).toContain("session.sessionId");

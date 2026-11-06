@@ -1,12 +1,10 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { and, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { courseSectionDeliveries, courseOfferings, courses, departments } from "@/db/schema";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import {
   createSectionFacultyAssignment,
   bulkCreateSectionFacultyAssignments,
@@ -27,14 +25,11 @@ export const runtime = "nodejs";
  * Legacy numeric class/faculty IDs require authorized membership resolution.
  */
 
-export async function GET(request: Request) {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const url = new URL(request.url);
-    // Legacy courseSlug wins over courseId, but must resolve to one scoped
-    // course; neither a section advisor nor a class ID grants teaching access.
-    // Legacy class+course+faculty directory: every supplied identifier is a
-    // scoped UUID, not a cast of a historic numeric ID.
     if (!url.searchParams.has("courseSlug") &&
       (url.searchParams.has("classId") || url.searchParams.has("facultyId"))) {
       const selectors=z.strictObject({
@@ -68,25 +63,15 @@ export async function GET(request: Request) {
         url.searchParams.get("includeEnded") ===
           "true",
       );
-
     return NextResponse.json({ assignments });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
-export async function POST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const body = await request.json();
-    // Bulk section mappings are prevalidated and committed atomically.
     if (Array.isArray(body) || (body && typeof body === "object" && Array.isArray(body.assignments))) {
       const assignments = await bulkCreateSectionFacultyAssignments(context,
         Array.isArray(body) ? body : body.assignments);
@@ -128,18 +113,15 @@ export async function POST(request: Request) {
     }
     const assignment = await createSectionFacultyAssignment(context, body);
     return NextResponse.json({ assignment, message: "Success" }, { status: 201 });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
 
 /** Deactivate section mappings without losing history (legacy mapping action). */
-export async function PATCH(request: Request) {
-  if (!isSameOriginRequest(request))
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  try {
-    const context = await getCurrentRequestContext();
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const body: unknown = await request.json();
     if (!body || typeof body !== "object" || !("assignmentId" in body) ||
       typeof body.assignmentId !== "string" || !("action" in body) ||
@@ -147,7 +129,5 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 });
     const assignment = await endSectionFacultyAssignment(context, body.assignmentId);
     return NextResponse.json({ assignment, message: "Mapping deactivated" });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

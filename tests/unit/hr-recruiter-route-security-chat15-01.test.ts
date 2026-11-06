@@ -24,7 +24,7 @@ describe("HR recruiter route security chat-15",()=>{
   const firstWrite=code.search(/await (?:createOwn|updateOwn|writeHr|editHr|sendRecruiter|openRecruiter|acknowledgeRecruiter|markHr)/);
   expect(origin).toBeGreaterThanOrEqual(0);
   expect(firstWrite).toBeGreaterThan(origin);
-  expect(code).toContain("getCurrentRequestContext");
+  expect(code).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
   expect(code).toMatch(/return NextResponse\.json\(\{error:"INVALID_ORIGIN"\}/);
  });
  it("HR-request-body parses streamed JSON bounded at 128 KiB, before passing to schema/service",()=>{

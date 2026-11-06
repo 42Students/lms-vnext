@@ -19,14 +19,14 @@ describe("G2-14-025-004 recruiter drive legacy action coverage",()=>{
   expect(mapping).toContain('state: "adapted-to-staged-TPO-verification"');
   expect(route).toContain("export async function POST(");
   expect(route).toContain("stagePlacementRoundResult(");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
  });
  it("maps recruiter selection proposals to their guarded and separate action",()=>{
   const route=read("src/app/api/placements/recruiter/drives/[jobId]/selections/route.ts");
   const service=read("src/modules/placements/recruiter-selection-list-write-service.ts");
   expect(mapping).toContain('vNext: "POST /api/placements/recruiter/drives/{jobId}/selections"');
   expect(route).toContain("export async function POST(");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(service).toContain("submitRecruiterSelectionList(");
   expect(service).toContain("getRecruiterPlacementWorkspace(");
   expect(service).toContain("grant");

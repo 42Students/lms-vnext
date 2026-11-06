@@ -8,7 +8,7 @@ describe("Super Admin content CSV parity",()=>{
    expect(route).toContain('exportSuperAdminLearningDirectory(request,"'+kind+'")');
   }
   const service=readFileSync("src/modules/admin-ui/super-admin-learning-csv-service.ts","utf8");
-  expect(service).toContain("getCurrentRequestContext");
+  expect(service).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
   expect(service).toContain("2000:500");
   expect(service).toContain("X-Export-Truncated");
   for(const name of ["lessons","course-progress"]){

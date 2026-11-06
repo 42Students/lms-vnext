@@ -1,9 +1,7 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {z} from "zod";
 import {normalizeLegacyProjectCreationStatus} from "@/modules/projects/validation";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import {
   createProjectInstance,
   listProjectInstances,
@@ -11,9 +9,10 @@ import {
 
 export const runtime = "nodejs";
 
-export async function GET(request: Request) {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const query=new URL(request.url).searchParams;
     const collegeId=query.get("collegeId")??"";
     const pageRaw=query.get("page");
@@ -25,9 +24,6 @@ export async function GET(request: Request) {
     if(page===null||limit===null)return NextResponse.json({
       error:"INVALID_PROJECT_PAGE",message:"Use a positive page and limit (1–200).",
     },{status:400,headers:{"Cache-Control":"no-store"}});
-    // Existing clients receive the full college-scoped list. Legacy paged
-    // directory callers opt into the numbered response via ?paged=1.
-    // All rows are still scoped and authorized by the service first.
     const projects=await listProjectInstances(context,collegeId);
     if(query.get("paged")==="1"){
       const slice=projects.slice((page-1)*limit,page*limit);
@@ -43,21 +39,13 @@ export async function GET(request: Request) {
       legacyEndpoints:{list:"GET /api/v1/admin/projects",
         paged:"GET /api/v1/admin/projects?page={page}&limit={limit}"},
     },{headers:{"Cache-Control":"no-store"}});
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
-export async function POST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const raw:unknown=await request.json();
     const legacy=z.object({
       collegeId:z.string().uuid(),templateId:z.string().uuid().optional(),
@@ -104,7 +92,6 @@ export async function POST(request: Request) {
       ...(typeof legacy.data["nextAction"]==="string"?{nextAction:legacy.data["nextAction"]}:{}),
     };
     const project = await createProjectInstance(context,canonical);
-
     return NextResponse.json(
       { project,status:"success",message:"Project created",
         data:project,legacyResponse:{status:"success",message:"Project created",data:project},
@@ -112,7 +99,5 @@ export async function POST(request: Request) {
         templateLink:"/admin/project-templates/"+encodeURIComponent(legacy.data.templateId) },
       {status:201,headers:{"Cache-Control":"no-store"}},
     );
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

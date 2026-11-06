@@ -1,7 +1,6 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
 import {
   createCollege,
   listColleges,
@@ -9,7 +8,6 @@ import {
   listAuthorizedCollegeSearchOptions,
   listAuthorizedOrganizationCollegePicker,
 } from "@/modules/colleges/service";
-import { apiErrorResponse } from "@/lib/api-error";
 import {listAdminScopeChoices} from "@/modules/admin-scope/service";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {getDb} from "@/db/client";
@@ -34,16 +32,13 @@ export const runtime = "nodejs";
  * No unscoped cache, select mutation or stale cross-tenant search results.
  */
 
-export async function GET(request: Request) {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const params=new URL(request.url).searchParams;
     const organizationId=params.get("organizationId");
     const mode=params.get("mode")??"list";
-    // The Super Admin scope switcher must be able to leave a selected college.
-    // Ordinary list/search calls remain selected-college fenced. Only an
-    // explicitly requested global switcher view can enumerate all active
-    // colleges and it must recheck the live platform administrator role.
     if(params.get("all")==="true"&&mode==="list"){
       if(!isSuperAdmin(context))throw new AuthorizationError("admin-scope.select");
       const options=await getDb().transaction(async tx=>{
@@ -145,30 +140,19 @@ export async function GET(request: Request) {
       return !match||[row.name,row.code,row.city??"",row.state??""]
         .some(value=>value.toLocaleLowerCase("en-IN").includes(match));
     }).slice(0,limit).map(project);
-    // Legacy popularity was a process-local usage count; vNext intentionally
-    // does not invent cross-tenant popularity counts from alphabetic rows.
     const message=mode==="popular"
       ?"Popularity ranking unavailable; showing authorized colleges by name."
       :"Colleges retrieved in "+elapsed+"ms";
     return NextResponse.json({status:"OK",message,data:result,colleges:result,
       ...(mode==="popular"?{popularityAvailable:false}:{})},
       {headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
-export async function POST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     let body: unknown;
     try {
       body = await request.json();
@@ -178,7 +162,6 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
-
     if(new URL(request.url).searchParams.get("mode")==="usage"){
       const parsed=z.strictObject({collegeId:z.string().uuid()}).safeParse(body);
       if(!parsed.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
@@ -199,12 +182,9 @@ export async function POST(request: Request) {
         code: string;
       },
     );
-
     return NextResponse.json(
       { college },
       { status: 201 },
     );
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

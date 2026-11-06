@@ -224,7 +224,7 @@ describe("chat-17 UX-coverage-closure-01 owned route contracts",()=>{
         expect(page).not.toContain('redirect("/login")');
       }
     }else if(route==="/learn/profile/data-access"){
-      expect(page).toContain("getCurrentRequestContext");
+      expect(page).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
       expect(page).toContain("getOwnLearnerProfileDataActions(context)");
       expect(page).toContain('title="Who has my data"');
     }else if(route==="/company-share/[token]"){

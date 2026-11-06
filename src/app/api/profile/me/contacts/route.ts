@@ -1,20 +1,14 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import { updateOwnLearnerContacts } from "@/modules/people/learner-contact-service";
 
 export const runtime = "nodejs";
 
-export async function PATCH(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-  try {
-    const context = await getCurrentRequestContext();
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const result = await updateOwnLearnerContacts(context, await request.json());
     return NextResponse.json(result);
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

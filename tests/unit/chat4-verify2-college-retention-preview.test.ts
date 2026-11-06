@@ -15,7 +15,7 @@ describe("College Admin 180-day retention disclosure",()=>{
   expect(component).toContain('role="alert"');
   expect(component).toContain("Retry");
   expect(component).toContain('aria-expanded={open}');
-  expect(route).toContain("getCurrentRequestContext()");
+  expect(route).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   expect(route).toContain("getCollegeApplicationRetentionReport(context,");
   expect(route).toContain("olderThanDays:180,page:1,pageSize:100");
   expect(route).toContain("olderThanDays:180,page:2,pageSize:100");

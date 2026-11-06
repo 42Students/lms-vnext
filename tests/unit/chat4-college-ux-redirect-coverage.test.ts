@@ -11,14 +11,14 @@ describe("chat-4 College UX canonical redirects and shared-kit coverage", () => 
     expect(source).toContain("return CollegeContactsPage({searchParams})");
     expect(source).not.toContain('redirect("/college/people/manage")');
     const destination = read(root + "/contacts/page.tsx");
-    expect(destination).toContain("getCurrentRequestContext()");
+    expect(destination).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   });
 
   it("COL-ux-redirect-02 legacy workspace list resolves to one canonical Projects list", () => {
     const source = read(root + "/projects/workspaces/page.tsx");
     expect(source).toContain('redirect("/college/projects"+');
     const destination = read(root + "/projects/page.tsx");
-    expect(destination).toContain("getCurrentRequestContext()");
+    expect(destination).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   });
 
   it("COL-ux-redirect-03 legacy workspace identifiers are URL-encoded to avoid forged segments", () => {
@@ -43,7 +43,7 @@ describe("chat-4 College UX canonical redirects and shared-kit coverage", () => 
     const destination = read(root + "/projects/[projectId]/[section]/page.tsx");
     expect(destination).toContain("<AdminProjectSectionPage");
     const guarded = read("src/components/projects/admin-project-section-page.tsx");
-    expect(guarded).toContain("getCurrentRequestContext()");
+    expect(guarded).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
     expect(guarded).toContain("requireProjectManageAccess");
   });
 

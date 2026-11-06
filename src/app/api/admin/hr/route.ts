@@ -1,8 +1,6 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
 import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
-import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 import {
   createSuperAdminHrAccount,
@@ -22,13 +20,12 @@ export const runtime = "nodejs";
  * No numeric IDs are accepted as vNext user IDs or silently reused.
  */
 
-export async function GET(request: Request) {
-  try {
-    const context =
-      await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const params =
       new URL(request.url).searchParams;
-
     const result =
       await listSuperAdminHrAccounts(
         context,
@@ -42,25 +39,14 @@ export async function GET(request: Request) {
             params.get("pageSize") ?? undefined,
         },
       );
-
     return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
-export async function POST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context =
-      await getCurrentRequestContext();
-
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const parsed = await readBoundedJsonRequest(request, 8192);
     if (!parsed.ok) {
       return NextResponse.json(
@@ -68,26 +54,19 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
-
     const input =
       createSuperAdminHrInputSchema.parse(
         parsed.value,
       );
-
-    // A recruiter account can receive real cross-college candidate access.
-    // Never provision it from a stale or different user's device session.
     await requireRecentDeviceAuthentication(context.user.id);
     const account =
       await createSuperAdminHrAccount(
         context,
         input,
       );
-
     return NextResponse.json(
       { account, idKind:"USER_UUID" },
       { status: 201, headers:{"Cache-Control":"private, no-store"} },
     );
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

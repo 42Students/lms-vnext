@@ -22,8 +22,8 @@ describe("chat-11 delegated College Admin decisions",()=>{
   expect(svc).toContain('eq(courseLessons.status, "ARCHIVED")');
   expect(svc).toContain('requirePermission(context, "courses.manage"');
   expect(svc).toContain("lockLiveLessonWriteAncestry(tx, path)");
-  expect(route).toContain("isSameOriginRequest(request)");
-  expect(route).toContain("export async function POST");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
+  expect(route).toMatch(/export (?:async function|const) POST/);
   expect(list).toContain('item.status==="ARCHIVED"');
   expect(list).toContain("<CollegeArchivedLessonRestore");
   const restore=src("src/components/courses/college-archived-lesson-restore.tsx");
@@ -85,7 +85,7 @@ describe("chat-11 delegated College Admin decisions",()=>{
   expect(service).toContain('eq(placementCompanyRelationships.status,"ARCHIVED")');
   expect(service).toContain('current.company.status!=="ACTIVE"');
   expect(directory).toContain("query.showDeleted");
-  expect(restore).toContain("isSameOriginRequest(request)");
+  expect(restore).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(ui).toContain('title="Restore this company?"');
   expect(ui).toContain("const busy = pendingId !== null;");
   expect(ui).toContain('item.companyStatus!=null && item.companyStatus!=="ACTIVE"');

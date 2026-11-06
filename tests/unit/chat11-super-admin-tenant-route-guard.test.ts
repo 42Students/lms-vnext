@@ -43,7 +43,7 @@ describe("SA-tenants-modules-SEC-01: never render admin filter recovery before a
    expect(auth,path).toBeGreaterThan(0);
    expect(auth,path).toBeLessThan(params);
    expect(auth,path).toBeLessThan(parsed);
-   expect(source,path).toContain("getCurrentRequestContext()");
+   expect(source,path).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   }
  });
  it("authenticates every route before handling hostile and repeated query parameters",()=>{
@@ -69,7 +69,7 @@ describe("SA-tenants-modules-SEC-01: never render admin filter recovery before a
    if(recovery.length>0)expect(auth,file).toBeLessThan(Math.min(...recovery));
    else if(file.endsWith("/tenants/page.tsx")) expect(auth,file).toBeLessThan(source.indexOf("const raw=await searchParams"));
    else expect(auth,file).toBeLessThan(source.indexOf("SuperAdminCollegeModuleAccessPage params="));
-   expect(source,file).toContain("getCurrentRequestContext()");
+   expect(source,file).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   }
  });
 });

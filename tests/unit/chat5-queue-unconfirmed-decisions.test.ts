@@ -30,7 +30,7 @@ describe("Chat-5 remaining queue ambiguity decisions",()=>{
  });
  it("TPO-students-49 requires full scope verification before admitting College Admin on private roster and exports",()=>{
   const page=file("src/app/(authenticated)/tpo/students/page.tsx");
-  expect(page).toContain("getCurrentRequestContext");
+  expect(page).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
   expect(file("docs/audit/acceptance/tpo-students-verification.md")).toContain("TPO-students-49 | OPEN (partial; runtime acceptance pending)");
   expect(page).toContain('can(context, "placements.manage"');
  });

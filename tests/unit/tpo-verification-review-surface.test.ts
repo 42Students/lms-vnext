@@ -19,7 +19,7 @@ describe("TPO-requests-verification-19",()=>{
    "src/app/api/tpo/verification/[membershipId]/[section]/route.ts",
    "src/app/api/tpo/verification/[membershipId]/[section]/documents/[receiptId]/route.ts",
   ])expect(file(path)).toContain("await requireTpoVerificationActor(context)");
-  expect(file("src/app/api/tpo/verification/review/route.ts")).toContain("isSameOriginRequest(request)");
+  expect(file("src/app/api/tpo/verification/review/route.ts")).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(file("src/modules/verification/tpo-staff-auth.ts")).toContain('eq(membershipRoles.role,"TPO")');
   expect(file("src/modules/verification/staff-private-document-service.ts")).toContain("detail.documents.some");
  });

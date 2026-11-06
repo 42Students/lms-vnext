@@ -93,7 +93,7 @@ describe("TPO-students-14 signed mutation endpoints", () => {
     it(`${name} checks same-origin before parsing or performing writes`, () => {
       const path = `src/app/api/placements/tpo/bulk-actions/${name}/route.ts`;
       const source = readFileSync(resolve(process.cwd(), path), "utf8");
-      expect(source).toContain("isSameOriginRequest(request)");
+      expect(source).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
       expect(source).toContain('error:"INVALID_ORIGIN"');
       expect(source).toContain("requireTpoJobCollege(context)");
       expect(source).toContain("readTpoBulkRequestBody(request)");

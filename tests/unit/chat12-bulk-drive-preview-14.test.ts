@@ -12,7 +12,7 @@ describe("TPO Add-to-Drive bulk scope preview",()=>{
  it("TPO-students-14 preflights active applications with college-scoped drive/role without mutations",()=>{
   const route=src("src/app/api/placements/jobs/[jobId]/bulk-add/preflight/route.ts");
   const service=src("src/modules/placements/bulk-drive-service.ts");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(service).toContain("export async function previewBulkDriveAdd(");
   expect(service).toContain("loadManagedDrive(context,placementJobIdSchema.parse(rawJobId))");
   expect(service).toContain("alreadyAppliedCount:new Set(rows.map(row=>row.membershipId)).size");

@@ -1,8 +1,7 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {and,desc,eq,inArray,ne,sql} from "drizzle-orm";
 import {z} from "zod";
-import {getCurrentRequestContext} from "@/auth/request-context";
-import {isSameOriginRequest} from "@/auth/origin";
 import {getDb} from "@/db/client";
 import {
   collegeMemberships,courseLessons,courseLearningPaths,courseOfferings,
@@ -11,7 +10,6 @@ import {
 } from "@/db/schema";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
-import {apiErrorResponse} from "@/lib/api-error";
 
 export const runtime="nodejs";
 const inputSchema=z.object({
@@ -21,11 +19,10 @@ const inputSchema=z.object({
 }).strict();
 const freshMessage="This learner has no recorded progress for that course — they are already starting fresh.";
 
-export async function POST(request:Request){
-  if(!isSameOriginRequest(request))
-    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
-  try{
-    const context=await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const membership=context.membership;
     if(!membership||membership.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
        !hasMembershipRole(context,"COLLEGE_ADMIN"))
@@ -107,5 +104,5 @@ export async function POST(request:Request){
       status:result.status,headers:{"cache-control":"private, no-store"},
     });
     return NextResponse.json(result,{headers:{"cache-control":"private, no-store"}});
-  }catch(error){return apiErrorResponse(error);}
-}
+  },
+);

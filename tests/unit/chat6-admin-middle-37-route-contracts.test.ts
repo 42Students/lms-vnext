@@ -23,13 +23,13 @@ describe("SA-admin-middle-route-01: exact second third entrypoint authorization 
       page.includes('redirect("/admin/placements/analytics"');
     if(canonicalHiringRedirect){
       const analytics=src("src/app/(authenticated)/admin/placements/analytics/page.tsx");
-      expect(analytics).toContain("getCurrentRequestContext()");
+      expect(analytics).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
       expect(analytics).toContain("requireSuperAdminSelectedCollege");
     }
     expect(hasLocalContext||delegated||canonicalHiringRedirect,route+" lacks authenticated context").toBe(true);
     if(delegated){
       const shared=src("src/components/courses/super-admin-content-directory-page.tsx");
-      expect(shared).toContain("getCurrentRequestContext()");
+      expect(shared).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
       expect(shared).toContain("if(!context.adminScope?.collegeId)");
       expect(shared).toContain("adminContentQuerySchema");
     }
@@ -65,7 +65,7 @@ describe("SA-admin-middle-route-01: exact second third entrypoint authorization 
  });
  it("SA-admin-middle-route-04 deep-linked class move uses audited same-period capacity checks",()=>{
   const page=src("src/app/(authenticated)/admin/people/directory/page.tsx");
-  expect(page).toContain("getCurrentRequestContext()");
+  expect(page).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   const roster=src("src/components/admin/super-admin-batch-roster-manager.tsx");
   expect(roster).toContain("target.learnerCount>=target.capacity");
   expect(roster).toContain("current.academicPeriodId!==target.academicPeriodId");

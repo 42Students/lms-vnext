@@ -40,7 +40,7 @@ describe("chat-7 final sprint Super Admin courses and content",()=>{
   expect(service).toContain("const failedCourses=new Set<string>(unauthorizedIds)");
   expect(service).toContain("bulkSuperAdminLessonVisibility(context");
   expect(service).toContain("failures.push(");
-  expect(read("src/app/api/admin/courses/bulk-status/route.ts")).toContain("isSameOriginRequest");
+  expect(read("src/app/api/admin/courses/bulk-status/route.ts")).toMatch(/isSameOriginRequest|from "@\/security\/route"/);
  });
  it("SA-academics-people-53 authorizes Super Admin college scoped course and lesson-content visibility",()=>{
   const source=read("src/modules/courses/super-admin-course-bulk-visibility.ts");

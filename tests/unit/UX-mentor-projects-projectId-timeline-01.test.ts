@@ -3,7 +3,7 @@ import {readFileSync} from "node:fs";
 const src=readFileSync("src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx","utf8");
 describe("Mentor UX cross-audit /mentor/projects/[projectId]/timeline",()=>{
  it("UX-mentor-projects-projectId-timeline-01 retains scope-aware service resolution",()=>{
-  expect(src).toContain("getCurrentRequestContext");
+  expect(src).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
   expect(src).toMatch(/getMentorProjectTimeline\s*\(/);
  });
  it("UX-mentor-projects-projectId-timeline-02 preserves exact legacy labels and navigable pagination",()=>{

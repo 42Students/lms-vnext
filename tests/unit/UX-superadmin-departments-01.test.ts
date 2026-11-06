@@ -5,7 +5,7 @@ const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 describe("UX-superadmin-departments-01",()=>{
  it("preserves original wording, permissions and supported accessible UX",()=>{
   const code=source("src/app/(authenticated)/superadmin/departments/page.tsx");
-  expect(code).toContain("getCurrentRequestContext()");
+  expect(code).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   expect(code).toContain("legacyDepartmentDestination(context, \"SUPER_ADMIN\")");
 
 

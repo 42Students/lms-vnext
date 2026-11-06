@@ -14,7 +14,7 @@ describe("batch daily reminder delivery",()=>{
   expect(service).toContain("tx.insert(inAppNotifications)");
   expect(service).not.toContain("emailSent:true");
   const route=read("src/app/api/placements/tpo/batches/[batchId]/remind/route.ts");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   const ui=read("src/components/tpo/tpo-batch-invitation-control.tsx");
   expect(ui).toContain("Send reminder");
   expect(ui).toContain("remindReview");

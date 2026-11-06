@@ -31,7 +31,7 @@ describe("College Admin atomic Team roster replacement",()=>{
   expect(service).toContain("recordActivityEventInTransaction");
   expect(service).toContain("notifyProjectMemberships");
   expect(service).toContain("PROJECT_MEMBER_CONFLICT");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(workspace).toContain("<CollegeProjectStudentRosterDialog");
   expect(modal).toContain("Manage students");
   expect(modal).toContain("Replace roster");

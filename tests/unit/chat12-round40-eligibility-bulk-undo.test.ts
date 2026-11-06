@@ -11,5 +11,5 @@ it("TPO-students-13 and TPO-students-16 undo eligibility batches only with actor
  expect(service).toContain('"PLACEMENTS_BULK_UNDONE"');
  expect(run).toContain("undoRows:plan.target");
  expect(ui).toContain("Undo last student batch (five minutes)");
- expect(src("src/app/api/placements/tpo/bulk-actions/undo/route.ts")).toContain("isSameOriginRequest(request)");
+ expect(src("src/app/api/placements/tpo/bulk-actions/undo/route.ts")).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
 });

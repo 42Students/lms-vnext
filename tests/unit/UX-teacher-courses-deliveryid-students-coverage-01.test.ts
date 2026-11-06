@@ -5,7 +5,7 @@ it("UX-teacher-courses-deliveryid-students-01 /teacher/courses/[deliveryId]/stud
 const s=readFileSync(join(process.cwd(),"src/app/(authenticated)/teacher/courses/[deliveryId]/students/page.tsx"),"utf8");
 expect(s).toContain("redirect(\"/teacher/courses/\"+encodeURIComponent(target.deliveryId)+\"/students\")");
 expect(s).toContain("notFound()");
-expect(s).toContain("getCurrentRequestContext");
+expect(s).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
 expect(s).toContain("FacultyCourseRoster");
 const roster=readFileSync(join(process.cwd(),
  "src/components/courses/faculty-course-roster.tsx"),"utf8");

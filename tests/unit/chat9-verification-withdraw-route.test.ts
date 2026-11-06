@@ -5,7 +5,7 @@ describe("DB04 registered migration 0081 live withdrawal boundary",()=>{
  it("requires a same-origin learner request with section and version only",()=>{
   const source=readFileSync(join(process.cwd(),
    "src/app/api/profile-verification/self/withdraw/route.ts"),"utf8");
-  expect(source).toContain("isSameOriginRequest(request)");
+  expect(source).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(source).toContain("z.strictObject");
   expect(source).toContain("withdrawOwnPendingVerification(");
   expect(source).toContain("createProfileVerificationRepository(verifyPrivateDocumentReceipt)");

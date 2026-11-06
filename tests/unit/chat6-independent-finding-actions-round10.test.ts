@@ -13,7 +13,7 @@ describe("Independent audit finding action workflow",()=>{
   for(const s of ["assertPersistedPlatformPermission","input.expectedVersion","eq(db10AuditFindings.version,row.version)","db10AuditFindingEvents","actorUserId:context.user.id","INVALID_DUPLICATE"])expect(svc).toContain(s);
   expect(svc.indexOf("await tx.insert(db10AuditFindingEvents)")).toBeGreaterThan(svc.indexOf("if(!saved)return {ok:false as const,reason:\"STALE_VERSION\"}"));
   const route=src("src/app/api/tracker/audit-findings/[publicId]/route.ts");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("DUPLICATE_TARGET_NOT_FOUND");
   expect(svc).toContain('if(!target)return {ok:false as const,reason:"DUPLICATE_TARGET_NOT_FOUND"};');
   const detail=src("src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx");

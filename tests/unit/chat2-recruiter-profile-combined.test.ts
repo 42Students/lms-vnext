@@ -38,7 +38,7 @@ describe("Recruiter profile combined update",()=>{
  });
  it("REC-calendar-messages-profile-25 scope and origin validate all profile updates",()=>{
   const route=src("src/app/api/placements/recruiter/profile/details/route.ts");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("updateOwnRecruiterProfileDetails");
  });
 });

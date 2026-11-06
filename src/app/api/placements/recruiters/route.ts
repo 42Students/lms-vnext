@@ -1,7 +1,5 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import {
   grantPlacementRecruiter,
   listPlacementRecruiterGrants,
@@ -9,10 +7,10 @@ import {
 
 export const runtime = "nodejs";
 
-export async function GET(request: Request) {
-  try {
-    const context =
-      await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const collegeId =
       new URL(request.url).searchParams.get(
         "collegeId",
@@ -23,22 +21,13 @@ export async function GET(request: Request) {
         collegeId ?? "",
       );
     return NextResponse.json({ grants });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
-export async function POST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context =
-      await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const result =
       await grantPlacementRecruiter(
         context,
@@ -47,7 +36,5 @@ export async function POST(request: Request) {
     return NextResponse.json(result, {
       status: 201,
     });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

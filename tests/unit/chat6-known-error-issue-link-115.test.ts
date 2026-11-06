@@ -17,7 +17,7 @@ describe("Known Errors create-and-link tracker workflow",()=>{
   expect(service).toContain("requireGlobalLogAdmin(context)");
   expect(service).toContain("knownErrorMutationSchema.parse(mutationRaw)");
   const route=read("src/app/api/tracker/logs/known-errors/[signatureId]/route.ts");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
  });
  it("SA-placements-projects-115 creates once, then links in an independent recoverable operation",()=>{
   const form=read("src/components/tracker/tracker-report-form.tsx");

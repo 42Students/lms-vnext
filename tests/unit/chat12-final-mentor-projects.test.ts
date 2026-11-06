@@ -42,7 +42,7 @@ describe("chat-12 final sprint mentor projects",()=>{
  });
  it("MEN-projects-meetings-20 requires same-origin mutations",()=>{
   const route=read("src/app/api/projects/[projectId]/mentor-overview/route.ts");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("updateMentorProjectOverview");
  });
  it("MEN-projects-meetings-48 uses the mentor's familiar quick-action wording",()=>{

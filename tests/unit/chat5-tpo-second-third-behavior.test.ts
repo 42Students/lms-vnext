@@ -122,7 +122,7 @@ describe("chat-5 TPO second-third: direct route authorization, negative and empt
  for(const [route,fetcher,empty] of routes){
   it("TPO-2ND-PAGE-"+route.replace(/[^a-z]+/g,"-")+"-01 authenticates and handles missing/empty evidence",()=>{
    const code=page(route);
-   expect(code).toContain("getCurrentRequestContext()");
+   expect(code).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
    expect(code).toMatch(/hasMembershipRole\(context,\s*"TPO"\)/);
    expect(code).toContain('redirect("/dashboard")');
    expect(code).toContain(fetcher);

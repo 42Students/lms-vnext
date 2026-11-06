@@ -12,7 +12,7 @@ describe("Academic Setup CSV parity",()=>{
   const classes=read(root+"classes/export/route.ts");
   const mapping=read(root+"semester-courses/export/route.ts");
   for(const source of [semester,batch,classes,mapping]){
-   expect(source).toContain("getCurrentRequestContext");
+   expect(source).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
    expect(source).toContain("X-Export-Truncated");
    expect(source).toContain("text/csv");
   }

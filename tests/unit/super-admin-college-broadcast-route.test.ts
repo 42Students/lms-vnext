@@ -4,7 +4,7 @@ const route=readFileSync("src/app/api/admin/announcements/broadcast/route.ts","u
 const service=readFileSync("src/modules/announcements/super-admin-college-broadcast-service.ts","utf8");
 describe("Super Admin bulk DB10 announcement guard",()=>{
  it("only mutates on explicit same-origin POST behind readiness",()=>{
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("announcementsRuntimeEnabled()");
   expect(service).toContain("requirePermission(context,\"college.manage\"");
  });

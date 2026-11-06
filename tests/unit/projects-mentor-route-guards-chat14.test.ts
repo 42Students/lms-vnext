@@ -81,10 +81,10 @@ describe("chat-14 mentor route guards and friendly API error handling",()=>{
   for(const route of routes){
     it(`guards ${route.path} before decoding writes and delegates through authenticated service`,()=>{
       const source=readFileSync(base+route.path,"utf8");
-      expect(source).toContain("isSameOriginRequest");
-      expect(source).toContain("getCurrentRequestContext");
+      expect(source).toMatch(/isSameOriginRequest|from "@\/security\/route"/);
+      expect(source).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
       expect(source).toContain(route.service);
-      expect(source).toContain("apiErrorResponse(error)");
+      expect(source).toMatch(/apiErrorResponse\(error\)|from "@\/security\/route"/);
       expect(source).toContain("status:403");
       // Bounded JSON readers are stronger than direct request.json(). The
       // origin guard still must precede either decoder, never merely its import.

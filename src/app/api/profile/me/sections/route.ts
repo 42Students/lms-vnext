@@ -1,13 +1,11 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import { updateOwnLearnerProfileSection } from "@/modules/people/learner-profile-section-service";
 export const runtime="nodejs";
-export async function PATCH(request:Request) {
-  if(!isSameOriginRequest(request)) return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
-  try {
-    const context=await getCurrentRequestContext();
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     return NextResponse.json(await updateOwnLearnerProfileSection(context,await request.json()));
-  } catch(error) { return apiErrorResponse(error); }
-}
+  },
+);

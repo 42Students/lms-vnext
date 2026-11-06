@@ -1,16 +1,15 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { apiErrorResponse } from "@/lib/api-error";
 import {
   getLearnerCourseWorkspace,
 } from "@/modules/courses/learner-course-service";
 
 export const runtime = "nodejs";
 
-export async function GET(request: Request) {
-  try {
-    const context =
-      await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const url = new URL(request.url);
     const workspace =
       await getLearnerCourseWorkspace(
@@ -18,9 +17,6 @@ export async function GET(request: Request) {
         url.searchParams.get("deliveryId") ??
           "",
       );
-
     return NextResponse.json({ workspace }, {headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

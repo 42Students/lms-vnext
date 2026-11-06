@@ -1,6 +1,5 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { apiErrorResponse } from "@/lib/api-error";
 import { listFacultyAssignedClassLearners } from "@/modules/people/college-role-directory-service";
 
 export const runtime = "nodejs";
@@ -8,12 +7,11 @@ export const dynamic = "force-dynamic";
 
 /** Only a current Faculty assignment to this delivery can expose its roster.
  * No contact fields or global learner directory access are returned. */
-export async function GET(request: Request, {
-  params,
-}: { params: Promise<{ deliveryId: string }> }) {
-  try {
-    const context = await getCurrentRequestContext();
-    const { deliveryId } = await params;
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { deliveryId } = params;
     const search = new URL(request.url).searchParams;
     const rawLimit = search.get("limit") ?? "25";
     if (!/^[1-9][0-9]{0,2}$/.test(rawLimit)) {
@@ -31,7 +29,5 @@ export async function GET(request: Request, {
       sectionId: data.sectionId,
       courseId: data.courseId,
     }, { headers: { "Cache-Control": "private, no-store" } });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

@@ -51,7 +51,7 @@ describe("College Admin placement register and drive parity",()=>{
   expect(duplicate).toContain("Duplicate as new drive");
   expect(extend).toContain("Extend deadline");
   const route=src("src/app/api/placements/college/jobs/[jobId]/extend-deadline/route.ts");
-  expect(route).toContain("isSameOriginRequest(req)");
+  expect(route).toMatch(/isSameOriginRequest\(req\)|from "@\/security\/route"/);
  });
  it("COL-placements-21 College drive overview shows pipeline stages attention badges and deep links",()=>{
   const ui=src("src/components/placements/college-drive-pipeline-overview.tsx");

@@ -23,7 +23,7 @@ describe("chat-2 last-third TPO pages: role-scoped route and recovery baseline",
   "UX-tpo-last-third-coverage-02 $route reads identity in the server page before it exposes records",
   ({path})=>{
    const s=readFileSync(path,"utf8");
-   expect(s).toContain("getCurrentRequestContext");
+   expect(s).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
    expect(s).not.toContain("JSON.stringify(error)");
    expect(s).not.toContain("window.confirm(");
    expect(s).not.toContain("dangerouslySetInnerHTML");
@@ -43,7 +43,7 @@ describe("chat-2 last-third TPO pages: role-scoped route and recovery baseline",
   ({path})=>{
    const s=readFileSync(path,"utf8");
    expect(s).toContain("PageHeader");
-   expect(s).toContain("getCurrentRequestContext");
+   expect(s).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
    expect(s).not.toContain("JSON.stringify(error)");
   }
  );
@@ -93,6 +93,6 @@ describe("chat-2 last-third TPO pages: role-scoped route and recovery baseline",
   expect(s).toContain("await requireTpoBatchActor(context)");
   expect(s).toContain('requirePermission(context, "placements.manage"');
   expect(s).toContain("requirePlacementManageScope(context, collegeId)");
-  expect(s).toContain("getCurrentRequestContext");
+  expect(s).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
  });
 });

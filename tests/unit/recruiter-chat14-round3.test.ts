@@ -60,7 +60,7 @@ describe("chat-14 recruiter reassigned batch 3",()=>{
   expect(service).toContain("ctx.user.id");
   expect(schema).toContain("prpr_recruiter_application_uq");
   expect(schema).toContain("prpr_note_ck");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("private, no-store");
   expect(ui).toContain("Only you can read or change this rating and note.");
   expect(ui).toContain("Clear rating and note");

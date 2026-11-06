@@ -1,9 +1,8 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { courseAssignments } from "@/db/schema";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { apiErrorResponse } from "@/lib/api-error";
 import {
   listAssignmentSubmissions,
 } from "@/modules/courses/assignment-submission-service";
@@ -19,9 +18,10 @@ export const runtime = "nodejs";
  * reader. POST submissions have moved to the separately authorized
  * /api/courses/assignments/:assignmentId/submit endpoint.
  */
-export async function GET(request: Request) {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const url = new URL(request.url);
     const params = url.searchParams;
     const legacyId = params.get("lessonContentId");
@@ -51,8 +51,6 @@ export async function GET(request: Request) {
       page: params.get("page") ?? undefined,
       size: params.get("size") ?? undefined,
     });
-    // Legacy unpaged readers saw up to 50 rows; canonical UUID callers retain
-    // their prior array contract unless explicit bounded paging is requested.
     const paging = pagination.page !== undefined && pagination.size !== undefined
       ? { limit: pagination.size, offset: pagination.page * pagination.size }
       : legacyId !== null ? { limit: 50, offset: 0 } : undefined;
@@ -62,7 +60,5 @@ export async function GET(request: Request) {
     return NextResponse.json({ submissions }, {
       headers: { "Cache-Control": "private, no-store" },
     });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

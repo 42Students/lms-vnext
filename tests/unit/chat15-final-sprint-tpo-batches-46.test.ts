@@ -23,7 +23,7 @@ describe("TPO-batches-46 batch-scoped saved student views",()=>{
  it("TPO-batches-46 exposes signed-in GET and same-origin POST, with pin/open/update/export controls",()=>{
   const route=src("src/app/api/placements/tpo/batches/[batchId]/saved-views/route.ts");
   const ui=src("src/components/tpo/tpo-batch-student-saved-views.tsx");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("listTpoBatchSavedViews(await getCurrentRequestContext(),batchId)");
   for(const label of ["Pin view","Save current filters","Update selected","Download CSV","Delete","Open"])
    expect(ui).toContain(label);

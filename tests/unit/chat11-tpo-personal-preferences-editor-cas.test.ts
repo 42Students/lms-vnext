@@ -29,7 +29,7 @@ describe("TPO-settings-audit-PREF-UI-06 user-scoped notification preferences",()
   expect(component).toContain("setCurrentVersion(result.version)");
   expect(component).toContain("setSaved({...value})");
   expect(component).toContain("finally{saving.current=false;setBusy(false);}");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("readTpoSettingsBody(request)");
   expect(service).toContain('hasMembershipRole(persisted,"TPO")');
   expect(service).toContain("tpoNotificationPreferencesMatch(current,values)");

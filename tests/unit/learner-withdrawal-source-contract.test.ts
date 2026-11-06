@@ -26,7 +26,7 @@ describe("Learner withdrawal UX and backend write contracts", () => {
   it("rechecks same origin, Zod and persisted active role/college within audited transaction", () => {
     const route = read("src/app/api/placements/applications/[applicationId]/actions/route.ts");
     const service = read("src/modules/placements/application-service.ts");
-    expect(route).toContain("isSameOriginRequest(request)");
+    expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     expect(route).toContain("learnerApplicationWithdrawalSchema.parse");
     expect(route).toContain("input.reason");
     expect(service).toContain('can(context, "placements.read"');

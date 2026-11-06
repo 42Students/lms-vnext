@@ -21,7 +21,7 @@ describe("TPO recruiter inbox legacy acceptance",()=>{
   const reply=readFileSync(join(process.cwd(),"src/components/tpo/tpo-recruiter-message-reply.tsx"),"utf8");
   const detail=readFileSync(join(process.cwd(),"src/app/(authenticated)/tpo/messages/[threadId]/page.tsx"),"utf8");
   expect(route).toContain("export async function POST");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("await listThreadMessages(context,id.data)");
   expect(reply).toContain('method:"POST"');
   expect(reply).toContain('"/read"');

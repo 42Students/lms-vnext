@@ -30,7 +30,7 @@ describe("UX-tpo-last-third-CSV-01 private report export ambiguity and tenant co
   expect(check).toBeGreaterThan(-1);
   expect(check).toBeLessThan(s.indexOf(service));
   expect(s).toContain('"Cache-Control":"private, no-store"');
-  expect(s).toContain("getCurrentRequestContext");
+  expect(s).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
   expect(s).not.toContain("dangerouslySetInnerHTML");
  });
  it("UX-tpo-last-third-CSV-03 after-college rejects unknown filters instead of ignoring them",()=>{

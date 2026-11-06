@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {z} from "zod";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -5,9 +6,6 @@ import {loadLessonContentScope} from "@/modules/courses/scope";
 import {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment-service";
 import {getLearnerAssessmentOverview} from "@/modules/courses/learner-assessment-service";
 import {CoursesServiceError} from "@/modules/courses/errors";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import {
   createLessonContent,
   listLessonContents,
@@ -49,9 +47,10 @@ function optionalLegacyFacultyFilter(value:string|null){
 }
 
 
-export async function GET(request: Request) {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const url = new URL(request.url);
     const contentId=url.searchParams.get("contentId");
     const facultyId=url.searchParams.get("facultyId");
@@ -66,9 +65,6 @@ export async function GET(request: Request) {
         },{status:400,headers:noStore});
       }
     }
-    // Distinct legacy content-grades and learner-progress aggregates are not
-    // represented by the simple author content list. An explicit error is
-    // preferable to a 200 empty list that looks like zero grades.
     if(url.searchParams.get("view")==="grades")
       return NextResponse.json({
         error:"CONTENT_GRADES_REPORT_UNAVAILABLE",
@@ -122,21 +118,13 @@ export async function GET(request: Request) {
     );
     return NextResponse.json({contents,data:contents,status:"SUCCESS",reason:"Lesson contents retrieved"},
       {headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
-export async function POST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const body = await request.json();
     if(body===null||typeof body!=="object"||Array.isArray(body)){
       return NextResponse.json({error:"INVALID_REQUEST",message:"Valid lessonId required"},
@@ -144,12 +132,9 @@ export async function POST(request: Request) {
     }
     const next=normalizeContentCreatePayload(body as Record<string,unknown>);
     const content = await createLessonContent(context,next as Parameters<typeof createLessonContent>[1]);
-
     return NextResponse.json(
       {content,data:content,LessonContents:content,status:"SUCCESS",reason:"Lesson content created"},
       {status:new URL(request.url).searchParams.get("response")==="vnext"?201:200,headers:noStore},
     );
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

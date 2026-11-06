@@ -82,7 +82,7 @@ describe("2026-11-03 source-backed missing-surface triage",()=>{
     expect(page).toContain("listTpoOutsideDriveRecords");
     expect(page).toContain("verifyRecordedOutsideConfirmation");
     const post=source(path.outsidePost);
-    expect(post).toContain("isSameOriginRequest(request)");
+    expect(post).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     expect(post).toContain("recordOutsideDrive(");
     expect(post).toContain("303");
   });

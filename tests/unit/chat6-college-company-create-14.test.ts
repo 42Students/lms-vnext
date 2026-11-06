@@ -15,7 +15,7 @@ describe("College Admin company identity creation",()=>{
   const route=src("src/app/api/placements/companies/route.ts");
   const service=src("src/modules/placements/company-service.ts");
   const ui=src("src/components/placements/college-company-create.tsx");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(service).toContain("requirePlacementManageScope(context, input.collegeId)");
   expect(service).toContain("PLACEMENT_COMPANY_IDENTITY_CONFLICT");
   expect(ui).toContain("Add company");

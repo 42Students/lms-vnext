@@ -49,7 +49,7 @@ describe("TPO bulk decisions audit",()=>{
   expect(ui).toContain("if(!valid||!acknowledged||pending||auditRetry)return");
  });
  it("TPO-requests-verification-13 requires CSRF-safe route and truthful partial-failure notice",()=>{
-  expect(src("src/app/api/placements/tpo/requests/bulk-audit/route.ts")).toContain("isSameOriginRequest(request)");
+  expect(src("src/app/api/placements/tpo/requests/bulk-audit/route.ts")).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   const ui=src("src/components/placements/tpo-request-bulk-decision.tsx");
   expect(ui).toContain("window.crypto.randomUUID()");
   expect(ui).toContain("batch audit could not be confirmed");

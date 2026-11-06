@@ -87,7 +87,7 @@ describe("2026-11-04 screenshot capability-first pilot",()=>{
   expect(page).toContain('route:"/tpo/announcements"');
   expect(page).toContain('<CurrentPageRetry label="Retry loading announcements"');
   const route=source("src/app/api/placements/tpo/announcements/route.ts");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("createTpoNotice");
  });
 

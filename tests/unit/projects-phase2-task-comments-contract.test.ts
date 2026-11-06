@@ -15,7 +15,7 @@ describe("PR-S2-04 registered comments",()=>{
   expect(s).toContain('project.status==="ARCHIVED"');
  });
  it("protects POST from cross-origin and retains GET read auth",()=>{
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("listProjectTaskComments(context,projectId,taskId)");
  });
 });

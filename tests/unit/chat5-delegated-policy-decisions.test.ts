@@ -48,7 +48,7 @@ describe("Chat-5 delegated decisions: safe behavior and remaining boundaries",()
     "src/app/api/placements/tpo/companies/[companyId]/people/route.ts"]){
     expect(source(path)).not.toContain("DB09_TPO_API_READY");
   }
-  expect(source("src/app/api/placements/tpo/companies/[companyId]/people/route.ts")).toContain("isSameOriginRequest(request)");
+  expect(source("src/app/api/placements/tpo/companies/[companyId]/people/route.ts")).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
  });
  it("TPO-drive-workspace-51 avoids silently equating employer reported acceptance with learner acknowledged acceptance",()=>{
   const register=source("src/modules/placements/tpo-drive-offer-register-model.ts");

@@ -33,8 +33,8 @@ describe("TPO-settings-audit-TRUST-02 college-scoped company domain validation",
 
  it("TPO-settings-audit-TRUST-03 bounds the trusted-domain HTTP mutation body before accepting changes",()=>{
   const route=readFileSync("src/app/api/placements/tpo/trusted-domains/route.ts","utf8");
-  expect(route).toContain("isSameOriginRequest(request)");
-  expect(route).toContain("getCurrentRequestContext()");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
+  expect(route).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   expect(route).toContain("readTpoSettingsBody(request)");
   expect(route).toContain("TpoCommunicationBodyError");
   expect(route).toContain('error:"INVALID_REQUEST"');

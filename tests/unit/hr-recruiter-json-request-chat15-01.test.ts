@@ -37,13 +37,13 @@ describe("HR-request-limits-01 bounded streamed JSON for recruiter mutations",()
  ];
  it.each(handlers)("HR-request-origin-limits checks same-origin before bounded read and maps errors: %s",(file)=>{
   const s=source("src/app/api/placements/recruiter/"+file);
-  expect(s).toContain("isSameOriginRequest(request)");
+  expect(s).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(s).toContain("readRecruiterJsonBody(request)");
   expect(s).toContain("RecruiterJsonBodyError");
   expect(s).toContain('status:');
   expect(s).toContain("413");
   expect(s).toContain("400");
-  expect(s).toContain("getCurrentRequestContext");
+  expect(s).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
  });
  it("GET drive requests does not write; its only API mutation methods are guarded",()=>{
   const s=source("src/app/api/placements/recruiter/drives/requests/route.ts");

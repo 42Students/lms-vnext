@@ -28,7 +28,7 @@ it("UX-learn-learn-my-placements-calendar-01 keeps real learner data and accessi
  expect(s).toContain('redirect("/learn/my-placements/schedule');
  expect(s).toContain("z.uuid().safeParse");
  const canonical=read("src/app/(authenticated)/learn/my-placements/schedule/page.tsx");
- expect(canonical).toContain("getCurrentRequestContext()");
+ expect(canonical).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
  expect(canonical).toContain("min-w-0");
  expect(read("src/app/(authenticated)/learn/my-placements/calendar/loading.tsx").length).toBeGreaterThan(0);
  expect(read("src/app/(authenticated)/learn/my-placements/calendar/error.tsx").length).toBeGreaterThan(0);
@@ -41,7 +41,7 @@ it("UX-learn-learn-my-placements-interviews-01 keeps real learner data and acces
  expect(s).toContain('redirect("/learn/my-placements/schedule');
  expect(s).toContain("z.uuid().safeParse");
  const canonical=read("src/app/(authenticated)/learn/my-placements/schedule/page.tsx");
- expect(canonical).toContain("getCurrentRequestContext()");
+ expect(canonical).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
  expect(canonical).toContain("min-w-0");
  expect(read("src/app/(authenticated)/learn/my-placements/interviews/loading.tsx").length).toBeGreaterThan(0);
  expect(read("src/app/(authenticated)/learn/my-placements/interviews/error.tsx").length).toBeGreaterThan(0);

@@ -112,8 +112,8 @@ describe("IIT Dharwad Projects breaker — state, access, integrity, deadlines a
   const code=src("src/modules/projects/evaluation-service.ts");
   expect(code.match(/scope.access !== "ADMIN" && scope.access !== "MENTOR"/g)).toHaveLength(2);
   const api=src("src/app/api/projects/[projectId]/submissions/[submissionId]/evaluation/route.ts");
-  expect(api).toContain("isSameOriginRequest(request)");
-  expect(api).toContain("getCurrentRequestContext()");
+  expect(api).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
+  expect(api).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
  });
  it("PROJ-BREAK-database-01 unique evaluation and open-submission constraints prevent race duplicates",()=>{
   const schema=src("src/db/schema/projects.ts");

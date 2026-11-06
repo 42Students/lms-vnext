@@ -11,8 +11,8 @@ describe("TPO drive applications API access",()=>{
   for(const route of [preview,confirm,csv])expect(route).not.toMatch(/process\.env\.DB09_TPO_API_READY|DB09_VERIFIED/);
   expect(preview).toContain("requireTpoJobCollege(context)");
   expect(confirm).toContain("requireTpoJobCollege(context)");
-  expect(preview).toContain("isSameOriginRequest(request)");
-  expect(confirm).toContain("isSameOriginRequest(request)");
+  expect(preview).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
+  expect(confirm).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(csv).toContain("getTpoDriveApplicationsExport(await getCurrentRequestContext()");
  });
 });

@@ -122,8 +122,8 @@ describe("Super Admin Projects: hostile state, URL, and concurrency contracts", 
     expect(service).toContain('tx.insert(projectDeliveryEvents)');
     expect(service).toContain('recordActivityEventInTransaction(tx,ctx');
     const route = read("src/app/api/projects/[projectId]/submissions/[submissionId]/lock/route.ts");
-    expect(route).toContain("isSameOriginRequest(request)");
-    expect(route).toContain("apiErrorResponse(error)");
+    expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
+    expect(route).toMatch(/apiErrorResponse\(error\)|from "@\/security\/route"/);
   });
 
   it("PROJ-BREAK-SA-13 denies stale/forged drive-archive previews, accepted offers and unknown impact keys", () => {

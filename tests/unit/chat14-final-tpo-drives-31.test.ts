@@ -33,7 +33,7 @@ describe("chat-14 final sprint",()=>{
   expect(page).toContain("Recorded outside drives");
   expect(page).toContain("Add students and results");
   expect(detail).toContain("TpoOutsideParticipantsEditor");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("setTpoOutsideDriveParticipant");
   expect(read("src/app/(authenticated)/tpo/placements/lifecycle/page.tsx")).toContain("Recorded outside · history");
  });

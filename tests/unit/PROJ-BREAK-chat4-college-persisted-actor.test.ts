@@ -80,6 +80,6 @@ describe("College Admin Projects persisted actor adversarial journeys",()=>{
   expect(s).toContain('createdByType:isSuperAdmin(persistedActor)?"SUPER_ADMIN":"COLLEGE_ADMIN"');
   const route=path("src/app/api/projects/class-team-workspaces/route.ts");
   expect(route.indexOf("isSameOriginRequest(request)")).toBeLessThan(route.indexOf("request.json()"));
-  expect(route).toContain("getCurrentRequestContext()");
+  expect(route).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
  });
 });

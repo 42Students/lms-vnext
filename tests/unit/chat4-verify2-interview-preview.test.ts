@@ -42,7 +42,7 @@ describe("W1 G2-12-030-015 cross-drive interview conflict preview", () => {
     expect(service).toContain("eq(placementApplications.jobId,job.id)");
     expect(service).toContain("eq(placementApplications.membershipId,candidate.studentId)");
     expect(service).toContain("limit(501)");
-    expect(route).toContain("isSameOriginRequest(request)");
+    expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     expect(ui).toContain("Checking other interviews in this college");
     expect(ui).toContain("college-wide scheduling preview could not be loaded");
     expect(ui).toContain("key:previewKey,result,error:false");

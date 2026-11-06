@@ -117,7 +117,7 @@ describe("chat-16 reassigned Tracker acceptance, round 2",()=>{
     for(const label of ["Daily digest","Regressions","Marked fixed","Send test alert","Send to Telegram now"]) {
       expect(panel).toContain(label);
     }
-    expect(route).toContain("isSameOriginRequest(request)");
+    expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   });
 
   it("SA-placements-projects-117 downloads redacted logs and produces Claude report without hidden raw stack",()=>{

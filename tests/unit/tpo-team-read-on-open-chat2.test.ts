@@ -10,7 +10,7 @@ describe("TPO Team opens as read without GET mutations",()=>{
   expect(action).toContain('method:"POST"');
   expect(action).toContain("timeoutMs:12000");
   expect(action).toContain("if(active)router.refresh()");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain('request.headers.get("accept")?.includes("application/json")');
   expect(route).toContain("NextResponse.json(result)");
  });

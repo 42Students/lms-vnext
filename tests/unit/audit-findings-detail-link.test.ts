@@ -11,7 +11,7 @@ describe("DB10 independent audit findings detail integration",()=>{
   expect(detail).toContain("Back to audit findings");
   expect(detail).not.toContain("TrackerIssueDetailPage");
   expect(board).toContain("independentFindingHref");
-  expect(board).toContain("getCurrentRequestContext");
+  expect(board).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
   expect(board).toContain("listIndependentAuditFindings");
  });
 });

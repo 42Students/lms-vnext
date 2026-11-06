@@ -213,7 +213,7 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   expect(service).toContain("recruiterOwnJobPredicate(ctx.user.id)");
   expect(service).toContain("new RecruiterPrivateReviewConflict()");
   const route=source("src/app/api/placements/recruiter/jobs/[jobId]/applicants/[applicationId]/private-rating/route.ts");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("private, no-store");
   expect(route).toContain("status:409");
  });

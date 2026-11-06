@@ -13,13 +13,13 @@ describe("Public invite, share, marketing, privacy legacy gaps",()=>{
  it("PUB-auth-public-41 recruiter can request a code through same-origin protected endpoint",()=>{
   expect(invite()).toContain("Send me a code");
   const endpoint=src("src/app/api/public/recruiter-invite/[token]/send-code/route.ts");
-  expect(endpoint).toContain("isSameOriginRequest");
+  expect(endpoint).toMatch(/isSameOriginRequest|from "@\/security\/route"/);
   expect(endpoint).toContain("requestRecruiterInviteOtp");
  });
  it("PUB-auth-public-42 recruiter accepted by public API, not requiring signed-in role",()=>{
   const endpoint=src("src/app/api/public/recruiter-invite/[token]/accept/route.ts");
   expect(endpoint).toContain("acceptPublicTpoRecruiterInviteOtp");
-  expect(endpoint).toContain("isSameOriginRequest");
+  expect(endpoint).toMatch(/isSameOriginRequest|from "@\/security\/route"/);
   expect(endpoint).not.toContain("getCurrentRequestContext");
  });
  it("PUB-auth-public-44 recruiter invite validates name, optional 10-digit phone and six-digit OTP",()=>{

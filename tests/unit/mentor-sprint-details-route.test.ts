@@ -7,7 +7,7 @@ const source=readFileSync(join(process.cwd(),
 
 describe("Mentor sprint edit route authorization contract",()=>{
   it("requires same-origin before resolving the authenticated actor or body",()=>{
-    expect(source).toContain("isSameOriginRequest(request)");
+    expect(source).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     expect(source).toContain('error:"INVALID_ORIGIN"');
     const origin=source.indexOf("isSameOriginRequest(request)");
     const auth=source.indexOf("getCurrentRequestContext()");

@@ -12,7 +12,7 @@ describe("LEARNER-placements-35 booked-round attendance confirmation",()=>{
  });
  it("LEARNER-placements-35 POST validates origin, enrollment ownership, booked status, future start and optimistic update",()=>{
   const route=source("src/app/api/placements/learner/rounds/confirm/route.ts");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   const service=source("src/modules/placements/learner-round-confirmation-service.ts");
   for(const x of ["requireLearnerPlacementAccess(context)",'eq(placementApplications.membershipId,member.id)',
    'eq(placementRoundCandidateSlots.status,"BOOKED")',"gt(placementRoundCandidateSlots.startsAt,new Date())",

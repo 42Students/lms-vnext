@@ -42,7 +42,7 @@ describe("chat-16 tracker live log to known error actions",()=>{
     expect(triage).toContain('id={"known-error-"+item.id}');
     expect(triage).toContain('id="known-errors"');
     const route=read("src/app/api/tracker/logs/known-errors/[signatureId]/route.ts");
-    expect(route).toContain("isSameOriginRequest(request)");
+    expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     expect(route).toContain("mutateKnownErrorForAdmin");
   });
 });

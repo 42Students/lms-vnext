@@ -1,7 +1,5 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import {
   transitionCourseQuiz,
   setCourseQuizResults,
@@ -9,25 +7,11 @@ import {
 
 export const runtime = "nodejs";
 
-type RouteContext = {
-  params: Promise<{ quizId: string }>;
-};
-
-export async function POST(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context =
-      await getCurrentRequestContext();
-    const { quizId } = await params;
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { quizId } = params;
     const body:unknown=await request.json();
     if(!body||typeof body!=="object"||Array.isArray(body))
       return NextResponse.json({error:"INVALID_QUIZ_TRANSITION",message:"A transition action is required"},{status:400});
@@ -47,7 +31,5 @@ export async function POST(
      operation:action,archived:action==="ARCHIVE",
      retainedHistory:action==="ARCHIVE"},
      {headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

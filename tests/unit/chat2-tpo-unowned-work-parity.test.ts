@@ -24,7 +24,7 @@ describe("TPO unowned work assignment safety",()=>{
   expect(service).toContain("isNull(placementCompanyRelationships.ownerMembershipId)");
   expect(service).toContain("tx.insert(activityEvents)");
   expect(service).toContain("tx.insert(inAppNotifications)");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("assignTpoUnownedWork(await getCurrentRequestContext()");
  });
  it("TPO-inbox-team-33 exposes a guarded, accessible assigner only when the schema is ready",()=>{

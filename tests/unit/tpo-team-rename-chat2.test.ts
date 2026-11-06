@@ -20,7 +20,7 @@ describe("TPO Team conversation rename",()=>{
   expect(component).toContain("busyRef.current");
   expect(component).toContain("timeoutMs:12000");
   expect(component).toContain("value={topic}");
-  expect(route).toContain("isSameOriginRequest");
+  expect(route).toMatch(/isSameOriginRequest|from "@\/security\/route"/);
   expect(route).toContain('status:409');
   expect(src("src/app/(authenticated)/tpo/team/[threadId]/page.tsx")).toContain("<TpoTeamRename");
  });

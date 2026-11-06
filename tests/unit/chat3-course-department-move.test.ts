@@ -16,7 +16,7 @@ describe("same-college course move",()=>{
  it("checks origin, tenant scope and historical offering guard at the route/service boundary",()=>{
   const route=readFileSync("src/app/api/courses/[courseId]/department/route.ts","utf8");
   const service=readFileSync("src/modules/courses/course-service.ts","utf8");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("moveCourseDepartmentInputSchema.parse(body)");
   expect(route).toContain("moveCourseDepartment(context,courseId,");
   expect(service).toContain("target.collegeId!==scope.collegeId");

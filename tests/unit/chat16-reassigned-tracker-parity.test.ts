@@ -46,7 +46,7 @@ describe("chat-16 reassigned tracker issue workflows",()=>{
     expect(bulk).toContain("setSelected(failures)");
     expect(bulk).toContain('tone={failed.length?"error":"success"}');
     expect(bulk).toContain("while(remaining.length)");
-    expect(route).toContain("isSameOriginRequest(request)");
+    expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     expect(route).toContain("updateBugTrackerWorkflowForAdmin(");
   });
   it("SA-placements-projects-107 saves, restores and deletes named views without persisting pagination cursors",()=>{

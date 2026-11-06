@@ -115,7 +115,7 @@ describe("chat-4 College Course Tabs gap closure",()=>{
   const backend=source("src/modules/courses/lesson-service.ts");
   expect(backend).toContain('for("update")');
   expect(backend).toContain("firstTemporary");
-  expect(source("src/app/api/courses/lessons/reorder-all/route.ts")).toContain("isSameOriginRequest(request)");
+  expect(source("src/app/api/courses/lessons/reorder-all/route.ts")).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
  });
  it("COL-course-tabs-R01 excludes resource clicks and counts only measured work",()=>{
   const service=source("src/modules/courses/college-learner-progress-service.ts");

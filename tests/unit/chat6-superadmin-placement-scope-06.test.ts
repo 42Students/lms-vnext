@@ -14,7 +14,7 @@ describe("SA-admin-middle-placement-scope-06 private Super Admin screen entrypoi
  for(const [route,gate,lookup] of cases){
   it(route+" checks persisted selected-college actor before first private lookup",()=>{
    const code=get(route);
-   expect(code).toContain("getCurrentRequestContext");
+   expect(code).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
    expect(code).toContain(gate);
    expect(code).toContain(lookup);
    expect(code.indexOf(gate)).toBeLessThan(code.indexOf(lookup));

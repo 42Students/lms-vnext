@@ -13,7 +13,7 @@ const termSchema=z.string().trim().min(2).max(100);
 /** TPO-home-28: bounded, permission-scoped live record suggestions. */
 export async function GET(request:NextRequest){
  try{
-  const parsed=termSchema.safeParse(request.nextUrl.searchParams.get("q")??"");
+  const parsed=termSchema.safeParse(new URL(request.url).searchParams.get("q")??"");
   if(!parsed.success)return NextResponse.json({error:"Enter at least 2 characters."},{status:400});
   const context=await getCurrentRequestContext();
   if(!hasTpoTooling(context))return NextResponse.json({error:"Access denied"},{status:403});

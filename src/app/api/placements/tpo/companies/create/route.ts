@@ -1,7 +1,5 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
@@ -16,12 +14,10 @@ import { matchesCompanyDomain } from "@/modules/placements/public-join/domain-mo
 
 export const runtime = "nodejs";
 
-export async function POST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-  try {
-    const context = await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     if (!context.membership || !hasMembershipRole(context, "TPO")) {
       throw new AuthorizationError("placements.manage");
     }
@@ -34,21 +30,19 @@ export async function POST(request: Request) {
     const body: unknown = await request.json();
     const raw = body && typeof body === "object" && !Array.isArray(body)
       ? body as Record<string, unknown> : {};
-    // A validated work email can provide the domain for a new employer.
-    // Never infer a domain from an unvalidated, personal or disposable address.
     const email = typeof raw["recruiterEmail"] === "string" ? raw["recruiterEmail"].trim().toLowerCase() : "";
     const derivedDomain = email.includes("@") ? email.split("@")[1] : undefined;
     const withDomain: Record<string, unknown> = {
       ...raw,
       ...(!raw["primaryDomain"] && derivedDomain ? { primaryDomain: derivedDomain } : {}),
     };
-    // Distinct-company review fields are validated separately (below) and are
-    // not part of the base create contract.
     const {
       reviewedCompanyId: _reviewedId, reviewedCompanyDomain: _reviewedDomain,
       distinctCompanyReason: _reviewReason, ...baseRaw
     } = withDomain;
-    void _reviewedId; void _reviewedDomain; void _reviewReason;
+    void _reviewedId;
+    void _reviewedDomain;
+    void _reviewReason;
     const parsed = tpoCreateCompanySchema.parse(baseRaw);
     const { confirmed: _confirmed, recruiterEmail, notTheSame, ...input } = parsed;
     void _confirmed;
@@ -60,9 +54,6 @@ export async function POST(request: Request) {
         message: "Use a recruiter email from the company domain.",
       }, { status: 422 });
     }
-    // Legacy "Add other": a company already on the list with the same name but
-    // a different domain is offered as "Use <company>" (SAME_COMPANY) unless the
-    // TPO explicitly confirms it is a different company, with a written reason.
     let distinctReview: { reviewedCompanyId: string; reason: string } | null = null;
     if (!notTheSame) {
       const same = await findSamePlacementCompanyByName(input.name, claimedDomain);
@@ -145,7 +136,5 @@ export async function POST(request: Request) {
       message:result.alreadyLinked?"Company is already linked to your college.":
         result.existed?"Existing company linked to your college.":"Company created and linked to your college.",
     }, { status: result.existed ? 200 : 201 });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

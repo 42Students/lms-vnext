@@ -66,7 +66,7 @@ describe("UX-CHAT15-ROUTES-41 HR, recruiter and tracker access and state matrix"
  });
  it("HR-RECRUITER-CHANGE-41 stand-alone request page checks the COMPANY party before rendering",()=>{
   const source=code("recruiter/drives/[jobId]/change-requests/page.tsx");
-  expect(source).toContain("getCurrentRequestContext()");
+  expect(source).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   expect(source).toContain("getDriveChangeRequests(context,jobId)");
   expect(source).toContain('data.party!=="COMPANY"');
   expect(source).toContain("notFound()");
@@ -91,7 +91,7 @@ describe("UX-CHAT15-ROUTES-41 HR, recruiter and tracker access and state matrix"
  ];
  it.each(privileged)("TRACKER-ADMIN-ROLE-41 %s denies ordinary reporters before private database lookup",route=>{
   const source=code("tracker/"+route+"/page.tsx");
-  expect(source).toContain("getCurrentRequestContext()");
+  expect(source).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   expect(source).toContain("isSuperAdmin(");
   expect(source.includes('redirect("/dashboard")') ||
    source.includes("Logs access")).toBe(true);
@@ -99,7 +99,7 @@ describe("UX-CHAT15-ROUTES-41 HR, recruiter and tracker access and state matrix"
  it("TRACKER-REPORTER-41 reporter self pages enforce live session and do not expose admin issue lists",()=>{
   for(const route of ["tracker","tracker/mine","tracker/mine/[publicId]"]){
    const source=code(route+"/page.tsx");
-   expect(source).toContain("getCurrentRequestContext()");
+   expect(source).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
    expect(source.includes('redirect("/dashboard")') ||
     source.includes("Sign in to report an issue")).toBe(true);
    expect(source).toContain('platformStatus');

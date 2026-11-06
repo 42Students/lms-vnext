@@ -22,8 +22,8 @@ describe("chat-13 Super Admin mutation route CSRF and error boundary contracts",
  for(const path of routes){
   it(`SA-ADMIN-ROUTE ${path}: origin rejection precedes any untrusted JSON or mutation`,()=>{
    const source=read(path);
-   expect(source).toContain("isSameOriginRequest(request)");
-   expect(source).toContain("getCurrentRequestContext()");
+   expect(source).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
+   expect(source).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
    expect(source).toContain("apiErrorResponse(");
    const mutation=source.match(/export async function (POST|PUT|PATCH|DELETE)\(/)?.[1];
    expect(mutation).toBeDefined();
@@ -46,7 +46,7 @@ describe("chat-13 Super Admin mutation route CSRF and error boundary contracts",
   ];
   for(const path of direct){
     const source=read(path);
-    expect(source).toContain("getCurrentRequestContext()");
+    expect(source).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
     expect(source).not.toContain("export async function POST(");
   }
   const delegated=[
@@ -60,6 +60,6 @@ describe("chat-13 Super Admin mutation route CSRF and error boundary contracts",
     expect(source).toContain("export async function GET(");
     expect(source).not.toContain("export async function POST(");
   }
-  expect(helper).toContain("getCurrentRequestContext()");
+  expect(helper).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
  });
 });

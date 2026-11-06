@@ -25,7 +25,7 @@ describe("College company creation evidence validation",()=>{
   expect(c).toContain("useGuardedAction");
   expect(c).toContain("minLength={2} maxLength={150}");
   const route=readFileSync("src/app/api/placements/companies/route.ts","utf8");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("createPlacementCompany");
  });
 });

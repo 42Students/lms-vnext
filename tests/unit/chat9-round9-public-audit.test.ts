@@ -35,7 +35,7 @@ describe("chat9 public page, signature and audit evidence",()=>{
  });
  it("TPO-settings-audit-93 uses authorized, bounded audit CSV from the same filtered log rather than raw unscoped activity",()=>{
   const route=read("src/app/api/placements/tpo/audit/export/route.ts");
-  expect(route).toContain("getCurrentRequestContext()");
+  expect(route).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   expect(route).toContain("tpoAuditQuerySchema.parse");
   expect(route).toContain("getTpoAuditLog(context,");
   expect(route).toContain("page<=50");

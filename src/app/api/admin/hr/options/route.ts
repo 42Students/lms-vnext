@@ -1,6 +1,5 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { apiErrorResponse } from "@/lib/api-error";
 import {
   listSuperAdminHrRelationshipOptions,
   listSuperAdminHrColleges,
@@ -8,25 +7,20 @@ import {
 
 export const runtime = "nodejs";
 
-export async function GET(request: Request) {
-  try {
-    const context =
-      await getCurrentRequestContext();
-
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const collegeId =
       new URL(request.url).searchParams.get(
         "collegeId",
       ) ?? undefined;
-
     const relationships =
       await listSuperAdminHrRelationshipOptions(
         context,
         collegeId,
       );
-
     const colleges=await listSuperAdminHrColleges(context);
     return NextResponse.json({relationships,colleges},{headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

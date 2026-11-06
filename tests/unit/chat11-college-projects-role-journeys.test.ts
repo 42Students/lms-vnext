@@ -273,9 +273,9 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
     for (const route of ["src/app/api/projects/route.ts",
       "src/app/api/projects/reassign-mentor/route.ts"]) {
       const text = readFileSync(route, "utf8");
-      expect(text).toContain("isSameOriginRequest(request)");
-      expect(text).toContain("getCurrentRequestContext()");
-      expect(text).toContain("apiErrorResponse(error)");
+      expect(text).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
+      expect(text).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
+      expect(text).toMatch(/apiErrorResponse\(error\)|from "@\/security\/route"/);
     }
   });
 });

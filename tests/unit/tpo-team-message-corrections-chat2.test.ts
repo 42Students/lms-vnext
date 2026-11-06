@@ -24,7 +24,7 @@ describe("TPO Team message edit and removal",()=>{
   expect(service).toContain('.for("update")');
   expect(service).toContain('metadata:{messageId:message.id,addedMembershipIds:');
   const route=src("src/app/api/placements/tpo/team/threads/[threadId]/messages/[messageId]/change/route.ts");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("status:409");
  });
  it("TPO-inbox-team-25 retains removed and edited state in thread rendering with guarded drafts",()=>{

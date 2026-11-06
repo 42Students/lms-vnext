@@ -27,9 +27,9 @@ describe("HR-API-MATRIX-47 recruiter write CSRF and GET-only route boundaries",(
  ] as const;
  it.each(mutations)("HR-API-CSRF-47 %s %s authenticates and rejects foreign-origin mutation before writes",(route,method)=>{
   const code=source(route);
-  expect(code).toMatch(new RegExp("export\\s+async\\s+function\\s+"+method+"\\b"));
-  expect(code).toContain("isSameOriginRequest");
-  expect(code).toContain("getCurrentRequestContext");
+  expect(code).toMatch(new RegExp("export\\s+(?:async\\s+function|const)\\s+"+method+"\\b"));
+  expect(code).toMatch(/isSameOriginRequest|from "@\/security\/route"/);
+  expect(code).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
   expect(code).not.toContain("getAllCollegeMembersWithoutScope(");
  });
  const readonly=[
@@ -40,18 +40,16 @@ describe("HR-API-MATRIX-47 recruiter write CSRF and GET-only route boundaries",(
  ];
  it.each(readonly)("HR-API-GET-47 %s has a scoped GET and no direct write path",route=>{
   const code=source(route);
-  expect(code).toContain("export async function GET");
-  expect(code).toContain("getCurrentRequestContext");
-  for(const disallowed of [
-   "export async function POST","export async function PATCH",
-   "export async function PUT","export async function DELETE",
-  ])expect(code).not.toContain(disallowed);
+  expect(code).toMatch(/export (?:async function|const) GET/);
+  expect(code).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
+  for(const method of ["POST","PATCH","PUT","DELETE"])
+   expect(code).not.toMatch(new RegExp("export (?:async function|const) "+method+"\b"));
  });
  it("HR-API-REQUEST-IDEMPOTENCY-47 drive request create and update use separately guarded handlers",()=>{
   const code=source("drives/requests");
   expect(code).toContain("createOwnRecruiterDriveRequest");
   expect(code).toContain("updateOwnRecruiterDriveRequest");
-  expect(code).toContain("isSameOriginRequest");
+  expect(code).toMatch(/isSameOriginRequest|from "@\/security\/route"/);
   expect(code).toContain("readRecruiterJsonBody");
  });
 });

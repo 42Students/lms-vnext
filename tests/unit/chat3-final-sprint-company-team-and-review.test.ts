@@ -23,7 +23,7 @@ describe("Chat-3 final sprint team and review contracts",()=>{
   const page=read("src/app/(authenticated)/tpo/team/company/[companyId]/page.tsx");
   const route=read("src/app/api/placements/tpo/company-team/[companyId]/route.ts");
   expect(page).toContain("hasPlacementTeamMembership(context)");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("readTpoCompanyTeam(await getCurrentRequestContext()");
   expect(route).toContain("mutateTpoCompanyTeam(await getCurrentRequestContext()");
   expect(page).toContain("TpoCompanyTeamConversation");

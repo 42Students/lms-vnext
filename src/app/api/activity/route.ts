@@ -1,6 +1,5 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { apiErrorResponse } from "@/lib/api-error";
 import { hasAmbiguousQuerySelectors } from "@/lib/security-query-selectors";
 import { listActivityEvents } from "@/modules/activity/service";
 
@@ -16,17 +15,13 @@ function value(
     : undefined;
 }
 
-export async function GET(
-  request: Request,
-) {
-  try {
-    const context =
-      await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const params = new URL(
       request.url,
     ).searchParams;
-    // A duplicate/empty tenant selector must never be silently collapsed to
-    // another scope by URLSearchParams.get() or a legacy alias.
     if (hasAmbiguousQuerySelectors(params, [
       "collegeId", "organizationId", "module", "importance", "actorUserId",
       "actorId", "eventType", "subjectType", "targetType", "from",
@@ -95,9 +90,6 @@ export async function GET(
             "40",
         },
       );
-
-    // Add truthful name dictionaries for legacy audit list adapters without
-    // pretending that cursor pagination provides an absolute page or total.
     const actorNames=Object.fromEntries(result.items
       .filter(row=>row.actor?.id&&row.actor.displayName)
       .map(row=>[row.actor!.id!,row.actor!.displayName!]));
@@ -122,7 +114,5 @@ export async function GET(
             }
           : null,
     },{headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

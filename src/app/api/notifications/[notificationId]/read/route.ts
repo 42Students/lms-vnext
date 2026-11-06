@@ -1,41 +1,21 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import { markOwnNotificationRead } from "@/modules/activity/notification-service";
 import { markOwnLearnerNotificationRead } from "@/modules/activity/learner-notification-read-service";
 
 export const runtime = "nodejs";
 
-type RouteContext = {
-  params: Promise<{
-    notificationId: string;
-  }>;
-};
-
-export async function POST(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context =
-      await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor, params }) => {
+    const context = actor!;
     const { notificationId } =
-      await params;
+      params;
     const notification = context.membership?.roles.includes("LEARNER")
       ? await markOwnLearnerNotificationRead(context, notificationId)
       : await markOwnNotificationRead(context, notificationId);
     return NextResponse.json({
       notification,
     });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

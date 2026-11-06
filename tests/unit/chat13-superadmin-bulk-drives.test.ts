@@ -26,8 +26,8 @@ describe("Super Admin bulk drive actions",()=>{
     expect(client).toContain('setSelected(response.results.filter(r => r.status === "SKIPPED")');
   });
   it("SA-placements-projects-11 forbids cross-origin writes and keeps raw codes out of client responses",()=>{
-    expect(route).toContain("isSameOriginRequest(request)");
+    expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     expect(client).toContain("apiFetch<Preview | Result>");
-    expect(route).toContain("apiErrorResponse(error)");
+    expect(route).toMatch(/apiErrorResponse\(error\)|from "@\/security\/route"/);
   });
 });

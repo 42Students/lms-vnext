@@ -1,7 +1,5 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import { learnerDiscussionListResponse } from "@/modules/courses/learner-discussion-response-model";
 import {
   createCourseDiscussionMessage,
@@ -32,27 +30,15 @@ function requestedEnvelope(url:URL){
  return url.searchParams.get("envelope")==="legacy";
 }
 
-type RouteContext = {
-  params: Promise<{
-    deliveryId: string;
-  }>;
-};
-
-export async function GET(
-  request: Request,
-  { params }: RouteContext,
-) {
-  try {
-    const context =
-      await getCurrentRequestContext();
-    const { deliveryId } = await params;
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { deliveryId } = params;
     const url=new URL(request.url);
     const envelope=requestedEnvelope(url);
     const query=Object.fromEntries(url.searchParams.entries());
     delete query["envelope"];
-    // Legacy classroom 'since' was a changed-row feed. Preserve its polling
-    // semantics through the append-only/delta API; it must not be interpreted
-    // as a beforeCreatedAt history cursor, which would miss tombstones.
     const since=query["since"];
     if(since!==undefined){
       const changes=await listCourseDiscussionChanges(context,deliveryId,{
@@ -67,26 +53,14 @@ export async function GET(
     return NextResponse.json(envelope?legacyEnvelope(response.messages):response,{
       headers: noStore,
     });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
-export async function POST(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context =
-      await getCurrentRequestContext();
-    const { deliveryId } = await params;
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { deliveryId } = params;
     const body:unknown=await request.json();
     const message=await createCourseDiscussionMessage(context,deliveryId,body);
     const envelope=requestedEnvelope(new URL(request.url));
@@ -94,7 +68,5 @@ export async function POST(
       envelope?legacyEnvelope(message):{message},
       {status:envelope?200:201,headers:noStore},
     );
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

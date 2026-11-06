@@ -41,7 +41,7 @@ describe("chat12 remaining Students scope and safety",()=>{
  });
  it("TPO-students-33 validates academic import with a college-scoped preview before commit",()=>{
   const route=s("src/app/api/placements/tpo/students/academic-import/route.ts");
-  expect(route).toContain("isSameOriginRequest");
+  expect(route).toMatch(/isSameOriginRequest|from "@\/security\/route"/);
   expect(route).toContain("previewTpoAcademicImport");
   expect(route).toContain("commitTpoAcademicImport");
  });

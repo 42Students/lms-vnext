@@ -1,7 +1,5 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import {facultyDiscussionModerationSchema} from "@/modules/courses/faculty-discussion-moderation-model";
 import {
   deleteCourseDiscussionMessage,
@@ -18,27 +16,11 @@ export const COURSE_DISCUSSION_LEGACY_MUTATION_MAP={
  delete:"DELETE /api/courses/deliveries/[deliveryId]/discussions/[messageId]",
 } as const;
 
-type RouteContext = {
-  params: Promise<{
-    deliveryId: string;
-    messageId: string;
-  }>;
-};
-
-export async function DELETE(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-    const { deliveryId, messageId } = await params;
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { deliveryId, messageId } = params;
     const version=facultyDiscussionModerationSchema.parse(await request.json());
     const deleted = await deleteCourseDiscussionMessage(
       context,
@@ -46,28 +28,16 @@ export async function DELETE(
       deliveryId,
       version,
     );
-
     return NextResponse.json({ deleted });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
 
-export async function PATCH(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-    const { deliveryId, messageId } = await params;
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { deliveryId, messageId } = params;
     const version=facultyDiscussionModerationSchema.parse(await request.json());
     const message =
       await toggleCourseDiscussionPin(
@@ -76,9 +46,6 @@ export async function PATCH(
         deliveryId,
         version,
       );
-
     return NextResponse.json({ message });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

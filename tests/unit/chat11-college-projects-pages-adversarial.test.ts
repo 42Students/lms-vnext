@@ -17,7 +17,7 @@ describe("PROJ-BREAK-COL-PAGES-01 scope and resilience for all seven College Adm
     return;
    }
    const scope=source.indexOf("getProjectAdminCollegeId(context)");
-   expect(source,page).toContain("getCurrentRequestContext()");
+   expect(source,page).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
    expect(scope,page).toBeGreaterThan(0);
    expect(source,page).not.toContain("context.membership.collegeId");
    expect(source,page).not.toContain("context.membership?.collegeId");

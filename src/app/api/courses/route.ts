@@ -1,7 +1,5 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import {
   createCourse,
   listCourses,
@@ -42,9 +40,10 @@ export const LEGACY_COURSE_API_CROSSWALK = {
  "POST /restore/{id}": "POST /api/courses/{uuid}/restore (legacy integer/collegeId crosswalk required)",
 } as const;
 
-export async function GET(request: Request) {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const url = new URL(request.url);
     const collegeId=url.searchParams.get("collegeId") ?? "";
     const departmentId=url.searchParams.get("departmentId");
@@ -80,32 +79,21 @@ export async function GET(request: Request) {
     return NextResponse.json({courses:legacyView
       ?courses.map(projectLegacyCoursePublic):courses},
       {headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
-export async function POST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const body = await request.json();
     const course = await createCourse(
       context,
       body,
     );
-
     return NextResponse.json(
       { course },
       { status: 201 },
     );
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

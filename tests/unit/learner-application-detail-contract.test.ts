@@ -19,6 +19,6 @@ describe("learner application detail and own withdrawal contract",()=>{
     expect(control).toContain("learnerApplicationWithdrawalSchema.safeParse");
     expect(control).toContain("Confirm withdrawal");
     expect(control).toContain("maxLength={2000}");
-    expect(action).toContain("isSameOriginRequest");
+    expect(action).toMatch(/isSameOriginRequest|from "@\/security\/route"/);
   });
 });

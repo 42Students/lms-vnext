@@ -30,7 +30,7 @@ describe("Faculty-authored learner assignment materials",()=>{
   expect(service).toContain("rows.length>=20");
   expect(service).toContain("rows.some(row=>row.externalUrl?.toLowerCase()");
   const route=read("src/app/api/courses/deliveries/[deliveryId]/assignments/[assignmentId]/materials/route.ts");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("export async function GET");
   expect(route).toContain("export async function POST");
   expect(route).toContain("export async function DELETE");

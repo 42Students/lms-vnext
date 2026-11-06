@@ -1,7 +1,5 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import { bulkReassignProjectMentor } from "@/modules/projects/member-service";
 import {findLegacyReassignmentMentorMembership}
   from "@/modules/projects/mentor-reassignment-legacy-lookup-service";
@@ -10,17 +8,10 @@ import {bulkProjectMentorReassignmentInputSchema} from "@/modules/projects/valid
 
 export const runtime = "nodejs";
 
-export async function POST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context =
-      await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const input: unknown = await request.json();
     let normalized:unknown=input;
     if(input && typeof input==="object" && !Array.isArray(input) &&
@@ -55,7 +46,5 @@ export async function POST(request: Request) {
       partialSuccess:result.failures.length>0&&result.reassignedCount>0,
       failedProjects:result.failures,
     },{headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

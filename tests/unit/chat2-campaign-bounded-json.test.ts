@@ -21,7 +21,7 @@ describe("TPO-campaigns-public-12 campaign request body bounds and draft preserv
   const drafts=readFileSync("src/app/api/placements/tpo/campaigns/drafts/route.ts","utf8");
   const audience=readFileSync("src/app/api/placements/tpo/campaigns/preview-selected/route.ts","utf8");
   for(const s of [drafts,audience]){
-   expect(s).toContain("isSameOriginRequest(request)");
+   expect(s).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
    expect(s).toContain("TpoCommunicationBodyError");
    expect(s).toContain("BODY_TOO_LARGE");
    expect(s).toContain("413:400");

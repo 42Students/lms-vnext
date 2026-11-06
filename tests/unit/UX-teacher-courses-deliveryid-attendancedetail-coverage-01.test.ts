@@ -5,5 +5,5 @@ it("UX-teacher-courses-deliveryid-attendancedetail-01 /teacher/courses/[delivery
  const source=readFileSync(join(process.cwd(),"src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/page.tsx"),"utf8");
  expect(source).toContain("redirect(\"/teacher/courses/\"+encodeURIComponent(target.deliveryId)");
  expect(source).toContain("notFound()");
- expect(source).toContain("getCurrentRequestContext");
+ expect(source).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
 });

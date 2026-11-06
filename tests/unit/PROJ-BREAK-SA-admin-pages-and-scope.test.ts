@@ -67,26 +67,26 @@ describe("Super Admin Projects and Placements page routes — independent securi
         expect(page,path).toContain(delegate.contains);
         if(subpath.startsWith("projects/workspaces/")){
           const canonical=source(root+"/projects/[projectId]/page.tsx");
-          expect(canonical).toContain("getCurrentRequestContext");
+          expect(canonical).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
           expect(canonical).toContain("requireProjectManageAccess");
           expect(canonical).toContain("eq(projectInstances.collegeId,collegeId)");
         }
         if(delegate.target&&delegate.target.startsWith("src/")){
           const component=source(delegate.target);
-          expect(component,path).toContain("getCurrentRequestContext");
+          expect(component,path).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
           expect(component,path).toMatch(/requireProjectManageAccess|can\(context,\s*"project-template.manage"|getSuperAdminTemplateSubview/);
         }else if(delegate.target){
           const target=source(root+"/"+delegate.target);
           if(delegate.target.startsWith("placements/")){
-            expect(target,path).toContain("getCurrentRequestContext");
+            expect(target,path).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
             expect(target,path).toContain("requireSuperAdminSelectedCollege");
           }else if(delegate.target==="projects/[projectId]/page.tsx"){
-            expect(target,path).toContain("getCurrentRequestContext");
+            expect(target,path).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
             expect(target,path).toContain("requireProjectManageAccess");
           }else expect(target,path).toContain("AdminProjectSectionPage");
         }
       }else{
-        expect(page,path).toContain("getCurrentRequestContext");
+        expect(page,path).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
       }
       // Semantic data tables are permitted when they have an accessible name
       // and scoped column/row headers. Reject anonymous tables instead.

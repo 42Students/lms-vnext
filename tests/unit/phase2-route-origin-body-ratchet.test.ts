@@ -9,9 +9,9 @@ import {describe,expect,it} from "vitest";
  */
 const SCOPE=/(tpo|\/hr|recruit)/i;
 const PHASE1=/(project|placement)/i;
-const HANDLER=/export\s+async\s+function\s+(POST|PUT|PATCH|DELETE)\b/g;
+const HANDLER=/export\s+(?:async\s+function\s+(POST|PUT|PATCH|DELETE)\b|const\s+(POST|PUT|PATCH|DELETE)\s*=)/g;
 const NEXT_HANDLER=/\nexport\s+(?:async\s+function|const)\s+(?:GET|POST|PUT|PATCH|DELETE)\b/;
-const ORIGIN=/isSameOriginRequest\(|guardLoginRequest\(/;
+const ORIGIN=/isSameOriginRequest\(|guardLoginRequest\(|\broute\(\s*\{/;
 const FIRST_WORK=/\.json\(\)|readBounded\w*\(|formData\(\)|\.text\(\)|getCurrentRequestContext\(|await\s+params|await\s+route\.params|await\s+context\.params/;
 const UNBOUNDED=/\b(?:request|req)\.json\(\)/;
 
@@ -37,7 +37,7 @@ for(const f of files){
  while((m=HANDLER.exec(src))){
   const rest=src.slice(m.index);
   const next=rest.slice(10).search(NEXT_HANDLER);
-  handlers.push({file:f,method:m[1]!,text:next<0?rest:rest.slice(0,next+10)});
+  handlers.push({file:f,method:(m[1]??m[2])!,text:next<0?rest:rest.slice(0,next+10)});
  }
 }
 

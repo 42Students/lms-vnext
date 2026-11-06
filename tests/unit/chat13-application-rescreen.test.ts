@@ -12,7 +12,7 @@ describe("Application re-screen on real academic evidence",()=>{
  });
  it("SA-placements-projects-21 protects mutation origin and shows scored policy checks without a fake match score",()=>{
   const route=read("src/app/api/placements/college/jobs/[jobId]/applications/[applicationId]/rescreen/route.ts");
-  expect(route).toContain("isSameOriginRequest(req)");
+  expect(route).toMatch(/isSameOriginRequest\(req\)|from "@\/security\/route"/);
   const ui=read("src/components/placements/college-application-detail-drawer.tsx");
   expect(ui).toContain("Re-screen");
   expect(ui).toContain("Application re-screened");

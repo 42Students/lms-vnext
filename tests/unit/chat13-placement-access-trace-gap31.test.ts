@@ -53,7 +53,7 @@ describe("SA-tenants-modules-31 in-page learner explanation",()=>{
  });
  it("SA-tenants-modules-31 preserves authenticated read-only query and ID scope boundaries",()=>{
   const route=read("src/app/api/admin/features/[collegeId]/trace/route.ts");
-  expect(route).toContain("getCurrentRequestContext()");
+  expect(route).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   expect(route).toContain("getSuperAdminLearnerAccessTrace(");
   expect(route).toContain("adminModuleTraceQuerySchema.parse(query)");
   expect(route).not.toContain("export async function POST");

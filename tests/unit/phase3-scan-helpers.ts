@@ -33,6 +33,8 @@ export const GUARD = new RegExp(
 );
 
 function resolveImport(spec: string, fromFile: string): string | null {
+  // The central wrapper authenticates but is not a service-level guard; it must not satisfy "guard within one hop".
+  if (spec === "@/security/route" || spec === "@/security/route-core") return null;
   let base: string;
   if (spec.startsWith("@/")) base = path.join(root, "src", spec.slice(2));
   else if (spec.startsWith(".")) base = path.resolve(path.dirname(fromFile), spec);
@@ -103,7 +105,7 @@ export const CONFIRM_TOKEN =
 export const DESTRUCTIVE_NAME = /delete|restore|terminate|merge|bulk|retake|revoke|remove|purge|reset|archive|suspend|disable/i;
 
 export const hasGuardWithinOneHop = (file: string) => oneHopSources(file).some((s) => GUARD.test(s));
-export const hasRequestContext = (src: string) => /getCurrentRequestContext/.test(src);
+export const hasRequestContext = (src: string) => /getCurrentRequestContext|from "@\/security\/route"/.test(src);
 
 export function exportedMethods(src: string): string[] {
   return [

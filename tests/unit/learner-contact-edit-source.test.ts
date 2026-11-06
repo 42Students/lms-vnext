@@ -25,7 +25,7 @@ describe("Learner contacts persisted write and UI route contracts", () => {
     const route = read("src/app/api/profile/me/contacts/route.ts");
     const model = read("src/modules/people/learner-contact-model.ts");
     const service = read("src/modules/people/learner-contact-service.ts");
-    expect(route).toContain("isSameOriginRequest(request)");
+    expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     expect(route).toContain("updateOwnLearnerContacts");
     expect(model).toContain(".strict()");
     expect(model).toContain("confirmed: z.literal(true)");

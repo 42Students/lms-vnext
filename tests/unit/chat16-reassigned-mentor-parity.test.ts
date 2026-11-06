@@ -63,7 +63,7 @@ describe("chat-16 reassigned mentor legacy parity",()=>{
     expect(service).toContain("maxSequence+1+i");
     expect(service).toContain("sequence:active[i]!.sequence");
     expect(service).toContain("new Set(ids).size===ids.length");
-    expect(route).toContain("isSameOriginRequest(request)");
+    expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     expect(list).toContain("onDragStart");
     expect(list).toContain("onDrop");
     expect(list).toContain("Move up");

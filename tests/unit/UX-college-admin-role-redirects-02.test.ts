@@ -34,7 +34,7 @@ describe("UX-college-admin-departments-02 role-safe legacy redirect",()=>{
    ["src/app/(authenticated)/college-admin/programs/page.tsx","legacyProgramDestination"],
   ]){
    const code=read(file);
-   expect(code).toContain("getCurrentRequestContext");
+   expect(code).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
    expect(code).toContain(resolver+"(context, \"COLLEGE_ADMIN\")");
    expect(code).toContain("redirect(");
    expect(code).not.toContain("searchParams");

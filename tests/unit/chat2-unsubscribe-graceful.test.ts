@@ -27,7 +27,7 @@ describe("Public unsubscribe confirmations",()=>{
   expect(service).toContain('if(outcome==="DENY")throw new CampaignUnsubscribeInvalid()');
   expect(route).toContain('CampaignUnsubscribeInvalid');
   expect(route).toContain('url.searchParams.set(\"scope\",\"placement-cell\")');
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("if(!claim)return successResponse");
   // The registered-table preflight moved into the shared service and must
   // remain ahead of any recipient lookup or CRM mutation.

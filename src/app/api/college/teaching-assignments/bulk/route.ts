@@ -1,8 +1,6 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import { createCourseTeachingAssignment } from "@/modules/courses/teaching-assignment-service";
 
 export const runtime = "nodejs";
@@ -14,11 +12,10 @@ const inputSchema = z.object({
 
 /** Batch API deliberately reports each delivery's outcome, including
  * conflicts, rather than claiming the entire action succeeded. */
-export async function POST(request: Request) {
-  if (!isSameOriginRequest(request))
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  try {
-    const context = await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const input = inputSchema.parse(await request.json());
     if (new Set(input.deliveryIds).size !== input.deliveryIds.length)
       return NextResponse.json({ error: "DUPLICATE_DELIVERY" }, { status: 400 });
@@ -36,5 +33,5 @@ export async function POST(request: Request) {
       }
     }
     return NextResponse.json({ created, failed, partial: failed.length > 0 });
-  } catch (error) { return apiErrorResponse(error); }
-}
+  },
+);

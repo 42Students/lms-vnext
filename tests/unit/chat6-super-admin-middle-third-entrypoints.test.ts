@@ -33,16 +33,16 @@ describe("SA-admin-middle-inventory-01 37 actual Super Admin page entrypoints",(
     expect(code).toMatch(/export default (?:async )?function|export \{ default \}/);
     if(route==="/admin/placements/hiring"){
       expect(code).toContain('redirect("/admin/placements/analytics"');
-      expect(entry("/admin/placements/analytics")).toContain("getCurrentRequestContext");
+      expect(entry("/admin/placements/analytics")).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
       return;
     }
     if(route==="/admin/live-classes"){
       expect(code).toContain("<SuperAdminContentDirectoryPage");
       const shared=readFileSync("src/components/courses/super-admin-content-directory-page.tsx","utf8");
-      expect(shared).toContain("getCurrentRequestContext");
+      expect(shared).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
       return;
     }
-    expect(code).toContain("getCurrentRequestContext");
+    expect(code).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
   });
   it.each([
     "/admin/placements/applications/[applicationId]",
@@ -54,7 +54,7 @@ describe("SA-admin-middle-inventory-01 37 actual Super Admin page entrypoints",(
     "/admin/placements/seasons/[seasonId]",
   ])("SA-admin-middle-inventory-02 %s asks tenant-scoped service before showing a foreign UUID",route=>{
     const code=entry(route);
-    expect(code).toContain("getCurrentRequestContext");
+    expect(code).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
     expect(code).toContain("notFound()");
     expect(code).toMatch(/getSuperAdmin[A-Za-z]+Detail/);
     expect(code).not.toContain("getDb()");
@@ -66,13 +66,13 @@ describe("SA-admin-middle-inventory-01 37 actual Super Admin page entrypoints",(
     const code=entry("/admin/placements/"+view);
     if(view==="hiring"){
       expect(code).toContain('redirect("/admin/placements/analytics"');
-      expect(entry("/admin/placements/analytics")).toContain("getCurrentRequestContext");
+      expect(entry("/admin/placements/analytics")).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
     }else if(view==="interviews"){
       expect(code).toContain("listSuperAdminInterviews(context");
       expect(code).toContain("context.adminScope?.collegeId");
     }else{
       expect(code).toContain("<AdminScopedReadPage");
     }
-    if(view!=="hiring")expect(code).toContain("getCurrentRequestContext");
+    if(view!=="hiring")expect(code).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
   });
 });

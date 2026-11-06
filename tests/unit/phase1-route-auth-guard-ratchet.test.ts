@@ -13,7 +13,7 @@ const ROUTE_FILE=/\/route\.ts$/;
 const SCOPE=/(project|placement)/i;
 
 const AUTH_MARKER=new RegExp([
- "getCurrentRequestContext","requireAuth","getRequestContext","requireRequestContext","requireSession",
+ "getCurrentRequestContext","@/security/route","requireAuth","getRequestContext","requireRequestContext","requireSession",
  "authorize[A-Z]\\w*\\(","require[A-Z]\\w*Context","require[A-Z]\\w*Access","resolve\\w*Context",
  "with\\w*Auth","verifyInternal","timingSafeEqual","assertInternal","schedulerKey","x-recruiter-mail-signature",
 ].join("|"));

@@ -36,7 +36,7 @@ describe("learner's bounded general-request history",()=>{
   expect(route).toContain("tpoOwnGeneralRequestQuerySchema.safeParse");
   expect(route).toContain("listOwnTpoGeneralRequestsPage(ctx,filter.data)");
   expect(route).toContain('"Cache-Control":"private, no-store"');
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
  });
  it("renders paging, retry, and returns to newest history after send",()=>{
   const ui=source("src/components/placements/learner-general-requests.tsx");

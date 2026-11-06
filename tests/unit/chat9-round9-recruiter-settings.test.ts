@@ -6,8 +6,8 @@ describe("chat-9 round9 TPO recruiter and communication settings",()=>{
  it("TPO-settings-audit-54 requires a same-origin authenticated write and never treats domain trust as recruiter verification",()=>{
   const route=source("src/app/api/placements/tpo/trusted-domains/route.ts");
   const ui=source("src/components/tpo/tpo-trusted-domain-editor.tsx");
-  expect(route).toContain("isSameOriginRequest(request)");
-  expect(route).toContain("getCurrentRequestContext()");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
+  expect(route).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   expect(ui).toContain("Trust never replaces verification or recruiter access checks.");
   expect(ui).toContain("Free-mail addresses cannot be trusted.");
   expect(ui).toContain('onClick={()=>setReview({action:"REMOVE",value:item})}');

@@ -14,7 +14,7 @@ describe("Projects IIT Dharwad — cross-account navigation and denial breaker",
  });
  it("PROJ-BREAK-pages-02 College Admin without an active selected membership gets recovery instead of a crash",()=>{
   const p=src("src/app/(authenticated)/college/projects/page.tsx");
-  expect(p).toContain("getCurrentRequestContext()");
+  expect(p).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   // The central policy helper covers both absent/inactive membership and
   // Super Admin selected-college scope; no page-local role-name bypass.
   expect(p).toContain("const collegeId = getProjectAdminCollegeId(context)");
@@ -61,7 +61,7 @@ describe("Projects IIT Dharwad — cross-account navigation and denial breaker",
     "src/app/(authenticated)/learn/projects/page.tsx",
   ]){
     const p=src(path);
-    expect(p,path).toContain("getCurrentRequestContext()");
+    expect(p,path).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
     expect(p,path).toMatch(/Pagination|pageSize|page: parsePage/);
   }
  });

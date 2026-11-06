@@ -54,7 +54,7 @@ describe("Super Admin second-third page entrypoints and ownership guards", () =>
     const code=readFileSync(`src/app/(authenticated)/admin/${route}/page.tsx`,"utf8");
     expect(code).toContain(guard);
     if (route!=="live-classes" && route!=="placements/hiring") {
-      expect(code).toContain("getCurrentRequestContext");
+      expect(code).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
     }
     if (route.includes("[") && !route.includes("lecture-halls/")) {
       expect(code).toContain("params");

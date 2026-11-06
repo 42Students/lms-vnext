@@ -33,7 +33,7 @@ describe("TPO-settings-audit-BODY-01 bounded JSON settings mutation requests",()
  });
  it("maps malformed and oversized payloads to stable 400/413 responses without echoing raw contents",()=>{
   const route=readFileSync("src/app/api/placements/tpo/settings/communication/route.ts","utf8");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("readTpoCommunicationBody(request)");
   expect(route).toContain("TpoCommunicationBodyError");
   expect(route).toContain('status:error.code==="BODY_TOO_LARGE"?413:400');

@@ -1,13 +1,13 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { apiErrorResponse } from "@/lib/api-error";
 import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 
 export const runtime = "nodejs";
 
-export async function GET(request: Request) {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     const collegeId =
       new URL(request.url).searchParams.get(
         "collegeId",
@@ -18,7 +18,5 @@ export async function GET(request: Request) {
         collegeId,
       );
     return NextResponse.json({ operations });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

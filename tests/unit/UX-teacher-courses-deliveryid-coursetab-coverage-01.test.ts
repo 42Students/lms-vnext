@@ -6,5 +6,5 @@ it("UX-teacher-courses-deliveryid-coursetab-01 /teacher/courses/[deliveryId]/[..
  expect(source).toContain('redirect(facultyCourseTabHref(deliveryId,requestedContent?"blueprint":"home")+');
  expect(source).toContain('if(filter!=="ALL")safe.set("filter",filter)');
  expect(source).toContain("notFound()");
- expect(source).toContain("getCurrentRequestContext");
+ expect(source).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
 });

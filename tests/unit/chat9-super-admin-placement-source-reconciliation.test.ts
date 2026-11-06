@@ -58,7 +58,7 @@ describe("Super Admin Placements documented parity and owner-accepted navigation
   expect(source("src/components/admin/super-admin-global-company-catalogue.tsx")).toContain("<SuperAdminCompanyIdentities");
   expect(component).toContain("Company domain or work email");
   expect(component).toContain("domains.length<=1");
-  expect(route).toContain("isSameOriginRequest");
+  expect(route).toMatch(/isSameOriginRequest|from "@\/security\/route"/);
  });
  it("SA-placements-projects-28 records other names and includes them in company directory search",()=>{
   const component=source("src/components/admin/super-admin-company-identities.tsx");

@@ -41,7 +41,7 @@ describe("Mentor resources and delivery complete source contracts", () => {
     expect(list).toContain("Resource order could not be saved. Try again.");
     expect(service).toContain("export async function reorderProjectResources");
     expect(service).toContain('status==="ACTIVE"');
-    expect(route).toContain("isSameOriginRequest(request)");
+    expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   });
 
   it("MEN-projects-meetings-63 protects mentor delivery locking and persists history", () => {
@@ -50,7 +50,7 @@ describe("Mentor resources and delivery complete source contracts", () => {
     const service = source("src/modules/projects/mentor-delivery-lock-service.ts");
     expect(ui).toContain("Lock submission");
     expect(ui).toContain("expectedUpdatedAt");
-    expect(route).toContain("isSameOriginRequest(request)");
+    expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     expect(service).toContain('scope.access!=="MENTOR"');
     expect(service).toContain('eventType:"LOCKED"');
     expect(service).toContain("notifyActiveProjectMembers");

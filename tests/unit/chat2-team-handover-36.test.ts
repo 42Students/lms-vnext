@@ -42,7 +42,7 @@ describe("Scoped Team ownership handover",()=>{
   expect(service).toContain("roleRevoked:false as const");
  });
  it("TPO-inbox-team-36 exposes guarded handover from People, not an unguarded role-revocation button",()=>{
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("tpoTeamHandoverSchema.safeParse");
   expect(ui).toContain("Who takes over?");
   expect(ui).toContain("const {askConfirm,dialog}=useConfirmFlow()");

@@ -1,28 +1,19 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
 import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { requirePermission } from "@/modules/permissions/policy";
 import { onboardPersonInputSchema } from "@/modules/people/validation";
 import { readBoundedAuthJson, AuthRequestBodyTooLarge } from "@/modules/auth/bounded-json";
-import { apiErrorResponse } from "@/lib/api-error";
 import { onboardPersonWithRuntime } from "@/modules/people/runtime";
 
 import {z} from "zod";
 
 export const runtime = "nodejs";
 
-export async function POST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     let body: unknown;
     try {
       body = await readBoundedAuthJson(request, 8_192);
@@ -33,7 +24,6 @@ export async function POST(request: Request) {
         { status: tooLarge?413:400 },
       );
     }
-
     const facultyProfileSchema=z.strictObject({
       kind:z.literal("FACULTY"),primaryDepartmentId:z.string().uuid(),
       // Administrative role grants must use membership roles, never a
@@ -55,23 +45,13 @@ export async function POST(request: Request) {
     const facultyProfile=parsed.data.facultyProfile;
     if(facultyProfile&&(!Array.isArray(parsed.data["roles"])||!parsed.data["roles"].includes("FACULTY")))
       return NextResponse.json({error:"FACULTY_ROLE_REQUIRED"},{status:400});
-    // Protected College Admin/TPO roles cannot be indirectly minted by
-    // onboarding without the same recent privileged sign-in required by
-    // the explicit role-grant route.
     const validatedPerson = onboardPersonInputSchema.parse(body);
     if (validatedPerson.roles.some(role =>
       role === "COLLEGE_ADMIN" || role === "TPO")) {
       requirePermission(context, "admin-scope.select");
     }
-    // Provisioning any new membership grants live access to college resources.
-    // Always require a fresh OTP-authenticated device session, not only for
-    // privileged ADMIN/TPO additions.
     await requireRecentDeviceAuthentication(context.user.id);
-    // Membership, role grant and optional faculty department/profile now
-    // commit together. Never return an active partially registered teacher.
     const person = await onboardPersonWithRuntime(context, body, facultyProfile);
     return NextResponse.json({ person,profileIncomplete:false },{headers:{"Cache-Control":"no-store"}});
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

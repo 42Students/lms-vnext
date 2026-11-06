@@ -1,23 +1,18 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
 import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
-import { apiErrorResponse } from "@/lib/api-error";
 import { resetLoginOtpLockout } from "@/modules/auth/admin-otp-lockout-reset-service";
 
 export const runtime = "nodejs";
 
-export async function POST(request: Request) {
-  if (!isSameOriginRequest(request))
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  try {
-    const context = await getCurrentRequestContext();
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     if (!isSuperAdmin(context) && !hasMembershipRole(context, "COLLEGE_ADMIN"))
       return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
     const input: unknown = await request.json();
     const result = await resetLoginOtpLockout(context, input);
     return NextResponse.json(result, { headers: { "Cache-Control": "no-store" } });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

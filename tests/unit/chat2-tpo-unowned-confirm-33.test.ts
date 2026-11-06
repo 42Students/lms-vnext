@@ -23,7 +23,7 @@ describe("TPO Team unowned handover confirmation",()=>{
   expect(service).toContain('eq(collegeMemberships.collegeId,college.id)');
   expect(service).toContain("targetMembershipId:target.id");
   expect(service).toContain('title:"You now own placement work"');
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("tpoAssignUnownedSchema.safeParse");
  });
 });

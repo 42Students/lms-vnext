@@ -23,7 +23,7 @@ describe("TPO batch import preview and commit security",()=>{
  });
  it("TPO-batches-R04 requires confirmed same-origin write and refuses any unreviewed unusable source row on the server",()=>{
   const server=readFileSync(new URL("../../src/app/api/placements/tpo/batches/[batchId]/import-commit/route.ts",import.meta.url),"utf8");
-  expect(server).toContain("isSameOriginRequest(request)");
+  expect(server).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(server).toContain("confirmed:z.literal(true)");
   expect(server).toContain("if(preview.skipped>0)");
   const form=readFileSync(new URL("../../src/components/tpo/tpo-batch-eligibility-import.tsx",import.meta.url),"utf8");

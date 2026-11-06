@@ -59,7 +59,7 @@ describe("UX-tpo-first-third-42 route scope and navigation inventory",()=>{
     expect(source).not.toContain("getCurrentRequestContext");
     return;
    }
-   expect(source).toContain("getCurrentRequestContext");
+   expect(source).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
    if(delegate.has(route)){
     // All batch reads delegate to requireTpoBatchActor (persisted actor,
     // active membership, tenant/org and role) in the workspace services.

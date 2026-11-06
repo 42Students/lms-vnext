@@ -72,7 +72,7 @@ describe("PHASE1-ORIGIN mutating handler ordering ratchet",()=>{
  });
 
  it("PHASE1-ORIGIN-02 every browser-facing mutating handler checks same-origin",()=>{
-  const missing=subject.filter(h=>!/isSameOriginRequest\(/.test(h.text)).map(h=>`${h.file} ${h.method}`);
+  const missing=subject.filter(h=>!/isSameOriginRequest\(|\broute\(\s*\{/.test(h.text)).map(h=>`${h.file} ${h.method}`);
   expect(missing).toEqual([]);
  });
 
@@ -88,6 +88,7 @@ describe("PHASE1-ORIGIN mutating handler ordering ratchet",()=>{
  it("PHASE1-ORIGIN-04 a failed origin check returns 403 INVALID_ORIGIN and never falls through",()=>{
   for(const h of subject){
    const idx=h.text.search(/isSameOriginRequest\(/);
+   if(idx<0&&/\broute\(\s*\{/.test(h.text)&&!/csrf:\s*false/.test(h.text))continue;
    const window=h.text.slice(idx,idx+400);
    expect(/INVALID_ORIGIN|403|Forbidden|forbidden/.test(window),`${h.file} ${h.method}`).toBe(true);
   }

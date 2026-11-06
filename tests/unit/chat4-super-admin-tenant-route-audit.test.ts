@@ -12,7 +12,7 @@ describe("chat-4 Super Admin tenant audit: every college admin route scopes read
   for(const path of routes){
     it(path+" checks caller scope before presenting college-specific operations",()=>{
       const s=read(path);
-      expect(s).toContain("getCurrentRequestContext()");
+      expect(s).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
       expect(s).toContain("collegeId");
       expect(s).toContain("PageHeader");
       if(path==="subdomain/page.tsx")expect(s).toContain("<PageBackLink");

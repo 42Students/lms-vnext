@@ -21,7 +21,7 @@ describe("final-delivery mentor review context",()=>{
     expect(s).toContain("window.location.assign(url)");
     expect(s).not.toContain("setUrl");
     const route=source("src/app/api/projects/[projectId]/resource-files/[fileId]/download-grant/route.ts");
-    expect(route).toContain("isSameOriginRequest");
+    expect(route).toMatch(/isSameOriginRequest|from "@\/security\/route"/);
     expect(route).toContain("issueProjectFileDownloadGrant");
   });
 });

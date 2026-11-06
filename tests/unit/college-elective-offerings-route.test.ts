@@ -6,7 +6,7 @@ describe("COL-academic-setup-01 offering path",()=>{
   const api=f("src/app/api/academics/elective-slots/[slotId]/offerings/route.ts");
   const scope=f("src/modules/electives/college-offering-choices-service.ts");
   expect(api).toContain("createElectiveOffering(context,{slotId,courseId,groupId:groupId||undefined,backedDeliveryId,capacity})");
-  expect(api).toContain("isSameOriginRequest(request)");
+  expect(api).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(scope).toContain('eq(lmsGroups.collegeId,slot.collegeId)');
   expect(scope).toContain('eq(programs.id,slot.programId)');
  });

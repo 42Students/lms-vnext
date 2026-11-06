@@ -4,7 +4,7 @@ describe("TPO-campaigns-public-01 campaign composer and POST",()=>{
  it("requires same-origin and authenticated persisted scope",()=>{
   const route=readFileSync("src/app/api/placements/tpo/campaigns/drafts/route.ts","utf8");
   const service=readFileSync("src/modules/messaging/tpo-campaign-draft-service.ts","utf8");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(service).toContain("assertPersistedPlatformPermission");
   expect(service).toContain("planTpoCampaignRecipients");
  });

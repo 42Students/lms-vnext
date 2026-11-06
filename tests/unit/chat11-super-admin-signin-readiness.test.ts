@@ -38,7 +38,7 @@ describe("SA-tenants-modules-LOGIN-01: per-college sign-in policy safety",()=>{
  it("requires origin, matching URL/body college, persisted role, active college and CAS",()=>{
   const route=source("src/app/api/admin/colleges/[collegeId]/signin/route.ts");
   const service=source("src/modules/colleges/admin-signin-policy-service.ts");
-  expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain('!("collegeId" in payload)||payload["collegeId"]!==collegeId');
   expect(route).toContain('const payload=legacy!==undefined');
   expect(route.indexOf("getCurrentRequestContext()"))

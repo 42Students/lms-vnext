@@ -23,7 +23,7 @@ describe("chat-15 learner general placement requests",()=>{
   const placement=source("src/app/(authenticated)/learn/my-placements/placement/page.tsx");
   expect(placement).toContain("<LearnerGeneralRequests");
   expect(source("src/db/schema/index.ts")).toContain("placement-general-requests");
-  expect(source("src/app/api/placements/requests/general/route.ts")).toContain("isSameOriginRequest(request)");
+  expect(source("src/app/api/placements/requests/general/route.ts")).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
  });
  it("LEARNER-placements-52 records a recipient-owned absence dispute instead of a silent attendance change",()=>{
   const dispute=tpoGeneralRequestInputSchema.parse({kind:"ABSENCE_DISPUTE",

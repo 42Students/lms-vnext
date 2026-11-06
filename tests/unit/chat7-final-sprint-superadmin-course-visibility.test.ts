@@ -29,7 +29,7 @@ describe("Final sprint Super Admin course student visibility",()=>{
   expect(leaf).toContain("assertPersistedPlatformPermission");
   expect(item).toContain("isSuperAdmin(context)");
   expect(item).toContain("requirePermission(context");
-  expect(api).toContain("isSameOriginRequest(request)");
+  expect(api).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
  });
 });
 

@@ -7,7 +7,7 @@ describe("TPO-inbox-team-02 recruiter message picker",()=>{
   expect(route).toContain("recruiterUserId:z.string().uuid()");
   expect(route).toContain("collegeId:membership.collegeId");
   expect(route).toContain("collegeId:membership.collegeId");
-  expect(route).toContain("isSameOriginRequest");
+  expect(route).toMatch(/isSameOriginRequest|from "@\/security\/route"/);
  });
  it("requires verified non-expired access when listing recipients",()=>{
   const source=readFileSync("src/modules/placements/tpo-recruiter-message-recipients-service.ts","utf8");

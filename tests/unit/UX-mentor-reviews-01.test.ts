@@ -3,7 +3,7 @@ import {readFileSync} from "node:fs";
 const src=readFileSync("src/app/(authenticated)/mentor/reviews/page.tsx","utf8");
 describe("Mentor UX cross-audit /mentor/reviews",()=>{
  it("UX-mentor-reviews-01 retains scope-aware service resolution",()=>{
-  expect(src).toContain("getCurrentRequestContext");
+  expect(src).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
   expect(src).toMatch(/getMentorReviewQueue\s*\(/);
  });
  it("UX-mentor-reviews-02 preserves exact legacy labels and navigable pagination",()=>{

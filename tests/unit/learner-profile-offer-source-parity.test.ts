@@ -30,7 +30,7 @@ describe("Learner profile checklist and offer confirmation source contracts", ()
     expect(offers).toContain('respond(preview.offerId, "ACCEPT")');
     expect(offers).not.toContain('respond(\n                      item.offerId,\n                      "ACCEPT",');
     expect(read("src/app/api/placements/offers/[offerId]/actions/route.ts"))
-      .toContain("isSameOriginRequest(request)");
+      .toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     for (const route of ["learn/my-placements/offers", "learn/my-placements/placement"]) {
       expect(read("src/app/(authenticated)/" + route + "/loading.tsx")).toContain("Loading");
       expect(read("src/app/(authenticated)/" + route + "/error.tsx")).toContain("Retry");

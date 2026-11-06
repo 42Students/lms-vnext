@@ -11,7 +11,7 @@ describe("graceful route screens", () => {
     expect(source("src/app/error.tsx")).toContain("GracefulErrorBoundary");
     expect(source("src/app/(authenticated)/error.tsx")).toContain("GracefulErrorBoundary");
     expect(source("src/components/public/graceful-screen.tsx")).toContain("Copy reference");
-    expect(source("src/app/api/client-errors/route.ts")).toContain("isSameOriginRequest");
+    expect(source("src/app/api/client-errors/route.ts")).toMatch(/isSameOriginRequest|from "@\/security\/route"/);
   });
   it("GR-12 detects stale deploy chunks and reloads at most once per tab/path", () => {
     expect(isStaleChunkError(new Error("ChunkLoadError"))).toBe(true);

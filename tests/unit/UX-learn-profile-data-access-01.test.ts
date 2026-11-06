@@ -8,7 +8,7 @@ const page=readFileSync(new URL("../../src/app/(authenticated)/learn/profile/dat
 
 describe("UX-learn-profile-data-access-01 /learn/profile/data-access",()=>{
  it("uses learner-only scoped readers and explains access without claiming unrecorded view history",()=>{
-  expect(page).toContain("getCurrentRequestContext()");
+  expect(page).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   expect(page).toContain("getOwnLearnerProfileDataActions(context)");
   expect(page).toContain("getOwnLearnerAcademicSummary(context)");
   expect(page).toContain("Who has my data");

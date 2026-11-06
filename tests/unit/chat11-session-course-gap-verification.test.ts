@@ -14,7 +14,7 @@ describe("chat-11 session and attendance parity",()=>{
  it("FAC-attendance-grades-16 retires the dead-end correction request page after access validation",()=>{
   const code=source("src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/page.tsx");
   expect(code).toContain("getFacultyCorrectionAvailability");
-  expect(code).toContain("getCurrentRequestContext()");
+  expect(code).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   expect(code).toContain('"/attendanceDetail"');
   expect(code).toContain("redirect(");
   expect(code).not.toContain("Correction request history unavailable");
