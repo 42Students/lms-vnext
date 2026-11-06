@@ -1,6 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { isSameOriginRequest } from "@/auth/origin";
-import { currentTenantScope, runWithTenantHolder } from "@/db/tenant-context";
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { apiErrorResponse } from "@/lib/api-error";
+import { requirePermission, type PlatformPermission } from "@/modules/permissions/policy";
+import { currentTenantScope, offerRequestValue, runWithTenantHolder } from "@/db/tenant-context";
 import { writeStructuredLog } from "@/observability/logger";
 import { createSecured } from "@/security/secure-handler-core";
 
@@ -22,4 +25,8 @@ export const secured = createSecured({
     });
   },
   newRequestId: () => randomUUID(),
+  getContext: () => getCurrentRequestContext(),
+  requirePermission: (context, permission) => requirePermission(context, permission as PlatformPermission),
+  onPermitted: (context) => offerRequestValue("request-context", context),
+  onError: (error) => apiErrorResponse(error),
 });

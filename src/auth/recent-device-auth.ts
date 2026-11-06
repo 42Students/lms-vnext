@@ -30,7 +30,7 @@ export function isRecentDeviceAuthentication(
  * prove authentication freshness. E2E impersonation is not a privileged
  * authentication factor even on a development host.
  */
-export async function requireRecentDeviceAuthentication(expectedUserId: string) {
+export async function requireRecentDeviceAuthentication(expectedUserId: string, maxAgeSeconds = PRIVILEGED_AUTH_MAX_AGE_SECONDS) {
   // A valid recent device belonging to user B must NEVER authorize a request
   // context resolved as user A (e.g. E2E impersonation on a development host,
   // misbound cookies, or future identity/context regressions).
@@ -51,7 +51,7 @@ export async function requireRecentDeviceAuthentication(expectedUserId: string) 
      LIMIT 1
   `);
   const row = result.rows[0] as { created_at?: Date | string } | undefined;
-  if (!isRecentDeviceAuthentication(row?.created_at, new Date())) {
+  if (!isRecentDeviceAuthentication(row?.created_at, new Date(), maxAgeSeconds)) {
     throw new SessionAuthenticationError("RECENT_SIGN_IN_REQUIRED");
   }
   return session;

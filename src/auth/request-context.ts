@@ -15,7 +15,7 @@ import {
 } from "./e2e-identity";
 import { resolveRequestContext } from "@/modules/identity/context-service";
 import { MEMBERSHIP_ROLES, type MembershipRole } from "@/modules/identity/constants";
-import { bindTenantScope, runAsSystem, scopeFromActor } from "@/db/tenant-context";
+import { bindTenantScope, runAsSystem, scopeFromActor, takeRequestValue } from "@/db/tenant-context";
 import { resolveRequestTenant } from "@/modules/auth/request-tenant";
 import { isTenantAccessAllowed } from "@/modules/auth/tenant-access";
 import {
@@ -96,7 +96,13 @@ async function resolveCurrentRequestContext() {
   return context;
 }
 
-export async function getCurrentRequestContext() {
+export function getCurrentRequestContext() {
+  // The route wrapper may already have resolved this actor to check its permission: reuse it exactly once.
+  const offered = takeRequestValue<Awaited<ReturnType<typeof resolveAndBind>>>("request-context");
+  return offered ? Promise.resolve(offered) : resolveAndBind();
+}
+
+async function resolveAndBind() {
   // The session, membership and tenant lookups run before any actor exists, so they run under a named system
   // scope; once resolved, the actor's college/role is bound for the rest of the request (row-level security reads it).
   const context = await runAsSystem("auth:resolve-request-context", resolveCurrentRequestContext);

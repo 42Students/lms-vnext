@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
+import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { allowRequest, clientIp } from "@/auth/ip-rate-limit";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedJsonBody } from "@/lib/bounded-json-body";
@@ -23,6 +24,9 @@ export const route = createRoute<Context, PlatformPermission>({
   readJson: readBoundedJsonBody,
   onError: apiErrorResponse,
   newRequestId: () => randomUUID(),
+  requireFreshAuth: async (context, maxAgeSeconds) => {
+    await requireRecentDeviceAuthentication((context as { user: { id: string } }).user.id, maxAgeSeconds);
+  },
   allowRequest,
   actorKey: (context) => (context as { user: { id: string } }).user.id,
   clientAddress: clientIp,

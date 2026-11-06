@@ -33,6 +33,8 @@ export type RouteDeps<Context> = {
   actorKey?: (context: Context) => string;
   /** Caller address for public routes (already canonicalised and trust-proxy aware). */
   clientAddress?: (request: Request) => string;
+  /** Throws when the actor's sign-in is older than maxAgeSeconds (step-up authentication). */
+  requireFreshAuth?: (context: Context, maxAgeSeconds: number) => Promise<void>;
   /** Budget applied to every authenticated state-changing request that does not set its own `rateLimit`. */
   defaultMutationLimit?: { limit: number; windowMs: number };
   /** Runs the handler inside the actor's database scope (row-level security reads it). Optional so the core stays framework-free. */
@@ -70,6 +72,12 @@ export type UserRouteConfig<Permission extends string, B> = Common & {
    * check. "service-enforced" is tracked debt (ratchet) until every route names its permission.
    */
   permission: Permission | "service-enforced";
+  /**
+   * Step-up authentication for sensitive actions (role/permission changes, user disable/delete, bulk export or
+   * import, secret/integration and tenant settings): the session must have been signed in within
+   * `maxAgeSeconds` (default 900). Otherwise the request fails with the standard RECENT_SIGN_IN_REQUIRED outcome.
+   */
+  stepUp?: true | { maxAgeSeconds: number };
   body?: { schema: ZodType<B>; maxBytes: number };
   csrf?: true;
 };
@@ -172,6 +180,10 @@ export function createRoute<Context, Permission extends string = string>(deps: R
           context = await deps.getContext();
           actorRef.context = context;
           if (config.permission !== "service-enforced") deps.requirePermission(context, config.permission);
+          if (config.stepUp) {
+            if (!deps.requireFreshAuth) throw new Error("stepUp requires deps.requireFreshAuth.");
+            await deps.requireFreshAuth(context, config.stepUp === true ? 900 : config.stepUp.maxAgeSeconds);
+          }
           const budget = config.rateLimit === false ? null : config.rateLimit
             ? { limit: config.rateLimit.limit, windowMs: config.rateLimit.windowMs ?? 60_000 }
             : mutating ? deps.defaultMutationLimit ?? null : null;

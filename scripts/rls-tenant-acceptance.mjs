@@ -71,7 +71,34 @@ try {
   check("enforce mode: college A cannot write a college B row", denied);
   const own = await asApp({ ...enforce, "app.college_id": A }, "INSERT INTO rls_probe (college_id) VALUES ($1) RETURNING id", [A]);
   check("enforce mode: college A can write its own row", own.rowCount === 1);
+
+  // 3. Global-read variant (migration 0334): platform-owned NULL-college rows are readable by every college,
+  //    writable only by platform/system scopes.
+  const variantTables = await client.query(
+    `SELECT tablename, qual, with_check FROM pg_policies WHERE schemaname = 'public' AND policyname = 'tenant_isolation' AND tablename IN ('lms_groups','legacy_id_map')`);
+  check("lms_groups and legacy_id_map carry the global-read variant policy",
+    variantTables.rowCount === 2 && variantTables.rows.every((r) => /IS NULL/i.test(r.qual) && !/IS NULL/i.test(r.with_check ?? "")));
+  await client.query(`DROP TABLE IF EXISTS rls_probe_global`);
+  await client.query(`CREATE TABLE rls_probe_global (id serial PRIMARY KEY, college_id uuid)`);
+  await client.query(`ALTER TABLE rls_probe_global ENABLE ROW LEVEL SECURITY`);
+  await client.query(`CREATE POLICY tenant_isolation ON rls_probe_global USING (app_rls_allows("college_id") OR "college_id" IS NULL) WITH CHECK (app_rls_allows("college_id"))`);
+  await client.query(`GRANT SELECT, INSERT ON rls_probe_global TO rls_probe_user`);
+  await client.query(`GRANT USAGE ON SEQUENCE rls_probe_global_id_seq TO rls_probe_user`);
+  await client.query(`INSERT INTO rls_probe_global (college_id) VALUES ($1), ($2), (NULL)`, [A, B]);
+  const countGlobal = async (s) => (await asApp(s, "SELECT count(*)::int AS n FROM rls_probe_global")).rows[0].n;
+  check("variant, college A: own row plus the global row", (await countGlobal({ ...enforce, "app.college_id": A })) === 2);
+  check("variant, platform scope: all rows", (await countGlobal({ ...enforce, "app.platform": "on" })) === 3);
+  let globalDenied = false;
+  try {
+    await asApp({ ...enforce, "app.college_id": A }, "INSERT INTO rls_probe_global (college_id) VALUES (NULL)");
+  } catch (error) {
+    globalDenied = /row-level security/i.test(String(error.message));
+  }
+  check("variant: a college cannot write a global row", globalDenied);
+  const globalSystem = await asApp({ ...enforce, "app.system": "seed" }, "INSERT INTO rls_probe_global (college_id) VALUES (NULL) RETURNING id");
+  check("variant: a system scope can write a global row", globalSystem.rowCount === 1);
 } finally {
+  await client.query("DROP TABLE IF EXISTS rls_probe_global").catch(() => {});
   await client.query("DROP TABLE IF EXISTS rls_probe").catch(() => {});
   await client.end();
 }

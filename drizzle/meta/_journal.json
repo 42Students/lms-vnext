@@ -2339,6 +2339,13 @@
       "when": 1793258410954,
       "tag": "0333_rls_tenant_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 334,
+      "version": "7",
+      "when": 1793258470954,
+      "tag": "0334_rls_global_read_variants",
+      "breakpoints": true
     }
   ]
 }

@@ -31,11 +31,25 @@ export type SecuredDeps = {
     download?: boolean;
   }) => void;
   newRequestId: () => string;
+  /** Resolves the authenticated actor (memoised per request so the handler's own lookup is free). */
+  getContext?: () => Promise<unknown>;
+  /** Throws when the actor lacks the permission. */
+  requirePermission?: (context: never, permission: string) => void;
+  /** Called with the resolved actor once its permission passed, so the handler's first lookup can reuse it. */
+  onPermitted?: (context: unknown) => void;
+  /** Maps a thrown session/authorization error to the platform's standard response. */
+  onError?: (error: unknown) => Response;
 };
 
 export type SecuredOptions = {
   /** "enforce": reject a state-changing request whose Origin is not this host, before the handler runs. "own": the handler checks. */
   csrf?: "enforce" | "own";
+  /**
+   * A registered permission, checked centrally after the origin check and before the handler runs. Only for handlers
+   * whose own order is (origin, then authentication), so the central check changes nothing a caller can see except
+   * that a missing permission is refused before any work.
+   */
+  permission?: string;
 };
 
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
@@ -92,6 +106,19 @@ export function createSecured(deps: SecuredDeps) {
           const denied = Response.json({ error: "INVALID_ORIGIN" }, { status: 403, headers: { "x-request-id": requestId } });
           audit(403);
           return denied;
+        }
+        if (options.permission) {
+          if (!deps.getContext || !deps.requirePermission || !deps.onError) throw new Error("permission requires getContext, requirePermission and onError.");
+          try {
+            const context = await deps.getContext();
+            deps.requirePermission(context as never, options.permission);
+            deps.onPermitted?.(context);
+          } catch (error) {
+            const denied = deps.onError(error);
+            stamp(denied, requestId);
+            audit(denied.status);
+            return denied;
+          }
         }
         try {
           const response = await (handler as unknown as (...a: unknown[]) => unknown)(...args);

@@ -5,10 +5,22 @@ const fs = require("fs"), cp = require("child_process");
 const APPLY = process.argv.includes("--apply");
 const li = process.argv.indexOf("--limit"); const LIMIT = li > 0 ? +process.argv[li + 1] : Infinity;
 const files = cp.execFileSync("git", ["ls-files", "src/app/api"], { encoding: "utf8" }).split("\n").filter((f) => f.endsWith("/route.ts"));
-const skip = {}; const bump = (k) => (skip[k] = (skip[k] || 0) + 1);
+const skip = {}; let curFile = ""; const bump = (k) => { skip[k] = (skip[k] || 0) + 1; if (process.env.WHY) console.log(k, curFile); };
 let converted = 0, handlers = 0;
 const METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"];
 const text = (src, n) => src.slice(n.getStart(), n.getEnd());
+
+// Routes behind the secured() shim are first turned back into plain exported handlers in memory, so the same
+// shape rules apply; a route that does not convert is left exactly as it was (still behind the shim).
+function unshim(src) {
+  if (!/@\/security\/secure-handler["']/.test(src)) return src;
+  const exportRe = /^export const (GET|POST|PUT|PATCH|DELETE) = secured\((handle\1)(?:, \{[^}]*\})?\);\r?\n?/gm;
+  const names = [...src.matchAll(exportRe)].map((m) => m[1]);
+  if (!names.length || /secured\((?!handle)/.test(src.replace(exportRe, ""))) return src;
+  let out = src.replace(exportRe, "");
+  for (const n of names) out = out.replace(new RegExp("^async function handle" + n + "\\(", "m"), "export async function " + n + "(");
+  return out.replace(/^import \{ secured \} from "@\/security\/secure-handler";\r?\n/m, "");
+}
 
 function isOriginGuard(st) {
   if (!ts.isIfStatement(st) || st.elseStatement) return false;
@@ -26,11 +38,13 @@ function isCatch(c) {
 const HOLD = new Set(["src/app/api/admin/placements/applications/refresh/route.ts", "src/app/api/admin/skills/curated-seed/route.ts"]);
 for (const p of files) {
   if (converted >= LIMIT) break;
+  curFile = p;
   if (HOLD.has(p)) { bump("held"); continue; }
-  let src = fs.readFileSync(p, "utf8");
+  let src = unshim(fs.readFileSync(p, "utf8"));
   if (/@\/security\/route/.test(src)) continue;
   if (!/getCurrentRequestContext\(\)/.test(src)) { bump("no-context"); continue; }
-  if (/getAll\(|new Response\(|ReadableStream|Content-Disposition|cookies\(|headers\(\)/.test(src)) { bump("unusual-api"); continue; }
+  // route() preserves any Response (body stream, status, headers); only repeated query keys change behaviour.
+  if (/getAll\(/.test(src)) { bump("unusual-api"); continue; }
   const sf = ts.createSourceFile(p, src, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
   const edits = []; let ok = true; let reason = "";
   const fns = sf.statements.filter((s) => ts.isFunctionDeclaration(s) && s.name && METHODS.includes(s.name.text) && s.modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword));

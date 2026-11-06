@@ -132,7 +132,7 @@ describe("secured(): downloads are hardened and audited centrally", () => {
   it("forces no-store and nosniff on an attachment and audits a GET export", async () => {
     const { events, secured } = make();
     const res = (await secured(async (_r: Request) => csv())(new Request("https://a.test/api/x-export"))) as Response;
-    expect(res.headers.get("Cache-Control")).toBe("private, no-store, max-age=0");
+    expect(res.headers.get("Cache-Control")).toBe("private, no-store");
     expect(res.headers.get("X-Content-Type-Options")).toBe("nosniff");
     expect(events).toEqual([expect.objectContaining({ method: "GET", status: 200, download: true })]);
   });
@@ -149,5 +149,53 @@ describe("secured(): downloads are hardened and audited centrally", () => {
     await secured(async (_r: Request) => new Response("no", { status: 403, headers: { "Content-Disposition": "attachment" } }))(new Request("https://a.test/api/z"));
     expect(events).toEqual([expect.objectContaining({ status: 403 })]);
     expect(events[0]?.download).toBeUndefined();
+  });
+});
+
+describe("secured(): central permission", () => {
+  const make = (opts: { allow?: boolean } = {}) => {
+    const events: Array<{ status: number }> = [];
+    const calls: string[] = [];
+    const secured = createSecured({
+      isSameOrigin: (r: Request) => r.headers.get("origin") === "https://a.test",
+      runWithHolder: (fn) => fn(),
+      currentActor: () => null,
+      onAudit: (e: { status: number }) => events.push(e),
+      newRequestId: () => "rid",
+      getContext: async () => (calls.push("ctx"), { user: { id: "u" } }),
+      requirePermission: (_c: unknown, p: string) => {
+        calls.push("perm:" + p);
+        if (opts.allow === false) throw new Error("FORBIDDEN");
+      },
+      onPermitted: () => calls.push("offered"),
+      onError: (e: unknown) => Response.json({ error: (e as Error).message }, { status: 403 }),
+    } as never);
+    return { events, calls, secured };
+  };
+  const post = (origin = "https://a.test") => new Request("https://a.test/api/x", { method: "POST", headers: { origin } });
+
+  it("checks the permission after the origin and before the handler", async () => {
+    const { secured, calls } = make();
+    const handler = vi.fn(async () => (calls.push("handler"), Response.json({ ok: 1 })));
+    const res = (await secured(handler, { csrf: "enforce", permission: "academics.manage" })(post())) as Response;
+    expect(res.status).toBe(200);
+    expect(calls).toEqual(["ctx", "perm:academics.manage", "offered", "handler"]);
+  });
+
+  it("refuses a cross-origin write before resolving the actor", async () => {
+    const { secured, calls } = make();
+    const res = (await secured(async () => Response.json({}), { csrf: "enforce", permission: "academics.manage" })(post("https://evil.test"))) as Response;
+    expect(res.status).toBe(403);
+    expect(calls).toEqual([]);
+  });
+
+  it("denies a missing permission without running the handler and audits it", async () => {
+    const { secured, events } = make({ allow: false });
+    const handler = vi.fn(async () => Response.json({}));
+    const res = (await secured(handler, { csrf: "enforce", permission: "academics.manage" })(post())) as Response;
+    expect(res.status).toBe(403);
+    expect(res.headers.get("x-request-id")).toBe("rid");
+    expect(handler).not.toHaveBeenCalled();
+    expect(events).toEqual([expect.objectContaining({ status: 403 })]);
   });
 });

@@ -222,8 +222,48 @@ describe("route downloads (L6)", () => {
     const res = await route({ auth: "user", permission: "service-enforced" }, async () =>
       new Response("a", { headers: { "Content-Disposition": 'attachment; filename="x.csv"', "Cache-Control": "public" } }),
     )(new Request("https://a.test/api/export"));
-    expect(res.headers.get("Cache-Control")).toBe("private, no-store, max-age=0");
+    expect(res.headers.get("Cache-Control")).toBe("private, no-store");
     expect(res.headers.get("X-Content-Type-Options")).toBe("nosniff");
     expect(events).toEqual([expect.objectContaining({ status: 200, download: true })]);
+  });
+});
+
+describe("route step-up authentication", () => {
+  const make = (fresh: (ctx: unknown, max: number) => Promise<void>) =>
+    createRoute({
+      getContext: async () => ({ user: { id: "u1" } }),
+      requirePermission: () => undefined,
+      isSameOrigin: () => true,
+      readJson: async () => ({ kind: "OK" as const, value: {} }),
+      onError: (e: unknown) => Response.json({ error: (e as Error).message }, { status: 401 }),
+      newRequestId: () => "rid",
+      requireFreshAuth: fresh,
+    } as never);
+  const req = () => new Request("https://a.test/api/x", { method: "POST" });
+
+  it("defaults to a 15-minute window and runs the handler only when fresh", async () => {
+    const calls: number[] = [];
+    const route = make(async (_c, max) => void calls.push(max));
+    const handler = vi.fn(async () => Response.json({ ok: 1 }));
+    const res = await route({ auth: "user", permission: "service-enforced", stepUp: true }, handler)(req());
+    expect(res.status).toBe(200);
+    expect(calls).toEqual([900]);
+  });
+
+  it("denies a stale sign-in before the body is read or the handler runs", async () => {
+    const route = make(async () => {
+      throw new Error("RECENT_SIGN_IN_REQUIRED");
+    });
+    const handler = vi.fn(async () => Response.json({}));
+    const res = await route({ auth: "user", permission: "service-enforced", stepUp: { maxAgeSeconds: 300 }, body: { schema: z.object({}), maxBytes: 10 } }, handler)(req());
+    expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "RECENT_SIGN_IN_REQUIRED" });
+    expect(handler).not.toHaveBeenCalled();
+  });
+
+  it("a route without stepUp never asks for fresh auth", async () => {
+    const fresh = vi.fn(async () => undefined);
+    await make(fresh)({ auth: "user", permission: "service-enforced" }, async () => Response.json({}))(req());
+    expect(fresh).not.toHaveBeenCalled();
   });
 });

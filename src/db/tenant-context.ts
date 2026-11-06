@@ -18,11 +18,30 @@ export type TenantScope = {
 };
 
 /** One mutable holder per request: the actor resolver fills it in once, and every later query reads it. */
-type Holder = { scope?: TenantScope };
+type Holder = { scope?: TenantScope; memo?: Map<string, unknown> };
 const storage = new AsyncLocalStorage<Holder>();
 
 export function currentTenantScope(): TenantScope | undefined {
   return storage.getStore()?.scope;
+}
+
+/**
+ * Hand-off of one already-resolved value to the very next reader in this request. The wrapper resolves the actor
+ * to check its permission and offers it here; the handler's first `getCurrentRequestContext()` takes it (no second
+ * lookup, same instant), and every later call resolves fresh, so a handler that deliberately re-checks the actor
+ * after slow work still sees any revocation. A no-op outside a request holder.
+ */
+export function offerRequestValue(key: string, value: unknown): void {
+  const holder = storage.getStore();
+  if (holder) (holder.memo ??= new Map()).set(key, value);
+}
+
+export function takeRequestValue<T>(key: string): T | undefined {
+  const memo = storage.getStore()?.memo;
+  if (!memo || !memo.has(key)) return undefined;
+  const value = memo.get(key) as T;
+  memo.delete(key);
+  return value;
 }
 
 export function runWithTenantScope<T>(scope: TenantScope, fn: () => T): T {

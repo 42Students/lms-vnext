@@ -26,45 +26,9 @@ const PLATFORM_ROUTES = [
  * that holds the real guard; the test below asserts it still contains one.
  */
 const TWO_HOP_ALLOWED: Record<string, { delegate: string; reason: string }> = {
-  "src/app/api/tenant-domains/route.ts": {
-    delegate: "src/modules/tenant-domains/service.ts",
-    reason: "*WithRuntime(context,...) in runtime.ts delegates to service.ts (isSuperAdmin + college.manage).",
-  },
-  "src/app/api/tenant-domains/[domainId]/route.ts": {
-    delegate: "src/modules/tenant-domains/service.ts",
-    reason: "same tenant-domains runtime to service.ts chain.",
-  },
-  "src/app/api/tenant-domains/[domainId]/ensure-token/route.ts": {
-    delegate: "src/modules/tenant-domains/managed-subdomain-service.ts",
-    reason: "runtime delegates to managed-subdomain-service.ts (isSuperAdmin + requirePermission).",
-  },
   "src/app/api/tenant-domains/[domainId]/verify/route.ts": {
     delegate: "src/modules/tenant-domains/service.ts",
     reason: "same tenant-domains runtime to service.ts chain.",
-  },
-  "src/app/api/admin/tenant-domains/resolve-preview/route.ts": {
-    delegate: "src/modules/tenant-domains/service.ts",
-    reason: "previewTenantHostResolutionWithRuntime delegates to the guarded tenant-domains service.",
-  },
-  "src/app/api/admin/onboarding/resolve-preview/route.ts": {
-    delegate: "src/modules/tenant-domains/service.ts",
-    reason: "same preview runtime as tenant-domains resolve-preview.",
-  },
-  "src/app/api/admin/faculty-assignment/export/route.ts": {
-    delegate: "src/modules/admin-ui/super-admin-faculty-assignments-service.ts",
-    reason: "CSV service calls listAdminFacultyAssignments, which uses requireSuperAdminSelectedCollege.",
-  },
-  "src/app/api/admin/features/[collegeId]/students/[membershipId]/history/export/route.ts": {
-    delegate: "src/modules/module-access/admin-trace-service.ts",
-    reason: "listSuperAdminStudentRuleHistory verifies via getSuperAdminLearnerAccessTrace (requirePermission).",
-  },
-  "src/app/api/admin/module-access/tree/route.ts": {
-    delegate: "src/modules/module-access/admin-read-service.ts",
-    reason: "readCompleteCollegeModuleTree calls getSuperAdminCollegeModuleAccess (isSuperAdmin + requirePermission).",
-  },
-  "src/app/api/admin/placements/organization-jobs/route.ts": {
-    delegate: "src/modules/placements/organization-application-search-service.ts",
-    reason: "resolveOrganizationPlacementSearchScope enforces isSuperAdmin before any query.",
   },
 };
 

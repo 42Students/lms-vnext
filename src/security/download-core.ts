@@ -12,8 +12,10 @@ export function isDownload(response: unknown): response is Response {
 /** Forces the safe headers on a download. Immutable (proxied) responses are left unchanged. */
 export function hardenDownload(response: Response): void {
   try {
-    response.headers.set("Cache-Control", "private, no-store, max-age=0");
-    response.headers.set("X-Content-Type-Options", "nosniff");
+    // Keep a route's own strict value (several are asserted verbatim); only a missing or weaker one is replaced.
+    const cacheControl = response.headers.get("Cache-Control") ?? "";
+    if (!/no-store/i.test(cacheControl) || !/private/i.test(cacheControl)) response.headers.set("Cache-Control", "private, no-store");
+    if (response.headers.get("X-Content-Type-Options")?.toLowerCase() !== "nosniff") response.headers.set("X-Content-Type-Options", "nosniff");
   } catch {
     /* immutable headers */
   }
