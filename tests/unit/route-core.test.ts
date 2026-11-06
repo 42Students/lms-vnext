@@ -142,3 +142,67 @@ describe("audit hook", () => {
     expect(res.status).toBe(200);
   });
 });
+
+describe("route abuse control (L8)", () => {
+  const base = () => {
+    const calls: Array<[string, number, number]> = [];
+    let allow = true;
+    const deps = {
+      getContext: async () => ({ user: { id: "u1" } }),
+      requirePermission: () => undefined,
+      isSameOrigin: () => true,
+      readJson: async () => ({ kind: "OK" as const, value: {} }),
+      onError: () => Response.json({ error: "E" }, { status: 500 }),
+      newRequestId: () => "rid",
+      allowRequest: (k: string, l: number, w: number) => (calls.push([k, l, w]), allow),
+      actorKey: (c: { user: { id: string } }) => c.user.id,
+      clientAddress: () => "9.9.9.9",
+      defaultMutationLimit: { limit: 300, windowMs: 60_000 },
+    };
+    return { calls, setAllow: (v: boolean) => (allow = v), route: createRoute(deps as never) };
+  };
+  const post = (path = "/api/x") => new Request("https://a.test" + path, { method: "POST" });
+
+  it("applies one central default write budget per user", async () => {
+    const { route, calls } = base();
+    const res = await route({ auth: "user", permission: "service-enforced" }, async () => Response.json({ ok: 1 }))(post());
+    expect(res.status).toBe(200);
+    expect(calls).toEqual([["user:u1:writes", 300, 60_000]]);
+  });
+
+  it("returns 429 with Retry-After and does not run the handler when over budget", async () => {
+    const { route, setAllow } = base();
+    setAllow(false);
+    const handler = vi.fn(async () => Response.json({}));
+    const res = await route({ auth: "user", permission: "service-enforced" }, handler)(post());
+    expect(res.status).toBe(429);
+    expect(res.headers.get("Retry-After")).toBe("60");
+    expect(await res.json()).toEqual({ error: "RATE_LIMITED" });
+    expect(handler).not.toHaveBeenCalled();
+  });
+
+  it("a route budget overrides the default and false opts out", async () => {
+    const a = base();
+    await a.route({ auth: "user", permission: "service-enforced", rateLimit: { limit: 5, windowMs: 1000 } }, async () => Response.json({}))(post());
+    expect(a.calls[0]).toEqual(["user:u1:POST:/api/x", 5, 1000]);
+    const b = base();
+    await b.route({ auth: "user", permission: "service-enforced", rateLimit: false }, async () => Response.json({}))(post());
+    expect(b.calls).toEqual([]);
+  });
+
+  it("does not throttle plain reads by default", async () => {
+    const { route, calls } = base();
+    await route({ auth: "user", permission: "service-enforced" }, async () => Response.json({}))(new Request("https://a.test/api/x"));
+    expect(calls).toEqual([]);
+  });
+
+  it("throttles public routes by caller address before doing any work", async () => {
+    const { route, calls, setAllow } = base();
+    setAllow(false);
+    const handler = vi.fn(async () => Response.json({}));
+    const res = await route({ auth: "public", publicReason: "r", rateLimit: { limit: 3 } }, handler)(new Request("https://a.test/api/p"));
+    expect(res.status).toBe(429);
+    expect(calls).toEqual([["pub:GET:/api/p:9.9.9.9", 3, 60_000]]);
+    expect(handler).not.toHaveBeenCalled();
+  });
+});

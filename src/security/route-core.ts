@@ -22,6 +22,17 @@ export type RouteDeps<Context> = {
   /** Maps any thrown value (session, authorization, validation, service errors) to a safe response. */
   onError: (error: unknown) => Response;
   newRequestId: () => string;
+  /**
+   * Abuse control (layer L8). Resolves true when the request is within budget for `key`. Optional so the core
+   * stays framework-free; `route.ts` wires the real limiter.
+   */
+  allowRequest?: (key: string, limit: number, windowMs: number) => boolean | Promise<boolean>;
+  /** Stable identity for a rate-limit key: the authenticated user id. */
+  actorKey?: (context: Context) => string;
+  /** Caller address for public routes (already canonicalised and trust-proxy aware). */
+  clientAddress?: (request: Request) => string;
+  /** Budget applied to every authenticated state-changing request that does not set its own `rateLimit`. */
+  defaultMutationLimit?: { limit: number; windowMs: number };
   /** Runs the handler inside the actor's database scope (row-level security reads it). Optional so the core stays framework-free. */
   runInScope?: <T>(context: Context, fn: () => T) => T;
   /**
@@ -44,6 +55,8 @@ type Common = {
   query?: ZodType;
   /** Query keys that may legitimately repeat (read with getAll from request.url). All other duplicates are rejected. */
   repeatableQuery?: readonly string[];
+  /** Per-actor (authenticated) or per-address (public) request budget; `false` opts out of the central default. */
+  rateLimit?: { limit: number; windowMs?: number } | false;
 };
 
 export type UserRouteConfig<Permission extends string, B> = Common & {
@@ -93,6 +106,13 @@ function jsonError(requestId: string, status: number, error: string) {
   );
 }
 
+function rateLimited(requestId: string, windowMs: number) {
+  return Response.json(
+    { error: "RATE_LIMITED" },
+    { status: 429, headers: { "Cache-Control": "private, no-store", "x-request-id": requestId, "Retry-After": String(Math.max(1, Math.ceil(windowMs / 1000))) } },
+  );
+}
+
 function withHeaders(response: Response, requestId: string) {
   const headers = new Headers(response.headers);
   if (!headers.has("x-request-id")) headers.set("x-request-id", requestId);
@@ -135,11 +155,27 @@ export function createRoute<Context, Permission extends string = string>(deps: R
         }
         if (config.query) config.query.parse(query);
 
+        // Public routes are throttled by address before any work; authenticated routes by actor once known.
+        if (config.auth === "public" && config.rateLimit && deps.allowRequest && deps.clientAddress) {
+          const windowMs = config.rateLimit.windowMs ?? 60_000;
+          if (!(await deps.allowRequest(`pub:${request.method}:${new URL(request.url).pathname}:${deps.clientAddress(request)}`, config.rateLimit.limit, windowMs))) {
+            return rateLimited(requestId, windowMs);
+          }
+        }
+
         let context: Context | null = null;
         if (config.auth === "user") {
           context = await deps.getContext();
           actorRef.context = context;
           if (config.permission !== "service-enforced") deps.requirePermission(context, config.permission);
+          const budget = config.rateLimit === false ? null : config.rateLimit
+            ? { limit: config.rateLimit.limit, windowMs: config.rateLimit.windowMs ?? 60_000 }
+            : mutating ? deps.defaultMutationLimit ?? null : null;
+          if (budget && deps.allowRequest && deps.actorKey) {
+            if (!(await deps.allowRequest(config.rateLimit ? `user:${deps.actorKey(context)}:${request.method}:${new URL(request.url).pathname}` : `user:${deps.actorKey(context)}:writes`, budget.limit, budget.windowMs))) {
+              return rateLimited(requestId, budget.windowMs);
+            }
+          }
         }
 
         let body = undefined as B;
