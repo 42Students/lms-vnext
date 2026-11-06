@@ -1189,9 +1189,6 @@
   "src/app/api/internal/inbound-mail/route.ts": {
    "route-on-shim-only": 1
   },
-  "src/app/api/internal/mentor-project-email-dispatch/route.ts": {
-   "route-on-shim-only": 1
-  },
   "src/app/api/internal/operations/notification-scheduler/route.ts": {
    "route-on-shim-only": 1
   },

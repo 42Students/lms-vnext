@@ -156,10 +156,9 @@ describe("state-changing API routes", () => {
     expect(scheduler).not.toContain("getCurrentRequestContext");
     const mentorWorker=fs.readFileSync(path.join(ROOT,
       "api/internal/mentor-project-email-dispatch/route.ts"),"utf8");
-    expect(mentorWorker).toContain('process.env["MENTOR_PROJECT_EMAIL_WORKER_TOKEN"]');
-    expect(mentorWorker).toContain('expected.length<32');
-    expect(mentorWorker).toContain('actual.startsWith("Bearer ")');
-    expect(mentorWorker).toContain('timingSafeEqual(');
+    // The shared internalRoute() compares the bearer in constant time and enforces the 32-byte minimum.
+    expect(mentorWorker).toContain('kind: "bearer"');
+    expect(mentorWorker).toContain('secretEnv: "MENTOR_PROJECT_EMAIL_WORKER_TOKEN"');
     expect(mentorWorker).not.toContain("getCurrentRequestContext");
   });
 
