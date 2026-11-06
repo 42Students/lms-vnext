@@ -15,7 +15,7 @@ import {
 } from "./e2e-identity";
 import { resolveRequestContext } from "@/modules/identity/context-service";
 import { MEMBERSHIP_ROLES, type MembershipRole } from "@/modules/identity/constants";
-import { bindTenantScope, scopeFromActor } from "@/db/tenant-context";
+import { bindTenantScope, runAsSystem, scopeFromActor } from "@/db/tenant-context";
 import { resolveRequestTenant } from "@/modules/auth/request-tenant";
 import { isTenantAccessAllowed } from "@/modules/auth/tenant-access";
 import {
@@ -58,7 +58,7 @@ async function resolveIdentityUid(cookieStore: CookieStore) {
 /** Verify session, load persisted membership and role selection, then resolve the
  * actual request Host and enforce its college restriction. Cookies select a
  * workspace but cannot grant permissions. Endpoint guards run afterwards. */
-export async function getCurrentRequestContext() {
+async function resolveCurrentRequestContext() {
   const cookieStore = await cookies();
   const identityUid =
     await resolveIdentityUid(cookieStore);
@@ -93,10 +93,14 @@ export async function getCurrentRequestContext() {
     throw new SessionAuthenticationError("SESSION_INVALID");
   }
 
-  // Every authenticated request now carries its college/role to the database (row-level security reads it).
-  // Inert unless DB_TENANT_SCOPE=on, and a no-op outside an API request holder.
-  bindTenantScope(scopeFromActor(context));
+  return context;
+}
 
+export async function getCurrentRequestContext() {
+  // The session, membership and tenant lookups run before any actor exists, so they run under a named system
+  // scope; once resolved, the actor's college/role is bound for the rest of the request (row-level security reads it).
+  const context = await runAsSystem("auth:resolve-request-context", resolveCurrentRequestContext);
+  bindTenantScope(scopeFromActor(context));
   return context;
 }
 

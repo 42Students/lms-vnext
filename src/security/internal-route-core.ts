@@ -20,6 +20,8 @@ export type InternalDeps = {
   >;
   onError: (error: unknown) => Response;
   newRequestId: () => string;
+  /** Runs the handler inside a named system tenant scope (jobs have no actor). */
+  runInSystemScope?: <T>(reason: string, fn: () => T) => T;
   /** Called on every denial with a reason code. Never receives the credential. */
   onDenied?: (event: { route: string; reason: "ORIGIN" | "QUERY" | "CREDENTIAL" | "BODY"; requestId: string }) => void;
 };
@@ -101,7 +103,8 @@ export function createInternalRoute(deps: InternalDeps) {
           if (read.kind !== "OK") return deny("BODY", 400, invalid);
           body = config.body.schema.parse(read.value);
         }
-        return withHeaders(await handler({ request, body, requestId }), requestId);
+        const run = () => handler({ request, body, requestId });
+        return withHeaders(await (deps.runInSystemScope ? deps.runInSystemScope("internal:" + config.name, run) : run()), requestId);
       } catch (error) {
         return withHeaders(deps.onError(error), requestId);
       }

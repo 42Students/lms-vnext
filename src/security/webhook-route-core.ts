@@ -20,6 +20,8 @@ export type WebhookDeps = {
   now: () => number; // epoch seconds
   onError: (error: unknown) => Response;
   newRequestId: () => string;
+  /** Runs the handler inside a named system tenant scope (a provider is not a user). */
+  runInSystemScope?: <T>(reason: string, fn: () => T) => T;
   onDenied?: (event: { route: string; reason: "ORIGIN" | "BODY" | "SIGNATURE" | "STALE" | "REPLAY" | "SCHEMA"; requestId: string }) => void;
 };
 
@@ -128,7 +130,8 @@ export function createWebhookRoute(deps: WebhookDeps) {
         }
         const parsed = config.body.schema.safeParse(json);
         if (!parsed.success) return deny("SCHEMA", 400, { error: "INVALID_REQUEST" });
-        return withHeaders(await handler({ request, body: parsed.data, requestId }), requestId);
+        const run = () => handler({ request, body: parsed.data, requestId });
+        return withHeaders(await (deps.runInSystemScope ? deps.runInSystemScope("webhook:" + config.name, run) : run()), requestId);
       } catch (error) {
         return withHeaders(deps.onError(error), requestId);
       }

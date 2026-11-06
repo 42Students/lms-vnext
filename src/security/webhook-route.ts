@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedUtf8Body } from "@/lib/bounded-utf8-body";
+import { runAsSystem } from "@/db/tenant-context";
 import { createWebhookRoute } from "@/security/webhook-route-core";
 
 /**
@@ -27,6 +28,7 @@ export const webhookRoute = createWebhookRoute({
   claimDelivery: (key, ttl) => claimDeliveryInMemory(key, ttl),
   now: () => Math.floor(Date.now() / 1000),
   onError: apiErrorResponse,
+  runInSystemScope: runAsSystem,
   newRequestId: () => randomUUID(),
   onDenied: (event) => {
     console.warn(JSON.stringify({ severity: "WARNING", event: "webhook.route_denied", ...event }));

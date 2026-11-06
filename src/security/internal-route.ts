@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { readBoundedUtf8Body } from "@/lib/bounded-utf8-body";
+import { runAsSystem } from "@/db/tenant-context";
 import { createInternalRoute } from "@/security/internal-route-core";
 
 /** The one way to define a machine-to-machine route. See docs/security/central-security-architecture.md (L10). */
@@ -13,6 +14,7 @@ export const internalRoute = createInternalRoute({
     return body.kind === "OK" && body.body === "";
   },
   onError: apiErrorResponse,
+  runInSystemScope: runAsSystem,
   newRequestId: () => randomUUID(),
   onDenied: (event) => {
     // Structured, secret-free denial record; the credential is never logged.

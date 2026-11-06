@@ -40,7 +40,13 @@ export function runWithTenantHolder<T>(fn: () => T): T {
  */
 export function bindTenantScope(scope: TenantScope): void {
   const holder = storage.getStore();
-  if (holder && !holder.scope) holder.scope = scope;
+  if (holder) {
+    if (!holder.scope) holder.scope = scope;
+    return;
+  }
+  // No wrapper holder: a server component or server action resolved an authenticated actor. Bind it for the rest
+  // of this request's async chain so its queries carry the same identity as an API route's.
+  storage.enterWith({ scope });
 }
 
 /** For internal jobs and the session/membership bootstrap, which run before an actor exists. */
