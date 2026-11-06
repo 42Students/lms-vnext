@@ -1,0 +1,31 @@
+#!/usr/bin/env node
+// Ratchet: per route file and rule the count may never exceed the baseline. `--update` can only lower counts.
+import { readFileSync, writeFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { RULES, scanRoute } from "./security-central-rules.mjs";
+
+const BASELINE_PATH = "docs/security/central-security-baseline.json";
+const args = new Set(process.argv.slice(2));
+const files = execFileSync("git", ["ls-files", "-z", "--", "src/app/api"], { encoding: "utf8", maxBuffer: 1 << 26 }).split("\0").filter(Boolean);
+const counts = {};
+for (const p of files) {
+  let s; try { s = readFileSync(p, "utf8"); } catch { continue; }
+  for (const f of scanRoute(p, s)) ((counts[p] ??= {})[f.rule] = (counts[p][f.rule] ?? 0) + 1);
+}
+const totals = Object.fromEntries(Object.keys(RULES).map((r) => [r, 0]));
+for (const r of Object.values(counts)) for (const [k, n] of Object.entries(r)) totals[k] += n;
+const read = () => { try { return JSON.parse(readFileSync(BASELINE_PATH, "utf8")); } catch { return { schemaVersion: 1, files: {} }; } };
+
+if (args.has("--report")) { for (const [k, n] of Object.entries(totals)) console.log(String(n).padStart(6), k); process.exit(0); }
+if (args.has("--init") || args.has("--update")) {
+  const old = read().files;
+  if (!args.has("--init")) for (const [p, r] of Object.entries(counts)) for (const [k, n] of Object.entries(r))
+    if (n > (old[p]?.[k] ?? -1)) { console.error(`refusing to raise the baseline: ${p} ${k} -> ${n}`); process.exit(1); }
+  writeFileSync(BASELINE_PATH, JSON.stringify({ schemaVersion: 1, files: counts }, null, 1) + "\n");
+  console.log("baseline written", JSON.stringify(totals)); process.exit(0);
+}
+const base = read().files; let bad = 0;
+for (const [p, r] of Object.entries(counts)) for (const [k, n] of Object.entries(r))
+  if (n > (base[p]?.[k] ?? 0)) { console.error(`${p}: ${k} ${base[p]?.[k] ?? 0} -> ${n} (${RULES[k]})`); bad++; }
+if (bad) { console.error(`security:central failed: ${bad} regression(s). New routes must use route() from @/security/route.`); process.exit(1); }
+console.log("security:central ok", JSON.stringify(totals));
