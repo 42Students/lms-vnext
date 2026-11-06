@@ -1,5 +1,5 @@
-import { TextLink } from "@/components/ui/text-link";
 "use client";
+import { TextLink } from "@/components/ui/text-link";
 
 
 type MessagesTab = "recruiters" | "team";
