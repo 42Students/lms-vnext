@@ -1,7 +1,5 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import {
   listPlacementRoundResults,
   stagePlacementRoundResult,
@@ -16,41 +14,25 @@ import {
 // {result} and supply the same-origin requirement. No old route is implied.
 export const runtime = "nodejs";
 
-type RouteContext = {
-  params: Promise<{ roundId: string }>;
-};
-
-export async function GET(
-  _request: Request,
-  { params }: RouteContext,
-) {
-  try {
-    const context = await getCurrentRequestContext();
-    const { roundId } = await params;
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor, params }) => {
+    const context = actor!;
+    const { roundId } = params;
     const results =
       await listPlacementRoundResults(
         context,
         roundId,
       );
     return NextResponse.json({ results });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
-export async function POST(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-  try {
-    const context = await getCurrentRequestContext();
-    const { roundId } = await params;
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { roundId } = params;
     const result =
       await stagePlacementRoundResult(
         context,
@@ -61,7 +43,5 @@ export async function POST(
       { result },
       { status: 201, headers:{"Cache-Control":"no-store"} },
     );
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

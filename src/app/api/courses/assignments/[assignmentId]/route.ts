@@ -1,8 +1,6 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import {
   updateCourseAssignment,getCourseAssignmentForAdmin,
 } from "@/modules/courses/assignment-service";
@@ -16,36 +14,21 @@ const versionedPatchSchema = z.looseObject({
   expectedUpdatedAt: z.iso.datetime({ offset: true }),
 });
 
-type RouteContext = {
-  params: Promise<{
-    assignmentId: string;
-  }>;
-};
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor, params }) => {
+    const context = actor!;
+    const {assignmentId}=params;
+    const assignment=await getCourseAssignmentForAdmin(context,assignmentId);
+    return NextResponse.json({assignment},{headers:{"Cache-Control":"private, no-store"}});
+  },
+);
 
-export async function GET(_:Request,{params}:RouteContext){
- try{
-  const context=await getCurrentRequestContext();
-  const {assignmentId}=await params;
-  const assignment=await getCourseAssignmentForAdmin(context,assignmentId);
-  return NextResponse.json({assignment},{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-
-export async function PATCH(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context =
-      await getCurrentRequestContext();
-    const { assignmentId } = await params;
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { assignmentId } = params;
     const body: unknown = await request.json();
     if (!versionedPatchSchema.safeParse(body).success) {
       return NextResponse.json(
@@ -59,9 +42,6 @@ export async function PATCH(
         assignmentId,
         updateCourseAssignmentInputSchema.parse(body),
       );
-
     return NextResponse.json({ assignment });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

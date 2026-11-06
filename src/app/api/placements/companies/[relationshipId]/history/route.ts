@@ -1,7 +1,5 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { apiErrorResponse } from "@/lib/api-error";
-import { isSameOriginRequest } from "@/auth/origin";
 import {
   getCollegeCompanyHistory,
   updateCollegeCompanyPrivateDetails,
@@ -10,34 +8,25 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-type RouteContext = {
-  params: Promise<{ relationshipId: string }>;
-};
-
-export async function GET(_request: Request, { params }: RouteContext) {
-  try {
-    const context = await getCurrentRequestContext();
-    const { relationshipId } = await params;
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor, params }) => {
+    const context = actor!;
+    const { relationshipId } = params;
     const history = await getCollegeCompanyHistory(context, relationshipId);
     return NextResponse.json(history);
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
-export async function PATCH(request: Request, { params }: RouteContext) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-  try {
-    const context = await getCurrentRequestContext();
-    const { relationshipId } = await params;
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { relationshipId } = params;
     const body: unknown = await request.json();
     const result = await updateCollegeCompanyPrivateDetails(
       context, relationshipId, body,
     );
     return NextResponse.json(result);
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

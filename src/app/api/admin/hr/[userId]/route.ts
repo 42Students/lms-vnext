@@ -1,8 +1,6 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
 import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
-import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 import {
   getSuperAdminHrAccount,
@@ -14,51 +12,25 @@ import {
 
 export const runtime = "nodejs";
 
-type RouteContext = {
-  params: Promise<{
-    userId: string;
-  }>;
-};
-
-export async function GET(
-  _request: Request,
-  { params }: RouteContext,
-) {
-  try {
-    const context =
-      await getCurrentRequestContext();
-
-    const { userId } = await params;
-
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor, params }) => {
+    const context = actor!;
+    const { userId } = params;
     const account =
       await getSuperAdminHrAccount(
         context,
         userId,
       );
-
     return NextResponse.json({ account }, { headers: { "Cache-Control": "private, no-store" } });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
-export async function PATCH(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context =
-      await getCurrentRequestContext();
-
-    const { userId } = await params;
-
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { userId } = params;
     const parsed = await readBoundedJsonRequest(request, 8192);
     if (!parsed.ok) {
       return NextResponse.json(
@@ -66,13 +38,10 @@ export async function PATCH(
         { status: 400 },
       );
     }
-
     const input =
       updateSuperAdminHrInputSchema.parse(
         parsed.value,
       );
-
-    // Updating recruiter identity or college grants changes data access.
     await requireRecentDeviceAuthentication(context.user.id);
     const account =
       await updateSuperAdminHrAccount(
@@ -80,9 +49,6 @@ export async function PATCH(
         userId,
         input,
       );
-
     return NextResponse.json({ account }, { headers: { "Cache-Control": "private, no-store" } });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

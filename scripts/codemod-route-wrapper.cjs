@@ -46,15 +46,21 @@ for (const p of files) {
     if (!origin && name !== "GET") { ok = false; reason = "mutation-without-origin"; break; }
     if (st.length !== 1 || !ts.isTryStatement(st[0]) || !st[0].catchClause || st[0].finallyBlock || !isCatch(st[0].catchClause)) { ok = false; reason = "shape"; break; }
     const body = st[0].tryBlock.statements;
-    const ctxIdx = body.findIndex((s) => ts.isVariableStatement(s) && s.declarationList.declarations.length === 1 && /^await getCurrentRequestContext\(\)$/.test(s.declarationList.declarations[0].initializer?.getText() ?? ""));
+    const ctxIdx = body.findIndex((s) => ts.isVariableStatement(s) && /^await getCurrentRequestContext\(\)$/.test(s.declarationList.declarations[0].initializer?.getText() ?? ""));
     if (ctxIdx !== 0) { ok = false; reason = "no-ctx-stmt"; break; }
     const ctxName = body[ctxIdx].declarationList.declarations[0].name.getText();
     if (ctxName !== "context") { ok = false; reason = "ctx-name"; break; }
+    const ctxDecls = body[ctxIdx].declarationList.declarations;
+    let extra = null;
+    if (ctxDecls.length > 1) {
+      const kw = body[ctxIdx].declarationList.getText().split(/\s/)[0];
+      extra = kw + " " + ctxDecls.slice(1).map((d) => d.getText()).join(", ") + ";";
+    }
     const rest = body.filter((_, i) => i !== ctxIdx);
-    const restText = rest.map((s) => text(src, s)).join("\n");
+    const restText = (extra ? extra + "\n" : "") + rest.map((s) => text(src, s)).join("\n");
     if (/getCurrentRequestContext|isSameOriginRequest|apiErrorResponse/.test(restText)) { ok = false; reason = "residual-helper"; break; }
     const ps = fn.parameters;
-    if (!ps.length || ps[0].name.getText() !== "request" || ps.length > 2) { ok = false; reason = "params-shape"; break; }
+    if (!ps.length || !ts.isIdentifier(ps[0].name) || ps.length > 2) { ok = false; reason = "params-shape"; break; }
     let usesParams = false;
     if (ps.length === 2) {
       const b = ps[1].name;
@@ -63,7 +69,9 @@ for (const p of files) {
     }
     // rewrite `await params` -> `params` inside the kept statements
     let newBody = ""; 
+    const reqName = ps[0].name.getText();
     const parts = [];
+    if (extra) parts.push(extra.replace(/await\s+params/g, "params"));
     for (const s of rest) {
       let t = text(src, s); const base = s.getStart();
       const reps = [];
@@ -72,8 +80,8 @@ for (const p of files) {
       parts.push(t);
     }
     const hasParams = usesParams && /\bparams\b/.test(parts.join("\n"));
-    const usesRequest = /\brequest\b/.test(parts.join("\n"));
-    const args = [usesRequest ? "request" : null, "context: actor", hasParams ? "params" : null].filter(Boolean).join(", ");
+    const usesRequest = new RegExp("\\b" + reqName + "\\b").test(parts.join("\n"));
+    const args = [usesRequest ? (reqName === "request" ? "request" : "request: " + reqName) : null, "context: actor", hasParams ? "params" : null].filter(Boolean).join(", ");
     const inner = parts.map((t) => "    " + t).join("\n");
     const out = `export const ${name} = route(\n  { auth: "user", permission: "service-enforced" },\n  async ({ ${args} }) => {\n    const context = actor!;\n${inner}\n  },\n);`;
     edits.push([fn.getStart(), fn.getEnd(), out]);

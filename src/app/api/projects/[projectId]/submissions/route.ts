@@ -1,7 +1,5 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import {
   createProjectSubmissionDraft,
   listProjectSubmissions,
@@ -9,42 +7,24 @@ import {
 
 export const runtime = "nodejs";
 
-type RouteContext = {
-  params: Promise<{ projectId: string }>;
-};
-
-export async function GET(
-  _request: Request,
-  { params }: RouteContext,
-) {
-  try {
-    const context = await getCurrentRequestContext();
-    const { projectId } = await params;
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor, params }) => {
+    const context = actor!;
+    const { projectId } = params;
     const result = await listProjectSubmissions(
       context,
       projectId,
     );
-
     return NextResponse.json(result);
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
-export async function POST(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-    const { projectId } = await params;
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { projectId } = params;
     const body = await request.json();
     const submission =
       await createProjectSubmissionDraft(
@@ -52,12 +32,9 @@ export async function POST(
         projectId,
         body,
       );
-
     return NextResponse.json(
       { submission },
       { status: 201 },
     );
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

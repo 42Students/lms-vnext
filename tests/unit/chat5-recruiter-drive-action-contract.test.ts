@@ -17,7 +17,7 @@ describe("G2-14-025-004 recruiter drive legacy action coverage",()=>{
   const route=read("src/app/api/placements/rounds/[roundId]/results/route.ts");
   expect(mapping).toContain('vNext: "POST /api/placements/rounds/{roundId}/results"');
   expect(mapping).toContain('state: "adapted-to-staged-TPO-verification"');
-  expect(route).toContain("export async function POST(");
+  expect(route).toMatch(/export (?:async function|const) POST\b/);
   expect(route).toContain("stagePlacementRoundResult(");
   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
  });
@@ -25,7 +25,7 @@ describe("G2-14-025-004 recruiter drive legacy action coverage",()=>{
   const route=read("src/app/api/placements/recruiter/drives/[jobId]/selections/route.ts");
   const service=read("src/modules/placements/recruiter-selection-list-write-service.ts");
   expect(mapping).toContain('vNext: "POST /api/placements/recruiter/drives/{jobId}/selections"');
-  expect(route).toContain("export async function POST(");
+  expect(route).toMatch(/export (?:async function|const) POST\b/);
   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(service).toContain("submitRecruiterSelectionList(");
   expect(service).toContain("getRecruiterPlacementWorkspace(");

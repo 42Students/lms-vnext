@@ -1,10 +1,8 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {and,eq,gt,isNull} from "drizzle-orm";
 import {z} from "zod";
-import {getCurrentRequestContext} from "@/auth/request-context";
-import {isSameOriginRequest} from "@/auth/origin";
 import {getDb} from "@/db/client";
-import {apiErrorResponse} from "@/lib/api-error";
 import {
   collegeMemberships,courseTeachingAssignments,courseSectionDeliveries,courseOfferings,
   courses,departments,membershipRoles,users,sectionScheduleEvents,sectionScheduleEventCourses,
@@ -17,7 +15,6 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 
 export const runtime="nodejs";
-type Params={params:Promise<{assignmentId:string}>};
 const editSchema=z.object({
   expectedMembershipId:z.string().uuid(),
   expectedUpdatedAt:z.iso.datetime({offset:true}),
@@ -29,16 +26,17 @@ const editSchema=z.object({
   semesterNumber:z.number().int().min(1).max(20).nullable(),
 }).strict();
 
-export async function PATCH(request:Request,{params}:Params){
-  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
-  try{
-    const context=await getCurrentRequestContext(),member=context.membership;
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const member=context.membership;
     if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
        !hasMembershipRole(context,"COLLEGE_ADMIN")||
        !can(context,"courses.manage",{collegeId:member.collegeId,organizationId:member.organizationId}))
       return NextResponse.json({error:"FORBIDDEN"},{status:403});
     requirePermission(context,"courses.manage",{collegeId:member.collegeId,organizationId:member.organizationId});
-    const {assignmentId}=await params;
+    const {assignmentId}=params;
     const parsed=editSchema.safeParse(await request.json().catch(()=>null));
     if(!z.string().uuid().safeParse(assignmentId).success||!parsed.success)
       return NextResponse.json({error:"INVALID_REQUEST",message:"Review the selected faculty, course, semester and year."},{status:400});
@@ -165,5 +163,5 @@ export async function PATCH(request:Request,{params}:Params){
     if("error" in txResult)return NextResponse.json({error:txResult.error,message:txResult.error},
       {status:txResult.status,headers:{"cache-control":"private, no-store"}});
     return NextResponse.json(txResult,{headers:{"cache-control":"private, no-store"}});
-  }catch(error){return apiErrorResponse(error);}
-}
+  },
+);

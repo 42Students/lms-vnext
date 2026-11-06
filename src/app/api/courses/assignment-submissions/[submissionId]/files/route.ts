@@ -1,23 +1,15 @@
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { apiErrorResponse } from "@/lib/api-error";
+import { route } from "@/security/route";
 import { storageJson } from "@/lib/storage-route";
 import { listSubmissionFiles } from "@/modules/courses/assignment-submission-file-service";
 
 export const runtime = "nodejs";
 
-type RouteContext = {
-  params: Promise<{
-    submissionId: string;
-  }>;
-};
-
-export async function GET(_request: Request, { params }: RouteContext) {
-  try {
-    const context = await getCurrentRequestContext();
-    const { submissionId } = await params;
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor, params }) => {
+    const context = actor!;
+    const { submissionId } = params;
     const files = await listSubmissionFiles(context, submissionId);
     return storageJson({ files });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);

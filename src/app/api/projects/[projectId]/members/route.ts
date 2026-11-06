@@ -1,8 +1,6 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { isSameOriginRequest } from "@/auth/origin";
-import { apiErrorResponse } from "@/lib/api-error";
 import {
   addProjectMember,
   listProjectMembers,
@@ -12,45 +10,25 @@ import { addProjectMemberInputSchema } from "@/modules/projects/validation";
 
 export const runtime = "nodejs";
 
-type RouteContext = {
-  params: Promise<{ projectId: string }>;
-};
-
-export async function GET(
-  _request: Request,
-  { params }: RouteContext,
-) {
-  try {
-    const context = await getCurrentRequestContext();
-    const { projectId } = await params;
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor, params }) => {
+    const context = actor!;
+    const { projectId } = params;
     const members = await listProjectMembers(
       context,
       projectId,
     );
-
     return NextResponse.json({ members });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
 
-export async function POST(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-    const { projectId } = await params;
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const { projectId } = params;
     const body: unknown = await request.json();
-    // Legacy direct mentor selection replaces an existing primary, rather
-    // than failing the add-member uniqueness check. Service authorizes it.
     if (body && typeof body === "object" && !Array.isArray(body) &&
         "primaryMentorMembershipId" in body) {
       const choice = z.strictObject({
@@ -69,12 +47,9 @@ export async function POST(
       projectId,
       addProjectMemberInputSchema.parse(body) as Parameters<typeof addProjectMember>[2],
     );
-
     return NextResponse.json(
       { member },
       { status: 201 },
     );
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
+  },
+);
