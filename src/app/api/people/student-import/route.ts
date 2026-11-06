@@ -35,7 +35,7 @@ async function handlePOST(request: Request) {
     return apiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = secured(handlePOST, { csrf: "enforce", stepUp: true });
 
 /** Legacy bulk import history: only a persisted, authorized Super Admin
  * acting in a selected college can read this audit ledger. The same college
@@ -63,4 +63,4 @@ async function handleDELETE(request:Request) {
     recovery:"Review the import history and end eligible memberships individually.",
   },{status:409,headers:{"Cache-Control":"private, no-store"}});
 }
-export const DELETE = secured(handleDELETE, { csrf: "enforce" });
+export const DELETE = secured(handleDELETE, { csrf: "enforce", stepUp: true });

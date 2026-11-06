@@ -16,7 +16,7 @@ export function safeReturnTo(value: string | null | undefined): string | null {
   } catch { return null; }
 }
 
-export function sessionExpiredHref(currentPath: string, reason: "expired" | "revoked" = "expired") {
+export function sessionExpiredHref(currentPath: string, reason: "expired" | "revoked" | "recent" = "expired") {
   const target = safeReturnTo(currentPath);
   return `/?auth=${reason}${target ? `&returnTo=${encodeURIComponent(target)}` : ""}`;
 }

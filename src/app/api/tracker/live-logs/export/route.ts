@@ -154,4 +154,4 @@ async function handleGET(request: Request) {
     },
   });
 }
-export const GET = secured(handleGET);
+export const GET = secured(handleGET, { stepUp: true });

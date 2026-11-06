@@ -27,4 +27,4 @@ async function handleGET(request: Request, {params}: {params:Promise<{jobId:stri
     return new Response("Applicants unavailable or access denied",{status:404,headers:{"Cache-Control":"no-store"}});
   }
 }
-export const GET = secured(handleGET);
+export const GET = secured(handleGET, { stepUp: true });

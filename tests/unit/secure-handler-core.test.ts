@@ -199,3 +199,41 @@ describe("secured(): central permission", () => {
     expect(events).toEqual([expect.objectContaining({ status: 403 })]);
   });
 });
+
+describe("secured(): step-up authentication", () => {
+  const make = (fresh: (c: unknown, max: number) => Promise<void>) => {
+    const events: Array<{ status: number }> = [];
+    const secured = createSecured({
+      isSameOrigin: () => true,
+      runWithHolder: (fn) => fn(),
+      currentActor: () => null,
+      onAudit: (e: { status: number }) => events.push(e),
+      newRequestId: () => "rid",
+      getContext: async () => ({ user: { id: "u" } }),
+      requireFreshAuth: fresh,
+      onError: (e: unknown) => Response.json({ error: (e as Error).message }, { status: 401 }),
+    } as never);
+    return { events, secured };
+  };
+  const post = () => new Request("https://a.test/api/x", { method: "POST" });
+
+  it("runs the handler only after a fresh sign-in (default 15 minutes)", async () => {
+    const seen: number[] = [];
+    const { secured } = make(async (_c, max) => void seen.push(max));
+    const res = (await secured(async (_r: Request) => Response.json({ ok: 1 }), { csrf: "enforce", stepUp: true })(post())) as Response;
+    expect(res.status).toBe(200);
+    expect(seen).toEqual([900]);
+  });
+
+  it("denies a stale sign-in before the handler and audits it", async () => {
+    const { secured, events } = make(async () => {
+      throw new Error("RECENT_SIGN_IN_REQUIRED");
+    });
+    const handler = vi.fn(async (_r: Request) => Response.json({}));
+    const res = (await secured(handler, { csrf: "enforce", stepUp: { maxAgeSeconds: 300 } })(post())) as Response;
+    expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "RECENT_SIGN_IN_REQUIRED" });
+    expect(handler).not.toHaveBeenCalled();
+    expect(events).toEqual([expect.objectContaining({ status: 401 })]);
+  });
+});

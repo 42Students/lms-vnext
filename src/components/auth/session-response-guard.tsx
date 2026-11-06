@@ -41,6 +41,20 @@ export function SessionResponseGuard() {
           detail:{status:response.status,reason:reason??null}
         }));
       }
+      if (response.status === 401 && reason === "RECENT_SIGN_IN_REQUIRED") {
+        // Step-up (owner decision 2026-11-06): role/permission changes, exports, secret and tenant settings need a
+        // sign-in no older than 15 minutes. The session is still valid, so the landing page would send the user
+        // straight back; end this device session first, then return here after a fresh sign-in.
+        redirected = true;
+        window.dispatchEvent(new CustomEvent("lms:session-lost",{detail:{reason:"expired",method}}));
+        try { await original("/api/auth/session",{method:"DELETE",credentials:"same-origin"}); }
+        catch { /* The sign-in page still explains why; the old session simply stays valid until it expires. */ }
+        window.location.replace(sessionExpiredHref(
+          window.location.pathname + window.location.search,
+          "recent",
+        ));
+        return response;
+      }
       if (response.status === 401 || reason === "SESSION_EXPIRED" || reason === "SESSION_REVOKED") {
         redirected = true;
         window.dispatchEvent(new CustomEvent("lms:session-lost",{

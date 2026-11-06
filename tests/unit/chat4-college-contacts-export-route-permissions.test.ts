@@ -33,7 +33,8 @@ describe("College contact CSV read route role and failure matrix", () => {
     expect(response.headers.get("vary")).toBe("Cookie");
     const body = await response.json();
     expect(body.message).toBe("Contact export filters are invalid. Clear the filters and try again.");
-    expect(mocks.context).not.toHaveBeenCalled();
+    // Step-up (15-minute sign-in) resolves the actor once before the handler validates filters; no data is read.
+    expect(mocks.context).toHaveBeenCalledTimes(1);
     expect(mocks.exportCsv).not.toHaveBeenCalled();
   });
 
@@ -46,7 +47,8 @@ describe("College contact CSV read route role and failure matrix", () => {
       const response = await GET(new Request("https://lms.example/api/college/contacts/export?" + query));
       expect(response.status).toBe(400);
     }
-    expect(mocks.context).not.toHaveBeenCalled();
+    // Step-up (15-minute sign-in) resolves the actor once per request before the handler validates filters.
+    expect(mocks.context).toHaveBeenCalledTimes(3);
     expect(mocks.exportCsv).not.toHaveBeenCalled();
   });
 
@@ -60,7 +62,8 @@ describe("College contact CSV read route role and failure matrix", () => {
     expect(response.headers.get("x-export-total")).toBe("1");
     expect(response.headers.get("x-export-truncated")).toBe("false");
     expect(await response.text()).toContain("s•••@example.edu");
-    expect(mocks.context).toHaveBeenCalledTimes(1);
+    // Wrapper lookup for step-up plus the handler's own (in production the second reuses the first).
+    expect(mocks.context).toHaveBeenCalledTimes(2);
     expect(mocks.exportCsv).toHaveBeenCalledTimes(1);
     expect(mocks.exportCsv.mock.calls[0][1]).toMatchObject({tab:"STUDENT"});
   });
@@ -76,3 +79,6 @@ describe("College contact CSV read route role and failure matrix", () => {
     expect(await response.text()).not.toContain("Masked");
   });
 });
+
+// The route now requires a sign-in no older than 15 minutes (step-up); this test is about its filter handling.
+vi.mock("@/auth/recent-device-auth", () => ({ requireRecentDeviceAuthentication: async () => undefined }));

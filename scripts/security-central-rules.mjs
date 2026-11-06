@@ -10,7 +10,7 @@ export const RULES = {
 };
 
 // Owner decision 2026-11-06: these need a sign-in no older than 15 minutes.
-const SENSITIVE_PATH = new RegExp(
+export const SENSITIVE_PATH = new RegExp(
   "(?:^|[/])(?:[a-z-]*export[a-z-]*|[a-z-]*import[a-z-]*|grants?|roles?|permissions?|disable|secrets?|integrations?|tenant-settings|platform-settings|api-keys?)(?:[/]|$)",
   "i",
 );

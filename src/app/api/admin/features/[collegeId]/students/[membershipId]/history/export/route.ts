@@ -23,4 +23,4 @@ async function handleGET(request:Request,{params}:{params:Promise<{collegeId:str
   }});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = secured(handleGET, { stepUp: true });

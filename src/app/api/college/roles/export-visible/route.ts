@@ -24,4 +24,4 @@ async function handleGET(req:Request){
   }});
  }catch(e){return apiErrorResponse(e);}
 }
-export const GET = secured(handleGET);
+export const GET = secured(handleGET, { stepUp: true });

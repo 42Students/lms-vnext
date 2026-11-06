@@ -20,4 +20,4 @@ async function handleGET(_request:Request,{params}:{params:Promise<{batchId:stri
   }});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = secured(handleGET, { stepUp: true });

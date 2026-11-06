@@ -37,6 +37,8 @@ export type SecuredDeps = {
   requirePermission?: (context: never, permission: string) => void;
   /** Called with the resolved actor once its permission passed, so the handler's first lookup can reuse it. */
   onPermitted?: (context: unknown) => void;
+  /** Throws when the actor's sign-in is older than maxAgeSeconds (step-up authentication). */
+  requireFreshAuth?: (context: unknown, maxAgeSeconds: number) => Promise<void>;
   /** Maps a thrown session/authorization error to the platform's standard response. */
   onError?: (error: unknown) => Response;
 };
@@ -50,6 +52,12 @@ export type SecuredOptions = {
    * that a missing permission is refused before any work.
    */
   permission?: string;
+  /**
+   * Step-up authentication: the sign-in must be no older than 15 minutes (or `{ maxAgeSeconds }`). Checked after the
+   * origin check and before the handler, like `permission`; sensitive actions only (role/permission changes, user
+   * disable or delete, bulk export/import, secret/integration and tenant settings).
+   */
+  stepUp?: true | { maxAgeSeconds: number };
 };
 
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
@@ -107,11 +115,14 @@ export function createSecured(deps: SecuredDeps) {
           audit(403);
           return denied;
         }
-        if (options.permission) {
-          if (!deps.getContext || !deps.requirePermission || !deps.onError) throw new Error("permission requires getContext, requirePermission and onError.");
+        if (options.permission || options.stepUp) {
+          if (!deps.getContext || !deps.onError) throw new Error("permission and stepUp require getContext and onError.");
+          if (options.permission && !deps.requirePermission) throw new Error("permission requires requirePermission.");
+          if (options.stepUp && !deps.requireFreshAuth) throw new Error("stepUp requires requireFreshAuth.");
           try {
             const context = await deps.getContext();
-            deps.requirePermission(context as never, options.permission);
+            if (options.permission) deps.requirePermission!(context as never, options.permission);
+            if (options.stepUp) await deps.requireFreshAuth!(context, options.stepUp === true ? 900 : options.stepUp.maxAgeSeconds);
             deps.onPermitted?.(context);
           } catch (error) {
             const denied = deps.onError(error);

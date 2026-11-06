@@ -23,4 +23,4 @@ async function handlePOST(request: Request) {
     return apiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = secured(handlePOST, { csrf: "enforce", stepUp: true });

@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { isSameOriginRequest } from "@/auth/origin";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
+import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { requirePermission, type PlatformPermission } from "@/modules/permissions/policy";
 import { currentTenantScope, offerRequestValue, runWithTenantHolder } from "@/db/tenant-context";
 import { writeStructuredLog } from "@/observability/logger";
@@ -27,6 +28,9 @@ export const secured = createSecured({
   newRequestId: () => randomUUID(),
   getContext: () => getCurrentRequestContext(),
   requirePermission: (context, permission) => requirePermission(context, permission as PlatformPermission),
+  requireFreshAuth: async (context, maxAgeSeconds) => {
+    await requireRecentDeviceAuthentication((context as { user: { id: string } }).user.id, maxAgeSeconds);
+  },
   onPermitted: (context) => offerRequestValue("request-context", context),
   onError: (error) => apiErrorResponse(error),
 });

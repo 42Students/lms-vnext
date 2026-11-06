@@ -30,4 +30,4 @@ async function handleGET(request:Request){
   return response;
  }
 }
-export const GET = secured(handleGET);
+export const GET = secured(handleGET, { stepUp: true });
