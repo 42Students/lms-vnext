@@ -8,7 +8,7 @@ import { getLearnerPlacementJourney } from "@/modules/placements/learner-journey
 export const runtime = "nodejs";
 
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "actor-owned" },
   async ({ context: actor }) => {
     const context = actor!;
     if (!context.membership || !hasMembershipRole(context, "LEARNER")) {

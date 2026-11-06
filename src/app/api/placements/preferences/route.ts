@@ -13,7 +13,7 @@ import {
 export const runtime = "nodejs";
 
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "actor-owned" },
   async ({ context: actor }) => {
     const context = actor!;
     await requireLearnerPlacementAccess(context);
@@ -24,7 +24,7 @@ export const GET = route(
 );
 
 export const PUT = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "actor-owned" },
   async ({ request, context: actor }) => {
     const context = actor!;
     await requireLearnerPlacementAccess(context);
@@ -40,7 +40,7 @@ export const PUT = route(
 
 /** Conflict-aware partial update, unlike the legacy full-form PUT. */
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "actor-owned" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const preferences=await patchCandidatePreferences(context,await request.json());

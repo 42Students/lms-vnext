@@ -7,7 +7,7 @@ import { listMyDriveDayRounds } from "@/modules/placements/drive-day-coordinator
 export const runtime = "nodejs";
 
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "actor-owned" },
   async ({ context: actor }) => {
     const context = actor!;
     const rounds =

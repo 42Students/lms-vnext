@@ -12,7 +12,7 @@ import {
 export const runtime = "nodejs";
 
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "actor-owned" },
   async ({ context: actor }) => {
     const context = actor!;
     await requireLearnerPlacementAccess(context);
@@ -22,7 +22,7 @@ export const GET = route(
 );
 
 export const PUT = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "actor-owned" },
   async ({ request, context: actor }) => {
     const context = actor!;
     await requireLearnerPlacementAccess(context);

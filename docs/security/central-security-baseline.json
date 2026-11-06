@@ -1411,7 +1411,7 @@
   },
   "src/app/api/placements/academic-evidence/me/route.ts": {
    "raw-request-json": 1,
-   "service-enforced": 2
+   "actor-owned": 2
   },
   "src/app/api/placements/applications/[applicationId]/actions/route.ts": {
    "route-on-shim-only": 1,
@@ -1431,7 +1431,7 @@
    "service-enforced": 1
   },
   "src/app/api/placements/applications/me/route.ts": {
-   "service-enforced": 1
+   "actor-owned": 1
   },
   "src/app/api/placements/college/drives/bulk/route.ts": {
    "route-on-shim-only": 1,
@@ -1525,7 +1525,7 @@
    "service-enforced": 1
   },
   "src/app/api/placements/drive-day/mine/route.ts": {
-   "service-enforced": 1
+   "actor-owned": 1
   },
   "src/app/api/placements/interviews/withdrawal-request/route.ts": {
    "raw-request-json": 1
@@ -1642,7 +1642,7 @@
    "route-on-shim-only": 1
   },
   "src/app/api/placements/journey/me/route.ts": {
-   "service-enforced": 1
+   "actor-owned": 1
   },
   "src/app/api/placements/learner/applications/[applicationId]/resume/route.ts": {
    "route-on-shim-only": 1,
@@ -1678,11 +1678,11 @@
   },
   "src/app/api/placements/preferences/notifications/route.ts": {
    "raw-request-json": 1,
-   "service-enforced": 2
+   "actor-owned": 2
   },
   "src/app/api/placements/preferences/route.ts": {
    "raw-request-json": 2,
-   "service-enforced": 3
+   "actor-owned": 3
   },
   "src/app/api/placements/recorded-outside/route.ts": {
    "route-on-shim-only": 1
@@ -1835,7 +1835,7 @@
    "direct-db-in-route": 1
   },
   "src/app/api/placements/requests/me/route.ts": {
-   "service-enforced": 1
+   "actor-owned": 1
   },
   "src/app/api/placements/requests/prep/route.ts": {
    "route-on-shim-only": 1
@@ -1849,7 +1849,7 @@
    "service-enforced": 1
   },
   "src/app/api/placements/results/me/route.ts": {
-   "service-enforced": 1
+   "actor-owned": 1
   },
   "src/app/api/placements/rounds/[roundId]/actions/route.ts": {
    "raw-request-json": 1
@@ -2926,7 +2926,7 @@
    "route-on-shim-only": 1
   },
   "src/app/api/projects/me/route.ts": {
-   "service-enforced": 1
+   "actor-owned": 1
   },
   "src/app/api/projects/mentor-candidates/route.ts": {
    "route-on-shim-only": 1

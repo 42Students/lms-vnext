@@ -25,7 +25,7 @@ export const LEGACY_LEARNER_JOBS_ROUTE_CROSSWALK = {
 } as const;
 
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "actor-owned" },
   async ({ context: actor }) => {
     const context = actor!;
     const applications =

@@ -11,7 +11,7 @@ export const runtime="nodejs";
 /** Own notification facet only. Legacy JobPreferences role/city/shift fields
  * belong to the learner profile and cannot be reconstructed here. */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "actor-owned" },
   async ({ context: actor }) => {
     const context = actor!;
     const {notifyMatchingJobs,notifyApplicationUpdates}=await getCandidatePreferences(context);
@@ -22,7 +22,7 @@ export const GET = route(
 
 
 export const PUT = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "actor-owned" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const preferences=await updateOwnPlacementNotificationPreferences(context,await request.json());
