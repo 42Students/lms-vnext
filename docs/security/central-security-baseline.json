@@ -1271,15 +1271,6 @@
   "src/app/api/internal/placements/tpo/interview-evening/route.ts": {
    "route-not-on-wrapper": 1
   },
-  "src/app/api/internal/placements/tpo/notices/deliver/route.ts": {
-   "route-not-on-wrapper": 1
-  },
-  "src/app/api/internal/placements/tpo/offer-expiry/run/route.ts": {
-   "route-not-on-wrapper": 1
-  },
-  "src/app/api/internal/placements/tpo/scheduler-status/route.ts": {
-   "route-not-on-wrapper": 1
-  },
   "src/app/api/internal/placements/tpo/withdrawal-escalations/run/route.ts": {
    "route-not-on-wrapper": 1
   },
