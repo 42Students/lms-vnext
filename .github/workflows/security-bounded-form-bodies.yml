@@ -46,3 +46,5 @@ jobs:
         run: npx vitest run tests/unit/security-bounded-form-data.test.ts
       - name: Typecheck bounded form and API integration
         run: npm run typecheck
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
