@@ -196,6 +196,8 @@ jobs:
         run: npm run db:test:prepare
       - name: Migration replay idempotence
         run: npm run db:migrate
+      - name: Tenant row-level security acceptance (non-superuser role, inert and enforce modes)
+        run: node scripts/rls-tenant-acceptance.mjs
       - name: Read-only PostgreSQL 17 migration/catalog witness
         run: node scripts/db002-postgres-catalog-acceptance.mjs
       - name: DB017 relationship-scoped disclosure defaults negative and tenant checks

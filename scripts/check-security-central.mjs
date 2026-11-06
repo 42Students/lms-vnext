@@ -3,6 +3,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { RULES, scanRoute } from "./security-central-rules.mjs";
+import { analyse } from "./rls-tenant-tables.mjs";
 
 const BASELINE_PATH = "docs/security/central-security-baseline.json";
 const args = new Set(process.argv.slice(2));
@@ -12,6 +13,7 @@ for (const p of files) {
   let s; try { s = readFileSync(p, "utf8"); } catch { continue; }
   for (const f of scanRoute(p, s)) ((counts[p] ??= {})[f.rule] = (counts[p][f.rule] ?? 0) + 1);
 }
+{ const { missing } = analyse(); if (missing.length) counts["drizzle (database)"] = { "tenant-table-without-rls": missing.length }; }
 const totals = Object.fromEntries(Object.keys(RULES).map((r) => [r, 0]));
 for (const r of Object.values(counts)) for (const [k, n] of Object.entries(r)) totals[k] += n;
 // Converting an existing off-wrapper route may add interim "service-enforced" debt once; brand-new routes may not.

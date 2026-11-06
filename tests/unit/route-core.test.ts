@@ -97,3 +97,13 @@ describe("repeatable query keys", () => {
     expect((await h(new Request("https://a.test/x?a=1&a=2"))).status).toBe(400);
   });
 });
+
+describe("database scope", () => {
+  it("runs the handler inside the actor scope, and only for authenticated routes", async () => {
+    const seen: unknown[] = [];
+    const { route } = setup({ runInScope: (ctx: unknown, fn: () => unknown) => { seen.push(ctx); return fn(); } });
+    await route({ auth: "user", permission: "service-enforced" }, async () => Response.json({}))(new Request("https://a.test/x"));
+    await route({ auth: "public", publicReason: "x" }, async () => Response.json({}))(new Request("https://a.test/x"));
+    expect(seen).toEqual([{ uid: "u1" }]);
+  });
+});

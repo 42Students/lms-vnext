@@ -1,5 +1,6 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool, type PoolConfig } from "pg";
+import { withTenantScope } from "./tenant-pool";
 import {
   getDatabaseConnectionConfig,
   getServerEnv,
@@ -50,7 +51,8 @@ function poolConfig(): PoolConfig {
 }
 
 function getPool() {
-  state.pool ??= new Pool(poolConfig());
+  // DB_TENANT_SCOPE=on makes every connection carry the request's college/user/role for row-level security.
+  state.pool ??= withTenantScope(new Pool(poolConfig()), process.env["DB_TENANT_SCOPE"] === "on");
   return state.pool;
 }
 

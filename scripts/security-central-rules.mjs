@@ -3,6 +3,7 @@ export const RULES = {
   "route-not-on-wrapper": "API route does not use the central route() wrapper",
   "raw-request-json": "route reads the body with request.json() instead of the bounded reader/wrapper",
   "direct-db-in-route": "route imports getDb directly instead of going through the data layer",
+  "tenant-table-without-rls": "table has a college_id column but no tenant RLS policy (run: node scripts/generate-rls-migration.mjs)",
   "service-enforced": "route declares permission 'service-enforced' (replace with a named permission)",
 };
 

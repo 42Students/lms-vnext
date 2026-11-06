@@ -22,6 +22,8 @@ export type RouteDeps<Context> = {
   /** Maps any thrown value (session, authorization, validation, service errors) to a safe response. */
   onError: (error: unknown) => Response;
   newRequestId: () => string;
+  /** Runs the handler inside the actor's database scope (row-level security reads it). Optional so the core stays framework-free. */
+  runInScope?: <T>(context: Context, fn: () => T) => T;
 };
 
 type Common = {
@@ -131,7 +133,8 @@ export function createRoute<Context, Permission extends string = string>(deps: R
         }
 
         const params = routeContext?.params ? await routeContext.params : {};
-        const response = await handler({ request, context, body, query, params, requestId });
+        const run = () => handler({ request, context, body, query, params, requestId });
+        const response = await (context !== null && deps.runInScope ? deps.runInScope(context, run) : run());
         return withHeaders(response, requestId);
       } catch (error) {
         return withHeaders(deps.onError(error), requestId);

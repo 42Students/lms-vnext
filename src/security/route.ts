@@ -4,6 +4,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { requirePermission, type PlatformPermission } from "@/modules/permissions/policy";
+import { runWithTenantScope, scopeFromActor } from "@/db/tenant-context";
 import { createRoute } from "@/security/route-core";
 
 type Context = Awaited<ReturnType<typeof getCurrentRequestContext>>;
@@ -20,4 +21,5 @@ export const route = createRoute<Context, PlatformPermission>({
   readJson: readBoundedJsonBody,
   onError: apiErrorResponse,
   newRequestId: () => randomUUID(),
+  runInScope: (context, fn) => runWithTenantScope(scopeFromActor(context as never), fn),
 });

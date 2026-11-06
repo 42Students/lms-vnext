@@ -2332,6 +2332,13 @@
       "when": 1793258350954,
       "tag": "0332_db03_elective_slot_year_and_course_college",
       "breakpoints": true
+    },
+    {
+      "idx": 333,
+      "version": "7",
+      "when": 1793258410954,
+      "tag": "0333_rls_tenant_policies",
+      "breakpoints": true
     }
   ]
 }
