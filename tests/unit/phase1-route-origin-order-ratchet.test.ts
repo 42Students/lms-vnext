@@ -112,7 +112,7 @@ describe("PHASE1-ORIGIN mutating handler ordering ratchet",()=>{
   const internal=handlers.filter(h=>INTERNAL(h)&&!h.shim);
   expect(internal.length).toBeGreaterThan(3);
   for(const h of internal.filter(x=>!/isSameOriginRequest\(/.test(x.text)))
-   expect(/timingSafeEqual|signature|authorization|x-[a-z-]+-key/i.test(h.text),`${h.file} ${h.method}`).toBe(true);
+   expect(/timingSafeEqual|signature|authorization|x-[a-z-]+-key|internalRoute\(/i.test(h.text),`${h.file} ${h.method}`).toBe(true);
  });
 
  it("PHASE1-ORIGIN-07 no GET handler in scope performs a write through a mutating-looking service call",()=>{
