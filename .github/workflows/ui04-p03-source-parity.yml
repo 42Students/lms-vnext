@@ -15,6 +15,9 @@ on:
       - "tests/ui04-source-parity.test.mjs"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   ui04-p03-source-parity:
     name: UI-04 P03 source parity (no browser)

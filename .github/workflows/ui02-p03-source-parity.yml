@@ -30,6 +30,9 @@ on:
       - "tests/ui02-source-parity.test.mjs"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   ui02-source-parity:
     runs-on: ubuntu-latest

@@ -1,0 +1,65 @@
+# Executed checks for repository governance and browser-header controls
+# (SEC-18-004, SEC-18-005, SEC-18-018, SEC-25-013, SEC-12-010, SEC-12-011, SEC-12-017).
+# These prove the files, workflow permissions and response headers say what the controls require.
+# They do not prove GitHub is enforcing them (branch protection is SEC-18-002) or that a deployed
+# environment serves the headers; those need deployed-configuration evidence.
+name: Security - governance files and response headers
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/**"
+      - "SECURITY.md"
+      - "src/security/headers.ts"
+      - "next.config.ts"
+      - "tests/security-governance-files.test.mjs"
+      - "tests/unit/security-headers.test.ts"
+      - "tests/unit/private-api-cache-headers.test.ts"
+  push:
+    branches: [main]
+    paths:
+      - ".github/**"
+      - "SECURITY.md"
+      - "src/security/headers.ts"
+      - "next.config.ts"
+      - "tests/security-governance-files.test.mjs"
+      - "tests/unit/security-headers.test.ts"
+      - "tests/unit/private-api-cache-headers.test.ts"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-governance-files-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  governance-files:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: CODEOWNERS, Dependabot, SECURITY.md, PR template and workflow permissions
+        run: node --test tests/security-governance-files.test.mjs
+
+  response-headers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: CSP, HSTS, COOP, Permissions-Policy and private API cache headers
+        run: npx vitest run tests/unit/security-headers.test.ts tests/unit/private-api-cache-headers.test.ts

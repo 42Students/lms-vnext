@@ -17,6 +17,9 @@ on:
 concurrency:
   group: db02-db03-core-${{ github.ref }}
   cancel-in-progress: true
+permissions:
+  contents: read
+
 jobs:
   registered-course-elective-integration:
     runs-on: ubuntu-latest

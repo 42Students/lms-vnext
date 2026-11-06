@@ -51,11 +51,20 @@ export const BASE_SECURITY_HEADERS = [
   },
   {
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=()",
+    value: "camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), serial=(), interest-cohort=()",
   },
   {
     key: "Strict-Transport-Security",
-    value: "max-age=15552000",
+    value: "max-age=31536000",
+  },
+  {
+    key: "Cross-Origin-Opener-Policy",
+    // Isolates the browsing context group but keeps OAuth popups working.
+    value: "same-origin-allow-popups",
+  },
+  {
+    key: "X-Permitted-Cross-Domain-Policies",
+    value: "none",
   },
   {
     key: "Content-Security-Policy",

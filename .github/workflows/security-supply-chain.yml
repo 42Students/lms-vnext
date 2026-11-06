@@ -1,0 +1,52 @@
+# Supply-chain gate (SEC-18-010, SEC-18-011, SEC-18-015, SEC-18-018, SEC-18-019, SEC-18-020).
+# - fails on any high or critical advisory in production dependencies
+# - reports (does not fail on) advisories in development tooling
+# - rejects non-registry or hash-less lockfile entries
+# - publishes a CycloneDX SBOM as a build artifact
+name: Security - supply chain
+
+on:
+  pull_request:
+    paths: ["package.json", "package-lock.json", ".github/workflows/security-supply-chain.yml", "scripts/check-lockfile-sources.mjs"]
+  push:
+    branches: [main]
+    paths: ["package.json", "package-lock.json", ".github/workflows/security-supply-chain.yml", "scripts/check-lockfile-sources.mjs"]
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-supply-chain-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  supply-chain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Lockfile sources and integrity
+        run: node scripts/check-lockfile-sources.mjs
+      - name: Reproducible install without lifecycle scripts
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Production dependencies must have no high or critical advisories
+        run: npm audit --omit=dev --audit-level=high
+      - name: Development tooling advisories (report only)
+        continue-on-error: true
+        run: npm audit --audit-level=high
+      - name: Generate SBOM
+        run: npm sbom --sbom-format cyclonedx --omit dev > sbom.cdx.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbom-cyclonedx
+          path: sbom.cdx.json
+          retention-days: 90

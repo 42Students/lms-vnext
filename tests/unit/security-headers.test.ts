@@ -71,4 +71,19 @@ describe("content security policy and transport security", () => {
       /max-age=\d{7,}/,
     );
   });
+
+  it("keeps HSTS at one year or more", () => {
+    const age = Number(/max-age=(\d+)/.exec(String(values.get("Strict-Transport-Security")))?.[1]);
+    expect(age).toBeGreaterThanOrEqual(31_536_000);
+  });
+
+  it("isolates the browsing context group without breaking popups", () => {
+    expect(values.get("Cross-Origin-Opener-Policy")).toBe("same-origin-allow-popups");
+    expect(values.get("X-Permitted-Cross-Domain-Policies")).toBe("none");
+  });
+
+  it("denies powerful browser features the product never uses", () => {
+    const policy = String(values.get("Permissions-Policy"));
+    for (const feature of ["payment=()", "usb=()", "bluetooth=()", "serial=()"]) expect(policy).toContain(feature);
+  });
 });

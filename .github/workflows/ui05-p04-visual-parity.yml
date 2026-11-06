@@ -5,6 +5,9 @@ on:
   schedule:
     - cron: '0 2 * * *'
 
+permissions:
+  contents: read
+
 jobs:
   visual-parity:
     runs-on: ubuntu-latest

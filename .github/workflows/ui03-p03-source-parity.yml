@@ -19,6 +19,9 @@ on:
       - "tests/ui03-source-parity.test.mjs"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   ui03-source-parity:
     runs-on: ubuntu-latest

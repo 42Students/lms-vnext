@@ -6,6 +6,9 @@ on:
     # Run nightly at 01:00 UTC
     - cron: '0 1 * * *'
 
+permissions:
+  contents: read
+
 jobs:
   visual-parity:
     runs-on: ubuntu-latest

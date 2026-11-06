@@ -1,0 +1,21 @@
+# Security-critical paths need review from an owner (SEC-18-003, SEC-18-004).
+# With branch protection enabled, "Require review from Code Owners" makes this binding.
+# Add more owners here as the team grows; every line below currently maps to the repository owner.
+
+* @techbyphani
+
+/src/security/                  @techbyphani
+/src/db/                        @techbyphani
+/drizzle/                       @techbyphani
+/src/proxy.ts                   @techbyphani
+/src/modules/identity/          @techbyphani
+/src/modules/people/            @techbyphani
+/src/modules/storage/           @techbyphani
+/src/app/api/internal/          @techbyphani
+/next.config.ts                 @techbyphani
+/Dockerfile                     @techbyphani
+/scripts/deploy-from-artifact.ps1 @techbyphani
+/.github/                       @techbyphani
+/docs/security/                 @techbyphani
+/package.json                   @techbyphani
+/package-lock.json              @techbyphani

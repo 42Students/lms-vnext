@@ -10,6 +10,9 @@ on:
       - '.github/workflows/api01-p01-crosswalk.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   crosswalk:
     name: API-01-P01 crosswalk completeness

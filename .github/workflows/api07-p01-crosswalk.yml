@@ -10,6 +10,9 @@ on:
       - '.github/workflows/api07-p01-crosswalk.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   crosswalk:
     name: "API07-P01 placements endpoint crosswalk"

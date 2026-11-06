@@ -755,8 +755,29 @@ jobs:
         env:
           DATABASE_URL: ""
         run: npm run db:test:prepare
+      - name: Create the least-privileged runtime role for the smoke server
+        # The app refuses to start as a superuser, owner or BYPASSRLS role (DATABASE_APP_PRINCIPAL_UNSAFE).
+        # This role has no ownership, no TRUNCATE, no CREATE and no membership in other roles.
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql "postgresql://postgres@127.0.0.1:5432/lms_vnext_smoke_test" -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE ROLE lms_runtime LOGIN PASSWORD 'lms_runtime_smoke' NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS NOINHERIT;
+          GRANT CONNECT ON DATABASE lms_vnext_smoke_test TO lms_runtime;
+          DO $$
+          DECLARE s text;
+          BEGIN
+            FOR s IN SELECT nspname FROM pg_namespace WHERE nspname NOT IN ('pg_catalog','information_schema') AND nspname NOT LIKE 'pg_toast%' AND nspname NOT LIKE 'pg_temp_%' LOOP
+              EXECUTE format('GRANT USAGE ON SCHEMA %I TO lms_runtime', s);
+              EXECUTE format('GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA %I TO lms_runtime', s);
+              EXECUTE format('GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA %I TO lms_runtime', s);
+            END LOOP;
+          END $$;
+          SQL
       - name: Standalone HTTP smoke
         shell: bash
+        env:
+          DATABASE_URL: postgresql://lms_runtime:lms_runtime_smoke@127.0.0.1:5432/lms_vnext_smoke_test
         run: |
           set -euo pipefail
           PORT=3000 HOSTNAME=127.0.0.1 node .next/standalone/server.js > /tmp/lms-vnext-smoke.log 2>&1 &

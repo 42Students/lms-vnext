@@ -10,6 +10,9 @@ on:
       - "tests/ui10-source-parity.test.mjs"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   ui10-global-gate:
     runs-on: ubuntu-latest

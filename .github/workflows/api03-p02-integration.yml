@@ -8,6 +8,9 @@ on:
       - ".github/workflows/api03-p02-integration.yml"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   integration-gate:
     runs-on: ubuntu-latest

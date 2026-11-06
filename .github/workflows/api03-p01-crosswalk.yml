@@ -9,6 +9,9 @@ on:
       - ".github/workflows/api03-p01-crosswalk.yml"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   crosswalk-gate:
     runs-on: ubuntu-latest

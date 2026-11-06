@@ -8,10 +8,13 @@ on:
       - ".github/workflows/schema-drift-capture.yml"
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   promote-file-enum:
+    # Writes a migration commit to main; the only job that needs more than read.
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
