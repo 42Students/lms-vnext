@@ -46,7 +46,7 @@ jobs:
       DB023_STAGED_PG: "YES"
       DB10_LOG_ALERTS_READY: "NO"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: 22

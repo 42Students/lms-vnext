@@ -52,7 +52,7 @@ jobs:
       DB018_ISOLATED_TEST_DATABASE: "1"
       DB041_REGISTERED_PG: "YES"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: 22
