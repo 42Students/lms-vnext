@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -5,27 +6,21 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoBatch } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { decidePlacementParticipation, PlacementBatchError } from "@/modules/placements/batch-participation-service";
 import { tpoBatchDecisionSchema } from "@/modules/placements/tpo-batch-decision-model";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Params={params:Promise<{batchId:string}>};
-async function handlePOST(request:Request,{params}:Params){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const ctx=await getCurrentRequestContext(),{batchId}=await params;
-  const {collegeId,ready,lifecycle}=await getTpoBatch(ctx,batchId);
-  if(lifecycle?.finishedAt)return NextResponse.json({error:"BATCH_FINISHED"},{status:409});
-  if(!ready)return NextResponse.json({error:"BATCH_MIGRATION_PENDING"},{status:503});
-  const input=tpoBatchDecisionSchema.parse(await request.json());
-  // This endpoint changes the COHORT scope only, never a learner's override.
-  const outcome=await decidePlacementParticipation(ctx,{collegeId,expectedCohortId:batchId,changes:[{
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const ctx = __actor!;
+    const {batchId}=params;
+    const {collegeId,ready,lifecycle}=await getTpoBatch(ctx,batchId);
+    if(lifecycle?.finishedAt)return NextResponse.json({error:"BATCH_FINISHED"},{status:409});
+    if(!ready)return NextResponse.json({error:"BATCH_MIGRATION_PENDING"},{status:503});
+    const input=tpoBatchDecisionSchema.parse(await request.json());
+    const outcome=await decidePlacementParticipation(ctx,{collegeId,expectedCohortId:batchId,changes:[{
    scopeType:"COHORT",scopeId:batchId,status:input.decision,
    reason:input.decision==="INELIGIBLE"?input.reason:null,expectedVersion:input.expectedVersion,
   }]});
-  return NextResponse.json(outcome,{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){
-  if(error instanceof PlacementBatchError&&["DB08_ACTION_STALE","DB08_BATCH_FINISHED"].includes(error.code))
-   return NextResponse.json({error:"BATCH_DECISION_CHANGED"},{status:409});
-  return apiErrorResponse(error);
- }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+    return NextResponse.json(outcome,{headers:{"Cache-Control":"private, no-store"}});
+  },
+);

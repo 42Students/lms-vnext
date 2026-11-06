@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -5,7 +6,6 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {createPlacementDebarment,liftPlacementDebarment,listTpoMemberDebarments,PlacementDebarmentError} from "@/modules/placements/debarment-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Context={params:Promise<{membershipId:string}>};
 const input=z.discriminatedUnion("action",[
@@ -15,21 +15,23 @@ const input=z.discriminatedUnion("action",[
  z.object({action:z.literal("LIFT"),debarmentId:z.string().uuid(),
   reason:z.string().trim().min(1).max(500)}).strict(),
 ]);
-async function handleGET(_request:Request,{params}:Context){
- try{
-  const ctx=await getCurrentRequestContext(),{membershipId}=await params;
-  const rows=await listTpoMemberDebarments(ctx,membershipId);
-  return NextResponse.json({rows},{headers:{"Cache-Control":"private, no-store"}});
- }catch(e){return apiErrorResponse(e);}
-}
-export const GET = secured(handleGET);
-async function handlePOST(request:Request,{params}:Context){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const ctx=await getCurrentRequestContext(),collegeId=await requireTpoBatchActor(ctx);
-  const {membershipId}=await params,body=input.parse(await request.json());
-  const rows=await listTpoMemberDebarments(ctx,membershipId);
-  if(body.action==="LIFT"){
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor, params }) => {
+    const ctx = __actor!;
+    const {membershipId}=params;
+    const rows=await listTpoMemberDebarments(ctx,membershipId);
+    return NextResponse.json({rows},{headers:{"Cache-Control":"private, no-store"}});
+  },
+);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const ctx = __actor!;
+    const collegeId=await requireTpoBatchActor(ctx);
+    const {membershipId}=params,body=input.parse(await request.json());
+    const rows=await listTpoMemberDebarments(ctx,membershipId);
+    if(body.action==="LIFT"){
    const own=rows.find(row=>row.id===body.debarmentId);
    if(!own)return NextResponse.json({error:"NOT_FOUND"},{status:404});
    await liftPlacementDebarment(ctx,{debarmentId:body.debarmentId,reason:body.reason});
@@ -37,12 +39,7 @@ async function handlePOST(request:Request,{params}:Context){
    await createPlacementDebarment(ctx,{collegeId,membershipId,
     reason:body.reason,untilDate:body.untilDate??null,untilDrives:body.untilDrives??null});
   }
-  return NextResponse.json({rows:await listTpoMemberDebarments(ctx,membershipId)},
+    return NextResponse.json({rows:await listTpoMemberDebarments(ctx,membershipId)},
    {headers:{"Cache-Control":"private, no-store"}});
- }catch(e){
-  if(e instanceof PlacementDebarmentError&&e.code==="DB08_DEBARMENT_ALREADY_ACTIVE")
-   return NextResponse.json({error:"CONFLICT"},{status:409});
-  return apiErrorResponse(e);
- }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

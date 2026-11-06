@@ -66,7 +66,7 @@ for (const p of files) {
     const ctxIdx = body.findIndex((s) => ts.isVariableStatement(s) && /^await getCurrentRequestContext\(\)$/.test(s.declarationList.declarations[0].initializer?.getText() ?? ""));
     if (ctxIdx < 0) { ok = false; reason = "no-ctx-stmt"; break; }
     const ctxName = body[ctxIdx].declarationList.declarations[0].name.getText();
-    if (ctxName !== "context") { ok = false; reason = "ctx-name"; break; }
+    if (!/^[A-Za-z_$][\w$]*$/.test(ctxName) || ["request", "params", "__actor"].includes(ctxName)) { ok = false; reason = "ctx-name"; break; }
     const ctxDecls = body[ctxIdx].declarationList.declarations;
     let extra = null;
     if (ctxDecls.length > 1) {
@@ -98,9 +98,9 @@ for (const p of files) {
     }
     const hasParams = usesParams && /\bparams\b/.test(parts.join("\n"));
     const usesRequest = new RegExp("\\b" + reqName + "\\b").test(parts.join("\n"));
-    const args = [usesRequest ? (reqName === "request" ? "request" : "request: " + reqName) : null, "context: actor", hasParams ? "params" : null].filter(Boolean).join(", ");
+    const args = [usesRequest ? (reqName === "request" ? "request" : "request: " + reqName) : null, "context: __actor", hasParams ? "params" : null].filter(Boolean).join(", ");
     const inner = parts.map((t) => "    " + t).join("\n");
-    const out = `export const ${name} = route(\n  { auth: "user", permission: "service-enforced" },\n  async ({ ${args} }) => {\n    const context = actor!;\n${inner}\n  },\n);`;
+    const out = `export const ${name} = route(\n  { auth: "user", permission: "service-enforced" },\n  async ({ ${args} }) => {\n    const ${ctxName} = __actor!;\n${inner}\n  },\n);`;
     edits.push([fn.getStart(), fn.getEnd(), out]);
     handlers++;
   }

@@ -164,8 +164,8 @@
    "route-on-shim-only": 1
   },
   "src/app/api/admin/assignments/content/save/route.ts": {
-   "route-on-shim-only": 1,
-   "direct-db-in-route": 1
+   "direct-db-in-route": 1,
+   "service-enforced": 1
   },
   "src/app/api/admin/assignments/export/route.ts": {
    "route-on-shim-only": 1
@@ -1302,8 +1302,8 @@
    "sensitive-without-step-up": 1
   },
   "src/app/api/mentor/task-reviews/export/route.ts": {
-   "route-on-shim-only": 1,
-   "sensitive-without-step-up": 1
+   "sensitive-without-step-up": 1,
+   "service-enforced": 1
   },
   "src/app/api/notifications/[notificationId]/delete/route.ts": {
    "route-on-shim-only": 1
@@ -1434,8 +1434,8 @@
    "actor-owned": 1
   },
   "src/app/api/placements/college/drives/bulk/route.ts": {
-   "route-on-shim-only": 1,
-   "raw-request-json": 1
+   "raw-request-json": 1,
+   "service-enforced": 1
   },
   "src/app/api/placements/college/jobs/[jobId]/applications/[applicationId]/rescreen/route.ts": {
    "route-on-shim-only": 1,
@@ -1916,13 +1916,13 @@
    "route-on-shim-only": 1
   },
   "src/app/api/placements/tpo/batches/[batchId]/classes/[classId]/decision/route.ts": {
-   "route-on-shim-only": 1,
    "raw-request-json": 1,
-   "direct-db-in-route": 1
+   "direct-db-in-route": 1,
+   "service-enforced": 1
   },
   "src/app/api/placements/tpo/batches/[batchId]/decisions/route.ts": {
-   "route-on-shim-only": 1,
-   "raw-request-json": 1
+   "raw-request-json": 1,
+   "service-enforced": 1
   },
   "src/app/api/placements/tpo/batches/[batchId]/history/export/route.ts": {
    "route-on-shim-only": 1
@@ -1971,9 +1971,9 @@
    "route-on-shim-only": 1
   },
   "src/app/api/placements/tpo/batches/[batchId]/undo/route.ts": {
-   "route-on-shim-only": 1,
    "raw-request-json": 1,
-   "direct-db-in-route": 1
+   "direct-db-in-route": 1,
+   "service-enforced": 1
   },
   "src/app/api/placements/tpo/bulk-actions/confirm/route.ts": {
    "service-enforced": 1
@@ -2347,7 +2347,7 @@
    "raw-request-json": 1
   },
   "src/app/api/placements/tpo/reports/after-college/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/placements/tpo/reports/branch-season/export/route.ts": {
    "route-on-shim-only": 1
@@ -2459,8 +2459,8 @@
    "raw-request-json": 1
   },
   "src/app/api/placements/tpo/students/[membershipId]/debarments/route.ts": {
-   "route-on-shim-only": 1,
-   "raw-request-json": 1
+   "raw-request-json": 1,
+   "service-enforced": 2
   },
   "src/app/api/placements/tpo/students/[membershipId]/panel/route.ts": {
    "route-on-shim-only": 1
@@ -3063,7 +3063,7 @@
    "route-on-shim-only": 1
   },
   "src/app/api/tpo/shell-counts/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/tpo/verification/[membershipId]/[section]/documents/[receiptId]/route.ts": {
    "route-on-shim-only": 1

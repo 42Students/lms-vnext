@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -11,25 +12,23 @@ import {eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {courseOfferings} from "@/db/schema";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** Compatibility adapter for retired /api/v1/admin/assignments/content/save.
  * Uses the one registered vNext authoring transaction; no opaque historical
  * resource DTO is silently ignored or written without verified uploads. */
-async function handlePOST(request:Request){
- if(!isSameOriginRequest(request))
-  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const ctx=await getCurrentRequestContext();
-  const parsed=await readBoundedJsonRequest(request,8192);
-  if(!parsed.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
-  const raw:unknown=parsed.value;
-  const input=toModernAssignmentWrite(raw);
-  const lesson=await loadCourseLessonScope(input.lessonId);
-  requirePermission(ctx,"courses.manage",{
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const ctx = __actor!;
+    const parsed=await readBoundedJsonRequest(request,8192);
+    if(!parsed.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+    const raw:unknown=parsed.value;
+    const input=toModernAssignmentWrite(raw);
+    const lesson=await loadCourseLessonScope(input.lessonId);
+    requirePermission(ctx,"courses.manage",{
    collegeId:lesson.collegeId,organizationId:lesson.organizationId,
   });
-  if(raw&&typeof raw==="object"&&"courseId" in raw&&raw.courseId!==undefined){
+    if(raw&&typeof raw==="object"&&"courseId" in raw&&raw.courseId!==undefined){
    const courseId=z.uuid().parse(raw.courseId);
    // Legacy had a raw courseId; the vNext lesson owns its offering, not
    // an independently trusted course/college selector. Callers must use
@@ -39,8 +38,7 @@ async function handlePOST(request:Request){
    if(!offering||offering.courseId!==courseId)
     return NextResponse.json({error:"ASSIGNMENT_COURSE_SCOPE_INVALID"},{status:400});
   }
-  const assignment=await createCourseAssignment(ctx,input);
-  return NextResponse.json({assignment,message:"Assignment saved"},{status:201});
- }catch(error){return apiErrorResponse(error);}
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+    const assignment=await createCourseAssignment(ctx,input);
+    return NextResponse.json({assignment,message:"Assignment saved"},{status:201});
+  },
+);
