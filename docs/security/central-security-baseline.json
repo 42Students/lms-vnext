@@ -635,8 +635,8 @@
    "direct-db-in-route": 1
   },
   "src/app/api/college/faculty/[membershipId]/lifecycle/route.ts": {
-   "route-on-shim-only": 1,
-   "raw-request-json": 1
+   "raw-request-json": 1,
+   "service-enforced": 1
   },
   "src/app/api/college/faculty/[membershipId]/reassign-schedules/route.ts": {
    "raw-request-json": 1,
@@ -651,8 +651,8 @@
    "service-enforced": 1
   },
   "src/app/api/college/groups/[groupId]/members/route.ts": {
-   "raw-request-json": 1,
-   "service-enforced": 1
+   "route-on-shim-only": 1,
+   "raw-request-json": 1
   },
   "src/app/api/college/groups/[groupId]/route.ts": {
    "raw-request-json": 1,
@@ -803,7 +803,7 @@
    "route-on-shim-only": 1
   },
   "src/app/api/colleges/[collegeId]/branding/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 2
   },
   "src/app/api/colleges/[collegeId]/restore/route.ts": {
    "service-enforced": 1
@@ -971,7 +971,7 @@
    "raw-request-json": 1
   },
   "src/app/api/courses/faculty/assignments/[deliveryId]/command/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/courses/faculty/assignments/[deliveryId]/methods/route.ts": {
    "route-on-shim-only": 1
@@ -983,7 +983,7 @@
    "service-enforced": 1
   },
   "src/app/api/courses/faculty/attendance/[deliveryId]/schedule/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/courses/faculty/find/route.ts": {
    "route-on-shim-only": 1
@@ -992,10 +992,10 @@
    "route-on-shim-only": 1
   },
   "src/app/api/courses/faculty/live-classes/[deliveryId]/command/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/courses/faculty/quizzes/[deliveryId]/command/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/courses/faculty/reports/[kind]/[assessmentId]/csv/route.ts": {
    "service-enforced": 1
@@ -1100,8 +1100,8 @@
    "service-enforced": 1
   },
   "src/app/api/courses/quizzes/[quizId]/faculty-results/route.ts": {
-   "route-on-shim-only": 1,
-   "raw-request-json": 1
+   "raw-request-json": 1,
+   "service-enforced": 1
   },
   "src/app/api/courses/quizzes/[quizId]/my-attempts/route.ts": {
    "service-enforced": 1
@@ -1244,7 +1244,7 @@
    "route-on-shim-only": 1
   },
   "src/app/api/mentor/calendar/google/connect/route.ts": {
-   "service-enforced": 1
+   "route-on-shim-only": 1
   },
   "src/app/api/mentor/calendar/google/disconnect/route.ts": {
    "service-enforced": 1
@@ -1371,7 +1371,7 @@
    "route-on-shim-only": 1
   },
   "src/app/api/people/faculty-document/[membershipId]/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 2
   },
   "src/app/api/people/faculty-identity-evidence/purge/route.ts": {
    "raw-request-json": 1,
@@ -1746,7 +1746,7 @@
    "route-on-shim-only": 1
   },
   "src/app/api/placements/recruiter/jobs/[jobId]/applicants/[applicationId]/notes/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/placements/recruiter/jobs/[jobId]/applicants/[applicationId]/private-rating/route.ts": {
    "route-on-shim-only": 1
@@ -1841,8 +1841,8 @@
    "service-enforced": 1
   },
   "src/app/api/placements/requests/route.ts": {
-   "route-on-shim-only": 1,
-   "raw-request-json": 1
+   "raw-request-json": 1,
+   "service-enforced": 2
   },
   "src/app/api/placements/results/[resultId]/actions/route.ts": {
    "raw-request-json": 1,
@@ -2007,16 +2007,16 @@
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/campaigns/drafts/[campaignId]/send/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/placements/tpo/campaigns/drafts/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/placements/tpo/campaigns/history/export/route.ts": {
    "route-on-shim-only": 1
   },
   "src/app/api/placements/tpo/campaigns/preview-selected/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/placements/tpo/companies/[companyId]/contact-log/route.ts": {
    "route-on-shim-only": 1,
@@ -2173,8 +2173,8 @@
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/jobs/[jobId]/diversity-outreach/route.ts": {
-   "raw-request-json": 1,
-   "service-enforced": 2
+   "route-on-shim-only": 1,
+   "raw-request-json": 1
   },
   "src/app/api/placements/tpo/jobs/[jobId]/edit/route.ts": {
    "raw-request-json": 1,
@@ -2303,7 +2303,7 @@
    "raw-request-json": 1
   },
   "src/app/api/placements/tpo/my-notification-preferences/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/placements/tpo/offers/[offerId]/cascade-undo/route.ts": {
    "route-on-shim-only": 1
@@ -2432,10 +2432,10 @@
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/settings/outcome-labels/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/placements/tpo/settings/prep-readiness/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/placements/tpo/settings/recruiter-grants/export/route.ts": {
    "route-on-shim-only": 1
@@ -2487,7 +2487,7 @@
    "direct-db-in-route": 1
   },
   "src/app/api/placements/tpo/students/notes/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/placements/tpo/students/nudges/route.ts": {
    "raw-request-json": 1,
@@ -2513,7 +2513,7 @@
    "raw-request-json": 1
   },
   "src/app/api/placements/tpo/team/everyone/messages/route.ts": {
-   "service-enforced": 1
+   "route-on-shim-only": 1
   },
   "src/app/api/placements/tpo/team/everyone/mute/route.ts": {
    "route-on-shim-only": 1
@@ -2542,11 +2542,11 @@
    "raw-request-json": 1
   },
   "src/app/api/placements/tpo/team/threads/[threadId]/messages/route.ts": {
-   "service-enforced": 1
+   "route-on-shim-only": 1
   },
   "src/app/api/placements/tpo/team/threads/[threadId]/preferences/route.ts": {
-   "raw-request-json": 1,
-   "service-enforced": 1
+   "route-on-shim-only": 1,
+   "raw-request-json": 1
   },
   "src/app/api/placements/tpo/team/threads/[threadId]/rename/route.ts": {
    "route-on-shim-only": 1,
@@ -2560,7 +2560,7 @@
    "raw-request-json": 1
   },
   "src/app/api/placements/tpo/trusted-domains/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/profile-verification/self/route.ts": {
    "route-on-shim-only": 1,
@@ -2574,8 +2574,8 @@
    "service-enforced": 2
   },
   "src/app/api/profile/learner-gallery/route.ts": {
-   "route-on-shim-only": 1,
-   "raw-request-json": 1
+   "raw-request-json": 1,
+   "service-enforced": 2
   },
   "src/app/api/profile/learner-gallery/upload/route.ts": {
    "route-on-shim-only": 1,
@@ -2611,8 +2611,8 @@
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/backlog/route.ts": {
-   "route-on-shim-only": 1,
-   "raw-request-json": 2
+   "raw-request-json": 2,
+   "service-enforced": 2
   },
   "src/app/api/projects/[projectId]/brief/route.ts": {
    "raw-request-json": 1,
@@ -2650,13 +2650,13 @@
    "route-on-shim-only": 1
   },
   "src/app/api/projects/[projectId]/meetings/[meetingId]/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/meetings/[meetingId]/rsvp/route.ts": {
    "route-on-shim-only": 1
   },
   "src/app/api/projects/[projectId]/meetings/[meetingId]/transition/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/meetings/legacy-sync/route.ts": {
    "raw-request-json": 1,
@@ -2669,7 +2669,7 @@
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/meetings/request/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/meetings/route.ts": {
    "route-on-shim-only": 1
@@ -2701,7 +2701,7 @@
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/mentor-overview/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/mentor-resources-export/route.ts": {
    "sensitive-without-step-up": 1,
@@ -2712,7 +2712,7 @@
    "sensitive-without-step-up": 1
   },
   "src/app/api/projects/[projectId]/mentor-updates/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/readiness/override/route.ts": {
    "raw-request-json": 1,
@@ -2815,10 +2815,10 @@
    "route-on-shim-only": 1
   },
   "src/app/api/projects/[projectId]/submissions/[submissionId]/mentor-decision/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/submissions/[submissionId]/mentor-lock/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/submissions/[submissionId]/reopen/route.ts": {
    "raw-request-json": 1,
@@ -2863,19 +2863,19 @@
    "route-on-shim-only": 1
   },
   "src/app/api/projects/[projectId]/tasks/[taskId]/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 2
   },
   "src/app/api/projects/[projectId]/tasks/[taskId]/submissions/[submissionId]/review/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/tasks/[taskId]/submissions/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 2
   },
   "src/app/api/projects/[projectId]/tasks/auto-assign-next/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/tasks/auto-assign/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/tasks/list/route.ts": {
    "service-enforced": 1
@@ -3069,7 +3069,7 @@
    "route-on-shim-only": 1
   },
   "src/app/api/tpo/verification/[membershipId]/[section]/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/tpo/verification/bulk-review/route.ts": {
    "service-enforced": 1

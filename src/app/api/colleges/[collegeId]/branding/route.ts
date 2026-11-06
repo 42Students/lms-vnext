@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -10,7 +11,6 @@ import {
   saveCollegeBranding,
 } from "@/modules/colleges/branding-service";
 import { z } from "zod";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -28,34 +28,33 @@ function notFound() {
   }, { status: 404 });
 }
 
-async function handleGET(_request: Request, { params }: RouteContext) {
-  try {
-    const context = await getCurrentRequestContext();
-    const collegeId = collegeIdSchema.parse((await params).collegeId);
-    return NextResponse.json({
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const collegeId = collegeIdSchema.parse((params).collegeId);
+return NextResponse.json({
       branding: await getCollegeBranding(context, collegeId),
     },{headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {
+} catch (error) {
     if (error instanceof CollegeBrandingNotFoundError) return notFound();
     return apiErrorResponse(error);
   }
-}
-export const GET = secured(handleGET);
+  },
+);
 
-async function handlePUT(request: Request, { params }: RouteContext) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-    const collegeId = collegeIdSchema.parse((await params).collegeId);
-
-    const body=await readCollegeBrandingBody(request);
-    return NextResponse.json({
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const collegeId = collegeIdSchema.parse((params).collegeId);
+const body=await readCollegeBrandingBody(request);
+return NextResponse.json({
       branding: await saveCollegeBranding(context, collegeId, body),
     },{headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {
+} catch (error) {
     if (error instanceof CollegeBrandingBodyError)
       return NextResponse.json({error:"INVALID_REQUEST"},{
        status:error.code==="BODY_TOO_LARGE"?413:400,
@@ -67,5 +66,5 @@ async function handlePUT(request: Request, { params }: RouteContext) {
     if (error instanceof CollegeBrandingNotFoundError) return notFound();
     return apiErrorResponse(error);
   }
-}
-export const PUT = secured(handlePUT, { csrf: "enforce" });
+  },
+);

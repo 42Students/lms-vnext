@@ -11,19 +11,39 @@ type RouteContext = { params: Promise<{ membershipId: string }> };
 
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ context: actor, params }) => {
-    const context = actor!;
-    const { membershipId } = params;
-    return NextResponse.json(await collegeStudentSectionOptions(context, membershipId));
+  async ({ context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { membershipId } = params;
+return NextResponse.json(await collegeStudentSectionOptions(context, membershipId));
+} catch (error) {
+    if (error instanceof CollegeStudentSectionMoveError) {
+      return NextResponse.json(
+        { error: error.code === "STUDENT_NOT_FOUND" ? "NOT_FOUND" : error.code },
+        { status: error.code === "STUDENT_NOT_FOUND" ? 404 : 409 },
+      );
+    }
+    return apiErrorResponse(error);
+  }
   },
 );
 export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor, params }) => {
-    const context = actor!;
-    const { membershipId } = params;
-    return NextResponse.json(await moveCollegeStudentSection(
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { membershipId } = params;
+return NextResponse.json(await moveCollegeStudentSection(
       context, membershipId, await request.json(),
     ));
+} catch (error) {
+    if (error instanceof CollegeStudentSectionMoveError) {
+      return NextResponse.json(
+        { error: error.code === "STUDENT_NOT_FOUND" ? "NOT_FOUND" : error.code },
+        { status: error.code === "STUDENT_NOT_FOUND" ? 404 : 409 },
+      );
+    }
+    return apiErrorResponse(error);
+  }
   },
 );

@@ -21,26 +21,30 @@ export const GET = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const {jobId}=params;
-    const result=await listTpoCompanyApplicantShares(__ctx,jobId,new URL(request.url).searchParams.get("status")??"ALL",new URL(request.url).searchParams.get("page")??1);
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    try {
+const {jobId}=params;
+const result=await listTpoCompanyApplicantShares(__ctx,jobId,new URL(request.url).searchParams.get("status")??"ALL",new URL(request.url).searchParams.get("page")??1);
+return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+} catch(error){return errorResponse(error);}
   },
 );
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const {jobId}=params;
-    const body=await request.json() as unknown;
-    if(!body||typeof body!=="object"||Array.isArray(body)) return NextResponse.json({error:"INVALID_INPUT"},{status:400});
-    const expiresInDays=(body as Record<string,unknown>)["expiresInDays"];
-    const selectedApplicationIds=(body as Record<string,unknown>)["selectedApplicationIds"];
-    const selectedColumns=(body as Record<string,unknown>)["selectedColumns"];
-    const shortlistBy=(body as Record<string,unknown>)["shortlistBy"];
-    const result=await issueTpoCompanyApplicantShare(__ctx,{jobId,expiresInDays,
+    try {
+const {jobId}=params;
+const body=await request.json() as unknown;
+if(!body||typeof body!=="object"||Array.isArray(body)) return NextResponse.json({error:"INVALID_INPUT"},{status:400});
+const expiresInDays=(body as Record<string,unknown>)["expiresInDays"];
+const selectedApplicationIds=(body as Record<string,unknown>)["selectedApplicationIds"];
+const selectedColumns=(body as Record<string,unknown>)["selectedColumns"];
+const shortlistBy=(body as Record<string,unknown>)["shortlistBy"];
+const result=await issueTpoCompanyApplicantShare(__ctx,{jobId,expiresInDays,
       ...(selectedApplicationIds!==undefined?{selectedApplicationIds}:{}),
       ...(selectedColumns!==undefined?{selectedColumns}:{}),
       ...(shortlistBy!==undefined?{shortlistBy}:{})});
-    return NextResponse.json(result,{status:201,headers:{"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"}});
+return NextResponse.json(result,{status:201,headers:{"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"}});
+} catch(error){return errorResponse(error);}
   },
 );

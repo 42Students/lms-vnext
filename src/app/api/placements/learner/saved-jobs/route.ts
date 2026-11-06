@@ -18,22 +18,29 @@ function savedJobsTableUnavailable(error: unknown): boolean {
 /** LEARNER-placements-13: this is the caller's bookmarks only. */
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const url=new URL(request.url);
-    const idsOnly=url.searchParams.get("ids")==="1";
-    if([...url.searchParams.keys()].some(key=>key!=="ids")||
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const url=new URL(request.url);
+const idsOnly=url.searchParams.get("ids")==="1";
+if([...url.searchParams.keys()].some(key=>key!=="ids")||
     (url.searchParams.has("ids")&&!idsOnly))
     return NextResponse.json({error:"INVALID_QUERY"},{status:400});
-    const jobs=await listOwnPlacementSavedJobs(context);
-    if(idsOnly)return NextResponse.json({ids:jobs.map(job=>job.jobId),
+const jobs=await listOwnPlacementSavedJobs(context);
+if(idsOnly)return NextResponse.json({ids:jobs.map(job=>job.jobId),
     data:jobs.map(job=>job.jobId),status:"success",
     message:jobs.length?"Saved jobs retrieved":"No saved jobs"},{
     headers:{"Cache-Control":"private, no-store"},
   });
-    return NextResponse.json({jobs,status:"success",
+return NextResponse.json({jobs,status:"success",
    message:jobs.length?"Saved jobs retrieved":"No saved jobs",data:jobs},{
    headers:{"Cache-Control":"private, no-store"},
   });
+} catch(error){
+  if(savedJobsTableUnavailable(error)){
+   return NextResponse.json({error:"SAVED_JOBS_NOT_CONFIGURED",status:"error",message:"Saved jobs not configured"},{status:503,headers:{"Retry-After":"60"}});
+  }
+  return apiErrorResponse(error);
+ }
   },
 );

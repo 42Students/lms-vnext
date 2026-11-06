@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -5,20 +6,19 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {lockMentorFinalDelivery} from "@/modules/projects/mentor-delivery-lock-service";
 import {readMentorProjectCommandBody,MentorProjectCommandBodyError,mentorProjectBodyFailureMessage}
  from "@/modules/projects/mentor-command-body";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-async function handlePOST(request:Request,{params}:{
- params:Promise<{projectId:string;submissionId:string}>;
-}){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const {projectId,submissionId}=await params;
-  const submission=await lockMentorFinalDelivery(await getCurrentRequestContext(),projectId,
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    try {
+const {projectId,submissionId}=params;
+const submission=await lockMentorFinalDelivery(__ctx,projectId,
    submissionId,await readMentorProjectCommandBody(request));
-  return NextResponse.json({submission});
- }catch(error){if(error instanceof MentorProjectCommandBodyError)
+return NextResponse.json({submission});
+} catch(error){if(error instanceof MentorProjectCommandBodyError)
   return NextResponse.json({error:error.code,message:mentorProjectBodyFailureMessage(error.status)},
    {status:error.status});
  return apiErrorResponse(error);}
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

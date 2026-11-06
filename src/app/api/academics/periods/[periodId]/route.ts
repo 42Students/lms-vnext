@@ -18,16 +18,17 @@ type RouteContext = {
 
 export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor, params }) => {
-    const context = actor!;
-    const { periodId } = params;
-    const parsedBody = await readBoundedJsonBody(request, 16_384);
-    if (parsedBody.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { periodId } = params;
+const parsedBody = await readBoundedJsonBody(request, 16_384);
+if (parsedBody.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: parsedBody.kind === "TOO_LARGE" ? 413 : 400,
       headers: { "Cache-Control": "private, no-store" },
     });
-    const body = parsedBody.value;
-    const period =
+const body = parsedBody.value;
+const period =
       body &&
       typeof body === "object" &&
       "action" in body
@@ -41,6 +42,14 @@ export const PATCH = route(
             periodId,
             body,
           );
-    return NextResponse.json({ period });
+return NextResponse.json({ period });
+} catch (error) {
+    if (error instanceof CollegePeriodLifecycleError) {
+      return NextResponse.json({ error: error.code }, {
+        status: error.code === "PERIOD_NOT_FOUND" ? 404 : 409,
+      });
+    }
+    return apiErrorResponse(error);
+  }
   },
 );

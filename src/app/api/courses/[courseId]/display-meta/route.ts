@@ -14,15 +14,16 @@ export const dynamic="force-dynamic";
 const privateHeaders={"Cache-Control":"private, no-store",Vary:"Cookie"} as const;
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ context: actor, params }) => {
-    const context = actor!;
-    const {courseId}=params;
-    const id=z.string().uuid().parse(courseId);
-    const scope=await loadCourseScope(id);
-    requirePermission(context,"courses.manage",{
+  async ({ context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const {courseId}=params;
+const id=z.string().uuid().parse(courseId);
+const scope=await loadCourseScope(id);
+requirePermission(context,"courses.manage",{
    collegeId:scope.collegeId,organizationId:scope.organizationId,
   });
-    const [metadata]=await getDb().select({
+const [metadata]=await getDb().select({
    id:courses.id,name:courses.name,code:courses.code,
    shortTitle:courses.shortTitle,officialCode:courses.officialCode,
    cardColor:courses.cardColor,description:courses.description,
@@ -30,10 +31,16 @@ export const GET = route(
   }).from(courses).innerJoin(departments,and(
     eq(departments.id,courses.departmentId),eq(departments.collegeId,scope.collegeId),
   )).where(eq(courses.id,id)).limit(1);
-    if(!metadata)return NextResponse.json({error:"COURSE_NOT_FOUND"},{status:404,headers:privateHeaders});
-    const {legacyMetadata,...safeMetadata}=metadata;
-    return NextResponse.json({metadata:{...safeMetadata,
+if(!metadata)return NextResponse.json({error:"COURSE_NOT_FOUND"},{status:404,headers:privateHeaders});
+const {legacyMetadata,...safeMetadata}=metadata;
+return NextResponse.json({metadata:{...safeMetadata,
    legacyFields:legacyCourseMetadataPreview(legacyMetadata),
   }},{headers:privateHeaders});
+} catch(error){
+  const response=apiErrorResponse(error);
+  response.headers.set("Cache-Control","private, no-store");
+  response.headers.set("Vary","Cookie");
+  return response;
+ }
   },
 );

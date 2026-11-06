@@ -120,8 +120,8 @@ function programCreateFieldErrors(error: ZodError) {
 
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
     const url = new URL(request.url);
     const mode=url.searchParams.get("mode");
     const departmentId=url.searchParams.get("departmentId") ?? url.searchParams.get("deptId");
@@ -154,18 +154,49 @@ export const GET = route(
 
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const parsedBody = await readBoundedJsonBody(request, 16_384);
-    if (parsedBody.kind !== "OK") return NextResponse.json({
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const parsedBody = await readBoundedJsonBody(request, 16_384);
+if (parsedBody.kind !== "OK") return NextResponse.json({
       error: "INVALID_REQUEST", message: "Enter valid program details.",
     }, { status: parsedBody.kind === "TOO_LARGE" ? 413 : 400,
       headers: { "Cache-Control": "no-store" } });
-    const body: unknown = parsedBody.value;
-    const legacy=new URL(request.url).searchParams.get("legacy")==="1";
-    const program = await createCollegeProgram(context, legacy?legacyProgramCreateInput(body):body);
-    return NextResponse.json(legacy
+const body: unknown = parsedBody.value;
+const legacy=new URL(request.url).searchParams.get("legacy")==="1";
+const program = await createCollegeProgram(context, legacy?legacyProgramCreateInput(body):body);
+return NextResponse.json(legacy
       ? {status:"OK",message:"Program created successfully",data:program}
       : { program }, { status: legacy?200:201 });
+} catch (error) {
+    if (error instanceof CollegeProgramMutationError) {
+      const fieldErrors = error.code === "PROGRAM_NAME_CONFLICT"
+        ? { name: "Program name already exists in this department" }
+        : error.code === "PROGRAM_CODE_CONFLICT"
+          ? { code: "Program code already exists in this department" }
+          : {};
+      return NextResponse.json({
+        error: error.code,
+        fieldErrors,
+        message: error.code === "PROGRAM_NAME_CONFLICT"
+          ? "Program name already exists in this department"
+          : "Unable to save this program. Review its details.",
+      }, { status: error.code === "DEPARTMENT_NOT_FOUND" ? 404 : 409 });
+    }
+    if (error instanceof ZodError) {
+      return NextResponse.json({
+        error: "INVALID_REQUEST",
+        fieldErrors: new URL(request.url).searchParams.get("legacy") === "1"
+          ? (() => {
+              const fields=programCreateFieldErrors(error);
+              return {...fields,...(fields["departmentId"] ? {dept_id:fields["departmentId"]}:{}),
+                ...(fields["durationTerms"] ? {duration_years:fields["durationTerms"]}:{})};
+            })()
+          : programCreateFieldErrors(error),
+        message: "Please review the program details.",
+      }, { status: 400 });
+    }
+    return apiErrorResponse(error);
+  }
   },
 );

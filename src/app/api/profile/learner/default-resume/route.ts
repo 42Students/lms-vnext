@@ -54,8 +54,12 @@ export const GET = route(
   { auth: "user", permission: "service-enforced" },
   async ({ context: __actor }) => {
     const __ctx = __actor!;
-    return NextResponse.json(await listLearnerDefaultResumes(
+    try {
+return NextResponse.json(await listLearnerDefaultResumes(
       __ctx), { headers });
+} catch (error) {
+    return safeError(error);
+  }
   },
 );
 
@@ -63,24 +67,28 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const context = __actor!;
-    const parsed = command.parse(await request.json());
-    if (parsed.action === "INITIATE") {
+    try {
+const parsed = command.parse(await request.json());
+if (parsed.action === "INITIATE") {
       return NextResponse.json(await initiateLearnerDefaultResumeUpload(context, parsed),
         { headers });
     }
-    if (parsed.action === "CONFIRM") {
+if (parsed.action === "CONFIRM") {
       return NextResponse.json(await confirmLearnerDefaultResumeUpload(context, parsed),
         { headers });
     }
-    if (parsed.action === "VIEW") {
+if (parsed.action === "VIEW") {
       return NextResponse.json(await viewOwnLearnerResume(context, parsed.receiptId),
         { headers });
     }
-    if (parsed.action === "CLEAR_DEFAULT") {
+if (parsed.action === "CLEAR_DEFAULT") {
       return NextResponse.json(await clearOwnLearnerDefaultResume(context),
         { headers });
     }
-    return NextResponse.json(await selectLearnerDefaultResume(context, parsed.receiptId),
+return NextResponse.json(await selectLearnerDefaultResume(context, parsed.receiptId),
       { headers });
+} catch (error) {
+    return safeError(error);
+  }
   },
 );

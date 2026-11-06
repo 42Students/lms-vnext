@@ -10,9 +10,17 @@ export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const {hallId,sessionId}=params;
-    return NextResponse.json({session:await cancelCollegeHallBooking(
+    try {
+const {hallId,sessionId}=params;
+return NextResponse.json({session:await cancelCollegeHallBooking(
       __ctx,hallId,sessionId,await request.json(),
     )});
+} catch(error){
+    if(error instanceof CollegeHallCancelError)
+      return NextResponse.json({error:error.code},{
+        status:error.code==="HALL_SESSION_NOT_FOUND"?404:409,
+      });
+    return apiErrorResponse(error);
+  }
   },
 );

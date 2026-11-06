@@ -11,9 +11,17 @@ export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const {groupId}=params;
-    return NextResponse.json(await writeCollegeGroupDetail(
+    try {
+const {groupId}=params;
+return NextResponse.json(await writeCollegeGroupDetail(
       __ctx,groupId,await request.json(),
     ));
+} catch(error) {
+    if(error instanceof CollegeGroupDetailWriteError)
+      return NextResponse.json({error:error.code},{
+        status:error.code==="GROUP_NOT_FOUND"||error.code==="MEMBER_NOT_FOUND"?404:409,
+      });
+    return apiErrorResponse(error);
+  }
   },
 );

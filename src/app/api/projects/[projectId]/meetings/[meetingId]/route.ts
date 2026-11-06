@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -7,7 +8,6 @@ import {readMentorProjectCommandBody,MentorProjectCommandBodyError,mentorProject
 import {
   scheduleProjectMeeting,
 } from "@/modules/projects/meeting-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -18,35 +18,26 @@ type RouteContext = {
   }>;
 };
 
-async function handlePATCH(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-    const { projectId, meetingId } =
-      await params;
-    const body = await readMentorProjectCommandBody(request);
-    const meeting = await scheduleProjectMeeting(
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { projectId, meetingId } =
+      params;
+const body = await readMentorProjectCommandBody(request);
+const meeting = await scheduleProjectMeeting(
       context,
       projectId,
       meetingId,
       body,
     );
-
-    return NextResponse.json({ meeting });
-  } catch (error) {
+return NextResponse.json({ meeting });
+} catch (error) {
     if(error instanceof MentorProjectCommandBodyError)
       return NextResponse.json({error:error.code,message:mentorProjectBodyFailureMessage(error.status)},
         {status:error.status});
     return apiErrorResponse(error);
   }
-}
-export const PATCH = secured(handlePATCH);
+  },
+);

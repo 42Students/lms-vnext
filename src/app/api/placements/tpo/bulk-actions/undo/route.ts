@@ -9,8 +9,13 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
-    const raw=await request.json();
-    const result=await undoTpoStudentBulkRun(__ctx,raw);
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    try {
+const raw=await request.json();
+const result=await undoTpoStudentBulkRun(__ctx,raw);
+return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+} catch(error){
+  if(error instanceof TpoStudentBulkUndoError)return NextResponse.json({error:error.code},{status:409});
+  return apiErrorResponse(error);
+ }
   },
 );

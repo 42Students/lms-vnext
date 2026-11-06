@@ -14,8 +14,8 @@ export const runtime = "nodejs";
  */
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ context: actor, params }) => {
-    const context = actor!;
+  async ({ context: __actor, params }) => {
+    const context = __actor!;
     const {slotId}=params;
     const detail=await getSuperAdminElectiveSlotDetail(context,slotId);
     if(!detail)return NextResponse.json({error:"ELECTIVE_SLOT_NOT_FOUND"},{status:404});
@@ -27,11 +27,20 @@ export const GET = route(
 
 export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor, params }) => {
-    const context = actor!;
-    const { slotId } = params;
-    const body: unknown = await request.json();
-    const result = await updateCollegeElectiveSlot(context, slotId, body);
-    return NextResponse.json({ slot: result });
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { slotId } = params;
+const body: unknown = await request.json();
+const result = await updateCollegeElectiveSlot(context, slotId, body);
+return NextResponse.json({ slot: result });
+} catch (error) {
+    if (error instanceof CollegeElectiveSlotMutationError) {
+      return NextResponse.json({ error: error.code }, {
+        status: error.code === "ELECTIVE_SLOT_NOT_FOUND" ? 404 : 409,
+      });
+    }
+    return apiErrorResponse(error);
+  }
   },
 );

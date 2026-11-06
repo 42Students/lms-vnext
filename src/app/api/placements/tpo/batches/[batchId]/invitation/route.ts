@@ -13,11 +13,21 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const { batchId } = params;
-    const result = await inviteTpoBatch(
+    try {
+const { batchId } = params;
+const result = await inviteTpoBatch(
       __ctx, batchId, await request.json(),
     );
-    return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
+return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
+} catch (error) {
+    if (error instanceof PlacementBatchError)
+      return NextResponse.json({ error: error.code }, {
+        status: error.code === "DB08_ACTION_STALE" ? 409 : 422,
+      });
+    if (error instanceof TpoBatchInvitationError)
+      return NextResponse.json({ error: error.code }, { status: 422 });
+    return apiErrorResponse(error);
+  }
   },
 );
 
@@ -25,10 +35,20 @@ export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const { batchId } = params;
-    const result = await saveTpoBatchRegistrationDeadline(
+    try {
+const { batchId } = params;
+const result = await saveTpoBatchRegistrationDeadline(
       __ctx, batchId, await request.json(),
     );
-    return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
+return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
+} catch (error) {
+    if (error instanceof PlacementBatchError)
+      return NextResponse.json({ error: error.code }, {
+        status: error.code === "DB08_ACTION_STALE" ? 409 : 422,
+      });
+    if (error instanceof TpoBatchInvitationError)
+      return NextResponse.json({ error: error.code }, { status: 422 });
+    return apiErrorResponse(error);
+  }
   },
 );

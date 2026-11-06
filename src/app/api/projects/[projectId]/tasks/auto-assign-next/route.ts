@@ -11,11 +11,19 @@ import {autoAssignMentorNextSprint} from
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor, params }) => {
-    const context = actor!;
-    const {projectId}=params;
-    const result=await autoAssignMentorNextSprint(
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const {projectId}=params;
+const result=await autoAssignMentorNextSprint(
    context,projectId,await readMentorProjectCommandBody(request));
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+} catch(error){
+  if(error instanceof MentorProjectCommandBodyError)
+   return NextResponse.json({error:error.code,
+     message:mentorProjectBodyFailureMessage(error.status)},
+     {status:error.status});
+  return apiErrorResponse(error);
+ }
   },
 );

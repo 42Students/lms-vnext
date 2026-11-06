@@ -7,9 +7,17 @@ import { confirmTpoDriveDayCheckIn,TpoAttendanceStaleError } from "@/modules/pla
 export const runtime = "nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor, params }) => {
-    const context = actor!;
-    const { roundId } = params;
-    return NextResponse.json(await confirmTpoDriveDayCheckIn(context, roundId, await request.json()));
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { roundId } = params;
+return NextResponse.json(await confirmTpoDriveDayCheckIn(context, roundId, await request.json()));
+} catch (error) {
+    if(error instanceof TpoAttendanceStaleError)
+      return NextResponse.json({error:"ATTENDANCE_STALE",
+       message:"Attendance changed in another session. Refresh the roster and retry."},
+       {status:409,headers:{"Cache-Control":"private, no-store"}});
+    return apiErrorResponse(error);
+  }
   },
 );

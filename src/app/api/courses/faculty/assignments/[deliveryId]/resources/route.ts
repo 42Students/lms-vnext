@@ -34,10 +34,17 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const {deliveryId}=params;
-    const body=await readFacultyAssignmentCommandBody(request);
-    const grant=await presignFacultyAssignmentResource(
+    try {
+const {deliveryId}=params;
+const body=await readFacultyAssignmentCommandBody(request);
+const grant=await presignFacultyAssignmentResource(
    __ctx,deliveryId,body);
-    return NextResponse.json({grant},{headers:{"Cache-Control":"private, no-store"}});
+return NextResponse.json({grant},{headers:{"Cache-Control":"private, no-store"}});
+} catch(error){
+  if(error instanceof FacultyAssignmentBodyError)
+   return NextResponse.json({error:error.code},{
+    status:error.status,headers:{"Cache-Control":"private, no-store"}});
+  return apiErrorResponse(error);
+ }
   },
 );

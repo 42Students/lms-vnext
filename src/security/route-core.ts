@@ -72,7 +72,7 @@ export type UserRouteConfig<Permission extends string, B> = Common & {
   /**
    * A registered permission name, or "service-enforced" when the service the handler calls performs the
    * check. "actor-owned" is for routes whose only authority is the signed-in actor's own identity or grants
-   * (recruiter, student self-service) checked in the handler; it needs no registry permission and is not debt.
+   * (recruiter, student self-service) checked in the handler; it needs no registry permission but is counted by the ratchet.
    * "service-enforced" is tracked debt (ratchet) until every route names its permission.
    */
   permission: Permission | "service-enforced" | "actor-owned";

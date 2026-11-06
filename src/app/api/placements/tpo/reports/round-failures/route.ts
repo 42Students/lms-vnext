@@ -10,20 +10,21 @@ export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    if(!context.membership||!hasMembershipRole(context,"TPO"))
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+if(!context.membership||!hasMembershipRole(context,"TPO"))
    return NextResponse.json({error:"UNAUTHORIZED"},{status:403,headers:{"Cache-Control":"private, no-store"}});
-    const params=new URL(request.url).searchParams;
-    if(tpoReportHasRepeatedSearchParams(params))return NextResponse.json({error:"INVALID_QUERY"},{
+const params=new URL(request.url).searchParams;
+if(tpoReportHasRepeatedSearchParams(params))return NextResponse.json({error:"INVALID_QUERY"},{
    status:400,headers:{"Cache-Control":"private, no-store"},
   });
-    const query=tpoRoundFailureCsvQuerySchema.parse(Object.fromEntries(params.entries()));
-    const report=await getPlacementFailureReasonsReport(context,{
+const query=tpoRoundFailureCsvQuerySchema.parse(Object.fromEntries(params.entries()));
+const report=await getPlacementFailureReasonsReport(context,{
    collegeId:context.membership.collegeId,...query,
   });
-    const rows=report.roundBranchFailureShares.slice(0,5000);
-    return new Response(tpoRoundFailureCsv(rows),{headers:{
+const rows=report.roundBranchFailureShares.slice(0,5000);
+return new Response(tpoRoundFailureCsv(rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="round-failures-by-branch.csv"',
    "Cache-Control":"private, no-store, max-age=0",
@@ -31,5 +32,6 @@ export const GET = route(
    "X-Export-Truncated":String(report.roundBranchFailureShares.length>rows.length),
    Vary:"Cookie",
   }});
+} catch(error){const response=apiErrorResponse(error);response.headers.set("Cache-Control","private, no-store");return response;}
   },
 );

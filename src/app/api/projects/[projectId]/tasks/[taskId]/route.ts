@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -9,7 +10,6 @@ import {
   updateProjectTaskStatus,
 } from "@/modules/projects/lifecycle-service";
 import {updateProjectTaskStatusInputSchema} from "@/modules/projects/validation";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -20,30 +20,21 @@ type RouteContext = {
   }>;
 };
 
-async function handlePATCH(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-    const { projectId, taskId } = await params;
-    const body = await readMentorProjectCommandBody(request);
-    const task = await updateProjectTaskStatus(
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { projectId, taskId } = params;
+const body = await readMentorProjectCommandBody(request);
+const task = await updateProjectTaskStatus(
       context,
       projectId,
       taskId,
       updateProjectTaskStatusInputSchema.parse(body),
     );
-
-    return NextResponse.json({ task });
-  } catch (error) {
+return NextResponse.json({ task });
+} catch (error) {
     if (error instanceof MentorProjectCommandBodyError) {
       return NextResponse.json(
         { error: error.code, message: mentorProjectBodyFailureMessage(error.status) },
@@ -52,21 +43,22 @@ async function handlePATCH(
     }
     return apiErrorResponse(error);
   }
-}
-export const PATCH = secured(handlePATCH);
+  },
+);
 
-async function handleDELETE(request:Request,{params}:RouteContext){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const context=await getCurrentRequestContext();
-  const {projectId,taskId}=await params;
-  const body=await readMentorProjectCommandBody(request);
-  return NextResponse.json(await deleteMentorProjectTask(context,projectId,taskId,body));
- }catch(error){
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const {projectId,taskId}=params;
+const body=await readMentorProjectCommandBody(request);
+return NextResponse.json(await deleteMentorProjectTask(context,projectId,taskId,body));
+} catch(error){
   if(error instanceof MentorProjectCommandBodyError)
    return NextResponse.json({error:error.code,message:mentorProjectBodyFailureMessage(error.status)},
     {status:error.status,headers:{"Cache-Control":"no-store"}});
   return apiErrorResponse(error);
  }
-}
-export const DELETE = secured(handleDELETE, { csrf: "enforce" });
+  },
+);

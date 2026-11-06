@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -5,17 +6,17 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {createRequestId} from "@/lib/request-id";
 import {commandFacultyQuiz} from "@/modules/courses/faculty-quiz-authoring-service";
 import {readFacultyQuizCommandBody,FacultyQuizBodyError} from "@/modules/courses/faculty-quiz-request-body";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-async function handlePOST(request:Request,{params}:{params:Promise<{deliveryId:string}>}){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const context=await getCurrentRequestContext();
-  const {deliveryId}=await params;
-  const body=await readFacultyQuizCommandBody(request);
-  const quiz=await commandFacultyQuiz(context,{deliveryId},body);
-  return NextResponse.json({quiz});
- }catch(error){
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const {deliveryId}=params;
+const body=await readFacultyQuizCommandBody(request);
+const quiz=await commandFacultyQuiz(context,{deliveryId},body);
+return NextResponse.json({quiz});
+} catch(error){
   if(error instanceof FacultyQuizBodyError){
    const requestId=createRequestId();
    const message=error.status===413
@@ -29,5 +30,5 @@ async function handlePOST(request:Request,{params}:{params:Promise<{deliveryId:s
   }
   return apiErrorResponse(error);
  }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

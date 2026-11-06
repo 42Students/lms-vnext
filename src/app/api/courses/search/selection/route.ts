@@ -18,8 +18,8 @@ const noStore={"Cache-Control":"private, no-store"};
  * user histories, invisible course titles, or inferred integer-ID aliases. */
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ context: actor }) => {
-    const context = actor!;
+  async ({ context: __actor }) => {
+    const context = __actor!;
     const courses=await listLearnerCourseDeliveries(context);
     const ids=[...new Set(courses.map(row=>row.deliveryId))];
     if(!ids.length)return Response.json({counts:{}},{headers:noStore});
@@ -37,15 +37,16 @@ export const GET = route(
 
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const input=selectedSchema.parse(await request.json());
-    const member=context.membership;
-    const courses=await listLearnerCourseDeliveries(context);
-    const selected=courses.find(row=>row.deliveryId===input.deliveryId);
-    if(!member||!selected)return Response.json({error:"COURSE_NOT_FOUND"},{status:404,headers:noStore});
-    const db=getDb();
-    await db.transaction(async tx=>{
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const input=selectedSchema.parse(await request.json());
+const member=context.membership;
+const courses=await listLearnerCourseDeliveries(context);
+const selected=courses.find(row=>row.deliveryId===input.deliveryId);
+if(!member||!selected)return Response.json({error:"COURSE_NOT_FOUND"},{status:404,headers:noStore});
+const db=getDb();
+await db.transaction(async tx=>{
    // The member can lose access after the initial scoped course read.
    // Retain SHARE locks until this non-sensitive usage event commits.
    const [current]=await tx.select({id:collegeMemberships.id})
@@ -67,6 +68,10 @@ export const POST = route(
     metadata:{courseId:selected.courseId,source:"HEADER_SEARCH"},
    });
   });
-    return Response.json({recorded:true},{headers:noStore});
+return Response.json({recorded:true},{headers:noStore});
+} catch(error){
+  if(error instanceof z.ZodError)return Response.json({error:"INVALID_SELECTION"},{status:400,headers:noStore});
+  return apiErrorResponse(error);
+ }
   },
 );

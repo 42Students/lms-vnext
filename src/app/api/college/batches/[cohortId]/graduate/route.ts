@@ -11,10 +11,17 @@ export const runtime = "nodejs";
 type Params = { params: Promise<{ cohortId: string }> };
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor, params }) => {
-    const context = actor!;
-    const { cohortId } = params;
-    const result = await markCollegeBatchGraduated(context, cohortId, await request.json());
-    return NextResponse.json({ cohort: result });
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { cohortId } = params;
+const result = await markCollegeBatchGraduated(context, cohortId, await request.json());
+return NextResponse.json({ cohort: result });
+} catch (error) {
+    if (error instanceof CollegeBatchGraduationError)
+      return NextResponse.json({ error: error.code },
+        { status: error.code === "BATCH_NOT_FOUND" ? 404 : 409 });
+    return apiErrorResponse(error);
+  }
   },
 );

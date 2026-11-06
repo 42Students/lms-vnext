@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -6,20 +7,17 @@ import {createRequestId} from "@/lib/request-id";
 import {readFacultyAssignmentCommandBody,FacultyAssignmentBodyError}
   from "@/modules/courses/faculty-assignment-request-body";
 import {commandFacultyAssignment} from "@/modules/courses/faculty-assignment-authoring-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-async function handlePOST(request:Request,{params}:{
-  params:Promise<{deliveryId:string}>;
-}){
-  if(!isSameOriginRequest(request))
-    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
-  try{
-    const context=await getCurrentRequestContext();
-    const {deliveryId}=await params;
-    const body=await readFacultyAssignmentCommandBody(request);
-    const assignment=await commandFacultyAssignment(context,{deliveryId},body);
-    return NextResponse.json({assignment});
-  }catch(error){
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const {deliveryId}=params;
+const body=await readFacultyAssignmentCommandBody(request);
+const assignment=await commandFacultyAssignment(context,{deliveryId},body);
+return NextResponse.json({assignment});
+} catch(error){
     if(error instanceof FacultyAssignmentBodyError){
       const requestId=createRequestId();
       const message=error.status===413
@@ -33,5 +31,5 @@ async function handlePOST(request:Request,{params}:{
     }
     return apiErrorResponse(error);
   }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

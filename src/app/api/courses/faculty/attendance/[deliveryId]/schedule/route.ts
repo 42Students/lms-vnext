@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -6,22 +7,17 @@ import {createRequestId} from "@/lib/request-id";
 import {FacultyAuthoringBodyError,readFacultyAuthoringBody}
   from "@/modules/courses/faculty-authoring-request-body";
 import {commandFacultyAttendanceSchedule} from "@/modules/attendance/faculty-schedule-mutation-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-async function handlePOST(request:Request,{params}:{
-  params:Promise<{deliveryId:string}>;
-}){
-  if(!isSameOriginRequest(request))
-    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
-  try{
-    const result=await commandFacultyAttendanceSchedule(
-      await getCurrentRequestContext(),await params,await readFacultyAuthoringBody(request));
-    // The old ClassSchedule route returned Response(status=OK,data=...).
-    // A UUID delivery is the authorized class/course mapping in vNext:
-    // numeric legacy course/class IDs must not bypass its teaching guard.
-    return NextResponse.json({result,data:result,status:"OK",message:"OK",
-      scheduleHref:"/teacher/courses/"+encodeURIComponent((await params).deliveryId)+"/attendance"});
-  }catch(error){
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    try {
+const result=await commandFacultyAttendanceSchedule(
+      __ctx,params,await readFacultyAuthoringBody(request));
+return NextResponse.json({result,data:result,status:"OK",message:"OK",
+      scheduleHref:"/teacher/courses/"+encodeURIComponent((params).deliveryId)+"/attendance"});
+} catch(error){
     if(error instanceof FacultyAuthoringBodyError){
       const requestId=createRequestId();
       const message=error.status===413
@@ -35,5 +31,5 @@ async function handlePOST(request:Request,{params}:{
     }
     return apiErrorResponse(error);
   }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

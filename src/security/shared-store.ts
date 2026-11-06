@@ -1,6 +1,7 @@
 import "server-only";
 import { getDb } from "@/db/client";
 import { allowRequest as allowInMemory } from "@/auth/ip-rate-limit";
+import { createMemoryLimiter } from "@/security/memory-limiter";
 import { createSharedStore } from "@/security/shared-store-core";
 
 /**
@@ -19,6 +20,23 @@ let calls = 0;
 function maybeSweep() {
   // One bounded batch every 200 calls per process keeps the table small without a scheduler.
   if (++calls % 200 === 0) void store.sweep().catch(() => undefined);
+}
+
+const isolated = createMemoryLimiter({
+  maxKeys: 20_000,
+  onSaturated: () => console.warn(JSON.stringify({ severity: "WARNING", event: "security.write_budget_saturated" })),
+});
+
+/** Write budget for the shim: shared store when on, otherwise its own bounded memory (never the login limiter's map). */
+export async function allowWriteBudget(key: string, limit: number, windowMs: number): Promise<boolean> {
+  if (!enabled()) return isolated(key, limit, windowMs);
+  try {
+    maybeSweep();
+    return await store.hit(key, limit, windowMs);
+  } catch (error) {
+    degraded(error);
+    return isolated(key, limit, windowMs);
+  }
 }
 
 export async function allowRequestShared(key: string, limit: number, windowMs: number): Promise<boolean> {

@@ -10,26 +10,32 @@ import {PlacementsServiceError} from "@/modules/placements/errors";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    let form:FormData;
-    try {form=await readBoundedFormData(request,64*1024);}
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+let form:FormData;
+try {form=await readBoundedFormData(request,64*1024);}
   catch(error){
    if(!(error instanceof BoundedFormDataError))throw error;
    return NextResponse.json({
     error:error.code==="BODY_TOO_LARGE"?"FORM_TOO_LARGE":"INVALID_FORM",
    },{status:error.code==="BODY_TOO_LARGE"?413:400,headers:{"Cache-Control":"private, no-store"}});
   }
-    const payload={
+const payload={
    collegeId:form.get("collegeId"),
    companyRelationshipId:form.get("companyRelationshipId"),
    title:form.get("title"),occurredAt:parseIstLocalSlot(form.get("occurredAt")),
    externalReferenceUrl:form.get("externalReferenceUrl")||undefined,
    notes:form.get("notes")||undefined,
   };
-    const saved=await recordOutsideDrive(context,payload);
-    return NextResponse.redirect(new URL(saved.role==="TPO"
+const saved=await recordOutsideDrive(context,payload);
+return NextResponse.redirect(new URL(saved.role==="TPO"
    ? "/tpo/placements/recorded-outside?saved="+saved.id
    : "/hr/drives/recorded-outside?collegeId="+saved.collegeId+"&saved="+saved.id,request.url),303);
+} catch(error){
+  if(error instanceof z.ZodError)return NextResponse.json({error:"INVALID_RECORD"},{status:400});
+  if(error instanceof PlacementsServiceError)return NextResponse.json({error:"NOT_FOUND"},{status:404});
+  throw error;
+ }
   },
 );

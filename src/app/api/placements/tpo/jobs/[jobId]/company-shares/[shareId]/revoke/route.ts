@@ -9,8 +9,16 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ context: __actor, params }) => {
     const __ctx = __actor!;
-    const {jobId,shareId}=params;
-    const data=await revokeTpoCompanyApplicantShare(__ctx,{jobId,shareId});
-    return NextResponse.json(data,{headers:{"Cache-Control":"private, no-store"}});
+    try {
+const {jobId,shareId}=params;
+const data=await revokeTpoCompanyApplicantShare(__ctx,{jobId,shareId});
+return NextResponse.json(data,{headers:{"Cache-Control":"private, no-store"}});
+} catch(error){
+  if(error instanceof CompanyShareError)return NextResponse.json({error:error.code},{
+   status:error.code==="MIGRATION_PENDING"?503:404,
+   headers:{"Cache-Control":"private, no-store"},
+  });
+  return apiErrorResponse(error);
+ }
   },
 );

@@ -21,8 +21,8 @@ export const legacyAssignmentContentRoute="/api/courses/assignments" as const;
 
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
     const url = new URL(request.url);
     const assignments =
       await listCourseAssignments(
@@ -40,17 +40,29 @@ export const GET = route(
 
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const body = await request.json();
-    const assignment =
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const body = await request.json();
+const assignment =
       await createCourseAssignment(
         context,
         body,
       );
-    return NextResponse.json(
+return NextResponse.json(
       { assignment, message: "Assignment saved" },
       { status: 201 },
     );
+} catch (error) {
+    if (isDatabaseUnavailableError(error)) {
+      // Preserve the central request ID/status/retry headers while presenting
+      // the old LMS actionable offline-writer message.
+      const response=apiErrorResponse(error);
+      const body=await response.json() as Record<string,unknown>;
+      return NextResponse.json({...body,message:"Assignment writer unavailable"},
+        {status:503,headers:response.headers});
+    }
+    return apiErrorResponse(error);
+  }
   },
 );

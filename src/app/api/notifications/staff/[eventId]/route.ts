@@ -49,26 +49,34 @@ function respondError(error: unknown) {
 
 export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor, params }) => {
-    const context = actor!;
-    const { eventId } = params;
-    const result = await updateStaffNotification(context, eventId, await request.json());
-    return NextResponse.json({
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { eventId } = params;
+const result = await updateStaffNotification(context, eventId, await request.json());
+return NextResponse.json({
       ...result,
       message: "Notification updated successfully",
     });
+} catch (error) {
+    return respondError(error);
+  }
   },
 );
 
 export const DELETE = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ context: actor, params }) => {
-    const context = actor!;
-    const { eventId } = params;
-    const result = await deleteStaffNotification(context, eventId);
-    return NextResponse.json({
+  async ({ context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { eventId } = params;
+const result = await deleteStaffNotification(context, eventId);
+return NextResponse.json({
       ...result,
       message: "Notification deleted successfully",
     });
+} catch (error) {
+    return respondError(error);
+  }
   },
 );

@@ -15,19 +15,35 @@ export const runtime = "nodejs";
 
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const input = await request.json();
-    const bulk = input && Array.isArray(input.mappings);
-    const row = bulk
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const input = await request.json();
+const bulk = input && Array.isArray(input.mappings);
+const row = bulk
       ? await addCollegeTermMappings(context, input.mappings)
       : await addCollegeTermMapping(context, input);
-    const inserted = bulk ? (row as unknown[]).length : 1;
-    return NextResponse.json({ mapping: row,
+const inserted = bulk ? (row as unknown[]).length : 1;
+return NextResponse.json({ mapping: row,
       action: bulk ? "BULK_ADD" : "ADD", insertedCount: inserted,
       message:TERM_MAPPING_COPY.addedMessage(inserted),
       ...(bulk ? { skippedCount: input.mappings.length - inserted } : {}) },
       { status: bulk && inserted === 0 ? 200 : 201 });
+} catch (error) {
+    if (error instanceof CollegeTermMappingError)
+      return NextResponse.json({ error: error.code }, { status: error.code.endsWith("NOT_FOUND") ? 404 : 409 });
+    if(error instanceof ZodError)
+      return NextResponse.json({error:"INVALID_TERM_MAPPING",
+        fieldErrors:Object.fromEntries(error.issues.map(issue=>{
+          const field=String(issue.path[0]??"course_ids");
+          const mapped=field==="programTermId"?"semester_id":
+            field==="courseId"?"course_ids":field==="programId"?"program_id":field;
+          return [mapped,issue.message];
+        }))},{status:400});
+    if(error instanceof SyntaxError)
+      return NextResponse.json({error:"INVALID_TERM_MAPPING"},{status:400});
+    return apiErrorResponse(error);
+  }
   },
 );
 /** Legacy /reorderCourses accepts COMPLETE ordered mapping IDs; PUT
@@ -36,11 +52,27 @@ export const POST = route(
  */
 export const PUT = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const input=collegeTermCourseFullOrderSchema.parse(await request.json());
-    const result=await reorderCollegeTermMappings(context,input);
-    return NextResponse.json({status:"OK",message:"Semester course order updated",
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const input=collegeTermCourseFullOrderSchema.parse(await request.json());
+const result=await reorderCollegeTermMappings(context,input);
+return NextResponse.json({status:"OK",message:"Semester course order updated",
       data:result,result},{headers:{"Cache-Control":"private, no-store"}});
+} catch(error){
+    if(error instanceof CollegeTermMappingError)
+      return NextResponse.json({error:error.code},{status:error.code.endsWith("NOT_FOUND")?404:409});
+    if(error instanceof ZodError)
+      return NextResponse.json({error:"INVALID_TERM_MAPPING",
+        fieldErrors:Object.fromEntries(error.issues.map(issue=>{
+          const field=String(issue.path[0]??"course_ids");
+          const mapped=field==="programTermId"?"semester_id":
+            field==="courseId"?"course_ids":field==="programId"?"program_id":field;
+          return [mapped,issue.message];
+        }))},{status:400});
+    if(error instanceof SyntaxError)
+      return NextResponse.json({error:"INVALID_TERM_MAPPING"},{status:400});
+    return apiErrorResponse(error);
+  }
   },
 );

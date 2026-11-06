@@ -9,14 +9,20 @@ export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const {jobTypeId}=params,body=await request.json() as unknown;
-    if(!body||typeof body!=="object"||Array.isArray(body))
+    try {
+const {jobTypeId}=params,body=await request.json() as unknown;
+if(!body||typeof body!=="object"||Array.isArray(body))
    return NextResponse.json({error:"INVALID_INPUT"},{status:400});
-    const fields=body as Record<string,unknown>;
-    const result=await setTpoJobTypeActive(__ctx,{
+const fields=body as Record<string,unknown>;
+const result=await setTpoJobTypeActive(__ctx,{
    jobTypeId,active:fields["active"],expectedVersion:fields["expectedVersion"],
   });
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+} catch(error){
+  if(error instanceof TpoConfigError)return NextResponse.json({error:error.code},{
+   status:error.code==="TPO_SETTINGS_STALE"||error.code==="TPO_JOB_TYPE_LAST_ACTIVE"||error.code==="TPO_JOB_TYPE_BUILTIN"?409:error.code==="TPO_SETTINGS_PENDING"?503:404});
+  return apiErrorResponse(error);
+ }
   },
 );
 
@@ -24,12 +30,19 @@ export const PUT = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const {jobTypeId}=params;
-    const body=await request.json() as {label?:unknown;expectedVersion?:unknown};
-    const result=await renameTpoJobType(__ctx,{
+    try {
+const {jobTypeId}=params;
+const body=await request.json() as {label?:unknown;expectedVersion?:unknown};
+const result=await renameTpoJobType(__ctx,{
    jobTypeId,label:body?.label,expectedVersion:body?.expectedVersion,
   });
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+} catch(error){
+  if(error instanceof TpoConfigError)return NextResponse.json({error:error.code},{
+   status:error.code==="TPO_SETTINGS_STALE"||error.code==="TPO_JOB_TYPE_EXISTS"||error.code==="TPO_JOB_TYPE_BUILTIN"?409:
+    error.code==="TPO_SETTINGS_PENDING"?503:404});
+  return apiErrorResponse(error);
+ }
   },
 );
 
@@ -37,11 +50,18 @@ export const DELETE = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const {jobTypeId}=params;
-    const body=await request.json() as {expectedVersion?:unknown};
-    const result=await removeTpoJobType(__ctx,{
+    try {
+const {jobTypeId}=params;
+const body=await request.json() as {expectedVersion?:unknown};
+const result=await removeTpoJobType(__ctx,{
    jobTypeId,expectedVersion:body?.expectedVersion,
   });
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+} catch(error){
+  if(error instanceof TpoConfigError)return NextResponse.json({error:error.code},{
+   status:error.code==="TPO_SETTINGS_STALE"||error.code==="TPO_JOB_TYPE_IN_USE"||
+    error.code==="TPO_JOB_TYPE_BUILTIN"?409:error.code==="TPO_SETTINGS_PENDING"?503:404});
+  return apiErrorResponse(error);
+ }
   },
 );

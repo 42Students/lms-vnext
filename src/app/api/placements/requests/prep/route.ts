@@ -8,7 +8,10 @@ export const GET = route(
   { auth: "user", permission: "service-enforced" },
   async ({ context: __actor }) => {
     const __ctx = __actor!;
-    return NextResponse.json({assignments:await listOwnTpoPrepAssignments(__ctx)},
+    try {
+return NextResponse.json({assignments:await listOwnTpoPrepAssignments(__ctx)},
   {headers:{"Cache-Control":"private, no-store"}});
+} catch(error){if(error instanceof TpoPrepError)return NextResponse.json({error:error.code},{status:503});
+  return apiErrorResponse(error);}
   },
 );

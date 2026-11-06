@@ -13,10 +13,18 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const { projectId } = params;
-    const body = await readMentorProjectCommandBody(request);
-    return NextResponse.json(await changeProjectSoftDeleteState(
+    try {
+const { projectId } = params;
+const body = await readMentorProjectCommandBody(request);
+return NextResponse.json(await changeProjectSoftDeleteState(
       __ctx, projectId, body, false,
     ));
+} catch (error) {
+    if (error instanceof MentorProjectCommandBodyError)
+      return NextResponse.json({
+        error: error.code, message: mentorProjectBodyFailureMessage(error.status),
+      }, { status: error.status });
+    return apiErrorResponse(error);
+  }
   },
 );

@@ -43,18 +43,19 @@ function respondError(error: unknown) {
 /** Authorised Super Admin browse; never reuse this route for personal inbox. */
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const params = new URL(request.url).searchParams;
-    const organizationId = params.get("organizationId") || undefined;
-    const collegeId = params.get("collegeId") || undefined;
-    const classId = params.get("classId") || undefined;
-    const courseId = params.get("courseId") || undefined;
-    const deliveryStatus = (params.get("deliveryStatus") || undefined) as
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const params = new URL(request.url).searchParams;
+const organizationId = params.get("organizationId") || undefined;
+const collegeId = params.get("collegeId") || undefined;
+const classId = params.get("classId") || undefined;
+const courseId = params.get("courseId") || undefined;
+const deliveryStatus = (params.get("deliveryStatus") || undefined) as
       "SENT" | "SCHEDULED" | "PROCESSING" | "FAILED" | "DELETED" | undefined;
-    const pageNo = params.has("pageNo") ? Number(params.get("pageNo")) : undefined;
-    const pageSize = params.has("pageSize") ? Number(params.get("pageSize")) : undefined;
-    const result = await listScopedAdminNotificationPage(context, {
+const pageNo = params.has("pageNo") ? Number(params.get("pageNo")) : undefined;
+const pageSize = params.has("pageSize") ? Number(params.get("pageSize")) : undefined;
+const result = await listScopedAdminNotificationPage(context, {
       ...(organizationId !== undefined ? { organizationId } : {}),
       ...(collegeId !== undefined ? { collegeId } : {}),
       ...(classId !== undefined ? { classId } : {}),
@@ -63,21 +64,28 @@ export const GET = route(
       ...(pageNo !== undefined ? { pageNo } : {}),
       ...(pageSize !== undefined ? { pageSize } : {}),
     });
-    return NextResponse.json(result);
+return NextResponse.json(result);
+} catch (error) {
+    return respondError(error);
+  }
   },
 );
 
 /** Staff composition; service checks assignment and stored course/class. */
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const result = await createStaffNotification(context, await request.json());
-    return NextResponse.json({
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const result = await createStaffNotification(context, await request.json());
+return NextResponse.json({
       ...result,
       message: result.deliveryStatus === "SCHEDULED"
         ? "Notification scheduled successfully"
         : "Notification created successfully",
     }, { status: 200 });
+} catch (error) {
+    return respondError(error);
+  }
   },
 );

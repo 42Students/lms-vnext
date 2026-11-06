@@ -11,9 +11,17 @@ export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const {assignmentId}=params;
-    return NextResponse.json(await reassignCollegeTeaching(
+    try {
+const {assignmentId}=params;
+return NextResponse.json(await reassignCollegeTeaching(
       __ctx,assignmentId,await request.json(),
     ));
+} catch(error){
+    if(error instanceof CollegeTeachingReassignError)
+      return NextResponse.json({error:error.code},{
+        status:error.code==="ASSIGNMENT_NOT_FOUND"?404:409,
+      });
+    return apiErrorResponse(error);
+  }
   },
 );

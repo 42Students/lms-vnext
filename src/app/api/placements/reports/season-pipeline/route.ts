@@ -9,14 +9,15 @@ export const dynamic = "force-dynamic";
 
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const query = Object.fromEntries(new URL(request.url).searchParams.entries());
-    const report = await getTpoSeasonPipeline(context, query);
-    const result = exportTpoSeasonPipelineCsv(
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const query = Object.fromEntries(new URL(request.url).searchParams.entries());
+const report = await getTpoSeasonPipeline(context, query);
+const result = exportTpoSeasonPipelineCsv(
       report.season?.name ?? "No season selected", report.totals, report.rows,
     );
-    return new Response("\uFEFF" + result.csv, {
+return new Response("\uFEFF" + result.csv, {
       status: 200,
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
@@ -27,5 +28,10 @@ export const GET = route(
         "X-Export-Truncated": String(result.truncated),
       },
     });
+} catch (caught) {
+    const response = apiErrorResponse(caught);
+    response.headers.set("Cache-Control", "private, no-store, max-age=0");
+    return response;
+  }
   },
 );

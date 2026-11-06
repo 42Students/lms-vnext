@@ -12,20 +12,25 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
-    const _p=await readBoundedJsonRequest(request,16384);
-    if(!_p.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
-    const payload=_p.value;
-    const payloadObj=payload as Record<string,unknown>;
-    const collegeId=z.uuid().parse(payloadObj.collegeId);
-    const {collegeId:_,...body}=payloadObj;
-    const result=await reviewSuperAdminVerificationBulk(__ctx,collegeId,body);
-    const receipts=result.outcomes.map(item=>({
+    try {
+const _p=await readBoundedJsonRequest(request,16384);
+if(!_p.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+const payload=_p.value;
+const payloadObj=payload as Record<string,unknown>;
+const collegeId=z.uuid().parse(payloadObj.collegeId);
+const {collegeId:_,...body}=payloadObj;
+const result=await reviewSuperAdminVerificationBulk(__ctx,collegeId,body);
+const receipts=result.outcomes.map(item=>({
    learnerMembershipId:item.learnerMembershipId,
    section:item.section,status:item.result,
    success:item.result==="VERIFIED"||item.result==="SENT_BACK",
   }));
-    return NextResponse.json({...result,receipts,
+return NextResponse.json({...result,receipts,
    status:result.summary.failed>0?"PARTIAL":"COMPLETE",
   },{headers:{"Cache-Control":"private, no-store"}});
+} catch(error){
+  if(error instanceof VerificationUnavailableError)return NextResponse.json({error:"VERIFICATION_STORAGE_PENDING"},{status:503});
+  return apiErrorResponse(error);
+ }
   },
 );

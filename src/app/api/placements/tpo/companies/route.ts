@@ -10,15 +10,19 @@ export const runtime = "nodejs";
 
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const collegeId = new URL(request.url).searchParams.get("collegeId") ?? "";
-    await requirePlacementManageScope(context,collegeId);
-    if(!(await placementTableExists("placement_tpo_leads"))||
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const collegeId = new URL(request.url).searchParams.get("collegeId") ?? "";
+await requirePlacementManageScope(context,collegeId);
+if(!(await placementTableExists("placement_tpo_leads"))||
        !(await placementTableExists("placement_tpo_lead_activities")))
       return NextResponse.json({error:"TPO_CRM_SCHEMA_NOT_REGISTERED"},{status:503});
-    return NextResponse.json({
+return NextResponse.json({
       companies: await listTpoCompanies(context, collegeId),
     });
+} catch (error) {
+    return tpoCrmApiErrorResponse(error);
+  }
   },
 );

@@ -10,14 +10,20 @@ type Context={params:Promise<{membershipId:string}>};
 
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ context: actor, params }) => {
-    const context = actor!;
-    const {membershipId}=params;
-    const grant=await grantCollegeStudentPlacementResume(context,membershipId);
-    return NextResponse.redirect(grant.url,{status:303,headers:{
+  async ({ context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const {membershipId}=params;
+const grant=await grantCollegeStudentPlacementResume(context,membershipId);
+return NextResponse.redirect(grant.url,{status:303,headers:{
    "Cache-Control":"private, no-store, max-age=0",
    "Referrer-Policy":"no-referrer",
    "X-Content-Type-Options":"nosniff",
   }});
+} catch(error){
+  const response=apiErrorResponse(error);
+  response.headers.set("Cache-Control","private, no-store, max-age=0");
+  return response;
+ }
   },
 );

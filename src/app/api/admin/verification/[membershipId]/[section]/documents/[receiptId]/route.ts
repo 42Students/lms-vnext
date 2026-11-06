@@ -11,14 +11,20 @@ export const GET = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const {membershipId,section,receiptId}=z.strictObject({
+    try {
+const {membershipId,section,receiptId}=z.strictObject({
    membershipId:z.uuid(),section:z.enum(["EDUCATION","IDENTITY"]),receiptId:z.uuid(),
   }).parse(params);
-    const collegeId=z.uuid().parse(new URL(request.url).searchParams.get("collegeId"));
-    const grant=await openCollegeVerificationDocument(
+const collegeId=z.uuid().parse(new URL(request.url).searchParams.get("collegeId"));
+const grant=await openCollegeVerificationDocument(
    __ctx,membershipId,section,receiptId,collegeId);
-    return NextResponse.redirect(grant.readUrl,{status:302,headers:{
+return NextResponse.redirect(grant.readUrl,{status:302,headers:{
    "Cache-Control":"private, no-store","Referrer-Policy":"no-referrer",
   }});
+} catch(error){
+  if(error instanceof VerificationStateError)return NextResponse.json({error:"NOT_FOUND"},{status:404});
+  if(error instanceof VerificationUnavailableError)return NextResponse.json({error:error.message},{status:503});
+  return apiErrorResponse(error);
+ }
   },
 );

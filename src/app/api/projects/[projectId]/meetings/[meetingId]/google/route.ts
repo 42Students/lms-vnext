@@ -27,14 +27,20 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const raw=await request.text();
-    if(raw.length>6000)return NextResponse.json({error:"INVALID_REQUEST"},{status:413});
-    const input=inputSchema.safeParse(JSON.parse(raw||"{}"));
-    if(!input.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
-    const {projectId,meetingId}=params;
-    const result=await syncMentorGoogleMeeting(__ctx,
+    try {
+const raw=await request.text();
+if(raw.length>6000)return NextResponse.json({error:"INVALID_REQUEST"},{status:413});
+const input=inputSchema.safeParse(JSON.parse(raw||"{}"));
+if(!input.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+const {projectId,meetingId}=params;
+const result=await syncMentorGoogleMeeting(__ctx,
    projectId,meetingId,input.data.weeklyCount,input.data.inviteeMembershipIds);
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+} catch(error){
+  if(error instanceof SyntaxError)
+   return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  return apiErrorResponse(error);
+ }
   },
 );
 

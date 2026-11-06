@@ -9,7 +9,12 @@ export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
-    return NextResponse.json(await setTpoBuiltinJobTypeActive(__ctx,await request.json()),{
+    try {
+return NextResponse.json(await setTpoBuiltinJobTypeActive(__ctx,await request.json()),{
   headers:{"Cache-Control":"private, no-store"}});
+} catch(error){if(error instanceof TpoConfigError)return NextResponse.json({error:error.code},{
+  status:error.code==="TPO_SETTINGS_STALE"||error.code==="TPO_JOB_TYPE_LAST_ACTIVE"?409:
+   error.code==="TPO_SETTINGS_PENDING"?503:422});
+  return apiErrorResponse(error);}
   },
 );

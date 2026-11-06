@@ -65,26 +65,29 @@ function handledError(error: unknown) {
 
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ context: actor, params }) => {
-    const context = actor!;
-    const { semesterId } = params;
-    const semester = await scopedSemester(context, semesterId);
-    if (!semester) return NextResponse.json({
+  async ({ context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { semesterId } = params;
+const semester = await scopedSemester(context, semesterId);
+if (!semester) return NextResponse.json({
       error: "SEMESTER_NOT_FOUND", message: "Program structure not found.",
     }, { status: 404 });
-    return NextResponse.json({ status: "OK", message: "OK", data: semester, semester },
+return NextResponse.json({ status: "OK", message: "OK", data: semester, semester },
       {headers:{"Cache-Control":"private, no-store"}});
+} catch (error) { return handledError(error); }
   },
 );
 
 export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor, params }) => {
-    const context = actor!;
-    const { semesterId } = params;
-    const url = new URL(request.url);
-    const statusType = url.searchParams.get("statusType");
-    if (statusType !== null) {
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { semesterId } = params;
+const url = new URL(request.url);
+const statusType = url.searchParams.get("statusType");
+if (statusType !== null) {
       if (statusType !== "ACTIVE" && statusType !== "INACTIVE") {
         return NextResponse.json({ error: "BAD_REQUEST", message: "Invalid status type." }, { status: 400 });
       }
@@ -104,19 +107,26 @@ export const PATCH = route(
       return NextResponse.json({ status: "OK", message: "Status updated successfully.",
         data: semester, semester });
     }
-    const body: unknown = await request.json();
-    const semester = await updateCollegeSemester(context, semesterId, body);
-    return NextResponse.json({ status: "OK", message: "Semester updated successfully.", data: semester, semester });
+const body: unknown = await request.json();
+const semester = await updateCollegeSemester(context, semesterId, body);
+return NextResponse.json({ status: "OK", message: "Semester updated successfully.", data: semester, semester });
+} catch (error) {
+    return handledError(error);
+  }
   },
 );
 
 export const DELETE = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor, params }) => {
-    const context = actor!;
-    const { semesterId } = params;
-    const body: unknown = await request.json();
-    const result = await deleteCollegeSemester(context, semesterId, body);
-    return NextResponse.json({ status: "OK", message: "Deleted successfully.", data: result, result });
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { semesterId } = params;
+const body: unknown = await request.json();
+const result = await deleteCollegeSemester(context, semesterId, body);
+return NextResponse.json({ status: "OK", message: "Deleted successfully.", data: result, result });
+} catch (error) {
+    return handledError(error);
+  }
   },
 );

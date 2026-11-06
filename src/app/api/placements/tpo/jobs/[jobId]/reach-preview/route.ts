@@ -10,9 +10,15 @@ export const GET = route(
   { auth: "user", permission: "service-enforced" },
   async ({ context: __actor, params }) => {
     const __ctx = __actor!;
-    const {jobId}=params;
-    const data=await getTpoDriveEligibilityReachPreview(
+    try {
+const {jobId}=params;
+const data=await getTpoDriveEligibilityReachPreview(
    __ctx,jobId);
-    return NextResponse.json(data,{headers:noStore});
+return NextResponse.json(data,{headers:noStore});
+} catch(error){
+  const response=apiErrorResponse(error);
+  response.headers.set("Cache-Control","private, no-store");
+  return response;
+ }
   },
 );

@@ -135,15 +135,19 @@ test("no guard evidence loss when a handler retains or strengthens its checks", 
 
 test("central wrappers count as guard evidence only when they really guard", () => {
   const evidence = (source) => extractApiMethods(source)[0];
-  const user = evidence(`export const POST = route({ auth: "user", permission: "x.y" }, async () => Response.json({}));`);
+  const IMPORT = 'import { route } from "@/security/route";\n';
+  const user = evidence(IMPORT + `export const POST = route({ auth: "user", permission: "x.y" }, async () => Response.json({}));`);
   assert.equal(user.has_direct_session_evidence, true);
   assert.equal(user.has_direct_origin_evidence, true);
+  // Same call without importing the central wrapper is not a guard.
+  const local = evidence(`export const POST = route({ auth: "user", permission: "x.y" }, async () => Response.json({}));`);
+  assert.equal(local.has_direct_session_evidence, false);
   // Public routes (either quote style), non-literal auth, and a method named route() on another object are not guards.
   for (const source of [
-    `export const GET = route({ auth: 'public', permission: "service-enforced" }, async () => Response.json({}));`,
-    `export const GET = route({ auth: AUTH, permission: "service-enforced" }, async () => Response.json({}));`,
-    `export const GET = router.route({ auth: "user" }, async () => Response.json({}));`,
-    `export const POST = webhookRoute({ name: "x" }, async () => Response.json({}));`,
+    IMPORT + `export const GET = route({ auth: 'public', permission: "service-enforced" }, async () => Response.json({}));`,
+    IMPORT + `export const GET = route({ auth: AUTH, permission: "service-enforced" }, async () => Response.json({}));`,
+    IMPORT + `export const GET = router.route({ auth: "user" }, async () => Response.json({}));`,
+    IMPORT + `export const POST = webhookRoute({ name: "x" }, async () => Response.json({}));`,
   ]) {
     const m = evidence(source);
     assert.equal(m.has_direct_session_evidence, false, source);

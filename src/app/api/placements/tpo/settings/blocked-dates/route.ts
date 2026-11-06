@@ -9,7 +9,13 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
-    const result=await createBlockedDate(__ctx,await request.json());
-    return NextResponse.json(result,{status:201,headers:{"Cache-Control":"private, no-store"}});
+    try {
+const result=await createBlockedDate(__ctx,await request.json());
+return NextResponse.json(result,{status:201,headers:{"Cache-Control":"private, no-store"}});
+} catch(error){
+  if(error instanceof BlockedDateError)return NextResponse.json({error:error.code},{
+   status:error.code==="DATE_EXISTS"?409:error.code==="DATE_PENDING"?503:error.code==="DATE_IN_PAST"||error.code==="DATE_RANGE_INVALID"?422:404});
+  return apiErrorResponse(error);
+ }
   },
 );

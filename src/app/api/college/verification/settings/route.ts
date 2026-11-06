@@ -13,25 +13,35 @@ export const runtime="nodejs";
 const inputSchema=z.strictObject({tpoCanVerify:z.boolean()});
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ context: actor }) => {
-    const context = actor!;
-    const scope=await requireCollegeVerificationActor(context);
-    await requireVerificationTables();
-    const [row]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
+  async ({ context: __actor }) => {
+    const context = __actor!;
+    try {
+const scope=await requireCollegeVerificationActor(context);
+await requireVerificationTables();
+const [row]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
    .from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,scope.collegeId)).limit(1);
-    return NextResponse.json({tpoCanVerify:row?.enabled??true},
+return NextResponse.json({tpoCanVerify:row?.enabled??true},
    {headers:{"Cache-Control":"private, no-store"}});
+} catch(error){
+  if(error instanceof VerificationUnavailableError)return NextResponse.json({error:error.message},{status:503});
+  return apiErrorResponse(error);
+ }
   },
 );
 export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const scope=await requireCollegeVerificationActor(context);
-    await requireVerificationTables();
-    const input=inputSchema.parse(await request.json());
-    await setTpoProfileVerificationEnabled(context,scope.collegeId,input.tpoCanVerify);
-    return NextResponse.json({tpoCanVerify:input.tpoCanVerify},
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const scope=await requireCollegeVerificationActor(context);
+await requireVerificationTables();
+const input=inputSchema.parse(await request.json());
+await setTpoProfileVerificationEnabled(context,scope.collegeId,input.tpoCanVerify);
+return NextResponse.json({tpoCanVerify:input.tpoCanVerify},
    {headers:{"Cache-Control":"private, no-store"}});
+} catch(error){
+  if(error instanceof VerificationUnavailableError)return NextResponse.json({error:error.message},{status:503});
+  return apiErrorResponse(error);
+ }
   },
 );

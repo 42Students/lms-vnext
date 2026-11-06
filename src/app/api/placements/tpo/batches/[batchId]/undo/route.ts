@@ -17,23 +17,24 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const ctx = __actor!;
-    const {batchId}=params;
-    const {collegeId}=await getTpoBatch(ctx,batchId);
-    if(!await placementTableExists("placement_eligibility_events"))
+    try {
+const {batchId}=params;
+const {collegeId}=await getTpoBatch(ctx,batchId);
+if(!await placementTableExists("placement_eligibility_events"))
    return NextResponse.json({error:"BATCH_MIGRATION_PENDING"},{status:503});
-    const {actionId}=inputSchema.parse(await request.json());
-    const events=await getDb().select({scopeType:placementEligibilityEvents.scopeType,
+const {actionId}=inputSchema.parse(await request.json());
+const events=await getDb().select({scopeType:placementEligibilityEvents.scopeType,
    scopeId:placementEligibilityEvents.scopeId})
    .from(placementEligibilityEvents)
    .where(and(eq(placementEligibilityEvents.collegeId,collegeId),
     eq(placementEligibilityEvents.actionId,actionId),
     eq(placementEligibilityEvents.eventKind,"DECIDE")));
-    if(events.length===0||events.some(e=>e.scopeType==="SECTION"||
+if(events.length===0||events.some(e=>e.scopeType==="SECTION"||
     (e.scopeType==="COHORT"&&e.scopeId!==batchId)||
     (e.scopeType!=="COHORT"&&e.scopeType!=="MEMBERSHIP")))
    return NextResponse.json({error:"BATCH_ACTION_NOT_FOUND"},{status:404});
-    const membershipIds=events.filter(e=>e.scopeType==="MEMBERSHIP").map(e=>e.scopeId);
-    if(membershipIds.length){
+const membershipIds=events.filter(e=>e.scopeType==="MEMBERSHIP").map(e=>e.scopeId);
+if(membershipIds.length){
    const matching=await getDb().select({id:learnerProgramEnrollments.membershipId})
     .from(learnerProgramEnrollments)
     .innerJoin(collegeMemberships,eq(collegeMemberships.id,learnerProgramEnrollments.membershipId))
@@ -43,7 +44,12 @@ export const POST = route(
    if(new Set(matching.map(r=>r.id)).size!==new Set(membershipIds).size)
     return NextResponse.json({error:"BATCH_ACTION_NOT_FOUND"},{status:404});
   }
-    const result=await undoPlacementParticipation(ctx,{collegeId,actionId});
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+const result=await undoPlacementParticipation(ctx,{collegeId,actionId});
+return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+} catch(error){
+  if(error instanceof PlacementBatchError&&error.code==="DB08_ACTION_STALE")
+   return NextResponse.json({error:"BATCH_ACTION_STALE"},{status:409});
+  return apiErrorResponse(error);
+ }
   },
 );

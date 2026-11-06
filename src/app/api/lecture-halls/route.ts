@@ -18,17 +18,18 @@ export const runtime = "nodejs";
 
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const search=new URL(request.url).searchParams;
-    const legacy=search.get("legacy")==="1";
-    const stats=search.get("stats")==="1";
-    const responseOptions = { headers: { "Cache-Control": "private, no-store" } };
-    const collegeId = search.get("collegeId");
-    if (stats) {
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const search=new URL(request.url).searchParams;
+const legacy=search.get("legacy")==="1";
+const stats=search.get("stats")==="1";
+const responseOptions = { headers: { "Cache-Control": "private, no-store" } };
+const collegeId = search.get("collegeId");
+if (stats) {
       return NextResponse.json(await getLectureHallStatistics(context, collegeId ?? ""), responseOptions);
     }
-    if (legacy && search.has("query")) {
+if (legacy && search.has("query")) {
       return NextResponse.json(await searchLectureHallsForPicker(context, {
         collegeId,
         query: search.get("query") ?? "",
@@ -37,7 +38,7 @@ export const GET = route(
         ...(search.has("roomType") ? { roomType: search.get("roomType") } : {}),
       }), responseOptions);
     }
-    if (legacy && (search.has("page") || search.has("size"))) {
+if (legacy && (search.has("page") || search.has("size"))) {
       return NextResponse.json(await listLectureHallsLegacyPage(context, {
         collegeId,
         ...(search.has("page") ? { page: search.get("page") } : {}),
@@ -46,34 +47,43 @@ export const GET = route(
         ...(search.has("query") ? { query: search.get("query") } : {}),
       }), responseOptions);
     }
-    const params=Object.fromEntries([...search].filter(([key])=>
+const params=Object.fromEntries([...search].filter(([key])=>
       !["legacy","stats","deptId","hallId"].includes(key)));
-    if(search.has("deptId")&&!params["departmentId"])params["departmentId"]=search.get("deptId")??"";
-    if(search.has("hallId")&&!params["id"])params["id"]=search.get("hallId")??"";
-    const result=await listLectureHalls(context,params);
-    if(legacy)return NextResponse.json({status:"success",message:"Lecture halls retrieved",
+if(search.has("deptId")&&!params["departmentId"])params["departmentId"]=search.get("deptId")??"";
+if(search.has("hallId")&&!params["id"])params["id"]=search.get("hallId")??"";
+const result=await listLectureHalls(context,params);
+if(legacy)return NextResponse.json({status:"success",message:"Lecture halls retrieved",
       data:result.items,total:result.pagination.total,
       pagination:result.pagination,collegeId:result.collegeId},
      {headers:{"Cache-Control":"private, no-store"}});
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+} catch (error) {
+    if (error instanceof LectureHallError) return lectureHallErrorResponse(error);
+    return apiErrorResponse(error);
+  }
   },
 );
 
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    let body: unknown;
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
     try {
+let body: unknown;
+try {
       body = await request.json();
     } catch {
       return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 });
     }
-    return NextResponse.json(
+return NextResponse.json(
       { hall: await createLectureHall(context,
           new URL(request.url).searchParams.get("legacy") === "1"
             ? normalizeLegacyLectureHallCreate(body) : body) },
       { status: 201 },
     );
+} catch (error) {
+    if (error instanceof LectureHallError) return lectureHallErrorResponse(error);
+    return apiErrorResponse(error);
+  }
   },
 );

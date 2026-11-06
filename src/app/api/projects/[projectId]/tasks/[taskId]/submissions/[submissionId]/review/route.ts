@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -8,7 +9,6 @@ import {readMentorProjectCommandBody,MentorProjectCommandBodyError,
 import {
   reviewProjectTaskSubmission,
 } from "@/modules/projects/task-submission-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -20,26 +20,18 @@ type RouteContext = {
   }>;
 };
 
-async function handlePOST(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-    const {
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const {
       projectId,
       taskId,
       submissionId,
-    } = await params;
-    const body = reviewProjectTaskSubmissionInputSchema.parse(await readMentorProjectCommandBody(request));
-    const result =
+    } = params;
+const body = reviewProjectTaskSubmissionInputSchema.parse(await readMentorProjectCommandBody(request));
+const result =
       await reviewProjectTaskSubmission(
         context,
         projectId,
@@ -47,14 +39,13 @@ async function handlePOST(
         submissionId,
         body,
       );
-
-    return NextResponse.json(result);
-  } catch (error) {
+return NextResponse.json(result);
+} catch (error) {
     if(error instanceof MentorProjectCommandBodyError)
       return NextResponse.json({error:error.code,
         message:mentorProjectBodyFailureMessage(error.status)},
         {status:error.status,headers:{"Cache-Control":"no-store"}});
     return apiErrorResponse(error);
   }
-}
-export const POST = secured(handlePOST);
+  },
+);

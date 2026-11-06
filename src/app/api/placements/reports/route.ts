@@ -517,22 +517,23 @@ function leadsReportCsv(report: PlacementLeadsReport) {
 
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const collegeId = isSuperAdmin(context)
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const collegeId = isSuperAdmin(context)
       ? context.adminScope?.collegeId ?? null
       : hasMembershipRole(context, "TPO")
         ? context.membership?.collegeId ?? null
         : null;
-    if (!collegeId) {
+if (!collegeId) {
       throw new AuthorizationError("placements.manage");
     }
-    const query = exportQuerySchema.parse(
+const query = exportQuerySchema.parse(
       Object.fromEntries(
         new URL(request.url).searchParams.entries(),
       ),
     );
-    if(query.kind==="accreditation-students"){
+if(query.kind==="accreditation-students"){
       if(!hasMembershipRole(context,"TPO")||!query.batchId)
         throw new AuthorizationError("placements.manage");
       const studentReport=await getTpoAccreditationStudentExport(context,{
@@ -544,7 +545,7 @@ export const GET = route(
         "Cache-Control":"private, no-store, max-age=0","X-Content-Type-Options":"nosniff",Vary:"Cookie"},
       });
     }
-    if (query.kind === "accreditation") {
+if (query.kind === "accreditation") {
       const accreditation = await getPlacementAccreditationReport(
         context,
         { collegeId, seasonId: query.seasonId, jobId: query.jobId },
@@ -560,14 +561,14 @@ export const GET = route(
         },
       });
     }
-    const workspace = await getPlacementReportWorkspace(context, {
+const workspace = await getPlacementReportWorkspace(context, {
       collegeId,
       seasonId: query.seasonId,
       jobId: query.jobId,
     });
-    let csv: string;
-    let filename: string;
-    switch (query.kind) {
+let csv: string;
+let filename: string;
+switch (query.kind) {
       case "placement-summary":
         csv = placementSummaryCsv(workspace);
         filename = "tpo-placement-summary.csv";
@@ -633,7 +634,7 @@ export const GET = route(
         }
       }
     }
-    return new Response(`﻿${csv}`, {
+return new Response(`﻿${csv}`, {
       status: 200,
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
@@ -643,5 +644,10 @@ export const GET = route(
         Vary: "Cookie",
       },
     });
+} catch (error) {
+    const response = apiErrorResponse(error);
+    response.headers.set("Cache-Control", "private, no-store, max-age=0");
+    return response;
+  }
   },
 );

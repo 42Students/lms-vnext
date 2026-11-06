@@ -10,9 +10,16 @@ export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const {slotId}=params;
-    return NextResponse.json({slot:await changeCollegeElectiveLifecycle(
+    try {
+const {slotId}=params;
+return NextResponse.json({slot:await changeCollegeElectiveLifecycle(
       __ctx,slotId,await request.json(),
     )});
+} catch(error) {
+    if(error instanceof ElectiveLifecycleError)
+      return NextResponse.json({error:error.code},{status:
+        error.code==="ELECTIVE_SLOT_NOT_FOUND"?404:409});
+    return apiErrorResponse(error);
+  }
   },
 );

@@ -10,9 +10,18 @@ import {
 export const runtime = "nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const result = await bulkUpdateTpoAfterCollege(context, await request.json());
-    return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const result = await bulkUpdateTpoAfterCollege(context, await request.json());
+return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
+} catch (error) {
+    if (error instanceof BulkAfterCollegeError)
+      return NextResponse.json({ error: error.code }, {
+        status: error.code === "AFTER_COLLEGE_STALE" ? 409 :
+          error.code === "AFTER_COLLEGE_PENDING" ? 503 : 400,
+      });
+    return apiErrorResponse(error);
+  }
   },
 );

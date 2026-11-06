@@ -13,10 +13,17 @@ export const dynamic = "force-dynamic";
 
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    return NextResponse.json(await updateConfirmedTpoCompanyTrust(
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+return NextResponse.json(await updateConfirmedTpoCompanyTrust(
       context, await request.json(),
     ));
+} catch (error) {
+    if (error instanceof TpoCompanyTrustConflict) {
+      return NextResponse.json({ error: error.message }, { status: 409 });
+    }
+    return apiErrorResponse(error);
+  }
   },
 );

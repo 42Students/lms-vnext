@@ -22,23 +22,27 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const ctx = __actor!;
-    const body=mutation.parse(await request.json());
-    const {groupId}=params;
-    const preview=await previewCollegeGroupRule(ctx,{groupId});
-    if(preview.projection.incomplete)
+    try {
+const body=mutation.parse(await request.json());
+const {groupId}=params;
+const preview=await previewCollegeGroupRule(ctx,{groupId});
+if(preview.projection.incomplete)
    return NextResponse.json({error:"RULE_PREVIEW_INCOMPLETE",
      message:"The learner preview is truncated. Narrow the criteria before applying."},{status:409});
-    const result=await refreshGroupRule(ctx,groupId,body.expectedGroupVersion);
-    return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+const result=await refreshGroupRule(ctx,groupId,body.expectedGroupVersion);
+return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+} catch(e){return fail(e);}
   },
 );
 export const DELETE = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const input=mutation.parse(await request.json());
-    const {groupId}=params;
-    const result=await clearGroupRule(__ctx,groupId,input.expectedGroupVersion);
-    return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+    try {
+const input=mutation.parse(await request.json());
+const {groupId}=params;
+const result=await clearGroupRule(__ctx,groupId,input.expectedGroupVersion);
+return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+} catch(e){return fail(e);}
   },
 );

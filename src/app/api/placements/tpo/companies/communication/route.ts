@@ -21,7 +21,15 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
-    return NextResponse.json(await updateCompanyCommunication(
+    try {
+return NextResponse.json(await updateCompanyCommunication(
   __ctx,await request.json()));
+} catch(e){
+  if(e instanceof CompanyCommunicationUnavailable)return NextResponse.json({error:"STORAGE_PENDING"},{status:503});
+  if(e instanceof Error&&e.message==="COMPANY_NOT_IN_COLLEGE")
+   return NextResponse.json({error:"COMPANY_NOT_FOUND"},{status:404});
+  if(e instanceof ZodError)return NextResponse.json({error:"INVALID_COMPANY_STATE"},{status:422});
+  return apiErrorResponse(e);
+ }
   },
 );

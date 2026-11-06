@@ -11,10 +11,18 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const {requestId}=params;
-    const response=await decideTpoRecruiterDriveRequest(
+    try {
+const {requestId}=params;
+const response=await decideTpoRecruiterDriveRequest(
       __ctx,requestId,await request.json(),
     );
-    return NextResponse.json(response,{headers:{"Cache-Control":"private, no-store"}});
+return NextResponse.json(response,{headers:{"Cache-Control":"private, no-store"}});
+} catch(error){
+    if(error instanceof TpoDriveRequestDecisionError)
+      return NextResponse.json({error:error.code},{
+        status:error.code==="REQUEST_NOT_FOUND"?404:409,
+      });
+    return apiErrorResponse(error);
+  }
   },
 );

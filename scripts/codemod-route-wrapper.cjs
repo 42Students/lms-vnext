@@ -62,6 +62,10 @@ for (const p of files) {
     if (!origin && name !== "GET") { ok = false; reason = "mutation-without-origin"; break; }
     if (st.length !== 1 || !ts.isTryStatement(st[0]) || !st[0].catchClause || st[0].finallyBlock) { ok = false; reason = "shape"; break; }
     const customCatch = isCatch(st[0].catchClause) ? null : st[0].catchClause;
+    // A catch that treats authentication/authorization errors itself would stop seeing them once route() resolves the actor first.
+    if (customCatch && /Authoriz|Unauthent|SessionError|NotSignedIn|\b40[13]\b/.test(customCatch.getText())) { ok = false; reason = "catch-auth"; break; }
+    // A catch that redirects or renders HTML for a failed navigation must keep seeing auth failures too.
+    if (customCatch && /redirect\(|NextResponse\.redirect|Response\.redirect/.test(customCatch.getText())) { ok = false; reason = "catch-redirect"; break; }
     const body = st[0].tryBlock.statements;
     const ctxIdx = body.findIndex((s) => ts.isVariableStatement(s) && /^await getCurrentRequestContext\(\)$/.test(s.declarationList.declarations[0].initializer?.getText() ?? ""));
     // Inline form: every use is `await getCurrentRequestContext()` inside an expression; resolve it once, first.
@@ -103,6 +107,13 @@ for (const p of files) {
     const hasParams = usesParams && /\bparams\b/.test(parts.join("\n"));
     const usesRequest = new RegExp("\\b" + reqName + "\\b").test(parts.join("\n"));
     const args = [usesRequest ? (reqName === "request" ? "request" : "request: " + reqName) : null, "context: __actor", hasParams ? "params" : null].filter(Boolean).join(", ");
+    // A catch that is not just `return apiErrorResponse(e)` carries domain-error mapping: keep it verbatim around the
+    // body (auth errors thrown by route() before the handler still reach route()'s own mapper, as they did before).
+    if (customCatch) {
+      const joined = parts.join("\n");
+      parts.length = 0;
+      parts.push("try {\n" + joined + "\n} " + customCatch.getText());
+    }
     const inner = parts.map((t) => "    " + t).join("\n");
     const out = `export const ${name} = route(\n  { auth: "user", permission: "service-enforced" },\n  async ({ ${args} }) => {\n    const ${ctxName} = __actor!;\n${inner}\n  },\n);`;
     edits.push([fn.getStart(), fn.getEnd(), out]);

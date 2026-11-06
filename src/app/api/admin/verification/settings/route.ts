@@ -15,16 +15,21 @@ const schema=z.strictObject({collegeId:z.uuid(),tpoCanVerify:z.boolean()});
 export const runtime="nodejs";
 export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const _p=await readBoundedJsonRequest(request,8192);
-    if(!_p.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
-    const input=schema.parse(_p.value);
-    await requireSuperAdminVerificationCollege(context,input.collegeId);
-    await requireVerificationTables();
-    await setTpoProfileVerificationEnabled(context,input.collegeId,input.tpoCanVerify);
-    const [saved]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const _p=await readBoundedJsonRequest(request,8192);
+if(!_p.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+const input=schema.parse(_p.value);
+await requireSuperAdminVerificationCollege(context,input.collegeId);
+await requireVerificationTables();
+await setTpoProfileVerificationEnabled(context,input.collegeId,input.tpoCanVerify);
+const [saved]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
     .from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,input.collegeId)).limit(1);
-    return NextResponse.json({tpoCanVerify:saved?.enabled??input.tpoCanVerify},{headers:{"Cache-Control":"private, no-store"}});
+return NextResponse.json({tpoCanVerify:saved?.enabled??input.tpoCanVerify},{headers:{"Cache-Control":"private, no-store"}});
+} catch(error){
+  if(error instanceof VerificationUnavailableError)return NextResponse.json({error:"VERIFICATION_STORAGE_PENDING"},{status:503});
+  return apiErrorResponse(error);
+ }
   },
 );

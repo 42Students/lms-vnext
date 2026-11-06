@@ -15,11 +15,18 @@ export const GET = route(
   { auth: "user", permission: "service-enforced" },
   async ({ context: __actor, params }) => {
     const __ctx = __actor!;
-    const {semesterId:termId}=params;
-    const result=await getCollegeTermStaffingReport(__ctx,termId);
-    return NextResponse.json({status:"OK",message:"OK",data:result.courses,
+    try {
+const {semesterId:termId}=params;
+const result=await getCollegeTermStaffingReport(__ctx,termId);
+return NextResponse.json({status:"OK",message:"OK",data:result.courses,
    term:result.term,totalClasses:result.totalClasses,
    historicalClassCount:result.historicalClassCount,source:result.source},
    {headers:{"Cache-Control":"private, no-store"}});
+} catch(error){
+  if(error instanceof CollegeTermMappingError)
+   return NextResponse.json({error:error.code},{status:error.code==="TERM_NOT_FOUND"?404:409,
+    headers:{"Cache-Control":"private, no-store"}});
+  return apiErrorResponse(error);
+ }
   },
 );

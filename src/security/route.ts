@@ -34,7 +34,7 @@ export const route = createRoute<Context, PlatformPermission>({
   // Every authenticated state-changing request draws on one generous per-user budget by default (one bucket per user,
   // so the limiter's memory is bounded by active users, not users x endpoints);
   // sensitive routes set a tighter `rateLimit`, bulk tools may set `rateLimit: false` with a reason in review.
-  defaultMutationLimit: { limit: 600, windowMs: 60_000 },
+  defaultMutationLimit: { limit: 1200, windowMs: 60_000 },
   defaultPublicLimit: { limit: 120, windowMs: 60_000 },
   onAudit: (event) => {
     const actor = event.context as { user?: { id?: string }; membership?: { id?: string; collegeId?: string; roles?: string[] } | null } | null;

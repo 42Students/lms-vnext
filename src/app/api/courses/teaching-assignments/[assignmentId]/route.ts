@@ -39,25 +39,35 @@ type RouteContext = {
 
 export const DELETE = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ context: actor, params }) => {
-    const context = actor!;
-    const { assignmentId } = params;
-    const assignment =
+  async ({ context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { assignmentId } = params;
+const assignment =
       await endCourseTeachingAssignment(
         context,
         await scopedTeachingAssignmentId(context,assignmentId),
       );
-    return NextResponse.json({
+return NextResponse.json({
       assignment,active:false,endedAt:assignment.endedAt,
       message: "Association deactivated successfully.",
     });
+} catch (error) {
+    // Legacy deactivation returned an empty 404 for a missing/already
+    // ended association. Keep other access failures in the normal API envelope.
+    if (error instanceof CoursesServiceError &&
+        error.code === "TEACHING_ASSIGNMENT_NOT_FOUND") {
+      return new Response(null, { status: 404 });
+    }
+    return apiErrorResponse(error);
+  }
   },
 );
 
 export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor, params }) => {
-    const context = actor!;
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
     const {assignmentId}=params;
     const body:unknown=await request.json();
     const parsed=changeCourseTeachingAssignmentRoleInputSchema.safeParse(body);

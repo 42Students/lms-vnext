@@ -12,8 +12,14 @@ export const GET = route(
   { auth: "user", permission: "service-enforced" },
   async ({ context: __actor, params }) => {
     const __ctx = __actor!;
-    const {offerId}=params;
-    const result=await previewOwnOfferAcceptanceImpact(__ctx,offerId);
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store, max-age=0","Vary":"Cookie"}});
+    try {
+const {offerId}=params;
+const result=await previewOwnOfferAcceptanceImpact(__ctx,offerId);
+return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store, max-age=0","Vary":"Cookie"}});
+} catch(error){
+  const response=apiErrorResponse(error);
+  response.headers.set("Cache-Control","private, no-store, max-age=0");
+  return response;
+ }
   },
 );

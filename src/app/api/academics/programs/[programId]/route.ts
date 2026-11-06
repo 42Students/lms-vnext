@@ -32,19 +32,20 @@ function handledError(error: unknown) {
 /** Legacy program detail lookup. Read scope is validated before any details leave the DB. */
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ context: actor, params }) => {
-    const context = actor!;
-    const { programId: rawId } = params;
-    const programId=z.string().uuid().safeParse(rawId);
-    if(!programId.success)return NextResponse.json({
+  async ({ context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { programId: rawId } = params;
+const programId=z.string().uuid().safeParse(rawId);
+if(!programId.success)return NextResponse.json({
       error:"PROGRAM_NOT_FOUND",message:"Program not found.",
     },{status:404});
-    const scope = await loadProgramScope(programId.data, true);
-    requirePermission(context, "academics.read", {
+const scope = await loadProgramScope(programId.data, true);
+requirePermission(context, "academics.read", {
       organizationId: scope.organizationId,
       collegeId: scope.collegeId,
     });
-    const [program] = await getDb().select({
+const [program] = await getDb().select({
       id: programs.id, departmentId: programs.departmentId,
       name: programs.name, code: programs.code,
       durationTerms: programs.durationTerms, status: programs.status,
@@ -52,8 +53,8 @@ export const GET = route(
       departmentName:departments.name,
     }).from(programs).innerJoin(departments,eq(departments.id,programs.departmentId))
       .where(eq(programs.id,programId.data)).limit(1);
-    if (!program) return NextResponse.json({ error: "PROGRAM_NOT_FOUND" }, { status: 404 });
-    const terms=await getDb().select({
+if (!program) return NextResponse.json({ error: "PROGRAM_NOT_FOUND" }, { status: 404 });
+const terms=await getDb().select({
       id:programTerms.id,name:programTerms.name,termNumber:programTerms.termNumber,
       startDate:programTerms.startDate,endDate:programTerms.endDate,
       legacyStartDate:programTerms.legacyStartDate,legacyEndDate:programTerms.legacyEndDate,
@@ -62,7 +63,7 @@ export const GET = route(
       createdAt:programTerms.createdAt,
     }).from(programTerms).where(eq(programTerms.programId,program.id))
       .orderBy(asc(programTerms.termNumber),asc(programTerms.id));
-    const links=terms.length?await getDb().select({
+const links=terms.length?await getDb().select({
       termId:programTermCourses.programTermId,id:courses.id,
       name:courses.name,code:courses.code,metaData:courses.legacyMetadata,
       enabled:courses.enabled,status:courses.status,
@@ -75,10 +76,10 @@ export const GET = route(
       .where(and(inArray(programTermCourses.programTermId,terms.map(term=>term.id)),
         eq(departments.collegeId,scope.collegeId)))
       .orderBy(asc(programTermCourses.displayOrder),asc(programTermCourses.id)):[];
-    const dateArray=(date:Date)=>[
+const dateArray=(date:Date)=>[
       date.getUTCFullYear(),date.getUTCMonth()+1,date.getUTCDate(),
     ];
-    const structure=terms.map(term=>{
+const structure=terms.map(term=>{
       const linked=links.filter(row=>row.termId===term.id);
       return {
         id:term.id,name:term.name,term_number:term.termNumber,
@@ -98,47 +99,52 @@ export const GET = route(
         created_at:dateArray(term.createdAt),
       };
     });
-    return NextResponse.json({
+return NextResponse.json({
       status:"OK",message:"OK",program:{...program,program_structure:structure},
       data:{...program,program_structure:structure,durationYears:program.durationTerms%2===0?
         program.durationTerms/2:null,
         // Old model used numeric program IDs; UUID is authoritative.
         id:program.id,departmentId:program.departmentId},
     },{headers:{"Cache-Control":"private, no-store"}});
+} catch (error) { return handledError(error); }
   },
 );
 
 export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor, params }) => {
-    const context = actor!;
-    const { programId } = params;
-    const parsedBody = await readBoundedJsonBody(request, 16_384);
-    if (parsedBody.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { programId } = params;
+const parsedBody = await readBoundedJsonBody(request, 16_384);
+if (parsedBody.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: parsedBody.kind === "TOO_LARGE" ? 413 : 400,
       headers: { "Cache-Control": "no-store" },
     });
-    const body: unknown = parsedBody.value;
-    const program = body && typeof body === "object" && "action" in body && body.action === "RESTORE"
+const body: unknown = parsedBody.value;
+const program = body && typeof body === "object" && "action" in body && body.action === "RESTORE"
       ? await restoreCollegeProgram(context, programId, body)
       : await updateCollegeProgram(context, programId, body);
-    return NextResponse.json({ program, message: "OK" });
+return NextResponse.json({ program, message: "OK" });
+} catch (error) { return handledError(error); }
   },
 );
 
 export const DELETE = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor, params }) => {
-    const context = actor!;
-    const { programId } = params;
-    const parsedBody = await readBoundedJsonBody(request, 16_384);
-    if (parsedBody.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { programId } = params;
+const parsedBody = await readBoundedJsonBody(request, 16_384);
+if (parsedBody.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: parsedBody.kind === "TOO_LARGE" ? 413 : 400,
       headers: { "Cache-Control": "no-store" },
     });
-    const body: unknown = parsedBody.value;
-    const program = await archiveCollegeProgram(context, programId, body);
-    return NextResponse.json({ program, message: "Program archived",
+const body: unknown = parsedBody.value;
+const program = await archiveCollegeProgram(context, programId, body);
+return NextResponse.json({ program, message: "Program archived",
       retention: "Historical academic records are retained. Restore remains possible when dependencies allow." });
+} catch (error) { return handledError(error); }
   },
 );

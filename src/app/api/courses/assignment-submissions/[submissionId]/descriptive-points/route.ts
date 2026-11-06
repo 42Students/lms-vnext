@@ -12,11 +12,19 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const {submissionId}=params;
-    const input=descriptiveAssignmentPointsSchema.parse(await request.json());
-    const submission=await addDescriptiveAssignmentPoints(
+    try {
+const {submissionId}=params;
+const input=descriptiveAssignmentPointsSchema.parse(await request.json());
+const submission=await addDescriptiveAssignmentPoints(
    __ctx,submissionId,input,
   );
-    return NextResponse.json({submission},{headers:{"Cache-Control":"no-store"}});
+return NextResponse.json({submission},{headers:{"Cache-Control":"no-store"}});
+} catch(error){
+  if(error instanceof RangeError)
+   return NextResponse.json({error:"ASSIGNMENT_GRADE_INVALID",
+    message:"Descriptive points exceed the assignment maximum."},
+    {status:400,headers:{"Cache-Control":"no-store"}});
+  return apiErrorResponse(error);
+ }
   },
 );

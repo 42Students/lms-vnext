@@ -19,10 +19,11 @@ export const runtime = "nodejs";
 
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const body: unknown = await request.json();
-    if (body && typeof body === "object" && !Array.isArray(body) &&
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const body: unknown = await request.json();
+if (body && typeof body === "object" && !Array.isArray(body) &&
       "action" in body && body.action === "GRADUATE") {
       const command = z.object({
         action: z.literal("GRADUATE"), cohortId: z.string().uuid(),
@@ -32,8 +33,8 @@ export const POST = route(
       const cohort = await markCollegeBatchGraduated(context, command.cohortId, { confirm: true });
       return NextResponse.json({ cohort, result: cohort, message: "Batch graduated" });
     }
-    let promotionInput = body;
-    if (body && typeof body === "object" && !Array.isArray(body) &&
+let promotionInput = body;
+if (body && typeof body === "object" && !Array.isArray(body) &&
         "yearStart" in body && typeof body.yearStart === "string") {
       const parsedYear = parsePromotionAcademicYear(body.yearStart);
       if (parsedYear === null)
@@ -44,8 +45,29 @@ export const POST = route(
         }, { status: 400 });
       promotionInput = { ...body, yearStart: parsedYear };
     }
-    const result = await executeCollegeBatchPromotion(context, promotionInput);
-    return NextResponse.json({status:"OK",message:result.message,result,data:result},
+const result = await executeCollegeBatchPromotion(context, promotionInput);
+return NextResponse.json({status:"OK",message:result.message,result,data:result},
       {headers:{"Cache-Control":"private, no-store"}});
+} catch (error) {
+    if(error instanceof ZodError||error instanceof SyntaxError)
+      return NextResponse.json({error:"INVALID_PROMOTION_INPUT",
+        message:"Refresh the preview and confirm the next semester and academic year."},
+        {status:400});
+    if (error instanceof CollegeBatchGraduationError) {
+      return NextResponse.json({ error: error.code,
+        message: error.code === "BATCH_NOT_READY_TO_GRADUATE" ? "The batch must complete its final semester before graduation." : "The batch changed; refresh and try again." },
+        { status: error.code === "BATCH_NOT_FOUND" ? 404 : 409 });
+    }
+    if (error instanceof CollegePromotionExecuteError) {
+      return NextResponse.json(
+        { error: error.code, message: error.code === "PROMOTION_STALE" ?
+          "Batch was modified by another request. Please refresh and try again." :
+          error.code === "PROMOTION_BLOCKED" ? "Complete the curriculum and learner readiness checks before promoting this batch." :
+          error.code === "PROMOTION_PREVIEW_CHANGED" ? "Preview changed. Refresh and confirm the updated batch before continuing." : "Batch not found." },
+        { status: error.code === "BATCH_NOT_FOUND" ? 404 : 409 },
+      );
+    }
+    return apiErrorResponse(error);
+  }
   },
 );

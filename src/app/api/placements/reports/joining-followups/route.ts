@@ -7,14 +7,15 @@ export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const query=Object.fromEntries(new URL(request.url).searchParams.entries());
-    const report=await getTpoJoiningFollowups(context,query);
-    if(!report.season)return Response.json({error:"PLACEMENT_SEASON_NOT_FOUND"},{status:404,
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const query=Object.fromEntries(new URL(request.url).searchParams.entries());
+const report=await getTpoJoiningFollowups(context,query);
+if(!report.season)return Response.json({error:"PLACEMENT_SEASON_NOT_FOUND"},{status:404,
    headers:{"Cache-Control":"private, no-store, max-age=0"}});
-    const exportData=tpoJoiningFollowupCsv(report,report.season.name);
-    return new Response("\uFEFF"+exportData.csv,{status:200,headers:{
+const exportData=tpoJoiningFollowupCsv(report,report.season.name);
+return new Response("\uFEFF"+exportData.csv,{status:200,headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="tpo-joining-followups.csv"',
    "Cache-Control":"private, no-store, max-age=0",
@@ -22,5 +23,6 @@ export const GET = route(
    Vary:"Cookie",
    "X-Export-Truncated":String(exportData.truncated||report.truncated),
   }});
+} catch(error){const res=apiErrorResponse(error);res.headers.set("Cache-Control","private, no-store, max-age=0");return res;}
   },
 );

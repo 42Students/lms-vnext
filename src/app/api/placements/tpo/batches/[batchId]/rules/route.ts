@@ -34,8 +34,14 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const {batchId}=params;
-    const result=await saveTpoBatchRuleOverrides(__ctx,batchId,await request.json());
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    try {
+const {batchId}=params;
+const result=await saveTpoBatchRuleOverrides(__ctx,batchId,await request.json());
+return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+} catch(error){
+  if(error instanceof PlacementBatchError&&error.code==="DB08_ACTION_STALE")
+   return NextResponse.json({error:"BATCH_RULES_CHANGED"},{status:409});
+  return apiErrorResponse(error);
+ }
   },
 );

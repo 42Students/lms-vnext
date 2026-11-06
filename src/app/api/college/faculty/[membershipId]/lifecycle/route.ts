@@ -1,26 +1,21 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { transitionCollegeFaculty, CollegeFacultyLifecycleError } from "@/modules/people/college-faculty-lifecycle-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ membershipId: string }> };
 
-async function handlePATCH(request: Request, { params }: RouteContext) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-  try {
-    const context = await getCurrentRequestContext();
-    const { membershipId } = await params;
-    const membership = await transitionCollegeFaculty(context, membershipId, await request.json());
-    // Faculty roster Actions renders CollegeFacultyLifecycleAction for each row,
-    // preserving the legacy Suspend/Reactivate entry point with tenant IDs.
-    // Keep the membership-scoped identity model while exposing the legacy
-    // row-refresh fields to all lifecycle callers.
-    return NextResponse.json({
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { membershipId } = params;
+const membership = await transitionCollegeFaculty(context, membershipId, await request.json());
+return NextResponse.json({
       membership,
       membershipId: membership.id,
       scope: "COLLEGE_MEMBERSHIP",
@@ -28,7 +23,7 @@ async function handlePATCH(request: Request, { params }: RouteContext) {
       suspendedAt: membership.suspendedAt,
       suspensionReason: membership.suspensionReason,
     });
-  } catch (error) {
+} catch (error) {
     if (error instanceof CollegeFacultyLifecycleError) {
       return NextResponse.json(
         {
@@ -46,5 +41,5 @@ async function handlePATCH(request: Request, { params }: RouteContext) {
     }
     return apiErrorResponse(error);
   }
-}
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+  },
+);

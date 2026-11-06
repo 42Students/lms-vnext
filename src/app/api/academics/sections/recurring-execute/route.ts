@@ -10,8 +10,15 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
-    return NextResponse.json(await executeCollegeRecurringSchedule(
+    try {
+return NextResponse.json(await executeCollegeRecurringSchedule(
       __ctx, await request.json(),
     ),{status:201});
+} catch(error) {
+    if(error instanceof CollegeRecurringExecutionError) {
+      return NextResponse.json({error:error.code},{status:error.code==="NOT_FOUND"?404:409});
+    }
+    return apiErrorResponse(error);
+  }
   },
 );

@@ -12,10 +12,18 @@ export const runtime = "nodejs";
 
 export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor, params }) => {
-    const context = actor!;
-    const { groupId } = params;
-    const updated = await changeCollegeStudyGroup(context, groupId, await request.json());
-    return NextResponse.json({ group: updated });
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { groupId } = params;
+const updated = await changeCollegeStudyGroup(context, groupId, await request.json());
+return NextResponse.json({ group: updated });
+} catch (error) {
+    if (error instanceof CollegeGroupManagementError) return NextResponse.json(
+      { error: error.code },
+      { status: error.code === "GROUP_NOT_FOUND" ? 404 : 409 },
+    );
+    return apiErrorResponse(error);
+  }
   },
 );

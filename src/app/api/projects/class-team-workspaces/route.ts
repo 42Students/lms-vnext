@@ -8,12 +8,13 @@ import { createClassTeamWorkspaces } from "@/modules/projects/class-team-workspa
 export const runtime = "nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const result = await createClassTeamWorkspaces(context, await request.json());
-    const repaired=result.teamCount>0&&result.alreadyCovered>0;
-    const unchanged=result.teamCount===0&&result.alreadyCovered>0;
-    return NextResponse.json({
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const result = await createClassTeamWorkspaces(context, await request.json());
+const repaired=result.teamCount>0&&result.alreadyCovered>0;
+const unchanged=result.teamCount===0&&result.alreadyCovered>0;
+return NextResponse.json({
       ...result,createdCount:result.teamCount,repairedCount:repaired?result.teamCount:0,
       unchangedCount:result.alreadyCovered,
       message:unchanged?"Team already in step":repaired?"Team repaired":"Project teams created",
@@ -26,5 +27,18 @@ export const POST = route(
       countSummary:{created:result.teamCount,alreadyCovered:result.alreadyCovered},
       nextAction:result.teamCount===0?"REVIEW_CLASS_OR_TEMPLATE":"OPEN_TEAM_WORKSPACES",
     }, {status:unchanged?200:201,headers:{"Cache-Control":"no-store"}});
+} catch(error) {
+    // A missing project table is a deployment dependency, not a partial team
+    // creation. The service transaction rolls back all groups and projects.
+    let cause:unknown=error;
+    for(let depth=0;depth<4;depth++){
+      if(cause&&typeof cause==="object"&&(cause as {code?:unknown}).code==="42P01")
+        return NextResponse.json({error:"PROJECT_TEAMS_UNAVAILABLE",
+          message:"Project teams are not available. Try again after project storage is configured."},
+          {status:503,headers:{"Cache-Control":"no-store","Retry-After":"60"}});
+      cause=cause&&typeof cause==="object"?(cause as {cause?:unknown}).cause:null;
+    }
+    return apiErrorResponse(error);
+  }
   },
 );

@@ -15,19 +15,22 @@ export const GET = route(
   { auth: "user", permission: "service-enforced" },
   async ({ context: __actor }) => {
     const __ctx = __actor!;
-    const registration=await getOwnLearnerRegistration(__ctx);
-    return NextResponse.json({registration,data:registration,status:"OK"},
+    try {
+const registration=await getOwnLearnerRegistration(__ctx);
+return NextResponse.json({registration,data:registration,status:"OK"},
       {headers:{"Cache-Control":"private, no-store"}});
+} catch (error) {return registrationError(error);}
   },
 );
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const context = __actor!;
-    await requireLearnerPlacementAccess(context);
-    const mime=request.headers.get("content-type")??"";
-    let payload:unknown;
-    if(mime.toLowerCase().includes("application/x-www-form-urlencoded")){
+    try {
+await requireLearnerPlacementAccess(context);
+const mime=request.headers.get("content-type")??"";
+let payload:unknown;
+if(mime.toLowerCase().includes("application/x-www-form-urlencoded")){
       // Legacy form POSTs use choice and consent; modern UI uses strict JSON.
       let form:FormData;
       try {form=await readBoundedFormData(request,8*1024);}
@@ -56,9 +59,10 @@ export const POST = route(
         }
       }
     }
-    const result=await registerOwnPlacementChoice(context,payload);
-    return NextResponse.json({ok:true,status:"OK",choice:result.choice,version:result.version, data:{choice:result.choice,version:result.version}},
+const result=await registerOwnPlacementChoice(context,payload);
+return NextResponse.json({ok:true,status:"OK",choice:result.choice,version:result.version, data:{choice:result.choice,version:result.version}},
       {headers:{"Cache-Control":"private, no-store"}});
+} catch (error) {return registrationError(error);}
   },
 );
 function registrationError(error:unknown) {

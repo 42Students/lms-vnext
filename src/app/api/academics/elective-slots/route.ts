@@ -14,8 +14,8 @@ export const runtime = "nodejs";
  */
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ context: actor }) => {
-    const context = actor!;
+  async ({ context: __actor }) => {
+    const context = __actor!;
     const options=await listCollegeElectiveSlotOptions(context);
     return NextResponse.json({
    ...options,
@@ -31,19 +31,20 @@ export const GET = route(
 
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const parsed = await readBoundedJsonBody(request, 16_384);
-    if (parsed.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const parsed = await readBoundedJsonBody(request, 16_384);
+if (parsed.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: parsed.kind === "TOO_LARGE" ? 413 : 400,
       headers: { "Cache-Control": "private, no-store" },
     });
-    const body: unknown = parsed.value;
-    const result = await createCollegeElectiveSlot(context, body);
-    const options = await listCollegeElectiveSlotOptions(context);
-    const program = options.programs.find(item => item.id === result.programId);
-    const period = options.periods.find(item => item.id === result.academicPeriodId);
-    return NextResponse.json({
+const body: unknown = parsed.value;
+const result = await createCollegeElectiveSlot(context, body);
+const options = await listCollegeElectiveSlotOptions(context);
+const program = options.programs.find(item => item.id === result.programId);
+const period = options.periods.find(item => item.id === result.academicPeriodId);
+return NextResponse.json({
       slot: { ...result, programName: program?.name ?? null,
         academicPeriodName: period?.name ?? null },
       message: "Elective slot created",
@@ -51,5 +52,13 @@ export const POST = route(
       pageHref:"/college/electives",
       editHref:"/api/academics/elective-slots/"+result.id,
     }, { status: 201 });
+} catch (error) {
+    if (error instanceof CollegeElectiveSlotMutationError) {
+      return NextResponse.json({
+        error:error.code,message:"Could not save the elective slot. Review the selected college and fields.",
+      },{status:409,headers:{"Cache-Control":"private, no-store"}});
+    }
+    return apiErrorResponse(error);
+  }
   },
 );

@@ -28,8 +28,8 @@ const inUseMessage = "A current active batch offering is using this semester-cou
 
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ context: actor, params }) => {
-    const context = actor!;
+  async ({ context: __actor, params }) => {
+    const context = __actor!;
     const { mappingId: raw } = params;
     const mappingId = z.string().uuid().parse(raw);
     const member = await resolveActingCollege(context, "academics.read");
@@ -74,23 +74,38 @@ export const GET = route(
 
 export const DELETE = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor, params }) => {
-    const context = actor!;
-    const { mappingId } = params;
-    const result = await removeCollegeTermMapping(context, mappingId, await request.json());
-    return NextResponse.json({status:"OK",result,message:"Course removed from semester"},
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { mappingId } = params;
+const result = await removeCollegeTermMapping(context, mappingId, await request.json());
+return NextResponse.json({status:"OK",result,message:"Course removed from semester"},
       {headers:{"Cache-Control":"private, no-store"}});
+} catch (error) {
+    if (error instanceof CollegeTermMappingError)
+      return NextResponse.json({ error: error.code,
+        message: error.code==="TERM_COURSE_IN_USE" ? inUseMessage :
+          "The semester mapping changed. Review its current state before retrying." },
+        { status: error.code.endsWith("NOT_FOUND") ? 404 : 409 });
+    return apiErrorResponse(error);
+  }
   },
 );
 
 export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor, params }) => {
-    const context = actor!;
-    const { mappingId } = params;
-    const mapping = await updateCollegeTermMapping(context, mappingId, await request.json());
-    return NextResponse.json({ status:"OK", mapping,
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { mappingId } = params;
+const mapping = await updateCollegeTermMapping(context, mappingId, await request.json());
+return NextResponse.json({ status:"OK", mapping,
       data:mapping,message:"Semester course updated",
       reorderHint:"Changing position resequences other courses within this semester." }, { headers: { "Cache-Control": "private, no-store" } });
+} catch (error) {
+    if (error instanceof CollegeTermMappingError)
+      return NextResponse.json({ error: error.code }, { status: error.code.endsWith("NOT_FOUND") ? 404 : 409 });
+    return apiErrorResponse(error);
+  }
   },
 );

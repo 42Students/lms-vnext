@@ -10,10 +10,17 @@ import {
 export const runtime = "nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const payload: unknown = await request.json();
-    const result = await previewCollegeRecurringSchedule(context, payload);
-    return NextResponse.json(result);
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const payload: unknown = await request.json();
+const result = await previewCollegeRecurringSchedule(context, payload);
+return NextResponse.json(result);
+} catch (error) {
+    if (error instanceof RecurringPreviewNotFoundError) {
+      return NextResponse.json({ error: error.message }, { status: 404 });
+    }
+    return apiErrorResponse(error);
+  }
   },
 );

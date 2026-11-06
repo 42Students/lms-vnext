@@ -8,9 +8,15 @@ import {reviewCollegeVerificationBulk} from "@/modules/verification/staff-bulk-r
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const result=await reviewCollegeVerificationBulk(context,await request.json());
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const result=await reviewCollegeVerificationBulk(context,await request.json());
+return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+} catch(error){
+  if(error instanceof VerificationUnavailableError)
+   return NextResponse.json({error:"VERIFICATION_UNAVAILABLE"},{status:503});
+  return apiErrorResponse(error);
+ }
   },
 );

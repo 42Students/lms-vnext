@@ -13,14 +13,24 @@ type RouteContext = { params: Promise<{ membershipId: string }> };
 
 export const PUT = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor, params }) => {
-    const context = actor!;
-    const { membershipId } = params;
-    const result = await decideTpoLearnerParticipation(
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { membershipId } = params;
+const result = await decideTpoLearnerParticipation(
       context, membershipId, await request.json(),
     );
-    return NextResponse.json(result, {
+return NextResponse.json(result, {
       headers: { "Cache-Control": "private, no-store" },
     });
+} catch (error) {
+    if (error instanceof TpoParticipationConflictError) {
+      return NextResponse.json(
+        { error: "PARTICIPATION_DECISION_CHANGED" },
+        { status: 409 },
+      );
+    }
+    return apiErrorResponse(error);
+  }
   },
 );

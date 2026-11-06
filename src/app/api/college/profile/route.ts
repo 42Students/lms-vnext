@@ -12,17 +12,27 @@ export const runtime = "nodejs";
 
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ context: actor }) => {
-    const context = actor!;
+  async ({ context: __actor }) => {
+    const context = __actor!;
     const profile = await loadCollegeOwnProfile(context);
     return NextResponse.json({ profile }, { headers: { "Cache-Control": "private, no-store" } });
   },
 );
 export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request, context: actor }) => {
-    const context = actor!;
-    const profile = await updateCollegeOwnProfile(context, await request.json());
-    return NextResponse.json({ profile },{headers:{"Cache-Control":"private, no-store"}});
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const profile = await updateCollegeOwnProfile(context, await request.json());
+return NextResponse.json({ profile },{headers:{"Cache-Control":"private, no-store"}});
+} catch (error) {
+    if(error instanceof CollegeProfileVersionConflict)
+      return NextResponse.json({error:"PROFILE_VERSION_CHANGED",
+        message:"Profile changed elsewhere. Refresh your profile before saving."},{status:409});
+    if(error instanceof CollegeProfileVersionRequired)
+      return NextResponse.json({error:"PROFILE_VERSION_REQUIRED",
+        message:"Profile version is required. Reload your profile before saving."},{status:400});
+    return apiErrorResponse(error);
+  }
   },
 );

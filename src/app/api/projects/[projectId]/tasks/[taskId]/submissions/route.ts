@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -9,7 +10,6 @@ import {
   listProjectTaskSubmissions,
   submitProjectTask,
 } from "@/modules/projects/task-submission-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -20,59 +20,44 @@ type RouteContext = {
   }>;
 };
 
-async function handleGET(
-  _request: Request,
-  { params }: RouteContext,
-) {
-  try {
-    const context = await getCurrentRequestContext();
-    const { projectId, taskId } = await params;
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor, params }) => {
+    const context = __actor!;
+    const { projectId, taskId } = params;
     const submissions =
       await listProjectTaskSubmissions(
         context,
         projectId,
         taskId,
       );
-
     return NextResponse.json({ submissions });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
-export const GET = secured(handleGET);
+  },
+);
 
-async function handlePOST(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-    const { projectId, taskId } = await params;
-    const body = submitProjectTaskInputSchema.parse(await readMentorProjectCommandBody(request));
-    const submission = await submitProjectTask(
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { projectId, taskId } = params;
+const body = submitProjectTaskInputSchema.parse(await readMentorProjectCommandBody(request));
+const submission = await submitProjectTask(
       context,
       projectId,
       taskId,
       body,
     );
-
-    return NextResponse.json(
+return NextResponse.json(
       { submission },
       { status: 201 },
     );
-  } catch (error) {
+} catch (error) {
     if(error instanceof MentorProjectCommandBodyError)
       return NextResponse.json({error:error.code,
         message:mentorProjectBodyFailureMessage(error.status)},
         {status:error.status,headers:{"Cache-Control":"no-store"}});
     return apiErrorResponse(error);
   }
-}
-export const POST = secured(handlePOST);
+  },
+);

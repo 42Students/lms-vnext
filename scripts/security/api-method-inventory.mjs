@@ -117,9 +117,12 @@ export function extractApiMethods(source, fileName = "route.ts") {
     }
     // route() (auth other than "public") resolves the session and, for mutations, checks Origin; internalRoute() rejects
     // any Origin and demands a machine credential. webhookRoute() is signature-based and is credited with neither.
-    const routeCall = wrapperCall(node, "route");
+    // The identifier only counts when this file imports it from the central module (a local function named route() is not a guard).
+    const importsRoute = /import\s*\{[^}]*\broute\b[^}]*\}\s*from\s*["']@\/security\/route["']/.test(source);
+    const importsInternal = /import\s*\{[^}]*\binternalRoute\b[^}]*\}\s*from\s*["']@\/security\/internal-route["']/.test(source);
+    const routeCall = importsRoute ? wrapperCall(node, "route") : null;
     const centralUser = Boolean(routeCall) && (() => { const auth = configAuth(routeCall); return auth !== null && auth !== "public"; })();
-    const centralMachine = Boolean(wrapperCall(node, "internalRoute"));
+    const centralMachine = importsInternal && Boolean(wrapperCall(node, "internalRoute"));
     const originCheck = [node, ...[...new Set(wrappedBodies)]].some(n => n && rejectsBrowserOrigin(n));
     methods.set(name, {
       method: name,

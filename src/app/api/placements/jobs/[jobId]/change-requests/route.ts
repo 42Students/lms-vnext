@@ -84,8 +84,8 @@ export const runtime="nodejs";export const dynamic="force-dynamic";
 type Props={params:Promise<{jobId:string}>};
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request: req, context: actor, params }) => {
-    const context = actor!;
+  async ({ request: req, context: __actor, params }) => {
+    const context = __actor!;
     const {jobId}=params;
     const url=new URL(req.url);
     if(url.searchParams.get("view")==="internal-notes"){
@@ -111,11 +111,12 @@ export const GET = route(
 );
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
-  async ({ request: req, context: actor, params }) => {
-    const context = actor!;
-    const {jobId}=params;
-    const body:unknown=await req.json().catch(()=>null);
-    if(body&&typeof body==="object"&&!Array.isArray(body)&&
+  async ({ request: req, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const {jobId}=params;
+const body:unknown=await req.json().catch(()=>null);
+if(body&&typeof body==="object"&&!Array.isArray(body)&&
     (body as {kind?:unknown}).kind==="INTERNAL_NOTE"){
    const input=internalNoteSchema.parse(body);
    const scoped=await scopedDriveThreads(context,jobId);
@@ -131,9 +132,15 @@ export const POST = route(
     messageId:created.id,notified:created.notified},
     {status:201,headers:{"Cache-Control":"private, no-store"}});
   }
-    const result=await mutateDriveChangeRequest(context,jobId,body);
-    return NextResponse.json({...result,
+const result=await mutateDriveChangeRequest(context,jobId,body);
+return NextResponse.json({...result,
    legacyStatus:result.status==="DECLINED"?"REPLIED":legacyDriveChangeStatus(result.status,null)},
    {headers:{"Cache-Control":"private, no-store"}});
+} catch(e){
+  if(e instanceof OpenDriveChangeConflict)
+   return NextResponse.json({error:e.code,message:e.legacyMessage},
+    {status:409,headers:{"Cache-Control":"private, no-store"}});
+  return apiErrorResponse(e);
+ }
   },
 );

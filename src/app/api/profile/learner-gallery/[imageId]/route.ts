@@ -22,21 +22,25 @@ export const GET = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const { imageId } = params;
-    const member = new URL(request.url).searchParams.get("membershipId") ?? undefined;
-    const result = await openLearnerGalleryImage(
+    try {
+const { imageId } = params;
+const member = new URL(request.url).searchParams.get("membershipId") ?? undefined;
+const result = await openLearnerGalleryImage(
       __ctx, imageId, member);
-    return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
+return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
+} catch (error) { return failure(error); }
   },
 );
 export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const { imageId } = params;
-    const member = new URL(request.url).searchParams.get("membershipId") ?? undefined;
-    const result = await deactivateLearnerGalleryImage(
+    try {
+const { imageId } = params;
+const member = new URL(request.url).searchParams.get("membershipId") ?? undefined;
+const result = await deactivateLearnerGalleryImage(
       __ctx, imageId, member);
-    return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
+return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
+} catch (error) { return failure(error); }
   },
 );

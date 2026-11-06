@@ -10,9 +10,17 @@ export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
-    const {sectionId}=params;
-    return NextResponse.json({section:await changeCollegeSectionLifecycle(
+    try {
+const {sectionId}=params;
+return NextResponse.json({section:await changeCollegeSectionLifecycle(
       __ctx,sectionId,await request.json(),
     )});
+} catch(error){
+    if(error instanceof CollegeSectionLifecycleError)
+      return NextResponse.json({error:error.code},{
+        status:error.code==="CLASS_NOT_FOUND"?404:409,
+      });
+    return apiErrorResponse(error);
+  }
   },
 );
