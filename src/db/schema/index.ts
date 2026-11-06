@@ -143,3 +143,4 @@ export {learnerProfileIdentitySummaries,learnerProfilePrivateDocumentBindings,le
 
 // DB-008: 0308 registered authoring-settings storage; runtime remains ACL-gated.
 export { lessonContentSettingsStaged as lessonContentSettings } from "./db05-lesson-settings.staged";
+export * from "./security-shared-store";

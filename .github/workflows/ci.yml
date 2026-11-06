@@ -198,6 +198,8 @@ jobs:
         run: npm run db:migrate
       - name: Tenant row-level security acceptance (non-superuser role, inert and enforce modes)
         run: node scripts/rls-tenant-acceptance.mjs
+      - name: Shared security store acceptance (claims, rate windows, atomicity under concurrency)
+        run: node scripts/shared-store-acceptance.mjs
       - name: Read-only PostgreSQL 17 migration/catalog witness
         run: node scripts/db002-postgres-catalog-acceptance.mjs
       - name: DB017 relationship-scoped disclosure defaults negative and tenant checks

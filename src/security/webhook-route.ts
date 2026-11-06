@@ -2,11 +2,12 @@ import { randomUUID } from "node:crypto";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedUtf8Body } from "@/lib/bounded-utf8-body";
 import { runAsSystem } from "@/db/tenant-context";
+import { claimDeliveryShared } from "@/security/shared-store";
 import { createWebhookRoute } from "@/security/webhook-route-core";
 
 /**
- * Replay memory for this process. A shared store (database or Redis) is the production target so replays are
- * rejected across instances; it plugs in here through `claimDelivery` without touching any route.
+ * Per-process replay memory, the fallback. With SECURITY_SHARED_STORE=on, claims go through the shared database
+ * store (src/security/shared-store.ts) so replays are rejected across instances.
  */
 const seen = new Map<string, number>();
 export async function claimDeliveryInMemory(key: string, ttlSeconds: number, nowMs = Date.now()): Promise<boolean> {
@@ -25,7 +26,7 @@ export const webhookRoute = createWebhookRoute({
     if (body.kind === "OK") return { kind: "OK", text: body.body };
     return body.kind === "TOO_LARGE" ? { kind: "TOO_LARGE" } : { kind: "INVALID" };
   },
-  claimDelivery: (key, ttl) => claimDeliveryInMemory(key, ttl),
+  claimDelivery: (key, ttl) => claimDeliveryShared(key, ttl, (k, t) => claimDeliveryInMemory(k, t)),
   now: () => Math.floor(Date.now() / 1000),
   onError: apiErrorResponse,
   runInSystemScope: runAsSystem,

@@ -2,7 +2,8 @@ import { randomUUID } from "node:crypto";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
-import { allowRequest, clientIp } from "@/auth/ip-rate-limit";
+import { clientIp } from "@/auth/ip-rate-limit";
+import { allowRequestShared } from "@/security/shared-store";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { requirePermission, type PlatformPermission } from "@/modules/permissions/policy";
@@ -27,7 +28,7 @@ export const route = createRoute<Context, PlatformPermission>({
   requireFreshAuth: async (context, maxAgeSeconds) => {
     await requireRecentDeviceAuthentication((context as { user: { id: string } }).user.id, maxAgeSeconds);
   },
-  allowRequest,
+  allowRequest: allowRequestShared,
   actorKey: (context) => (context as { user: { id: string } }).user.id,
   clientAddress: clientIp,
   // Every authenticated state-changing request draws on one generous per-user budget by default (one bucket per user,
