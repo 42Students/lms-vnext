@@ -1976,10 +1976,10 @@
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/bulk-actions/confirm/route.ts": {
-   "service-enforced": 1
+   "route-on-shim-only": 1
   },
   "src/app/api/placements/tpo/bulk-actions/preview/route.ts": {
-   "service-enforced": 1
+   "route-on-shim-only": 1
   },
   "src/app/api/placements/tpo/bulk-actions/undo/route.ts": {
    "route-on-shim-only": 1,
