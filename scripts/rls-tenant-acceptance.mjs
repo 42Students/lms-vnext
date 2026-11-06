@@ -37,6 +37,7 @@ try {
   await client.query(`ALTER TABLE rls_probe ENABLE ROW LEVEL SECURITY`);
   await client.query(`CREATE POLICY tenant_isolation ON rls_probe USING (app_rls_allows("college_id")) WITH CHECK (app_rls_allows("college_id"))`);
   await client.query(`DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'rls_probe_user') THEN CREATE ROLE rls_probe_user NOLOGIN; END IF; END $$`);
+  await client.query(`GRANT USAGE ON SCHEMA public TO rls_probe_user`);
   await client.query(`GRANT SELECT, INSERT ON rls_probe TO rls_probe_user`);
   await client.query(`GRANT USAGE ON SEQUENCE rls_probe_id_seq TO rls_probe_user`);
   await client.query(`INSERT INTO rls_probe (college_id) VALUES ($1), ($2)`, [A, B]);

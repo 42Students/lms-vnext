@@ -11,6 +11,9 @@ LANGUAGE sql STABLE AS $$
       OR row_college = nullif(current_setting('app.college_id', true), '')::uuid
 $$;
 --> statement-breakpoint
+-- Explicit, because hardened databases revoke default function execution from PUBLIC.
+GRANT EXECUTE ON FUNCTION app_rls_allows(uuid) TO PUBLIC;
+--> statement-breakpoint
 ALTER TABLE "academic_periods" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
 DROP POLICY IF EXISTS tenant_isolation ON "academic_periods";
@@ -77,6 +80,12 @@ DROP POLICY IF EXISTS tenant_isolation ON "attendance_policies";
 --> statement-breakpoint
 CREATE POLICY tenant_isolation ON "attendance_policies" USING (app_rls_allows("college_id")) WITH CHECK (app_rls_allows("college_id"));
 --> statement-breakpoint
+ALTER TABLE "attendance_record_events" ENABLE ROW LEVEL SECURITY;
+--> statement-breakpoint
+DROP POLICY IF EXISTS tenant_isolation ON "attendance_record_events";
+--> statement-breakpoint
+CREATE POLICY tenant_isolation ON "attendance_record_events" USING (app_rls_allows("college_id")) WITH CHECK (app_rls_allows("college_id"));
+--> statement-breakpoint
 ALTER TABLE "bug_reports" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
 DROP POLICY IF EXISTS tenant_isolation ON "bug_reports";
@@ -119,11 +128,29 @@ DROP POLICY IF EXISTS tenant_isolation ON "elective_slots";
 --> statement-breakpoint
 CREATE POLICY tenant_isolation ON "elective_slots" USING (app_rls_allows("college_id")) WITH CHECK (app_rls_allows("college_id"));
 --> statement-breakpoint
+ALTER TABLE "faculty_avatar_cleanup_queue" ENABLE ROW LEVEL SECURITY;
+--> statement-breakpoint
+DROP POLICY IF EXISTS tenant_isolation ON "faculty_avatar_cleanup_queue";
+--> statement-breakpoint
+CREATE POLICY tenant_isolation ON "faculty_avatar_cleanup_queue" USING (app_rls_allows("college_id")) WITH CHECK (app_rls_allows("college_id"));
+--> statement-breakpoint
+ALTER TABLE "general_sms_delivery_logs" ENABLE ROW LEVEL SECURITY;
+--> statement-breakpoint
+DROP POLICY IF EXISTS tenant_isolation ON "general_sms_delivery_logs";
+--> statement-breakpoint
+CREATE POLICY tenant_isolation ON "general_sms_delivery_logs" USING (app_rls_allows("college_id")) WITH CHECK (app_rls_allows("college_id"));
+--> statement-breakpoint
 ALTER TABLE "identity_auth_attempts" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
 DROP POLICY IF EXISTS tenant_isolation ON "identity_auth_attempts";
 --> statement-breakpoint
 CREATE POLICY tenant_isolation ON "identity_auth_attempts" USING (app_rls_allows("college_id")) WITH CHECK (app_rls_allows("college_id"));
+--> statement-breakpoint
+ALTER TABLE "identity_email_verification_links" ENABLE ROW LEVEL SECURITY;
+--> statement-breakpoint
+DROP POLICY IF EXISTS tenant_isolation ON "identity_email_verification_links";
+--> statement-breakpoint
+CREATE POLICY tenant_isolation ON "identity_email_verification_links" USING (app_rls_allows("college_id")) WITH CHECK (app_rls_allows("college_id"));
 --> statement-breakpoint
 ALTER TABLE "identity_preuser_challenges" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
@@ -340,6 +367,12 @@ ALTER TABLE "placement_public_enquiry_rate_events" ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS tenant_isolation ON "placement_public_enquiry_rate_events";
 --> statement-breakpoint
 CREATE POLICY tenant_isolation ON "placement_public_enquiry_rate_events" USING (app_rls_allows("college_id")) WITH CHECK (app_rls_allows("college_id"));
+--> statement-breakpoint
+ALTER TABLE "placement_public_external_job_links" ENABLE ROW LEVEL SECURITY;
+--> statement-breakpoint
+DROP POLICY IF EXISTS tenant_isolation ON "placement_public_external_job_links";
+--> statement-breakpoint
+CREATE POLICY tenant_isolation ON "placement_public_external_job_links" USING (app_rls_allows("college_id")) WITH CHECK (app_rls_allows("college_id"));
 --> statement-breakpoint
 ALTER TABLE "placement_public_join_links" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint

@@ -34,6 +34,9 @@ LANGUAGE sql STABLE AS $$
       OR row_college = nullif(current_setting('app.college_id', true), '')::uuid
 $$;
 --> statement-breakpoint
+-- Explicit, because hardened databases revoke default function execution from PUBLIC.
+GRANT EXECUTE ON FUNCTION app_rls_allows(uuid) TO PUBLIC;
+--> statement-breakpoint
 `
   : "";
 
