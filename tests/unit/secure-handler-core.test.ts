@@ -114,3 +114,40 @@ describe("secured() with unusual invocations", () => {
     expect(events[0]).toMatchObject({ path: "" });
   });
 });
+
+describe("secured(): downloads are hardened and audited centrally", () => {
+  const make = () => {
+    const events: Array<{ download?: boolean; method: string; status: number }> = [];
+    const secured = createSecured({
+      isSameOrigin: () => true,
+      runWithHolder: (fn) => fn(),
+      currentActor: () => ({ userId: "u", collegeId: "c", role: "COLLEGE_ADMIN" }),
+      onAudit: (e: { download?: boolean; method: string; status: number }) => events.push(e),
+      newRequestId: () => "rid",
+    } as never);
+    return { events, secured };
+  };
+  const csv = () => new Response("a,b", { headers: { "Content-Type": "text/csv", "Content-Disposition": 'attachment; filename="x.csv"', "Cache-Control": "public, max-age=600" } });
+
+  it("forces no-store and nosniff on an attachment and audits a GET export", async () => {
+    const { events, secured } = make();
+    const res = (await secured(async (_r: Request) => csv())(new Request("https://a.test/api/x-export"))) as Response;
+    expect(res.headers.get("Cache-Control")).toBe("private, no-store, max-age=0");
+    expect(res.headers.get("X-Content-Type-Options")).toBe("nosniff");
+    expect(events).toEqual([expect.objectContaining({ method: "GET", status: 200, download: true })]);
+  });
+
+  it("does not audit ordinary reads and does not touch non-attachment responses", async () => {
+    const { events, secured } = make();
+    const res = (await secured(async (_r: Request) => Response.json({ ok: 1 }, { headers: { "Cache-Control": "public" } }))(new Request("https://a.test/api/y"))) as Response;
+    expect(res.headers.get("Cache-Control")).toBe("public");
+    expect(events).toEqual([]);
+  });
+
+  it("does not audit a failed download attempt as an export", async () => {
+    const { events, secured } = make();
+    await secured(async (_r: Request) => new Response("no", { status: 403, headers: { "Content-Disposition": "attachment" } }))(new Request("https://a.test/api/z"));
+    expect(events).toEqual([expect.objectContaining({ status: 403 })]);
+    expect(events[0]?.download).toBeUndefined();
+  });
+});

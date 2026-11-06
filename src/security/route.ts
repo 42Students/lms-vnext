@@ -38,6 +38,7 @@ export const route = createRoute<Context, PlatformPermission>({
       path: event.path,
       status: event.status,
       durationMs: event.durationMs,
+      download: event.download === true,
       userId: actor?.user?.id ?? null,
       membershipId: actor?.membership?.id ?? null,
       collegeId: actor?.membership?.collegeId ?? null,

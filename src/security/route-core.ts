@@ -11,6 +11,8 @@ import type { ZodType } from "zod";
  * the real implementations.
  */
 
+import { hardenDownload, isDownload } from "@/security/download-core";
+
 export type BodyReadResult = { kind: "OK"; value: unknown } | { kind: "INVALID" } | { kind: "TOO_LARGE" };
 
 export type RouteDeps<Context> = {
@@ -47,6 +49,8 @@ export type RouteDeps<Context> = {
     status: number;
     durationMs: number;
     context: Context | null;
+    /** True when the response was a file download (an export), audited even for GET. */
+    download?: boolean;
   }) => void;
 };
 
@@ -200,9 +204,11 @@ export function createRoute<Context, Permission extends string = string>(deps: R
       const started = Date.now();
       const actorRef: { context: Context | null } = { context: null };
       const response = await core(request, routeContext, requestId, actorRef);
+      const download = isDownload(response) && response.status < 400;
+      if (download) hardenDownload(response);
       if (deps.onAudit && config.auth === "user") {
         const status = response.status;
-        if (!SAFE_METHODS.has(request.method.toUpperCase()) || status === 401 || status === 403 || status === 429) {
+        if (!SAFE_METHODS.has(request.method.toUpperCase()) || download || status === 401 || status === 403 || status === 429) {
           try {
             deps.onAudit({
               requestId,
@@ -211,6 +217,7 @@ export function createRoute<Context, Permission extends string = string>(deps: R
               status,
               durationMs: Date.now() - started,
               context: actorRef.context,
+              ...(download ? { download: true } : {}),
             });
           } catch {
             /* auditing must never change the response */

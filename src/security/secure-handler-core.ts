@@ -1,3 +1,5 @@
+import { hardenDownload, isDownload } from "@/security/download-core";
+
 /**
  * `secured()` wraps ANY route handler without reading or changing its body (docs/security/central-security-architecture.md).
  *
@@ -25,6 +27,8 @@ export type SecuredDeps = {
     status: number;
     durationMs: number;
     actor: Actor | null;
+    /** True when the response was a file download (an export), audited even for GET. */
+    download?: boolean;
   }) => void;
   newRequestId: () => string;
 };
@@ -64,9 +68,9 @@ export function createSecured(deps: SecuredDeps) {
       const requestId = deps.newRequestId();
       const started = Date.now();
 
-      const audit = (status: number) => {
+      const audit = (status: number, download = false) => {
         if (!deps.onAudit) return;
-        if (mutating || status === 401 || status === 403 || status === 429) {
+        if (mutating || download || status === 401 || status === 403 || status === 429) {
           try {
             deps.onAudit({
               requestId,
@@ -75,6 +79,7 @@ export function createSecured(deps: SecuredDeps) {
               status,
               durationMs: Date.now() - started,
               actor: deps.currentActor(),
+              ...(download ? { download: true } : {}),
             });
           } catch {
             /* auditing must never change the response */
@@ -91,7 +96,9 @@ export function createSecured(deps: SecuredDeps) {
         try {
           const response = await (handler as unknown as (...a: unknown[]) => unknown)(...args);
           stamp(response, requestId);
-          audit(response instanceof Response ? response.status : 200);
+          const download = isDownload(response) && response.status < 400;
+          if (download) hardenDownload(response as Response);
+          audit(response instanceof Response ? response.status : 200, download);
           return response;
         } catch (error) {
           audit(500);

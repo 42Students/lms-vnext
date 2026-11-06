@@ -206,3 +206,24 @@ describe("route abuse control (L8)", () => {
     expect(handler).not.toHaveBeenCalled();
   });
 });
+
+describe("route downloads (L6)", () => {
+  it("hardens an attachment and audits the export even for a GET", async () => {
+    const events: Array<{ download?: boolean; status: number }> = [];
+    const route = createRoute({
+      getContext: async () => ({ user: { id: "u1" } }),
+      requirePermission: () => undefined,
+      isSameOrigin: () => true,
+      readJson: async () => ({ kind: "OK" as const, value: {} }),
+      onError: () => Response.json({}, { status: 500 }),
+      newRequestId: () => "rid",
+      onAudit: (e: { download?: boolean; status: number }) => events.push(e),
+    } as never);
+    const res = await route({ auth: "user", permission: "service-enforced" }, async () =>
+      new Response("a", { headers: { "Content-Disposition": 'attachment; filename="x.csv"', "Cache-Control": "public" } }),
+    )(new Request("https://a.test/api/export"));
+    expect(res.headers.get("Cache-Control")).toBe("private, no-store, max-age=0");
+    expect(res.headers.get("X-Content-Type-Options")).toBe("nosniff");
+    expect(events).toEqual([expect.objectContaining({ status: 200, download: true })]);
+  });
+});
