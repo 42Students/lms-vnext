@@ -24,4 +24,4 @@ async function handleGET(request:Request,{params}:{params:Promise<{batchId:strin
   }});
  }catch(error){const response=apiErrorResponse(error);response.headers.set("Cache-Control","private, no-store, max-age=0");return response;}
 }
-export const GET = secured(handleGET);
+export const GET = secured(handleGET, { stepUp: true });

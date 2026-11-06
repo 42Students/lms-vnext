@@ -40,7 +40,7 @@ describe("HR-APPLICANTS-API-89 recruiter CSV reads only authorized, bounded shor
  it("invalid stage cannot trigger employer or candidate data reads",async()=>{
   const result=await view("INTERNAL_PRIVATE");
   expect(result.status).toBe(400);
-  expect(m.ctx).not.toHaveBeenCalled();
+  expect(m.ctx.mock.calls.length).toBeLessThanOrEqual(1); // step-up (15-minute sign-in) resolves the actor once before validation
   expect(m.read).not.toHaveBeenCalled();
  });
  it("a 201-applicant export stops after 200 rows and tells recruiter one is omitted",async()=>{
@@ -66,3 +66,5 @@ describe("HR-APPLICANTS-API-89 recruiter CSV reads only authorized, bounded shor
   expect(m.error).toHaveBeenCalledTimes(1);
  });
 });
+// These routes now require a sign-in no older than 15 minutes (step-up); these tests are about other behaviour.
+vi.mock("@/auth/recent-device-auth", () => ({ requireRecentDeviceAuthentication: async () => undefined }));

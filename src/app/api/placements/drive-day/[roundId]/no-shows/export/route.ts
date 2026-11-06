@@ -47,4 +47,4 @@ async function handleGET(_request: Request, { params }: RouteContext) {
     return response;
   }
 }
-export const GET = secured(handleGET);
+export const GET = secured(handleGET, { stepUp: true });

@@ -48,3 +48,6 @@ describe("TPO-campaigns-public-12 private campaign history CSV request contract"
   expect(body.message).toContain("Narrow the purpose filter");
  });
 });
+
+// These routes now require a sign-in no older than 15 minutes (step-up); these tests are about other behaviour.
+vi.mock("@/auth/recent-device-auth", () => ({ requireRecentDeviceAuthentication: async () => undefined }));

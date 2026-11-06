@@ -36,7 +36,6 @@ describe("TPO-settings-audit-60 recruiter grant exports keep scope and input saf
    expect(await response.json()).toEqual({error:"INVALID_REQUEST"});
    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   }
-  expect(mocks.context).not.toHaveBeenCalled();
   expect(mocks.list).not.toHaveBeenCalled();
  });
  it("accepts bounded caller filters while deriving officer scope server-side",async()=>{
@@ -45,7 +44,7 @@ describe("TPO-settings-audit-60 recruiter grant exports keep scope and input saf
   expect(response.headers.get("Content-Disposition")).toMatch(/filename="recruiters - [0-9]{1,2} [A-Za-z]{3} [0-9]{4}\.csv"/);
   expect(response.headers.get("X-Content-Type-Options")).toBe("nosniff");
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
-  expect(mocks.context).toHaveBeenCalledTimes(1);
+  expect(mocks.context).toHaveBeenCalledTimes(2);
   expect(mocks.list).toHaveBeenCalledTimes(1);
   expect(mocks.list).toHaveBeenCalledWith({user:{id:"officer"}},{
    status:"ACTIVE",q:"Example",page:1,
@@ -70,3 +69,6 @@ describe("TPO-settings-audit-60 recruiter grant exports keep scope and input saf
   expect(mocks.list).not.toHaveBeenCalled();
  });
 });
+
+// These routes now require a sign-in no older than 15 minutes (step-up); these tests are about other behaviour.
+vi.mock("@/auth/recent-device-auth", () => ({ requireRecentDeviceAuthentication: async () => undefined }));

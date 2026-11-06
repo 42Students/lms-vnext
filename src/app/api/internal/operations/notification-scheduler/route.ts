@@ -14,7 +14,6 @@ import {
   queueFencedCourseDueReminders,
   queueFencedInterviewReminders,
 } from "@/modules/operations/notification-scheduled-job-service";
-import { hasBrowserOrigin } from "@/security/browser-origin";
 import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
@@ -31,7 +30,7 @@ type WiredJob = "notification.release" | "notification.cleanup"
  */
 async function handlePOST(request: Request) {
   // Browser Origin never authorizes a service scheduler.
-  if (hasBrowserOrigin(request))
+  if (request.headers.has("origin"))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers});
   const secret = process.env["DB10_NOTIFICATION_SCHEDULER_SECRET"] ?? "";
   const supplied = request.headers.get("x-notification-scheduler-key") ?? "";

@@ -45,7 +45,7 @@ describe("HR-EXPORT-104 exact recruiter CSV query boundary",()=>{
   const response=await handlers[area](query);
   expect(response.status).toBe(400);
   expect(await response.json()).toMatchObject({error:"INVALID_QUERY"});
-  expect(m.ctx).not.toHaveBeenCalled();
+  expect(m.ctx.mock.calls.length).toBeLessThanOrEqual(1); // step-up (15-minute sign-in) resolves the actor once before validation
   expect(m.job).not.toHaveBeenCalled();
   expect(m.activity).not.toHaveBeenCalled();
   expect(m.notifications).not.toHaveBeenCalled();
@@ -60,6 +60,8 @@ describe("HR-EXPORT-104 exact recruiter CSV query boundary",()=>{
  ] as const)("%s refuses unexpected query fields without silently discarding them",async(area,query)=>{
   const response=await handlers[area](query);
   expect(response.status).toBe(400);
-  expect(m.ctx).not.toHaveBeenCalled();
+  expect(m.ctx.mock.calls.length).toBeLessThanOrEqual(1); // step-up (15-minute sign-in) resolves the actor once before validation
  });
 });
+// These routes now require a sign-in no older than 15 minutes (step-up); these tests are about other behaviour.
+vi.mock("@/auth/recent-device-auth", () => ({ requireRecentDeviceAuthentication: async () => undefined }));

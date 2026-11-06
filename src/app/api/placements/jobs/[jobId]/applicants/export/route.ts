@@ -68,4 +68,4 @@ async function handleGET(
     return response;
   }
 }
-export const GET = secured(handleGET);
+export const GET = secured(handleGET, { stepUp: true });

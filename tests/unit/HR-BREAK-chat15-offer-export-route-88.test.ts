@@ -25,7 +25,7 @@ describe("HR-OFFER-EXPORT-88: issuer rows are not draft selection ledger entries
    const response=await view(state);
    expect(response.status).toBe(400);
    expect(await response.json()).toMatchObject({error:"OFFER_STATE_NOT_EXPORTABLE"});
-   expect(m.ctx).not.toHaveBeenCalled();
+   expect(m.ctx.mock.calls.length).toBeLessThanOrEqual(1); // step-up (15-minute sign-in) resolves the actor once before validation
    expect(m.read).not.toHaveBeenCalled();
   });
  it("a real ISSUED filter emits a private no-store employer CSV with masked contact",async()=>{
@@ -46,3 +46,5 @@ describe("HR-OFFER-EXPORT-88: issuer rows are not draft selection ledger entries
   expect(m.read).not.toHaveBeenCalled();
  });
 });
+// These routes now require a sign-in no older than 15 minutes (step-up); these tests are about other behaviour.
+vi.mock("@/auth/recent-device-auth", () => ({ requireRecentDeviceAuthentication: async () => undefined }));

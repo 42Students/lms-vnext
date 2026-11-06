@@ -43,7 +43,7 @@ describe("chat-16 recruiter drive bulk resumes ZIP",()=>{
  it("rejects additional query parameters before fetching private actor or records",async()=>{
   const response=await GET(new Request(route+"?url=https://attacker.test"),params);
   expect(response.status).toBe(400);
-  expect(fixture.context).not.toHaveBeenCalled();
+  expect(fixture.context.mock.calls.length).toBeLessThanOrEqual(1); // step-up (15-minute sign-in) resolves the actor once before validation
   expect(fixture.read).not.toHaveBeenCalled();
  });
  it("rejects expired or swapped employer principal without a private read",async()=>{
@@ -96,3 +96,6 @@ describe("chat-16 recruiter drive bulk resumes ZIP",()=>{
   expect(fetcher).toHaveBeenCalledTimes(20);
  });
 });
+
+// These routes now require a sign-in no older than 15 minutes (step-up); these tests are about other behaviour.
+vi.mock("@/auth/recent-device-auth", () => ({ requireRecentDeviceAuthentication: async () => undefined }));

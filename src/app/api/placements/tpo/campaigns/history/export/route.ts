@@ -37,4 +37,4 @@ async function handleGET(request:Request){
   "X-Export-Scope":"All filtered batches",
  }});
 }
-export const GET = secured(handleGET);
+export const GET = secured(handleGET, { stepUp: true });

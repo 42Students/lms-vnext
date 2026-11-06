@@ -123,4 +123,4 @@ async function handleGET(request:Request,{params}:Params){
   return NextResponse.json({error:"RESUMES_NOT_AVAILABLE"},{status:404,headers});
  }
 }
-export const GET = secured(handleGET);
+export const GET = secured(handleGET, { stepUp: true });

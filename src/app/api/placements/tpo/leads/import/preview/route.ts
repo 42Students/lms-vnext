@@ -32,4 +32,4 @@ async function handlePOST(request: Request) {
     return tpoCrmApiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = secured(handlePOST, { csrf: "enforce", stepUp: true });

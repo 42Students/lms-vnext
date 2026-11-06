@@ -11,14 +11,18 @@ const APPLY = process.argv.includes("--apply");
 
 // Staff and administrator surfaces first. Self-service exports (a learner's or mentor's own data) and recruiter
 // downloads are decided individually, not by pattern.
-const STAFF_AREAS = new Set(["admin", "academics", "college", "people", "tpo", "tracker", "attendance"]);
+const STAFF_AREAS = new Set(["admin", "academics", "college", "people", "tpo", "tracker", "attendance", "placements", "courses", "activity"]);
+// Decided 2026-11-07: bulk exports of other people's data need a fresh sign-in; a recruiter's own operational
+// feeds (notifications, calendar, activity, team, drives) and public share-token links do not. Mentor and project
+// exports stay for a separate decision.
+const OWN_SCOPE = /^placements\/(?:company-share\/|recruiter\/(?:notifications|calendar|activity|team|drives)\/)/;
 
 (async () => {
   const { SENSITIVE_PATH } = await import("./security-central-rules.mjs");
   const files = cp.execFileSync("git", ["ls-files", "src/app/api"], { encoding: "utf8" }).split("\n").filter((f) => f.endsWith("/route.ts"));
   let changedFiles = 0, handlers = 0, skippedOwn = 0;
   for (const f of files) {
-    if (!SENSITIVE_PATH.test(f.slice("src/app/api/".length)) || !STAFF_AREAS.has(f.split("/")[3])) continue;
+    if (!SENSITIVE_PATH.test(f.slice("src/app/api/".length)) || !STAFF_AREAS.has(f.split("/")[3]) || OWN_SCOPE.test(f.slice("src/app/api/".length))) continue;
     const src = fs.readFileSync(f, "utf8");
     if (!/@\/security\/secure-handler["']/.test(src) || /stepUp\s*:|requireRecentDeviceAuthentication/.test(src)) continue;
     let changed = false;

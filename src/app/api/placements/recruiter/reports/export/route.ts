@@ -30,4 +30,4 @@ async function handleGET(request:Request){
    "Cache-Control":"private, no-store","X-Export-Omitted":String(csv.omitted)}});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = secured(handleGET, { stepUp: true });

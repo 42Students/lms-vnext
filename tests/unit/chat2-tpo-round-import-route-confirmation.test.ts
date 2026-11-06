@@ -99,3 +99,6 @@ describe("TPO-drive-workspace-40 import-preview and confirmed staging route",()=
   expect(state.preview).not.toHaveBeenCalled();
  });
 });
+
+// These routes now require a sign-in no older than 15 minutes (step-up); these tests are about other behaviour.
+vi.mock("@/auth/recent-device-auth", () => ({ requireRecentDeviceAuthentication: async () => undefined }));

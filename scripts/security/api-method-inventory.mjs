@@ -26,7 +26,7 @@ const AUTH_CALLS = new Set([
   "verifyIdentitySessionCookie", "resolveSession",
 ]);
 const ORIGIN_CALLS = new Set([
-  "isSameOriginRequest", "guardLoginRequest", "hasBrowserOrigin", "scannerCallbackRequestRejection",
+  "isSameOriginRequest", "guardLoginRequest", "scannerCallbackRequestRejection",
 ]);
 const PERMISSION_CALLS = new Set([
   "requirePermission", "assertPersistedPlatformPermission", "can",
@@ -66,13 +66,14 @@ export function extractApiMethods(source, fileName = "route.ts") {
   function put(name, node, kind) {
     if (!METHODS.has(name)) return;
     let calls = calledIdentifiers(node);
+    let bodyText = node?.getText() ?? "";
     // secured(handleX): the guard calls live in the wrapped local function, so count them for this method.
     if (calls.includes("secured") && node) {
       const inner = new Set(calls);
       (function visit(item) {
         if (ts.isCallExpression(item) && ts.isIdentifier(item.expression) && item.expression.text === "secured") {
           for (const arg of item.arguments) {
-            if (ts.isIdentifier(arg) && localFunctions.has(arg.text)) calledIdentifiers(localFunctions.get(arg.text)).forEach(c => inner.add(c));
+            if (ts.isIdentifier(arg) && localFunctions.has(arg.text)) { calledIdentifiers(localFunctions.get(arg.text)).forEach(c => inner.add(c)); bodyText += localFunctions.get(arg.text).getText(); }
           }
         }
         ts.forEachChild(item, visit);
@@ -85,7 +86,7 @@ export function extractApiMethods(source, fileName = "route.ts") {
       method: name,
       implementation: kind,
       has_direct_session_evidence: central || calls.some(x => AUTH_CALLS.has(x)),
-      has_direct_origin_evidence: central || calls.some(x => ORIGIN_CALLS.has(x)),
+      has_direct_origin_evidence: central || /headers\.has\(\s*["']origin["']\s*\)/.test(bodyText) || calls.some(x => ORIGIN_CALLS.has(x)),
       has_direct_permission_evidence: calls.some(x => PERMISSION_CALLS.has(x)),
       call_identifiers: calls,
       // Every method is unreviewed until its target resolution, permissions,

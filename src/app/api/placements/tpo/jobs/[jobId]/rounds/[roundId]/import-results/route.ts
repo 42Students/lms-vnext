@@ -15,7 +15,7 @@ async function handleGET(_request:Request){
   "Cache-Control":"private, no-store",
  }});
 }
-export const GET = secured(handleGET);
+export const GET = secured(handleGET, { stepUp: true });
 async function handlePOST(request:Request,{params}:Props){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -53,4 +53,4 @@ async function handlePOST(request:Request,{params}:Props){
   return NextResponse.json(value,{headers:{"Cache-Control":"private, no-store"}});
  }catch(e){return apiErrorResponse(e);}
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = secured(handlePOST, { csrf: "enforce", stepUp: true });
