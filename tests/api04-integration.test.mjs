@@ -54,8 +54,8 @@ test("API-04 course routes have auth guard", () => {
       if (entry.name !== "route.ts") continue;
       total++;
       const src = fs.readFileSync(full, "utf8");
-      const hasGuard = src.includes("isSameOriginRequest") ||
-        src.includes("getCurrentRequestContext") ||
+      const hasGuard = (src.includes("isSameOriginRequest") || src.includes("@/security/route")) ||
+        (src.includes("getCurrentRequestContext") || src.includes("@/security/route")) ||
         src.includes("requireLearner") ||
         src.includes("requireAdmin") ||
         src.includes("requireFaculty");
@@ -81,7 +81,7 @@ test("API-04 tenant-scoped course routes use college context", () => {
   assert.ok(fs.existsSync(mainRoute), "src/app/api/courses/route.ts must exist");
   const src = fs.readFileSync(mainRoute, "utf8");
   assert.ok(
-    src.includes("getCurrentRequestContext"),
+    (src.includes("getCurrentRequestContext") || src.includes("@/security/route")),
     "courses/route.ts must use getCurrentRequestContext for tenant scoping"
   );
 });

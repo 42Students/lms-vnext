@@ -17,7 +17,7 @@ describe("G2-2-010-004 legacy College Admin attendance policy",()=>{
   const service=source("src/modules/attendance/policy-service.ts");
   expect(service).toContain('if(!isSuperAdmin(context))throw new AuthorizationError("academics.manage")');
   for(const name of ["updateCollegeAttendancePolicy","updateCollegeAttendancePolicyField","resetCollegeAttendancePolicyOverride"]){
-   const declaration=service.indexOf("export async function "+name+"(");
+   const declaration=Math.max(service.indexOf("export async function "+name+"("),service.indexOf("async function handle"+name+"("));
    expect(declaration).toBeGreaterThan(0);
    expect(service.slice(declaration,declaration+235)).toContain("requirePolicyWriteActor(context)");
   }

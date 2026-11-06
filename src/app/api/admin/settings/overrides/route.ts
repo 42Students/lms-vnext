@@ -7,8 +7,9 @@ import {listAdminTenantSettings,saveAdminTenantSettings,addUnlistedTenantSetting
  from "@/modules/platform-settings/admin-editor-service";
 import {listOrganizationTenantSettings,saveOrganizationTenantSettings,removeOrganizationTenantSetting,OrganizationSettingsError}
  from "@/modules/platform-settings/organization-settings-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const q=new URL(request.url).searchParams;
   const scope=q.get("scope");
@@ -22,7 +23,8 @@ export async function GET(request:Request){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function PATCH(request:Request){
+export const GET = secured(handleGET);
+async function handlePATCH(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const _pp=await readBoundedJsonRequest(request,8192);
@@ -51,12 +53,13 @@ export async function PATCH(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });
 
 /** Legacy TenantSettings PUT adapter: an arbitrary map is NOT accepted
  * without explicit per-key versions and the current verified scope. Convert
  * at most 31 fields to independently auditable and recoverable PATCH commands.
  * Unlisted setting creation and deletion remain POST/DELETE respectively. */
-export async function PUT(request:Request){
+async function handlePUT(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const _pr=await readBoundedJsonRequest(request,8192);
@@ -88,9 +91,10 @@ export async function PUT(request:Request){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });
 
 /** SA-tenants-modules-40: separately guarded free-form inventory edits. */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const _ps=await readBoundedJsonRequest(request,8192);
@@ -104,7 +108,8 @@ export async function POST(request:Request){
   return apiErrorResponse(error);
  }
 }
-export async function DELETE(request:Request){
+export const POST = secured(handlePOST, { csrf: "enforce" });
+async function handleDELETE(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const _pd=await readBoundedJsonRequest(request,8192);
@@ -123,3 +128,4 @@ export async function DELETE(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });

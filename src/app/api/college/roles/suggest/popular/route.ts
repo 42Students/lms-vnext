@@ -5,16 +5,18 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listPopularFacultyDirectory,recordFacultyDirectorySelection}
  from "@/modules/people/college-role-directory-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"private, no-store"};
-export async function GET(){
+async function handleGET(){
  try{
   const items=await listPopularFacultyDirectory(await getCurrentRequestContext(),10);
   return NextResponse.json({items},{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function POST(request:Request){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  try{
@@ -25,3 +27,4 @@ export async function POST(request:Request){
   return NextResponse.json(outcome,{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST);

@@ -4,11 +4,12 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
 import { recordTpoOfferLifecycle } from "@/modules/placements/tpo-offer-lifecycle-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function POST(
+async function handlePOST(
   request: Request,
   { params }: { params: Promise<{ jobId: string }> },
 ) {
@@ -27,3 +28,4 @@ export async function POST(
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

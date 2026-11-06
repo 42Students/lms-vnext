@@ -5,9 +5,10 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrDriveProposalHistoryQuerySchema} from "@/modules/placements/hr-drive-proposal-history-model";
 import {listHrDriveProposals} from "@/modules/placements/hr-drive-proposal-history-service";
 import {hrDriveProposalHistoryCsv} from "@/modules/placements/hr-drive-proposal-export-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** Read-only, college-scoped CSV for the requested 20-row proposal-history page. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
@@ -38,3 +39,4 @@ export async function GET(request:Request){
  }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

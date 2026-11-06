@@ -6,8 +6,9 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrOpenRecruiterConversationSchema} from "@/modules/placements/hr-conversation-open-model";
 import {openRecruiterMessageThread,composeAndSendRecruiterThreadMessage,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const form=await request.formData().catch(()=>null);
@@ -33,3 +34,4 @@ export async function POST(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

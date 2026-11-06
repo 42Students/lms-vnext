@@ -7,10 +7,11 @@ import {
 } from "@/modules/academics/college-section-mutation-service";
 
 import { deleteCollegeSection, CollegeSectionLifecycleError } from "@/modules/academics/college-section-lifecycle-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function PATCH(request: Request, {
+async function handlePATCH(request: Request, {
   params,
 }: {
   params: Promise<{ sectionId: string }>;
@@ -34,9 +35,10 @@ export async function PATCH(request: Request, {
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });
 
 /** Dependency-free hard delete only. Historical children always block it. */
-export async function DELETE(request:Request,{params}:{params:Promise<{sectionId:string}>}){
+async function handleDELETE(request:Request,{params}:{params:Promise<{sectionId:string}>}){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -53,3 +55,4 @@ export async function DELETE(request:Request,{params}:{params:Promise<{sectionId
   return apiErrorResponse(error);
  }
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });

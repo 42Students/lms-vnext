@@ -1,5 +1,6 @@
 import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** Legacy /api/v1/attendance/bulk accepted numeric classScheduleId and
  * student identifiers. Those are not safe vNext authorization keys. The
@@ -7,7 +8,7 @@ export const runtime="nodejs";
  * and active membership UUIDs before a full-roster save. No silent remap or
  * partial marking is allowed.
  */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return NextResponse.json({
@@ -24,3 +25,4 @@ export async function POST(request:Request){
   transaction:"Atomic entire active roster; no partial saves",
  },{status:410,headers:{"Cache-Control":"no-store"}});
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

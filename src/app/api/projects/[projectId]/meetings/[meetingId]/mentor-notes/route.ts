@@ -5,9 +5,10 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {updateMentorMeetingNotes} from "@/modules/projects/mentor-meeting-notes-service";
 import {readMentorProjectCommandBody,MentorProjectCommandBodyError,mentorProjectBodyFailureMessage}
   from "@/modules/projects/mentor-command-body";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string;meetingId:string}>};
-export async function PATCH(request:Request,{params}:RouteContext){
+async function handlePATCH(request:Request,{params}:RouteContext){
   if(!isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   try{
@@ -19,3 +20,4 @@ export async function PATCH(request:Request,{params}:RouteContext){
       {status:error.status});
   return apiErrorResponse(error);}
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

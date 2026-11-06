@@ -2,12 +2,13 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {grantCollegeStudentPlacementResume} from "@/modules/placements/college-student-resume-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 type Context={params:Promise<{membershipId:string}>};
 
-export async function GET(_request:Request,{params}:Context){
+async function handleGET(_request:Request,{params}:Context){
  try{
   const context=await getCurrentRequestContext();
   const {membershipId}=await params;
@@ -23,3 +24,4 @@ export async function GET(_request:Request,{params}:Context){
   return response;
  }
 }
+export const GET = secured(handleGET);

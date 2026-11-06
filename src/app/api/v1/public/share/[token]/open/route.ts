@@ -3,9 +3,10 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {getPublicCompanyApplicantShare} from "@/modules/placements/company-share/public-service";
 import {legacyShareBody,legacyShareCode,legacyShareCookie,legacyShareHeaders,
  legacyShareInvalid,legacyShareVerify} from "@/modules/placements/company-share/legacy-public-controller";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function POST(request:Request,{params}:{params:Promise<{token:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{token:string}>}){
  if(!isSameOriginRequest(request))return legacyShareInvalid();
  const {token}=await params,code=legacyShareCode(await legacyShareBody(request));
  const access=await legacyShareVerify(token,code);
@@ -14,3 +15,4 @@ export async function POST(request:Request,{params}:{params:Promise<{token:strin
  if(!result||result.kind!=="READY")return legacyShareInvalid();
  return legacyShareCookie(NextResponse.json(result,{headers:legacyShareHeaders}),access);
 }
+export const POST = secured(handlePOST);

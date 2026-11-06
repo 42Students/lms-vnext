@@ -3,6 +3,7 @@ import { ZodError } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { previewCollegeBatchPromotion, CollegePromotionPreviewError } from "@/modules/academics/college-batch-promotion-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 
@@ -10,7 +11,7 @@ export const runtime="nodejs";
  * Read-only authorization and model checks are identical to the eventual
  * execute path; the owner must confirm an unchanged preview before POST.
  */
-export async function GET(request:Request){
+async function handleGET(request:Request){
   try{
     const query=new URL(request.url).searchParams;
     if([...query.keys()].some(key=>query.getAll(key).length!==1))
@@ -33,3 +34,4 @@ export async function GET(request:Request){
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);

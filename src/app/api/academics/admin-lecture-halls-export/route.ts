@@ -4,10 +4,11 @@ import { isSuperAdmin } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { exportParams } from "@/modules/academics/college-lecture-halls-export-model";
 import { exportCollegeLectureHalls } from "@/modules/academics/college-lecture-halls-export-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 /** SA-academics-people-27: tenant-selected, bounded CSV for Super Admin only. */
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
     if (!isSuperAdmin(context)) throw new AuthorizationError("academics.manage");
@@ -24,3 +25,4 @@ export async function GET(request: Request) {
     }});
   } catch(error) { return apiErrorResponse(error); }
 }
+export const GET = secured(handleGET);

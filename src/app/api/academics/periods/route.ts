@@ -7,10 +7,11 @@ import {
   createAcademicPeriod,
   listAcademicPeriods,
 } from "@/modules/academics/period-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const query = new URL(request.url).searchParams;
     if (query.getAll("collegeId").length > 1) return NextResponse.json({
@@ -28,8 +29,9 @@ export async function GET(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json(
       { error: "INVALID_ORIGIN" },
@@ -58,3 +60,4 @@ export async function POST(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST);

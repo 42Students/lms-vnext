@@ -5,11 +5,12 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { announcementApiError } from "@/lib/announcement-api-error";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { announcementStatisticsForAdmin } from "@/modules/announcements/service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+async function handleGET() {
   if (!announcementsRuntimeEnabled()) {
     return NextResponse.json({ error: "DB10_ANNOUNCEMENTS_MIGRATIONS_PENDING" }, { status: 503 });
   }
@@ -31,3 +32,4 @@ export async function GET() {
     return announcementApiError(error);
   }
 }
+export const GET = secured(handleGET);

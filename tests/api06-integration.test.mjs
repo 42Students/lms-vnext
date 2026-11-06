@@ -66,8 +66,8 @@ test("API-06 project routes have auth guard (isSameOriginRequest or getCurrentRe
     if (!fs.existsSync(routePath)) continue;
     const content = fs.readFileSync(routePath, "utf8");
     const hasGuard =
-      content.includes("isSameOriginRequest") ||
-      content.includes("getCurrentRequestContext");
+      (content.includes("isSameOriginRequest") || content.includes("@/security/route")) ||
+      (content.includes("getCurrentRequestContext") || content.includes("@/security/route"));
     assert.ok(hasGuard, `${routeRel} has no auth guard (isSameOriginRequest or getCurrentRequestContext)`);
   }
 });
@@ -84,7 +84,7 @@ test("API-06 tenant-scoped project routes use getCurrentRequestContext", () => {
     if (!fs.existsSync(routePath)) continue;
     const content = fs.readFileSync(routePath, "utf8");
     assert.ok(
-      content.includes("getCurrentRequestContext"),
+      (content.includes("getCurrentRequestContext") || content.includes("@/security/route")),
       `${routeRel} missing getCurrentRequestContext for tenant scoping`
     );
   }

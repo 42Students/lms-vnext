@@ -5,6 +5,7 @@ import {getHrJobRead} from "@/modules/placements/hr-job-read-service";
 import {hrApplicantFilterSchema} from "@/modules/placements/hr-job-applicants-model";
 import {grantRecruiterSharedResume} from "@/modules/placements/recruiter-applicant-resume-service";
 import {makeStoredZip,type ZipEntry} from "@/modules/placements/company-share/zip-model";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -58,7 +59,7 @@ async function readBoundedResume(url:string,contentType:string):
 type Params={params:Promise<{jobId:string}>};
 /** Employer-specific ZIP. Each applicant is independently reauthorized against
  * persisted SHORTLISTED, active-college and CLEAN receipt checks. */
-export async function GET(request:Request,{params}:Params){
+async function handleGET(request:Request,{params}:Params){
  if(new URL(request.url).searchParams.size>0)
   return NextResponse.json({error:"INVALID_QUERY"},{status:400,headers});
  try{
@@ -122,3 +123,4 @@ export async function GET(request:Request,{params}:Params){
   return NextResponse.json({error:"RESUMES_NOT_AVAILABLE"},{status:404,headers});
  }
 }
+export const GET = secured(handleGET);

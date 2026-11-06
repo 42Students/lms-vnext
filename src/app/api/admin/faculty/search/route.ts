@@ -9,11 +9,12 @@ import {
   listAdminScopedPeopleSuggestions,
   recordAdminScopedFacultySelection,
 } from "@/modules/admin-ui/super-admin-scoped-people-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 const privateHeaders = { "Cache-Control": "private, no-store" };
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
     const params = new URL(request.url).searchParams;
@@ -61,8 +62,9 @@ export async function GET(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return Response.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -84,3 +86,4 @@ export async function POST(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST);

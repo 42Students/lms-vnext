@@ -6,17 +6,19 @@ import {
   loadCollegeOwnProfile, updateCollegeOwnProfile,
   CollegeProfileVersionConflict, CollegeProfileVersionRequired,
 } from "@/modules/people/college-admin-profile-edit-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+async function handleGET() {
   try {
     const context = await getCurrentRequestContext();
     const profile = await loadCollegeOwnProfile(context);
     return NextResponse.json({ profile }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) { return apiErrorResponse(error); }
 }
-export async function PATCH(request: Request) {
+export const GET = secured(handleGET);
+async function handlePATCH(request: Request) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   try {
@@ -33,3 +35,4 @@ export async function PATCH(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

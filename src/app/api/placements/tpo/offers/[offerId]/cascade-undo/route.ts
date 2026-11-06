@@ -6,10 +6,11 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {undoPlacementOfferCascade} from "@/modules/placements/offer-cascade-undo-service";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 const body=z.object({cascadeId:z.string().uuid(),confirmed:z.literal(true)}).strict();
 /** P-S1-06: no GET mutation, no client-supplied actor or tenant scope. */
-export async function POST(request:Request,{params}:{
+async function handlePOST(request:Request,{params}:{
  params:Promise<{offerId:string}>
 }){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -42,3 +43,4 @@ export async function POST(request:Request,{params}:{
   throw err;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

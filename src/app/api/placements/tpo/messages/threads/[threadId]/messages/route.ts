@@ -4,9 +4,10 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {sendThreadMessage,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
+import { secured } from "@/security/secure-handler";
 const schema=z.strictObject({body:z.string().trim().min(1).max(4000)});
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{params:Promise<{threadId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{threadId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const input=schema.safeParse(await request.json().catch(()=>null));
  const id=z.string().uuid().safeParse((await params).threadId);
@@ -22,3 +23,4 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
   throw error;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

@@ -1,8 +1,9 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { exportCollegeDriveApplicationsCsv } from "@/modules/placements/college-drive-applications-service";
 import { driveApplicationsExportParams } from "@/modules/placements/college-drive-applications-model";
+import { secured } from "@/security/secure-handler";
 
-export async function GET(request: Request, {params}: {params:Promise<{jobId:string}>}) {
+async function handleGET(request: Request, {params}: {params:Promise<{jobId:string}>}) {
   const context = await getCurrentRequestContext();
   const {jobId}=await params;
   const search=new URL(request.url).searchParams;
@@ -26,3 +27,4 @@ export async function GET(request: Request, {params}: {params:Promise<{jobId:str
     return new Response("Applicants unavailable or access denied",{status:404,headers:{"Cache-Control":"no-store"}});
   }
 }
+export const GET = secured(handleGET);

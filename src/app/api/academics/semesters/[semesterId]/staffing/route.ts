@@ -2,6 +2,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {CollegeTermMappingError,getCollegeTermStaffingReport} from "@/modules/academics/college-term-mapping-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -10,7 +11,7 @@ export const dynamic="force-dynamic";
  * authenticated acting-college UUID term rather than trusting numeric IDs.
  * This is a read-only report: mapping writes use separate authorized routes.
  */
-export async function GET(_request:Request,{params}:{params:Promise<{semesterId:string}>}){
+async function handleGET(_request:Request,{params}:{params:Promise<{semesterId:string}>}){
  try{
   const {semesterId:termId}=await params;
   const result=await getCollegeTermStaffingReport(await getCurrentRequestContext(),termId);
@@ -25,3 +26,4 @@ export async function GET(_request:Request,{params}:{params:Promise<{semesterId:
   return apiErrorResponse(error);
  }
 }
+export const GET = secured(handleGET);

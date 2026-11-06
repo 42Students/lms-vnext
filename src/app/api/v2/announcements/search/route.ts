@@ -4,11 +4,12 @@ import { isSuperAdmin } from "@/modules/identity/context";
 import { announcementApiError } from "@/lib/announcement-api-error";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { searchLegacyAnnouncementsForGlobalSuperAdmin } from "@/modules/announcements/service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   if (!announcementsRuntimeEnabled()) {
     return NextResponse.json({ error: "DB10_ANNOUNCEMENTS_MIGRATIONS_PENDING" }, { status: 503 });
   }
@@ -35,3 +36,4 @@ export async function GET(request: Request) {
     return announcementApiError(error);
   }
 }
+export const GET = secured(handleGET);

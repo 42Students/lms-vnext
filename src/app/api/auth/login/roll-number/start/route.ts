@@ -4,9 +4,10 @@ import { auditLogin, guardLoginRequest, ipTag, loginErrorResponse } from "@/modu
 import {
   rollNumberStartSchema, startLearnerRollNumberLogin,
 } from "@/modules/auth/roll-number-login-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   const guarded = await guardLoginRequest(request, rollNumberStartSchema,
     "roll-number-login-start", 6);
   if (!guarded.ok) return guarded.response;
@@ -25,3 +26,4 @@ export async function POST(request: Request) {
     });
   }
 }
+export const POST = secured(handlePOST);

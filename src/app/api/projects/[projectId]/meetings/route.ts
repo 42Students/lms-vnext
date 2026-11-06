@@ -10,6 +10,7 @@ import {
 } from "@/modules/projects/meeting-service";
 import {replaceLegacyProjectMeetingDraftSection} from "@/modules/projects/project-meeting-plan-service";
 import {parseMentorMeetingCollectionPagination} from "@/modules/projects/mentor-meeting-collection-pagination";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 /** Old bulk PUT /{projectId}/meetings maps to this GET collection plus
@@ -20,7 +21,7 @@ type RouteContext = {
   params: Promise<{ projectId: string }>;
 };
 
-export async function GET(
+async function handleGET(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -59,8 +60,9 @@ export async function GET(
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function POST(
+async function handlePOST(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -93,12 +95,13 @@ export async function POST(
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST);
 
 /** Old meetings PUT submits the entire draft section with the original token.
  * Do not fan out into POST/PATCH requests: a partial write would break legacy
  * replace semantics. Scheduled or completed meetings remain protected.
  */
-export async function PUT(request:Request,{params}:RouteContext){
+async function handlePUT(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -116,3 +119,4 @@ export async function PUT(request:Request,{params}:RouteContext){
     {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });

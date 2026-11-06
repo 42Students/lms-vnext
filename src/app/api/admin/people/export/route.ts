@@ -3,8 +3,9 @@ import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { apiErrorResponse } from "@/lib/api-error";
 import { exportSuperAdminUsers } from "@/modules/people/admin-users-export-service";
 import { readSuperAdminPeopleExportParams } from "@/modules/people/admin-users-export-model";
+import { secured } from "@/security/secure-handler";
 export const runtime = "nodejs";
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
  try {
   const context=await getCurrentRequestContext();
   await requireRecentDeviceAuthentication(context.user.id);
@@ -18,3 +19,4 @@ export async function GET(request: Request) {
   }});
  } catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

@@ -8,9 +8,10 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {profileVerificationSettings} from "@/db/schema/profile-verification";
 import {requireCollegeVerificationActor,requireVerificationTables,VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {setTpoProfileVerificationEnabled} from "@/modules/profile-verification/settings-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 const inputSchema=z.strictObject({tpoCanVerify:z.boolean()});
-export async function GET(){
+async function handleGET(){
  try{
   const context=await getCurrentRequestContext();
   const scope=await requireCollegeVerificationActor(context);
@@ -24,7 +25,8 @@ export async function GET(){
   return apiErrorResponse(error);
  }
 }
-export async function PATCH(request:Request){
+export const GET = secured(handleGET);
+async function handlePATCH(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const context=await getCurrentRequestContext();
@@ -39,3 +41,4 @@ export async function PATCH(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

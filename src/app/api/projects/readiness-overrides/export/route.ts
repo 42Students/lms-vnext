@@ -6,8 +6,9 @@ export const runtime = "nodejs";
 
 import { projectReadinessOverrideCsvCell } from "@/modules/projects/readiness-overrides-export-model";
 import {z} from "zod";
+import { secured } from "@/security/secure-handler";
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const collegeId = new URL(request.url).searchParams.get("collegeId");
     if (!collegeId) return Response.json({ error: "INVALID_REQUEST" }, { status: 400 });
@@ -31,3 +32,4 @@ export async function GET(request: Request) {
     });
   } catch (error) { return apiErrorResponse(error); }
 }
+export const GET = secured(handleGET);

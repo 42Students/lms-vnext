@@ -7,6 +7,7 @@ import {
   LearnerGalleryError, initiateOwnLearnerGalleryUpload,
   confirmOwnLearnerGalleryUpload,
 } from "@/modules/profile-verification/learner-image-gallery-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 const noStore = { "Cache-Control": "private, no-store" };
@@ -15,7 +16,7 @@ const schema = z.discriminatedUnion("action", [
     contentType: z.string(), sizeBytes: z.number() }),
   z.strictObject({ action: z.literal("CONFIRM"), objectKey: z.string() }),
 ]);
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403, headers: noStore });
   try {
@@ -44,3 +45,4 @@ export async function POST(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST);

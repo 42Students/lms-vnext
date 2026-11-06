@@ -6,8 +6,9 @@ import {VerificationStateError} from "@/modules/profile-verification/domain";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {openCollegeVerificationDocument} from "@/modules/verification/staff-private-document-service";
 import {requireTpoVerificationActor} from "@/modules/verification/tpo-staff-auth";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request,{params}:{params:Promise<{membershipId:string;section:string;receiptId:string}>}){
+async function handleGET(request:Request,{params}:{params:Promise<{membershipId:string;section:string;receiptId:string}>}){
  try{
   const input=z.strictObject({membershipId:z.string().uuid(),section:z.enum(["EDUCATION","IDENTITY"]),receiptId:z.string().uuid()}).parse(await params);
   const context=await getCurrentRequestContext();
@@ -26,3 +27,4 @@ export async function GET(request:Request,{params}:{params:Promise<{membershipId
   return apiErrorResponse(error);
  }
 }
+export const GET = secured(handleGET);

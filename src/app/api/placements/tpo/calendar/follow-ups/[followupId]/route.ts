@@ -9,11 +9,12 @@ import { moveTpoFollowup } from "@/modules/placements/tpo-crm-service";
 import { calendarFollowupMoveSchema } from "@/modules/placements/tpo-calendar-followup-model";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { tpoCrmFollowupIdSchema } from "@/modules/placements/tpo-crm-validation";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ followupId: string }> };
 
-export async function PATCH(request: Request, { params }: RouteContext) {
+async function handlePATCH(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -43,6 +44,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     return tpoCrmApiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });
 
 /** Legacy drag/drop calendars POST the move; both verbs go through the
  * same scoped, transactional writer with the current followup UUID. */

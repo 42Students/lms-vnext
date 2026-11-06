@@ -10,8 +10,9 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getSuperAdminStudentCourseProgress} from "@/modules/courses/super-admin-student-course-progress";
 import {studentCourseCompletion} from "@/modules/courses/super-admin-student-progress-model";
 import {placementReportCsv} from "@/modules/placements/report-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const context=await getCurrentRequestContext();
   requirePermission(context,"admin-scope.select");
@@ -70,3 +71,4 @@ export async function GET(request:Request){
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

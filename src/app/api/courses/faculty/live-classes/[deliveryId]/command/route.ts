@@ -6,9 +6,10 @@ import {createRequestId} from "@/lib/request-id";
 import {FacultyAuthoringBodyError,readFacultyAuthoringBody}
   from "@/modules/courses/faculty-authoring-request-body";
 import {commandFacultyLiveClass} from "@/modules/courses/faculty-live-mutation-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{
+async function handlePOST(request:Request,{params}:{
   params:Promise<{deliveryId:string}>;
 }) {
   if(!isSameOriginRequest(request))
@@ -32,3 +33,4 @@ export async function POST(request:Request,{params}:{
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

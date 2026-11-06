@@ -5,9 +5,10 @@ import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-q
 import {mentorTaskHistoryQuerySchema} from "@/modules/projects/mentor-task-history-model";
 import {getMentorTaskReviewHistory} from "@/modules/projects/mentor-task-history-service";
 import {mentorReviewedTasksCsv} from "@/modules/projects/mentor-task-review-export-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** Own assigned Mentor project review history only; capped, no raw feedback. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
   try{
     const url=new URL(request.url);
     const filters=singleValueMentorExportFilters(url.searchParams,
@@ -32,3 +33,4 @@ export async function GET(request:Request){
     });
   }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

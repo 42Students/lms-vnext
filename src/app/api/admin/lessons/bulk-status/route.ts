@@ -3,8 +3,9 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {bulkSuperAdminLessonVisibility} from "@/modules/courses/super-admin-lesson-bulk-visibility";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return Response.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const _p=await readBoundedJsonRequest(request,16384);
@@ -18,3 +19,4 @@ export async function POST(request:Request){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST);

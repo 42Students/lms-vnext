@@ -9,7 +9,7 @@ describe("G2-14-025-004 recruiter drive legacy action coverage",()=>{
   const route=read("src/app/api/placements/recruiter/jobs/[jobId]/applicants/resumes/export/route.ts");
   expect(mapping).toContain('vNext: "GET /api/placements/recruiter/jobs/{jobId}/applicants/resumes/export"');
   expect(mapping).toContain('state: "adapted-to-bounded-authorized-first-20"');
-  expect(route).toContain("export async function GET(");
+  expect(route).toMatch(/export (?:async function|const) GET\b/);
   expect(route).toContain("const MAX_FILES=20");
   expect(route).toContain("grantRecruiterSharedResume(");
  });

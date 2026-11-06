@@ -4,10 +4,11 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getSuperAdminLearnerAccessTrace} from "@/modules/module-access/admin-trace-service";
 import {studentRuleCards} from "@/modules/module-access/admin-student-rule-model";
 import {adminModuleTraceQuerySchema} from "@/modules/module-access/admin-trace-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** SA-tenants-modules-31: authenticated, college-scoped read-only autocomplete
  * and explanation, never a way to act as the selected student. */
-export async function GET(request:Request,{params}:{params:Promise<{collegeId:string}>}){
+async function handleGET(request:Request,{params}:{params:Promise<{collegeId:string}>}){
  try{
   const query:Record<string,string>={};
   for(const [key,value] of new URL(request.url).searchParams){
@@ -47,3 +48,4 @@ export async function GET(request:Request,{params}:{params:Promise<{collegeId:st
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

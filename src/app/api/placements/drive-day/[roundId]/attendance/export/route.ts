@@ -5,6 +5,7 @@ import { AuthorizationError, can, requirePermission } from "@/modules/permission
 import { tpoRoundAttendanceCsv } from "@/modules/placements/tpo-operations-export-model";
 import { getTpoRoundDriveDay } from "@/modules/placements/tpo-round-drive-day-service";
 import { placementRoundIdSchema } from "@/modules/placements/validation";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,7 +16,7 @@ type RouteContext = { params: Promise<{ roundId: string }> };
  * No supplied college identifier. The roster service independently resolves
  * the persisted round and rechecks the authenticated TPO's college scope.
  */
-export async function GET(_request: Request, { params }: RouteContext) {
+async function handleGET(_request: Request, { params }: RouteContext) {
   try {
     const context = await getCurrentRequestContext();
     if (!context.membership || !hasMembershipRole(context, "TPO")) {
@@ -47,3 +48,4 @@ export async function GET(_request: Request, { params }: RouteContext) {
     return response;
   }
 }
+export const GET = secured(handleGET);

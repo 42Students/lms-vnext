@@ -8,8 +8,9 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {updateOwnRecruiterDesignation} from "@/modules/placements/recruiter-designation-service";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {readRecruiterJsonBody,RecruiterJsonBodyError} from "@/modules/placements/recruiter-json-request";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function PATCH(request:Request) {
+async function handlePATCH(request:Request) {
  if(!isSameOriginRequest(request)) return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try {
   const context=await getCurrentRequestContext();
@@ -19,10 +20,11 @@ export async function PATCH(request:Request) {
    return NextResponse.json({error:"INVALID_REQUEST"},{status:error.kind==="TOO_LARGE"?413:400});
    return apiErrorResponse(error);}
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });
 
 /** Existing recruiter self profile, selected from the authenticated user and
  * company grant. Do not trust supplied college/user IDs or a query bearer. */
-export async function GET(){
+async function handleGET(){
  try{
   const context=await getCurrentRequestContext();
   if(!hasActiveRecruiter(context)||!context.recruiter||
@@ -41,3 +43,4 @@ export async function GET(){
   }},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

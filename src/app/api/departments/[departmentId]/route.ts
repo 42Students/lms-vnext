@@ -8,6 +8,7 @@ import {
 import { apiErrorResponse } from "@/lib/api-error";
 import { ZodError } from "zod";
 import { DepartmentServiceError } from "@/modules/departments/service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -17,7 +18,7 @@ type RouteContext = {
   }>;
 };
 
-export async function PATCH(
+async function handlePATCH(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -65,11 +66,12 @@ export async function PATCH(
     return response;
   }
 }
+export const PATCH = secured(handlePATCH);
 
 /** Legacy PUT maps to the same tenant-scoped UUID update as PATCH. */
 export const PUT = PATCH;
 
-export async function DELETE(
+async function handleDELETE(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -98,3 +100,4 @@ export async function DELETE(
     return apiErrorResponse(error);
   }
 }
+export const DELETE = secured(handleDELETE);

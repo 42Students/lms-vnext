@@ -4,8 +4,9 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {updateCollegeOfferingMetadata,CollegeOfferingMetadataError}
   from "@/modules/courses/college-offering-metadata-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function PATCH(request:Request,{params}:{params:Promise<{offeringId:string}>}){
+async function handlePATCH(request:Request,{params}:{params:Promise<{offeringId:string}>}){
   if(!isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   try{
@@ -20,3 +21,4 @@ export async function PATCH(request:Request,{params}:{params:Promise<{offeringId
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

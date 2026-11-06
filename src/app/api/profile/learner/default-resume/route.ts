@@ -12,6 +12,7 @@ import {
   clearOwnLearnerDefaultResume,
 } from "@/modules/placements/learner-default-resume-service";
 import { PrivateObjectStorageError } from "@/modules/storage/private-object-storage";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 const headers = { "Cache-Control": "private, no-store" };
@@ -49,7 +50,7 @@ function safeError(error: unknown) {
   return apiErrorResponse(error);
 }
 
-export async function GET() {
+async function handleGET() {
   try {
     return NextResponse.json(await listLearnerDefaultResumes(
       await getCurrentRequestContext()), { headers });
@@ -57,8 +58,9 @@ export async function GET() {
     return safeError(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403, headers });
   }
@@ -87,3 +89,4 @@ export async function POST(request: Request) {
     return safeError(error);
   }
 }
+export const POST = secured(handlePOST);

@@ -5,10 +5,11 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 import { previewSuperAdminBulkDrives, updateSuperAdminBulkDrives }
   from "@/modules/placements/super-admin-bulk-drive-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({error: "INVALID_ORIGIN"}, {status: 403});
   }
@@ -28,3 +29,4 @@ export async function POST(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

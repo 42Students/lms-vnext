@@ -4,8 +4,9 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {hrActivityQuerySchema} from "@/modules/placements/hr-job-activity-model";
 import {listRecruiterJobActivity} from "@/modules/placements/hr-job-activity-service";
 import {buildHrActivityCsv,HR_ACTIVITY_CSV_CAP} from "@/modules/placements/hr-activity-csv-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   const allowed=["collegeId","kind","q"];
@@ -36,3 +37,4 @@ export async function GET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

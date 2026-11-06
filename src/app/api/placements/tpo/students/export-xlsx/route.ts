@@ -9,8 +9,9 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {getTpoStudentsIntelligence,tpoStudentsQueryObjectSchema,tpoStudentsRangeRefinement} from "@/modules/placements/tpo-students-service";
 import {exportTpoStudentsXlsx} from "@/modules/placements/tpo-students-xlsx";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";export const dynamic="force-dynamic";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const ctx=await getCurrentRequestContext();
   if(!ctx.membership||!hasMembershipRole(ctx,"TPO"))throw new AuthorizationError("placements.manage");
@@ -52,3 +53,4 @@ export async function GET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

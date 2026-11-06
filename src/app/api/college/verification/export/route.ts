@@ -5,8 +5,9 @@ import {exportCollegeVerificationCsv} from "@/modules/verification/staff-export-
 import {parseVerificationExportQuery} from "@/modules/verification/export-query";
 import {VerificationQueueLimitError} from "@/modules/verification/staff-queue-service";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=parseVerificationExportQuery(new URL(request.url).searchParams);
   const report=await exportCollegeVerificationCsv(await getCurrentRequestContext(),params);
@@ -26,3 +27,4 @@ export async function GET(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const GET = secured(handleGET);

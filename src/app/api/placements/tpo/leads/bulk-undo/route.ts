@@ -5,12 +5,13 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {tpoCrmTablesReady} from "@/modules/placements/tpo-crm-storage-readiness";
 import {tpoCrmApiErrorResponse} from "@/lib/tpo-crm-api-error";
 import {TpoBulkUndoError,undoTpoRecruiterBulkRun} from "@/modules/placements/tpo-bulk-undo-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
 /** Single-winner, five-minute restore; never accepts client-supplied old values. */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  if(!await tpoCrmTablesReady())
@@ -27,3 +28,4 @@ export async function POST(request:Request){
   return tpoCrmApiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

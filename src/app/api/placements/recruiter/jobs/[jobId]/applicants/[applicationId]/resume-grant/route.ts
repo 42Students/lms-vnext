@@ -5,9 +5,10 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {grantRecruiterSharedResume,RecruiterResumeUnavailable}
  from "@/modules/placements/recruiter-applicant-resume-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Params={params:Promise<{jobId:string;applicationId:string}>};
-export async function POST(request:Request,{params}:Params){
+async function handlePOST(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -25,3 +26,4 @@ export async function POST(request:Request,{params}:Params){
   return NextResponse.json({error:"RESUME_NOT_AVAILABLE"},{status:404});
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

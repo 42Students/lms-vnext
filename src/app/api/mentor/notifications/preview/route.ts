@@ -12,12 +12,13 @@ import {mentorAttentionReceiptKey,mentorAnnouncementReceiptKey} from
  "@/modules/projects/mentor-attention-read-model";
 import {sortMentorUnifiedNotifications} from
  "@/modules/projects/mentor-unified-notification-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** Every source read reauthorizes the signed-in recipient, college and live
  * Mentor role. Render at most five source-owned entries in the shell.
  * Provider email/push is never inferred from this in-app preview.
  */
-export async function GET(){
+async function handleGET(){
  try{
   const context=await getCurrentRequestContext();
   const inbox=await getMentorPersonalInbox(context,{view:"all"});
@@ -57,3 +58,4 @@ export async function GET(){
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

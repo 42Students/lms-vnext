@@ -5,8 +5,9 @@ import {mentorTaskReviewQuerySchema} from "@/modules/projects/mentor-task-review
 import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
 import {getMentorTaskReviews} from "@/modules/projects/mentor-task-review-service";
 import {mentorPendingTaskReviewCsv} from "@/modules/projects/mentor-pending-task-review-export";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const url=new URL(request.url);
   const filters=singleValueMentorExportFilters(url.searchParams,[
@@ -31,3 +32,4 @@ export async function GET(request:Request){
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

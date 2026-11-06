@@ -6,6 +6,7 @@ import {AFTER_COLLEGE_LABELS} from "@/modules/placements/tpo-after-college-model
 import {apiErrorResponse} from "@/lib/api-error";
 import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-url-guard";
 import {z} from "zod";
+import { secured } from "@/security/secure-handler";
 const params=z.object({batchId:z.uuid().optional(),branchId:z.uuid().optional()}).strict();
 const csv=(v:unknown)=>{
  const value=String(v??"");
@@ -13,7 +14,7 @@ const csv=(v:unknown)=>{
  return '"'+safe.replaceAll('"','""')+'"';
 };
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const q=new URL(request.url).searchParams;
   if(tpoReportHasRepeatedSearchParams(q)||[...q.keys()].some(key=>key!=="batchId"&&key!=="branchId"))
@@ -39,3 +40,4 @@ export async function GET(request:Request){
     "X-Export-Truncated":data.rows.length>rows.length?"true":"false",Vary:"Cookie"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

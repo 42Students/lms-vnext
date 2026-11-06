@@ -2,6 +2,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoAuditLog,tpoAuditQuerySchema} from "@/modules/placements/tpo-audit-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -9,7 +10,7 @@ export const dynamic="force-dynamic";
 /** Only revalidate a bounded, already-authorized TPO audit page. This is a
  * private in-memory stale-while-revalidate read, not an audit writer/export.
  * Every GET rechecks the persisted TPO actor and current college. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const url=new URL(request.url);
   const raw:Record<string,unknown>=Object.fromEntries(url.searchParams.entries());
@@ -25,3 +26,4 @@ export async function GET(request:Request){
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

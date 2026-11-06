@@ -12,7 +12,7 @@ const routes = [
 test("DB10 Tracker HTTP handlers fail closed before migration verification", () => {
   for (const [path, write] of routes) {
     const code = fs.readFileSync(path, "utf8");
-    const handlers = [...code.matchAll(/export async function (GET|PATCH|POST|PUT)\s*\(/g)];
+    const handlers = [...code.matchAll(/export (?:async function|const) (GET|PATCH|POST|PUT)\b/g)];
     const gates = [...code.matchAll(/trackerAdminRuntimeEnabled\(\)/g)];
     assert.ok(handlers.length > 0, `No HTTP handler in ${path}`);
     assert.equal(gates.length, handlers.length, `Ungated Tracker handler in ${path}`);

@@ -3,8 +3,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {removeBlockedRange,BlockedDateError} from "@/modules/placements/tpo-blocked-date-write-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function DELETE(request:Request){
+async function handleDELETE(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   return NextResponse.json(await removeBlockedRange(await getCurrentRequestContext(),await request.json()),{
@@ -15,3 +16,4 @@ export async function DELETE(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });

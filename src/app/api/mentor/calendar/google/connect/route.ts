@@ -7,11 +7,12 @@ import {mentorGoogleConfig,mentorGoogleConsentUrl,mentorGooglePkceChallenge} fro
  "@/modules/projects/mentor-google-calendar-provider";
 import {mentorGoogleConnectionState} from
  "@/modules/projects/mentor-google-calendar-connection-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** An authenticated, explicit user navigation starts Google OAuth. A signed-in
  * Mentor alone may connect their own college-scoped calendar grant.
  */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const context=await getCurrentRequestContext();
   const status=await mentorGoogleConnectionState(context);
@@ -33,3 +34,4 @@ export async function GET(request:Request){
     {headers:MENTOR_GOOGLE_OAUTH_RESPONSE_HEADERS});
  }
 }
+export const GET = secured(handleGET);

@@ -6,10 +6,11 @@ import {
  issueOwnFacultyAttachmentUpload,completeOwnFacultyAttachmentUpload,
  openOwnFacultyAttachment,revokeOwnFacultyAttachment,
 } from "@/modules/people/faculty-section-attachment-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"private, no-store"};
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  try{
@@ -17,7 +18,8 @@ export async function POST(request:Request){
    await getCurrentRequestContext(),await request.json()),{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function PATCH(request:Request){
+export const POST = secured(handlePOST);
+async function handlePATCH(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  try{
@@ -25,7 +27,8 @@ export async function PATCH(request:Request){
    await getCurrentRequestContext(),await request.json()),{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function GET(request:Request){
+export const PATCH = secured(handlePATCH);
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   return NextResponse.json(await openOwnFacultyAttachment(
@@ -35,7 +38,8 @@ export async function GET(request:Request){
    }),{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function DELETE(request:Request){
+export const GET = secured(handleGET);
+async function handleDELETE(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  try{
@@ -43,3 +47,4 @@ export async function DELETE(request:Request){
    await getCurrentRequestContext(),await request.json()),{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
+export const DELETE = secured(handleDELETE);

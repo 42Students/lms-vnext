@@ -1,3 +1,5 @@
 import {exportSuperAdminLearningDirectory} from "@/modules/admin-ui/super-admin-learning-csv-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){return exportSuperAdminLearningDirectory(request,"ASSIGNMENT");}
+async function handleGET(request:Request){return exportSuperAdminLearningDirectory(request,"ASSIGNMENT");}
+export const GET = secured(handleGET);

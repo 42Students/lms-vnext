@@ -11,6 +11,7 @@ import {
   getProjectTemplateDetail,
   reviseProjectTemplate,
 } from "@/modules/projects/template-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 const TEMPLATE_MAX_BYTES = 8 * 1024 * 1024;
@@ -24,7 +25,7 @@ type RouteContext = {
  * UUID and live permission scope remain authoritative; a URL parameter can
  * never expand the caller's selected college.
  */
-export async function GET(request:Request,{params}:RouteContext) {
+async function handleGET(request:Request,{params}:RouteContext) {
  try{
   const context=await getCurrentRequestContext();
   const query=new URL(request.url).searchParams;
@@ -45,8 +46,9 @@ export async function GET(request:Request,{params}:RouteContext) {
    {headers:privateHeaders});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);
 
-export async function PATCH(
+async function handlePATCH(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -129,17 +131,19 @@ export async function PATCH(
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH);
 
 /** Version-checked PUT alias. Section-only legacy updates merge just the
  * submitted section into the immutable current blueprint; never a blind write.
  */
-export async function PUT(request:Request,context:RouteContext) {
+async function handlePUT(request:Request,context:RouteContext) {
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return PATCH(request,context);
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });
 
-export async function DELETE(
+async function handleDELETE(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -163,3 +167,4 @@ export async function DELETE(
     return apiErrorResponse(error);
   }
 }
+export const DELETE = secured(handleDELETE);

@@ -4,6 +4,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {privateAuthJson} from "@/modules/auth/private-response";
 import {AuthRequestBodyTooLarge,readBoundedAuthJson} from "@/modules/auth/bounded-json";
 import {POST as startScopedLogin} from "@/app/api/auth/login/start/route";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const legacy=z.strictObject({
@@ -14,7 +15,7 @@ const legacy=z.strictObject({
 /** Legacy input is untrusted: validate Origin and cap bytes before adapting
  * to canonical OTP login. The downstream handler still owns tenant resolution,
  * per-IP throttling, identity checks and credential delivery. */
-export async function POST(request:Request) {
+async function handlePOST(request:Request) {
   if(!isSameOriginRequest(request))
     return privateAuthJson({error:"INVALID_ORIGIN"},{status:403});
   let parsed:z.infer<typeof legacy>;
@@ -44,3 +45,4 @@ export async function POST(request:Request) {
   // HMAC-only challenge and transport guard as the current login API.
   return startScopedLogin(adapted);
 }
+export const POST = secured(handlePOST);

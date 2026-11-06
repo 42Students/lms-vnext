@@ -6,6 +6,7 @@ import {
   resolveRequestTenant,
 } from "@/modules/auth/request-tenant";
 import { getPublicCollegeBranding } from "@/modules/colleges/branding-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -22,7 +23,7 @@ const headers = {
  * coerced legacy numeric IDs; old clients must inspect idFormat before use.
  * Tenant identity comes exclusively from the verified request Host.
  */
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   const hostHeader = request.headers.get("host");
   const tenant = await resolveRequestTenant(hostHeader);
   const localHost = (hostHeader ?? "").trim().toLowerCase().replace(/:\d+$/, "");
@@ -110,3 +111,4 @@ export async function GET(request: Request) {
     }, { status: 503, headers });
   }
 }
+export const GET = secured(handleGET);

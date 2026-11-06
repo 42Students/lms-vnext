@@ -9,6 +9,7 @@ import {queueFencedInterviewReminders}
  from "@/modules/operations/notification-scheduled-job-service";
 import {queueFencedInterviewReminderEmails}
  from "@/modules/announcements/tpo-interview-reminder-email-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -16,7 +17,7 @@ const noStore={"Cache-Control":"no-store"};
 /** The private Cloud Scheduler runs at 19:00 Asia/Kolkata. Configure this
  * paired worker INSTEAD OF the in-app-only notification scheduler route for
  * tpo.interviewReminders, never both. The morning route stays IN_APP-only. */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
   // Scheduled/service callbacks have no browser Origin. Reject a foreign Origin when one is supplied.
   if (request.headers.has("origin") && !isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -57,3 +58,4 @@ export async function POST(request:Request){
    {status:503,headers:noStore});
  }
 }
+export const POST = secured(handlePOST);

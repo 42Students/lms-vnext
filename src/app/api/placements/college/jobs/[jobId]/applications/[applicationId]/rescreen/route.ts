@@ -3,9 +3,10 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {rescreenCollegeApplication} from "@/modules/placements/college-application-detail-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Ctx={params:Promise<{jobId:string;applicationId:string}>};
-export async function POST(req:Request,{params}:Ctx){
+async function handlePOST(req:Request,{params}:Ctx){
  if(!isSameOriginRequest(req))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -22,3 +23,4 @@ export async function POST(req:Request,{params}:Ctx){
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

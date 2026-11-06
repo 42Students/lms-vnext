@@ -4,10 +4,11 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {parseRecruiterSelectionXlsx} from "@/modules/placements/recruiter-selection-xlsx-model";
 import {readRecruiterUploadEnvelope,RecruiterUploadTooLargeError} from "@/modules/placements/recruiter-upload-size-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** Parses only worksheet A IDs. This endpoint never grants candidate visibility
  * or stages a selection: the submission service rechecks the exact shortlist. */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const ctx=await getCurrentRequestContext().catch(()=>null);
@@ -35,3 +36,4 @@ export async function POST(request:Request){
  if(!outcome.ok)return NextResponse.json({error:outcome.error},{status:422});
  return NextResponse.json(outcome,{headers:{"Cache-Control":"no-store"}});
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

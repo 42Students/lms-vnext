@@ -2,8 +2,9 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getLegacyProjectDeliveryHistory} from "@/modules/projects/project-legacy-delivery-history-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request,{params}:{params:Promise<{projectId:string}>}){
+async function handleGET(request:Request,{params}:{params:Promise<{projectId:string}>}){
  try{
   const {projectId}=await params;
   const raw=new URL(request.url).searchParams.get("limit");
@@ -13,3 +14,4 @@ export async function GET(request:Request,{params}:{params:Promise<{projectId:st
   return NextResponse.json(history,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

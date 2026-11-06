@@ -9,6 +9,7 @@ import {
   devFixtureManifestEnabled,
   readProvisionedDevFixtureManifest,
 } from "@/modules/e2e/dev-fixture-manifest";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -24,7 +25,7 @@ function matchesSecret(value: string | null, expected: string) {
 /** Read-only replacement for the legacy unrestricted seed response:
  * fixtures must be provisioned transactionally by the dev environment.
  * Never accepts IDs/body or writes data, and is wholly unavailable in prod. */
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   if (process.env.NODE_ENV === "production" || process.env["APP_ENV"] !== "development") {
     return NextResponse.json({ error: "NOT_FOUND" }, { status: 404, headers: noStore });
   }
@@ -69,3 +70,4 @@ export async function GET(request: Request) {
     });
   }
 }
+export const GET = secured(handleGET);

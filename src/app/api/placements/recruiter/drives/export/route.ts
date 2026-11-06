@@ -5,8 +5,9 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {recruiterDriveListQuerySchema} from "@/modules/placements/recruiter-drive-list-model";
 import {searchOwnRecruiterDrives} from "@/modules/placements/recruiter-drive-search-service";
 import {buildHrDrivesCsv,HR_DRIVE_CSV_CAP} from "@/modules/placements/hr-drives-csv-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   const allowed=["collegeId","view","q","employment","mode","deadline","sort"];
@@ -38,3 +39,4 @@ export async function GET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

@@ -6,6 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
 import {previewTpoBulkAction} from "@/modules/placements/tpo-bulk-action-preview-service";
 import {TpoBulkApplicationsUnavailable} from "@/modules/placements/tpo-bulk-workflow-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 const previewMessages:Record<string,string>={
  REQUEST_TOO_LARGE:"This bulk action is too large. Select no more than 200 rows at once.",
@@ -17,7 +18,7 @@ function safeBulkCount(value:unknown){
  const n=typeof value==="number"?value:NaN;
  return Number.isFinite(n)?Math.max(0,Math.min(1_000_000,Math.trunc(n))):0;
 }
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -45,3 +46,4 @@ export async function POST(request:Request){
    return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

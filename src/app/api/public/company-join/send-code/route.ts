@@ -3,9 +3,10 @@ import { isSameOriginRequest } from "@/auth/origin";
 import {readBoundedJsonBody} from "@/lib/bounded-json-body";
 import { requestPublicJoinCode, PublicJoinCodeError } from "@/modules/placements/public-join/send-code-service";
 import { deliverPublicRecruiterJoinCode } from "@/modules/messaging/public-join-code-delivery";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -34,3 +35,4 @@ export async function POST(request: Request) {
       {status:503,headers:{"Cache-Control":"no-store"}});
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

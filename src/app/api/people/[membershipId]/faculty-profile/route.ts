@@ -14,6 +14,7 @@ import {
   getFacultyProfileWithRuntime,
   upsertFacultyProfileWithRuntime,
 } from "@/modules/people/runtime";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -23,7 +24,7 @@ type RouteContext = {
   }>;
 };
 
-export async function GET(
+async function handleGET(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -65,8 +66,9 @@ export async function GET(
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function PUT(
+async function handlePUT(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -101,6 +103,7 @@ export async function PUT(
     return apiErrorResponse(error);
   }
 }
+export const PUT = secured(handlePUT);
 
 /** College-admin section editor. Faculty self-edit remains on the separate
  * authenticated self-document route. Only a current people.manage principal
@@ -109,7 +112,7 @@ export async function PUT(
  */
 /** Backward-compatible staff profile editor; shares the persisted actor,
  * target-role protection and CAS of the dedicated faculty-document endpoint. */
-export async function PATCH(request:Request,{params}:RouteContext){
+async function handlePATCH(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try {
@@ -131,3 +134,4 @@ export async function PATCH(request:Request,{params}:RouteContext){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

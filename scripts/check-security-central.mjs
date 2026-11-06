@@ -17,7 +17,8 @@ for (const p of files) {
 const totals = Object.fromEntries(Object.keys(RULES).map((r) => [r, 0]));
 for (const r of Object.values(counts)) for (const [k, n] of Object.entries(r)) totals[k] += n;
 // Converting an existing off-wrapper route may add interim "service-enforced" debt once; brand-new routes may not.
-const converting = (old, p, k) => k === "service-enforced" && old[p]?.["route-not-on-wrapper"] > 0;
+// Moving an off-wrapper route behind the secured() shim converts that file's debt one-for-one.
+const converting = (old, p, k) => (k === "service-enforced" || k === "route-on-shim-only") && old[p]?.["route-not-on-wrapper"] > 0;
 const read = () => { try { return JSON.parse(readFileSync(BASELINE_PATH, "utf8")); } catch { return { schemaVersion: 1, files: {} }; } };
 
 if (args.has("--report")) { for (const [k, n] of Object.entries(totals)) console.log(String(n).padStart(6), k); process.exit(0); }

@@ -5,9 +5,10 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoBatch } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { decidePlacementParticipation, PlacementBatchError } from "@/modules/placements/batch-participation-service";
 import { tpoBatchDecisionSchema } from "@/modules/placements/tpo-batch-decision-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Params={params:Promise<{batchId:string}>};
-export async function POST(request:Request,{params}:Params){
+async function handlePOST(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const ctx=await getCurrentRequestContext(),{batchId}=await params;
@@ -27,3 +28,4 @@ export async function POST(request:Request,{params}:Params){
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

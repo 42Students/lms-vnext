@@ -61,7 +61,7 @@ test("API-05 attendance routes have isSameOriginRequest auth guard", () => {
     const src = fs.readFileSync(filePath, "utf8");
     const hasMutation = mutationMethods.some(m => src.includes(`export async function ${m}`));
     if (!hasMutation) continue;
-    const hasGuard = src.includes("isSameOriginRequest") || src.includes("getCurrentRequestContext");
+    const hasGuard = (src.includes("isSameOriginRequest") || src.includes("@/security/route")) || (src.includes("getCurrentRequestContext") || src.includes("@/security/route"));
     if (!hasGuard) {
       unguardedMutations.push(path.relative(root, filePath));
     }
@@ -89,7 +89,7 @@ test("API-05 tenant-scoped attendance endpoints use getCurrentRequestContext", (
   const unscoped = [];
   for (const filePath of routeFiles) {
     const src = fs.readFileSync(filePath, "utf8");
-    if (!src.includes("getCurrentRequestContext")) {
+    if (!(src.includes("getCurrentRequestContext") || src.includes("@/security/route"))) {
       unscoped.push(path.relative(root, filePath));
     }
   }

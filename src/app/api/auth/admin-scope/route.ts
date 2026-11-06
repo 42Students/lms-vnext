@@ -16,10 +16,11 @@ import {
   listAdminScopeChoices,
   resolveAdminScopeSelection,
 } from "@/modules/admin-scope/service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+async function handleGET() {
   try {
     const context = await getCurrentRequestContext();
     const choices = await listAdminScopeChoices(context);
@@ -37,8 +38,9 @@ export async function GET() {
     return privateAuthResponse(apiErrorResponse(error));
   }
 }
+export const GET = secured(handleGET);
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return privateAuthJson(
       { error: "INVALID_ORIGIN" },
@@ -99,8 +101,9 @@ export async function POST(request: Request) {
     return privateAuthResponse(apiErrorResponse(error));
   }
 }
+export const POST = secured(handlePOST);
 
-export async function DELETE(request: Request) {
+async function handleDELETE(request: Request) {
   if (!isSameOriginRequest(request)) {
     return privateAuthJson(
       { error: "INVALID_ORIGIN" },
@@ -131,3 +134,4 @@ export async function DELETE(request: Request) {
     return privateAuthResponse(apiErrorResponse(error));
   }
 }
+export const DELETE = secured(handleDELETE);

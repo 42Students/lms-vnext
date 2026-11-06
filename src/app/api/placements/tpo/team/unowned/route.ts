@@ -4,8 +4,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assignTpoUnownedWork,tpoAssignUnownedSchema} from "@/modules/placements/tpo-team-unowned-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const parsed=tpoAssignUnownedSchema.safeParse(await request.json().catch(()=>null));
  if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
@@ -20,3 +21,4 @@ export async function POST(request:Request){
   throw error;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

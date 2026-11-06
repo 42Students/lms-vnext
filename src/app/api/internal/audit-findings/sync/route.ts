@@ -3,6 +3,7 @@ import {auditCronRequestRejection} from
  "@/modules/bug-tracker/audit-cron-request-guard";
 import {independentAuditImporterReady,syncIndependentAuditInbox} from
  "@/modules/bug-tracker/independent-audit-inbox-importer";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -14,7 +15,7 @@ const noStore={"Cache-Control":"private, no-store"} as const;
  * caller-supplied query, or unexpected HTTP request body before DB/provider I/O.
  * No user cookie, tenant selector, or URL credential grants machine authority.
  */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  const rejection=auditCronRequestRejection(
   request,process.env["AUDIT_FINDINGS_CRON_SECRET"]);
  if(rejection)
@@ -30,3 +31,4 @@ export async function GET(request:Request){
   return NextResponse.json({error:"IMPORT_FAILED"},{status:500,headers:noStore});
  }
 }
+export const GET = secured(handleGET);

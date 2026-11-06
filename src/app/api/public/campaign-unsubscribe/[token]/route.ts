@@ -1,13 +1,14 @@
 import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
 import {POST as confirmUnsubscribe} from "../route";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /**
  * Compatibility with the legacy path-token POST client. Never accept an
  * unverified token as a successful unsubscribe, even if already expired.
  * Both API shapes use the same bounded, signed-token and durable write path.
  */
-export async function POST(request:Request,{params}:{
+async function handlePOST(request:Request,{params}:{
  params:Promise<{token:string}>;
 }){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -27,3 +28,4 @@ export async function POST(request:Request,{params}:{
  });
  return confirmUnsubscribe(forwarded);
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

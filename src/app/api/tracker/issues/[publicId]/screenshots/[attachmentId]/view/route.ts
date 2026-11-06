@@ -13,9 +13,10 @@ import {getPrivateR2Config} from "@/modules/storage/r2-config";
 import {headObject,presignUrl} from "@/modules/storage/s3-client";
 import {apiErrorResponse} from "@/lib/api-error";
 import {canSignBugScreenshotDownload} from "@/modules/bug-tracker/access-and-attachments";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(_request:Request,{params}:{
+async function handleGET(_request:Request,{params}:{
  params:Promise<{publicId:string;attachmentId:string}>;
 }){
  try{
@@ -64,3 +65,4 @@ export async function GET(_request:Request,{params}:{
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

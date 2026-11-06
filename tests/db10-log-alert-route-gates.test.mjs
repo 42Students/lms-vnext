@@ -25,7 +25,7 @@ test("all known-error endpoints fail closed before any database reader", () => {
 test("mutation endpoints require exact same-origin write protection", () => {
   assert.match(code[1], /isSameOriginRequest\(request\)/);
   assert.match(code[2], /isSameOriginRequest\(request\)/);
-  assert.doesNotMatch(code[0], /export async function POST/);
+  assert.doesNotMatch(code[0], /export (?:async function|const) POST\b/);
 });
 
 test("service gates global super admin, locks triage row and preserves poll cursor", () => {

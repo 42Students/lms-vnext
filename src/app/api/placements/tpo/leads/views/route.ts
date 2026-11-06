@@ -5,15 +5,17 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listTpoRecruiterSavedViews,changeTpoRecruiterSavedView,TpoSavedViewError}
  from "@/modules/placements/tpo-recruiter-saved-view-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(){
+async function handleGET(){
  try{
   const result=await listTpoRecruiterSavedViews(await getCurrentRequestContext());
   return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
  }catch(e){return apiErrorResponse(e);}
 }
-export async function POST(request:Request){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const result=await changeTpoRecruiterSavedView(await getCurrentRequestContext(),await request.json());
@@ -25,3 +27,4 @@ export async function POST(request:Request){
   return apiErrorResponse(e);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

@@ -3,10 +3,11 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getLearnerPlacementJourney } from "@/modules/placements/learner-journey-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+async function handleGET() {
   try {
     const context = await getCurrentRequestContext();
     if (!context.membership || !hasMembershipRole(context, "LEARNER")) {
@@ -47,3 +48,4 @@ export async function GET() {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);

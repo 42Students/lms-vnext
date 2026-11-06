@@ -33,7 +33,7 @@ describe("LEARNER-placements-R04 persisted event producers",()=>{
  });
  it("LEARNER-placements-R04 creates no receipt in the browser or GET handler",()=>{
   const service=source("src/modules/placements/learner-placement-event-delivery.ts");
-  expect(service).not.toContain("export async function GET");
+  expect(service).not.toMatch(/export (?:async function|const) GET\b/);
   expect(service).not.toContain("listOwnNotifications(");
  });
 });

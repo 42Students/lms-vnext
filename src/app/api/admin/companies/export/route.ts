@@ -4,8 +4,9 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {adminCompaniesQuerySchema} from "@/modules/placements/admin-company-directory-model";
 import {listSuperAdminCompanyDirectory} from "@/modules/placements/admin-company-directory-service";
 import {superAdminCompanyCsv} from "@/modules/placements/admin-company-directory-export-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try {
   const params=new URL(request.url).searchParams;
   const input:Record<string,string>={};
@@ -36,3 +37,4 @@ export async function GET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

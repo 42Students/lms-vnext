@@ -12,6 +12,7 @@ import {
   SemesterMutationError,
   updateCollegeSemester,
 } from "@/modules/academics/semester-mutation-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ semesterId: string }> };
@@ -62,7 +63,7 @@ function handledError(error: unknown) {
   return apiErrorResponse(error);
 }
 
-export async function GET(_request: Request, { params }: RouteContext) {
+async function handleGET(_request: Request, { params }: RouteContext) {
   try {
     const { semesterId } = await params;
     const context = await getCurrentRequestContext();
@@ -74,8 +75,9 @@ export async function GET(_request: Request, { params }: RouteContext) {
       {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) { return handledError(error); }
 }
+export const GET = secured(handleGET);
 
-export async function PATCH(request: Request, { params }: RouteContext) {
+async function handlePATCH(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -114,8 +116,9 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     return handledError(error);
   }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });
 
-export async function DELETE(request: Request, { params }: RouteContext) {
+async function handleDELETE(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -129,3 +132,4 @@ export async function DELETE(request: Request, { params }: RouteContext) {
     return handledError(error);
   }
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });

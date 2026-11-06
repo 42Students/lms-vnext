@@ -3,11 +3,12 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {listCollegeInterviewDirectory}
  from "@/modules/placements/college-interview-directory-service";
 import {apiErrorResponse} from "@/lib/api-error";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 const escape=(value:string)=>value.replaceAll("\\","\\\\").replaceAll(";","\\;")
  .replaceAll(",","\\,").replaceAll("\n","\\n");
 const stamp=(d:Date)=>d.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,"");
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const q=new URL(request.url).searchParams;
   const data=await listCollegeInterviewDirectory(await getCurrentRequestContext(),{
@@ -39,3 +40,4 @@ export async function GET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

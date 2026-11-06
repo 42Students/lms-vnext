@@ -2,6 +2,7 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {searchAuthorizedCourseSuggestions} from "@/modules/courses/college-course-catalogue-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const noStore={"Cache-Control":"private, no-store"};
@@ -12,7 +13,7 @@ const querySchema=z.strictObject({
 
 /** Scoped SQL-backed v2 course search. Never expose raw legacy numeric course
  * IDs or serve an unscoped process-global cache to a tenant. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
   try{
     const params=new URL(request.url).searchParams;
     const input=querySchema.parse({
@@ -28,3 +29,4 @@ export async function GET(request:Request){
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);

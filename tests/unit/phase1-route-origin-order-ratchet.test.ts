@@ -9,7 +9,7 @@ import {describe,expect,it} from "vitest";
  * Secret-authenticated internal workers and `export const X=Y` aliases are handled separately.
  */
 const SCOPE=/(project|placement)/i;
-const HANDLER=/export\s+(?:async\s+function\s+(POST|PUT|PATCH|DELETE)\b|const\s+(POST|PUT|PATCH|DELETE)\s*=)/g;
+const HANDLER=/export\s+(?:async\s+function\s+(POST|PUT|PATCH|DELETE)\b|const\s+(POST|PUT|PATCH|DELETE)\s*=)|async\s+function\s+handle(POST|PUT|PATCH|DELETE)\b/g;
 const NEXT_HANDLER=/\nexport\s+(?:async\s+function|const)\s+(?:GET|POST|PUT|PATCH|DELETE)\b/;
 const FIRST_WORK=/\.json\(\)|readBounded\w*\(|formData\(\)|\.text\(\)|getCurrentRequestContext\(|await\s+params|await\s+route\.params|await\s+context\.params/;
 
@@ -49,7 +49,7 @@ function functionBody(src:string,index:number):string{
  return src.slice(start);
 }
 
-type Handler={file:string;method:string;text:string;alias:boolean};
+type Handler={file:string;method:string;text:string;alias:boolean;shim:boolean};
 const handlers:Handler[]=[];
 for(const f of files){
  const src=fs.readFileSync(path.join(process.cwd(),f),"utf8");
@@ -59,11 +59,13 @@ for(const f of files){
   const rest=src.slice(m.index);
   const next=rest.slice(10).search(NEXT_HANDLER);
   const text=next<0?rest:rest.slice(0,next+10);
-  handlers.push({file:f,method:(m[1]??m[2])!,text,alias:/^export\s+const\s+\w+\s*=\s*\w+\s*;?\s*$/.test(text.trim().split("\n")[0]!.trim())});
+  // `export const X = secured(handleX)` is the central wrapper; the handler body is the `handleX` function above it.
+  const shim=/^export\s+const\s+\w+\s*=\s*secured\(\s*handle/.test(text.trim());
+  handlers.push({file:f,method:(m[1]??m[2]??m[3])!,text,shim,alias:/^export\s+const\s+\w+\s*=\s*(?:secured\(\s*)?(?:POST|PUT|PATCH|DELETE|GET)\b/.test(text.trim().split("\n")[0]!.trim())||/^export\s+const\s+\w+\s*=\s*\w+\s*;?\s*$/.test(text.trim().split("\n")[0]!.trim())});
  }
 }
 const INTERNAL=(h:Handler)=>h.file.includes("/api/internal/");
-const subject=handlers.filter(h=>!h.alias&&!INTERNAL(h));
+const subject=handlers.filter(h=>!h.alias&&!h.shim&&!INTERNAL(h));
 
 describe("PHASE1-ORIGIN mutating handler ordering ratchet",()=>{
  it("PHASE1-ORIGIN-01 discovers the mutating handler surface",()=>{
@@ -98,7 +100,7 @@ describe("PHASE1-ORIGIN mutating handler ordering ratchet",()=>{
   const aliases=handlers.filter(h=>h.alias);
   expect(aliases.length).toBeGreaterThan(0);
   for(const a of aliases){
-   const target=/=\s*(\w+)\s*;?/.exec(a.text.split("\n")[0]!)![1]!;
+   const target=/=\s*(?:secured\(\s*)?(\w+)/.exec(a.text.split("\n")[0]!)![1]!;
    const src=fs.readFileSync(path.join(process.cwd(),a.file),"utf8");
    const def=handlers.find(h=>h.file===a.file&&h.method===target&&!h.alias);
    expect(def,`${a.file} alias ${a.method}=${target} has no handler in the same file (${src.length}b)`).toBeDefined();
@@ -107,7 +109,7 @@ describe("PHASE1-ORIGIN mutating handler ordering ratchet",()=>{
  });
 
  it("PHASE1-ORIGIN-06 internal mutating workers are the only handlers without an origin check and authenticate with a secret",()=>{
-  const internal=handlers.filter(INTERNAL);
+  const internal=handlers.filter(h=>INTERNAL(h)&&!h.shim);
   expect(internal.length).toBeGreaterThan(3);
   for(const h of internal.filter(x=>!/isSameOriginRequest\(/.test(x.text)))
    expect(/timingSafeEqual|signature|authorization|x-[a-z-]+-key/i.test(h.text),`${h.file} ${h.method}`).toBe(true);
@@ -122,7 +124,7 @@ describe("PHASE1-ORIGIN mutating handler ordering ratchet",()=>{
   const offenders:string[]=[];
   for(const f of files){
    const src=fs.readFileSync(path.join(process.cwd(),f),"utf8");
-   const m=/export\s+(?:async\s+function\s+GET\b|const\s+GET\s*=\s*async)/.exec(src);
+   const m=/export\s+(?:async\s+function\s+GET\b|const\s+GET\s*=\s*async)|async\s+function\s+handleGET\b/.exec(src);
    if(!m)continue;
    const text=functionBody(src,m.index);
    const call=WRITE_CALL.exec(text);

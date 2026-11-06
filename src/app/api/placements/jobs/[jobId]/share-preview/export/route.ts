@@ -4,11 +4,12 @@ import { getTpoShareableShortlist } from "@/modules/placements/tpo-shareable-sho
 import {
   tpoShareableShortlistCsv,
 } from "@/modules/placements/tpo-shareable-shortlist-model";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type RouteContext = { params: Promise<{ jobId: string }> };
-export async function GET(request: Request, { params }: RouteContext) {
+async function handleGET(request: Request, { params }: RouteContext) {
   try {
     const { jobId } = await params;
     const data = await getTpoShareableShortlist(
@@ -31,3 +32,4 @@ export async function GET(request: Request, { params }: RouteContext) {
     return response;
   }
 }
+export const GET = secured(handleGET);

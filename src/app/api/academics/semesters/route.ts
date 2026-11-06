@@ -7,6 +7,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { createCollegeSemester, SemesterMutationError } from "@/modules/academics/semester-mutation-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 /** Legacy-semester compatibility map:
@@ -18,7 +19,7 @@ export const runtime = "nodejs";
  * familiar {status,message,data} envelope plus explicit 'semesters'.
  */
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   const query = new URL(request.url).searchParams;
   // A duplicate key must never broaden the read scope silently.
   if ([...query.keys()].some(key => query.getAll(key).length > 1)) {
@@ -35,9 +36,10 @@ export async function GET(request: Request) {
       {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) { return apiErrorResponse(error); }
 }
+export const GET = secured(handleGET);
 
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -72,3 +74,4 @@ export async function POST(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

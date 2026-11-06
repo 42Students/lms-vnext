@@ -6,6 +6,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { alertEnvironment } from "@/modules/log-alerts/signature";
 import { cloudPollSettings } from "@/modules/log-alerts/scheduler";
 import { cloudLoggingAccessToken, readCloudLogErrorPage } from "@/modules/log-alerts/cloud-log-reader";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -27,7 +28,7 @@ const HEADERS = {
  * A partial provider failure writes a truthful, terminal incomplete _meta
  * record, never a false success or a retry of ambiguous provider cursors.
  */
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   const context = await getCurrentRequestContext();
   if (!isSuperAdmin(context) || context.user.platformStatus !== "ACTIVE" ||
       context.adminScope?.collegeId || context.adminScope?.organizationId) {
@@ -153,3 +154,4 @@ export async function GET(request: Request) {
     },
   });
 }
+export const GET = secured(handleGET);

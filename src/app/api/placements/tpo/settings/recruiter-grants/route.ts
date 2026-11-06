@@ -4,6 +4,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {readTpoSettingsBody,TpoCommunicationBodyError} from "@/modules/placements/tpo-communication-request-model";
 import { changeTpoRecruiterGrant,TpoRecruiterGrantConflict } from "@/modules/placements/tpo-recruiter-grant-write-service";
+import { secured } from "@/security/secure-handler";
 export const runtime = "nodejs";
 /** Legacy /api/v1/tpo/recruiter-access/{recruiterId}/extend|revoke maps
  * to action EXTEND|REVOKE with the UUID grantId and expectedUpdatedAt.
@@ -11,7 +12,7 @@ export const runtime = "nodejs";
  * tenant-scoped permission and compare-and-swap are enforced in the service.
  * A recruiter leaving their own college instead uses the separate self-leave DELETE.
  */
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   try {
     const context = await getCurrentRequestContext();
@@ -29,3 +30,4 @@ export async function POST(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

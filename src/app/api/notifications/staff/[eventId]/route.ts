@@ -8,6 +8,7 @@ import {
   deleteStaffNotification,
   updateStaffNotification,
 } from "@/modules/activity/notification-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -46,7 +47,7 @@ function respondError(error: unknown) {
   return apiErrorResponse(error);
 }
 
-export async function PATCH(request: Request, { params }: RouteContext) {
+async function handlePATCH(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -62,8 +63,9 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     return respondError(error);
   }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });
 
-export async function DELETE(request: Request, { params }: RouteContext) {
+async function handleDELETE(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -79,3 +81,4 @@ export async function DELETE(request: Request, { params }: RouteContext) {
     return respondError(error);
   }
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });

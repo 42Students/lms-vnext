@@ -6,8 +6,9 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {createTpoInternalThread} from "@/modules/placements/tpo-team-internal-create-service";
 import {internalThreadSchema} from "@/modules/placements/tpo-team-internal-model";
 import {TpoTeamAddPeopleRequiredError} from "@/modules/placements/tpo-team-asks-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const isJson=request.headers.get("content-type")?.toLowerCase().includes("application/json")??false;
  let source:Record<string,unknown>={};
@@ -84,3 +85,4 @@ export async function POST(request:Request){
   throw error;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

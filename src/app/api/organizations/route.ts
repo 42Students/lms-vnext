@@ -6,13 +6,14 @@ import {
   listOrganizations,
 } from "@/modules/organizations/service";
 import { apiErrorResponse } from "@/lib/api-error";
+import { secured } from "@/security/secure-handler";
 
 /** Canonical UUID API. Legacy /api/v1/organization/create and /fetch
  * use dedicated response-envelope shims; numeric-ID update/delete URLs are
  * deliberately not translated to unrelated UUID records. */
 export const runtime = "nodejs";
 
-export async function GET() {
+async function handleGET() {
   try {
     const context = await getCurrentRequestContext();
     const items = await listOrganizations(context);
@@ -22,8 +23,9 @@ export async function GET() {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json(
       { error: "INVALID_ORIGIN" },
@@ -57,3 +59,4 @@ export async function POST(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST);

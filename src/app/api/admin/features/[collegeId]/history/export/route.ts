@@ -3,8 +3,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {collegePolicyHistoryQuery} from "@/modules/module-access/admin-college-rule-history-model";
 import {listCollegeFeatureHistory} from "@/modules/module-access/admin-college-rule-history-service";
 import {collegePolicyHistoryCsv} from "@/modules/module-access/admin-college-rule-history-export";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request,{params}:{params:Promise<{collegeId:string}>}){
+async function handleGET(request:Request,{params}:{params:Promise<{collegeId:string}>}){
  try{
   const input:Record<string,string>={};
   for(const [key,value] of new URL(request.url).searchParams){
@@ -23,3 +24,4 @@ export async function GET(request:Request,{params}:{params:Promise<{collegeId:st
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

@@ -4,11 +4,12 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {readBoundedJsonBody} from "@/lib/bounded-json-body";
 import {apiErrorResponse} from "@/lib/api-error";
 import {changeInboundMailStatusForAdmin,getInboundMailDetailForAdmin} from "@/modules/inbound-mail/admin-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 /** Canonical CAS PATCH for triage. The old POST /{id}/done?done=true|false
  * is translated under the same Super Admin guard at [id]/done/route.ts. */
-export async function PATCH(request:Request){
+async function handlePATCH(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -35,3 +36,4 @@ export async function PATCH(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

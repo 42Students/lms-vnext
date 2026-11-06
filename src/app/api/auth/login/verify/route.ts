@@ -15,6 +15,7 @@ import {
 import { verifyLoginWithRuntime } from "@/modules/auth/runtime";
 import { getAuthConfig } from "@/modules/auth/config";
 import {LoginError} from "@/modules/auth/login-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -51,7 +52,7 @@ function previousToken(request: Request) {
   return null;
 }
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   const guarded = await guardLoginRequest(
     request,
     schema,
@@ -161,3 +162,4 @@ export async function POST(request: Request) {
     return loginErrorResponse(error, { route: "login-verify", ip: guarded.ip });
   }
 }
+export const POST = secured(handlePOST);

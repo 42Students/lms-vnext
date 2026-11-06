@@ -1,8 +1,9 @@
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {exportTpoDriveLifecycle} from "@/modules/placements/tpo-drive-list-export-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";export const dynamic="force-dynamic";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   const query={...Object.fromEntries(params),ids:params.getAll("ids")};
@@ -14,3 +15,4 @@ export async function GET(request:Request){
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

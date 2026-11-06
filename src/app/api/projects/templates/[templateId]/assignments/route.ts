@@ -11,6 +11,7 @@ import {
   replaceProjectTemplateCollegeAssignments,
   getProjectTemplateDetail,
 } from "@/modules/projects/template-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -39,7 +40,7 @@ async function parseRequest(
   return bodySchema.parse(await request.json());
 }
 
-export async function POST(
+async function handlePOST(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -69,8 +70,9 @@ export async function POST(
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST);
 
-export async function DELETE(
+async function handleDELETE(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -97,9 +99,10 @@ export async function DELETE(
     return apiErrorResponse(error);
   }
 }
+export const DELETE = secured(handleDELETE);
 
 /** Compare and replace all currently assigned colleges, never append blindly. */
-export async function PUT(request:Request,{params}:RouteContext){
+async function handlePUT(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -121,9 +124,10 @@ export async function PUT(request:Request,{params}:RouteContext){
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });
 
 /** Read the baseline set to send back as expectedCollegeIds on PUT. */
-export async function GET(_request:Request,{params}:RouteContext){
+async function handleGET(_request:Request,{params}:RouteContext){
  try{
   const {templateId}=await params;
   const context=await getCurrentRequestContext();
@@ -142,3 +146,4 @@ export async function GET(_request:Request,{params}:RouteContext){
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

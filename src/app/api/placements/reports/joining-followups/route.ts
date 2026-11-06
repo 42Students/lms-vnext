@@ -2,9 +2,10 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoJoiningFollowups} from "@/modules/placements/tpo-joining-followup-service";
 import {tpoJoiningFollowupCsv} from "@/modules/placements/tpo-joining-followup-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const context=await getCurrentRequestContext();
   const query=Object.fromEntries(new URL(request.url).searchParams.entries());
@@ -22,3 +23,4 @@ export async function GET(request:Request){
   }});
  }catch(error){const res=apiErrorResponse(error);res.headers.set("Cache-Control","private, no-store, max-age=0");return res;}
 }
+export const GET = secured(handleGET);

@@ -6,10 +6,11 @@ import {
   changeCollegeStudyGroup,
   CollegeGroupManagementError,
 } from "@/modules/groups/college-group-management-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function PATCH(
+async function handlePATCH(
   request: Request,
   { params }: { params: Promise<{ groupId: string }> },
 ) {
@@ -27,3 +28,4 @@ export async function PATCH(
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

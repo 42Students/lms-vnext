@@ -4,6 +4,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoApplicantPipeline} from "@/modules/placements/tpo-applicant-pipeline-service";
 import {tpoApplicantPipelineParams} from "@/modules/placements/tpo-applicant-pipeline-model";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -25,7 +26,7 @@ async function read(context:Awaited<ReturnType<typeof getCurrentRequestContext>>
 }
 /** Scoped replacement for legacy job-application search and stats.
  * No caller can provide organizationId or widen the selected college. */
-export async function GET(request:Request,{params}:Params){
+async function handleGET(request:Request,{params}:Params){
  try{
   const {jobId}=await params;
   const raw:Record<string,string>={};
@@ -37,9 +38,10 @@ export async function GET(request:Request,{params}:Params){
   return NextResponse.json(value,{headers:{"Cache-Control":"private, no-store"}});
  }catch(reason){return apiErrorResponse(reason);}
 }
+export const GET = secured(handleGET);
 /** No refresh cache exists. Re-read the actual scoped pipeline and report
  * that the persisted database was queried, never imply a stale cache was invalidated. */
-export async function POST(request:Request,{params}:Params){
+async function handlePOST(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -57,3 +59,4 @@ export async function POST(request:Request,{params}:Params){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(reason){return apiErrorResponse(reason);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

@@ -4,8 +4,9 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {decideLegacyTpoRequest} from "@/modules/placements/tpo-global-requests-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{params:Promise<{requestId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{requestId:string}>}){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -18,3 +19,4 @@ export async function POST(request:Request,{params}:{params:Promise<{requestId:s
   return NextResponse.json(decided,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

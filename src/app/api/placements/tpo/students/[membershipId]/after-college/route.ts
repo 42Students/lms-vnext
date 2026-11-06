@@ -3,8 +3,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {AfterCollegeError,setTpoAfterCollegeOutcome} from "@/modules/placements/tpo-after-college-write-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function PUT(request:Request,{params}:{params:Promise<{membershipId:string}>}){
+async function handlePUT(request:Request,{params}:{params:Promise<{membershipId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {membershipId}=await params,raw=await request.json() as unknown;
@@ -23,3 +24,4 @@ export async function PUT(request:Request,{params}:{params:Promise<{membershipId
   return apiErrorResponse(error);
  }
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });

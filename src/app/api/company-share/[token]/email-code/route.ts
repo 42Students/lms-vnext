@@ -3,10 +3,11 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {emailAuthorizedCompanyShareCode} from "@/modules/placements/company-share/access-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 type Props={params:Promise<{token:string}>};
-export async function POST(request:Request,{params}:Props){
+async function handlePOST(request:Request,{params}:Props){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -24,3 +25,4 @@ export async function POST(request:Request,{params}:Props){
    {status:403,headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

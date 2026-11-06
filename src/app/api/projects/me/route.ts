@@ -4,10 +4,11 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {
   listMyProjectInstances,
 } from "@/modules/projects/member-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+async function handleGET() {
   try {
     const context = await getCurrentRequestContext();
     const projects =
@@ -18,3 +19,4 @@ export async function GET() {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);

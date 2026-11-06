@@ -6,6 +6,7 @@ import {
   getLearnerProfileWithRuntime,
   upsertLearnerProfileWithRuntime,
 } from "@/modules/people/runtime";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -15,7 +16,7 @@ type RouteContext = {
   }>;
 };
 
-export async function GET(
+async function handleGET(
   _request: Request,
   { params }: RouteContext,
 ) {
@@ -32,8 +33,9 @@ export async function GET(
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function PUT(
+async function handlePUT(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -68,3 +70,4 @@ export async function PUT(
     return apiErrorResponse(error);
   }
 }
+export const PUT = secured(handlePUT);

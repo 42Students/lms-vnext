@@ -8,8 +8,9 @@ import {writeSuperAdminCollegeRule} from "@/modules/module-access/admin-college-
 import {collegeFeatureModuleSchema,collegeRuleWriteSchema} from "@/modules/module-access/admin-college-rule-model";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(_request:Request,{params}:{params:Promise<{collegeId:string}>}){
+async function handleGET(_request:Request,{params}:{params:Promise<{collegeId:string}>}){
  try{
   const {collegeId}=await params;
   const result=await getSuperAdminCollegeFeatureSnapshot(await getCurrentRequestContext(),collegeId);
@@ -17,8 +18,9 @@ export async function GET(_request:Request,{params}:{params:Promise<{collegeId:s
   return NextResponse.json(result,{headers:{"cache-control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);
 
-export async function PUT(request:Request,{params}:{params:Promise<{collegeId:string}>}){
+async function handlePUT(request:Request,{params}:{params:Promise<{collegeId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const _p=await readBoundedJsonRequest(request,8192);
@@ -53,3 +55,4 @@ export async function PUT(request:Request,{params}:{params:Promise<{collegeId:st
    NextResponse.json({error:"NOT_FOUND",message:"No active college with that ID."},{status:404,headers:{"cache-control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });

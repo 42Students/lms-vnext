@@ -6,11 +6,12 @@ import { tpoRecruiterInviteApiErrorResponse } from "@/lib/tpo-recruiter-invite-a
 import { issueTpoRecruiterInvite } from "@/modules/placements/tpo-recruiter-invite-service";
 import {deliverTpoRecruiterInviteEmail} from "@/modules/placements/tpo-recruiter-invite-email-delivery";
 import {outboundQueueRuntimeEnabled} from "@/modules/operations/outbound-delivery-queue";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ leadId: string }> };
 
-export async function POST(request: Request, { params }: RouteContext) {
+async function handlePOST(request: Request, { params }: RouteContext) {
   if (!await tpoCrmTablesReady()) {
     return NextResponse.json({ error: "DB09_MIGRATIONS_PENDING" }, { status: 503 });
   }
@@ -66,3 +67,4 @@ export async function POST(request: Request, { params }: RouteContext) {
     return tpoRecruiterInviteApiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

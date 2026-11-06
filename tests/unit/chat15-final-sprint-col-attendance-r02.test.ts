@@ -79,7 +79,7 @@ describe("COL-attendance-R02 verified parent absence/correction SMS",()=>{
   expect(service).toContain('eq(attendanceParentSmsOutbox.status,"QUEUED")');
   expect(service).toContain('eventType:"ATTENDANCE_PARENT_SMS_CONSENT_REVOKED"');
   expect(service).toContain('eventType:"ATTENDANCE_PARENT_SMS_CONSENT_UPDATED"');
-  expect(route).toContain("export async function DELETE(request:Request)");
+  expect(route).toContain("async function handleDELETE(request:Request)");
   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(ui).toContain("Disable guardian SMS for selected learner");
  });

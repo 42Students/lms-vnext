@@ -3,8 +3,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {parseCollegeContactsExportParams} from "@/modules/people/college-contacts-export-model";
 import {exportCollegeContactsCsv} from "@/modules/people/college-contacts-export-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const input=parseCollegeContactsExportParams(new URL(request.url).searchParams);
   const report=await exportCollegeContactsCsv(await getCurrentRequestContext(),input);
@@ -29,3 +30,4 @@ export async function GET(request:Request){
   return response;
  }
 }
+export const GET = secured(handleGET);

@@ -2,8 +2,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getSuperAdminBatchRosterOverview} from "@/modules/admin-ui/super-admin-batch-roster-service";
 import {superAdminBatchRosterCsv} from "@/modules/admin-ui/super-admin-batch-roster-export-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(_request:Request,{params}:{params:Promise<{batchId:string}>}){
+async function handleGET(_request:Request,{params}:{params:Promise<{batchId:string}>}){
  try{
   const {batchId}=await params;
   const data=await getSuperAdminBatchRosterOverview(await getCurrentRequestContext(),batchId);
@@ -19,3 +20,4 @@ export async function GET(_request:Request,{params}:{params:Promise<{batchId:str
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

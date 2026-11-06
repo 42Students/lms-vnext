@@ -12,6 +12,7 @@ import {
   listMembershipRolesWithRuntime,
   removeMembershipRoleWithRuntime,
 } from "@/modules/people/runtime";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -46,7 +47,7 @@ async function readJson(request: Request) {
   }
 }
 
-export async function GET(
+async function handleGET(
   _request: Request,
   { params }: RouteContext,
 ) {
@@ -65,8 +66,9 @@ export async function GET(
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function POST(
+async function handlePOST(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -103,8 +105,9 @@ export async function POST(
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST);
 
-export async function DELETE(
+async function handleDELETE(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -141,3 +144,4 @@ export async function DELETE(
     return apiErrorResponse(error);
   }
 }
+export const DELETE = secured(handleDELETE);

@@ -7,13 +7,14 @@ import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "@/modules/auth/bounde
 import {privateAuthJson,privateAuthResponse} from "@/modules/auth/private-response";
 import {ownEmailOwnershipScope} from "@/modules/identity/own-email-ownership-scope";
 import {issueOwnEmailOwnershipLink} from "@/modules/identity/own-email-ownership-runtime";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const schema=z.strictObject({applicationId:z.string().uuid().optional()});
 
 /** A same-origin, real-device-only sender. Browser cannot select user,
  * membership, college, recipient, template or redirect URL. */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return privateAuthJson({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -44,3 +45,4 @@ export async function POST(request:Request){
   return privateAuthResponse(apiErrorResponse(error));
  }
 }
+export const POST = secured(handlePOST);

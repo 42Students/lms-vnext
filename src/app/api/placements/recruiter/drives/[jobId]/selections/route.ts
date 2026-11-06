@@ -3,6 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {submitRecruiterSelectionList} from "@/modules/placements/recruiter-selection-list-write-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 
@@ -18,7 +19,7 @@ const requestErrors:Record<string,{status:number;message:string}>={
  SELECTION_STORAGE_UNAVAILABLE:{status:503,message:"Selection submissions are temporarily unavailable. No selection list was sent."},
 };
 
-export async function POST(request:Request,{params}:{params:Promise<{jobId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{jobId:string}>}){
  if(!isSameOriginRequest(request))
   return Response.json({error:"INVALID_ORIGIN"},{status:403});
  const input:unknown=await request.json().catch(()=>null);
@@ -38,3 +39,4 @@ export async function POST(request:Request,{params}:{params:Promise<{jobId:strin
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST);

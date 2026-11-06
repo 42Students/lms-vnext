@@ -7,6 +7,7 @@ import { membershipLifecycleInputSchema } from "@/modules/people/validation";
 import { apiErrorResponse } from "@/lib/api-error";
 import { PeopleServiceError } from "@/modules/people/errors";
 import { updateMembershipLifecycleWithRuntime } from "@/modules/people/runtime";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -25,7 +26,7 @@ type RouteContext = {
   }>;
 };
 
-export async function PATCH(
+async function handlePATCH(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -87,3 +88,4 @@ export async function PATCH(
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH);

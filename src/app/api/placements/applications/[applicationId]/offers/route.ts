@@ -4,6 +4,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
 import { issuePlacementOffer } from "@/modules/placements/offer-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -13,7 +14,7 @@ type RouteContext = {
   }>;
 };
 
-export async function POST(
+async function handlePOST(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -46,3 +47,4 @@ export async function POST(
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST);

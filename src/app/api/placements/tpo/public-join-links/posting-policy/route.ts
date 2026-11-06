@@ -6,8 +6,9 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {readTpoSettingsBody,TpoCommunicationBodyError} from "@/modules/placements/tpo-communication-request-model";
 import {getPublicJoinPostingPolicy,setPublicJoinPostingPolicy} from "@/modules/placements/tpo-public-join-posting-policy-service";
 import {TpoPublicJoinLinkError} from "@/modules/placements/tpo-public-join-link-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const search=new URL(request.url).searchParams,keys=[...search.keys()];
   if(keys.length!==new Set(keys).size||keys.some(key=>key!=="scope"&&key!=="companyId"))
@@ -28,7 +29,8 @@ export async function GET(request:Request){
   return apiErrorResponse(error);
  }
 }
-export async function POST(request:Request){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const value=await setPublicJoinPostingPolicy(await getCurrentRequestContext(),
@@ -43,3 +45,4 @@ export async function POST(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

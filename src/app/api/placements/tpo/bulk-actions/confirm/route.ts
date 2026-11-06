@@ -7,8 +7,9 @@ import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-
 import {TpoBulkApplicationsUnavailable} from "@/modules/placements/tpo-bulk-workflow-model";
 import {confirmTpoBulkAction,TpoBulkPreviewError}
  from "@/modules/placements/tpo-bulk-action-confirm-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -31,3 +32,4 @@ export async function POST(request:Request){
    return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

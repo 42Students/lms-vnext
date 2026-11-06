@@ -4,6 +4,7 @@ import {
  adminContentKindSchema,adminContentQuerySchema,
 } from "@/modules/courses/super-admin-content-directory-model";
 import {listSuperAdminContentDirectory} from "@/modules/courses/super-admin-content-directory-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -12,7 +13,7 @@ function csvCell(value:unknown):string{
  const string=value==null?"":String(value);
  return '"'+(/^[\s]*[=+@-]/.test(string)?"'"+string:string).replaceAll('"','""')+'"';
 }
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   const allowed=new Set(["kind","q","status","offeringId","lessonId","deliveryId","scope"]);
@@ -59,3 +60,4 @@ export async function GET(request:Request){
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

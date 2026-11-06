@@ -3,9 +3,10 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoPersonalInbox} from "@/modules/activity/tpo-notifications-service";
 import {countTpoUnreadRecruiterMessages} from "@/modules/placements/tpo-recruiter-unread-count-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** TPO-home-33 / TPO-inbox-team-62: own-college unread counts, no message bodies. */
-export async function GET(){
+async function handleGET(){
  try{
   const context=await getCurrentRequestContext();
   const [inbox,messages]=await Promise.all([
@@ -22,3 +23,4 @@ export async function GET(){
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

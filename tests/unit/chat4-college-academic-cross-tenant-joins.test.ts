@@ -4,8 +4,8 @@ import { readFileSync } from "node:fs";
 const scopeSource=readFileSync("src/modules/academics/a2-scope.ts","utf8");
 const rosterSource=readFileSync("src/modules/academics/roster-service.ts","utf8");
 function sectionOf(source:string,start:string,end:string){
- const a=source.indexOf("export async function "+start+"(");
- const b=source.indexOf("export async function "+end+"(",a);
+ const a=Math.max(source.indexOf("export async function "+start+"("),source.indexOf("async function handle"+start+"("));
+ const b=Math.max(source.indexOf("export async function "+end+"(",a),source.indexOf("async function handle"+end+"(",a));
  expect(a).toBeGreaterThanOrEqual(0);
  expect(b).toBeGreaterThan(a);
  return source.slice(a,b);

@@ -8,11 +8,12 @@ import {
   tpoIntelligenceCsv,
   tpoIntelligenceFiltersSchema,
 } from "@/modules/placements/tpo-intelligence-model";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const params = new URL(request.url).searchParams;
     if(tpoReportHasRepeatedSearchParams(params))return NextResponse.json({error:"INVALID_QUERY"},{
@@ -38,3 +39,4 @@ export async function GET(request: Request) {
     return response;
   }
 }
+export const GET = secured(handleGET);

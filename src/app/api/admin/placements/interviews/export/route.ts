@@ -2,10 +2,11 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {exportSuperAdminInterviewsCsv} from "@/modules/admin-ui/super-admin-placement-interviews-service";
 import {superAdminReadQuerySchema} from "@/modules/admin-ui/super-admin-read-directory-model";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=Object.fromEntries(new URL(request.url).searchParams.entries());
   const query=superAdminReadQuerySchema.parse({
@@ -22,3 +23,4 @@ export async function GET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

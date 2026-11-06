@@ -3,8 +3,9 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {parseFacultyResultsSearchParams} from "@/modules/courses/faculty-results-model";
 import {getFacultyAssessmentResults} from "@/modules/courses/faculty-results-service";
 import {facultyResultsPageCsv} from "@/modules/courses/faculty-results-export";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  const url=new URL(request.url);
  const raw:Record<string,string|string[]>={};
  for(const [key,value] of url.searchParams){
@@ -24,3 +25,4 @@ export async function GET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

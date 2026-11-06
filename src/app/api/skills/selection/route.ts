@@ -11,6 +11,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { canReadSkillCatalog } from "@/modules/skills/catalog-access";
 import { skillsCatalogRuntimeEnabled } from "@/modules/skills/catalog-readiness";
 import { normalizeSkillUsageKey, skillUsageNameSchema } from "@/modules/skills/usage-normalization";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -35,7 +36,7 @@ const selectionSchema = z.strictObject({
  * The actor-level advisory lock serializes hourly rate enforcement across nodes.
  * DB10 writes remain closed until migrations and seed verification are approved.
  */
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -131,3 +132,4 @@ export async function POST(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

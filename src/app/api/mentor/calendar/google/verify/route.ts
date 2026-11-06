@@ -5,12 +5,13 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {mentorGoogleVerifyCalendarAccess} from "@/modules/projects/mentor-google-calendar-provider";
 import {getMentorGoogleAccessToken,mentorGoogleConnectionState}
  from "@/modules/projects/mentor-google-calendar-connection-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 const headers={"Cache-Control":"private, no-store"};
 
 /** Explicit, same-origin check of a refreshable Google grant. Never return
  * access/refresh tokens to the browser or call Google on page render. */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers});
  let context:Awaited<ReturnType<typeof getCurrentRequestContext>>;
@@ -30,3 +31,4 @@ export async function POST(request:Request){
    {status:502,headers});
  }
 }
+export const POST = secured(handlePOST);

@@ -4,13 +4,15 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {TpoPrepError,assignTpoPrepCourse,listTpoPrepCourseOptions} from "@/modules/placements/tpo-prep-assignment-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";export const dynamic="force-dynamic";
-export async function GET(){
+async function handleGET(){
  try{return NextResponse.json({courses:await listTpoPrepCourseOptions(await getCurrentRequestContext())},
   {headers:{"Cache-Control":"private, no-store"}});}
  catch(error){if(error instanceof TpoPrepError)return NextResponse.json({error:error.code},{status:503});return apiErrorResponse(error);}
 }
-export async function POST(request:Request){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const payload=await request.json() as unknown;
@@ -45,3 +47,4 @@ export async function POST(request:Request){
  catch(error){if(error instanceof TpoPrepError)return NextResponse.json({error:error.code},{status:error.code==="UNAVAILABLE"?503:409});
   return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

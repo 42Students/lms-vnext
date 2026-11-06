@@ -4,10 +4,11 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {addDescriptiveAssignmentPoints} from "@/modules/courses/assignment-submission-service";
 import {descriptiveAssignmentPointsSchema} from "@/modules/courses/assignment-descriptive-points-model";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 type Params={params:Promise<{submissionId:string}>};
-export async function POST(request:Request,{params}:Params){
+async function handlePOST(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -25,3 +26,4 @@ export async function POST(request:Request,{params}:Params){
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

@@ -3,10 +3,11 @@ import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { loadClassTeamRoster } from "@/modules/projects/class-team-roster-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 const querySchema = z.object({ collegeId: z.string().uuid(), classId: z.string().uuid() }).strict();
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const url = new URL(request.url);
     const query = querySchema.parse(Object.fromEntries(url.searchParams));
@@ -17,3 +18,4 @@ export async function GET(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);

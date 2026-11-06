@@ -6,6 +6,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {
   CourseImageError, grantCourseImage, readCourseImage, removeCourseImage,
 } from "@/modules/courses/course-image-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -24,7 +25,7 @@ function imageError(error: unknown) {
   return response;
 }
 
-export async function POST(request: Request, { params }: RouteContext) {
+async function handlePOST(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request)) return NextResponse.json({
     error: "INVALID_ORIGIN",
   }, { status: 403, headers: privateHeaders });
@@ -40,8 +41,9 @@ export async function POST(request: Request, { params }: RouteContext) {
     return NextResponse.json({ grant }, { status: 201, headers: privateHeaders });
   } catch (error) { return imageError(error); }
 }
+export const POST = secured(handlePOST);
 
-export async function GET(_request: Request, { params }: RouteContext) {
+async function handleGET(_request: Request, { params }: RouteContext) {
   try {
     const context = await getCurrentRequestContext();
     const { courseId } = await params;
@@ -56,8 +58,9 @@ export async function GET(_request: Request, { params }: RouteContext) {
     });
   } catch (error) { return imageError(error); }
 }
+export const GET = secured(handleGET);
 
-export async function DELETE(request: Request, { params }: RouteContext) {
+async function handleDELETE(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request)) return NextResponse.json({
     error: "INVALID_ORIGIN",
   }, { status: 403, headers: privateHeaders });
@@ -69,3 +72,4 @@ export async function DELETE(request: Request, { params }: RouteContext) {
     });
   } catch (error) { return imageError(error); }
 }
+export const DELETE = secured(handleDELETE);

@@ -8,7 +8,7 @@ const service = readFileSync("src/modules/skills/catalog-service.ts", "utf8");
 const normalization = readFileSync("src/modules/skills/usage-normalization.ts", "utf8");
 
 test("DB19-P30 import may run after verified schema, but live writes require full DB10 readiness", () => {
-  const post = route.slice(route.indexOf("export async function POST"), route.indexOf("type ReadMode"));
+  const post = route.slice(Math.max(route.indexOf("export async function POST("),route.indexOf("async function handlePOST(")), route.indexOf("type ReadMode"));
   const schemaGate = post.indexOf("if(!skillsCatalogSchemaReady())");
   const importHandler = post.indexOf('if(action==="IMPORT_SKILLS")');
   const selectionGate = post.indexOf("if(!skillsCatalogRuntimeEnabled())", importHandler);

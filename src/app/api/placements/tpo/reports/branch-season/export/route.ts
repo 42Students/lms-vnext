@@ -5,11 +5,12 @@ import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-
 import {NextResponse} from "next/server";
 import { tpoBranchSeasonQuerySchema, tpoBranchSeasonCsv } from "@/modules/placements/tpo-branch-season-model";
 import { getTpoBranchSeasonDashboard } from "@/modules/placements/tpo-branch-season-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const params = new URL(request.url).searchParams;
     if(tpoReportHasRepeatedSearchParams(params))return NextResponse.json({error:"INVALID_QUERY"},{
@@ -33,3 +34,4 @@ export async function GET(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);

@@ -2,9 +2,10 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {exportParams} from "@/modules/academics/college-directory-export-model";
 import {exportCollegeAssessments} from "@/modules/courses/college-assessment-export-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=exportParams(new URL(request.url).searchParams);
   if(params===null)return Response.json({error:"Invalid export filters"},{status:400});
@@ -22,3 +23,4 @@ export async function GET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

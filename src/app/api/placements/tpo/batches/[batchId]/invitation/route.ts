@@ -5,10 +5,11 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { PlacementBatchError } from "@/modules/placements/batch-participation-service";
 import { TpoBatchInvitationError } from "@/modules/placements/tpo-batch-invitation-model";
 import { inviteTpoBatch, saveTpoBatchRegistrationDeadline } from "@/modules/placements/tpo-batch-invitation-service";
+import { secured } from "@/security/secure-handler";
 export const runtime = "nodejs";
 type Params = { params: Promise<{ batchId: string }> };
 
-export async function POST(request: Request, { params }: Params) {
+async function handlePOST(request: Request, { params }: Params) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   try {
@@ -27,8 +28,9 @@ export async function POST(request: Request, { params }: Params) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });
 
-export async function PATCH(request: Request, { params }: Params) {
+async function handlePATCH(request: Request, { params }: Params) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   try {
@@ -47,3 +49,4 @@ export async function PATCH(request: Request, { params }: Params) {
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

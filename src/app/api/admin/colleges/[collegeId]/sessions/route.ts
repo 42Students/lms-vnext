@@ -5,9 +5,10 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { collegeAdminSessionDisplay, listCollegeAdminSessions, revokeCollegeAdminSessions } from "@/modules/colleges/admin-session-service";
 import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
+import { secured } from "@/security/secure-handler";
 export const runtime = "nodejs";
 type RouteContext = {params:Promise<{collegeId:string}>};
-export async function GET(request:Request,{params}:RouteContext){
+async function handleGET(request:Request,{params}:RouteContext){
  try{
   // get() silently takes the first occurrence. Reject duplicated userId
   // or unexpected query keys rather than permitting ambiguous admin target
@@ -38,7 +39,8 @@ export async function GET(request:Request,{params}:RouteContext){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function POST(request:Request,{params}:RouteContext){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const _parsed=await readBoundedJsonRequest(request,8192);
@@ -53,3 +55,4 @@ export async function POST(request:Request,{params}:RouteContext){
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

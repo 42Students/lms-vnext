@@ -3,7 +3,7 @@ import {describe,expect,it} from "vitest";
 const blocked=readFileSync("src/modules/placements/tpo-blocked-date-write-service.ts","utf8");
 const outcome=readFileSync("src/modules/placements/tpo-outcome-label-settings-service.ts","utf8");
 function functionBody(source:string,name:string){
- const begin=source.indexOf("export async function "+name+"(");
+ const begin=Math.max(source.indexOf("export async function "+name+"("),source.indexOf("async function handle"+name+"("));
  const next=source.indexOf("export async function ",begin+1);
  expect(begin).toBeGreaterThanOrEqual(0);
  return source.slice(begin,next<0?source.length:next);

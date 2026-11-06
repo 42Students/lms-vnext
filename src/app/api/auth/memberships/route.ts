@@ -20,6 +20,7 @@ import {
   listMembershipChoices,
   resolveRequestContext,
 } from "@/modules/identity/context-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -101,7 +102,7 @@ async function hostCollegeScope(identityUid: string) {
   return tenant.kind === "college" ? tenant.collegeId : null;
 }
 
-export async function GET() {
+async function handleGET() {
   try {
     const identityUid = await getCurrentIdentityUid();
     const collegeScope = await hostCollegeScope(identityUid);
@@ -146,8 +147,9 @@ export async function GET() {
     return authErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return privateAuthJson(
       { error: "INVALID_ORIGIN" },
@@ -262,8 +264,9 @@ export async function POST(request: Request) {
     return authErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST);
 
-export async function DELETE(request: Request) {
+async function handleDELETE(request: Request) {
   if (!isSameOriginRequest(request)) {
     return privateAuthJson(
       { error: "INVALID_ORIGIN" },
@@ -288,3 +291,4 @@ export async function DELETE(request: Request) {
   });
   return response;
 }
+export const DELETE = secured(handleDELETE);

@@ -7,11 +7,12 @@ import {
   bulkAssignTpoLeadOwner,
   listTpoLeadOwners,
 } from "@/modules/placements/tpo-bulk-lead-owner-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+async function handleGET() {
   if (!await tpoCrmTablesReady()) {
     return NextResponse.json({ error: "DB09_MIGRATIONS_PENDING" }, { status: 503 });
   }
@@ -22,8 +23,9 @@ export async function GET() {
     return tpoCrmApiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!await tpoCrmTablesReady()) {
     return NextResponse.json({ error: "DB09_MIGRATIONS_PENDING" }, { status: 503 });
   }
@@ -39,3 +41,4 @@ export async function POST(request: Request) {
     return tpoCrmApiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

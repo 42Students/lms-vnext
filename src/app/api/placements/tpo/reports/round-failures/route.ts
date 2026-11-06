@@ -5,9 +5,10 @@ import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getPlacementFailureReasonsReport} from "@/modules/placements/report-extra-service";
 import {tpoRoundFailureCsvQuerySchema,tpoRoundFailureCsv} from "@/modules/placements/tpo-round-failure-csv-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const context=await getCurrentRequestContext();
   if(!context.membership||!hasMembershipRole(context,"TPO"))
@@ -31,3 +32,4 @@ export async function GET(request:Request){
   }});
  }catch(error){const response=apiErrorResponse(error);response.headers.set("Cache-Control","private, no-store");return response;}
 }
+export const GET = secured(handleGET);

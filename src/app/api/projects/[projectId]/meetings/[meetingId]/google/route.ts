@@ -6,13 +6,14 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {checkMentorGoogleMeeting,syncMentorGoogleMeeting,
  removeCancelledMentorGoogleMeeting}
  from "@/modules/projects/mentor-google-meeting-sync-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Params={params:Promise<{projectId:string;meetingId:string}>};
 const inputSchema=z.strictObject({
  weeklyCount:z.number().int().min(2).max(52).optional(),
  inviteeMembershipIds:z.array(z.uuid()).min(1).max(100).optional(),
 });
-export async function GET(_request:Request,{params}:Params){
+async function handleGET(_request:Request,{params}:Params){
  try{
   const {projectId,meetingId}=await params;
   const status=await checkMentorGoogleMeeting(
@@ -20,7 +21,8 @@ export async function GET(_request:Request,{params}:Params){
   return NextResponse.json(status,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function POST(request:Request,{params}:Params){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -38,11 +40,12 @@ export async function POST(request:Request,{params}:Params){
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });
 
 /** Explicitly retract an already-cancelled meeting from the consented
  * Google account. This does not cancel an active local meeting.
  */
-export async function DELETE(request:Request,{params}:Params){
+async function handleDELETE(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -52,3 +55,4 @@ export async function DELETE(request:Request,{params}:Params){
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });

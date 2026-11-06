@@ -8,9 +8,10 @@ import {mentorGoogleConfig,mentorGoogleExchangeCode} from
  "@/modules/projects/mentor-google-calendar-provider";
 import {saveMentorGoogleConnection} from
  "@/modules/projects/mentor-google-calendar-connection-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 const oauthCookie="mentor-google-oauth";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  const target=new URL("/mentor/calendar",request.url);
  const response=(status:"connected"|"failed")=>{
   target.searchParams.set("google",status);
@@ -45,3 +46,4 @@ export async function GET(request:Request){
   return response("connected");
  }catch{return response("failed");}
 }
+export const GET = secured(handleGET);

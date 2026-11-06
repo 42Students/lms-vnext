@@ -3,12 +3,13 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getFacultyQuizQuestionCsvForDownload} from "@/modules/courses/faculty-quiz-question-csv-service";
 import {facultyCsvAttachmentHeaders} from "@/modules/courses/faculty-report-csv-request";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 type RouteContext={params:Promise<{quizId:string}>};
 
-export async function GET(request:Request,{params}:RouteContext){
+async function handleGET(request:Request,{params}:RouteContext){
  try{
   const {quizId}=await params;
   const url=new URL(request.url);
@@ -27,3 +28,4 @@ export async function GET(request:Request,{params}:RouteContext){
   return new Response("\uFEFF"+result.csv,{status:200,headers});
  }catch(error){return apiErrorResponse(error)}
 }
+export const GET = secured(handleGET);

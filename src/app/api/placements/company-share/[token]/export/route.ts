@@ -6,6 +6,7 @@ import {companyShareCsvResponseHeaders} from "@/modules/placements/company-share
 import {makeStoredZip,type ZipEntry} from "@/modules/placements/company-share/zip-model";
 import {getPrivateR2Config} from "@/modules/storage/r2-config";
 import {isAllowedCompanyShareResumeDownload} from "@/modules/placements/company-share/signed-resume-guard";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -58,7 +59,7 @@ async function boundedSignedResume(url:string,remainingBytes:number):Promise<{by
   return {bytes:content,extension};
  }catch{return null;}
 }
-export async function GET(request:Request,{params}:{params:Promise<{token:string}>}){
+async function handleGET(request:Request,{params}:{params:Promise<{token:string}>}){
  const {token}=await params;
  const proof=(await cookies()).get("company_share_access")?.value??null;
  const query=new URL(request.url).searchParams;
@@ -126,3 +127,4 @@ export async function GET(request:Request,{params}:{params:Promise<{token:string
   },
  });
 }
+export const GET = secured(handleGET);

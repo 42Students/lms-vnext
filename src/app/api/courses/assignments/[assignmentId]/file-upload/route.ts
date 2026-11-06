@@ -11,6 +11,7 @@ import {
 import {
   assignmentFilesRuntimeEnabled,
 } from "@/modules/courses/assignment-file-readiness";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 const MAX_PROXY_UPLOAD_BYTES=10*1024*1024;
@@ -27,7 +28,7 @@ type RouteContext = {
   }>;
 };
 
-export async function POST(
+async function handlePOST(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -145,3 +146,4 @@ export async function POST(
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST);

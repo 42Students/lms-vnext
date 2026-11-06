@@ -5,8 +5,9 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {changeTpoTeamAsk} from "@/modules/placements/tpo-team-asks-service";
 import {tpoTeamAskActionSchema} from "@/modules/placements/tpo-team-asks-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{params:Promise<{threadId:string;askId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{threadId:string;askId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const {threadId,askId}=await params;
  const raw:unknown=await request.json().catch(()=>null);
@@ -26,3 +27,4 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
   throw error;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

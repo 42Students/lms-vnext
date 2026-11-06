@@ -8,6 +8,7 @@ import {headObject,presignUrl} from "@/modules/storage/s3-client";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getLearnerCourseFileReference,validCourseResourceStorageKey} from "@/modules/courses/learner-course-file-reference-service";
 import {loadCourseSectionDeliveryScope} from "@/modules/courses/scope";
+import { secured } from "@/security/secure-handler";
 
 /** Reject ambiguous, negative and out-of-range historical material indices before
  * making any scoped file lookup. Keep errors field-safe for older clients. */
@@ -34,7 +35,7 @@ function fileName(key:string){
 /** The browser handles full downloads and HTTP Range on the signed R2 URL.
  * No file bytes are proxied through Next.js. Every request authenticates and
  * authorizes one material before issuing a fifteen-minute GET capability. */
-export async function GET(request:Request,{params}:RouteContext){
+async function handleGET(request:Request,{params}:RouteContext){
  const url=new URL(request.url);
  const values=url.searchParams.getAll("download");
  const materialValues=url.searchParams.getAll("materialId");
@@ -146,3 +147,4 @@ export async function GET(request:Request,{params}:RouteContext){
   "Referrer-Policy":"no-referrer",
  }});
 }
+export const GET = secured(handleGET);

@@ -4,10 +4,11 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { bugTrackerApiError } from "@/lib/bug-tracker-api-error";
 import { retestBugTrackerIssueForAdmin } from "@/modules/bug-tracker/admin-service";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function POST(
+async function handlePOST(
   request: Request,
   { params }: { params: Promise<{ publicId: string }> },
 ) {
@@ -53,6 +54,7 @@ export async function POST(
     return bugTrackerApiError(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });
 
 
 /** New clients may use workflow PATCH. The same scoped handler enforces

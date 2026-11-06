@@ -4,10 +4,11 @@ import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { tpoCrmApiErrorResponse } from "@/lib/tpo-crm-api-error";
 import { getTpoCompanyMemory } from "@/modules/placements/tpo-company-memory-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
     const url = new URL(request.url);
@@ -38,3 +39,4 @@ export async function GET(request: Request) {
     return tpoCrmApiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);

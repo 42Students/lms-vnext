@@ -239,7 +239,7 @@ test("Mentor posted Activity updates are persisted in scoped project events and 
   assert.match(service,/requireProjectLifecycleMutationAccess/);
   assert.match(service,/access\.access!=="MENTOR"\|\|access\.project\.status!=="ACTIVE"/);
   assert.match(service,/eventType:ACTIVITY_EVENT_TYPES\.PROJECTS_MENTOR_UPDATE_POSTED/);
-  assert.match(route,/export async function POST/);
+  assert.match(route,/export (?:async function|const) POST\b/);
   assert.match(route,/readMentorProjectCommandBody\(request,4096\)/);
   assert.match(route,/postMentorProjectUpdate\(/);
   assert.match(composer,/projectMutation\("\/api\/projects\/"/);

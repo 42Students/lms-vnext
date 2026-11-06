@@ -7,9 +7,9 @@ import { readFileSync } from "node:fs";
 const code = readFileSync(new URL("../src/modules/courses/lesson-content-service.ts", import.meta.url),"utf8");
 const ancestry = readFileSync(new URL("../src/modules/courses/lesson-write-ancestry.ts", import.meta.url),"utf8");
 const func = (name,next) => {
-  const start=code.indexOf("export async function "+name+"(");
+  const start=Math.max(code.indexOf("export async function "+name+"("),code.indexOf("async function handle"+name+"("));
   assert.ok(start>=0,name);
-  const end=next?code.indexOf("export async function "+next+"(",start+20):-1;
+  const end=next?Math.max(code.indexOf("export async function "+next+"(",start+20),code.indexOf("async function handle"+next+"(",start+20)):-1;
   return code.slice(start,end<0?undefined:end);
 };
 const create=func("createLessonContent","updateLessonContent");

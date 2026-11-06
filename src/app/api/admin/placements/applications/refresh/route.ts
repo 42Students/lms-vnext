@@ -4,6 +4,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 
@@ -13,7 +14,7 @@ export const runtime="nodejs";
  * and no cross-college read grant provided by calling this compatibility URL.
  * External maintenance callers can retire their refresh loop safely.
  */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -31,3 +32,4 @@ export async function POST(request:Request){
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

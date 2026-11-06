@@ -7,10 +7,11 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {tpoCrmCollegeIdSchema} from "@/modules/placements/tpo-crm-validation";
 import {tpoCrmTablesReady} from "@/modules/placements/tpo-crm-storage-readiness";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 
 /** Remote and bounded recruiter lookup: tenant-scoped, no contact fields. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   const keys=[...params.keys()];
@@ -40,3 +41,4 @@ export async function GET(request:Request){
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

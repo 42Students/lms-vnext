@@ -8,6 +8,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
 import { seedDevE2eCollegeFixtures } from "@/modules/people/dev-e2e-seed-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,7 +33,7 @@ function seedSecretMatches(provided: string | null) {
  * a global Super Admin without an acting-college scope, same origin, and an
  * independent >=32-character development seed secret.
  */
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!enabled()) {
     return NextResponse.json({
       error: "E2E_SEED_DISABLED",
@@ -60,3 +61,4 @@ export async function POST(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

@@ -3,10 +3,11 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoBatchStudents} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {buildTpoEligibilityImportScaffold} from "@/modules/placements/tpo-eligibility-import-scaffold-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const pageSchema=z.coerce.number().int().min(1).max(100000).default(1);
-export async function GET(request:Request,{params}:{params:Promise<{batchId:string}>}){
+async function handleGET(request:Request,{params}:{params:Promise<{batchId:string}>}){
  try{
   const {batchId}=await params;
   const query=new URL(request.url).searchParams;
@@ -23,3 +24,4 @@ export async function GET(request:Request,{params}:{params:Promise<{batchId:stri
   }});
  }catch(error){const response=apiErrorResponse(error);response.headers.set("Cache-Control","private, no-store, max-age=0");return response;}
 }
+export const GET = secured(handleGET);

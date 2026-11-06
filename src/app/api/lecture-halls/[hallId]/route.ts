@@ -9,12 +9,13 @@ import {
   normalizeLegacyLectureHallUpdate,
 } from "@/modules/academics/lecture-hall-service";
 import { lectureHallErrorResponse } from "../error-response";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
 type RouteContext = { params: Promise<{ hallId: string }> };
 /** Scoped by-ID read; old integer hall ID must first be mapped to UUID. */
-export async function GET(_request:Request,{params}:RouteContext){
+async function handleGET(_request:Request,{params}:RouteContext){
  try{
   const ctx=await getCurrentRequestContext();
   const hall=await getLectureHallDetail(ctx,(await params).hallId);
@@ -24,10 +25,11 @@ export async function GET(_request:Request,{params}:RouteContext){
   return apiErrorResponse(error);
  }
 }
+export const GET = secured(handleGET);
 
 
 /** Edit a hall, or archive / restore it with {"status": "ARCHIVED" | "ACTIVE"}. */
-export async function PATCH(request: Request, { params }: RouteContext) {
+async function handlePATCH(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -51,18 +53,20 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });
 
 
 /** Legacy PUT shares the same validated, tenant-scoped update service. */
-export async function PUT(request:Request,context:RouteContext){
+async function handlePUT(request:Request,context:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return PATCH(request,context);
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });
 
 /** Destructive legacy DELETE is migrated to safe, reversible archive.
  * Future scheduled classes still block the operation inside the row lock. */
-export async function DELETE(request:Request,{params}:RouteContext){
+async function handleDELETE(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -76,3 +80,4 @@ export async function DELETE(request:Request,{params}:RouteContext){
   return apiErrorResponse(error);
  }
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });

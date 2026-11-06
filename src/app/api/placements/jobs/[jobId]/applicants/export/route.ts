@@ -1,6 +1,7 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { exportPlacementJobApplicantsCsv } from "@/modules/placements/applicant-export-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -19,7 +20,7 @@ type RouteContext = {
  * A GET download intentionally does not require an Origin header:
  * ordinary browser navigation/download links do not reliably send one.
  */
-export async function GET(
+async function handleGET(
   _request: Request,
   { params }: RouteContext,
 ) {
@@ -67,3 +68,4 @@ export async function GET(
     return response;
   }
 }
+export const GET = secured(handleGET);

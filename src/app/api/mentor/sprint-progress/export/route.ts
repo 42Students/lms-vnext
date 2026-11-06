@@ -5,8 +5,9 @@ import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-q
 import {csvSafeCell} from "@/modules/projects/mentor-board-review-model";
 import {mentorSprintProgressQuerySchema} from "@/modules/projects/mentor-sprint-progress-model";
 import {getMentorSprintProgress} from "@/modules/projects/mentor-sprint-progress-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
   try{
     const url=new URL(request.url);
     const filters=singleValueMentorExportFilters(url.searchParams,
@@ -41,3 +42,4 @@ export async function GET(request:Request){
     });
   }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

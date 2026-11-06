@@ -5,11 +5,12 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { tpoCrmApiErrorResponse } from "@/lib/tpo-crm-api-error";
 import { confirmedMarkTpoNotNowSchema } from "@/modules/placements/tpo-crm-validation";
 import { markTpoLeadNotNow } from "@/modules/placements/tpo-crm-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ leadId: string }> };
 
-export async function POST(request: Request, { params }: RouteContext) {
+async function handlePOST(request: Request, { params }: RouteContext) {
   if (!await tpoCrmTablesReady()) return NextResponse.json({error:"DB09_MIGRATIONS_PENDING"},{status:503});
 
   if (!isSameOriginRequest(request)) {
@@ -27,3 +28,4 @@ export async function POST(request: Request, { params }: RouteContext) {
     return tpoCrmApiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

@@ -2,6 +2,7 @@ import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
 import {acceptAuthenticatedRecruiterEmailReply} from "@/modules/placements/recruiter-message-email-inbound-service";
 import {readBoundedRecruiterInboundBody} from "@/modules/placements/recruiter-mail-body-model";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 
@@ -26,7 +27,7 @@ function reply(body:{error:string;outcome?:string;action?:string;retryable?:bool
   {accepted:true;replayed:boolean;outcome:"POSTED"|"STORED"|"DUPLICATE"|"NOT_OURS"},status=200){
  return NextResponse.json(body,{status,headers:noStore});
 }
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request)){
   console.warn("[recruiter-mail-inbound] origin rejected");
   return reply({error:"FORBIDDEN"},403);
@@ -66,3 +67,4 @@ export async function POST(request:Request){
   return reply({error:"SERVICE_UNAVAILABLE"},503);
  }
 }
+export const POST = secured(handlePOST);

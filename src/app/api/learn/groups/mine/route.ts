@@ -3,8 +3,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {listLearnerGroups} from "@/modules/groups/learner-group-list-service";
 import {learnerGroupKindSchema} from "@/modules/groups/learner-group-detail-service";
 import {apiErrorResponse} from "@/lib/api-error";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const raw=new URL(request.url).searchParams.get("kind");
   const kind=raw?learnerGroupKindSchema.parse(raw.toUpperCase()):undefined;
@@ -12,3 +13,4 @@ export async function GET(request:Request){
   return NextResponse.json(result.mine,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

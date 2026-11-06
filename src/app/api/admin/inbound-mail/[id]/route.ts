@@ -2,12 +2,13 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getInboundMailDetailForAdmin} from "@/modules/inbound-mail/admin-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 type Params={params:Promise<{id:string}>};
 /** Full plain text is available only after a separate global-Super-Admin read.
  * An unknown ID returns the same generic 404 as a deleted email. */
-export async function GET(_request:Request,{params}:Params){
+async function handleGET(_request:Request,{params}:Params){
  try{
   const {id}=await params;
   const message=await getInboundMailDetailForAdmin(await getCurrentRequestContext(),id);
@@ -17,3 +18,4 @@ export async function GET(_request:Request,{params}:Params){
    headers:{"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

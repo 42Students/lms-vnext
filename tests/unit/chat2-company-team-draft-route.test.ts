@@ -10,7 +10,7 @@ describe("Company Team posting routes and graceful draft retention",()=>{
   expect(route).toContain('error.code==="STALE"');
   expect(route).toContain("idempotencyKey:parsed.data.idempotencyKey");
   expect(route).toContain('status:409');
-  expect(route).not.toContain("export async function GET(");
+  expect(route).not.toMatch(/export (?:async function|const) GET\b/);
  });
  it("TPO-companies-05 retains unsent drafts and a stable idempotency token across network retries",()=>{
   const form=src("src/components/tpo/tpo-company-team-composer.tsx");

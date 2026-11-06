@@ -8,6 +8,7 @@ import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { reconcileCuratedSkillSynonyms } from "@/modules/skills/curated-synonym-seed-service";
 import { skillsCatalogReadiness } from "@/modules/skills/catalog-readiness";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -18,7 +19,7 @@ const inputSchema = z.strictObject({
 
 /** Privileged operator-only preview/apply; never starts on public requests,
  * boot, or a CI environment without a verified schema replay marker. */
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   try {
@@ -42,3 +43,4 @@ export async function POST(request: Request) {
       {headers:{"Cache-Control":"private, no-store"}});
   }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

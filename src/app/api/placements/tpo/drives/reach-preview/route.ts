@@ -5,11 +5,12 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {readBoundedJsonBody} from "@/lib/bounded-json-body";
 import {apiErrorResponse} from "@/lib/api-error";
 import {previewDraftDriveTargeting} from "@/modules/placements/tpo-drive-create-reach-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"private, no-store"} as const;
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},
   {status:403,headers:noStore});
  const payload=await readBoundedJsonBody(request,4096);
@@ -27,3 +28,4 @@ export async function POST(request:Request){
   return response;
  }
 }
+export const POST = secured(handlePOST);

@@ -3,8 +3,9 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {studentRuleHistoryCursorSchema} from "@/modules/module-access/admin-student-rule-history-model";
 import {listSuperAdminStudentRuleHistory} from "@/modules/module-access/admin-student-rule-history-service";
 import {studentRuleHistoryCsv} from "@/modules/module-access/admin-student-rule-history-export";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request,{params}:{params:Promise<{collegeId:string;membershipId:string}>}){
+async function handleGET(request:Request,{params}:{params:Promise<{collegeId:string;membershipId:string}>}){
  try{
   const input:Record<string,string>={};
   for(const [key,value] of new URL(request.url).searchParams){
@@ -22,3 +23,4 @@ export async function GET(request:Request,{params}:{params:Promise<{collegeId:st
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

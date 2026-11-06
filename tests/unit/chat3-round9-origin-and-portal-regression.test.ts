@@ -20,7 +20,7 @@ describe("Chat-3 Round 9 restored contracts",()=>{
  it("api-origin-guard protects POST and DELETE assignment materials at route boundaries",()=>{
   const src=read("src/app/api/courses/deliveries/[deliveryId]/assignments/[assignmentId]/materials/route.ts");
   for(const method of ["POST","DELETE"]){
-   const block=src.slice(src.indexOf("export async function "+method+"("));
+   const block=src.slice(Math.max(src.indexOf("export async function "+method+"("),src.indexOf("async function handle"+method+"(")));
    expect(block).toContain("if(!isSameOriginRequest(request))");
    expect(block).toContain('error:"INVALID_ORIGIN"');
   }

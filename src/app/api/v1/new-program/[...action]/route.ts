@@ -9,6 +9,7 @@ import {
   GET as canonicalGetDetail, PATCH as canonicalPatch, DELETE as canonicalDelete,
 } from "@/app/api/academics/programs/[programId]/route";
 import { listPrograms } from "@/modules/academics/program-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type Context = { params: Promise<{ action: string[] }> };
@@ -18,7 +19,7 @@ const uuid = z.string().uuid();
  * not authorization identifiers; old clients must supply verified UUIDs
  * after a college-scoped lookup. Writes keep the current request-origin guard
  * and vNext's soft-archive and academic dependency protections. */
-export async function GET(request: Request, { params }: Context) {
+async function handleGET(request: Request, { params }: Context) {
   const { action } = await params;
   const [operation, id] = action;
   const url = new URL(request.url);
@@ -61,8 +62,9 @@ export async function GET(request: Request, { params }: Context) {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function POST(request: Request, { params }: Context) {
+async function handlePOST(request: Request, { params }: Context) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   const { action } = await params;
@@ -72,8 +74,9 @@ export async function POST(request: Request, { params }: Context) {
   url.searchParams.set("legacy","1");
   return canonicalPost(new Request(url,request));
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });
 
-export async function PUT(request: Request, { params }: Context) {
+async function handlePUT(request: Request, { params }: Context) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   const { action } = await params;
@@ -110,8 +113,9 @@ export async function PUT(request: Request, { params }: Context) {
     return apiErrorResponse(error);
   }
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });
 
-export async function DELETE(request: Request, { params }: Context) {
+async function handleDELETE(request: Request, { params }: Context) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   const { action } = await params;
@@ -122,3 +126,4 @@ export async function DELETE(request: Request, { params }: Context) {
     method:"DELETE",headers:request.headers,body:JSON.stringify({confirm:true}),
   }),{params:Promise.resolve({programId:id!})});
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });

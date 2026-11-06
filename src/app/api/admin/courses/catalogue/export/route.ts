@@ -9,11 +9,12 @@ import {
   collegeCourseCatalogueExportQuerySchema,
   renderCollegeCourseCatalogueCsv,
 } from "@/modules/courses/college-course-catalogue-export-model";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
 /** SA-academics-people-54: selected-college CSV, not the College Admin endpoint. */
-export async function GET(request: Request): Promise<Response> {
+async function handleGET(request: Request): Promise<Response> {
   try {
     const params=new URL(request.url).searchParams;
     if([...params.keys()].some((key,index,keys)=>keys.indexOf(key)!==index)){
@@ -51,3 +52,4 @@ export async function GET(request: Request): Promise<Response> {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);

@@ -7,10 +7,11 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {tpoAuditCsv} from "@/modules/placements/tpo-audit-csv-model";
 import {tpoAuditXlsx} from "@/modules/placements/tpo-audit-xlsx-model";
 import {getTpoAuditLog,tpoAuditQuerySchema,type TpoAuditRow} from "@/modules/placements/tpo-audit-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Page through the actual college-scoped union, never export unfiltered raw history. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const url=new URL(request.url);
   const format=url.searchParams.get("format")??"csv";
@@ -80,3 +81,4 @@ export async function GET(request:Request){
   return response;
  }
 }
+export const GET = secured(handleGET);

@@ -1,5 +1,6 @@
 import {NextResponse} from "next/server";
 import {GET as getProjectResources} from "../route";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
@@ -8,7 +9,7 @@ type RouteContext={params:Promise<{projectId:string}>};
  * history reader. No legacy collegeId query may widen the active scope.
  * The shared reader enforces project access and returns 10 entries per page.
  */
-export async function GET(request:Request,context:RouteContext){
+async function handleGET(request:Request,context:RouteContext){
  const original=new URL(request.url);
  if([...original.searchParams.keys()].some(key=>key!=="page"&&key!=="collegeId") ||
     original.searchParams.getAll("page").length>1 ||
@@ -22,3 +23,4 @@ export async function GET(request:Request,context:RouteContext){
  original.searchParams.set("view","audit");
  return getProjectResources(new Request(original.toString(),{headers:request.headers}),context);
 }
+export const GET = secured(handleGET);

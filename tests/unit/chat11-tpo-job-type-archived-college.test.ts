@@ -7,7 +7,7 @@ const writes=[
 ] as const;
 describe("TPO-settings-audit-23 active-college lock for job-type writes",()=>{
  it.each(writes)("TPO-settings-audit-23 %s rejects archived college before authorizing or mutating",(name)=>{
-  const start=source.indexOf("export async function "+name+"(");
+  const start=Math.max(source.indexOf("export async function "+name+"("),source.indexOf("async function handle"+name+"("));
   const next=source.indexOf("export async function ",start+1);
   expect(start).toBeGreaterThanOrEqual(0);
   const body=source.slice(start,next<0?source.length:next);

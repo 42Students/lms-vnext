@@ -5,10 +5,11 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {PlacementBatchError} from "@/modules/placements/batch-participation-service";
 import {saveTpoBatchRuleOverrides} from "@/modules/placements/tpo-batch-rules-service";
 import {getTpoBatch} from "@/modules/placements/tpo-batch-workspace-read-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** Legacy GET /batches/{id}/rules: scoped read, never a write or a guessed
  * college. The full batch and students views use sibling routes. */
-export async function GET(_request:Request,{params}:{params:Promise<{batchId:string}>}){
+async function handleGET(_request:Request,{params}:{params:Promise<{batchId:string}>}){
  try{
   const {batchId}=await params;
   const state=await getTpoBatch(await getCurrentRequestContext(),batchId);
@@ -27,7 +28,8 @@ export async function GET(_request:Request,{params}:{params:Promise<{batchId:str
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function POST(request:Request,{params}:{params:Promise<{batchId:string}>}){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request,{params}:{params:Promise<{batchId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {batchId}=await params;
@@ -39,3 +41,4 @@ export async function POST(request:Request,{params}:{params:Promise<{batchId:str
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

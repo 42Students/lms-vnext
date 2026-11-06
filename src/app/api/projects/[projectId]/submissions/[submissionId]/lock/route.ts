@@ -4,8 +4,9 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {lockAdminProjectSubmission} from "@/modules/projects/admin-submission-review-service";
 import {readLimitedProjectLockInput} from "@/modules/projects/admin-lock-request-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{params:Promise<{projectId:string;submissionId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{projectId:string;submissionId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   // Reject oversized or malformed JSON before looking up the actor.
@@ -19,3 +20,4 @@ export async function POST(request:Request,{params}:{params:Promise<{projectId:s
   return NextResponse.json({submission},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

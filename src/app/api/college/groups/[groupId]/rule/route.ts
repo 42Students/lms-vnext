@@ -6,6 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {clearGroupRule,refreshGroupRule,GroupRuleServiceError}
  from "@/modules/groups/rules-service";
 import {previewCollegeGroupRule} from "@/modules/groups/college-rule-preview-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Ctx={params:Promise<{groupId:string}>};
 const mutation=z.strictObject({confirmed:z.literal(true),
@@ -17,7 +18,7 @@ function fail(e:unknown){
 }
 /** Manual apply is separate from Save: re-check authorized scope and rule
  * under locks, with an optimistic group version. */
-export async function POST(request:Request,{params}:Ctx){
+async function handlePOST(request:Request,{params}:Ctx){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const ctx=await getCurrentRequestContext();
@@ -31,7 +32,8 @@ export async function POST(request:Request,{params}:Ctx){
   return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
  }catch(e){return fail(e);}
 }
-export async function DELETE(request:Request,{params}:Ctx){
+export const POST = secured(handlePOST, { csrf: "enforce" });
+async function handleDELETE(request:Request,{params}:Ctx){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const input=mutation.parse(await request.json());
@@ -40,3 +42,4 @@ export async function DELETE(request:Request,{params}:Ctx){
   return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
  }catch(e){return fail(e);}
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });

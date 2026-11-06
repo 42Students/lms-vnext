@@ -3,6 +3,7 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listMyProjectInstancesLegacyPage} from "@/modules/projects/member-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -18,7 +19,7 @@ const querySchema=z.strictObject({
   "IN_PROGRESS","READY","BLOCKED"]).optional(),
  attention:z.enum(["LEARNER_ACTION","BLOCKED"]).optional(),
 });
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const url=new URL(request.url);
   const keys=["page","size","search","status","attention"];
@@ -37,3 +38,4 @@ export async function GET(request:Request){
   return NextResponse.json(page,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

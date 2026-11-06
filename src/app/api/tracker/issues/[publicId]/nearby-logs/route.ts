@@ -3,9 +3,10 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {getBugTrackerIssueForAdmin} from "@/modules/bug-tracker/admin-service";
 import {readTrackerLiveLogs} from "@/modules/bug-tracker/tracker-cloud-logs";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
-export async function GET(
+async function handleGET(
   _request:Request,{params}:{params:Promise<{publicId:string}>},
 ){
   const context=await getCurrentRequestContext();
@@ -28,3 +29,4 @@ export async function GET(
     return NextResponse.json({message:"Nearby log entries could not be loaded."},{status:503});
   }
 }
+export const GET = secured(handleGET);

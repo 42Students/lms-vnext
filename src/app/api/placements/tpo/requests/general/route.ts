@@ -3,8 +3,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {TpoGeneralRequestError,listTpoGeneralRequests} from "@/modules/placements/tpo-general-request-service";
 import {tpoGeneralReviewQuerySchema} from "@/modules/placements/tpo-general-request-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";export const dynamic="force-dynamic";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   for(const key of ["page","pageSize","status","kind","q"]){
@@ -24,3 +25,4 @@ export async function GET(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const GET = secured(handleGET);

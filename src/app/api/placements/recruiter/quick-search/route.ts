@@ -5,6 +5,7 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {recruiterDriveListQuerySchema} from "@/modules/placements/recruiter-drive-list-model";
 import {searchOwnRecruiterDrives} from "@/modules/placements/recruiter-drive-search-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const uuid=z.string().uuid();
@@ -13,7 +14,7 @@ const term=z.string().trim().min(2).max(100);
 /** Recruiter Everywhere: search ONLY drives belonging to this exact
  * recruiter/company and an explicitly authorized college, never a global
  * student or company index. A chooser is mandatory for multi-college users. */
-export async function GET(request:NextRequest){
+async function handleGET(request:NextRequest){
  try{
   const params=request.nextUrl.searchParams;
   if(params.getAll("q").length!==1||params.getAll("collegeId").length>1)
@@ -54,3 +55,4 @@ export async function GET(request:NextRequest){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

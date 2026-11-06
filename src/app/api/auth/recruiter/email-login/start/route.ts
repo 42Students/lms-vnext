@@ -8,6 +8,7 @@ import {maskEmail} from "@/modules/auth/crypto";
 import {drizzleLoginRepository} from "@/modules/auth/login-repository";
 import {startLoginWithRuntime} from "@/modules/auth/runtime";
 import {publicWorkEmailIssue} from "@/modules/placements/public-work-email-policy";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const schema=z.strictObject({
@@ -21,7 +22,7 @@ const schema=z.strictObject({
  * from the allowed response but impossible to verify. Staff email login stays
  * on the ordinary channel and does not inherit corporate-email restrictions.
  */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
   const guarded=await guardLoginRequest(request,schema,"recruiter-email-login-start",10);
   if(!guarded.ok)return guarded.response;
   const {ip,tenantCollegeId}=guarded;
@@ -71,3 +72,4 @@ export async function POST(request:Request){
     return loginErrorResponse(error,{route:"recruiter-email-login-start",ip});
   }
 }
+export const POST = secured(handlePOST);

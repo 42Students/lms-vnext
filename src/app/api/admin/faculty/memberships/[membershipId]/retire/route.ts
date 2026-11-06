@@ -10,6 +10,7 @@ import {requirePermission,AuthorizationError} from "@/modules/permissions/policy
 import {isSuperAdmin} from "@/modules/identity/context";
 import {getPersonMembershipDetailWithRuntime,updateMembershipLifecycleWithRuntime} from "@/modules/people/runtime";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -50,7 +51,7 @@ async function impact({membershipId}: {membershipId:string}){
  return {context,person,canEnd,otherRoles,courses:courses?.n??0,
   schedules:schedules?.n??0,projects:projects?.n??0};
 }
-export async function GET(_request:Request,{params}:Props){
+async function handleGET(_request:Request,{params}:Props){
  try{
   const result=await impact(await params);
   return NextResponse.json({
@@ -59,7 +60,8 @@ export async function GET(_request:Request,{params}:Props){
   },{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function POST(request:Request,{params}:Props){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request,{params}:Props){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  try{
@@ -82,3 +84,4 @@ export async function POST(request:Request,{params}:Props){
    {headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST);

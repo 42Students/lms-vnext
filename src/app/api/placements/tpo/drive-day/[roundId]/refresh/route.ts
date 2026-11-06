@@ -4,6 +4,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {getTpoRoundDriveDay} from "@/modules/placements/tpo-round-drive-day-service";
 import {placementRoundIdSchema} from "@/modules/placements/validation";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -13,7 +14,7 @@ type RouteContext={params:Promise<{roundId:string}>};
 /** This scoped health read precedes an RSC refresh. A failed poll must not
  * replace the operator's last known roster with a false empty state.
  */
-export async function GET(_request:Request,{params}:RouteContext){
+async function handleGET(_request:Request,{params}:RouteContext){
  try{
   const context=await getCurrentRequestContext();
   if(!context.membership||!hasMembershipRole(context,"TPO"))
@@ -36,3 +37,4 @@ export async function GET(_request:Request,{params}:RouteContext){
   return response;
  }
 }
+export const GET = secured(handleGET);

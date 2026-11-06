@@ -8,6 +8,7 @@ import {publicPlacementTableReady} from "@/modules/placements/public-page/readin
 import {DEFAULT_PUBLIC_METRICS,PUBLIC_METRIC_LABELS,formatPublicPlacementMetric}
   from "@/modules/placements/public-page/content-model";
 import {publicPlacementDisclosure} from "@/modules/placements/public-placement-disclosure-model";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -22,7 +23,7 @@ const missing=()=>NextResponse.json({error:"PAGE_NOT_FOUND"},
  * college from its verified hostname, never an untrusted query college ID.
  * Return only publication-approved aggregates; a hidden number is omitted
  * rather than returned as a zero or an identifiable small population. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
   const tenant=await resolveRequestTenant(request.headers.get("host"));
   if(tenant.kind!=="college")return missing();
   try{
@@ -70,3 +71,4 @@ export async function GET(request:Request){
     },{headers});
   }catch{return unavailable();}
 }
+export const GET = secured(handleGET);

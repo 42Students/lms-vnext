@@ -5,11 +5,12 @@ import {TPO_SCHEDULED_JOBS} from "@/modules/operations/tpo-scheduled-job-registr
 import {NextResponse} from "next/server";
 import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
 import {escalatePendingWithdrawalRequests} from "@/modules/placements/tpo-withdrawal-escalation-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"no-store"} as const;
 /** POST-only scheduler using the existing TPO scheduler secret; GET cannot send notifications. */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  const secret=process.env["TPO_NOTICE_SCHEDULER_SECRET"]??"";
  const provided=request.headers.get("x-tpo-scheduler-key")??"";
  // The scheduler credential is mandatory in each deployment. Distinguish a
@@ -41,3 +42,4 @@ export async function POST(request:Request){
   return NextResponse.json({error:"ESCALATION_NOT_COMPLETED"},{status:503,headers:noStore});
  }
 }
+export const POST = secured(handlePOST);

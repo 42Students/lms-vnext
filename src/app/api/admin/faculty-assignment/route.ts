@@ -3,6 +3,7 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listAdminFacultyAssignments} from "@/modules/admin-ui/super-admin-faculty-assignments-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Zero-based legacy admin read adapter. All college scope comes from the
@@ -15,7 +16,7 @@ const legacyQuery=z.strictObject({
  q:z.string().trim().max(100),
  collegeId:z.string().uuid().optional(),
 });
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const query=new URL(request.url).searchParams;
   for(const key of new Set(query.keys())){
@@ -48,3 +49,4 @@ export async function GET(request:Request){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

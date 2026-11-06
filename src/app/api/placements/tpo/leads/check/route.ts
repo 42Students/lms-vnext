@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { tpoCrmApiErrorResponse } from "@/lib/tpo-crm-api-error";
 import { checkTpoLeadContact } from "@/modules/placements/tpo-crm-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -10,7 +11,7 @@ export const runtime = "nodejs";
  * Legacy duplicate-preview: only returns a recruiter lead for the
  * authenticated college, with invitation secrets stripped.
  */
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   if (!await tpoCrmTablesReady()) {
     return NextResponse.json(
       { error: "DB09_MIGRATIONS_PENDING" },
@@ -31,3 +32,4 @@ export async function GET(request: Request) {
     return tpoCrmApiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);

@@ -6,9 +6,10 @@ import {parseMentorNotificationReadBody} from
   "@/modules/activity/mentor-notification-read-input";
 import {markAllMentorUnifiedNotificationsRead} from
   "@/modules/projects/mentor-unified-notification-read-all-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -20,3 +21,4 @@ export async function POST(request:Request){
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

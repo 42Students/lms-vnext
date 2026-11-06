@@ -3,9 +3,10 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoDriveApplicationsExport} from "@/modules/placements/tpo-drive-applications-export-service";
 import {tpoDriveApplicationsExportQuerySchema} from "@/modules/placements/tpo-drive-applications-export-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(request:Request,{params}:{params:Promise<{jobId:string}>}){
+async function handleGET(request:Request,{params}:{params:Promise<{jobId:string}>}){
  try{
   const {jobId}=await params;
   const filters=tpoDriveApplicationsExportQuerySchema.omit({jobId:true})
@@ -20,3 +21,4 @@ export async function GET(request:Request,{params}:{params:Promise<{jobId:string
   }});
  }catch(error){const response=apiErrorResponse(error);response.headers.set("Cache-Control","private, no-store, max-age=0");return response;}
 }
+export const GET = secured(handleGET);

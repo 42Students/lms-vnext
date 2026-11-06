@@ -5,9 +5,10 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {readMentorProjectCommandBody,MentorProjectCommandBodyError,mentorProjectBodyFailureMessage}
  from "@/modules/projects/mentor-command-body";
 import {writeMentorProjectRelease} from "@/modules/projects/mentor-release-write-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Route={params:Promise<{projectId:string;releaseId:string}>};
-export async function PATCH(request:Request,{params}:Route){
+async function handlePATCH(request:Request,{params}:Route){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {projectId,releaseId}=await params;
@@ -20,7 +21,8 @@ export async function PATCH(request:Request,{params}:Route){
     return apiErrorResponse(error);
   }
 }
-export async function DELETE(request:Request,{params}:Route){
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+async function handleDELETE(request:Request,{params}:Route){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {projectId,releaseId}=await params;
@@ -33,3 +35,4 @@ export async function DELETE(request:Request,{params}:Route){
     return apiErrorResponse(error);
   }
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });

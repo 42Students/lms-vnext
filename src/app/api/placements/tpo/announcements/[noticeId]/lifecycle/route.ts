@@ -5,8 +5,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {mutateTpoNotice} from "@/modules/announcements/tpo-placement-notice-lifecycle";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{params:Promise<{noticeId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{noticeId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const form=await request.formData().catch(()=>null);
  const {noticeId}=await params;
@@ -46,12 +47,13 @@ export async function POST(request:Request,{params}:{params:Promise<{noticeId:st
   throw error;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });
 
 
 /** Legacy DELETE maps to a version-checked soft delete. A request with no
  * version is rejected instead of deleting an announcement another TPO edited.
  */
-export async function DELETE(request:Request,{params}:{params:Promise<{noticeId:string}>}){
+async function handleDELETE(request:Request,{params}:{params:Promise<{noticeId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const {noticeId}=await params;
  const query=new URL(request.url).searchParams;
@@ -83,10 +85,11 @@ export async function DELETE(request:Request,{params}:{params:Promise<{noticeId:
   throw error;
  }
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });
 /** Legacy PUT /undo is restore or send-undo. Content edits have a separate
  * versioned editor; unknown legacy PUT bodies must never silently mutate.
  */
-export async function PUT(request:Request,{params}:{params:Promise<{noticeId:string}>}){
+async function handlePUT(request:Request,{params}:{params:Promise<{noticeId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const {noticeId}=await params;
  const raw:unknown=await request.json().catch(()=>null);
@@ -118,3 +121,4 @@ export async function PUT(request:Request,{params}:{params:Promise<{noticeId:str
   throw error;
  }
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });

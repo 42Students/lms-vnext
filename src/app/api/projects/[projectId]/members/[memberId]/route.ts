@@ -6,6 +6,7 @@ import {
   endProjectMember,
   updateProjectMember,
 } from "@/modules/projects/member-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -16,7 +17,7 @@ type RouteContext = {
   }>;
 };
 
-export async function PATCH(
+async function handlePATCH(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -43,8 +44,9 @@ export async function PATCH(
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH);
 
-export async function DELETE(
+async function handleDELETE(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -69,11 +71,12 @@ export async function DELETE(
     return apiErrorResponse(error);
   }
 }
+export const DELETE = secured(handleDELETE);
 
 /** Historic POST /members/:id/remove adapter. Unlike DELETE it requires an
  * explicit action so a misrouted form POST cannot silently remove someone.
  * The shared writer rechecks project membership and permissions. */
-export async function POST(request:Request,route:RouteContext){
+async function handlePOST(request:Request,route:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const input:unknown=await request.json().catch(()=>null);
@@ -88,3 +91,4 @@ export async function POST(request:Request,route:RouteContext){
    {headers:{"Deprecation":"true","Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

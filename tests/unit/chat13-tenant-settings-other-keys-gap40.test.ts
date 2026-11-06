@@ -17,7 +17,7 @@ describe("SA-tenants-modules-40 Other stored keys",()=>{
  it("SA-tenants-modules-40 guards create and delete API against cross-origin requests",()=>{
   const route=read("src/app/api/admin/settings/overrides/route.ts");
   for(const handler of ["POST","DELETE"])
-   expect(route).toContain("export async function "+handler+"(request:Request)");
+   expect(route).toContain("async function handle"+handler+"(request:Request)");
   expect((route.match(/if\(!isSameOriginRequest\(request\)\)/g)??[]).length).toBeGreaterThanOrEqual(3);
  });
  it("SA-tenants-modules-40 displays unknown stored keys and wrong-scope warning",()=>{

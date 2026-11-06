@@ -5,6 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {
  CourseProgressRetakeError,previewAdminCourseProgressRetake,startAdminCourseProgressRetake,
 } from "@/modules/courses/admin-progress-retake-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const cache={"Cache-Control":"private, no-store"};
@@ -19,7 +20,7 @@ function failure(error:unknown){
  }
  return apiErrorResponse(error);
 }
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const url=new URL(request.url);
   if([...url.searchParams.keys()].some(k=>!["offeringId","membershipId"].includes(k)) ||
@@ -34,7 +35,8 @@ export async function GET(request:Request){
   return NextResponse.json(state,{headers:cache});
  }catch(error){return failure(error);}
 }
-export async function POST(request:Request){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:cache});
  try{
@@ -49,3 +51,4 @@ export async function POST(request:Request){
   return NextResponse.json(result,{headers:cache});
  }catch(error){return failure(error);}
 }
+export const POST = secured(handlePOST);

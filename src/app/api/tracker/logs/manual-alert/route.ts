@@ -4,10 +4,11 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {requireGlobalLogAdmin} from "@/modules/log-alerts/admin-service";
 import {sendManualTelegramAlertForAdmin} from "@/modules/log-alerts/manual-ops";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const inputSchema=z.strictObject({kind:z.enum(["TEST","DIGEST"])});
-export async function POST(request:Request){
+async function handlePOST(request:Request){
   if(!isSameOriginRequest(request))
     return NextResponse.json({message:"This request could not be completed."},{status:403});
   const context=await getCurrentRequestContext();
@@ -41,3 +42,4 @@ export async function POST(request:Request){
     return NextResponse.json({message:"Could not send the alert. Try again later."},{status:503});
   }
 }
+export const POST = secured(handlePOST);

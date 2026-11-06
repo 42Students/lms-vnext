@@ -4,10 +4,11 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { lessonContentOrderRuntimeEnabled } from "@/modules/courses/lesson-content-order-readiness";
 import { updateDeliveryLessonContentOrder } from "@/modules/courses/lesson-content-order-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function PUT(request: Request) {
+async function handlePUT(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json(
       { error: "INVALID_ORIGIN" },
@@ -42,3 +43,4 @@ export async function PUT(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const PUT = secured(handlePUT);

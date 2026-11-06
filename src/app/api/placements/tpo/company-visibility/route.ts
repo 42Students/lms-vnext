@@ -6,10 +6,11 @@ import {
   getCompanyVisibilitySettings,
   saveCompanyVisibilitySettings,
 } from "@/modules/placements/tpo-policy-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   if (process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED") return NextResponse.json({error:"DB09_MIGRATIONS_PENDING"},{status:503});
 
   try {
@@ -21,8 +22,9 @@ export async function GET(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function PUT(request: Request) {
+async function handlePUT(request: Request) {
   if (process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED") return NextResponse.json({error:"DB09_MIGRATIONS_PENDING"},{status:503});
 
   if (!isSameOriginRequest(request)) {
@@ -41,3 +43,4 @@ export async function PUT(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });

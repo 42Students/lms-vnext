@@ -2,8 +2,9 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {handleOwnTrackerAttachment} from "@/modules/bug-tracker/attachment-upload-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{
+async function handlePOST(request:Request,{params}:{
  params:Promise<{publicId:string}>;
 }){
  if(!isSameOriginRequest(request))
@@ -29,3 +30,4 @@ export async function POST(request:Request,{params}:{
   throw error;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

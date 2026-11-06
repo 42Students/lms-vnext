@@ -12,7 +12,7 @@ const routes = [
 test("DB10 announcement routes fail closed until migration verification", () => {
   for (const [path, expectedHandlers, hasWrites] of routes) {
     const code = fs.readFileSync(path, "utf8");
-    const handlers = [...code.matchAll(/export async function (GET|POST|PATCH|DELETE)\s*\(/g)];
+    const handlers = [...code.matchAll(/export (?:async function|const) (GET|POST|PATCH|DELETE)\b/g)];
     const gates = [...code.matchAll(/announcementsRuntimeEnabled\(\)/g)];
     assert.equal(handlers.length, expectedHandlers, `Unexpected handler count: ${path}`);
     assert.equal(gates.length, handlers.length, `Ungated announcement handler: ${path}`);

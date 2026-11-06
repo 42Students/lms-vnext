@@ -3,6 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getAdminAttendanceGrid} from "@/modules/attendance/admin-service";
 import {attendanceIndiaDay} from "@/modules/attendance/admin-grid-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 const query=z.strictObject({
  deliveryId:z.string().uuid(),
@@ -14,7 +15,7 @@ const query=z.strictObject({
  * inclusive IST dates. No caller-controlled college ID is accepted.
  * Attendance is NOT marked until a session is marked, even when the
  * absence exception row is missing. All cases are bounded to 12 months. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const ctx=await getCurrentRequestContext();
   const collegeId=ctx.adminScope?.collegeId??ctx.membership?.collegeId;
@@ -75,3 +76,4 @@ export async function GET(request:Request){
    headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

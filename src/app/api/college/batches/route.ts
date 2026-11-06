@@ -5,10 +5,11 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {
   CollegeCohortMutationError, createCollegeCohort,
 } from "@/modules/academics/college-cohort-mutation-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -38,11 +39,12 @@ export async function POST(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });
 
 // Old LMS fetchByProgram returns a status/message/data envelope. The college,
 // program and membership are still validated by the same vNext scoped read
 // service, and the returned IDs are UUIDs, never integer legacy IDs.
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const {listCollegeBatches}=await import("@/modules/academics/college-academic-directory-service");
   const {collegeBatchDirectorySchema}=await import("@/modules/academics/college-academic-directory-model");
@@ -66,3 +68,4 @@ export async function GET(request:Request){
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

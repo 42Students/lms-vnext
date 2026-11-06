@@ -4,8 +4,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getSuperAdminCollegeReadiness} from "@/modules/colleges/readiness-service";
 import {buildSuperAdminReadinessCsv} from "@/modules/colleges/admin-readiness-export-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(_request:Request,{params}:{params:Promise<{collegeId:string}>}){
+async function handleGET(_request:Request,{params}:{params:Promise<{collegeId:string}>}){
  try {
   const {collegeId}=await params;
   const id=z.uuid().parse(collegeId);
@@ -26,3 +27,4 @@ export async function GET(_request:Request,{params}:{params:Promise<{collegeId:s
   return response;
  }
 }
+export const GET = secured(handleGET);

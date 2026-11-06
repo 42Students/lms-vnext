@@ -8,6 +8,7 @@ import {
   transitionAcademicPeriod,
   updateAcademicPeriod,
 } from "@/modules/academics/period-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -15,7 +16,7 @@ type RouteContext = {
   params: Promise<{ periodId: string }>;
 };
 
-export async function PATCH(
+async function handlePATCH(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -61,3 +62,4 @@ export async function PATCH(
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH);

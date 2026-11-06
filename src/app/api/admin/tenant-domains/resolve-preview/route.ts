@@ -2,11 +2,12 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {previewTenantHostResolutionWithRuntime} from "@/modules/tenant-domains/runtime";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 
 /** Read-only global administrator preview of the effective verified host. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const query=new URL(request.url).searchParams;
   if([...query.keys()].length!==1||!query.has("host")||!(query.get("host")??"").trim())
@@ -18,3 +19,4 @@ export async function GET(request:Request){
   return NextResponse.json(resolution,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

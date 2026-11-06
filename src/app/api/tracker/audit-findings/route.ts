@@ -3,6 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {parseIndependentFindingFilters} from "@/modules/bug-tracker/independent-audit-findings-model";
 import {listIndependentAuditFindings} from "@/modules/bug-tracker/independent-audit-findings-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -11,7 +12,7 @@ export const dynamic="force-dynamic";
  * Filtering and permission checks run in the same domain service as the board.
  * Credentials, syncing and mutations are never exposed by this endpoint.
  */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   const raw:Record<string,string|string[]|undefined>={};
@@ -25,3 +26,4 @@ export async function GET(request:Request){
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

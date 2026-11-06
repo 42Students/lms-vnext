@@ -6,12 +6,13 @@ import {getMentorPersonalInbox} from
 import {mentorInboxQuerySchema} from
  "@/modules/activity/mentor-notifications-model";
 import {parseNotificationCursor} from "@/modules/activity/notification-cursor";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** Page only the authenticated recipient's personal notices. The cursor is
  * validated before DB access; the service re-verifies active Mentor role and
  * college membership on every page, never trusting client recipient IDs.
  */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const query=new URL(request.url).searchParams;
   if([...query.keys()].some(key=>!["view","beforeCreatedAt","beforeId"].includes(key))||
@@ -50,3 +51,4 @@ export async function GET(request:Request){
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

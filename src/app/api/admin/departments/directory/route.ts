@@ -3,6 +3,7 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listAdminDepartmentsAcrossColleges} from "@/modules/admin-ui/super-admin-department-directory-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -13,7 +14,7 @@ const querySchema=z.strictObject({
 });
 /** Selected admin scope is taken exclusively from the server-side session.
  * Request parameters cannot broaden organization or college access. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const url=new URL(request.url);
   const params=Object.fromEntries(url.searchParams.entries());
@@ -30,3 +31,4 @@ export async function GET(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const GET = secured(handleGET);

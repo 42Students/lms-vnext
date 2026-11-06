@@ -4,6 +4,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import { createPrivateReadGrant } from "@/modules/storage/private-object-storage";
 import { placementJobIdSchema } from "@/modules/placements/validation";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 const noStore = { "Cache-Control": "private, no-store" };
@@ -12,7 +13,7 @@ type Params = { params: Promise<{ jobId: string }> };
 /** Read only a published drive visible to this learner's scoped college,
  * current cohort and section. The upload owner is never inferred from a
  * client-supplied object key and the signed URL is never persisted. */
-export async function GET(_request: Request, { params }: Params) {
+async function handleGET(_request: Request, { params }: Params) {
   try {
     const { jobId } = await params;
     if (!placementJobIdSchema.safeParse(jobId).success)
@@ -38,3 +39,4 @@ export async function GET(_request: Request, { params }: Params) {
     }, { headers: noStore });
   } catch (error) { return apiErrorResponse(error); }
 }
+export const GET = secured(handleGET);

@@ -8,6 +8,7 @@ import { getCollegeDashboardPendingGrades, getCollegeDashboardPendingGradesCount
 import { getCollegeDashboardUnstaffedCourses, getCollegeDashboardUnstaffedDeliveriesCount } from "@/modules/admin-ui/college-dashboard-staffing-service";
 import { getCollegeDashboardSetupGaps } from "@/modules/admin-ui/college-dashboard-setup-gaps-service";
 import { getCollegeClosingQuizzes } from "@/modules/admin-ui/college-dashboard-quizzes-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 function value<T>(result: PromiseSettledResult<T>): T | null {
@@ -16,7 +17,7 @@ function value<T>(result: PromiseSettledResult<T>): T | null {
 
 /** Authenticated, tenant-scoped compatibility read for legacy dashboard clients.
  * Unlike the retired endpoint, partial-feed failures are explicit null, not zero. */
-export async function GET() {
+async function handleGET() {
   try {
     const context = await getCurrentRequestContext();
     const membership = context.membership;
@@ -55,3 +56,4 @@ export async function GET() {
     }, {headers:{"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"}});
   } catch (error) {return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

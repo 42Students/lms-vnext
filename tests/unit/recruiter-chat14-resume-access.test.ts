@@ -30,8 +30,8 @@ describe("REC-home-drives-38 employer-shared private resume grants",()=>{
  it("REC-home-drives-38 issues signed URLs only via origin-guarded POST with an indistinguishable 404",()=>{
   const route=read("src/app/api/placements/recruiter/jobs/[jobId]/applicants/[applicationId]/resume-grant/route.ts");
   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
-  expect(route).toContain("export async function POST(");
-  expect(route).not.toContain("export async function GET(");
+  expect(route).toMatch(/export (?:async function|const) POST\b/);
+  expect(route).not.toMatch(/export (?:async function|const) GET\b/);
   expect(route).toContain('"Cache-Control":"private, no-store"');
   expect(route).toContain('error:"RESUME_NOT_AVAILABLE"');
  });

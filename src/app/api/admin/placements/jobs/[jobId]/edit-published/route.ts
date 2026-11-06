@@ -4,9 +4,10 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readAdminPlacementJson} from "@/modules/placements/admin-request-body-model";
 import {editSuperAdminPublishedDrive} from "@/modules/placements/super-admin-published-drive-edit-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Ctx={params:Promise<{jobId:string}>};
-export async function PATCH(request:Request,{params}:Ctx){
+async function handlePATCH(request:Request,{params}:Ctx){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   // A published edit can contain a 15,000-character description plus
@@ -18,3 +19,4 @@ export async function PATCH(request:Request,{params}:Ctx){
    await getCurrentRequestContext(),jobId,body.value));
  }catch(e){return apiErrorResponse(e);}
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

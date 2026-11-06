@@ -7,6 +7,7 @@ import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "@/modules/auth/bounde
 import {privateAuthJson,privateAuthResponse} from "@/modules/auth/private-response";
 import {ownAccountProofScope} from "@/modules/identity/own-account-proof-authorization";
 import {redeemScopedAccountProof} from "@/modules/identity/scoped-account-verification-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const schema=z.strictObject({
@@ -16,7 +17,7 @@ const schema=z.strictObject({
 
 /** Verification proves own scoped role ownership only. It never logs in,
  * grants a role, mints tokens/cookies or changes active college selection. */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return privateAuthJson({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -44,3 +45,4 @@ export async function POST(request:Request){
   return privateAuthResponse(apiErrorResponse(error));
  }
 }
+export const POST = secured(handlePOST);

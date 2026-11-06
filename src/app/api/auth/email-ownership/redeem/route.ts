@@ -7,13 +7,14 @@ import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "@/modules/auth/bounde
 import {privateAuthJson,privateAuthResponse} from "@/modules/auth/private-response";
 import {ownEmailOwnershipScope} from "@/modules/identity/own-email-ownership-scope";
 import {redeemOwnEmailOwnershipLink} from "@/modules/identity/own-email-ownership-runtime";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const schema=z.strictObject({token:z.string().regex(/^[a-zA-Z0-9_-]{43}$/)});
 
 /** A token confirms contact ownership only: it cannot mint login sessions,
  * change membership/role permissions, or approve a placement application. */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return privateAuthJson({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -37,3 +38,4 @@ export async function POST(request:Request){
   return privateAuthResponse(apiErrorResponse(error));
  }
 }
+export const POST = secured(handlePOST);

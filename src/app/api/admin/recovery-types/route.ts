@@ -3,8 +3,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {requirePermission} from "@/modules/permissions/policy";
 import {RECOVERY_ENTITY_TYPES} from "@/modules/admin-ui/recovery-type-registry";
 import {apiErrorResponse} from "@/lib/api-error";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(){
+async function handleGET(){
  try{
   const context=await getCurrentRequestContext();
   requirePermission(context,"admin-scope.select");
@@ -14,3 +15,4 @@ export async function GET(){
   }))},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

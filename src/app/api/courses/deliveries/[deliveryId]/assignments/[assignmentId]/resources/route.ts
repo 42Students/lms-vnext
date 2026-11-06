@@ -5,13 +5,14 @@ import {
  listOwnLearnerAssignmentMaterialLinks,
  listOwnLearnerAssignmentResources,
 } from "@/modules/courses/learner-assignment-materials-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 type Params={params:Promise<{deliveryId:string;assignmentId:string}>};
 
 /** An enrolled learner's resource list never exposes private object keys.
  * PDF and file links are resolved separately through the signed-read route. */
-export async function GET(_request:Request,{params}:Params){
+async function handleGET(_request:Request,{params}:Params){
  try{
   const {deliveryId,assignmentId}=await params;
   const context=await getCurrentRequestContext();
@@ -24,3 +25,4 @@ export async function GET(_request:Request,{params}:Params){
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

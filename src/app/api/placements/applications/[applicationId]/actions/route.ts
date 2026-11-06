@@ -6,6 +6,7 @@ import { listOwnPlacementApplications, withdrawPlacementApplication } from "@/mo
 import { z } from "zod";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { learnerApplicationWithdrawalSchema } from "@/modules/placements/learner-withdrawal-model";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -13,7 +14,7 @@ type RouteContext = {
   params: Promise<{ applicationId: string }>;
 };
 
-export async function POST(
+async function handlePOST(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -80,3 +81,4 @@ export async function POST(
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST);

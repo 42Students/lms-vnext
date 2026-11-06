@@ -4,11 +4,12 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {readTpoVerificationExport} from "@/modules/verification/tpo-queue-export-read-service";
 import {tpoVerificationQuerySchema} from "@/modules/verification/tpo-queue-server-model";
 import {verificationCsv} from "@/modules/verification/queue-export";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const context=await getCurrentRequestContext();
   const stamp=(value:Date)=>new Intl.DateTimeFormat("en-IN",{
@@ -56,3 +57,4 @@ export async function GET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

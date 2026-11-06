@@ -3,9 +3,10 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoDriveCloseout } from "@/modules/placements/tpo-drive-closeout-service";
 import { tpoDriveCloseoutCsv } from "@/modules/placements/tpo-drive-closeout-model";
+import { secured } from "@/security/secure-handler";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export async function GET(_request: Request, { params }: {
+async function handleGET(_request: Request, { params }: {
   params: Promise<{ jobId: string }>;
 }) {
   try {
@@ -27,3 +28,4 @@ export async function GET(_request: Request, { params }: {
     return response;
   }
 }
+export const GET = secured(handleGET);

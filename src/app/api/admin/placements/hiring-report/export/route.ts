@@ -4,12 +4,13 @@ import {getSuperAdminCompanyHiringReport} from "@/modules/admin-ui/super-admin-h
 import {superAdminHiringReportQuery,hiringCompanyRollups} from "@/modules/admin-ui/super-admin-hiring-report-model";
 import {placementReportCsv,placementReportCsvCell} from "@/modules/placements/report-model";
 import {apiErrorResponse} from "@/lib/api-error";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 
 /** Read-only selected-college or organization export with the legacy summary, funnel,
  * company/job rows and company totals as separate CSV sections. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   const keys=[...params.keys()];
@@ -72,3 +73,4 @@ export async function GET(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const GET = secured(handleGET);

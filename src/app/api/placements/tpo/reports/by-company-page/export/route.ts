@@ -7,9 +7,10 @@ import {getPlacementReportWorkspace} from "@/modules/placements/report-service";
 import {companyReportViewSchema,paginateCompanyReport} from "@/modules/placements/tpo-company-report-view-model";
 import {tpoVisibleCompanyReportCsv} from "@/modules/placements/tpo-company-page-csv-model";
 import {NextResponse} from "next/server";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const context=await getCurrentRequestContext();
   if(!context.membership||!hasMembershipRole(context,"TPO")){
@@ -41,3 +42,4 @@ export async function GET(request:Request){
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

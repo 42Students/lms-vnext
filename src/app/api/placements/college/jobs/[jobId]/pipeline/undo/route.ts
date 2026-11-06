@@ -6,11 +6,12 @@ import {readBoundedJsonBody} from "@/lib/bounded-json-body";
 import {apiErrorResponse} from "@/lib/api-error";
 import {undoCollegeApplicationStage,COLLEGE_STAGE_UNDO_TOO_LATE}
  from "@/modules/placements/college-stage-undo-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"private, no-store"} as const;
 type Params={params:Promise<{jobId:string}>};
-export async function POST(request:Request,{params}:Params){
+async function handlePOST(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  const payload=await readBoundedJsonBody(request,2048);
@@ -32,3 +33,4 @@ export async function POST(request:Request,{params}:Params){
   return response;
  }
 }
+export const POST = secured(handlePOST);

@@ -3,8 +3,9 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {adminFeatureQuerySchema} from "@/modules/module-access/admin-feature-query";
 import {listSuperAdminFeatureControls} from "@/modules/module-access/admin-read-service";
 import {superAdminFeaturePageCsv} from "@/modules/module-access/admin-feature-export";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const input:Record<string,string>={};
   for(const [key,value] of new URL(request.url).searchParams){
@@ -22,3 +23,4 @@ export async function GET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

@@ -10,7 +10,7 @@ const entries=[
  {name:"setTpoJobTypeCountsAsPlaced",noop:"if(current.countsAsPlaced===input.countsAsPlaced)",cas:"if(current.updatedAt.toISOString()!==input.expectedVersion)"},
 ] as const;
 function handler(name:string){
- const start=source.indexOf("export async function "+name+"(");
+ const start=Math.max(source.indexOf("export async function "+name+"("),source.indexOf("async function handle"+name+"("));
  const next=source.indexOf("\nexport async function ",start+1);
  expect(start).toBeGreaterThanOrEqual(0);
  return source.slice(start,next===-1?source.length:next);

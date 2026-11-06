@@ -5,10 +5,11 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { manageCollegeStudyMember } from "@/modules/groups/college-member-management-service";
 import { GroupServiceError } from "@/modules/groups/service";
 import { GroupActorAccessError } from "@/modules/groups/actor-access";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function POST(
+async function handlePOST(
   request: Request, { params }: { params: Promise<{ groupId: string }> },
 ) {
   if (!isSameOriginRequest(request))
@@ -29,3 +30,4 @@ export async function POST(
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

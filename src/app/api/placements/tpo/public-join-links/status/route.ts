@@ -3,9 +3,10 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoPublicJoinLinkStatus} from "@/modules/placements/tpo-public-join-link-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** TPO-companies-R02: scoped readback; never returns the original secret token. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const search=new URL(request.url).searchParams;
   // TPO-settings-audit-55: reject repeated or smuggled selectors instead of
@@ -30,3 +31,4 @@ export async function GET(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const GET = secured(handleGET);

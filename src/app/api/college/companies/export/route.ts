@@ -5,10 +5,11 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {parseCollegeCompaniesQuery} from "@/modules/placements/college-company-directory-model";
 import {listCollegeCompanyDirectory} from "@/modules/placements/college-company-directory-service";
 import {collegeCompanyCsv} from "@/modules/placements/college-directory-csv";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 // Bound memory, database pagination and response size for tenant exports.
 export const COLLEGE_COMPANY_EXPORT_CAP=5000;
-export async function GET(request:Request) {
+async function handleGET(request:Request) {
  try{
   const raw=Object.fromEntries(new URL(request.url).searchParams);
   const parsed=parseCollegeCompaniesQuery(raw);
@@ -38,3 +39,4 @@ export async function GET(request:Request) {
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

@@ -56,7 +56,7 @@ describe("SA-tenants-modules-31 in-page learner explanation",()=>{
   expect(route).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
   expect(route).toContain("getSuperAdminLearnerAccessTrace(");
   expect(route).toContain("adminModuleTraceQuerySchema.parse(query)");
-  expect(route).not.toContain("export async function POST");
+  expect(route).not.toMatch(/export (?:async function|const) POST\b/);
  });
 });
 

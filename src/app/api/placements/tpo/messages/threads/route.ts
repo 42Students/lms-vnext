@@ -4,13 +4,14 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {openTpoMessageThread,sendThreadMessage,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 import {hasMembershipRole} from "@/modules/identity/context";
+import { secured } from "@/security/secure-handler";
 const input=z.strictObject({
  recruiterUserId:z.string().uuid(),
  jobId:z.string().uuid().nullable().optional(),
  body:z.string().trim().min(1).max(4000).optional(),
 });
 export const runtime="nodejs";
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const parsed=input.safeParse(await request.json().catch(()=>null));
  if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
@@ -42,3 +43,4 @@ export async function POST(request:Request){
   throw error;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

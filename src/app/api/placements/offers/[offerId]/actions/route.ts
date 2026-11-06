@@ -6,6 +6,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
 import { actOnPlacementOffer } from "@/modules/placements/offer-service";
 import { placementOfferActionSchema } from "@/modules/placements/validation";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 // The old offer response API requires a literal JSON boolean. Do not
@@ -19,7 +20,7 @@ type RouteContext = {
   params: Promise<{ offerId: string }>;
 };
 
-export async function POST(
+async function handlePOST(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -69,3 +70,4 @@ export async function POST(
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST);

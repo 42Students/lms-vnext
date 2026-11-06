@@ -5,10 +5,11 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {tpoRecruiterAccessQuerySchema} from "@/modules/placements/tpo-recruiter-access-model";
 import {listTpoRecruiterAccess} from "@/modules/placements/tpo-recruiter-access-service";
 import {tpoRecruiterGrantCsv,tpoRecruiterGrantXlsx} from "@/modules/placements/tpo-recruiter-grant-export-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   // Do not silently choose the first value of conflicting filters or
@@ -35,3 +36,4 @@ export async function GET(request:Request){
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

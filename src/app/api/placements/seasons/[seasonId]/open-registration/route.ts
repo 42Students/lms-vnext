@@ -3,9 +3,10 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {changeTpoSeasonRegistration,TpoSettingsStaleError} from "@/modules/placements/tpo-season-write-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{params:Promise<{seasonId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{seasonId:string}>}){
   if(!isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   try{
@@ -24,3 +25,4 @@ export async function POST(request:Request,{params}:{params:Promise<{seasonId:st
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

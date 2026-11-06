@@ -6,11 +6,12 @@ import {getDb} from "@/db/client";
 import {assignmentSubmissions,attendanceSessions,courseAssignments,courseDiscussionMessages} from "@/db/schema";
 import {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment-service";
 import {getFacultyClassSchedule} from "@/modules/courses/faculty-schedule-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 /** Live workload counts from current Faculty grants, never shared with
  * the College, Mentor, Recruiter, or TPO navigation. */
-export async function GET(){
+async function handleGET(){
  try{
   const context=await getCurrentRequestContext();
   const assessments=await getFacultyAssessmentOverview(context);
@@ -72,3 +73,4 @@ export async function GET(){
   },{headers:{"Cache-Control":"private, no-store","Vary":"Cookie"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

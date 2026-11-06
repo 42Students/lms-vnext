@@ -6,11 +6,12 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { saveTpoCompanyPerson, TpoCompanyPersonStale } from "@/modules/placements/tpo-company-person-service";
 import { TpoCrmError } from "@/modules/placements/tpo-crm-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type Context = { params: Promise<{ companyId: string }> };
 
-export async function POST(request: Request, { params }: Context) {
+async function handlePOST(request: Request, { params }: Context) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -35,3 +36,4 @@ export async function POST(request: Request, { params }: Context) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

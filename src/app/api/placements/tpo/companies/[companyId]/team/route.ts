@@ -6,8 +6,9 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {mutateTpoCompanyTeam,TpoCompanyTeamError} from "@/modules/placements/tpo-company-team-service";
 import {tpoCompanyTeamPostSchema} from "@/modules/placements/tpo-company-team-model";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{params:Promise<{companyId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{companyId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const {companyId}=await params;
  // Bound the untrusted JSON stream before parsing: message validation alone
@@ -49,3 +50,4 @@ export async function POST(request:Request,{params}:{params:Promise<{companyId:s
   throw error;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

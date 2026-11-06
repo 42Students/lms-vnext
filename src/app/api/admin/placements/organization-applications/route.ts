@@ -4,23 +4,25 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {searchOrganizationPlacementApplications,getOrganizationApplicationStats} from "@/modules/placements/organization-application-search-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
 /** Exact organization is the one selected by Super Admin's college switcher. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const query=Object.fromEntries(new URL(request.url).searchParams.entries());
   const data=await searchOrganizationPlacementApplications(await getCurrentRequestContext(),query);
   return NextResponse.json(data,{headers:{"Cache-Control":"private, no-store"}});
  }catch(problem){return apiErrorResponse(problem);}
 }
+export const GET = secured(handleGET);
 
 /** Compatibility for legacy refresh: no cache exists to invalidate.
  * This still authenticates and verifies the current organization scope.
  */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -33,3 +35,4 @@ export async function POST(request:Request){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(problem){return apiErrorResponse(problem);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

@@ -5,6 +5,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getOwnIdentityProfile, updateOwnIdentityName } from "@/modules/people/identity-profile-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const input=z.strictObject({
@@ -16,13 +17,14 @@ const input=z.strictObject({
 });
 
 /** Own identity only. No targetUserId, email or phone is accepted. */
-export async function GET() {
+async function handleGET() {
  try {
   const profile=await getOwnIdentityProfile(await getCurrentRequestContext());
   return NextResponse.json({profile},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function PATCH(request:Request){
+export const GET = secured(handleGET);
+async function handlePATCH(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,
    headers:{"Cache-Control":"private, no-store"}});
@@ -42,3 +44,4 @@ export async function PATCH(request:Request){
   return NextResponse.json({profile},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const PATCH = secured(handlePATCH);

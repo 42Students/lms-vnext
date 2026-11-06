@@ -3,8 +3,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {markOwnTpoNoticeRead} from "@/modules/announcements/tpo-notice-read-receipts-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{params:Promise<{noticeId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{noticeId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const value=await markOwnTpoNoticeRead(await getCurrentRequestContext(),(await params).noticeId);
@@ -16,3 +17,4 @@ export async function POST(request:Request,{params}:{params:Promise<{noticeId:st
   });
  }catch(e){return apiErrorResponse(e);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

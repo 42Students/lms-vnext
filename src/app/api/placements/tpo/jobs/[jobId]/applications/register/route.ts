@@ -2,8 +2,9 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listTpoLegacyApplicationRegister} from "@/modules/placements/legacy-application-register-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request,{params}:{params:Promise<{jobId:string}>}){
+async function handleGET(request:Request,{params}:{params:Promise<{jobId:string}>}){
  try{
   const {jobId}=await params;
   const parsed:Record<string,string>={};
@@ -16,3 +17,4 @@ export async function GET(request:Request,{params}:{params:Promise<{jobId:string
   return NextResponse.json(result,{headers:{"cache-control":"no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

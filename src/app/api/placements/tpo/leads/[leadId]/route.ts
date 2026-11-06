@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { tpoCrmApiErrorResponse } from "@/lib/tpo-crm-api-error";
 import { getTpoLead, updateTpoLead } from "@/modules/placements/tpo-crm-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ leadId: string }> };
@@ -14,7 +15,7 @@ function pending() {
   return NextResponse.json({ error: "DB09_MIGRATIONS_PENDING" }, { status: 503 });
 }
 
-export async function GET(request: Request, { params }: RouteContext) {
+async function handleGET(request: Request, { params }: RouteContext) {
   if (!await tpoCrmTablesReady()) return pending();
   try {
     const context = await getCurrentRequestContext();
@@ -26,8 +27,9 @@ export async function GET(request: Request, { params }: RouteContext) {
     return tpoCrmApiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function PATCH(request: Request, { params }: RouteContext) {
+async function handlePATCH(request: Request, { params }: RouteContext) {
   if (!await tpoCrmTablesReady()) return pending();
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
@@ -41,3 +43,4 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     return tpoCrmApiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

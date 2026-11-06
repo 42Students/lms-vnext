@@ -3,9 +3,10 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoDriveOfferRegisterCsv } from "@/modules/placements/tpo-drive-offer-register-service";
 import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-url-guard";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(request:Request,{params}:{
+async function handleGET(request:Request,{params}:{
  params:Promise<{jobId:string}>;
 }){
  try{
@@ -39,3 +40,4 @@ export async function GET(request:Request,{params}:{
   return response;
  }
 }
+export const GET = secured(handleGET);

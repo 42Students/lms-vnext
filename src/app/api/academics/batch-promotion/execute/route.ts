@@ -7,6 +7,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { CollegePromotionExecuteError, executeCollegeBatchPromotion } from "@/modules/academics/college-batch-promotion-execute";
 
 import { markCollegeBatchGraduated, CollegeBatchGraduationError } from "@/modules/academics/college-batch-graduation-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 /** Legacy /api/v1/batch/{numericId}/promote cannot authorize mutations by
@@ -16,7 +17,7 @@ export const runtime = "nodejs";
  * A stale preview never commits and must be refreshed before resubmission.
  */
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -70,3 +71,4 @@ export async function POST(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

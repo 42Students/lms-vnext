@@ -6,8 +6,9 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getRecruiterCompanyTeam} from "@/modules/placements/recruiter-company-team-service";
 import {buildHrTeamCsv} from "@/modules/placements/hr-team-csv-model";
 import {hrTeamSearchSchema,searchHrTeam} from "@/modules/placements/hr-team-search-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const search=new URL(request.url).searchParams;
   const selected=z.string().uuid().parse(search.get("collegeId"));
@@ -25,3 +26,4 @@ export async function GET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

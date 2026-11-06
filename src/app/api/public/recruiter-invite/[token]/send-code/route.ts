@@ -6,10 +6,11 @@ import {requestRecruiterInviteOtp} from "@/modules/placements/recruiter-invite-o
 import {deliverPublicRecruiterJoinCode} from "@/modules/messaging/public-join-code-delivery";
 import {isRecruiterInviteTokenShape} from "@/modules/placements/tpo-recruiter-invite-policy";
 import {recruiterInviteAcceptReady} from "@/modules/placements/recruiter-invite-otp-accept-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"} as const;
-export async function POST(request:Request,{params}:{params:Promise<{token:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{token:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  if(new URL(request.url).search)
   return NextResponse.json({error:"INVALID_REQUEST"},{status:400,headers:noStore});
@@ -65,3 +66,4 @@ export async function POST(request:Request,{params}:{params:Promise<{token:strin
   return NextResponse.json({error:"INVITE_INVALID"},{status:404,headers:noStore});
  }
 }
+export const POST = secured(handlePOST);

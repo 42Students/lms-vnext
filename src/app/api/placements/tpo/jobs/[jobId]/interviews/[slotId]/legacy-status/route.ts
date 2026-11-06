@@ -2,8 +2,9 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoInterviewLegacyStatus} from "@/modules/placements/tpo-interview-legacy-status-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(_request:Request,{params}:{
+async function handleGET(_request:Request,{params}:{
  params:Promise<{jobId:string;slotId:string}>;
 }){
  try{
@@ -13,3 +14,4 @@ export async function GET(_request:Request,{params}:{
   return NextResponse.json(state,{headers:{"cache-control":"no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

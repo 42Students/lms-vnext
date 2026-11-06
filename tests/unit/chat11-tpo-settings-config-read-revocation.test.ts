@@ -19,7 +19,7 @@ const readers=[
  {name:"listTpoPrepCourses",table:"courses",result:"return tx.select({id:courses.id"},
 ] as const;
 function body(name:string){
- const start=source.indexOf("export async function "+name+"(");
+ const start=Math.max(source.indexOf("export async function "+name+"("),source.indexOf("async function handle"+name+"("));
  const next=source.indexOf("export async function ",start+1);
  expect(start).toBeGreaterThanOrEqual(0);
  return source.slice(start,next<0?source.length:next);

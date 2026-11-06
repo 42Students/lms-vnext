@@ -5,6 +5,7 @@ import {verifyUnsubscribeToken} from "@/modules/messaging/unsubscribe-model";
 import {verifyTpoCampaignRecipientToken,resolveTpoCampaignRecipientSecret} from "@/modules/messaging/tpo-campaign-recipient-token";
 import {CampaignUnsubscribeInvalid,unsubscribeTpoCampaignRecipient} from "@/modules/messaging/tpo-campaign-unsubscribe-service";
 import {GlobalEmailSuppressionUnavailable,persistVerifiedGlobalEmailSuppression} from "@/modules/operations/global-email-suppression-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** Do not acknowledge a signed opt-out when its recipient table has not
  * been deployed. Public callers get a generic retryable state, never a
@@ -31,7 +32,7 @@ function successResponse(request:Request,scope:"placement-cell"|null){
  response.headers.set("Cache-Control","no-store");
  return response;
 }
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  // A public POST must not parse an unbounded multipart or URL-encoded body.
  // Reconstruct only the bounded UTF-8 bytes for the same native form parser.
@@ -96,3 +97,4 @@ export async function POST(request:Request){
  }
  return successResponse(request,null);
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

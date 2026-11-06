@@ -5,12 +5,13 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 import { apiErrorResponse } from "@/lib/api-error";
 import { CourseImageError, completeCourseImage } from "@/modules/courses/course-image-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 const schema = z.object({ receiptId: z.string().uuid() }).strict();
 type RouteContext = { params: Promise<{ courseId: string }> };
 
-export async function POST(request: Request, { params }: RouteContext) {
+async function handlePOST(request: Request, { params }: RouteContext) {
   const headers = { "Cache-Control": "private, no-store", Vary: "Cookie" };
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403, headers });
@@ -38,3 +39,4 @@ export async function POST(request: Request, { params }: RouteContext) {
     return response;
   }
 }
+export const POST = secured(handlePOST);

@@ -7,6 +7,7 @@ import {executeScheduledJobWithLease,scheduledJobWorkerIdentity}
  from "@/modules/operations/scheduled-job-runner";
 import {queueEligibleDeadlineTodayReminders}
  from "@/modules/announcements/tpo-deadline-today-job-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -17,7 +18,7 @@ const noStore={"Cache-Control":"no-store"};
  * A distinct non-public secret and a persisted authorized service actor are
  * required in addition to a transactional PostgreSQL lease.
  */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
   // Scheduled/service callbacks have no browser Origin. Reject a foreign Origin when one is supplied.
   if (request.headers.has("origin") && !isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -48,3 +49,4 @@ export async function POST(request:Request){
    {status:503,headers:noStore});
  }
 }
+export const POST = secured(handlePOST);

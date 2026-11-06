@@ -8,11 +8,12 @@ import {
 
 import { retireCollegeBatch, CollegeBatchRetireError }
   from "@/modules/academics/college-batch-retire-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ cohortId: string }> };
 
-export async function PATCH(request: Request, { params }: RouteContext) {
+async function handlePATCH(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -34,19 +35,21 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });
 
 /** Legacy BatchController used PUT. Keep that method as a compatibility
  * alias, while the scoped vNext API remains PATCH. The request still requires
  * the current optimistic token and exact academic UUIDs; integer legacy batch
  * IDs or a year-only body are not silently interpreted. */
-export async function PUT(request:Request,route:RouteContext) {
+async function handlePUT(request:Request,route:RouteContext) {
   return PATCH(request,route);
 }
+export const PUT = secured(handlePUT);
 
 /** Retire/archive is intentionally not the legacy destructive SQL DELETE.
  * This preserves references to enrollments and academic periods. Only the
  * existing mutation service can retire eligible batches. */
-export async function DELETE(request:Request,{params}:RouteContext) {
+async function handleDELETE(request:Request,{params}:RouteContext) {
   if(!isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   try {
@@ -62,3 +65,4 @@ export async function DELETE(request:Request,{params}:RouteContext) {
     return apiErrorResponse(error);
   }
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });

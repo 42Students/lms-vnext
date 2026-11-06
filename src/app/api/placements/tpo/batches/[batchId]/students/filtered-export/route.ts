@@ -5,10 +5,11 @@ import {getTpoBatchStudentRegistrationView} from "@/modules/placements/tpo-batch
 import {parseBatchStudentSearchParams} from "@/modules/placements/tpo-batch-student-view-model";
 import {selectTpoBatchStudentView} from "@/modules/placements/tpo-batch-student-selection-model";
 import {serializeTpoBatchStudentViewCsv} from "@/modules/placements/tpo-batch-student-filtered-export-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const pageSchema=z.coerce.number().int().min(1).max(100000).default(1);
-export async function GET(request:Request,{params}:{params:Promise<{batchId:string}>}){
+async function handleGET(request:Request,{params}:{params:Promise<{batchId:string}>}){
  try{
   const {batchId}=await params;
   const raw=Object.fromEntries(new URL(request.url).searchParams.entries());
@@ -31,3 +32,4 @@ export async function GET(request:Request,{params}:{params:Promise<{batchId:stri
   return response;
  }
 }
+export const GET = secured(handleGET);

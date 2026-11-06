@@ -8,12 +8,13 @@ import { finishTpoFollowup } from "@/modules/placements/tpo-crm-service";
 import { tpoCrmTablesReady } from "@/modules/placements/tpo-crm-storage-readiness";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { tpoCrmFollowupIdSchema } from "@/modules/placements/tpo-crm-validation";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ followupId: string }> };
 
 /** Completing a calendar item uses the same scoped writer as the recruiter lead workspace. */
-export async function POST(request: Request, { params }: RouteContext) {
+async function handlePOST(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -46,3 +47,4 @@ export async function POST(request: Request, { params }: RouteContext) {
     return tpoCrmApiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

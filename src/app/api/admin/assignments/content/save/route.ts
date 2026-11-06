@@ -11,11 +11,12 @@ import {eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {courseOfferings} from "@/db/schema";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** Compatibility adapter for retired /api/v1/admin/assignments/content/save.
  * Uses the one registered vNext authoring transaction; no opaque historical
  * resource DTO is silently ignored or written without verified uploads. */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -42,3 +43,4 @@ export async function POST(request:Request){
   return NextResponse.json({assignment,message:"Assignment saved"},{status:201});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

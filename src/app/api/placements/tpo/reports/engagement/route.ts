@@ -9,9 +9,10 @@ import {getTpoRecordedRanDrives} from "@/modules/placements/tpo-engagement-ran-d
 import {joinTpoCompanyEngagementWithPlacement} from "@/modules/placements/tpo-company-engagement-model";
 import {companyEngagementCsv,companyEngagementCsvQuerySchema} from "@/modules/placements/tpo-company-engagement-csv-model";
 import {NextResponse} from "next/server";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const context=await getCurrentRequestContext();
   if(!context.membership||!hasMembershipRole(context,"TPO"))
@@ -46,3 +47,4 @@ export async function GET(request:Request){
   return response;
  }
 }
+export const GET = secured(handleGET);

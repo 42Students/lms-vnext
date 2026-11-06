@@ -3,13 +3,14 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getProjectResourceAuditPage} from "@/modules/projects/workspace-view-service";
 import {z} from "zod";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const cursorSchema=z.object({
   beforeTime:z.iso.datetime().optional(),
   beforeId:z.string().uuid().optional(),
 }).strict().refine(value=>Boolean(value.beforeTime)===Boolean(value.beforeId));
-export async function GET(request:Request,{params}:{
+async function handleGET(request:Request,{params}:{
   params:Promise<{projectId:string}>;
 }){
   try{
@@ -26,3 +27,4 @@ export async function GET(request:Request,{params}:{
     return NextResponse.json(page,{headers:{"Cache-Control":"private, no-store"}});
   }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

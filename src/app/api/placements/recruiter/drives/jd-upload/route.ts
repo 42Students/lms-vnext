@@ -7,6 +7,7 @@ import { readRecruiterJsonBody, RecruiterJsonBodyError } from "@/modules/placeme
 import {
   initiateOwnRecruiterJdUpload, verifyOwnRecruiterJdObject, readOwnRecruiterJd,
 } from "@/modules/placements/recruiter-jd-upload-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 const noStore = { "Cache-Control": "private, no-store" };
@@ -27,7 +28,7 @@ function failed(error: unknown) {
   return apiErrorResponse(error);
 }
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403, headers: noStore });
   try {
@@ -48,8 +49,9 @@ export async function POST(request: Request) {
       { headers: noStore });
   } catch (error) { return failed(error); }
 }
+export const POST = secured(handlePOST);
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const url = new URL(request.url);
     const params = z.strictObject({
@@ -62,3 +64,4 @@ export async function GET(request: Request) {
     return NextResponse.json(result, { headers: noStore });
   } catch (error) { return failed(error); }
 }
+export const GET = secured(handleGET);

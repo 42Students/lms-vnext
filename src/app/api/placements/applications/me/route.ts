@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { listOwnPlacementApplications } from "@/modules/placements/application-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 /** Old /api/v1/jobs controller was split by resource and actor. Numeric
@@ -23,7 +24,7 @@ export const LEGACY_LEARNER_JOBS_ROUTE_CROSSWALK = {
  offerResponse: "/api/placements/offers/{offerId}/actions",
 } as const;
 
-export async function GET() {
+async function handleGET() {
   try {
     const context = await getCurrentRequestContext();
     const applications =
@@ -33,3 +34,4 @@ export async function GET() {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);

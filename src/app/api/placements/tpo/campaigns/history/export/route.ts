@@ -4,8 +4,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {exportTpoMessagingHistory} from "@/modules/messaging/receipt-history-service";
 import {messagingHistoryCsv} from "@/modules/messaging/receipt-history-export-model";
 import {z} from "zod";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  const context=await getCurrentRequestContext();
  const raw=new URL(request.url).searchParams;
  // Do not silently accept duplicated filters or unrecognized selectors on
@@ -36,3 +37,4 @@ export async function GET(request:Request){
   "X-Export-Scope":"All filtered batches",
  }});
 }
+export const GET = secured(handleGET);

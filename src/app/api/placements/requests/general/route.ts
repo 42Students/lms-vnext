@@ -7,8 +7,9 @@ import {and,eq} from "drizzle-orm";
 import {learnerProgramEnrollments} from "@/db/schema";
 import {TpoGeneralRequestError,createOwnTpoGeneralRequest,listOwnTpoGeneralRequestsPage} from "@/modules/placements/tpo-general-request-service";
 import {tpoOwnGeneralRequestQuerySchema} from "@/modules/placements/tpo-general-request-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";export const dynamic="force-dynamic";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   if([...params.keys()].some(key=>!["page","pageSize"].includes(key))||
@@ -29,7 +30,8 @@ export async function GET(request:Request){
   return apiErrorResponse(error);
  }
 }
-export async function POST(request:Request){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const result=await createOwnTpoGeneralRequest(await getCurrentRequestContext(),await request.json());
@@ -40,3 +42,4 @@ export async function POST(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

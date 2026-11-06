@@ -2,6 +2,7 @@ import {NextResponse} from "next/server";
 import {ingestVerifiedInboundMail,VerifiedInboundMailError}
  from "@/modules/inbound-mail/verified-intake-service";
 import {readBoundedRecruiterInboundBody} from "@/modules/placements/recruiter-mail-body-model";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -12,7 +13,7 @@ const noStore={"Cache-Control":"no-store"} as const;
  * A browser Origin and URL query controls are never part of the protocol.
  * Reject obviously unsigned input before allocating/parsing request bytes.
  */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(request.headers.has("origin"))
   return NextResponse.json({error:"FORBIDDEN"},{status:403,headers:noStore});
  const signature=request.headers.get("x-inbound-mail-signature")??"";
@@ -39,3 +40,4 @@ export async function POST(request:Request){
   return NextResponse.json({error:"SERVICE_UNAVAILABLE"},{status:503,headers:noStore});
  }
 }
+export const POST = secured(handlePOST);

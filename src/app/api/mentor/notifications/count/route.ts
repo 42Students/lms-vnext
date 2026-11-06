@@ -13,12 +13,13 @@ import {listOwnMentorSourceReceipts} from
   "@/modules/projects/mentor-notification-source-receipts-service";
 import {mentorAttentionReceiptKey,mentorAnnouncementReceiptKey}
   from "@/modules/projects/mentor-attention-read-model";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 /** Bell count shares exactly the signed-in user's persisted read receipts.
  * A full-college notice count is not invented if the notice feed is paged.
  */
-export async function GET(){
+async function handleGET(){
  try{
   const context=await getCurrentRequestContext();
   const inbox=await getMentorPersonalInbox(context,{view:"all"});
@@ -41,3 +42,4 @@ export async function GET(){
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

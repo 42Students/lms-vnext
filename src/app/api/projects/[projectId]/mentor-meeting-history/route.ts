@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getMentorMeetingChangeHistory } from "@/modules/projects/mentor-meeting-history-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type Route = { params: Promise<{ projectId: string }> };
 
 /** Typed, paginated meeting history for the currently assigned mentor only. */
-export async function GET(request: Request, { params }: Route) {
+async function handleGET(request: Request, { params }: Route) {
   try {
     const { projectId } = await params;
     const url = new URL(request.url);
@@ -19,3 +20,4 @@ export async function GET(request: Request, { params }: Route) {
     return NextResponse.json(data, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) { return apiErrorResponse(error); }
 }
+export const GET = secured(handleGET);

@@ -5,6 +5,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {readTrackerLiveLogs,safeTrackerCloudLogDetail,trackerCloudLogQuerySchema} from "@/modules/bug-tracker/tracker-cloud-logs";
 import {alertEnvironment} from "@/modules/log-alerts/signature";
 import {isSuperAdmin} from "@/modules/identity/context";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const filters=["windowMinutes","pageToken","query","minimumSeverity","anchorAt","anchor","environment","size","level","search","window"] as const;
@@ -85,7 +86,7 @@ async function execute(context:Awaited<ReturnType<typeof getCurrentRequestContex
     return logFailureResponse(cause);
   }
 }
-export async function GET(request:Request){
+async function handleGET(request:Request){
   const context=await getCurrentRequestContext();
   if(!authorized(context))return NextResponse.json({message:"Not authorized."},{status:403});
   const url=new URL(request.url);
@@ -93,7 +94,8 @@ export async function GET(request:Request){
     return NextResponse.json({message:"Check the log filters."},{status:400});
   return execute(context,Object.fromEntries(url.searchParams));
 }
-export async function POST(request:Request){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request){
   if(!isSameOriginRequest(request))return NextResponse.json({message:"Not authorized."},{status:403});
   const context=await getCurrentRequestContext();
   if(!authorized(context))return NextResponse.json({message:"Not authorized."},{status:403});
@@ -152,3 +154,4 @@ export async function POST(request:Request){
     return logFailureResponse(cause);
   }
 }
+export const POST = secured(handlePOST);

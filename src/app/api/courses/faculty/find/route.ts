@@ -2,11 +2,12 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {searchFacultyWorkspace} from "@/modules/courses/faculty-find-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 /** Faculty prototype search results are authorized on every request and
  * cannot be cached across colleges, roles or users. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   const terms=params.getAll("q");
@@ -19,3 +20,4 @@ export async function GET(request:Request){
   return NextResponse.json({results},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

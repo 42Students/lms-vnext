@@ -7,6 +7,7 @@ import {
 import { StorageFileError } from "@/modules/storage/file-errors";
 import { authorizeOrNotFound } from "@/modules/storage/file-access";
 import { z } from "zod";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -18,7 +19,7 @@ type RouteContext = {
  * signed URL. Never expose storage keys or make URL grants cacheable.
  * Learners require a scoped delivery; faculty/admin use the existing
  * material service's persisted course and delivery authorization. */
-export async function GET(request: Request, { params }: RouteContext) {
+async function handleGET(request: Request, { params }: RouteContext) {
   try {
     const rawParams = await params;
     const parsedIds = z.object({
@@ -94,3 +95,4 @@ export async function GET(request: Request, { params }: RouteContext) {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);

@@ -10,6 +10,7 @@ import {
   fetchPagedDepartments,
 } from "@/modules/departments/service";
 import { apiErrorResponse } from "@/lib/api-error";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 /** Legacy transport map: /api/v1/department/fetch?collegeId -> GET,
@@ -19,7 +20,7 @@ export const runtime = "nodejs";
  * request/session/role checks protect cross-college membership data.
  */
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
     const query = new URL(request.url).searchParams;
@@ -65,8 +66,9 @@ export async function GET(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json(
       { error: "INVALID_ORIGIN" },
@@ -103,3 +105,4 @@ export async function POST(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST);

@@ -6,6 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {createRequestId} from "@/lib/request-id";
 import {readTpoCompanyTeamBody,TpoCompanyTeamBodyError} from "@/modules/placements/tpo-company-team-request-body";
 import {readTpoCompanyTeam,mutateTpoCompanyTeam,TpoCompanyTeamError} from "@/modules/placements/tpo-company-team-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Params={params:Promise<{companyId:string}>};
 function safeError(error:unknown){
@@ -38,14 +39,15 @@ function safeError(error:unknown){
  }
  return apiErrorResponse(error);
 }
-export async function GET(_request:Request,{params}:Params){
+async function handleGET(_request:Request,{params}:Params){
  try{
   const {companyId}=await params;
   const result=await readTpoCompanyTeam(await getCurrentRequestContext(),companyId);
   return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
  }catch(error){return safeError(error);}
 }
-export async function POST(request:Request,{params}:Params){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request,{params}:Params){
  if(!isSameOriginRequest(request)){
   const requestId=createRequestId();
   return NextResponse.json({error:"INVALID_ORIGIN",
@@ -58,3 +60,4 @@ export async function POST(request:Request,{params}:Params){
   return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
  }catch(error){return safeError(error);}
 }
+export const POST = secured(handlePOST);

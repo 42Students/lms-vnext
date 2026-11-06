@@ -8,11 +8,12 @@ import {
 import {
  listTpoAuditSavedViews,changeTpoAuditSavedView,TpoAuditSavedViewError,
 } from "@/modules/placements/tpo-audit-saved-view-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"};
 
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   if(new URL(request.url).searchParams.size!==0)
    return NextResponse.json({error:"INVALID_REQUEST"},{status:400,headers:noStore});
@@ -21,7 +22,8 @@ export async function GET(request:Request){
   });
  }catch(error){return apiErrorResponse(error);}
 }
-export async function POST(request:Request){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  try{
@@ -40,3 +42,4 @@ export async function POST(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST);

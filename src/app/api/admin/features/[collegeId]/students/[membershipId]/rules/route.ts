@@ -6,8 +6,9 @@ import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {writeSuperAdminStudentRule} from "@/modules/module-access/admin-student-rule-write";
 import {getSuperAdminLearnerAccessTrace} from "@/modules/module-access/admin-trace-service";
 import {studentRuleSnapshot} from "@/modules/module-access/admin-student-rule-snapshot";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function PUT(request:Request,{params}:{params:Promise<{collegeId:string;membershipId:string}>}){
+async function handlePUT(request:Request,{params}:{params:Promise<{collegeId:string;membershipId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {collegeId,membershipId}=await params;
@@ -18,8 +19,9 @@ export async function PUT(request:Request,{params}:{params:Promise<{collegeId:st
   return rule?NextResponse.json({rule}):NextResponse.json({error:"NOT_FOUND"},{status:404});
  }catch(error){return apiErrorResponse(error);}
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });
 
-export async function GET(_request:Request,{params}:{params:Promise<{collegeId:string;membershipId:string}>}){
+async function handleGET(_request:Request,{params}:{params:Promise<{collegeId:string;membershipId:string}>}){
  try{
   const {collegeId,membershipId}=await params;
   const result=await getSuperAdminLearnerAccessTrace(await getCurrentRequestContext(),collegeId,{membershipId});
@@ -27,3 +29,4 @@ export async function GET(_request:Request,{params}:{params:Promise<{collegeId:s
   return NextResponse.json({rules:studentRuleSnapshot(result.selected.modules)},{headers:{"cache-control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

@@ -7,11 +7,12 @@ import {
   updateAnnouncement,
 } from "@/modules/announcements/service";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ announcementId: string }> };
 
-export async function PATCH(request: Request, { params }: RouteContext) {
+async function handlePATCH(request: Request, { params }: RouteContext) {
   if (!announcementsRuntimeEnabled()) {
     return NextResponse.json({ error: "DB10_ANNOUNCEMENTS_MIGRATIONS_PENDING" }, { status: 503 });
   }
@@ -35,8 +36,9 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     return announcementApiError(error);
   }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });
 
-export async function DELETE(request: Request, { params }: RouteContext) {
+async function handleDELETE(request: Request, { params }: RouteContext) {
   if (!announcementsRuntimeEnabled()) {
     return NextResponse.json({ error: "DB10_ANNOUNCEMENTS_MIGRATIONS_PENDING" }, { status: 503 });
   }
@@ -58,3 +60,4 @@ export async function DELETE(request: Request, { params }: RouteContext) {
     return announcementApiError(error);
   }
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });

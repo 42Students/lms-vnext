@@ -28,7 +28,7 @@ describe("TPO bounded mutation request contracts",()=>{
   ];
   for(const route of routes){
    const code=src(route);
-   const post=code.slice(code.indexOf("export async function POST("));
+   const post=code.slice(Math.max(code.indexOf("export async function POST("),code.indexOf("async function handlePOST(")));
    const origin=post.indexOf("isSameOriginRequest(");
    const decode=post.indexOf("readTpoBulkRequestBody(");
    expect(origin,route).toBeGreaterThanOrEqual(0);
@@ -49,7 +49,7 @@ describe("TPO bounded mutation request contracts",()=>{
   ];
   for(const route of routes){
     const source=src(route);
-    const post=source.slice(source.indexOf("export async function POST("));
+    const post=source.slice(Math.max(source.indexOf("export async function POST("),source.indexOf("async function handlePOST(")));
     const origin=post.indexOf("isSameOriginRequest(request)");
     const parse=post.indexOf("readTpoBulkRequestBody(request)");
     expect(origin,route).toBeGreaterThanOrEqual(0);
@@ -67,7 +67,7 @@ describe("TPO bounded mutation request contracts",()=>{
  });
  it("PLACEMENTS-JOINING-BODY-43 caps all joining corrections before parsing untrusted request data",()=>{
   const route=src("src/app/api/placements/offers/[offerId]/joining/route.ts");
-  const put=route.slice(route.indexOf("export async function PUT("));
+  const put=route.slice(Math.max(route.indexOf("export async function PUT("),route.indexOf("async function handlePUT(")));
   const origin=put.indexOf("isSameOriginRequest(request)");
   const decode=put.indexOf("readTpoBulkRequestBody(request)");
   expect(origin).toBeGreaterThanOrEqual(0);
@@ -80,9 +80,9 @@ describe("TPO bounded mutation request contracts",()=>{
  });
  it("PLACEMENTS-SELECTION-BODY-41 maps parser failure on POST, not in the read-only GET route",()=>{
   const source=src("src/app/api/placements/tpo/jobs/[jobId]/selections/route.ts");
-  const get=source.slice(source.indexOf("export async function GET("),
-    source.indexOf("export async function POST("));
-  const post=source.slice(source.indexOf("export async function POST("));
+  const get=source.slice(Math.max(source.indexOf("export async function GET("),source.indexOf("async function handleGET(")),
+    Math.max(source.indexOf("export async function POST("),source.indexOf("async function handlePOST(")));
+  const post=source.slice(Math.max(source.indexOf("export async function POST("),source.indexOf("async function handlePOST(")));
   expect(get).not.toContain("TpoBulkBodyError");
   expect(get).not.toContain("readTpoBulkRequestBody(");
   expect(post).toContain("const body=await readTpoBulkRequestBody(request)");

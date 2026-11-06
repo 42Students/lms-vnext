@@ -4,9 +4,10 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { tpoOfferExpiryCsv } from "@/modules/placements/tpo-offer-expiry-model";
 import { getTpoOfferExpiryWatchlist } from "@/modules/placements/tpo-offer-expiry-service";
 import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-url-guard";
+import { secured } from "@/security/secure-handler";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   if (process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED") {
     return NextResponse.json({ error: "DB09_MIGRATIONS_PENDING" }, {
       status: 503,
@@ -40,3 +41,4 @@ export async function GET(request: Request) {
     return response;
   }
 }
+export const GET = secured(handleGET);

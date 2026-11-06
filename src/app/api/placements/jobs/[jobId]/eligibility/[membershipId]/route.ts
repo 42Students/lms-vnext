@@ -14,6 +14,7 @@ import {
   revokeEligibilityOverride,
   setEligibilityOverride,
 } from "@/modules/placements/eligibility-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -24,7 +25,7 @@ type RouteContext = {
   }>;
 };
 
-export async function GET(
+async function handleGET(
   _request: Request,
   { params }: RouteContext,
 ) {
@@ -55,6 +56,7 @@ export async function GET(
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
 /** Both legacy POST and modern PUT use the same tenant-scoped membership
  * identity and optimistic override receipt. Never accept a raw legacy numeric
@@ -122,18 +124,20 @@ async function updateOverride(request:Request,{params}:RouteContext){
    expectedOverrideId:override?.id},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function PUT(request:Request,route:RouteContext){
+async function handlePUT(request:Request,route:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return updateOverride(request,route);
 }
-export async function POST(request:Request,route:RouteContext){
+export const PUT = secured(handlePUT, { csrf: "enforce" });
+async function handlePOST(request:Request,route:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return updateOverride(request,route);
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });
 
-export async function DELETE(
+async function handleDELETE(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -167,3 +171,4 @@ export async function DELETE(
     return apiErrorResponse(error);
   }
 }
+export const DELETE = secured(handleDELETE);

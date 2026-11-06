@@ -3,11 +3,12 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {getLearnerPlacementRequestWorkspace} from "@/modules/placements/request-service";
 import {apiErrorResponse} from "@/lib/api-error";
 import {partitionLearnerPlacementSchedule} from "@/modules/placements/learner-placement-schedule-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Legacy learner /schedule adapter. Caller identity is session-owned; never
  * accept learnerId, collegeId, or applicationId as an authorization bypass. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const url=new URL(request.url);
   if([...url.searchParams.keys()].some(key=>key!=="view"))
@@ -46,3 +47,4 @@ export async function GET(request:Request){
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

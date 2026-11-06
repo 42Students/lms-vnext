@@ -5,8 +5,9 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {ProjectsServiceError} from "@/modules/projects/errors";
 import {reviewProjectSubmissionInputSchema} from "@/modules/projects/validation";
 import {listProjectSubmissions,reviewProjectSubmission} from "@/modules/projects/submission-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{params:Promise<{projectId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{projectId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {projectId}=await params;
@@ -30,3 +31,4 @@ export async function POST(request:Request,{params}:{params:Promise<{projectId:s
   return NextResponse.json({message:"Project delivery reviewed",review:reviewed});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

@@ -4,8 +4,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {setTpoTeamEveryoneMuted} from "@/modules/placements/tpo-team-everyone-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const form=await request.formData().catch(()=>null);
  try{
@@ -21,3 +22,4 @@ export async function POST(request:Request){
   throw error;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

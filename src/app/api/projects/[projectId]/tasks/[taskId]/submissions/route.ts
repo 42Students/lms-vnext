@@ -9,6 +9,7 @@ import {
   listProjectTaskSubmissions,
   submitProjectTask,
 } from "@/modules/projects/task-submission-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -19,7 +20,7 @@ type RouteContext = {
   }>;
 };
 
-export async function GET(
+async function handleGET(
   _request: Request,
   { params }: RouteContext,
 ) {
@@ -38,8 +39,9 @@ export async function GET(
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function POST(
+async function handlePOST(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -73,3 +75,4 @@ export async function POST(
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST);

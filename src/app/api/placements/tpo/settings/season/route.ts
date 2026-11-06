@@ -6,13 +6,14 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listPlacementSeasons} from "@/modules/placements/season-service";
 import {changeTpoSeason,TpoSettingsStaleError} from "@/modules/placements/tpo-season-write-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 
 /** Legacy /lens/seasons parity: the season selector must be populated by a
  * scoped read and must not silently create or switch a season. "Current" maps
  * to the only ACTIVE season in this college, never to the most recent ID. */
-export async function GET(){
+async function handleGET(){
   try{
     const context=await getCurrentRequestContext();
     const collegeId=context.membership?.collegeId;
@@ -35,6 +36,7 @@ export async function GET(){
     },{headers:{"Cache-Control":"private, no-store"}});
   }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);
 
 async function writeSeason(request:Request,action:"POST"|"PUT"){
   if(!isSameOriginRequest(request))
@@ -57,12 +59,14 @@ async function writeSeason(request:Request,action:"POST"|"PUT"){
   }
 }
 /** vNext create/edit form, retained for existing callers. */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return writeSeason(request,"POST");
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });
 /** Legacy edit verb; body must include explicit seasonId and revision token. */
-export async function PUT(request:Request){
+async function handlePUT(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return writeSeason(request,"PUT");
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });

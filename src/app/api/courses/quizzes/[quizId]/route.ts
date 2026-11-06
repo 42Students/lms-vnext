@@ -12,6 +12,7 @@ import {getDb} from "@/db/client";
 import {quizAttempts} from "@/db/schema";
 import {eq,sql} from "drizzle-orm";
 import {can} from "@/modules/permissions/policy";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -19,7 +20,7 @@ type RouteContext = {
   params: Promise<{ quizId: string }>;
 };
 
-export async function GET(
+async function handleGET(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -69,8 +70,9 @@ export async function GET(
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function PATCH(
+async function handlePATCH(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -99,15 +101,17 @@ export async function PATCH(
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH);
 
 /** Old clients used PUT for the same validated metadata update. */
-export async function PUT(request:Request,context:RouteContext){
+async function handlePUT(request:Request,context:RouteContext){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return PATCH(request,context);
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });
 
 /** DELETE archives and retains every attempt; it never destroys learner data. */
-export async function DELETE(request:Request,{params}:RouteContext){
+async function handleDELETE(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -117,3 +121,4 @@ export async function DELETE(request:Request,{params}:RouteContext){
   return NextResponse.json({quiz});
  }catch(error){return apiErrorResponse(error);}
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });

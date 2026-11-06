@@ -5,8 +5,9 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {readMentorProjectCommandBody,MentorProjectCommandBodyError,mentorProjectBodyFailureMessage}
  from "@/modules/projects/mentor-command-body";
 import {writeMentorProjectRelease} from "@/modules/projects/mentor-release-write-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{params:Promise<{projectId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{projectId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {projectId}=await params;
@@ -22,3 +23,4 @@ export async function POST(request:Request,{params}:{params:Promise<{projectId:s
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

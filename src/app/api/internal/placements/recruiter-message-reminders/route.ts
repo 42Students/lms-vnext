@@ -5,6 +5,7 @@ import {TPO_SCHEDULED_JOBS} from "@/modules/operations/tpo-scheduled-job-registr
 import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
 import {dispatchRecruiterUnreadMessageDigests} from "@/modules/placements/recruiter-message-email-dispatch-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 // The legacy job waited 90 seconds after process startup. Our external
 // dev CronJob invokes this authenticated worker on five-minute ticks.
@@ -21,7 +22,7 @@ function allowed(request:Request){
  const expected=createHash("sha256").update(secret).digest();
  return timingSafeEqual(actual,expected);
 }
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request)||!allowed(request))
   return NextResponse.json({error:"FORBIDDEN"},{status:403});
  if(process.uptime()*1_000<STARTUP_GRACE_MS)
@@ -40,3 +41,4 @@ export async function POST(request:Request){
   return NextResponse.json({error:"SERVICE_UNAVAILABLE"},{status:503});
  }
 }
+export const POST = secured(handlePOST);

@@ -7,8 +7,9 @@ import {mentorCalendarFiltersSchema,filterMentorCalendar}
  from "@/modules/projects/mentor-calendar-filter-model";
 import {mentorCalendarCsv} from "@/modules/projects/mentor-calendar-export-model";
 import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const url=new URL(request.url);
   const filters=singleValueMentorExportFilters(url.searchParams,[
@@ -30,3 +31,4 @@ export async function GET(request:Request){
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

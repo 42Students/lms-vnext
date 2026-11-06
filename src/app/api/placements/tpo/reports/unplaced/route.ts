@@ -11,9 +11,10 @@ import {getTpoUnplacedLastApplications} from "@/modules/placements/tpo-unplaced-
 import {getTpoStudentsIntelligence} from "@/modules/placements/tpo-students-service";
 import {unplacedFilteredExportQuerySchema,tpoUnplacedFilteredCsv}
  from "@/modules/placements/tpo-unplaced-filtered-export-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const context=await getCurrentRequestContext();
   if(!context.membership||!hasMembershipRole(context,"TPO"))return NextResponse.json({error:"UNAUTHORIZED"},{status:403});
@@ -64,3 +65,4 @@ export async function GET(request:Request){
  }catch(error){const response=apiErrorResponse(error);
   response.headers.set("Cache-Control","private, no-store");return response;}
 }
+export const GET = secured(handleGET);

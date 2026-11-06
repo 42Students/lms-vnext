@@ -16,6 +16,7 @@ import {issueTpoRecruiterInvite} from "@/modules/placements/tpo-recruiter-invite
 import {deliverTpoRecruiterInviteEmail} from "@/modules/placements/tpo-recruiter-invite-email-delivery";
 import {outboundQueueRuntimeEnabled} from "@/modules/operations/outbound-delivery-queue";
 import {PlacementsServiceError} from "@/modules/placements/errors";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -57,7 +58,7 @@ async function scoped(requestCtx:Awaited<ReturnType<typeof getCurrentRequestCont
  if(!row)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  return {job:row,collegeId};
 }
-export async function GET(_request:Request,{params}:Ctx) {
+async function handleGET(_request:Request,{params}:Ctx) {
  try{
   const context=await getCurrentRequestContext();
   const {job}=await scoped(context,(await params).jobId);
@@ -69,7 +70,8 @@ export async function GET(_request:Request,{params}:Ctx) {
    publicLinkAvailable:false},{headers});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function POST(request:Request,{params}:Ctx) {
+export const GET = secured(handleGET);
+async function handlePOST(request:Request,{params}:Ctx) {
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers});
  if(!await tpoCrmTablesReady())
@@ -149,3 +151,4 @@ export async function POST(request:Request,{params}:Ctx) {
   },{headers});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST);

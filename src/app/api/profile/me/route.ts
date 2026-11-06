@@ -10,12 +10,13 @@ import {
 } from "@/modules/people/runtime";
 
 import {updateOwnLearnerProfileDocument} from "@/modules/people/learner-profile-document-edit-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 const MAX_PROFILE_DOCUMENT_BYTES = 2 * 1024 * 1024;
 const privateHeaders = { "Cache-Control": "private, no-store" };
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const context =
       await getCurrentRequestContext();
@@ -50,8 +51,9 @@ export async function GET(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function PUT(request: Request) {
+async function handlePUT(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json(
       { error: "INVALID_ORIGIN" },
@@ -74,6 +76,7 @@ export async function PUT(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const PUT = secured(handlePUT);
 
 /** Stable route replacement directory for legacy LearnerProfileController consumers. */
 export const LEARNER_PROFILE_ROUTE_REPLACEMENTS = {
@@ -100,7 +103,7 @@ export const LEARNER_PROFILE_ROUTE_REPLACEMENTS = {
 } as const;
 
 /** Read-only discovery. Existing GET/PUT and section PATCH contracts are unchanged. */
-export async function OPTIONS() {
+async function handleOPTIONS() {
   return NextResponse.json({
     version: 1, read: "GET /api/profile/me",
     sections: LEARNER_PROFILE_ROUTE_REPLACEMENTS,
@@ -108,3 +111,4 @@ export async function OPTIONS() {
     administrativeProfile: "GET /api/college/students/{membershipId}/profile (requires authorized college context)",
   }, { headers: { Allow: "GET, PUT, OPTIONS", "Cache-Control": "no-store" } });
 }
+export const OPTIONS = secured(handleOPTIONS);

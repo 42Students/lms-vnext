@@ -6,12 +6,12 @@ describe("TPO-inbox-team-02 message actions",()=>{
   const route=readFileSync(path+"/[threadId]/messages/route.ts","utf8");
   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("sendThreadMessage(context,id.data,input.data.body)");
-  expect(route).not.toContain("export async function GET");
+  expect(route).not.toMatch(/export (?:async function|const) GET\b/);
  });
  it("only acknowledges on confirmed POST",()=>{
   const route=readFileSync(path+"/[threadId]/read/route.ts","utf8");
   expect(route).toContain("confirmed:z.literal(true)");
-  expect(route).toContain("export async function POST");
-  expect(route).not.toContain("export async function GET");
+  expect(route).toMatch(/export (?:async function|const) POST\b/);
+  expect(route).not.toMatch(/export (?:async function|const) GET\b/);
  });
 });

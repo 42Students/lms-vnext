@@ -6,10 +6,11 @@ import {mentorReviewOverviewSchema,mentorDeliveryReviewCsv}
  from "@/modules/projects/mentor-review-overview-model";
 import {getMentorDeliveryReviewOverview}
  from "@/modules/projects/mentor-review-overview-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
 /** Read-only exact-project Mentor audit summary. No raw feedback, identity or URLs. */
-export async function GET(request:Request,{params}:RouteContext){
+async function handleGET(request:Request,{params}:RouteContext){
  try{
   const {projectId}=await params,url=new URL(request.url);
   const filters=singleValueMentorExportFilters(url.searchParams,
@@ -33,3 +34,4 @@ export async function GET(request:Request,{params}:RouteContext){
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

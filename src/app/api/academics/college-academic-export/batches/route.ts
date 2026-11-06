@@ -2,8 +2,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {exportCollegeAcademicDirectory} from "@/modules/academics/college-academic-export-service";
 import {exportParams} from "@/modules/academics/college-academic-export-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const query=exportParams(new URL(request.url).searchParams);
   const result=await exportCollegeAcademicDirectory(await getCurrentRequestContext(),"BATCHES",query);
@@ -17,3 +18,4 @@ export async function GET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

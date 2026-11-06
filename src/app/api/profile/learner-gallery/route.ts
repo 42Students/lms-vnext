@@ -5,6 +5,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {
   LearnerGalleryError, listLearnerGallery, appendLearnerGalleryImage,
 } from "@/modules/profile-verification/learner-image-gallery-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 function failure(error: unknown) {
@@ -16,14 +17,15 @@ function failure(error: unknown) {
     });
   return apiErrorResponse(error);
 }
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const membershipId = new URL(request.url).searchParams.get("membershipId") ?? undefined;
     const result = await listLearnerGallery(await getCurrentRequestContext(), membershipId);
     return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) { return failure(error); }
 }
-export async function POST(request: Request) {
+export const GET = secured(handleGET);
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   try {
@@ -34,3 +36,4 @@ export async function POST(request: Request) {
     return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) { return failure(error); }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

@@ -5,13 +5,14 @@ import {
  legacyClientSettingsEnvelope,
  readLearnerPlaybackSettings,
 } from "@/modules/courses/learner-playback-settings";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 
 /** Legacy authenticated client-settings endpoint. Settings are global safe
  * playback/poll intervals, never an unauthenticated or tenant-sensitive dump.
  * The service retains its resilient defaults during a configuration outage. */
-export async function GET(){
+async function handleGET(){
  try{
   const context=await getCurrentRequestContext();
   const settings=await readLearnerPlaybackSettings(context.membership?.collegeId);
@@ -22,3 +23,4 @@ export async function GET(){
   return apiErrorResponse(error);
  }
 }
+export const GET = secured(handleGET);

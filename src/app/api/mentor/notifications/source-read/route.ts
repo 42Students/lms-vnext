@@ -5,11 +5,12 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {markOwnMentorSourceRead} from
   "@/modules/projects/mentor-notification-source-receipts-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const inputSchema=z.strictObject({key:z.string().min(8).max(320)});
 
-export async function POST(request:Request){
+async function handlePOST(request:Request){
   if(!isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   try{
@@ -27,3 +28,4 @@ export async function POST(request:Request){
     return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
   }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

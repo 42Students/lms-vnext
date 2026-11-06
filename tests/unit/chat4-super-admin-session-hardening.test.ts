@@ -55,7 +55,7 @@ describe("Super Admin tenant sessions adversarial management",()=>{
    "listCollegeAdminSessionTargets","listCollegeAdminSessions","listCollegeAdminHistory",
   ];
   for(const [index,name] of actions.entries()){
-   const start=s.indexOf("export async function "+name+"(");
+   const start=Math.max(s.indexOf("export async function "+name+"("),s.indexOf("async function handle"+name+"("));
    const next=s.indexOf("export async function ",start+20);
    const body=s.slice(start,next>=0?next:undefined);
    expect(start).toBeGreaterThan(-1);

@@ -10,6 +10,7 @@ import {
   saveCollegeBranding,
 } from "@/modules/colleges/branding-service";
 import { z } from "zod";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -27,7 +28,7 @@ function notFound() {
   }, { status: 404 });
 }
 
-export async function GET(_request: Request, { params }: RouteContext) {
+async function handleGET(_request: Request, { params }: RouteContext) {
   try {
     const context = await getCurrentRequestContext();
     const collegeId = collegeIdSchema.parse((await params).collegeId);
@@ -39,8 +40,9 @@ export async function GET(_request: Request, { params }: RouteContext) {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function PUT(request: Request, { params }: RouteContext) {
+async function handlePUT(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -66,3 +68,4 @@ export async function PUT(request: Request, { params }: RouteContext) {
     return apiErrorResponse(error);
   }
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });

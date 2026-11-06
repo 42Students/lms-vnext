@@ -6,13 +6,14 @@ import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import {
   CollegeSectionError, updateCollegeSection,
 } from "@/modules/academics/college-section-mutation-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
 /** Legacy PUT /api/v1/class/update/{id} with an OK envelope.
  * Numeric legacy IDs cannot identify a new UUID section; the caller must
  * map its old identity to a scoped persisted section before mutation. */
-export async function PUT(
+async function handlePUT(
   request: Request,
   { params }: { params: Promise<{ sectionId: string }> },
 ) {
@@ -41,3 +42,4 @@ export async function PUT(
     return apiErrorResponse(error);
   }
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });

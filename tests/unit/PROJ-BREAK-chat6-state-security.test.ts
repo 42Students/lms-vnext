@@ -131,7 +131,7 @@ describe("IIT Dharwad Projects breaker — state, access, integrity, deadlines a
   expect(denied).toBe(4);
   for(const name of ["createProjectSubmissionDraft","updateProjectSubmissionDraft",
     "submitProjectSubmission","reviewProjectSubmission"]){
-    const start=code.indexOf("export async function "+name+"(");
+    const start=Math.max(code.indexOf("export async function "+name+"("),code.indexOf("async function handle"+name+"("));
     expect(start,name).toBeGreaterThan(-1);
     const next=code.indexOf("export async function ",start+1);
     const body=code.slice(start,next===-1?undefined:next);
@@ -162,7 +162,7 @@ describe("IIT Dharwad Projects breaker — state, access, integrity, deadlines a
  it("PROJ-BREAK-file-05 resource edit and deletion recheck archived status under project row lock",()=>{
   const code=src("src/modules/projects/project-resource-file-service.ts");
   for(const name of ["updateProjectFileDetails","removeProjectFile"]){
-    const start=code.indexOf("export async function "+name+"(");
+    const start=Math.max(code.indexOf("export async function "+name+"("),code.indexOf("async function handle"+name+"("));
     const end=code.indexOf("export async function ",start+1);
     const body=code.slice(start,end<0?undefined:end);
     expect(body,name).toContain("requireOpenProject(scope.project.status)");

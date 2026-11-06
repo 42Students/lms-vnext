@@ -1,8 +1,9 @@
 import {NextResponse} from "next/server";
 import {getPublicJoinPreview} from "@/modules/placements/public-join/preview-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(_request:Request,{params}:{params:Promise<{token:string}>}){
+async function handleGET(_request:Request,{params}:{params:Promise<{token:string}>}){
  try{
   const {token}=await params;
   const preview=await getPublicJoinPreview(token,"COMPANY");
@@ -16,3 +17,4 @@ export async function GET(_request:Request,{params}:{params:Promise<{token:strin
   return NextResponse.json({success:false,error:"SERVICE_UNAVAILABLE"},{status:503,headers:{"Cache-Control":"no-store"}});
  }
 }
+export const GET = secured(handleGET);

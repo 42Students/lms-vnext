@@ -8,6 +8,7 @@ import {
   applyToPlacementJob,
   listPlacementJobApplications,
 } from "@/modules/placements/application-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -21,7 +22,7 @@ type RouteContext = {
   params: Promise<{ jobId: string }>;
 };
 
-export async function GET(
+async function handleGET(
   _request: Request,
   { params }: RouteContext,
 ) {
@@ -38,8 +39,9 @@ export async function GET(
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function POST(
+async function handlePOST(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -117,3 +119,4 @@ export async function POST(
     return response;
   }
 }
+export const POST = secured(handlePOST);

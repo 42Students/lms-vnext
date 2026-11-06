@@ -9,6 +9,7 @@ import {
   updateProjectTaskStatus,
 } from "@/modules/projects/lifecycle-service";
 import {updateProjectTaskStatusInputSchema} from "@/modules/projects/validation";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -19,7 +20,7 @@ type RouteContext = {
   }>;
 };
 
-export async function PATCH(
+async function handlePATCH(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -52,8 +53,9 @@ export async function PATCH(
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH);
 
-export async function DELETE(request:Request,{params}:RouteContext){
+async function handleDELETE(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const context=await getCurrentRequestContext();
@@ -67,3 +69,4 @@ export async function DELETE(request:Request,{params}:RouteContext){
   return apiErrorResponse(error);
  }
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });

@@ -4,6 +4,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readCollegeLogoForm,CollegeLogoRequestError} from "@/modules/colleges/college-logo-request-body";
 import {CollegeLogoError,uploadCollegeLogo,getPublicCollegeLogo,removeCollegeLogo} from "@/modules/colleges/admin-branding-logo-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 // The logo uses an explicitly scoped same-origin multipart endpoint as the
@@ -18,7 +19,7 @@ export const dynamic="force-dynamic";
 // not arbitrary 5 MiB historical R2 uploads; cropping happens in the client.
 // Other uploads route to their own assignment/attachment scoped endpoints.
 type Params={params:Promise<{collegeId:string}>};
-export async function POST(request:Request,{params}:Params){
+async function handlePOST(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const context=await getCurrentRequestContext();
@@ -50,7 +51,8 @@ export async function POST(request:Request,{params}:Params){
   return apiErrorResponse(error);
  }
 }
-export async function GET(_request:Request,{params}:Params){
+export const POST = secured(handlePOST, { csrf: "enforce" });
+async function handleGET(_request:Request,{params}:Params){
  try{
   const file=await getPublicCollegeLogo((await params).collegeId);
   if(!file)return new Response(null,{status:404,headers:{"Cache-Control":"no-store"}});
@@ -61,11 +63,13 @@ export async function GET(_request:Request,{params}:Params){
   }});
  }catch{return new Response(null,{status:503,headers:{"Cache-Control":"no-store"}});}
 }
+export const GET = secured(handleGET);
 
-export async function DELETE(request:Request,{params}:Params){
+async function handleDELETE(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const result=await removeCollegeLogo(await getCurrentRequestContext(),(await params).collegeId);
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });

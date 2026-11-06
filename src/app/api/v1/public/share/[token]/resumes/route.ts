@@ -2,8 +2,9 @@ import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
 import {legacyShareBody,legacyShareCode,legacyShareCookie,legacyShareInvalid,
  legacyShareVerify} from "@/modules/placements/company-share/legacy-public-controller";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{params:Promise<{token:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{token:string}>}){
  if(!isSameOriginRequest(request))return legacyShareInvalid();
  const {token}=await params,access=await legacyShareVerify(token,
   legacyShareCode(await legacyShareBody(request)));
@@ -15,3 +16,4 @@ export async function POST(request:Request,{params}:{params:Promise<{token:strin
   encodeURIComponent(token)+"/export?format=zip",request.url);
  return legacyShareCookie(NextResponse.redirect(url,303),access);
 }
+export const POST = secured(handlePOST);

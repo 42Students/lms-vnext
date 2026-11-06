@@ -5,10 +5,11 @@ import {getMentorReviewQueue} from "@/modules/projects/mentor-portfolio-service"
 import {mentorReviewQuerySchema} from "@/modules/projects/mentor-portfolio-model";
 import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
 import {mentorReviewExportCsv} from "@/modules/projects/mentor-review-export-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 
 /** Capped metadata export from the live persisted Mentor assignment scope only. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const filters=singleValueMentorExportFilters(new URL(request.url).searchParams,[
    "projectId","projectStatus","assignment","search","order","age",
@@ -42,3 +43,4 @@ export async function GET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

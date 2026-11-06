@@ -3,8 +3,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {createTpoJobType,saveTpoJobTypes,TpoConfigError} from "@/modules/placements/tpo-job-type-write-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const result=await createTpoJobType(await getCurrentRequestContext(),await request.json());
@@ -15,8 +16,9 @@ export async function POST(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });
 
-export async function PUT(request:Request){
+async function handlePUT(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const result=await saveTpoJobTypes(await getCurrentRequestContext(),await request.json());
@@ -36,3 +38,4 @@ export async function PUT(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });

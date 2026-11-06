@@ -4,10 +4,11 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { bugTrackerApiError } from "@/lib/bug-tracker-api-error";
 import { updateBugTrackerWorkflowForAdmin } from "@/modules/bug-tracker/admin-service";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function PATCH(
+async function handlePATCH(
   request: Request,
   { params }: { params: Promise<{ publicId: string }> },
 ) {
@@ -46,3 +47,4 @@ export async function PATCH(
     return bugTrackerApiError(error);
   }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

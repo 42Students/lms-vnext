@@ -5,8 +5,9 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readTpoCampaignBody,TpoCommunicationBodyError} from "@/modules/placements/tpo-communication-request-model";
 import {createTpoCampaignDraft,TpoCampaignDraftError} from "@/modules/messaging/tpo-campaign-draft-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const body=await readTpoCampaignBody(request);
@@ -22,3 +23,4 @@ export async function POST(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

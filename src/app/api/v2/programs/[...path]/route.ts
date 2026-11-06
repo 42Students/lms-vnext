@@ -6,6 +6,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { listPrograms } from "@/modules/academics/program-service";
 import { recordScopedProgramSelection } from "@/modules/academics/legacy-program-popularity";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type Context = { params: Promise<{ path: string[] }> };
@@ -15,7 +16,7 @@ const uuid = z.string().uuid();
  * endpoints. The active college is always a verified UUID; legacy numeric
  * departments are never inferred from a different tenant's records.
  * Global-mode access remains behind the vNext acting-college selection. */
-export async function GET(request: Request, { params }: Context) {
+async function handleGET(request: Request, { params }: Context) {
   const { path } = await params;
   const [kind, qualifier] = path;
   const url = new URL(request.url);
@@ -57,11 +58,12 @@ export async function GET(request: Request, { params }: Context) {
     method:"GET",headers:request.headers,signal:request.signal,
   }));
 }
+export const GET = secured(handleGET);
 
 /** The old cache recorded program selections only in JVM memory. A bounded
  * worker-local score preserves the ranking hint; no user-level tracking,
  * no cross-college counter, and no durable enrollment side effect. */
-export async function POST(request: Request, { params }: Context) {
+async function handlePOST(request: Request, { params }: Context) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   }
@@ -84,3 +86,4 @@ export async function POST(request: Request, { params }: Context) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

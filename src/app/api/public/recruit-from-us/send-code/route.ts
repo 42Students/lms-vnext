@@ -3,8 +3,9 @@ import { resolveRequestTenant } from "@/modules/auth/request-tenant";
 import { isSameOriginRequest } from "@/auth/origin";
 import { sendPublicEnquiryCode,PublicEnquiryError } from "@/modules/placements/public-enquiry/send-service";
 import {readPublicRecruitEnquiryBody} from "@/modules/placements/public-enquiry/body-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  let tenant:Awaited<ReturnType<typeof resolveRequestTenant>>;
  try {tenant=await resolveRequestTenant(request.headers.get("host"));}
@@ -29,3 +30,4 @@ export async function POST(request:Request){
    {status:503,headers:{"Cache-Control":"no-store"}});
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

@@ -5,7 +5,7 @@ const main=source("src/modules/projects/template-service.ts");
 const rollback=source("src/modules/projects/template-rollback-service.ts");
 const taxonomy=source("src/modules/activity/taxonomy.ts");
 function body(name:string){
- const start=main.indexOf("export async function "+name+"(");
+ const start=Math.max(main.indexOf("export async function "+name+"("),main.indexOf("async function handle"+name+"("));
  const next=main.indexOf("export async function ",start+20);
  return main.slice(start,next<0?undefined:next);
 }

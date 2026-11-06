@@ -7,6 +7,7 @@ import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "@/modules/auth/bounde
 import {privateAuthJson,privateAuthResponse} from "@/modules/auth/private-response";
 import {ownAccountProofScope} from "@/modules/identity/own-account-proof-authorization";
 import {issueOwnAccountProofWithProvider} from "@/modules/identity/own-account-proof-runtime";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 
@@ -17,7 +18,7 @@ const schema=z.strictObject({
 
 /** Authenticated, own-active-role proof only: neither identifiers nor a role
  * can be submitted by the browser, even if it has other college memberships. */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return privateAuthJson({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -50,3 +51,4 @@ export async function POST(request:Request){
   return privateAuthResponse(apiErrorResponse(error));
  }
 }
+export const POST = secured(handlePOST);

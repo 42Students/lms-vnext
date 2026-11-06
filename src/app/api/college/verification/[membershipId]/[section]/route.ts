@@ -5,8 +5,9 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {VerificationStateError} from "@/modules/profile-verification/domain";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {getCollegeVerificationDetail} from "@/modules/verification/staff-review-detail-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(_request:Request,{params}:{params:Promise<{membershipId:string;section:string}>}){
+async function handleGET(_request:Request,{params}:{params:Promise<{membershipId:string;section:string}>}){
  try{
   const raw=await params;
   const input=z.strictObject({membershipId:z.string().uuid(),section:z.enum(["EDUCATION","IDENTITY"])}).parse(raw);
@@ -18,3 +19,4 @@ export async function GET(_request:Request,{params}:{params:Promise<{membershipI
   return apiErrorResponse(error);
  }
 }
+export const GET = secured(handleGET);

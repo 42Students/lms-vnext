@@ -6,10 +6,11 @@ import {
   CollegeContactProfileError,
   updateOwnCollegeContactProfile,
 } from "@/modules/colleges/college-contact-profile-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function PATCH(request: Request) {
+async function handlePATCH(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -27,3 +28,4 @@ export async function PATCH(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

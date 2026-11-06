@@ -5,10 +5,11 @@ import {getMentorPortfolioActivity} from "@/modules/projects/mentor-portfolio-se
 import {mentorActivityQuerySchema} from "@/modules/projects/mentor-portfolio-model";
 import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
 import {mentorPortfolioActivityCsv} from "@/modules/projects/mentor-portfolio-activity-export-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 
 /** Current, college-scoped Mentor projects only; never exports raw activity metadata. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   const filters=singleValueMentorExportFilters(params,[
@@ -39,3 +40,4 @@ export async function GET(request:Request){
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

@@ -6,10 +6,11 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {getTpoGlobalRequestsInbox} from "@/modules/placements/tpo-global-requests-service";
 import {globalTpoRequestsQuerySchema} from "@/modules/placements/tpo-global-requests-model";
 import {toTpoRequestsPageCsv} from "@/modules/placements/tpo-requests-page-csv-model";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try {
   const context=await getCurrentRequestContext();
   if(!context.membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
@@ -43,3 +44,4 @@ export async function GET(request:Request){
   return response;
  }
 }
+export const GET = secured(handleGET);

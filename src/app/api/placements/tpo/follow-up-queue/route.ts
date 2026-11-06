@@ -3,10 +3,11 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { tpoCrmApiErrorResponse } from "@/lib/tpo-crm-api-error";
 import { createConfirmedTpoFollowup } from "@/modules/placements/tpo-followup-queue-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED") {
     return NextResponse.json({ error: "DB09_MIGRATIONS_PENDING" }, { status: 503 });
   }
@@ -21,3 +22,4 @@ export async function POST(request: Request) {
     return tpoCrmApiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

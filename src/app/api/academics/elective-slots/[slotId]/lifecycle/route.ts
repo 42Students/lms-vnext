@@ -4,8 +4,9 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {changeCollegeElectiveLifecycle,ElectiveLifecycleError}
   from "@/modules/electives/college-elective-lifecycle-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function PATCH(request:Request,{params}:{
+async function handlePATCH(request:Request,{params}:{
   params:Promise<{slotId:string}>;
 }) {
   if(!isSameOriginRequest(request))
@@ -22,3 +23,4 @@ export async function PATCH(request:Request,{params}:{
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

@@ -4,6 +4,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import {parseSuperAdminQuizQuery} from "@/modules/admin-ui/super-admin-quiz-query-model";
 import {listCollegeAssessmentAggregate} from "@/modules/courses/college-assessment-aggregate-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -12,7 +13,7 @@ export const dynamic="force-dynamic";
  * and the selected-college permission are the sole authorization authority.
  * No question answers, learner submissions or private contacts are included.
  */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   const raw:Record<string,string|string[]|undefined>={};
@@ -32,3 +33,4 @@ export async function GET(request:Request){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

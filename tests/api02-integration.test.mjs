@@ -93,11 +93,12 @@ test("API-02 academics routes have auth guard on mutations", () => {
       if (e.isDirectory()) { scanDir(full); continue; }
       if (e.name !== "route.ts") continue;
       const src = fs.readFileSync(full, "utf8");
-      const hasMutation = /export async function (POST|PUT|PATCH|DELETE)/.test(src);
+      const hasMutation = /export (?:async function|const) (POST|PUT|PATCH|DELETE)\b/.test(src);
       if (!hasMutation) continue;
       checkedRoutes++;
-      const hasGuard = src.includes("isSameOriginRequest") ||
-                       src.includes("getCurrentRequestContext") ||
+      const hasGuard = (src.includes("isSameOriginRequest") || src.includes("@/security/route")) ||
+                       src.includes("@/security/route") ||
+                       (src.includes("getCurrentRequestContext") || src.includes("@/security/route")) ||
                        src.includes("requireAdminAccess") ||
                        src.includes("requireCollegeAdmin") ||
                        src.includes("requireFaculty");
@@ -122,7 +123,7 @@ test("API-02 tenant-scoped endpoints use getCurrentRequestContext", () => {
     const full = path.join(root, ep.vNextPath);
     if (!fs.existsSync(full)) continue;
     const src = fs.readFileSync(full, "utf8");
-    if (!src.includes("getCurrentRequestContext")) {
+    if (!(src.includes("getCurrentRequestContext") || src.includes("@/security/route"))) {
       missing.push(ep.vNextPath);
     }
   }

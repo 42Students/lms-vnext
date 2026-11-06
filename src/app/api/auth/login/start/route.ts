@@ -8,6 +8,7 @@ import {
   loginErrorResponse,
 } from "@/modules/auth/http";
 import { startLoginWithRuntime } from "@/modules/auth/runtime";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -37,7 +38,7 @@ const schema = z.strictObject({
   });
 });
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   const startedAt = Date.now();
   const guarded = await guardLoginRequest(
     request,
@@ -78,3 +79,4 @@ export async function POST(request: Request) {
     return loginErrorResponse(error, { route: "login-start", ip: guarded.ip });
   }
 }
+export const POST = secured(handlePOST);

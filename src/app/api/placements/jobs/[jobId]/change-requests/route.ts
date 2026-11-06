@@ -18,6 +18,7 @@ import {readTpoInternalConversation} from "@/modules/placements/tpo-team-convers
 import {postTpoInternalMessage} from "@/modules/placements/tpo-team-internal-reply-service";
 
 import {legacyDriveChangeStatus} from "@/modules/placements/tpo-drive-change-request-model";
+import { secured } from "@/security/secure-handler";
 
 /**
  * Legacy /api/v1/tpo compatibility map (G2-5-023-001/034):
@@ -81,7 +82,7 @@ async function scopedDriveThreads(context:Awaited<ReturnType<typeof getCurrentRe
 
 export const runtime="nodejs";export const dynamic="force-dynamic";
 type Props={params:Promise<{jobId:string}>};
-export async function GET(req:Request,{params}:Props){
+async function handleGET(req:Request,{params}:Props){
  try{const {jobId}=await params;
   const context=await getCurrentRequestContext();
   const url=new URL(req.url);
@@ -106,7 +107,8 @@ export async function GET(req:Request,{params}:Props){
   }))},{headers:{"Cache-Control":"private, no-store"}});
  }catch(e){return apiErrorResponse(e);}
 }
-export async function POST(req:Request,{params}:Props){
+export const GET = secured(handleGET);
+async function handlePOST(req:Request,{params}:Props){
  if(!isSameOriginRequest(req))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{const {jobId}=await params;
   const context=await getCurrentRequestContext();
@@ -138,3 +140,4 @@ export async function POST(req:Request,{params}:Props){
   return apiErrorResponse(e);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

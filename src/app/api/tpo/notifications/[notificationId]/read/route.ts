@@ -4,10 +4,11 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { parseTpoNotificationReadBody } from "@/modules/activity/tpo-notifications-model";
 import { markOwnTpoNotificationRead } from "@/modules/activity/tpo-notifications-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function POST(
+async function handlePOST(
   request: Request,
   { params }: { params: Promise<{ notificationId: string }> },
 ) {
@@ -24,3 +25,4 @@ export async function POST(
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

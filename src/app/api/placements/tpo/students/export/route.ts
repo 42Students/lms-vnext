@@ -15,6 +15,7 @@ import {
   tpoStudentsQueryObjectSchema,
   tpoStudentsRangeRefinement,
 } from "@/modules/placements/tpo-students-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -27,7 +28,7 @@ export const dynamic = "force-dynamic";
  * Export rows are calculated inside the already-authorized service,
  * using the same journey/branch/search filters as the HTML roster.
  */
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
 
@@ -116,3 +117,4 @@ export async function GET(request: Request) {
     return response;
   }
 }
+export const GET = secured(handleGET);

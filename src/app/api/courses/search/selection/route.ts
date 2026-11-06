@@ -6,6 +6,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listLearnerCourseDeliveries} from "@/modules/courses/learner-course-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const selectedSchema=z.strictObject({deliveryId:z.uuid()});
@@ -15,7 +16,7 @@ const noStore={"Cache-Control":"private, no-store"};
  * accepted legacy integer course IDs. This scoped replacement counts only
  * this learner's authorized deliveries; no search can reveal other tenants,
  * user histories, invisible course titles, or inferred integer-ID aliases. */
-export async function GET(){
+async function handleGET(){
  try{
   const context=await getCurrentRequestContext();
   const courses=await listLearnerCourseDeliveries(context);
@@ -32,8 +33,9 @@ export async function GET(){
    [row.deliveryId,Math.max(0,Number(row.total))]))},{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);
 
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return Response.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  try{
@@ -72,3 +74,4 @@ export async function POST(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST);

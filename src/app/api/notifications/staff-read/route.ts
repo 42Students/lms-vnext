@@ -2,9 +2,10 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listStaffNotificationSubjects} from "@/modules/activity/learner-notification-read-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
   try{
     const params=new URL(request.url).searchParams;
     for(const key of params.keys()){
@@ -20,3 +21,4 @@ export async function GET(request:Request){
     return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
   }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

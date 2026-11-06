@@ -3,10 +3,11 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {ensureTenantDomainVerificationTokenWithRuntime} from "@/modules/tenant-domains/runtime";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 type Params={params:Promise<{domainId:string}>};
-export async function POST(request:Request,{params}:Params){
+async function handlePOST(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {domainId}=await params;
@@ -15,3 +16,4 @@ export async function POST(request:Request,{params}:Params){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

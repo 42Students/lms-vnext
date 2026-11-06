@@ -5,9 +5,10 @@ import {listAnnouncementsForAdmin} from "@/modules/announcements/service";
 import {parseSuperAdminAnnouncementParams} from "@/modules/announcements/super-admin-list-query";
 import {announcementHistoryCsv} from "@/modules/announcements/admin-csv-model";
 import {announcementApiError} from "@/lib/announcement-api-error";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 const noStore={"cache-control":"private, no-store"};
-export async function GET(request:Request){
+async function handleGET(request:Request){
  if(!announcementsRuntimeEnabled())return Response.json({error:"DB10_ANNOUNCEMENTS_MIGRATIONS_PENDING"},{status:503,headers:noStore});
  const raw:Record<string,string>={};
  for(const [key,value] of new URL(request.url).searchParams){
@@ -33,3 +34,4 @@ export async function GET(request:Request){
   }});
  }catch(error){return announcementApiError(error);}
 }
+export const GET = secured(handleGET);

@@ -17,20 +17,36 @@ export type TenantScope = {
   system: string | null;
 };
 
-const storage = new AsyncLocalStorage<TenantScope>();
+/** One mutable holder per request: the actor resolver fills it in once, and every later query reads it. */
+type Holder = { scope?: TenantScope };
+const storage = new AsyncLocalStorage<Holder>();
 
 export function currentTenantScope(): TenantScope | undefined {
-  return storage.getStore();
+  return storage.getStore()?.scope;
 }
 
 export function runWithTenantScope<T>(scope: TenantScope, fn: () => T): T {
-  return storage.run(scope, fn);
+  return storage.run({ scope }, fn);
+}
+
+/** Opens an empty per-request holder (the `secured()` wrapper does this for every API route). */
+export function runWithTenantHolder<T>(fn: () => T): T {
+  return storage.run({}, fn);
+}
+
+/**
+ * Called by the actor resolver after it has authenticated the request. A no-op outside a request holder,
+ * and it never replaces a scope that is already bound (a named system scope or a wrapper scope wins).
+ */
+export function bindTenantScope(scope: TenantScope): void {
+  const holder = storage.getStore();
+  if (holder && !holder.scope) holder.scope = scope;
 }
 
 /** For internal jobs and the session/membership bootstrap, which run before an actor exists. */
 export function runAsSystem<T>(reason: string, fn: () => T): T {
   if (!reason.trim()) throw new Error("runAsSystem requires a reason.");
-  return storage.run({ userId: null, collegeId: null, role: null, platform: false, system: reason }, fn);
+  return storage.run({ scope: { userId: null, collegeId: null, role: null, platform: false, system: reason } }, fn);
 }
 
 type ActorLike = {

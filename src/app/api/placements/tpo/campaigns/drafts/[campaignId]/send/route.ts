@@ -4,9 +4,10 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {dispatchTpoCampaign,TpoCampaignDispatchError} from "@/modules/messaging/tpo-campaign-dispatch-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function POST(request:Request,{params}:{params:Promise<{campaignId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{campaignId:string}>}){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -21,3 +22,4 @@ export async function POST(request:Request,{params}:{params:Promise<{campaignId:
   return apiErrorResponse(e);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

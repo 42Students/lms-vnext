@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
 import {DELETE as revokeCurrentSession} from "@/app/api/auth/session/route";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 
@@ -9,7 +10,7 @@ export const runtime="nodejs";
  * The shared handler retains same-origin enforcement, explicit cookie
  * clearing, failure status, and the original "Logged out" success message.
  */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  // A legacy Bearer token is not a revocable vNext opaque cookie. Do not claim
  // it was blocklisted or silently bridge authorization across auth systems.
@@ -21,3 +22,4 @@ export async function POST(request:Request){
  }
  return revokeCurrentSession(request);
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

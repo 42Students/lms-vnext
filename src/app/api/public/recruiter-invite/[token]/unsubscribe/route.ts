@@ -3,13 +3,14 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { validateNoArgumentRecruiterInvitePost } from "@/modules/placements/public-recruiter-invite-request";
 import { tpoRecruiterInviteApiErrorResponse } from "@/lib/tpo-recruiter-invite-api-error";
 import { unsubscribeRecruiterInvite } from "@/modules/placements/tpo-recruiter-invite-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 const noStore = { "Cache-Control": "private, no-store", "Referrer-Policy": "no-referrer" } as const;
 type RouteContext = { params: Promise<{ token: string }> };
 
-export async function POST(request: Request, { params }: RouteContext) {
+async function handlePOST(request: Request, { params }: RouteContext) {
   if (process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED") {
     return NextResponse.json({ error: "DB09_MIGRATIONS_PENDING" }, { status: 503, headers: noStore });
   }
@@ -29,3 +30,4 @@ export async function POST(request: Request, { params }: RouteContext) {
     return tpoRecruiterInviteApiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST);

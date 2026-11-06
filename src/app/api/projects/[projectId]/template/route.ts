@@ -6,11 +6,12 @@ import { readMentorProjectCommandBody, MentorProjectCommandBodyError,
   mentorProjectBodyFailureMessage } from "@/modules/projects/mentor-command-body";
 import { replaceProjectWorkspaceTemplate, searchWorkspaceAssignedTemplates }
   from "@/modules/projects/project-template-replace-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type Context = { params: Promise<{ projectId: string }> };
 
-export async function GET(request: Request, { params }: Context) {
+async function handleGET(request: Request, { params }: Context) {
   try {
     const { projectId } = await params;
     const search = new URL(request.url).searchParams.get("search") ?? "";
@@ -25,7 +26,8 @@ export async function GET(request: Request, { params }: Context) {
     return apiErrorResponse(error);
   }
 }
-export async function POST(request: Request, { params }: Context) {
+export const GET = secured(handleGET);
+async function handlePOST(request: Request, { params }: Context) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -43,3 +45,4 @@ export async function POST(request: Request, { params }: Context) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

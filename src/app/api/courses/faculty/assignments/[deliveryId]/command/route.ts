@@ -6,8 +6,9 @@ import {createRequestId} from "@/lib/request-id";
 import {readFacultyAssignmentCommandBody,FacultyAssignmentBodyError}
   from "@/modules/courses/faculty-assignment-request-body";
 import {commandFacultyAssignment} from "@/modules/courses/faculty-assignment-authoring-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{
+async function handlePOST(request:Request,{params}:{
   params:Promise<{deliveryId:string}>;
 }){
   if(!isSameOriginRequest(request))
@@ -33,3 +34,4 @@ export async function POST(request:Request,{params}:{
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

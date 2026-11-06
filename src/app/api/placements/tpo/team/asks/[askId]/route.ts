@@ -4,13 +4,14 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {changeTpoTeamAskById} from "@/modules/placements/tpo-team-asks-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const actionSchema=z.strictObject({
  action:z.enum(["DONE","CANCEL"]),
  note:z.string().trim().max(2000).optional(),
 });
-export async function POST(request:Request,{params}:{
+async function handlePOST(request:Request,{params}:{
  params:Promise<{askId:string}>;
 }){
  if(!isSameOriginRequest(request))
@@ -37,3 +38,4 @@ export async function POST(request:Request,{params}:{
   throw error;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

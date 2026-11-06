@@ -5,6 +5,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {
   LearnerGalleryError, deactivateLearnerGalleryImage, openLearnerGalleryImage,
 } from "@/modules/profile-verification/learner-image-gallery-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type Params = { params: Promise<{ imageId: string }> };
@@ -17,7 +18,7 @@ function failure(error: unknown) {
     });
   return apiErrorResponse(error);
 }
-export async function GET(request: Request, { params }: Params) {
+async function handleGET(request: Request, { params }: Params) {
   try {
     const { imageId } = await params;
     const member = new URL(request.url).searchParams.get("membershipId") ?? undefined;
@@ -26,7 +27,8 @@ export async function GET(request: Request, { params }: Params) {
     return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) { return failure(error); }
 }
-export async function PATCH(request: Request, { params }: Params) {
+export const GET = secured(handleGET);
+async function handlePATCH(request: Request, { params }: Params) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   try {
@@ -37,3 +39,4 @@ export async function PATCH(request: Request, { params }: Params) {
     return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) { return failure(error); }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

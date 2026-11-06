@@ -3,9 +3,10 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {getTpoTeamAskSummary,listOwnTpoTeamAsks,
  listTpoTeamMentions,lookupTpoTeamAsk} from "@/modules/placements/tpo-team-asks-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  const params=new URL(request.url).searchParams;
  const view=params.get("view")??"mine";
  if(!["mine","mentions","summary","lookup"].includes(view))
@@ -34,3 +35,4 @@ export async function GET(request:Request){
   throw error;
  }
 }
+export const GET = secured(handleGET);

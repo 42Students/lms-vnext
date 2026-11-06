@@ -3,6 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {readOwnApplicationResume,updateOwnApplicationResume}
  from "@/modules/placements/learner-application-resume-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Params={params:Promise<{applicationId:string}>};
 const headers={"Cache-Control":"private, no-store"};
@@ -18,12 +19,13 @@ function errorResponse(error:unknown){
   return NextResponse.json({error:"INVALID_REQUEST"},{status:400,headers});
  throw error;
 }
-export async function GET(_request:Request,{params}:Params){
+async function handleGET(_request:Request,{params}:Params){
  try{return NextResponse.json(await readOwnApplicationResume(
   await getCurrentRequestContext(),(await params).applicationId),{headers});}
  catch(error){return errorResponse(error);}
 }
-export async function POST(request:Request,{params}:Params){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers});
  const body:unknown=await request.json().catch(()=>null);
@@ -31,3 +33,4 @@ export async function POST(request:Request,{params}:Params){
   await getCurrentRequestContext(),(await params).applicationId,body),{headers});}
  catch(error){return errorResponse(error);}
 }
+export const POST = secured(handlePOST);

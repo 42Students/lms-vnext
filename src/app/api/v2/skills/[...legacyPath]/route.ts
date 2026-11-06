@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isSameOriginRequest } from "@/auth/origin";
 import { GET as readSkills, POST as selectSkill } from "@/app/api/skills/route";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -19,7 +20,7 @@ function readMode(parts: string[]) {
 
 /** Mounted v2 compatibility path: keep the legacy response shape while using
  * the current authenticated catalog and safe, cache-disabled queries. */
-export async function GET(request: Request, { params }: Context) {
+async function handleGET(request: Request, { params }: Context) {
   const { legacyPath } = await params;
   const parsed = readMode(legacyPath);
   if (!parsed || legacyPath.some(value => value.length > 200)) {
@@ -39,10 +40,11 @@ export async function GET(request: Request, { params }: Context) {
   if (parsed.skillName) target.searchParams.set("skillName", parsed.skillName);
   return readSkills(new Request(target, { headers: request.headers }));
 }
+export const GET = secured(handleGET);
 
 /** Legacy POST /api/v2/skills/{skillName}/select, now same-origin and
  * authenticated. The route never accepts an arbitrary reporter/learner ID. */
-export async function POST(request: Request, { params }: Context) {
+async function handlePOST(request: Request, { params }: Context) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403, headers });
   }
@@ -60,3 +62,4 @@ export async function POST(request: Request, { params }: Context) {
   if (!outcome.ok) return outcome;
   return NextResponse.json({ status: "success", message: "Selection recorded", data: null }, { headers });
 }
+export const POST = secured(handlePOST);

@@ -5,11 +5,12 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {placementJobIdSchema} from "@/modules/placements/validation";
 import { changeTpoDriveLifecycle,TpoPublishEmailUnavailable } from "@/modules/placements/tpo-drive-lifecycle-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function POST(request: Request, { params }: {
+async function handlePOST(request: Request, { params }: {
   params: Promise<{ jobId: string }>;
 }) {
   if (!isSameOriginRequest(request)) {
@@ -51,3 +52,4 @@ export async function POST(request: Request, { params }: {
     return response;
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

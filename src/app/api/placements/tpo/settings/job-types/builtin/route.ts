@@ -3,8 +3,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {setTpoBuiltinJobTypeActive,TpoConfigError} from "@/modules/placements/tpo-job-type-write-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function PATCH(request:Request){
+async function handlePATCH(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{return NextResponse.json(await setTpoBuiltinJobTypeActive(await getCurrentRequestContext(),await request.json()),{
   headers:{"Cache-Control":"private, no-store"}});}
@@ -13,3 +14,4 @@ export async function PATCH(request:Request){
    error.code==="TPO_SETTINGS_PENDING"?503:422});
   return apiErrorResponse(error);}
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

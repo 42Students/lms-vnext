@@ -10,6 +10,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getDb} from "@/db/client";
 import {academicPeriods,sectionEnrollments,sections} from "@/db/schema";
 import {countOwnUnreadNotifications,listOwnNotifications} from "@/modules/activity/notification-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -20,7 +21,7 @@ const encoder=new TextEncoder();
 const noStore={"Cache-Control":"private, no-cache, no-transform","Content-Type":"text/event-stream; charset=utf-8",
  "Connection":"keep-alive","X-Accel-Buffering":"no"};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-export async function GET(request:Request){
+async function handleGET(request:Request){
  const params=new URL(request.url).searchParams;
  if(params.has("token")||params.has("access_token")||params.has("bearer")||
    params.has("authorization"))
@@ -144,3 +145,4 @@ export async function GET(request:Request){
   return new Response(source,{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

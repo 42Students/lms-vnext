@@ -4,12 +4,13 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { tpoCrmApiErrorResponse } from "@/lib/tpo-crm-api-error";
 import { previewTpoLeadImportCollisions } from "@/modules/placements/tpo-lead-csv-import-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /** Read-only preview uses POST to keep up to 5000 contacts out of query strings. */
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!await tpoCrmTablesReady()) {
     return NextResponse.json({ error: "DB09_MIGRATIONS_PENDING" }, { status: 503 });
   }
@@ -31,3 +32,4 @@ export async function POST(request: Request) {
     return tpoCrmApiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

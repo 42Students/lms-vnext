@@ -13,6 +13,7 @@ import { db10Announcements } from "@/db/schema/db10-announcements";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -51,7 +52,7 @@ function typedError(message: string, status: number) {
  * is a scope assertion only, never a way to choose a different tenant.
  * Return a capped deleted-only list without materializing full datasets.
  */
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   const url = new URL(request.url);
   const typeInput = url.searchParams.get("entityType");
   try {
@@ -195,3 +196,4 @@ export async function GET(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);

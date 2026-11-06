@@ -10,6 +10,7 @@ import {
  revokeFacultyAdminDocumentAttachment,
  openFacultyDocumentForAdmin,
 } from "@/modules/people/faculty-admin-document-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -27,7 +28,7 @@ async function readInput(request:Request){
 
 /** Authorized staff get an upload grant only for an existing Faculty profile
  * and a specific saved qualification/identity row in their managed college. */
-export async function POST(request:Request,{params}:Params){
+async function handlePOST(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  try{
@@ -38,7 +39,8 @@ export async function POST(request:Request,{params}:Params){
    await getCurrentRequestContext(),membershipId,input.value),{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function PATCH(request:Request,{params}:Params){
+export const POST = secured(handlePOST);
+async function handlePATCH(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  try{
@@ -49,7 +51,8 @@ export async function PATCH(request:Request,{params}:Params){
    await getCurrentRequestContext(),membershipId,input.value),{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function DELETE(request:Request,{params}:Params){
+export const PATCH = secured(handlePATCH);
+async function handleDELETE(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  try{
@@ -60,9 +63,10 @@ export async function DELETE(request:Request,{params}:Params){
    await getCurrentRequestContext(),membershipId,input.value),{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
+export const DELETE = secured(handleDELETE);
 /** Read grants can never be issued from an object key; the current profile
  * must still reference a CLEAN, non-revoked receipt owned by that member. */
-export async function GET(request:Request,{params}:Params){
+async function handleGET(request:Request,{params}:Params){
  try{
   const {membershipId}=await params;
   const query=new URL(request.url).searchParams;
@@ -73,3 +77,4 @@ export async function GET(request:Request,{params}:Params){
    }),{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

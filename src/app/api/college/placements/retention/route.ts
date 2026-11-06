@@ -2,6 +2,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getCollegeApplicationRetentionReport} from "@/modules/placements/college-retention-report-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 
@@ -9,7 +10,7 @@ export const runtime="nodejs";
  * The service checks the current actor's college, returns read-only records,
  * and always caps this private sample at 200 applications.
  */
-export async function GET(){
+async function handleGET(){
  try{
   const context=await getCurrentRequestContext();
   const first=await getCollegeApplicationRetentionReport(context,{
@@ -31,3 +32,4 @@ export async function GET(){
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

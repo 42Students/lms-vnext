@@ -7,6 +7,7 @@ import {getBatchEligibilityImportPreview} from "@/modules/placements/tpo-batch-i
 import {tpoSheetRowSchema} from "@/modules/placements/tpo-eligibility-sheet-model";
 import {decidePlacementParticipation,PlacementBatchError} from "@/modules/placements/batch-participation-service";
 import {placementTableExists} from "@/modules/placements/staged-tables";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 const inputSchema=z.object({
  rows:z.array(tpoSheetRowSchema).min(1).max(5000),
@@ -14,7 +15,7 @@ const inputSchema=z.object({
  previewMemberIds:z.array(z.string().uuid().nullable()).min(1).max(5000).optional(),
  confirmed:z.literal(true),
 }).strict();
-export async function POST(request:Request,{params}:{params:Promise<{batchId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{batchId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {batchId}=await params,body=inputSchema.parse(await request.json());
@@ -57,3 +58,4 @@ export async function POST(request:Request,{params}:{params:Promise<{batchId:str
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

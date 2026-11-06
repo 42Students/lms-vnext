@@ -4,13 +4,14 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {privateR2SetupState} from "@/modules/storage/r2-config";
 import {devAttestationAllowed} from "@/modules/storage/file-lifecycle";
 import {productionScannerCallbackReady} from "@/modules/storage/production-scan-verdict-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
 /** Optional-storage capability probe. It never exposes bucket names or credentials
  * and does not make unrelated app readiness depend on R2 provisioning. */
-export async function GET(){
+async function handleGET(){
  try{
   const context=await getCurrentRequestContext();
   if(!isSuperAdmin(context))
@@ -41,3 +42,4 @@ export async function GET(){
    headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

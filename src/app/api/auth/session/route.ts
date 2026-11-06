@@ -13,11 +13,12 @@ import {
 } from "@/auth/session";
 import { logError } from "@/observability/logger";
 import { revokeSessionByToken } from "@/modules/auth/session-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
 /** Logout: revokes this device's server-side session and clears cookies. */
-export async function DELETE(request: Request) {
+async function handleDELETE(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json(
       { error: "INVALID_ORIGIN" },
@@ -74,10 +75,12 @@ export async function DELETE(request: Request) {
 
   return response;
 }
+export const DELETE = secured(handleDELETE);
 
 /** Compatibility for legacy sign-out method. Both verbs revoke only the
  * current opaque first-party session, return "Logged out" on success, and
  * perform the same same-origin and cookie-clearing checks. */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  return DELETE(request);
 }
+export const POST = secured(handlePOST);

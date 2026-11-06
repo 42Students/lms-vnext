@@ -5,6 +5,7 @@ import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { bugTrackerApiError } from "@/lib/bug-tracker-api-error";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 import { createBugTrackerIssueForAdmin } from "@/modules/bug-tracker/report-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -14,7 +15,7 @@ export const runtime = "nodejs";
  * /api/v1/public/bug-tracker manager API. Platform-account identity and
  * same-origin request checks are mandatory; reporter sessions remain held.
  */
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!trackerAdminRuntimeEnabled()) {
     return NextResponse.json({error:"DB10_TRACKER_MIGRATIONS_PENDING"},{status:503});
   }
@@ -33,3 +34,4 @@ export async function POST(request: Request) {
     return bugTrackerApiError(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

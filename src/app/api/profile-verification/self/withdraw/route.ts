@@ -7,6 +7,7 @@ import {VerificationStateError} from "@/modules/profile-verification/domain";
 import {createProfileVerificationRepository} from "@/modules/profile-verification/repository";
 import {verifyPrivateDocumentReceipt} from "@/modules/profile-verification/private-receipts";
 import {withdrawOwnPendingVerification} from "@/modules/profile-verification/service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const withdrawSchema=z.strictObject({
@@ -15,7 +16,7 @@ const withdrawSchema=z.strictObject({
 });
 
 /** Migration 0081 registers WITHDRAWN; never accept a snapshot or target learner from the caller. */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const input=withdrawSchema.safeParse(await request.json().catch(()=>null));
@@ -42,3 +43,4 @@ export async function POST(request:Request){
   throw error;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

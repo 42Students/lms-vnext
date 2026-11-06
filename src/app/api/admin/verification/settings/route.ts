@@ -10,9 +10,10 @@ import {profileVerificationSettings} from "@/db/schema/profile-verification";
 import {requireSuperAdminVerificationCollege} from "@/modules/verification/super-admin-scope";
 import {requireVerificationTables,VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {setTpoProfileVerificationEnabled} from "@/modules/profile-verification/settings-service";
+import { secured } from "@/security/secure-handler";
 const schema=z.strictObject({collegeId:z.uuid(),tpoCanVerify:z.boolean()});
 export const runtime="nodejs";
-export async function PATCH(request:Request){
+async function handlePATCH(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const _p=await readBoundedJsonRequest(request,8192);
@@ -30,3 +31,4 @@ export async function PATCH(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

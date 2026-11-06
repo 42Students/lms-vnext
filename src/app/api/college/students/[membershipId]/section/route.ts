@@ -4,11 +4,12 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { collegeStudentSectionOptions, moveCollegeStudentSection, CollegeStudentSectionMoveError }
   from "@/modules/academics/college-student-section-move-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ membershipId: string }> };
 
-export async function GET(_request: Request, { params }: RouteContext) {
+async function handleGET(_request: Request, { params }: RouteContext) {
   try {
     const context = await getCurrentRequestContext();
     const { membershipId } = await params;
@@ -23,7 +24,8 @@ export async function GET(_request: Request, { params }: RouteContext) {
     return apiErrorResponse(error);
   }
 }
-export async function PATCH(request: Request, { params }: RouteContext) {
+export const GET = secured(handleGET);
+async function handlePATCH(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request)) return NextResponse.json(
     { error: "INVALID_ORIGIN" }, { status: 403 },
   );
@@ -43,3 +45,4 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH);

@@ -5,8 +5,9 @@ import {z} from "zod";
 import {exportCollegeVerificationCsv} from "@/modules/verification/staff-export-service";
 import {VerificationQueueLimitError} from "@/modules/verification/staff-queue-service";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   const collegeId=z.uuid().parse(params.get("collegeId"));
@@ -30,3 +31,4 @@ export async function GET(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const GET = secured(handleGET);

@@ -8,8 +8,8 @@ const service = readFileSync("src/modules/skills/catalog-service.ts", "utf8");
 const readiness = readFileSync("src/modules/skills/catalog-readiness.ts", "utf8");
 const model = readFileSync("src/db/schema/db10-skills-catalog.draft.ts", "utf8");
 const barrel = readFileSync("src/db/schema/index.ts", "utf8");
-const get = route.slice(route.indexOf("export async function GET"), route.indexOf("const skillSelectionSchema"));
-const post = route.slice(route.indexOf("export async function POST"), route.indexOf("type ReadMode"));
+const get = route.slice(Math.max(route.indexOf("export async function GET("),route.indexOf("async function handleGET(")), route.indexOf("const skillSelectionSchema"));
+const post = route.slice(Math.max(route.indexOf("export async function POST("),route.indexOf("async function handlePOST(")), route.indexOf("type ReadMode"));
 
 test("skills GET is disabled until replay, synonym seed and source are verified", () => {
   assert.match(readiness, /\["DB10_SKILLS_READY"\]\s*===\s*"DB10_VERIFIED"/);

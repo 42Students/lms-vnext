@@ -25,7 +25,7 @@ describe("Super Admin drive delete impact preview",()=>{
  it("SA-placements-projects-12 requires same-origin confirmation and a typed reason",()=>{
   const route=read("src/app/api/admin/placements/jobs/[jobId]/delete/route.ts");
   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
-  expect(route).toContain("export async function GET");
+  expect(route).toMatch(/export (?:async function|const) GET\b/);
   const ui=read("src/components/placements/super-admin-drive-archive.tsx");
   expect(ui).toContain("Preview delete impact");
   expect(ui).toContain("Delete (archive)");

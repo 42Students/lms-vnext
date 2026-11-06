@@ -6,6 +6,7 @@ import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import {
   CollegeSectionError, createCollegeSection,
 } from "@/modules/academics/college-section-mutation-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -14,7 +15,7 @@ export const runtime = "nodejs";
  * persisted tenant-scoped UUID membership authorization. No numeric legacy
  * class/college ID is trusted or mapped from the request body.
  */
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   try {
@@ -37,3 +38,4 @@ export async function POST(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

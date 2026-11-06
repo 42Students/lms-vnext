@@ -1,9 +1,10 @@
 import {NextResponse} from "next/server";
 import {getPublicCompanyApplicantShare} from "@/modules/placements/company-share/public-service";
 import {legacyShareHeaders,legacyShareInvalid} from "@/modules/placements/company-share/legacy-public-controller";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(_request:Request,{params}:{params:Promise<{token:string}>}){
+async function handleGET(_request:Request,{params}:{params:Promise<{token:string}>}){
  const {token}=await params;
  const result=await getPublicCompanyApplicantShare(token,1,"VIEW","",null).catch(()=>null);
  if(!result||result.kind==="UNAVAILABLE")return legacyShareInvalid();
@@ -14,3 +15,4 @@ export async function GET(_request:Request,{params}:{params:Promise<{token:strin
  },{headers:legacyShareHeaders});
  return NextResponse.json({requiresCode:true},{headers:legacyShareHeaders});
 }
+export const GET = secured(handleGET);

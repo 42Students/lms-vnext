@@ -5,10 +5,11 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {readMentorProjectCommandBody,MentorProjectCommandBodyError,mentorProjectBodyFailureMessage}
  from "@/modules/projects/mentor-command-body";
 import { createMentorProjectSprint } from "@/modules/projects/mentor-sprint-write-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
-export async function POST(request:Request,{params}:RouteContext) {
+async function handlePOST(request:Request,{params}:RouteContext) {
   if(!isSameOriginRequest(request)) {
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   }
@@ -25,3 +26,4 @@ export async function POST(request:Request,{params}:RouteContext) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

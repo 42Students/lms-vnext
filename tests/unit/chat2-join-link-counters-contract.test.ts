@@ -4,7 +4,7 @@ describe("TPO-companies-R01 TPO-campaigns-public-21 counters",()=>{
  it("counts opens only by POST",()=>{
   const route=readFileSync("src/app/api/public/join-link/open/route.ts","utf8");
   expect(route).toMatch(/isSameOriginRequest|from "@\/security\/route"/);
-  expect(route).not.toContain("export async function GET");
+  expect(route).not.toMatch(/export (?:async function|const) GET\b/);
  });
  it("counts joins on first successful grant",()=>{
   const svc=readFileSync("src/modules/placements/public-join/join-service.ts","utf8");

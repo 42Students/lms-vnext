@@ -2,9 +2,10 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listCourseDiscussionChanges} from "@/modules/courses/discussion-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
-export async function GET(request:Request,{params}:{
+async function handleGET(request:Request,{params}:{
  params:Promise<{deliveryId:string}>;
 }){
  try{
@@ -17,3 +18,4 @@ export async function GET(request:Request,{params}:{
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

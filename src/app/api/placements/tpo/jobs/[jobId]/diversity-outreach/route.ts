@@ -7,11 +7,12 @@ import {
   PrivateDiversityPolicyError, readPrivateTpoDiversityOutreach, savePrivateTpoDiversityOutreach,
   reviewPrivateTpoDiversityOutreach,
 } from "@/modules/placements/tpo-diversity-outreach-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 const noStore = { "Cache-Control": "private, no-store" };
 type Params = { params: Promise<{ jobId: string }> };
-export async function GET(_request: Request, { params }: Params) {
+async function handleGET(_request: Request, { params }: Params) {
   try {
     return NextResponse.json(await readPrivateTpoDiversityOutreach(
       await getCurrentRequestContext(), (await params).jobId), { headers: noStore });
@@ -23,7 +24,8 @@ export async function GET(_request: Request, { params }: Params) {
     return apiErrorResponse(error);
   }
 }
-export async function POST(request: Request, { params }: Params) {
+export const GET = secured(handleGET);
+async function handlePOST(request: Request, { params }: Params) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403, headers: noStore });
   try {
@@ -46,3 +48,4 @@ export async function POST(request: Request, { params }: Params) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST);

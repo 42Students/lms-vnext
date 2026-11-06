@@ -3,9 +3,10 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {updateLegacyCourseBulkFlags} from "@/modules/courses/legacy-course-bulk-flags-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return Response.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -16,3 +17,4 @@ export async function POST(request:Request){
   return Response.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST);

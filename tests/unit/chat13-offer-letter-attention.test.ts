@@ -23,7 +23,7 @@ describe("Super Admin needs attention and application offer letters",()=>{
   expect(svc).toContain("assertPersistedPlatformPermission(tx,ctx");
   expect(svc).toContain('offerLetterUrl:input.url');
   const route=read("src/app/api/placements/college/jobs/[jobId]/applications/[applicationId]/route.ts");
-  expect(route).toContain("export async function PATCH");
+  expect(route).toMatch(/export (?:async function|const) PATCH\b/);
   expect(route).toMatch(/isSameOriginRequest\(req\)|from "@\/security\/route"/);
   const ui=read("src/components/placements/college-application-detail-drawer.tsx");
   expect(ui).toContain("Attach Offer Letter");

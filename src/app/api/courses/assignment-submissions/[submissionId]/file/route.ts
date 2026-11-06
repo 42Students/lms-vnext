@@ -8,6 +8,7 @@ import {
 import {
   assignmentFilesRuntimeEnabled,
 } from "@/modules/courses/assignment-file-readiness";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -17,7 +18,7 @@ type RouteContext = {
   }>;
 };
 
-export async function GET(
+async function handleGET(
   _request: Request,
   { params }: RouteContext,
 ) {
@@ -54,3 +55,4 @@ export async function GET(
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);

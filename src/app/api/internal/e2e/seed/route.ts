@@ -5,6 +5,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {assertE2EFixtureWriterEnabled,seedIsolatedE2EAcademicGraph}
  from "@/modules/people/e2e-fixture-seed-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -18,7 +19,7 @@ const headers={"Cache-Control":"private, no-store"};
  * There is deliberately no URL/body parameter accepting a foreign tenant,
  * phone number or privilege. The namespace comes only from deployment env.
  */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({status:"ERROR",error:"INVALID_ORIGIN"},
    {status:403,headers});
@@ -57,3 +58,4 @@ export async function POST(request:Request){
    {status:503,headers});
  }
 }
+export const POST = secured(handlePOST);

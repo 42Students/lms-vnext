@@ -2,11 +2,12 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {previewTenantHostResolutionWithRuntime} from "@/modules/tenant-domains/runtime";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 
 /** Read-only, global-super-admin host resolution diagnostic; no DNS request. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   if([...params.keys()].some(key=>key!=="host")||params.getAll("host").length!==1)
@@ -21,3 +22,4 @@ export async function GET(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const GET = secured(handleGET);

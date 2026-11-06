@@ -10,8 +10,9 @@ import {VerificationStateError} from "@/modules/profile-verification/domain";
 import {reviewProfileVerification} from "@/modules/profile-verification/service";
 import {createProfileVerificationRepository} from "@/modules/profile-verification/repository";
 import {verifyPrivateDocumentReceipt} from "@/modules/profile-verification/private-receipts";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const context=await getCurrentRequestContext();
@@ -54,3 +55,4 @@ export async function POST(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

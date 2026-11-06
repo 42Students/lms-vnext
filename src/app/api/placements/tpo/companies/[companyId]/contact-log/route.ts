@@ -6,12 +6,13 @@ import {
   createConfirmedTpoCompanyInteraction,
   TpoCompanyInteractionConflict,
 } from "@/modules/placements/tpo-company-interaction-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type RouteContext = { params: Promise<{ companyId: string }> };
 
-export async function POST(request: Request, { params }: RouteContext) {
+async function handlePOST(request: Request, { params }: RouteContext) {
   if (process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED") {
     return NextResponse.json({ error: "DB09_MIGRATIONS_PENDING" }, { status: 503 });
   }
@@ -32,3 +33,4 @@ export async function POST(request: Request, { params }: RouteContext) {
     return tpoCrmApiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

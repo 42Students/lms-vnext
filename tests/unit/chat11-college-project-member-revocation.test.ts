@@ -35,8 +35,8 @@ describe("PROJ-COL-REVOKE-03 member/mentor mutation safety",()=>{
    ["endProjectMember","listProjectMembers","const [fresh]"],
   ] as const;
   for(const [name,next,after] of operations){
-   const begin=src.indexOf("export async function "+name+"(");
-   const end=src.indexOf("export async function "+next+"(",begin);
+   const begin=Math.max(src.indexOf("export async function "+name+"("),src.indexOf("async function handle"+name+"("));
+   const end=Math.max(src.indexOf("export async function "+next+"(",begin),src.indexOf("async function handle"+next+"(",begin));
    const action=src.slice(begin,end);
    const lock=action.indexOf('.for("update")');
    const check=action.indexOf('assertPersistedPlatformPermission(tx,context,"projects.manage"');

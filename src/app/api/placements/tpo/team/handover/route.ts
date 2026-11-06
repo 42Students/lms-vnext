@@ -5,8 +5,9 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {handoverTpoTeamWork} from "@/modules/placements/tpo-team-handover-service";
 import {tpoTeamHandoverSchema} from "@/modules/placements/tpo-team-handover-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const parsed=tpoTeamHandoverSchema.safeParse(await request.json().catch(()=>null));
@@ -26,3 +27,4 @@ export async function POST(request:Request){
   throw error;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

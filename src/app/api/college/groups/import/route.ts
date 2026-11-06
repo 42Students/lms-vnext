@@ -4,9 +4,10 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { confirmCollegeGroupCsv, confirmCollegeGroupManual } from "@/modules/groups/college-group-import-service";
 import { GroupCsvPreviewNotFoundError } from "@/modules/groups/college-group-csv-preview-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -24,3 +25,4 @@ export async function POST(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

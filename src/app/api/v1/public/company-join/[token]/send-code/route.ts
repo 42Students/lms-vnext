@@ -3,9 +3,10 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {readBoundedJsonBody} from "@/lib/bounded-json-body";
 import {requestPublicJoinCode,PublicJoinCodeError} from "@/modules/placements/public-join/send-code-service";
 import {deliverPublicRecruiterJoinCode} from "@/modules/messaging/public-join-code-delivery";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** Legacy token-in-path adapter; same verified-IP throttle and OTP delivery. */
-export async function POST(request:Request,{params}:{params:Promise<{token:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{token:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const body=await readBoundedJsonBody(request);
  if(body.kind!=="OK")return NextResponse.json({error:body.kind==="TOO_LARGE"?"REQUEST_TOO_LARGE":"COULD_NOT_SEND_CODE"},
@@ -25,3 +26,4 @@ export async function POST(request:Request,{params}:{params:Promise<{token:strin
    {status,headers:{"Cache-Control":"no-store"}});
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

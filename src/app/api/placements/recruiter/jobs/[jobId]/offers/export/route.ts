@@ -3,8 +3,9 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {hrApplicantFilterSchema} from "@/modules/placements/hr-job-applicants-model";
 import {getHrJobRead} from "@/modules/placements/hr-job-read-service";
 import {buildHrOfferCsv,HR_OFFER_EXPORT_CAP} from "@/modules/placements/hr-offer-export-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request,{params}:{params:Promise<{jobId:string}>}){
+async function handleGET(request:Request,{params}:{params:Promise<{jobId:string}>}){
  try{
   const {jobId}=await params;
   const url=new URL(request.url);
@@ -38,3 +39,4 @@ export async function GET(request:Request,{params}:{params:Promise<{jobId:string
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

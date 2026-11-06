@@ -10,6 +10,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { requirePersistedTpoMembership } from "@/modules/placements/tpo-persisted-actor-service";
 import { deliverDueTpoNotices } from "@/modules/announcements/tpo-notice-delivery-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -36,7 +37,7 @@ async function scopedNotice(noticeId: string) {
   return notice ?? null;
 }
 
-export async function GET(_request: Request, { params }: Params) {
+async function handleGET(_request: Request, { params }: Params) {
   try {
     const notice = await scopedNotice((await params).noticeId);
     if (!notice) return NextResponse.json({error: "NOTICE_NOT_FOUND"},{status:404});
@@ -67,8 +68,9 @@ export async function GET(_request: Request, { params }: Params) {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function POST(request: Request, { params }: Params) {
+async function handlePOST(request: Request, { params }: Params) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   }
@@ -97,3 +99,4 @@ export async function POST(request: Request, { params }: Params) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

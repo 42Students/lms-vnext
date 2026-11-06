@@ -3,9 +3,10 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {listCollegeAdminHistory} from "@/modules/colleges/admin-session-service";
 import {collegeAdminHistoryCsv} from "@/modules/colleges/admin-history-export-model";
 import {parseAdminSessionHistoryPage} from "@/modules/colleges/admin-session-query-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(request:Request,{params}:{params:Promise<{collegeId:string;userId:string}>}){
+async function handleGET(request:Request,{params}:{params:Promise<{collegeId:string;userId:string}>}){
  try{
   const {collegeId,userId}=await params;
   const search = new URL(request.url).searchParams;
@@ -32,3 +33,4 @@ export async function GET(request:Request,{params}:{params:Promise<{collegeId:st
   return response;
  }
 }
+export const GET = secured(handleGET);

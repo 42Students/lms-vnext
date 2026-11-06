@@ -7,10 +7,11 @@ import {readRecruiterJsonBody,RecruiterJsonBodyError} from "@/modules/placements
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import {readRecruiterPrivateReview,writeRecruiterPrivateReview,
  RecruiterPrivateReviewConflict,RecruiterPrivateReviewMigrationPending} from "@/modules/placements/recruiter-private-rating-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 const headers={"Cache-Control":"private, no-store"};
 type Params={params:Promise<{jobId:string;applicationId:string}>};
-export async function GET(_request:Request,{params}:Params){
+async function handleGET(_request:Request,{params}:Params){
  try{
   const {jobId,applicationId}=await params;
   const context=await getCurrentRequestContext();
@@ -22,7 +23,8 @@ export async function GET(_request:Request,{params}:Params){
   return NextResponse.json(body,{headers});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function PATCH(request:Request,{params}:Params){
+export const GET = secured(handleGET);
+async function handlePATCH(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers});
  try{
@@ -46,3 +48,4 @@ export async function PATCH(request:Request,{params}:Params){
   return apiErrorResponse(error);
  }
 }
+export const PATCH = secured(handlePATCH);

@@ -1,10 +1,11 @@
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listSuperAdminCompanyDirectory} from "@/modules/placements/admin-company-directory-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** Search currently authorized, active company relationships only. The
  * merge writer still independently checks same-college source/target scope. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const url=new URL(request.url);
   if([...url.searchParams.keys()].some(key=>key!=="q"&&key!=="page")||
@@ -20,3 +21,4 @@ export async function GET(request:Request){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { searchCollegeSemesterAutocomplete } from "@/modules/academics/college-academic-directory-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 const schema = z.object({
@@ -11,7 +12,7 @@ const schema = z.object({
   limit: z.string().regex(/^\d{1,2}$/).transform(Number).pipe(z.number().int().min(1).max(50)).optional(),
 }).strict();
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   const url = new URL(request.url);
   const input = schema.safeParse(Object.fromEntries(url.searchParams));
   if (!input.success) {
@@ -27,3 +28,4 @@ export async function GET(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);

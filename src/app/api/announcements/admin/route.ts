@@ -9,10 +9,11 @@ import {
 } from "@/modules/announcements/service";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { parseAnnouncementAdminApiQuery } from "@/modules/announcements/admin-api-query";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   if (!announcementsRuntimeEnabled()) {
     return NextResponse.json({ error: "DB10_ANNOUNCEMENTS_MIGRATIONS_PENDING" }, { status: 503 });
   }
@@ -43,8 +44,9 @@ export async function GET(request: Request) {
     return announcementApiError(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!announcementsRuntimeEnabled()) {
     return NextResponse.json({ error: "DB10_ANNOUNCEMENTS_MIGRATIONS_PENDING" }, { status: 503 });
   }
@@ -73,3 +75,4 @@ export async function POST(request: Request) {
     return announcementApiError(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

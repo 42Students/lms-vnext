@@ -5,6 +5,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {createPlacementDebarment,liftPlacementDebarment,listTpoMemberDebarments,PlacementDebarmentError} from "@/modules/placements/debarment-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Context={params:Promise<{membershipId:string}>};
 const input=z.discriminatedUnion("action",[
@@ -14,14 +15,15 @@ const input=z.discriminatedUnion("action",[
  z.object({action:z.literal("LIFT"),debarmentId:z.string().uuid(),
   reason:z.string().trim().min(1).max(500)}).strict(),
 ]);
-export async function GET(_request:Request,{params}:Context){
+async function handleGET(_request:Request,{params}:Context){
  try{
   const ctx=await getCurrentRequestContext(),{membershipId}=await params;
   const rows=await listTpoMemberDebarments(ctx,membershipId);
   return NextResponse.json({rows},{headers:{"Cache-Control":"private, no-store"}});
  }catch(e){return apiErrorResponse(e);}
 }
-export async function POST(request:Request,{params}:Context){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request,{params}:Context){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const ctx=await getCurrentRequestContext(),collegeId=await requireTpoBatchActor(ctx);
@@ -43,3 +45,4 @@ export async function POST(request:Request,{params}:Context){
   return apiErrorResponse(e);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

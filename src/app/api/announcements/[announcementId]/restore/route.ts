@@ -4,10 +4,11 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { announcementApiError } from "@/lib/announcement-api-error";
 import { restoreAnnouncement } from "@/modules/announcements/service";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function POST(
+async function handlePOST(
   request: Request,
   { params }: { params: Promise<{ announcementId: string }> },
 ) {
@@ -30,3 +31,4 @@ export async function POST(
     return announcementApiError(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

@@ -3,9 +3,10 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listTpoCompanyShareAudit} from "@/modules/placements/company-share/manage-service";
 import {tpoCompanyShareAuditCsv} from "@/modules/placements/company-share/audit-csv-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(request:Request,{params}:{params:Promise<{jobId:string}>}){
+async function handleGET(request:Request,{params}:{params:Promise<{jobId:string}>}){
  try{
   const {jobId}=await params;
   const result=await listTpoCompanyShareAudit(await getCurrentRequestContext(),jobId,new URL(request.url).searchParams.get("kind")??"ALL",1,{exportAll:true});
@@ -19,3 +20,4 @@ export async function GET(request:Request,{params}:{params:Promise<{jobId:string
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

@@ -17,8 +17,8 @@ const handlers=[
  "setTpoJobTypeCountsAsPlaced",
 ] as const;
 function bodyOf(name:(typeof handlers)[number]){
- const start=service.indexOf("export async function "+name+"(");
- const following=handlers.map(item=>service.indexOf("export async function "+item+"("))
+ const start=Math.max(service.indexOf("export async function "+name+"("),service.indexOf("async function handle"+name+"("));
+ const following=handlers.map(item=>Math.max(service.indexOf("export async function "+item+"("),service.indexOf("async function handle"+item+"(")))
   .filter(index=>index>start);
  const end=following.length?Math.min(...following):service.length;
  expect(start).toBeGreaterThanOrEqual(0);

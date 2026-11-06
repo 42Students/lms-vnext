@@ -14,7 +14,8 @@ function csvResponse(header:string[],rows:(string|number|null)[][],file:string,t
 }
 
 import {listCollegeTermMappings} from "@/modules/academics/college-term-mapping-service";
-export async function GET(request:Request){
+import { secured } from "@/security/secure-handler";
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   const status=params.get("status")??"ALL",q=(params.get("q")??"").trim().toLocaleLowerCase("en-IN");
@@ -35,3 +36,4 @@ export async function GET(request:Request){
    rows,"semester-course-mapping.csv",matching.length>records.length);
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

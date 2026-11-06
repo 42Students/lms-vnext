@@ -4,9 +4,10 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {listTpoBatchHistory} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {batchHistoryViewSchema,filterTpoBatchHistoryKind,filterTpoBatchHistoryOutcome} from "@/modules/placements/tpo-batch-history-view-model";
 import {serializeTpoCohortHistoryCsv} from "@/modules/placements/tpo-batch-history-csv-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(request:Request,{params}:{params:Promise<{batchId:string}>}){
+async function handleGET(request:Request,{params}:{params:Promise<{batchId:string}>}){
  try{
   const {batchId}=await params;
   const input=Object.fromEntries(new URL(request.url).searchParams.entries());
@@ -30,3 +31,4 @@ export async function GET(request:Request,{params}:{params:Promise<{batchId:stri
   return response;
  }
 }
+export const GET = secured(handleGET);

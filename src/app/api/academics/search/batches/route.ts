@@ -5,6 +5,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { searchCollegeBatchAutocomplete,recordCollegeBatchSearchSelection } from "@/modules/academics/college-academic-directory-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 const schema = z.object({
@@ -12,7 +13,7 @@ const schema = z.object({
   limit: z.string().regex(/^\d{1,2}$/).transform(Number).pipe(z.number().int().min(1).max(50)).optional(),
 }).strict();
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   const url = new URL(request.url);
   if ([...url.searchParams.keys()].some(key => url.searchParams.getAll(key).length > 1))
     return NextResponse.json({ error: "INVALID_FILTERS" }, {
@@ -30,10 +31,11 @@ export async function GET(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
 /** Selection analytics never trust a client college ID, and are recorded only
  * for a cohort within the requester's persisted selected college. */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -50,3 +52,4 @@ export async function POST(request:Request){
       headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

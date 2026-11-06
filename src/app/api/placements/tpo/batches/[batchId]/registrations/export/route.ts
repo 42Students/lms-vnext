@@ -4,10 +4,11 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listTpoBatchRegistrationRoster} from "@/modules/placements/tpo-batch-registration-roster-service";
 import {exportTpoBatchRegistrationsCsv} from "@/modules/placements/tpo-batch-registration-export-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Same filters and 25-row pagination as UI. No export of consent metadata. */
-export async function GET(request:Request,{params}:{params:Promise<{batchId:string}>}){
+async function handleGET(request:Request,{params}:{params:Promise<{batchId:string}>}){
  try{
   const {batchId}=await params;
   const q=new URL(request.url).searchParams;
@@ -24,3 +25,4 @@ export async function GET(request:Request,{params}:{params:Promise<{batchId:stri
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

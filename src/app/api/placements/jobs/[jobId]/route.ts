@@ -8,6 +8,7 @@ import {
   updatePlacementJob,
 } from "@/modules/placements/job-service";
 import {updatePlacementJobInputSchema,placementJobIdSchema} from "@/modules/placements/validation";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -15,7 +16,7 @@ type RouteContext = {
   params: Promise<{ jobId: string }>;
 };
 
-export async function GET(
+async function handleGET(
   _request: Request,
   { params }: RouteContext,
 ) {
@@ -32,8 +33,9 @@ export async function GET(
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function PATCH(request: Request, { params }: RouteContext) {
+async function handlePATCH(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -48,8 +50,9 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });
 
-export async function DELETE(request: Request, { params }: RouteContext) {
+async function handleDELETE(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -72,11 +75,12 @@ export async function DELETE(request: Request, { params }: RouteContext) {
     return apiErrorResponse(error);
   }
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });
 
 /** PUT adapter for historic job editors. It never chooses a tenant or creates
  * a new job; the existing UUID scope, draft-only policy and CAS remain in
  * updatePlacementJob. Unsupported source fields cannot silently disappear. */
-export async function PUT(request:Request,{params}:RouteContext){
+async function handlePUT(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const body:unknown=await request.json().catch(()=>null);
@@ -117,3 +121,4 @@ export async function PUT(request:Request,{params}:RouteContext){
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });

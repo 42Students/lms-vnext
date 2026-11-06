@@ -3,8 +3,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {setTpoJobTypeCountsAsPlaced,TpoConfigError} from "@/modules/placements/tpo-job-type-write-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function PATCH(request:Request,{params}:{params:Promise<{jobTypeId:string}>}){
+async function handlePATCH(request:Request,{params}:{params:Promise<{jobTypeId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {jobTypeId}=await params;
@@ -17,3 +18,4 @@ export async function PATCH(request:Request,{params}:{params:Promise<{jobTypeId:
    status:error.code==="TPO_SETTINGS_STALE"||error.code==="TPO_JOB_TYPE_BUILTIN"?409:error.code==="TPO_SETTINGS_PENDING"?503:404});
   return apiErrorResponse(error);}
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

@@ -7,12 +7,13 @@ import { getDb } from "@/db/client";
 import { apiErrorResponse } from "@/lib/api-error";
 import { placementTpoMessages, placementTpoMessageThreads } from "@/db/schema/tpo-collaboration";
 import { hasActiveRecruiter } from "@/modules/identity/context";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
 /** Scoped lightweight recruiter inbox pulse. No message bodies or foreign
  * college threads are returned, and polling never marks anything as read. */
-export async function GET(request:Request) {
+async function handleGET(request:Request) {
  try {
   const context=await getCurrentRequestContext();
   if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
@@ -55,3 +56,4 @@ export async function GET(request:Request) {
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

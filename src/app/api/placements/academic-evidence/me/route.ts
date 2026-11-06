@@ -7,10 +7,11 @@ import {
   getOwnAcademicEvidence,
   upsertOwnAcademicEvidence,
 } from "@/modules/placements/eligibility-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+async function handleGET() {
   try {
     const context = await getCurrentRequestContext();
     await requireLearnerPlacementAccess(context);
@@ -20,8 +21,9 @@ export async function GET() {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function PUT(request: Request) {
+async function handlePUT(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json(
       { error: "INVALID_ORIGIN" },
@@ -41,3 +43,4 @@ export async function PUT(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const PUT = secured(handlePUT);

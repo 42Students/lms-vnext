@@ -8,6 +8,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { addTpoFollowup } from "@/modules/placements/tpo-crm-service";
 import { calendarFollowupCreateSchema } from "@/modules/placements/tpo-calendar-followup-model";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 /** Old POST /api/v1/tpo/recruiter-leads/{leadId}/follow-ups maps to
@@ -15,7 +16,7 @@ export const runtime = "nodejs";
  * College/lead ownership and missing-lead 404 remain enforced.
  */
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -45,3 +46,4 @@ export async function POST(request: Request) {
     return tpoCrmApiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

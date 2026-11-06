@@ -11,6 +11,7 @@ import {
  independentAuditImporterReady,syncIndependentAuditInbox,
 } from "@/modules/bug-tracker/independent-audit-inbox-importer";
 import {independentAuditGithubConfigured} from "@/modules/bug-tracker/independent-audit-github-client";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -27,7 +28,7 @@ async function authorizedContext(){
 
 /** Legacy GET /sync returns real stored provenance only, not an inferred
  * success based on GitHub having a nonempty inbox. */
-export async function GET(){
+async function handleGET(){
  try{
   const context=await authorizedContext();
   const state=await readIndependentFindingSyncState(context);
@@ -37,10 +38,11 @@ export async function GET(){
   },{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);
 
 /** Manual Sync now must satisfy origin, active unscoped Super Admin,
  * a fresh device session and a persisted grant locked for the real write. */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  // No caller-supplied tenant/repository/options may affect the sync.
@@ -65,3 +67,4 @@ export async function POST(request:Request){
   return NextResponse.json({result},{status:result.busy?409:200,headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST);

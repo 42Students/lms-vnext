@@ -25,9 +25,9 @@ describe("chat-13 Super Admin mutation route CSRF and error boundary contracts",
    expect(source).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
    expect(source).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
    expect(source).toContain("apiErrorResponse(");
-   const mutation=source.match(/export async function (POST|PUT|PATCH|DELETE)\(/)?.[1];
+   const mutation=source.match(/export (?:async function|const) (POST|PUT|PATCH|DELETE)\b/)?.[1];
    expect(mutation).toBeDefined();
-   const body=source.slice(source.indexOf("export async function "+mutation+"("));
+   const body=source.slice(Math.max(source.indexOf("export async function "+mutation+"("),source.indexOf("async function handle"+mutation+"(")));
    const origin=body.indexOf("isSameOriginRequest(request)");
    const readers=["request.json()","readAdminPlacementJson(request","readLimitedProjectLockInput(request","readBoundedJsonRequest(request"];
    const firstRead=Math.min(...readers.map(token=>body.indexOf(token))
@@ -47,7 +47,7 @@ describe("chat-13 Super Admin mutation route CSRF and error boundary contracts",
   for(const path of direct){
     const source=read(path);
     expect(source).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
-    expect(source).not.toContain("export async function POST(");
+    expect(source).not.toMatch(/export (?:async function|const) POST\b/);
   }
   const delegated=[
     "src/app/api/admin/placements/applications/export/route.ts",
@@ -57,8 +57,8 @@ describe("chat-13 Super Admin mutation route CSRF and error boundary contracts",
   for(const path of delegated){
     const source=read(path);
     expect(source).toContain("exportSuperAdminScopedDirectory(");
-    expect(source).toContain("export async function GET(");
-    expect(source).not.toContain("export async function POST(");
+    expect(source).toMatch(/export (?:async function|const) GET\b/);
+    expect(source).not.toMatch(/export (?:async function|const) POST\b/);
   }
   expect(helper).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
  });

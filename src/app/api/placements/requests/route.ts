@@ -3,12 +3,13 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { createPlacementRequest,listOwnPlacementRequests } from "@/modules/placements/request-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
 /** Compatibility for old GET /learner/requests/mine and new unified history.
  * Every row comes from the currently authenticated learner membership. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const u=new URL(request.url);
   if([...u.searchParams.keys()].some(key=>!["mine","page","pageSize"].includes(key))||
@@ -27,7 +28,8 @@ export async function GET(request:Request){
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function POST(request: Request) {
+export const GET = secured(handleGET);
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json(
       { error: "INVALID_ORIGIN" },
@@ -50,3 +52,4 @@ export async function POST(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST);

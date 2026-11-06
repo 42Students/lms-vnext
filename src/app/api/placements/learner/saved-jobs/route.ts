@@ -2,6 +2,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listOwnPlacementSavedJobs} from "@/modules/placements/saved-job-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** Missing DB08 migration: keep a recoverable 503 instead of an opaque 500. */
 function savedJobsTableUnavailable(error: unknown): boolean {
@@ -15,7 +16,7 @@ function savedJobsTableUnavailable(error: unknown): boolean {
  return false;
 }
 /** LEARNER-placements-13: this is the caller's bookmarks only. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const url=new URL(request.url);
   const idsOnly=url.searchParams.get("ids")==="1";
@@ -42,3 +43,4 @@ export async function GET(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const GET = secured(handleGET);

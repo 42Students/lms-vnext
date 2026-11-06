@@ -4,8 +4,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {setMyTpoTeamAway,tpoTeamAwaySchema} from "@/modules/placements/tpo-team-away-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const input=tpoTeamAwaySchema.safeParse(await request.json().catch(()=>null));
  if(!input.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
@@ -20,3 +21,4 @@ export async function POST(request:Request){
   throw error;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

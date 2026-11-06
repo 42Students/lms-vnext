@@ -10,6 +10,7 @@ import { getDb } from "@/db/client";
 import { users,departments } from "@/db/schema";
 import { and,eq,inArray,isNull,or } from "drizzle-orm";
 import { z } from "zod";
+import { secured } from "@/security/secure-handler";
 
 const previewSchema=z.object({
   collegeId:z.string().uuid(),
@@ -18,7 +19,7 @@ const previewSchema=z.object({
   preview:z.literal(true),
 }).strict();
 export const runtime="nodejs";
-export async function POST(request:Request){
+async function handlePOST(request:Request){
   if(!isSameOriginRequest(request))return Response.json({error:"INVALID_ORIGIN"},{status:403});
   try{
     // CSV can be 1.5 MB of text; cap the actual incoming JSON stream
@@ -77,3 +78,4 @@ export async function POST(request:Request){
       {headers:{"Cache-Control":"private, no-store"}});
   }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST);

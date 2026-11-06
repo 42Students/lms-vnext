@@ -15,6 +15,7 @@ import {
 } from "./e2e-identity";
 import { resolveRequestContext } from "@/modules/identity/context-service";
 import { MEMBERSHIP_ROLES, type MembershipRole } from "@/modules/identity/constants";
+import { bindTenantScope, scopeFromActor } from "@/db/tenant-context";
 import { resolveRequestTenant } from "@/modules/auth/request-tenant";
 import { isTenantAccessAllowed } from "@/modules/auth/tenant-access";
 import {
@@ -91,6 +92,10 @@ export async function getCurrentRequestContext() {
   if (!isTenantAccessAllowed(context, tenant)) {
     throw new SessionAuthenticationError("SESSION_INVALID");
   }
+
+  // Every authenticated request now carries its college/role to the database (row-level security reads it).
+  // Inert unless DB_TENANT_SCOPE=on, and a no-op outside an API request holder.
+  bindTenantScope(scopeFromActor(context));
 
   return context;
 }

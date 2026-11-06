@@ -5,8 +5,9 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {updateOwnRecruiterProfileDetails} from "@/modules/placements/recruiter-profile-details-service";
 import {normalizeLegacyRecruiterMobile} from "@/modules/placements/recruiter-profile-details-model";
 import {readRecruiterJsonBody,RecruiterJsonBodyError} from "@/modules/placements/recruiter-json-request";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function PATCH(request:Request){
+async function handlePATCH(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const raw:unknown=await readRecruiterJsonBody(request);
@@ -47,3 +48,4 @@ export async function PATCH(request:Request){
   return NextResponse.json({error:"INVALID_REQUEST"},{status:error.kind==="TOO_LARGE"?413:400});
   return apiErrorResponse(error);}
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

@@ -6,6 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getDb} from "@/db/client";
 import {collegeMemberships} from "@/db/schema";
 import {listColleges} from "@/modules/colleges/service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -66,7 +67,7 @@ async function scopedCatalog(){
   .groupBy(collegeMemberships.collegeId);
  return {colleges,activity:new Map(registrations.map(row=>[row.collegeId,row.total]))};
 }
-export async function GET(request:Request,{params}:RouteContext){
+async function handleGET(request:Request,{params}:RouteContext){
  try{
   const {path=[]}=await params;
   const action=path[0]??"search";
@@ -130,7 +131,8 @@ export async function GET(request:Request,{params}:RouteContext){
    hasMore:page*limit<total,scope:"AUTHORIZED_ONLY"},{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function POST(request:Request,{params}:RouteContext){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request,{params}:RouteContext){
  const {path=[]}=await params;
  if(path[0]!=="refresh")return NextResponse.json({error:"NOT_FOUND"},{status:404,headers:noStore});
  if(!isSameOriginRequest(request))
@@ -142,3 +144,4 @@ export async function POST(request:Request,{params}:RouteContext){
   return NextResponse.json({refreshed:true,cache:"LIVE_DATABASE"},{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST);

@@ -4,11 +4,12 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoBatchStudents } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { exportTpoBatchStudentsCsv } from "@/modules/placements/tpo-batch-students-export-model";
+import { secured } from "@/security/secure-handler";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 const pageSchema = z.coerce.number().int().min(1).max(100000).default(1);
 /** Exports exactly one 25-person page; URL cannot override tenant or batch. */
-export async function GET(request:Request,{params}:{params:Promise<{batchId:string}>}){
+async function handleGET(request:Request,{params}:{params:Promise<{batchId:string}>}){
  try {
   const {batchId}=await params;
   const url=new URL(request.url);
@@ -23,3 +24,4 @@ export async function GET(request:Request,{params}:{params:Promise<{batchId:stri
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

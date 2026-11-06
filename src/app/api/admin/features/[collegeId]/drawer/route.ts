@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getSuperAdminLearnerAccessTrace} from "@/modules/module-access/admin-trace-service";
 import {studentRuleCards} from "@/modules/module-access/admin-student-rule-model";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const query=z.strictObject({
@@ -12,7 +13,7 @@ const query=z.strictObject({
  view:z.enum(["suggestions","overrides","locked"]).default("suggestions"),
  page:z.coerce.number().int().min(1).max(10000).default(1),
 });
-export async function GET(request:Request,{params}:{params:Promise<{collegeId:string}>}){
+async function handleGET(request:Request,{params}:{params:Promise<{collegeId:string}>}){
  try{
   const input:Record<string,string>={};
   for(const [key,value] of new URL(request.url).searchParams){
@@ -74,3 +75,4 @@ export async function GET(request:Request,{params}:{params:Promise<{collegeId:st
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

@@ -4,8 +4,9 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readTpoSettingsBody,TpoCommunicationBodyError} from "@/modules/placements/tpo-communication-request-model";
 import {setTpoPrepReadiness,PrepReadinessError} from "@/modules/placements/tpo-prep-readiness-write-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function PUT(request:Request){
+async function handlePUT(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const result=await setTpoPrepReadiness(await getCurrentRequestContext(),await readTpoSettingsBody(request));
@@ -20,3 +21,4 @@ export async function PUT(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });

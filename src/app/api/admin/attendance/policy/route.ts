@@ -3,6 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {getCollegeAttendancePolicy} from "@/modules/attendance/policy-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -13,7 +14,7 @@ export const dynamic="force-dynamic";
  * Data comes from attendance_policies (24 hours / 75% absent an override).
  * Do not infer a platform or organization override that is not persisted here.
  */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const context=await getCurrentRequestContext();
   const collegeId=context.membership?.collegeId??
@@ -35,3 +36,4 @@ export async function GET(request:Request){
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

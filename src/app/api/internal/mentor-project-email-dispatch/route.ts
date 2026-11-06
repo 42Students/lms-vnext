@@ -3,13 +3,14 @@ import {NextResponse} from "next/server";
 import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
 import {mentorProjectEmailWorkerReady,runMentorProjectEmailDispatchBatch}
  from "@/modules/projects/mentor-project-email-dispatch-worker";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const headers={"Cache-Control":"private, no-store"};
 /** Server-to-server only. No GET and no browser session or client-chosen job.
  * The worker token must be independently provisioned and rotated.
  */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(request.headers.has("origin"))
   return NextResponse.json({error:"FORBIDDEN"},{status:403,headers});
  const expected=process.env["MENTOR_PROJECT_EMAIL_WORKER_TOKEN"]??"";
@@ -38,3 +39,4 @@ export async function POST(request:Request){
   return NextResponse.json({error:"WORKER_UNAVAILABLE"},{status:503,headers});
  }
 }
+export const POST = secured(handlePOST);

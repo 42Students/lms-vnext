@@ -4,8 +4,9 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {collegeHiringAnalyticsQuery} from "@/modules/placements/college-hiring-analytics-model";
 import {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel-service";
 import {collegeHiringFunnelCsv} from "@/modules/placements/college-hiring-funnel-export";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";export const dynamic="force-dynamic";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const parsed=collegeHiringAnalyticsQuery(Object.fromEntries(new URL(request.url).searchParams));
   if(!parsed.success)return NextResponse.json({error:"INVALID_REPORT_FILTERS"},{status:400});
@@ -24,3 +25,4 @@ export async function GET(request:Request){
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

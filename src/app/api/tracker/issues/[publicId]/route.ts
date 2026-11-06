@@ -8,10 +8,11 @@ import {isSuperAdmin} from "@/modules/identity/context";
 import {
   getMyTrackerReport,listMyTrackerReportHistory,listMyTrackerReportScreenshots,
 } from "@/modules/bug-tracker/reporter-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function GET(
+async function handleGET(
   request: Request,
   { params }: { params: Promise<{ publicId: string }> },
 ) {
@@ -56,3 +57,4 @@ export async function GET(
     return bugTrackerApiError(error);
   }
 }
+export const GET = secured(handleGET);

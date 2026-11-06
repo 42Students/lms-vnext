@@ -6,12 +6,13 @@ import {
  recruiterInviteAcceptReady,recruiterInviteAcceptanceBodySchema,
 } from "@/modules/placements/recruiter-invite-otp-accept-model";
 import {acceptPublicTpoRecruiterInviteOtp} from "@/modules/placements/public-recruiter-invite-accept-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"} as const;
 type RouteContext={params:Promise<{token:string}>};
-export async function POST(request:Request,{params}:RouteContext){
+async function handlePOST(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  if(!recruiterInviteAcceptReady({
@@ -34,3 +35,4 @@ export async function POST(request:Request,{params}:RouteContext){
   return tpoRecruiterInviteApiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST);

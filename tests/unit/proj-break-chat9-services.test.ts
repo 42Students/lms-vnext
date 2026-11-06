@@ -146,7 +146,7 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
    // Check the mutation handler itself, never compare unrelated GET code.
    // A wrapped route checks origin inside route() before authentication; the wrapper's own tests prove the order.
    if(page.includes('from "@/security/route"'))continue;
-   const mutation=page.slice(page.indexOf("export async function POST"));
+   const mutation=page.slice(Math.max(page.indexOf("export async function POST("),page.indexOf("async function handlePOST(")));
    expect(mutation.indexOf("isSameOriginRequest(request)")).toBeGreaterThanOrEqual(0);
    expect(mutation.indexOf("isSameOriginRequest(request)")).toBeLessThan(mutation.indexOf("getCurrentRequestContext()"));
    expect(page).toMatch(/apiErrorResponse\(error\)|from "@\/security\/route"/);

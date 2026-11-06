@@ -4,6 +4,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { CollegeElectiveSlotMutationError, createCollegeElectiveSlot, listCollegeElectiveSlotOptions } from "@/modules/electives/college-slot-mutation-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 /** Old /api/v1/electives/admin/slots is now scoped to the selected college
@@ -11,7 +12,7 @@ export const runtime = "nodejs";
  * PATCH /api/academics/elective-slots/{slotId}. Archive is a separate
  * version-checked lifecycle action, not a hidden delete from this endpoint.
  */
-export async function GET(){
+async function handleGET(){
  try{
   const context=await getCurrentRequestContext();
   const options=await listCollegeElectiveSlotOptions(context);
@@ -26,8 +27,9 @@ export async function GET(){
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -62,3 +64,4 @@ export async function POST(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

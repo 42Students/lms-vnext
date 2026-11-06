@@ -5,12 +5,13 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readTpoSettingsBody,TpoCommunicationBodyError} from "@/modules/placements/tpo-communication-request-model";
 import {previewSelectedTpoCampaignAudience} from "@/modules/messaging/engage-audience-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
 /** Read-only calculation: never issues or queues campaign mail. */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request)){
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  }
@@ -26,3 +27,4 @@ export async function POST(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

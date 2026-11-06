@@ -10,9 +10,10 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoBatch } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { placementTableExists } from "@/modules/placements/staged-tables";
 import { undoPlacementParticipation, PlacementBatchError } from "@/modules/placements/batch-participation-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 const inputSchema=z.object({actionId:z.string().uuid()}).strict();
-export async function POST(request:Request,{params}:{params:Promise<{batchId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{batchId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const ctx=await getCurrentRequestContext(),{batchId}=await params;
@@ -49,3 +50,4 @@ export async function POST(request:Request,{params}:{params:Promise<{batchId:str
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

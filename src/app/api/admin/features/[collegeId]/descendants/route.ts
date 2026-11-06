@@ -5,8 +5,9 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {readDescendantRule,writeDescendantRule} from "@/modules/module-access/admin-descendant-rule-write";
+import { secured } from "@/security/secure-handler";
 const query=z.strictObject({scopeType:z.enum(["DEPARTMENT","PROGRAM","COHORT","SECTION"]),scopeId:z.uuid(),module:z.enum(["projects","placements","electives"])});
-export async function GET(request:Request,{params}:{params:Promise<{collegeId:string}>}){
+async function handleGET(request:Request,{params}:{params:Promise<{collegeId:string}>}){
  try{
   const {collegeId}=await params;
   const u=new URL(request.url);
@@ -15,7 +16,8 @@ export async function GET(request:Request,{params}:{params:Promise<{collegeId:st
   return result?NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}}):NextResponse.json({error:"NOT_FOUND"},{status:404});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function PUT(request:Request,{params}:{params:Promise<{collegeId:string}>}){
+export const GET = secured(handleGET);
+async function handlePUT(request:Request,{params}:{params:Promise<{collegeId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {collegeId}=await params;
@@ -26,3 +28,4 @@ export async function PUT(request:Request,{params}:{params:Promise<{collegeId:st
   return result?NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}}):NextResponse.json({error:"NOT_FOUND"},{status:404});
  }catch(error){return apiErrorResponse(error);}
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });

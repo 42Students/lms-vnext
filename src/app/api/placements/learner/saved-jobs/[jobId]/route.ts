@@ -6,6 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {isDatabaseUnavailableError} from "@/lib/db-outage";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {saveOwnPlacementJob,unsaveOwnPlacementJob,SavedJobsStorageUnavailableError} from "@/modules/placements/saved-job-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 type RouteContext={params:Promise<{jobId:string}>};
@@ -34,7 +35,7 @@ function savedJobError(error:unknown,action:"SAVE"|"UNSAVE"="SAVE"){
  },{status:response.status,headers:{"Cache-Control":"no-store"}});
  return response;
 }
-export async function POST(request:Request,{params}:RouteContext){
+async function handlePOST(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const {jobId}=await params;
@@ -45,7 +46,8 @@ export async function POST(request:Request,{params}:RouteContext){
   return NextResponse.json({saved:Boolean(saved),message:"Job saved"},{status:200});
  }catch(error){return savedJobError(error);}
 }
-export async function DELETE(request:Request,{params}:RouteContext){
+export const POST = secured(handlePOST, { csrf: "enforce" });
+async function handleDELETE(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const {jobId}=await params;
@@ -56,3 +58,4 @@ export async function DELETE(request:Request,{params}:RouteContext){
   return NextResponse.json({...result,saved:false,message:"Job removed from saved"},{status:200});
  }catch(error){return savedJobError(error,"UNSAVE");}
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });

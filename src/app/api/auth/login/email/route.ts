@@ -7,6 +7,7 @@ import {
   loginErrorResponse,
 } from "@/modules/auth/http";
 import { sendEmailFallbackWithRuntime } from "@/modules/auth/runtime";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -22,7 +23,7 @@ export const runtime = "nodejs";
 const schema = z.strictObject({ attemptId: z.string().trim().nullish() });
 const challengeIdSchema = z.string().uuid();
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   const startedAt=Date.now();
   const guarded = await guardLoginRequest(
     request,
@@ -66,3 +67,4 @@ export async function POST(request: Request) {
     return loginErrorResponse(error, { route: "login-email", ip: guarded.ip });
   }
 }
+export const POST = secured(handlePOST);

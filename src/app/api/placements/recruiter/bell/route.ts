@@ -3,8 +3,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readHrRecruiterBell,markHrRecruiterBellRead,countHrRecruiterBellUnread} from "@/modules/placements/hr-recruiter-bell-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const context=await getCurrentRequestContext();
   if(new URL(request.url).searchParams.get("countOnly")==="1"){
@@ -21,12 +22,14 @@ export async function GET(request:Request){
    },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function POST(request:Request){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const data=await markHrRecruiterBellRead(await getCurrentRequestContext());
   return NextResponse.json({...data,ok:true},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });
 /** Legacy PUT /notifications/mark-all-read uses the same scoped writer. */
 export const PUT=POST;

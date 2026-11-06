@@ -8,6 +8,7 @@ import {
   createStaffNotification,
   listScopedAdminNotificationPage,
 } from "@/modules/activity/notification-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -40,7 +41,7 @@ function respondError(error: unknown) {
 }
 
 /** Authorised Super Admin browse; never reuse this route for personal inbox. */
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
     const params = new URL(request.url).searchParams;
@@ -66,9 +67,10 @@ export async function GET(request: Request) {
     return respondError(error);
   }
 }
+export const GET = secured(handleGET);
 
 /** Staff composition; service checks assignment and stored course/class. */
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -85,3 +87,4 @@ export async function POST(request: Request) {
     return respondError(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

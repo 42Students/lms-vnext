@@ -9,6 +9,7 @@ import {requirePermission} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {listCollegePeopleWithRuntime} from "@/modules/people/runtime";
 import {apiErrorResponse} from "@/lib/api-error";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -22,7 +23,7 @@ const querySchema=z.strictObject({
  * no "Selection recorded" response without a persisted popularity write.
  * UI pages redirect on missing membership; API consumers receive HTTP 401.
  */
-export async function GET(request:Request){
+async function handleGET(request:Request){
   let context:Awaited<ReturnType<typeof getCurrentRequestContext>>;
   try{context=await getCurrentRequestContext();}
   catch{return NextResponse.json({error:"AUTHENTICATION_REQUIRED",
@@ -65,3 +66,4 @@ export async function GET(request:Request){
       data:result.items,total:result.pagination.total},{headers:noStore});
   }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

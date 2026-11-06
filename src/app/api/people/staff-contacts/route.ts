@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { listCollegeStaffContacts } from "@/modules/people/college-contacts-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -10,7 +11,7 @@ export const runtime = "nodejs";
  * scope and learner exclusion are all enforced in the service transaction.
  * No caller-provided college identifier or unmasked phone lookup is accepted.
  */
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const params = new URL(request.url).searchParams;
     const result = await listCollegeStaffContacts(await getCurrentRequestContext(), {
@@ -25,3 +26,4 @@ export async function GET(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);

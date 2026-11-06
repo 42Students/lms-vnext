@@ -6,10 +6,11 @@ import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-q
 import {getMentorProjectActivityHistory}
   from "@/modules/projects/mentor-project-activity-service";
 import {mentorActivityCsv} from "@/modules/projects/mentor-project-activity-export-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
 /** Read-only, strict project and current Mentor scope; no external sending. */
-export async function GET(request:Request,{params}:RouteContext){
+async function handleGET(request:Request,{params}:RouteContext){
   try{
     const {projectId}=await params;
     const url=new URL(request.url);
@@ -38,3 +39,4 @@ export async function GET(request:Request,{params}:RouteContext){
     });
   }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

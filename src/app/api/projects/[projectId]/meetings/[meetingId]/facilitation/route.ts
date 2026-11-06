@@ -6,9 +6,10 @@ import {readMentorProjectCommandBody,MentorProjectCommandBodyError,
  mentorProjectBodyFailureMessage} from "@/modules/projects/mentor-command-body";
 import {updateMentorMeetingFacilitation} from
  "@/modules/projects/mentor-meeting-notes-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Context={params:Promise<{projectId:string;meetingId:string}>};
-export async function PATCH(request:Request,{params}:Context){
+async function handlePATCH(request:Request,{params}:Context){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -26,3 +27,4 @@ export async function PATCH(request:Request,{params}:Context){
   return apiErrorResponse(error);
  }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

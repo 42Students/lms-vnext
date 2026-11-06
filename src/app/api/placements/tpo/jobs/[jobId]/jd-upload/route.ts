@@ -5,13 +5,14 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {readBoundedJsonBody} from "@/lib/bounded-json-body";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoJdStatus,initiateTpoJdUpload,saveTpoJdUpload} from "@/modules/placements/tpo-jd-upload-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"private, no-store"} as const;
 type Ctx={params:Promise<{jobId:string}>};
 const discriminator=z.object({action:z.enum(["INITIATE","CONFIRM","REMOVE"])});
-export async function POST(request:Request,{params}:Ctx){
+async function handlePOST(request:Request,{params}:Ctx){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},
   {status:403,headers:noStore});
  const body=await readBoundedJsonBody(request,4096);
@@ -35,8 +36,9 @@ export async function POST(request:Request,{params}:Ctx){
   return response;
  }
 }
+export const POST = secured(handlePOST);
 
-export async function GET(_request:Request,{params}:Ctx){
+async function handleGET(_request:Request,{params}:Ctx){
  try{
   const {jobId}=await params;
   return NextResponse.json(
@@ -47,3 +49,4 @@ export async function GET(_request:Request,{params}:Ctx){
   return response;
  }
 }
+export const GET = secured(handleGET);

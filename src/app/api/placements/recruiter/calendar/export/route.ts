@@ -5,8 +5,9 @@ import {listRecruiterCalendarEvents} from "@/modules/placements/recruiter-calend
 import {placementCalendarWindow} from "@/modules/placements/placement-calendar-model";
 import {hrCalendarCategorySchema} from "@/modules/placements/hr-calendar-category-model";
 import {buildHrCalendarCsv} from "@/modules/placements/hr-calendar-export-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const p=new URL(request.url).searchParams;
   const allowed=["date","view","category"];
@@ -27,3 +28,4 @@ export async function GET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

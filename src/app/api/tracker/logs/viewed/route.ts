@@ -7,10 +7,11 @@ import {
   readLogAlertAdminState,
 } from "@/modules/log-alerts/admin-service";
 import { logAlertsRuntimeEnabled } from "@/modules/log-alerts/readiness";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+async function handleGET() {
   if (!logAlertsRuntimeEnabled()) {
     return NextResponse.json({ error: "DB10_LOG_ALERTS_MIGRATIONS_PENDING" }, { status: 503 });
   }
@@ -23,8 +24,9 @@ export async function GET() {
     return logAlertApiError(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!logAlertsRuntimeEnabled()) {
     return NextResponse.json({ error: "DB10_LOG_ALERTS_MIGRATIONS_PENDING" }, { status: 503 });
   }
@@ -39,3 +41,4 @@ export async function POST(request: Request) {
     return logAlertApiError(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

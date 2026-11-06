@@ -3,8 +3,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {collegeInterviewFilters,listCollegeInterviewDirectory} from "@/modules/placements/college-interview-directory-service";
 import {collegeInterviewCsv} from "@/modules/placements/college-directory-csv";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request) {
+async function handleGET(request:Request) {
  try{
   const raw=Object.fromEntries(new URL(request.url).searchParams);
   const parsed=collegeInterviewFilters.safeParse(raw);
@@ -19,3 +20,4 @@ export async function GET(request:Request) {
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

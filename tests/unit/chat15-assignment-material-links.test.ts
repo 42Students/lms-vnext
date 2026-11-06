@@ -31,9 +31,9 @@ describe("Faculty-authored learner assignment materials",()=>{
   expect(service).toContain("rows.some(row=>row.externalUrl?.toLowerCase()");
   const route=read("src/app/api/courses/deliveries/[deliveryId]/assignments/[assignmentId]/materials/route.ts");
   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
-  expect(route).toContain("export async function GET");
-  expect(route).toContain("export async function POST");
-  expect(route).toContain("export async function DELETE");
+  expect(route).toMatch(/export (?:async function|const) GET\b/);
+  expect(route).toMatch(/export (?:async function|const) POST\b/);
+  expect(route).toMatch(/export (?:async function|const) DELETE\b/);
  });
  it("LEARNER-learning-misc-02 exposes handouts on the actual assignment detail, without invented file receipts",()=>{
   const page=read("src/app/(authenticated)/learn/allAssignments/[assignmentId]/page.tsx");

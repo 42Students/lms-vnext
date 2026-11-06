@@ -5,9 +5,10 @@ import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-q
 import {getMentorReports} from "@/modules/projects/mentor-reports-service";
 import {mentorReportsQuerySchema,mentorReportsCsv}
   from "@/modules/projects/mentor-reports-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** Only registered current Mentor project state, never learner data. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
   try{
     const url=new URL(request.url);
     const filters=singleValueMentorExportFilters(url.searchParams,
@@ -26,3 +27,4 @@ export async function GET(request:Request){
     });
   }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

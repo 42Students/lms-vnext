@@ -5,6 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {
  completeLessonResourceFileUpload,removeLessonResourceFile,editLessonResourceFileDetails,
 } from "@/modules/courses/lesson-resource-file-upload-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 type Route={params:Promise<{contentId:string;materialId:string}>};
@@ -27,18 +28,21 @@ async function act(request:Request,{params}:Route,action:"COMPLETE"|"REMOVE"|"ED
   return Response.json({result},{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function POST(request:Request,context:Route){
+async function handlePOST(request:Request,context:Route){
  if(!isSameOriginRequest(request))
   return Response.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  return act(request,context,"COMPLETE");
 }
-export async function DELETE(request:Request,context:Route){
+export const POST = secured(handlePOST);
+async function handleDELETE(request:Request,context:Route){
  if(!isSameOriginRequest(request))
   return Response.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  return act(request,context,"REMOVE");
 }
-export async function PATCH(request:Request,context:Route){
+export const DELETE = secured(handleDELETE);
+async function handlePATCH(request:Request,context:Route){
  if(!isSameOriginRequest(request))
   return Response.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  return act(request,context,"EDIT");
 }
+export const PATCH = secured(handlePATCH);

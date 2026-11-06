@@ -6,8 +6,9 @@ import {BoundedFormDataError,readBoundedFormData} from "@/lib/bounded-form-data"
 import {recordOutsideDrive} from "@/modules/placements/recorded-outside-service";
 import {parseIstLocalSlot} from "@/modules/placements/hr-interview-slot-model";
 import {PlacementsServiceError} from "@/modules/placements/errors";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   // Authenticate first, then enforce the actual stream budget. Preserve
@@ -38,3 +39,4 @@ export async function POST(request:Request){
   throw error;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

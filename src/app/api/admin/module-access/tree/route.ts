@@ -3,6 +3,7 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readCompleteCollegeModuleTree} from "@/modules/module-access/admin-full-tree-read";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -15,7 +16,7 @@ const query=z.strictObject({
  * 500-row pages with stable parent IDs so clients can assemble the full tree.
  * Individual learners continue to use the authorized membership trace API.
  */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const url=new URL(request.url);
   const input=query.parse({
@@ -32,3 +33,4 @@ export async function GET(request:Request){
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

@@ -22,6 +22,7 @@ import {
   getPlacementReportDetails,
   getPlacementReportWorkspace,
 } from "@/modules/placements/report-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -514,7 +515,7 @@ function leadsReportCsv(report: PlacementLeadsReport) {
   return placementReportCsv(headings, rows);
 }
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
 
@@ -658,3 +659,4 @@ export async function GET(request: Request) {
     return response;
   }
 }
+export const GET = secured(handleGET);

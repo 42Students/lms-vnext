@@ -4,11 +4,12 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {
  getCollegeContentAuthoringOptions,collegeExistingContentFiltersFromSearch,
 } from "@/modules/courses/college-content-authoring-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Authorized scoped GET. No private storage keys or unreleased playback
  * tokens are returned; client aborts superseded searches on filter changes. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   const kind=z.enum(["YOUTUBE","RESOURCE","LIVE_CLASS"]).parse(params.get("kind"));
@@ -33,3 +34,4 @@ export async function GET(request:Request){
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

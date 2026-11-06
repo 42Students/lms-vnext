@@ -6,13 +6,14 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {recruiterCalendarQuerySchema,listRecruiterCalendarEvents}
  from "@/modules/placements/recruiter-calendar-service";
 import {recruiterCalendarIcs} from "@/modules/placements/recruiter-calendar-ics-model";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const querySchema=z.strictObject({
  from:z.iso.date(),to:z.iso.date(),collegeId:z.string().uuid().optional(),
 });
 
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const context=await getCurrentRequestContext();
   if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
@@ -43,3 +44,4 @@ export async function GET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

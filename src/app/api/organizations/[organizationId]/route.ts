@@ -8,6 +8,7 @@ import {
 import { apiErrorResponse } from "@/lib/api-error";
 import { organizationIdSchema } from "@/modules/organizations/validation";
 import { listOrganizations } from "@/modules/organizations/service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -21,7 +22,7 @@ type RouteContext = {
  * listOrganizations rechecks that scope in its read transaction, so no
  * arbitrary organization UUID can expose a record outside the current tenant.
  */
-export async function GET(_request: Request,{params}:RouteContext) {
+async function handleGET(_request: Request,{params}:RouteContext) {
  try {
   const {organizationId}=await params;
   const id=organizationIdSchema.safeParse(organizationId);
@@ -40,8 +41,9 @@ export async function GET(_request: Request,{params}:RouteContext) {
   return apiErrorResponse(error);
  }
 }
+export const GET = secured(handleGET);
 
-export async function PATCH(
+async function handlePATCH(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -77,16 +79,18 @@ export async function PATCH(
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH);
 
 /** Legacy PUT /fetch-update callers may send the same complete name payload.
  * Keep the vNext origin, role, schema and archived-parent checks in PATCH. */
-export async function PUT(request: Request, context: RouteContext) {
+async function handlePUT(request: Request, context: RouteContext) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   return PATCH(request, context);
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });
 
-export async function DELETE(
+async function handleDELETE(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -111,3 +115,4 @@ export async function DELETE(
     return apiErrorResponse(error);
   }
 }
+export const DELETE = secured(handleDELETE);

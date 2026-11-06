@@ -2,12 +2,13 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getCollegeLearnerProgressReport} from "@/modules/courses/college-learner-progress-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const quote=(value:unknown)=>'"'+String(value??"").replace(/"/g,'""')+'"';
 
 /** Export the same authorized active-enrollment audience as the live report. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const context=await getCurrentRequestContext();
   const url=new URL(request.url);
@@ -44,3 +45,4 @@ export async function GET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

@@ -11,9 +11,10 @@ import {verifyPrivateDocumentReceipt} from "@/modules/profile-verification/priva
 import {verificationReviewInput} from "@/modules/verification/review-input";
 import {requireSuperAdminVerificationCollege} from "@/modules/verification/super-admin-scope";
 import {requireVerificationTables,VerificationUnavailableError} from "@/modules/verification/staff-auth";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const _p=await readBoundedJsonRequest(request,8192);
@@ -42,3 +43,4 @@ export async function POST(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

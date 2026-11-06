@@ -4,9 +4,10 @@ import {tpoAudiencePreviewQuery,announcementPreviewScope} from "@/modules/announ
 import {previewTpoCollegeAnnouncementVisibility,previewTpoPlacementAudience} from "@/modules/announcements/tpo-audience-preview-service";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {apiErrorResponse} from "@/lib/api-error";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** Scoped, non-cacheable count only; no recipient identities or contact data. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  const params=new URL(request.url).searchParams;
  if([...params.keys()].some(key=>!["audience","targetId","targetIds"].includes(key))||
     params.getAll("audience").length!==1||params.getAll("targetId").length>1||
@@ -31,3 +32,4 @@ export async function GET(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const GET = secured(handleGET);

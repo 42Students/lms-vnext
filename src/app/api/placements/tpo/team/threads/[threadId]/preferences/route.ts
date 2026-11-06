@@ -4,8 +4,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {updateTpoTeamThreadPreferences} from "@/modules/placements/tpo-team-preferences-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{params:Promise<{threadId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{threadId:string}>}){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -25,3 +26,4 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
   throw error;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

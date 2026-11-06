@@ -3,8 +3,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {collegeRoleDirectoryQuerySchema} from "@/modules/people/college-role-directory-model";
 import {exportVisibleCollegePeople} from "@/modules/people/college-visible-directory-export";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";export const dynamic="force-dynamic";
-export async function GET(req:Request){
+async function handleGET(req:Request){
  try{
   const params=new URL(req.url).searchParams;
   const kind=params.get("kind");
@@ -23,3 +24,4 @@ export async function GET(req:Request){
   }});
  }catch(e){return apiErrorResponse(e);}
 }
+export const GET = secured(handleGET);

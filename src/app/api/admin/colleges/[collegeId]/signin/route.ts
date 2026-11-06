@@ -4,11 +4,12 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readAdminSignInRequestBody,AdminSignInRequestError} from "@/modules/colleges/admin-signin-request-body";
 import {CollegeSignInPolicyError,readAdminCollegeSignInPolicy,saveAdminCollegeSignInPolicy} from "@/modules/colleges/admin-signin-policy-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** Legacy branding readers consume data.branding.loginMethods or
  * data.data.branding.loginMethods; do not expose unrelated tenant branding.
  */
-export async function GET(_request:Request,{params}:{params:Promise<{collegeId:string}>}){
+async function handleGET(_request:Request,{params}:{params:Promise<{collegeId:string}>}){
  try{
   const {collegeId}=await params;
   const state=await readAdminCollegeSignInPolicy(await getCurrentRequestContext(),collegeId);
@@ -30,7 +31,8 @@ export async function GET(_request:Request,{params}:{params:Promise<{collegeId:s
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function PUT(request:Request,{params}:{params:Promise<{collegeId:string}>}){
+export const GET = secured(handleGET);
+async function handlePUT(request:Request,{params}:{params:Promise<{collegeId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const context=await getCurrentRequestContext();
@@ -70,3 +72,4 @@ export async function PUT(request:Request,{params}:{params:Promise<{collegeId:st
   return apiErrorResponse(error);
  }
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });

@@ -4,8 +4,9 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {setTpoOutsideDriveParticipant} from "@/modules/placements/recorded-outside-participation-service";
 import {apiErrorResponse} from "@/lib/api-error";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{params:Promise<{recordId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{recordId:string}>}){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -21,3 +22,4 @@ export async function POST(request:Request,{params}:{params:Promise<{recordId:st
    await getCurrentRequestContext(),{...validated,recordId}));
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

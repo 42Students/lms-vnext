@@ -6,6 +6,7 @@ import { trustedClientErrorIp } from "@/modules/log-alerts/client-error-ip";
 import { logError } from "@/observability/logger";
 import { acceptClientErrorRate, browserErrorSchema, safeBrowserComponent } from "@/modules/log-alerts/client-report";
 import { redactAlertText, safeAlertPath } from "@/modules/log-alerts/redaction";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 const MAX_BYTES = 4096;
@@ -34,7 +35,7 @@ async function readBoundedBody(request: Request): Promise<string | null> {
   return new TextDecoder().decode(bytes);
 }
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ message: "This request could not be verified." }, { status: 403 });
   }
@@ -93,3 +94,4 @@ export async function POST(request: Request) {
   // not await the response; never show this endpoint's errors as a UI toast.
   return NextResponse.json({ received: true }, { status: 202 });
 }
+export const POST = secured(handlePOST);

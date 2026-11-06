@@ -98,7 +98,7 @@ describe("chat-14 mentor route guards and friendly API error handling",()=>{
         expect(source).toContain("mentorProjectBodyFailureMessage(error.status)");
       }
       for(const method of route.methods){
-        expect(source).toMatch(new RegExp("export\\s+async\\s+function\\s+"+method+"\\s*\\("));
+        expect(source).toMatch(new RegExp("export\\s+(?:async\\s+function|const)\\s+"+method+"\\b"));
       }
       // Mutating handlers may never expose exception messages directly.
       expect(source).not.toContain("error.message");

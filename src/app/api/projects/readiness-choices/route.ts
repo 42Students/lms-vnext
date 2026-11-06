@@ -4,13 +4,14 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {listCollegeReadinessWorkspaceChoicePage}
  from "@/modules/projects/college-readiness-releases-service";
 import {z} from "zod";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 const schema=z.strictObject({
  collegeId:z.string().uuid(),q:z.string().trim().max(120).default(""),
  page:z.string().regex(/^[1-9][0-9]{0,5}$/).transform(Number)
   .pipe(z.number().int().min(1).max(100000)).default(1),
 });
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const url=new URL(request.url);
   if([...url.searchParams.keys()].some(k=>!["collegeId","q","page"].includes(k))||
@@ -28,3 +29,4 @@ export async function GET(request:Request){
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

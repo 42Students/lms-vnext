@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {rollbackProjectTemplate} from "@/modules/projects/template-rollback-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 const rollbackCommand=z.strictObject({
  versionId:z.string().uuid(),expectedTemplateVersion:z.number().int().min(1),
@@ -11,7 +12,7 @@ const rollbackCommand=z.strictObject({
  expectedAssignedCollegeCount:z.number().int().min(0).optional(),
  expectedPinnedWorkspaceCount:z.number().int().min(0).optional(),
 });
-export async function POST(request:Request,{params}:{params:Promise<{templateId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{templateId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {templateId}=await params;
@@ -25,3 +26,4 @@ export async function POST(request:Request,{params}:{params:Promise<{templateId:
   return NextResponse.json({...result,message:"Template rolled back"},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

@@ -5,8 +5,9 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { editTpoNotice, editTpoNoticeSchema } from "@/modules/announcements/tpo-placement-edit-service";
+import { secured } from "@/security/secure-handler";
 export const runtime = "nodejs";
-export async function POST(request: Request, {params}: {params: Promise<{noticeId: string}>}) {
+async function handlePOST(request: Request, {params}: {params: Promise<{noticeId: string}>}) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({error: "INVALID_ORIGIN"}, {status: 403});
   const form = await request.formData().catch(() => null);
@@ -60,3 +61,4 @@ export async function POST(request: Request, {params}: {params: Promise<{noticeI
     throw error;
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

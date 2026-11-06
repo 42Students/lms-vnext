@@ -4,8 +4,9 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {trackerAdminRuntimeEnabled} from "@/modules/bug-tracker/readiness";
 import {presignTrackerAttachment} from "@/modules/bug-tracker/attachment-storage-service";
 import {bugTrackerApiError} from "@/lib/bug-tracker-api-error";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{params:Promise<{publicId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{publicId:string}>}){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  if(!trackerAdminRuntimeEnabled())
@@ -18,3 +19,4 @@ export async function POST(request:Request,{params}:{params:Promise<{publicId:st
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return bugTrackerApiError(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

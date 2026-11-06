@@ -3,9 +3,10 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {resolveSignedInRecruiterPendingInvite} from "@/modules/placements/public-recruiter-invite-accept-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Params={params:Promise<{collegeId:string;action:string}>};
-export async function POST(request:Request,{params}:Params){
+async function handlePOST(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const {collegeId,action}=await params;
  if(action!=="accept"&&action!=="decline")return NextResponse.json({error:"NOT_FOUND"},{status:404});
@@ -14,3 +15,4 @@ export async function POST(request:Request,{params}:Params){
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

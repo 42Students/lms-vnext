@@ -8,10 +8,11 @@ import {publicPlacementPublicationInput} from "@/modules/placements/public-page/
 import {setTpoPublicPlacementPublication,PublicPlacementPublishError,getTpoPublicPlacementLegacySettings} from "@/modules/placements/public-page/publication-service";
 import {getPublicPlacementPageContent,saveTpoPublicPlacementContent} from "@/modules/placements/public-page/content-service";
 import {publicPlacementContentInput} from "@/modules/placements/public-page/content-model";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const form=await request.formData().catch(()=>null);
  if(!form)return NextResponse.json({error:"INVALID_BODY"},{status:400});
@@ -32,10 +33,11 @@ export async function POST(request:Request){
   throw e;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });
 
 /** Legacy placement-page GET is scoped to the authenticated TPO, not a
  * caller-supplied college. Include optimistic content version for the PUT. */
-export async function GET(){
+async function handleGET(){
  try{
   const ctx=await getCurrentRequestContext();
   const data=await getTpoPublicPlacementLegacySettings(ctx);
@@ -46,6 +48,7 @@ export async function GET(){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);
 
 const legacyPublicPagePut=z.union([
  z.strictObject({enabled:z.boolean()}),
@@ -56,7 +59,7 @@ const legacyPublicPagePut=z.union([
 ]);
 /** Legacy PUT accepts either publication or content; keep each state change
  * independently auditable. Require the actual content version on edits. */
-export async function PUT(request:Request){
+async function handlePUT(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -87,3 +90,4 @@ export async function PUT(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });

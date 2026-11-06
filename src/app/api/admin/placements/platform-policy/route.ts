@@ -3,13 +3,15 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {readAdminPlacementJson} from "@/modules/placements/admin-request-body-model";
 import { listPlatformPlacementPolicy, PlatformPlacementPolicyConflict, PlatformPlacementPolicyValidationError, setPlatformPlacementPolicy } from "@/modules/placements/platform-placement-policy-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(){
+async function handleGET(){
  try{return Response.json({fields:await listPlatformPlacementPolicy(await getCurrentRequestContext())},
   {headers:{"Cache-Control":"private, no-store"}});}
  catch(error){return apiErrorResponse(error);}
 }
-export async function PUT(request:Request){
+export const GET = secured(handleGET);
+async function handlePUT(request:Request){
  if(!isSameOriginRequest(request))return Response.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const body=await readAdminPlacementJson(request,4096);
@@ -25,3 +27,4 @@ export async function PUT(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const PUT = secured(handlePUT);

@@ -5,13 +5,14 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {
  getTpoOfferLetterAttachment,attachTpoOfferLetter,
 } from "@/modules/placements/tpo-offer-lifecycle-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 type Route={params:Promise<{jobId:string;offerId:string}>};
 
 /** A selected-college TPO-only reference, never a direct storage upload or
  * publicly readable object path. File uploads still use signed storage APIs. */
-export async function GET(_request:Request,{params}:Route){
+async function handleGET(_request:Request,{params}:Route){
  try{
   const {jobId,offerId}=await params;
   const result=await getTpoOfferLetterAttachment(
@@ -19,7 +20,8 @@ export async function GET(_request:Request,{params}:Route){
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function POST(request:Request,{params}:Route){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request,{params}:Route){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -30,3 +32,4 @@ export async function POST(request:Request,{params}:Route){
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

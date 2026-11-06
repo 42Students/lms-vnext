@@ -5,6 +5,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {
   setCourseQuizResults,
 } from "@/modules/courses/quiz-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -12,7 +13,7 @@ type RouteContext = {
   params: Promise<{ quizId: string }>;
 };
 
-export async function POST(
+async function handlePOST(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -39,9 +40,11 @@ export async function POST(
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST);
 
 /** Legacy PATCH results maps to the same authorized results transition as POST. */
-export async function PATCH(request: Request, route: RouteContext) {
+async function handlePATCH(request: Request, route: RouteContext) {
   if (!isSameOriginRequest(request)) return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   return POST(request, route);
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

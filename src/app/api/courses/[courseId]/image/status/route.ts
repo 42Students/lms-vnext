@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { CourseImageError, getCourseImageStatus } from "@/modules/courses/course-image-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type RouteContext = { params: Promise<{ courseId: string }> };
 
-export async function GET(_request: Request, { params }: RouteContext) {
+async function handleGET(_request: Request, { params }: RouteContext) {
   const headers = { "Cache-Control": "private, no-store", Vary: "Cookie" };
   try {
     const context = await getCurrentRequestContext();
@@ -25,3 +26,4 @@ export async function GET(_request: Request, { params }: RouteContext) {
     return response;
   }
 }
+export const GET = secured(handleGET);

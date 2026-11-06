@@ -2,9 +2,10 @@ import { NextResponse } from "next/server";
 import { isSameOriginRequest } from "@/auth/origin";
 import {readBoundedJsonBody} from "@/lib/bounded-json-body";
 import { acceptPublicRecruiterJoin, PublicJoinAcceptError } from "@/modules/placements/public-join/join-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -35,3 +36,4 @@ export async function POST(request: Request) {
       {status:503,headers:{"Cache-Control":"no-store"}});
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

@@ -8,6 +8,7 @@ import {createProfileVerificationRepository} from "@/modules/profile-verificatio
 import {verifyPrivateDocumentReceipt} from "@/modules/profile-verification/private-receipts";
 import {submitOwnVerification} from "@/modules/profile-verification/service";
 import {getOwnLearnerVerificationStatus} from "@/modules/placements/learner-verification-status-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 
 const requestSchema=z.strictObject({
@@ -17,7 +18,7 @@ const requestSchema=z.strictObject({
 
 /** Historical GET /api/v1/profile/verification projects only the active
  * member's own status, without raw identity identifiers or document URLs. */
-export async function GET(){
+async function handleGET(){
  try{
   const context=await getCurrentRequestContext();
   const status=await getOwnLearnerVerificationStatus(context);
@@ -28,11 +29,12 @@ export async function GET(){
   throw error;
  }
 }
+export const GET = secured(handleGET);
 
 /** Only the authenticated active learner may submit their own stored profile snapshot.
  * The DB04 writer locks the row, checks the version and validates CLEAN private receipts.
  */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const input=requestSchema.safeParse(await request.json().catch(()=>null));
  if(!input.success)return NextResponse.json({
@@ -67,3 +69,4 @@ export async function POST(request:Request){
   throw error;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

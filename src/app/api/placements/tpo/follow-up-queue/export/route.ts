@@ -3,9 +3,10 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoFollowupQueueCsv} from "@/modules/placements/tpo-followup-queue-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  if(process.env["DB09_TPO_API_READY"]!=="DB09_VERIFIED")
   return NextResponse.json({error:"DB09_MIGRATIONS_PENDING"},{status:503,
    headers:{"Cache-Control":"private, no-store, max-age=0"}});
@@ -25,3 +26,4 @@ export async function GET(request:Request){
   return response;
  }
 }
+export const GET = secured(handleGET);

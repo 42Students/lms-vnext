@@ -7,6 +7,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {privateAuthResponse} from "@/modules/auth/private-response";
 import { revokeOwnSession } from "@/modules/auth/session-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -25,7 +26,7 @@ type RouteContext = { params: Promise<{ sessionId: string }> };
  * user id of the session row, never by role (the legacy LMS let any FACULTY
  * revoke anyone's session).
  */
-export async function DELETE(request: Request, { params }: RouteContext) {
+async function handleDELETE(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request)) {
     return privateAuthResponse(NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 }));
   }
@@ -58,3 +59,4 @@ export async function DELETE(request: Request, { params }: RouteContext) {
     return privateAuthResponse(apiErrorResponse(error));
   }
 }
+export const DELETE = secured(handleDELETE);

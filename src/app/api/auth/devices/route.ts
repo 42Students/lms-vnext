@@ -10,6 +10,7 @@ import {
   revokeAllOwnSessions,
   revokeOtherSessions,
 } from "@/modules/auth/session-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -21,7 +22,7 @@ export const runtime = "nodejs";
  * The new API deliberately withholds user IDs, raw JTI and IP addresses.
  */
 /** The signed-in person's own live devices. Never anyone else's. */
-export async function GET() {
+async function handleGET() {
   try {
     const session = await getCurrentDeviceSession();
     const rows = await listActiveSessions(session.userId);
@@ -43,13 +44,14 @@ export async function GET() {
     return privateAuthResponse(apiErrorResponse(error));
   }
 }
+export const GET = secured(handleGET);
 
 /** Own-session actions only; never infer a target person from caller JSON.
  * Legacy staff-wide revocation is deliberately not exposed from a self-device
  * route: cross-account revocation requires a separately authorized admin
  * workflow and persisted permission check. scope=all revokes this device too.
  */
-export async function DELETE(request: Request) {
+async function handleDELETE(request: Request) {
   if (!isSameOriginRequest(request)) {
     return privateAuthResponse(NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 }));
   }
@@ -89,3 +91,4 @@ export async function DELETE(request: Request) {
     return privateAuthResponse(apiErrorResponse(error));
   }
 }
+export const DELETE = secured(handleDELETE);

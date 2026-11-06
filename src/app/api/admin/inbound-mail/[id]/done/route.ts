@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {changeInboundMailStatusForAdmin,getInboundMailDetailForAdmin} from "@/modules/inbound-mail/admin-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 type RouteContext={params:Promise<{id:string}>};
@@ -11,7 +12,7 @@ type RouteContext={params:Promise<{id:string}>};
 /** Historical done/reopen action translated to the vNext CAS triage state.
  * Never trust old numeric IDs, incoming version claims or a tenant selector.
  * The authorized current row provides the expected status and version. */
-export async function POST(request:Request,{params}:RouteContext){
+async function handlePOST(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},
   {status:403,headers:{"Cache-Control":"private, no-store"}});
  try{
@@ -45,3 +46,4 @@ export async function POST(request:Request,{params}:RouteContext){
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST);

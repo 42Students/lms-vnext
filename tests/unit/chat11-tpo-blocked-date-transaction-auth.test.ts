@@ -3,8 +3,8 @@ import {describe,expect,it} from "vitest";
 const source=readFileSync("src/modules/placements/tpo-blocked-date-write-service.ts","utf8");
 const names=["createBlockedDate","deleteBlockedDate","removeBlockedRange"] as const;
 function handler(name:(typeof names)[number]){
- const start=source.indexOf("export async function "+name+"(");
- const end=names.map(item=>source.indexOf("export async function "+item+"("))
+ const start=Math.max(source.indexOf("export async function "+name+"("),source.indexOf("async function handle"+name+"("));
+ const end=names.map(item=>Math.max(source.indexOf("export async function "+item+"("),source.indexOf("async function handle"+item+"(")))
   .filter(i=>i>start).reduce((min,n)=>Math.min(min,n),source.length);
  expect(start).toBeGreaterThan(0);
  return source.slice(start,end);

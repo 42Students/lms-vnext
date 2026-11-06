@@ -3,6 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {archiveOwnLearnerNotification} from "@/modules/activity/learner-notification-read-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 type RouteContext={params:Promise<{notificationId:string}>};
@@ -20,13 +21,15 @@ async function archive(request:Request,{params}:RouteContext,alias:boolean){
     },{headers:{"Cache-Control":"private, no-store"}});
   }catch(error){return apiErrorResponse(error);}
 }
-export async function DELETE(request:Request,context:RouteContext){
+async function handleDELETE(request:Request,context:RouteContext){
   if(!isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   return archive(request,context,false);
 }
-export async function POST(request:Request,context:RouteContext){
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });
+async function handlePOST(request:Request,context:RouteContext){
   if(!isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   return archive(request,context,true);
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

@@ -6,9 +6,10 @@ import {tpoDriveDayIssueSchema,filterTpoDriveDayIssues} from "@/modules/placemen
 import {tpoDriveDaySortSchema,sortTpoDriveDayRows} from "@/modules/placements/tpo-drive-day-sort-model";
 import {tpoLiveRoundSearchSchema,filterTpoLiveRoundSearch} from "@/modules/placements/tpo-live-round-search-model";
 import {serializeTpoLiveDriveDayCsv} from "@/modules/placements/tpo-live-drive-day-csv-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const query=new URL(request.url).searchParams;
   const q=tpoLiveRoundSearchSchema.parse(query.get("q")??undefined);
@@ -31,3 +32,4 @@ export async function GET(request:Request){
   return response;
  }
 }
+export const GET = secured(handleGET);

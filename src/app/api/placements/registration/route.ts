@@ -9,15 +9,17 @@ import { requireLearnerPlacementAccess } from "@/modules/placements/learner-part
 import {
   PlacementRegistrationError, registerOwnPlacementChoice,
 } from "@/modules/placements/batch-registration-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET() {
+async function handleGET() {
   try {
     const registration=await getOwnLearnerRegistration(await getCurrentRequestContext());
     return NextResponse.json({registration,data:registration,status:"OK"},
       {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {return registrationError(error);}
 }
-export async function POST(request:Request) {
+export const GET = secured(handleGET);
+async function handlePOST(request:Request) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   try {
@@ -59,6 +61,7 @@ export async function POST(request:Request) {
       {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {return registrationError(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });
 function registrationError(error:unknown) {
   if (error instanceof PlacementRegistrationError)
     return NextResponse.json({error:error.code},{

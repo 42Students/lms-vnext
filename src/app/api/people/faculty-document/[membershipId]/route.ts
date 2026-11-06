@@ -4,17 +4,19 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readBoundedFacultyProfileJson,FacultyProfileBodyTooLarge} from "@/modules/people/faculty-profile-request-body";
 import {getFacultyDocumentForAdmin,patchFacultyDocumentForAdmin} from "@/modules/people/faculty-admin-document-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 type Params={params:Promise<{membershipId:string}>};
-export async function GET(_request:Request,{params}:Params){
+async function handleGET(_request:Request,{params}:Params){
  try{
   const {membershipId}=await params;
   return NextResponse.json(await getFacultyDocumentForAdmin(await getCurrentRequestContext(),membershipId),
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function PATCH(request:Request,{params}:Params){
+export const GET = secured(handleGET);
+async function handlePATCH(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -27,4 +29,5 @@ export async function PATCH(request:Request,{params}:Params){
   return NextResponse.json(value,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });
 export const PUT=PATCH;

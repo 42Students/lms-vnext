@@ -16,6 +16,7 @@ import {listSuperAdminBroadcastColleges,publishSuperAdminCollegeBroadcast} from 
 import {listAnnouncementsForAdmin} from "@/modules/announcements/service";
 import {parseAnnouncementAdminApiQuery} from "@/modules/announcements/admin-api-query";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 
 /** Source broadcast IDs are distinct from individual recipient copies.
@@ -58,7 +59,7 @@ async function groupMutationInput(request:Request){
 }
 
 /** PUT is the legacy edit alias; recipients cannot change during an edit. */
-export async function PATCH(request:Request){
+async function handlePATCH(request:Request){
  if(!announcementsRuntimeEnabled())
   return NextResponse.json({error:"DB10_ANNOUNCEMENTS_MIGRATIONS_PENDING"},{status:503});
  if(!isSameOriginRequest(request))
@@ -76,9 +77,10 @@ export async function PATCH(request:Request){
    {headers:{"cache-control":"private, no-store"}});
  }catch(error){return announcementApiError(error);}
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });
 export const PUT=PATCH;
 
-export async function DELETE(request:Request){
+async function handleDELETE(request:Request){
  if(!announcementsRuntimeEnabled())
   return NextResponse.json({error:"DB10_ANNOUNCEMENTS_MIGRATIONS_PENDING"},{status:503});
  if(!isSameOriginRequest(request))
@@ -96,6 +98,7 @@ export async function DELETE(request:Request){
    {headers:{"cache-control":"private, no-store"}});
  }catch(error){return announcementApiError(error);}
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });
 
 
 /** Preserve legacy composer field names, but never infer consent or expand an
@@ -119,7 +122,7 @@ function normalizeBroadcastComposer(raw:unknown):unknown{
   publishConsent:value["publishConsent"],
  };
 }
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!announcementsRuntimeEnabled())return NextResponse.json({error:"DB10_ANNOUNCEMENTS_MIGRATIONS_PENDING"},{status:503});
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -135,12 +138,13 @@ export async function POST(request:Request){
   },{status:201,headers:{"cache-control":"private, no-store"}});
  }catch(error){return announcementApiError(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });
 
 
 /** Legacy broadcast picker and history read, scoped by the same authoritative
  * Super Admin/TPO-college directory as POST. Cursor pages may split a broadcast:
  * visibleCopyCount is for this page only, never an all-college reach claim. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  if(!announcementsRuntimeEnabled())
   return NextResponse.json({error:"DB10_ANNOUNCEMENTS_MIGRATIONS_PENDING"},{status:503});
  try{
@@ -204,3 +208,4 @@ export async function GET(request:Request){
   },{headers:{"cache-control":"private, no-store"}});
  }catch(error){return announcementApiError(error);}
 }
+export const GET = secured(handleGET);

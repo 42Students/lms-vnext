@@ -14,6 +14,7 @@ import {
   queueFencedCourseDueReminders,
   queueFencedInterviewReminders,
 } from "@/modules/operations/notification-scheduled-job-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -27,7 +28,7 @@ type WiredJob = "notification.release" | "notification.cleanup"
  * POST the specific job key; no GET, unauthenticated or browser trigger may
  * publish notifications. Deployment/IAM is a separate explicit release gate.
  */
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   // Browser Origin never authorizes a service scheduler.
   if (request.headers.has("origin"))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers});
@@ -129,3 +130,4 @@ export async function POST(request: Request) {
       { status: 503, headers });
   }
 }
+export const POST = secured(handlePOST);

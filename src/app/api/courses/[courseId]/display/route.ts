@@ -9,6 +9,7 @@ import {
   updateCourseDisplayContent,
 } from "@/modules/courses/course-display-service";
 import { courseDisplayRuntimeEnabled } from "@/modules/courses/course-display-readiness";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -34,7 +35,7 @@ function pending() {
   );
 }
 
-export async function GET(
+async function handleGET(
   _request: Request,
   { params }: RouteContext,
 ) {
@@ -55,8 +56,9 @@ export async function GET(
     return privateError(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function PUT(
+async function handlePUT(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -86,3 +88,4 @@ export async function PUT(
     return privateError(error);
   }
 }
+export const PUT = secured(handlePUT);

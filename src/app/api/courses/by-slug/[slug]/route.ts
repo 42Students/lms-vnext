@@ -9,6 +9,7 @@ import { loadAcademicCollegeScope } from "@/modules/academics/scope";
 import { CoursesServiceError } from "@/modules/courses/errors";
 import { loadCourseScope } from "@/modules/courses/scope";
 import { requirePermission } from "@/modules/permissions/policy";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -22,7 +23,7 @@ const slugSchema = z.string().min(1).max(64)
  * An archived slug remains reserved in the unique index, but is not exposed
  * to a catalog reader. Numeric legacy IDs are never guessed from slugs.
  */
-export async function GET(request: Request, { params }: RouteContext) {
+async function handleGET(request: Request, { params }: RouteContext) {
   try {
     const context = await getCurrentRequestContext();
     const { slug: rawSlug } = await params;
@@ -67,3 +68,4 @@ export async function GET(request: Request, { params }: RouteContext) {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);

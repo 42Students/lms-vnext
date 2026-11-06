@@ -4,10 +4,11 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
 import { cancelTpoDriveWithPreview, getTpoDriveCancelPreview } from "@/modules/placements/tpo-drive-cancel-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function POST(
+async function handlePOST(
   request: Request,
   { params }: { params: Promise<{ jobId: string }> },
 ) {
@@ -30,12 +31,14 @@ export async function POST(
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });
 
 /** TPO-drives-13: read-only bulk preflight. Never mutates a job on GET. */
-export async function GET(_request:Request,{params}:{params:Promise<{jobId:string}>}){
+async function handleGET(_request:Request,{params}:{params:Promise<{jobId:string}>}){
  try{
   const {jobId}=await params;
   return NextResponse.json(await getTpoDriveCancelPreview(await getCurrentRequestContext(),jobId),
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

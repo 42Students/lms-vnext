@@ -5,8 +5,9 @@ import {countTpoUnreadRecruiterMessages} from "@/modules/placements/tpo-recruite
 import {getPendingTpoRequestsCount} from "@/modules/placements/tpo-pending-requests-count-service";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listMyTpoInternalThreads} from "@/modules/placements/tpo-team-internal-read-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(){
+async function handleGET(){
  try{
   const ctx=await getCurrentRequestContext();
   const [personal,messages,requests,team]=await Promise.all([
@@ -20,3 +21,4 @@ export async function GET(){
    headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

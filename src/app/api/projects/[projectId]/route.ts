@@ -6,6 +6,7 @@ import {updateCollegeProjectSummary} from "@/modules/projects/college-project-su
 import {
   getProjectInstanceWorkspace,
 } from "@/modules/projects/instance-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -13,7 +14,7 @@ type RouteContext = {
   params: Promise<{ projectId: string }>;
 };
 
-export async function GET(
+async function handleGET(
   _request: Request,
   { params }: RouteContext,
 ) {
@@ -31,8 +32,9 @@ export async function GET(
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function PATCH(request:Request,{params}:RouteContext){
+async function handlePATCH(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {projectId}=await params;
@@ -49,3 +51,4 @@ export async function PATCH(request:Request,{params}:RouteContext){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

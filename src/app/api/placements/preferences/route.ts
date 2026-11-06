@@ -8,10 +8,11 @@ import {
   getCandidatePreferences,
   upsertCandidatePreferences,
 } from "@/modules/placements/candidate-preferences-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+async function handleGET() {
   try {
     const context = await getCurrentRequestContext();
     await requireLearnerPlacementAccess(context);
@@ -22,8 +23,9 @@ export async function GET() {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function PUT(request: Request) {
+async function handlePUT(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json(
       { error: "INVALID_ORIGIN" },
@@ -45,9 +47,10 @@ export async function PUT(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const PUT = secured(handlePUT);
 
 /** Conflict-aware partial update, unlike the legacy full-form PUT. */
-export async function PATCH(request:Request){
+async function handlePATCH(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const context=await getCurrentRequestContext();
@@ -55,3 +58,4 @@ export async function PATCH(request:Request){
   return NextResponse.json({preferences},{headers:{"cache-control":"no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

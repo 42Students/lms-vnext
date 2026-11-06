@@ -6,13 +6,14 @@ import { skillsCatalogRuntimeEnabled } from "@/modules/skills/catalog-readiness"
 import {
   listSkillSynonymsForParent, searchSkillsByExactSynonym, skillSynonymExists,
 } from "@/modules/skills/catalog-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type Context = {params:Promise<{path:string[]}>};
 
 /** Read-only alias tools for permitted catalog importers/editors.
  * Never creates cross-tenant users, tracks lookup activity or mutates terms. */
-export async function GET(request:Request,{params}:Context) {
+async function handleGET(request:Request,{params}:Context) {
   if(!skillsCatalogRuntimeEnabled())return NextResponse.json({
     error:"DB10_SKILLS_MIGRATIONS_PENDING",
     message:"Synonym catalog is not ready; entered skill names can be saved without selecting an alias.",
@@ -39,3 +40,4 @@ export async function GET(request:Request,{params}:Context) {
     return NextResponse.json({error:"NOT_FOUND"},{status:404});
   }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

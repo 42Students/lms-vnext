@@ -3,8 +3,9 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {collegeSemesterDirectorySchema} from "@/modules/academics/college-academic-directory-model";
 import {listCollegeSemesters} from "@/modules/academics/college-academic-directory-service";
 import {placementReportCsv} from "@/modules/placements/report-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   const parsed=collegeSemesterDirectorySchema.safeParse({
@@ -37,3 +38,4 @@ export async function GET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

@@ -11,6 +11,7 @@ import {StorageFileError} from "@/modules/storage/file-errors";
 import {z} from "zod";
 import {readResourceMaterialCommandJson} from "@/modules/courses/resource-material-command-json";
 import {isSameOriginRequest} from "@/auth/origin";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 type Route={params:Promise<{contentId:string}>};
@@ -49,7 +50,7 @@ function queryParams(request:Request):Record<string,unknown>{
  * both resolve through the same staff/learner scope checks and clean-scan
  * attestation. The response must not be cached or leaked through Referer.
  */
-export async function GET(request:Request,{params}:Route){
+async function handleGET(request:Request,{params}:Route){
  try{
   const {contentId:rawContentId}=await params;
   const contentId=z.string().uuid().parse(rawContentId);
@@ -73,7 +74,8 @@ export async function GET(request:Request,{params}:Route){
   return Response.json({materials},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function POST(request:Request,{params}:Route){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request,{params}:Route){
  if(!isSameOriginRequest(request))return Response.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {contentId:rawContentId}=await params;
@@ -85,3 +87,4 @@ export async function POST(request:Request,{params}:Route){
   return Response.json({result},{status:201,headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST);

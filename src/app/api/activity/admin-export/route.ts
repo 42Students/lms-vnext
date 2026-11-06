@@ -2,8 +2,9 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readCollegeActivityExportParams } from "@/modules/activity/college-activity-export-model";
 import { exportSuperAdminActivity } from "@/modules/activity/super-admin-audit-export-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request) {
+async function handleGET(request:Request) {
  try {
   const params=readCollegeActivityExportParams(new URL(request.url).searchParams);
   const result=await exportSuperAdminActivity(await getCurrentRequestContext(),params);
@@ -21,3 +22,4 @@ export async function GET(request:Request) {
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

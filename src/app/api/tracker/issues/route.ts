@@ -13,6 +13,7 @@ import { BUG_STATUSES } from "@/modules/bug-tracker/workflow";
 import { db10BugReports } from "@/db/schema/db10-bug-tracker";
 import { getDb } from "@/db/client";
 import { isSuperAdmin } from "@/modules/identity/context";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -34,7 +35,7 @@ function invalid(field?: string, message?: string) {
  * super-admin capability for full index reads. Reporters may search only their own
  * records; managers retain the cursor-based, scoped admin endpoint.
  */
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   if (!trackerAdminRuntimeEnabled()) {
     return NextResponse.json({ error: "DB10_TRACKER_MIGRATIONS_PENDING" }, { status: 503 });
   }
@@ -144,9 +145,10 @@ export async function GET(request: Request) {
     return bugTrackerApiError(error);
   }
 }
+export const GET = secured(handleGET);
 
 /** Reporter intake requires the signed-in user and same-origin protection. */
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!trackerAdminRuntimeEnabled()) {
     return NextResponse.json({ error: "DB10_TRACKER_MIGRATIONS_PENDING" }, { status: 503 });
   }
@@ -189,3 +191,4 @@ export async function POST(request: Request) {
     return bugTrackerApiError(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

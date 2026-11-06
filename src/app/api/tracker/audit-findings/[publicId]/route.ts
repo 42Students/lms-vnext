@@ -3,10 +3,11 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getIndependentAuditFinding,listIndependentAuditFindingEvents,listIndependentAuditFindings,mutateIndependentAuditFinding} from "@/modules/bug-tracker/independent-audit-findings-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 type Params={params:Promise<{publicId:string}>};
-export async function GET(_request:Request,{params}:Params){
+async function handleGET(_request:Request,{params}:Params){
  try{
   const ctx=await getCurrentRequestContext();
   const {publicId}=await params;
@@ -26,7 +27,8 @@ export async function GET(_request:Request,{params}:Params){
   return NextResponse.json({finding,events,similar},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function PATCH(request:Request,{params}:Params){
+export const GET = secured(handleGET);
+async function handlePATCH(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:{"Cache-Control":"private, no-store"}});
  try{
   const {publicId}=await params;
@@ -46,3 +48,4 @@ export async function PATCH(request:Request,{params}:Params){
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const PATCH = secured(handlePATCH);

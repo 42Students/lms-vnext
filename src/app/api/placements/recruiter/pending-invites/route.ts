@@ -4,13 +4,15 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listOwnRecruiterPendingInvites,respondToOwnRecruiterPendingInvite} from "@/modules/placements/recruiter-pending-invites-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(){
+async function handleGET(){
  try{
   return NextResponse.json(await listOwnRecruiterPendingInvites(await getCurrentRequestContext()),
     {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);
 
 const pendingInviteResponseSchema=z.strictObject({
  grantId:z.string().uuid(),
@@ -19,7 +21,7 @@ const pendingInviteResponseSchema=z.strictObject({
 });
 /** A signed-in recruiter can only act on an invite currently owned by the
  * same user and company. Version and tenant grant are rechecked under lock. */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const body:unknown=await request.json().catch(()=>null);
@@ -44,3 +46,4 @@ export async function POST(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

@@ -3,10 +3,11 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import { summarizeLegacyLearnerJobs } from "@/modules/placements/legacy-job-read-adapter";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   const search = new URL(request.url).searchParams;
   if ([...search.keys()].some(key => key !== "legacy") ||
       (search.has("legacy") && search.get("legacy") !== "1")) {
@@ -27,3 +28,4 @@ export async function GET(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);

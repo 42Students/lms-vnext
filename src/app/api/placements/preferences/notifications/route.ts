@@ -4,12 +4,13 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { updateOwnPlacementNotificationPreferences } from "@/modules/placements/learner-placement-notification-service";
 import { getCandidatePreferences } from "@/modules/placements/candidate-preferences-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 
 /** Own notification facet only. Legacy JobPreferences role/city/shift fields
  * belong to the learner profile and cannot be reconstructed here. */
-export async function GET() {
+async function handleGET() {
   try {
     const context=await getCurrentRequestContext();
     const {notifyMatchingJobs,notifyApplicationUpdates}=await getCandidatePreferences(context);
@@ -19,9 +20,10 @@ export async function GET() {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
 
-export async function PUT(request:Request) {
+async function handlePUT(request:Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   }
@@ -33,3 +35,4 @@ export async function PUT(request:Request) {
     return apiErrorResponse(error);
   }
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });

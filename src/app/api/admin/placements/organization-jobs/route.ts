@@ -2,6 +2,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {searchOrganizationPlacementJobs} from "@/modules/placements/organization-job-search-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -10,7 +11,7 @@ export const dynamic="force-dynamic";
  * checked against the selected tenant (or an explicitly unscoped platform
  * admin), and neither legacy numeric IDs nor slug text grant write access.
  */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const url=new URL(request.url);
   const query:Record<string,string>={};
@@ -26,3 +27,4 @@ export async function GET(request:Request){
   return apiErrorResponse(error);
  }
 }
+export const GET = secured(handleGET);

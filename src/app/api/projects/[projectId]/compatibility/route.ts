@@ -4,8 +4,9 @@ import {requireProjectReadAccess} from "@/modules/projects/access";
 import {apiErrorResponse} from "@/lib/api-error";
 import {legacyProjectSectionOrder,projectLegacyCompatibilityRoutes}
  from "@/modules/projects/legacy-project-api-crosswalk";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(_request:Request,{params}:{
+async function handleGET(_request:Request,{params}:{
  params:Promise<{projectId:string}>;
 }){
  try{
@@ -23,3 +24,4 @@ export async function GET(_request:Request,{params}:{
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

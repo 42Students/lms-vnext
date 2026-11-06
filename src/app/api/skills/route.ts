@@ -19,6 +19,7 @@ import { readSkillCatalog, recordSkillSelection, invalidateSkillCatalogSearchCac
 import { skillsCatalogRuntimeEnabled, skillsCatalogSchemaReady, skillsCatalogReadiness } from "@/modules/skills/catalog-readiness";
 import { parseSkillCatalogQuery } from "@/modules/skills/catalog-validation";
 import { skillUsageNameSchema } from "@/modules/skills/usage-normalization";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -47,7 +48,7 @@ const importInput = z.strictObject({
  * duplicate inserts, including concurrent import calls. Do not repurpose the
  * legacy integer source IDs as UUID keys.
  */
-export async function POST(request:Request) {
+async function handlePOST(request:Request) {
   if(!isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   if(!skillsCatalogSchemaReady())
@@ -106,6 +107,7 @@ export async function POST(request:Request) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });
 
 
 type ReadMode = "search" | "popular" | "categories" | "category" | "exists" | "stats";
@@ -153,7 +155,7 @@ function legacyErrorMessage(mode: ReadMode) {
 }
 
 /** Read-only skill catalog. All DB-backed reads remain disabled until DB10 is verified. */
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   const firstParams = new URL(request.url).searchParams;
   if(hasAmbiguousQuerySelectors(firstParams, [
     "mode","compat","skillName","query","category","limit",
@@ -288,6 +290,7 @@ export async function GET(request: Request) {
     return mapped;
   }
 }
+export const GET = secured(handleGET);
 
 const skillSelectionSchema=z.strictObject({
   skillId:z.uuid().optional(),

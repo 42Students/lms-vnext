@@ -6,6 +6,7 @@ import {
   getCollegePlacementRules,
   saveCollegePlacementRules,
 } from "@/modules/placements/tpo-policy-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -19,7 +20,7 @@ function migrationPendingResponse(){
   },{status:503,headers:{"Cache-Control":"private, no-store","Retry-After":"60"}});
 }
 
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   if (process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED") return migrationPendingResponse();
 
   try {
@@ -31,8 +32,9 @@ export async function GET(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function PUT(request: Request) {
+async function handlePUT(request: Request) {
   if (process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED") return migrationPendingResponse();
 
   if (!isSameOriginRequest(request)) {
@@ -51,3 +53,4 @@ export async function PUT(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });

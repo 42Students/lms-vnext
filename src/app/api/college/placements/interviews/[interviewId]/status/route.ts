@@ -4,8 +4,9 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {finishCollegeInterview,CollegeInterviewLifecycleError}
  from "@/modules/placements/college-interview-lifecycle-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{params:Promise<{interviewId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{interviewId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {interviewId}=await params;
@@ -21,3 +22,4 @@ export async function POST(request:Request,{params}:{params:Promise<{interviewId
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

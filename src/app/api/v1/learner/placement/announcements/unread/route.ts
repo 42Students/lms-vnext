@@ -7,11 +7,12 @@ import { listOwnLearnerAnnouncementReceipts } from "@/modules/announcements/lear
 import { requireLearnerPlacementAccess } from "@/modules/placements/learner-participation-guard";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
 /** Learner-only placement announcement unread count, never personal alert count. */
-export async function GET() {
+async function handleGET() {
   if (!announcementsRuntimeEnabled()) {
     return NextResponse.json({ error: "DB10_ANNOUNCEMENTS_MIGRATIONS_PENDING" }, { status: 503 });
   }
@@ -44,3 +45,4 @@ export async function GET() {
     return announcementApiError(error);
   }
 }
+export const GET = secured(handleGET);

@@ -5,6 +5,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {fetchPagedDepartments} from "@/modules/departments/service";
 import {filterDepartmentRows,type DepartmentDirectoryRow} from "@/modules/admin-ui/department-directory";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const inputSchema=z.strictObject({
@@ -23,7 +24,7 @@ const inputSchema=z.strictObject({
  * Popularity is not inferred from academic use counts: selections require a
  * persisted, separately permissioned analytics table before ranking is safe.
  */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const context=await getCurrentRequestContext();
   const search=new URL(request.url).searchParams;
@@ -80,11 +81,12 @@ export async function GET(request:Request){
   },{headers});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);
 /** Recording a selection without durable storage would invent popularity
  * counts and lose data on restart. Do not acknowledge a write until migration
  * and tenant-scoped storage have been added by the data owner.
  */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -94,3 +96,4 @@ export async function POST(request:Request){
    {status:503,headers:{"Cache-Control":"no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

@@ -4,10 +4,11 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readRecruiterJsonBody, RecruiterJsonBodyError } from "@/modules/placements/recruiter-json-request";
 import { addRecruiterApplicantNote } from "@/modules/placements/applicant-notes-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function POST(
+async function handlePOST(
   request: Request,
   { params }: { params: Promise<{ jobId: string; applicationId: string }> },
 ) {
@@ -30,3 +31,4 @@ export async function POST(
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

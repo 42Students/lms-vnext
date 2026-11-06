@@ -2,11 +2,12 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getLearnerCalendarExtras} from "@/modules/placements/learner-calendar-extras-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Legacy /learner/drives/calendar-extras, using an authenticated membership
  * rather than trusting the caller's learnerId, college or numeric job IDs. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const url=new URL(request.url);
   const start=url.searchParams.get("start"),end=url.searchParams.get("end");
@@ -19,3 +20,4 @@ export async function GET(request:Request){
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

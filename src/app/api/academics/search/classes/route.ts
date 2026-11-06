@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { searchSections } from "@/modules/academics/section-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -13,7 +14,7 @@ const querySchema = z.object({
 }).strict();
 
 /** Read-only legacy autocomplete, never refresh or write. */
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   const searchParams = new URL(request.url).searchParams;
   if ([...searchParams.keys()].some(key => searchParams.getAll(key).length !== 1)) {
     return NextResponse.json({ error: "INVALID_FILTERS" }, { status: 400 });
@@ -26,3 +27,4 @@ export async function GET(request: Request) {
     return NextResponse.json({ classes });
   } catch (error) { return apiErrorResponse(error); }
 }
+export const GET = secured(handleGET);

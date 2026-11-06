@@ -2,12 +2,13 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {previewOwnOfferAcceptanceImpact} from "@/modules/placements/offer-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
 /** LEARNER-placements-R02: GET is read-only and only returns the learner's own impact. */
-export async function GET(_request:Request,{params}:{
+async function handleGET(_request:Request,{params}:{
  params:Promise<{offerId:string}>;
 }){
  try{
@@ -20,3 +21,4 @@ export async function GET(_request:Request,{params}:{
   return response;
  }
 }
+export const GET = secured(handleGET);

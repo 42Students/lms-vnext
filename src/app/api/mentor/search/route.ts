@@ -3,9 +3,10 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {mentorUnifiedSearchQuery,searchMentorWorkspace}
   from "@/modules/projects/mentor-unified-search-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
   try{
     const query=new URL(request.url).searchParams;
     if([...query.keys()].some(key=>key!=="q")||query.getAll("q").length!==1){
@@ -21,3 +22,4 @@ export async function GET(request:Request){
     });
   }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

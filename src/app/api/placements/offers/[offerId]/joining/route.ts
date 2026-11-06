@@ -5,6 +5,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
 import { recordPlacementJoiningOutcome } from "@/modules/placements/offer-service";
 import { placementJoiningOutcomeInputSchema } from "@/modules/placements/validation";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -12,7 +13,7 @@ type RouteContext = {
   params: Promise<{ offerId: string }>;
 };
 
-export async function PUT(
+async function handlePUT(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -41,3 +42,4 @@ export async function PUT(
     return apiErrorResponse(error);
   }
 }
+export const PUT = secured(handlePUT);

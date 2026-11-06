@@ -8,10 +8,11 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {requirePermission} from "@/modules/permissions/policy";
 import {loadCourseScope} from "@/modules/courses/scope";
 import {legacyCourseMetadataPreview} from "@/modules/courses/legacy-course-metadata-preview";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const privateHeaders={"Cache-Control":"private, no-store",Vary:"Cookie"} as const;
-export async function GET(_request:Request,{params}:{
+async function handleGET(_request:Request,{params}:{
  params:Promise<{courseId:string}>;
 }){
  try{
@@ -42,3 +43,4 @@ export async function GET(_request:Request,{params}:{
   return response;
  }
 }
+export const GET = secured(handleGET);

@@ -6,8 +6,9 @@ import {BoundedFormDataError,readBoundedFormData} from "@/lib/bounded-form-data"
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {postTpoInternalMessage,TeamAddPeopleRequiredError} from "@/modules/placements/tpo-team-internal-reply-service";
 import {internalMessageSchema} from "@/modules/placements/tpo-team-internal-model";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{params:Promise<{threadId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{threadId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   // Authenticate before multipart parsing; cap actual streamed bytes.
@@ -48,3 +49,4 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
   throw error;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

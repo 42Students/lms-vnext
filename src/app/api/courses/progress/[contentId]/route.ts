@@ -11,6 +11,7 @@ import {
   listMyLearnerContentProgressBatch,
   saveLearnerContentProgress,
 } from "@/modules/courses/progress-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -18,7 +19,7 @@ type RouteContext = {
   params: Promise<{ contentId: string }>;
 };
 
-export async function GET(
+async function handleGET(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -48,8 +49,9 @@ export async function GET(
     return apiErrorResponse(error);
   }
 }
+export const GET = secured(handleGET);
 
-export async function PUT(
+async function handlePUT(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -93,6 +95,7 @@ export async function PUT(
     return apiErrorResponse(error);
   }
 }
+export const PUT = secured(handlePUT);
 
 /** Legacy administrative retake command. A content ID is a scope fence,
  * not permission to overwrite a single previous attempt. The batch creates
@@ -118,7 +121,7 @@ const retakeInput=z.strictObject({
   ctx.addIssue({code:"custom",path:["offeringId"],message:"courseId is required"});
 });
 
-export async function POST(request:Request,{params}:RouteContext){
+async function handlePOST(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:{"Cache-Control":"private, no-store"}});
  try{
@@ -182,3 +185,4 @@ export async function POST(request:Request,{params}:RouteContext){
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST);

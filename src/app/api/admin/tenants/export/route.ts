@@ -3,8 +3,9 @@ import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readTenantDirectoryExportParams } from "@/modules/colleges/admin-tenant-export-model";
 import { exportSuperAdminTenantDirectory } from "@/modules/colleges/admin-tenant-lifecycle-service";
+import { secured } from "@/security/secure-handler";
 export const runtime = "nodejs";
-export async function GET(request: Request) {
+async function handleGET(request: Request) {
   try {
     // Reject malformed/ambiguous filters before spending database reads on
     // session and privileged step-up; no tenant data is accessed here.
@@ -25,3 +26,4 @@ export async function GET(request: Request) {
     return response;
   }
 }
+export const GET = secured(handleGET);

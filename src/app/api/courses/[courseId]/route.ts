@@ -14,6 +14,7 @@ import {
   archiveCourse,
   updateCourse,
 } from "@/modules/courses/course-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -40,7 +41,7 @@ function slugError(message:string){
 }
 /** Read a course without using a guessed numeric legacy ID or leaking tenants.
  * A supplied courseSlug must resolve to the same authorized course ID. */
-export async function GET(request:Request,{params}:RouteContext){
+async function handleGET(request:Request,{params}:RouteContext){
  try{
   const context=await getCurrentRequestContext();
   const {courseId:raw}=await params;
@@ -84,7 +85,8 @@ export async function GET(request:Request,{params}:RouteContext){
   return NextResponse.json({course:scope},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export async function PATCH(
+export const GET = secured(handleGET);
+async function handlePATCH(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -110,8 +112,9 @@ export async function PATCH(
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH);
 
-export async function DELETE(
+async function handleDELETE(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -135,3 +138,4 @@ export async function DELETE(
     return apiErrorResponse(error);
   }
 }
+export const DELETE = secured(handleDELETE);

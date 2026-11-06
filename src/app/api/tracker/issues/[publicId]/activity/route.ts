@@ -9,7 +9,8 @@ export const runtime="nodejs";
 type Params={params:Promise<{publicId:string}>};
 const headers={"cache-control":"private, no-store"};
 import {listMyTrackerReportHistory} from "@/modules/bug-tracker/reporter-service";
-export async function GET(_request:Request,{params}:Params){
+import { secured } from "@/security/secure-handler";
+async function handleGET(_request:Request,{params}:Params){
   if(!trackerAdminRuntimeEnabled())
     return NextResponse.json({error:"DB10_TRACKER_MIGRATIONS_PENDING"},{status:503,headers});
   try{
@@ -30,3 +31,4 @@ export async function GET(_request:Request,{params}:Params){
       {headers});
   }catch(error){return bugTrackerApiError(error);}
 }
+export const GET = secured(handleGET);

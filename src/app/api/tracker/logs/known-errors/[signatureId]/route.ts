@@ -6,10 +6,11 @@ import { mutateKnownErrorForAdmin } from "@/modules/log-alerts/admin-service";
 import { z } from "zod";
 import { alertEnvironment } from "@/modules/log-alerts/signature";
 import { logAlertsRuntimeEnabled } from "@/modules/log-alerts/readiness";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-export async function PATCH(
+async function handlePATCH(
   request: Request,
   { params }: { params: Promise<{ signatureId: string }> },
 ) {
@@ -49,3 +50,4 @@ export async function PATCH(
     return logAlertApiError(error);
   }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

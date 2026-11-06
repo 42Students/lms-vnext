@@ -5,9 +5,10 @@ import {getMentorResourceDirectory} from "@/modules/projects/mentor-resource-dir
 import {mentorResourceDirectoryQuerySchema,mentorResourceDirectoryCsv}
  from "@/modules/projects/mentor-resource-directory-model";
 import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
-export async function GET(request:Request,{params}:RouteContext){
+async function handleGET(request:Request,{params}:RouteContext){
  try{
   const {projectId}=await params,url=new URL(request.url);
   const filters=singleValueMentorExportFilters(url.searchParams,
@@ -26,3 +27,4 @@ export async function GET(request:Request,{params}:RouteContext){
   });
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

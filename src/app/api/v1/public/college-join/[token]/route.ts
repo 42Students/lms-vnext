@@ -1,5 +1,6 @@
 import {NextResponse} from "next/server";
 import {publicCollegeJoinTokenSchema} from "@/modules/placements/public-college-join-model";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 
@@ -7,7 +8,7 @@ export const runtime="nodejs";
  * the college-join SSR preview. This is an on-origin navigation, not a token
  * exchange: only the destination's verified digest/expiry checks can show
  * any college information. Never cache token-bearing redirects. */
-export async function GET(request:Request,{params}:{
+async function handleGET(request:Request,{params}:{
  params:Promise<{token:string}>;
 }){
  const {token}=await params;
@@ -21,3 +22,4 @@ export async function GET(request:Request,{params}:{
  response.headers.set("Referrer-Policy","no-referrer");
  return response;
 }
+export const GET = secured(handleGET);

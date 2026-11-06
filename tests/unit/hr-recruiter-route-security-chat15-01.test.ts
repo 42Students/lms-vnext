@@ -19,7 +19,7 @@ describe("HR recruiter route security chat-15",()=>{
  ];
  it.each(guarded)("HR-origin-permission %s checks same-origin before any recruiter mutation",file=>{
   const code=get(file);
-  expect(code).toMatch(/export async function (POST|PATCH)\(/);
+  expect(code).toMatch(/export (?:async function|const) (POST|PATCH)\b/);
   const origin=code.indexOf("isSameOriginRequest(request)");
   const firstWrite=code.search(/await (?:createOwn|updateOwn|writeHr|editHr|sendRecruiter|openRecruiter|acknowledgeRecruiter|markHr)/);
   expect(origin).toBeGreaterThanOrEqual(0);
@@ -55,7 +55,7 @@ describe("HR recruiter route security chat-15",()=>{
  });
  it("HR-requests do not mutate data on GET; POST replay and PATCH are guarded",()=>{
   const s=get("drives/requests/route.ts");
-  const getSection=s.slice(s.indexOf("export async function GET"),s.indexOf("export async function POST"));
+  const getSection=s.slice(Math.max(s.indexOf("export async function GET("),s.indexOf("async function handleGET(")),Math.max(s.indexOf("export async function POST("),s.indexOf("async function handlePOST(")));
   expect(getSection).toContain("listOwnRecruiterDriveRequests");
   expect(getSection).not.toContain("updateOwnRecruiterDriveRequest(");
   expect(getSection).not.toContain("createOwnRecruiterDriveRequest(");

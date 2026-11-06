@@ -5,6 +5,7 @@ import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-rea
 import {apiErrorResponse} from "@/lib/api-error";
 import {exportTpoCompanyDirectory,tpoCompaniesQuerySchema} from "@/modules/placements/tpo-companies-view-service";
 import {tpoStudentCsvCell} from "@/modules/placements/tpo-students-csv";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -15,7 +16,7 @@ function cell(value:unknown):string {
  return tpoStudentCsvCell(String(value??""));
 }
 
-export async function GET(request:Request) {
+async function handleGET(request:Request) {
  try {
   const url=new URL(request.url);
   const context=await getCurrentRequestContext();
@@ -47,3 +48,4 @@ export async function GET(request:Request) {
   });
  } catch(error) {return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

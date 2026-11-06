@@ -7,6 +7,7 @@ import {readMentorProjectCommandBody,MentorProjectCommandBodyError,mentorProject
 import {
   transitionProjectMeeting,
 } from "@/modules/projects/meeting-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
@@ -17,7 +18,7 @@ type RouteContext = {
   }>;
 };
 
-export async function POST(
+async function handlePOST(
   request: Request,
   { params }: RouteContext,
 ) {
@@ -49,3 +50,4 @@ export async function POST(
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST);

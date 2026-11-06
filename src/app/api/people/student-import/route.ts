@@ -3,12 +3,13 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { runCollegeStudentCsv, listSuperAdminStudentCsvImportHistory } from "@/modules/people/college-student-csv-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 // PREVIEW and IMPORT deliberately share one scoped validation contract.
 // Legacy bulk registration history/undo needs a durable cross-system ledger;
 // a partially provisioned identity must not be rolled back by this route.
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
@@ -34,11 +35,12 @@ export async function POST(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });
 
 /** Legacy bulk import history: only a persisted, authorized Super Admin
  * acting in a selected college can read this audit ledger. The same college
  * controls import and the historical actor/receipt metadata returned here. */
-export async function GET() {
+async function handleGET() {
   try {
     const history = await listSuperAdminStudentCsvImportHistory(
       await getCurrentRequestContext(),
@@ -47,11 +49,12 @@ export async function GET() {
       {headers:{"Cache-Control":"private, no-store"}});
   } catch(error) { return apiErrorResponse(error); }
 }
+export const GET = secured(handleGET);
 
 /** A legacy one-step batch undo cannot erase an externally provisioned
  * identity, learner attendance or placement work. Return an explicit
  * dependency-review outcome; never pretend a partial rollback succeeded. */
-export async function DELETE(request:Request) {
+async function handleDELETE(request:Request) {
   if(!isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   return NextResponse.json({
@@ -60,3 +63,4 @@ export async function DELETE(request:Request) {
     recovery:"Review the import history and end eligible memberships individually.",
   },{status:409,headers:{"Cache-Control":"private, no-store"}});
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });

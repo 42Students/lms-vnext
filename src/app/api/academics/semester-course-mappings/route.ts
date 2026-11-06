@@ -5,6 +5,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { addCollegeTermMapping, addCollegeTermMappings, reorderCollegeTermMappings, CollegeTermMappingError } from "@/modules/academics/college-term-mapping-service";
 import { collegeTermCourseFullOrderSchema, TERM_MAPPING_COPY } from "@/modules/academics/college-term-mapping-model";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 /** Legacy addCourse -> POST, addCourses -> POST {mappings}, reorderCourses
@@ -12,7 +13,7 @@ export const runtime = "nodejs";
  * Semester-scoped GET is the college term mapping directory.
  */
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   try {
@@ -44,11 +45,12 @@ export async function POST(request: Request) {
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });
 /** Legacy /reorderCourses accepts COMPLETE ordered mapping IDs; PUT
  * performs tenant authorization, a locked set-equality CAS and one transaction.
  * It never mutates credits while updating 1-based displayOrder.
  */
-export async function PUT(request:Request){
+async function handlePUT(request:Request){
   if(!isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   try{
@@ -73,3 +75,4 @@ export async function PUT(request:Request){
     return apiErrorResponse(error);
   }
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });

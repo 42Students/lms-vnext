@@ -4,6 +4,7 @@ import {scannerCallbackRequestRejection} from "@/modules/storage/scan-verdict-re
 import {
  applyProductionScanVerdict,productionScannerCallbackReady,
 } from "@/modules/storage/production-scan-verdict-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -15,7 +16,7 @@ const noStore={"Cache-Control":"no-store"} as const;
  * bytes of the private R2 object, compute a digest, and supply the previously
  * captured object generation. Never expose this endpoint as a user action.
  */
-export async function POST(request:Request){
+async function handlePOST(request:Request){
   // One machine-only gate, evaluated before parsing, scanning or database I/O.
   const rejection=scannerCallbackRequestRejection(
    request,process.env["PRIVATE_STORAGE_SCANNER_WEBHOOK_SECRET"]);
@@ -44,3 +45,4 @@ export async function POST(request:Request){
    {status:409,headers:noStore});
  }
 }
+export const POST = secured(handlePOST);

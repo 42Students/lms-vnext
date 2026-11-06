@@ -8,7 +8,7 @@ describe("Mentor task details route protection",()=>{
       "src/app/api/projects/[projectId]/tasks/[taskId]/details/route.ts"),"utf8");
     expect(source).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
     expect(source).toContain("updateMentorTaskDetails(context,path,raw)");
-    expect(source).not.toContain("export async function POST");
-    expect(source).not.toContain("export async function PUT");
+    expect(source).not.toMatch(/export (?:async function|const) POST\b/);
+    expect(source).not.toMatch(/export (?:async function|const) PUT\b/);
   });
 });

@@ -156,7 +156,7 @@ test("API01-P02 auth route files export the expected HTTP methods", () => {
     assert.ok(fs.existsSync(abs), `Route file not found: ${file}`);
     const src = fs.readFileSync(abs, "utf8");
     for (const m of methods) {
-      const exported = src.includes(`function ${m}`) || src.includes(`export {${m}`) ||
+      const exported = src.includes(`function ${m}`) || src.includes(`export const ${m} =`) || src.includes(`export {${m}`) ||
         src.includes(`export { ${m}`) || src.includes(`${m} }`);
       assert.ok(exported, `${file} does not export ${m} handler`);
     }

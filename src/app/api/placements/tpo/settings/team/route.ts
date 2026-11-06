@@ -3,6 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {addTpoTeamAssignment,removeTpoTeamAssignment,readTpoTeamRemovalImpact} from "@/modules/placements/tpo-settings-team-actions-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 function teamErrorResponse(error:unknown){
  if(error instanceof Error){
@@ -18,22 +19,25 @@ function teamErrorResponse(error:unknown){
  }
  return apiErrorResponse(error);
 }
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const membershipId=new URL(request.url).searchParams.get("membershipId");
   const impact=await readTpoTeamRemovalImpact(await getCurrentRequestContext(),membershipId);
   return NextResponse.json({impact},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return teamErrorResponse(error);}
 }
-export async function POST(request:Request){
+export const GET = secured(handleGET);
+async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{return NextResponse.json(await addTpoTeamAssignment(await getCurrentRequestContext(),await request.json()),
    {headers:{"Cache-Control":"private, no-store"}});}
  catch(error){return teamErrorResponse(error);}
 }
-export async function DELETE(request:Request){
+export const POST = secured(handlePOST, { csrf: "enforce" });
+async function handleDELETE(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{return NextResponse.json(await removeTpoTeamAssignment(await getCurrentRequestContext(),await request.json()),
    {headers:{"Cache-Control":"private, no-store"}});}
  catch(error){return teamErrorResponse(error);}
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });

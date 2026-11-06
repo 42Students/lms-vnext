@@ -13,7 +13,7 @@ const admin:RequestContext={
 const organization=readFileSync("src/modules/organizations/service.ts","utf8");
 const college=readFileSync("src/modules/colleges/service.ts","utf8");
 const fn=(source:string,name:string)=>{
- const index=source.indexOf("export async function "+name+"(");
+ const index=Math.max(source.indexOf("export async function "+name+"("),source.indexOf("async function handle"+name+"("));
  const end=source.indexOf("export async function ",index+1);
  expect(index).toBeGreaterThan(-1);
  return source.slice(index,end<0?source.length:end);

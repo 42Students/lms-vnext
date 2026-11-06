@@ -15,7 +15,8 @@ function csvResponse(header:string[],rows:(string|number|null)[][],file:string,t
 
 import {collegeClassQuerySchema} from "@/modules/academics/college-structure-directory-model";
 import {listCollegeClasses} from "@/modules/academics/college-structure-directory-service";
-export async function GET(request:Request){
+import { secured } from "@/security/secure-handler";
+async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
   const parsed=collegeClassQuerySchema.safeParse({
@@ -50,3 +51,4 @@ export async function GET(request:Request){
    "maxStudents","students","status"],rows,"classes.csv",false);
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

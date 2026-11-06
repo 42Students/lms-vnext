@@ -47,7 +47,7 @@ describe("HR-request-limits-01 bounded streamed JSON for recruiter mutations",()
  });
  it("GET drive requests does not write; its only API mutation methods are guarded",()=>{
   const s=source("src/app/api/placements/recruiter/drives/requests/route.ts");
-  const get=s.slice(s.indexOf("export async function GET("),s.indexOf("export async function POST("));
+  const get=s.slice(Math.max(s.indexOf("export async function GET("),s.indexOf("async function handleGET(")),Math.max(s.indexOf("export async function POST("),s.indexOf("async function handlePOST(")));
   expect(get).toContain("listOwnRecruiterDriveRequests");
   expect(get).not.toContain("createOwnRecruiterDriveRequest(");
   expect(get).not.toContain("updateOwnRecruiterDriveRequest(");

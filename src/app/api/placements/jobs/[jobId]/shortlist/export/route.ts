@@ -2,12 +2,13 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoDriveShortlist } from "@/modules/placements/tpo-shortlist-service";
 import { tpoShortlistCsv } from "@/modules/placements/tpo-shortlist-model";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type RouteContext = { params: Promise<{ jobId: string }> };
 
-export async function GET(_request: Request, { params }: RouteContext) {
+async function handleGET(_request: Request, { params }: RouteContext) {
   try {
     const context = await getCurrentRequestContext();
     const { jobId } = await params;
@@ -30,3 +31,4 @@ export async function GET(_request: Request, { params }: RouteContext) {
     return response;
   }
 }
+export const GET = secured(handleGET);

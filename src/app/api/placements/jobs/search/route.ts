@@ -1,5 +1,6 @@
 import {NextResponse} from "next/server";
 import {GET as listScopedPlacementJobs} from "../route";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 
@@ -10,7 +11,7 @@ export const runtime="nodejs";
  * a broader employer list. Call the scoped learner discovery endpoint for
  * those audiences instead.
  */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  const url=new URL(request.url);
  const unsupported=["learnerId","deptId","programId","jobType"].filter(key=>
    url.searchParams.has(key));
@@ -27,3 +28,4 @@ export async function GET(request:Request){
  });
  return listScopedPlacementJobs(scopedRequest);
 }
+export const GET = secured(handleGET);

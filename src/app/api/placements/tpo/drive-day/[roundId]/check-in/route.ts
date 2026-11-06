@@ -3,8 +3,9 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { confirmTpoDriveDayCheckIn,TpoAttendanceStaleError } from "@/modules/placements/tpo-drive-day-checkin-service";
+import { secured } from "@/security/secure-handler";
 export const runtime = "nodejs";
-export async function POST(request: Request, { params }: { params: Promise<{ roundId: string }> }) {
+async function handlePOST(request: Request, { params }: { params: Promise<{ roundId: string }> }) {
   if (!isSameOriginRequest(request)) return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   try {
     const context = await getCurrentRequestContext();
@@ -18,3 +19,4 @@ export async function POST(request: Request, { params }: { params: Promise<{ rou
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

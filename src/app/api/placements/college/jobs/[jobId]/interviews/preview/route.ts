@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { previewCollegeInterviewConflicts } from "@/modules/placements/college-interview-conflict-preview";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -11,7 +12,7 @@ type Props={params:Promise<{jobId:string}>};
 /** Same-origin authenticated preview; no cross-tenant records or candidate
  * identifiers from other jobs are accepted, and all results are aggregate.
  */
-export async function POST(request:Request,{params}:Props){
+async function handlePOST(request:Request,{params}:Props){
   if(!isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   try{
@@ -23,3 +24,4 @@ export async function POST(request:Request,{params}:Props){
     );
   }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

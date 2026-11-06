@@ -6,9 +6,10 @@ import {alertEnvironment} from "@/modules/log-alerts/signature";
 import {logAlertsRuntimeEnabled} from "@/modules/log-alerts/readiness";
 import {muteLegacyKnownErrorForAdmin} from "@/modules/log-alerts/admin-service";
 import {legacyKnownErrorMuteLookupSchema} from "@/modules/log-alerts/validation";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
-export async function POST(request:Request){
+async function handlePOST(request:Request){
  if(!logAlertsRuntimeEnabled())return NextResponse.json({
   error:"DB10_LOG_ALERTS_MIGRATIONS_PENDING"},{status:503});
  if(!isSameOriginRequest(request))
@@ -23,3 +24,4 @@ export async function POST(request:Request){
   return NextResponse.json({item},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return logAlertApiError(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

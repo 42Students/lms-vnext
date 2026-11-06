@@ -8,6 +8,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { updateCollegeTermMapping, removeCollegeTermMapping, CollegeTermMappingError } from "@/modules/academics/college-term-mapping-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 /** Legacy semester courses endpoint map (numeric term/course identifiers must
@@ -25,7 +26,7 @@ export const runtime = "nodejs";
  */
 const inUseMessage = "A current active batch offering is using this semester-course mapping. Remove the live offering before deleting this mapping.";
 
-export async function GET(
+async function handleGET(
   _request: Request, { params }: { params: Promise<{ mappingId: string }> },
 ) {
   try {
@@ -71,8 +72,9 @@ export async function GET(
       {headers:{"Cache-Control":"private, no-store"}});
   } catch(error) { return apiErrorResponse(error); }
 }
+export const GET = secured(handleGET);
 
-export async function DELETE(
+async function handleDELETE(
   request: Request, { params }: { params: Promise<{ mappingId: string }> },
 ) {
   if (!isSameOriginRequest(request))
@@ -92,8 +94,9 @@ export async function DELETE(
     return apiErrorResponse(error);
   }
 }
+export const DELETE = secured(handleDELETE, { csrf: "enforce" });
 
-export async function PATCH(
+async function handlePATCH(
   request: Request, { params }: { params: Promise<{ mappingId: string }> },
 ) {
   if (!isSameOriginRequest(request))
@@ -111,3 +114,4 @@ export async function PATCH(
     return apiErrorResponse(error);
   }
 }
+export const PATCH = secured(handlePATCH, { csrf: "enforce" });

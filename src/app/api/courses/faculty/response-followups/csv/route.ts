@@ -3,8 +3,9 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {parseFacultyFollowUpSearchParams} from "@/modules/courses/faculty-response-followup-model";
 import {getFacultyResponseFollowUps} from "@/modules/courses/faculty-response-followup-service";
 import {facultyFollowUpPageCsv} from "@/modules/courses/faculty-followup-export";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function GET(request:Request){
+async function handleGET(request:Request){
  const raw:Record<string,string|string[]>={};
  for(const [key,value] of new URL(request.url).searchParams){
   const existing=raw[key];
@@ -23,3 +24,4 @@ export async function GET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

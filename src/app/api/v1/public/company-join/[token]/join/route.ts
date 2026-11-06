@@ -3,6 +3,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {readBoundedJsonBody} from "@/lib/bounded-json-body";
 import {acceptPublicRecruiterJoin,PublicJoinAcceptError} from "@/modules/placements/public-join/join-service";
 import {z} from "zod";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 const legacy=z.strictObject({
  email:z.string().email().max(254),code:z.string().regex(/^[0-9]{6}$/),
@@ -15,7 +16,7 @@ const legacy=z.strictObject({
  * displayName. Join authority still comes only from the hashed URL token and
  * a fresh OTP, never from a collegeId or companyId supplied by the caller.
  */
-export async function POST(request:Request,{params}:{params:Promise<{token:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{token:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const body=await readBoundedJsonBody(request);
  if(body.kind!=="OK")return NextResponse.json({error:"INVALID_REQUEST"},{status:body.kind==="TOO_LARGE"?413:400});
@@ -38,3 +39,4 @@ export async function POST(request:Request,{params}:{params:Promise<{token:strin
    {status:unavailable?503:code==="RATE_LIMITED"?429:400,headers:{"Cache-Control":"no-store"}});
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

@@ -5,8 +5,9 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {editHrJobRound,hrRoundEditorUnavailableMessage} from "@/modules/placements/hr-round-editor-service";
 import {hrRoundFormSchema} from "@/modules/placements/hr-round-editor-model";
 import {PlacementsServiceError} from "@/modules/placements/errors";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{params:Promise<{jobId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{jobId:string}>}){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const {jobId}=await params;
@@ -47,3 +48,4 @@ export async function POST(request:Request,{params}:{params:Promise<{jobId:strin
   throw error;
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

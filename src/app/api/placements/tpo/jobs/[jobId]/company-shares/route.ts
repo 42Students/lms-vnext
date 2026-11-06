@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { CompanyShareError, issueTpoCompanyApplicantShare, listTpoCompanyApplicantShares } from "@/modules/placements/company-share/manage-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -16,14 +17,15 @@ function errorResponse(error:unknown) {
   }
   return apiErrorResponse(error);
 }
-export async function GET(request:Request,{params}:RouteContext) {
+async function handleGET(request:Request,{params}:RouteContext) {
   try {
     const {jobId}=await params;
     const result=await listTpoCompanyApplicantShares(await getCurrentRequestContext(),jobId,new URL(request.url).searchParams.get("status")??"ALL",new URL(request.url).searchParams.get("page")??1);
     return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
   }catch(error){return errorResponse(error);}
 }
-export async function POST(request:Request,{params}:RouteContext) {
+export const GET = secured(handleGET);
+async function handlePOST(request:Request,{params}:RouteContext) {
   if(!isSameOriginRequest(request)) return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   try {
     const {jobId}=await params;
@@ -40,3 +42,4 @@ export async function POST(request:Request,{params}:RouteContext) {
     return NextResponse.json(result,{status:201,headers:{"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"}});
   }catch(error){return errorResponse(error);}
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

@@ -4,8 +4,9 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {addTpoStudentNotes} from "@/modules/placements/tpo-student-notes-service";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(req:Request){
+async function handlePOST(req:Request){
  if(!isSameOriginRequest(req))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   // A 2k-character note and 100 UUIDs fit comfortably below 64KiB. Reject
@@ -19,3 +20,4 @@ export async function POST(req:Request){
   return apiErrorResponse(error);
  }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

@@ -3,12 +3,13 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {getCollegeDashboardCards} from "@/modules/admin-ui/college-dashboard-cards-service";
 import {apiErrorResponse} from "@/lib/api-error";
 import {requirePermission} from "@/modules/permissions/policy";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Read-only compatibility projection of the old college summary controller.
  * College identity comes exclusively from the signed-in membership, never from
  * a request-supplied legacy numeric ID or UUID query parameter. */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const url=new URL(request.url);
   if([...url.searchParams.keys()].length)
@@ -31,3 +32,4 @@ export async function GET(request:Request){
    updatedAt:new Date().toISOString()},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

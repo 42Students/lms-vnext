@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { tpoRecruiterInviteApiErrorResponse } from "@/lib/tpo-recruiter-invite-api-error";
 import { previewRecruiterInvite } from "@/modules/placements/tpo-recruiter-invite-service";
 import { isRecruiterInviteTokenShape } from "@/modules/placements/tpo-recruiter-invite-policy";
+import { secured } from "@/security/secure-handler";
 
 /** Legacy PublicRecruiterInviteController route crosswalk (all five methods):
  * GET /api/v1/public/recruiter-invite/{token} => GET here, now {invite}.
@@ -19,7 +20,7 @@ export const dynamic = "force-dynamic";
 const privateHeaders = { "Cache-Control": "private, no-store", "Referrer-Policy": "no-referrer", "X-Robots-Tag": "noindex, nofollow" } as const;
 type RouteContext = { params: Promise<{ token: string }> };
 
-export async function GET(_request: Request, { params }: RouteContext) {
+async function handleGET(_request: Request, { params }: RouteContext) {
   if (process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED") {
     return NextResponse.json({ error: "DB09_MIGRATIONS_PENDING" }, { status: 503, headers: privateHeaders });
   }
@@ -37,3 +38,4 @@ export async function GET(_request: Request, { params }: RouteContext) {
     return response;
   }
 }
+export const GET = secured(handleGET);

@@ -2,10 +2,11 @@ import "server-only";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getTpoMessagesPulse} from "@/modules/placements/tpo-messages-service";
 import {apiErrorResponse} from "@/lib/api-error";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 
-export async function GET(){
+async function handleGET(){
  try{
   const context=await getCurrentRequestContext();
   const pulse=await getTpoMessagesPulse(context);
@@ -17,3 +18,4 @@ export async function GET(){
   return Response.json({version},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

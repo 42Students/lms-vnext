@@ -4,9 +4,10 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {ProjectsServiceError} from "@/modules/projects/errors";
 import {listProjectSubmissions,updateProjectSubmissionDraft} from "@/modules/projects/submission-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Ctx={params:Promise<{projectId:string}>};
-export async function GET(_request:Request,{params}:Ctx){
+async function handleGET(_request:Request,{params}:Ctx){
  try{
   const {projectId}=await params;
   const result=await listProjectSubmissions(await getCurrentRequestContext(),projectId);
@@ -14,9 +15,10 @@ export async function GET(_request:Request,{params}:Ctx){
    history:result.history},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);
 /** Legacy PUT /submission safely writes the current DRAFT only. It never
  * takes an ID from a non-scoped lookup or silently adopts a newer revision. */
-export async function PUT(request:Request,{params}:Ctx){
+async function handlePUT(request:Request,{params}:Ctx){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {projectId}=await params;
@@ -38,3 +40,4 @@ export async function PUT(request:Request,{params}:Ctx){
   return NextResponse.json({message:"Project delivery updated",submission:updated});
  }catch(error){return apiErrorResponse(error);}
 }
+export const PUT = secured(handlePUT, { csrf: "enforce" });

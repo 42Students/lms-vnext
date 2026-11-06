@@ -5,8 +5,9 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {
   decideTpoRecruiterDriveRequest,TpoDriveRequestDecisionError,
 } from "@/modules/placements/tpo-drive-request-decision-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-export async function POST(request:Request,{params}:{
+async function handlePOST(request:Request,{params}:{
   params:Promise<{requestId:string}>,
 }){
   if(!isSameOriginRequest(request))
@@ -25,3 +26,4 @@ export async function POST(request:Request,{params}:{
     return apiErrorResponse(error);
   }
 }
+export const POST = secured(handlePOST, { csrf: "enforce" });

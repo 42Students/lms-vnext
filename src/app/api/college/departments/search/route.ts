@@ -7,13 +7,14 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
 import {z} from "zod";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 /** Modern scoped equivalent of legacy GET department search. Non-global
  * callers must have a persisted active college or supply that same college;
  * a missing scope is a structured 403, never a global search.
  */
-export async function GET(request:Request){
+async function handleGET(request:Request){
  try{
   const context=await getCurrentRequestContext();
   const params=new URL(request.url).searchParams;
@@ -42,3 +43,4 @@ export async function GET(request:Request){
   return NextResponse.json({items:rows},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

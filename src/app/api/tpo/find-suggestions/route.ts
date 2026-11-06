@@ -6,12 +6,13 @@ import {hasTpoTooling} from "@/modules/placements/tpo-workspace-access-model";
 import {findTpoPeopleAndCompanies} from "@/modules/placements/tpo-find-people-service";
 import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {getPlacementTpoOperations} from "@/modules/placements/tpo-operations-service";
+import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const termSchema=z.string().trim().min(2).max(100);
 
 /** TPO-home-28: bounded, permission-scoped live record suggestions. */
-export async function GET(request:NextRequest){
+async function handleGET(request:NextRequest){
  try{
   const parsed=termSchema.safeParse(new URL(request.url).searchParams.get("q")??"");
   if(!parsed.success)return NextResponse.json({error:"Enter at least 2 characters."},{status:400});
@@ -47,3 +48,4 @@ export async function GET(request:NextRequest){
   return NextResponse.json({results},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const GET = secured(handleGET);

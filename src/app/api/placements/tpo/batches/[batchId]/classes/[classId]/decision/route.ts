@@ -7,13 +7,14 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoBatch} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {decidePlacementParticipation} from "@/modules/placements/batch-participation-service";
+import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 const command=z.discriminatedUnion("decision",[
  z.strictObject({decision:z.literal("ELIGIBLE"),expectedVersion:z.string().min(1)}),
  z.strictObject({decision:z.literal("INELIGIBLE"),reason:z.string().trim().min(3).max(200),expectedVersion:z.string().min(1)}),
  z.strictObject({decision:z.literal("NOT_DECIDED"),expectedVersion:z.string().min(1)}),
 ]);
-export async function POST(request:Request,{params}:{params:Promise<{batchId:string;classId:string}>}){
+async function handlePOST(request:Request,{params}:{params:Promise<{batchId:string;classId:string}>}){
  if(!isSameOriginRequest(request))return Response.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const ctx=await getCurrentRequestContext(),{batchId,classId}=await params;
@@ -33,3 +34,4 @@ export async function POST(request:Request,{params}:{params:Promise<{batchId:str
   return Response.json(outcome,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
+export const POST = secured(handlePOST);
