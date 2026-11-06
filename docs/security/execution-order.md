@@ -4,6 +4,8 @@ Written 2026-11-05. This is a working order, not a status source. Status lives o
 
 It also absorbs the engineering checks in [../planning/vnext-tightening-plan.md](../planning/vnext-tightening-plan.md). Where the two overlap, do the step once and record it against the control.
 
+The central design that makes most controls inherited instead of repeated per route is in [central-security-architecture.md](central-security-architecture.md).
+
 ## State on 2026-11-05
 
 - Tracker: 0 of 493 controls verified, 28 partial evidence, 1 confirmed gap (`SEC-18-002`, `main` not protected), 464 unassessed. Release sign-off is not approved.
