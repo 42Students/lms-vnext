@@ -91,3 +91,10 @@ describe("tenant context", () => {
     expect(tenantSettings({ userId: null, collegeId: null, role: null, platform: false, system: "bootstrap" })["app.system"]).toBe("bootstrap");
   });
 });
+
+describe("tenant context robustness", () => {
+  it("does not throw on a malformed actor (missing roles/systemRoles)", () => {
+    const s = scopeFromActor({ user: { id: "u" }, membership: { collegeId: "c" } as never });
+    expect(s).toMatchObject({ userId: "u", collegeId: "c", role: null, platform: false });
+  });
+});

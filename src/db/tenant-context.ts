@@ -44,7 +44,8 @@ export function scopeFromActor(actor: ActorLike): TenantScope {
   return {
     userId: actor.user.id,
     collegeId: actor.membership?.collegeId ?? actor.adminScope?.collegeId ?? null,
-    role: actor.membership?.roles[0] ?? (platform ? "SUPER_ADMIN" : null),
+    // Defensive: a malformed context yields no role (and so no RLS access when enforced), never an exception.
+    role: actor.membership?.roles?.[0] ?? (platform ? "SUPER_ADMIN" : null),
     platform,
     system: null,
   };

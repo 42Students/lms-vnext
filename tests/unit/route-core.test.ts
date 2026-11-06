@@ -107,3 +107,38 @@ describe("database scope", () => {
     expect(seen).toEqual([{ uid: "u1" }]);
   });
 });
+
+describe("audit hook", () => {
+  const events: Array<Record<string, unknown>> = [];
+  const make = () => setup({ onAudit: (e: Record<string, unknown>) => events.push(e) });
+
+  it("records state-changing requests with identifiers only", async () => {
+    events.length = 0;
+    const { route } = make();
+    await route({ auth: "user", permission: "service-enforced" }, async () => Response.json({}))(
+      new Request("https://a.test/api/x?secret=1", { method: "POST", body: "{}" }),
+    );
+    expect(events).toHaveLength(1);
+    expect(events[0]).toMatchObject({ method: "POST", path: "/api/x", status: 200, context: { uid: "u1" }, requestId: "rid-1" });
+    expect(JSON.stringify(events[0])).not.toContain("secret");
+  });
+
+  it("records denials but not successful reads, and skips public routes", async () => {
+    events.length = 0;
+    const { route } = make();
+    await route({ auth: "user", permission: "service-enforced" }, async () => Response.json({}))(new Request("https://a.test/x"));
+    expect(events).toHaveLength(0);
+    await route({ auth: "user", permission: "service-enforced" }, async () => Response.json({}, { status: 403 }))(new Request("https://a.test/x"));
+    expect(events).toHaveLength(1);
+    await route({ auth: "public", publicReason: "r" }, async () => Response.json({}))(new Request("https://a.test/x", { method: "POST" }));
+    expect(events).toHaveLength(1);
+  });
+
+  it("never lets a failing audit hook change the response", async () => {
+    const { route } = setup({ onAudit: () => { throw new Error("boom"); } });
+    const res = await route({ auth: "user", permission: "service-enforced" }, async () => Response.json({ ok: 1 }))(
+      new Request("https://a.test/x", { method: "POST", body: "{}" }),
+    );
+    expect(res.status).toBe(200);
+  });
+});

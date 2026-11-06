@@ -5,6 +5,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { requirePermission, type PlatformPermission } from "@/modules/permissions/policy";
 import { runWithTenantScope, scopeFromActor } from "@/db/tenant-context";
+import { writeStructuredLog } from "@/observability/logger";
 import { createRoute } from "@/security/route-core";
 
 type Context = Awaited<ReturnType<typeof getCurrentRequestContext>>;
@@ -21,5 +22,19 @@ export const route = createRoute<Context, PlatformPermission>({
   readJson: readBoundedJsonBody,
   onError: apiErrorResponse,
   newRequestId: () => randomUUID(),
+  onAudit: (event) => {
+    const actor = event.context as { user?: { id?: string }; membership?: { id?: string; collegeId?: string; roles?: string[] } | null } | null;
+    writeStructuredLog(event.status >= 400 ? "WARNING" : "INFO", "api.audit", {
+      requestId: event.requestId,
+      method: event.method,
+      path: event.path,
+      status: event.status,
+      durationMs: event.durationMs,
+      userId: actor?.user?.id ?? null,
+      membershipId: actor?.membership?.id ?? null,
+      collegeId: actor?.membership?.collegeId ?? null,
+      role: actor?.membership?.roles?.[0] ?? null,
+    });
+  },
   runInScope: (context, fn) => runWithTenantScope(scopeFromActor(context as never), fn),
 });

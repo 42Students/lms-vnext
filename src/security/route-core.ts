@@ -24,6 +24,19 @@ export type RouteDeps<Context> = {
   newRequestId: () => string;
   /** Runs the handler inside the actor's database scope (row-level security reads it). Optional so the core stays framework-free. */
   runInScope?: <T>(context: Context, fn: () => T) => T;
+  /**
+   * Audit trail hook (layer L9). Called for authenticated routes after every state-changing request and every
+   * 401/403/429 outcome. It receives identifiers only: never the body, query values or headers. A throwing hook
+   * never changes the response.
+   */
+  onAudit?: (event: {
+    requestId: string;
+    method: string;
+    path: string;
+    status: number;
+    durationMs: number;
+    context: Context | null;
+  }) => void;
 };
 
 type Common = {
@@ -99,8 +112,12 @@ export function createRoute<Context, Permission extends string = string>(deps: R
       throw new Error("A route that skips the origin check must state csrfExemptReason.");
     }
 
-    return async function handle(request: Request, routeContext?: RouteContext): Promise<Response> {
-      const requestId = deps.newRequestId();
+    const core = async (
+      request: Request,
+      routeContext: RouteContext | undefined,
+      requestId: string,
+      actorRef: { context: Context | null },
+    ): Promise<Response> => {
       try {
         const mutating = !SAFE_METHODS.has(request.method.toUpperCase());
         if (mutating && config.csrf !== false && !deps.isSameOrigin(request)) {
@@ -121,6 +138,7 @@ export function createRoute<Context, Permission extends string = string>(deps: R
         let context: Context | null = null;
         if (config.auth === "user") {
           context = await deps.getContext();
+          actorRef.context = context;
           if (config.permission !== "service-enforced") deps.requirePermission(context, config.permission);
         }
 
@@ -139,6 +157,31 @@ export function createRoute<Context, Permission extends string = string>(deps: R
       } catch (error) {
         return withHeaders(deps.onError(error), requestId);
       }
+    };
+
+    return async function handle(request: Request, routeContext?: RouteContext): Promise<Response> {
+      const requestId = deps.newRequestId();
+      const started = Date.now();
+      const actorRef: { context: Context | null } = { context: null };
+      const response = await core(request, routeContext, requestId, actorRef);
+      if (deps.onAudit && config.auth === "user") {
+        const status = response.status;
+        if (!SAFE_METHODS.has(request.method.toUpperCase()) || status === 401 || status === 403 || status === 429) {
+          try {
+            deps.onAudit({
+              requestId,
+              method: request.method.toUpperCase(),
+              path: new URL(request.url).pathname,
+              status,
+              durationMs: Date.now() - started,
+              context: actorRef.context,
+            });
+          } catch {
+            /* auditing must never change the response */
+          }
+        }
+      }
+      return response;
     };
   };
 }
