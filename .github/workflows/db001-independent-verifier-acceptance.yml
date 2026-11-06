@@ -138,7 +138,7 @@ jobs:
           done < <(git ls-files --others --exclude-standard -- 'drizzle/')
       - name: Upload generated schema diagnosis (NOT a migration)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: db001-generated-drift-diagnostic
           path: .verification/db001-generator-diagnostic/
@@ -146,7 +146,7 @@ jobs:
           if-no-files-found: ignore
       - name: Retain redacted acceptance or failure receipt
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: db001-independent-verifier-evidence
           path: .verification/db001-pinned.json

@@ -86,7 +86,7 @@ jobs:
           --workers=1
       - name: Preserve focused browser failure evidence
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: faculty-blueprint-tail-${{ github.sha }}
           path: |

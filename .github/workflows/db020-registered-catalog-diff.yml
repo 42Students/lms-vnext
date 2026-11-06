@@ -145,7 +145,7 @@ jobs:
           node -e 'const j=require("./.verification/db020-catalog-disposition.json"); if(j.passCertification!==false)process.exit(1)'
       - name: Store exact-source diagnostic artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: db020-registered-catalog-diagnosis
           path: |
