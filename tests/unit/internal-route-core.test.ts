@@ -59,6 +59,22 @@ describe("internal route pipeline", () => {
     expect((await h(call({ authorization: SECRET }))).status).toBe(403);
   });
 
+  it("reveals validation errors only after the credential passes", async () => {
+    const { internalRoute } = setup();
+    const h = internalRoute(cfg, async () => Response.json({}));
+    expect((await h(call({}, "https://a.test/x?job=1"))).status).toBe(403);
+  });
+
+  it("requires an empty body when asked, with the route's own invalid body", async () => {
+    const full = setup({ readEmpty: async () => false });
+    const res = await full.internalRoute({ ...cfg, emptyBody: true, invalid: { message: "Invalid request." } }, async () => Response.json({}))(call({ "x-key": SECRET }));
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ message: "Invalid request." });
+    const empty = setup({ readEmpty: async () => true });
+    expect((await empty.internalRoute({ ...cfg, emptyBody: true }, async () => Response.json({}))(call({ "x-key": SECRET }))).status).toBe(200);
+    expect(() => empty.internalRoute({ ...cfg, emptyBody: true, body: { schema: z.unknown(), maxBytes: 1 } }, async () => Response.json({}))).toThrow();
+  });
+
   it("rejects a query string unless allowed", async () => {
     const { internalRoute } = setup();
     expect((await internalRoute(cfg, async () => Response.json({}))(call({ "x-key": SECRET }, "https://a.test/x?job=1"))).status).toBe(400);

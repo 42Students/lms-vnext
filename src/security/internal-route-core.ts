@@ -13,6 +13,8 @@ import type { ZodType } from "zod";
 export type InternalDeps = {
   /** Reads a deployment secret by name (injected so tests never touch process.env). */
   readSecret: (name: string) => string | undefined;
+  /** True only when the request carries no body at all (stream-checked, not Content-Length). */
+  readEmpty?: (request: Request) => Promise<boolean>;
   readJson: (request: Request, maxBytes: number) => Promise<
     { kind: "OK"; value: unknown } | { kind: "INVALID" } | { kind: "TOO_LARGE" }
   >;
@@ -33,8 +35,12 @@ export type InternalRouteConfig<B> = {
   /** Allow a query string (default: rejected, no client selects job parameters). */
   allowQuery?: boolean;
   body?: { schema: ZodType<B>; maxBytes: number };
+  /** The request must have no body (scheduler pings). Mutually exclusive with `body`. */
+  emptyBody?: true;
   /** Keep a route's existing denial body so callers and tests see no change. */
   denied?: { status: number; body: unknown };
+  /** Body for 400/413 responses (default { error: "INVALID_REQUEST" }). */
+  invalid?: unknown;
 };
 
 const MIN_SECRET_BYTES = 32;
@@ -60,6 +66,8 @@ export function createInternalRoute(deps: InternalDeps) {
     handler: (args: { request: Request; body: B; requestId: string }) => Promise<Response> | Response,
   ) {
     const denied = config.denied ?? { status: 403, body: { error: "FORBIDDEN" } };
+    const invalid = config.invalid ?? { error: "INVALID_REQUEST" };
+    if (config.emptyBody && config.body) throw new Error("emptyBody and body are mutually exclusive.");
 
     return async function handle(request: Request): Promise<Response> {
       const requestId = deps.newRequestId();
@@ -69,7 +77,6 @@ export function createInternalRoute(deps: InternalDeps) {
       };
       try {
         if (request.headers.has("origin")) return deny("ORIGIN");
-        if (!config.allowQuery && new URL(request.url).search) return deny("QUERY", 400, { error: "INVALID_REQUEST" });
 
         const cred = config.credential;
         const provided =
@@ -80,12 +87,18 @@ export function createInternalRoute(deps: InternalDeps) {
                 return auth?.startsWith("Bearer ") ? auth.slice("Bearer ".length) : null;
               })();
         if (!credentialMatches(provided, deps.readSecret(cred.secretEnv))) return deny("CREDENTIAL");
+        // Validation errors are only revealed to an authenticated machine caller.
+        if (!config.allowQuery && new URL(request.url).search) return deny("QUERY", 400, invalid);
+        if (config.emptyBody) {
+          if (!deps.readEmpty) throw new Error("emptyBody requires deps.readEmpty.");
+          if (!(await deps.readEmpty(request))) return deny("BODY", 400, invalid);
+        }
 
         let body = undefined as B;
         if (config.body) {
           const read = await deps.readJson(request, config.body.maxBytes);
-          if (read.kind === "TOO_LARGE") return deny("BODY", 413, { error: "INVALID_REQUEST" });
-          if (read.kind !== "OK") return deny("BODY", 400, { error: "INVALID_REQUEST" });
+          if (read.kind === "TOO_LARGE") return deny("BODY", 413, invalid);
+          if (read.kind !== "OK") return deny("BODY", 400, invalid);
           body = config.body.schema.parse(read.value);
         }
         return withHeaders(await handler({ request, body, requestId }), requestId);

@@ -10,7 +10,7 @@ export const RULES = {
 export function scanRoute(path, source) {
   if (!/^src\/app\/api\/.+\/route\.ts$/.test(path.split(String.fromCharCode(92)).join("/"))) return [];
   const out = [];
-  const onWrapper = /from\s+["']@\/security\/route["']/.test(source);
+  const onWrapper = /from\s+["']@\/security\/(?:route|internal-route)["']/.test(source);
   if (!onWrapper) out.push({ rule: "route-not-on-wrapper" });
   for (const _ of source.matchAll(/\b(?:request|req)\.json\s*\(/g)) out.push({ rule: "raw-request-json" });
   if (/\bgetDb\b/.test(source) && /from\s+["']@\/db/.test(source)) out.push({ rule: "direct-db-in-route" });
