@@ -9,7 +9,7 @@ import { exportedMethods, handlerBody, read, rel, routeFiles } from "./phase3-sc
 const INTERNAL = routeFiles("src/app/api/internal").map((p) => ({ file: rel(p), src: read(p) }));
 
 const CREDENTIAL_CHECK =
-  /timingSafeEqual|verify\w*Signature|verifyInbound|validWebhookSecret|constantTimeEqual|\bhmac\b|x-[a-z-]*(?:key|signature|secret)/i;
+  /internalRoute\(|timingSafeEqual|verify\w*Signature|verifyInbound|validWebhookSecret|constantTimeEqual|\bhmac\b|x-[a-z-]*(?:key|signature|secret)/i;
 
 /** Routes that authenticate in a delegated module; the delegate is asserted below. */
 const DELEGATED: Record<string, { delegate: string; reason: string }> = {

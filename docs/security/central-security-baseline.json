@@ -1244,9 +1244,6 @@
   "src/app/api/hello/route.ts": {
    "route-not-on-wrapper": 1
   },
-  "src/app/api/internal/alerts/tick/route.ts": {
-   "route-not-on-wrapper": 1
-  },
   "src/app/api/internal/audit-findings/sync/route.ts": {
    "route-not-on-wrapper": 1
   },
@@ -1257,9 +1254,6 @@
    "route-not-on-wrapper": 1
   },
   "src/app/api/internal/mentor-project-email-dispatch/route.ts": {
-   "route-not-on-wrapper": 1
-  },
-  "src/app/api/internal/notifications/release/route.ts": {
    "route-not-on-wrapper": 1
   },
   "src/app/api/internal/operations/notification-scheduler/route.ts": {

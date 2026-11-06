@@ -13,7 +13,7 @@ const ROUTE_FILE=/\/route\.ts$/;
 const SCOPE=/(project|placement)/i;
 
 const AUTH_MARKER=new RegExp([
- "getCurrentRequestContext","@/security/route","requireAuth","getRequestContext","requireRequestContext","requireSession",
+ "getCurrentRequestContext","@/security/route","@/security/internal-route","requireAuth","getRequestContext","requireRequestContext","requireSession",
  "authorize[A-Z]\\w*\\(","require[A-Z]\\w*Context","require[A-Z]\\w*Access","resolve\\w*Context",
  "with\\w*Auth","verifyInternal","timingSafeEqual","assertInternal","schedulerKey","x-recruiter-mail-signature",
 ].join("|"));
@@ -107,7 +107,7 @@ describe("PHASE1-AUTH route authentication ratchet",()=>{
   expect(internal.length).toBeGreaterThan(3);
   for(const f of internal){
    const src=read(f);
-   expect(/timingSafeEqual|x-recruiter-mail-signature|verifyInternal|assertInternal|schedulerKey/.test(src)||isGuarded(f,src),rel(f)).toBe(true);
+   expect(/internalRoute\(|timingSafeEqual|x-recruiter-mail-signature|verifyInternal|assertInternal|schedulerKey/.test(src)||isGuarded(f,src),rel(f)).toBe(true);
    expect(/getCurrentRequestContext/.test(src)&&!/timingSafeEqual|signature/i.test(src),
     `${rel(f)} relies on a browser session but lives under /internal`).toBe(false);
   }

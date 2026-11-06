@@ -74,3 +74,17 @@ Agent time is roughly two weeks end to end; the human-gated parts are listed bel
 ## What this does not change
 
 Tenant data, production, credentials and the CI database-role fix already merged are untouched by this document. No control moves state because of this plan; states change only through evidence recorded in `docs/tracker.json`.
+
+## Build status (2026-11-06, updated as work lands)
+
+This table is a working note, not a status source. Control states live only in `docs/tracker.json`.
+
+| Layer | Built | Not built |
+|---|---|---|
+| L2 route wrapper | `src/security/route.ts` + core, 10 tests; about 200 routes converted | About 800 routes (varied shapes) |
+| L12 guards | `security:central` in lint: routes off wrapper, raw `request.json()`, direct DB imports, `service-enforced` debt, tenant tables without RLS | More rules |
+| L4 permission registry | Analyzer + review report (`scripts/permission-candidates.mjs`, `docs/security/permission-candidates.json`) | Accepted names per route; replacing `service-enforced` |
+| L5 tenant scope | `src/db/tenant-context.ts`, `tenant-pool.ts`; handlers run in the actor's scope; off by default | Scope for server components, jobs, bootstrap |
+| L5 RLS | Migration 0333: catalog-driven `tenant_isolation` policies, inert until `app.rls_mode = 'enforce'`; acceptance script in CI | Per-table policy variants; enforcement per environment ([rls-rollout.md](rls-rollout.md)) |
+| L10 internal wrapper | `src/security/internal-route.ts` + core, 12 tests; 5 internal routes converted | Remaining internal routes with bespoke credentials; webhook wrapper with replay protection |
+| L6, L8, L9, L11 | Not started | Storage/export service, distributed rate limiting, audit events and redacting logger, validated startup config |
