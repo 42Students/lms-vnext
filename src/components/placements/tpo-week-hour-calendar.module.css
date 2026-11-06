@@ -63,7 +63,7 @@
   color: var(--lms-topbar-ink) !important;
   font-size: 12px !important;
   line-height: 20px !important;
-  transition: background var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), border-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
+  transition: background var(--lms-motion-fast) var(--lms-motion-ease), border-color var(--lms-motion-fast) var(--lms-motion-ease);
 }
 .event:hover {
   background: var(--lms-neutral-100) !important;

@@ -86,7 +86,7 @@
   background: transparent !important;
   color: var(--lms-neutral-500) !important;
   cursor: pointer;
-  transition: color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), background var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
+  transition: color var(--lms-motion-fast) var(--lms-motion-ease), background var(--lms-motion-fast) var(--lms-motion-ease);
 }
 .arrow:hover:not(:disabled) {
   color: var(--lms-primary) !important;
@@ -97,7 +97,7 @@
   min-height: 44px !important;
   color: var(--lms-primary) !important;
   border-color: var(--lms-primary) !important;
-  transition: color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)),border-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)),background var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
+  transition: color var(--lms-motion-fast) var(--lms-motion-ease),border-color var(--lms-motion-fast) var(--lms-motion-ease),background var(--lms-motion-fast) var(--lms-motion-ease);
 }
 .today:hover:not(:disabled) {
   color: var(--lms-primary-hover) !important;

@@ -124,7 +124,7 @@
   min-height: 40px;
   border-radius: 8px;
   color: var(--auth-body);
-  transition: color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), background-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), box-shadow var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
+  transition: color var(--lms-motion-fast) var(--lms-motion-ease), background-color var(--lms-motion-fast) var(--lms-motion-ease), box-shadow var(--lms-motion-fast) var(--lms-motion-ease);
 }
  .card :global([role="tab"][aria-selected="true"]) {
   background: var(--lms-surface, var(--lms-white));
@@ -146,7 +146,7 @@
   font-size: 14px;
   line-height: 20px;
   letter-spacing: .2px;
-  transition: border-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), box-shadow var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
+  transition: border-color var(--lms-motion-fast) var(--lms-motion-ease), box-shadow var(--lms-motion-fast) var(--lms-motion-ease);
 }
 .card :global(input:focus-visible) {
   border-color: var(--auth-primary);
@@ -165,7 +165,7 @@
   font-weight: 600;
   line-height: 20px;
   box-shadow: none;
-  transition: background-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), box-shadow var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
+  transition: background-color var(--lms-motion-fast) var(--lms-motion-ease), box-shadow var(--lms-motion-fast) var(--lms-motion-ease);
 }
 .card :global(button[type="submit"]:hover:not(:disabled)) { background: color-mix(in srgb, var(--auth-primary) 90%, var(--lms-black)); }
 .card :global(button[type="submit"]:focus-visible) {

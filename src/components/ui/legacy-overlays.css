@@ -162,7 +162,7 @@
 }
 @media (prefers-reduced-motion: no-preference) {
   [data-slot="info-popover"][open] [role="tooltip"] {
-    animation: lms-legacy-popup-enter var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)) both;
+    animation: lms-legacy-popup-enter var(--lms-motion-fast) var(--lms-motion-ease) both;
   }
 }
 [data-slot="menu"] [role="menuitem"][aria-disabled="true"] {
@@ -188,7 +188,7 @@
   background: color-mix(in srgb, var(--lms-black) 6%, transparent);
 }
 [data-slot="popover"] {
-  transition: background-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), box-shadow var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
+  transition: background-color var(--lms-motion-fast) var(--lms-motion-ease), box-shadow var(--lms-motion-fast) var(--lms-motion-ease);
 }
 [data-slot="popover"]:focus-visible {
   outline: 2px solid var(--lms-primary-text);
@@ -225,7 +225,7 @@
 [data-slot="popover-listbox"] a[href]:active { background: color-mix(in srgb, var(--lms-black) 6%, transparent); }
 [data-slot="popover-listbox"] a[href]:focus-visible { outline: 2px solid var(--lms-primary-text); outline-offset: 3px; }
 @media (prefers-reduced-motion: no-preference) {
-  [data-slot="popover-listbox"] { animation: lms-legacy-popup-enter var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)) both; }
+  [data-slot="popover-listbox"] { animation: lms-legacy-popup-enter var(--lms-motion-fast) var(--lms-motion-ease) both; }
 }
 @media (prefers-reduced-motion: reduce) {
   [data-slot="popover-listbox"] { animation: none !important; transition: none !important; }
@@ -266,7 +266,7 @@
 /* docs/design/legacy-styles/components___notification-drawer.scss:192-223 */
 [data-slot="notification-popover"] :is(ul, ol) a[href] {
   border-radius: 8px;
-  transition: background var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), border-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), box-shadow var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
+  transition: background var(--lms-motion-fast) var(--lms-motion-ease), border-color var(--lms-motion-fast) var(--lms-motion-ease), box-shadow var(--lms-motion-fast) var(--lms-motion-ease);
   -webkit-tap-highlight-color: transparent;
 }
 [data-slot="notification-popover"] :is(ul, ol) a[href]:hover {
@@ -315,36 +315,36 @@
 @media (prefers-reduced-motion: no-preference) {
   [data-slot="dialog"][open][data-closing="true"],
   [data-slot="bottom-sheet"][open][data-closing="true"] {
-    animation: lms-legacy-dialog-exit var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)) both;
+    animation: lms-legacy-dialog-exit var(--lms-motion-fast) var(--lms-motion-ease) both;
   }
 }
 @media (prefers-reduced-motion: no-preference) {
   [data-slot="drawer"][open][data-closing="true"] {
-    animation: lms-legacy-drawer-exit var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)) both;
+    animation: lms-legacy-drawer-exit var(--lms-motion-fast) var(--lms-motion-ease) both;
   }
   [data-slot="drawer"][data-side="left"][open][data-closing="true"] {
-    animation: lms-legacy-drawer-left-exit var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)) both;
+    animation: lms-legacy-drawer-left-exit var(--lms-motion-fast) var(--lms-motion-ease) both;
   }
 }
 
 @media (prefers-reduced-motion: no-preference) {
   [data-slot="dialog"][open],
   [data-slot="bottom-sheet"][open] {
-    animation: lms-legacy-dialog-enter var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)) both;
+    animation: lms-legacy-dialog-enter var(--lms-motion-fast) var(--lms-motion-ease) both;
   }
   [data-slot="drawer"][open] {
-    animation: lms-legacy-drawer-enter var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)) both;
+    animation: lms-legacy-drawer-enter var(--lms-motion-fast) var(--lms-motion-ease) both;
   }
   @media (max-width: 767px) {
     [data-slot="drawer"][data-side="left"][open] {
-      animation: lms-legacy-drawer-left-enter var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)) both;
+      animation: lms-legacy-drawer-left-enter var(--lms-motion-fast) var(--lms-motion-ease) both;
     }
   }
   [data-slot="dropdown-root"][open] > [data-slot="dropdown"],
   [role="dialog"][aria-modal="false"]:not([data-slot]),
   [data-slot="notification-popover"],
   [data-slot="toast-stack"] > section {
-    animation: lms-legacy-popup-enter var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)) both;
+    animation: lms-legacy-popup-enter var(--lms-motion-fast) var(--lms-motion-ease) both;
   }
 }
 @media (min-width: 768px) {
@@ -408,5 +408,5 @@
 }
 [data-slot="searchable-select"] [role="option"] {
   min-height: 44px;
-  transition: background-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
+  transition: background-color var(--lms-motion-fast) var(--lms-motion-ease);
 }

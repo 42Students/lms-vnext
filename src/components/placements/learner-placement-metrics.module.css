@@ -22,7 +22,7 @@
   border-radius: 14px !important;
   background: var(--lms-white) !important;
   box-shadow: none !important;
-  transition: border-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)),
+  transition: border-color var(--lms-motion-fast) var(--lms-motion-ease),
     box-shadow 150ms cubic-bezier(.2,0,0,1),
     transform 150ms cubic-bezier(.2,0,0,1) !important;
 }

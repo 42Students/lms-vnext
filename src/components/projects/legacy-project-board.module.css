@@ -23,7 +23,7 @@
   border-radius: 20px !important;
   background: linear-gradient(180deg, color-mix(in srgb, var(--lms-primary) 4%, transparent), var(--lms-white) 28%) !important;
   box-shadow: var(--lms-elevation-3);
-  transition: border-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), box-shadow var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), transform var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
+  transition: border-color var(--lms-motion-fast) var(--lms-motion-ease), box-shadow var(--lms-motion-fast) var(--lms-motion-ease), transform var(--lms-motion-fast) var(--lms-motion-ease);
 }
 .lane:hover {
   transform: translateY(-1px);
@@ -68,7 +68,7 @@
   border-radius: 14px !important;
   background: var(--lms-white) !important;
   box-shadow: var(--lms-elevation-3);
-  transition: border-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), box-shadow var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), transform var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
+  transition: border-color var(--lms-motion-fast) var(--lms-motion-ease), box-shadow var(--lms-motion-fast) var(--lms-motion-ease), transform var(--lms-motion-fast) var(--lms-motion-ease);
 }
 .card:hover {
   transform: translateY(-1px);

@@ -34,7 +34,7 @@
   background: var(--lms-white) !important;
   box-shadow: none !important;
   text-align: left;
-  transition: border-color var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease)), background var(--lms-motion-fast) var(--lms-motion-var(--lms-motion-ease));
+  transition: border-color var(--lms-motion-fast) var(--lms-motion-ease), background var(--lms-motion-fast) var(--lms-motion-ease);
 }
 .feed [data-slot="button"]:hover:not(:disabled) {
   border-color: var(--lms-neutral-200) !important;
