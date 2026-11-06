@@ -1,18 +1,21 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getCollegeRoundSlotAppointments,mutateCollegeRoundSlotInterview} from "@/modules/placements/college-round-slot-action-service";
 import {driveInterviewsParams} from "@/modules/placements/college-drive-interviews-model";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 type Props={params:Promise<{jobId:string}>};
-async function handleGET(request:Request,{params}:Props){
- try{const {jobId}=await params;
-  const query=driveInterviewsParams(Object.fromEntries(new URL(request.url).searchParams));
-  if(!query)return NextResponse.json({error:"INVALID_INTERVIEW_FILTERS"},{status:400});
-  return NextResponse.json(await getCollegeRoundSlotAppointments(
-   await getCurrentRequestContext(),jobId,{
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {jobId}=params;
+    const query=driveInterviewsParams(Object.fromEntries(new URL(request.url).searchParams));
+    if(!query)return NextResponse.json({error:"INVALID_INTERVIEW_FILTERS"},{status:400});
+    return NextResponse.json(await getCollegeRoundSlotAppointments(
+   __ctx,jobId,{
      ...(query.appointmentPage !== undefined ? {appointmentPage:query.appointmentPage} : {}),
      ...(query.appointmentStatus !== undefined ? {appointmentStatus:query.appointmentStatus} : {}),
      ...(query.appointmentMode !== undefined ? {appointmentMode:query.appointmentMode} : {}),
@@ -25,14 +28,14 @@ async function handleGET(request:Request,{params}:Props){
      ...(query.candidateSearch !== undefined ? {candidateSearch:query.candidateSearch} : {}),
    }),
    {headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
-async function handlePOST(request:Request,{params}:Props){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{const {jobId}=await params;
-  return NextResponse.json(await mutateCollegeRoundSlotInterview(await getCurrentRequestContext(),jobId,await request.json()),
+  },
+);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {jobId}=params;
+    return NextResponse.json(await mutateCollegeRoundSlotInterview(__ctx,jobId,await request.json()),
    {headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

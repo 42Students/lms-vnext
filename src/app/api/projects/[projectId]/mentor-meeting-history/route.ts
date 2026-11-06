@@ -1,23 +1,24 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getMentorMeetingChangeHistory } from "@/modules/projects/mentor-meeting-history-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type Route = { params: Promise<{ projectId: string }> };
 
 /** Typed, paginated meeting history for the currently assigned mentor only. */
-async function handleGET(request: Request, { params }: Route) {
-  try {
-    const { projectId } = await params;
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const { projectId } = params;
     const url = new URL(request.url);
-    const data = await getMentorMeetingChangeHistory(await getCurrentRequestContext(), {
+    const data = await getMentorMeetingChangeHistory(__ctx, {
       projectId,
       ...(url.searchParams.has("meetingKey") ? { meetingKey: url.searchParams.get("meetingKey") } : {}),
       page: url.searchParams.get("page") ?? "1",
     });
     return NextResponse.json(data, { headers: { "Cache-Control": "private, no-store" } });
-  } catch (error) { return apiErrorResponse(error); }
-}
-export const GET = secured(handleGET);
+  },
+);

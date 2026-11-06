@@ -1,21 +1,22 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getInboundMailDetailForAdmin} from "@/modules/inbound-mail/admin-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 type Params={params:Promise<{id:string}>};
 /** Full plain text is available only after a separate global-Super-Admin read.
  * An unknown ID returns the same generic 404 as a deleted email. */
-async function handleGET(_request:Request,{params}:Params){
- try{
-  const {id}=await params;
-  const message=await getInboundMailDetailForAdmin(await getCurrentRequestContext(),id);
-  if(!message)return NextResponse.json({error:"INBOUND_MAIL_NOT_FOUND"},{status:404,
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {id}=params;
+    const message=await getInboundMailDetailForAdmin(__ctx,id);
+    if(!message)return NextResponse.json({error:"INBOUND_MAIL_NOT_FOUND"},{status:404,
     headers:{"Cache-Control":"private, no-store"}});
-  return NextResponse.json({message},{
+    return NextResponse.json({message},{
    headers:{"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
+  },
+);

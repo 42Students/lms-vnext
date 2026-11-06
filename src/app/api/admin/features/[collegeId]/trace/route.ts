@@ -1,28 +1,30 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getSuperAdminLearnerAccessTrace} from "@/modules/module-access/admin-trace-service";
 import {studentRuleCards} from "@/modules/module-access/admin-student-rule-model";
 import {adminModuleTraceQuerySchema} from "@/modules/module-access/admin-trace-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** SA-tenants-modules-31: authenticated, college-scoped read-only autocomplete
  * and explanation, never a way to act as the selected student. */
-async function handleGET(request:Request,{params}:{params:Promise<{collegeId:string}>}){
- try{
-  const query:Record<string,string>={};
-  for(const [key,value] of new URL(request.url).searchParams){
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const query:Record<string,string>={};
+    for(const [key,value] of new URL(request.url).searchParams){
    if(Object.hasOwn(query,key)||!["q","membershipId"].includes(key))
     return NextResponse.json({error:"INVALID_FILTER"},{status:400});
    query[key]=value;
   }
-  const parsed=adminModuleTraceQuerySchema.parse(query);
-  const {collegeId}=await params;
-  const result=await getSuperAdminLearnerAccessTrace(
-   await getCurrentRequestContext(),collegeId,parsed);
-  if(!result)return NextResponse.json({error:"NOT_FOUND"},{status:404});
-  const student=result.selected;
-  return NextResponse.json({
+    const parsed=adminModuleTraceQuerySchema.parse(query);
+    const {collegeId}=params;
+    const result=await getSuperAdminLearnerAccessTrace(
+   __ctx,collegeId,parsed);
+    if(!result)return NextResponse.json({error:"NOT_FOUND"},{status:404});
+    const student=result.selected;
+    return NextResponse.json({
    learners:result.learners.slice(0,12).map(row=>({
     membershipId:row.membershipId,displayName:row.displayName,rollNumber:row.rollNumber,
    })),
@@ -46,6 +48,5 @@ async function handleGET(request:Request,{params}:{params:Promise<{collegeId:str
     })),
    }:null,
   },{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
+  },
+);

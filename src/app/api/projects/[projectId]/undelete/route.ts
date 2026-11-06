@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -5,25 +6,17 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { readMentorProjectCommandBody, MentorProjectCommandBodyError,
   mentorProjectBodyFailureMessage } from "@/modules/projects/mentor-command-body";
 import { changeProjectSoftDeleteState } from "@/modules/projects/project-soft-delete-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ projectId: string }> };
-async function handlePOST(request: Request, { params }: RouteContext) {
-  if (!isSameOriginRequest(request))
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  try {
-    const { projectId } = await params;
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const { projectId } = params;
     const body = await readMentorProjectCommandBody(request);
     return NextResponse.json(await changeProjectSoftDeleteState(
-      await getCurrentRequestContext(), projectId, body, true,
+      __ctx, projectId, body, true,
     ));
-  } catch (error) {
-    if (error instanceof MentorProjectCommandBodyError)
-      return NextResponse.json({
-        error: error.code, message: mentorProjectBodyFailureMessage(error.status),
-      }, { status: error.status });
-    return apiErrorResponse(error);
-  }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

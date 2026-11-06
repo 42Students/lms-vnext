@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -5,15 +6,14 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {markOwnMentorSourceRead} from
   "@/modules/projects/mentor-notification-source-receipts-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const inputSchema=z.strictObject({key:z.string().min(8).max(320)});
 
-async function handlePOST(request:Request){
-  if(!isSameOriginRequest(request))
-    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
-  try{
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const __ctx = __actor!;
     if(Number(request.headers.get("content-length")??0)>1024)
       return NextResponse.json({error:"INVALID_REQUEST"},{status:413});
     const body=await request.text();
@@ -24,8 +24,7 @@ async function handlePOST(request:Request){
       return NextResponse.json({error:"INVALID_BODY"},{status:400});
     }
     const {key}=inputSchema.parse(raw);
-    const result=await markOwnMentorSourceRead(await getCurrentRequestContext(),key);
+    const result=await markOwnMentorSourceRead(__ctx,key);
     return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
-  }catch(error){return apiErrorResponse(error);}
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

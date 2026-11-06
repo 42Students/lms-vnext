@@ -1,17 +1,17 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {deleteTpoUnpublishedDraft} from "@/modules/placements/tpo-delete-draft-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-async function handlePOST(request:Request,{params}:{params:Promise<{jobId:string}>}){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const {jobId}=await params;
-  const result=await deleteTpoUnpublishedDraft(await getCurrentRequestContext(),
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {jobId}=params;
+    const result=await deleteTpoUnpublishedDraft(__ctx,
    jobId,await request.json());
-  return NextResponse.json(result,{status:result.archived?200:409});
- }catch(error){return apiErrorResponse(error)}
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+    return NextResponse.json(result,{status:result.archived?200:409});
+  },
+);

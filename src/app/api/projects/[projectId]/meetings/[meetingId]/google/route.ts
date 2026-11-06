@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -6,53 +7,47 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {checkMentorGoogleMeeting,syncMentorGoogleMeeting,
  removeCancelledMentorGoogleMeeting}
  from "@/modules/projects/mentor-google-meeting-sync-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Params={params:Promise<{projectId:string;meetingId:string}>};
 const inputSchema=z.strictObject({
  weeklyCount:z.number().int().min(2).max(52).optional(),
  inviteeMembershipIds:z.array(z.uuid()).min(1).max(100).optional(),
 });
-async function handleGET(_request:Request,{params}:Params){
- try{
-  const {projectId,meetingId}=await params;
-  const status=await checkMentorGoogleMeeting(
-   await getCurrentRequestContext(),projectId,meetingId);
-  return NextResponse.json(status,{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
-async function handlePOST(request:Request,{params}:Params){
- if(!isSameOriginRequest(request))
-  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const raw=await request.text();
-  if(raw.length>6000)return NextResponse.json({error:"INVALID_REQUEST"},{status:413});
-  const input=inputSchema.safeParse(JSON.parse(raw||"{}"));
-  if(!input.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
-  const {projectId,meetingId}=await params;
-  const result=await syncMentorGoogleMeeting(await getCurrentRequestContext(),
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {projectId,meetingId}=params;
+    const status=await checkMentorGoogleMeeting(
+   __ctx,projectId,meetingId);
+    return NextResponse.json(status,{headers:{"Cache-Control":"private, no-store"}});
+  },
+);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const raw=await request.text();
+    if(raw.length>6000)return NextResponse.json({error:"INVALID_REQUEST"},{status:413});
+    const input=inputSchema.safeParse(JSON.parse(raw||"{}"));
+    if(!input.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+    const {projectId,meetingId}=params;
+    const result=await syncMentorGoogleMeeting(__ctx,
    projectId,meetingId,input.data.weeklyCount,input.data.inviteeMembershipIds);
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){
-  if(error instanceof SyntaxError)
-   return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
-  return apiErrorResponse(error);
- }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  },
+);
 
 /** Explicitly retract an already-cancelled meeting from the consented
  * Google account. This does not cancel an active local meeting.
  */
-async function handleDELETE(request:Request,{params}:Params){
- if(!isSameOriginRequest(request))
-  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const {projectId,meetingId}=await params;
-  const result=await removeCancelledMentorGoogleMeeting(
-   await getCurrentRequestContext(),projectId,meetingId);
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const DELETE = secured(handleDELETE, { csrf: "enforce" });
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {projectId,meetingId}=params;
+    const result=await removeCancelledMentorGoogleMeeting(
+   __ctx,projectId,meetingId);
+    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  },
+);

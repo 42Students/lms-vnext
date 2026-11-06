@@ -1,37 +1,38 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {appendCollegeApplicationNote,attachCollegeApplicationOfferLetter,getCollegeApplicationDetail}
  from "@/modules/placements/college-application-detail-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 type Params={params:Promise<{jobId:string;applicationId:string}>};
-async function handleGET(_req:Request,{params}:Params){
- try{const {jobId,applicationId}=await params;
-  const detail=await getCollegeApplicationDetail(await getCurrentRequestContext(),jobId,applicationId);
-  return NextResponse.json(detail,{headers:{"Cache-Control":"private, no-store"}});
- }catch(e){return apiErrorResponse(e);}
-}
-export const GET = secured(handleGET);
-async function handlePOST(req:Request,{params}:Params){
- if(!isSameOriginRequest(req))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{const {jobId,applicationId}=await params;
-  return NextResponse.json(await appendCollegeApplicationNote(await getCurrentRequestContext(),
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {jobId,applicationId}=params;
+    const detail=await getCollegeApplicationDetail(__ctx,jobId,applicationId);
+    return NextResponse.json(detail,{headers:{"Cache-Control":"private, no-store"}});
+  },
+);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request: req, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {jobId,applicationId}=params;
+    return NextResponse.json(await appendCollegeApplicationNote(__ctx,
    jobId,applicationId,await req.json()),{status:201,headers:{"Cache-Control":"private, no-store"}});
- }catch(e){return apiErrorResponse(e);}
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
-async function handlePATCH(req:Request,{params}:Params){
- if(!isSameOriginRequest(req))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{const {jobId,applicationId}=await params;
-  const context=await getCurrentRequestContext();
-  const raw:unknown=await req.json();
-  let input=raw;
-  // The old application-level URL action has no offerId. Resolve only a
-  // genuine, unique ACTIVE offer inside this already-authorized application;
-  // never invent an offer or attach a letter to an unrelated historic offer.
-  if(raw&&typeof raw==="object"&&!Array.isArray(raw)&&
+  },
+);
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request: req, context: __actor, params }) => {
+    const context = __actor!;
+    const {jobId,applicationId}=params;
+    const raw:unknown=await req.json();
+    let input=raw;
+    if(raw&&typeof raw==="object"&&!Array.isArray(raw)&&
      !("offerId" in raw)&&"url" in raw){
     const detail=await getCollegeApplicationDetail(context,jobId,applicationId);
     const active=detail.offers.filter(offer=>offer.status==="ISSUED"||offer.status==="ACCEPTED");
@@ -42,8 +43,7 @@ async function handlePATCH(req:Request,{params}:Params){
     },{status:active.length===0?404:409,headers:{"Cache-Control":"private, no-store"}});
     input={...raw,offerId:active[0]!.id};
   }
-  return NextResponse.json(await attachCollegeApplicationOfferLetter(
+    return NextResponse.json(await attachCollegeApplicationOfferLetter(
     context,jobId,applicationId,input),{headers:{"Cache-Control":"private, no-store"}});
- }catch(e){return apiErrorResponse(e);}
-}
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+  },
+);

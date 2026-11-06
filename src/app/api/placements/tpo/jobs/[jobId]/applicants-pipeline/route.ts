@@ -1,10 +1,10 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoApplicantPipeline} from "@/modules/placements/tpo-applicant-pipeline-service";
 import {tpoApplicantPipelineParams} from "@/modules/placements/tpo-applicant-pipeline-model";
-import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -26,37 +26,37 @@ async function read(context:Awaited<ReturnType<typeof getCurrentRequestContext>>
 }
 /** Scoped replacement for legacy job-application search and stats.
  * No caller can provide organizationId or widen the selected college. */
-async function handleGET(request:Request,{params}:Params){
- try{
-  const {jobId}=await params;
-  const raw:Record<string,string>={};
-  for(const [key,value] of new URL(request.url).searchParams){
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {jobId}=params;
+    const raw:Record<string,string>={};
+    for(const [key,value] of new URL(request.url).searchParams){
    if(Object.hasOwn(raw,key))return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
    raw[key]=value;
   }
-  const value=await read(await getCurrentRequestContext(),jobId,raw);
-  return NextResponse.json(value,{headers:{"Cache-Control":"private, no-store"}});
- }catch(reason){return apiErrorResponse(reason);}
-}
-export const GET = secured(handleGET);
+    const value=await read(__ctx,jobId,raw);
+    return NextResponse.json(value,{headers:{"Cache-Control":"private, no-store"}});
+  },
+);
 /** No refresh cache exists. Re-read the actual scoped pipeline and report
  * that the persisted database was queried, never imply a stale cache was invalidated. */
-async function handlePOST(request:Request,{params}:Params){
- if(!isSameOriginRequest(request))
-  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const {jobId}=await params;
-  const payload:unknown=await request.json().catch(()=>({}));
-  if(!payload||typeof payload!=="object"||Array.isArray(payload))
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {jobId}=params;
+    const payload:unknown=await request.json().catch(()=>({}));
+    if(!payload||typeof payload!=="object"||Array.isArray(payload))
    return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
-  const raw=payload as Record<string,unknown>;
-  if(Object.keys(raw).some(key=>key!=="mode"&&key!=="action")||
+    const raw=payload as Record<string,unknown>;
+    if(Object.keys(raw).some(key=>key!=="mode"&&key!=="action")||
      raw["action"]!=="REFRESH"||raw["mode"]!==undefined&&raw["mode"]!=="stats")
    return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
-  const value=await read(await getCurrentRequestContext(),jobId,{mode:"stats"});
-  return NextResponse.json({...value,message:"Live application statistics retrieved",
+    const value=await read(__ctx,jobId,{mode:"stats"});
+    return NextResponse.json({...value,message:"Live application statistics retrieved",
    refreshed:false,reason:"Applications are read directly from the database; no refresh is required."},
    {headers:{"Cache-Control":"private, no-store"}});
- }catch(reason){return apiErrorResponse(reason);}
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

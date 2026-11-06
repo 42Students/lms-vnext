@@ -1,29 +1,22 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {addDescriptiveAssignmentPoints} from "@/modules/courses/assignment-submission-service";
 import {descriptiveAssignmentPointsSchema} from "@/modules/courses/assignment-descriptive-points-model";
-import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 type Params={params:Promise<{submissionId:string}>};
-async function handlePOST(request:Request,{params}:Params){
- if(!isSameOriginRequest(request))
-  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const {submissionId}=await params;
-  const input=descriptiveAssignmentPointsSchema.parse(await request.json());
-  const submission=await addDescriptiveAssignmentPoints(
-   await getCurrentRequestContext(),submissionId,input,
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {submissionId}=params;
+    const input=descriptiveAssignmentPointsSchema.parse(await request.json());
+    const submission=await addDescriptiveAssignmentPoints(
+   __ctx,submissionId,input,
   );
-  return NextResponse.json({submission},{headers:{"Cache-Control":"no-store"}});
- }catch(error){
-  if(error instanceof RangeError)
-   return NextResponse.json({error:"ASSIGNMENT_GRADE_INVALID",
-    message:"Descriptive points exceed the assignment maximum."},
-    {status:400,headers:{"Cache-Control":"no-store"}});
-  return apiErrorResponse(error);
- }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+    return NextResponse.json({submission},{headers:{"Cache-Control":"no-store"}});
+  },
+);

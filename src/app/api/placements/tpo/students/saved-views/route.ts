@@ -1,21 +1,24 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listTpoStudentSavedViews,mutateTpoStudentSavedView}
  from "@/modules/placements/tpo-student-saved-views-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";export const dynamic="force-dynamic";
-async function handleGET(){
- try{return NextResponse.json(await listTpoStudentSavedViews(await getCurrentRequestContext()),
-  {headers:{"Cache-Control":"private, no-store"}})}
- catch(error){return apiErrorResponse(error)}
-}
-export const GET = secured(handleGET);
-async function handlePOST(req:Request){
- if(!isSameOriginRequest(req))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{return NextResponse.json(await mutateTpoStudentSavedView(await getCurrentRequestContext(),await req.json()),
-  {headers:{"Cache-Control":"private, no-store"}})}
- catch(error){return apiErrorResponse(error)}
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor }) => {
+    const __ctx = __actor!;
+    return NextResponse.json(await listTpoStudentSavedViews(__ctx),
+  {headers:{"Cache-Control":"private, no-store"}})
+  },
+);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request: req, context: __actor }) => {
+    const __ctx = __actor!;
+    return NextResponse.json(await mutateTpoStudentSavedView(__ctx,await req.json()),
+  {headers:{"Cache-Control":"private, no-store"}})
+  },
+);

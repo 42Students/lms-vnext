@@ -1,28 +1,32 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {beginOwnTpoAvatarUpload,confirmOwnTpoAvatar,readOwnTpoAvatar}
  from "@/modules/placements/tpo-avatar-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-async function handleGET(){
- try{return NextResponse.json(await readOwnTpoAvatar(await getCurrentRequestContext()),
-  {headers:{"Cache-Control":"private, no-store"}});}
- catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
-async function handlePOST(request:Request){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{return NextResponse.json(await beginOwnTpoAvatarUpload(await getCurrentRequestContext(),
-  await request.json()),{headers:{"Cache-Control":"private, no-store"}});}
- catch(error){return apiErrorResponse(error);}
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
-async function handlePATCH(request:Request){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{return NextResponse.json(await confirmOwnTpoAvatar(await getCurrentRequestContext(),
-  await request.json()),{headers:{"Cache-Control":"private, no-store"}});}
- catch(error){return apiErrorResponse(error);}
-}
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor }) => {
+    const __ctx = __actor!;
+    return NextResponse.json(await readOwnTpoAvatar(__ctx),
+  {headers:{"Cache-Control":"private, no-store"}});
+  },
+);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const __ctx = __actor!;
+    return NextResponse.json(await beginOwnTpoAvatarUpload(__ctx,
+  await request.json()),{headers:{"Cache-Control":"private, no-store"}});
+  },
+);
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const __ctx = __actor!;
+    return NextResponse.json(await confirmOwnTpoAvatar(__ctx,
+  await request.json()),{headers:{"Cache-Control":"private, no-store"}});
+  },
+);

@@ -1,15 +1,18 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {applyTpoWholeRound,getTpoRoundApplyPreview} from "@/modules/placements/tpo-round-apply-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 type Params={params:Promise<{jobId:string;roundId:string}>};
-async function handleGET(_request:Request,{params}:Params){
- try{const {jobId,roundId}=await params;
-  const data=await getTpoRoundApplyPreview(await getCurrentRequestContext(),jobId,roundId);
-  return NextResponse.json({
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {jobId,roundId}=params;
+    const data=await getTpoRoundApplyPreview(__ctx,jobId,roundId);
+    return NextResponse.json({
     ...data,contract:"PENDING_RESULTS_ONLY",
     legacyPendingRoute:"/api/v1/tpo/rounds/"+roundId+"/results/pending",
     legacyApplyRoute:"/api/v1/tpo/rounds/"+roundId+"/results/apply",
@@ -17,25 +20,22 @@ async function handleGET(_request:Request,{params}:Params){
       apply:"/api/placements/tpo/jobs/"+jobId+"/rounds/"+roundId+"/apply-all"},
     message:"Review unapplied round results before confirming.",
   },{headers:{"Cache-Control":"private, no-store"}});
- }catch(e){return apiErrorResponse(e);}
-}
-export const GET = secured(handleGET);
-async function handlePOST(request:Request,{params}:Params){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const notify=new URL(request.url).searchParams.get("notify");
-  if(notify!==null&&notify!=="true"&&notify!=="false")
+  },
+);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const notify=new URL(request.url).searchParams.get("notify");
+    if(notify!==null&&notify!=="true"&&notify!=="false")
    return NextResponse.json({error:"INVALID_NOTIFY_FLAG",
     message:"Use notify=true or notify=false."},
     {status:400,headers:{"Cache-Control":"private, no-store"}});
-  // Legacy apply?notify=false: outcomes still advance atomically; only the
-  // learner notice is suppressed. Unspecified notify defaults to true.
-  const {jobId,roundId}=await params;
-  const result=await applyTpoWholeRound(await getCurrentRequestContext(),jobId,roundId,await request.json(),notify!=="false");
-  return NextResponse.json({...result,notify:notify!=="false",notificationChannel:notify==="false"?"SUPPRESSED":"IN_APP",
+    const {jobId,roundId}=params;
+    const result=await applyTpoWholeRound(__ctx,jobId,roundId,await request.json(),notify!=="false");
+    return NextResponse.json({...result,notify:notify!=="false",notificationChannel:notify==="false"?"SUPPRESSED":"IN_APP",
     contract:"PENDING_RESULTS_ONLY",requiresReload:true,
     message:"Pending round results applied. Refresh to review any remaining decisions."},
    {headers:{"Cache-Control":"private, no-store"}});
- }catch(e){return apiErrorResponse(e);}
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

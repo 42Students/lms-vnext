@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { listCollegeActiveReadinessOverrides } from "@/modules/projects/admin-readiness-overrides-service";
@@ -6,17 +7,18 @@ export const runtime = "nodejs";
 
 import { projectReadinessOverrideCsvCell } from "@/modules/projects/readiness-overrides-export-model";
 import {z} from "zod";
-import { secured } from "@/security/secure-handler";
 
-async function handleGET(request: Request) {
-  try {
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const __ctx = __actor!;
     const collegeId = new URL(request.url).searchParams.get("collegeId");
     if (!collegeId) return Response.json({ error: "INVALID_REQUEST" }, { status: 400 });
     const query=new URL(request.url).searchParams;
     const selected=query.get("projectIds");
     const ids=selected===null?null:z.array(z.string().uuid()).min(1).max(25)
       .parse(selected.length<=925?selected.split(","):[]);
-    const rows = await listCollegeActiveReadinessOverrides(await getCurrentRequestContext(), collegeId);
+    const rows = await listCollegeActiveReadinessOverrides(__ctx, collegeId);
     const visible=ids?rows.filter(row=>ids.includes(row.projectId)):rows;
     const lines = [
       ["Workspace", "Workspace ID", "Override direction", "Override note", "Overridden by", "Overridden at"].map(projectReadinessOverrideCsvCell).join(","),
@@ -30,6 +32,5 @@ async function handleGET(request: Request) {
         "cache-control": "private, no-store",
       },
     });
-  } catch (error) { return apiErrorResponse(error); }
-}
-export const GET = secured(handleGET);
+  },
+);

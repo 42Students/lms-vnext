@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -11,7 +12,6 @@ import {
   listCourseLessons,
   resolveLegacyLessonLearningPath,
 } from "@/modules/courses/lesson-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 const noStore = { "Cache-Control": "private, no-store" };
@@ -24,9 +24,10 @@ const noStore = { "Cache-Control": "private, no-store" };
  * not an in-process global cache, and does NOT reuse lesson-create rights.
  */
 
-async function handleGET(request: Request) {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
     const url = new URL(request.url);
     const view = url.searchParams.get("view");
     if (view === "search") {
@@ -96,28 +97,16 @@ async function handleGET(request: Request) {
       url.searchParams.get("includeArchived") ===
         "true",
     );
-
-    // Keep the modern "lessons" array stable. Legacy consumers that expect
-    // Response(status,message,data) may use the same authenticated scoped
-    // endpoint without another unprotected /api/v1 namespace.
     return NextResponse.json({
       lessons,status:"success",message:"Lessons retrieved",data:lessons,
     }, { headers: noStore });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
-export const GET = secured(handleGET);
+  },
+);
 
-async function handlePOST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
     const view = new URL(request.url).searchParams.get("view");
     if (view !== null) {
       if (view !== "refresh")
@@ -136,16 +125,12 @@ async function handlePOST(request: Request) {
         message: "Lesson search reads live scoped data. No cache refresh is performed.",
       }, { status: 410, headers: noStore });
     }
-    const context = await getCurrentRequestContext();
     const body:unknown=await request.json();
     if(!body||typeof body!=="object"||Array.isArray(body))
       return NextResponse.json({error:"INVALID_LESSON_REQUEST"},{
         status:400,headers:noStore,
       });
     const raw=body as Record<string,unknown>;
-    // Legacy lesson_name and sequence=0 semantics are mapped, but the
-    // learning path must always resolve to the caller's authorized offering.
-    // Course slugs/legacy numeric IDs alone are not trusted parent IDs.
     if(!raw["learningPathId"]&&(raw["course_id"]||raw["courseId"]||raw["slug"]))
       return NextResponse.json({
         error:"LEARNING_PATH_REQUIRED",
@@ -155,13 +140,9 @@ async function handlePOST(request: Request) {
     const mapped=(legacyLessonName!==undefined && modern["name"]===undefined)
       ?{...modern,name:legacyLessonName}:modern;
     const lesson = await createCourseLesson(context,mapped);
-
     return NextResponse.json(
       { lesson,status:"success",message:"Lesson created",data:lesson },
       { status: 201, headers: noStore },
     );
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
-export const POST = secured(handlePOST);
+  },
+);

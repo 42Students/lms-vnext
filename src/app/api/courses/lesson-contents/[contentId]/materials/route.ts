@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {
@@ -11,7 +12,6 @@ import {StorageFileError} from "@/modules/storage/file-errors";
 import {z} from "zod";
 import {readResourceMaterialCommandJson} from "@/modules/courses/resource-material-command-json";
 import {isSameOriginRequest} from "@/auth/origin";
-import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 type Route={params:Promise<{contentId:string}>};
@@ -50,14 +50,15 @@ function queryParams(request:Request):Record<string,unknown>{
  * both resolve through the same staff/learner scope checks and clean-scan
  * attestation. The response must not be cached or leaked through Referer.
  */
-async function handleGET(request:Request,{params}:Route){
- try{
-  const {contentId:rawContentId}=await params;
-  const contentId=z.string().uuid().parse(rawContentId);
-  const query=fileGrantQuerySchema.parse(normalizeContentAliases(contentId,queryParams(request)));
-  const context=await getCurrentRequestContext();
-  const deliveryId=query.deliveryId??null;
-  if(query.openMaterialId || query.legacyMaterialIndex !== undefined){
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    const {contentId:rawContentId}=params;
+    const contentId=z.string().uuid().parse(rawContentId);
+    const query=fileGrantQuerySchema.parse(normalizeContentAliases(contentId,queryParams(request)));
+    const deliveryId=query.deliveryId??null;
+    if(query.openMaterialId || query.legacyMaterialIndex !== undefined){
    const grant=await authorizeOrNotFound(async()=>{
     const materialId=query.openMaterialId ??
      await resolveLegacyResourceMaterialId(context,contentId,deliveryId,query.legacyMaterialIndex!);
@@ -70,21 +71,20 @@ async function handleGET(request:Request,{params}:Route){
     "X-Content-Type-Options":"nosniff",
    }});
   }
-  const materials=await listLessonResourceMaterials(context,contentId,deliveryId);
-  return Response.json({materials},{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
-async function handlePOST(request:Request,{params}:Route){
- if(!isSameOriginRequest(request))return Response.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const {contentId:rawContentId}=await params;
-  const contentId=z.string().uuid().parse(rawContentId);
-  const input=await readResourceMaterialCommandJson(request);
-  const deliveryId=deliveryQuerySchema.parse(normalizeContentAliases(contentId,queryParams(request))).deliveryId??null;
-  const result=await commandLessonResourceMaterial(
-   await getCurrentRequestContext(),contentId,deliveryId,input);
-  return Response.json({result},{status:201,headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const POST = secured(handlePOST);
+    const materials=await listLessonResourceMaterials(context,contentId,deliveryId);
+    return Response.json({materials},{headers:{"Cache-Control":"private, no-store"}});
+  },
+);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {contentId:rawContentId}=params;
+    const contentId=z.string().uuid().parse(rawContentId);
+    const input=await readResourceMaterialCommandJson(request);
+    const deliveryId=deliveryQuerySchema.parse(normalizeContentAliases(contentId,queryParams(request))).deliveryId??null;
+    const result=await commandLessonResourceMaterial(
+   __ctx,contentId,deliveryId,input);
+    return Response.json({result},{status:201,headers:{"Cache-Control":"private, no-store"}});
+  },
+);

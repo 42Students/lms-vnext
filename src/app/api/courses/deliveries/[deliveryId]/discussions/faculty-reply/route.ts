@@ -1,18 +1,17 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {postFacultyDiscussionReply} from "@/modules/courses/faculty-discussion-reply-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-async function handlePOST(request:Request,{params}:{params:Promise<{deliveryId:string}>}){
- if(!isSameOriginRequest(request))
-  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const {deliveryId}=await params;
-  const message=await postFacultyDiscussionReply(await getCurrentRequestContext(),
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {deliveryId}=params;
+    const message=await postFacultyDiscussionReply(__ctx,
    deliveryId,await request.json());
-  return NextResponse.json({message},{status:201});
- }catch(error){return apiErrorResponse(error);}
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+    return NextResponse.json({message},{status:201});
+  },
+);

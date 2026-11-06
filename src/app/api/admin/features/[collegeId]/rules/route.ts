@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
@@ -8,33 +9,30 @@ import {writeSuperAdminCollegeRule} from "@/modules/module-access/admin-college-
 import {collegeFeatureModuleSchema,collegeRuleWriteSchema} from "@/modules/module-access/admin-college-rule-model";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-async function handleGET(_request:Request,{params}:{params:Promise<{collegeId:string}>}){
- try{
-  const {collegeId}=await params;
-  const result=await getSuperAdminCollegeFeatureSnapshot(await getCurrentRequestContext(),collegeId);
-  if(!result)return NextResponse.json({error:"NOT_FOUND",message:"No active college with that ID."},{status:404,headers:{"cache-control":"private, no-store"}});
-  return NextResponse.json(result,{headers:{"cache-control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {collegeId}=params;
+    const result=await getSuperAdminCollegeFeatureSnapshot(__ctx,collegeId);
+    if(!result)return NextResponse.json({error:"NOT_FOUND",message:"No active college with that ID."},{status:404,headers:{"cache-control":"private, no-store"}});
+    return NextResponse.json(result,{headers:{"cache-control":"private, no-store"}});
+  },
+);
 
-async function handlePUT(request:Request,{params}:{params:Promise<{collegeId:string}>}){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const _p=await readBoundedJsonRequest(request,8192);
-  if(!_p.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
-  const input:unknown=_p.value;
-  const {collegeId}=await params;
-  const context=await getCurrentRequestContext();
-  // vNext rule writes are versioned: SET/INHERIT plus the expected persisted
-  // value, never the legacy bare {module,enabled} toggle that can lose locks.
-  // Authorize before disclosing field-level validation to callers.
-  if(!isSuperAdmin(context))throw new AuthorizationError("admin-scope.select");
-  requirePermission(context,"admin-scope.select");
-  const parsed=collegeRuleWriteSchema.safeParse(input);
-  if(!parsed.success){
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    const _p=await readBoundedJsonRequest(request,8192);
+    if(!_p.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+    const input:unknown=_p.value;
+    const {collegeId}=params;
+    if(!isSuperAdmin(context))throw new AuthorizationError("admin-scope.select");
+    requirePermission(context,"admin-scope.select");
+    const parsed=collegeRuleWriteSchema.safeParse(input);
+    if(!parsed.success){
    const values=input!==null&&typeof input==="object"&&!Array.isArray(input)
      ? input as Record<string,unknown>:null;
    const moduleName=values?.["module"];
@@ -50,9 +48,8 @@ async function handlePUT(request:Request,{params}:{params:Promise<{collegeId:str
          : "Invalid module rule. Choose Set or Inherit and check the fields.";
    return NextResponse.json({error:"INVALID_REQUEST",message},{status:400,headers:{"cache-control":"private, no-store"}});
   }
-  const rule=await writeSuperAdminCollegeRule(context,collegeId,parsed.data);
-  return rule?NextResponse.json({rule},{headers:{"cache-control":"private, no-store"}}):
+    const rule=await writeSuperAdminCollegeRule(context,collegeId,parsed.data);
+    return rule?NextResponse.json({rule},{headers:{"cache-control":"private, no-store"}}):
    NextResponse.json({error:"NOT_FOUND",message:"No active college with that ID."},{status:404,headers:{"cache-control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const PUT = secured(handlePUT, { csrf: "enforce" });
+  },
+);

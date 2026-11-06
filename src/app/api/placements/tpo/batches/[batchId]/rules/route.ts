@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -5,15 +6,16 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {PlacementBatchError} from "@/modules/placements/batch-participation-service";
 import {saveTpoBatchRuleOverrides} from "@/modules/placements/tpo-batch-rules-service";
 import {getTpoBatch} from "@/modules/placements/tpo-batch-workspace-read-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** Legacy GET /batches/{id}/rules: scoped read, never a write or a guessed
  * college. The full batch and students views use sibling routes. */
-async function handleGET(_request:Request,{params}:{params:Promise<{batchId:string}>}){
- try{
-  const {batchId}=await params;
-  const state=await getTpoBatch(await getCurrentRequestContext(),batchId);
-  return NextResponse.json({
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {batchId}=params;
+    const state=await getTpoBatch(__ctx,batchId);
+    return NextResponse.json({
    batch:state.batch,
    ready:state.ready,
    readiness:state.readiness,
@@ -26,19 +28,14 @@ async function handleGET(_request:Request,{params}:{params:Promise<{batchId:stri
     back:"/tpo/batches",
    },
   },{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
-async function handlePOST(request:Request,{params}:{params:Promise<{batchId:string}>}){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const {batchId}=await params;
-  const result=await saveTpoBatchRuleOverrides(await getCurrentRequestContext(),batchId,await request.json());
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){
-  if(error instanceof PlacementBatchError&&error.code==="DB08_ACTION_STALE")
-   return NextResponse.json({error:"BATCH_RULES_CHANGED"},{status:409});
-  return apiErrorResponse(error);
- }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {batchId}=params;
+    const result=await saveTpoBatchRuleOverrides(__ctx,batchId,await request.json());
+    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  },
+);

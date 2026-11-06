@@ -1,9 +1,9 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {resolveLegacyMeetingKeyLink}
  from "@/modules/projects/legacy-meeting-link-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -13,12 +13,13 @@ type Params={params:Promise<{projectId:string;meetingKey:string}>};
  * permitted project; an archived or cross-college key cannot leak metadata.
  * The response holds an authorized UUID but no private facilitation notes.
  */
-async function handleGET(_request:Request,{params}:Params){
- try{
-  const {projectId,meetingKey}=await params;
-  const result=await resolveLegacyMeetingKeyLink(
-   await getCurrentRequestContext(),projectId,meetingKey);
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {projectId,meetingKey}=params;
+    const result=await resolveLegacyMeetingKeyLink(
+   __ctx,projectId,meetingKey);
+    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  },
+);

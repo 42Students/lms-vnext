@@ -1,17 +1,18 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getLegacyProjectDeliveryHistory} from "@/modules/projects/project-legacy-delivery-history-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-async function handleGET(request:Request,{params}:{params:Promise<{projectId:string}>}){
- try{
-  const {projectId}=await params;
-  const raw=new URL(request.url).searchParams.get("limit");
-  const limit=raw&&/^[0-9]{1,3}$/.test(raw)?Number(raw):100;
-  const history=await getLegacyProjectDeliveryHistory(
-    await getCurrentRequestContext(),projectId,limit);
-  return NextResponse.json(history,{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {projectId}=params;
+    const raw=new URL(request.url).searchParams.get("limit");
+    const limit=raw&&/^[0-9]{1,3}$/.test(raw)?Number(raw):100;
+    const history=await getLegacyProjectDeliveryHistory(
+    __ctx,projectId,limit);
+    return NextResponse.json(history,{headers:{"Cache-Control":"private, no-store"}});
+  },
+);

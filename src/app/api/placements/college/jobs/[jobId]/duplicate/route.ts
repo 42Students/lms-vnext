@@ -1,15 +1,16 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {duplicateCollegeDrive} from "@/modules/placements/college-drive-clone-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-async function handlePOST(req:Request,{params}:{params:Promise<{jobId:string}>}){
- if(!isSameOriginRequest(req))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{const {jobId}=await params;
-  return NextResponse.json(await duplicateCollegeDrive(await getCurrentRequestContext(),jobId,await req.json()),{
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request: req, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {jobId}=params;
+    return NextResponse.json(await duplicateCollegeDrive(__ctx,jobId,await req.json()),{
    headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error)}
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

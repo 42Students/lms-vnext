@@ -1,24 +1,27 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getFacultyScheduleReassignOptions,reassignFacultyUpcomingSchedules}
  from "@/modules/people/college-faculty-schedule-reassignment-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Params={params:Promise<{membershipId:string}>};
-async function handleGET(_req:Request,{params}:Params){
- try{const {membershipId}=await params;
-  return NextResponse.json(await getFacultyScheduleReassignOptions(await getCurrentRequestContext(),membershipId),
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {membershipId}=params;
+    return NextResponse.json(await getFacultyScheduleReassignOptions(__ctx,membershipId),
    {headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
-async function handlePOST(req:Request,{params}:Params){
- if(!isSameOriginRequest(req))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{const {membershipId}=await params;
-  return NextResponse.json(await reassignFacultyUpcomingSchedules(await getCurrentRequestContext(),
+  },
+);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request: req, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {membershipId}=params;
+    return NextResponse.json(await reassignFacultyUpcomingSchedules(__ctx,
    membershipId,await req.json()),{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

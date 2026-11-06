@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -9,21 +10,20 @@ import { requireLearnerPlacementAccess } from "@/modules/placements/learner-part
 import {
   PlacementRegistrationError, registerOwnPlacementChoice,
 } from "@/modules/placements/batch-registration-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-async function handleGET() {
-  try {
-    const registration=await getOwnLearnerRegistration(await getCurrentRequestContext());
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor }) => {
+    const __ctx = __actor!;
+    const registration=await getOwnLearnerRegistration(__ctx);
     return NextResponse.json({registration,data:registration,status:"OK"},
       {headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {return registrationError(error);}
-}
-export const GET = secured(handleGET);
-async function handlePOST(request:Request) {
-  if (!isSameOriginRequest(request))
-    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
-  try {
-    const context=await getCurrentRequestContext();
+  },
+);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
     await requireLearnerPlacementAccess(context);
     const mime=request.headers.get("content-type")??"";
     let payload:unknown;
@@ -59,9 +59,8 @@ async function handlePOST(request:Request) {
     const result=await registerOwnPlacementChoice(context,payload);
     return NextResponse.json({ok:true,status:"OK",choice:result.choice,version:result.version, data:{choice:result.choice,version:result.version}},
       {headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {return registrationError(error);}
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);
 function registrationError(error:unknown) {
   if (error instanceof PlacementRegistrationError)
     return NextResponse.json({error:error.code},{

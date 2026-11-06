@@ -1,20 +1,20 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getProjectResourceAuditPage} from "@/modules/projects/workspace-view-service";
 import {z} from "zod";
-import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 const cursorSchema=z.object({
   beforeTime:z.iso.datetime().optional(),
   beforeId:z.string().uuid().optional(),
 }).strict().refine(value=>Boolean(value.beforeTime)===Boolean(value.beforeId));
-async function handleGET(request:Request,{params}:{
-  params:Promise<{projectId:string}>;
-}){
-  try{
-    const {projectId}=await params;
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {projectId}=params;
     const url=new URL(request.url);
     const parsed=cursorSchema.safeParse({
       beforeTime:url.searchParams.get("beforeTime")??undefined,
@@ -23,8 +23,7 @@ async function handleGET(request:Request,{params}:{
     if(!parsed.success)return NextResponse.json({error:"INVALID_ACTIVITY_CURSOR"},{status:400});
     const cursor=parsed.data.beforeTime&&parsed.data.beforeId
       ?{beforeTime:parsed.data.beforeTime,beforeId:parsed.data.beforeId}:undefined;
-    const page=await getProjectResourceAuditPage(await getCurrentRequestContext(),projectId,cursor);
+    const page=await getProjectResourceAuditPage(__ctx,projectId,cursor);
     return NextResponse.json(page,{headers:{"Cache-Control":"private, no-store"}});
-  }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
+  },
+);

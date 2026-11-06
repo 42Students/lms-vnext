@@ -1,9 +1,9 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getCohortCreationPreflight} from "@/modules/projects/cohort-preflight-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 
 function resultEnvelope(result:Awaited<ReturnType<typeof getCohortCreationPreflight>>){
@@ -16,23 +16,23 @@ function resultEnvelope(result:Awaited<ReturnType<typeof getCohortCreationPrefli
 /** The old API accepted POST for preflight. Preserve POST and legacy client
  * response flags while GET remains available to current vNext forms.
  * This is always read-only: actual creation uses its independent POST route. */
-async function handlePOST(request:Request){
- if(!isSameOriginRequest(request))
-  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const raw:unknown=await request.json();
-  const result=await getCohortCreationPreflight(await getCurrentRequestContext(),raw);
-  return NextResponse.json(resultEnvelope(result),{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
-async function handleGET(request:Request){
- try{
-  const params=new URL(request.url).searchParams;
-  const result=await getCohortCreationPreflight(await getCurrentRequestContext(),{
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const __ctx = __actor!;
+    const raw:unknown=await request.json();
+    const result=await getCohortCreationPreflight(__ctx,raw);
+    return NextResponse.json(resultEnvelope(result),{headers:{"Cache-Control":"private, no-store"}});
+  },
+);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const __ctx = __actor!;
+    const params=new URL(request.url).searchParams;
+    const result=await getCohortCreationPreflight(__ctx,{
    collegeId:params.get("collegeId"),classId:params.get("classId"),templateId:params.get("templateId"),
   });
-  return NextResponse.json(resultEnvelope(result),{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
+    return NextResponse.json(resultEnvelope(result),{headers:{"Cache-Control":"private, no-store"}});
+  },
+);

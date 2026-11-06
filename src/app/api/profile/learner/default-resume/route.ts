@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -12,7 +13,6 @@ import {
   clearOwnLearnerDefaultResume,
 } from "@/modules/placements/learner-default-resume-service";
 import { PrivateObjectStorageError } from "@/modules/storage/private-object-storage";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 const headers = { "Cache-Control": "private, no-store" };
@@ -50,23 +50,20 @@ function safeError(error: unknown) {
   return apiErrorResponse(error);
 }
 
-async function handleGET() {
-  try {
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor }) => {
+    const __ctx = __actor!;
     return NextResponse.json(await listLearnerDefaultResumes(
-      await getCurrentRequestContext()), { headers });
-  } catch (error) {
-    return safeError(error);
-  }
-}
-export const GET = secured(handleGET);
+      __ctx), { headers });
+  },
+);
 
-async function handlePOST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403, headers });
-  }
-  try {
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
     const parsed = command.parse(await request.json());
-    const context = await getCurrentRequestContext();
     if (parsed.action === "INITIATE") {
       return NextResponse.json(await initiateLearnerDefaultResumeUpload(context, parsed),
         { headers });
@@ -85,8 +82,5 @@ async function handlePOST(request: Request) {
     }
     return NextResponse.json(await selectLearnerDefaultResume(context, parsed.receiptId),
       { headers });
-  } catch (error) {
-    return safeError(error);
-  }
-}
-export const POST = secured(handlePOST);
+  },
+);

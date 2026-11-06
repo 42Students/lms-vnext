@@ -64,17 +64,20 @@ for (const p of files) {
     const customCatch = isCatch(st[0].catchClause) ? null : st[0].catchClause;
     const body = st[0].tryBlock.statements;
     const ctxIdx = body.findIndex((s) => ts.isVariableStatement(s) && /^await getCurrentRequestContext\(\)$/.test(s.declarationList.declarations[0].initializer?.getText() ?? ""));
-    if (ctxIdx < 0) { ok = false; reason = "no-ctx-stmt"; break; }
-    const ctxName = body[ctxIdx].declarationList.declarations[0].name.getText();
+    // Inline form: every use is `await getCurrentRequestContext()` inside an expression; resolve it once, first.
+    const inlineCount = ctxIdx < 0 ? (text(src, st[0].tryBlock).match(/await getCurrentRequestContext\(\)/g) || []).length : 0;
+    const inlineOnly = inlineCount > 0 && (text(src, st[0].tryBlock).match(/getCurrentRequestContext/g) || []).length === inlineCount && !/\b__ctx\b/.test(text(src, st[0].tryBlock));
+    if (ctxIdx < 0 && !inlineOnly) { ok = false; reason = "no-ctx-stmt"; break; }
+    const ctxName = ctxIdx < 0 ? "__ctx" : body[ctxIdx].declarationList.declarations[0].name.getText();
     if (!/^[A-Za-z_$][\w$]*$/.test(ctxName) || ["request", "params", "__actor"].includes(ctxName)) { ok = false; reason = "ctx-name"; break; }
-    const ctxDecls = body[ctxIdx].declarationList.declarations;
+    const ctxDecls = ctxIdx < 0 ? [] : body[ctxIdx].declarationList.declarations;
     let extra = null;
     if (ctxDecls.length > 1) {
       const kw = body[ctxIdx].declarationList.getText().split(/\s/)[0];
       extra = kw + " " + ctxDecls.slice(1).map((d) => d.getText()).join(", ") + ";";
     }
     const rest = body.filter((_, i) => i !== ctxIdx);
-    const restText = (extra ? extra + "\n" : "") + rest.map((s) => text(src, s)).join("\n");
+    const restText = (extra ? extra + "\n" : "") + rest.map((s) => text(src, s)).join("\n").replace(/await getCurrentRequestContext\(\)/g, "__ctx");
     if (/getCurrentRequestContext|isSameOriginRequest|apiErrorResponse/.test(restText)) { ok = false; reason = "residual-helper"; break; }
     const ps = fn.parameters;
     if ((ps.length && !ts.isIdentifier(ps[0].name)) || ps.length > 2) { ok = false; reason = "params-shape"; break; }
@@ -94,6 +97,7 @@ for (const p of files) {
       const reps = [];
       (function v(n) { if (ts.isAwaitExpression(n) && n.expression.getText() === "params") reps.push([n.getStart() - base, n.getEnd() - base, "params"]); ts.forEachChild(n, v); })(s);
       for (const [a, b, r] of reps.sort((x, y) => y[0] - x[0])) t = t.slice(0, a) + r + t.slice(b);
+      if (ctxIdx < 0) t = t.replace(/await getCurrentRequestContext\(\)/g, "__ctx");
       parts.push(t);
     }
     const hasParams = usesParams && /\bparams\b/.test(parts.join("\n"));

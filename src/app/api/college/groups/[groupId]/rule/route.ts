@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -6,7 +7,6 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {clearGroupRule,refreshGroupRule,GroupRuleServiceError}
  from "@/modules/groups/rules-service";
 import {previewCollegeGroupRule} from "@/modules/groups/college-rule-preview-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Ctx={params:Promise<{groupId:string}>};
 const mutation=z.strictObject({confirmed:z.literal(true),
@@ -18,28 +18,27 @@ function fail(e:unknown){
 }
 /** Manual apply is separate from Save: re-check authorized scope and rule
  * under locks, with an optimistic group version. */
-async function handlePOST(request:Request,{params}:Ctx){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const ctx=await getCurrentRequestContext();
-  const body=mutation.parse(await request.json());
-  const {groupId}=await params;
-  const preview=await previewCollegeGroupRule(ctx,{groupId});
-  if(preview.projection.incomplete)
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const ctx = __actor!;
+    const body=mutation.parse(await request.json());
+    const {groupId}=params;
+    const preview=await previewCollegeGroupRule(ctx,{groupId});
+    if(preview.projection.incomplete)
    return NextResponse.json({error:"RULE_PREVIEW_INCOMPLETE",
      message:"The learner preview is truncated. Narrow the criteria before applying."},{status:409});
-  const result=await refreshGroupRule(ctx,groupId,body.expectedGroupVersion);
-  return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
- }catch(e){return fail(e);}
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
-async function handleDELETE(request:Request,{params}:Ctx){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const input=mutation.parse(await request.json());
-  const {groupId}=await params;
-  const result=await clearGroupRule(await getCurrentRequestContext(),groupId,input.expectedGroupVersion);
-  return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
- }catch(e){return fail(e);}
-}
-export const DELETE = secured(handleDELETE, { csrf: "enforce" });
+    const result=await refreshGroupRule(ctx,groupId,body.expectedGroupVersion);
+    return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+  },
+);
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const input=mutation.parse(await request.json());
+    const {groupId}=params;
+    const result=await clearGroupRule(__ctx,groupId,input.expectedGroupVersion);
+    return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+  },
+);

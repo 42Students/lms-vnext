@@ -1,16 +1,17 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getLearnerAssessmentOverview} from "@/modules/courses/learner-assessment-service";
 import {learnerDueSoonNotices} from "@/modules/courses/learner-assignment-due-notice-model";
 import {apiErrorResponse} from "@/lib/api-error";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** Learner-only live reminder read; no externally scheduled delivery is claimed. */
-async function handleGET(){
- try{
-  const overview=await getLearnerAssessmentOverview(await getCurrentRequestContext());
-  const notices=learnerDueSoonNotices(overview.assignments,new Date(overview.snapshotNowMs));
-  return NextResponse.json({notices},{headers:{"Cache-Control":"no-store"}});
- }catch(e){return apiErrorResponse(e);}
-}
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor }) => {
+    const __ctx = __actor!;
+    const overview=await getLearnerAssessmentOverview(__ctx);
+    const notices=learnerDueSoonNotices(overview.assignments,new Date(overview.snapshotNowMs));
+    return NextResponse.json({notices},{headers:{"Cache-Control":"no-store"}});
+  },
+);
