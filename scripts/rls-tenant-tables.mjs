@@ -44,6 +44,8 @@ export function analyse(migrations = readMigrations()) {
       tables.delete(m[1]);
       policies.delete(m[1]);
     }
+    // A catalog-wide migration covers every tenant table that exists at that point.
+    if (sql.includes("-- rls:catalog-wide")) for (const [name, v] of tables) if (v.college) policies.add(name);
     for (const m of sql.matchAll(new RegExp(String.raw`CREATE POLICY\s+\S+\s+ON\s+${ident}`, "gi"))) policies.add(m[1]);
   }
   const tenantTables = [...tables].filter(([, v]) => v.college).map(([k]) => k).sort();
