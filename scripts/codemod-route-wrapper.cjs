@@ -15,6 +15,8 @@ const text = (src, n) => src.slice(n.getStart(), n.getEnd());
 function unshim(src) {
   if (!/@\/security\/secure-handler["']/.test(src)) return src;
   const exportRe = /^export const (GET|POST|PUT|PATCH|DELETE) = secured\((handle\1)(?:, \{[^}]*\})?\);\r?\n?/gm;
+  // Never silently drop a shim option (stepUp, permission): leave such routes for a manual conversion.
+  if (/^export const (?:GET|POST|PUT|PATCH|DELETE) = secured\(handle\w+, \{[^}]*(?:stepUp|permission)/m.test(src)) return src;
   const names = [...src.matchAll(exportRe)].map((m) => m[1]);
   if (!names.length || /secured\((?!handle)/.test(src.replace(exportRe, ""))) return src;
   let out = src.replace(exportRe, "");

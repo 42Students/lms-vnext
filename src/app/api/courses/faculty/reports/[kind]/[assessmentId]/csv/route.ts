@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getFacultyReportCsvForDownload } from "@/modules/courses/faculty-report-csv-service";
@@ -5,7 +6,6 @@ import {
   facultyCsvAttachmentHeaders,
   parseFacultyCsvDownloadUrl,
 } from "@/modules/courses/faculty-report-csv-request";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,10 +15,11 @@ type RouteContext = {
 };
 
 /** Read-only export. POST/PUT state changes are not accepted by this route. */
-async function handleGET(request:Request,{params}:RouteContext) {
-  try {
-    const context = await getCurrentRequestContext();
-    const path = await params;
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor, params }) => {
+    const context = actor!;
+    const path = params;
     const query = parseFacultyCsvDownloadUrl(request.url,{
       kind:path.kind,assessmentId:path.assessmentId,
     });
@@ -29,8 +30,5 @@ async function handleGET(request:Request,{params}:RouteContext) {
     return new Response("\uFEFF" + csv,{
       status:200,headers,
     });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
-export const GET = secured(handleGET);
+  },
+);

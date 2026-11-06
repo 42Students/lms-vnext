@@ -1,16 +1,17 @@
+import { route } from "@/security/route";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { exportParams } from "@/modules/academics/college-lecture-halls-export-model";
 import { exportCollegeLectureHalls } from "@/modules/academics/college-lecture-halls-export-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 /** SA-academics-people-27: tenant-selected, bounded CSV for Super Admin only. */
-async function handleGET(request: Request) {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     if (!isSuperAdmin(context)) throw new AuthorizationError("academics.manage");
     const result = await exportCollegeLectureHalls(
       context, exportParams(new URL(request.url).searchParams), "superadmin",
@@ -23,6 +24,5 @@ async function handleGET(request: Request) {
       "X-Export-Row-Cap": String(result.cap),
       "X-Content-Type-Options": "nosniff",
     }});
-  } catch(error) { return apiErrorResponse(error); }
-}
-export const GET = secured(handleGET, { stepUp: true });
+  },
+);

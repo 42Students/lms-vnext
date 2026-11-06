@@ -2,7 +2,7 @@
  "schemaVersion": 1,
  "files": {
   "src/app/api/academics/admin-lecture-halls-export/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/academics/batch-promotion/execute/route.ts": {
    "route-on-shim-only": 1,
@@ -36,9 +36,6 @@
    "route-on-shim-only": 1
   },
   "src/app/api/academics/college-content-export/video/route.ts": {
-   "route-on-shim-only": 1
-  },
-  "src/app/api/academics/college-course-export/route.ts": {
    "route-on-shim-only": 1
   },
   "src/app/api/academics/college-electives-export/route.ts": {
@@ -949,7 +946,6 @@
    "service-enforced": 1
   },
   "src/app/api/courses/college/learner-progress/export/route.ts": {
-   "route-on-shim-only": 1,
    "sensitive-without-step-up": 1
   },
   "src/app/api/courses/deliveries/[deliveryId]/assignments/[assignmentId]/materials/route.ts": {
@@ -1016,7 +1012,7 @@
    "route-on-shim-only": 1
   },
   "src/app/api/courses/faculty/reports/[kind]/[assessmentId]/csv/route.ts": {
-   "route-on-shim-only": 1
+   "service-enforced": 1
   },
   "src/app/api/courses/faculty/reports/quiz/[quizId]/question-csv/route.ts": {
    "route-on-shim-only": 1
@@ -1724,9 +1720,6 @@
    "route-on-shim-only": 1,
    "sensitive-without-step-up": 1
   },
-  "src/app/api/placements/recruiter/calendar/ics/route.ts": {
-   "route-on-shim-only": 1
-  },
   "src/app/api/placements/recruiter/conversations/[threadId]/acknowledge/route.ts": {
    "route-on-shim-only": 1
   },
@@ -2406,8 +2399,8 @@
    "sensitive-without-step-up": 1
   },
   "src/app/api/placements/tpo/reports/by-company-page/export/route.ts": {
-   "route-on-shim-only": 1,
-   "sensitive-without-step-up": 1
+   "sensitive-without-step-up": 1,
+   "service-enforced": 1
   },
   "src/app/api/placements/tpo/reports/engagement/route.ts": {
    "route-on-shim-only": 1
