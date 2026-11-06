@@ -1,8 +1,8 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getCollegeApplicationRetentionReport} from "@/modules/placements/college-retention-report-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 
@@ -10,19 +10,20 @@ export const runtime="nodejs";
  * The service checks the current actor's college, returns read-only records,
  * and always caps this private sample at 200 applications.
  */
-async function handleGET(){
- try{
-  const context=await getCurrentRequestContext();
-  const first=await getCollegeApplicationRetentionReport(context,{
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor }) => {
+    const context = actor!;
+    const first=await getCollegeApplicationRetentionReport(context,{
    olderThanDays:180,page:1,pageSize:100,
   });
-  const second=first.total>100
+    const second=first.total>100
    ?await getCollegeApplicationRetentionReport(context,{
       olderThanDays:180,page:2,pageSize:100,
     })
    :null;
-  const rows=[...first.rows,...(second?.rows??[])];
-  return NextResponse.json({
+    const rows=[...first.rows,...(second?.rows??[])];
+    return NextResponse.json({
    rows:rows.map(row=>({
     id:row.id,jobTitle:row.jobTitle,applicationStatus:row.status,
     lastUpdated:row.lastChange.toISOString(),
@@ -30,6 +31,5 @@ async function handleGET(){
    totalStaleCount:first.total,cutoff:first.cutoff.toISOString(),
    truncated:first.total>rows.length,
   },{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
+  },
+);

@@ -76,7 +76,7 @@ for (const p of files) {
     const restText = (extra ? extra + "\n" : "") + rest.map((s) => text(src, s)).join("\n");
     if (/getCurrentRequestContext|isSameOriginRequest|apiErrorResponse/.test(restText)) { ok = false; reason = "residual-helper"; break; }
     const ps = fn.parameters;
-    if (!ps.length || !ts.isIdentifier(ps[0].name) || ps.length > 2) { ok = false; reason = "params-shape"; break; }
+    if ((ps.length && !ts.isIdentifier(ps[0].name)) || ps.length > 2) { ok = false; reason = "params-shape"; break; }
     let usesParams = false;
     if (ps.length === 2) {
       const b = ps[1].name;
@@ -85,7 +85,7 @@ for (const p of files) {
     }
     // rewrite `await params` -> `params` inside the kept statements
     let newBody = ""; 
-    const reqName = ps[0].name.getText();
+    const reqName = ps.length ? ps[0].name.getText() : "__none__";
     const parts = [];
     if (extra) parts.push(extra.replace(/await\s+params/g, "params"));
     for (const s of rest) {

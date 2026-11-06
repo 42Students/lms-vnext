@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -7,40 +8,28 @@ import {
   getOwnAcademicEvidence,
   upsertOwnAcademicEvidence,
 } from "@/modules/placements/eligibility-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-async function handleGET() {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor }) => {
+    const context = actor!;
     await requireLearnerPlacementAccess(context);
     const evidence = await getOwnAcademicEvidence(context);
     return NextResponse.json({ evidence });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
-export const GET = secured(handleGET);
+  },
+);
 
-async function handlePUT(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     await requireLearnerPlacementAccess(context);
     const evidence = await upsertOwnAcademicEvidence(
       context,
       await request.json(),
     );
     return NextResponse.json({ evidence });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
-export const PUT = secured(handlePUT);
+  },
+);

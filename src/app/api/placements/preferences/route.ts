@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -8,33 +9,24 @@ import {
   getCandidatePreferences,
   upsertCandidatePreferences,
 } from "@/modules/placements/candidate-preferences-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-async function handleGET() {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor }) => {
+    const context = actor!;
     await requireLearnerPlacementAccess(context);
     const preferences =
       await getCandidatePreferences(context);
     return NextResponse.json({ preferences });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
-export const GET = secured(handleGET);
+  },
+);
 
-async function handlePUT(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
     await requireLearnerPlacementAccess(context);
     const body = await request.json();
     const preferences =
@@ -43,19 +35,15 @@ async function handlePUT(request: Request) {
         body,
       );
     return NextResponse.json({ preferences });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
-export const PUT = secured(handlePUT);
+  },
+);
 
 /** Conflict-aware partial update, unlike the legacy full-form PUT. */
-async function handlePATCH(request:Request){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const context=await getCurrentRequestContext();
-  const preferences=await patchCandidatePreferences(context,await request.json());
-  return NextResponse.json({preferences},{headers:{"cache-control":"no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: actor }) => {
+    const context = actor!;
+    const preferences=await patchCandidatePreferences(context,await request.json());
+    return NextResponse.json({preferences},{headers:{"cache-control":"no-store"}});
+  },
+);

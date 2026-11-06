@@ -1,15 +1,16 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getLearnerPlacementJourney } from "@/modules/placements/learner-journey-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-async function handleGET() {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor }) => {
+    const context = actor!;
     if (!context.membership || !hasMembershipRole(context, "LEARNER")) {
       return NextResponse.json(
         { error: "FORBIDDEN", message: "Only students have placements" },
@@ -20,13 +21,6 @@ async function handleGET() {
       await getLearnerPlacementJourney(
         context,
       );
-    // V1 LearnerPlacementController crosswalk:
-    // GET overview -> /api/placements/overview/me
-    // GET journey  -> /api/placements/journey/me (this GET)
-    // GET process  -> learner's own application detail, linked per row
-    // POST register -> /api/placements/registration (same-origin guarded)
-    // The legacy empty response always had applications, schedule and offers
-    // as distinct [] values; preserve them without exposing unreleased offers.
     const processes=journey.map(item=>({
       applicationId:item.applicationId,
       jobId:item.job.id,
@@ -44,8 +38,5 @@ async function handleGET() {
       offers,
       processes,
     },{headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-}
-export const GET = secured(handleGET);
+  },
+);

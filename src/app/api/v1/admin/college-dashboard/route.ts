@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { requirePermission } from "@/modules/permissions/policy";
@@ -8,7 +9,6 @@ import { getCollegeDashboardPendingGrades, getCollegeDashboardPendingGradesCount
 import { getCollegeDashboardUnstaffedCourses, getCollegeDashboardUnstaffedDeliveriesCount } from "@/modules/admin-ui/college-dashboard-staffing-service";
 import { getCollegeDashboardSetupGaps } from "@/modules/admin-ui/college-dashboard-setup-gaps-service";
 import { getCollegeClosingQuizzes } from "@/modules/admin-ui/college-dashboard-quizzes-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 function value<T>(result: PromiseSettledResult<T>): T | null {
@@ -17,9 +17,10 @@ function value<T>(result: PromiseSettledResult<T>): T | null {
 
 /** Authenticated, tenant-scoped compatibility read for legacy dashboard clients.
  * Unlike the retired endpoint, partial-feed failures are explicit null, not zero. */
-async function handleGET() {
-  try {
-    const context = await getCurrentRequestContext();
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: actor }) => {
+    const context = actor!;
     const membership = context.membership;
     if (!membership || membership.status !== "ACTIVE") {
       return NextResponse.json({error:"COLLEGE_MEMBERSHIP_REQUIRED"},{status:403});
@@ -54,6 +55,5 @@ async function handleGET() {
       setupGaps:value(setup),
       dueQuizzes:value(quizzes),
     }, {headers:{"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"}});
-  } catch (error) {return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
+  },
+);
