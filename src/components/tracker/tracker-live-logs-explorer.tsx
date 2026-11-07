@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
 import { formatNumberIN } from "@/lib/safe-format";
 import { formatDateWith } from "@/lib/format-date";
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 
 type Entry={id:string;time:string;event:string;message:string;path:string;requestId:string|null;component:string|null;
   knownErrorId?:string|null;muted?:boolean|null};
@@ -49,14 +50,11 @@ export function trackerLogMarkdown(rows:readonly Entry[]):string{
  * execute formulas in quoted CSV cells. Neutralise formula prefixes and bound
  * embedded newlines without changing the immutable source records. */
 export function trackerLogCsv(rows:readonly Entry[]):string{
- const cell=(value:string)=>{
- const clean=value.replace(/[\r\n]+/g," ");
- const inert=/^\s*[=+\-@]/.test(clean)?"'"+clean:clean;
-  return '"'+inert.replaceAll('"','""')+'"';
- };
- return ["Time,Event,Route,Component,Reference,Message",
+ const cell=(value:string)=>spreadsheetCsvCell(value.replace(/[\r\n]+/g," "));
+ const header=["Time","Event","Route","Component","Reference","Message"];
+ return "\ufeff"+[header.map(cell).join(","),
   ...rows.map(row=>[row.time,row.event,row.path,row.component??"",row.requestId??"",row.message]
-   .map(cell).join(","))].join("\n");
+   .map(cell).join(","))].join("\r\n")+"\r\n";
 }
 
 /** Explicitly bounded privacy-redacted NDJSON with the terminal _meta record.
