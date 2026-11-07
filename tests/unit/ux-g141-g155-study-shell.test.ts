@@ -18,7 +18,7 @@ describe("UX-G141 study group action and import safeguards", () => {
     expect(members).toContain("function reviewAction(");
     expect(members).toContain('setError(null);');
     expect(members).toContain('reviewAction({ action: "ADD", membershipId });');
-    expect(members).toMatch(/\\[0-9a-f\\]\\{12\\}/i);
+    expect(members).toContain("[0-9a-f]{12}");
     expect(members).toContain('{error ? <Alert tone="error">{error}</Alert> : null}');
   });
 
