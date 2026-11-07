@@ -8,7 +8,7 @@ import {publicPlacementTableReady} from "@/modules/placements/public-page/readin
 import {DEFAULT_PUBLIC_METRICS,PUBLIC_METRIC_LABELS,formatPublicPlacementMetric}
   from "@/modules/placements/public-page/content-model";
 import {publicPlacementDisclosure} from "@/modules/placements/public-placement-disclosure-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -71,4 +71,7 @@ async function handleGET(request:Request){
     },{headers});
   }catch{return unavailable();}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "public", publicReason: "Link or form opened without an account (token, slug or anonymous report); the handler validates the token or input and is rate limited per address.", csrf: false, csrfExemptReason: "Links and email clients send no same-origin header; the handler validates the token or applies its own origin check.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

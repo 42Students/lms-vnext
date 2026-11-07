@@ -151,6 +151,15 @@ function rateLimited(requestId: string, windowMs: number) {
 }
 
 function withHeaders(response: Response, requestId: string) {
+  // Set the headers in place when the response allows it (keeps NextResponse cookies and avoids copying the body);
+  // responses with immutable headers (redirects, fetch results) are rebuilt instead.
+  try {
+    if (!response.headers.has("x-request-id")) response.headers.set("x-request-id", requestId);
+    if (!response.headers.has("Cache-Control")) response.headers.set("Cache-Control", "private, no-store");
+    return response;
+  } catch {
+    /* immutable headers: fall through to a rebuilt response */
+  }
   const headers = new Headers(response.headers);
   if (!headers.has("x-request-id")) headers.set("x-request-id", requestId);
   if (!headers.has("Cache-Control")) headers.set("Cache-Control", "private, no-store");

@@ -5,7 +5,7 @@ import {listRecruiterCalendarEvents} from "@/modules/placements/recruiter-calend
 import {placementCalendarWindow} from "@/modules/placements/placement-calendar-model";
 import {hrCalendarCategorySchema} from "@/modules/placements/hr-calendar-category-model";
 import {buildHrCalendarCsv} from "@/modules/placements/hr-calendar-export-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -28,4 +28,7 @@ async function handleGET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

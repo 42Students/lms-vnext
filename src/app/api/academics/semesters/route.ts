@@ -7,7 +7,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { createCollegeSemester, SemesterMutationError } from "@/modules/academics/semester-mutation-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 /** Legacy-semester compatibility map:
@@ -36,7 +36,10 @@ async function handleGET(request: Request) {
       {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) { return apiErrorResponse(error); }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);
 
 
 async function handlePOST(request: Request) {
@@ -74,4 +77,7 @@ async function handlePOST(request: Request) {
     return apiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

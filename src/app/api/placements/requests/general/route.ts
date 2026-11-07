@@ -7,7 +7,7 @@ import {and,eq} from "drizzle-orm";
 import {learnerProgramEnrollments} from "@/db/schema";
 import {TpoGeneralRequestError,createOwnTpoGeneralRequest,listOwnTpoGeneralRequestsPage} from "@/modules/placements/tpo-general-request-service";
 import {tpoOwnGeneralRequestQuerySchema} from "@/modules/placements/tpo-general-request-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 async function handleGET(request:Request){
  try{
@@ -30,7 +30,10 @@ async function handleGET(request:Request){
   return apiErrorResponse(error);
  }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -42,4 +45,7 @@ async function handlePOST(request:Request){
   return apiErrorResponse(error);
  }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

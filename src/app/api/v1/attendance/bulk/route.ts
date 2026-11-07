@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 /** Legacy /api/v1/attendance/bulk accepted numeric classScheduleId and
  * student identifiers. Those are not safe vNext authorization keys. The
@@ -25,4 +25,7 @@ async function handlePOST(request:Request){
   transaction:"Atomic entire active roster; no partial saves",
  },{status:410,headers:{"Cache-Control":"no-store"}});
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

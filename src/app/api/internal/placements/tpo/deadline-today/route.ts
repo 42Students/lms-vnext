@@ -7,7 +7,7 @@ import {executeScheduledJobWithLease,scheduledJobWorkerIdentity}
  from "@/modules/operations/scheduled-job-runner";
 import {queueEligibleDeadlineTodayReminders}
  from "@/modules/announcements/tpo-deadline-today-job-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -49,4 +49,7 @@ async function handlePOST(request:Request){
    {status:503,headers:noStore});
  }
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "public", publicReason: "Machine-to-machine endpoint: the handler authenticates the caller with its own shared secret or signature.", csrf: false, csrfExemptReason: "Callers are servers or schedulers and send no browser Origin; the handler checks its credential instead.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { tpoRecruiterInviteApiErrorResponse } from "@/lib/tpo-recruiter-invite-api-error";
 import { previewRecruiterInvite } from "@/modules/placements/tpo-recruiter-invite-service";
 import { isRecruiterInviteTokenShape } from "@/modules/placements/tpo-recruiter-invite-policy";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 /** Legacy PublicRecruiterInviteController route crosswalk (all five methods):
  * GET /api/v1/public/recruiter-invite/{token} => GET here, now {invite}.
@@ -38,4 +38,7 @@ async function handleGET(_request: Request, { params }: RouteContext) {
     return response;
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "public", publicReason: "Link or form opened without an account (token, slug or anonymous report); the handler validates the token or input and is rate limited per address.", csrf: false, csrfExemptReason: "Links and email clients send no same-origin header; the handler validates the token or applies its own origin check.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);

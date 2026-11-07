@@ -7,6 +7,15 @@
 const ts = require("typescript");
 const fs = require("fs"), cp = require("child_process");
 const APPLY = process.argv.includes("--apply");
+// --public: wrap routes that are reachable without a session (sign-in, token links, OAuth callbacks, machine callers). The handler keeps
+// its own credential/signature/state checks; route() adds request id, no-store, a per-address budget and error mapping.
+const PUBLIC = process.argv.includes("--public");
+function publicReason(p) {
+  if (new RegExp('(^|\/)api\/(internal|webhooks?)(\/|$)').test(p)) return ["Machine-to-machine endpoint: the handler authenticates the caller with its own shared secret or signature.", "Callers are servers or schedulers and send no browser Origin; the handler checks its credential instead."];
+  if (new RegExp('(^|\/)api\/(v1\/)?auth(\/|$)').test(p)) return ["Sign-in, recovery and session endpoints run before or independently of a session; each handler enforces its own challenge, device or session-state checks.", "The handler applies its own origin and challenge checks, unchanged by this wrapper."];
+  if (/callback|oauth|google/.test(p)) return ["OAuth redirect endpoint: the handler validates the signed state and the signed-in user itself and redirects on failure.", "Redirects come from the identity provider; the handler validates state instead of Origin."];
+  return ["Link or form opened without an account (token, slug or anonymous report); the handler validates the token or input and is rate limited per address.", "Links and email clients send no same-origin header; the handler validates the token or applies its own origin check."];
+}
 const fi = process.argv.indexOf("--files");
 const only = fi > 0 ? new Set(fs.readFileSync(process.argv[fi + 1], "utf8").split("\n").map((s) => s.trim()).filter(Boolean)) : null;
 const files = cp.execFileSync("git", ["ls-files", "src/app/api"], { encoding: "utf8" }).split("\n").filter((f) => f.endsWith("/route.ts") && (!only || only.has(f)));
@@ -47,7 +56,8 @@ for (const p of files) {
   const src = fs.readFileSync(p, "utf8");
   if (!/@\/security\/secure-handler["']/.test(src)) continue;
   if (/@\/security\/route["']/.test(src) && !/\bsecured\(/.test(src)) continue;
-  if (NOT_USER.test("/" + p.replace(/^src\/app\//, ""))) { bump("not-user-path"); continue; }
+  if (!PUBLIC && !process.env.FORCE_USER && NOT_USER.test("/" + p.replace(/^src\/app\//, ""))) { bump("not-user-path"); continue; }
+  if (p.includes("[...") || p.includes("faculty-document/[membershipId]/attachments")) { bump("catch-all-or-manual"); continue; }
   const sf = ts.createSourceFile(p, src, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
   const fnDecls = new Map();
   for (const s of sf.statements) if (ts.isFunctionDeclaration(s) && s.name) fnDecls.set(s.name.text, s);
@@ -84,15 +94,19 @@ for (const p of files) {
   if (!exported.length) { bump("none"); continue; }
   if (exported.some((e) => e.opts.csrf === "own")) { bump("csrf-own"); continue; }
   // The handler's own code, plus the services it calls, must resolve a session; otherwise it is public or machine-authenticated.
-  if (!resolvesSession(p, 2)) { bump("no-session-found"); continue; }
+  if (!PUBLIC && !process.env.FORCE_USER && !resolvesSession(p, 2)) { bump("no-session-found"); continue; }
   // getAll() on a computed key cannot be mapped to repeatableQuery safely.
-  if (/getAll\(\s*[^"')\s]/.test(src)) { bump("getall-computed"); continue; }
+  // getAll(key).length comparisons only detect repeats (route() already rejects them); any other computed read needs a manual look.
+  if ([...src.matchAll(/getAll\(\s*([^"')\s][^)]*)\)(\s*\.length)?/g)].some((m) => !m[2])) { bump("getall-computed"); continue; }
   const repeat = [...new Set([...src.matchAll(/getAll\(\s*["']([^"']+)["']\s*\)/g)].map((m) => m[1]))];
   const edits = [];
   for (const e of exported) {
     const arity = e.fn.parameters.length;
-    const parts = ['auth: "user"', "permission: " + (e.opts.permission ?? '"service-enforced"')];
-    if (e.opts.stepUp) parts.push("stepUp: " + e.opts.stepUp);
+    const [why, csrfWhy] = publicReason("/" + p.replace(/^src\/app\//, ""));
+    const parts = PUBLIC
+      ? ['auth: "public"', "publicReason: " + JSON.stringify(why), "csrf: false", "csrfExemptReason: " + JSON.stringify(csrfWhy), "rateLimit: { limit: 3000, windowMs: 60_000 }"]
+      : ['auth: "user"', "permission: " + (e.opts.permission ?? '"service-enforced"')];
+    if (e.opts.stepUp && !PUBLIC) parts.push("stepUp: " + e.opts.stepUp);
     if (repeat.length) parts.push("repeatableQuery: [" + repeat.map((k) => JSON.stringify(k)).join(", ") + "]");
     const destruct = arity >= 2 ? "{ request, params }" : "{ request }";
     const call = arity === 0 ? e.fnName + "()" : arity === 1

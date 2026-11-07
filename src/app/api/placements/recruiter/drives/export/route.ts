@@ -5,7 +5,7 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {recruiterDriveListQuerySchema} from "@/modules/placements/recruiter-drive-list-model";
 import {searchOwnRecruiterDrives} from "@/modules/placements/recruiter-drive-search-service";
 import {buildHrDrivesCsv,HR_DRIVE_CSV_CAP} from "@/modules/placements/hr-drives-csv-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -39,4 +39,7 @@ async function handleGET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

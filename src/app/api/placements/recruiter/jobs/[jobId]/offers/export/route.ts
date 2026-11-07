@@ -3,7 +3,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {hrApplicantFilterSchema} from "@/modules/placements/hr-job-applicants-model";
 import {getHrJobRead} from "@/modules/placements/hr-job-read-service";
 import {buildHrOfferCsv,HR_OFFER_EXPORT_CAP} from "@/modules/placements/hr-offer-export-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handleGET(request:Request,{params}:{params:Promise<{jobId:string}>}){
  try{
@@ -39,4 +39,7 @@ async function handleGET(request:Request,{params}:{params:Promise<{jobId:string}
   }});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);

@@ -6,7 +6,7 @@ import {createOwnRecruiterDriveRequest,updateOwnRecruiterDriveRequest,
  listOwnRecruiterDriveRequests,RecruiterDriveRequestError} from "@/modules/placements/recruiter-drive-request-service";
 import {ZodError,z} from "zod";
 import {readRecruiterJsonBody,RecruiterJsonBodyError} from "@/modules/placements/recruiter-json-request";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 function errorResponse(error:unknown){
  if(error instanceof RecruiterJsonBodyError)return NextResponse.json({error:"INVALID_REQUEST"},{status:error.kind==="TOO_LARGE"?413:400});
@@ -27,17 +27,26 @@ async function handleGET(request:Request){
   const requests=await listOwnRecruiterDriveRequests(await getCurrentRequestContext(),collegeId);
   return NextResponse.json({requests});}catch(e){return errorResponse(e);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{const result=await createOwnRecruiterDriveRequest(await getCurrentRequestContext(),await readRecruiterJsonBody(request));
   return NextResponse.json(result,{status:result.replayed?200:201});}
  catch(e){return errorResponse(e);}
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);
 async function handlePATCH(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{const result=await updateOwnRecruiterDriveRequest(await getCurrentRequestContext(),await readRecruiterJsonBody(request));
   return NextResponse.json({request:result});}catch(e){return errorResponse(e);}
 }
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePATCH(request as Parameters<typeof handlePATCH>[0]),
+);

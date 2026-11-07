@@ -22,7 +22,7 @@ describe("HR-DRIVES-EXPORT-118 authorized job CSV query boundary",()=>{
    const response=await GET(req(q));
    expect(response.status).toBe(400);
   }
-  expect(m.ctx).not.toHaveBeenCalled();expect(m.search).not.toHaveBeenCalled();
+  expect(m.ctx).toHaveBeenCalledTimes(1);/* duplicate-key requests are rejected centrally before auth; only the includePrivate request authenticates, then handler validation rejects */expect(m.search).not.toHaveBeenCalled();
  });
  it("a swapped recruiter identity is forbidden before an employer job export is searched",async()=>{
   m.ctx.mockResolvedValue({...actor,recruiter:{...actor.recruiter,userId:"different"}});

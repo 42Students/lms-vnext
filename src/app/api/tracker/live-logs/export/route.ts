@@ -6,7 +6,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { alertEnvironment } from "@/modules/log-alerts/signature";
 import { cloudPollSettings } from "@/modules/log-alerts/scheduler";
 import { cloudLoggingAccessToken, readCloudLogErrorPage } from "@/modules/log-alerts/cloud-log-reader";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -154,4 +154,7 @@ async function handleGET(request: Request) {
     },
   });
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

@@ -2,7 +2,7 @@ import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
 import {acceptAuthenticatedRecruiterEmailReply} from "@/modules/placements/recruiter-message-email-inbound-service";
 import {readBoundedRecruiterInboundBody} from "@/modules/placements/recruiter-mail-body-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 
@@ -67,4 +67,7 @@ async function handlePOST(request:Request){
   return reply({error:"SERVICE_UNAVAILABLE"},503);
  }
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "public", publicReason: "Machine-to-machine endpoint: the handler authenticates the caller with its own shared secret or signature.", csrf: false, csrfExemptReason: "Callers are servers or schedulers and send no browser Origin; the handler checks its credential instead.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

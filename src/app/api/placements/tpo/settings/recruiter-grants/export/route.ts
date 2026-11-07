@@ -5,7 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {tpoRecruiterAccessQuerySchema} from "@/modules/placements/tpo-recruiter-access-model";
 import {listTpoRecruiterAccess} from "@/modules/placements/tpo-recruiter-access-service";
 import {tpoRecruiterGrantCsv,tpoRecruiterGrantXlsx} from "@/modules/placements/tpo-recruiter-grant-export-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -36,4 +36,7 @@ async function handleGET(request:Request){
   });
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

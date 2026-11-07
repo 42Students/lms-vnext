@@ -49,7 +49,7 @@ describe("AUTH-sessions-10 device list and revocation HTTP hostile journeys", ()
       { id: otherSessionId, device_name: null, user_agent: null,
         created_at: lastSeen, last_seen_at: lastSeen, expires_at: lastSeen },
     ]);
-    const result = await GET();
+    const result = await GET(new Request("https://campus.example.test/api/auth/devices"));
     expect(result.status).toBe(200);
     expect(result.headers.get("Cache-Control")).toBe("private, no-store");
     expect(listActiveSessions).toHaveBeenCalledOnce();
@@ -68,7 +68,7 @@ describe("AUTH-sessions-10 device list and revocation HTTP hostile journeys", ()
 
   it("AUTH-sessions-10 an absent/revoked session fails closed before reading any device records", async () => {
     vi.mocked(getCurrentDeviceSession).mockRejectedValue(new SessionAuthenticationError("SESSION_REVOKED"));
-    const result = await GET();
+    const result = await GET(new Request("https://campus.example.test/api/auth/devices"));
     expect(result.status).toBe(401);
     expect(result.headers.get("Cache-Control")).toBe("private, no-store");
     expect(result.headers.get("x-request-id")).toBe("test-ref");

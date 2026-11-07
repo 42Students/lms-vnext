@@ -5,7 +5,7 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrDriveProposalHistoryQuerySchema} from "@/modules/placements/hr-drive-proposal-history-model";
 import {listHrDriveProposals} from "@/modules/placements/hr-drive-proposal-history-service";
 import {hrDriveProposalHistoryCsv} from "@/modules/placements/hr-drive-proposal-export-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 /** Read-only, college-scoped CSV for the requested 20-row proposal-history page. */
 async function handleGET(request:Request){
@@ -39,4 +39,7 @@ async function handleGET(request:Request){
  }});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

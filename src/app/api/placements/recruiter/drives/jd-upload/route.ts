@@ -7,7 +7,7 @@ import { readRecruiterJsonBody, RecruiterJsonBodyError } from "@/modules/placeme
 import {
   initiateOwnRecruiterJdUpload, verifyOwnRecruiterJdObject, readOwnRecruiterJd,
 } from "@/modules/placements/recruiter-jd-upload-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 const noStore = { "Cache-Control": "private, no-store" };
@@ -49,7 +49,10 @@ async function handlePOST(request: Request) {
       { headers: noStore });
   } catch (error) { return failed(error); }
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);
 
 async function handleGET(request: Request) {
   try {
@@ -64,4 +67,7 @@ async function handleGET(request: Request) {
     return NextResponse.json(result, { headers: noStore });
   } catch (error) { return failed(error); }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

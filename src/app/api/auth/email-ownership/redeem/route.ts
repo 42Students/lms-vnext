@@ -7,7 +7,7 @@ import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "@/modules/auth/bounde
 import {privateAuthJson,privateAuthResponse} from "@/modules/auth/private-response";
 import {ownEmailOwnershipScope} from "@/modules/identity/own-email-ownership-scope";
 import {redeemOwnEmailOwnershipLink} from "@/modules/identity/own-email-ownership-runtime";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 const schema=z.strictObject({token:z.string().regex(/^[a-zA-Z0-9_-]{43}$/)});
@@ -38,4 +38,7 @@ async function handlePOST(request:Request){
   return privateAuthResponse(apiErrorResponse(error));
  }
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "public", publicReason: "Sign-in, recovery and session endpoints run before or independently of a session; each handler enforces its own challenge, device or session-state checks.", csrf: false, csrfExemptReason: "The handler applies its own origin and challenge checks, unchanged by this wrapper.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

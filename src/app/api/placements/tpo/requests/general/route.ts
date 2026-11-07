@@ -3,7 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {TpoGeneralRequestError,listTpoGeneralRequests} from "@/modules/placements/tpo-general-request-service";
 import {tpoGeneralReviewQuerySchema} from "@/modules/placements/tpo-general-request-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 async function handleGET(request:Request){
  try{
@@ -25,4 +25,7 @@ async function handleGET(request:Request){
   return apiErrorResponse(error);
  }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

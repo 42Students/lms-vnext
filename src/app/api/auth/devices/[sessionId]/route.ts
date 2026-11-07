@@ -7,7 +7,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {privateAuthResponse} from "@/modules/auth/private-response";
 import { revokeOwnSession } from "@/modules/auth/session-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -59,4 +59,7 @@ async function handleDELETE(request: Request, { params }: RouteContext) {
     return privateAuthResponse(apiErrorResponse(error));
   }
 }
-export const DELETE = secured(handleDELETE);
+export const DELETE = route(
+  { auth: "public", publicReason: "Sign-in, recovery and session endpoints run before or independently of a session; each handler enforces its own challenge, device or session-state checks.", csrf: false, csrfExemptReason: "The handler applies its own origin and challenge checks, unchanged by this wrapper.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as Parameters<typeof handleDELETE>[1]),
+);

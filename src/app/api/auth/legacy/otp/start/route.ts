@@ -4,7 +4,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {privateAuthJson} from "@/modules/auth/private-response";
 import {AuthRequestBodyTooLarge,readBoundedAuthJson} from "@/modules/auth/bounded-json";
 import {POST as startScopedLogin} from "@/app/api/auth/login/start/route";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 const legacy=z.strictObject({
@@ -45,4 +45,7 @@ async function handlePOST(request:Request) {
   // HMAC-only challenge and transport guard as the current login API.
   return startScopedLogin(adapted);
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "public", publicReason: "Sign-in, recovery and session endpoints run before or independently of a session; each handler enforces its own challenge, device or session-state checks.", csrf: false, csrfExemptReason: "The handler applies its own origin and challenge checks, unchanged by this wrapper.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

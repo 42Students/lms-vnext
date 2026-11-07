@@ -16,6 +16,8 @@ const AUTH_MARKER=new RegExp([
  "authorize[A-Z]\\w*\\(","require[A-Z]\\w*Context","require[A-Z]\\w*Access","resolve\\w*Context",
  "with\\w*Auth","verifyInternal","timingSafeEqual","assertInternal","schedulerKey","guardLoginRequest",
 ].join("|"));
+// A route() declared auth: "public" is NOT authenticated by the central wrapper: its import alone must not satisfy the marker.
+const hasAuthMarker=(src:string)=>AUTH_MARKER.test(src.includes('auth: "public"')?src.split("@/security/route").join(""):src);
 const ALIAS_IMPORT=/from\s*["']((?:\.\.\/)+[^"']*route|@\/app\/api\/[^"']+\/route)["']/;
 
 /** Public routes: authorised by an unguessable invite token or by being a public enquiry form. All are same-origin guarded. */
@@ -57,7 +59,7 @@ function resolveAlias(file:string,src:string):string|null{
  return spec.startsWith("@/")?path.join(process.cwd(),"src",spec.slice(2)+".ts"):path.resolve(path.dirname(file),spec+".ts");
 }
 function isGuarded(file:string,src:string,seen=new Set<string>()):boolean{
- if(AUTH_MARKER.test(src))return true;
+ if(hasAuthMarker(src))return true;
  if(seen.has(file))return false;
  seen.add(file);
  const target=resolveAlias(file,src);
@@ -81,7 +83,7 @@ describe("PHASE2-AUTH TPO/HR/recruiter route authentication ratchet",()=>{
    const abs=path.join(process.cwd(),file);
    expect(fs.existsSync(abs),`${file} no longer exists; remove the exception`).toBe(true);
    expect(reason.length,file).toBeGreaterThan(40);
-   expect(AUTH_MARKER.test(read(abs)),`${file} now has its own auth marker; remove the exception`).toBe(false);
+   expect(hasAuthMarker(read(abs)),`${file} now has its own auth marker; remove the exception`).toBe(false);
   }
  });
 

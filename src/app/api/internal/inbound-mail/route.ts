@@ -2,7 +2,7 @@ import {NextResponse} from "next/server";
 import {ingestVerifiedInboundMail,VerifiedInboundMailError}
  from "@/modules/inbound-mail/verified-intake-service";
 import {readBoundedRecruiterInboundBody} from "@/modules/placements/recruiter-mail-body-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -40,4 +40,7 @@ async function handlePOST(request:Request){
   return NextResponse.json({error:"SERVICE_UNAVAILABLE"},{status:503,headers:noStore});
  }
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "public", publicReason: "Machine-to-machine endpoint: the handler authenticates the caller with its own shared secret or signature.", csrf: false, csrfExemptReason: "Callers are servers or schedulers and send no browser Origin; the handler checks its credential instead.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

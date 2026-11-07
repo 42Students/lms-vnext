@@ -1,7 +1,7 @@
 import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
 import {POST as createOrganization} from "@/app/api/organizations/route";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 /** Compatibility for old organization creation; canonical auth, origin and scope
  * checks execute before translating only the response envelope. */
@@ -13,4 +13,7 @@ async function handlePOST(request:Request){
  return NextResponse.json({status:"OK",message:"OK",data:body.organization},
   {status:200,headers:{"cache-control":"private, no-store","deprecation":"true"}});
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

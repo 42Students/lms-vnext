@@ -44,7 +44,7 @@ describe("HR-EXPORT-104 exact recruiter CSV query boundary",()=>{
  ] as const)("%s rejects duplicate sensitive filter before any grant lookup",async(area,query)=>{
   const response=await handlers[area](query);
   expect(response.status).toBe(400);
-  expect(await response.json()).toMatchObject({error:"INVALID_QUERY"});
+  expect(await response.json()).toMatchObject({error:"INVALID_REQUEST"}); // duplicate keys are rejected centrally
   expect(m.ctx.mock.calls.length).toBeLessThanOrEqual(1); // step-up (15-minute sign-in) resolves the actor once before validation
   expect(m.job).not.toHaveBeenCalled();
   expect(m.activity).not.toHaveBeenCalled();

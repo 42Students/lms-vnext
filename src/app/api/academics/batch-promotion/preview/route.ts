@@ -3,7 +3,7 @@ import { ZodError } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { previewCollegeBatchPromotion, CollegePromotionPreviewError } from "@/modules/academics/college-batch-promotion-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 
@@ -34,4 +34,7 @@ async function handleGET(request:Request){
     return apiErrorResponse(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

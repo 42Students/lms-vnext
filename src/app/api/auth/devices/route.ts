@@ -10,7 +10,7 @@ import {
   revokeAllOwnSessions,
   revokeOtherSessions,
 } from "@/modules/auth/session-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -44,7 +44,10 @@ async function handleGET() {
     return privateAuthResponse(apiErrorResponse(error));
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "public", publicReason: "Sign-in, recovery and session endpoints run before or independently of a session; each handler enforces its own challenge, device or session-state checks.", csrf: false, csrfExemptReason: "The handler applies its own origin and challenge checks, unchanged by this wrapper.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  () => handleGET(),
+);
 
 /** Own-session actions only; never infer a target person from caller JSON.
  * Legacy staff-wide revocation is deliberately not exposed from a self-device
@@ -91,4 +94,7 @@ async function handleDELETE(request: Request) {
     return privateAuthResponse(apiErrorResponse(error));
   }
 }
-export const DELETE = secured(handleDELETE);
+export const DELETE = route(
+  { auth: "public", publicReason: "Sign-in, recovery and session endpoints run before or independently of a session; each handler enforces its own challenge, device or session-state checks.", csrf: false, csrfExemptReason: "The handler applies its own origin and challenge checks, unchanged by this wrapper.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  ({ request }) => handleDELETE(request as Parameters<typeof handleDELETE>[0]),
+);

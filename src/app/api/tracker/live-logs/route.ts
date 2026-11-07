@@ -5,7 +5,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {readTrackerLiveLogs,safeTrackerCloudLogDetail,trackerCloudLogQuerySchema} from "@/modules/bug-tracker/tracker-cloud-logs";
 import {alertEnvironment} from "@/modules/log-alerts/signature";
 import {isSuperAdmin} from "@/modules/identity/context";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 const filters=["windowMinutes","pageToken","query","minimumSeverity","anchorAt","anchor","environment","size","level","search","window"] as const;
@@ -94,7 +94,10 @@ async function handleGET(request:Request){
     return NextResponse.json({message:"Check the log filters."},{status:400});
   return execute(context,Object.fromEntries(url.searchParams));
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);
 async function handlePOST(request:Request){
   if(!isSameOriginRequest(request))return NextResponse.json({message:"Not authorized."},{status:403});
   const context=await getCurrentRequestContext();
@@ -154,4 +157,7 @@ async function handlePOST(request:Request){
     return logFailureResponse(cause);
   }
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

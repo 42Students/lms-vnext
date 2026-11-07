@@ -13,7 +13,7 @@ import {
 } from "@/auth/session";
 import { logError } from "@/observability/logger";
 import { revokeSessionByToken } from "@/modules/auth/session-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -75,7 +75,10 @@ async function handleDELETE(request: Request) {
 
   return response;
 }
-export const DELETE = secured(handleDELETE);
+export const DELETE = route(
+  { auth: "public", publicReason: "Sign-in, recovery and session endpoints run before or independently of a session; each handler enforces its own challenge, device or session-state checks.", csrf: false, csrfExemptReason: "The handler applies its own origin and challenge checks, unchanged by this wrapper.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  ({ request }) => handleDELETE(request as Parameters<typeof handleDELETE>[0]),
+);
 
 /** Compatibility for legacy sign-out method. Both verbs revoke only the
  * current opaque first-party session, return "Logged out" on success, and
@@ -83,4 +86,7 @@ export const DELETE = secured(handleDELETE);
 async function handlePOST(request:Request){
  return DELETE(request);
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "public", publicReason: "Sign-in, recovery and session endpoints run before or independently of a session; each handler enforces its own challenge, device or session-state checks.", csrf: false, csrfExemptReason: "The handler applies its own origin and challenge checks, unchanged by this wrapper.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

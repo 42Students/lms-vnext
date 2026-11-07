@@ -17,6 +17,8 @@ const AUTH_MARKER=new RegExp([
  "authorize[A-Z]\\w*\\(","require[A-Z]\\w*Context","require[A-Z]\\w*Access","resolve\\w*Context",
  "with\\w*Auth","verifyInternal","timingSafeEqual","assertInternal","schedulerKey","x-recruiter-mail-signature",
 ].join("|"));
+// A route() declared auth: "public" is NOT authenticated by the central wrapper: its import alone must not satisfy the marker.
+const hasAuthMarker=(src:string)=>AUTH_MARKER.test(src.includes('auth: "public"')?src.split("@/security/route").join(""):src);
 
 const ALIAS_IMPORT=/from\s*["']((?:\.\.\/)+[^"']*route|@\/app\/api\/[^"']+\/route)["']/;
 
@@ -55,7 +57,7 @@ function resolveAlias(file:string,src:string):string|null{
  return target;
 }
 function isGuarded(file:string,src:string,seen=new Set<string>()):boolean{
- if(AUTH_MARKER.test(src))return true;
+ if(hasAuthMarker(src))return true;
  if(seen.has(file))return false;
  seen.add(file);
  const target=resolveAlias(file,src);
@@ -78,7 +80,7 @@ describe("PHASE1-AUTH route authentication ratchet",()=>{
    const abs=path.join(process.cwd(),file);
    expect(fs.existsSync(abs),`${file} no longer exists; remove the exception`).toBe(true);
    expect(reason.length,file).toBeGreaterThan(40);
-   expect(AUTH_MARKER.test(read(abs)),`${file} now has its own auth marker; remove the exception`).toBe(false);
+   expect(hasAuthMarker(read(abs)),`${file} now has its own auth marker; remove the exception`).toBe(false);
   }
  });
 
@@ -92,7 +94,7 @@ describe("PHASE1-AUTH route authentication ratchet",()=>{
  it("PHASE1-AUTH-05 every alias route resolves to a target route file that exists",()=>{
   for(const f of routes){
    const src=read(f);
-   if(AUTH_MARKER.test(src))continue;
+   if(hasAuthMarker(src))continue;
    const target=resolveAlias(f,src);
    if(target)expect(fs.existsSync(target),`${rel(f)} aliases a missing route ${target}`).toBe(true);
   }

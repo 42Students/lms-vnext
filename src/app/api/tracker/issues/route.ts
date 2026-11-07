@@ -13,7 +13,7 @@ import { BUG_STATUSES } from "@/modules/bug-tracker/workflow";
 import { db10BugReports } from "@/db/schema/db10-bug-tracker";
 import { getDb } from "@/db/client";
 import { isSuperAdmin } from "@/modules/identity/context";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -145,7 +145,10 @@ async function handleGET(request: Request) {
     return bugTrackerApiError(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);
 
 /** Reporter intake requires the signed-in user and same-origin protection. */
 async function handlePOST(request: Request) {
@@ -191,4 +194,7 @@ async function handlePOST(request: Request) {
     return bugTrackerApiError(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

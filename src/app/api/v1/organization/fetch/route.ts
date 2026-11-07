@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
 import {GET as listOrganizations} from "@/app/api/organizations/route";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 /** Old /fetch reads still follow the canonical tenant/role-scoped reader. */
 async function handleGET(request:Request){
@@ -10,4 +10,7 @@ async function handleGET(request:Request){
  return NextResponse.json({status:"OK",message:"OK",data:body.organizations},
   {status:200,headers:{"cache-control":"private, no-store","deprecation":"true"}});
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

@@ -3,7 +3,7 @@ import {auditCronRequestRejection} from
  "@/modules/bug-tracker/audit-cron-request-guard";
 import {independentAuditImporterReady,syncIndependentAuditInbox} from
  "@/modules/bug-tracker/independent-audit-inbox-importer";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -31,4 +31,7 @@ async function handleGET(request:Request){
   return NextResponse.json({error:"IMPORT_FAILED"},{status:500,headers:noStore});
  }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "public", publicReason: "Machine-to-machine endpoint: the handler authenticates the caller with its own shared secret or signature.", csrf: false, csrfExemptReason: "Callers are servers or schedulers and send no browser Origin; the handler checks its credential instead.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

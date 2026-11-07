@@ -7,7 +7,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
 import {z} from "zod";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 /** Modern scoped equivalent of legacy GET department search. Non-global
@@ -43,4 +43,7 @@ async function handleGET(request:Request){
   return NextResponse.json({items:rows},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

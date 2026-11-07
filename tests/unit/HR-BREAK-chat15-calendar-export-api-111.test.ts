@@ -19,7 +19,7 @@ describe("HR-CALENDAR-API-111 actual read-only exporter",()=>{
    "date=2099-01-01&view=week&category=PRIVATE"]){
    expect((await GET(new Request(path+"?"+query))).status).toBe(400);
   }
-  expect(m.ctx).not.toHaveBeenCalled();expect(m.calendar).not.toHaveBeenCalled();
+  expect(m.ctx).toHaveBeenCalledTimes(3);/* central auth runs first, once per request; the handler's validation then rejects before any calendar read */expect(m.calendar).not.toHaveBeenCalled();
  });
  it("an authorized calendar CSV is private, read only and scoped through central service",async()=>{
   const response=await GET(new Request(path+"?date=2099-01-01&view=week&category=ROUNDS"));

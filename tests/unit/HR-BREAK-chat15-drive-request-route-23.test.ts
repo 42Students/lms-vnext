@@ -55,8 +55,9 @@ describe("HR-REQUEST-ROUTE-23 live HTTP response, CSRF and replay handling",()=>
  it("GET requires a valid college UUID before resolving the session",async()=>{
   const bad=await GET(request("GET","?collegeId=../../another-college"));
   expect(bad.status).toBe(400);
-  expect(mocks.context).not.toHaveBeenCalled();
+  expect(mocks.context).toHaveBeenCalledTimes(1);/* central auth first, then validation */
   expect(mocks.list).not.toHaveBeenCalled();
+  mocks.context.mockClear();
   const good=await GET(request("GET","?collegeId="+college));
   expect(good.status).toBe(200);
   expect(await good.json()).toEqual({requests:[{id:"scoped-request"}]});

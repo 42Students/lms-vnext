@@ -4,7 +4,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {hrActivityQuerySchema} from "@/modules/placements/hr-job-activity-model";
 import {listRecruiterJobActivity} from "@/modules/placements/hr-job-activity-service";
 import {buildHrActivityCsv,HR_ACTIVITY_CSV_CAP} from "@/modules/placements/hr-activity-csv-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -37,4 +37,7 @@ async function handleGET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

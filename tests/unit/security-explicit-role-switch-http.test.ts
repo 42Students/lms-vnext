@@ -10,7 +10,7 @@ import {GET,POST} from "@/app/api/auth/memberships/route";
 import type {RequestContext} from "@/modules/identity/context";
 
 vi.mock("next/headers",()=>({headers:vi.fn(),cookies:vi.fn()}));
-vi.mock("@/auth/request-context",()=>({getCurrentIdentityUid:vi.fn()}));
+vi.mock("@/auth/request-context",()=>({getCurrentIdentityUid:vi.fn(),getCurrentRequestContext:vi.fn()}));
 vi.mock("@/auth/origin",()=>({isSameOriginRequest:vi.fn()}));
 vi.mock("@/modules/auth/request-tenant",()=>({resolveRequestTenant:vi.fn()}));
 vi.mock("@/modules/auth/tenant-access",()=>({isTenantAccessAllowed:vi.fn()}));
@@ -61,7 +61,7 @@ beforeEach(()=>{
 
 describe("ambiguous multirole membership switch cannot mint authorization cookies",()=>{
  it("GET reports a required selection without inventing a privileged active role",async()=>{
-  const response=await GET();
+  const response=await GET(new Request("https://campus.example.test/api/auth/memberships"));
   expect(response.status).toBe(200);
   expect(await response.json()).toMatchObject({
    currentMembershipKey:membership,currentRole:null,
@@ -78,7 +78,7 @@ describe("ambiguous multirole membership switch cannot mint authorization cookie
    name==="lms_membership"?{value:membership}:
    name==="lms_role"?{value:"COLLEGE_ADMIN"}:undefined,
   } as never);
-  const response=await GET();
+  const response=await GET(new Request("https://campus.example.test/api/auth/memberships"));
   expect(response.status).toBe(200);
   expect(await response.json()).toMatchObject({
    currentRole:null,roleSelectionRequired:true,membershipSelectionRequired:true,

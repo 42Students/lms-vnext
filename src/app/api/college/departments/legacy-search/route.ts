@@ -5,7 +5,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {fetchPagedDepartments} from "@/modules/departments/service";
 import {filterDepartmentRows,type DepartmentDirectoryRow} from "@/modules/admin-ui/department-directory";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 const inputSchema=z.strictObject({
@@ -81,7 +81,10 @@ async function handleGET(request:Request){
   },{headers});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);
 /** Recording a selection without durable storage would invent popularity
  * counts and lose data on restart. Do not acknowledge a write until migration
  * and tenant-scoped storage have been added by the data owner.
@@ -96,4 +99,7 @@ async function handlePOST(request:Request){
    {status:503,headers:{"Cache-Control":"no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

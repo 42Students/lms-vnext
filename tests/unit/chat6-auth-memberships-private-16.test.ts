@@ -7,7 +7,7 @@ import {listMembershipChoices,resolveRequestContext} from "@/modules/identity/co
 import {isSameOriginRequest} from "@/auth/origin";
 import {GET,POST,DELETE} from "@/app/api/auth/memberships/route";
 vi.mock("next/headers",()=>({headers:vi.fn(),cookies:vi.fn()}));
-vi.mock("@/auth/request-context",()=>({getCurrentIdentityUid:vi.fn()}));
+vi.mock("@/auth/request-context",()=>({getCurrentIdentityUid:vi.fn(),getCurrentRequestContext:vi.fn()}));
 vi.mock("@/modules/auth/request-tenant",()=>({resolveRequestTenant:vi.fn()}));
 vi.mock("@/modules/auth/tenant-access",()=>({isTenantAccessAllowed:vi.fn()}));
 vi.mock("@/auth/origin",()=>({isSameOriginRequest:vi.fn()}));
@@ -46,7 +46,7 @@ beforeEach(()=>{
 });
 describe("AUTH-handoff-16 scoped membership cookies and no-store",()=>{
  it("GET exposes only host-college membership and refuses HTTP caching",async()=>{
-  const response=await GET();
+  const response=await GET(new Request("https://campus.example.test/api/auth/memberships"));
   expect(response.status).toBe(200);
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   expect(await response.json()).toMatchObject({
@@ -66,7 +66,7 @@ describe("AUTH-handoff-16 scoped membership cookies and no-store",()=>{
  });
  it("AUTH-handoff-18 distinguishes temporary domain outage from invalid or revoked session",async()=>{
   vi.mocked(resolveRequestTenant).mockResolvedValue({kind:"unavailable",host:"campus.example"});
-  const response=await GET();
+  const response=await GET(new Request("https://campus.example.test/api/auth/memberships"));
   expect(response.status).toBe(503);
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   expect(await response.json()).toMatchObject({
@@ -78,7 +78,7 @@ describe("AUTH-handoff-16 scoped membership cookies and no-store",()=>{
  });
  it("rejects wrong-tenant host and does not serialize private memberships on failure",async()=>{
   vi.mocked(isTenantAccessAllowed).mockReturnValue(false);
-  const response=await GET();
+  const response=await GET(new Request("https://campus.example.test/api/auth/memberships"));
   expect(response.status).toBe(401);
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   expect((await response.text())).not.toContain(ownMembership);

@@ -21,7 +21,7 @@ describe("HR-PROPOSAL-API-101 employer discussion export",()=>{
    {...actor,user:{...actor.user,platformStatus:"DISABLED"}},
    {...actor,recruiter:{...actor.recruiter,userId:"swapped"}},
   ]){
-   m.ctx.mockResolvedValueOnce(ctx);
+   m.ctx.mockResolvedValue(ctx); // route() and the handler each look the actor up (mocked, no reuse)
    const response=await GET(url("collegeId="+college));
    expect(response.status).toBe(403);
   }

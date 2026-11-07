@@ -4,7 +4,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {listCollegeReadinessWorkspaceChoicePage}
  from "@/modules/projects/college-readiness-releases-service";
 import {z} from "zod";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 const schema=z.strictObject({
  collegeId:z.string().uuid(),q:z.string().trim().max(120).default(""),
@@ -29,4 +29,7 @@ async function handleGET(request:Request){
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

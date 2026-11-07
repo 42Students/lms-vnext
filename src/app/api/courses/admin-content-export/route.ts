@@ -4,7 +4,7 @@ import {
  adminContentKindSchema,adminContentQuerySchema,
 } from "@/modules/courses/super-admin-content-directory-model";
 import {listSuperAdminContentDirectory} from "@/modules/courses/super-admin-content-directory-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -60,4 +60,7 @@ async function handleGET(request:Request){
   });
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

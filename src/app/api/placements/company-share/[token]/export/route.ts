@@ -6,7 +6,7 @@ import {companyShareCsvResponseHeaders} from "@/modules/placements/company-share
 import {makeStoredZip,type ZipEntry} from "@/modules/placements/company-share/zip-model";
 import {getPrivateR2Config} from "@/modules/storage/r2-config";
 import {isAllowedCompanyShareResumeDownload} from "@/modules/placements/company-share/signed-resume-guard";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -127,4 +127,7 @@ async function handleGET(request:Request,{params}:{params:Promise<{token:string}
   },
  });
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "public", publicReason: "Link or form opened without an account (token, slug or anonymous report); the handler validates the token or input and is rate limited per address.", csrf: false, csrfExemptReason: "Links and email clients send no same-origin header; the handler validates the token or applies its own origin check.", rateLimit: { limit: 3000, windowMs: 60_000 }, repeatableQuery: ["format", "q"] },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);

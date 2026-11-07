@@ -62,7 +62,7 @@ describe("HR-DRIVE-API-71: recruiter requests preserve idempotence and friendly 
    expect(response.status).toBe(400);
    expect(await response.json()).toMatchObject({error:"INVALID_REQUEST"});
   }
-  expect(m.ctx).not.toHaveBeenCalled();
+  expect(m.ctx).toHaveBeenCalledTimes(1); // duplicate key rejected centrally before auth; the unexpected-field request authenticates, then handler validation rejects
   expect(m.list).not.toHaveBeenCalled();
  });
  it("authorized GET is read-only and preserves the exact college filter",async()=>{

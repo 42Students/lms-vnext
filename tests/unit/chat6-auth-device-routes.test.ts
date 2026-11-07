@@ -45,7 +45,7 @@ describe("device-session HTTP ownership and CSRF matrix", () => {
       {id:own,device_name:"Own laptop",user_agent:"Chrome",created_at:"2026-10-19T00:00:00Z",last_seen_at:"2026-10-19T01:00:00Z",expires_at:"2026-10-24T00:00:00Z"},
       {id:other,device_name:"Own phone",user_agent:"Safari",created_at:"2026-10-18T00:00:00Z",last_seen_at:"2026-10-19T00:00:00Z",expires_at:"2026-10-23T00:00:00Z"},
     ]);
-    const response=await listDevices();
+    const response=await listDevices(new Request("https://college.example.edu/api/auth/devices"));
     expect(response.status).toBe(200);
     expect(response.headers.get("Cache-Control")).toBe("private, no-store");
     expect(fakes.list).toHaveBeenCalledWith("user-a");
@@ -97,6 +97,6 @@ describe("device-session HTTP ownership and CSRF matrix", () => {
     fakes.revokeOther.mockRejectedValueOnce(new Error("unavailable"));
     expect((await signOutOthers(make())).status).toBe(400);
     fakes.list.mockRejectedValueOnce(new Error("unavailable"));
-    expect((await listDevices()).status).toBe(400);
+    expect((await listDevices(new Request("https://college.example.edu/api/auth/devices"))).status).toBe(400);
   });
 });

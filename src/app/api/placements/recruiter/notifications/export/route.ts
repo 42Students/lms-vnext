@@ -4,7 +4,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {hrNotificationsQuerySchema} from "@/modules/placements/hr-notifications-model";
 import {listHrNotifications} from "@/modules/placements/hr-notifications-service";
 import {buildHrInboxCsv,HR_INBOX_CSV_CAP} from "@/modules/placements/hr-inbox-csv-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -39,4 +39,7 @@ async function handleGET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

@@ -3,7 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getAdminAttendanceGrid} from "@/modules/attendance/admin-service";
 import {attendanceIndiaDay} from "@/modules/attendance/admin-grid-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 const query=z.strictObject({
  deliveryId:z.string().uuid(),
@@ -76,4 +76,7 @@ async function handleGET(request:Request){
    headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

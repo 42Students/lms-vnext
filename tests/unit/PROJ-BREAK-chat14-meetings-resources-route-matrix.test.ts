@@ -147,8 +147,8 @@ describe("Mentor meeting and resource endpoint permission matrix",()=>{
    }
   }
   expect(state.reads).toBe(4);
-  // Per request: route() lookup, plus the handler's own lookup for the routes that still resolve it themselves (2 reads x 2 retries).
-  expect(state.authReads).toBe(6);
+  // Per request: route() lookup plus the handler's own lookup (mocked, so no reuse): 4 requests x 2.
+  expect(state.authReads).toBe(8);
   expect(state.writes).toBe(0);
  });
  it("PROJ-BREAK-MENTOR-336 GET rejects missing account or cross-tenant scope with no write",async()=>{

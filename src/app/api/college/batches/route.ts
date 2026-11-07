@@ -5,7 +5,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {
   CollegeCohortMutationError, createCollegeCohort,
 } from "@/modules/academics/college-cohort-mutation-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -39,7 +39,10 @@ async function handlePOST(request: Request) {
     return apiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);
 
 // Old LMS fetchByProgram returns a status/message/data envelope. The college,
 // program and membership are still validated by the same vNext scoped read
@@ -68,4 +71,7 @@ async function handleGET(request:Request){
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);
