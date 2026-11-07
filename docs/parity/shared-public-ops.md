@@ -493,3 +493,16 @@ this is only scoped UX closure, not deployment, security, or role-parity sign-of
 
 **Boundary / remaining global gates:** This UX group cannot certify provider delivery, live invitation issuance/acceptance, real database persistence, production tenant authorization or full release readiness; those remain in separate DB/API/security and parity gates. Final exact-SHA TypeScript-gated acceptance: [run 42387417330](https://github.com/42Students/lms-vnext/actions/runs/42387417330) on `3fb85a0bf15636e52172589ccb4a82ce12a9cd56` passed scoped ESLint, TypeScript, Vitest 17/17 and Chromium 4/4. Browser screenshot/HTML evidence is retained as [artifact 13580351772](https://github.com/42Students/lms-vnext/actions/runs/42387417330/artifacts/13580351772). **UX-G045 closed in the UX ledger; independent live-provider/DB/auth and production release gates are not closed.**
 
+## UX-G050 / UX-G052 / UX-G077 — Public marketing journeys (7 November 2026)
+
+**Canonical allocation:** `docs/tracker.json#uxReview`; three separately claimed groups owned by `ux-marketing-trio-2026-11-07`.
+
+**Implemented:** Early accessible wayfinding and CTAs on Enterprises (`/enterprises`), Home (`/home`) and Platform (`/platform`); safe in-page anchors; responsive numbered platform lifecycle; public error fallback and contextual slow-loading states; canonical/OG/Twitter metadata on Platform. No shared marketing shell changes or altered permissions, product availability, tenant data, workflows, API contracts or sensitive outputs.
+
+**Exact source acceptance SHA:** `38fa70d71d4b282b73f18d32b7e2b21c1be61bfe`. [Scoped GitHub Actions execution](https://github.com/42Students/lms-vnext/actions/runs/42390390665) completed ESLint, `node --test tests/ux-marketing-trio-group.test.mjs`, and `npx playwright test tests/e2e/ux-marketing-trio.spec.ts --project=chromium --reporter=line` successfully. Desktop 1280×800 and mobile 390×844 checks cover keyboard/focus, live internal navigation, responsive width, runtime errors, and actual CTA destinations: Home→Universities, Enterprises/Platform→Request a Demo.
+
+**Visual proof:** [Retained artifact](https://github.com/42Students/lms-vnext/actions/runs/42390390665/artifacts/13580969005) contains `home-desktop.png`, `home-mobile.png`, `enterprises-desktop.png`, `enterprises-mobile.png`, `platform-desktop.png`, and `platform-mobile.png` in `ux-marketing-trio-evidence/`.
+
+**Cross-role/security regression:** Route-local pages only; no auth, role, RLS, tenant, server-side API, PII, or storage logic changed. Existing shared `MarketingLayout` and /request-demo flow preserved. Human-operated learning/placements descriptions and the enterprise outcomes disclaimer remain; unbuilt AI and third-party integrations are not advertised. Group-level browser tests exercise real public destinations, not mocked success.
+
+**Release boundary:** Source/browser scoped acceptance is evidence for each route group, **not** a claim that every repository-wide security, UX guard, CI, deployment, or cross-role workflow is green. The workflow's separately recorded global TypeScript result remains authoritative; record failures without weakening gate assertions.
