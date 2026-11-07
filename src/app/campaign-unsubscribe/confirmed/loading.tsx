@@ -5,7 +5,7 @@ export default function Loading() {
   return <main style={{minHeight:"100dvh"}} className={`${authStyles["page"]} mx-auto flex w-full max-w-xl min-w-0 items-center px-4 pb-8 pt-24 md:py-12`}>
     <div className="w-full min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
       <PageHeader title="Email preference updated" />
-      <GracefulPageLoading label="Loading email preferences…" />
+      <GracefulPageLoading label="Preparing your confirmation…" />
     </div>
   </main>;
 }
