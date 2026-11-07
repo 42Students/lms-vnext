@@ -5,6 +5,7 @@ import { RecruiterInviteLanding } from "@/components/tpo/recruiter-invite-landin
  * index, archive, or disclose its URL as a cross-site referrer. */
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
+  title: "Recruiter invitation | 42LMS",
   robots: { index: false, follow: false, noarchive: true },
   referrer: "no-referrer",
 };
