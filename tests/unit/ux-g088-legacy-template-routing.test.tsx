@@ -95,10 +95,12 @@ describe("UX-G088 legacy Super Admin project template browser bookmarks",()=>{
       ["projects","templates","bad.token"],
       ["projects","templates",".."],
       ["projects","templates","slug","unknown"],
+      ["projects","templates","new","overview"],
+      ["projects","templates","NEW","colleges"],
     ]){
       await expect(render(segments)).rejects.toThrow("NOT_FOUND");
     }
-    expect(notFound).toHaveBeenCalledTimes(3);
+    expect(notFound).toHaveBeenCalledTimes(5);
     expect(getDb).not.toHaveBeenCalled();
   });
 });
