@@ -15526,11 +15526,11 @@
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Students / Import → Videos (part 16)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-profile-cross-role-2026-11-07",
         "pickedAt": "2026-11-07T17:00:00.000Z",
         "startedAt": "2026-11-07T17:00:00.000Z",
-        "completedAt": null,
+        "completedAt": "2026-11-07T17:53:00.994Z",
         "sourceFiles": [
           "src/app/(authenticated)/college/students/import/error.tsx",
           "src/app/(authenticated)/college/students/import/loading.tsx",
@@ -15560,8 +15560,42 @@
           "PAGE-0203"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Review role-focused learner/teacher/college UX routes as group, implement safely with in-scope file ownership, add exact source tests and browser proof. No DONE without all acceptance requirements."
+        "evidence": [
+          {
+            "commitSha": "4bd79f48ccd9f173628c9da4adefc1f8487b0d89",
+            "parityDoc": "docs/parity/ux-college-learner-faculty-journeys.md",
+            "tests": [
+              {
+                "command": "node --test tests/ux-cross-role-g043-g066-g095.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851 (4/4 scoped source and owned-file inventory contract tests passed)"
+              },
+              {
+                "command": "npx eslint [scoped G043 G066 G095 edited files and CI-only fixture]",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851 (scope ESLint step passed; see exact file list in workflow)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-cross-role-g043-g066-g095.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851 (6/6 actual route error/loading recovery interactions passed)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851/artifacts/13583464464 (college-desktop.png)"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851/artifacts/13583464464 (college-mobile.png)"
+              }
+            ],
+            "regressionReview": "Bulk importer/single student registration cross-link while preserving permission and option services; student import/register/verification/videos errors offer Retry and safe fallback. All owned source files inventoried; real role-specific data mutation is outside CI fixture. Browser checks verified focus, retry callbacks, public/safe role exit links, loading state and lack of horizontal overflow or runtime errors.",
+            "securityReview": "UI route-only display/error/loading changes. Server auth, membership, permissions, tenant selection, RLS, private data reads, save actions, review decisions, audit, database and message semantics were not changed. No release/security assertion was weakened."
+          }
+        ],
+        "notes": "DONE on scoped UX evidence: 4/4 Node source/inventory tests, ESLint, 6/6 Chromium desktop/mobile recovery scenarios, 6 screenshot artifacts. https://github.com/42Students/lms-vnext/actions/runs/42397390851. Full repository TypeScript on this source SHA failed only in two concurrently owned HR loading files using unsupported GracefulPageLoading shape=\"form\"; this group's modified files had no reported TypeScript error. Does not claim global CI green or privileged logged-in mutation E2E. Existing integration/security suites continue to govern that scope."
       },
       {
         "id": "UX-G044",
@@ -16746,11 +16780,11 @@
         "type": "JOURNEY",
         "area": "learn",
         "title": "Learn · Profile / Verification → Quizzes / My Attempts (part 8)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-profile-cross-role-2026-11-07",
         "pickedAt": "2026-11-07T17:00:00.000Z",
         "startedAt": "2026-11-07T17:00:00.000Z",
-        "completedAt": null,
+        "completedAt": "2026-11-07T17:53:00.994Z",
         "sourceFiles": [
           "src/app/(authenticated)/learn/profile/verification/error.tsx",
           "src/app/(authenticated)/learn/profile/verification/loading.tsx",
@@ -16784,8 +16818,42 @@
         "newRouteOnly": [
           "/learn/quizzes/my-attempts"
         ],
-        "evidence": [],
-        "notes": "Review role-focused learner/teacher/college UX routes as group, implement safely with in-scope file ownership, add exact source tests and browser proof. No DONE without all acceptance requirements."
+        "evidence": [
+          {
+            "commitSha": "4bd79f48ccd9f173628c9da4adefc1f8487b0d89",
+            "parityDoc": "docs/parity/ux-college-learner-faculty-journeys.md",
+            "tests": [
+              {
+                "command": "node --test tests/ux-cross-role-g043-g066-g095.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851 (4/4 scoped source and owned-file inventory contract tests passed)"
+              },
+              {
+                "command": "npx eslint [scoped G043 G066 G095 edited files and CI-only fixture]",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851 (scope ESLint step passed; see exact file list in workflow)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-cross-role-g043-g066-g095.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851 (6/6 actual route error/loading recovery interactions passed)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851/artifacts/13583464464 (learner-desktop.png)"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851/artifacts/13583464464 (learner-mobile.png)"
+              }
+            ],
+            "regressionReview": "Learner own-verification error offers profile exit without treating read failure as rejection; project list errors offer learner-home exit; tab-specific project loading gets bounded retry. Private verification, project scoping and quiz alias unchanged. Live authorized project mutations outside fixture. Browser checks verified focus, retry callbacks, public/safe role exit links, loading state and lack of horizontal overflow or runtime errors.",
+            "securityReview": "UI route-only display/error/loading changes. Server auth, membership, permissions, tenant selection, RLS, private data reads, save actions, review decisions, audit, database and message semantics were not changed. No release/security assertion was weakened."
+          }
+        ],
+        "notes": "DONE on scoped UX evidence: 4/4 Node source/inventory tests, ESLint, 6/6 Chromium desktop/mobile recovery scenarios, 6 screenshot artifacts. https://github.com/42Students/lms-vnext/actions/runs/42397390851. Full repository TypeScript on this source SHA failed only in two concurrently owned HR loading files using unsupported GracefulPageLoading shape=\"form\"; this group's modified files had no reported TypeScript error. Does not claim global CI green or privileged logged-in mutation E2E. Existing integration/security suites continue to govern that scope."
       },
       {
         "id": "UX-G067",
@@ -18320,11 +18388,11 @@
         "type": "JOURNEY",
         "area": "teacher",
         "title": "Teacher · Courses / DeliveryId → Profile / Contacts (part 5)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-profile-cross-role-2026-11-07",
         "pickedAt": "2026-11-07T17:00:00.000Z",
         "startedAt": "2026-11-07T17:00:00.000Z",
-        "completedAt": null,
+        "completedAt": "2026-11-07T17:53:00.994Z",
         "sourceFiles": [
           "src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/error.tsx",
           "src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/loading.tsx",
@@ -18362,8 +18430,42 @@
         "newRouteOnly": [
           "/teacher/fileExplorer"
         ],
-        "evidence": [],
-        "notes": "Review role-focused learner/teacher/college UX routes as group, implement safely with in-scope file ownership, add exact source tests and browser proof. No DONE without all acceptance requirements."
+        "evidence": [
+          {
+            "commitSha": "4bd79f48ccd9f173628c9da4adefc1f8487b0d89",
+            "parityDoc": "docs/parity/ux-college-learner-faculty-journeys.md",
+            "tests": [
+              {
+                "command": "node --test tests/ux-cross-role-g043-g066-g095.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851 (4/4 scoped source and owned-file inventory contract tests passed)"
+              },
+              {
+                "command": "npx eslint [scoped G043 G066 G095 edited files and CI-only fixture]",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851 (scope ESLint step passed; see exact file list in workflow)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-cross-role-g043-g066-g095.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851 (6/6 actual route error/loading recovery interactions passed)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851/artifacts/13583464464 (faculty-desktop.png)"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851/artifacts/13583464464 (faculty-mobile.png)"
+              }
+            ],
+            "regressionReview": "Malformed student detail timestamps no longer crash the view; live schedule links to teaching courses; profile and contact errors have 44px retry targets. Faculty-role and student detail services unchanged. Live authorized profile save outside fixture. Browser checks verified focus, retry callbacks, public/safe role exit links, loading state and lack of horizontal overflow or runtime errors.",
+            "securityReview": "UI route-only display/error/loading changes. Server auth, membership, permissions, tenant selection, RLS, private data reads, save actions, review decisions, audit, database and message semantics were not changed. No release/security assertion was weakened."
+          }
+        ],
+        "notes": "DONE on scoped UX evidence: 4/4 Node source/inventory tests, ESLint, 6/6 Chromium desktop/mobile recovery scenarios, 6 screenshot artifacts. https://github.com/42Students/lms-vnext/actions/runs/42397390851. Full repository TypeScript on this source SHA failed only in two concurrently owned HR loading files using unsupported GracefulPageLoading shape=\"form\"; this group's modified files had no reported TypeScript error. Does not claim global CI green or privileged logged-in mutation E2E. Existing integration/security suites continue to govern that scope."
       },
       {
         "id": "UX-G096",
