@@ -14547,11 +14547,11 @@
         "type": "JOURNEY",
         "area": "campaign-unsubscribe",
         "title": "Campaign Unsubscribe · Token → Confirmed (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-campaign-unsubscribe-ux-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07T15:31:00Z",
         "sourceFiles": [
           "src/app/campaign-unsubscribe/[token]/error.tsx",
           "src/app/campaign-unsubscribe/[token]/loading.tsx",
@@ -14569,8 +14569,42 @@
           "PAGE-0503"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Ownership: complete /campaign-unsubscribe/[token] and /confirmed UX, including loading/error, accessibility, mobile and failure states. Do not mark DONE without executed tests and desktop/mobile browser evidence."
+        "evidence": [
+          {
+            "commitSha": "82c56f0bc82f4b6e4d2c0dbd57e4320ef96ad04e",
+            "parityDoc": "docs/parity/ux-g027-campaign-unsubscribe.md",
+            "tests": [
+              {
+                "command": "npx eslint scoped campaign-unsubscribe pages, component and browser spec && node --test tests/ux-g027-unsubscribe-contract.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386591655 (Scoped source/accessibility and contract checks success)"
+              },
+              {
+                "command": "npx vitest run tests/unit/UX-campaign-unsubscribe-token-01.test.ts tests/unit/UX-campaign-unsubscribe-confirmed-01.test.ts tests/unit/chat16-public-unsubscribe-page-27.test.ts tests/unit/chat16-campaign-unsubscribe-ssr-pages-16.test.ts tests/unit/chat2-unsubscribe-graceful.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386591655 (Existing opt-out and scope regression tests success)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g027-campaign-unsubscribe.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386591655 (3 passed, zero retries)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386591655/artifacts/13579458169 (desktop-token.png, 1280x800; inspected, no clipping)"
+              },
+              {
+                "viewport": "mobile",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386591655/artifacts/13579458169 (mobile-token.png, mobile-retry.png, mobile-confirmed.png, 375px; inspected, no clipping)"
+              }
+            ],
+            "regressionReview": "Five existing opt-out regression suites pass at exact source SHA. Shared Card, Heading, PageHeader, GracefulErrorBoundary and ButtonLink implementations unchanged; CampaignUnsubscribeConfirm has a single current route caller. Successful POST redirect-only confirmation; no false success on errors.",
+            "securityReview": "GET remains non-mutating and does not reveal link validity or recipient lookup results. Same-origin, bounded-body, purpose-scoped token verification, suppression authorization and generic invalid-token response remain in unchanged POST route; no role/tenant data exposed."
+          }
+        ],
+        "notes": "Closed after exact-SHA CI: 3/3 clean browser tests (desktop and mobile), scoped lint/source tests and five existing opt-out regression suites passed. Visual screenshots inspected; same-origin signed POST, bounded body, generic invalid-token response and no-mutation GET preserved. Evidence: docs/parity/ux-g027-campaign-unsubscribe.md."
       },
       {
         "id": "UX-G028",
