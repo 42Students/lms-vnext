@@ -106,7 +106,7 @@ for (const viewport of viewports) {
         calls++;
         expect(route.request().method()).toBe("POST");
         expect(route.request().postDataJSON()).toEqual({ token: verificationToken });
-        expect(route.request().headers().referer).not.toContain(verificationToken);
+        expect(route.request().headers().referer ?? "").not.toContain(verificationToken);
         await route.fulfill({
           status: 200, contentType: "application/json",
           body: JSON.stringify({ verified: true, sessionCreated: false }),
