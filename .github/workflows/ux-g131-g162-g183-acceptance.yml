@@ -15,6 +15,7 @@ on:
       - 'src/modules/verification/staff-export-service.ts'
       - 'tests/unit/ux-g131-g162-g183-acceptance.test.ts'
       - 'tests/unit/chat12-verification-round2.test.ts'
+      - 'tests/unit/chat5-requests-sequential-notices.test.ts'
       - 'tests/e2e/ux-g131-g162-verification-announcements.spec.ts'
       - '.github/workflows/ux-g131-g162-g183-acceptance.yml'
 
@@ -72,6 +73,7 @@ jobs:
             src/modules/verification/staff-export-service.ts \
             tests/unit/ux-g131-g162-g183-acceptance.test.ts \
             tests/unit/chat12-verification-round2.test.ts \
+            tests/unit/chat5-requests-sequential-notices.test.ts \
             tests/e2e/ux-g131-g162-verification-announcements.spec.ts
           npm run typecheck
       - name: Focused unit and prior-role regression
@@ -79,6 +81,7 @@ jobs:
           npx vitest run \
             tests/unit/ux-g131-g162-g183-acceptance.test.ts \
             tests/unit/chat12-verification-round2.test.ts \
+            tests/unit/chat5-requests-sequential-notices.test.ts \
             tests/unit/super-admin-broadcast-ui.test.ts \
             tests/unit/chat4-college-verification-misc-gap-closure.test.ts \
             --reporter=dot
