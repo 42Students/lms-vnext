@@ -1,4 +1,7 @@
 import { spawnSync } from "node:child_process";
+import { writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { RequestContext } from "../src/modules/identity/context";
 
@@ -589,6 +592,27 @@ async function main() {
         membershipId:ids.learnerCollegeAMembership,role:"LEARNER",
       });
       process.stdout.write("Persisted Mentor browser project "+project.id+"\\n");
+    }
+
+    if (process.env["UX_G174_SEED_REPORTS"] === "true") {
+      const {createCourseAssignment}=await import("../src/modules/courses/assignment-service");
+      const {createCourseQuiz}=await import("../src/modules/courses/quiz-service");
+      const dueAt=new Date(Date.now()+30*86400_000).toISOString();
+      const assignment=await createCourseAssignment(collegeAdmin,{
+        lessonId:lesson.id,deliveryId:deliveryA.id,
+        title:"E2E Faculty CSV Assignment",dueAt,maxPoints:10,sequence:30,
+      });
+      const quiz=await createCourseQuiz(collegeAdmin,{
+        lessonId:lesson.id,deliveryId:deliveryA.id,
+        title:"E2E Faculty CSV Quiz",dueAt,sequence:31,
+        maxAttempts:1,shuffleQuestions:false,shuffleOptions:false,
+        questions:[{type:"SINGLE_CHOICE",prompt:"Select true",points:5,sequence:0,
+          options:[{text:"True",correct:true,sequence:0},{text:"False",correct:false,sequence:1}]}],
+      });
+      writeFileSync(join(tmpdir(),"lms-vnext-ux-g174-fixture.json"),JSON.stringify({
+        assignmentId:assignment.id,quizId:quiz.id,deliveryId:deliveryA.id,
+        otherDeliveryId:deliveryB.id,
+      }),{encoding:"utf8",mode:0o600});
     }
 
     process.stdout.write(
