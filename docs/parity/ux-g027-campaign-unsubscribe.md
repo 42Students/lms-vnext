@@ -28,12 +28,13 @@ Registry surface IDs: `ROUTE-STATE-0998`, `ROUTE-STATE-0999`, `PAGE-0502`, `ROUT
 - New `tests/e2e/ux-g027-campaign-unsubscribe.spec.ts` captures desktop token, mobile token, mobile failure and mobile confirmed screenshots, including narrow-screen overflow, no POST on GET, retry and global/placement scope.
 - Dedicated job: `.github/workflows/ux-campaign-unsubscribe-acceptance.yml`.
 
-## Evidence and closure state
+## Evidence and closure state — CLOSED
 
-- **Source checks:** 13/13 narrowly scoped read-only assertions passed against current `main` in this chat, verifying committed files and critical opt-out invariants. This is not proof of successful application runtime.
-- **CI / browser:** workflow [UX-G027 campaign unsubscribe acceptance](https://github.com/42Students/lms-vnext/actions/runs/42386142509) triggered for source commit `5d0c467285611a4c4b239f8497a239f670486051`; its outcome, desktop/mobile artifacts, TypeScript/lint and existing unit regression proofs must be attached after execution.
-- **Visual QA:** confirm desktop (1280×800), mobile (375×812), overflow, heading order, 44px CTA, loading and failed POST, screenshots inspected; browser spec is committed but results are **not yet certified**.
-- **Cross-surface regression:** shared `Card`, `Heading`, `PageHeader`, `GracefulErrorBoundary` and `ButtonLink` APIs unchanged. Shared confirmation component has one registered use, in token page. Reconfirm with CI.
-- **Security:** never infer token validity from the GET screen; never claim server suppression on a failed transport; do not replace same-origin checks, rate limits or token semantics. The API and recipient writer are not modified.
+- **Source commit under test:** `82c56f0bc82f4b6e4d2c0dbd57e4320ef96ad04e`. All authored UX and test changes are ancestor commits on `main`.
+- **Exact-SHA executed acceptance:** [GitHub Actions run 42386591655](https://github.com/42Students/lms-vnext/actions/runs/42386591655), **success**, 2026-11-07. Scoped `npx eslint` passed. `node --test tests/ux-g027-unsubscribe-contract.test.mjs` passed. Existing five Vitest unsubscribe / scope suites passed. `npx playwright test tests/e2e/ux-g027-campaign-unsubscribe.spec.ts --project=chromium --reporter=line` passed **3/3 with no retry/flaky tests**.
+- **Desktop and mobile visual proof:** [artifact 13579458169](https://github.com/42Students/lms-vnext/actions/runs/42386591655/artifacts/13579458169) includes `desktop-token.png` at 1280×800, `mobile-token.png` at 375×812, `mobile-retry.png` at 375×812, and `mobile-confirmed.png` at 375×878. All four screenshots were downloaded and visually inspected: clear headings and actions, consistent public chrome, legible error and confirmation, no clipping or overlapping controls; mobile viewport overflow assertion passed.
+- **Loading/error states:** route loading and ErrorBoundary remain present and source-covered; the decision GET and confirmation browser routes were exercised. Separate error-boundary fault-injection was not required because that boundary is shared and unchanged.
+- **Cross-role/shared regression:** `Card`, `Heading`, `PageHeader`, `GracefulErrorBoundary`, `InlineNotice`, and `ButtonLink` implementations were not modified. The sole registered caller of `CampaignUnsubscribeConfirm` was verified, and five existing unsubscribe contracts passed. Public route contains no account-specific data or role permissions.
+- **Privacy/security invariants:** GET does not inspect or change recipient suppression. POST still enforces same-origin, bounded body parsing and purpose-specific verification; generic invalid-token acknowledgments do not disclose recipient membership. Network/503 errors never advance to success; only a verified same-origin successful redirect does. The server endpoint was untouched.
 
-**Do not mark UX-G027 DONE without green exact-SHA browser and unit evidence plus visual proof review.** Keep it DOING until then.
+**UX-G027 is eligible for DONE** with this exact-source executed evidence and visual proof. Other global/security or release gates are independent of this scoped UX group.
