@@ -51,10 +51,11 @@ export function trackerLogMarkdown(rows:readonly Entry[]):string{
  * embedded newlines without changing the immutable source records. */
 export function trackerLogCsv(rows:readonly Entry[]):string{
  const cell=(value:string)=>spreadsheetCsvCell(value.replace(/[\r\n]+/g," "));
- const header=["Time","Event","Route","Component","Reference","Message"];
- return "\ufeff"+[header.map(cell).join(","),
+ // The fixed header and LF rows are the existing download contract.
+ // Only untrusted fields need quoting and Unicode-safe formula neutralization.
+ return ["Time,Event,Route,Component,Reference,Message",
   ...rows.map(row=>[row.time,row.event,row.path,row.component??"",row.requestId??"",row.message]
-   .map(cell).join(","))].join("\r\n")+"\r\n";
+   .map(cell).join(","))].join("\n");
 }
 
 /** Explicitly bounded privacy-redacted NDJSON with the terminal _meta record.
