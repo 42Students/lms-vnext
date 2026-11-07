@@ -32,4 +32,4 @@ The original profile editors remain available in the authenticated role-specific
 
 ## Results
 
-**Pending executed GitHub Actions acceptance.** Do not mark these groups DONE without successful test results and screenshot artifacts referenced by the canonical board.
+**Scoped UX acceptance recorded: G143 + G150 DONE.** [Run](https://github.com/42Students/lms-vnext/actions/runs/42396588929) passed scoped ESLint, 4/4 source contracts, and 4/4 real-component Chromium desktop/mobile cases. [Screenshot artifact](https://github.com/42Students/lms-vnext/actions/runs/42396588929/artifacts/13584151589) includes faculty/learner desktop and mobile captures. The run's **global TypeScript** check failed in concurrently edited project CSV export files unrelated to either group; they were subsequently fixed on main. A newer screenshot-stability/TypeScript re-run is queued. This note does not assert repo-wide CI is green.
