@@ -120,8 +120,8 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    }}
    onApply={filters=>navigate({...filters,page:"1"})}/>
   <div className="flex flex-wrap items-center justify-between gap-3">
-   <p className="text-sm text-muted-foreground">Select only eligible requests on this page. Bulk actions are limited to 20 per operation.</p>
-   <Label>Sort requests
+   <p className="text-sm text-muted-foreground">Sort and selections apply to this loaded page only. Bulk actions are limited to 20 eligible requests per operation.</p>
+   <Label>Sort this page
     <Select value={sort} onChange={e=>setSort(e.target.value as typeof sort)} className="ml-2 min-h-11 md:min-h-9">
      <option value="OLDEST">Oldest first</option><option value="NEWEST">Newest first</option>
      <option value="NAME">Student name</option>
@@ -153,7 +153,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
   <Dialog open={actionsOpen} onOpenChange={setActionsOpen} title="Verification actions"
     description="Choose the requests to review or verify without opening each submission.">
    <div className="space-y-[var(--lms-space-3)]">
-   <p role="status" className="text-sm">{chosen.length} of 20 requests selected on this page.</p>
+   <p role="status" className="text-sm">{chosen.length} of {Math.min(20,candidates.length)} eligible requests selected on this page.</p>
    <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] sm:grid-cols-2 lg:flex lg:flex-wrap [&>button]:w-full lg:[&>button]:w-auto">
     <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys(candidates.slice(0,20).map(verificationSelectionKey));setBulkAction(null);}}
      className="min-h-11 md:min-h-[var(--lms-control-height)]">Select first 20 waiting</Button>
@@ -164,6 +164,9 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
     <Button variant="secondary" type="button" disabled={bulkBusy||!chosen.length} onClick={()=>{setActionsOpen(false);setBulkAction("SEND_BACK");}}
      className="min-h-11 md:min-h-[var(--lms-control-height)]">Send back</Button>
    </div>
+   {candidates.length>50?<p role="status" className="text-xs text-muted-foreground">
+    Showing the first 50 eligible requests for selection. Use the queue row controls or narrow the filters to select others.
+   </p>:null}
    <ul className="max-h-44 space-y-2 overflow-y-auto">
     {candidates.slice(0,50).map(row=><li key={verificationSelectionKey(row)}>
       <Label variant="choice" className="flex min-h-11 items-center gap-[var(--lms-space-2)]">
