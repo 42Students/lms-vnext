@@ -15,6 +15,6 @@ Source: `src/components/people/faculty-profile-editor.tsx`, `faculty-profile-met
 - Positive / negative source contracts: `tests/ux-profile-g143-g150.test.mjs`.
 - True rendered-component browser interactions at desktop 1280×800 and mobile 390×844: `tests/e2e/ux-profile-editors.spec.ts`, via an unshipped CI fixture.
 - Scoped lint, global TypeScript and browser screenshots: [workflow](https://github.com/42Students/lms-vnext/actions/runs/42393164698).
-- **Pending CI proof.** No green claim until steps finish. Full privileged account persistence is outside the test-only preview and should not be inferred.
+- **Scoped UX DONE.** [Executed CI](https://github.com/42Students/lms-vnext/actions/runs/42396588929) passed 4/4 combined source tests and all 4 combined browser scenarios. [Screenshots](https://github.com/42Students/lms-vnext/actions/runs/42396588929/artifacts/13584151589) contain faculty desktop/mobile evidence. Global TypeScript failed in independent, concurrently changed project CSV exports (subsequently corrected on main); the group's executed scoped checks are green. This does not establish authenticated save acceptance.
 
 Security review: No identity, tenant, RBAC, API, persistence, or sensitive-read code changed. Source fields, private-document restrictions and existing authorization remain unchanged. Parity: `docs/parity/ux-profile-editors.md`.
