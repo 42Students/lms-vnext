@@ -18,3 +18,14 @@ Scope: `/recruiter-invite/[token]` page, loading and error, canonical `Recruiter
 ## Regression and security review
 
 Canonical server preview, token hashing, OTP HMAC, same-origin handlers, expiration/revocation, company/email binding, signed-in consent, role grants and tenant isolation are unchanged. No new authentication bypass or cross-domain exchange. The existing HR legacy alias points to this canonical page and must continue to resolve; no invitation data is logged. Exact-SHA CI and screenshots required before DONE.
+
+
+## Executed closure evidence — 2026-11-07
+
+- **Exact accepted SHA:** `5db9b53ce1c7fcd9cea96412812c25a51c378e21`; canonical recruiter route and OTP component blobs unchanged on latest `main`.
+- **[Successful scoped CI](https://github.com/42Students/lms-vnext/actions/runs/42392314518)**: ESLint, source privacy and server acknowledgement contracts, existing `UX-recruiter-invite-token-01` and share/privacy/role regression suites passed; browser **4/4** passed with no failures.
+- **[Screenshots and traces](https://github.com/42Students/lms-vnext/actions/runs/42392314518/artifacts/13581663762)**: `recruiter-invalid-mobile.png` at 320×720, `recruiter-ready-desktop.png` and `recruiter-pending-consent-desktop.png` at 1280×800 visually reviewed. All usable, readable, responsive, no clipping.
+- Browser mocked code send and server attestation, verified OTP field receives keyboard focus, and asserted an existing recruiter moves into **pending consent** rather than automatic college access. Invalid token shows safe sign-in. Live mail delivery and real identity provider sign-off were not performed in this scoped UX group.
+- Authentication/consent boundaries, OTP HMAC validation, token expiry, server-granted role and tenant isolation unchanged.
+
+**UX-G084: DONE after scoped acceptance.**
