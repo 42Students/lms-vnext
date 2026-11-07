@@ -12,6 +12,7 @@ import { friendlyReference } from "@/lib/friendly-error";
 import { GracefulScreen } from "@/components/public/graceful-screen";
 import { createRequestId } from "@/lib/request-id";
 import { Heading } from "@/components/ui/heading";
+import { RootErrorReference } from "@/components/public/root-error-reference";
 import { ButtonLink } from "@/components/ui/button-link";
 
 export function isStaleChunkError(error: Error): boolean {
@@ -103,10 +104,10 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", l
       }catch{/* The fallback must not trust a malformed referrer. */}
       window.location.assign(new URL("/",window.location.origin).href);
     };
-    return <main role="alert" className="flex min-h-dvh w-full min-w-0 flex-col items-center justify-center bg-[color:var(--lms-neutral-50)] p-8 text-center">
-      <Heading level={1} className="m-0 text-[64px] leading-none text-[color:var(--lms-primary-hover)]">500</Heading>
+    return <main role="alert" data-root-error="true" aria-labelledby="root-error-status" aria-describedby="root-error-guidance" className="flex min-h-dvh w-full min-w-0 flex-col items-center justify-center bg-[color:var(--lms-neutral-50)] p-8 text-center">
+      <Heading level={1} id="root-error-status" className="m-0 text-[64px] leading-none text-[color:var(--lms-primary-hover)]">500</Heading>
       <Heading level={2} size="2xl" className="mb-2 mt-4 leading-[32px] text-[color:var(--lms-neutral-900)]">Server Error</Heading>
-      <p className="mb-8 max-w-[420px] text-sm leading-[22px] text-[color:var(--lms-text-muted)]">
+      <p id="root-error-guidance" className="mb-8 max-w-[420px] text-sm leading-[22px] text-[color:var(--lms-text-muted)]">
         Something went wrong on our side. Please try again in a moment.
       </p>
       <div className="flex min-w-0 flex-wrap justify-center gap-3">
@@ -121,7 +122,7 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", l
       <Button type="button" variant="link" onClick={reset} className="mt-4 min-h-11 text-sm">
         Try again
       </Button>
-      {reference?<p className="mt-4 break-words text-xs text-[color:var(--lms-text-muted)]">{reference}</p>:null}
+      {reference ? <RootErrorReference reference={reference} /> : null}
     </main>;
   }
   return <GracefulScreen title={title} message={message} retry={reset}
