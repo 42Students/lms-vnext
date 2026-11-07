@@ -2,6 +2,7 @@
 import { PageHeader } from "@/components/ui/page-header";
 
 import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button-link";
 export default function LearnerProjectsError({
   reset,
 }: {
@@ -15,7 +16,8 @@ export default function LearnerProjectsError({
         Check your connection, then try again. Your project data has not been changed.
       </p>
       <div className="mt-4 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-3">
-        <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>Retry</Button>
+        <Button type="button" className="min-h-11 w-full sm:w-auto" onClick={reset}>Retry</Button>
+        <ButtonLink variant="secondary" href="/learn/home" className="w-full sm:w-auto">Learner home</ButtonLink>
       </div>
     </section>
   );
