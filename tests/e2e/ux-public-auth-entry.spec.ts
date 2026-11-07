@@ -62,14 +62,14 @@ for (const viewport of viewports) {
       const code = page.getByRole("textbox", { name: "Verification code" });
       await code.fill("123456");
       await page.getByRole("button", { name: "Verify and sign in" }).click();
-      await expect(page.getByRole("alert")).toContainText("Incorrect or expired code");
+      await expect(page.locator("#roll-login-error")).toContainText("Incorrect or expired code");
       await expect(code).toHaveValue("123456");
       expect(started).toBe(1);
       expect(verified).toBe(1);
       await expect(page.getByRole("link", { name: "Sign in with phone or email" })).toHaveAttribute("href", "/login");
       await page.getByRole("button", { name: "Start again or request another code" }).click();
       await expect(roll).toBeVisible();
-      await expect(page.getByRole("alert")).toHaveCount(0);
+      await expect(page.locator("#roll-login-error")).toHaveCount(0);
       await expectNoOverflow(page);
       expect(exceptions).toEqual([]);
     });
@@ -89,7 +89,7 @@ for (const viewport of viewports) {
       const roll = page.getByRole("textbox", { name: "Roll number" });
       await roll.fill("TEST-ROLL-9");
       await page.getByRole("button", { name: "Send verification code" }).click();
-      await expect(page.getByRole("alert")).toContainText(/sign-in method is unavailable/i);
+      await expect(page.locator("#roll-login-error")).toContainText(/sign-in method is unavailable/i);
       await expect(roll).toHaveValue("TEST-ROLL-9");
       await expect(page.getByRole("button", { name: "Send verification code" })).toBeEnabled();
       expect(calls).toBe(1);
@@ -141,7 +141,7 @@ for (const viewport of viewports) {
         await route.fulfill({ status: 400, body: "{}" });
       });
       await page.goto("/verify-email#token=invalid-token");
-      await expect(page.getByRole("alert")).toContainText(/invalid, expired or unavailable/);
+      await expect(page.locator('main [role="alert"]')).toContainText(/invalid, expired or unavailable/);
       await expect(page.getByRole("link", { name: "Back to sign in" }))
         .toHaveAttribute("href", "/login");
       await expect(page).toHaveURL(/\/verify-email$/);
@@ -162,7 +162,7 @@ test("UX-G124 server-declined proof never displays raw errors or redirects autom
     });
     await page.goto("/verify-email#token=" + verificationToken);
     await page.getByRole("button", { name: "Confirm email ownership" }).click();
-    await expect(page.getByRole("alert")).toContainText(/invalid, expired or unavailable/);
+    await expect(page.locator('main [role="alert"]')).toContainText(/invalid, expired or unavailable/);
     await expect(page.getByRole("button", { name: "Confirm email ownership" })).toHaveCount(0);
     await expect(page).toHaveURL(/\/verify-email$/);
     expect(await page.locator("body").innerText()).not.toContain("SESSION_MISSING");
