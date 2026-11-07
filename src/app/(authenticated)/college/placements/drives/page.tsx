@@ -80,6 +80,9 @@ export default async function CollegeDrivesPage({ searchParams }: {
   // Even an empty filtered roster has one logical page. An old bookmark
   // pointing at page 5 must never announce "Page 5 of 1" with no recovery.
   if(query.page>data.totalPages)redirect(driveListHref({...query,page:data.totalPages}));
+  const unfiltered = query.status === "ALL" && !query.q && !query.seasonId &&
+    !query.relationshipId && !query.deadlineAfter && !query.deadlineBefore &&
+    query.minimumApplicants === undefined;
   const formatter = createDateFormatter("en-IN", {day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata"});
   const expired=(job:(typeof data.items)[number])=>Boolean(job.applicationDeadline&&job.applicationDeadline.getTime()<Date.now());
   const jobStatus=(job:(typeof data.items)[number])=>{
@@ -201,10 +204,9 @@ export default async function CollegeDrivesPage({ searchParams }: {
       <div className="hidden md:block"><DataTable caption="College placement jobs" columns={columns} rows={data.items} mobileMode="scroll"
         getRowKey={item=>item.id}
         empty={<div className="min-w-0 space-y-2 text-sm text-body" role="status">
-          <p>{data.total===0 && query.status==="ALL" && !query.q && !query.seasonId && !query.relationshipId
+          <p>{data.total===0 && unfiltered
             ?"No drives yet":data.total===0?"No drives match these filters in this college.":"No rows on this page. Choose an earlier page."}</p>
-          {data.total===0 && query.status==="ALL" && !query.q &&
-            !query.seasonId && !query.relationshipId?
+          {data.total===0 && unfiltered?
             <p>Create the first job for this college.</p>:null}
           {data.total===0?<TextLink href="/college/placements/new"
             className="inline-flex min-h-11 items-center md:min-h-9">Create Job</TextLink>:null}
@@ -239,10 +241,13 @@ export default async function CollegeDrivesPage({ searchParams }: {
           currentDeadline={item.applicationDeadline?.toISOString()??null}/>:null}
         </div>
        </article>)}
-       {data.items.length===0?<p role="status" className="p-4 text-sm text-body">
-        {data.total===0&&query.status==="ALL"&&!query.q?"No drives yet":"No drives match these filters"}
-        {" "}<TextLink href="/college/placements/new">Create Job</TextLink>
-       </p>:null}
+       {data.items.length===0?<div role="status" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-4 text-sm text-body">
+        <p>{data.total===0&&unfiltered?"No drives yet. Create the first job for this college.":"No drives match the current filters in this college."}</p>
+        <div className="flex flex-wrap gap-3">
+          {!unfiltered?<TextLink href="/college/placements/drives" className="inline-flex min-h-11 items-center">Clear filters</TextLink>:null}
+          <TextLink href="/college/placements/new" className="inline-flex min-h-11 items-center">Create Job</TextLink>
+        </div>
+       </div>:null}
       </div>
     </section>
     <nav aria-label="Drive pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
