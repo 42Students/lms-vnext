@@ -21275,10 +21275,10 @@
         "type": "OUTBOUND",
         "area": "academics",
         "title": "Academics · Outbound copy and exports (part 1)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-academics-exports-2026-11-07",
         "pickedAt": "2026-11-07T16:56:57.390Z",
-        "startedAt": null,
+        "startedAt": "2026-11-07T16:57:03.808Z",
         "completedAt": null,
         "sourceFiles": [
           "src/modules/academics/college-academic-export-model.ts",
