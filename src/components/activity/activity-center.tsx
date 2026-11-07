@@ -394,8 +394,8 @@ export function ActivityCenter({
 
       <Disclosure title="Raw forensic table · current page" className="min-w-0">
        <p className="text-xs text-muted-foreground">One representative event appears per activity group. IP and user-agent source values were not retained. Use individual details for full audit records.</p>
-       <div className="mt-3 w-full overflow-x-auto" role="region" tabIndex={0}
-        aria-label="Raw forensic activity table, scroll horizontally for all columns"><Table className="min-w-[960px]">
+       <div className="mt-3 w-full min-w-0"><Table scrollLabel="Raw forensic activity table, scroll horizontally for all columns"
+        className="min-w-[960px]">
         <thead><tr>{RAW_AUDIT_FORENSIC_HEADERS.map(label=>
          <th scope="col" key={label} className="border-b border-border px-3 py-2">{label}</th>)}</tr></thead>
         <tbody>{groups.map(group=>{
