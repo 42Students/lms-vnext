@@ -27,6 +27,22 @@ for (const viewport of [
     await programs.getByRole("button", { name: "Retry" }).click();
     await expect(programs.getByRole("status")).toContainText("Program retry count: 1");
 
+    const tenant = page.getByRole("region", {name:"Tenant Setup recovery"});
+    await expect(tenant.getByRole("link", {name:"Tenant directory"}))
+      .toHaveAttribute("href","/admin/tenants/directory");
+    await tenant.getByRole("button", {name:"Retry"}).click();
+    await expect(tenant.getByRole("status")).toContainText("Tenant retry count: 1");
+    const videos = page.getByRole("region", {name:"Video directory recovery"});
+    await expect(videos.getByRole("link", {name:"Open lessons"}))
+      .toHaveAttribute("href","/admin/lessons");
+    await videos.getByRole("button", {name:"Retry"}).click();
+    await expect(videos.getByRole("status")).toContainText("Video retry count: 1");
+    const drives = page.getByRole("region", {name:"College drives recovery"});
+    await expect(drives.getByRole("link", {name:"Placement overview"}))
+      .toHaveAttribute("href","/college/placements");
+    await drives.getByRole("button", {name:"Retry"}).click();
+    await expect(drives.getByRole("status")).toContainText("Drives retry count: 1");
+
     for (const button of [
       departments.getByRole("button", { name: "Retry" }),
       programs.getByRole("button", { name: "Retry" }),
