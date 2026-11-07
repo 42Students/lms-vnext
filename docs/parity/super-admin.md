@@ -1225,3 +1225,8 @@ Attached to **existing tenant/module, people, interview and operational families
 Newly source-inspected descendants include `src/pages/superadmin/sections/{Faculty,FacultyAssignment,Students,Departments,Courses,CourseProgress,Lessons,LessonContent,AdminResources,Quizzes,SemesterManagement,SemesterCourseMapping,Attendance,Batches,BatchPromotion,Classes,LectureHalls,Companies,HiringDashboard,Jobs,PeopleDirectory,Programs}.js` (legacy FE `9d56bb7a347b06f242ef615c19fdc298f83329e0`). See `docs/audit/legacy-dev-census/2026-10-28-wave4-6-reconciliation.md`.
 
 Each is a conditional nested section within established Super Admin/admin page families. Preserve role/college scope and unique triggers for editors, import/export, schedules, attendance, grading, project/placement related navigation, tenant controls, failure/retry and destructive save states. Reconcile against existing consolidated vNext routes and shared administrative components before acceptance; no one-to-one route/file equivalence is assumed. Follow the already identified `ModuleAccess.js` inheritance/history/permission contract separately. No DB/browser tests or greens were asserted by this source inspection.
+
+
+## UX-G168 — Super Admin export readability and safety (2026-11-07)
+
+[UX-G168 export CSV alignment, Unicode formula safety and download-error review](pages/shared/UX-G168-admin-exports.md). Per-export access controls and selected tenant remain server-authoritative; see `docs/tracker.json#uxReview.groups` for closure status.
