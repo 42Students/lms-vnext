@@ -14509,10 +14509,10 @@
         "type": "JOURNEY",
         "area": "campaign-unsubscribe",
         "title": "Campaign Unsubscribe · Token → Confirmed (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-campaign-unsubscribe-ux-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/campaign-unsubscribe/[token]/error.tsx",
@@ -14531,7 +14531,8 @@
           "PAGE-0503"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Ownership: complete /campaign-unsubscribe/[token] and /confirmed UX, including loading/error, accessibility, mobile and failure states. Do not mark DONE without executed tests and desktop/mobile browser evidence."
       },
       {
         "id": "UX-G028",
