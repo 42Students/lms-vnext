@@ -2,7 +2,6 @@ import { Pagination } from "@/components/ui/pagination";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import { tpoCrmTablesReady } from "@/modules/placements/tpo-crm-storage-readiness";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -32,7 +31,7 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
     (typeof raw.scope==="string"&&!FOLLOWUP_SCOPES.some(value=>value===raw.scope)) ||
     (typeof raw.window==="string"&&!FOLLOWUP_WINDOWS.some(value=>value===raw.window)) ||
     (typeof raw.q==="string"&&raw.q.trim().length>100) ||
-    (typeof raw.page==="string"&&!/^[1-9]\\d{0,3}$/.test(raw.page))) {
+    (typeof raw.page==="string"&&!/^[1-9]\d{0,3}$/.test(raw.page))) {
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Follow-ups due" />
       <Alert tone="error">Invalid follow-up filters. <TextLink href="/tpo/follow-ups" className="inline-flex min-h-11 items-center font-semibold md:min-h-9">Clear filters</TextLink></Alert>
