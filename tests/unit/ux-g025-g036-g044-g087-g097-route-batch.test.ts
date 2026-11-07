@@ -17,9 +17,7 @@ describe("Five-group development acceptance fixture isolation", () => {
 describe("UX-G025 Super Admin setup/content routing and denial safety", () => {
   it("normalizes only supported legacy content filters and preserves lesson search", () => {
     const videos = route("admin/videos/page.tsx");
-    expect(videos).toContain("legacySuperAdminLessonContentHref(raw)");
-    expect(videos).toContain('search.set("lessonSearch", lessonSearch.trim())');
-    expect(videos).toContain('search.set("lessonPage", lessonPage)');
+    expect(videos).toContain("legacySuperAdminContentHandoffHref(raw)");
     expect(videos).not.toContain("for(const [name,value] of Object.entries(raw))");
   });
   it("does not misrepresent an authorization denial as a transient tenant outage", () => {
@@ -57,6 +55,11 @@ describe("UX-G036 college placements page and drive guard", () => {
     const home = route("college/placements/page.tsx");
     expect(home).toContain('Browse all drives ({all?.total??"—"})');
     expect(home).not.toContain('draft&&closed?draft.total+closed.total:"—"} closed / draft');
+    const directory = route("college/placements/drives/page.tsx");
+    expect(directory).toContain("if(query.page>data.totalPages)redirect");
+    expect(directory).toContain('data.total===0&&unfiltered?"No drives yet.');
+    expect(directory).toContain("No drives match the current filters in this college.");
+    expect(directory).toContain('query.minimumApplicants === undefined');
   });
   it("provides a safe alternate path if a college drive read fails", () => {
     const fallback = route("college/placements/drives/error.tsx");
@@ -99,6 +102,7 @@ describe("UX-G087 Super Admin legacy page recovery", () => {
     const crosswalk = route("superadmin/[...legacy]/page.tsx");
     expect(crosswalk).toContain("requirePermission(context,");
     expect(crosswalk).toContain("getProjectAdminCollegeId(context)");
+    expect(crosswalk).toContain("legacySuperAdminContentHandoffHref(query)");
   });
   it("labels the root handoff with its actual destination", () => {
     expect(route("superadmin/loading.tsx")).toContain("Opening Super Admin dashboard");
