@@ -1,0 +1,61 @@
+name: UX-G047 G083 G084 recruiter journeys acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/app/company-share/**'
+      - 'src/app/recruiter-invite/**'
+      - 'src/app/(authenticated)/recruiter-invitations/**'
+      - 'src/components/tpo/recruiter-invite-landing.tsx'
+      - 'src/components/hr/recruiter-pending-invitations.tsx'
+      - 'tests/ux-g047-g083-g084-contract.test.mjs'
+      - 'tests/unit/ux-g083-recruiter-invitations-server.test.tsx'
+      - 'tests/e2e/ux-g047-g083-g084-recruiter-journeys.spec.ts'
+      - '.github/workflows/ux-recruiter-public-groups-acceptance.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  recruiter-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Lint UI and all new tests
+        run: |
+          npx eslint 'src/app/company-share/[token]/page.tsx' 'src/app/recruiter-invite/[token]/page.tsx' 'src/app/(authenticated)/recruiter-invitations' src/components/tpo/recruiter-invite-landing.tsx src/components/hr/recruiter-pending-invitations.tsx tests/e2e/ux-g047-g083-g084-recruiter-journeys.spec.ts tests/unit/ux-g083-recruiter-invitations-server.test.tsx
+      - name: Source security and UX invariants
+        run: node --test tests/ux-g047-g083-g084-contract.test.mjs
+      - name: Existing privacy, consent, role and server-page regressions
+        run: |
+          npx vitest run \
+            tests/unit/ux-g083-recruiter-invitations-server.test.tsx \
+            tests/unit/chat16-public-company-share-page-16.test.ts \
+            tests/unit/security-company-share-code-form.test.ts \
+            tests/unit/company-share-code-live-grant-guard.test.ts \
+            tests/unit/company-share-mobile-cards.test.ts \
+            tests/unit/UX-recruiter-invite-token-01.test.ts
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop/mobile recruiter browser acceptance
+        run: npx playwright test tests/e2e/ux-g047-g083-g084-recruiter-journeys.spec.ts --project=chromium --reporter=line
+      - name: Preserve desktop/mobile screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-g047-g083-g084-browser-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: warn
+          retention-days: 14
