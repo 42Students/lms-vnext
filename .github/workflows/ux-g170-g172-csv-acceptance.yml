@@ -47,10 +47,10 @@ jobs:
       E2E_AUTH_ENABLED: "true"
       APP_ENV: development
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Verify actual checkout matches triggering commit
         run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: npm
@@ -88,7 +88,7 @@ jobs:
           node -e 'const s=require("./ux-g170-g172-browser-results.json").stats; if(s.expected!==5||s.unexpected!==0||s.flaky!==0||s.skipped!==0){console.error("CSV UX browser proof failed:",s);process.exit(1)};console.log("Browser proof:",s)'
       - name: Preserve real screenshot and download evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: ux-g170-g172-export-browser-evidence
           path: |

@@ -41,8 +41,8 @@ jobs:
       NEXT_TELEMETRY_DISABLED: "1"
       UX_FIVE_ROUTE_FIXTURE: "1"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: npm
@@ -108,7 +108,7 @@ jobs:
           node -e 'const x=require("./ux-five-route-results.json").stats;console.log(x);if(x.expected!==4||x.unexpected!==0||x.flaky!==0||x.skipped!==0)process.exit(1)'
       - name: Save desktop/mobile screenshots and logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: ux-five-route-batch-evidence
           path: |
