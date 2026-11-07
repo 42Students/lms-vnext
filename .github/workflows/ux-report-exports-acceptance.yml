@@ -40,6 +40,10 @@ jobs:
       TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
       E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
       E2E_AUTH_ENABLED: "true"
+      # The isolated db:e2e:prepare step applies the checked-in DB10 migrations
+      # before the browser exercises these operator-gated report endpoints.
+      DB10_ANNOUNCEMENTS_READY: DB10_VERIFIED
+      DB10_TRACKER_READY: DB10_VERIFIED
       APP_ENV: development
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
