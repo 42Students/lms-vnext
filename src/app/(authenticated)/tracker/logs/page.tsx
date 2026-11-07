@@ -158,7 +158,7 @@ export default async function TrackerLogsPage({
       {newSinceLastVisit > 0 ? (
         <Alert tone="info">{newSinceLastVisit}{items.length === 40 ? "+" : ""} new tracked error {newSinceLastVisit === 1 ? "signature" : "signatures"} since your last review.</Alert>
       ) : null}
-      <nav aria-label="Log tools" className="flex flex-wrap items-center gap-3 text-sm">
+      <nav aria-label="Log tools" className="flex min-w-0 flex-wrap items-center gap-3 text-sm [&_a]:min-h-11 [&_a]:inline-flex [&_a]:items-center">
         <TextLink href="#known-errors">Known errors</TextLink>
         <TextLink href="#telegram-alert-tools">Alert digest</TextLink>
       </nav>
