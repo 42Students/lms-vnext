@@ -19,6 +19,7 @@ type Row={notification:{id:string;title:string;body:string;actionHref:string|nul
 export function LearnerNotificationBell(){
  const [items,setItems]=useState<Row[]>([]);
  const [due,setDue]=useState<Due[]>([]);
+ const [dueError,setDueError]=useState(false);
  const [open,setOpen]=useState(false);
  const [mobile,setMobile]=useState(false);
  const [error,setError]=useState("");
@@ -38,8 +39,14 @@ export function LearnerNotificationBell(){
  const refreshDue=useCallback(async()=>{
   try{
    const payload=await apiFetch<{notices?:Due[]}>("/api/courses/learner/due-notices",{cache:"no-store"});
-   setDue(Array.isArray(payload.notices)?payload.notices:[]);
-  }catch{ /* Existing personal notification inbox remains available. */ }
+   if(!Array.isArray(payload.notices))throw new Error("Invalid deadline response");
+   setDue(payload.notices);
+   setDueError(false);
+  }catch{
+   // Do not present deadlines from an earlier, potentially stale request.
+   setDue([]);
+   setDueError(true);
+  }
  },[]);
  const refresh=useCallback(async()=>{
   if(refreshInFlight.current)return;
@@ -91,13 +98,14 @@ export function LearnerNotificationBell(){
    </TextLink>
  </>;
  const panelBody=<>
-   {error?<div className="min-w-0 space-y-2 border-b border-border pb-3"><InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>
+   {error?<div className="min-w-0 space-y-2 border-b border-border pb-3"><InlineNotice tone="error" message={error}/>
     <Button variant="ghost" type="button" className="w-full min-h-11 md:w-auto text-sm text-primary-text underline" loading={loading} disabled={loading} onClick={()=>void refresh()}>Retry notifications</Button>
    </div>:null}
    {loading&&!everLoaded?<div data-learner-notification-state="" role="status"><GracefulPageLoading/></div>:null}
    {error&&everLoaded?<p className="mt-2 text-xs text-muted-foreground leading-[20px]">Showing the last successful notifications.</p>:null}
    {loading&&everLoaded?<p role="status" className="px-4 py-2 text-xs text-muted-foreground leading-[20px]">Refreshing notifications…</p>:null}
    {items.length===0&&!error&&!loading?<TopbarNotificationEmpty title="No notifications yet"/>:null}
+   {dueError?<p role="status" className="mt-3 text-xs leading-5 text-muted-foreground">Course deadlines could not be refreshed. <TextLink href="/learn/courses" onClick={()=>setOpen(false)}>Open courses</TextLink> to check current due dates.</p>:null}
    {due.length>0?<section aria-labelledby="learner-bell-due-heading" className="mt-3">
     <Heading level={3} size="sm" id="learner-bell-due-heading" className="text-[var(--lms-heading)]">Assignments due within 48 hours</Heading>
     <ul className="mt-2 space-y-2">
@@ -111,6 +119,7 @@ export function LearnerNotificationBell(){
      Live Course deadlines, not emailed or marked as read.
     </p>
    </section>:null}
+   {items.length===40?<p className="mt-2 text-xs leading-5 text-muted-foreground">The unread badge counts only the latest 40 notifications. See all notifications for full history.</p>:null}
    <ScrollCue axis="y" label="Learner notifications" className="mt-3 min-w-0" viewportClassName="max-h-[55vh]"><ul role="list" aria-label="Recent learner notifications" className="divide-y divide-border">
     {items.slice(0,8).map(row=>{
      const target=learnerNotificationTarget(row.notification.actionHref)??"/learn/notifications";
@@ -128,7 +137,7 @@ export function LearnerNotificationBell(){
 
  </>;
  return <div className="relative shrink-0" ref={root}>
-  <Button variant="secondary" size="icon" ref={trigger} type="button" aria-label={count>0?"Notifications, "+count+" unread":"Notifications, no unread items"}
+  <Button variant="secondary" size="icon" ref={trigger} type="button" aria-label={count>0?"Notifications, "+count+" unread in recent items":"Notifications, no unread in recent items"}
     aria-haspopup="dialog" aria-expanded={open} aria-controls={open?(mobile?"lms-learner-mobile-notifications":"lms-learner-notifications"):undefined}
     onClick={()=>{setOpen(value=>!value);if(!open){void refresh();void refreshDue();}}}
     className="relative inline-flex h-11 w-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface hover:bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] transition-[background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none">
