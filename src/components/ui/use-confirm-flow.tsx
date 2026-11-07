@@ -12,7 +12,8 @@ export function useConfirmFlow() {
     return new Promise<boolean>(resolve => {
       resolver.current?.(false);
       resolver.current = resolve;
-      setMessage(prompt);
+      // A blank prompt would create an inaccessible confirmation dialog title.
+      setMessage(prompt.trim() || "Confirm this action?");
     });
   }
   function finish(approved: boolean) {
