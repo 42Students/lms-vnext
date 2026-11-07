@@ -9,6 +9,7 @@ on:
       - src/components/hr/**
       - tests/unit/UX-hr-five-groups-batch.test.tsx
       - tests/e2e/ux-hr-five-groups-anonymous.spec.ts
+      - tests/e2e/ux-hr-five-groups-authorized.spec.ts
       - .github/workflows/ux-hr-five-groups-acceptance.yml
 
 concurrency:
@@ -49,6 +50,59 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ux-hr-five-groups-viewport-evidence
+          path: |
+            test-results/ux-hr-five-groups/
+            playwright-report/
+          if-no-files-found: ignore
+
+  authorized-recruiter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: "true"
+      APP_ENV: development
+      PLATFORM_HOSTS: localhost,127.0.0.1
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Seed disposable PG17 and verified recruiter/learner identities
+        run: npm run db:e2e:prepare
+      - name: Generate per-run first-party E2E auth keys
+        shell: bash
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Authorised recruiter responsive journeys and learner denials
+        run: npx playwright test tests/e2e/ux-hr-five-groups-authorized.spec.ts --project=chromium --reporter=line
+      - name: Keep real-browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-hr-five-groups-authorized-evidence
           path: |
             test-results/ux-hr-five-groups/
             playwright-report/
