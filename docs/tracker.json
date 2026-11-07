@@ -15709,11 +15709,11 @@
         "type": "JOURNEY",
         "area": "company-share",
         "title": "Company Share · Token (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-recruiter-public-batch-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07T16:47:00Z",
         "sourceFiles": [
           "src/app/company-share/[token]/error.tsx",
           "src/app/company-share/[token]/loading.tsx",
@@ -15727,8 +15727,47 @@
           "PAGE-0506"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "End-to-end UX group acceptance: scoped fixes, negative and positive regression, desktop/mobile browser, privacy and security review; only DONE after green exact-SHA CI and documented screenshots."
+        "evidence": [
+          {
+            "commitSha": "5db9b53ce1c7fcd9cea96412812c25a51c378e21",
+            "parityDoc": "docs/parity/ux-g047-company-share.md",
+            "tests": [
+              {
+                "command": "npx eslint scoped share/recruiter UI and browser files",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392314518 (Lint UI and all new tests: success)"
+              },
+              {
+                "command": "node --test tests/ux-g047-g083-g084-contract.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392314518 (Source security and UX invariants: success)"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g083-recruiter-invitations-server.test.tsx tests/unit/chat16-public-company-share-page-16.test.ts tests/unit/security-company-share-code-form.test.ts tests/unit/company-share-code-live-grant-guard.test.ts tests/unit/company-share-mobile-cards.test.ts tests/unit/UX-recruiter-invite-token-01.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392314518 (Existing privacy, consent, role and server-page regressions: success)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g047-g083-g084-recruiter-journeys.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392314518 (4 passed; group-specific invalid/ready/pending checks green)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392314518/artifacts/13581663762 (company-share-invalid-desktop.png, 1280x800 reviewed)"
+              },
+              {
+                "viewport": "mobile",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392314518/artifacts/13581663762 (company-share-invalid-mobile.png, 320x720 reviewed)"
+              }
+            ],
+            "regressionReview": "Existing code proof, same-origin POST, selected-column rendering, expiring grants and CSV/download policies preserved; existing CODE_REQUIRED, READY, UNAVAILABLE and failed-provider SSR tests passed. Denied browser route shows no applicant data.",
+            "securityReview": "Private token-bearing share uses explicit dynamic noindex/nofollow/noarchive/no-referrer. No cross-site request/recipient input bypass, code challenge remains session+tenant scoped, selected columns/short-lived resume authorization unchanged."
+          }
+        ],
+        "notes": "Private company applicant share end-to-end UX verified at accepted SHA; desktop/mobile screenshots manually inspected; source unchanged on latest main. See docs/parity/ux-g047-company-share.md"
       },
       {
         "id": "UX-G048",
@@ -17628,11 +17667,11 @@
         "type": "JOURNEY",
         "area": "recruiter-invite",
         "title": "Recruiter Invite · Token (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-recruiter-public-batch-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07T16:47:00Z",
         "sourceFiles": [
           "src/app/recruiter-invite/[token]/error.tsx",
           "src/app/recruiter-invite/[token]/loading.tsx",
@@ -17644,8 +17683,47 @@
           "PAGE-0518"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "End-to-end UX group acceptance: scoped fixes, negative and positive regression, desktop/mobile browser, privacy and security review; only DONE after green exact-SHA CI and documented screenshots."
+        "evidence": [
+          {
+            "commitSha": "5db9b53ce1c7fcd9cea96412812c25a51c378e21",
+            "parityDoc": "docs/parity/ux-g084-recruiter-invite.md",
+            "tests": [
+              {
+                "command": "npx eslint scoped share/recruiter UI and browser files",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392314518 (Lint UI and all new tests: success)"
+              },
+              {
+                "command": "node --test tests/ux-g047-g083-g084-contract.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392314518 (Source security and UX invariants: success)"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g083-recruiter-invitations-server.test.tsx tests/unit/chat16-public-company-share-page-16.test.ts tests/unit/security-company-share-code-form.test.ts tests/unit/company-share-code-live-grant-guard.test.ts tests/unit/company-share-mobile-cards.test.ts tests/unit/UX-recruiter-invite-token-01.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392314518 (Existing privacy, consent, role and server-page regressions: success)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g047-g083-g084-recruiter-journeys.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392314518 (4 passed; group-specific invalid/ready/pending checks green)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392314518/artifacts/13581663762 (recruiter-ready-desktop.png, recruiter-pending-consent-desktop.png, 1280x800 reviewed)"
+              },
+              {
+                "viewport": "mobile",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392314518/artifacts/13581663762 (recruiter-invalid-mobile.png, 320x720 reviewed)"
+              }
+            ],
+            "regressionReview": "Canonical recruiter invite preserves preview/OTP/decline/unsubscribe and accepted email/status matching; browser verified code auto focus and that pending consent never automatically grants access. HR legacy alias and public APIs untouched.",
+            "securityReview": "Force-dynamic noindex/nofollow/noarchive/no-referrer, no server grant from client alone, verified OTP email and server acknowledgement required. Rate limits and tenant/role checks unchanged."
+          }
+        ],
+        "notes": "Canonical recruiter invitation end-to-end UX verified at accepted SHA; desktop/mobile screenshots manually inspected; source unchanged on latest main. See docs/parity/ux-g084-recruiter-invite.md"
       },
       {
         "id": "UX-G085",
