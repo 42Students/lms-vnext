@@ -10,19 +10,24 @@ import { TextLink } from "@/components/ui/text-link";
 import { Heading } from "@/components/ui/heading";
 
 /** Shared error, forbidden, offline and maintenance screen; copy and recovery stay intact. */
-export function GracefulScreen({ title, message, homeHref = "/dashboard", retry, requestId, homeLabel = "Go to home" }: {
+export function GracefulScreen({ title, message, homeHref = "/dashboard", retry, requestId, homeLabel = "Go to home", alternateHref, alternateLabel }: {
   title: string;
   message: string;
   homeHref?: string;
   retry?: () => void;
   requestId?: string | null;
   homeLabel?: string;
+  /** Optional second, safe same-origin recovery path on a permission screen. */
+  alternateHref?: string;
+  alternateLabel?: string;
 }) {
   const reference = friendlyReference(requestId);
   // /dashboard is the central, permission-aware home. Explicit homepage
   // links supplied by public 404 callers must not discard signed-in role scope.
   const destination = homeHref.startsWith("/")&&!homeHref.startsWith("//")&&homeHref!=="/"
     ? homeHref : "/dashboard";
+  const alternateDestination = alternateHref?.startsWith("/") && !alternateHref.startsWith("//") && alternateHref !== "/"
+    ? alternateHref : null;
   const legacyStatus = title === "Page not found" || title === "Server Error";
   const statusCode = title === "Page not found" ? 404 : title === "Server Error" ? 500 : null;
   function goBack() {
@@ -73,6 +78,7 @@ export function GracefulScreen({ title, message, homeHref = "/dashboard", retry,
             <TextLink variant="bare" href={destination} className={styles["primary"]}>
               {statusCode===500?"Go to Home":homeLabel}
             </TextLink>
+            {alternateDestination && alternateLabel ? <TextLink variant="bare" href={alternateDestination} className={styles["secondary"]}>{alternateLabel}</TextLink> : null}
             {retry ? <Button type="button" onClick={retry} className={styles["secondary"]}>Try again</Button> : null}
           </div>
           {legacyStatus && reference ? <p className={styles["reference"]}>Reference: {reference}</p> : null}
