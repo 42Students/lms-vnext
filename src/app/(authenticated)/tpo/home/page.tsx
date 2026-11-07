@@ -64,6 +64,14 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
   <PageHeader title="Placements is switched off for this college" />
   <p className="mt-2 text-sm text-body leading-[22px]">Placement work is not available until your college enables the Placements module.</p>
  </div>;
+ if(Array.isArray(routeQuery.seasonId)||Array.isArray(routeQuery.team)){
+  return <div className="min-w-0 space-y-4 md:space-y-6">
+   <PageHeader title="Home" />
+   <ErrorState title="Invalid placement home filters"
+    description="This link provided the same filter more than once. Choose one value before opening a season or team view."
+    action={<ButtonLink href="/tpo/home" variant="secondary">Clear home filters</ButtonLink>}/>
+  </div>;
+ }
  const collegeId=ctx.membership!.collegeId;
  const calendarNow=new Date();
  const weekEnd=new Date(calendarNow.getTime()+7*86400000);
