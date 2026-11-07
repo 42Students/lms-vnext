@@ -27,6 +27,8 @@ describe("legacy Super Admin lesson-content links",()=>{
   const delivery="11111111-1111-4111-8111-111111111111";
   expect(legacySuperAdminLessonContentHref({type:"live-class",classId:delivery}))
    .toBe("/admin/live-classes?deliveryId="+delivery+"&scope=SECTION");
+  expect(legacySuperAdminLessonContentHref({type:"live_class",classId:delivery}))
+   .toBe("/admin/live-classes?deliveryId="+delivery+"&scope=SECTION");
   expect(legacySuperAdminLessonContentHref({type:"video",classId:"17"}))
    .toBe("/admin/videos");
  });
