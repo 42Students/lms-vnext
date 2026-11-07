@@ -27,7 +27,7 @@ jobs:
           ls -lh out >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload image tarballs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: vnext-images-${{ github.sha }}
           path: out/*.tar

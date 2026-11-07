@@ -59,7 +59,7 @@ jobs:
         run: npx playwright test --project=chromium tests/e2e/mentor-legacy-calendar-visual.spec.ts tests/e2e/w03-mentor-surfaces.spec.ts
       - name: Archive safe browser evidence and failure traces
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mentor-meeting-capability-evidence
           path: |

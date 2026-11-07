@@ -49,7 +49,7 @@ jobs:
 
       - name: Upload screenshots on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ui05-visual-parity-screenshots
           path: tests/ui-snapshots/ui05/
@@ -57,7 +57,7 @@ jobs:
 
       - name: Upload Playwright report on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ui05-playwright-report
           path: playwright-report/
