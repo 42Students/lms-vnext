@@ -12,7 +12,6 @@ import {
 import {
   loadCourseDisplayContentIfReady,
 } from "@/modules/courses/course-display-service";
-import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 
@@ -54,11 +53,10 @@ export default async function FacultyCoursePage({
         >
           ← My Teaching Courses
         </TextLink>
-        <Disclosure title="Course shortcuts" className="min-w-0">
-          <div className="flex min-w-0 flex-col gap-1 pb-2 md:flex-row md:flex-wrap md:gap-3">
+        <div aria-label="Course shortcuts" className="flex min-w-0 flex-wrap items-center gap-2 pb-2 md:gap-3">
           <TextLink
             href={`/teacher/courses/${deliveryId}/students`}
-            className="inline-flex min-h-11 items-center px-2 text-sm md:min-h-9"
+            className="inline-flex min-h-11 items-center px-3 text-sm md:min-h-9"
           >
             Students
           </TextLink>
@@ -72,8 +70,7 @@ export default async function FacultyCoursePage({
           >
             Discussions
           </ButtonLink>
-          </div>
-        </Disclosure>
+        </div>
       </nav>
       <FacultyCourseWorkspace
         workspace={workspace}
