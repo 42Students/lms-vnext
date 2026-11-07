@@ -7,6 +7,8 @@ import {isSameOriginRequest} from "@/auth/origin";
 
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:vi.fn()}));
 vi.mock("@/auth/origin",()=>({isSameOriginRequest:vi.fn()}));
+vi.mock("@/db/client",()=>({getDb:()=>({transaction:(fn:(tx:object)=>Promise<unknown>)=>fn({})})}));
+vi.mock("@/modules/permissions/persisted-actor",()=>({assertPersistedPlatformPermission:vi.fn(async()=>undefined)}));
 vi.mock("@/modules/admin-scope/service",async importOriginal=>{
  const original=await importOriginal<typeof import("@/modules/admin-scope/service")>();
  return {
@@ -17,7 +19,7 @@ vi.mock("@/modules/admin-scope/service",async importOriginal=>{
 });
 const org="11111111-1111-4111-8111-111111111111";
 const college="22222222-2222-4222-8222-222222222222";
-const request=(method:"POST"|"DELETE")=>new Request("https://platform.test/api/auth/admin-scope",{
+const request=(method:"GET"|"POST"|"DELETE")=>new Request("https://platform.test/api/auth/admin-scope",{
  method,headers:{"content-type":"application/json"},
  body:method==="POST"?JSON.stringify({kind:"college",collegeId:college}):undefined,
 });
@@ -45,7 +47,7 @@ describe("AUTH-handoff-17 strict Super Admin scope and private failures",()=>{
  });
  it("does not cache an expired-session GET failure or leak scope choices",async()=>{
   vi.mocked(getCurrentRequestContext).mockRejectedValueOnce(new Error("Unexpected session backend error"));
-  const response=await GET();
+  const response=await GET(request("GET"));
   expect(response.status).toBeGreaterThanOrEqual(400);
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   expect(await response.text()).not.toContain(college);
@@ -56,7 +58,7 @@ describe("AUTH-handoff-17 strict Super Admin scope and private failures",()=>{
   const response=await POST(request("POST"));
   expect(response.status).toBeGreaterThanOrEqual(400);
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
-  expect(response.cookies.getAll().every(cookie=>!cookie.name.includes("scope"))).toBe(true);
+  expect(!(response.headers.get("set-cookie")??"").includes("scope")).toBe(true);
  });
  it("AUTH-handoff-19 rejects oversized scope JSON without resolving or storing it",async()=>{
   const oversized=new Request("https://platform.test/api/auth/admin-scope",{
@@ -68,13 +70,13 @@ describe("AUTH-handoff-17 strict Super Admin scope and private failures",()=>{
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   expect(await response.json()).toEqual({error:"REQUEST_TOO_LARGE"});
   expect(resolveAdminScopeSelection).not.toHaveBeenCalled();
-  expect(response.cookies.getAll().length).toBe(0);
+  expect(response.headers.get("set-cookie")).toBeNull();
  });
  it("does not cache denied scope clearing after expired session",async()=>{
   vi.mocked(getCurrentRequestContext).mockRejectedValueOnce(new Error("Revoked identity session"));
   const response=await DELETE(request("DELETE"));
   expect(response.status).toBeGreaterThanOrEqual(400);
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
-  expect(response.cookies.getAll().every(cookie=>!cookie.name.includes("scope"))).toBe(true);
+  expect(!(response.headers.get("set-cookie")??"").includes("scope")).toBe(true);
  });
 });

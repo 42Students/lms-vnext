@@ -15,7 +15,7 @@ describe("HR-JOBS-API-119 read-only recruiter job portfolio",()=>{
   m.error.mockImplementation(()=>Response.json({error:"NOT_AVAILABLE"},{status:503}));
  });
  it("authorized empty portfolio has no fabricated drives and uses own caller identity",async()=>{
-  const response=await GET();
+  const response=await GET(new Request("https://lms.example/api/placements/recruiter/jobs"));
   expect(response.status).toBe(200);
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   expect(await response.json()).toEqual({jobs:[]});
@@ -25,20 +25,20 @@ describe("HR-JOBS-API-119 read-only recruiter job portfolio",()=>{
   const allowed=[{collegeId:"college-a",companyId:"company",
    job:{id:"own-job",title:"Engineer",status:"PUBLISHED"}}];
   m.jobs.mockResolvedValue(allowed);
-  const response=await GET();
+  const response=await GET(new Request("https://lms.example/api/placements/recruiter/jobs"));
   expect(await response.json()).toEqual({jobs:allowed});
   expect(m.jobs).toHaveBeenCalledTimes(1);
  });
  it("a revoked recruiter grant does not fall back to a global job listing",async()=>{
   m.jobs.mockRejectedValue(new Error("recruiter grant revoked"));
-  const response=await GET();
+  const response=await GET(new Request("https://lms.example/api/placements/recruiter/jobs"));
   expect(response.status).toBe(503);
   expect((await response.text())).not.toContain("recruiter grant revoked");
   expect(m.error).toHaveBeenCalledTimes(1);
  });
  it("authentication dependency failure cannot be mistaken for an empty company",async()=>{
   m.ctx.mockRejectedValue(new Error("identity backend timeout"));
-  const response=await GET();
+  const response=await GET(new Request("https://lms.example/api/placements/recruiter/jobs"));
   expect(response.status).toBe(503);
   expect(m.jobs).not.toHaveBeenCalled();
  });

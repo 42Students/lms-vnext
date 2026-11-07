@@ -40,7 +40,8 @@ describe("COL-placements-R01 college directory and export behavior",()=>{
   const company=source("src/app/api/college/companies/export/route.ts");
   const interview=source("src/app/api/college/placements/interviews/export/route.ts");
   expect(company).toContain("listCollegeCompanyDirectory(context,parsed.data,{exportAll:true}");
-  expect(company).toContain("const context=await getCurrentRequestContext()");
+  expect(company).toMatch(/export const GET\s*=\s*route\(\s*\{\s*auth:\s*"user"/);
+  expect(company).toContain("const context = __actor!");
   expect(interview).toContain("listCollegeInterviewDirectory(await getCurrentRequestContext()");
   expect(company).toContain("no-store");
   expect(interview).toContain("no-store");

@@ -57,10 +57,11 @@ describe("FAC-GRADE-HTTP-01 Faculty published gradebook CSV endpoint", () => {
     expect(stubs.gradebook).toHaveBeenCalledWith({ user: { id: "authorized-faculty" } }, { deliveryId });
   });
 
-  it("rejects invalid delivery identifiers before resolving context or generating CSV", async () => {
+  it("rejects invalid delivery identifiers (after the wrapper authenticates) before the service or CSV generation", async () => {
     const response = await get("not-a-uuid");
     expect(response.status).toBe(403);
-    expect(stubs.context).not.toHaveBeenCalled();
+    // Authentication now runs first (central wrapper); the identifier is rejected before any gradebook read.
+    expect(stubs.context).toHaveBeenCalledTimes(1);
     expect(stubs.gradebook).not.toHaveBeenCalled();
     expect(stubs.apiError).toHaveBeenCalledOnce();
   });

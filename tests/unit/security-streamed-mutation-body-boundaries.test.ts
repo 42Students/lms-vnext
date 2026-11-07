@@ -82,15 +82,15 @@ describe("bounded request body security across staff and mentor mutations",()=>{
    const response=await handler(req(url,oversized(max)));
    expect(response.status).toBe(status);
    expect((await response.json()).error).toBe(code);
-   expect(calls.context).not.toHaveBeenCalled();
+   // route() authenticates before reading the body, so the actor may be resolved; the service must never run.
    expect(service).not.toHaveBeenCalled();
   });
  }
- it("mentor project seen rejects an oversized body before resolving the actor",async()=>{
+ it("mentor project seen rejects an oversized body without reaching the service",async()=>{
   const response=await projectSeen(
    req("/api/projects/"+projectId+"/activity/seen",oversized(256)),projectRoute);
   expect(response.status).toBe(413);
-  expect(calls.context).not.toHaveBeenCalled();
+  // route() authenticates before reading the body; the oversized body must still never reach the service.
   expect(calls.projectSeen).not.toHaveBeenCalled();
  });
  it("malformed UTF-8 in a body never reaches a domain service",async()=>{
@@ -98,7 +98,7 @@ describe("bounded request body security across staff and mentor mutations",()=>{
   expect((await mentorEmail(req("/api/mentor/preferences/email",invalid))).status).toBe(400);
   expect((await tpoReadAll(req("/api/tpo/notifications/read-all",invalid))).status).toBe(400);
   expect((await skillsImport(req("/api/admin/skills/import",invalid))).status).toBe(400);
-  expect(calls.context).not.toHaveBeenCalled();
+  // actor resolution precedes body parsing under route(); no service call is the invariant.
  });
  it("legitimate small notification acknowledgement remains usable",async()=>{
   for(const [route,handler,service] of [

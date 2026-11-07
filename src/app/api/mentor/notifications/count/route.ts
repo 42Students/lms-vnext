@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
@@ -13,33 +14,32 @@ import {listOwnMentorSourceReceipts} from
   "@/modules/projects/mentor-notification-source-receipts-service";
 import {mentorAttentionReceiptKey,mentorAnnouncementReceiptKey}
   from "@/modules/projects/mentor-attention-read-model";
-import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 /** Bell count shares exactly the signed-in user's persisted read receipts.
  * A full-college notice count is not invented if the notice feed is paged.
  */
-async function handleGET(){
- try{
-  const context=await getCurrentRequestContext();
-  const inbox=await getMentorPersonalInbox(context,{view:"all"});
-  const access=await resolveOptionalModuleAccess(context);
-  const [alerts,notices]=await Promise.all([
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor }) => {
+    const context = __actor!;
+    const inbox=await getMentorPersonalInbox(context,{view:"all"});
+    const access=await resolveOptionalModuleAccess(context);
+    const [alerts,notices]=await Promise.all([
     access.projects.enabled?
       listMyMentorProjectAttention(context):Promise.resolve([]),
     announcementsRuntimeEnabled()?
       listVisibleAnnouncementsForMembership(context):Promise.resolve([]),
   ]);
-  const keys=[...alerts.map(mentorAttentionReceiptKey),
+    const keys=[...alerts.map(mentorAttentionReceiptKey),
     ...notices.map(mentorAnnouncementReceiptKey)];
-  const read=await listOwnMentorSourceReceipts(context,keys);
-  const sourceUnread=keys.filter(key=>!read.has(key)).length;
-  const count=inbox.unreadCount+sourceUnread;
-  return NextResponse.json({unreadCount:count,
+    const read=await listOwnMentorSourceReceipts(context,keys);
+    const sourceUnread=keys.filter(key=>!read.has(key)).length;
+    const count=inbox.unreadCount+sourceUnread;
+    return NextResponse.json({unreadCount:count,
     loadedSourceUnread:sourceUnread,
     /** Source notices return at most 100 newest at a time. */
     partial:announcementsRuntimeEnabled()&&notices.length>=100,
   },{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
+  },
+);

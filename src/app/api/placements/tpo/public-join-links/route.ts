@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -7,19 +8,18 @@ import {readTpoSettingsBody,TpoCommunicationBodyError} from "@/modules/placement
 import {
   changeTpoPublicJoinLink, TpoPublicJoinLinkError,
 } from "@/modules/placements/tpo-public-join-link-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-async function handlePOST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-  try {
-    const body = await readTpoSettingsBody(request);
-    const result = await changeTpoPublicJoinLink(await getCurrentRequestContext(), body);
-    return NextResponse.json(result, { status: 201, headers: { "Cache-Control": "no-store" } });
-  } catch (error) {
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const __ctx = __actor!;
+    try {
+const body = await readTpoSettingsBody(request);
+const result = await changeTpoPublicJoinLink(__ctx, body);
+return NextResponse.json(result, { status: 201, headers: { "Cache-Control": "no-store" } });
+} catch (error) {
     if(error instanceof TpoCommunicationBodyError)return NextResponse.json({error:"INVALID_BODY"},{
       status:error.code==="BODY_TOO_LARGE"?413:400,headers:{"Cache-Control":"private, no-store"},
     });
@@ -35,5 +35,5 @@ async function handlePOST(request: Request) {
     }
     return apiErrorResponse(error);
   }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

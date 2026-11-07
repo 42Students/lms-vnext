@@ -77,7 +77,9 @@ describe("private roster export routes require recent server-side sign-in", () =
   it.each(targets)("%s checks a live recent device session before private data reads", (path, lookup) => {
     const source = readFileSync(path, "utf8");
     expect(source).toContain('from "@/auth/recent-device-auth"');
-    const context = source.indexOf("getCurrentRequestContext()");
+    // Wrapper form: route() resolves the request actor (auth) before the handler body runs.
+    const wrapped = source.includes('from "@/security/route"') && /=\s*route\(\s*\{\s*auth:\s*"user"/.test(source);
+    const context = wrapped ? source.search(/=\s*route\(/) : source.indexOf("getCurrentRequestContext()");
     const recent = source.indexOf("await requireRecentDeviceAuthentication(context.user.id)");
     const firstRead = source.indexOf(lookup);
     expect(context, path + ": no request actor").toBeGreaterThan(0);

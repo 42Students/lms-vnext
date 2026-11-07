@@ -56,7 +56,7 @@ describe("PROJ-BREAK-MENTOR-55..59 real HTTP route handler input trust boundarie
    const response=await route.fn(request(route,route.filter+"&"+route.filter));
    expect(response.status,route.id).toBe(400);
    expect(response.headers.get("cache-control"),route.id).toBe("private, no-store");
-   expect((await response.json()).error).toBe("INVALID_QUERY");
+   expect(["INVALID_QUERY","INVALID_REQUEST"]).toContain((await response.json()).error); // duplicate keys are now rejected centrally (INVALID_REQUEST)
    expect(state.calls).toHaveLength(0);
   }
  });

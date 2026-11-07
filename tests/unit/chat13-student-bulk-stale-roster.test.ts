@@ -28,8 +28,11 @@ describe("SA-STUDENT-BULK-18 selected-college bulk controls",()=>{
   const route=readFileSync("src/app/api/admin/students/module-access/bulk/route.ts","utf8");
   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toContain("readBoundedJsonRequest(request,8192)");
+  // route() performs origin -> authentication before the handler; the handler bounds the body before the service call.
+  expect(route).toContain("export const POST = route(");
+  expect(route).toContain('auth: "user"');
   expect(route.indexOf("readBoundedJsonRequest(request,8192)")).toBeLessThan(
-    route.indexOf("getCurrentRequestContext()"));
+    route.lastIndexOf("updateSuperAdminStudentRulesInBulk("));
   expect(route).toContain('error:"INVALID_REQUEST"');
  });
  it("freezes confirmed membership IDs, suppresses duplicate clicks and disables in-flight selectors",()=>{

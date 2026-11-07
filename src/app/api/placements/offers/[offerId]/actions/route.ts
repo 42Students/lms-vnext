@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {z} from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -6,7 +7,6 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
 import { actOnPlacementOffer } from "@/modules/placements/offer-service";
 import { placementOfferActionSchema } from "@/modules/placements/validation";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 // The old offer response API requires a literal JSON boolean. Do not
@@ -20,24 +20,15 @@ type RouteContext = {
   params: Promise<{ offerId: string }>;
 };
 
-async function handlePOST(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context =
-      await getCurrentRequestContext();
-    const { offerId } = await params;
-    const raw=await readTpoBulkRequestBody(request);
-    let actionInput:unknown=raw;
-    if(typeof raw==="object"&&raw!==null&&!Array.isArray(raw)){
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { offerId } = params;
+const raw=await readTpoBulkRequestBody(request);
+let actionInput:unknown=raw;
+if(typeof raw==="object"&&raw!==null&&!Array.isArray(raw)){
       const source=raw as Record<string,unknown>;
       if("accept" in source){
         // One canonical strict schema for both legacy and vNext callers:
@@ -49,7 +40,7 @@ async function handlePOST(
         };
       }
     }
-    const offer =
+const offer =
       await actOnPlacementOffer(
         context,
         offerId,
@@ -57,17 +48,13 @@ async function handlePOST(
         new Date(),
         context.membership?.roles.includes("LEARNER") ? "ISSUED" : undefined,
       );
-    // vNext clients read {offer}; historical LearnerOfferController returned
-    // the offer object directly. Legacy integrations must unwrap response.offer
-    // at their adapter boundary; changing this authenticated route would break
-    // active clients and does not add server-side security.
-    return NextResponse.json({offer,status:offer?.status},
+return NextResponse.json({offer,status:offer?.status},
       {headers:{"Cache-Control":"private, no-store"}});
-  } catch (error) {
+} catch (error) {
     if(error instanceof TpoBulkBodyError)return NextResponse.json({error:error.message},{
       status:error.status,headers:{"Cache-Control":"private, no-store"},
     });
     return apiErrorResponse(error);
   }
-}
-export const POST = secured(handlePOST);
+  },
+);

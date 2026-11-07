@@ -50,8 +50,10 @@ describe("HR-APPLICANT-PRIVATE-115 resume grants and private rating identity bou
  it("an unavailable auth session is hidden on the resume existence endpoint",async()=>{
   m.ctx.mockRejectedValue(new Error("session backend private record"));
   const response=await resumePOST(new Request(url+"/resume-grant",{method:"POST"}),params);
-  expect(response.status).toBe(404);
-  expect(await response.json()).toMatchObject({error:"RESUME_NOT_AVAILABLE"});
+  // route() maps a session-backend failure through the central error mapper: generic, no private detail.
+  expect(response.status).toBe(503);
+  expect(JSON.stringify(await response.json())).not.toContain("private record");
+  expect(m.error).toHaveBeenCalledTimes(1);
   expect(m.resume).not.toHaveBeenCalled();
  });
  it("authorized employer grant retains no-store privacy and exact scoped IDs",async()=>{

@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -5,15 +6,16 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {updateOwnRecruiterProfileDetails} from "@/modules/placements/recruiter-profile-details-service";
 import {normalizeLegacyRecruiterMobile} from "@/modules/placements/recruiter-profile-details-model";
 import {readRecruiterJsonBody,RecruiterJsonBodyError} from "@/modules/placements/recruiter-json-request";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-async function handlePATCH(request:Request){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const raw:unknown=await readRecruiterJsonBody(request);
-  if(raw===null)return NextResponse.json({error:"BODY_REQUIRED"},{status:400});
-  let normalized=raw;
-  if(typeof raw==="object"&&raw!==null&&!Array.isArray(raw)){
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const __ctx = __actor!;
+    try {
+const raw:unknown=await readRecruiterJsonBody(request);
+if(raw===null)return NextResponse.json({error:"BODY_REQUIRED"},{status:400});
+let normalized=raw;
+if(typeof raw==="object"&&raw!==null&&!Array.isArray(raw)){
     const source=raw as Record<string,unknown>;
     // Historic contactMail was mutable; work email is now the immutable
     // verified sign-in identity. Never accept a silent contact-mail rewrite.
@@ -28,9 +30,7 @@ async function handlePATCH(request:Request){
         phone:fields["phone"]??contactMobile};
     }
   }
-  // Legacy RecruiterSelfController returns this exact 400 error contract
-  // before attempting a mutation, not a misleading stale-version response.
-  if(normalized&&typeof normalized==="object"&&!Array.isArray(normalized)){
+if(normalized&&typeof normalized==="object"&&!Array.isArray(normalized)){
     const candidate=(normalized as Record<string,unknown>)["phone"];
     if(typeof candidate==="string"&&normalizeLegacyRecruiterMobile(candidate)===null){
       return NextResponse.json({
@@ -39,13 +39,13 @@ async function handlePATCH(request:Request){
       },{status:400,headers:{"Cache-Control":"private, no-store"}});
     }
   }
-  const profile=await updateOwnRecruiterProfileDetails(
-    await getCurrentRequestContext(),normalized);
-  return NextResponse.json({profile,workEmailEditable:false,
+const profile=await updateOwnRecruiterProfileDetails(
+    __ctx,normalized);
+return NextResponse.json({profile,workEmailEditable:false,
     workEmailHelp:"Work email is linked to your verified sign-in account."},
     {headers:{"Cache-Control":"private, no-store"}});
- }catch(error){if(error instanceof RecruiterJsonBodyError)
+} catch(error){if(error instanceof RecruiterJsonBodyError)
   return NextResponse.json({error:"INVALID_REQUEST"},{status:error.kind==="TOO_LARGE"?413:400});
   return apiErrorResponse(error);}
-}
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+  },
+);

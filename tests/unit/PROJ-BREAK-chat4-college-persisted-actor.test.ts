@@ -28,7 +28,7 @@ describe("College Admin Projects persisted actor adversarial journeys",()=>{
   expect(can({...c,membership:{...c.membership!,status:"ENDED"}},"projects.manage",scope)).toBe(false);
   expect(can({...c,membership:{...c.membership!,roles:["FACULTY"]}},"projects.manage",scope)).toBe(false);
   expect(can({...c,user:{...c.user,platformStatus:"DISABLED"}},"projects.manage",scope)).toBe(false);
-  const superAdmin={...c,user:{...c.user,systemRoles:["SUPER_ADMIN"] as const}};
+  const superAdmin={...c,membership:null,user:{...c.user,systemRoles:["SUPER_ADMIN"] as const}};
   expect(can({...superAdmin,adminScope:{collegeId:collegeB,organizationId:orgB}},"projects.manage",scope)).toBe(false);
   expect(can({...superAdmin,adminScope:{collegeId:collegeA,organizationId:orgB}},"projects.manage",scope)).toBe(false);
   expect(can({...superAdmin,adminScope:{collegeId:collegeA,organizationId:orgA}},"projects.manage",scope)).toBe(true);

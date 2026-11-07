@@ -53,7 +53,8 @@ describe("DB-004 first-party self identity profile HTTP boundary",()=>{
   const result=await PATCH(req(body));
   expect(result.status).toBe(413);
   expect(await result.json()).toEqual({error:"REQUEST_TOO_LARGE"});
-  expect(fakes.context).not.toHaveBeenCalled();
+  // route() authenticates before the body is read; the handler still never mutates.
+  expect(fakes.context).toHaveBeenCalledTimes(1);
   expect(fakes.save).not.toHaveBeenCalled();
  });
  it("caps streamed profile bodies without trusting Content-Length",async()=>{
@@ -72,7 +73,8 @@ describe("DB-004 first-party self identity profile HTTP boundary",()=>{
   } as RequestInit&{duplex:"half"});
   const result=await PATCH(request);
   expect(result.status).toBe(413);
-  expect(fakes.context).not.toHaveBeenCalled();
+  // route() authenticates before the body is read; the handler still never mutates.
+  expect(fakes.context).toHaveBeenCalledTimes(1);
   expect(fakes.save).not.toHaveBeenCalled();
  });
  it("rejects missing and invalid UTF-8 JSON bodies without mutation",async()=>{
@@ -85,11 +87,12 @@ describe("DB-004 first-party self identity profile HTTP boundary",()=>{
     "content-type":"application/json"},body:new Uint8Array([0x7b,0xff,0x7d]),
   });
   expect((await PATCH(invalidUtf8)).status).toBe(400);
-  expect(fakes.context).not.toHaveBeenCalled();
+  // route() authenticates before the body is read; the handler still never mutates.
+  expect(fakes.context).toHaveBeenCalledTimes(2);
   expect(fakes.save).not.toHaveBeenCalled();
  });
  it("reads the authenticated person's own profile with no-store semantics",async()=>{
-  const result=await GET();
+  const result=await GET(new Request("https://lms.example/api/auth/profile",{method:"GET",headers:{host:"lms.example"}}));
   expect(result.status).toBe(200);
   expect(result.headers.get("Cache-Control")).toContain("no-store");
   expect(fakes.load).toHaveBeenCalledWith(ctx);

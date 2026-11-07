@@ -1,22 +1,20 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readAdminPlacementJson} from "@/modules/placements/admin-request-body-model";
 import {editSuperAdminPublishedDrive} from "@/modules/placements/super-admin-published-drive-edit-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Ctx={params:Promise<{jobId:string}>};
-async function handlePATCH(request:Request,{params}:Ctx){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  // A published edit can contain a 15,000-character description plus
-  // locations/reason. Deny a larger stream before loading selected scope.
-  const body=await readAdminPlacementJson(request,49152);
-  if(!body.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
-  const {jobId}=await params;
-  return NextResponse.json(await editSuperAdminPublishedDrive(
-   await getCurrentRequestContext(),jobId,body.value));
- }catch(e){return apiErrorResponse(e);}
-}
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const body=await readAdminPlacementJson(request,49152);
+    if(!body.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+    const {jobId}=params;
+    return NextResponse.json(await editSuperAdminPublishedDrive(
+   __ctx,jobId,body.value));
+  },
+);

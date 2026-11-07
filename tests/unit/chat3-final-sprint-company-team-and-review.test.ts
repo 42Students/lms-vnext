@@ -24,8 +24,10 @@ describe("Chat-3 final sprint team and review contracts",()=>{
   const route=read("src/app/api/placements/tpo/company-team/[companyId]/route.ts");
   expect(page).toContain("hasPlacementTeamMembership(context)");
   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
-  expect(route).toContain("readTpoCompanyTeam(await getCurrentRequestContext()");
-  expect(route).toContain("mutateTpoCompanyTeam(await getCurrentRequestContext()");
+  expect(route).toContain("readTpoCompanyTeam(");
+  expect(route).toMatch(/export const GET\s*=\s*route\(\s*\{\s*auth:\s*"user"/);
+  expect(route).toContain("mutateTpoCompanyTeam(");
+  expect(route).toMatch(/export const POST\s*=\s*route\(\s*\{\s*auth:\s*"user"/);
   expect(page).toContain("TpoCompanyTeamConversation");
  });
  it("TPO-companies-05 models follow, @mentions, #references, decisions and asks with author protections",()=>{
@@ -87,7 +89,8 @@ describe("Chat-3 final sprint team and review contracts",()=>{
   expect(ui).toContain("ConfirmDialog");
   expect(ui).toContain("retryStatus");
   expect(ui).not.toContain("window.confirm(");
-  expect(route).toContain("getTpoPublicJoinLinkStatus(await getCurrentRequestContext()");
+  expect(route).toContain("getTpoPublicJoinLinkStatus(");
+  expect(route).toMatch(/export const GET\s*=\s*route\(\s*\{\s*auth:\s*"user"/);
   expect(route).toContain('"Cache-Control":"no-store"');
  });
  it("TPO-companies-R05 canonical list sorts the company's drives newest first",()=>{

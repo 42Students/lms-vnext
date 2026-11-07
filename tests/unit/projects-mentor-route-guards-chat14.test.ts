@@ -85,14 +85,25 @@ describe("chat-14 mentor route guards and friendly API error handling",()=>{
       expect(source).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
       expect(source).toContain(route.service);
       expect(source).toMatch(/apiErrorResponse\(error\)|from "@\/security\/route"/);
-      expect(source).toContain("status:403");
+      // Wrapper form: route() itself answers 403 INVALID_ORIGIN / authorization failures, so the file need not.
+      const wrapped=source.includes('from "@/security/route"');
+      if(!wrapped)expect(source).toContain("status:403");
       // Bounded JSON readers are stronger than direct request.json(). The
       // origin guard still must precede either decoder, never merely its import.
       const decoder=source.includes("readMentorProjectCommandBody(request)")
         ?"readMentorProjectCommandBody(request)":"request.json()";
       expect(source).toContain(decoder);
-      expect(source.indexOf("isSameOriginRequest(request)")).toBeGreaterThanOrEqual(0);
-      expect(source.indexOf("isSameOriginRequest(request)")).toBeLessThan(source.lastIndexOf(decoder));
+      if(wrapped){
+        // origin -> auth -> permission run inside route() before the handler, so every decode sits inside the handler.
+        expect(source).not.toContain("secured(");
+        for(const method of route.methods)
+          expect(source).toMatch(new RegExp("export\\s+const\\s+"+method+"\\s*=\\s*route\\(\\s*\\{\\s*auth:\\s*\"user\""));
+        expect(source.indexOf("= route(")).toBeGreaterThanOrEqual(0);
+        expect(source.indexOf("= route(")).toBeLessThan(source.lastIndexOf(decoder));
+      }else{
+        expect(source.indexOf("isSameOriginRequest(request)")).toBeGreaterThanOrEqual(0);
+        expect(source.indexOf("isSameOriginRequest(request)")).toBeLessThan(source.lastIndexOf(decoder));
+      }
       if(decoder==="readMentorProjectCommandBody(request)"){
         expect(source).toContain("MentorProjectCommandBodyError");
         expect(source).toContain("mentorProjectBodyFailureMessage(error.status)");

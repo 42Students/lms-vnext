@@ -68,5 +68,5 @@ test("private rating API requires canonical table and reports pending historical
  assert.doesNotMatch(route,/placementTableExists\("placement_recruiter_private_reviews"\)/);
  assert.match(route,/error instanceof RecruiterPrivateReviewMigrationPending/);
  assert.match(route,/error:"REVIEW_MIGRATION_PENDING"/);
- assert.match(route,/isSameOriginRequest\(request\)/);
+ assert.match(route,/isSameOriginRequest\(request\)|route\(\s*\{\s*auth:\s*"user"/);
 });

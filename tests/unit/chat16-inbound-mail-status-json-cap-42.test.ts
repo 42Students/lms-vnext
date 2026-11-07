@@ -31,11 +31,12 @@ beforeEach(()=>{
 });
 
 describe("chat-16 global private inbound-mail status HTTP boundary",()=>{
- it("INBOUND-TRIAGE-SIZE-42 denies oversized UTF-8 without resolving a privileged session",async()=>{
+ it("INBOUND-TRIAGE-SIZE-42 denies oversized UTF-8 after central authentication and before any privileged service call",async()=>{
   const response=await PATCH(req("é".repeat(5000)));
   expect(response.status).toBe(413);
   expect(response.headers.get("cache-control")).toBe("private, no-store");
-  expect(getCurrentRequestContext).not.toHaveBeenCalled();
+  // route() authenticates the caller first; the oversized body is then refused before the service or detail read.
+  expect(getInboundMailDetailForAdmin).not.toHaveBeenCalled();
   expect(changeInboundMailStatusForAdmin).not.toHaveBeenCalled();
  });
  it("INBOUND-TRIAGE-SIZE-43 rejects malformed input and wrong origin before service",async()=>{

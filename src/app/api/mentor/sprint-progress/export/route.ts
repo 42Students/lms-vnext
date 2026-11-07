@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
@@ -5,17 +6,17 @@ import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-q
 import {csvSafeCell} from "@/modules/projects/mentor-board-review-model";
 import {mentorSprintProgressQuerySchema} from "@/modules/projects/mentor-sprint-progress-model";
 import {getMentorSprintProgress} from "@/modules/projects/mentor-sprint-progress-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-async function handleGET(request:Request){
-  try{
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
     const url=new URL(request.url);
     const filters=singleValueMentorExportFilters(url.searchParams,
       ["projectId","taskAttention","order","state","release","search"]);
     if(!filters)return NextResponse.json({error:"INVALID_QUERY"},{status:400,
       headers:{"Cache-Control":"private, no-store"}});
     const query=mentorSprintProgressQuerySchema.parse({...filters,page:1});
-    const context=await getCurrentRequestContext();
     const first=await getMentorSprintProgress(context,query);
     if(!first.enabled)return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403});
     const rows=[...first.items];
@@ -40,6 +41,5 @@ async function handleGET(request:Request){
         "Content-Disposition":'attachment; filename="mentor-sprint-progress.csv"',
         "Cache-Control":"private, no-store","X-Export-Omitted":String(omitted)},
     });
-  }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
+  },
+);

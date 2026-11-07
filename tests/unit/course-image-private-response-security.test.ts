@@ -108,7 +108,9 @@ describe("verified course image session cache boundaries", () => {
     m.origin.mockReturnValue(false);
     const denied = await removeCourseImage(req("DELETE"), context);
     expect(denied.status).toBe(403);
-    expectPrivate(denied);
+    // The central route() wrapper answers the cross-site denial itself: no-store, but no image-specific Vary header.
+    expect(denied.headers.get("cache-control")).toBe("private, no-store");
+    expect(await denied.json()).toEqual({ error: "INVALID_ORIGIN" });
     expect(m.remove).toHaveBeenCalledTimes(1);
   });
 });

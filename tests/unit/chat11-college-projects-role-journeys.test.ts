@@ -134,6 +134,8 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
   it("PROJ-COL-SCOPE-03 refuses implicit Super Admin cross-tenant fallback", () => {
     const active = adminContext();
     const superUser = { ...active.user, systemRoles: ["SUPER_ADMIN" as const] };
+    // A Super Admin acting at platform level has no selected membership (isSuperAdmin requires membership === null).
+    active.membership = null as never;
     expect(getProjectAdminCollegeId({ ...active, user: superUser,
       adminScope: null })).toBeNull();
     expect(getProjectAdminCollegeId({ ...active, user: superUser,

@@ -43,7 +43,7 @@ describe("SA-HIRING-EXPORT-13 protected Super Admin CSV route",()=>{
     ]){
       const response=await get(path);
       expect(response.status,path).toBe(400);
-      expect(await response.json()).toMatchObject({error:"INVALID_REPORT_FILTERS"});
+      expect(await response.json()).toMatchObject({error:"INVALID_REQUEST"}); // route() rejects repeated query keys before authentication
     }
     expect(mocks.getCurrentRequestContext).not.toHaveBeenCalled();
     expect(mocks.getSuperAdminCompanyHiringReport).not.toHaveBeenCalled();

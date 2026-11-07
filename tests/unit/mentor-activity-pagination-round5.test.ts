@@ -5,7 +5,9 @@ const src=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 describe("mentor project activity pagination",()=>{
  it("MEN-projects-meetings-60 pages real authorized project history with a stable microsecond cursor",()=>{
   const route=src("src/app/api/projects/[projectId]/activity/route.ts");
-  expect(route).toContain("getProjectActivityPage(await getCurrentRequestContext(),projectId");
+  expect(route).toContain('from "@/security/route"');
+  expect(route).toMatch(/export const GET = route\(\s*\{ auth: "user"/);
+  expect(route).toContain("getProjectActivityPage(__ctx,projectId");
   expect(route).toContain("last.cursorOccurredAt");
   expect(route).toContain("private, no-store");
   expect(route).toContain("parseLearnerProjectActivityFilters");

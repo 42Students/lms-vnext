@@ -105,11 +105,13 @@ describe("Super Admin Projects adversarial controls", () => {
 
   it("PROJ-BREAK-SA-04 keeps same-origin enforcement on Super Admin delivery mutations", () => {
     const route = read("src/app/api/projects/[projectId]/submissions/[submissionId]/lock/route.ts");
-    expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
+    // Origin check, then authentication, are done by the central wrapper before the handler reads the body.
+    expect(route).toContain('import { route } from "@/security/route"');
+    expect(route).toMatch(/export const POST = route\(\s*\{ auth: "user"/);
     expect(route).toContain("readLimitedProjectLockInput(request)");
-    expect(route.indexOf("isSameOriginRequest(request)")).toBeLessThan(route.indexOf("readLimitedProjectLockInput(request)"));
-    expect(route.indexOf("readLimitedProjectLockInput(request)")).toBeLessThan(route.indexOf("getCurrentRequestContext()"));
-    expect(route).toMatch(/apiErrorResponse\(error\)|from "@\/security\/route"/);
+    // The handler body only starts after the wrapper config, so the bounded read can never precede origin+auth.
+    expect(route.indexOf('route(')).toBeLessThan(route.indexOf("readLimitedProjectLockInput(request)"));
+    expect(route).not.toMatch(/export async function POST\(/);
     const service = read("src/modules/projects/admin-submission-review-service.ts");
     expect(service).toContain('z.strictObject({reason:z.string().trim().min(1).max(4000)})');
   });

@@ -7,12 +7,11 @@ const source=readFileSync(join(process.cwd(),
 
 describe("Mentor sprint edit route authorization contract",()=>{
   it("requires same-origin before resolving the authenticated actor or body",()=>{
-    expect(source).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
-    expect(source).toContain('error:"INVALID_ORIGIN"');
-    const origin=source.indexOf("isSameOriginRequest(request)");
-    const auth=source.indexOf("getCurrentRequestContext()");
-    expect(origin).toBeGreaterThan(-1);
-    expect(auth).toBeGreaterThan(origin);
+    // route() answers INVALID_ORIGIN, then authenticates, before the handler reads any body.
+    expect(source).toContain('from "@/security/route"');
+    expect(source).toMatch(/export const PATCH = route\(\s*\{ auth: "user"/);
+    expect(source).not.toContain("secured(");
+    expect(source.indexOf("readMentorProjectCommandBody(request)")).toBeGreaterThan(source.indexOf("= route("));
     expect(source).toContain("updateMentorSprintDetails(context,path,body)");
   });
 });

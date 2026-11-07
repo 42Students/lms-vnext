@@ -31,15 +31,15 @@ describe("SA-ADMIN-BODY-16 actual-byte-limited Super Admin mutation payloads",()
    "src/app/api/admin/placements/jobs/[jobId]/edit-published/route.ts",
   ]){
    const fullSource=readFileSync(path,"utf8");
-   // The same route may contain a read-only GET handler above the mutation.
-   const mutationStart=Math.max(Math.max(fullSource.indexOf("export async function PUT("),fullSource.indexOf("async function handlePUT(")),
-    Math.max(fullSource.indexOf("export async function PATCH("),fullSource.indexOf("async function handlePATCH(")));
+   // route() runs origin -> authentication before the handler, so the bounded body read happens inside the
+   // handler only for an authenticated, same-origin caller. The route may also hold a read-only GET above.
+   expect(fullSource).toContain('from "@/security/route"');
+   const mutationStart=fullSource.search(/export const (PUT|PATCH)\s*=\s*route\(/);
    expect(mutationStart).toBeGreaterThanOrEqual(0);
    const s=fullSource.slice(mutationStart);
-   expect(s.indexOf("isSameOriginRequest(request)")).toBeLessThan(
-     s.indexOf("readAdminPlacementJson(request,"));
-   expect(s.indexOf("readAdminPlacementJson(request,")).toBeLessThan(
-     s.indexOf("getCurrentRequestContext()"));
+   expect(s).toMatch(/auth:\s*"user"/);
+   expect(s).not.toMatch(/csrf:\s*false/);
+   expect(s).toContain("readAdminPlacementJson(request,");
    expect(s).toContain('error:"INVALID_REQUEST"');
   }
  });

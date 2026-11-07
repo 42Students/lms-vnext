@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -6,7 +7,6 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {
   CourseImageError, grantCourseImage, readCourseImage, removeCourseImage,
 } from "@/modules/courses/course-image-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -25,30 +25,31 @@ function imageError(error: unknown) {
   return response;
 }
 
-async function handlePOST(request: Request, { params }: RouteContext) {
-  if (!isSameOriginRequest(request)) return NextResponse.json({
-    error: "INVALID_ORIGIN",
-  }, { status: 403, headers: privateHeaders });
-  try {
-    const context = await getCurrentRequestContext();
-    const { courseId } = await params;
-    const body = await readBoundedJsonRequest(request, 4096);
-    if (!body.ok) return NextResponse.json({ error: "INVALID_REQUEST" }, {
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { courseId } = params;
+const body = await readBoundedJsonRequest(request, 4096);
+if (!body.ok) return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: 400, headers: privateHeaders,
     });
-    const data: unknown = body.value;
-    const grant = await grantCourseImage(context, courseId, data);
-    return NextResponse.json({ grant }, { status: 201, headers: privateHeaders });
-  } catch (error) { return imageError(error); }
-}
-export const POST = secured(handlePOST);
+const data: unknown = body.value;
+const grant = await grantCourseImage(context, courseId, data);
+return NextResponse.json({ grant }, { status: 201, headers: privateHeaders });
+} catch (error) { return imageError(error); }
+  },
+);
 
-async function handleGET(_request: Request, { params }: RouteContext) {
-  try {
-    const context = await getCurrentRequestContext();
-    const { courseId } = await params;
-    const image = await readCourseImage(context, courseId);
-    return new Response(image.body, {
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { courseId } = params;
+const image = await readCourseImage(context, courseId);
+return new Response(image.body, {
       headers: {
         ...privateHeaders,
         "Content-Type": image.contentType,
@@ -56,20 +57,19 @@ async function handleGET(_request: Request, { params }: RouteContext) {
         "Content-Security-Policy": "default-src 'none'; sandbox",
       },
     });
-  } catch (error) { return imageError(error); }
-}
-export const GET = secured(handleGET);
+} catch (error) { return imageError(error); }
+  },
+);
 
-async function handleDELETE(request: Request, { params }: RouteContext) {
-  if (!isSameOriginRequest(request)) return NextResponse.json({
-    error: "INVALID_ORIGIN",
-  }, { status: 403, headers: privateHeaders });
-  try {
-    const context = await getCurrentRequestContext();
-    const { courseId } = await params;
-    return NextResponse.json(await removeCourseImage(context, courseId), {
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { courseId } = params;
+return NextResponse.json(await removeCourseImage(context, courseId), {
       headers: privateHeaders,
     });
-  } catch (error) { return imageError(error); }
-}
-export const DELETE = secured(handleDELETE);
+} catch (error) { return imageError(error); }
+  },
+);

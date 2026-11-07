@@ -1,16 +1,16 @@
+import { route } from "@/security/route";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {facultyGradebookCsv,facultyGradebookParamsSchema} from "@/modules/courses/faculty-gradebook-model";
 import {getFacultyPublishedGradebook} from "@/modules/courses/faculty-gradebook-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-async function handleGET(_request:Request,{
-  params,
-}:{params:Promise<{deliveryId:string}>}){
-  try{
-    const query=facultyGradebookParamsSchema.parse(await params);
-    const data=await getFacultyPublishedGradebook(await getCurrentRequestContext(),query);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor, params }) => {
+    const __ctx = __actor!;
+    const query=facultyGradebookParamsSchema.parse(params);
+    const data=await getFacultyPublishedGradebook(__ctx,query);
     return new Response("\uFEFF"+facultyGradebookCsv(data.rows),{
       headers:{
         "Content-Type":"text/csv; charset=utf-8",
@@ -19,6 +19,5 @@ async function handleGET(_request:Request,{
         "X-Content-Type-Options":"nosniff",
       },
     });
-  }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
+  },
+);

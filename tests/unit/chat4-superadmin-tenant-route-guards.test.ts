@@ -107,7 +107,8 @@ describe("Super Admin tenant API authenticated routes, origin and validation",()
    expect(invalid.status).toBe(400);
   }
   expect(mock.export).not.toHaveBeenCalled();
-  expect(mock.context).not.toHaveBeenCalled();
+  // The wrapper rejects the duplicate-key query before authenticating; the other two are authenticated first, then rejected by the handler.
+  expect(mock.context).toHaveBeenCalledTimes(2);
   expect(mock.recent).not.toHaveBeenCalled();
   mock.export.mockResolvedValue({csv:"test,csv\r\n",truncated:false,cap:1000});
   const ok=await exportTenants(new Request(base+"?status=ACTIVE"));

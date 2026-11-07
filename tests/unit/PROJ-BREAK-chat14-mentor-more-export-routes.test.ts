@@ -40,7 +40,7 @@ describe("PROJ-BREAK-MENTOR-99..102 export handler query trust boundaries",()=>{
   ]){
    const response=await route.handler(request(route.path,hostile));
    expect(response.status,route.name+" "+hostile).toBe(400);
-   expect((await response.json()).error).toBe("INVALID_QUERY");
+   expect(["INVALID_QUERY","INVALID_REQUEST"]).toContain((await response.json()).error); // duplicate keys are now rejected centrally (INVALID_REQUEST)
    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   }
   expect(state.sprintReads).toBe(0);expect(state.historyReads).toBe(0);

@@ -41,12 +41,13 @@ describe("IIT Dharwad Projects: delivery lock route authorization and streamed b
     expect(state.contextReads).toBe(0);
     expect(state.locks).toBe(0);
   });
-  it("PROJ-BREAK-routing-122 oversize actual byte count rejects before private role lookup",async()=>{
+  it("PROJ-BREAK-routing-122 oversize actual byte count rejects before the lock service (auth runs first, once)",async()=>{
     const reason="💡".repeat(2500);
     const response=await POST(command(JSON.stringify({reason})),params);
     expect(response.status).toBe(400);
     expect(await response.json()).toEqual({error:"INVALID_REQUEST"});
-    expect(state.contextReads).toBe(0);
+    // route() authenticates (one actor read) before the handler reads the bounded body.
+    expect(state.contextReads).toBe(1);
     expect(state.locks).toBe(0);
   });
   it("PROJ-BREAK-routing-123 malformed JSON and forged content length fail closed",async()=>{
@@ -58,7 +59,7 @@ describe("IIT Dharwad Projects: delivery lock route authorization and streamed b
       const response=await POST(req,params);
       expect(response.status).toBe(400);
     }
-    expect(state.contextReads).toBe(0);
+    expect(state.contextReads).toBe(3);
     expect(state.locks).toBe(0);
   });
   it("PROJ-BREAK-routing-124 authorized submission lock is private and delegates once",async()=>{

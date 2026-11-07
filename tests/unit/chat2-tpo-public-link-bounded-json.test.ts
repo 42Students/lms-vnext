@@ -35,14 +35,17 @@ describe("TPO-settings-audit-55 bounded recruiter and public join-link write bou
   ];
   for(const path of paths){
    const s=readFileSync(path,"utf8");
-   expect(s,path).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
+   // Origin check (403) + authentication happen in the central wrapper, before the handler reads the body.
+   expect(s,path).toContain('import { route } from "@/security/route"');
+   expect(s,path).toMatch(/export const POST\s*=\s*route\(\s*\{\s*auth:\s*"user"/);
    expect(s,path).toContain("readTpoSettingsBody(request)");
    expect(s,path).toContain("TpoCommunicationBodyError");
    expect(s,path).toContain("BODY_TOO_LARGE");
-   expect(s,path).toMatch(/status:\s*403/);
    expect(s,path).toMatch(/(?:status:\s*400|\?413:400)/);
    expect(s,path).toContain("413");
-   expect(s.indexOf("isSameOriginRequest(request)"),path).toBeLessThan(s.indexOf("readTpoSettingsBody(request)"));
+   expect(s.indexOf("export const POST"),path).toBeGreaterThanOrEqual(0);
+   expect(s.indexOf("export const POST"),path).toBeLessThan(s.indexOf("readTpoSettingsBody(request)"));
+   expect(s,path).not.toContain("export async function POST(");
    expect(s,path).not.toContain("await request.json()");
   }
  });

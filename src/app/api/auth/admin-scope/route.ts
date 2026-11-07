@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {AdminScopeServiceError} from "@/modules/admin-scope/service";
 import {ZodError} from "zod";
 import {getDb} from "@/db/client";
@@ -16,17 +17,17 @@ import {
   listAdminScopeChoices,
   resolveAdminScopeSelection,
 } from "@/modules/admin-scope/service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 
-async function handleGET() {
-  try {
-    const context = await getCurrentRequestContext();
-    const choices = await listAdminScopeChoices(context);
-    await getDb().transaction(tx=>assertPersistedPlatformPermission(tx,context,"admin-scope.select"));
-
-    return privateAuthJson({
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor }) => {
+    const context = __actor!;
+    try {
+const choices = await listAdminScopeChoices(context);
+await getDb().transaction(tx=>assertPersistedPlatformPermission(tx,context,"admin-scope.select"));
+return privateAuthJson({
       scope:context.adminScope??null,choices,
       // Legacy /auth/memberships is now /api/auth/memberships; changing
       // college x role uses the membership chooser, not platform admin scope.
@@ -34,25 +35,19 @@ async function handleGET() {
        adminScope:"/api/auth/admin-scope",clearMethod:"DELETE"},
       restoredFrom:"VERIFIED_SERVER_SCOPE",
     });
-  } catch (error) {
+} catch (error) {
     return privateAuthResponse(apiErrorResponse(error));
   }
-}
-export const GET = secured(handleGET);
+  },
+);
 
-async function handlePOST(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return privateAuthJson(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-
-    let body: unknown;
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
     try {
+let body: unknown;
+try {
       body = await readBoundedAuthJson(request,2_048);
     } catch(error) {
       const tooLarge=error instanceof AuthRequestBodyTooLarge;
@@ -61,22 +56,20 @@ async function handlePOST(request: Request) {
         { status: tooLarge?413:400 },
       );
     }
-
-    await getDb().transaction(tx=>assertPersistedPlatformPermission(tx,context,"admin-scope.select"));
-    const scope = await resolveAdminScopeSelection(
+await getDb().transaction(tx=>assertPersistedPlatformPermission(tx,context,"admin-scope.select"));
+const scope = await resolveAdminScopeSelection(
       context,
       body,
     );
-    const cleared=!scope.organizationId&&!scope.collegeId;
-    const response = privateAuthJson({
+const cleared=!scope.organizationId&&!scope.collegeId;
+const response = privateAuthJson({
       ok:true,scope:cleared?null:scope,
       // Scope cookies are not login identities; authorization is checked
       // against current persisted permissions for every following request.
       requiresRouterRefresh:true,
       activeScope:cleared?"GLOBAL":scope.collegeId?"COLLEGE":"ORGANIZATION",
     });
-
-    response.cookies.set(
+response.cookies.set(
       ADMIN_SCOPE_COOKIE_NAME,
       encodeAdminScopeCookie(scope),
       {
@@ -87,9 +80,8 @@ async function handlePOST(request: Request) {
         maxAge: cleared?0:SESSION_MAX_AGE_SECONDS,
       },
     );
-
-    return response;
-  } catch (error) {
+return response;
+} catch (error) {
     if(error instanceof AdminScopeServiceError)return privateAuthJson({
       error:"ADMIN_SCOPE_NOT_FOUND",message:"Could not select that scope. It may no longer be available; reload the organization and college choices. Your previous scope was not changed.",
       status:400,type:"validation",
@@ -100,38 +92,30 @@ async function handlePOST(request: Request) {
     },{status:400});
     return privateAuthResponse(apiErrorResponse(error));
   }
-}
-export const POST = secured(handlePOST);
+  },
+);
 
-async function handleDELETE(request: Request) {
-  if (!isSameOriginRequest(request)) {
-    return privateAuthJson(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-
-  try {
-    const context = await getCurrentRequestContext();
-    await listAdminScopeChoices(context);
-    await getDb().transaction(tx=>assertPersistedPlatformPermission(tx,context,"admin-scope.select"));
-
-    const response = privateAuthJson({
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor }) => {
+    const context = __actor!;
+    try {
+await listAdminScopeChoices(context);
+await getDb().transaction(tx=>assertPersistedPlatformPermission(tx,context,"admin-scope.select"));
+const response = privateAuthJson({
       ok:true,scope:null,activeScope:"GLOBAL",requiresRouterRefresh:true,
       message:"Super Admin organization and college scope cleared.",
     });
-
-    response.cookies.set(ADMIN_SCOPE_COOKIE_NAME, "", {
+response.cookies.set(ADMIN_SCOPE_COOKIE_NAME, "", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
       maxAge: 0,
     });
-
-    return response;
-  } catch (error) {
+return response;
+} catch (error) {
     return privateAuthResponse(apiErrorResponse(error));
   }
-}
-export const DELETE = secured(handleDELETE);
+  },
+);

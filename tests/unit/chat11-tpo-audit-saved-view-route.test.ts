@@ -28,7 +28,7 @@ beforeEach(()=>{
  mocks.error.mockImplementation(()=>NextResponse.json({error:"ACCESS_DENIED"},{status:403}));
 });
 describe("TPO-settings-audit-R04 private saved audit view HTTP surface",()=>{
- it("GET rejects forged college/user filters before actor access and never caches",async()=>{
+ it("GET rejects forged college/user filters after central authentication, never reaching the service, and never caches",async()=>{
   for(const url of [endpoint+"?collegeId=foreign",endpoint+"?userId=other",endpoint+"?scope=RECRUITER",endpoint+"?page=2"]){
    const response=await GET(new Request(url));
    expect(response.status,url).toBe(400);
@@ -36,7 +36,8 @@ describe("TPO-settings-audit-R04 private saved audit view HTTP surface",()=>{
    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   }
   expect(mocks.list).not.toHaveBeenCalled();
-  expect(mocks.actor).not.toHaveBeenCalled();
+  // route() authenticates before the handler validates the query shape; the service is still never reached.
+  expect(mocks.actor).toHaveBeenCalledTimes(4);
  });
  it("GET loads only signed-in owner scoped saved views",async()=>{
   const response=await GET(new Request(endpoint));

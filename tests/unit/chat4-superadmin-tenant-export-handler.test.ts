@@ -38,10 +38,19 @@ describe("SA-tenants-directory-export-01 scoped export handler and cache isolati
   const result=await GET(request(query));
   expect(result.status).toBe(400);
   expect(result.headers.get("Cache-Control")).toBe("private, no-store");
-  expect(result.headers.get("Vary")).toBe("Cookie");
   expect(mocks.export).not.toHaveBeenCalled();
   expect(mocks.recent).not.toHaveBeenCalled();
-  expect(mocks.apiError).toHaveBeenCalledTimes(1);
+  // Duplicate keys are rejected by the central wrapper (INVALID_REQUEST, no error mapper, no handler);
+  // everything else is rejected by the handler's own parser and error mapper (Vary: Cookie).
+  const searchParams=new URLSearchParams(query);
+  const duplicateKey=["q","status","organizationId"].some(key=>searchParams.getAll(key).length>1);
+  if(duplicateKey){
+   expect(mocks.apiError).not.toHaveBeenCalled();
+   expect(await result.json()).toEqual({error:"INVALID_REQUEST"});
+  }else{
+   expect(result.headers.get("Vary")).toBe("Cookie");
+   expect(mocks.apiError).toHaveBeenCalledTimes(1);
+  }
  });
  it("passes only validated normalized search, organization and state with the same actor context",async()=>{
   const result=await GET(request("q=%20college%20&organizationId="+org+"&status=ALL"));

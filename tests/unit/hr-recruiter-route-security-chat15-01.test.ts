@@ -22,10 +22,17 @@ describe("HR recruiter route security chat-15",()=>{
   expect(code).toMatch(/export (?:async function|const) (POST|PATCH)\b/);
   const origin=code.indexOf("isSameOriginRequest(request)");
   const firstWrite=code.search(/await (?:createOwn|updateOwn|writeHr|editHr|sendRecruiter|openRecruiter|acknowledgeRecruiter|markHr)/);
-  expect(origin).toBeGreaterThanOrEqual(0);
-  expect(firstWrite).toBeGreaterThan(origin);
-  expect(code).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
-  expect(code).toMatch(/return NextResponse\.json\(\{error:"INVALID_ORIGIN"\}/);
+  if(code.includes('from "@/security/route"')){
+   // Central wrapper form: route() runs origin -> auth -> permission before the handler, so the mutation is inside the handler.
+   expect(code).toMatch(/export const (POST|PATCH)\s*=\s*route\(\s*\{\s*auth:\s*"user"/);
+   expect(code).not.toContain("secured(");
+   expect(firstWrite).toBeGreaterThan(code.search(/=\s*route\(/));
+  }else{
+   expect(origin).toBeGreaterThanOrEqual(0);
+   expect(firstWrite).toBeGreaterThan(origin);
+   expect(code).toMatch(/getCurrentRequestContext/);
+   expect(code).toMatch(/return NextResponse\.json\(\{error:"INVALID_ORIGIN"\}/);
+  }
  });
  it("HR-request-body parses streamed JSON bounded at 128 KiB, before passing to schema/service",()=>{
   const helper=readFileSync(join(process.cwd(),"src/modules/placements/recruiter-json-request.ts"),"utf8");

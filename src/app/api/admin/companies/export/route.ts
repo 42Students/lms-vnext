@@ -1,30 +1,28 @@
+import { route } from "@/security/route";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {requireRecentDeviceAuthentication} from "@/auth/recent-device-auth";
 import {apiErrorResponse} from "@/lib/api-error";
 import {adminCompaniesQuerySchema} from "@/modules/placements/admin-company-directory-model";
 import {listSuperAdminCompanyDirectory} from "@/modules/placements/admin-company-directory-service";
 import {superAdminCompanyCsv} from "@/modules/placements/admin-company-directory-export-model";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-async function handleGET(request:Request){
- try {
-  const params=new URL(request.url).searchParams;
-  const input:Record<string,string>={};
-  for(const [key,value] of params){if(Object.hasOwn(input,key))return Response.json({error:"INVALID_REQUEST"},{status:400});input[key]=value;}
-  if(input["collegeId"]==="")delete input["collegeId"];
-  const query=adminCompaniesQuerySchema.parse(input);
-  const context=await getCurrentRequestContext();
-  await requireRecentDeviceAuthentication(context.user.id);
-  const page=await listSuperAdminCompanyDirectory(context,{...query,page:1});
-  // The legacy browser export included unrestricted contact columns. Keep
-  // this authenticated server export restricted to the already-authorized
-  // directory projection; private contact fields are intentionally omitted.
-  if(page.total===0)return Response.json({error:"NO_COMPANIES_TO_EXPORT",message:"No matching companies to export."},{status:404,headers:{"cache-control":"private, no-store"}});
-  const cap=2000;
-  const pages=Math.min(40,Math.ceil(page.total/50));
-  const extra=await Promise.all(Array.from({length:Math.max(0,pages-1)},(_,index)=>listSuperAdminCompanyDirectory(context,{...query,page:index+2})));
-  const rows=[...page.rows,...extra.flatMap(part=>part.rows)].slice(0,cap);
-  return new Response(superAdminCompanyCsv(rows),{headers:{
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    const params=new URL(request.url).searchParams;
+    const input:Record<string,string>={};
+    for(const [key,value] of params){if(Object.hasOwn(input,key))return Response.json({error:"INVALID_REQUEST"},{status:400});input[key]=value;}
+    if(input["collegeId"]==="")delete input["collegeId"];
+    const query=adminCompaniesQuerySchema.parse(input);
+    await requireRecentDeviceAuthentication(context.user.id);
+    const page=await listSuperAdminCompanyDirectory(context,{...query,page:1});
+    if(page.total===0)return Response.json({error:"NO_COMPANIES_TO_EXPORT",message:"No matching companies to export."},{status:404,headers:{"cache-control":"private, no-store"}});
+    const cap=2000;
+    const pages=Math.min(40,Math.ceil(page.total/50));
+    const extra=await Promise.all(Array.from({length:Math.max(0,pages-1)},(_,index)=>listSuperAdminCompanyDirectory(context,{...query,page:index+2})));
+    const rows=[...page.rows,...extra.flatMap(part=>part.rows)].slice(0,cap);
+    return new Response(superAdminCompanyCsv(rows),{headers:{
    "content-type":"text/csv; charset=utf-8",
    "content-disposition":'attachment; filename="companies.csv"',
    "cache-control":"no-store",
@@ -35,6 +33,5 @@ async function handleGET(request:Request){
    "x-export-truncated":String(page.total>cap),
    "x-content-type-options":"nosniff",
   }});
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
+  },
+);

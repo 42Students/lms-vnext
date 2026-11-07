@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {ZodError} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -6,7 +7,6 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {createRequestId} from "@/lib/request-id";
 import {readTpoCompanyTeamBody,TpoCompanyTeamBodyError} from "@/modules/placements/tpo-company-team-request-body";
 import {readTpoCompanyTeam,mutateTpoCompanyTeam,TpoCompanyTeamError} from "@/modules/placements/tpo-company-team-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 type Params={params:Promise<{companyId:string}>};
 function safeError(error:unknown){
@@ -39,25 +39,25 @@ function safeError(error:unknown){
  }
  return apiErrorResponse(error);
 }
-async function handleGET(_request:Request,{params}:Params){
- try{
-  const {companyId}=await params;
-  const result=await readTpoCompanyTeam(await getCurrentRequestContext(),companyId);
-  return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
- }catch(error){return safeError(error);}
-}
-export const GET = secured(handleGET);
-async function handlePOST(request:Request,{params}:Params){
- if(!isSameOriginRequest(request)){
-  const requestId=createRequestId();
-  return NextResponse.json({error:"INVALID_ORIGIN",
-   message:"This Team update could not be verified. Reload and try again.",requestId},{
-   status:403,headers:{"Cache-Control":"no-store","x-request-id":requestId}});
- }
- try{
-  const {companyId}=await params;
-  const result=await mutateTpoCompanyTeam(await getCurrentRequestContext(),companyId,await readTpoCompanyTeamBody(request));
-  return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
- }catch(error){return safeError(error);}
-}
-export const POST = secured(handlePOST);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor, params }) => {
+    const __ctx = __actor!;
+    try {
+const {companyId}=params;
+const result=await readTpoCompanyTeam(__ctx,companyId);
+return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+} catch(error){return safeError(error);}
+  },
+);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    try {
+const {companyId}=params;
+const result=await mutateTpoCompanyTeam(__ctx,companyId,await readTpoCompanyTeamBody(request));
+return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+} catch(error){return safeError(error);}
+  },
+);

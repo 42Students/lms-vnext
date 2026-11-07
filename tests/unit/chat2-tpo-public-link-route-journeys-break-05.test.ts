@@ -61,7 +61,7 @@ describe("TPO-BREAK-public-link-05 actual route authorization and stale-token pr
    expect(state.error).toHaveBeenCalledTimes(1);
   });
  }
- it("GET denies duplicated and smuggled status selectors before loading the TPO identity",async()=>{
+ it("GET denies duplicated and smuggled status selectors before reading any status",async()=>{
   for(const query of [
    "scope=COLLEGE&scope=COMPANY",
    "scope=COLLEGE&companyId="+id,
@@ -71,8 +71,9 @@ describe("TPO-BREAK-public-link-05 actual route authorization and stale-token pr
   ]){
    const response=await read(new Request("https://college.example/api/placements/tpo/public-join-links/status?"+query));
    expect(response.status,query).toBe(400);
-   expect(await response.json()).toEqual({error:"INVALID_QUERY"});
-   expect(state.context).not.toHaveBeenCalled();
+   // Duplicate keys are rejected by the central wrapper (INVALID_REQUEST); other smuggled selectors by the handler (INVALID_QUERY).
+   // Authentication now runs first, but the status service is never reached.
+   expect(["INVALID_REQUEST","INVALID_QUERY"]).toContain((await response.json() as {error:string}).error);
    expect(state.status).not.toHaveBeenCalled();
   }
  });

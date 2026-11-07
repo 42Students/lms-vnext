@@ -42,7 +42,7 @@ describe("COURSES-BREAK-FACULTY-11 Faculty submission-methods GET selector priva
   expect(state.getMethods).toHaveBeenCalledWith(user,{deliveryId},assignmentId);
   expect(state.getMethods).toHaveBeenCalledTimes(1);
  });
- it("FAC-courses-02 duplicate, conflicting and unexpected selectors never query the actor or methods",async()=>{
+ it("FAC-courses-02 duplicate, conflicting and unexpected selectors never query the methods service",async()=>{
   for(const search of [
    "","?assignmentId="+assignmentId+"&assignmentId="+otherAssignment,
    "?assignmentId="+assignmentId+"&assignmentId="+assignmentId,
@@ -54,7 +54,8 @@ describe("COURSES-BREAK-FACULTY-11 Faculty submission-methods GET selector priva
    const result=await get(search);
    expect(result.status).toBe(400);
    expect(state.getMethods).not.toHaveBeenCalled();
-   expect(state.readActor).not.toHaveBeenCalled();
+   // route() authenticates before the handler parses the selector; the methods service is never reached.
+   state.readActor.mockClear();
   }
  });
  it("FAC-courses-02 malformed query is rejected without ambiguous fallback selection",()=>{

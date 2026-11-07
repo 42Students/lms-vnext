@@ -24,7 +24,10 @@ describe("TPO-batches-46 batch-scoped saved student views",()=>{
   const route=src("src/app/api/placements/tpo/batches/[batchId]/saved-views/route.ts");
   const ui=src("src/components/tpo/tpo-batch-student-saved-views.tsx");
   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
-  expect(route).toContain("listTpoBatchSavedViews(await getCurrentRequestContext(),batchId)");
+  expect(route).toContain('export const GET = route(');
+  expect(route).toContain('export const POST = route(');
+  expect(route).toContain("listTpoBatchSavedViews(__ctx,batchId)");
+  expect(route).toContain("mutateTpoBatchSavedView(__ctx,batchId,");
   for(const label of ["Pin view","Save current filters","Update selected","Download CSV","Delete","Open"])
    expect(ui).toContain(label);
   const page=src("src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx");

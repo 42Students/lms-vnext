@@ -28,7 +28,7 @@ const organizationId="11111111-1111-4111-8111-111111111111";
 const collegeId="22222222-2222-4222-8222-222222222222";
 const scope={organizationId,collegeId};
 const context={user:{id:"superadmin"},adminScope:scope};
-const request=(method:"POST"|"DELETE")=>new Request("https://platform.test/api/auth/admin-scope",{
+const request=(method:"GET"|"POST"|"DELETE")=>new Request("https://platform.test/api/auth/admin-scope",{
  method,headers:{"Content-Type":"application/json"},
  body:method==="POST"?JSON.stringify(scope):undefined,
 });
@@ -42,7 +42,7 @@ beforeEach(()=>{
 });
 describe("AUTH-handoff-16 account scope response cache safety",()=>{
  it("GET never caches selected college identity and role choices",async()=>{
-  const response=await (await handlers()).GET();
+  const response=await (await handlers()).GET(request("GET"));
   expect(response.status).toBe(200);
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   expect(await response.json()).toEqual({
@@ -56,7 +56,7 @@ describe("AUTH-handoff-16 account scope response cache safety",()=>{
   const response=await (await handlers()).POST(request("POST"));
   expect(response.status).toBe(200);
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
-  expect(response.cookies.get("lms_admin_scope")?.value).toBe("college:"+organizationId+":"+collegeId);
+  expect(response.headers.get("set-cookie")).toContain("lms_admin_scope="+encodeURIComponent("college:"+organizationId+":"+collegeId));
   expect(mocks.resolveAdminScopeSelection).toHaveBeenCalledWith(context,scope);
  });
  it("cross-origin POST and DELETE do not read private choices",async()=>{
@@ -72,6 +72,6 @@ describe("AUTH-handoff-16 account scope response cache safety",()=>{
   const response=await (await handlers()).DELETE(request("DELETE"));
   expect(response.status).toBe(200);
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
-  expect(response.cookies.get("lms_admin_scope")?.value).toBe("");
+  expect(response.headers.get("set-cookie")).toMatch(/lms_admin_scope=;/);
  });
 });

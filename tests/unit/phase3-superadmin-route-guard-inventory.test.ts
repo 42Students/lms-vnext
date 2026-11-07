@@ -30,6 +30,18 @@ const TWO_HOP_ALLOWED: Record<string, { delegate: string; reason: string }> = {
     delegate: "src/modules/tenant-domains/service.ts",
     reason: "same tenant-domains runtime to service.ts chain.",
   },
+  "src/app/api/tenant-domains/[domainId]/ensure-token/route.ts": {
+    delegate: "src/modules/tenant-domains/service.ts",
+    reason: "route() resolves the actor; ensureTenantDomainVerificationToken loads the domain through loadAuthorizedDomain, which requires Super Admin and college.manage.",
+  },
+  "src/app/api/admin/module-access/tree/route.ts": {
+    delegate: "src/modules/module-access/admin-read-service.ts",
+    reason: "route() resolves the actor; readCompleteCollegeModuleTree calls getSuperAdminCollegeModuleAccess, which requires Super Admin plus the persisted module-access grant.",
+  },
+  "src/app/api/admin/tenant-domains/resolve-preview/route.ts": {
+    delegate: "src/modules/tenant-domains/service.ts",
+    reason: "route() resolves the actor; previewTenantHostResolution requires Super Admin without a narrowed scope and the admin-scope.select permission.",
+  },
   "src/app/api/admin/placements/organization-jobs/route.ts": {
     delegate: "src/modules/placements/organization-application-search-service.ts",
     reason: "route() resolves the actor; the job search resolves its scope in the application-search service, which requires Super Admin and the persisted placements.read grant.",

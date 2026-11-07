@@ -48,7 +48,7 @@ beforeEach(()=>{
 });
 describe("Mentor bell unified unread count",()=>{
  it("adds personal, current project attention and authorized college notice sources",async()=>{
-  const response=await GET();
+  const response=await GET(new Request("https://lms.example/api/mentor/notifications/count"));
   expect(response.status).toBe(200);
   expect(response.headers.get("cache-control")).toBe("private, no-store");
   expect(await response.json()).toEqual({
@@ -59,15 +59,15 @@ describe("Mentor bell unified unread count",()=>{
  it("honors read receipts and disabled optional sources",async()=>{
   state.readKeys=new Set(["attention:project-1:review:sub@2026-10-23T08:00:00Z"]);
   state.announcementsEnabled=false;state.projectsEnabled=false;
-  expect((await(await GET()).json()).unreadCount).toBe(3);
+  expect((await(await GET(new Request("https://lms.example/api/mentor/notifications/count"))).json()).unreadCount).toBe(3);
   expect(state.calls).toEqual([]);
  });
  it("flags incomplete notice counts rather than presenting false exactness",async()=>{
   state.notices=100;
-  expect((await(await GET()).json()).partial).toBe(true);
+  expect((await(await GET(new Request("https://lms.example/api/mentor/notifications/count"))).json()).partial).toBe(true);
  });
  it("denies unauthenticated requests",async()=>{
   state.signedIn=false;
-  expect((await GET()).status).toBe(401);
+  expect((await GET(new Request("https://lms.example/api/mentor/notifications/count"))).status).toBe(401);
  });
 });

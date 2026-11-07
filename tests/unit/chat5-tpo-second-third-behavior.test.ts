@@ -15,6 +15,23 @@ const src=(path:string)=>readFileSync(new URL("../../"+path,import.meta.url),"ut
 const uuid="11111111-1111-4111-8111-111111111111";
 const job="/tpo/placements/jobs/[jobId]/";
 const page=(fragment:string)=>src("src/app/(authenticated)"+job+fragment+"/page.tsx");
+
+/**
+ * Slice of one HTTP method's definition. Routes on the central wrapper (`export const POST = route({...})`) get
+ * origin check -> authentication -> handler from route(); legacy routes still carry an inline isSameOriginRequest.
+ * `guard` is the index of the equivalent of "origin is checked first": the wrapper definition itself, or the inline check.
+ */
+function method(code:string,verb:string){
+ const wrapped=code.indexOf("export const "+verb+" = route(");
+ if(wrapped>=0){
+  const next=code.indexOf(String.fromCharCode(10)+"export const ",wrapped+10);
+  const slice=code.slice(wrapped,next<0?undefined:next);
+  return {slice,guard:0,wrapped:true,fileHasWrapperImport:code.includes('import { route } from "@/security/route"')};
+ }
+ const start=Math.max(code.indexOf("export async function "+verb+"("),code.indexOf("async function handle"+verb+"("));
+ const slice=code.slice(start);
+ return {slice,guard:slice.indexOf("isSameOriginRequest("),wrapped:false,fileHasWrapperImport:false};
+}
 const at=new Date("2099-10-18T10:00:00Z");
 
 describe("TPO bounded mutation request contracts",()=>{
@@ -28,14 +45,13 @@ describe("TPO bounded mutation request contracts",()=>{
   ];
   for(const route of routes){
    const code=src(route);
-   const post=code.slice(Math.max(code.indexOf("export async function POST("),code.indexOf("async function handlePOST(")));
-   const origin=post.indexOf("isSameOriginRequest(");
+   const {slice:post,guard:origin,wrapped,fileHasWrapperImport}=method(code,"POST");
    const decode=post.indexOf("readTpoBulkRequestBody(");
    expect(origin,route).toBeGreaterThanOrEqual(0);
+   if(wrapped)expect(fileHasWrapperImport,route).toBe(true);
    expect(decode,route).toBeGreaterThan(origin);
    expect(post,route).toContain("TpoBulkBodyError");
-   const catchName=route.includes("waitlist-promote")?"e":"error";
-   expect(post,route).toContain(catchName+" instanceof TpoBulkBodyError");
+   expect(post,route).toContain("instanceof TpoBulkBodyError");
    expect(post,route).toContain("apiErrorResponse(");
    expect(post,route).not.toMatch(/await (?:req|request)\.json\(\)/);
   }
@@ -49,13 +65,12 @@ describe("TPO bounded mutation request contracts",()=>{
   ];
   for(const route of routes){
     const source=src(route);
-    const post=source.slice(Math.max(source.indexOf("export async function POST("),source.indexOf("async function handlePOST(")));
-    const origin=post.indexOf("isSameOriginRequest(request)");
+    const {slice:post,guard:origin,wrapped,fileHasWrapperImport}=method(source,"POST");
     const parse=post.indexOf("readTpoBulkRequestBody(request)");
     expect(origin,route).toBeGreaterThanOrEqual(0);
+    if(wrapped)expect(fileHasWrapperImport,route).toBe(true);
     expect(parse,route).toBeGreaterThan(origin);
-    const caught=route.includes("cascade-undo")?"err":"error";
-    expect(post,route).toContain(caught+" instanceof TpoBulkBodyError");
+    expect(post,route).toContain("instanceof TpoBulkBodyError");
     expect(post,route).toContain("status:");
     expect(post,route).not.toContain("request.json()");
   }
@@ -67,8 +82,8 @@ describe("TPO bounded mutation request contracts",()=>{
  });
  it("PLACEMENTS-JOINING-BODY-43 caps all joining corrections before parsing untrusted request data",()=>{
   const route=src("src/app/api/placements/offers/[offerId]/joining/route.ts");
-  const put=route.slice(Math.max(route.indexOf("export async function PUT("),route.indexOf("async function handlePUT(")));
-  const origin=put.indexOf("isSameOriginRequest(request)");
+  const {slice:put,guard:origin,wrapped,fileHasWrapperImport}=method(route,"PUT");
+  if(wrapped)expect(fileHasWrapperImport).toBe(true);
   const decode=put.indexOf("readTpoBulkRequestBody(request)");
   expect(origin).toBeGreaterThanOrEqual(0);
   expect(decode).toBeGreaterThan(origin);
@@ -80,9 +95,8 @@ describe("TPO bounded mutation request contracts",()=>{
  });
  it("PLACEMENTS-SELECTION-BODY-41 maps parser failure on POST, not in the read-only GET route",()=>{
   const source=src("src/app/api/placements/tpo/jobs/[jobId]/selections/route.ts");
-  const get=source.slice(Math.max(source.indexOf("export async function GET("),source.indexOf("async function handleGET(")),
-    Math.max(source.indexOf("export async function POST("),source.indexOf("async function handlePOST(")));
-  const post=source.slice(Math.max(source.indexOf("export async function POST("),source.indexOf("async function handlePOST(")));
+  const get=method(source,"GET").slice;
+  const post=method(source,"POST").slice;
   expect(get).not.toContain("TpoBulkBodyError");
   expect(get).not.toContain("readTpoBulkRequestBody(");
   expect(post).toContain("const body=await readTpoBulkRequestBody(request)");

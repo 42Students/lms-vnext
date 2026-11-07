@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -8,31 +9,29 @@ import {
 import {
  listTpoAuditSavedViews,changeTpoAuditSavedView,TpoAuditSavedViewError,
 } from "@/modules/placements/tpo-audit-saved-view-service";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"};
 
-async function handleGET(request:Request){
- try{
-  if(new URL(request.url).searchParams.size!==0)
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const __ctx = __actor!;
+    if(new URL(request.url).searchParams.size!==0)
    return NextResponse.json({error:"INVALID_REQUEST"},{status:400,headers:noStore});
-  return NextResponse.json(await listTpoAuditSavedViews(await getCurrentRequestContext()),{
+    return NextResponse.json(await listTpoAuditSavedViews(__ctx),{
    headers:noStore,
   });
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
-async function handlePOST(request:Request){
- if(!isSameOriginRequest(request))
-  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
- try{
-  // Authenticate before reading arbitrary untrusted bytes. The service
-  // derives the owner and tenant from persisted identity, never the JSON.
-  const context=await getCurrentRequestContext();
-  const body=await readTpoSettingsBody(request);
-  return NextResponse.json(await changeTpoAuditSavedView(context,body),{headers:noStore});
- }catch(error){
+  },
+);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const body=await readTpoSettingsBody(request);
+return NextResponse.json(await changeTpoAuditSavedView(context,body),{headers:noStore});
+} catch(error){
   if(error instanceof TpoCommunicationBodyError)
    return NextResponse.json({error:"INVALID_REQUEST"},{status:error.code==="BODY_TOO_LARGE"?413:400,headers:noStore});
   if(error instanceof TpoAuditSavedViewError){
@@ -41,5 +40,5 @@ async function handlePOST(request:Request){
   }
   return apiErrorResponse(error);
  }
-}
-export const POST = secured(handlePOST);
+  },
+);

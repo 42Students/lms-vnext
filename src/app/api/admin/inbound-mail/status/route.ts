@@ -1,24 +1,23 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {readBoundedJsonBody} from "@/lib/bounded-json-body";
 import {apiErrorResponse} from "@/lib/api-error";
 import {changeInboundMailStatusForAdmin,getInboundMailDetailForAdmin} from "@/modules/inbound-mail/admin-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 /** Canonical CAS PATCH for triage. The old POST /{id}/done?done=true|false
  * is translated under the same Super Admin guard at [id]/done/route.ts. */
-async function handlePATCH(request:Request){
- if(!isSameOriginRequest(request))
-  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const body=await readBoundedJsonBody(request,8192);
-  if(body.kind!=="OK")return NextResponse.json({error:"INVALID_BODY"},
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    const body=await readBoundedJsonBody(request,8192);
+    if(body.kind!=="OK")return NextResponse.json({error:"INVALID_BODY"},
    {status:body.kind==="TOO_LARGE"?413:400,headers:{"Cache-Control":"private, no-store"}});
-  const context=await getCurrentRequestContext();
-  const result=await changeInboundMailStatusForAdmin(context,body.value);
-  if(result.kind==="STALE") {
+    const result=await changeInboundMailStatusForAdmin(context,body.value);
+    if(result.kind==="STALE") {
    // The already-authorized service validated the ID and mutation scope.
    // Re-read under that same global Super Admin guard: absent is 404, while
    // changed status/version is a retryable 409. Never expose mail contents.
@@ -29,11 +28,8 @@ async function handlePATCH(request:Request){
    return NextResponse.json({error:"MESSAGE_CHANGED",
      message:"This message changed. Reload it and try again."},{status:409});
   }
-  if(result.kind==="UNAVAILABLE")
+    if(result.kind==="UNAVAILABLE")
    return NextResponse.json({error:"INBOUND_MAIL_STORAGE_UNAVAILABLE"},{status:503});
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){
-  return apiErrorResponse(error);
- }
-}
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  },
+);

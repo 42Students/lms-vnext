@@ -24,6 +24,7 @@ vi.mock("@/modules/auth/private-response", () => ({
 }));
 vi.mock("@/auth/session", () => ({
   MEMBERSHIP_COOKIE_NAME: "active_membership",
+  ROLE_COOKIE_NAME: "active_role",
   SESSION_COOKIE_NAME: "lms_session",
 }));
 vi.mock("@/auth/admin-scope", () => ({ADMIN_SCOPE_COOKIE_NAME:"admin_scope"}));

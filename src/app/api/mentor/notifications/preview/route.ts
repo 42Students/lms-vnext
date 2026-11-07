@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
@@ -12,25 +13,25 @@ import {mentorAttentionReceiptKey,mentorAnnouncementReceiptKey} from
  "@/modules/projects/mentor-attention-read-model";
 import {sortMentorUnifiedNotifications} from
  "@/modules/projects/mentor-unified-notification-model";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 /** Every source read reauthorizes the signed-in recipient, college and live
  * Mentor role. Render at most five source-owned entries in the shell.
  * Provider email/push is never inferred from this in-app preview.
  */
-async function handleGET(){
- try{
-  const context=await getCurrentRequestContext();
-  const inbox=await getMentorPersonalInbox(context,{view:"all"});
-  const access=await resolveOptionalModuleAccess(context);
-  const [alerts,notices]=await Promise.all([
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor }) => {
+    const context = __actor!;
+    const inbox=await getMentorPersonalInbox(context,{view:"all"});
+    const access=await resolveOptionalModuleAccess(context);
+    const [alerts,notices]=await Promise.all([
    access.projects.enabled?listMyMentorProjectAttention(context):Promise.resolve([]),
    announcementsRuntimeEnabled()?listVisibleAnnouncementsForMembership(context):Promise.resolve([]),
   ]);
-  const keys=[...alerts.map(mentorAttentionReceiptKey),
+    const keys=[...alerts.map(mentorAttentionReceiptKey),
     ...notices.map(mentorAnnouncementReceiptKey)];
-  const read=await listOwnMentorSourceReceipts(context,keys);
-  const items=sortMentorUnifiedNotifications([
+    const read=await listOwnMentorSourceReceipts(context,keys);
+    const items=sortMentorUnifiedNotifications([
    ...inbox.page.items.map(row=>({
     id:row.notification.id,source:"PERSONAL" as const,
     title:row.notification.title,description:row.notification.body,
@@ -51,11 +52,10 @@ async function handleGET(){
       actionHref:null,read:read.has(receiptKey),receiptKey};
    }),
   ]).slice(0,5);
-  return NextResponse.json({items,hasMore:Boolean(inbox.page.nextCursor)||
+    return NextResponse.json({items,hasMore:Boolean(inbox.page.nextCursor)||
     announcementsRuntimeEnabled()&&notices.length>=100||
     alerts.length+notices.length+inbox.page.items.length>5},{
       headers:{"Cache-Control":"private, no-store"},
   });
- }catch(error){return apiErrorResponse(error);}
-}
-export const GET = secured(handleGET);
+  },
+);

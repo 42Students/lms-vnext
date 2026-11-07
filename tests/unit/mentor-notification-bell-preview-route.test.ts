@@ -53,7 +53,7 @@ beforeEach(()=>{
 });
 describe("Mentor merged bell preview API",()=>{
  it("returns no-store newest-first personal, attention and college records",async()=>{
-  const response=await GET();
+  const response=await GET(new Request("https://lms.example/api/mentor/notifications/preview"));
   expect(response.status).toBe(200);
   expect(response.headers.get("cache-control")).toBe("private, no-store");
   const data=await response.json() as {items:Array<{
@@ -64,11 +64,11 @@ describe("Mentor merged bell preview API",()=>{
  });
  it("does not include disabled optional project or college sources",async()=>{
   state.projects=false;state.announcements=false;
-  const result=await(await GET()).json() as {items:Array<{source:string}>};
+  const result=await(await GET(new Request("https://lms.example/api/mentor/notifications/preview"))).json() as {items:Array<{source:string}>};
   expect(result.items.map(item=>item.source)).toEqual(["PERSONAL"]);
  });
  it("denies removed or unauthenticated Mentor identity",async()=>{
   state.signedIn=false;
-  expect((await GET()).status).toBe(403);
+  expect((await GET(new Request("https://lms.example/api/mentor/notifications/preview"))).status).toBe(403);
  });
 });

@@ -1,3 +1,4 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {requireTpoJobCollege} from "@/modules/placements/tpo-job-write-base";
@@ -6,7 +7,6 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
 import {previewTpoBulkAction} from "@/modules/placements/tpo-bulk-action-preview-service";
 import {TpoBulkApplicationsUnavailable} from "@/modules/placements/tpo-bulk-workflow-model";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
 const previewMessages:Record<string,string>={
  REQUEST_TOO_LARGE:"This bulk action is too large. Select no more than 200 rows at once.",
@@ -18,22 +18,22 @@ function safeBulkCount(value:unknown){
  const n=typeof value==="number"?value:NaN;
  return Number.isFinite(n)?Math.max(0,Math.min(1_000_000,Math.trunc(n))):0;
 }
-async function handlePOST(request:Request){
- if(!isSameOriginRequest(request))
-   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-   const body=await readTpoBulkRequestBody(request);
-   const context=await getCurrentRequestContext();
-   await requireTpoJobCollege(context);
-   const result=await previewTpoBulkAction(context,body);
-   const ready=safeBulkCount(result.counts.ready),skipped=safeBulkCount(result.counts.skipped);
-   return NextResponse.json({
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor }) => {
+    const context = __actor!;
+    try {
+const body=await readTpoBulkRequestBody(request);
+await requireTpoJobCollege(context);
+const result=await previewTpoBulkAction(context,body);
+const ready=safeBulkCount(result.counts.ready),skipped=safeBulkCount(result.counts.skipped);
+return NextResponse.json({
      ...result,counts:{ready,skipped},
      summary:ready+" ready · "+skipped+" skipped",
      confirmationRequired:true,
      message:"Review the eligible rows and confirm before applying this bulk action.",
    },{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){
+} catch(error){
    if(error instanceof TpoBulkBodyError)
      return NextResponse.json({error:error.message,
        message:previewMessages[error.message]??"The bulk selection could not be previewed.",
@@ -45,5 +45,5 @@ async function handlePOST(request:Request){
      },{status:503,headers:{"Cache-Control":"private, no-store"}});
    return apiErrorResponse(error);
  }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

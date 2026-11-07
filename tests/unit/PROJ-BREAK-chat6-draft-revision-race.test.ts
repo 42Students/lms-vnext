@@ -34,7 +34,7 @@ describe("PROJ-BREAK-submissions-10 concurrent learner draft revisions",()=>{
     expect(route).toContain("body,");
     const ui=readFileSync("src/components/projects/project-final-delivery-controls.tsx","utf8");
     const client=ui.slice(ui.indexOf("export function LearnerFinalDeliveryControl"),ui.indexOf("export function FinalReviewControl"));
-    expect(client).toContain('"POST",\n        {expectedUpdatedAt:lastSavedUpdatedAt.current}');
+    expect(client).toMatch(/"POST",\s*\{expectedUpdatedAt:lastSavedUpdatedAt\.current\},?\s*\)/);
   });
   it("an old browser tab is rejected after a parallel edit, even when calls share the same wall-clock millisecond",()=>{
     const first=new Date(stamp);

@@ -1,23 +1,21 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {lockAdminProjectSubmission} from "@/modules/projects/admin-submission-review-service";
 import {readLimitedProjectLockInput} from "@/modules/projects/admin-lock-request-model";
-import { secured } from "@/security/secure-handler";
 export const runtime="nodejs";
-async function handlePOST(request:Request,{params}:{params:Promise<{projectId:string;submissionId:string}>}){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  // Reject oversized or malformed JSON before looking up the actor.
-  // The streaming reader caps actual bytes, not just the advertised size.
-  const command=await readLimitedProjectLockInput(request);
-  if(!command.ok)
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const __ctx = __actor!;
+    const command=await readLimitedProjectLockInput(request);
+    if(!command.ok)
     return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
-  const {projectId,submissionId}=await params;
-  const submission=await lockAdminProjectSubmission(await getCurrentRequestContext(),
+    const {projectId,submissionId}=params;
+    const submission=await lockAdminProjectSubmission(__ctx,
    projectId,submissionId,command.value);
-  return NextResponse.json({submission},{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+    return NextResponse.json({submission},{headers:{"Cache-Control":"private, no-store"}});
+  },
+);

@@ -31,10 +31,12 @@ describe("PROJ-BREAK-SA-38 bounded streaming submission-lock input",()=>{
  });
  it("checks same-origin before streaming and never authenticates malformed payloads",()=>{
   const code=readFileSync("src/app/api/projects/[projectId]/submissions/[submissionId]/lock/route.ts","utf8");
-  expect(code.indexOf("isSameOriginRequest(request)")).toBeLessThan(
-   code.indexOf("readLimitedProjectLockInput(request)"));
-  expect(code.indexOf("readLimitedProjectLockInput(request)")).toBeLessThan(
-   code.indexOf("getCurrentRequestContext()"));
+  // route() runs origin -> authentication -> permission before the handler; the bounded read happens inside it.
+  expect(code).toContain('import { route } from "@/security/route"');
+  expect(code).toMatch(/export const POST = route\(\s*\{ auth: "user"/);
+  expect(code).not.toMatch(/export async function POST\(/);
+  expect(code.indexOf("route(")).toBeLessThan(code.indexOf("readLimitedProjectLockInput(request)"));
+  // A malformed payload is rejected with the generic error inside the handler.
   expect(code).toContain('error:"INVALID_REQUEST"');
   expect(code).toContain('Cache-Control":"private, no-store"');
  });

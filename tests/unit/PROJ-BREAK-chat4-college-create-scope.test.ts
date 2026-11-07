@@ -40,6 +40,8 @@ describe("College Admin Projects class-team creation adversarial scopes", () => 
     const actor: RequestContext = {
       ...collegeAdmin(),
       user: { ...collegeAdmin().user, systemRoles: ["SUPER_ADMIN"] },
+      // Super Admin authority applies only on the platform admin path (no selected membership).
+      membership: null,
       adminScope: null,
     };
     expect(getProjectAdminCollegeId(actor)).toBeNull();

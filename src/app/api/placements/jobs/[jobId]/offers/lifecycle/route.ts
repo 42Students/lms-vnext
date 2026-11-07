@@ -1,31 +1,27 @@
+import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
 import { recordTpoOfferLifecycle } from "@/modules/placements/tpo-offer-lifecycle-service";
-import { secured } from "@/security/secure-handler";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-async function handlePOST(
-  request: Request,
-  { params }: { params: Promise<{ jobId: string }> },
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
-  }
-  try {
-    const context = await getCurrentRequestContext();
-    const { jobId } = await params;
-    return NextResponse.json(
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ request, context: __actor, params }) => {
+    const context = __actor!;
+    try {
+const { jobId } = params;
+return NextResponse.json(
       await recordTpoOfferLifecycle(context, jobId, await readTpoBulkRequestBody(request)),
     );
-  } catch (error) {
+} catch (error) {
     if(error instanceof TpoBulkBodyError)return NextResponse.json({error:error.message},
       {status:error.status,headers:{"Cache-Control":"private, no-store"}});
     return apiErrorResponse(error);
   }
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);

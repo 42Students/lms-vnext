@@ -1,19 +1,19 @@
+import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {ensureTenantDomainVerificationTokenWithRuntime} from "@/modules/tenant-domains/runtime";
-import { secured } from "@/security/secure-handler";
 
 export const runtime="nodejs";
 type Params={params:Promise<{domainId:string}>};
-async function handlePOST(request:Request,{params}:Params){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const {domainId}=await params;
-  const domain=await ensureTenantDomainVerificationTokenWithRuntime(await getCurrentRequestContext(),domainId);
-  return NextResponse.json({domain,verificationRequired:!domain.isVerified},
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  async ({ context: __actor, params }) => {
+    const __ctx = __actor!;
+    const {domainId}=params;
+    const domain=await ensureTenantDomainVerificationTokenWithRuntime(__ctx,domainId);
+    return NextResponse.json({domain,verificationRequired:!domain.isVerified},
    {headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
-}
-export const POST = secured(handlePOST, { csrf: "enforce" });
+  },
+);
