@@ -51,8 +51,9 @@ for (const viewport of viewports) {
    const create=page.locator('[data-ux-fixture="debar-create"]');
    const helpIds=await page.locator('[data-ux-fixture^="debar"] input[type="date"]')
     .evaluateAll(inputs=>inputs.map(input=>input.getAttribute("aria-describedby")));
-   expect(helpIds.length).toBe(1);
+   expect(helpIds).toHaveLength(2);
    expect(helpIds.every(Boolean)).toBe(true);
+   expect(new Set(helpIds).size).toBe(2);
    await existing.getByRole("button",{name:"Review lift"}).first().click();
    const modal=page.getByRole("dialog",{name:"Lift debarment"});
    await expect(modal).toBeVisible();
