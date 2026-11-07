@@ -14471,7 +14471,7 @@
           "/admin/projects/workspaces/deleted"
         ],
         "evidence": [],
-        "notes": "Claimed as additional UX batch: 12 route-state/page surfaces each. Strict DONE requires scoped implementation, tests, desktop/mobile browser evidence and role/privacy regression."
+        "notes": "Source pass committed: four error fallbacks now expose safe template-directory navigation, create and version-comparison loading preserve page context. All 12 sources reviewed; role/UUID/version rules unchanged. Unit+browser tests: tests/unit/ux-g022-g103-route-recovery.test.ts and tests/e2e/ux-g022-g103-route-recovery.spec.ts. CI 42397732685 pending on source SHA fc8ebc33; no DONE until complete desktop/mobile and role-negative proof. See docs/parity/pages/shared/UX-G022-G103.md."
       },
       {
         "id": "UX-G023",
@@ -18764,7 +18764,7 @@
           "/tpo/drives/new"
         ],
         "evidence": [],
-        "notes": "Claimed as additional UX batch: 12 route-state/page surfaces each. Strict DONE requires scoped implementation, tests, desktop/mobile browser evidence and role/privacy regression."
+        "notes": "Source pass committed: invalid finder reset, strict follow-up URL state recovery, repeated home-filter refusal, accessible home busy state. All 12 sources reviewed; no-show/attendance and authorized TPO reads unchanged. Unit+browser tests: tests/unit/ux-g022-g103-route-recovery.test.ts and tests/e2e/ux-g022-g103-route-recovery.spec.ts. CI 42397732685 pending on source SHA fc8ebc33; no DONE until complete desktop/mobile and role-negative proof. See docs/parity/pages/shared/UX-G022-G103.md."
       },
       {
         "id": "UX-G104",
@@ -20090,7 +20090,7 @@
         ],
         "newRouteOnly": [],
         "evidence": [],
-        "notes": "Source implementation committed on main: keyboard-submit/required create+edit, publication consent guard, audience search select/clear with API-aligned 500-cap. Source commits 690da84426819cf6fdd05b8adccf3b27fda4f13b, 4dc910c8a8f1350046d7a04dd14a0e144a053f6d. Scope and security boundaries documented in docs/parity/pages/shared/UX-G131-G162-G183.md. Unit/browser tests and dedicated CI workflow committed; exact-SHA successful desktop/mobile run REQUIRED before DONE."
+        "notes": "Source implementation and regression tests committed on main (native keyboard forms, audience and confirmation, capped selection). Scoped acceptance workflow ux-g131-g162-g183; run 42396989946 failed on unrelated global TypeScript HR loading shape errors, subsequently repaired. Current run 42397969147 pending. Remains DOING until exact-SHA unit+browser evidence. See docs/parity/pages/shared/UX-G131-G162-G183.md."
       },
       {
         "id": "UX-G132",
@@ -21286,7 +21286,7 @@
         ],
         "newRouteOnly": [],
         "evidence": [],
-        "notes": "Source implementation committed on main: page-only sorting/selection transparency, first-50 visibility notice, reversible TPO filters, stale validation and send-back reason reset, 20-item selection guard, reason length. Source commits c809b85858d5f1fcb26ca7b188c0c0c3114cb4c2, 6a84c2d6ab09d27ef4f7a022994b3eb584cc25fd, 5fbede36f9cb243571e7f14e91152f178ad96f3a, 5a6415a1eaf081f8f79a4257dc126079f47ba5b2. Parity docs and focused tests committed; exact-SHA CI and responsive browser proof outstanding before DONE."
+        "notes": "Source implementation plus retryable verification drawer load-failure fix commit 2dcb0b69; strict unit regression commit b75c5ee9. Scoped acceptance 42397969147 queued. Prior run 42396989946 failed global TypeScript HR loading, now fixed. Remains DOING pending unit, browser, private-data negative checks. See docs/parity/pages/shared/UX-G131-G162-G183.md."
       },
       {
         "id": "UX-G163",
@@ -22059,7 +22059,7 @@
         ],
         "newRouteOnly": [],
         "evidence": [],
-        "notes": "Source implementation committed on main: learner correction reason punctuation and authorized staff CSV export now populated with saved reviewer name, still spreadsheet-safe and college-scoped. Source commit 9869ea075394c24ba6da40fd687468219e711305 plus notification-copy source commit. Updated both legacy wording tests and added focused UX test. Parity docs committed; exact-SHA CI and responsive browser/cross-role proof REQUIRED before DONE."
+        "notes": "Source notification punctuation and reviewer-name CSV export committed; formula safety regression test added e00aec2d4. Scoped acceptance 42397969147 queued. No new private fields; existing tenant-scoped query preserved. Remains DOING pending executed tests and browser evidence. See docs/parity/pages/shared/UX-G131-G162-G183.md."
       },
       {
         "id": "UX-G184",
