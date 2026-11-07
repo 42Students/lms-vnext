@@ -19990,7 +19990,7 @@
         ],
         "newRouteOnly": [],
         "evidence": [],
-        "notes": "Owned for announcements authoring, verification review/filters and verification notification/export user experience; CI and responsive browser acceptance outstanding."
+        "notes": "Source implementation committed on main: keyboard-submit/required create+edit, publication consent guard, audience search select/clear with API-aligned 500-cap. Source commits 690da84426819cf6fdd05b8adccf3b27fda4f13b, 4dc910c8a8f1350046d7a04dd14a0e144a053f6d. Scope and security boundaries documented in docs/parity/pages/shared/UX-G131-G162-G183.md. Unit/browser tests and dedicated CI workflow committed; exact-SHA successful desktop/mobile run REQUIRED before DONE."
       },
       {
         "id": "UX-G132",
@@ -21122,7 +21122,7 @@
         ],
         "newRouteOnly": [],
         "evidence": [],
-        "notes": "Owned for announcements authoring, verification review/filters and verification notification/export user experience; CI and responsive browser acceptance outstanding."
+        "notes": "Source implementation committed on main: page-only sorting/selection transparency, first-50 visibility notice, reversible TPO filters, stale validation and send-back reason reset, 20-item selection guard, reason length. Source commits c809b85858d5f1fcb26ca7b188c0c0c3114cb4c2, 6a84c2d6ab09d27ef4f7a022994b3eb584cc25fd, 5fbede36f9cb243571e7f14e91152f178ad96f3a, 5a6415a1eaf081f8f79a4257dc126079f47ba5b2. Parity docs and focused tests committed; exact-SHA CI and responsive browser proof outstanding before DONE."
       },
       {
         "id": "UX-G163",
@@ -21858,7 +21858,7 @@
         ],
         "newRouteOnly": [],
         "evidence": [],
-        "notes": "Owned for announcements authoring, verification review/filters and verification notification/export user experience; CI and responsive browser acceptance outstanding."
+        "notes": "Source implementation committed on main: learner correction reason punctuation and authorized staff CSV export now populated with saved reviewer name, still spreadsheet-safe and college-scoped. Source commit 9869ea075394c24ba6da40fd687468219e711305 plus notification-copy source commit. Updated both legacy wording tests and added focused UX test. Parity docs committed; exact-SHA CI and responsive browser/cross-role proof REQUIRED before DONE."
       },
       {
         "id": "UX-G184",
