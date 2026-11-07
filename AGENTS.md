@@ -8,6 +8,8 @@
 - Preserve all 101 previously accepted DB/API/UI packages and previous evidence; do not recertify or reopen completed engineering packages unless a concrete regression demands it. No independent public release security claim until the 493-control requirements and separate release gates are met.
 - Shared `main` has concurrent writers. Fetch and reconcile fresh HEAD before each patch; never overwrite another chat's canonical security-control updates. Never commit credentials, sensitive provider receipts or private production data.
 
+**Owner-requested parallel UX grouping (2026-11-07):** For optional UX polish without confusing active SECURITY work, use `docs/tracker.json#uxReview.groups` as the *same canonical tracker* with statuses `UNPICKED → PICKED → DOING → DONE`. Run `npm run ux:groups -- --unpicked --area learn` or `--group UX-Gxxx` to pick a non-overlapping group; `--pick UX-Gxxx --by chat-ID` and `--start UX-Gxxx --by chat-ID` edit only the local tracker, which must then be committed/pushed from freshly reconciled `main`. Mark `DONE` only with executed tests, desktop/mobile browser proof and review evidence in the existing `docs/parity/` file; use `--done ... --evidence-file ...`. The UX board tracks a frozen 2,080-entry registry + 83 newer routes; reconcile discoveries without overwriting security statuses or falsely advancing release gates. Shared kit/components are assigned separate groups, so coordinate before editing those files concurrently.
+
 ---
 
 # LMS vNext engineering rules
