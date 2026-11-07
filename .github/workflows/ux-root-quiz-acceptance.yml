@@ -1,0 +1,81 @@
+name: UX-G002 and UX-G079 root quiz acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/app/page.tsx
+      - src/app/(authenticated)/error.tsx
+      - src/app/(authenticated)/loading.tsx
+      - src/app/quiz/**
+      - tests/unit/ux-g002-g079-root-quiz.test.ts
+      - tests/e2e/ux-root-quiz-journeys.spec.ts
+      - .github/workflows/ux-root-quiz-acceptance.yml
+
+concurrency:
+  group: ux-root-quiz-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  focused-ux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: "true"
+      APP_ENV: development
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Scoped lint
+        run: npx eslint src/app/page.tsx 'src/app/(authenticated)/error.tsx' 'src/app/(authenticated)/loading.tsx' src/app/quiz/page.tsx src/app/quiz/error.tsx src/app/quiz/loading.tsx tests/unit/ux-g002-g079-root-quiz.test.ts tests/e2e/ux-root-quiz-journeys.spec.ts
+      - name: TypeScript
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: Focused root and quiz source regression
+        run: npx vitest run tests/unit/ux-g002-g079-root-quiz.test.ts
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Prepare disposable E2E database
+        run: npm run db:e2e:prepare
+      - name: Set ephemeral browser sign-in keys
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Desktop/mobile authenticated entry and recovery
+        run: npx playwright test tests/e2e/ux-root-quiz-journeys.spec.ts --project=chromium --reporter=line
+      - name: Upload viewport and failure artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-g002-g079-evidence
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
