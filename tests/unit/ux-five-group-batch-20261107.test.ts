@@ -37,6 +37,12 @@ describe("UX-G154 project write safety", () => {
   expect(src).toContain("mutationLock.current = true");
   expect(src).toContain("mutationLock.current = false");
  });
+ it("preserves cross-page selected college labels without trusting them for authorization", () => {
+  const src=source("src/components/projects/super-admin-template-college-bulk.tsx");
+  expect(src).toContain("savedSelection.find(row=>row.id===id)");
+  expect(src).toContain("expectedCollegeIds:[...current].sort()");
+  expect(src).toContain("collegeIds:desired.sort()");
+ });
 });
 
 describe("UX-G161 tracker recoverability and formula safety", () => {
