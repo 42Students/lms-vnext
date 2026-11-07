@@ -21,4 +21,4 @@ Code-read and dev-evidence assessments written before the single CI pass. None o
 | SEC-22 privacy | data-inventory.md | |
 | Gate 0 | GATE0-CI-RED.md | CI run 42414194708, local unit reproduction |
 
-Not yet assessed: SEC-13 business logic, SEC-14 LMS-specific attack scenarios (partly probed), SEC-23 automated security testing, SEC-24 independent testing, SEC-25 governance, SEC-26 sensitive operations. Owner-facing list: OWNER-ACTIONS.md. Ranked work: NEXT-UP.md.
+Also: assessments/SEC-13-business-logic.md and assessments/SEC-14-23-24-25-26-remaining.md. Not assessed: SEC-22 beyond the data inventory. Owner-facing list: OWNER-ACTIONS.md. Ranked work: NEXT-UP.md.
