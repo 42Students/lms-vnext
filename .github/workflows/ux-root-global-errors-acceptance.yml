@@ -1,0 +1,45 @@
+name: UX root and global error recovery acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/app/error.tsx
+      - src/app/global-error.tsx
+      - src/app/e2e/ux-root-error-fixture/**
+      - src/components/public/graceful-error-boundary.tsx
+      - src/components/public/root-error-reference.tsx
+      - tests/unit/ux-root-global-errors.test.ts
+      - tests/e2e/ux-root-global-errors.spec.ts
+      - .github/workflows/ux-root-global-errors-acceptance.yml
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      UX_ROOT_ERROR_FIXTURE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Lint root error files and acceptance fixtures
+        run: npx eslint src/app/error.tsx src/app/global-error.tsx src/app/e2e/ux-root-error-fixture/page.tsx src/components/public/graceful-error-boundary.tsx src/components/public/root-error-reference.tsx tests/unit/ux-root-global-errors.test.ts tests/e2e/ux-root-global-errors.spec.ts
+      - name: Focused root and global error invariants
+        run: npx vitest run tests/unit/ux-root-global-errors.test.ts tests/unit/graceful-root-screens.test.ts --reporter=dot
+      - name: Install headless Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Real root-error and isolated global CSS browser acceptance
+        run: npx playwright test tests/e2e/ux-root-global-errors.spec.ts --project=chromium --reporter=line
+      - name: Validate dependent TypeScript
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
