@@ -17,8 +17,9 @@ type Preview={storageReady:boolean;freeSeats:number|null;activeOffers:number;row
 export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;preview:Preview}){
  const router=useRouter();const inFlight=useRef(false);const [reason,setReason]=useState("A placement offer seat became available");
  const [busy,setBusy]=useState(false);const [error,setError]=useState("");const [success,setSuccess]=useState("");const [confirmOpen,setConfirmOpen]=useState(false);
+ const [requiresRefresh,setRequiresRefresh]=useState(false);
  async function promote(){
-  if(!preview.next||inFlight.current||reason.trim().length<3)return;
+  if(!preview.next||!preview.storageReady||requiresRefresh||inFlight.current||reason.trim().length<3)return;
   inFlight.current=true;
   setBusy(true);setError("");setSuccess("");
   try{const data=await apiFetch<{seatNumber?:number}>("/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/waitlist-promote",{
@@ -27,9 +28,13 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
   });
   if(typeof data?.seatNumber!=="number"||!Number.isSafeInteger(data.seatNumber)||data.seatNumber<1)
    throw Error("Could not promote waitlisted learner. Refresh the preview before retrying.");
-  setSuccess("Offer released to "+preview.next.name+" for seat "+data.seatNumber+".");
+  setSuccess("Offer released to "+preview.next.name+" for seat "+data.seatNumber+". Reload the waitlist before releasing another offer.");
+  setRequiresRefresh(true);
   router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Could not release offer");}
+  }catch(e){
+   setRequiresRefresh(true);
+   setError((e instanceof Error?e.message:"Could not release offer")+". Recheck the saved offer before attempting another release.");
+  }
   finally{inFlight.current=false;setBusy(false);setConfirmOpen(false);}
  }
  return <section className="min-w-0 space-y-4">
@@ -46,7 +51,7 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
    <Label stack className="min-w-0">Reason for promotion
     <Textarea rows={2} minLength={3} maxLength={500} value={reason} onChange={e=>{setReason(e.target.value);setError("");}} className="min-h-24 w-full min-w-0"
      /></Label>
-   <Button variant="primary" type="button" disabled={busy||reason.trim().length<3} onClick={()=>setConfirmOpen(true)}
+   <Button variant="primary" type="button" disabled={busy||requiresRefresh||reason.trim().length<3} onClick={()=>setConfirmOpen(true)}
     className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
     {busy?"Verifying…":"Verify and release next offer"}</Button>
   </div>:null}
@@ -70,8 +75,9 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
     description="This issues a real offer and records the seat."
     confirmLabel="Verify and release next offer" onConfirm={()=>void promote()}/>
   {success?<InlineNotice tone="success" message={success}/>:null}
-  <Button variant="secondary" type="button" disabled={busy} onClick={()=>router.refresh()}
+  <Button variant="secondary" type="button" disabled={busy} onClick={()=>requiresRefresh?window.location.reload():router.refresh()}
     className="min-h-11 w-full px-3 sm:w-auto md:min-h-9">Refresh waitlist and seats</Button>
-  {error?<InlineNotice tone="error" message={error+" Refresh the preview before retrying."}/>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {requiresRefresh?<p role="status" className="text-sm text-body leading-[22px]">Offer actions are locked until the waitlist and seat availability are reloaded.</p>:null}
  </section>;
 }
