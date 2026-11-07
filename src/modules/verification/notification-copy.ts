@@ -11,6 +11,8 @@ export function verificationDecisionNotice(input:{
   body:`Verified by ${input.reviewerName?.trim()||"the placement cell"}. Companies and the placement cell now see it as verified.`,
  };
  const reason=input.reason?.trim()||"Your submitted details need a change.";
+ // Keep the reviewer-provided explanation intact but separate it from the next instruction.
+ const sentence=/[.!?]$/u.test(reason)?reason:reason+".";
  return {title:`Your ${section} needs a change`,
-  body:`${reason} Fix it on your profile and send it again.`};
+  body:`${sentence} Fix it on your profile and send it again.`};
 }
