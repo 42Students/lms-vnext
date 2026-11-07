@@ -7,7 +7,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {Checkbox} from "@/components/ui/checkbox";
-import {broadcastConsentSummary} from "@/modules/announcements/super-admin-college-broadcast-model";
+import {addBroadcastAudienceSelection,broadcastConsentSummary,MAX_BROADCAST_RECIPIENT_COLLEGES} from "@/modules/announcements/super-admin-college-broadcast-model";
 import {broadcastLocalTiming} from "@/modules/announcements/super-admin-broadcast-timing-model";
 import { Radio } from "@/components/ui/radio";
 import { Label } from "@/components/ui/label";
@@ -37,7 +37,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
  const timing=broadcastLocalTiming("",expiresAt);
  const buttonError=buttonLabel.trim()&&!buttonUrl.trim()?"Add an HTTPS link to use this button.":buttonUrl.trim()&&!/^https:\/\/[^\s]+$/i.test(buttonUrl.trim())?"The link has to start with https://":null;
  const buttonValid=!buttonError&&buttonLabel.trim().length<=60&&buttonUrl.trim().length<=500;
- const valid=buttonValid&&count>0&&Boolean(title.trim())&&title.length<=200&&Boolean(message.trim())&&message.length<=8000&&timing.valid&&(!timing.expiresAt||new Date(timing.expiresAt).getTime()>=Date.now()-60_000)&&!pending;
+ const valid=buttonValid&&count>0&&count<=MAX_BROADCAST_RECIPIENT_COLLEGES&&Boolean(title.trim())&&title.length<=200&&Boolean(message.trim())&&message.length<=8000&&timing.valid&&(!timing.expiresAt||new Date(timing.expiresAt).getTime()>=Date.now()-60_000)&&!pending;
  async function submit(){
   if(!valid||publishing.current)return;
   publishing.current=true;
@@ -102,8 +102,8 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
      </Button>)}
     </div>:null}
    <div className="flex flex-wrap items-center gap-2">
-    <Button type="button" variant="secondary" size="sm" disabled={pending||matchingColleges.length===0||matchingColleges.every(item=>selected.includes(item.id))}
-     onClick={()=>{setAudienceTouched(true);setSelected(prev=>[...new Set([...prev,...matchingColleges.map(item=>item.id)])]);}}>
+    <Button type="button" variant="secondary" size="sm" disabled={pending||selected.length>=MAX_BROADCAST_RECIPIENT_COLLEGES||matchingColleges.length===0||matchingColleges.every(item=>selected.includes(item.id))}
+     onClick={()=>{setAudienceTouched(true);setSelected(prev=>addBroadcastAudienceSelection(prev,matchingColleges.map(item=>item.id)));}}>
      Select matching ({matchingColleges.length})
     </Button>
     <Button type="button" variant="ghost" size="sm" disabled={pending||selected.length===0}
@@ -112,7 +112,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
    <fieldset className="max-h-52 min-w-0 space-y-[var(--lms-space-2)] overflow-y-auto rounded-[var(--lms-control-radius)] border border-border p-3">
     <legend className="sr-only">Select placement cells</legend>
     {matchingColleges.map(item=><Label variant="choice" key={item.id} className="flex min-h-11 items-center gap-3 md:min-h-9">
-     <Checkbox disabled={pending} checked={selected.includes(item.id)}
+     <Checkbox disabled={pending||(!selected.includes(item.id)&&selected.length>=MAX_BROADCAST_RECIPIENT_COLLEGES)} checked={selected.includes(item.id)}
        onChange={e=>{setAudienceTouched(true);setSelected(prev=>e.target.checked?[...new Set([...prev,item.id])]:prev.filter(id=>id!==item.id));}}/>
      {item.label}
     </Label>)}
@@ -121,8 +121,12 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
    <p role="status" className="text-xs text-muted-foreground">
     {selected.length} placement {selected.length===1?"cell":"cells"} selected · {matchingColleges.length} matching the current search.
     Search only changes the visible choices, not the saved selection.
+    You can select up to {MAX_BROADCAST_RECIPIENT_COLLEGES} placement cells per announcement.
    </p>
   </div>:null}
+  {count>MAX_BROADCAST_RECIPIENT_COLLEGES?<p role="alert" className="text-sm text-danger-text">
+   This audience exceeds the {MAX_BROADCAST_RECIPIENT_COLLEGES}-college limit. Narrow the selection before publishing.
+  </p>:null}
   {audienceTouched&&mode==="SELECTED_COLLEGES"&&selected.length===0?<p role="alert" className="text-sm text-danger-text">Pick at least one</p>:null}
   <p className="text-xs text-muted-foreground">Placement-cell messages use the legacy 200-character title and 8,000-character body limits.</p>
   <Label stack className="min-w-0">Title<Input disabled={pending} value={title} maxLength={200} aria-invalid={titleTouched&&!title.trim()} onBlur={()=>setTitleTouched(true)} onChange={e=>setTitle(e.target.value)}/></Label>
