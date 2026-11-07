@@ -1,0 +1,79 @@
+name: UX-G169 G171 G174 G177 CSV export acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/modules/shared/metadata-export-csv-cell.ts
+      - src/modules/announcements/admin-csv-model.ts
+      - src/modules/bug-tracker/audit-findings-csv-model.ts
+      - src/modules/courses/faculty-report-csv.ts
+      - src/modules/messaging/receipt-history-export-model.ts
+      - tests/unit/UX-G169-G171-G174-G177-exports.test.ts
+      - tests/unit/HR-BREAK-chat19-messaging-csv-unicode.test.ts
+      - tests/e2e/ux-report-export-journeys.spec.ts
+      - .github/workflows/ux-report-exports-acceptance.yml
+concurrency:
+  group: ux-export-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  verified-export-ux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: "true"
+      APP_ENV: development
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Scoped lint
+        run: npx eslint src/modules/shared/metadata-export-csv-cell.ts src/modules/announcements/admin-csv-model.ts src/modules/bug-tracker/audit-findings-csv-model.ts src/modules/courses/faculty-report-csv.ts src/modules/messaging/receipt-history-export-model.ts tests/unit/UX-G169-G171-G174-G177-exports.test.ts tests/unit/HR-BREAK-chat19-messaging-csv-unicode.test.ts tests/e2e/ux-report-export-journeys.spec.ts
+      - name: Full TypeScript
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: CSV export focused and pre-existing regressions
+        run: npx vitest run tests/unit/UX-G169-G171-G174-G177-exports.test.ts tests/unit/super-admin-db10-announcement-csv.test.ts tests/unit/audit-findings-export.test.ts tests/unit/faculty-report-csv.test.ts tests/unit/messaging-receipt-history-csv.test.ts tests/unit/messaging-history-export-contract.test.ts tests/unit/HR-BREAK-chat19-messaging-csv-unicode.test.ts tests/unit/chat19-invisible-mark-export-matrix.test.ts
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Prepare disposable E2E database
+        run: npm run db:e2e:prepare
+      - name: Set ephemeral sign-in secrets
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Browser export read, permissions, and CSV evidence
+        run: npx playwright test tests/e2e/ux-report-export-journeys.spec.ts --project=chromium --reporter=line
+      - name: Upload export evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-four-report-export-evidence
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
