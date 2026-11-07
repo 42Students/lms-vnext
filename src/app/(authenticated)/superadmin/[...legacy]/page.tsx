@@ -104,8 +104,10 @@ async function nestedProjectDestination(
 
   // The old /templates/new entry point is an action, never a template slug.
   // Check its stronger manage permission before handing off to the vNext form.
-  if (route === "templates" && segments.length === 3 &&
-      segments[2]?.toLowerCase() === "new") {
+  if (route === "templates" && segments[2]?.toLowerCase() === "new") {
+    // An added /overview or /colleges does not reinterpret the create action
+    // as a persisted template token, even if a legacy slug was named new.
+    if (segments.length !== 3) return null;
     requirePermission(context, "project-template.manage");
     return "/admin/projects/templates/new";
   }
