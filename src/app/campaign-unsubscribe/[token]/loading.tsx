@@ -6,8 +6,8 @@ const loadingPageClass = `${authStyles["page"]} mx-auto flex min-h-dvh w-full ma
 export default function Loading() {
   return <main className={loadingPageClass}>
     <div className="w-full min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
-      <PageHeader title="Campaign email preferences" />
-      <GracefulPageLoading label="Checking email preferences…" />
+      <PageHeader title="Stop these emails?" />
+      <GracefulPageLoading label="Opening unsubscribe options…" />
     </div>
   </main>;
 }
