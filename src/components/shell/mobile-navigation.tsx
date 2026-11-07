@@ -18,8 +18,9 @@ export function MobileNavigation({ items }: { items: readonly ShellNavItem[] }) 
   // A real modal must close on desktop breakpoint: otherwise the hidden
   // dialog could trap focus after the desktop sidebar appears.
   // Native Drawer owns the focus trap, Escape/Back and focus recovery.
-  // The opener is disabled while the drawer is open to prevent duplicate
-  // overlays; blocked route handling stays with shared navigation links.
+  // The trigger stays focusable while the drawer is open so the native
+  // dialog can reliably return keyboard focus to it after dismissal.
+  // The modal backdrop prevents a second open action.
   // Close on browser Back/Forward or programmatic route changes as well as
   // the normal sidebar-link click; do not leave a stale modal over new pages.
   useEffect(() => { setOpen(false); }, [pathname]);
@@ -35,7 +36,7 @@ export function MobileNavigation({ items }: { items: readonly ShellNavItem[] }) 
   }, []);
 
   return <>
-    <Button type="button" aria-label={open?"Close menu":"Open menu"} disabled={open}
+    <Button type="button" aria-label="Open menu"
       aria-expanded={open} aria-haspopup="dialog" aria-controls={open ? "lms-mobile-navigation" : undefined} onClick={() => setOpen(true)}
       variant="secondary" size="icon" className="w-11 shrink-0 md:hidden">
       <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="20" height="20"
