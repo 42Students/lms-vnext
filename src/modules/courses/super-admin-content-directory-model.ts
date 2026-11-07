@@ -71,7 +71,7 @@ export function effectiveCourseContentVisibleToStudents(input:{
 export function legacySuperAdminLessonContentHref(raw:Record<string,string|string[]|undefined>):string {
  const rawType=typeof raw["type"]==="string"?raw["type"].toLowerCase():"video";
  const kind:AdminContentKind=rawType==="resources"||rawType==="resource"?"RESOURCES":
-  rawType==="live-classes"||rawType==="live-class"?"LIVE_CLASSES":"VIDEOS";
+  rawType==="live-classes"||rawType==="live-class"||rawType==="live_class"?"LIVE_CLASSES":"VIDEOS";
  // The old classId=0 means course-wide content, not an unknown class.
  // A positive legacy integer is not a vNext Section delivery UUID and must
  // not be guessed or forwarded without a scoped identity crosswalk.
