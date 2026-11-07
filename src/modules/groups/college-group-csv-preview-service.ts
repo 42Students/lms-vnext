@@ -82,7 +82,8 @@ export async function previewCollegeGroupCsv(context: RequestContext, raw: unkno
       if (!memberId) status = "NOT_FOUND";
       else if (memberState.has(memberId)) status =
         memberState.get(memberId) === "REMOVED" ? "PREVIOUSLY_REMOVED" : "ALREADY_MEMBER";
-      else if (group.status !== "ACTIVE" || available === 0) status = "CAPACITY_FULL";
+      else if (group.status !== "ACTIVE") status = "GROUP_NOT_ACTIVE";
+      else if (available === 0) status = "CAPACITY_FULL";
       else { available -= 1; status = "READY"; }
     }
     return { rowNumber: row.rowNumber, email: row.value, status };
