@@ -68,3 +68,15 @@ Method: code read only, no tests run, nothing deployed. Not the tracker. Each re
 2. **Decide FORCE RLS** (SEC-06-009) and write the table classification (001-003).
 3. **At the CI pass:** add SQL-level negative tests for 019-024 and cross-college tests for SEC-05-005/008, then enter tracker evidence from that run.
 4. **Independent review** before any VERIFIED (audit brief questions 9 and 10).
+
+## Update 2026-11-07 (later): more inspected, parent-derived tables listed
+
+Read from the live dev database (read-only job) and code:
+
+- **SEC-06-003 / 002:** 130 tables have no `college_id` but a foreign-key path to a tenant table; 3 are user-owned; 32 are global or infrastructure. Full list: [tables-without-college-id.md](tables-without-college-id.md). The 130 have NO policy. This is the biggest open hole in SEC-06: the database does not narrow a direct query on a child table even though its parent is locked. Plan in that file; not auto-applied without the CI pass because a wrong policy blanks pages.
+- **SEC-06-009:** migration `0337` forces RLS for the owner (the runtime role owns all 278 tables). Written and pushed, not yet deployed.
+- **SEC-06-010/011:** `lms_vnext_app` has no superuser and no BYPASSRLS (confirmed on dev). It has CREATEROLE and CREATEDB, which it should not (SEC-06-012 gap on dev; production readiness refuses this, dev does not enforce it).
+- **SEC-05-021 college archival:** context resolution requires `colleges.status = ACTIVE` for the membership lookup (`context-service.ts:165,281,350`), so an archived college drops access on the next request. IMPLEMENTED_UNVERIFIED; needs a test.
+- **SEC-05-012 caches:** no `unstable_cache` or `revalidate` and no module-level cross-request cache found; the `new Map` hits in services are per-call local variables. IMPLEMENTED_UNVERIFIED (nothing to leak found); re-check any in-memory cache added later.
+- **SEC-05-011 search:** no external search index; search is SQL `ILIKE` inside services (111 modules), so it inherits each service's college filter and, once enforced, RLS. Per-service review still open.
+- **SEC-05-022 time-limited cross-college authority:** GAP. The Super Admin scope cookie (`lms_admin_scope`) carries no expiry; the header comment says authorization is verified server-side, but there is no time limit on a Super Admin acting inside a college. Owner decision: add a short expiry plus an audit line when a scope is entered.

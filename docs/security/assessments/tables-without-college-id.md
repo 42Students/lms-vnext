@@ -1,0 +1,183 @@
+# Tables without a college_id column, classified from the live dev catalog (2026-11-07)
+
+Read-only query on dev (lms_vnext). Parent-derived = no `college_id` but a foreign-key path to a table that has one. These 130 tables have NO row-level security policy, so a direct query on them is not narrowed by the database even when their parent is locked. SEC-06-002 / SEC-06-003 deliverable.
+
+## parent_derived (130)
+
+- assignment_submission_links
+- assignment_submissions
+- attendance_records
+- attendance_sessions
+- bug_report_activities
+- bug_report_attachments
+- cohort_progression_events
+- cohort_progression_state
+- cohorts
+- colleges
+- course_assignment_materials
+- course_assignment_resources
+- course_assignments
+- course_discussion_messages
+- course_learning_paths
+- course_lessons
+- course_offerings
+- course_quizzes
+- course_section_deliveries
+- course_teaching_assignments
+- courses
+- elective_offerings
+- faculty_course_associations
+- faculty_profiles
+- group_backed_class_offerings
+- identity_email_ownership_proofs
+- in_app_notifications
+- learner_content_progress
+- learner_profile_education_documents
+- learner_profile_education_entries
+- learner_profile_identity_summaries
+- learner_profile_images
+- learner_profile_import_undo_journal
+- learner_profile_private_document_bindings
+- learner_profile_video_intros
+- learner_profiles
+- learner_program_enrollments
+- lesson_content_delivery_sequences
+- lesson_content_materials
+- lesson_contents
+- lms_group_member_events
+- lms_group_members
+- lms_group_rules
+- membership_roles
+- messaging_delivery_receipts
+- placement_application_legacy_auto_screening
+- placement_application_legacy_status_history
+- placement_application_notes
+- placement_application_private_artifacts
+- placement_application_round_exceptions
+- placement_application_screening_history
+- placement_application_screenings
+- placement_application_status_history
+- placement_applications
+- placement_batch_registration_events
+- placement_candidate_academic_evidence
+- placement_candidate_preferences
+- placement_college_application_stage_history
+- placement_college_application_stages
+- placement_college_interviews
+- placement_company_domains
+- placement_company_share_selections
+- placement_debarment_drive_events
+- placement_debarment_history
+- placement_drive_change_request_messages
+- placement_drive_change_requests
+- placement_drive_selections
+- placement_eligibility_overrides
+- placement_external_offer_events
+- placement_interview_private_events
+- placement_job_diversity_outreach
+- placement_job_eligibility_policies
+- placement_job_role_options
+- placement_job_round_events
+- placement_job_rounds
+- placement_joining_history
+- placement_joining_outcomes
+- placement_learner_general_request_events
+- placement_learner_requests
+- placement_legacy_application_status_events
+- placement_offer_status_history
+- placement_offers
+- placement_public_join_challenges
+- placement_public_join_rate_events
+- placement_recruiter_college_grants
+- placement_recruiter_inbound_email_events
+- placement_recruiter_message_mail_state
+- placement_recruiter_private_reviews
+- placement_recruiter_selection_items
+- placement_round_attendance
+- placement_round_candidate_slots
+- placement_round_results
+- placement_tpo_application_stages
+- placement_tpo_messages
+- placement_tpo_notice_audiences
+- placement_tpo_notice_recipients
+- placement_tpo_share_events
+- placement_waitlist_promotions
+- profile_private_document_receipts
+- profile_verification_academic_marks
+- profile_verification_events
+- profile_verification_tpo_grants
+- profile_verifications
+- program_term_courses
+- program_terms
+- programs
+- project_delivery_events
+- project_evaluation_items
+- project_evaluations
+- project_meeting_history
+- project_meetings
+- project_members
+- project_releases
+- project_resource_audit
+- project_resources
+- project_sprints
+- project_submission_reviews
+- project_submissions
+- project_task_comments
+- project_task_submissions
+- project_tasks
+- quiz_attempt_answers
+- quiz_attempts
+- quiz_options
+- quiz_questions
+- section_enrollments
+- section_faculty_assignments
+- section_schedule_event_courses
+- section_schedule_events
+- sections
+
+## user_owned (3)
+
+- identity_device_sessions
+- placement_recruiter_profiles
+- system_roles
+
+## other (32)
+
+- announcement_broadcast_groups
+- audit_finding_events
+- audit_finding_file
+- audit_finding_syncs
+- audit_findings
+- bug_tracker_access
+- bug_tracker_sessions
+- log_alert_daily_counts
+- log_alert_observed_events
+- log_alert_signature_accounts
+- log_alert_signatures
+- log_alert_states
+- module_access_rules
+- organizations
+- outbound_global_email_suppressions
+- outbound_suppressions
+- placement_companies
+- placement_company_aliases
+- placement_company_merge_history
+- placement_recruiter_public_contacts
+- platform_broadcasts
+- platform_legacy_org_override_archives
+- platform_setting_overrides
+- project_template_legacy_events
+- project_template_versions
+- project_templates
+- scheduled_job_leases
+- security_shared_store
+- skill_synonyms
+- skill_usage
+- skills
+- users
+
+## Plan
+
+- parent_derived: generate a policy per table from its foreign keys (`EXISTS (SELECT 1 FROM parent WHERE parent.id = child.fk)`; the parent policy applies inside the subquery). Only where one tenant-bearing parent is unambiguous; tables with several parents or an optional parent need a reviewed decision. Do not auto-apply without the CI pass: a wrong policy blanks pages.
+- user_owned (3): policy on the user id, not the college. `identity_device_sessions` first.
+- other (32): global or infrastructure (users, organizations, skills, leases, shared store). Document each as intentionally unscoped; `users` and `organizations` need a reviewed read rule.
