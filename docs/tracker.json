@@ -13353,11 +13353,11 @@
         "type": "JOURNEY",
         "area": "(root)",
         "title": "(Root) · Home (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-root-quiz-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [
           "src/app/(authenticated)/error.tsx",
           "src/app/(authenticated)/loading.tsx",
@@ -13369,8 +13369,34 @@
           "PAGE-0513"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Root sign-in and learner quiz route UX implementation underway; acceptance requires exact source SHA, executed tests, responsive keyboard browser evidence, and unchanged auth/quiz contracts."
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "aff8ef1ef0eb4eb84aebd82aa86cb7bc11c115dd",
+            "description": "Exact-SHA source validation passed on main (root/quiz routes), browser job 42391169871"
+          },
+          {
+            "type": "ci",
+            "runId": 42391169871,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42391169871",
+            "conclusion": "success",
+            "results": "Scoped lint, full TS, 5/5 Vitest, 4/4 Chromium"
+          },
+          {
+            "type": "document",
+            "path": "docs/parity/pages/shared/UX-G002-root.md"
+          },
+          {
+            "type": "browser",
+            "artifactId": 13581392643,
+            "views": [
+              "1280px root",
+              "390px expired sign-in"
+            ],
+            "role": "anonymous"
+          }
+        ],
+        "notes": "Scoped UX surfaces improved and exact-SHA CI green (5 Vitest, 4 Chromium mobile/desktop; lint and full typecheck). Global release/security gates remain separate."
       },
       {
         "id": "UX-G003",
@@ -17093,11 +17119,11 @@
         "type": "JOURNEY",
         "area": "quiz",
         "title": "Quiz · Home (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-root-quiz-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [
           "src/app/quiz/error.tsx",
           "src/app/quiz/loading.tsx",
@@ -17109,8 +17135,34 @@
           "PAGE-0517"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Root sign-in and learner quiz route UX implementation underway; acceptance requires exact source SHA, executed tests, responsive keyboard browser evidence, and unchanged auth/quiz contracts."
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "aff8ef1ef0eb4eb84aebd82aa86cb7bc11c115dd",
+            "description": "Exact-SHA source validation passed on main (root/quiz routes), browser job 42391169871"
+          },
+          {
+            "type": "ci",
+            "runId": 42391169871,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42391169871",
+            "conclusion": "success",
+            "results": "Scoped lint, full TS, 5/5 Vitest, 4/4 Chromium"
+          },
+          {
+            "type": "document",
+            "path": "docs/parity/pages/learner/UX-G079-quiz.md"
+          },
+          {
+            "type": "browser",
+            "artifactId": 13581392643,
+            "views": [
+              "320px quiz error/recovery",
+              "1280px quiz error/recovery"
+            ],
+            "role": "seeded learner"
+          }
+        ],
+        "notes": "Scoped UX surfaces improved and exact-SHA CI green (5 Vitest, 4 Chromium mobile/desktop; lint and full typecheck). Global release/security gates remain separate."
       },
       {
         "id": "UX-G080",
