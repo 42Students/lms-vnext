@@ -20156,10 +20156,10 @@
         "type": "COMPONENT",
         "area": "people",
         "title": "People · Interactive components (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-faculty-learner-profile-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/components/people/faculty-profile-editor.tsx",
@@ -20176,7 +20176,8 @@
           "OVERLAY-0091"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Complete the faculty editor and learner profile component UX. Verify direct component behavior at desktop/mobile in CI-only test preview, preserving all permissions and data."
       },
       {
         "id": "UX-G144",
@@ -20441,10 +20442,10 @@
         "type": "COMPONENT",
         "area": "profile",
         "title": "Profile · Interactive components (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-faculty-learner-profile-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/components/profile/learner-profile-workspace.tsx"
@@ -20453,7 +20454,8 @@
           "OVERLAY-0130"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Complete the faculty editor and learner profile component UX. Verify direct component behavior at desktop/mobile in CI-only test preview, preserving all permissions and data."
       },
       {
         "id": "UX-G151",
