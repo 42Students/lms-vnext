@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 import { timedDebarDraftError, todayInIndia, type DebarDuration } from "@/modules/placements/tpo-timed-debar-view-model";
 
 const draft = (duration: DebarDuration, overrides: Partial<Parameters<typeof timedDebarDraftError>[0]> = {}) => ({
@@ -29,5 +30,27 @@ describe("UX-G160 TPO timed restrictions — pre-submit feedback", () => {
     for (const reason of ["", "   ", "X".repeat(501)])
       expect(timedDebarDraftError(draft("MANUAL", { reason }))).not.toBeNull();
     expect(timedDebarDraftError(draft("MANUAL", { reason: " X " }))).toBeNull();
+  });
+});
+
+describe("UX-G160 rendered controls remain scoped and accessible", () => {
+  it("keeps the authorized API, confirm dialog, and visible date feedback", () => {
+    const src = readFileSync("src/components/tpo/tpo-timed-debar-control.tsx", "utf8");
+    expect(src).toContain('apiFetch<{rows:TpoTimedDebarRow[]}>');
+    expect(src).toContain('type="date" min={today}');
+    expect(src).toContain("aria-invalid={invalidDate}");
+    expect(src).toContain('disabled={pending||active.length>0||Boolean(draftError)}');
+    expect(src).toContain('<Dialog open={confirm!==null}');
+    expect(src).toContain("locked.current");
+    expect(src).toContain("remaining");
+    expect(src).toContain("IST, inclusive");
+  });
+  it("separates navigational links from an interactive follow-up control", () => {
+    const src = readFileSync("src/components/tpo/tpo-topbar-new-menu.tsx", "utf8");
+    expect(src).toContain("<nav aria-label=");
+    expect(src.indexOf("</nav>")).toBeLessThan(src.indexOf("<TpoNewFollowupModal"));
+    expect(src).not.toContain('role="menuitem"');
+    expect(src).toContain('encodeURIComponent(companyName)');
+    expect(src).toContain('href:"/tpo/follow-ups"');
   });
 });
