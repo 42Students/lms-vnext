@@ -1,6 +1,6 @@
 "use client";
 import { Select } from "@/components/ui/select";
-import {useRef,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -15,6 +15,7 @@ export function AuditFindingStatusAction({publicId,current,version}:{publicId:st
  const inFlight=useRef(false);
  const [feedback,setFeedback]=useState("");
  const [stale,setStale]=useState(false);
+ useEffect(()=>{setStatus(current as BugStatus);setStale(false);setFeedback("");setReview(false);},[current,version]);
  async function submit(){
   if(inFlight.current||!canChangeAuditFindingStatus(current,status,pending))return;
   inFlight.current=true;
@@ -36,7 +37,7 @@ export function AuditFindingStatusAction({publicId,current,version}:{publicId:st
       (issue as Record<string,unknown>)["status"]!==status||
       (issue as Record<string,unknown>)["publicId"]!==publicId)
      throw Error("Tracker update could not be confirmed.");
-   setFeedback("Status saved; updating the board.");setReview(false);router.refresh();
+   setFeedback("Status saved; updating the board.");setReview(false);setStale(true);router.refresh();
   }catch{setFeedback("Connection failure. No status change was confirmed.");}
   finally{inFlight.current=false;setPending(false);}
  }
