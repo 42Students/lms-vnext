@@ -25,6 +25,6 @@ export function mentorReviewExportCsv(rows:readonly MentorReviewExportRow[],omit
   const submitted=Number.isFinite(row.occurredAt.getTime())?fmt.format(row.occurredAt)+" IST":"Unknown";
   lines.push([row.projectId,row.projectTitle,"Final delivery awaiting review",submitted].map(csvSafeCell).join(","));
  }
- if(totalOmitted>0)lines.push(["","Export capped",totalOmitted+" more matching deliveries",""].map(csvSafeCell).join(","));
+ if(totalOmitted>0)lines.push(["Export capped","",totalOmitted+" more matching deliveries",""].map(csvSafeCell).join(","));
  return "\uFEFF"+lines.join("\r\n")+"\r\n";
 }
