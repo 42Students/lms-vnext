@@ -17025,6 +17025,44 @@
           {
             "type": "parity",
             "ref": "docs/parity/shared-public-ops.md#ux-g076--public-placements-and-retired-shared-job-links-7-november-2026"
+          },
+          {
+            "commitSha": "5ef5b1e3a6a9eadac89ffabb4744cda56aeb5e0f",
+            "parityDoc": "docs/parity/shared-public-ops.md",
+            "tests": [
+              {
+                "command": "npx eslint src/app/placements/**/*.tsx and UX-G076 focused test paths; npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386887182 — focused-public-ux job"
+              },
+              {
+                "command": "npx vitest run tests/unit/chat2-public-placements-page.test.ts tests/unit/chat16-public-placement-page-states-03.test.tsx tests/unit/ux-g076-public-placements.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386887182 — 17/17 Vitest cases passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g076-public-placements.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386887182 — 4/4 browser cases passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g076-published-college.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386887182 — 2/2 disposable-PG17 tenant browser cases passed"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386887182 — 4+2 browser scenarios include desktop"
+              },
+              {
+                "viewport": "mobile",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386887182 — 4+2 browser scenarios include mobile"
+              }
+            ],
+            "regressionReview": "Original UX-G076 source/ci/parity evidence records retained. Both run 42386887182 jobs verified success: 17 focused Vitest, 4 public placement browser, 2 seeded PG17 published-college browser. This entry normalizes the schema; it changes no source or accepted feature behavior.",
+            "securityReview": "Same original run proved published college tenant scope with disposable PG17 and public page guards; this is only a schema normalization of already executed evidence, not new DB/RLS/security certification."
           }
         ],
         "notes": "DONE for scoped UX only at exact SHA 5ef5b1e3a6a9eadac89ffabb4744cda56aeb5e0f; actions 42386887182 passed BOTH jobs (17 unit/SSR, 6 Chromium desktop/mobile cases, isolated PG17 published-college fixture). Public publishing/OTP/role/RLS gates unchanged, and global security/release gates remain separate. Evidence: docs/parity/shared-public-ops.md."
