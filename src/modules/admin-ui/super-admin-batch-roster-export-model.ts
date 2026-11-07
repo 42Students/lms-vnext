@@ -1,10 +1,7 @@
 import {z} from "zod";
+import {spreadsheetCsvCell} from "@/security/csv-cell";
 export const superAdminBatchRosterExportId=z.uuid();
-const neutralize=(value:string)=>/^[\s\u0000-\u001f\u00ad\u200b-\u200f\u202a-\u202e\u2060\u2066-\u2069\uFEFF]*[=+@-]/u.test(value)?"'"+value:value;
-function csvCell(value:unknown){
- const text=neutralize(value==null?"":String(value));
- return '"'+text.replace(/"/g,'""')+'"';
-}
+const csvCell = spreadsheetCsvCell;
 export function superAdminBatchRosterCsv(rows:readonly {
  name:string|null;roll:string|null;email:string|null;classId:string|null;
 }[],classLabels:ReadonlyMap<string,string>){
