@@ -9,7 +9,7 @@ import {mentorBoardExportCsv,mentorBoardReviewQuerySchema}
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "service-enforced", stepUp: true },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     const {projectId}=params;

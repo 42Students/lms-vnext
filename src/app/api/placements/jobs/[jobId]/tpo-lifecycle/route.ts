@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -19,7 +20,7 @@ const { jobId } = params;
 if(!placementJobIdSchema.safeParse(jobId).success)
       return NextResponse.json({error:"PLACEMENT_JOB_NOT_FOUND",
         message:"This drive no longer exists or its link is invalid."},{status:404});
-const body:unknown=await request.json().catch(()=>null);
+const body:unknown=await boundedRequestJson(request).catch(()=>null);
 if(!body||typeof body!=="object"||Array.isArray(body))
       return NextResponse.json({error:"INVALID_REQUEST",
         message:"Choose a drive lifecycle action and try again."},{status:400});

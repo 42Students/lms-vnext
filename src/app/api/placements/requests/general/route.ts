@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -37,7 +38,7 @@ export const GET = route(
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  const result=await createOwnTpoGeneralRequest(await getCurrentRequestContext(),await request.json());
+  const result=await createOwnTpoGeneralRequest(await getCurrentRequestContext(),await boundedRequestJson(request));
   return NextResponse.json(result,{status:201,headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
   if(error instanceof TpoGeneralRequestError)return NextResponse.json({error:error.code},

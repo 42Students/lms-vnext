@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
@@ -18,7 +19,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const context = __actor!;
     try {
-const input = await request.json();
+const input = await boundedRequestJson(request);
 const bulk = input && Array.isArray(input.mappings);
 const row = bulk
       ? await addCollegeTermMappings(context, input.mappings)
@@ -55,7 +56,7 @@ export const PUT = route(
   async ({ request, context: __actor }) => {
     const context = __actor!;
     try {
-const input=collegeTermCourseFullOrderSchema.parse(await request.json());
+const input=collegeTermCourseFullOrderSchema.parse(await boundedRequestJson(request));
 const result=await reorderCollegeTermMappings(context,input);
 return NextResponse.json({status:"OK",message:"Semester course order updated",
       data:result,result},{headers:{"Cache-Control":"private, no-store"}});

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { isSameOriginRequest } from "@/auth/origin";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -18,7 +19,7 @@ async function handlePOST(request: Request) {
     // and IMPORT stages of this single, college-scoped endpoint. The service
     // revalidates on IMPORT; clients must not treat an old preview as a permit.
     const report = await runCollegeStudentCsv(
-      await getCurrentRequestContext(), await request.json(),
+      await getCurrentRequestContext(), await boundedRequestJson(request, 8 * 1024 * 1024),
     );
     const preflightPassed = report.structuralErrors.length === 0 && report.invalid === 0;
     return NextResponse.json({

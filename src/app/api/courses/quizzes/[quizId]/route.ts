@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -90,7 +91,7 @@ async function handlePATCH(
     const context =
       await getCurrentRequestContext();
     const { quizId } = await params;
-    const body = await request.json();
+    const body = await boundedRequestJson(request);
     // Legacy PATCH also carried transition and result-publication commands.
     // Every command still passes through its scoped service validation.
     const quiz = body && typeof body==="object" && "action" in body

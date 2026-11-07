@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -17,7 +18,7 @@ export const POST = route(
     try {
 await requireCollegeVerificationActor(context);
 await requireVerificationTables();
-const input=verificationReviewInput.parse(await request.json());
+const input=verificationReviewInput.parse(await boundedRequestJson(request));
 const record=await reviewProfileVerification(context,input,
    createProfileVerificationRepository(verifyPrivateDocumentReceipt));
 const sectionLabel=record.section==="EDUCATION"?"Education":"Identity";

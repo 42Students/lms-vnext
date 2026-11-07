@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { tpoCrmTablesReady } from "@/modules/placements/tpo-crm-storage-readiness";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -22,7 +23,7 @@ async function handlePOST(request: Request) {
       return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 403 });
     }
     return NextResponse.json(await importTpoLeadsCsv(
-      context, context.membership.collegeId, await request.json(),
+      context, context.membership.collegeId, await boundedRequestJson(request, 8 * 1024 * 1024),
     ));
   } catch (error) {
     if (error instanceof Error && error.message.startsWith("CSV_")) {

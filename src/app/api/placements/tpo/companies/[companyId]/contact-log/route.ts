@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -23,7 +24,7 @@ async function handlePOST(request: Request, { params }: RouteContext) {
     const context = await getCurrentRequestContext();
     const { companyId } = await params;
     const created = await createConfirmedTpoCompanyInteraction(
-      context, companyId, await request.json(),
+      context, companyId, await boundedRequestJson(request),
     );
     return NextResponse.json({ activity: created }, { status: 201 });
   } catch (error) {

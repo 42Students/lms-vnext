@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {ZodError} from "zod";
@@ -23,7 +24,7 @@ export const POST = route(
     const __ctx = __actor!;
     try {
 return NextResponse.json(await updateCompanyCommunication(
-  __ctx,await request.json()));
+  __ctx,await boundedRequestJson(request)));
 } catch(e){
   if(e instanceof CompanyCommunicationUnavailable)return NextResponse.json({error:"STORAGE_PENDING"},{status:503});
   if(e instanceof Error&&e.message==="COMPANY_NOT_IN_COLLEGE")

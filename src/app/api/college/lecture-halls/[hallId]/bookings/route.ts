@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -11,7 +12,7 @@ export const POST = route(
     const __ctx = __actor!;
     try {
 const {hallId} = params;
-const booking = await createCollegeHallBooking(__ctx,hallId,await request.json());
+const booking = await createCollegeHallBooking(__ctx,hallId,await boundedRequestJson(request));
 return NextResponse.json({booking},{status:201});
 } catch(error) {
     if (error instanceof CollegeHallBookingError) return NextResponse.json({error:error.code},{

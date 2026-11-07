@@ -10,7 +10,7 @@ export const runtime="nodejs";
 
 /** Current, college-scoped Mentor projects only; never exports raw activity metadata. */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "service-enforced", stepUp: true },
   async ({ request, context: actor }) => {
     const context = actor!;
     const params=new URL(request.url).searchParams;

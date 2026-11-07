@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
@@ -11,7 +12,7 @@ export const POST = route(
     const context = actor!;
     if (!isSuperAdmin(context) && !hasMembershipRole(context, "COLLEGE_ADMIN"))
       return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
-    const input: unknown = await request.json();
+    const input: unknown = await boundedRequestJson(request);
     const result = await resetLoginOtpLockout(context, input);
     return NextResponse.json(result, { headers: { "Cache-Control": "no-store" } });
   },

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {
@@ -12,7 +13,7 @@ export const POST = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { quizId } = params;
-    const body:unknown=await request.json();
+    const body:unknown=await boundedRequestJson(request);
     if(!body||typeof body!=="object"||Array.isArray(body))
       return NextResponse.json({error:"INVALID_QUIZ_TRANSITION",message:"A transition action is required"},{status:400});
     const data=body as Record<string,unknown>;

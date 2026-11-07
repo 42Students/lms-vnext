@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { and, eq, inArray } from "drizzle-orm";
@@ -22,7 +23,7 @@ const {batchId}=params;
 const {collegeId}=await getTpoBatch(ctx,batchId);
 if(!await placementTableExists("placement_eligibility_events"))
    return NextResponse.json({error:"BATCH_MIGRATION_PENDING"},{status:503});
-const {actionId}=inputSchema.parse(await request.json());
+const {actionId}=inputSchema.parse(await boundedRequestJson(request));
 const events=await getDb().select({scopeType:placementEligibilityEvents.scopeType,
    scopeId:placementEligibilityEvents.scopeId})
    .from(placementEligibilityEvents)

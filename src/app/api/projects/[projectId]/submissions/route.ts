@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {
@@ -25,7 +26,7 @@ export const POST = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { projectId } = params;
-    const body = await request.json();
+    const body = await boundedRequestJson(request);
     const submission =
       await createProjectSubmissionDraft(
         context,

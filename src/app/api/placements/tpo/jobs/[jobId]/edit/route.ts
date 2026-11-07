@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -10,6 +11,6 @@ export const PATCH = route(
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     const {jobId}=params;
-    return NextResponse.json(await editTpoDrive(__ctx,jobId,await request.json()));
+    return NextResponse.json(await editTpoDrive(__ctx,jobId,await boundedRequestJson(request)));
   },
 );

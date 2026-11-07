@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {restoreArchivedEntity} from "@/modules/organizations/service";
@@ -10,7 +11,7 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {
     const context = actor!;
-    const body:unknown=await request.json();
+    const body:unknown=await boundedRequestJson(request);
     const result=await restoreArchivedEntity(context,body);
     return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
   },

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -10,7 +11,7 @@ async function handlePOST(request:Request){
   if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   try {
     return NextResponse.json({
-      report:await runCollegeFacultyCsv(await getCurrentRequestContext(),await request.json()),
+      report:await runCollegeFacultyCsv(await getCurrentRequestContext(),await boundedRequestJson(request, 8 * 1024 * 1024)),
     });
   } catch(error){return apiErrorResponse(error);}
 }

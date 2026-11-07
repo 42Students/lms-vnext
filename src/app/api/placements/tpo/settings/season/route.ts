@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -46,7 +47,7 @@ async function writeSeason(request:Request,action:"POST"|"PUT"){
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   try{
     const context=await getCurrentRequestContext();
-    const raw:unknown=await request.json();
+    const raw:unknown=await boundedRequestJson(request);
     if(raw===null||typeof raw!=="object"||Array.isArray(raw))
       return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
     // Legacy PUT identified the season by its ID; never edit the selected

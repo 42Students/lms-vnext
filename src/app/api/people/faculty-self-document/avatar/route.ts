@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -18,7 +19,7 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
-    const raw:unknown=await request.json();
+    const raw:unknown=await boundedRequestJson(request);
     return NextResponse.json(await beginOwnFacultyAvatarUpload(
     __ctx,raw),
     {headers:{"Cache-Control":"private, no-store"}});
@@ -28,7 +29,7 @@ export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
-    const raw:unknown=await request.json();
+    const raw:unknown=await boundedRequestJson(request);
     return NextResponse.json(await confirmOwnFacultyAvatar(
     __ctx,raw),
     {headers:{"Cache-Control":"private, no-store"}});

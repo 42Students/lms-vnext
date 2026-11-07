@@ -9,7 +9,7 @@ import {buildHrTeamCsv} from "@/modules/placements/hr-team-csv-model";
 import {hrTeamSearchSchema,searchHrTeam} from "@/modules/placements/hr-team-search-model";
 export const runtime="nodejs";
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "service-enforced", stepUp: true },
   async ({ request, context: actor }) => {
     const context = actor!;
     const search=new URL(request.url).searchParams;

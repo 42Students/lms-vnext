@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -37,7 +38,7 @@ export const POST = route(
     const placementRequest =
       await createPlacementRequest(
         context,
-        await request.json(),
+        await boundedRequestJson(request),
       );
     return NextResponse.json(
       placementRequest,

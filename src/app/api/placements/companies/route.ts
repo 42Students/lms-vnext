@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {z} from "zod";
@@ -27,7 +28,7 @@ export const POST = route(
   { auth: "user", permission: "placements.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
-    const body = await request.json();
+    const body = await boundedRequestJson(request);
     const result = await createPlacementCompany(
       context,
       body,

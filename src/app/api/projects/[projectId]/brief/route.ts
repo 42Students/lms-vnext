@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -11,7 +12,7 @@ export const PATCH = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const {projectId}=params;
-    const payload:unknown=await request.json();
+    const payload:unknown=await boundedRequestJson(request);
     const legacy=z.strictObject({
    detailsToken:z.iso.datetime({offset:true}),
    overview:z.object({

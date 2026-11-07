@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -9,7 +10,7 @@ const schema=z.strictObject({body:z.string().trim().min(1).max(4000)});
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{threadId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const input=schema.safeParse(await request.json().catch(()=>null));
+ const input=schema.safeParse(await boundedRequestJson(request).catch(()=>null));
  const id=z.string().uuid().safeParse((await params).threadId);
  if(!input.success||!id.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  const context=await getCurrentRequestContext();

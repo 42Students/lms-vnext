@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {z} from "zod";
@@ -20,6 +21,6 @@ export const PATCH = route(
     const context = actor!;
     const {membershipId}=params;
     return NextResponse.json({person:await saveCollegePersonEditor(
-      context,membershipId,await request.json())});
+      context,membershipId,await boundedRequestJson(request))});
   },
 );

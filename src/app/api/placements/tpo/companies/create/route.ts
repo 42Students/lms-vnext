@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -27,7 +28,7 @@ export const POST = route(
     }
     requirePermission(context, "placements.manage", { collegeId });
     await requirePlacementManageScope(context, collegeId);
-    const body: unknown = await request.json();
+    const body: unknown = await boundedRequestJson(request);
     const raw = body && typeof body === "object" && !Array.isArray(body)
       ? body as Record<string, unknown> : {};
     const email = typeof raw["recruiterEmail"] === "string" ? raw["recruiterEmail"].trim().toLowerCase() : "";

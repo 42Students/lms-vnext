@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -17,7 +18,7 @@ export const POST = route(
     const context = __actor!;
     try {
 return NextResponse.json(await updateConfirmedTpoCompanyTrust(
-      context, await request.json(),
+      context, await boundedRequestJson(request),
     ));
 } catch (error) {
     if (error instanceof TpoCompanyTrustConflict) {

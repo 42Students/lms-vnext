@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
@@ -53,7 +54,7 @@ export const PATCH = route(
     const context = __actor!;
     try {
 const { eventId } = params;
-const result = await updateStaffNotification(context, eventId, await request.json());
+const result = await updateStaffNotification(context, eventId, await boundedRequestJson(request));
 return NextResponse.json({
       ...result,
       message: "Notification updated successfully",

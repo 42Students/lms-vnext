@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -15,7 +16,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const context = __actor!;
     try {
-const created = await createCollegeStudyGroup(context, await request.json());
+const created = await createCollegeStudyGroup(context, await boundedRequestJson(request));
 return NextResponse.json({ group: created }, { status: 201 });
 } catch (error) {
     if (error instanceof CollegeGroupManagementError) return NextResponse.json(

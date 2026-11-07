@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -34,7 +35,7 @@ export const POST = route(
     const __ctx = __actor!;
     try {
 const query = new URL(request.url).searchParams;
-const input: unknown = await request.json();
+const input: unknown = await boundedRequestJson(request);
 const result = await appendLearnerGalleryImage(
       __ctx, input, query.get("membershipId") ?? undefined);
 return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -10,7 +11,7 @@ export const POST = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const {projectId,taskId}=params;
-    const body=await request.json();
+    const body=await boundedRequestJson(request);
     const task=await moveOwnLearnerProjectTask(context,projectId,taskId,body);
     return NextResponse.json({task});
   },

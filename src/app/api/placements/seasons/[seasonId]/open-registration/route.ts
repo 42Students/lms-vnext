@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -12,7 +13,7 @@ export const POST = route(
     const __ctx = __actor!;
     try {
 const {seasonId}=params;
-const raw:unknown=await request.json();
+const raw:unknown=await boundedRequestJson(request);
 if(!raw||typeof raw!=="object"||Array.isArray(raw))
       return NextResponse.json({error:"INVALID_INPUT"},{status:400});
 const payload={...raw,seasonId};

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -20,7 +21,7 @@ async function handlePOST(request: Request, { params }: RouteContext) {
   try {
     const context = await getCurrentRequestContext();
     const { companyId } = await params;
-    const created = await createTpoCompanyFeedback(context, companyId, await request.json());
+    const created = await createTpoCompanyFeedback(context, companyId, await boundedRequestJson(request));
     if (!created) {
       return NextResponse.json({ error: "COMPANY_CONTACT_NOT_FOUND" }, { status: 404 });
     }

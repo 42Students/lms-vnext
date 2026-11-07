@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {z} from "zod";
@@ -46,7 +47,7 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {
     const context = actor!;
-    const raw:unknown=await request.json();
+    const raw:unknown=await boundedRequestJson(request);
     const legacy=z.object({
       collegeId:z.string().uuid(),templateId:z.string().uuid().optional(),
       title:z.string().trim().min(1).max(160),

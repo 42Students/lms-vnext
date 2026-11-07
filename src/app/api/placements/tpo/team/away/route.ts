@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -8,7 +9,7 @@ import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const input=tpoTeamAwaySchema.safeParse(await request.json().catch(()=>null));
+ const input=tpoTeamAwaySchema.safeParse(await boundedRequestJson(request).catch(()=>null));
  if(!input.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  try{return NextResponse.json(await setMyTpoTeamAway(await getCurrentRequestContext(),input.data));}
  catch(error){

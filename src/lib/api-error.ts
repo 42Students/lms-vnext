@@ -3,6 +3,7 @@ import { friendlyApiError } from "@/lib/friendly-error";
 import { createRequestId } from "@/lib/request-id";
 import { isDatabaseUnavailableError } from "@/lib/db-outage";
 import { ZodError } from "zod";
+import { RequestBodyError } from "@/lib/bounded-request-json";
 import { SessionAuthenticationError } from "@/auth/session";
 import { ContextResolutionError } from "@/modules/identity/context-service";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -59,6 +60,10 @@ export function apiErrorResponse(error: unknown) {
       },
       { status: 400 },
     );
+  }
+
+  if (error instanceof RequestBodyError) {
+    return respond({ error: error.code }, { status: error.status });
   }
 
   if (error instanceof StorageFileError) {

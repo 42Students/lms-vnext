@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -69,7 +70,7 @@ async function handlePUT(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  const raw:unknown=await request.json();
+  const raw:unknown=await boundedRequestJson(request);
   const parsed=legacyPublicPagePut.safeParse(raw);
   if(!parsed.success)return NextResponse.json({error:"INVALID_BODY",
    message:"Check the publication setting, text, selected numbers and saved version."},

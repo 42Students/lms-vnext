@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -15,7 +16,7 @@ export const PATCH = route(
   async ({ request, context: __actor }) => {
     const context = __actor!;
     try {
-const raw: unknown = await request.json();
+const raw: unknown = await boundedRequestJson(request);
 const saved = await updateOwnCollegeContactProfile(context, raw);
 return NextResponse.json({ profile: saved });
 } catch (error) {

@@ -10,7 +10,7 @@ export const runtime="nodejs";
 
 /** Capped metadata export from the live persisted Mentor assignment scope only. */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "service-enforced", stepUp: true },
   async ({ request, context: actor }) => {
     const context = actor!;
     const filters=singleValueMentorExportFilters(new URL(request.url).searchParams,[

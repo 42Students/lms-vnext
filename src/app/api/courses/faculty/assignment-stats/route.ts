@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {
@@ -21,7 +22,7 @@ export const POST = route(
   { auth: "user", permission: "courses.read" },
   async ({ request, context: actor }) => {
     const context = actor!;
-    const stats=await getFacultyAssignmentSubmissionStatsBulk(context,await request.json());
+    const stats=await getFacultyAssignmentSubmissionStatsBulk(context,await boundedRequestJson(request));
     return NextResponse.json({status:"success",message:"Submission stats retrieved",stats},
     {headers:{"Cache-Control":"private, no-store"}});
   },

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -32,7 +33,7 @@ async function handlePATCH(
 
   let body: unknown;
   try {
-    body = await request.json();
+    body = await boundedRequestJson(request);
   } catch {
     return NextResponse.json(
       { error: "INVALID_REQUEST" },
@@ -81,7 +82,7 @@ async function handleDELETE(
   try {
     const context = await getCurrentRequestContext();
     const { domainId } = await params;
-    const body: unknown = await request.json().catch(() => ({}));
+    const body: unknown = await boundedRequestJson(request).catch(() => ({}));
     const parsed = z.strictObject({ confirmationHost: z.string().max(255).optional() }).parse(body);
     await deleteTenantDomainWithRuntime(context, domainId, parsed.confirmationHost);
 

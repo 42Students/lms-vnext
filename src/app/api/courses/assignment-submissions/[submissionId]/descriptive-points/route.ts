@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -14,7 +15,7 @@ export const POST = route(
     const __ctx = __actor!;
     try {
 const {submissionId}=params;
-const input=descriptiveAssignmentPointsSchema.parse(await request.json());
+const input=descriptiveAssignmentPointsSchema.parse(await boundedRequestJson(request));
 const submission=await addDescriptiveAssignmentPoints(
    __ctx,submissionId,input,
   );

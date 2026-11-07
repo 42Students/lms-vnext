@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { and, eq } from "drizzle-orm";
@@ -107,7 +108,7 @@ if (statusType !== null) {
       return NextResponse.json({ status: "OK", message: "Status updated successfully.",
         data: semester, semester });
     }
-const body: unknown = await request.json();
+const body: unknown = await boundedRequestJson(request);
 const semester = await updateCollegeSemester(context, semesterId, body);
 return NextResponse.json({ status: "OK", message: "Semester updated successfully.", data: semester, semester });
 } catch (error) {
@@ -122,7 +123,7 @@ export const DELETE = route(
     const context = __actor!;
     try {
 const { semesterId } = params;
-const body: unknown = await request.json();
+const body: unknown = await boundedRequestJson(request);
 const result = await deleteCollegeSemester(context, semesterId, body);
 return NextResponse.json({ status: "OK", message: "Deleted successfully.", data: result, result });
 } catch (error) {

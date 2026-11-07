@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -19,7 +20,7 @@ const withdrawSchema=z.strictObject({
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const input=withdrawSchema.safeParse(await request.json().catch(()=>null));
+ const input=withdrawSchema.safeParse(await boundedRequestJson(request).catch(()=>null));
  if(!input.success)
   return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
  try {

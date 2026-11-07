@@ -8,7 +8,7 @@ import {getMentorTaskReviews} from "@/modules/projects/mentor-task-review-servic
 import {mentorPendingTaskReviewCsv} from "@/modules/projects/mentor-pending-task-review-export";
 export const runtime="nodejs";
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "service-enforced", stepUp: true },
   async ({ request, context: __actor }) => {
     const ctx = __actor!;
     const url=new URL(request.url);

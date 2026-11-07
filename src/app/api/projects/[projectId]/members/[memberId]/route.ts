@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -31,7 +32,7 @@ async function handlePATCH(
   try {
     const context = await getCurrentRequestContext();
     const { projectId, memberId } = await params;
-    const body = await request.json();
+    const body = await boundedRequestJson(request);
     const member = await updateProjectMember(
       context,
       projectId,
@@ -85,7 +86,7 @@ export const DELETE = route(
 async function handlePOST(request:Request,route:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const input:unknown=await request.json().catch(()=>null);
+ const input:unknown=await boundedRequestJson(request).catch(()=>null);
  if(!input||typeof input!=="object"||Array.isArray(input)||
    (input as {action?:unknown}).action!=="REMOVE")
   return NextResponse.json({error:"INVALID_REQUEST"},{status:400});

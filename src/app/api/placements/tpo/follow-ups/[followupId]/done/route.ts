@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { tpoCrmTablesReady } from "@/modules/placements/tpo-crm-storage-readiness";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -18,7 +19,7 @@ async function handlePOST(request: Request, { params }: RouteContext) {
   try {
     const context = await getCurrentRequestContext();
     const { followupId } = await params;
-    const body = await request.json();
+    const body = await boundedRequestJson(request);
     const followup = await finishTpoFollowup(
       context, body.collegeId, followupId,
     );

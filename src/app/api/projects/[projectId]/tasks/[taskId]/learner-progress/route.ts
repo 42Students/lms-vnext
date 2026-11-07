@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -12,7 +13,7 @@ async function handlePATCH(request: Request, { params }: RouteContext) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   try {
     const [context, path] = await Promise.all([getCurrentRequestContext(), params]);
-    const task = await updateLearnerProjectTaskProgress(context, path, await request.json());
+    const task = await updateLearnerProjectTaskProgress(context, path, await boundedRequestJson(request));
     return NextResponse.json({ task }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     return apiErrorResponse(error);

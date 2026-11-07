@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {ZodError} from "zod";
@@ -21,7 +22,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     try {
-const result=await changeTpoRecruiterSavedView(__ctx,await request.json());
+const result=await changeTpoRecruiterSavedView(__ctx,await boundedRequestJson(request));
 return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
 } catch(e){
   if(e instanceof ZodError)return NextResponse.json({error:"INVALID_SAVED_VIEW"},{status:422});

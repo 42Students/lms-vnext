@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -24,7 +25,7 @@ async function change(request:Request,params:Params["params"]){
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {deliveryId,assignmentId}=await params;
-  const input=await request.json();
+  const input=await boundedRequestJson(request);
   const result=await commandFacultyAssignmentMaterialLink(
    await getCurrentRequestContext(),assignmentId,deliveryId,input);
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});

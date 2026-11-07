@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {and,eq} from "drizzle-orm";
@@ -69,7 +70,7 @@ export const PATCH = route(
   async ({ request, context: __actor, params }) => {
     const context = __actor!;
     const {assignmentId}=params;
-    const body:unknown=await request.json();
+    const body:unknown=await boundedRequestJson(request);
     const parsed=changeCourseTeachingAssignmentRoleInputSchema.safeParse(body);
     if(!parsed.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
     const assignment=await changeCourseTeachingAssignmentRole(context,

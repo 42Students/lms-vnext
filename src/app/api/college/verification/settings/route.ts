@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {eq} from "drizzle-orm";
@@ -35,7 +36,7 @@ export const PATCH = route(
     try {
 const scope=await requireCollegeVerificationActor(context);
 await requireVerificationTables();
-const input=inputSchema.parse(await request.json());
+const input=inputSchema.parse(await boundedRequestJson(request));
 await setTpoProfileVerificationEnabled(context,scope.collegeId,input.tpoCanVerify);
 return NextResponse.json({tpoCanVerify:input.tpoCanVerify},
    {headers:{"Cache-Control":"private, no-store"}});

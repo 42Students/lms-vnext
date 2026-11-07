@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -16,7 +17,7 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {
     const context = actor!;
-    const input = inputSchema.parse(await request.json());
+    const input = inputSchema.parse(await boundedRequestJson(request, 8 * 1024 * 1024));
     if (new Set(input.deliveryIds).size !== input.deliveryIds.length)
       return NextResponse.json({ error: "DUPLICATE_DELIVERY" }, { status: 400 });
     const created: string[] = [];

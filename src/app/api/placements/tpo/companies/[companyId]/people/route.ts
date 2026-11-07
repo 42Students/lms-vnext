@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { placementTableExists } from "@/modules/placements/staged-tables";
@@ -21,7 +22,7 @@ await requirePlacementManageScope(context,context.membership?.collegeId??"");
 if(!(await placementTableExists("placement_tpo_leads"))||
        !(await placementTableExists("placement_tpo_lead_activities")))
       return NextResponse.json({error:"TPO_CRM_SCHEMA_NOT_REGISTERED"},{status:503});
-const result = await saveTpoCompanyPerson(context, companyId, await request.json());
+const result = await saveTpoCompanyPerson(context, companyId, await boundedRequestJson(request));
 return NextResponse.json({ result });
 } catch (error) {
     if (error instanceof TpoCompanyPersonStale) {

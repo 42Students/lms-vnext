@@ -11,7 +11,7 @@ export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
 /** Read-only exact-project Mentor audit summary. No raw feedback, identity or URLs. */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "service-enforced", stepUp: true },
   async ({ request, context: __actor, params }) => {
     const context = __actor!;
     const {projectId}=params,url=new URL(request.url);

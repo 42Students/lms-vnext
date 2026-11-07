@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -13,7 +14,7 @@ export const PATCH = route(
     try {
 const {slotId}=params;
 return NextResponse.json({slot:await changeCollegeElectiveLifecycle(
-      __ctx,slotId,await request.json(),
+      __ctx,slotId,await boundedRequestJson(request),
     )});
 } catch(error) {
     if(error instanceof ElectiveLifecycleError)

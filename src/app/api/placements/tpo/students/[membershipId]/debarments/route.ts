@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {z} from "zod";
@@ -30,7 +31,7 @@ export const POST = route(
     const ctx = __actor!;
     try {
 const collegeId=await requireTpoBatchActor(ctx);
-const {membershipId}=params,body=input.parse(await request.json());
+const {membershipId}=params,body=input.parse(await boundedRequestJson(request));
 const rows=await listTpoMemberDebarments(ctx,membershipId);
 if(body.action==="LIFT"){
    const own=rows.find(row=>row.id===body.debarmentId);

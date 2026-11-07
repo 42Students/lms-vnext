@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -10,7 +11,7 @@ export const POST = route(
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     const {jobId}=params;
-    const result=await previewBulkDriveAdd(__ctx,jobId,await request.json());
+    const result=await previewBulkDriveAdd(__ctx,jobId,await boundedRequestJson(request, 8 * 1024 * 1024));
     return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
   },
 );

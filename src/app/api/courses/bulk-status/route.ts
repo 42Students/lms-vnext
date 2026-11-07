@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {bulkSuperAdminCourseVisibility} from "@/modules/courses/super-admin-course-bulk-visibility";
@@ -12,7 +13,7 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {
     const context = actor!;
-    const report=await bulkSuperAdminCourseVisibility(context,await request.json());
+    const report=await bulkSuperAdminCourseVisibility(context,await boundedRequestJson(request, 8 * 1024 * 1024));
     return NextResponse.json(report,{headers:{"Cache-Control":"private, no-store"}});
   },
 );

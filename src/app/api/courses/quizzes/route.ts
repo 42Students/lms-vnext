@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { and, asc, eq, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -136,7 +137,7 @@ async function handlePOST(request: Request) {
   try {
     const context =
       await getCurrentRequestContext();
-    const body:unknown=await request.json();
+    const body:unknown=await boundedRequestJson(request);
     if(!body||typeof body!=="object"||Array.isArray(body))
       return NextResponse.json({error:"INVALID_QUIZ_INPUT",message:"Quiz details are required"},{status:400});
     const record=body as Record<string,unknown>;

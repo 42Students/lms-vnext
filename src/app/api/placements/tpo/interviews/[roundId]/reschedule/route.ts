@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -12,7 +13,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{roundId:stri
       headers:{"Cache-Control":"private, no-store, max-age=0"}});
  try{
   const {roundId}=await params;
-  return NextResponse.json(await rescheduleTpoInterview(await getCurrentRequestContext(),roundId,await request.json()));
+  return NextResponse.json(await rescheduleTpoInterview(await getCurrentRequestContext(),roundId,await boundedRequestJson(request)));
  }catch(error){return apiErrorResponse(error);}
 }
 export const POST = route(

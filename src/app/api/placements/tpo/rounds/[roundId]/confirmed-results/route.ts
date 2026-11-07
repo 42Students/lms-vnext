@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { confirmTpoRoundResult } from "@/modules/placements/tpo-confirmed-round-result-service";
@@ -10,7 +11,7 @@ export const POST = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { roundId } = params;
-    const result = await confirmTpoRoundResult(context, roundId, await request.json());
+    const result = await confirmTpoRoundResult(context, roundId, await boundedRequestJson(request));
     return NextResponse.json({ result }, { status: 201 });
   },
 );

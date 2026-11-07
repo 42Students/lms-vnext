@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {z} from "zod";
@@ -17,7 +18,7 @@ export const POST = route(
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     const {templateId}=params;
-    const raw:unknown=await request.json().catch(()=>null);
+    const raw:unknown=await boundedRequestJson(request).catch(()=>null);
     const command=rollbackCommand.safeParse(raw);
     if(!command.success)return NextResponse.json({
    error:"ROLLBACK_CONFIRMATION_REQUIRED",

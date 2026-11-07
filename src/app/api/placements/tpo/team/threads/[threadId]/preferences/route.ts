@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {ZodError} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -11,7 +12,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{threadId:str
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {threadId}=await params;
-  const body=await request.json().catch(()=>null) as {action?:unknown}|null;
+  const body=await boundedRequestJson(request).catch(()=>null) as {action?:unknown}|null;
   const result=await updateTpoTeamThreadPreferences(await getCurrentRequestContext(),{
    threadId,action:body?.action,
   });

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { correctAdminAttendance } from "@/modules/attendance/admin-service";
@@ -9,7 +10,7 @@ export const PATCH = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { scheduleEventId } = params;
-    const body = await request.json();
+    const body = await boundedRequestJson(request);
     const result =
       await correctAdminAttendance(
         context,

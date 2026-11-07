@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -12,7 +13,7 @@ export const POST = route(
     const __ctx = __actor!;
     try {
 const {interviewId}=params;
-const raw=await request.json() as Record<string,unknown>;
+const raw=await boundedRequestJson(request) as Record<string,unknown>;
 const result=await finishCollegeInterview(__ctx,{
    id:interviewId,status:raw["status"],expectedVersion:raw["expectedVersion"],
    reason:raw["reason"],

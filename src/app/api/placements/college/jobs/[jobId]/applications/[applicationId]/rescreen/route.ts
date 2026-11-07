@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -12,7 +13,7 @@ export const POST = route(
     const __ctx = __actor!;
     const {jobId,applicationId}=params;
     const result=await rescreenCollegeApplication(__ctx,
-   jobId,applicationId,await req.json());
+   jobId,applicationId,await boundedRequestJson(req));
     return NextResponse.json({
    ...result,screeningProvider:"PERSISTED_ELIGIBILITY_RULES",
    automatedScoringAvailable:false,

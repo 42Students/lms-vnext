@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -9,7 +10,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{requestId:st
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {requestId}=await params;
-  return NextResponse.json(await decideTpoGeneralRequest(await getCurrentRequestContext(),requestId,await request.json()),
+  return NextResponse.json(await decideTpoGeneralRequest(await getCurrentRequestContext(),requestId,await boundedRequestJson(request)),
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
   if(error instanceof TpoGeneralRequestError)return NextResponse.json({error:error.code},

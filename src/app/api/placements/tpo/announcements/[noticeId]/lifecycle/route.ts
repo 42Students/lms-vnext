@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {noticePostError} from "../../form-error-response";
 import {z} from "zod";
@@ -62,7 +63,7 @@ async function handleDELETE(request:Request,{params}:{params:Promise<{noticeId:s
  const query=new URL(request.url).searchParams;
  let version:unknown=query.get("expectedVersion");
  if(version===null){
-  const raw=await request.json().catch(()=>null);
+  const raw=await boundedRequestJson(request).catch(()=>null);
   if(raw&&typeof raw==="object"&&!Array.isArray(raw))
    version=(raw as {expectedVersion?:unknown}).expectedVersion;
  }
@@ -98,7 +99,7 @@ export const DELETE = route(
 async function handlePUT(request:Request,{params}:{params:Promise<{noticeId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const {noticeId}=await params;
- const raw:unknown=await request.json().catch(()=>null);
+ const raw:unknown=await boundedRequestJson(request).catch(()=>null);
  const parsed=z.strictObject({
   action:z.enum(["RESTORE","UNDO_SEND"]),
   expectedVersion:z.number().int().nonnegative(),

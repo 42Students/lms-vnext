@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -18,7 +19,7 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request: req, context: __actor }) => {
     const __ctx = __actor!;
-    return NextResponse.json(await mutateTpoStudentSavedView(__ctx,await req.json()),
+    return NextResponse.json(await mutateTpoStudentSavedView(__ctx,await boundedRequestJson(req)),
   {headers:{"Cache-Control":"private, no-store"}})
   },
 );

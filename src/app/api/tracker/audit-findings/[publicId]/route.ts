@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -33,7 +34,7 @@ export const PATCH = route(
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     const {publicId}=params;
-    const result=await mutateIndependentAuditFinding(__ctx,publicId,await request.json());
+    const result=await mutateIndependentAuditFinding(__ctx,publicId,await boundedRequestJson(request));
     if(!result.ok)return NextResponse.json({
    error:result.reason,
    message:result.reason==="STATUS_UNCHANGED"?"It is already this status":

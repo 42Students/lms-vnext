@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {ZodError} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -17,7 +18,7 @@ async function handlePOST(request:Request){
  if(!await tpoCrmTablesReady())
   return NextResponse.json({error:"DB09_MIGRATIONS_PENDING"},{status:503});
  try{
-  const payload=await request.json().catch(()=>null);
+  const payload=await boundedRequestJson(request, 8 * 1024 * 1024).catch(()=>null);
   const restored=await undoTpoRecruiterBulkRun(await getCurrentRequestContext(),payload);
   return NextResponse.json(restored,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){

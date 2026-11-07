@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -10,7 +11,7 @@ export const PUT = route(
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     try {
-const {membershipId}=params,raw=await request.json() as unknown;
+const {membershipId}=params,raw=await boundedRequestJson(request) as unknown;
 if(!raw||typeof raw!=="object"||Array.isArray(raw))
    return NextResponse.json({error:"INVALID_INPUT"},{status:400});
 const input=raw as Record<string,unknown>;

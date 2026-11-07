@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -63,7 +64,7 @@ async function handlePATCH(
 
     let body: unknown;
     try {
-      body = await request.json();
+      body = await boundedRequestJson(request);
     } catch {
       return NextResponse.json(
         { error: "INVALID_REQUEST" },

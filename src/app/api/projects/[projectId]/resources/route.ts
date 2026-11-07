@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -81,7 +82,7 @@ async function handlePOST(
   try {
     const context = await getCurrentRequestContext();
     const { projectId } = await params;
-    const body = await request.json();
+    const body = await boundedRequestJson(request);
     const resource = await createProjectResource(
       context,
       projectId,

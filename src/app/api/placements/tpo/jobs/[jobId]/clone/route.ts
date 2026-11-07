@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -11,7 +12,7 @@ export const POST = route(
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     const {jobId}=params;
-    const copied=await cloneTpoDrive(__ctx,jobId,await request.json());
+    const copied=await cloneTpoDrive(__ctx,jobId,await boundedRequestJson(request));
     return NextResponse.json(copied,{status:201,headers:{"Cache-Control":"private, no-store"}});
   },
 );

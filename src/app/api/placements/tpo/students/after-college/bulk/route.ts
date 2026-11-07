@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -13,7 +14,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const context = __actor!;
     try {
-const result = await bulkUpdateTpoAfterCollege(context, await request.json());
+const result = await bulkUpdateTpoAfterCollege(context, await boundedRequestJson(request, 8 * 1024 * 1024));
 return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
 } catch (error) {
     if (error instanceof BulkAfterCollegeError)

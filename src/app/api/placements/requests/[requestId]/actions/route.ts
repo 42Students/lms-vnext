@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { actOnPlacementRequest } from "@/modules/placements/request-service";
@@ -11,7 +12,7 @@ export const POST = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { requestId } = params;
-    const payload = await request.json();
+    const payload = await boundedRequestJson(request);
     const validated = z.union([
       placementRequestActionSchema,
       z.object({

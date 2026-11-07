@@ -9,7 +9,7 @@ import {mentorReviewedTasksCsv} from "@/modules/projects/mentor-task-review-expo
 export const runtime="nodejs";
 /** Own assigned Mentor project review history only; capped, no raw feedback. */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "service-enforced", stepUp: true },
   async ({ request, context: __actor }) => {
     const context = __actor!;
     const url=new URL(request.url);

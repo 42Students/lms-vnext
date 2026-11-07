@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -25,7 +26,7 @@ async function handlePATCH(
   try {
     const context = await getCurrentRequestContext();
     const { scheduleEventId } = await params;
-    const body = await request.json();
+    const body = await boundedRequestJson(request);
     const result = await markFacultyAttendance(
       context,
       scheduleEventId,

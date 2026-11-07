@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { createCollegeDepartment } from "@/modules/departments/college-department-mutation-service";
@@ -12,7 +13,7 @@ export const POST = route(
   async ({ request, context: actor }) => {
     const context = actor!;
     return NextResponse.json({ department: await createCollegeDepartment(
-      context, await request.json(),
+      context, await boundedRequestJson(request),
     ) }, { status: 201 });
   },
 );

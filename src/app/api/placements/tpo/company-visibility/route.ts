@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -36,7 +37,7 @@ async function handlePUT(request: Request) {
 
   try {
     const context = await getCurrentRequestContext();
-    const input = await request.json();
+    const input = await boundedRequestJson(request);
     const result = await saveCompanyVisibilitySettings(context, input);
     if (!result.ok) {
       return NextResponse.json({ error: result.error }, { status: 409 });

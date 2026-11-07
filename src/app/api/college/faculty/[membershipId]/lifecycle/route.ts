@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -14,7 +15,7 @@ export const PATCH = route(
     const context = __actor!;
     try {
 const { membershipId } = params;
-const membership = await transitionCollegeFaculty(context, membershipId, await request.json());
+const membership = await transitionCollegeFaculty(context, membershipId, await boundedRequestJson(request));
 return NextResponse.json({
       membership,
       membershipId: membership.id,

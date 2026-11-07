@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -125,7 +126,7 @@ export const POST = route(
         message: "Lesson search reads live scoped data. No cache refresh is performed.",
       }, { status: 410, headers: noStore });
     }
-    const body:unknown=await request.json();
+    const body:unknown=await boundedRequestJson(request);
     if(!body||typeof body!=="object"||Array.isArray(body))
       return NextResponse.json({error:"INVALID_LESSON_REQUEST"},{
         status:400,headers:noStore,

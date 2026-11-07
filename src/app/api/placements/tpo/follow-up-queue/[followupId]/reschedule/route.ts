@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -14,7 +15,7 @@ async function handlePOST(request:Request,{params}:RouteContext){
  try{
   const context=await getCurrentRequestContext();
   const {followupId}=await params;
-  const result=await rescheduleConfirmedTpoFollowup(context,followupId,await request.json());
+  const result=await rescheduleConfirmedTpoFollowup(context,followupId,await boundedRequestJson(request));
   return NextResponse.json({followup:result});
  }catch(error){return tpoCrmApiErrorResponse(error);}
 }

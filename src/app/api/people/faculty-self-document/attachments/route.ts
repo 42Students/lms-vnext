@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -15,7 +16,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     return NextResponse.json(await issueOwnFacultyAttachmentUpload(
-   __ctx,await request.json()),{headers:noStore});
+   __ctx,await boundedRequestJson(request)),{headers:noStore});
   },
 );
 export const PATCH = route(
@@ -23,7 +24,7 @@ export const PATCH = route(
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     return NextResponse.json(await completeOwnFacultyAttachmentUpload(
-   __ctx,await request.json()),{headers:noStore});
+   __ctx,await boundedRequestJson(request)),{headers:noStore});
   },
 );
 export const GET = route(
@@ -43,6 +44,6 @@ export const DELETE = route(
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     return NextResponse.json(await revokeOwnFacultyAttachment(
-   __ctx,await request.json()),{headers:noStore});
+   __ctx,await boundedRequestJson(request)),{headers:noStore});
   },
 );

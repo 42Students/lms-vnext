@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {
@@ -11,7 +12,7 @@ export const PATCH = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { departmentId } = params;
-    const department=await renameCollegeDepartment(context,departmentId,await request.json());
+    const department=await renameCollegeDepartment(context,departmentId,await boundedRequestJson(request));
     return NextResponse.json({department,message:"Department updated successfully"},{
       headers:{"Cache-Control":"private, no-store"}
     });
@@ -27,7 +28,7 @@ export const DELETE = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { departmentId } = params;
-    const department=await archiveCollegeDepartment(context,departmentId,await request.json());
+    const department=await archiveCollegeDepartment(context,departmentId,await boundedRequestJson(request));
     return NextResponse.json({department,archived:true,
       message:"Department archived successfully"},{
       headers:{"Cache-Control":"private, no-store"}

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -32,7 +33,7 @@ export const POST = route(
     message:"Use notify=true or notify=false."},
     {status:400,headers:{"Cache-Control":"private, no-store"}});
     const {jobId,roundId}=params;
-    const result=await applyTpoWholeRound(__ctx,jobId,roundId,await request.json(),notify!=="false");
+    const result=await applyTpoWholeRound(__ctx,jobId,roundId,await boundedRequestJson(request),notify!=="false");
     return NextResponse.json({...result,notify:notify!=="false",notificationChannel:notify==="false"?"SUPPRESSED":"IN_APP",
     contract:"PENDING_RESULTS_ONLY",requiresReload:true,
     message:"Pending round results applied. Refresh to review any remaining decisions."},

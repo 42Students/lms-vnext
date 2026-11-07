@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -9,7 +10,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     try {
-const json:unknown=await request.json();
+const json:unknown=await boundedRequestJson(request);
 const jobId=json&&typeof json==="object"&&!Array.isArray(json)&&"jobId" in json
    ?(json as {jobId:unknown}).jobId:null;
 return NextResponse.json(await createPublicExternalJobLink(

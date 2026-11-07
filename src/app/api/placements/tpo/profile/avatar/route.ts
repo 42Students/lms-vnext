@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -19,7 +20,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     return NextResponse.json(await beginOwnTpoAvatarUpload(__ctx,
-  await request.json()),{headers:{"Cache-Control":"private, no-store"}});
+  await boundedRequestJson(request)),{headers:{"Cache-Control":"private, no-store"}});
   },
 );
 export const PATCH = route(
@@ -27,6 +28,6 @@ export const PATCH = route(
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     return NextResponse.json(await confirmOwnTpoAvatar(__ctx,
-  await request.json()),{headers:{"Cache-Control":"private, no-store"}});
+  await boundedRequestJson(request)),{headers:{"Cache-Control":"private, no-store"}});
   },
 );

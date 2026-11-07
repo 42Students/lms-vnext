@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -10,7 +11,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     return NextResponse.json({ round: await decideTpoCalendarRound(
-      __ctx, await request.json(),
+      __ctx, await boundedRequestJson(request),
     ) });
   },
 );

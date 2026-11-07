@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {
@@ -23,7 +24,7 @@ export const PATCH = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { relationshipId } = params;
-    const body: unknown = await request.json();
+    const body: unknown = await boundedRequestJson(request);
     const result = await updateCollegeCompanyPrivateDetails(
       context, relationshipId, body,
     );

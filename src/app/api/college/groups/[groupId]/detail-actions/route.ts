@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -14,7 +15,7 @@ export const PATCH = route(
     try {
 const {groupId}=params;
 return NextResponse.json(await writeCollegeGroupDetail(
-      __ctx,groupId,await request.json(),
+      __ctx,groupId,await boundedRequestJson(request),
     ));
 } catch(error) {
     if(error instanceof CollegeGroupDetailWriteError)

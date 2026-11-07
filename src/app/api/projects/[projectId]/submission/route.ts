@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -24,7 +25,7 @@ export const PUT = route(
   async ({ request, context: __actor, params }) => {
     const context = __actor!;
     const {projectId}=params;
-    const raw=await request.json() as Record<string,unknown>;
+    const raw=await boundedRequestJson(request) as Record<string,unknown>;
     const body=raw["delivery"]&&typeof raw["delivery"]==="object"&&!Array.isArray(raw["delivery"])
     ?raw["delivery"] as Record<string,unknown>:raw;
     const result=await listProjectSubmissions(context,projectId);

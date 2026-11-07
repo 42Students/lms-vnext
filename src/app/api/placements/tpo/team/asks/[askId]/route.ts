@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -19,7 +20,7 @@ async function handlePOST(request:Request,{params}:{
  const {askId}=await params;
  if(!z.string().uuid().safeParse(askId).success)
   return NextResponse.json({error:"NOT_FOUND"},{status:404});
- const body:unknown=await request.json().catch(()=>null);
+ const body:unknown=await boundedRequestJson(request).catch(()=>null);
  const parsed=actionSchema.safeParse(body);
  if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  try{

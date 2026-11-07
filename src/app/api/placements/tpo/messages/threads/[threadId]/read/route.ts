@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -10,7 +11,7 @@ export const runtime="nodejs";
 /** POST is the only TPO read acknowledgement; GET remains read-only. */
 async function handlePOST(request:Request,{params}:{params:Promise<{threadId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const body=confirm.safeParse(await request.json().catch(()=>null));
+ const body=confirm.safeParse(await boundedRequestJson(request).catch(()=>null));
  const id=z.string().uuid().safeParse((await params).threadId);
  if(!body.success||!id.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  const context=await getCurrentRequestContext();

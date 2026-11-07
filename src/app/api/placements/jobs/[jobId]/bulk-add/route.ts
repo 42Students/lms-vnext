@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {
@@ -26,7 +27,7 @@ export const POST = route(
     const context = actor!;
     const { jobId } = params;
     return NextResponse.json(await bulkAddLearnersToDrive(
-      context, jobId, await request.json(),
+      context, jobId, await boundedRequestJson(request, 8 * 1024 * 1024),
     ));
   },
 );

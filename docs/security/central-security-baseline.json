@@ -5,7 +5,6 @@
    "service-enforced": 1
   },
   "src/app/api/academics/batch-promotion/execute/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/academics/batch-promotion/preview/route.ts": {
@@ -54,18 +53,12 @@
    "service-enforced": 1
   },
   "src/app/api/academics/elective-slots/[slotId]/lifecycle/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
-  "src/app/api/academics/elective-slots/[slotId]/offerings/[offeringId]/route.ts": {
-   "raw-request-json": 2
-  },
   "src/app/api/academics/elective-slots/[slotId]/offerings/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/academics/elective-slots/[slotId]/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/academics/elective-slots/route.ts": {
@@ -75,7 +68,6 @@
    "service-enforced": 2
   },
   "src/app/api/academics/faculty-assignments/route.ts": {
-   "raw-request-json": 2,
    "direct-db-in-route": 1,
    "service-enforced": 3
   },
@@ -89,40 +81,23 @@
   "src/app/api/academics/programs/route.ts": {
    "service-enforced": 2
   },
-  "src/app/api/academics/schedule-events/[eventId]/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/academics/schedule-events/route.ts": {
    "service-enforced": 2
   },
   "src/app/api/academics/search/batches/route.ts": {
    "service-enforced": 2
   },
-  "src/app/api/academics/section-enrollments/[sectionEnrollmentId]/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/academics/section-enrollments/route.ts": {
    "service-enforced": 2
-  },
-  "src/app/api/academics/sections/recurring-execute/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/academics/sections/recurring-preview/route.ts": {
-   "raw-request-json": 1
   },
   "src/app/api/academics/sections/route.ts": {
    "service-enforced": 2
   },
   "src/app/api/academics/semester-course-mappings/[mappingId]/route.ts": {
-   "raw-request-json": 2,
    "direct-db-in-route": 1,
    "service-enforced": 3
   },
-  "src/app/api/academics/semester-course-mappings/route.ts": {
-   "raw-request-json": 2
-  },
   "src/app/api/academics/semesters/[semesterId]/route.ts": {
-   "raw-request-json": 2,
    "direct-db-in-route": 1,
    "service-enforced": 3
   },
@@ -362,14 +337,7 @@
    "direct-db-in-route": 1,
    "service-enforced": 1
   },
-  "src/app/api/announcements/[announcementId]/restore/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/announcements/[announcementId]/route.ts": {
-   "raw-request-json": 2
-  },
   "src/app/api/announcements/admin/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/announcements/mine/route.ts": {
@@ -378,25 +346,13 @@
   "src/app/api/attendance/admin/departments/export/route.ts": {
    "service-enforced": 1
   },
-  "src/app/api/attendance/admin/parent-contacts/retry/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/attendance/admin/parent-contacts/route.ts": {
-   "raw-request-json": 2
-  },
   "src/app/api/attendance/admin/policy/route.ts": {
-   "raw-request-json": 3,
    "service-enforced": 1
   },
-  "src/app/api/attendance/admin/sessions/[scheduleEventId]/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/attendance/faculty/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/attendance/faculty/sessions/[scheduleEventId]/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/auth/admin-scope/route.ts": {
@@ -404,109 +360,51 @@
    "service-enforced": 3
   },
   "src/app/api/auth/admin/otp-lockout-reset/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/auth/profile/route.ts": {
    "service-enforced": 2
   },
   "src/app/api/bug-tracker/reports/[publicId]/attachments/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/client-settings/route.ts": {
    "service-enforced": 1
   },
-  "src/app/api/college/batches/[cohortId]/graduate/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/college/batches/[cohortId]/route.ts": {
-   "raw-request-json": 2
-  },
   "src/app/api/college/batches/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
-  },
-  "src/app/api/college/classes/[sectionId]/lifecycle/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/college/classes/[sectionId]/route.ts": {
-   "raw-request-json": 2
-  },
-  "src/app/api/college/classes/route.ts": {
-   "raw-request-json": 1
   },
   "src/app/api/college/contacts/export/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/college/course-progress/start-attempt/route.ts": {
-   "raw-request-json": 1,
    "direct-db-in-route": 1
   },
   "src/app/api/college/departments/[departmentId]/route.ts": {
-   "raw-request-json": 2,
    "service-enforced": 2
   },
   "src/app/api/college/departments/legacy-search/route.ts": {
    "service-enforced": 2
   },
   "src/app/api/college/departments/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/college/departments/search/route.ts": {
    "direct-db-in-route": 1
   },
   "src/app/api/college/faculty/[membershipId]/lifecycle/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/college/faculty/[membershipId]/reassign-schedules/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/college/faculty/import/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
-  },
-  "src/app/api/college/groups/[groupId]/detail-actions/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/college/groups/[groupId]/members/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/college/groups/[groupId]/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/college/groups/[groupId]/rule/route.ts": {
-   "raw-request-json": 2
-  },
-  "src/app/api/college/groups/import-preview/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/college/groups/import/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/college/groups/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/college/lecture-halls/[hallId]/bookings/[sessionId]/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/college/lecture-halls/[hallId]/bookings/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/college/offerings/[offeringId]/lifecycle/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/college/offerings/[offeringId]/metadata/route.ts": {
-   "raw-request-json": 1
   },
   "src/app/api/college/people/[membershipId]/audit/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/college/people/[membershipId]/edit/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/college/people/[membershipId]/profile-overview/route.ts": {
@@ -516,11 +414,7 @@
    "direct-db-in-route": 1,
    "service-enforced": 1
   },
-  "src/app/api/college/placements/interviews/[interviewId]/status/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/college/profile/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/college/roles/export-visible/route.ts": {
@@ -530,15 +424,12 @@
    "service-enforced": 1
   },
   "src/app/api/college/roles/suggest/popular/route.ts": {
-   "sensitive-without-step-up": 1,
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/college/roles/suggest/route.ts": {
    "direct-db-in-route": 1
   },
   "src/app/api/college/students/[membershipId]/section/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/college/students/import-history/route.ts": {
@@ -548,18 +439,12 @@
    "service-enforced": 1
   },
   "src/app/api/college/students/register/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/college/teaching-assignments/[assignmentId]/edit/route.ts": {
-   "raw-request-json": 1,
    "direct-db-in-route": 1
   },
-  "src/app/api/college/teaching-assignments/[assignmentId]/reassign/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/college/teaching-assignments/bulk/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/college/verification/[membershipId]/[section]/documents/[receiptId]/route.ts": {
@@ -569,18 +454,15 @@
    "service-enforced": 1
   },
   "src/app/api/college/verification/bulk-review/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/college/verification/export/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/college/verification/review/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/college/verification/settings/route.ts": {
-   "raw-request-json": 1,
    "direct-db-in-route": 1,
    "service-enforced": 2
   },
@@ -591,28 +473,19 @@
    "service-enforced": 1
   },
   "src/app/api/colleges/[collegeId]/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
-  "src/app/api/colleges/contact-profile/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/colleges/route.ts": {
-   "raw-request-json": 1,
    "direct-db-in-route": 1,
    "service-enforced": 2
   },
   "src/app/api/company-share/[token]/email-code/route.ts": {
    "service-enforced": 1
   },
-  "src/app/api/courses/[courseId]/department/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/courses/[courseId]/display-meta/route.ts": {
    "direct-db-in-route": 1
   },
   "src/app/api/courses/[courseId]/display/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/courses/[courseId]/image/complete/route.ts": {
@@ -625,18 +498,8 @@
    "service-enforced": 1
   },
   "src/app/api/courses/[courseId]/route.ts": {
-   "raw-request-json": 1,
    "direct-db-in-route": 1,
    "service-enforced": 3
-  },
-  "src/app/api/courses/assignment-submissions/[submissionId]/descriptive-points/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/courses/assignment-submissions/[submissionId]/grade/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/courses/assignment-submissions/[submissionId]/publish/route.ts": {
-   "raw-request-json": 1
   },
   "src/app/api/courses/assignment-submissions/route.ts": {
    "direct-db-in-route": 1
@@ -648,11 +511,9 @@
    "service-enforced": 1
   },
   "src/app/api/courses/assignments/[assignmentId]/publish-grades/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/courses/assignments/[assignmentId]/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/courses/assignments/[assignmentId]/submission-files/[fileId]/complete/route.ts": {
@@ -664,60 +525,44 @@
   "src/app/api/courses/assignments/[assignmentId]/submission-files/route.ts": {
    "service-enforced": 1
   },
-  "src/app/api/courses/assignments/[assignmentId]/submit/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/courses/assignments/[assignmentId]/transition/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/courses/assignments/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/courses/bulk-status/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/courses/by-slug/[slug]/route.ts": {
    "direct-db-in-route": 1
   },
   "src/app/api/courses/college-content-visibility/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/courses/college-lesson-visibility/route.ts": {
-   "raw-request-json": 2,
    "service-enforced": 2
   },
   "src/app/api/courses/deliveries/[deliveryId]/assignments/[assignmentId]/materials/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 3
   },
   "src/app/api/courses/deliveries/[deliveryId]/contents/[contentId]/file/route.ts": {
    "direct-db-in-route": 1
   },
   "src/app/api/courses/deliveries/[deliveryId]/discussions/[messageId]/route.ts": {
-   "raw-request-json": 2,
    "service-enforced": 2
   },
   "src/app/api/courses/deliveries/[deliveryId]/discussions/changes/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/courses/deliveries/[deliveryId]/discussions/faculty-reply/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/courses/deliveries/[deliveryId]/discussions/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/courses/deliveries/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
-  },
-  "src/app/api/courses/faculty/assignment-stats/route.ts": {
-   "raw-request-json": 1
   },
   "src/app/api/courses/faculty/assignments/[deliveryId]/command/route.ts": {
    "service-enforced": 1
@@ -759,121 +604,68 @@
    "direct-db-in-route": 1,
    "service-enforced": 1
   },
-  "src/app/api/courses/learning-paths/[learningPathId]/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/courses/learning-paths/[learningPathId]/transition/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/courses/learning-paths/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/courses/lesson-contents/[contentId]/discussions/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
-  },
-  "src/app/api/courses/lesson-contents/[contentId]/materials/files/[materialId]/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/courses/lesson-contents/[contentId]/materials/files/route.ts": {
-   "raw-request-json": 1
   },
   "src/app/api/courses/lesson-contents/[contentId]/materials/route.ts": {
    "service-enforced": 2
   },
   "src/app/api/courses/lesson-contents/[contentId]/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
-  "src/app/api/courses/lesson-contents/[contentId]/transition/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/courses/lesson-contents/order/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/courses/lesson-contents/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
-  },
-  "src/app/api/courses/lessons/[lessonId]/route.ts": {
-   "raw-request-json": 1
   },
   "src/app/api/courses/lessons/[lessonId]/videos/route.ts": {
    "service-enforced": 1
   },
-  "src/app/api/courses/lessons/reorder-all/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/courses/lessons/reorder/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/courses/lessons/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
-  "src/app/api/courses/offerings/[offeringId]/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/courses/offerings/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/courses/progress/[contentId]/route.ts": {
-   "raw-request-json": 2,
    "service-enforced": 3
   },
   "src/app/api/courses/quizzes/[quizId]/faculty-results/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/courses/quizzes/[quizId]/my-attempts/route.ts": {
    "service-enforced": 1
   },
-  "src/app/api/courses/quizzes/[quizId]/results/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/courses/quizzes/[quizId]/route.ts": {
-   "raw-request-json": 1,
    "direct-db-in-route": 1,
    "service-enforced": 4
   },
-  "src/app/api/courses/quizzes/[quizId]/submit/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/courses/quizzes/[quizId]/transition/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/courses/quizzes/route.ts": {
-   "raw-request-json": 1,
    "direct-db-in-route": 1,
    "service-enforced": 2
   },
   "src/app/api/courses/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/courses/search/selection/route.ts": {
-   "raw-request-json": 1,
    "direct-db-in-route": 1,
    "service-enforced": 2
   },
   "src/app/api/courses/teaching-assignments/[assignmentId]/route.ts": {
-   "raw-request-json": 1,
    "direct-db-in-route": 1,
    "service-enforced": 2
   },
   "src/app/api/courses/teaching-assignments/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/departments/[departmentId]/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/departments/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/dev/e2e/manifest/route.ts": {
@@ -890,7 +682,6 @@
    "service-enforced": 1
   },
   "src/app/api/learn/groups/[groupId]/membership/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/learn/groups/[groupId]/route.ts": {
@@ -906,22 +697,18 @@
    "service-enforced": 1
   },
   "src/app/api/lecture-halls/[hallId]/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 4
   },
   "src/app/api/lecture-halls/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/mentor/activity/export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/mentor/attention/later/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/mentor/calendar/export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/mentor/calendar/google/disconnect/route.ts": {
@@ -961,26 +748,21 @@
    "service-enforced": 1
   },
   "src/app/api/mentor/reports/export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/mentor/reviews/export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/mentor/search/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/mentor/sprint-progress/export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/mentor/task-review-history/export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/mentor/task-reviews/export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/notifications/[notificationId]/delete/route.ts": {
@@ -1002,11 +784,9 @@
    "service-enforced": 1
   },
   "src/app/api/notifications/staff/[eventId]/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/notifications/staff/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/notifications/stream/route.ts": {
@@ -1017,23 +797,18 @@
    "service-enforced": 1
   },
   "src/app/api/organizations/[organizationId]/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 4
   },
   "src/app/api/organizations/restore/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/organizations/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/people/[membershipId]/faculty-profile/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 3
   },
   "src/app/api/people/[membershipId]/learner-profile/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/people/[membershipId]/lifecycle/route.ts": {
@@ -1049,19 +824,15 @@
    "service-enforced": 2
   },
   "src/app/api/people/faculty-identity-evidence/purge/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/people/faculty-self-document/attachments/route.ts": {
-   "raw-request-json": 3,
    "service-enforced": 4
   },
   "src/app/api/people/faculty-self-document/avatar/route.ts": {
-   "raw-request-json": 2,
    "service-enforced": 3
   },
   "src/app/api/people/faculty-self-document/identity/route.ts": {
-   "raw-request-json": 3,
    "service-enforced": 4
   },
   "src/app/api/people/faculty-self-document/route.ts": {
@@ -1074,19 +845,15 @@
    "service-enforced": 1
   },
   "src/app/api/people/student-import/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 3
   },
   "src/app/api/placements/academic-evidence/[membershipId]/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/academic-evidence/me/route.ts": {
-   "raw-request-json": 1,
    "actor-owned": 2
   },
   "src/app/api/placements/applications/[applicationId]/actions/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/applications/[applicationId]/offers/route.ts": {
@@ -1096,7 +863,6 @@
    "service-enforced": 1
   },
   "src/app/api/placements/applications/[applicationId]/screening/actions/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/applications/[applicationId]/screening/route.ts": {
@@ -1106,75 +872,40 @@
    "actor-owned": 1
   },
   "src/app/api/placements/college/drives/bulk/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/college/jobs/[jobId]/applications/[applicationId]/rescreen/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/college/jobs/[jobId]/applications/[applicationId]/route.ts": {
-   "raw-request-json": 2,
    "service-enforced": 3
   },
   "src/app/api/placements/college/jobs/[jobId]/archive/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
-  "src/app/api/placements/college/jobs/[jobId]/company/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/placements/college/jobs/[jobId]/duplicate/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/placements/college/jobs/[jobId]/extend-deadline/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/college/jobs/[jobId]/interviews/[interviewId]/feedback/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
-  "src/app/api/placements/college/jobs/[jobId]/interviews/feedback/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/placements/college/jobs/[jobId]/interviews/preview/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/placements/college/jobs/[jobId]/interviews/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/college/jobs/[jobId]/pipeline/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/college/jobs/[jobId]/reopen/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
-  },
-  "src/app/api/placements/college/students/[membershipId]/profile/route.ts": {
-   "raw-request-json": 1
   },
   "src/app/api/placements/companies/[relationshipId]/history/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
-  },
-  "src/app/api/placements/companies/[relationshipId]/route.ts": {
-   "raw-request-json": 1
   },
   "src/app/api/placements/companies/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
-  },
-  "src/app/api/placements/company-share/[token]/export/route.ts": {
-   "sensitive-without-step-up": 1
   },
   "src/app/api/placements/drive-day/[roundId]/attendance/export/route.ts": {
    "service-enforced": 1
-  },
-  "src/app/api/placements/drive-day/[roundId]/attendance/route.ts": {
-   "raw-request-json": 1
   },
   "src/app/api/placements/drive-day/[roundId]/no-shows/export/route.ts": {
    "service-enforced": 1
@@ -1185,50 +916,38 @@
   "src/app/api/placements/drive-day/mine/route.ts": {
    "actor-owned": 1
   },
-  "src/app/api/placements/interviews/withdrawal-request/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/placements/job-types/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/jobs/[jobId]/applications/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/jobs/[jobId]/bulk-add/preflight/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/jobs/[jobId]/bulk-add/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/jobs/[jobId]/change-requests/route.ts": {
-   "raw-request-json": 1,
    "direct-db-in-route": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/jobs/[jobId]/coordinators/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/jobs/[jobId]/eligibility-policy/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/jobs/[jobId]/eligibility/[membershipId]/route.ts": {
-   "raw-request-json": 2,
    "service-enforced": 4
   },
   "src/app/api/placements/jobs/[jobId]/eligibility/me/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/jobs/[jobId]/evaluation-config/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/jobs/[jobId]/offers/[offerId]/letter/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/jobs/[jobId]/offers/bulk-withdraw/route.ts": {
@@ -1237,24 +956,13 @@
   "src/app/api/placements/jobs/[jobId]/offers/lifecycle/route.ts": {
    "service-enforced": 1
   },
-  "src/app/api/placements/jobs/[jobId]/roles/[roleOptionId]/route.ts": {
-   "sensitive-without-step-up": 1,
-   "raw-request-json": 1
-  },
   "src/app/api/placements/jobs/[jobId]/roles/route.ts": {
-   "sensitive-without-step-up": 1,
-   "raw-request-json": 1,
    "service-enforced": 1
   },
-  "src/app/api/placements/jobs/[jobId]/rounds/reorder/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/placements/jobs/[jobId]/rounds/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/jobs/[jobId]/route.ts": {
-   "raw-request-json": 2,
    "service-enforced": 4
   },
   "src/app/api/placements/jobs/[jobId]/screening/route.ts": {
@@ -1267,11 +975,9 @@
    "service-enforced": 1
   },
   "src/app/api/placements/jobs/[jobId]/status/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/jobs/[jobId]/tpo-lifecycle/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/jobs/me/calendar-extras/route.ts": {
@@ -1281,7 +987,6 @@
    "service-enforced": 1
   },
   "src/app/api/placements/jobs/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/jobs/search/route.ts": {
@@ -1291,14 +996,12 @@
    "actor-owned": 1
   },
   "src/app/api/placements/learner/applications/[applicationId]/resume/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/learner/jobs/[jobId]/job-description/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/learner/rounds/confirm/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/learner/saved-jobs/[jobId]/route.ts": {
@@ -1323,25 +1026,21 @@
    "service-enforced": 1
   },
   "src/app/api/placements/preferences/notifications/route.ts": {
-   "raw-request-json": 1,
    "actor-owned": 2
   },
   "src/app/api/placements/preferences/route.ts": {
-   "raw-request-json": 2,
    "actor-owned": 3
   },
   "src/app/api/placements/recorded-outside/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/recruiter/activity/export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/recruiter/bell/route.ts": {
    "service-enforced": 2
   },
   "src/app/api/placements/recruiter/calendar/export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/recruiter/calendar/ics/route.ts": {
@@ -1364,18 +1063,15 @@
    "service-enforced": 1
   },
   "src/app/api/placements/recruiter/drives/[jobId]/interview-slots/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/recruiter/drives/[jobId]/rounds/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/recruiter/drives/[jobId]/selections/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/recruiter/drives/export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/recruiter/drives/jd-upload/route.ts": {
@@ -1385,7 +1081,6 @@
    "service-enforced": 1
   },
   "src/app/api/placements/recruiter/drives/proposals/export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/recruiter/drives/requests/route.ts": {
@@ -1419,21 +1114,16 @@
    "service-enforced": 1
   },
   "src/app/api/placements/recruiter/notifications/export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/recruiter/pending-invites/[collegeId]/[action]/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/recruiter/pending-invites/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/recruiter/profile/details/route.ts": {
    "service-enforced": 1
-  },
-  "src/app/api/placements/recruiter/profile/name/route.ts": {
-   "raw-request-json": 1
   },
   "src/app/api/placements/recruiter/profile/route.ts": {
    "direct-db-in-route": 1,
@@ -1449,11 +1139,9 @@
    "service-enforced": 1
   },
   "src/app/api/placements/recruiter/team/export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/recruiters/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/registration/route.ts": {
@@ -1472,11 +1160,9 @@
    "service-enforced": 1
   },
   "src/app/api/placements/requests/[requestId]/actions/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/requests/general/route.ts": {
-   "raw-request-json": 1,
    "direct-db-in-route": 1,
    "service-enforced": 2
   },
@@ -1487,40 +1173,30 @@
    "service-enforced": 1
   },
   "src/app/api/placements/requests/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/results/[resultId]/actions/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/results/me/route.ts": {
    "actor-owned": 1
   },
-  "src/app/api/placements/rounds/[roundId]/actions/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/placements/rounds/[roundId]/results/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/rounds/[roundId]/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/seasons/[seasonId]/actions/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/seasons/[seasonId]/open-registration/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/seasons/current/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/seasons/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/announcements/[noticeId]/delivery/route.ts": {
@@ -1531,7 +1207,6 @@
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/announcements/[noticeId]/lifecycle/route.ts": {
-   "raw-request-json": 2,
    "service-enforced": 3
   },
   "src/app/api/placements/tpo/announcements/[noticeId]/read-cell/route.ts": {
@@ -1562,37 +1237,15 @@
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/batches/[batchId]/classes/[classId]/decision/route.ts": {
-   "raw-request-json": 1,
    "direct-db-in-route": 1
   },
-  "src/app/api/placements/tpo/batches/[batchId]/decisions/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/placements/tpo/batches/[batchId]/import-commit/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/placements/tpo/batches/[batchId]/import-preview/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/placements/tpo/batches/[batchId]/invitation/route.ts": {
-   "raw-request-json": 2
-  },
-  "src/app/api/placements/tpo/batches/[batchId]/lifecycle/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/placements/tpo/batches/[batchId]/remind/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/placements/tpo/batches/[batchId]/rules/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/batches/[batchId]/saved-views/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/batches/[batchId]/undo/route.ts": {
-   "raw-request-json": 1,
    "direct-db-in-route": 1
   },
   "src/app/api/placements/tpo/bulk-actions/confirm/route.ts": {
@@ -1602,7 +1255,6 @@
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/bulk-actions/undo/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/calendar/export/route.ts": {
@@ -1615,15 +1267,12 @@
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/calendar/follow-ups/[followupId]/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/calendar/follow-ups/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/calendar/round/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/campaigns/drafts/[campaignId]/send/route.ts": {
@@ -1639,44 +1288,33 @@
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/companies/[companyId]/contact-log/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/companies/[companyId]/domain/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/companies/[companyId]/feedback/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/companies/[companyId]/people/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/companies/[companyId]/team/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/companies/communication/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
-  "src/app/api/placements/tpo/companies/create/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/placements/tpo/companies/lifecycle/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/company-team/[companyId]/route.ts": {
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/company-visibility/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/drive-day/[roundId]/check-in/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/drive-day/[roundId]/refresh/route.ts": {
@@ -1686,7 +1324,6 @@
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/drive-requests/[requestId]/decision/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/drives/[jobId]/closeout/export/route.ts": {
@@ -1695,9 +1332,6 @@
   "src/app/api/placements/tpo/drives/[jobId]/public-link/route.ts": {
    "service-enforced": 2
   },
-  "src/app/api/placements/tpo/drives/draft/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/placements/tpo/drives/export/route.ts": {
    "service-enforced": 1
   },
@@ -1705,47 +1339,33 @@
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/external-jobs/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/follow-up-queue/[followupId]/complete/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/follow-up-queue/[followupId]/reschedule/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/follow-up-queue/export/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/follow-up-queue/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
-  "src/app/api/placements/tpo/follow-ups/[followupId]/done/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/placements/tpo/follow-ups/[followupId]/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/placements/tpo/interviews/[roundId]/reschedule/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/jobs/[jobId]/applicants-pipeline/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/jobs/[jobId]/applicants/[applicationId]/legacy-status/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/jobs/[jobId]/applicants/[applicationId]/notes/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/jobs/[jobId]/applicants/[applicationId]/review/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/jobs/[jobId]/applications/export/route.ts": {
@@ -1758,7 +1378,6 @@
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/jobs/[jobId]/clone/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/jobs/[jobId]/close-preview/route.ts": {
@@ -1771,23 +1390,18 @@
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/jobs/[jobId]/company-shares/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/jobs/[jobId]/delete-draft/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/jobs/[jobId]/diversity-outreach/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/jobs/[jobId]/edit/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/jobs/[jobId]/extend-deadline/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/jobs/[jobId]/interviews/[slotId]/legacy-status/route.ts": {
@@ -1803,23 +1417,19 @@
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/jobs/[jobId]/recruiter-review-invite/route.ts": {
-   "raw-request-json": 1,
    "direct-db-in-route": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/jobs/[jobId]/remind-not-applied/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/jobs/[jobId]/rounds/[roundId]/apply-all/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/jobs/[jobId]/rounds/[roundId]/import-results/route.ts": {
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/jobs/[jobId]/rounds/[roundId]/interview-slots/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/jobs/[jobId]/selections/route.ts": {
@@ -1832,72 +1442,45 @@
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/leads/[leadId]/activity/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
-  },
-  "src/app/api/placements/tpo/leads/[leadId]/contacted/route.ts": {
-   "raw-request-json": 1
   },
   "src/app/api/placements/tpo/leads/[leadId]/follow-ups/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
-  "src/app/api/placements/tpo/leads/[leadId]/invite/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/placements/tpo/leads/[leadId]/not-now/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/placements/tpo/leads/[leadId]/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/leads/bulk-owner/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
-  "src/app/api/placements/tpo/leads/bulk-stage/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/placements/tpo/leads/bulk-undo/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/leads/import/preview/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/leads/import/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/leads/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/leads/search/route.ts": {
    "direct-db-in-route": 1
   },
   "src/app/api/placements/tpo/leads/views/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
-  },
-  "src/app/api/placements/tpo/messages/notifications/read/route.ts": {
-   "raw-request-json": 1
   },
   "src/app/api/placements/tpo/messages/pulse/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/messages/threads/[threadId]/messages/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/messages/threads/[threadId]/read/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/messages/threads/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/my-notification-preferences/route.ts": {
@@ -1907,15 +1490,12 @@
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/outside-drives/[recordId]/participants/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/placement-rules/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/profile/avatar/route.ts": {
-   "raw-request-json": 2,
    "service-enforced": 3
   },
   "src/app/api/placements/tpo/public-join-links/enabled/route.ts": {
@@ -1931,11 +1511,9 @@
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/public-page/content/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/public-placement/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 3
   },
   "src/app/api/placements/tpo/reports/after-college/route.ts": {
@@ -1960,41 +1538,33 @@
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/requests/[requestId]/decision/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/requests/bulk-audit/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/requests/export/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/requests/general/[requestId]/decision/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/requests/general/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/rounds/[roundId]/bulk-confirmed-results/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/rounds/[roundId]/confirmed-results/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/settings/blocked-dates/[dateId]/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/settings/blocked-dates/range/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/settings/blocked-dates/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/settings/cgpa-rule/route.ts": {
@@ -2004,23 +1574,18 @@
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/settings/company-trust/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/settings/job-types/[jobTypeId]/placed/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/settings/job-types/[jobTypeId]/route.ts": {
-   "raw-request-json": 3,
    "service-enforced": 3
   },
   "src/app/api/placements/tpo/settings/job-types/builtin/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/settings/job-types/route.ts": {
-   "raw-request-json": 2,
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/settings/outcome-labels/route.ts": {
@@ -2035,39 +1600,28 @@
   "src/app/api/placements/tpo/settings/recruiter-grants/route.ts": {
    "service-enforced": 1
   },
-  "src/app/api/placements/tpo/settings/rules/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/placements/tpo/settings/season/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 3
   },
   "src/app/api/placements/tpo/settings/team/route.ts": {
-   "raw-request-json": 2,
    "service-enforced": 3
   },
   "src/app/api/placements/tpo/students/[membershipId]/after-college/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/students/[membershipId]/debarments/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/students/[membershipId]/panel/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/students/[membershipId]/participation/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/students/academic-import/route.ts": {
-   "sensitive-without-step-up": 1,
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/students/after-college/bulk/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/students/export-xlsx/route.ts": {
@@ -2082,25 +1636,18 @@
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/students/nudges/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/students/prep/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/students/saved-views/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
-  },
-  "src/app/api/placements/tpo/team/asks/[askId]/route.ts": {
-   "raw-request-json": 1
   },
   "src/app/api/placements/tpo/team/asks/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/team/away/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/team/everyone/messages/route.ts": {
@@ -2110,83 +1657,64 @@
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/team/handover/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/team/threads/[threadId]/acknowledge/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/team/threads/[threadId]/asks/[askId]/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/team/threads/[threadId]/asks/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/team/threads/[threadId]/messages/[messageId]/change/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/team/threads/[threadId]/messages/[messageId]/decision/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/team/threads/[threadId]/messages/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/team/threads/[threadId]/preferences/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/team/threads/[threadId]/rename/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/team/threads/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/team/unowned/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/trusted-domains/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/profile-verification/self/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/profile-verification/self/withdraw/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/profile/learner-gallery/[imageId]/route.ts": {
    "service-enforced": 2
   },
   "src/app/api/profile/learner-gallery/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/profile/learner-gallery/upload/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/profile/learner/default-resume/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
-  },
-  "src/app/api/profile/me/contacts/route.ts": {
-   "raw-request-json": 1
   },
   "src/app/api/profile/me/education-config/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/profile/me/route.ts": {
    "service-enforced": 3
-  },
-  "src/app/api/profile/me/sections/route.ts": {
-   "raw-request-json": 1
   },
   "src/app/api/projects/[projectId]/activity/route.ts": {
    "service-enforced": 1
@@ -2198,22 +1726,18 @@
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/backlog/pull/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/backlog/route.ts": {
-   "raw-request-json": 2,
    "service-enforced": 2
   },
   "src/app/api/projects/[projectId]/brief/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/compatibility/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/complete/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/delete/route.ts": {
@@ -2250,7 +1774,6 @@
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/meetings/legacy-sync/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/projects/[projectId]/meetings/legacy/[meetingKey]/route.ts": {
@@ -2269,23 +1792,18 @@
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/members/[memberId]/route.ts": {
-   "raw-request-json": 2,
    "service-enforced": 3
   },
   "src/app/api/projects/[projectId]/members/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/projects/[projectId]/mentor-activity-export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/mentor-board-export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/mentor-delivery-review-export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/mentor-meeting-history/route.ts": {
@@ -2295,18 +1813,15 @@
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/mentor-resources-export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/mentor-sprint-summary-export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/mentor-updates/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/readiness/override/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/readiness/route.ts": {
@@ -2316,11 +1831,9 @@
    "service-enforced": 2
   },
   "src/app/api/projects/[projectId]/releases/[releaseId]/ship/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/releases/[releaseId]/unship/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/releases/route.ts": {
@@ -2333,34 +1846,27 @@
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/resources/[resourceId]/route.ts": {
-   "raw-request-json": 2,
    "service-enforced": 2
   },
   "src/app/api/projects/[projectId]/resources/audit/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/resources/library/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/resources/reorder/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/resources/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/projects/[projectId]/restore/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/roster/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/projects/[projectId]/sprints/[sprintId]/complete/route.ts": {
@@ -2388,18 +1894,15 @@
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/submission/review/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/submission/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/projects/[projectId]/submissions/[submissionId]/admin-review/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/submissions/[submissionId]/evaluation/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/projects/[projectId]/submissions/[submissionId]/lock/route.ts": {
@@ -2412,28 +1915,15 @@
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/submissions/[submissionId]/reopen/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/submissions/[submissionId]/review/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
-  },
-  "src/app/api/projects/[projectId]/submissions/[submissionId]/route.ts": {
-   "raw-request-json": 1
-  },
-  "src/app/api/projects/[projectId]/submissions/[submissionId]/submit/route.ts": {
-   "raw-request-json": 1
   },
   "src/app/api/projects/[projectId]/submissions/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
-  "src/app/api/projects/[projectId]/tasks/[taskId]/assignee/route.ts": {
-   "raw-request-json": 1
-  },
   "src/app/api/projects/[projectId]/tasks/[taskId]/comments/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/projects/[projectId]/tasks/[taskId]/details/route.ts": {
@@ -2443,11 +1933,9 @@
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/tasks/[taskId]/learner-progress/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/tasks/[taskId]/learner-status/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/tasks/[taskId]/mentor-transition/route.ts": {
@@ -2472,7 +1960,6 @@
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/tasks/plan/new/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/tasks/plan/route.ts": {
@@ -2491,11 +1978,9 @@
    "service-enforced": 1
   },
   "src/app/api/projects/class-team-workspaces/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/cohort-preflight/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/projects/deleted/route.ts": {
@@ -2517,33 +2002,27 @@
    "service-enforced": 1
   },
   "src/app/api/projects/readiness-overrides/export/route.ts": {
-   "sensitive-without-step-up": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/reassign-mentor/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/projects/templates/[templateId]/assignments/route.ts": {
-   "raw-request-json": 2,
    "service-enforced": 4
   },
   "src/app/api/projects/templates/[templateId]/duplicate/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/projects/templates/[templateId]/metadata/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/templates/[templateId]/publish/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/projects/templates/[templateId]/rollback/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/projects/templates/[templateId]/route.ts": {
@@ -2560,7 +2039,6 @@
    "service-enforced": 2
   },
   "src/app/api/skills/selection/route.ts": {
-   "raw-request-json": 1,
    "direct-db-in-route": 1,
    "service-enforced": 1
   },
@@ -2570,11 +2048,7 @@
   "src/app/api/teacher/classes/[deliveryId]/learners/search/route.ts": {
    "service-enforced": 1
   },
-  "src/app/api/tenant-domains/[domainId]/route.ts": {
-   "raw-request-json": 2
-  },
   "src/app/api/tenant-domains/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/tpo/find-suggestions/route.ts": {
@@ -2608,7 +2082,6 @@
    "service-enforced": 1
   },
   "src/app/api/tracker/audit-findings/[publicId]/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/tracker/audit-findings/export/route.ts": {
@@ -2621,11 +2094,9 @@
    "service-enforced": 1
   },
   "src/app/api/tracker/issues/[publicId]/attachments/confirm/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/tracker/issues/[publicId]/attachments/presign/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/tracker/issues/[publicId]/attachments/route.ts": {
@@ -2635,7 +2106,6 @@
    "service-enforced": 1
   },
   "src/app/api/tracker/issues/[publicId]/retest/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/tracker/issues/[publicId]/route.ts": {
@@ -2646,31 +2116,25 @@
    "service-enforced": 1
   },
   "src/app/api/tracker/issues/[publicId]/workflow/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/tracker/issues/route.ts": {
-   "raw-request-json": 1,
    "direct-db-in-route": 1,
    "service-enforced": 2
   },
   "src/app/api/tracker/live-logs/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 2
   },
   "src/app/api/tracker/logs/known-errors/[signatureId]/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/tracker/logs/known-errors/legacy-mute/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/tracker/logs/known-errors/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/tracker/logs/manual-alert/route.ts": {
-   "raw-request-json": 1,
    "service-enforced": 1
   },
   "src/app/api/tracker/logs/viewed/route.ts": {

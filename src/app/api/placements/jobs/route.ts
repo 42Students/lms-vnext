@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import {z} from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -185,7 +186,7 @@ async function handlePOST(request: Request) {
 
   try {
     const context = await getCurrentRequestContext();
-    const body = await request.json();
+    const body = await boundedRequestJson(request);
     const job = await createPlacementJob(context, body);
     return NextResponse.json(job, { status: 201 });
   } catch (error) {

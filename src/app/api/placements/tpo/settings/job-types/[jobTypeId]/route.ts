@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -10,7 +11,7 @@ export const PATCH = route(
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     try {
-const {jobTypeId}=params,body=await request.json() as unknown;
+const {jobTypeId}=params,body=await boundedRequestJson(request) as unknown;
 if(!body||typeof body!=="object"||Array.isArray(body))
    return NextResponse.json({error:"INVALID_INPUT"},{status:400});
 const fields=body as Record<string,unknown>;
@@ -32,7 +33,7 @@ export const PUT = route(
     const __ctx = __actor!;
     try {
 const {jobTypeId}=params;
-const body=await request.json() as {label?:unknown;expectedVersion?:unknown};
+const body=await boundedRequestJson(request) as {label?:unknown;expectedVersion?:unknown};
 const result=await renameTpoJobType(__ctx,{
    jobTypeId,label:body?.label,expectedVersion:body?.expectedVersion,
   });
@@ -52,7 +53,7 @@ export const DELETE = route(
     const __ctx = __actor!;
     try {
 const {jobTypeId}=params;
-const body=await request.json() as {expectedVersion?:unknown};
+const body=await boundedRequestJson(request) as {expectedVersion?:unknown};
 const result=await removeTpoJobType(__ctx,{
    jobTypeId,expectedVersion:body?.expectedVersion,
   });

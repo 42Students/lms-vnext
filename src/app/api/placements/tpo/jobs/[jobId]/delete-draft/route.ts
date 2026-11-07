@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -11,7 +12,7 @@ export const POST = route(
     const __ctx = __actor!;
     const {jobId}=params;
     const result=await deleteTpoUnpublishedDraft(__ctx,
-   jobId,await request.json());
+   jobId,await boundedRequestJson(request));
     return NextResponse.json(result,{status:result.archived?200:409});
   },
 );

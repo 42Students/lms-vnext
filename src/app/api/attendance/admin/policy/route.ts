@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {
@@ -18,7 +19,7 @@ export const PUT = route(
   { auth: "user", permission: "academics.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
-    const body = await request.json();
+    const body = await boundedRequestJson(request);
     const policy =
       await updateCollegeAttendancePolicy(
         context,
@@ -45,7 +46,7 @@ export const PATCH = route(
   { auth: "user", permission: "academics.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
-    return NextResponse.json(await updateCollegeAttendancePolicyField(context,await request.json()));
+    return NextResponse.json(await updateCollegeAttendancePolicyField(context,await boundedRequestJson(request)));
   },
 );
 
@@ -57,6 +58,6 @@ export const DELETE = route(
   async ({ request, context: actor }) => {
     const context = actor!;
     return NextResponse.json(await resetCollegeAttendancePolicyOverride(
-      context,await request.json()));
+      context,await boundedRequestJson(request)));
   },
 );

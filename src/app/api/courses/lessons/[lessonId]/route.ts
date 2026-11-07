@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { updateCourseLessonInputSchema } from "@/modules/courses/validation";
@@ -13,7 +14,7 @@ export const PATCH = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { lessonId } = params;
-    const body: unknown = await request.json();
+    const body: unknown = await boundedRequestJson(request);
     if (body && typeof body === "object" &&
         ["courseId","offeringId","learningPathId"].some(key=>key in body)) {
       return NextResponse.json({

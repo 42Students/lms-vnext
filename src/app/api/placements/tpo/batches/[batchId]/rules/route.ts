@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -36,7 +37,7 @@ export const POST = route(
     const __ctx = __actor!;
     try {
 const {batchId}=params;
-const result=await saveTpoBatchRuleOverrides(__ctx,batchId,await request.json());
+const result=await saveTpoBatchRuleOverrides(__ctx,batchId,await boundedRequestJson(request));
 return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
 } catch(error){
   if(error instanceof PlacementBatchError&&error.code==="DB08_ACTION_STALE")

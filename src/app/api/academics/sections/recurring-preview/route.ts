@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -13,7 +14,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const context = __actor!;
     try {
-const payload: unknown = await request.json();
+const payload: unknown = await boundedRequestJson(request);
 const result = await previewCollegeRecurringSchedule(context, payload);
 return NextResponse.json(result);
 } catch (error) {

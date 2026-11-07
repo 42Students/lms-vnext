@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -27,7 +28,7 @@ const pendingInviteResponseSchema=z.strictObject({
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const body:unknown=await request.json().catch(()=>null);
+ const body:unknown=await boundedRequestJson(request).catch(()=>null);
  const parsed=pendingInviteResponseSchema.safeParse(body);
  if(!parsed.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
  try{

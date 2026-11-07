@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {
@@ -13,7 +14,7 @@ export const PATCH = route(
     const context = actor!;
     const { projectId, resourceId } =
       params;
-    const body = await request.json();
+    const body = await boundedRequestJson(request);
     const resource = await updateProjectResource(
       context,
       projectId,
@@ -30,7 +31,7 @@ export const DELETE = route(
     const context = actor!;
     const { projectId, resourceId } =
       params;
-    const body: unknown=await request.json().catch(()=>({}));
+    const body: unknown=await boundedRequestJson(request).catch(()=>({}));
     const resource = await archiveProjectResource(
       context,
       projectId,

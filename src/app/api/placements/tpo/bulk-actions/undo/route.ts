@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -10,7 +11,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     try {
-const raw=await request.json();
+const raw=await boundedRequestJson(request, 8 * 1024 * 1024);
 const result=await undoTpoStudentBulkRun(__ctx,raw);
 return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
 } catch(error){

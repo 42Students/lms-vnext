@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -14,7 +15,7 @@ export const POST = route(
     try {
 const {requestId}=params;
 const response=await decideTpoRecruiterDriveRequest(
-      __ctx,requestId,await request.json(),
+      __ctx,requestId,await boundedRequestJson(request),
     );
 return NextResponse.json(response,{headers:{"Cache-Control":"private, no-store"}});
 } catch(error){

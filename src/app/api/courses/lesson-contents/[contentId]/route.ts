@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { listLessonContents,updateLessonContent } from "@/modules/courses/lesson-content-service";
@@ -27,7 +28,7 @@ export const PATCH = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { contentId } = params;
-    const body = await request.json();
+    const body = await boundedRequestJson(request);
     const content = await updateLessonContent(
       context,
       contentId,

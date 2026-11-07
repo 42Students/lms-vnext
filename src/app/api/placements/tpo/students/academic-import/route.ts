@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -7,7 +8,7 @@ import {
 
 export const runtime = "nodejs";
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "service-enforced", stepUp: true },
   async ({ request, context: actor }) => {
     const context = actor!;
     const body = z.object({
@@ -15,7 +16,7 @@ export const POST = route(
       rows: z.array(z.unknown()).min(1).max(5000),
       skipUnmatched: z.boolean().optional(),
       mode: z.enum(["BULK", "SINGLE"]).optional(),
-    }).parse(await request.json());
+    }).parse(await boundedRequestJson(request, 8 * 1024 * 1024));
     const mode = body.action === "CORRECT" ? "SINGLE" : body.mode ?? "BULK";
     if ((body.action === "CORRECT" || mode === "SINGLE") && body.rows.length !== 1)
       return NextResponse.json({error:"ACADEMIC_CORRECTION_REQUIRES_ONE_STUDENT",

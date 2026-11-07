@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -12,7 +13,7 @@ export const POST = route(
     const __ctx = __actor!;
     try {
 const {batchId}=params;
-const body=await request.json() as unknown;
+const body=await boundedRequestJson(request) as unknown;
 if(!body||typeof body!=="object"||Array.isArray(body))
    return NextResponse.json({error:"INVALID_INPUT"},{status:400});
 const item=body as Record<string,unknown>;

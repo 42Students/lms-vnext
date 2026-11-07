@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {facultyDiscussionModerationSchema} from "@/modules/courses/faculty-discussion-moderation-model";
@@ -21,7 +22,7 @@ export const DELETE = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { deliveryId, messageId } = params;
-    const version=facultyDiscussionModerationSchema.parse(await request.json());
+    const version=facultyDiscussionModerationSchema.parse(await boundedRequestJson(request));
     const deleted = await deleteCourseDiscussionMessage(
       context,
       messageId,
@@ -38,7 +39,7 @@ export const PATCH = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { deliveryId, messageId } = params;
-    const version=facultyDiscussionModerationSchema.parse(await request.json());
+    const version=facultyDiscussionModerationSchema.parse(await boundedRequestJson(request));
     const message =
       await toggleCourseDiscussionPin(
         context,

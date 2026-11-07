@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -11,7 +12,7 @@ export const POST = route(
     const __ctx = __actor!;
     const {jobId, applicationId} = params;
     const saved = await reviewTpoApplicant(__ctx,
-      {jobId, applicationId}, await request.json());
+      {jobId, applicationId}, await boundedRequestJson(request));
     return NextResponse.json({ status: saved.status, updatedAt: saved.updatedAt.toISOString() });
   },
 );

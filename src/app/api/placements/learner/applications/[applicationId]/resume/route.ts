@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -31,7 +32,7 @@ export const GET = route(
 async function handlePOST(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers});
- const body:unknown=await request.json().catch(()=>null);
+ const body:unknown=await boundedRequestJson(request).catch(()=>null);
  try{return NextResponse.json(await updateOwnApplicationResume(
   await getCurrentRequestContext(),(await params).applicationId,body),{headers});}
  catch(error){return errorResponse(error);}

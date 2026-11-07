@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -115,7 +116,7 @@ export const POST = route(
     const context = __actor!;
     try {
 const {jobId}=params;
-const body:unknown=await req.json().catch(()=>null);
+const body:unknown=await boundedRequestJson(req).catch(()=>null);
 if(body&&typeof body==="object"&&!Array.isArray(body)&&
     (body as {kind?:unknown}).kind==="INTERNAL_NOTE"){
    const input=internalNoteSchema.parse(body);

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import {z} from "zod";
 import {and,eq,sql} from "drizzle-orm";
@@ -103,7 +104,7 @@ async function handlePATCH(
   try {
     const context = await getCurrentRequestContext();
     const { courseId } = await params;
-    const body = await request.json();
+    const body = await boundedRequestJson(request);
     const course = await updateCourse(
       context,
       courseId,

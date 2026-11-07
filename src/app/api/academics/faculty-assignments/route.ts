@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { and, eq, isNull } from "drizzle-orm";
@@ -71,7 +72,7 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {
     const context = actor!;
-    const body = await request.json();
+    const body = await boundedRequestJson(request);
     if (Array.isArray(body) || (body && typeof body === "object" && Array.isArray(body.assignments))) {
       const assignments = await bulkCreateSectionFacultyAssignments(context,
         Array.isArray(body) ? body : body.assignments);
@@ -122,7 +123,7 @@ export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {
     const context = actor!;
-    const body: unknown = await request.json();
+    const body: unknown = await boundedRequestJson(request);
     if (!body || typeof body !== "object" || !("assignmentId" in body) ||
       typeof body.assignmentId !== "string" || !("action" in body) ||
       body.action !== "DEACTIVATE")

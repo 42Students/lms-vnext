@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {
@@ -29,7 +30,7 @@ export const POST = route(
     const context = actor!;
     const { projectId, submissionId } =
       params;
-    const body = await request.json();
+    const body = await boundedRequestJson(request);
     const evaluation =
       await createProjectEvaluation(
         context,

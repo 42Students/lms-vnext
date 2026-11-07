@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { tpoCrmTablesReady } from "@/modules/placements/tpo-crm-storage-readiness";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -35,7 +36,7 @@ async function handlePOST(request: Request) {
   }
   try {
     const context = await getCurrentRequestContext();
-    const payload = confirmedCreateTpoLeadSchema.parse(await request.json());
+    const payload = confirmedCreateTpoLeadSchema.parse(await boundedRequestJson(request));
     const lead = await createTpoLead(context, payload.lead);
     return NextResponse.json({ lead }, { status: 201 });
   } catch (error) {

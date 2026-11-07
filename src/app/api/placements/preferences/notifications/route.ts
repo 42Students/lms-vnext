@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -25,7 +26,7 @@ export const PUT = route(
   { auth: "user", permission: "actor-owned" },
   async ({ request, context: actor }) => {
     const context = actor!;
-    const preferences=await updateOwnPlacementNotificationPreferences(context,await request.json());
+    const preferences=await updateOwnPlacementNotificationPreferences(context,await boundedRequestJson(request));
     return NextResponse.json({preferences,status:"success",message:"Updated successfully"});
   },
 );

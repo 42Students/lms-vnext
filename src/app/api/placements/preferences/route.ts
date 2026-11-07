@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -28,7 +29,7 @@ export const PUT = route(
   async ({ request, context: actor }) => {
     const context = actor!;
     await requireLearnerPlacementAccess(context);
-    const body = await request.json();
+    const body = await boundedRequestJson(request);
     const preferences =
       await upsertCandidatePreferences(
         context,
@@ -43,7 +44,7 @@ export const PATCH = route(
   { auth: "user", permission: "actor-owned" },
   async ({ request, context: actor }) => {
     const context = actor!;
-    const preferences=await patchCandidatePreferences(context,await request.json());
+    const preferences=await patchCandidatePreferences(context,await boundedRequestJson(request));
     return NextResponse.json({preferences},{headers:{"cache-control":"no-store"}});
   },
 );

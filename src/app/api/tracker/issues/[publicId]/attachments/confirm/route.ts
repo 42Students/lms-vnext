@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -12,7 +13,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{publicId:str
  if(!trackerAdminRuntimeEnabled())
   return NextResponse.json({error:"DB10_TRACKER_MIGRATIONS_PENDING"},{status:503});
  try{
-  const raw:unknown=await request.json();
+  const raw:unknown=await boundedRequestJson(request);
   const {publicId}=await params;
   const result=await confirmTrackerAttachment(
     await getCurrentRequestContext(),publicId,raw);

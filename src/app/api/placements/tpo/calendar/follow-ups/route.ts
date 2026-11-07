@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { tpoCrmTablesReady } from "@/modules/placements/tpo-crm-storage-readiness";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -31,7 +32,7 @@ async function handlePOST(request: Request) {
     }
     const collegeId = context.membership.collegeId;
     await requirePlacementManageScope(context, collegeId);
-    const input = calendarFollowupCreateSchema.parse(await request.json());
+    const input = calendarFollowupCreateSchema.parse(await boundedRequestJson(request));
     const followup = await addTpoFollowup(context, input.leadId, {
       collegeId,
       dueAt: input.dueAt,

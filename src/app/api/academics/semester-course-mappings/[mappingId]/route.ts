@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { and, eq } from "drizzle-orm";
@@ -78,7 +79,7 @@ export const DELETE = route(
     const context = __actor!;
     try {
 const { mappingId } = params;
-const result = await removeCollegeTermMapping(context, mappingId, await request.json());
+const result = await removeCollegeTermMapping(context, mappingId, await boundedRequestJson(request));
 return NextResponse.json({status:"OK",result,message:"Course removed from semester"},
       {headers:{"Cache-Control":"private, no-store"}});
 } catch (error) {
@@ -98,7 +99,7 @@ export const PATCH = route(
     const context = __actor!;
     try {
 const { mappingId } = params;
-const mapping = await updateCollegeTermMapping(context, mappingId, await request.json());
+const mapping = await updateCollegeTermMapping(context, mappingId, await boundedRequestJson(request));
 return NextResponse.json({ status:"OK", mapping,
       data:mapping,message:"Semester course updated",
       reorderHint:"Changing position resequences other courses within this semester." }, { headers: { "Cache-Control": "private, no-store" } });

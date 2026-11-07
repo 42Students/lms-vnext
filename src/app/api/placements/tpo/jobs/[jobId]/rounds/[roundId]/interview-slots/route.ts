@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -20,7 +21,7 @@ export const POST = route(
   async ({ request: req, context: __actor, params }) => {
     const __ctx = __actor!;
     const {jobId,roundId}=params;
-    return NextResponse.json(await mutateTpoInterviewSlots(__ctx,jobId,roundId,await req.json()),
+    return NextResponse.json(await mutateTpoInterviewSlots(__ctx,jobId,roundId,await boundedRequestJson(req)),
    {headers:{"Cache-Control":"private, no-store"}});
   },
 );

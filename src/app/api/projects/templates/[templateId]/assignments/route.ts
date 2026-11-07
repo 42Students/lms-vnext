@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -37,7 +38,7 @@ const bodySchema = z
 async function parseRequest(
   request: Request,
 ) {
-  return bodySchema.parse(await request.json());
+  return bodySchema.parse(await boundedRequestJson(request));
 }
 
 export const POST = route(
@@ -84,7 +85,7 @@ export const PUT = route(
     requirePermission(context,"project-template.assign");
     if(context.adminScope?.collegeId)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-    const body=bulkSchema.parse(await request.json());
+    const body=bulkSchema.parse(await boundedRequestJson(request));
     const result=await replaceProjectTemplateCollegeAssignments(context,templateId,
     body.collegeIds,body.expectedCollegeIds);
     return NextResponse.json({

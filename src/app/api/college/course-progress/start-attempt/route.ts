@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {and,desc,eq,inArray,ne,sql} from "drizzle-orm";
@@ -30,7 +31,7 @@ export const POST = route(
     requirePermission(context,"courses.manage",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     });
-    const decoded=inputSchema.safeParse(await request.json().catch(()=>null));
+    const decoded=inputSchema.safeParse(await boundedRequestJson(request).catch(()=>null));
     if(!decoded.success)
       return NextResponse.json({error:"INVALID_REQUEST",message:"Select a learner and course."},{status:400});
     const {learnerMembershipId,offeringId,deliveryId}=decoded.data;

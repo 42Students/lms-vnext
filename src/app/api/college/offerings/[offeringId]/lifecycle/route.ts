@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -14,7 +15,7 @@ export const PATCH = route(
     try {
 const {offeringId} = params;
 return NextResponse.json({offering:await changeCollegeOfferingLifecycle(
-      __ctx,offeringId,await request.json(),
+      __ctx,offeringId,await boundedRequestJson(request),
     )});
 } catch (error) {
     if (error instanceof CollegeOfferingLifecycleError)

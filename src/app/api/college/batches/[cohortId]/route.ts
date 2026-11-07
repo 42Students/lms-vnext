@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -20,7 +21,7 @@ async function handlePATCH(request: Request, { params }: RouteContext) {
   try {
     const context = await getCurrentRequestContext();
     const { cohortId } = await params;
-    const body: unknown = await request.json();
+    const body: unknown = await boundedRequestJson(request);
     const cohort = await updateCollegeCohort(context, cohortId, body);
     return NextResponse.json({
       status:"OK",message:"Batch updated successfully",success:true,
@@ -60,7 +61,7 @@ async function handleDELETE(request:Request,{params}:RouteContext) {
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   try {
     const {cohortId}=await params;
-    const result=await retireCollegeBatch(await getCurrentRequestContext(),cohortId,await request.json());
+    const result=await retireCollegeBatch(await getCurrentRequestContext(),cohortId,await boundedRequestJson(request));
     return NextResponse.json({
       status:"OK",message:"Batch archived successfully",success:true,
       cohort:result,data:result,idKind:"UUID",lifecycle:"ARCHIVE_NOT_HARD_DELETE",

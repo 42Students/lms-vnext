@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -13,7 +14,7 @@ async function handlePOST(request: Request) {
   }
   try {
     const context = await getCurrentRequestContext();
-    const raw: unknown = await request.json();
+    const raw: unknown = await boundedRequestJson(request, 8 * 1024 * 1024);
     const isManual = raw !== null && typeof raw === "object" &&
       !Array.isArray(raw) && "identifierType" in raw;
     return NextResponse.json(isManual

@@ -16,6 +16,14 @@ export const SENSITIVE_PATH = new RegExp(
   "i",
 );
 
+// Reviewed false positives of the path rule: each needs a written reason.
+export const STEP_UP_EXEMPT = {
+  "college/roles/suggest/popular": "Read-only list of popular job-role names for autocomplete; no role or permission of any user changes.",
+  "placements/jobs/[jobId]/roles": "Job role options of a placement drive (a hiring concept), not membership roles or permissions.",
+  "placements/jobs/[jobId]/roles/[roleOptionId]": "Job role option of a placement drive (a hiring concept), not membership roles or permissions.",
+  "placements/company-share/[token]/export": "Token link for a company without an account: there is no session to step up; the share token and access proof gate it.",
+};
+
 export function scanRoute(path, source) {
   if (!/^src\/app\/api\/.+\/route\.ts$/.test(path.split(String.fromCharCode(92)).join("/"))) return [];
   const out = [];
@@ -33,7 +41,8 @@ export function scanRoute(path, source) {
   const sensitiveHandler =
     new RegExp("export\\s+(?:async\\s+function|const)\\s+(?:POST|PUT|PATCH|DELETE)\\b").test(source) ||
     /attachment|text\/csv|\.csv/i.test(source);
-  if (SENSITIVE_PATH.test(apiPath) && sensitiveHandler && !/stepUp\s*:|requireRecentDeviceAuthentication/.test(source)) {
+  const exemptKey = apiPath.replace(/\/route\.ts$/, "");
+  if (SENSITIVE_PATH.test(apiPath) && sensitiveHandler && !(exemptKey in STEP_UP_EXEMPT) &&!/stepUp\s*:|requireRecentDeviceAuthentication/.test(source)) {
     out.push({ rule: "sensitive-without-step-up" });
   }
   for (const _ of source.matchAll(/\b(?:request|req)\.json\s*\(/g)) out.push({ rule: "raw-request-json" });

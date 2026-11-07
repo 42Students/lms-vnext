@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {z} from "zod";
 import {and,eq} from "drizzle-orm";
@@ -26,7 +27,7 @@ export const POST = route(
     const [section]=await getDb().select({id:sections.id}).from(sections)
     .where(and(eq(sections.id,classId),eq(sections.cohortId,batchId),eq(sections.status,"ACTIVE"))).limit(1);
     if(!section)return Response.json({error:"CLASS_NOT_IN_BATCH"},{status:404});
-    const input=command.parse(await request.json());
+    const input=command.parse(await boundedRequestJson(request));
     const outcome=await decidePlacementParticipation(ctx,{collegeId,expectedCohortId:batchId,changes:[{
    scopeType:"SECTION",scopeId:section.id,status:input.decision,
    expectedVersion:input.expectedVersion,

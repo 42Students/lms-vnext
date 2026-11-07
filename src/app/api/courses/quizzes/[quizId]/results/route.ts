@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -28,7 +29,7 @@ async function handlePOST(
     const context =
       await getCurrentRequestContext();
     const { quizId } = await params;
-    const body = await request.json();
+    const body = await boundedRequestJson(request);
     const quiz = await setCourseQuizResults(
       context,
       quizId,

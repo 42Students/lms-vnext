@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -35,7 +36,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     try {
-return NextResponse.json(await addTpoTeamAssignment(__ctx,await request.json()),
+return NextResponse.json(await addTpoTeamAssignment(__ctx,await boundedRequestJson(request)),
    {headers:{"Cache-Control":"private, no-store"}});
 } catch(error){return teamErrorResponse(error);}
   },
@@ -45,7 +46,7 @@ export const DELETE = route(
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     try {
-return NextResponse.json(await removeTpoTeamAssignment(__ctx,await request.json()),
+return NextResponse.json(await removeTpoTeamAssignment(__ctx,await boundedRequestJson(request)),
    {headers:{"Cache-Control":"private, no-store"}});
 } catch(error){return teamErrorResponse(error);}
   },

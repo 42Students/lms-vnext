@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -46,7 +47,7 @@ async function handlePATCH(request: Request, { params }: RouteContext) {
   try {
     const context = await getCurrentRequestContext();
     const { jobId } = await params;
-    const body = await request.json();
+    const body = await boundedRequestJson(request);
     const job = await updatePlacementJob(context, jobId, body);
     return NextResponse.json(job);
   } catch (error) {
@@ -92,7 +93,7 @@ export const DELETE = route(
 async function handlePUT(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const body:unknown=await request.json().catch(()=>null);
+ const body:unknown=await boundedRequestJson(request).catch(()=>null);
  if(!body||typeof body!=="object"||Array.isArray(body))
   return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
  const wrapped=body as Record<string,unknown>;

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -29,7 +30,7 @@ export const PATCH = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { assignmentId } = params;
-    const body: unknown = await request.json();
+    const body: unknown = await boundedRequestJson(request);
     if (!versionedPatchSchema.safeParse(body).success) {
       return NextResponse.json(
         { error: "FACULTY_ASSIGNMENT_STALE_VERSION" },

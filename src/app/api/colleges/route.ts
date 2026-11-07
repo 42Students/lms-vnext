@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -155,7 +156,7 @@ export const POST = route(
     const context = actor!;
     let body: unknown;
     try {
-      body = await request.json();
+      body = await boundedRequestJson(request);
     } catch {
       return NextResponse.json(
         { error: "INVALID_REQUEST" },

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -11,7 +12,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const result=await purgeExpiredFacultyIdentityEvidence(
-   __ctx,await request.json());
+   __ctx,await boundedRequestJson(request));
     return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
   },
 );

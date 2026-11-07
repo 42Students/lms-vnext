@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {listProjectTaskComments,postProjectTaskComment} from "@/modules/projects/task-comment-service";
@@ -16,7 +17,7 @@ export const POST = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const {projectId,taskId}=params;
-    const comment=await postProjectTaskComment(context,projectId,taskId,await request.json());
+    const comment=await postProjectTaskComment(context,projectId,taskId,await boundedRequestJson(request));
     return NextResponse.json({comment,message:"Project task comment added",refreshComments:true},{status:201});
   },
 );

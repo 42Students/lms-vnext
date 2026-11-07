@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {
@@ -30,7 +31,7 @@ export const POST = route(
     const { jobId } = params;
     let body: Awaited<ReturnType<Request["json"]>>;
     try {
-      body = await request.json();
+      body = await boundedRequestJson(request);
     } catch {
       return NextResponse.json(
         { error: "INVALID_REQUEST" },

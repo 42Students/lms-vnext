@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -15,7 +16,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const result=await issueOwnFacultyIdentityUpload(__ctx,
-   await request.json());
+   await boundedRequestJson(request));
     return NextResponse.json(result,{headers:noStore});
   },
 );
@@ -24,7 +25,7 @@ export const PATCH = route(
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const result=await completeOwnFacultyIdentityUpload(__ctx,
-   await request.json());
+   await boundedRequestJson(request));
     return NextResponse.json(result,{headers:noStore});
   },
 );
@@ -44,7 +45,7 @@ export const DELETE = route(
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const result=await revokeOwnFacultyIdentityEvidence(__ctx,
-   await request.json());
+   await boundedRequestJson(request));
     return NextResponse.json(result,{headers:noStore});
   },
 );

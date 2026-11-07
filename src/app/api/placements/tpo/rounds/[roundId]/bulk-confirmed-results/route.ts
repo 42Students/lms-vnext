@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { confirmTpoBulkRoundResults } from "@/modules/placements/tpo-bulk-round-result-service";
@@ -11,7 +12,7 @@ export const POST = route(
     const context = actor!;
     const { roundId } = params;
     const result=await confirmTpoBulkRoundResults(
-      context, roundId, await request.json(),
+      context, roundId, await boundedRequestJson(request, 8 * 1024 * 1024),
     );
     return NextResponse.json({
       ...result,

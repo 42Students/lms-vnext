@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
@@ -77,7 +78,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const context = __actor!;
     try {
-const result = await createStaffNotification(context, await request.json());
+const result = await createStaffNotification(context, await boundedRequestJson(request));
 return NextResponse.json({
       ...result,
       message: result.deliveryStatus === "SCHEDULED"

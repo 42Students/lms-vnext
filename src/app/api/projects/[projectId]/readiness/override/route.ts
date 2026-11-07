@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {z} from "zod";
@@ -15,7 +16,7 @@ export const POST = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const {projectId}=params;
-    const raw:unknown=await request.json();
+    const raw:unknown=await boundedRequestJson(request);
     const legacy=legacyReadinessBody.safeParse(raw);
     if(legacy.success&&legacy.data.collegeId&&
       legacy.data.collegeId!==getProjectAdminCollegeId(context))

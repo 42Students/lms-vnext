@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -31,7 +32,7 @@ export const PATCH = route(
     const context = __actor!;
     try {
 const { slotId } = params;
-const body: unknown = await request.json();
+const body: unknown = await boundedRequestJson(request);
 const result = await updateCollegeElectiveSlot(context, slotId, body);
 return NextResponse.json({ slot: result });
 } catch (error) {

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -40,7 +41,7 @@ async function handlePOST(request:Request,{params}:RouteContext){
     const context=await getCurrentRequestContext();
     const {contentId}=await params;
     const message=await createLessonContentDiscussion(
-      context,contentId,await request.json());
+      context,contentId,await boundedRequestJson(request));
     return NextResponse.json({message},{status:201,headers:noStore});
   }catch(error){return apiErrorResponse(error);}
 }

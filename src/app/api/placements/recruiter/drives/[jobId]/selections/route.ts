@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -22,7 +23,7 @@ const requestErrors:Record<string,{status:number;message:string}>={
 async function handlePOST(request:Request,{params}:{params:Promise<{jobId:string}>}){
  if(!isSameOriginRequest(request))
   return Response.json({error:"INVALID_ORIGIN"},{status:403});
- const input:unknown=await request.json().catch(()=>null);
+ const input:unknown=await boundedRequestJson(request).catch(()=>null);
  if(input===null)return Response.json({error:"INVALID_JSON"},{status:400});
  try{
   const {jobId}=await params;

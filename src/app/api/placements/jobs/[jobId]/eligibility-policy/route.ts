@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {
@@ -29,7 +30,7 @@ export const PUT = route(
     const policy = await upsertJobEligibilityPolicy(
       context,
       jobId,
-      await request.json(),
+      await boundedRequestJson(request),
     );
     return NextResponse.json({ policy });
   },

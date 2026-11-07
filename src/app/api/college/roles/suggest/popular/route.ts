@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {z} from "zod";
@@ -21,7 +22,7 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
-    const raw:unknown=await request.json();
+    const raw:unknown=await boundedRequestJson(request);
     const parsed=z.strictObject({facultyMembershipId:z.uuid()}).parse(raw);
     const outcome=await recordFacultyDirectorySelection(
    __ctx,parsed.facultyMembershipId);

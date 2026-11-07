@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -22,7 +23,7 @@ export const POST = route(
     const __ctx = __actor!;
     const {jobId,applicationId}=params;
     return NextResponse.json(await appendCollegeApplicationNote(__ctx,
-   jobId,applicationId,await req.json()),{status:201,headers:{"Cache-Control":"private, no-store"}});
+   jobId,applicationId,await boundedRequestJson(req)),{status:201,headers:{"Cache-Control":"private, no-store"}});
   },
 );
 export const PATCH = route(
@@ -30,7 +31,7 @@ export const PATCH = route(
   async ({ request: req, context: __actor, params }) => {
     const context = __actor!;
     const {jobId,applicationId}=params;
-    const raw:unknown=await req.json();
+    const raw:unknown=await boundedRequestJson(req);
     let input=raw;
     if(raw&&typeof raw==="object"&&!Array.isArray(raw)&&
      !("offerId" in raw)&&"url" in raw){

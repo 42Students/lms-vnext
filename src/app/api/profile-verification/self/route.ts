@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -39,7 +40,7 @@ export const GET = route(
  */
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const input=requestSchema.safeParse(await request.json().catch(()=>null));
+ const input=requestSchema.safeParse(await boundedRequestJson(request).catch(()=>null));
  if(!input.success)return NextResponse.json({
   error:"INVALID_REQUEST",
   message:"Choose Education or Identity and refresh the section to obtain its current version.",

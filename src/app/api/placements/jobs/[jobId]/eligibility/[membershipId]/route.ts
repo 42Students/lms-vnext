@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -70,7 +71,7 @@ async function updateOverride(request:Request,{params}:RouteContext){
  try{
   const context=await getCurrentRequestContext();
   const {jobId,membershipId}=await params;
-  const raw:unknown=await request.json().catch(()=>null);
+  const raw:unknown=await boundedRequestJson(request).catch(()=>null);
   if(!raw||typeof raw!=="object"||Array.isArray(raw))
    return NextResponse.json({error:"INVALID_REQUEST",message:"Choose include or exclude."},{status:400});
   const record=raw as Record<string,unknown>;
@@ -160,7 +161,7 @@ async function handleDELETE(
     const context = await getCurrentRequestContext();
     const { jobId, membershipId } = await params;
     const raw=request.headers.get("content-type")?.startsWith("application/json")
-      ?await request.json():{};
+      ?await boundedRequestJson(request):{};
     const options=z.object({
       expectedOverrideId:z.string().uuid().optional(),
       reason:z.string().trim().min(3).max(500).optional(),

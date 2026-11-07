@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -21,7 +22,7 @@ export const POST = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { jobId } = params;
-    const command = statusCommandSchema.parse(await request.json());
+    const command = statusCommandSchema.parse(await boundedRequestJson(request));
     const reopen="isActive" in command?command.isActive:command.action==="REOPEN";
     const job = reopen
       ? await reopenCollegeDrive(context,jobId,{confirmed:true})

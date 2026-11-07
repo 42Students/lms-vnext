@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -27,7 +28,7 @@ export const POST = route(
     const __ctx = __actor!;
     const {jobId}=params;
     return NextResponse.json(
-  await archiveCollegeDrive(__ctx,jobId,await req.json()),
+  await archiveCollegeDrive(__ctx,jobId,await boundedRequestJson(req)),
   {headers:{"Cache-Control":"private, no-store"}});
   },
 );

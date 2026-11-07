@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {z} from "zod";
@@ -10,7 +11,7 @@ export const POST = route(
   { auth: "user", permission: "academics.manage" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
-    const input=z.object({collegeId:z.string().uuid()}).strict().parse(await request.json());
+    const input=z.object({collegeId:z.string().uuid()}).strict().parse(await boundedRequestJson(request));
     const result=await retryQueuedAttendanceParentSmsForCollege(__ctx,input.collegeId);
     return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
   },

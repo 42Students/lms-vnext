@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {listCollegeOfferingChoices} from "@/modules/electives/college-offering-choices-service";
@@ -17,7 +18,7 @@ export const POST = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const {slotId}=params;
-    const {courseId,groupId,backedDeliveryId,capacity}=await request.json();
+    const {courseId,groupId,backedDeliveryId,capacity}=await boundedRequestJson(request);
     const offering=await createElectiveOffering(context,{slotId,courseId,groupId:groupId||undefined,backedDeliveryId,capacity});
     return NextResponse.json({offering},{status:201});
   },

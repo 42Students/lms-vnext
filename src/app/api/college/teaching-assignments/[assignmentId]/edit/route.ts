@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {and,eq,gt,isNull} from "drizzle-orm";
@@ -37,7 +38,7 @@ export const PATCH = route(
       return NextResponse.json({error:"FORBIDDEN"},{status:403});
     requirePermission(context,"courses.manage",{collegeId:member.collegeId,organizationId:member.organizationId});
     const {assignmentId}=params;
-    const parsed=editSchema.safeParse(await request.json().catch(()=>null));
+    const parsed=editSchema.safeParse(await boundedRequestJson(request).catch(()=>null));
     if(!z.string().uuid().safeParse(assignmentId).success||!parsed.success)
       return NextResponse.json({error:"INVALID_REQUEST",message:"Review the selected faculty, course, semester and year."},{status:400});
     const input=parsed.data,txResult=await getDb().transaction(async tx=>{

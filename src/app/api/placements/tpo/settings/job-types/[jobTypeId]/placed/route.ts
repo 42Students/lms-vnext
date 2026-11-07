@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -11,7 +12,7 @@ export const PATCH = route(
     const __ctx = __actor!;
     try {
 const {jobTypeId}=params;
-const body=await request.json() as {countsAsPlaced?:unknown;expectedVersion?:unknown};
+const body=await boundedRequestJson(request) as {countsAsPlaced?:unknown;expectedVersion?:unknown};
 return NextResponse.json(await setTpoJobTypeCountsAsPlaced(__ctx,{
    jobTypeId,countsAsPlaced:body?.countsAsPlaced,expectedVersion:body?.expectedVersion,
   }),{headers:{"Cache-Control":"private, no-store"}});

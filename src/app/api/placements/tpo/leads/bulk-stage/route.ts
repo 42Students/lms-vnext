@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { tpoCrmTablesReady } from "@/modules/placements/tpo-crm-storage-readiness";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -20,7 +21,7 @@ async function handlePOST(request: Request) {
     return NextResponse.json(
       await bulkChangeTpoLeadStages(
         await getCurrentRequestContext(),
-        await request.json(),
+        await boundedRequestJson(request, 8 * 1024 * 1024),
       ),
     );
   } catch (error) {

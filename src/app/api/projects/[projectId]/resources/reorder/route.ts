@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {reorderProjectResources} from "@/modules/projects/resource-service";
@@ -8,7 +9,7 @@ export const POST = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const {projectId}=params;
-    const payload:unknown=await request.json();
+    const payload:unknown=await boundedRequestJson(request);
     const result=await reorderProjectResources(context,projectId,payload);
     return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
   },

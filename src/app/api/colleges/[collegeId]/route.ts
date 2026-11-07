@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { ADMIN_SCOPE_COOKIE_NAME } from "@/auth/admin-scope";
@@ -15,7 +16,7 @@ export const PATCH = route(
     const { collegeId } = params;
     let body: unknown;
     try {
-      body = await request.json();
+      body = await boundedRequestJson(request);
     } catch {
       return NextResponse.json(
         { error: "INVALID_REQUEST" },

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { and, count, desc, eq, sql } from "drizzle-orm";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -162,7 +163,7 @@ async function handlePOST(request: Request) {
     const context = await getCurrentRequestContext();
     let body: unknown;
     try {
-      body = await request.json();
+      body = await boundedRequestJson(request);
     } catch {
       return invalid();
     }

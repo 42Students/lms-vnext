@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {z} from "zod";
@@ -21,7 +22,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     try {
-const payload=await request.json() as unknown;
+const payload=await boundedRequestJson(request) as unknown;
 const base=z.strictObject({
    offeringId:z.uuid().optional(),courseId:z.uuid().optional(),
    membershipIds:z.array(z.uuid()).min(1).max(100).optional(),

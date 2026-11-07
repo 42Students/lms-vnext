@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -79,7 +80,7 @@ async function handlePUT(
       await getCurrentRequestContext();
     const { courseId } = await params;
     // Rich course text and up to 30 takeaways can legitimately be large,
-    // but an unbounded request.json() lets a caller allocate arbitrary memory.
+    // but an unbounded boundedRequestJson(request) lets a caller allocate arbitrary memory.
     const body = await readBoundedJsonRequest(request, 262144);
     if (!body.ok) return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: 400, headers: privateHeaders,

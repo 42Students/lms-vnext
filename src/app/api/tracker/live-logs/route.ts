@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -102,7 +103,7 @@ async function handlePOST(request:Request){
   if(!isSameOriginRequest(request))return NextResponse.json({message:"Not authorized."},{status:403});
   const context=await getCurrentRequestContext();
   if(!authorized(context))return NextResponse.json({message:"Not authorized."},{status:403});
-  const payload:unknown=await request.json().catch(()=>null);
+  const payload:unknown=await boundedRequestJson(request).catch(()=>null);
   const parsed=actions.safeParse(payload);
   if(!parsed.success)return NextResponse.json({message:"Check the log request."},{status:400});
   if(parsed.data.action==="QUERY"||parsed.data.action==="DETAIL"){

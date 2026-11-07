@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -22,7 +23,7 @@ export const POST = route(
     const __ctx = __actor!;
     const {jobId,interviewId}=params;
     const data=await recordCollegeInterviewFeedback(__ctx,
-   jobId,interviewId,await request.json());
+   jobId,interviewId,await boundedRequestJson(request));
     return NextResponse.json(data,{status:201,headers:{"Cache-Control":"private, no-store"}});
   },
 );

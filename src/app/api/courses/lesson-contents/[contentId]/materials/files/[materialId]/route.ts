@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -16,7 +17,7 @@ async function act(request:Request,{params}:Route,action:"COMPLETE"|"REMOVE"|"ED
   return Response.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  try{
   const {contentId,materialId}=await params;
-  const body:unknown=await request.json();
+  const body:unknown=await boundedRequestJson(request);
   const context=await getCurrentRequestContext();
   const result=action==="EDIT"?
    await editLessonResourceFileDetails(context,contentId,materialId,body):

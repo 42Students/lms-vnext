@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { tpoCrmTablesReady } from "@/modules/placements/tpo-crm-storage-readiness";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -20,7 +21,7 @@ async function handlePOST(request: Request, { params }: RouteContext) {
   }
 
   try {
-    const body = await request.json().catch(() => ({}));
+    const body = await boundedRequestJson(request).catch(() => ({}));
     // Registered queue readiness and direct-provider readiness are distinct.
     // A verified outbox may accept encrypted intent before any provider sends.
     if(body.sendEmail===true &&

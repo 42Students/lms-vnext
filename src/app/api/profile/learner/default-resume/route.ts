@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -68,7 +69,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const context = __actor!;
     try {
-const parsed = command.parse(await request.json());
+const parsed = command.parse(await boundedRequestJson(request));
 if (parsed.action === "INITIATE") {
       return NextResponse.json(await initiateLearnerDefaultResumeUpload(context, parsed),
         { headers });

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {reopenApprovedProjectDelivery} from "@/modules/projects/delivery-reopen-service";
@@ -7,7 +8,7 @@ export const POST = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const {projectId,submissionId}=params;
-    const result=await reopenApprovedProjectDelivery(context,projectId,submissionId,await request.json());
+    const result=await reopenApprovedProjectDelivery(context,projectId,submissionId,await boundedRequestJson(request));
     return NextResponse.json(result);
   },
 );

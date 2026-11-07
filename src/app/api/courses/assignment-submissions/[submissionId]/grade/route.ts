@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {
@@ -12,7 +13,7 @@ export const PATCH = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { submissionId } = params;
-    const body = gradeAssignmentSubmissionInputSchema.parse(await request.json());
+    const body = gradeAssignmentSubmissionInputSchema.parse(await boundedRequestJson(request));
     const submission =
       await gradeAssignmentSubmission(
         context,

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -17,7 +18,7 @@ export const PATCH = route(
     const context = __actor!;
     try {
 const { sectionId } = params;
-const body: unknown = await request.json();
+const body: unknown = await boundedRequestJson(request);
 const section = await updateCollegeSection(context, sectionId, body);
 return NextResponse.json({ section });
 } catch (error) {
@@ -39,7 +40,7 @@ export const DELETE = route(
     const context = __actor!;
     try {
 const {sectionId}=params;
-const deleted=await deleteCollegeSection(context,sectionId,await request.json());
+const deleted=await deleteCollegeSection(context,sectionId,await boundedRequestJson(request));
 return NextResponse.json({deleted},{headers:{"Cache-Control":"private, no-store"}});
 } catch(error){
   if(error instanceof CollegeSectionLifecycleError || error instanceof CollegeSectionError)

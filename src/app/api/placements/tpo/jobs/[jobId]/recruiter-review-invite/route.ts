@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {and,eq} from "drizzle-orm";
 import {z} from "zod";
@@ -82,7 +83,7 @@ async function handlePOST(request:Request,{params}:Ctx) {
  try{
   const context=await getCurrentRequestContext();
   const {job,collegeId}=await scoped(context,(await params).jobId);
-  const body=requestSchema.parse(await request.json());
+  const body=requestSchema.parse(await boundedRequestJson(request));
   const emailDomain=body.email.split("@").at(-1)?.toLowerCase()??"";
   if(!job.verifiedAt||!job.primaryDomain)
    return NextResponse.json({error:"COMPANY_DOMAIN_UNVERIFIED",

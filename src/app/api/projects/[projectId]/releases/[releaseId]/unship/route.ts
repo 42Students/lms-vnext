@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {
@@ -11,7 +12,7 @@ export const POST = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { projectId, releaseId } = params;
-    const payload:unknown=await request.json().catch(()=>({}));
+    const payload:unknown=await boundedRequestJson(request).catch(()=>({}));
     const release = await unshipProjectRelease(
       context,
       projectId,

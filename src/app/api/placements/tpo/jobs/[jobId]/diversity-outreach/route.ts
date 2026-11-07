@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -32,7 +33,7 @@ async function handlePOST(request: Request, { params }: Params) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403, headers: noStore });
   try {
-    const input: unknown = await request.json();
+    const input: unknown = await boundedRequestJson(request);
     const context = await getCurrentRequestContext();
     const jobId = (await params).jobId;
     const action = input && typeof input === "object" && "action" in input

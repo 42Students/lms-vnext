@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { closePlacementSeason } from "@/modules/placements/season-service";
@@ -11,7 +12,7 @@ export const POST = route(
     const context = actor!;
     const input =
       placementSeasonActionInputSchema.parse(
-        await request.json(),
+        await boundedRequestJson(request),
       );
     const { seasonId } = params;
     if (input.action === "CLOSE") {

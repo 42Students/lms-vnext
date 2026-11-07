@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { reorderPlacementRounds } from "@/modules/placements/round-service";
@@ -12,7 +13,7 @@ export const POST = route(
     const rounds = await reorderPlacementRounds(
       context,
       jobId,
-      await request.json(),
+      await boundedRequestJson(request),
     );
     return NextResponse.json({ rounds });
   },

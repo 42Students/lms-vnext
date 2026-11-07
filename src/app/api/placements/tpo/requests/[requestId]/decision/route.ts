@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { decideTpoRequest } from "@/modules/placements/tpo-request-decision-service";
@@ -7,6 +8,6 @@ export const POST = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { requestId } = params;
-    return NextResponse.json({ request: await decideTpoRequest(context, requestId, await request.json()) });
+    return NextResponse.json({ request: await decideTpoRequest(context, requestId, await boundedRequestJson(request)) });
   },
 );

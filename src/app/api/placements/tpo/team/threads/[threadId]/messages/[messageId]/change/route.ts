@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -9,7 +10,7 @@ export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{threadId:string;messageId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const {threadId,messageId}=await params;
- const raw:unknown=await request.json().catch(()=>null);
+ const raw:unknown=await boundedRequestJson(request).catch(()=>null);
  const parsed=tpoTeamMessageChangeSchema.safeParse({
   ...(raw&&typeof raw==="object"&&!Array.isArray(raw)?raw:{}),
   threadId,messageId,

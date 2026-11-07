@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -16,7 +17,7 @@ async function handlePOST(request:Request){
     return NextResponse.json({message:"Not authorized."},{status:403});
   try{requireGlobalLogAdmin(context);}
   catch{return NextResponse.json({message:"Not authorized."},{status:403});}
-  const parsed=inputSchema.safeParse(await request.json().catch(()=>null));
+  const parsed=inputSchema.safeParse(await boundedRequestJson(request).catch(()=>null));
   if(!parsed.success)
     return NextResponse.json({message:"Choose a valid alert type."},{status:400});
   try{

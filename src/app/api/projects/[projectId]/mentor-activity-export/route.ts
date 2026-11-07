@@ -11,7 +11,7 @@ export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
 /** Read-only, strict project and current Mentor scope; no external sending. */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "service-enforced", stepUp: true },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const {projectId}=params;

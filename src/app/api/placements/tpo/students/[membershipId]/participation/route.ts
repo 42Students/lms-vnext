@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -18,7 +19,7 @@ export const PUT = route(
     try {
 const { membershipId } = params;
 const result = await decideTpoLearnerParticipation(
-      context, membershipId, await request.json(),
+      context, membershipId, await boundedRequestJson(request),
     );
 return NextResponse.json(result, {
       headers: { "Cache-Control": "private, no-store" },

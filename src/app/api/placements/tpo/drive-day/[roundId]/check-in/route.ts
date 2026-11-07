@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -11,7 +12,7 @@ export const POST = route(
     const context = __actor!;
     try {
 const { roundId } = params;
-return NextResponse.json(await confirmTpoDriveDayCheckIn(context, roundId, await request.json()));
+return NextResponse.json(await confirmTpoDriveDayCheckIn(context, roundId, await boundedRequestJson(request)));
 } catch (error) {
     if(error instanceof TpoAttendanceStaleError)
       return NextResponse.json({error:"ATTENDANCE_STALE",

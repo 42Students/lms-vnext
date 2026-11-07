@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -48,7 +49,7 @@ if(!placementJobIdSchema.safeParse(jobId).success)
         {status:400,headers:{"Cache-Control":"private, no-store"}});
 let input: unknown;
 try {
-      input = await request.json();
+      input = await boundedRequestJson(request);
     } catch {
       return NextResponse.json({ error: "INVALID_REQUEST",
         message: "Provide a valid JSON application body." },

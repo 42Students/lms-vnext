@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {replaceCollegeProjectLearners} from "@/modules/projects/college-project-roster-service";
@@ -7,7 +8,7 @@ export const POST = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const {projectId}=params;
-    const result=await replaceCollegeProjectLearners(context,projectId,await request.json());
+    const result=await replaceCollegeProjectLearners(context,projectId,await boundedRequestJson(request));
     return NextResponse.json(result);
   },
 );

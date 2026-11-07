@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -15,7 +16,7 @@ async function handlePOST(request: Request) {
   }
   try {
     const context = await getCurrentRequestContext();
-    const body: unknown = await request.json();
+    const body: unknown = await boundedRequestJson(request);
     const raw=body&&typeof body==="object"&&!Array.isArray(body)
       ?body as Record<string,unknown>:{};
     if("batchName" in raw&&!raw["startPeriodId"]){

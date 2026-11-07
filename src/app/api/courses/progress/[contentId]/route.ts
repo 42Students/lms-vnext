@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -69,7 +70,7 @@ async function handlePUT(
     const context =
       await getCurrentRequestContext();
     const { contentId } = await params;
-    const body = await request.json().catch(() => null);
+    const body = await boundedRequestJson(request).catch(() => null);
     if (body === null || typeof body !== "object" || Array.isArray(body)) {
       return NextResponse.json({error:"INVALID_PROGRESS_REQUEST",
         message:"Progress request cannot be null"}, {status:400});
@@ -135,7 +136,7 @@ async function handlePOST(request:Request,{params}:RouteContext){
   const {contentId}=await params;
   if(!z.uuid().safeParse(contentId).success)
    return NextResponse.json({error:"INVALID_CONTENT_ID",message:"Content ID must be a valid UUID"},{status:400});
-  const raw:unknown=await request.json().catch(()=>null);
+  const raw:unknown=await boundedRequestJson(request).catch(()=>null);
   if(raw===null || typeof raw!=="object" || Array.isArray(raw))
    return NextResponse.json({error:"INVALID_REQUEST",message:"Progress request cannot be null"},{status:400});
   const action=(raw as Record<string,unknown>)["action"];

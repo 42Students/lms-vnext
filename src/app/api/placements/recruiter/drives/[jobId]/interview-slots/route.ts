@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -11,7 +12,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{jobId:string
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const {jobId}=await params;
  const json=request.headers.get("content-type")?.toLowerCase().includes("application/json")??false;
- const data:unknown=json?await request.json().catch(()=>null):await request.formData().catch(()=>null);
+ const data:unknown=json?await boundedRequestJson(request).catch(()=>null):await request.formData().catch(()=>null);
  if(!data)return NextResponse.json({error:"INVALID_FORM"},{status:400});
  try{
   // Both the old recruiter JSON DTO and the in-page form resolve to the same

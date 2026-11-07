@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -14,7 +15,7 @@ export const POST = route(
     const __ctx = __actor!;
     const {contentId}=params;
     const result=await beginLessonResourceFileUpload(
-   __ctx,contentId,await request.json());
+   __ctx,contentId,await boundedRequestJson(request));
     return Response.json(result,{status:201,headers:noStore});
   },
 );

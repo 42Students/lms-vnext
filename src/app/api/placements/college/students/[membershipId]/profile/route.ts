@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -10,7 +11,7 @@ export const PATCH = route(
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     const {membershipId}=params;
-    const body=await request.json() as Record<string,unknown>;
+    const body=await boundedRequestJson(request) as Record<string,unknown>;
     const result=await editCollegeStudentPlacementProfile(
    __ctx,{...body,membershipId});
     return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});

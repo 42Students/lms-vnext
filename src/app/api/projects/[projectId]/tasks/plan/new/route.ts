@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -13,7 +14,7 @@ export const POST = route(
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     const {projectId}=params;
-    const body:unknown=await request.json();
+    const body:unknown=await boundedRequestJson(request);
     const result=await createAdminTaskPlanItem(
    __ctx,projectId,body);
     return NextResponse.json(result,{status:201,headers:{"Cache-Control":"private, no-store"}});

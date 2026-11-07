@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -17,7 +18,7 @@ async function handlePOST(
   try {
     const context = await getCurrentRequestContext();
     const { groupId } = await params;
-    const member = await manageCollegeStudyMember(context, groupId, await request.json());
+    const member = await manageCollegeStudyMember(context, groupId, await boundedRequestJson(request));
     return NextResponse.json({ member });
   } catch (error) {
     if (error instanceof GroupServiceError)

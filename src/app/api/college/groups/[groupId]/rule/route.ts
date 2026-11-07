@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {z} from "zod";
@@ -23,7 +24,7 @@ export const POST = route(
   async ({ request, context: __actor, params }) => {
     const ctx = __actor!;
     try {
-const body=mutation.parse(await request.json());
+const body=mutation.parse(await boundedRequestJson(request));
 const {groupId}=params;
 const preview=await previewCollegeGroupRule(ctx,{groupId});
 if(preview.projection.incomplete)
@@ -39,7 +40,7 @@ export const DELETE = route(
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     try {
-const input=mutation.parse(await request.json());
+const input=mutation.parse(await boundedRequestJson(request));
 const {groupId}=params;
 const result=await clearGroupRule(__ctx,groupId,input.expectedGroupVersion);
 return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});

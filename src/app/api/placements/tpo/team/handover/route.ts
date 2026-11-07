@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -10,7 +11,7 @@ export const runtime="nodejs";
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const parsed=tpoTeamHandoverSchema.safeParse(await request.json().catch(()=>null));
+ const parsed=tpoTeamHandoverSchema.safeParse(await boundedRequestJson(request).catch(()=>null));
  if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  try{
   const result=await handoverTpoTeamWork(await getCurrentRequestContext(),parsed.data);

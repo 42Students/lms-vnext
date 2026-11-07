@@ -9,7 +9,7 @@ import { projectReadinessOverrideCsvCell } from "@/modules/projects/readiness-ov
 import {z} from "zod";
 
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "service-enforced", stepUp: true },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const collegeId = new URL(request.url).searchParams.get("collegeId");

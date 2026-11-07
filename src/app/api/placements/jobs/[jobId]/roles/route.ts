@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {
@@ -30,7 +31,7 @@ export const POST = route(
       await createPlacementRoleOption(
         context,
         jobId,
-        await request.json(),
+        await boundedRequestJson(request),
       );
     return NextResponse.json(
       { role },

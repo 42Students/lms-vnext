@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -27,7 +28,7 @@ export const POST = route(
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     const {jobId,offerId}=params;
-    const raw:unknown=await request.json();
+    const raw:unknown=await boundedRequestJson(request);
     const result=await attachTpoOfferLetter(
    __ctx,jobId,offerId,raw);
     return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});

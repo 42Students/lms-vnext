@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {and,count,eq,inArray} from "drizzle-orm";
 import {z} from "zod";
@@ -40,7 +41,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const context = __actor!;
     try {
-const input=selectedSchema.parse(await request.json());
+const input=selectedSchema.parse(await boundedRequestJson(request));
 const member=context.membership;
 const courses=await listLearnerCourseDeliveries(context);
 const selected=courses.find(row=>row.deliveryId===input.deliveryId);

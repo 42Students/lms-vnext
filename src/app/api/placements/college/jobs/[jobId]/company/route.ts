@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {relinkDraftPlacementCompany} from "@/modules/placements/job-service";
@@ -8,7 +9,7 @@ export const PATCH = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const {jobId}=params;
-    const input:unknown=await request.json();
+    const input:unknown=await boundedRequestJson(request);
     const result=await relinkDraftPlacementCompany(context,jobId,input);
     return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
   },

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {moveCourseDepartmentInputSchema} from "@/modules/courses/validation";
@@ -12,7 +13,7 @@ export const POST = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const {courseId}=params;
-    const body:unknown=await request.json();
+    const body:unknown=await boundedRequestJson(request);
     const input=moveCourseDepartmentInputSchema.parse(body);
     const course=await moveCourseDepartment(context,courseId,
       input.departmentId,input.expectedUpdatedAt);

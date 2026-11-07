@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {z,ZodError} from "zod";
@@ -13,7 +14,7 @@ export const POST = route(
     try {
 const input=z.strictObject({
     domain:z.string().trim().min(1,"Enter a company email domain."),
-  }).parse(await request.json());
+  }).parse(await boundedRequestJson(request));
 const result=await addTpoCompanyDomain(__ctx,{
    ...input,companyId:(params).companyId,
   });

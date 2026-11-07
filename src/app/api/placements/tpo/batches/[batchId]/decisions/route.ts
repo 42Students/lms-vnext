@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -17,7 +18,7 @@ const {batchId}=params;
 const {collegeId,ready,lifecycle}=await getTpoBatch(ctx,batchId);
 if(lifecycle?.finishedAt)return NextResponse.json({error:"BATCH_FINISHED"},{status:409});
 if(!ready)return NextResponse.json({error:"BATCH_MIGRATION_PENDING"},{status:503});
-const input=tpoBatchDecisionSchema.parse(await request.json());
+const input=tpoBatchDecisionSchema.parse(await boundedRequestJson(request));
 const outcome=await decidePlacementParticipation(ctx,{collegeId,expectedCohortId:batchId,changes:[{
    scopeType:"COHORT",scopeId:batchId,status:input.decision,
    reason:input.decision==="INELIGIBLE"?input.reason:null,expectedVersion:input.expectedVersion,

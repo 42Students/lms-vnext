@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { tpoCrmTablesReady } from "@/modules/placements/tpo-crm-storage-readiness";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -40,7 +41,7 @@ async function handlePATCH(request: Request, { params }: RouteContext) {
   try {
     const context = await getCurrentRequestContext();
     const { leadId } = await params;
-    const lead = await updateTpoLead(context, leadId, await request.json());
+    const lead = await updateTpoLead(context, leadId, await boundedRequestJson(request));
     return NextResponse.json({ lead });
   } catch (error) {
     return tpoCrmApiErrorResponse(error);

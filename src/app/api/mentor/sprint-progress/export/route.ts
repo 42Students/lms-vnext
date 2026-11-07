@@ -8,7 +8,7 @@ import {mentorSprintProgressQuerySchema} from "@/modules/projects/mentor-sprint-
 import {getMentorSprintProgress} from "@/modules/projects/mentor-sprint-progress-service";
 export const runtime="nodejs";
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "service-enforced", stepUp: true },
   async ({ request, context: __actor }) => {
     const context = __actor!;
     const url=new URL(request.url);

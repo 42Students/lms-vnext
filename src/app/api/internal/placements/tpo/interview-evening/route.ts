@@ -1,6 +1,4 @@
-import {timingSafeEqual} from "node:crypto";
 import {NextResponse} from "next/server";
-import { isSameOriginRequest } from "@/auth/origin";
 import {postgresScheduledJobLeaseStore}
  from "@/modules/operations/postgres-scheduled-job-lease-store";
 import {executeScheduledJobWithLease,scheduledJobWorkerIdentity}
@@ -9,7 +7,7 @@ import {queueFencedInterviewReminders}
  from "@/modules/operations/notification-scheduled-job-service";
 import {queueFencedInterviewReminderEmails}
  from "@/modules/announcements/tpo-interview-reminder-email-service";
-import { route } from "@/security/route";
+import { internalRoute } from "@/security/internal-route";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -18,17 +16,6 @@ const noStore={"Cache-Control":"no-store"};
  * paired worker INSTEAD OF the in-app-only notification scheduler route for
  * tpo.interviewReminders, never both. The morning route stays IN_APP-only. */
 async function handlePOST(request:Request){
-  // Scheduled/service callbacks have no browser Origin. Reject a foreign Origin when one is supplied.
-  if (request.headers.has("origin") && !isSameOriginRequest(request))
-    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const secret=process.env["TPO_REMINDER_SCHEDULER_SECRET"]??"";
- const incoming=request.headers.get("x-tpo-reminder-key")??"";
- if(Buffer.byteLength(secret,"utf8")<32)
-  return NextResponse.json({error:"SCHEDULER_NOT_CONFIGURED"},
-   {status:503,headers:noStore});
- const expected=Buffer.from(secret,"utf8"),supplied=Buffer.from(incoming,"utf8");
- if(expected.length!==supplied.length||!timingSafeEqual(expected,supplied))
-  return NextResponse.json({error:"FORBIDDEN"},{status:403,headers:noStore});
  if(process.env["DB10_NOTIFICATION_SCHEDULER_READY"]!=="DB10_VERIFIED"||
     process.env["TPO_INTERVIEW_EMAIL_READY"]!=="VERIFIED"||
     process.env["ZEPTOMAIL_LEGACY_KEY_REVOKED"]!=="confirmed")
@@ -58,7 +45,7 @@ async function handlePOST(request:Request){
    {status:503,headers:noStore});
  }
 }
-export const POST = route(
-  { auth: "public", publicReason: "Machine-to-machine endpoint: the handler authenticates the caller with its own shared secret or signature.", csrf: false, csrfExemptReason: "Callers are servers or schedulers and send no browser Origin; the handler checks its credential instead.", rateLimit: { limit: 3000, windowMs: 60_000 } },
-  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+export const POST = internalRoute(
+  { name: "internal.placements.tpo.interview-evening", credential: { kind: "header", header: "x-tpo-reminder-key", secretEnv: "TPO_REMINDER_SCHEDULER_SECRET" }, emptyBody: true, denied: { status: 403, body: { error: "FORBIDDEN" } } },
+  ({ request }) => handlePOST(request),
 );

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -14,7 +15,7 @@ export const PATCH = route(
     try {
 const {assignmentId}=params;
 return NextResponse.json(await reassignCollegeTeaching(
-      __ctx,assignmentId,await request.json(),
+      __ctx,assignmentId,await boundedRequestJson(request),
     ));
 } catch(error){
     if(error instanceof CollegeTeachingReassignError)

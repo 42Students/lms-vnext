@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -11,7 +12,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const context = __actor!;
     try {
-const result = await createClassTeamWorkspaces(context, await request.json());
+const result = await createClassTeamWorkspaces(context, await boundedRequestJson(request));
 const repaired=result.teamCount>0&&result.alreadyCovered>0;
 const unchanged=result.teamCount===0&&result.alreadyCovered>0;
 return NextResponse.json({

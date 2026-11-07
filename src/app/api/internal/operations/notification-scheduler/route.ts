@@ -1,4 +1,3 @@
-import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { readBoundedUtf8Body } from "@/lib/bounded-utf8-body";
 import { postgresScheduledJobLeaseStore } from "@/modules/operations/postgres-scheduled-job-lease-store";
@@ -14,7 +13,7 @@ import {
   queueFencedCourseDueReminders,
   queueFencedInterviewReminders,
 } from "@/modules/operations/notification-scheduled-job-service";
-import { route } from "@/security/route";
+import { internalRoute } from "@/security/internal-route";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -29,25 +28,6 @@ type WiredJob = "notification.release" | "notification.cleanup"
  * publish notifications. Deployment/IAM is a separate explicit release gate.
  */
 async function handlePOST(request: Request) {
-  // Browser Origin never authorizes a service scheduler.
-  if (request.headers.has("origin"))
-    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers});
-  const secret = process.env["DB10_NOTIFICATION_SCHEDULER_SECRET"] ?? "";
-  const supplied = request.headers.get("x-notification-scheduler-key") ?? "";
-  if (Buffer.byteLength(secret, "utf8") < 32 ||
-      Buffer.byteLength(secret, "utf8") > 256 ||
-      secret !== secret.trim() || /\s/u.test(secret)) {
-    return NextResponse.json({ error: "SCHEDULER_NOT_CONFIGURED" },
-      { status: 503, headers });
-  }
-  const expected = Buffer.from(secret, "utf8");
-  const actual = Buffer.from(supplied, "utf8");
-  if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) {
-    return NextResponse.json({ error: "FORBIDDEN" }, { status: 403, headers });
-  }
-  if (new URL(request.url).search) {
-    return NextResponse.json({ error: "INVALID_JOB" }, { status: 400, headers });
-  }
   if (process.env["DB10_NOTIFICATION_SCHEDULER_READY"] !== "DB10_VERIFIED") {
     return NextResponse.json({ error: "SCHEDULER_NOT_READY" },
       { status: 503, headers });
@@ -130,7 +110,7 @@ async function handlePOST(request: Request) {
       { status: 503, headers });
   }
 }
-export const POST = route(
-  { auth: "public", publicReason: "Machine-to-machine endpoint: the handler authenticates the caller with its own shared secret or signature.", csrf: false, csrfExemptReason: "Callers are servers or schedulers and send no browser Origin; the handler checks its credential instead.", rateLimit: { limit: 3000, windowMs: 60_000 } },
-  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+export const POST = internalRoute(
+  { name: "internal.operations.notification-scheduler", credential: { kind: "header", header: "x-notification-scheduler-key", secretEnv: "DB10_NOTIFICATION_SCHEDULER_SECRET" }, denied: { status: 403, body: { error: "FORBIDDEN" } }, invalid: { error: "INVALID_JOB" } },
+  ({ request }) => handlePOST(request),
 );

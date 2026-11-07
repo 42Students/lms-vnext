@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -11,7 +12,7 @@ export const POST = route(
     const __ctx = __actor!;
     const {deliveryId}=params;
     const message=await postFacultyDiscussionReply(__ctx,
-   deliveryId,await request.json());
+   deliveryId,await boundedRequestJson(request));
     return NextResponse.json({message},{status:201});
   },
 );

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { applyPlacementRoundResultInputSchema } from "@/modules/placements/validation";
@@ -11,7 +12,7 @@ export const POST = route(
     const context = actor!;
     const { resultId } = params;
     applyPlacementRoundResultInputSchema.parse(
-      await request.json(),
+      await boundedRequestJson(request),
     );
     const result =
       await applyPlacementRoundResult(

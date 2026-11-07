@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { z, ZodError } from "zod";
@@ -22,7 +23,7 @@ export const POST = route(
   async ({ request, context: __actor }) => {
     const context = __actor!;
     try {
-const body: unknown = await request.json();
+const body: unknown = await boundedRequestJson(request);
 if (body && typeof body === "object" && !Array.isArray(body) &&
       "action" in body && body.action === "GRADUATE") {
       const command = z.object({

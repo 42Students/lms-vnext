@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { createHash } from "node:crypto";
 import { and, eq, gte, inArray, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
@@ -51,7 +52,7 @@ async function handlePOST(request: Request) {
     if (!canReadSkillCatalog(context)) {
       return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
     }
-    const raw: unknown = await request.json();
+    const raw: unknown = await boundedRequestJson(request);
     const input = selectionSchema.parse(raw);
     const names = input.freeTextSkills.map(normalizeSkillUsageKey);
     const signature = createHash("sha256")

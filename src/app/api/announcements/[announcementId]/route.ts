@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -23,7 +24,7 @@ async function handlePATCH(request: Request, { params }: RouteContext) {
     const context = await getCurrentRequestContext();
     const { announcementId } = await params;
     let body: unknown;
-    try { body = await request.json(); }
+    try { body = await boundedRequestJson(request); }
     catch { return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 }); }
     // Shared broadcasts use a single tenant-scoped, version-checked
     // transaction in the service, not a single recipient update.
@@ -52,7 +53,7 @@ async function handleDELETE(request: Request, { params }: RouteContext) {
     const context = await getCurrentRequestContext();
     const { announcementId } = await params;
     let body: unknown;
-    try { body = await request.json(); }
+    try { body = await boundedRequestJson(request); }
     catch { return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 }); }
     const announcement=await deleteAnnouncement(context,announcementId,body);
     return NextResponse.json({

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {
@@ -56,7 +57,7 @@ export const POST = route(
     const season =
       await createPlacementSeason(
         context,
-        await request.json(),
+        await boundedRequestJson(request),
       );
     return NextResponse.json(
       { season },

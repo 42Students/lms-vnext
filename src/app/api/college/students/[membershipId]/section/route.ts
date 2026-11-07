@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -34,7 +35,7 @@ export const PATCH = route(
     try {
 const { membershipId } = params;
 return NextResponse.json(await moveCollegeStudentSection(
-      context, membershipId, await request.json(),
+      context, membershipId, await boundedRequestJson(request),
     ));
 } catch (error) {
     if (error instanceof CollegeStudentSectionMoveError) {

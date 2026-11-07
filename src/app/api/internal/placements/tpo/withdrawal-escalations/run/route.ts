@@ -1,34 +1,16 @@
-import {randomUUID,timingSafeEqual} from "node:crypto";
+import {randomUUID} from "node:crypto";
 import {executeScheduledJobWithLease} from "@/modules/operations/scheduled-job-runner";
 import {postgresScheduledJobLeaseStore} from "@/modules/operations/postgres-scheduled-job-lease-store";
 import {TPO_SCHEDULED_JOBS} from "@/modules/operations/tpo-scheduled-job-registry";
 import {NextResponse} from "next/server";
 import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
 import {escalatePendingWithdrawalRequests} from "@/modules/placements/tpo-withdrawal-escalation-service";
-import { route } from "@/security/route";
+import { internalRoute } from "@/security/internal-route";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"no-store"} as const;
 /** POST-only scheduler using the existing TPO scheduler secret; GET cannot send notifications. */
 async function handlePOST(request:Request){
- const secret=process.env["TPO_NOTICE_SCHEDULER_SECRET"]??"";
- const provided=request.headers.get("x-tpo-scheduler-key")??"";
- // The scheduler credential is mandatory in each deployment. Distinguish a
- // missing worker configuration from a bad caller key without exposing either.
- if(Buffer.byteLength(secret,"utf8")<32)
-  return NextResponse.json({error:"SCHEDULER_NOT_CONFIGURED",
-   message:"Configure TPO_NOTICE_SCHEDULER_SECRET (at least 32 characters) for the withdrawal escalation worker."},
-   {status:403,headers:noStore});
- const expected=Buffer.from(secret),actual=Buffer.from(provided);
- if(expected.length!==actual.length||!timingSafeEqual(expected,actual))
-  return NextResponse.json({error:"FORBIDDEN"},{status:403,headers:noStore});
- if(request.headers.has("origin"))
-  return NextResponse.json({error:"FORBIDDEN"},{status:403,headers:noStore});
- if(new URL(request.url).search)
-  return NextResponse.json({error:"INVALID_REQUEST"},{status:400,headers:noStore});
- const body=await readBoundedUtf8Body(request,0);
- if(body.kind!=="OK"||body.body!=="")
-  return NextResponse.json({error:"INVALID_REQUEST"},{status:400,headers:noStore});
  try{
   const result=await executeScheduledJobWithLease(
    postgresScheduledJobLeaseStore,
@@ -42,7 +24,7 @@ async function handlePOST(request:Request){
   return NextResponse.json({error:"ESCALATION_NOT_COMPLETED"},{status:503,headers:noStore});
  }
 }
-export const POST = route(
-  { auth: "public", publicReason: "Machine-to-machine endpoint: the handler authenticates the caller with its own shared secret or signature.", csrf: false, csrfExemptReason: "Callers are servers or schedulers and send no browser Origin; the handler checks its credential instead.", rateLimit: { limit: 3000, windowMs: 60_000 } },
-  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+export const POST = internalRoute(
+  { name: "internal.placements.tpo.withdrawal-escalations", credential: { kind: "header", header: "x-tpo-scheduler-key", secretEnv: "TPO_NOTICE_SCHEDULER_SECRET" }, emptyBody: true, denied: { status: 403, body: { error: "FORBIDDEN" } } },
+  ({ request }) => handlePOST(request),
 );

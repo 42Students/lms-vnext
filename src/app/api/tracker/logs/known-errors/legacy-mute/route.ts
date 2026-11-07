@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -16,7 +17,7 @@ async function handlePOST(request:Request){
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const ctx=await getCurrentRequestContext();
-  const raw:unknown=await request.json();
+  const raw:unknown=await boundedRequestJson(request);
   const input=legacyKnownErrorMuteLookupSchema.parse(raw);
   if(input.environment!==alertEnvironment())
    return NextResponse.json({error:"ENVIRONMENT_NOT_AVAILABLE"},{status:400});

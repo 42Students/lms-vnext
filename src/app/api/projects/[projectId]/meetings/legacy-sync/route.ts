@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import {
@@ -21,7 +22,7 @@ export const PUT = route(
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const {projectId} = params;
-    const body: unknown = await request.json();
+    const body: unknown = await boundedRequestJson(request);
     const result = await synchronizeLegacyProjectMeetingSection(context, projectId, body);
     return NextResponse.json(result, {headers: {"Cache-Control": "private, no-store"}});
   },

@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -18,7 +19,7 @@ const inputSchema=z.object({
 async function handlePOST(request:Request,{params}:{params:Promise<{batchId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  const {batchId}=await params,body=inputSchema.parse(await request.json());
+  const {batchId}=await params,body=inputSchema.parse(await boundedRequestJson(request, 8 * 1024 * 1024));
   const context=await getCurrentRequestContext();
   const preview=await getBatchEligibilityImportPreview(context,batchId,{rows:body.rows});
   // Never silently apply the matched subset while any source row is unusable.

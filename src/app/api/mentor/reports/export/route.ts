@@ -9,7 +9,7 @@ import {mentorReportsQuerySchema,mentorReportsCsv}
 export const runtime="nodejs";
 /** Only registered current Mentor project state, never learner data. */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "service-enforced", stepUp: true },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const url=new URL(request.url);

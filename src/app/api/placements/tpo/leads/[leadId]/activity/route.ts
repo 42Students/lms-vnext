@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { tpoCrmTablesReady } from "@/modules/placements/tpo-crm-storage-readiness";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -40,7 +41,7 @@ async function handlePOST(request: Request, { params }: RouteContext) {
     const context = await getCurrentRequestContext();
     const { leadId } = await params;
     const activity = await logTpoLeadActivity(
-      context, leadId, await request.json(),
+      context, leadId, await boundedRequestJson(request),
     );
     return NextResponse.json({ activity }, { status: 201 });
   } catch (error) {

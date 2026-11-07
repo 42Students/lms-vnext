@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { z, ZodError } from "zod";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -20,7 +21,7 @@ async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403, headers: noStore });
   try {
-    const input = schema.parse(await request.json());
+    const input = schema.parse(await boundedRequestJson(request, 8 * 1024 * 1024));
     const context = await getCurrentRequestContext();
     // The HTTP action discriminator is transport-only. The private-storage
     // service enforces strict payloads and must never receive an extra "action".

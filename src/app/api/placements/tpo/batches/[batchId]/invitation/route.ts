@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -16,7 +17,7 @@ export const POST = route(
     try {
 const { batchId } = params;
 const result = await inviteTpoBatch(
-      __ctx, batchId, await request.json(),
+      __ctx, batchId, await boundedRequestJson(request),
     );
 return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
 } catch (error) {
@@ -38,7 +39,7 @@ export const PATCH = route(
     try {
 const { batchId } = params;
 const result = await saveTpoBatchRegistrationDeadline(
-      __ctx, batchId, await request.json(),
+      __ctx, batchId, await boundedRequestJson(request),
     );
 return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
 } catch (error) {

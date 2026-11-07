@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -21,7 +22,7 @@ export const POST = route(
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     const {batchId}=params;
-    return NextResponse.json(await mutateTpoBatchSavedView(__ctx,batchId,await request.json()),
+    return NextResponse.json(await mutateTpoBatchSavedView(__ctx,batchId,await boundedRequestJson(request)),
    {headers:{"Cache-Control":"private, no-store"}});
   },
 );

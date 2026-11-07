@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -31,7 +32,7 @@ async function handlePUT(request: Request) {
     const order =
       await updateDeliveryLessonContentOrder(
         context,
-        await request.json(),
+        await boundedRequestJson(request),
       );
     return NextResponse.json({
       order,

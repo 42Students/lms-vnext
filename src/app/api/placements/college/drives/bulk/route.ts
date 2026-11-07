@@ -1,3 +1,4 @@
+import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -9,7 +10,7 @@ export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const ctx = __actor!;
-    const raw=await request.json();
+    const raw=await boundedRequestJson(request, 8 * 1024 * 1024);
     return NextResponse.json(raw?.confirmStage==="PREVIEW"?
    await previewCollegeBulkDrives(ctx,{action:raw.action,jobIds:raw.jobIds}):
    await updateCollegeBulkDrives(ctx,{action:raw.action,jobIds:raw.jobIds,confirmed:raw.confirmed}),
