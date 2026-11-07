@@ -16,6 +16,11 @@ on:
 permissions:
   contents: read
 
+# Only the most recent scoped UX code matters when parallel chats push quickly.
+concurrency:
+  group: ux-mentor-teach-tpo-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   browser:
     runs-on: ubuntu-latest
