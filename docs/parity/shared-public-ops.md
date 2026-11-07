@@ -573,3 +573,22 @@ Exact-SHA run is shared with UX-G078:
 https://github.com/42Students/lms-vnext/actions/runs/42390895781
 at 670881e5be5e1091f76ee59156fd1c4eb0ad108b.
 The independent authorization, security and release gates remain open.
+
+
+**UX-G078/G089 exact-SHA final acceptance (7 November 2026):**
+[Actions run 42391328381](https://github.com/42Students/lms-vnext/actions/runs/42391328381)
+on source/test/workflow SHA 102c0927b982a07f1dcec27c2ed40eefb5e9d24b
+completed SUCCESS. Scoped ESLint and full repository TypeScript passed;
+four Vitest files / **13 of 13 tests passed**; the existing mixed file's
+named privacy test passed **1/1**; Chromium policy and safe sign-in browser
+journeys passed **4 of 4** (desktop 1280x800, mobile 390x844). Both groups'
+canonical UX status may be changed to DONE under their scope, independently
+of the still-red historical 9 mixed-suite assertions, seven-account parity,
+tenant/role security controls and production release acceptance.
+
+Earlier browser failures in [run 42390895781](https://github.com/42Students/lms-vnext/actions/runs/42390895781)
+were **test-only**: title expectation missed the shared Next.js suffix,
+and a Privacy Policy query matched both the sign-in form and footer links.
+They were corrected to accept the correct template title and target the
+footer navigation. The application data, OTP, permission and legal-content
+behavior was not changed to satisfy those assertions.
