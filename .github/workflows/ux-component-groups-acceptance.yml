@@ -1,0 +1,43 @@
+name: UX component groups acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/components/admin/tenant-settings-other-keys.tsx
+      - src/components/electives/college-slot-manager.tsx
+      - src/components/activity/activity-center.tsx
+      - src/components/activity/learner-notifications-inbox.tsx
+      - src/app/e2e/ux-component-groups/**
+      - tests/e2e/ux-component-groups.spec.ts
+      - .github/workflows/ux-component-groups-acceptance.yml
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      E2E_AUTH_ENABLED: "true"
+      APP_ENV: development
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Scoped UX source and test lint
+        run: npx eslint src/components/admin/tenant-settings-other-keys.tsx src/components/electives/college-slot-manager.tsx src/components/activity/activity-center.tsx src/components/activity/learner-notifications-inbox.tsx src/app/e2e/ux-component-groups/page.tsx src/app/e2e/ux-component-groups/ux-component-groups-harness.tsx tests/e2e/ux-component-groups.spec.ts
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop and mobile UX component interaction acceptance
+        run: npx playwright test tests/e2e/ux-component-groups.spec.ts --project=chromium --reporter=line
+      - name: TypeScript
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
