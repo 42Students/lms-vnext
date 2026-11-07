@@ -11,7 +11,7 @@ import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 import { legacySuperAdminDestination } from "@/modules/admin-ui/legacy-superadmin-destination-model";
-import { legacySuperAdminLessonContentHref } from "@/modules/courses/super-admin-content-directory-model";
+import { legacySuperAdminContentHandoffHref } from "@/modules/courses/super-admin-content-directory-model";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const NUMERIC_LEGACY_ID = /^[1-9][0-9]{0,9}$/;
@@ -175,7 +175,7 @@ export default async function LegacySuperAdminRedirect({
   // A generic catch-all redirect would lose classId=0 (shared), selected
   // Section UUID, and content status filters. Never forward a raw college ID.
   if (legacy.length === 1 && legacy[0]?.toLowerCase() === "lesson-content") {
-    return redirect(legacySuperAdminLessonContentHref(query));
+    return redirect(legacySuperAdminContentHandoffHref(query));
   }
 
   // Pass only supported, bounded navigation state. A forged query college may
