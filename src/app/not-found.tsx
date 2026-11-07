@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { GracefulScreen } from "@/components/public/graceful-screen";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getShellNavigation } from "@/components/shell/shell-model";
+import { hasActiveRecruiter, isSuperAdmin } from "@/modules/identity/context";
 
 export const metadata: Metadata = {
   title: "Page Not Found | 42LMS",
@@ -19,7 +20,9 @@ export default async function NotFound() {
     const landing = getShellNavigation(context)[0]?.href;
     if (landing?.startsWith("/") && !landing.startsWith("//")) {
       homeHref = landing;
-      showSignIn = false;
+      // The anonymous shell still contains a Dashboard entry, but it does
+      // not imply an active membership or recruiter/platform session.
+      showSignIn = !(context.membership || hasActiveRecruiter(context) || isSuperAdmin(context));
     }
   } catch {
     // No signed-in role exists: the centralized dashboard handles sign-in.
