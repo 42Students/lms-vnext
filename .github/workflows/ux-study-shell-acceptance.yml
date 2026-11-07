@@ -19,6 +19,10 @@ on:
       - tests/e2e/ux-g141-g155-study-shell.spec.ts
       - .github/workflows/ux-study-shell-acceptance.yml
 
+concurrency:
+  group: ux-study-shell-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
