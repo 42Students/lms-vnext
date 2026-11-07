@@ -14,8 +14,14 @@ export default function VerifyEmailPage() {
   const [token, setToken] = useState("");
   const [state, setState] = useState<"loading" | "ready" | "sending" | "done" | "invalid">("loading");
   const submitting = useRef(false);
+  // React Strict Mode replays mount effects in development. Do not consume a
+  // one-time fragment twice: the second pass would see the stripped URL and
+  // incorrectly replace a valid link with an invalid-link state.
+  const processedLink = useRef(false);
 
   useEffect(() => {
+    if (processedLink.current) return;
+    processedLink.current = true;
     const hash = new URLSearchParams(window.location.hash.slice(1));
     const value = hash.get("token") ?? "";
     // Strip the bearer before exposing links or any user interaction.
