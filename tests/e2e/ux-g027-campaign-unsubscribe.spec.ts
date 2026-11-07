@@ -44,7 +44,7 @@ test.describe("UX-G027 campaign opt-out", () => {
     await page.getByRole("button", { name: "Unsubscribe" }).click();
     await expect(page).toHaveURL(/\/campaign-unsubscribe\/confirmed\?scope=placement-cell$/);
     await expect(page.getByRole("heading", { name: "You're unsubscribed" })).toBeVisible();
-    await expect(page.getByRole("status")).toContainText("This placement cell will not email you again.");
+    await expect(page.locator('p[role="status"]')).toContainText("This placement cell will not email you again.");
     await expect(page.getByRole("link", { name: "Return home" })).toBeVisible();
     expect(posts).toBe(2);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -54,8 +54,8 @@ test.describe("UX-G027 campaign opt-out", () => {
   test("global confirmation retains the separate transactional-email caveat", async ({ page }) => {
     await page.goto("/campaign-unsubscribe/confirmed?scope=global");
     await expect(page.getByRole("heading", { name: "Email preference updated" })).toBeVisible();
-    await expect(page.getByRole("status")).toContainText("Transactional account messages may use separate preferences.");
-    await expect(page.getByRole("status")).not.toContainText("This placement cell will not email you again.");
+    await expect(page.locator('p[role="status"]')).toContainText("Transactional account messages may use separate preferences.");
+    await expect(page.locator('p[role="status"]')).not.toContainText("This placement cell will not email you again.");
     await expect(page.getByRole("link", { name: "Return home" })).toHaveAttribute("href", "/");
   });
 });
