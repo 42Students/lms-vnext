@@ -31,7 +31,7 @@ test.describe("UX-G135 college contact profile draft recovery",()=>{
     writes++;
     expect(route.request().method()).toBe("PATCH");
     expect(route.request().postDataJSON()).toMatchObject({collegeName:"Updated College",expectedVersion:7,confirm:true});
-    const body=writes===1?{error:"CONTACT_PROFILE_STALE"}:{profile:{
+    const body=writes===1?{error:"COLLEGE_PROFILE_STALE"}:{profile:{
       collegeName:"Updated College",supportEmail:"help@example.edu",supportPhone:"+91 98765 43210",
       termsUrl:"https://example.edu/terms",privacyUrl:"https://example.edu/privacy",version:8,
     }};
