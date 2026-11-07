@@ -13441,11 +13441,11 @@
         "type": "JOURNEY",
         "area": "account",
         "title": "Account · Security (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-root-quiz-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [
           "src/app/(authenticated)/account/security/error.tsx",
           "src/app/(authenticated)/account/security/loading.tsx",
@@ -13457,8 +13457,34 @@
           "PAGE-0001"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Implementation underway: signed-in device management and direct login UX. Preserve role/tenant/session invariants; close after exact-SHA CI and desktop/mobile browser evidence."
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "56cf4e35769f15787709fa7ae9925570e8810787",
+            "description": "Exact source SHA for passed workflow on main"
+          },
+          {
+            "type": "ci",
+            "runId": 42392268954,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42392268954",
+            "conclusion": "success",
+            "results": "Scoped ESLint, full TS, Vitest 8/8, real first-party OTP Chromium 5/5"
+          },
+          {
+            "type": "document",
+            "path": "docs/parity/pages/shared/UX-G003-devices.md"
+          },
+          {
+            "type": "browser",
+            "artifactId": 13582351787,
+            "role": "real seeded super-admin, plus anonymous deny",
+            "views": [
+              "390px device page",
+              "1280px revoke another session"
+            ]
+          }
+        ],
+        "notes": "Scope 3/3 surfaces improved; exact-SHA CI success: lint, project TS, 8 Vitest and 5 real OTP Chromium tests; security/release gates separate."
       },
       {
         "id": "UX-G004",
@@ -16628,11 +16654,11 @@
         "type": "JOURNEY",
         "area": "login",
         "title": "Login · Home (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-root-quiz-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [
           "src/app/login/error.tsx",
           "src/app/login/loading.tsx",
@@ -16644,8 +16670,34 @@
           "PAGE-0512"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Implementation underway: signed-in device management and direct login UX. Preserve role/tenant/session invariants; close after exact-SHA CI and desktop/mobile browser evidence."
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "56cf4e35769f15787709fa7ae9925570e8810787",
+            "description": "Exact source SHA for passed workflow on main"
+          },
+          {
+            "type": "ci",
+            "runId": 42392268954,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42392268954",
+            "conclusion": "success",
+            "results": "Scoped ESLint, full TS, Vitest 8/8, real first-party OTP Chromium 5/5"
+          },
+          {
+            "type": "document",
+            "path": "docs/parity/pages/shared/UX-G067-login.md"
+          },
+          {
+            "type": "browser",
+            "artifactId": 13582351787,
+            "role": "public",
+            "views": [
+              "320px direct-login failure",
+              "1280px direct-login form"
+            ]
+          }
+        ],
+        "notes": "Scope 3/3 surfaces improved; exact-SHA CI success: lint, project TS, 8 Vitest and 5 real OTP Chromium tests; security/release gates separate."
       },
       {
         "id": "UX-G068",
