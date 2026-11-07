@@ -41,6 +41,9 @@ export default async function CollegeDrivesPage({ searchParams }: {
       action={<TextLink href="/dashboard"
         className="inline-flex min-h-11 items-center md:min-h-9">Back to dashboard</TextLink>} />
   </div>;
+  // An active college membership is not itself a College Admin grant.
+  // Reject wrong-role callers before resolving college module settings.
+  if (!hasMembershipRole(context, "COLLEGE_ADMIN")) redirect("/dashboard");
   const moduleAccess = await resolveOptionalModuleAccess(context);
   if (!moduleAccess.placements.enabled) return <div className="min-w-0 space-y-4">
     <PageHeader title="Jobs"/>
