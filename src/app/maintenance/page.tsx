@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { GracefulScreen } from "@/components/public/graceful-screen";
+import { MaintenanceRecovery } from "./maintenance-recovery";
 
-export const metadata: Metadata = { title: "Maintenance | 42LMS", robots: { index: false, follow: false } };
+export const metadata: Metadata = {
+  title: "Maintenance | 42LMS",
+  robots: { index: false, follow: false },
+};
 
-/** Display-only public recovery URL; maintenance routing is handled independently. */
+/** Static public recovery route; middleware remains the authority for maintenance policy. */
 export default function MaintenancePage() {
-  return <GracefulScreen title="We'll be back shortly"
-    message="42LMS is undergoing scheduled maintenance. Please try again in a little while."
-    homeHref="/login" homeLabel="Return to sign in" />;
+  return <MaintenanceRecovery />;
 }
