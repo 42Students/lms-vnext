@@ -21,7 +21,7 @@ export default async function FacultyCoursesPage({searchParams}: {
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader
         title="My Teaching Courses"
-        description="Your active Course deliveries, exact Sections and the learning items visible to each class."
+        description="Find the courses and class sections you teach. Use the filters below to narrow your list."
       />
       <FacultyCourseList rows={rows} query={list.query} pagination={list} scopeCount={list.scopeCount} periods={list.periods} sections={list.sections} assignmentChoices={list.assignmentChoices} />
     </div>
