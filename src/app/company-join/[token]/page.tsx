@@ -1,8 +1,17 @@
+import type { Metadata } from "next";
 import { PublicJoinPreviewRetry } from "@/components/placements/public-join-preview-retry";
 import { PublicRecruiterJoinForm } from "@/components/placements/public-recruiter-join-form";
 import { getPublicJoinPreview } from "@/modules/placements/public-join/preview-service";
 import {publicJoinUnavailable,publicJoinUnavailableCopy} from "@/modules/placements/public-join/readiness-state";
 import { runAsSystem } from "@/db/tenant-context";
+
+/** Invitation links contain bearer tokens. Keep them out of search, previews and referrers. */
+export const dynamic = "force-dynamic";
+export const metadata: Metadata = {
+  title: "Join college placements | 42LMS",
+  robots: { index: false, follow: false, noarchive: true },
+  referrer: "no-referrer",
+};
 
 async function CompanyJoinPage({
   params,
