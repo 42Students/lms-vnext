@@ -1,0 +1,91 @@
+name: UX-G165 G168 shared controls and admin CSV acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/components/ui/tabs.tsx
+      - src/components/ui/textarea.tsx
+      - src/components/ui/third-party-link.tsx
+      - src/components/ui/toast.tsx
+      - src/components/ui/tooltip.tsx
+      - src/components/ui/use-confirm-flow.tsx
+      - src/modules/admin-ui/super-admin-batch-roster-export-model.ts
+      - src/modules/admin-ui/super-admin-faculty-assignments-csv-service.ts
+      - src/modules/admin-ui/super-admin-learning-csv-service.ts
+      - src/modules/admin-ui/super-admin-scoped-csv-model.ts
+      - src/modules/admin-ui/super-admin-scoped-csv-service.ts
+      - tests/unit/ux-g165-shared-controls.test.tsx
+      - tests/unit/ux-g168-admin-export-ux.test.ts
+      - tests/e2e/ux-shared-admin-exports.spec.ts
+      - .github/workflows/ux-g165-g168-acceptance.yml
+
+concurrency:
+  group: ux-g165-g168-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ux-browser-and-models:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: "true"
+      APP_ENV: development
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Scoped lint
+        run: |
+          npx eslint src/components/ui/tabs.tsx src/components/ui/textarea.tsx src/components/ui/third-party-link.tsx src/components/ui/toast.tsx src/components/ui/tooltip.tsx src/components/ui/use-confirm-flow.tsx src/modules/admin-ui/super-admin-batch-roster-export-model.ts src/modules/admin-ui/super-admin-faculty-assignments-csv-service.ts src/modules/admin-ui/super-admin-learning-csv-service.ts src/modules/admin-ui/super-admin-scoped-csv-model.ts src/modules/admin-ui/super-admin-scoped-csv-service.ts tests/unit/ux-g165-shared-controls.test.tsx tests/unit/ux-g168-admin-export-ux.test.ts tests/e2e/ux-shared-admin-exports.spec.ts
+      - name: Full TypeScript
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: UI kit, UTF-8 export, existing regressions
+        run: |
+          npx vitest run tests/unit/ux-g165-shared-controls.test.tsx tests/unit/ux-g168-admin-export-ux.test.ts tests/unit/chat3-sa-faculty-assignments-csv-http.test.ts tests/unit/chat7-superadmin-learning-export-service-behavior.test.ts tests/unit/chat13-scoped-csv-export-page-size.test.ts tests/unit/UX-kit-projects-hardening-chat17.test.tsx
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Prepare disposable browser database
+        run: npm run db:e2e:prepare
+      - name: Ephemeral browser credentials
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Browser 390 and 1280, authorized and denied export
+        run: npx playwright test tests/e2e/ux-shared-admin-exports.spec.ts --project=chromium --reporter=line
+      - name: Keep viewport and failure screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-g165-g168-evidence
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
