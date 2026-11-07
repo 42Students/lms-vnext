@@ -812,9 +812,9 @@ export function LearnerProfileWorkspace(props: {
                 {entry.url?<div className="mt-2"><ThirdPartyLink href={entry.url} label="View link" /></div>:null}
                 <div className="mt-3 flex flex-wrap gap-2">
                   <Button className="min-h-11 md:min-h-9" size="sm" variant="secondary" disabled={pending||contactPending}
-                    onClick={()=>openShowcase(kind,entry)}>Edit</Button>
+                    aria-label={`Edit ${kind}: ${entry.title}`} onClick={()=>openShowcase(kind,entry)}>Edit</Button>
                   <Button className="min-h-11 md:min-h-9" size="sm" variant="danger" disabled={pending||contactPending}
-                    onClick={()=>deleteShowcase(kind,entry["id"])}>Delete</Button>
+                    aria-label={`Delete ${kind}: ${entry.title}`} onClick={()=>deleteShowcase(kind,entry["id"])}>Delete</Button>
                 </div>
               </li>)}
             </ul>:<p className="text-sm text-muted-foreground">
@@ -834,7 +834,7 @@ export function LearnerProfileWorkspace(props: {
           (Number(right["endYear"]) || 0) - (Number(left["endYear"]) || 0)) : items;
         return (
           <Card key={section} id={section} title={collectionLabels[section]} action={<Button className="min-h-11 md:min-h-9" size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
-            onClick={() => openCollection(section)}>Add</Button>}>
+            aria-label={`Add ${collectionLabels[section]} record`} onClick={() => openCollection(section)}>Add</Button>}>
             {displayItems.length ? (
               <div className="space-y-2">
                 {displayItems.map((item) => {
@@ -847,9 +847,9 @@ export function LearnerProfileWorkspace(props: {
                       </div>
                       <div className="flex w-full flex-wrap gap-2 md:w-auto">
                         <Button size="sm" variant="secondary" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
-                          className="min-h-11 flex-1 md:flex-none" onClick={() => openCollection(section, item)}>Edit</Button>
+                          aria-label={`Edit ${collectionLabels[section]}: ${summary.primary}`} className="min-h-11 flex-1 md:flex-none" onClick={() => openCollection(section, item)}>Edit</Button>
                         <Button size="sm" variant="danger" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
-                          className="min-h-11 flex-1 md:flex-none" onClick={() => removeItem(section, String(item["id"]))}>Delete</Button>
+                          aria-label={`Delete ${collectionLabels[section]}: ${summary.primary}`} className="min-h-11 flex-1 md:flex-none" onClick={() => removeItem(section, String(item["id"]))}>Delete</Button>
                       </div>
                     </div>
                   );
