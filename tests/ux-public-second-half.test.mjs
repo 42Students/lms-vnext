@@ -35,9 +35,13 @@ test("UX-public-forbidden-01 keeps actual graceful access-denied page",()=>{
   assert.match(page,/homeHref="\/dashboard"/);
   assert.match(page,/index: false/);
 });
-test("UX-public-privacy-policy-01 canonical policy still redirects to full legacy document",()=>{
+test("UX-public-privacy-policy-01 canonical indexed policy renders the complete bundled legal document",()=>{
   const page=app("privacy-policy/page.tsx");
-  assert.match(page,/redirect\("\/assets\/static\/privacy-policy-view\.html"\)/);
+  assert.match(page,/public\/assets\/static\/privacy-policy-view\.html/);
+  assert.match(page,/dangerouslySetInnerHTML=\{\{__html:documentBody\}\}/);
+  assert.match(page,/Skip to policy content/);
+  assert.match(page,/canonical: "https:\/\/42lms\.com\/privacy-policy"/);
+  assert.doesNotMatch(page,/redirect\(/);
   assert.match(page,/export const metadata/);
 });
 test("UX-public-request-demo-01 email demo CTA stays explicit and keyboard accessible",()=>{

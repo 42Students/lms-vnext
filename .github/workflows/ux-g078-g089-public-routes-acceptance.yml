@@ -1,0 +1,59 @@
+name: UX-G078 G089 policy and legacy sign-in acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/app/privacy-policy/**
+      - src/app/superadmin-login/**
+      - tests/unit/UX-G078-policy-render.test.tsx
+      - tests/unit/UX-G089-superadmin-bookmark.test.ts
+      - tests/e2e/ux-g078-g089-public-routes.spec.ts
+      - tests/ux-public-second-half.test.mjs
+      - .github/workflows/ux-g078-g089-public-routes-acceptance.yml
+
+concurrency:
+  group: ux-g078-g089-main
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      PLATFORM_HOSTS: "localhost,127.0.0.1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Scoped lint and typecheck
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: |
+          npx eslint src/app/privacy-policy/page.tsx src/app/superadmin-login/page.tsx src/app/superadmin-login/error.tsx src/app/superadmin-login/loading.tsx tests/unit/UX-G078-policy-render.test.tsx tests/unit/UX-G089-superadmin-bookmark.test.ts tests/e2e/ux-g078-g089-public-routes.spec.ts
+          npm run typecheck
+      - name: Policy and legacy bookmark unit and SSR regression
+        run: |
+          npx vitest run tests/unit/UX-G078-policy-render.test.tsx tests/unit/UX-G089-superadmin-bookmark.test.ts tests/unit/UX-chat16-public-auth-legacy-bookmarks-03.test.ts tests/unit/UX-public-legacy-redirects-02.test.ts
+          node --test tests/ux-public-second-half.test.mjs
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop/mobile policy and secure bookmark journeys
+        run: npx playwright test tests/e2e/ux-g078-g089-public-routes.spec.ts --project=chromium --reporter=line
+      - name: Preserve browser failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-g078-g089-browser-failures
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
