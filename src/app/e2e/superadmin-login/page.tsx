@@ -1,8 +1,16 @@
+import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/page-header";
+import { ButtonLink } from "@/components/ui/button-link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+
+export const metadata: Metadata = {
+  title: "Retired test sign-in · 42 LMS",
+  robots: { index: false, follow: false, noarchive: true },
+  referrer: "no-referrer",
+};
 
 /**
  * Retired public E2E login deep link. Do not accept a phone number here or
@@ -26,9 +34,10 @@ export default async function LegacySuperAdminE2ELoginPage({
       devVerifiedSuperAdmin = false;
     }
   }
-  return <main className="mx-auto w-full max-w-xl px-4 py-8 sm:py-12">
+  return <main className="flex min-h-dvh min-w-0 items-center justify-center bg-[color:var(--lms-neutral-50)] px-4 py-8 sm:py-12">
+    <div className="w-full max-w-xl min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 sm:p-7">
     <PageHeader title="E2E Superadmin Login" />
-    <section className="space-y-4 border border-border bg-surface p-5 text-sm text-body"
+    <section className="min-w-0 space-y-4 text-sm text-body"
       role="status" aria-live="polite">
       <Heading level={2} size="lg" className="text-primary-text">
         Deprecated E2E login link — restricted development setup
@@ -48,9 +57,15 @@ export default async function LegacySuperAdminE2ELoginPage({
         setup, not a public login bypass. If fixture setup or sign-in fails, review
         the development configuration and try the secure login below.
         This page never creates a test account or grants access.</p>
-      <TextLink href="/login" className="inline-flex min-h-11 items-center">
-        Continue to secure sign-in
-      </TextLink>
+      <nav aria-label="Next steps" className="flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap">
+        <ButtonLink variant="primary" href="/login" className="min-h-11 w-full sm:w-auto">
+          Continue to secure sign-in
+        </ButtonLink>
+        <ButtonLink variant="secondary" href="/home" className="min-h-11 w-full sm:w-auto">
+          Back to home
+        </ButtonLink>
+      </nav>
     </section>
+    </div>
   </main>;
 }
