@@ -19,3 +19,5 @@ Readable by learner (24): own courses, quiz attempts, groups, notifications, dri
 Observation: a person whose membership holds two roles (the seeded mentor and TPO also hold FACULTY) answers 401 on every API route until a role is chosen through `POST /api/auth/memberships`, although login reports `selectedMembership: true`. This is the one-role-per-request rule working; the login response wording is misleading for API clients.
 
 Not covered: mutating methods, routes with path parameters (see `cross-college-api-probe-2026-11-08.md`), recruiter and Super Admin as callers, and routes that need a request body or query to return data.
+
+**Re-checked after the redeploy (dev image 8efb7c1b):** learner `GET /api/v1/admin/college-dashboard` answers 403 and the college admin 200; the wrong-role `faculty-self-document` call that used to answer 500 now answers 409; `/e2e/*` answers 404; API responses carry `Cross-Origin-Resource-Policy: same-origin`.
