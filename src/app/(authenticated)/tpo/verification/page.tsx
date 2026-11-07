@@ -26,6 +26,14 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
   <TextLink href="/tpo/verification" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Clear filters</TextLink>
  </div>;
  const query=parsed;
+ const activeFilters=[query.kind!=="ALL",query.waitingState!=="ALL",query.waitingSince!=="ALL",
+  Boolean(query.search),Boolean(query.batchId),Boolean(query.branchId),query.pageSize!==1000]
+  .filter(Boolean).length;
+ const {batchId,branchId,...unscopedQuery}=query;
+ void batchId;
+ void branchId;
+ const resetToTab=tpoVerificationHref({...unscopedQuery,kind:"ALL",waitingState:"ALL",
+  waitingSince:"ALL",search:"",page:1});
  const context=await getCurrentRequestContext();
  const retryHref=tpoVerificationHref(query);
  let queue:Awaited<ReturnType<typeof getTpoVerificationQueue>>;
@@ -75,7 +83,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
    </Disclosure>
   </nav>
   <form method="get" action="/tpo/verification" className="min-w-0 border-b border-border pb-3" aria-label="Filter verification">
-   <Disclosure title="Filter the queue">
+   <Disclosure title={activeFilters ? "Filter the queue ("+activeFilters+" active)" : "Filter the queue"} defaultOpen={activeFilters>0}>
     <div className="grid min-w-0 grid-cols-1 gap-3 pb-4 sm:grid-cols-2 lg:grid-cols-4">
    <Label stack>Status
     <Select name="tab" defaultValue={query.tab} className="min-h-11 md:min-h-9">
@@ -131,6 +139,10 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
     </div>
    </Disclosure>
   </form>
+  {activeFilters>0?<div role="status" className="flex min-w-0 flex-wrap items-center gap-3 text-sm text-body">
+   <span>{activeFilters} active filter{activeFilters===1?"":"s"} applied to this verification view.</span>
+   <TextLink href={resetToTab} className="inline-flex min-h-11 items-center md:min-h-9">Clear filters (keep status)</TextLink>
+  </div>:null}
   {queue.available&&queue.enabled&&queue.permitted&&queue.counts?
    <p role="status" className="text-sm text-body leading-[22px]">
     {queue.counts.WAITING} waiting · {queue.counts.SENT_BACK} sent back · {queue.counts.VERIFIED} verified
