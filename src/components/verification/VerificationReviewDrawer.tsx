@@ -47,9 +47,9 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
   let active=true;
   apiFetch<Detail>(url,{cache:"no-store"}).then(data=>{if(active)setDetail(data);})
    .catch(()=>{if(active){
+    // Preserve the open drawer so the inline Retry and Exit paths remain usable.
+    // A network failure must not silently dismiss a student's private review.
     setError("Could not open this student");
-    showToast({tone:"error",title:"Could not open this student"});
-    onClose();
    }})
     .finally(()=>{if(active)setLoading(false);});
   return ()=>{active=false;};
