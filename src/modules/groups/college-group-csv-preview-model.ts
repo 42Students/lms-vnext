@@ -20,28 +20,32 @@ export function parseMemberEmailCsv(csv: string): Array<{ rowNumber: number; val
   let field = "";
   let row: string[] = [];
   let quoted = false;
+  let closedQuote = false;
   for (let i = 0; i < body.length; i += 1) {
     const ch = body[i];
     if (quoted) {
       if (ch === '"' && body[i + 1] === '"') { field += '"'; i += 1; }
-      else if (ch === '"') quoted = false;
+      else if (ch === '"') { quoted = false; closedQuote = true; }
       else field += ch;
     } else if (ch === '"') {
-      if (field.length !== 0) throw new Error("INVALID_CSV_QUOTE");
+      if (field.length !== 0 || closedQuote) throw new Error("INVALID_CSV_QUOTE");
       quoted = true;
     } else if (ch === ",") {
-      row.push(field); field = "";
+      row.push(field); field = ""; closedQuote = false;
     } else if (ch === "\n" || ch === "\r") {
       if (ch === "\r" && body[i + 1] === "\n") i += 1;
-      row.push(field); field = "";
+      row.push(field); field = ""; closedQuote = false;
       rows.push(row); row = [];
       if (rows.length > GROUP_IMPORT_MAX_ROWS + 1) throw new Error("CSV_ROW_LIMIT");
     } else {
+      // A quoted field must end at a delimiter. Never silently accept
+      // malformed input like "alice@example.com"oops as an email.
+      if (closedQuote) throw new Error("INVALID_CSV_QUOTE");
       field += ch;
     }
   }
   if (quoted) throw new Error("UNTERMINATED_CSV_QUOTE");
-  if (field.length > 0 || row.length > 0) {
+  if (field.length > 0 || row.length > 0 || closedQuote) {
     row.push(field); rows.push(row);
   }
   const header = rows[0];
