@@ -16737,11 +16737,11 @@
         "type": "JOURNEY",
         "area": "placements",
         "title": "Placements · Home → Jobs / JobId (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-public-placements-chat-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [
           "src/app/placements/error.tsx",
           "src/app/placements/loading.tsx",
@@ -16757,8 +16757,24 @@
         "newRouteOnly": [
           "/placements/jobs/[jobId]"
         ],
-        "evidence": [],
-        "notes": "Public placements page and private shared-job link UX pass. Preserve security gates; evidence-driven DONE pending executed tests, desktop/mobile browser verification, cross-role regression."
+        "evidence": [
+          {
+            "type": "source",
+            "ref": "5ef5b1e3a6a9eadac89ffabb4744cda56aeb5e0f",
+            "url": "https://github.com/42Students/lms-vnext/commit/5ef5b1e3a6a9eadac89ffabb4744cda56aeb5e0f"
+          },
+          {
+            "type": "ci",
+            "ref": "42386887182",
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42386887182",
+            "detail": "Exact SHA: scoped ESLint+TypeScript; 3 Vitest files/17 tests passing; 4 Chromium desktop/mobile not-found & retired-link tests and 2 disposable PostgreSQL 17 published-college desktop/mobile tests passing."
+          },
+          {
+            "type": "parity",
+            "ref": "docs/parity/shared-public-ops.md#ux-g076--public-placements-and-retired-shared-job-links-7-november-2026"
+          }
+        ],
+        "notes": "DONE for scoped UX only at exact SHA 5ef5b1e3a6a9eadac89ffabb4744cda56aeb5e0f; actions 42386887182 passed BOTH jobs (17 unit/SSR, 6 Chromium desktop/mobile cases, isolated PG17 published-college fixture). Public publishing/OTP/role/RLS gates unchanged, and global security/release gates remain separate. Evidence: docs/parity/shared-public-ops.md."
       },
       {
         "id": "UX-G077",
