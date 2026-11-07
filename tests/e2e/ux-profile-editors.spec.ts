@@ -7,7 +7,7 @@ for(const viewport of [{name:"desktop",width:1280,height:800},{name:"mobile",wid
    await page.setViewportSize({width:viewport.width,height:viewport.height});
    const errors:string[]=[];
    page.on("pageerror",error=>errors.push(error.message));
-   await page.goto("/__ux-profile-proof");
+   await page.goto("/ux-profile-proof-preview");
    await expect(page.getByRole("heading",{level:1,name:"Profile editor UX acceptance"})).toBeVisible();
    await page.getByRole("button",{name:actor==="faculty"?"Faculty preview":"Learner preview"}).click();
    if(actor==="faculty"){
