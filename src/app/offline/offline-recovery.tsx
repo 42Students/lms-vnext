@@ -14,7 +14,9 @@ export function OfflineRecovery() {
 
   useEffect(() => {
     // Sync after hydration; never read navigator during server rendering.
-    setConnection(navigator.onLine ? "online" : "offline");
+    const initial = window.setTimeout(() => {
+      setConnection(navigator.onLine ? "online" : "offline");
+    }, 0);
     const onOffline = () => {
       setConnection("offline");
       setFeedback("The connection was lost. Reconnect before trying again.");
@@ -26,6 +28,7 @@ export function OfflineRecovery() {
     window.addEventListener("offline", onOffline);
     window.addEventListener("online", onOnline);
     return () => {
+      window.clearTimeout(initial);
       window.removeEventListener("offline", onOffline);
       window.removeEventListener("online", onOnline);
     };
