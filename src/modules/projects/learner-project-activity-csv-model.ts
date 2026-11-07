@@ -1,7 +1,8 @@
 /** Export only the already authorized, filtered activity page, never all historical events. */
 const MAX_ROWS=100,MAX_CELL=240;
 function csvCell(value:string):string {
- // Truncate at Unicode code-point boundaries: do not break emoji or Indian scripts.\n const shortened=Array.from(value).slice(0,MAX_CELL).join("");
+ // Truncate at Unicode code-point boundaries: do not break emoji or Indian scripts.
+ const shortened=Array.from(value).slice(0,MAX_CELL).join("");
  const guarded=/^[\p{Cc}\p{Cf}\p{M}\p{Zs}\p{Zl}\p{Zp}]*[=+@\-]/u.test(shortened)?"'"+shortened:shortened;
  return '"'+guarded.replaceAll('"','""')+'"';
 }
