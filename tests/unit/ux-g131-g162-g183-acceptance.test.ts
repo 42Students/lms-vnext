@@ -67,6 +67,11 @@ describe("UX-G162 — verification review control clarity", () => {
     expect(review).toContain("500 characters in the student-facing reason");
     expect(review).toContain("useGuardedAction");
     expect(review).toContain("canEditVerificationDecision");
+    const fetchFailure = review.split('.catch(()=>{if(active){')[1]?.split('}})')[0] ?? "";
+    expect(fetchFailure).toContain("Could not open this student");
+    expect(fetchFailure).not.toContain("onClose()");
+    expect(review).toContain("canRetryVerificationReview(error,loading)");
+
   });
 });
 
