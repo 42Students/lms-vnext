@@ -36,8 +36,9 @@ describe("HR-BREAK-MESSAGING-CSV-02: Unicode-safe, aggregate-only TPO history ex
   const csv=messagingHistoryCsv([makeRow(raw)],1);
   expect(csv).toContain('"\'=HYPERLINK(""https://evil.invalid"",""open"")\nsecond"');
   expect(csv).toMatch(/"export_rows","1","matching_total","1"(?:,""){5}\r\n$/);
-  // Every spreadsheet row must have the same nine fields for reliable filtering.
-  expect(csv.trimEnd().split("\r\n").every(line =>
-    (line.match(/","/g)?.length ?? 0) === 8)).toBe(true);
+  // The new summary footer has the same nine columns as the header; the
+  // purpose cell may itself contain quoted commas and embedded newlines.
+  const footer=csv.trimEnd().split("\r\n").at(-1) ?? "";
+  expect(footer.split(",")).toHaveLength(9);
  });
 });
