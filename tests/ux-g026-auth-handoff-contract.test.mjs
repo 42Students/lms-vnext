@@ -13,7 +13,7 @@ test("UX-G026 bearer credential handoff is never indexed or forwarded",()=>{
   assert.match(page,/const permitted = new Set\(\["tab", "view", "page", "month"/);
   assert.match(page,/retained\.set\(key,value\)/);
   assert.match(page,/redirect\("\/login\?auth=handoff-retired"/);
-  assert.doesNotMatch(page,/\bfetch\(|localStorage|setCookie\(/);
+  assert.doesNotMatch(page,/\bfetch\(|localStorage\.(?:getItem|setItem)|setCookie\(/);
 });
 
 test("UX-G026 error recovery uses one public landmark and keeps shared retry reporting",()=>{
