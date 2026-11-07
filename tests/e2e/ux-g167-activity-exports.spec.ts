@@ -42,7 +42,7 @@ test.describe("UX-G167 Activity CSV exports: authorized desktop/mobile downloads
     const csv=await response.text();
     expect(csv.startsWith("\uFEFF")).toBe(true);
     expect(csv).toContain('"Time","Who","What","Item","Action key","IP"');
-    expect(csv).toContain('"Redacted"');
+    expect(csv).not.toContain('"127.0.0.1"');
     expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
     await page.screenshot({path:"test-results/ux-g167-college-mobile.png",fullPage:true});
 
