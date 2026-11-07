@@ -69,3 +69,17 @@ test("registry drift or duplicated entry cannot silently be called fully grouped
   assert.ok(report.errors.includes("DUPLICATE_REGISTRY_ENTRY"));
   assert.ok(report.errors.some(e=>e.startsWith("REGISTRY_ENTRY_CHANGED")));
 });
+
+test("dimensioned desktop/mobile viewport evidence is accepted without accepting ambiguous labels", () => {
+  const evidence = newProof();
+  evidence.browser = [
+    { viewport: "desktop 1280x800", proof: "desktop verified at run URL" },
+    { viewport: "mobile 390x844", proof: "mobile verified at run URL" },
+  ];
+  assert.equal(isCompletionEvidence(evidence), true);
+  evidence.browser[1].viewport = "mobile-like";
+  assert.equal(isCompletionEvidence(evidence), false);
+  evidence.browser[1].viewport = "mobile";
+  evidence.browser[1].proof = "";
+  assert.equal(isCompletionEvidence(evidence), false);
+});
