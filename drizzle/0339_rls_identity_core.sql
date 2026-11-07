@@ -1,4 +1,5 @@
 -- Identity-core tenant policies (SEC-06-002/003). Inert unless app.rls_mode = enforce.
+-- A recruiter is visible to a college only through a grant that college can see.
 -- A person may always see their own college memberships (the workspace picker needs them before a college is chosen).
 DROP POLICY IF EXISTS own_memberships ON "college_memberships";
 --> statement-breakpoint
@@ -26,7 +27,7 @@ ALTER TABLE "users" FORCE ROW LEVEL SECURITY;
 --> statement-breakpoint
 DROP POLICY IF EXISTS tenant_isolation_identity ON "users";
 --> statement-breakpoint
-CREATE POLICY tenant_isolation_identity ON "users" USING (app_rls_bypass() OR "id" = nullif(current_setting('app.user_id', true), '')::uuid OR EXISTS (SELECT 1 FROM "college_memberships" AS m WHERE m."user_id" = "users"."id") OR EXISTS (SELECT 1 FROM "placement_recruiter_profiles" AS r WHERE r."user_id" = "users"."id")) WITH CHECK (app_rls_bypass() OR "id" = nullif(current_setting('app.user_id', true), '')::uuid);
+CREATE POLICY tenant_isolation_identity ON "users" USING (app_rls_bypass() OR "id" = nullif(current_setting('app.user_id', true), '')::uuid OR EXISTS (SELECT 1 FROM "college_memberships" AS m WHERE m."user_id" = "users"."id") OR EXISTS (SELECT 1 FROM "placement_recruiter_college_grants" AS g WHERE g."recruiter_user_id" = "users"."id")) WITH CHECK (app_rls_bypass() OR "id" = nullif(current_setting('app.user_id', true), '')::uuid);
 --> statement-breakpoint
 ALTER TABLE "membership_roles" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
