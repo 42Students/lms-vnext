@@ -28,10 +28,14 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
   }
   const raw=await searchParams;
   // Reject ambiguous repeated keys rather than choosing an arbitrary value.
-  if ([raw.scope, raw.window, raw.q, raw.page].some(Array.isArray)) {
+  if ([raw.scope, raw.window, raw.q, raw.page].some(Array.isArray) ||
+    (typeof raw.scope==="string"&&!FOLLOWUP_SCOPES.some(value=>value===raw.scope)) ||
+    (typeof raw.window==="string"&&!FOLLOWUP_WINDOWS.some(value=>value===raw.window)) ||
+    (typeof raw.q==="string"&&raw.q.trim().length>100) ||
+    (typeof raw.page==="string"&&!/^[1-9]\\d{0,3}$/.test(raw.page))) {
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Follow-ups due" />
-      <Alert tone="error">Invalid follow-up filters. <Link href="/tpo/follow-ups">Clear filters</Link></Alert>
+      <Alert tone="error">Invalid follow-up filters. <TextLink href="/tpo/follow-ups" className="inline-flex min-h-11 items-center font-semibold md:min-h-9">Clear filters</TextLink></Alert>
     </div>;
   }
   const scope=(Array.isArray(raw.scope)?raw.scope[0]:raw.scope)==="MINE"?"MINE":"TEAM";
