@@ -15,7 +15,7 @@ export function mentorCalendarCsv(rows:readonly MentorMeetingCalendarItem[],omit
  for(const row of limited)lines.push([row.id,row.projectTitle,row.title,row.status,
   dateLabel(row.startsAt),dateLabel(row.endsAt)].map(csvSafeCell).join(","));
  const hidden=(Number.isSafeInteger(omitted)&&omitted>0?omitted:0)+Math.max(0,rows.length-limited.length);
- if(hidden>0)lines.push(["","Truncated",hidden+" additional matching meetings","","",""]
+ if(hidden>0)lines.push(["Truncated export","",hidden+" additional matching meetings","","",""]
    .map(csvSafeCell).join(","));
  return "\uFEFF"+lines.join("\r\n")+"\r\n";
 }
