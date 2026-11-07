@@ -147,9 +147,11 @@ export default async function HomePage({
   // PUB-auth-public-39: platform visitors see the minimal public landing,
   // while college hosts and explicit sign-in links keep the OTP entry screen.
   // The proxy supplies the canonical path; do not use untrusted forwarded hosts.
+  // A legacy Super Admin sign-in request must not be treated as an anonymous
+  // platform marketing visit: keep the verified OTP form reachable at root.
   const requestPath = (await headers()).get("x-lms-path")?.split("?")[0];
   if (tenant.kind === "platform" && requestPath !== "/login" &&
-      !authValue && !recruiterValue && !requested) redirect("/home");
+      !authValue && !recruiterValue && !requested && !legacySuperAdmin) redirect("/home");
   const branding =
     tenant.kind === "college"
       ? await optionalPublicBranding(tenant.collegeId)
