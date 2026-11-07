@@ -18636,10 +18636,10 @@
         "type": "JOURNEY",
         "area": "universities",
         "title": "Universities · Home (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-universities-chat-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/universities/error.tsx",
@@ -18652,7 +18652,8 @@
           "PAGE-0521"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Universities public landing journey: responsive UX, CTAs, error/loading states, accessibility and SEO; implementation and verification in progress."
       },
       {
         "id": "UX-G124",
