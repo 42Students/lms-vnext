@@ -20274,7 +20274,7 @@
         ],
         "newRouteOnly": [],
         "evidence": [],
-        "notes": "Claimed course quiz/progress and content authoring UX review. Scoped implementations/tests only; no graded submit, deadline, role/tenant access changes. Exact SHA verification required before closure."
+        "notes": "Implemented all four registered controls: quiz unsent-answer Close confirmation/answered progress/mobile overflow; server-verified resource-progress retry; content-directory labelled responsive search; lesson-creation aria-invalid/busy state. Tests/unit/ux-g139-course-controls.test.ts and browser tests/e2e/ux-g139-course-controls.spec.ts plus workflow .github/workflows/ux-g139-course-controls-acceptance.yml. Workflow https://github.com/42Students/lms-vnext/actions/runs/42394405880 (SHA 70e0a9c0031131df6f5caf7e6c5a98602d603d09) queued; no green exact-SHA proof. Review docs/parity/pages/learner/UX-G139-course-controls.md. Keep DOING."
       },
       {
         "id": "UX-G140",
@@ -21269,7 +21269,7 @@
         ],
         "newRouteOnly": [],
         "evidence": [],
-        "notes": "UI kit and scoped Super Admin export UX implementation. Exact-SHA lint/typecheck/Vitest/browser verification; preserve role and CSV safety."
+        "notes": "Source improvements committed: external HTTPS link labelled copy fallback with stable ARIA controls; tabs hide empty inaccessible panel; confirmation prompts have readable fallback title. Textarea, popover and toasts reviewed. New SSR/unit suite tests/unit/ux-g165-shared-controls.test.tsx and existing UI kit regressions plus seeded browser acceptance in .github/workflows/ux-g165-g168-acceptance.yml. Workflow https://github.com/42Students/lms-vnext/actions/runs/42393532019 (SHA abcab15ea231068485b36efb0256e773783011c0) remains queued; exact-SHA test/browser proof NOT YET available. Source review docs/parity/pages/shared/UX-G165-ui-kit.md. Keep DOING."
       },
       {
         "id": "UX-G166",
@@ -21366,7 +21366,7 @@
         ],
         "newRouteOnly": [],
         "evidence": [],
-        "notes": "UI kit and scoped Super Admin export UX implementation. Exact-SHA lint/typecheck/Vitest/browser verification; preserve role and CSV safety."
+        "notes": "Source improvements committed: Unicode-safe batch roster CSV, schema-width truncation notices, safe internal export hrefs, private JSON invalid-filter failures; row caps and permissions unchanged. Tests/unit/ux-g168-admin-export-ux.test.ts and existing service regressions, seeded 390/1280px browser checks tests/e2e/ux-shared-admin-exports.spec.ts. Workflow https://github.com/42Students/lms-vnext/actions/runs/42393532019 (SHA abcab15ea231068485b36efb0256e773783011c0) queued; exact-SHA unit/browser proof NOT YET available. Review docs/parity/pages/shared/UX-G168-admin-exports.md. Keep DOING."
       },
       {
         "id": "UX-G169",
