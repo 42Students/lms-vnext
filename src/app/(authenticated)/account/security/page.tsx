@@ -1,13 +1,10 @@
 import { redirect } from "next/navigation";
 import { getCurrentDeviceSession } from "@/auth/current-session";
 import { DeviceList } from "@/components/auth/device-list";
-import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { describeDevice, deviceTimestampIso } from "@/modules/auth/device-label";
 import { listActiveSessions } from "@/modules/auth/session-service";
-import { ButtonLink } from "@/components/ui/button-link";
-import { TextLink } from "@/components/ui/text-link";
 
 export default async function AccountSecurityPage() {
   let session: Awaited<ReturnType<typeof getCurrentDeviceSession>>;
@@ -20,23 +17,40 @@ export default async function AccountSecurityPage() {
 
   const rows = await listActiveSessions(session.userId).catch(() => null);
 
+  // A native GET always fetches fresh session data, even when the Next Router
+  // already holds the current /account/security route in its client cache.
+  const reload = (
+    <form method="get" action="/account/security">
+      <button type="submit"
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-primary)] px-4 text-sm font-semibold text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] focus-ring sm:w-auto md:min-h-9">
+        Refresh device list
+      </button>
+    </form>
+  );
+
   return (
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader
         title="Signed-in devices"
-        description="Every place you're signed in. Sign out any device you don't recognise."
+        description="Review your active sign-ins and sign out any device you don't recognise."
       />
       {rows === null ? (
-        <ErrorState description="Your current session could not be listed."
-          action={<ButtonLink variant="secondary" href="/account/security"
-            className="min-w-0 w-full md:w-auto">Try again</ButtonLink>}/>
+        <ErrorState
+          title="Unable to load signed-in devices"
+          description="We couldn't check your device sessions right now. Your current session has not been signed out. Refresh the list to try again."
+          action={reload}
+        />
       ) : rows.length === 0 ? (
-        <EmptyState
-          title="No active devices"
-          description="Your current session could not be listed."
-          action={<TextLink href="/account/security" className="inline-flex min-h-11 items-center md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Try again</TextLink>}
+        <ErrorState
+          title="No active sessions returned"
+          description="You're signed in, but the device list did not return any sessions. Refresh the list. If this keeps happening, contact support before making changes to your account."
+          action={reload}
         />
       ) : (
+        <>
+          <p role="note" className="max-w-3xl min-w-0 break-words text-sm leading-6 text-muted-foreground">
+            Only this account's active sign-ins are shown. Signing out another device ends its session; this device stays signed in unless you choose to sign out here.
+          </p>
         <DeviceList
           devices={rows.map((row) => ({
             id: String(row["id"]),
@@ -48,6 +62,7 @@ export default async function AccountSecurityPage() {
             current: row["id"] === session.sessionId,
           }))}
         />
+        </>
       )}
     </div>
   );
