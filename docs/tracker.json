@@ -13399,10 +13399,10 @@
         "type": "JOURNEY",
         "area": "activity",
         "title": "Activity · Home → EventId (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-activity-group-chat-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/activity/[eventId]/error.tsx",
@@ -13421,7 +13421,8 @@
           "PAGE-0003"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Source UX pass in progress for /activity and /activity/[eventId]; do not close without executed checks and desktop/mobile browser evidence."
       },
       {
         "id": "UX-G005",
