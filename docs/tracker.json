@@ -20319,7 +20319,7 @@
         "newRouteOnly": [],
         "evidence": [
           {
-            "commitSha": "baadc516e47b9228513002ce52f3c03d72509dfb",
+            "commitSha": "4cbbbb1f6b6657dbe9bfebf0af7a5a2365270012",
             "parityDoc": "docs/parity/ux-g141-g155-g175-2026-11-07.md",
             "tests": [],
             "browser": [],
@@ -20869,7 +20869,7 @@
         "newRouteOnly": [],
         "evidence": [
           {
-            "commitSha": "baadc516e47b9228513002ce52f3c03d72509dfb",
+            "commitSha": "4cbbbb1f6b6657dbe9bfebf0af7a5a2365270012",
             "parityDoc": "docs/parity/ux-g141-g155-g175-2026-11-07.md",
             "tests": [],
             "browser": [],
@@ -21593,7 +21593,7 @@
         "newRouteOnly": [],
         "evidence": [
           {
-            "commitSha": "baadc516e47b9228513002ce52f3c03d72509dfb",
+            "commitSha": "4cbbbb1f6b6657dbe9bfebf0af7a5a2365270012",
             "parityDoc": "docs/parity/ux-g141-g155-g175-2026-11-07.md",
             "tests": [],
             "browser": [],
