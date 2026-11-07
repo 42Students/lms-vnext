@@ -612,3 +612,11 @@ and a Privacy Policy query matched both the sign-in form and footer links.
 They were corrected to accept the correct template title and target the
 footer navigation. The application data, OTP, permission and legal-content
 behavior was not changed to satisfy those assertions.
+
+
+## UX-G003 and UX-G067 — Signed-in devices and dedicated login recovery (2026-11-07)
+
+- [UX-G003 session-management UX](pages/shared/UX-G003-devices.md): truthful device-load states, real refresh, and first-party seeded session browser coverage, without changing authorization or revocation APIs.
+- [UX-G067 direct /login UX](pages/shared/UX-G067-login.md): non-indexed credential entry, direct fresh-sign-in error action and named loading feedback.
+
+Closure is governed by `docs/tracker.json#uxReview.groups` and the scoped exact-SHA acceptance workflow.
