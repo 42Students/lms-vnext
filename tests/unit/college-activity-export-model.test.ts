@@ -28,6 +28,12 @@ describe("College Activity CSV export", () => {
       expect(escapeActivityCsvCell(prefix + "payload")).toMatch(/^"'/);
     }
     expect(escapeActivityCsvCell('A "quoted" item')).toBe('"A ""quoted"" item"');
+    // Leading zero-width, bidi, combining and C0 control characters are
+    // ignored by some spreadsheet applications when interpreting formulas.
+    for (const prefix of ["\u200b=", "\u2067+", "\u0301@", "\u0001-"]) {
+      expect(escapeActivityCsvCell(prefix + "payload")).toBe("\"'" + prefix + "payload\"");
+    }
+    expect(escapeActivityCsvCell("\u200bNormal")).toBe('"\u200bNormal"');
   });
   it("includes an explicit footer on truncated exports while preserving column count", () => {
     const event = {
@@ -42,5 +48,10 @@ describe("College Activity CSV export", () => {
     expect(csv).toContain("'=HYPERLINK");
     expect(csv).toContain("'+INJECT");
     expect(buildCollegeActivityCsv([], false)).not.toContain("TRUNCATED");
+    const excessive = buildCollegeActivityCsv(
+      Array.from({ length: COLLEGE_ACTIVITY_EXPORT_CAP + 1 }, () => event), false,
+    );
+    expect(excessive.split("\r\n")).toHaveLength(COLLEGE_ACTIVITY_EXPORT_CAP + 2);
+    expect(excessive).toContain("EXPORT TRUNCATED");
   });
 });
