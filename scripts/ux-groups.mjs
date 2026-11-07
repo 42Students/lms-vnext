@@ -99,7 +99,7 @@ export function isCompletionEvidence(evidence) {
     evidence.tests.every(t => goodText(t.command) && t.passed === true && goodText(t.proof)) &&
     Array.isArray(evidence.browser) &&
     ["desktop", "mobile"].every(v => evidence.browser.some(b =>
-      goodText(b.viewport) && b.viewport.trim().toLowerCase().split(/\\s+/)[0] === v && goodText(b.proof))) &&
+      goodText(b.viewport) && b.viewport.trim().toLowerCase().split(/\s+/)[0] === v && goodText(b.proof))) &&
     goodText(evidence.regressionReview) && goodText(evidence.securityReview));
 }
 
