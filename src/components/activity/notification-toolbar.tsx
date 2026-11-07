@@ -9,6 +9,7 @@ import { FRIENDLY_MESSAGES } from "@/lib/friendly-error";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { TextLink } from "@/components/ui/text-link";
+import { notificationFilterHref, type NotificationPreservedParams } from "@/modules/activity/notification-filter-links";
 
 export function NotificationToolbar({
   view,
@@ -22,6 +23,7 @@ export function NotificationToolbar({
   categories = [],
   selectedCategory,
   categoryParam = "category",
+  preservedParams,
   display = "all",
   segmented = false,
 }: {
@@ -37,6 +39,8 @@ export function NotificationToolbar({
   categories?: readonly {id:string;label:string;unread:number}[];
   selectedCategory?: string;
   categoryParam?: "category" | "tab";
+  /** Keeps validated search and class/course scope while switching filters. */
+  preservedParams?: NotificationPreservedParams;
   display?: "all" | "filters" | "mark-all";
   segmented?:boolean;
 }) {
@@ -67,14 +71,14 @@ export function NotificationToolbar({
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
       {display!=="mark-all"?<div className={segmented?"inline-flex max-w-full flex-wrap gap-0 overflow-hidden rounded-[8px] border border-border bg-[var(--lms-neutral-50)] p-[4px]":"flex min-w-0 flex-wrap gap-2"} role="group" aria-label="Notification filter">
         <TextLink variant="bare"
-          href={baseHref + "?view=all" + (selectedCategory&&selectedCategory!=="all"?"&"+categoryParam+"="+encodeURIComponent(selectedCategory):"")}
+          href={notificationFilterHref({baseHref,view:"all",category:selectedCategory,categoryParam,preservedParams})}
           aria-current={view === "all" ? "page" : undefined}
           className={`inline-flex min-h-11 md:min-h-9 min-w-0 items-center justify-center break-words rounded-[var(--lms-filter-radius,8px)] border px-3 text-center text-sm font-medium leading-5 transition-colors duration-[var(--lms-motion-fast)] focus-ring ${view === "all" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
         >
           {allLabel}
         </TextLink>
         <TextLink variant="bare"
-          href={baseHref + "?view=unread" + (selectedCategory&&selectedCategory!=="all"?"&"+categoryParam+"="+encodeURIComponent(selectedCategory):"")}
+          href={notificationFilterHref({baseHref,view:"unread",category:selectedCategory,categoryParam,preservedParams})}
           aria-current={view === "unread" ? "page" : undefined}
           className={`inline-flex min-h-11 md:min-h-9 min-w-0 items-center justify-center break-words rounded-[var(--lms-filter-radius,8px)] border px-3 text-center text-sm font-medium leading-5 transition-colors duration-[var(--lms-motion-fast)] focus-ring ${view === "unread" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
         >
@@ -94,9 +98,7 @@ export function NotificationToolbar({
       {display!=="mark-all"&&categories.length?(
         <nav aria-label="Notification categories" className="flex min-w-0 gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible">
           {categories.map(item=>{
-            const query=new URLSearchParams({view});
-            if(item.id!=="all")query.set(categoryParam,item.id);
-            const link=baseHref+"?"+query.toString();
+            const link=notificationFilterHref({baseHref,view,category:item.id,categoryParam,preservedParams});
             const active=item.id===(selectedCategory??"all");
             return <TextLink variant="bare" key={item.id} href={link} scroll={false}
               aria-current={active?"page":undefined}
