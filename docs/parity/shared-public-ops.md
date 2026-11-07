@@ -239,6 +239,27 @@ Legacy `/e2e/superadmin-login` is a test helper.
 - [ ] vNext E2E/auth harness covers equivalent deterministic test setup without a production backdoor.
 
 
+## UX-NOTIF-01 — Shared Notifications inbox interaction group (2026-11-07)
+
+**Group scope (registry snapshot, IDs may shift on regeneration):** `PAGE-0303` (`/notifications`); `ROUTE-STATE-0603/0604` (route error/loading); `WIDGET-0009/0010` (notification list and toolbar), with the shared `KIT-0006` confirmation component as an existing dependency. Also verify the role-specific notification-toolbar/list call sites after modifying their shared components. This UX group **does not replace** the outstanding W06 functional/security/parity evidence below.
+
+**UX problems addressed in source:**
+- The All/Unread and category links dropped the current search term, class and course filters. Shared filter-link builder now preserves validated values and intentionally resets historical pagination.
+- Clear search discarded unrelated filters and ambiguous empty-state `All` links gave little guidance. Clear search now retains view/category/context; empty search states explain recovery, and the unfiltered escape action is explicit.
+- Mark all as read affected the full inbox even with filtered results visible. The shared inbox now asks for confirmation and states the cross-filter effect.
+- Category unread-count accessible labels previously called counts `in loaded view` although the reader counts the user's full relevant category. Labels now say `unread`.
+
+**Edited files:** `src/app/(authenticated)/notifications/page.tsx`, `src/components/activity/notification-toolbar.tsx`, `src/components/activity/notification-list.tsx`, and pure URL helper `src/modules/activity/notification-filter-links.ts`. Regression cases are authored in `tests/unit/notification-filter-links.test.ts` (preservation, encoding, category reset, cursor reset, existing role paths, blank values). The existing route loading/error components were reviewed and retained; no authorization, database, mail, delivery or read-state mutation service was changed.
+
+**Verification required for this group (separate from global W06 parity):**
+- [ ] Focused Vitest suite, TypeScript and relevant lint pass on a recorded current main commit.
+- [ ] Desktop and narrow-mobile browser checks for search → All/Unread → category → clear; history/back; empty/partial-error/retry; and older pagination links.
+- [ ] Keyboard/screen-reader check of labels, notification detail open/close/focus, bulk-mark confirmation/cancel and post-success refresh.
+- [ ] Shared-component regressions on Learner, Faculty, Mentor, TPO and Recruiter notification call sites; verify no scope/tenant/role behavior changed.
+- [ ] Record actual screenshots/browser evidence and mark UX CLOSED only after all applicable checks have executed.
+
+**Status:** `IMPLEMENTED / VERIFY` (code and tests authored, not certified as browser-accepted); no overall parity/security/release closure or denominator increment is claimed.
+
 # Shared Notification Feed — W06 source-backed parity checkpoint (2026-10-10)
 
 **Legacy oracle:** `lms2-fe@e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2` TPO `src/pages/tpo/notifications.js`; legacy backend `lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5`. The legacy TPO feed has All/Unread tabs, Mark all as read, Today/Yesterday/This week/Earlier buckets and a linked detail/open action.
