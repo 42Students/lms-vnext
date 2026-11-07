@@ -1,4 +1,5 @@
 import { spreadsheetCsvCell } from "@/security/csv-cell";
+import { isSafeInternalHref } from "@/lib/safe-internal-href";
 import {superAdminReadQuerySchema, type SuperAdminReadQuery, type SuperAdminReadRow} from "./super-admin-read-directory-model";
 export const SUPER_ADMIN_SCOPED_CSV_CAP=250;
 export const superAdminScopedCsvQuerySchema=superAdminReadQuerySchema.omit({page:true});
@@ -11,6 +12,9 @@ export function parseSuperAdminScopedCsvParams(params:URLSearchParams){
  return superAdminScopedCsvQuerySchema.parse(raw);
 }
 export function superAdminScopedCsvHref(path:string,query:SuperAdminReadQuery){
+ // Export buttons must never navigate outside the LMS, even if a future
+ // caller accidentally supplies a protocol-relative or encoded external URL.
+ if(!isSafeInternalHref(path)) throw new Error("Unsafe CSV export destination");
  const params=new URLSearchParams();
  if(query.q)params.set("q",query.q);
  if(query.status!=="ALL")params.set("status",query.status);
