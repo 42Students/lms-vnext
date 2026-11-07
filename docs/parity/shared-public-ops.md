@@ -230,6 +230,26 @@ These are **three independent status groups** in the sole canonical `docs/tracke
 
 **UX group dispositions:** `UX-G068 DONE` (maintenance), `UX-G051 DONE` (forbidden), `UX-G085 DONE` (request-demo) in `docs/tracker.json#uxReview.groups`. Their use of fixed internal recovery paths does not grant additional permissions. Dashboard recovery uses a synthetic/stubbed destination for the maintenance test; the forbidden test follows the actual public `/login` recovery page and checks the workspace-link destination without requiring a test account. Demo clipboard success/error uses synthetic browser Clipboard API only; no emails sent, no real accounts accessed. These are scoped **UX** closures, not GR-80–83, parity, security, or release closure.
 
+## UX-G185 and UX-G186 — Root/global crash recovery UX (7 November 2026)
+
+**Ownership:** Both groups are claimed by `chat-ux-root-error-2026-11-07` in `docs/tracker.json#uxReview.groups`. These shared route states are scoped **UX polish**, not a claim that root failure, deployment, authorization, browser or release acceptance is globally certified.
+
+### UX-G185 — App Router root error boundary (`src/app/error.tsx`)
+
+The existing root route boundary still renders `GracefulErrorBoundary`, so it retains redacted browser event reporting, a locally generated support reference, one-time stale-chunk recovery, and explicit Try again, Go back and Home links.
+
+The public 500 branch now labels its status heading and guidance for assistive technology, focuses that heading after an unexpected page replacement, and offers a **Copy reference** button. Copying uses only the locally generated 8-hex-character support code, never `error.message`, Next digests, route context, provider diagnostics or session information. If Clipboard API is denied, the reference stays selectable and users get an announced manual-copy instruction. The authenticated shell boundary is not changed by this root-only presentation branch.
+
+**Acceptance scope:** a development-only test fixture at `src/app/e2e/ux-root-error-fixture/page.tsx` throws a synthetic exception when `NODE_ENV=development` **and** `UX_ROOT_ERROR_FIXTURE=1`. It cannot be enabled in a production build. Desktop/mobile Chromium verifies the actual root boundary, heading/focus, sanitized error text, safe navigation, reference copy/fallback, an intercepted redacted client-error report, and horizontal overflow; it never creates a real account or uses production data.
+
+### UX-G186 — Global error document (`src/app/global-error.tsx`)
+
+The global boundary handles cases where even the Next root layout fails. It still delegates its error to `GracefulErrorBoundary` rather than displaying the thrown message. It now supplies its own **accessible HTML document shell** (language, descriptive title, noindex/nofollow, viewport metadata) and static, self-contained emergency CSS. This makes the error instructions and controls usable when the normal app stylesheet/Inter font or root layout is unavailable. The CSS includes mobile padding and visible keyboard focus. It does not interpolate user or exception data.
+
+**Acceptance scope:** Chromium loads a no-app-stylesheet preview containing the **exact CSS literal extracted from `global-error.tsx`**, at desktop/mobile sizes. It verifies visible headings, metadata, focusable controls, emergency layout and no horizontal overflow. This is a controlled CSS-failure preview, **not** a claim that a real production root-layout crash was induced. The shared Vitest checks document structure, redaction, one-time chunk recovery and fixture production guard. The true production layout-failure chaos drill remains a separate global release test.
+
+**Evidence:** `tests/unit/ux-root-global-errors.test.ts` and `tests/e2e/ux-root-global-errors.spec.ts`, running in `.github/workflows/ux-root-global-errors-acceptance.yml`. Do not mark either `DONE` before an exact commit, executed unit/lint, and desktop/mobile browser evidence exist.
+
 ## UX-G075 — Public offline recovery (7 November 2026)
 
 **UX-group allocation:** `docs/tracker.json#uxReview.groups[UX-G075]`. The route `/offline` was one of the 83 route-only entries missing from the older generated 2,080-surface registry; it is a **single standalone UX group**, not a DB/API/security parity closure.
