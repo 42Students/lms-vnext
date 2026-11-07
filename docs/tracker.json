@@ -21768,14 +21768,22 @@
         "newRouteOnly": [],
         "evidence": [
           {
-            "type": "UX_IMPLEMENTATION_PENDING",
-            "commitSha": "597653b8fe745a00f6f02a2bbdd364cb7d9502dd",
-            "parityDoc": "docs/parity/ux-g170-attendance-csv-2026-11-07.md",
-            "ciRun": "https://github.com/42Students/lms-vnext/actions/runs/42394826109",
-            "summary": "Attendance CSV serializer, Unicode formula neutralization and paginated export drift checks implemented; initial exact-SHA typecheck failure corrected; rerun queued.",
-            "verification": "Await exact-SHA unit, TypeScript and desktop/mobile browser pass before DONE."
+            "type": "ci-partial",
+            "runId": 42415911091,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42415911091",
+            "conclusion": "success",
+            "commitSha": "35789d7f8a1083b9efe08b1f27ce2b32c8988054",
+            "description": "Scoped lint and TypeScript green, 31/31 unit tests, 2/2 real serializer synthetic desktop/mobile downloads, screenshots and artifact 13592000859. No authenticated tenant HTTP claim."
+          },
+          {
+            "type": "ci-pending",
+            "runId": 42416880809,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42416880809",
+            "conclusion": "queued",
+            "description": "New disposable PostgreSQL integration and real OTP-backed college admin, superadmin, learner HTTP acceptance required before DONE."
           }
-        ]
+        ],
+        "notes": "DOING: prior exact-SHA 35789d7 run 42415911091 PASSED 31 unit/2 browser synthetic; screenshot+CSV artifact 13592000859. To close, new guarded DB integration and first-party OTP role/tenant E2E run 42416880809 at SHA 8eb26b8db is QUEUED. Do not claim DONE until completed and green."
       },
       {
         "id": "UX-G171",
@@ -21844,14 +21852,22 @@
         "newRouteOnly": [],
         "evidence": [
           {
-            "type": "UX_IMPLEMENTATION_PENDING",
-            "commitSha": "e480c761265067fbd7a844653244a6316d2bc074",
-            "parityDoc": "docs/parity/ux-g172-college-csv-2026-11-07.md",
-            "ciRun": "https://github.com/42Students/lms-vnext/actions/runs/42394826109",
-            "summary": "College history/readiness CSV escaping and BOM improved; existing tenant directory cap and route guards preserved; focused rerun queued.",
-            "verification": "Await exact-SHA unit, TypeScript and desktop/mobile browser pass before DONE."
+            "type": "ci-partial",
+            "runId": 42415911091,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42415911091",
+            "conclusion": "success",
+            "commitSha": "35789d7f8a1083b9efe08b1f27ce2b32c8988054",
+            "description": "Scoped lint and TypeScript green, 31/31 unit tests, 2/2 real serializer synthetic desktop/mobile downloads, screenshots and artifact 13592000859. No authenticated tenant HTTP claim."
+          },
+          {
+            "type": "ci-pending",
+            "runId": 42416880809,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42416880809",
+            "conclusion": "queued",
+            "description": "New disposable PostgreSQL integration and real OTP-backed college admin, superadmin, learner HTTP acceptance required before DONE."
           }
-        ]
+        ],
+        "notes": "DOING: prior exact-SHA 35789d7 run 42415911091 PASSED 31 unit/2 browser synthetic; screenshot+CSV artifact 13592000859. To close, new guarded DB integration and first-party OTP role/tenant E2E run 42416880809 at SHA 8eb26b8db is QUEUED. Do not claim DONE until completed and green."
       },
       {
         "id": "UX-G173",
