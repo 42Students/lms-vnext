@@ -1,7 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
-import {redactAlertText} from "./redaction";
-import {limitTelegramAlert} from "./telegram-notifier";
+import {sanitizeTelegramLine} from "./telegram-notifier";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { db10LogAlertSignatures as signatures } from "@/db/schema/db10-log-alerts.draft";
@@ -77,14 +76,21 @@ async function postTelegramOperation(operation:"answerCallbackQuery"|"editMessag
 async function answerTelegramCallback(callbackId:string,message:string){
   return postTelegramOperation("answerCallbackQuery",{callback_query_id:callbackId,text:message});
 }
-async function editAcknowledgedMessage(chatId:string|number,messageId:number,original:string){
-  // A callback can carry the original redacted alert text. Re-sanitize it to
-  // avoid echoing manipulated updates, and leave at most one durable suffix.
-  const scrubbed=limitTelegramAlert(original.split(/\r?\n/).map(redactAlertText).join("\n"));
+/** Keep the diagnostic context, redact callback text and show one durable status. */
+export function acknowledgedTelegramMessageText(original:string):string{
   const suffix="\n\n✅ Acknowledged";
-  const safe=scrubbed.endsWith(suffix)?scrubbed:scrubbed.slice(0,3500-suffix.length)+suffix;
+  const withoutSuffix=original.replace(/(?:(?:\r?\n){2}✅ Acknowledged)+\s*$/u,"");
+  const sanitized=withoutSuffix.split(/\r?\n/).map(sanitizeTelegramLine).filter(Boolean).join("\n");
+  const max=3500-Array.from(suffix).length;
+  const chars=Array.from(sanitized);
+  const clipped=chars.length>max?chars.slice(0,max-3).join("")+"...":sanitized;
+  return clipped+suffix;
+}
+async function editAcknowledgedMessage(chatId:string|number,messageId:number,original:string){
   return postTelegramOperation("editMessageText",{
-    chat_id:chatId,message_id:messageId,text:safe,reply_markup:{inline_keyboard:[]},
+    chat_id:chatId,message_id:messageId,
+    text:acknowledgedTelegramMessageText(original),
+    reply_markup:{inline_keyboard:[]},
   });
 }
 
