@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { validTelegramCallbackChat, validTelegramCallbackOperator, validTelegramAcknowledgementId, validTelegramWebhookSecret, acknowledgedTelegramMessageText } from "@/modules/log-alerts/telegram-webhook";
+import { sendTelegramAlert } from "@/modules/log-alerts/telegram-notifier";
 import { knownErrorMutationSchema } from "@/modules/log-alerts/validation";
 
 const app = process.env.APP_ENV;
@@ -89,6 +90,40 @@ describe("Telegram acknowledgement", () => {
     expect(message.endsWith("...\n\n✅ Acknowledged")).toBe(true);
     expect(message).not.toContain("\uFFFD");
   });
+  it("renders safe diagnostic copy and an actionable acknowledgement button in the outbound payload",async()=>{
+    const priorToken=process.env.TELEGRAM_ALERT_BOT_TOKEN;
+    try{
+      process.env.APP_ENV="production";
+      process.env.TELEGRAM_ALERT_BOT_TOKEN="not-a-real-provider-token";
+      process.env.TELEGRAM_ALERT_CHAT_ID="-1001234567890";
+      let payload: {text:string;reply_markup?:{inline_keyboard:{text:string;callback_data:string}[][]}}|null=null;
+      const incidentId="11111111-1111-4111-8111-111111111111";
+      const delivered=await sendTelegramAlert(
+        "Time: 2099-01-01T01:02:03.000Z\\nRequest ID: af02b19c\\nDeploy: aabbccddee\\nDetails: alice@example.com",
+        {acknowledgeSignatureId:incidentId,transport:async (_url,init)=>{
+          payload=JSON.parse(String(init?.body));
+          return new Response(JSON.stringify({ok:true}),{status:200});
+        }},
+      );
+      expect(delivered).toBe(true);
+      expect(payload).not.toBeNull();
+      const rendered=payload as unknown as {text:string;reply_markup:{inline_keyboard:{text:string;callback_data:string}[][]}};
+      expect(rendered.text).toContain("Request ID: af02b19c");
+      expect(rendered.text).toContain("Deploy: aabbccddee");
+      expect(rendered.text).not.toContain("alice@example.com");
+      expect(rendered.reply_markup.inline_keyboard[0]?.[0]).toEqual({
+        text:"✅ Acknowledge",callback_data:"ack:"+incidentId,
+      });
+      const badProvider=await sendTelegramAlert("Error",{
+        transport:async()=>new Response(JSON.stringify({ok:false}),{status:200}),
+      });
+      expect(badProvider).toBe(false);
+    }finally{
+      if(priorToken===undefined)delete process.env.TELEGRAM_ALERT_BOT_TOKEN;
+      else process.env.TELEGRAM_ALERT_BOT_TOKEN=priorToken;
+    }
+  });
+
   it("GR-123 Logs admin action accepts acknowledgement without exposing identities", () => {
     expect(knownErrorMutationSchema.safeParse({ action: "ACKNOWLEDGE" }).success).toBe(true);
     expect(knownErrorMutationSchema.safeParse({ action: "ACKNOWLEDGE", accountId: "secret" }).success).toBe(false);
