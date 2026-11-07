@@ -231,7 +231,9 @@ export function LearnerNotificationsInbox({
             onChange={event=>setSearch(event.target.value)}
             onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();applySearch();}}}
             placeholder="Search title or message"
+            aria-describedby="learner-notification-search-help"
             className="mt-[var(--lms-space-2)] min-h-11 w-full md:min-h-[var(--lms-control-height)]"/>
+          <span id="learner-notification-search-help" className="mt-1 block text-xs font-normal text-muted-foreground">Results filter as you type. Apply search to keep it in the page link.</span>
         </Label>
         <FilterChip type="button" aria-pressed={unread==="unread"}
           onClick={()=>selectUnread(unread==="unread"?"all":"unread")}
@@ -259,7 +261,7 @@ export function LearnerNotificationsInbox({
         </div>
       ):null}
       <div className="flex min-w-0 flex-col items-start justify-between gap-[var(--lms-space-2)] md:flex-row md:items-center">
-        <p role="status" className="text-sm text-body leading-[22px]">Showing {visible.length} of {combined.length} loaded notifications in this filtered view. {refreshing?"Refreshing notifications…":null}</p>
+        <p role="status" aria-live="polite" className="text-sm text-body leading-[22px]">Showing {visible.length} of {combined.length} loaded notifications in this filtered view. {refreshing?"Refreshing notifications…":null}</p>
         <div className="flex min-w-0 w-full flex-wrap items-center gap-3 md:w-auto">
           <Button type="button" variant="secondary" size="sm" disabled={refreshing}
             className="min-h-11 w-full md:w-auto md:min-h-9" onClick={refreshInbox}>
@@ -299,7 +301,7 @@ export function LearnerNotificationsInbox({
             {filtered?"Try another category or return to the complete notification feed.":"You'll see course updates and announcements here when available."}
           </p>
           {filtered?<Button type="button" onClick={resetFilters} variant="secondary"
-            className="min-h-11 w-full md:w-auto md:min-h-9">View all</Button>:null}
+            className="min-h-11 w-full md:w-auto md:min-h-9">Clear filters and show all</Button>:null}
         </div>
       ) : (
         <NotificationList items={visible.map(item=>{
