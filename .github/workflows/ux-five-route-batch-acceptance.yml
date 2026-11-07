@@ -1,0 +1,99 @@
+name: UX-G025 G036 G044 G087 G097 route UX acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/app/(authenticated)/admin/tenants/setup/page.tsx
+      - src/app/(authenticated)/admin/verification/page.tsx
+      - src/app/(authenticated)/admin/videos/page.tsx
+      - src/app/(authenticated)/college/placements/**
+      - src/app/(authenticated)/college-admin/**
+      - src/app/(authenticated)/superadmin/**
+      - src/app/(authenticated)/teacher/report/quiz/**
+      - src/app/(authenticated)/teacher/response-followups/**
+      - src/app/(authenticated)/teacher/results/**
+      - src/modules/admin-ui/legacy-department-links.ts
+      - src/components/ux/ux-five-route-error-preview.tsx
+      - src/app/e2e/ux-five-route-recovery/**
+      - tests/unit/legacy-department-links.test.ts
+      - tests/unit/ux-g025-g036-g044-g087-g097-route-batch.test.ts
+      - tests/e2e/ux-five-route-recovery.spec.ts
+      - .github/workflows/ux-five-route-batch-acceptance.yml
+
+permissions:
+  contents: read
+
+jobs:
+  route-ux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      UX_FIVE_ROUTE_FIXTURE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Scoped ESLint
+        run: |
+          npx eslint \
+            'src/app/(authenticated)/admin/tenants/setup/page.tsx' \
+            'src/app/(authenticated)/admin/verification/page.tsx' \
+            'src/app/(authenticated)/admin/videos/page.tsx' \
+            'src/app/(authenticated)/college/placements/page.tsx' \
+            'src/app/(authenticated)/college/placements/drives/page.tsx' \
+            'src/app/(authenticated)/college-admin/departments/error.tsx' \
+            'src/app/(authenticated)/college-admin/programs/error.tsx' \
+            'src/app/(authenticated)/superadmin/departments/page.tsx' \
+            'src/app/(authenticated)/superadmin/programs/page.tsx' \
+            'src/app/(authenticated)/superadmin/not-found.tsx' \
+            'src/app/(authenticated)/superadmin/error.tsx' \
+            'src/app/(authenticated)/superadmin/[...legacy]/error.tsx' \
+            'src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx' \
+            'src/app/(authenticated)/teacher/response-followups/page.tsx' \
+            'src/app/(authenticated)/teacher/results/page.tsx' \
+            src/modules/admin-ui/legacy-department-links.ts \
+            src/components/ux/ux-five-route-error-preview.tsx \
+            src/app/e2e/ux-five-route-recovery/page.tsx \
+            tests/unit/legacy-department-links.test.ts \
+            tests/unit/ux-g025-g036-g044-g087-g097-route-batch.test.ts \
+            tests/e2e/ux-five-route-recovery.spec.ts
+      - name: Full TypeScript check
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: Five-group focused unit and existing role-safety regression
+        run: |
+          npx vitest run \
+            tests/unit/legacy-department-links.test.ts \
+            tests/unit/UX-college-admin-role-redirects-02.test.ts \
+            tests/unit/chat10-superadmin-legacy-content-alias.test.ts \
+            tests/unit/PROJ-BREAK-chat9-admin-verification-entry.test.tsx \
+            tests/unit/chat11-super-admin-tenant-setup-authority.test.ts \
+            tests/unit/faculty-quiz-attempts-model.test.ts \
+            tests/unit/ux-g025-g036-g044-g087-g097-route-batch.test.ts
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop and mobile recovery browser scenarios
+        shell: bash
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: ux-five-route-results.json
+        run: |
+          set -euo pipefail
+          npx playwright test tests/e2e/ux-five-route-recovery.spec.ts --project=chromium --reporter=line,html,json
+          node -e 'const x=require("./ux-five-route-results.json").stats;console.log(x);if(x.expected!==4||x.unexpected!==0||x.flaky!==0||x.skipped!==0)process.exit(1)'
+      - name: Save desktop/mobile screenshots and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-five-route-batch-evidence
+          path: |
+            test-results/
+            playwright-report/
+            ux-five-route-results.json
+          if-no-files-found: ignore
