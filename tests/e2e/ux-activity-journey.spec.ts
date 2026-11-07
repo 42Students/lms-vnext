@@ -36,27 +36,36 @@ test.describe("UX-G004 Activity Log journey", () => {
 
   test("320px forensic view is readable, keyboard navigable, and can open details", async ({page,context}) => {
     await authenticateGracefulRole(context,"superadmin");
+    // Seed a real auditable action through the UI on the disposable E2E DB.
+    // This makes the event cards/detail proof deterministic rather than skipping
+    // the important interaction whenever the initial event table is empty.
+    await page.goto("/admin/colleges");
+    const organization = page.locator("#college-organization");
+    await expect(organization).toBeVisible();
+    await organization.selectOption({index:1});
+    await page.locator("#college-name").fill("UX G004 Audit Seed College");
+    await page.locator("#college-code").fill("ux-g004-audit-seed");
+    await page.getByRole("button",{name:"Create College"}).click();
+    await expect(page.getByText("UX G004 Audit Seed College",{exact:true}).first()).toBeVisible();
+
     await page.setViewportSize({width:320,height:780});
     await page.goto("/activity?mode=raw&view=all&range=ALL");
     await expect(page.getByRole("heading",{level:1,name:"Activity Log"})).toBeVisible();
     await expect(page.getByRole("heading",{name:"Raw Audit Logs",exact:true})).toBeVisible();
     await expect(page.locator("table").filter({hasText:"User Agent"})).toBeHidden();
     const mobileItems = page.locator('ol[aria-label="Audit log events"] > li');
-    if (await mobileItems.count()) {
-      const first = mobileItems.first();
-      const detail = first.getByRole("link",{name:"View event details"});
-      await detail.focus();
-      await expect(detail).toBeFocused();
-      await detail.click();
-      await expect(page.getByRole("heading",{name:"Event context"})).toBeVisible();
-      const panel = page.getByRole("region",{name:"Event context JSON, scrollable"});
-      if (await panel.count()) {
-        await panel.focus();
-        await expect(panel).toBeFocused();
-      }
-    } else {
-      await expect(page.getByText("No audit logs match these filters.").first()).toBeVisible();
-      await expect(page.getByRole("link",{name:"Clear filters"})).toBeVisible();
+    await expect(mobileItems.first()).toBeVisible();
+    const created = mobileItems.filter({hasText:"UX G004 Audit Seed College"}).first();
+    await expect(created).toBeVisible();
+    const detail = created.getByRole("link",{name:"View event details"});
+    await detail.focus();
+    await expect(detail).toBeFocused();
+    await detail.click();
+    await expect(page.getByRole("heading",{name:"Event context"})).toBeVisible();
+    const panel = page.getByRole("region",{name:"Event context JSON, scrollable"});
+    if (await panel.count()) {
+      await panel.focus();
+      await expect(panel).toBeFocused();
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
     await page.screenshot({path:"test-results/ux-g004-mobile-320.png",fullPage:true});
@@ -70,6 +79,10 @@ test.describe("UX-G004 Activity Log journey", () => {
     await expect(page.getByRole("navigation",{name:"Activity Log filters"})).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
     await page.screenshot({path:"test-results/ux-g004-mobile-390.png",fullPage:true});
+
+    await authenticateGracefulRole(context,"college");
+    await page.goto("/activity?view=all&range=ALL");
+    await expect(page.getByRole("heading",{level:1,name:"Activity Log"})).toBeVisible();
 
     await authenticateGracefulRole(context,"learner");
     await page.goto("/activity");
