@@ -32,11 +32,24 @@ export function CollegeContactProfileForm({ initial }: {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [discardOpen, setDiscardOpen] = useState(false);
   const dirty = name.trim() !== saved.collegeName ||
     email.trim() !== (saved.supportEmail ?? "") ||
     phone.trim() !== (saved.supportPhone ?? "") ||
     terms.trim() !== (saved.termsUrl ?? "") ||
     privacy.trim() !== (saved.privacyUrl ?? "");
+
+  function discardChanges() {
+    if (pending) return;
+    setName(saved.collegeName);
+    setEmail(saved.supportEmail ?? "");
+    setPhone(saved.supportPhone ?? "");
+    setTerms(saved.termsUrl ?? "");
+    setPrivacy(saved.privacyUrl ?? "");
+    setError(null);
+    setSuccess(null);
+    setDiscardOpen(false);
+  }
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -112,6 +125,9 @@ export function CollegeContactProfileForm({ initial }: {
         value={privacy} onChange={event => setPrivacy(event.target.value)}
         placeholder="https://college.example.edu/privacy" />
     </Label>
+    <p role="status" aria-live="polite" className="min-w-0 text-xs leading-5 text-muted-foreground md:col-span-2">
+      {dirty ? "Unsaved changes. Review the public details before confirming." : "No unsaved changes."}
+    </p>
     {error ? <p role="alert" className="min-w-0 break-words text-sm text-error md:col-span-2 leading-[22px]">
       {error}. If this profile changed elsewhere, refresh before retrying.
     </p> : null}
@@ -123,15 +139,7 @@ export function CollegeContactProfileForm({ initial }: {
         className="min-h-11 w-full sm:w-auto md:min-h-9">
         {pending ? "Saving…" : "Confirm and save changes"}
       </Button>
-      <Button disabled={pending || !dirty} type="button" onClick={() => {
-        setName(saved.collegeName);
-        setEmail(saved.supportEmail ?? "");
-        setPhone(saved.supportPhone ?? "");
-        setTerms(saved.termsUrl ?? "");
-        setPrivacy(saved.privacyUrl ?? "");
-        setError(null);
-        setSuccess(null);
-      }} variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">
+      <Button disabled={pending || !dirty} type="button" onClick={() => setDiscardOpen(true)} variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">
         Reset
       </Button>
     </div>
@@ -141,6 +149,16 @@ export function CollegeContactProfileForm({ initial }: {
       A stale version is rejected rather than overwriting a concurrent update.
     </p>
   </form>
+  <ConfirmDialog
+    open={discardOpen}
+    onOpenChange={setDiscardOpen}
+    title="Discard unsaved contact changes?"
+    description="This restores the last saved college contact details. It does not change the saved profile."
+    confirmLabel="Discard changes"
+    confirmVariant="danger"
+    pending={pending}
+    onConfirm={discardChanges}
+  />
   <ConfirmDialog
     open={confirmOpen}
     onOpenChange={setConfirmOpen}
