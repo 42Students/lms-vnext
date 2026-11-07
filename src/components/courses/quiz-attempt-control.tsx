@@ -361,14 +361,16 @@ export function QuizAttemptControl({
             <ol className="mt-2 flex flex-wrap gap-2">
               {quiz.questions.map((question,index)=><li key={question.id}>
                 <ButtonLink variant="secondary"
-                  href={"#quiz-question-"+question.id}>Question {index+1} · {question.points} pts</ButtonLink>
+                  aria-label={"Question "+(index+1)+", "+((answers[question.id]??[]).length?"answered":"not answered")}
+                   href={"#quiz-question-"+question.id}>Question {index+1} · {((answers[question.id]??[]).length?"Answered":"Not answered")}</ButtonLink>
               </li>)}
             </ol>
           </Disclosure>
           <ol className="mt-2 hidden flex-wrap gap-2 lg:flex">
             {quiz.questions.map((question,index)=><li key={question.id}>
               <ButtonLink variant="secondary"
-                href={"#quiz-question-"+question.id}>Question {index+1} · {question.points} pts</ButtonLink>
+                aria-label={"Question "+(index+1)+", "+((answers[question.id]??[]).length?"answered":"not answered")}
+                   href={"#quiz-question-"+question.id}>Question {index+1} · {((answers[question.id]??[]).length?"Answered":"Not answered")}</ButtonLink>
             </li>)}
           </ol>
         </nav>
@@ -381,7 +383,7 @@ export function QuizAttemptControl({
                 className="rounded-lg border border-border bg-surface p-4"
                 disabled={submitting}
               >
-                <legend className="px-1 text-sm font-semibold text-foreground">
+                <legend className="max-w-full break-words px-1 text-sm font-semibold text-foreground">
                   {questionIndex + 1}.{" "}
                   {question.prompt}
                 </legend>
