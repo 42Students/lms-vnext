@@ -22,3 +22,14 @@ Scope: `/company-join/[token]` (token page, loading, error) and the existing sha
 `src/components/placements/public-recruiter-join-form.tsx`, `src/components/placements/public-join-preview-retry.tsx`, the preview service, token validation, tenant context, send-code/join APIs, RLS and role permissions remain unchanged. The form also serves College Join; no shared component was changed after College Join's independent closure. A GET does not join, change an email, or send an OTP. Secrets and bearer token are not displayed in UI/error details.
 
 **Closure gate:** exact-SHA scoped lint/source/SSR and browser desktop/mobile checks green, evidence artifact reviewed, and tracker updated.
+
+
+## Executed closure evidence — 2026-11-07
+
+- **Exact source SHA**: `5e42b0859bfde020455d48442c85fe087576ab00`.
+- **[Passing acceptance workflow](https://github.com/42Students/lms-vnext/actions/runs/42390619702)**: scoped ESLint and Node source checks passed; five existing Vitest suites plus `ux-g046-company-join-journey.test.tsx` passed; Chromium suite passed 3/3 with no retries.
+- **[Browser artifact](https://github.com/42Students/lms-vnext/actions/runs/42390619702/artifacts/13581266813)**: `company-invalid-desktop.png` at 1280×800 and `company-invalid-mobile.png` at 320×720 inspected. Brand, alert, instructions and sign-in action are legible, responsive, not clipped; narrow screen no horizontal overflow and no enabled send-code on invalid links.
+- The valid invitation / readiness-unavailable / invalid / provider-error branches were exercised by the mocked SSR unit journey. Live provider OTP delivery, real external invitations and production tenant signoff are separate release/integration gates, not asserted by this UX closure.
+- Cross-role review: shared company/college invite form and API code unchanged; server token validation, RLS scope, no-spam/OTP rules and college privacy preserved. No new user data displayed on denial or failure.
+
+**UX-G046: DONE after scoped acceptance.**
