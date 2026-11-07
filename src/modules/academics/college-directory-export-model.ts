@@ -13,12 +13,14 @@ export function exportParams(params:URLSearchParams):Record<string,string>|null 
 }
 export function buildCollegeDirectoryCsv(headers:readonly string[],
  rows:readonly (readonly string[])[],truncated:boolean,cap:number){
+ if(!Number.isSafeInteger(cap)||cap<1||cap>1000)
+  throw new RangeError("INVALID_EXPORT_CAP");
  const lines=[headers.map(safeCollegeCsvCell).join(",")];
- for(const cells of rows)lines.push(cells.map(safeCollegeCsvCell).join(","));
- if(truncated)lines.push([
+ for(const cells of rows.slice(0,cap))lines.push(cells.map(safeCollegeCsvCell).join(","));
+ if(truncated||rows.length>cap)lines.push([
   "EXPORT TRUNCATED",
   "Only the first "+cap+" matching records were exported. Narrow your filters.",
-  ...Array.from({length:Math.max(0,headers.length-2)},()=>""),  
+  ...Array.from({length:Math.max(0,headers.length-2)},()=>""),
  ].map(safeCollegeCsvCell).join(","));
  return "\ufeff"+lines.join("\r\n");
 }
