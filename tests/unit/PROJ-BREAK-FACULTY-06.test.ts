@@ -72,7 +72,7 @@ const faculty:RequestContext={
  user:{id:"55555555-5555-4555-8555-555555555555",
   identityUid:"faculty",platformStatus:"ACTIVE",systemRoles:[]},
  membership:{id:"66666666-6666-4666-8666-666666666666",
-  collegeId,organizationId,status:"ACTIVE",roles:["FACULTY","MENTOR"]},
+  collegeId,organizationId,status:"ACTIVE",roles:["MENTOR"]},
 };
 const note=(at:string,content="Old note")=>
  updateMentorMeetingNotes(faculty,{projectId,meetingId},{

@@ -46,3 +46,9 @@ Rule for the fix: tests change to match the security model (one role per request
 | remaining one-offs | about 40 | about 45 | Individual drift |
 
 The 345 database failures are the larger set and are dominated by the one-role fixtures (113 files carry two-role actor literals; names in the literals: `mentor` 37, `tpo` 23, `faculty` 21). A name-based narrowing (`mentor` to `MENTOR`, `tpo` to `TPO`, `faculty` to `FACULTY`) would be the first codemod to try, verified on a disposable PostgreSQL.
+
+### Progress 2026-11-08 (Claude, local runs of the 78 failing unit files)
+
+Fixed: two test files that did not parse (unbalanced parenthesis), the R2 account-id fixture (`test-account` is now invalid by design; `testaccount`) in four files (unblocks `file-lifecycle`, the video source test and the two storage integration tests), a policy mock that dropped `AuthorizationError`, four stale `no-store` expectations (now `private, no-store`), the Super Admin fixtures of five files (a Super Admin with a membership is that member, so platform-admin fixtures carry `membership: null`), `platform-policy.test.ts` (a two-role context now grants nothing, stated as the expectation) and `PROJ-BREAK-FACULTY-06` (the actor acts as `MENTOR`). Unit failures went from 134 tests in 78 files to about 95 in 66 files (re-measure with the command above).
+
+Rules learned for the rest: narrow a two-role actor by what the SERVICE under test requires, not by the variable name (the `faculty` actor in FACULTY-06 acts as a mentor). The `hybrid` actors in `PROJ-BREAK-chat3-faculty-role-journey` and `PROJ-BREAK-FACULTY-02` and the "dual-role platform admin" cases in `PROJ-BREAK-chat6-super-admin-audit-scope` encode the OLD union semantics and need their expectations rewritten to the one-role rule (membership wins), not just a fixture change.
