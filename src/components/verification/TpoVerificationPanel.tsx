@@ -36,6 +36,7 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
  const pageOverdue=rows.filter(row=>(row.status==="SUBMITTED"||row.status==="UPDATE_PENDING")&&
   asOf.getTime()-row.submittedAt.getTime()>7*86400000).length;
  const activeUpdate=params.get("waitingState")==="UPDATE_PENDING";
+ const pageFiltersActive=filters.state!=="ALL"||filters.marksheets!=="ANY"||filters.attention!=="ALL";
  function toggleAttention(value:"MISSING_DOCUMENT"|"WAITING_OVER_WEEK"){
   setFilters(old=>({...old,marksheets:"ANY",attention:old.attention===value?"ALL":value}));
   setSelected(null);setSequenceIndex(null);
@@ -74,6 +75,10 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
  return <section className="min-w-0 space-y-3">
   <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
    <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>router.refresh()}>Refresh</Button>
+   {pageFiltersActive?<Button variant="ghost" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
+    onClick={()=>{setFilters({...defaultTpoVerificationFilters});setSelected(null);setSequenceIndex(null);setSequenceRows([]);}}>
+    Clear page filters
+   </Button>:null}
    {serverTab==="WAITING"&&waiting.length>0?<Button variant="primary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
     onClick={()=>{setSelected(null);setSequenceRows(waiting);setSequenceIndex(0);}}>Start with the first of {waiting.length}</Button>:null}
   </div>
