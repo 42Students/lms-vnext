@@ -5,7 +5,7 @@ import {listAnnouncementsForAdmin} from "@/modules/announcements/service";
 import {parseSuperAdminAnnouncementParams} from "@/modules/announcements/super-admin-list-query";
 import {announcementHistoryCsv} from "@/modules/announcements/admin-csv-model";
 import {announcementApiError} from "@/lib/announcement-api-error";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 const noStore={"cache-control":"private, no-store"};
 async function handleGET(request:Request){
@@ -34,4 +34,7 @@ async function handleGET(request:Request){
   }});
  }catch(error){return announcementApiError(error);}
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

@@ -4,7 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { tpoCrmApiErrorResponse } from "@/lib/tpo-crm-api-error";
 import { importTpoLeadsCsv } from "@/modules/placements/tpo-lead-csv-import-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -31,4 +31,7 @@ async function handlePOST(request: Request) {
     return tpoCrmApiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce", stepUp: true });
+export const POST = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

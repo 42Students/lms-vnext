@@ -5,7 +5,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {BoundedFormDataError,readBoundedFormData} from "@/lib/bounded-form-data";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {postTpoTeamEveryoneMessage} from "@/modules/placements/tpo-team-everyone-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -27,4 +27,7 @@ async function handlePOST(request:Request){
   throw error;
  }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

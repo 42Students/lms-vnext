@@ -3,7 +3,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {collegeSemesterDirectorySchema} from "@/modules/academics/college-academic-directory-model";
 import {listCollegeSemesters} from "@/modules/academics/college-academic-directory-service";
 import {placementReportCsv} from "@/modules/placements/report-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -38,4 +38,7 @@ async function handleGET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

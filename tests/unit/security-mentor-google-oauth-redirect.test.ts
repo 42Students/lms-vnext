@@ -14,6 +14,7 @@ vi.mock("@/modules/projects/mentor-google-calendar-provider",()=>({
  mentorGoogleConfig:mock.config,
  mentorGoogleConsentUrl:mock.consent,
  mentorGoogleExchangeCode:mock.exchange,
+ mentorGooglePkceChallenge:(verifier:string)=>createHash("sha256").update(verifier,"ascii").digest("base64url"),
 }));
 vi.mock("next/headers",()=>({cookies:async()=>({get:mock.cookie})}));
 

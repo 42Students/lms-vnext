@@ -9,7 +9,7 @@ import {
   updateCourseDisplayContent,
 } from "@/modules/courses/course-display-service";
 import { courseDisplayRuntimeEnabled } from "@/modules/courses/course-display-readiness";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -56,7 +56,10 @@ async function handleGET(
     return privateError(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);
 
 async function handlePUT(
   request: Request,
@@ -88,4 +91,7 @@ async function handlePUT(
     return privateError(error);
   }
 }
-export const PUT = secured(handlePUT);
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePUT(request as Parameters<typeof handlePUT>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePUT>[1]),
+);

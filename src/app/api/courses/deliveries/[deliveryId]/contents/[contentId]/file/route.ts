@@ -8,7 +8,7 @@ import {headObject,presignUrl} from "@/modules/storage/s3-client";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getLearnerCourseFileReference,validCourseResourceStorageKey} from "@/modules/courses/learner-course-file-reference-service";
 import {loadCourseSectionDeliveryScope} from "@/modules/courses/scope";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 /** Reject ambiguous, negative and out-of-range historical material indices before
  * making any scoped file lookup. Keep errors field-safe for older clients. */
@@ -147,4 +147,7 @@ async function handleGET(request:Request,{params}:RouteContext){
   "Referrer-Policy":"no-referrer",
  }});
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["download", "materialId", "index"] },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);

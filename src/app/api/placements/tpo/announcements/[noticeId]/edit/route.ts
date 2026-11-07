@@ -5,7 +5,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { editTpoNotice, editTpoNoticeSchema } from "@/modules/announcements/tpo-placement-edit-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime = "nodejs";
 async function handlePOST(request: Request, {params}: {params: Promise<{noticeId: string}>}) {
   if (!isSameOriginRequest(request))
@@ -61,4 +61,7 @@ async function handlePOST(request: Request, {params}: {params: Promise<{noticeId
     throw error;
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["targetIds"] },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

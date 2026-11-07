@@ -12,7 +12,7 @@ import {getDb} from "@/db/client";
 import {quizAttempts} from "@/db/schema";
 import {eq,sql} from "drizzle-orm";
 import {can} from "@/modules/permissions/policy";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -70,7 +70,10 @@ async function handleGET(
     return apiErrorResponse(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["includeCorrectAnswers"] },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);
 
 async function handlePATCH(
   request: Request,
@@ -101,14 +104,20 @@ async function handlePATCH(
     return apiErrorResponse(error);
   }
 }
-export const PATCH = secured(handlePATCH);
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["includeCorrectAnswers"] },
+  ({ request, params }) => handlePATCH(request as Parameters<typeof handlePATCH>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePATCH>[1]),
+);
 
 /** Old clients used PUT for the same validated metadata update. */
 async function handlePUT(request:Request,context:RouteContext){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return PATCH(request,context);
 }
-export const PUT = secured(handlePUT, { csrf: "enforce" });
+export const PUT = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["includeCorrectAnswers"] },
+  ({ request, params }) => handlePUT(request as Parameters<typeof handlePUT>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePUT>[1]),
+);
 
 /** DELETE archives and retains every attempt; it never destroys learner data. */
 async function handleDELETE(request:Request,{params}:RouteContext){
@@ -121,4 +130,7 @@ async function handleDELETE(request:Request,{params}:RouteContext){
   return NextResponse.json({quiz});
  }catch(error){return apiErrorResponse(error);}
 }
-export const DELETE = secured(handleDELETE, { csrf: "enforce" });
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["includeCorrectAnswers"] },
+  ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as Parameters<typeof handleDELETE>[1]),
+);

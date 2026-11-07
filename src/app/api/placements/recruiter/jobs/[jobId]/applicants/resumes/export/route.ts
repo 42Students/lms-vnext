@@ -5,7 +5,7 @@ import {getHrJobRead} from "@/modules/placements/hr-job-read-service";
 import {hrApplicantFilterSchema} from "@/modules/placements/hr-job-applicants-model";
 import {grantRecruiterSharedResume} from "@/modules/placements/recruiter-applicant-resume-service";
 import {makeStoredZip,type ZipEntry} from "@/modules/placements/company-share/zip-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -123,4 +123,7 @@ async function handleGET(request:Request,{params}:Params){
   return NextResponse.json({error:"RESUMES_NOT_AVAILABLE"},{status:404,headers});
  }
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);

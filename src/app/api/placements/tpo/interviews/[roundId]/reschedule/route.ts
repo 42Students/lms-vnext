@@ -3,7 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {rescheduleTpoInterview} from "@/modules/placements/tpo-interview-reschedule-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{roundId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({message:"Your session could not be verified. Refresh the page and try again."},{status:403});
@@ -15,4 +15,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{roundId:stri
   return NextResponse.json(await rescheduleTpoInterview(await getCurrentRequestContext(),roundId,await request.json()));
  }catch(error){return apiErrorResponse(error);}
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

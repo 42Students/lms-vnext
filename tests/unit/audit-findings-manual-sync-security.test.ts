@@ -73,7 +73,7 @@ describe("manual audit synchronization privilege boundary", () => {
     expect(syncIndependentAuditInbox).not.toHaveBeenCalled();
   });
 
-  it("rejects caller-supplied query or body before identity and writes", async () => {
+  it("rejects caller-supplied query or body before recent-auth and writes", async () => {
     for (const input of [
       request(undefined, "?source=foreign"),
       request("{}"),
@@ -84,16 +84,17 @@ describe("manual audit synchronization privilege boundary", () => {
       expect(response.status).toBe(400);
       expect(await response.json()).toEqual({ error: "INVALID_REQUEST" });
     }
-    expect(getCurrentRequestContext).not.toHaveBeenCalled();
+    // The wrapper authenticates first; the handler then refuses the input before any recent-auth or write.
+    expect(requireRecentDeviceAuthentication).not.toHaveBeenCalled();
     expect(syncIndependentAuditInbox).not.toHaveBeenCalled();
   });
 
   it("denies a normal user and scoped platform admin before importer", async () => {
-    vi.mocked(getCurrentRequestContext).mockResolvedValueOnce({
+    vi.mocked(getCurrentRequestContext).mockResolvedValue({
       ...actor, user: { ...actor.user, systemRoles: [] },
     });
     expect((await POST(request())).status).toBe(403);
-    vi.mocked(getCurrentRequestContext).mockResolvedValueOnce({
+    vi.mocked(getCurrentRequestContext).mockResolvedValue({
       ...actor, adminScope: {
         organizationId: "22222222-2222-4222-8222-222222222222",
         collegeId: null,

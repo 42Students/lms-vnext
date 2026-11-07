@@ -15,7 +15,7 @@ function csvResponse(header:string[],rows:(string|number|null)[][],file:string,t
 
 import {collegeBatchDirectorySchema} from "@/modules/academics/college-academic-directory-model";
 import {listCollegeBatches} from "@/modules/academics/college-academic-directory-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
@@ -40,4 +40,7 @@ async function handleGET(request:Request){
    "academicYear","currentSemester","status","students"],rows,"batches.csv",records.length<total);
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

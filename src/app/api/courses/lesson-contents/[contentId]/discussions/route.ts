@@ -6,7 +6,7 @@ import {
   createLessonContentDiscussion, lessonContentDiscussionsEnabled,
   listLessonContentDiscussions,
 } from "@/modules/courses/lesson-content-discussion-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 const noStore = { "Cache-Control": "private, no-store" };
@@ -25,7 +25,10 @@ async function handleGET(request:Request,{params}:RouteContext){
     return NextResponse.json(messages,{headers:noStore});
   }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);
 
 async function handlePOST(request:Request,{params}:RouteContext){
   if(!isSameOriginRequest(request))
@@ -41,4 +44,7 @@ async function handlePOST(request:Request,{params}:RouteContext){
     return NextResponse.json({message},{status:201,headers:noStore});
   }catch(error){return apiErrorResponse(error);}
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

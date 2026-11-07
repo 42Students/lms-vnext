@@ -21,10 +21,6 @@ const AUTH_MARKER=new RegExp([
 const ALIAS_IMPORT=/from\s*["']((?:\.\.\/)+[^"']*route|@\/app\/api\/[^"']+\/route)["']/;
 
 const EXCEPTIONS:Record<string,string>={
- "src/app/api/admin/placements/applications/export/route.ts":
-  "Delegates to exportSuperAdminScopedDirectory, which calls getCurrentRequestContext and enforces super-admin scope.",
- "src/app/api/admin/placements/shortlisted/export/route.ts":
-  "Delegates to exportSuperAdminScopedDirectory, which calls getCurrentRequestContext and enforces super-admin scope.",
  "src/app/api/placements/company-share/[token]/export/route.ts":
   "Public company share: authorised by an unguessable share token plus the company_share_access proof cookie checked in getPublicCompanyApplicantShare.",
  "src/app/api/public/placement-job/[slug]/route.ts":

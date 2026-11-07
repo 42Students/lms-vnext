@@ -9,7 +9,7 @@ import {
   normalizeLegacyLectureHallUpdate,
 } from "@/modules/academics/lecture-hall-service";
 import { lectureHallErrorResponse } from "../error-response";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -25,7 +25,10 @@ async function handleGET(_request:Request,{params}:RouteContext){
   return apiErrorResponse(error);
  }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);
 
 
 /** Edit a hall, or archive / restore it with {"status": "ARCHIVED" | "ACTIVE"}. */
@@ -53,7 +56,10 @@ async function handlePATCH(request: Request, { params }: RouteContext) {
     return apiErrorResponse(error);
   }
 }
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePATCH(request as Parameters<typeof handlePATCH>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePATCH>[1]),
+);
 
 
 /** Legacy PUT shares the same validated, tenant-scoped update service. */
@@ -62,7 +68,10 @@ async function handlePUT(request:Request,context:RouteContext){
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return PATCH(request,context);
 }
-export const PUT = secured(handlePUT, { csrf: "enforce" });
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePUT(request as Parameters<typeof handlePUT>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePUT>[1]),
+);
 
 /** Destructive legacy DELETE is migrated to safe, reversible archive.
  * Future scheduled classes still block the operation inside the row lock. */
@@ -80,4 +89,7 @@ async function handleDELETE(request:Request,{params}:RouteContext){
   return apiErrorResponse(error);
  }
 }
-export const DELETE = secured(handleDELETE, { csrf: "enforce" });
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as Parameters<typeof handleDELETE>[1]),
+);

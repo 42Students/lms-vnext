@@ -11,7 +11,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { canReadSkillCatalog } from "@/modules/skills/catalog-access";
 import { skillsCatalogRuntimeEnabled } from "@/modules/skills/catalog-readiness";
 import { normalizeSkillUsageKey, skillUsageNameSchema } from "@/modules/skills/usage-normalization";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -132,4 +132,7 @@ async function handlePOST(request: Request) {
     return apiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

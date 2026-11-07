@@ -8,7 +8,7 @@ import {publicPlacementPublicationInput} from "@/modules/placements/public-page/
 import {setTpoPublicPlacementPublication,PublicPlacementPublishError,getTpoPublicPlacementLegacySettings} from "@/modules/placements/public-page/publication-service";
 import {getPublicPlacementPageContent,saveTpoPublicPlacementContent} from "@/modules/placements/public-page/content-service";
 import {publicPlacementContentInput} from "@/modules/placements/public-page/content-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 
@@ -33,7 +33,10 @@ async function handlePOST(request:Request){
   throw e;
  }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);
 
 /** Legacy placement-page GET is scoped to the authenticated TPO, not a
  * caller-supplied college. Include optimistic content version for the PUT. */
@@ -48,7 +51,10 @@ async function handleGET(){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  () => handleGET(),
+);
 
 const legacyPublicPagePut=z.union([
  z.strictObject({enabled:z.boolean()}),
@@ -90,4 +96,7 @@ async function handlePUT(request:Request){
   return apiErrorResponse(error);
  }
 }
-export const PUT = secured(handlePUT, { csrf: "enforce" });
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePUT(request as Parameters<typeof handlePUT>[0]),
+);

@@ -4,7 +4,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { lessonContentOrderRuntimeEnabled } from "@/modules/courses/lesson-content-order-readiness";
 import { updateDeliveryLessonContentOrder } from "@/modules/courses/lesson-content-order-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -43,4 +43,7 @@ async function handlePUT(request: Request) {
     return apiErrorResponse(error);
   }
 }
-export const PUT = secured(handlePUT);
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePUT(request as Parameters<typeof handlePUT>[0]),
+);

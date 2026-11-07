@@ -7,7 +7,7 @@ import {
   readLogAlertAdminState,
 } from "@/modules/log-alerts/admin-service";
 import { logAlertsRuntimeEnabled } from "@/modules/log-alerts/readiness";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -24,7 +24,10 @@ async function handleGET() {
     return logAlertApiError(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  () => handleGET(),
+);
 
 async function handlePOST(request: Request) {
   if (!logAlertsRuntimeEnabled()) {
@@ -41,4 +44,7 @@ async function handlePOST(request: Request) {
     return logAlertApiError(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

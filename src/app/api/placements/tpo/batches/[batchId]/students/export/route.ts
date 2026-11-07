@@ -4,7 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoBatchStudents } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { exportTpoBatchStudentsCsv } from "@/modules/placements/tpo-batch-students-export-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 const pageSchema = z.coerce.number().int().min(1).max(100000).default(1);
@@ -24,4 +24,7 @@ async function handleGET(request:Request,{params}:{params:Promise<{batchId:strin
   }});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);

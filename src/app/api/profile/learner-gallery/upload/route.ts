@@ -7,7 +7,7 @@ import {
   LearnerGalleryError, initiateOwnLearnerGalleryUpload,
   confirmOwnLearnerGalleryUpload,
 } from "@/modules/profile-verification/learner-image-gallery-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 const noStore = { "Cache-Control": "private, no-store" };
@@ -45,4 +45,7 @@ async function handlePOST(request: Request) {
     return apiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

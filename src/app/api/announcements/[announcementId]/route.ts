@@ -7,7 +7,7 @@ import {
   updateAnnouncement,
 } from "@/modules/announcements/service";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ announcementId: string }> };
@@ -36,7 +36,10 @@ async function handlePATCH(request: Request, { params }: RouteContext) {
     return announcementApiError(error);
   }
 }
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePATCH(request as Parameters<typeof handlePATCH>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePATCH>[1]),
+);
 
 async function handleDELETE(request: Request, { params }: RouteContext) {
   if (!announcementsRuntimeEnabled()) {
@@ -60,4 +63,7 @@ async function handleDELETE(request: Request, { params }: RouteContext) {
     return announcementApiError(error);
   }
 }
-export const DELETE = secured(handleDELETE, { csrf: "enforce" });
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as Parameters<typeof handleDELETE>[1]),
+);

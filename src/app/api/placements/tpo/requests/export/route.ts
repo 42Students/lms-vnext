@@ -6,7 +6,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {getTpoGlobalRequestsInbox} from "@/modules/placements/tpo-global-requests-service";
 import {globalTpoRequestsQuerySchema} from "@/modules/placements/tpo-global-requests-model";
 import {toTpoRequestsPageCsv} from "@/modules/placements/tpo-requests-page-csv-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -44,4 +44,7 @@ async function handleGET(request:Request){
   return response;
  }
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

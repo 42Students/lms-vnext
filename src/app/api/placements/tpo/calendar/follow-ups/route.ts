@@ -8,7 +8,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { addTpoFollowup } from "@/modules/placements/tpo-crm-service";
 import { calendarFollowupCreateSchema } from "@/modules/placements/tpo-calendar-followup-model";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 /** Old POST /api/v1/tpo/recruiter-leads/{leadId}/follow-ups maps to
@@ -46,4 +46,7 @@ async function handlePOST(request: Request) {
     return tpoCrmApiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

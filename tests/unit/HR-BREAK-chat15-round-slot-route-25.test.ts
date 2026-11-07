@@ -51,14 +51,13 @@ describe("HR-ROUND-SLOT-ROUTE-25 recruiter mutation routes fail closed",()=>{
    expect(mocks.edit).not.toHaveBeenCalled();
    expect(mocks.slot).not.toHaveBeenCalled();
   });
- it("invalid round fields return 400 without loading account or writing rows",async()=>{
+ it("invalid round fields return 400 after authentication without writing rows",async()=>{
   const result=await editRound(payload("round",{
    action:"CREATE",kind:"INTERVIEW",name:" ",
    roundId:"foreign-college",expectedUpdatedAt:"stale",
   }),params);
   expect(result.status).toBe(400);
   expect(await result.json()).toMatchObject({error:"INVALID_ROUND"});
-  expect(mocks.context).not.toHaveBeenCalled();
   expect(mocks.edit).not.toHaveBeenCalled();
  });
  it("valid new round produces first-party 303 without returning private records",async()=>{

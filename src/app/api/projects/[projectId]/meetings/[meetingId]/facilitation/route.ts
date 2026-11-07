@@ -6,7 +6,7 @@ import {readMentorProjectCommandBody,MentorProjectCommandBodyError,
  mentorProjectBodyFailureMessage} from "@/modules/projects/mentor-command-body";
 import {updateMentorMeetingFacilitation} from
  "@/modules/projects/mentor-meeting-notes-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 type Context={params:Promise<{projectId:string;meetingId:string}>};
 async function handlePATCH(request:Request,{params}:Context){
@@ -27,4 +27,7 @@ async function handlePATCH(request:Request,{params}:Context){
   return apiErrorResponse(error);
  }
 }
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePATCH(request as Parameters<typeof handlePATCH>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePATCH>[1]),
+);

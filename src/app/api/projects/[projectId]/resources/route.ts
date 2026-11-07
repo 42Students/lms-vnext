@@ -10,7 +10,7 @@ import {
   getProjectResourceHistory,
   ProjectResourceHistoryUnavailable,
 } from "@/modules/projects/resource-history-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -62,7 +62,10 @@ async function handleGET(
     return apiErrorResponse(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["page", "resourceKey", "view"] },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);
 
 async function handlePOST(
   request: Request,
@@ -93,4 +96,7 @@ async function handlePOST(
     return apiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["page", "resourceKey", "view"] },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

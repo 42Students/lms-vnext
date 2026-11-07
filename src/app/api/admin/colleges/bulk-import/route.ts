@@ -4,7 +4,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {bulkImportColleges} from "@/modules/colleges/bulk-import-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -15,4 +15,7 @@ async function handlePOST(request:Request){
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export const POST = secured(handlePOST, { csrf: "enforce", stepUp: true });
+export const POST = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

@@ -6,7 +6,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {createTpoInternalThread} from "@/modules/placements/tpo-team-internal-create-service";
 import {internalThreadSchema} from "@/modules/placements/tpo-team-internal-model";
 import {TpoTeamAddPeopleRequiredError} from "@/modules/placements/tpo-team-asks-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -85,4 +85,7 @@ async function handlePOST(request:Request){
   throw error;
  }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["participantMembershipIds"] },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

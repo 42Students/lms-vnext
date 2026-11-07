@@ -58,10 +58,9 @@ describe("HR-BREAK-CONVO-ACK-53: only persisted own-thread read receipts confirm
   expect(response.status).toBe(403);
   expect(mock.ack).not.toHaveBeenCalled();
  });
- it("rejects invalid thread IDs before any permission or data read",async()=>{
+ it("rejects invalid thread IDs before any data read or acknowledgement",async()=>{
   const response=await invoke(true,"bad-id");
   expect(response.status).toBe(404);
-  expect(mock.ctx).not.toHaveBeenCalled();
   expect(mock.ack).not.toHaveBeenCalled();
  });
  it.each([null,{},[],true,"<html>Sign in</html>",

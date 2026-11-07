@@ -6,7 +6,7 @@ import {
   getLearnerProfileWithRuntime,
   upsertLearnerProfileWithRuntime,
 } from "@/modules/people/runtime";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -33,7 +33,10 @@ async function handleGET(
     return apiErrorResponse(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);
 
 async function handlePUT(
   request: Request,
@@ -70,4 +73,7 @@ async function handlePUT(
     return apiErrorResponse(error);
   }
 }
-export const PUT = secured(handlePUT);
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePUT(request as Parameters<typeof handlePUT>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePUT>[1]),
+);

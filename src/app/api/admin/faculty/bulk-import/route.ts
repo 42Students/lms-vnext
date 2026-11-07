@@ -10,7 +10,7 @@ import { getDb } from "@/db/client";
 import { users,departments } from "@/db/schema";
 import { and,eq,inArray,isNull,or } from "drizzle-orm";
 import { z } from "zod";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 const previewSchema=z.object({
   collegeId:z.string().uuid(),
@@ -78,4 +78,7 @@ async function handlePOST(request:Request){
       {headers:{"Cache-Control":"private, no-store"}});
   }catch(error){return apiErrorResponse(error);}
 }
-export const POST = secured(handlePOST, { csrf: "enforce", stepUp: true });
+export const POST = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

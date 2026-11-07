@@ -37,9 +37,8 @@ describe("TPO-drive-workspace-44 guarded reschedule endpoint and error UX",()=>{
   state.origin.mockReturnValue(false);
   const response=await POST(request(),params);
   expect(response.status).toBe(403);
-  const body=await response.json();
-  expect(body).toHaveProperty("message");
-  expect(JSON.stringify(body)).not.toContain("INVALID_ORIGIN");
+  // route() rejects the forged origin centrally with the standard code, before any session read.
+  expect(await response.json()).toEqual({error:"INVALID_ORIGIN"});
   expect(state.context).not.toHaveBeenCalled();
   expect(state.reschedule).not.toHaveBeenCalled();
  });
@@ -50,7 +49,8 @@ describe("TPO-drive-workspace-44 guarded reschedule endpoint and error UX",()=>{
   const body=await response.json();
   expect(body.message).toContain("temporarily unavailable");
   expect(JSON.stringify(body)).not.toContain("DB09_MIGRATIONS_PENDING");
-  expect(state.context).not.toHaveBeenCalled();
+  // route() authenticates once; the handler's storage gate then stops before the service.
+  expect(state.context).toHaveBeenCalledTimes(1);
   expect(state.reschedule).not.toHaveBeenCalled();
  });
  it("TPO-drive-workspace-44 transmits explicit confirmation, expected version and secured actor to service",async()=>{

@@ -7,7 +7,7 @@ import {VerificationStateError} from "@/modules/profile-verification/domain";
 import {createProfileVerificationRepository} from "@/modules/profile-verification/repository";
 import {verifyPrivateDocumentReceipt} from "@/modules/profile-verification/private-receipts";
 import {withdrawOwnPendingVerification} from "@/modules/profile-verification/service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 const withdrawSchema=z.strictObject({
@@ -43,4 +43,7 @@ async function handlePOST(request:Request){
   throw error;
  }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

@@ -3,7 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {collegeRoleDirectoryQuerySchema} from "@/modules/people/college-role-directory-model";
 import {exportVisibleCollegePeople} from "@/modules/people/college-visible-directory-export";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 async function handleGET(req:Request){
  try{
@@ -24,4 +24,7 @@ async function handleGET(req:Request){
   }});
  }catch(e){return apiErrorResponse(e);}
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

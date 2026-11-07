@@ -7,7 +7,7 @@ import { membershipLifecycleInputSchema } from "@/modules/people/validation";
 import { apiErrorResponse } from "@/lib/api-error";
 import { PeopleServiceError } from "@/modules/people/errors";
 import { updateMembershipLifecycleWithRuntime } from "@/modules/people/runtime";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -88,4 +88,7 @@ async function handlePATCH(
     return apiErrorResponse(error);
   }
 }
-export const PATCH = secured(handlePATCH);
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePATCH(request as Parameters<typeof handlePATCH>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePATCH>[1]),
+);

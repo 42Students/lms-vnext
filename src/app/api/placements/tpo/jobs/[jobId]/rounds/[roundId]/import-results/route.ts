@@ -5,7 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {BoundedFormDataError,readBoundedFormData} from "@/lib/bounded-form-data";
 import {ROUND_IMPORT_TEMPLATE} from "@/modules/placements/tpo-round-import-model";
 import {previewTpoRoundImport,stageTpoRoundImport} from "@/modules/placements/tpo-round-import-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 type Props={params:Promise<{jobId:string;roundId:string}>};
 async function handleGET(_request:Request){
@@ -15,7 +15,10 @@ async function handleGET(_request:Request){
   "Cache-Control":"private, no-store",
  }});
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);
 async function handlePOST(request:Request,{params}:Props){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -53,4 +56,7 @@ async function handlePOST(request:Request,{params}:Props){
   return NextResponse.json(value,{headers:{"Cache-Control":"private, no-store"}});
  }catch(e){return apiErrorResponse(e);}
 }
-export const POST = secured(handlePOST, { csrf: "enforce", stepUp: true });
+export const POST = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

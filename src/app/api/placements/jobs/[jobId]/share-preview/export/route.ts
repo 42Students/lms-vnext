@@ -4,7 +4,7 @@ import { getTpoShareableShortlist } from "@/modules/placements/tpo-shareable-sho
 import {
   tpoShareableShortlistCsv,
 } from "@/modules/placements/tpo-shareable-shortlist-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,4 +32,7 @@ async function handleGET(request: Request, { params }: RouteContext) {
     return response;
   }
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);

@@ -6,7 +6,7 @@ import {
   getCompanyVisibilitySettings,
   saveCompanyVisibilitySettings,
 } from "@/modules/placements/tpo-policy-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -22,7 +22,10 @@ async function handleGET(request: Request) {
     return apiErrorResponse(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);
 
 async function handlePUT(request: Request) {
   if (process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED") return NextResponse.json({error:"DB09_MIGRATIONS_PENDING"},{status:503});
@@ -43,4 +46,7 @@ async function handlePUT(request: Request) {
     return apiErrorResponse(error);
   }
 }
-export const PUT = secured(handlePUT, { csrf: "enforce" });
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePUT(request as Parameters<typeof handlePUT>[0]),
+);

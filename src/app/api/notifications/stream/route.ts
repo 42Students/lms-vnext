@@ -10,7 +10,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getDb} from "@/db/client";
 import {academicPeriods,sectionEnrollments,sections} from "@/db/schema";
 import {countOwnUnreadNotifications,listOwnNotifications} from "@/modules/activity/notification-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -145,4 +145,7 @@ async function handleGET(request:Request){
   return new Response(source,{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["classId"] },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

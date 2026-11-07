@@ -5,7 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {updateMentorMeetingNotes} from "@/modules/projects/mentor-meeting-notes-service";
 import {readMentorProjectCommandBody,MentorProjectCommandBodyError,mentorProjectBodyFailureMessage}
   from "@/modules/projects/mentor-command-body";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string;meetingId:string}>};
 async function handlePATCH(request:Request,{params}:RouteContext){
@@ -20,4 +20,7 @@ async function handlePATCH(request:Request,{params}:RouteContext){
       {status:error.status});
   return apiErrorResponse(error);}
 }
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePATCH(request as Parameters<typeof handlePATCH>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePATCH>[1]),
+);

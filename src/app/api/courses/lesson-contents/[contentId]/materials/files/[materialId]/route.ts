@@ -5,7 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {
  completeLessonResourceFileUpload,removeLessonResourceFile,editLessonResourceFileDetails,
 } from "@/modules/courses/lesson-resource-file-upload-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 type Route={params:Promise<{contentId:string;materialId:string}>};
@@ -33,16 +33,25 @@ async function handlePOST(request:Request,context:Route){
   return Response.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  return act(request,context,"COMPLETE");
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);
 async function handleDELETE(request:Request,context:Route){
  if(!isSameOriginRequest(request))
   return Response.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  return act(request,context,"REMOVE");
 }
-export const DELETE = secured(handleDELETE);
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as Parameters<typeof handleDELETE>[1]),
+);
 async function handlePATCH(request:Request,context:Route){
  if(!isSameOriginRequest(request))
   return Response.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  return act(request,context,"EDIT");
 }
-export const PATCH = secured(handlePATCH);
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePATCH(request as Parameters<typeof handlePATCH>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePATCH>[1]),
+);

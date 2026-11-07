@@ -4,7 +4,7 @@ import {tpoAudiencePreviewQuery,announcementPreviewScope} from "@/modules/announ
 import {previewTpoCollegeAnnouncementVisibility,previewTpoPlacementAudience} from "@/modules/announcements/tpo-audience-preview-service";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {apiErrorResponse} from "@/lib/api-error";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 /** Scoped, non-cacheable count only; no recipient identities or contact data. */
 async function handleGET(request:Request){
@@ -32,4 +32,7 @@ async function handleGET(request:Request){
   return apiErrorResponse(error);
  }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["audience", "targetId", "targetIds"] },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

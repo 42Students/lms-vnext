@@ -7,7 +7,7 @@ import { listOwnLearnerAnnouncementReceipts } from "@/modules/announcements/lear
 import { requireLearnerPlacementAccess } from "@/modules/placements/learner-participation-guard";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -45,4 +45,7 @@ async function handleGET() {
     return announcementApiError(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  () => handleGET(),
+);

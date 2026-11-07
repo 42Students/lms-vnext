@@ -73,14 +73,17 @@ describe("notifications SSE class probing and live authority",()=>{
  ])("rejects ambiguous or unrecognized selector %s before loading identity",async query=>{
    const result=await GET(request(query));
    expect(result.status).toBe(400);
-   expect(getCurrentRequestContext).not.toHaveBeenCalled();
+   // route() authenticates once (401 before the handler); the handler rejects the selector before any further identity or DB work.
+   expect(getCurrentRequestContext).toHaveBeenCalledTimes(1);
+   expect(resolveRequestContext).not.toHaveBeenCalled();
    expect(getDb).not.toHaveBeenCalled();
  });
  it("never accepts bearer-token query strings",async()=>{
    const result=await GET(request("?token=forbidden"));
    expect(result.status).toBe(400);
    expect(await result.json()).toMatchObject({error:"BEARER_QUERY_FORBIDDEN"});
-   expect(getCurrentRequestContext).not.toHaveBeenCalled();
+   expect(getCurrentRequestContext).toHaveBeenCalledTimes(1);
+   expect(getDb).not.toHaveBeenCalled();
  });
  it("denies unassigned same-college class ID before querying class size",async()=>{
    vi.mocked(canSubscribeToClassNotificationStream).mockResolvedValue(false);

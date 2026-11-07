@@ -5,7 +5,7 @@ import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-rea
 import {apiErrorResponse} from "@/lib/api-error";
 import {exportTpoCompanyDirectory,tpoCompaniesQuerySchema} from "@/modules/placements/tpo-companies-view-service";
 import {tpoStudentCsvCell} from "@/modules/placements/tpo-students-csv";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -48,4 +48,7 @@ async function handleGET(request:Request) {
   });
  } catch(error) {return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

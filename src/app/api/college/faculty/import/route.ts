@@ -3,7 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { runCollegeFacultyCsv } from "@/modules/people/college-faculty-csv-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 async function handlePOST(request:Request){
@@ -14,4 +14,7 @@ async function handlePOST(request:Request){
     });
   } catch(error){return apiErrorResponse(error);}
 }
-export const POST = secured(handlePOST, { csrf: "enforce", stepUp: true });
+export const POST = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

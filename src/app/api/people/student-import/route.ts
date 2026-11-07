@@ -3,7 +3,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { runCollegeStudentCsv, listSuperAdminStudentCsvImportHistory } from "@/modules/people/college-student-csv-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 // PREVIEW and IMPORT deliberately share one scoped validation contract.
@@ -35,7 +35,10 @@ async function handlePOST(request: Request) {
     return apiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce", stepUp: true });
+export const POST = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);
 
 /** Legacy bulk import history: only a persisted, authorized Super Admin
  * acting in a selected college can read this audit ledger. The same college
@@ -49,7 +52,10 @@ async function handleGET() {
       {headers:{"Cache-Control":"private, no-store"}});
   } catch(error) { return apiErrorResponse(error); }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  () => handleGET(),
+);
 
 /** A legacy one-step batch undo cannot erase an externally provisioned
  * identity, learner attendance or placement work. Return an explicit
@@ -63,4 +69,7 @@ async function handleDELETE(request:Request) {
     recovery:"Review the import history and end eligible memberships individually.",
   },{status:409,headers:{"Cache-Control":"private, no-store"}});
 }
-export const DELETE = secured(handleDELETE, { csrf: "enforce", stepUp: true });
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleDELETE(request as Parameters<typeof handleDELETE>[0]),
+);

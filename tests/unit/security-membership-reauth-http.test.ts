@@ -150,7 +150,8 @@ describe("sensitive membership and onboarding writes",()=>{
   expect((await removeRole(make("DELETE",member+"/roles",oversized),args)).status).toBe(413);
   const bigLifecycle=JSON.stringify({action:"END",padding:"x".repeat(3_000)});
   expect((await changeLifecycle(make("PATCH",member+"/lifecycle",bigLifecycle),args)).status).toBe(413);
-  expect(mocks.context).not.toHaveBeenCalled();
+  // route() authenticates each request once before the body is read (401 precedes 413); no service work follows.
+  expect(mocks.context).toHaveBeenCalledTimes(3);
   noMutations();
  });
  it("rejects oversized onboarding profiles even with a forged small Content-Length",async()=>{

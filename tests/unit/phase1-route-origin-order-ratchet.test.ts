@@ -104,7 +104,9 @@ describe("PHASE1-ORIGIN mutating handler ordering ratchet",()=>{
    const src=fs.readFileSync(path.join(process.cwd(),a.file),"utf8");
    const def=handlers.find(h=>h.file===a.file&&h.method===target&&!h.alias);
    expect(def,`${a.file} alias ${a.method}=${target} has no handler in the same file (${src.length}b)`).toBeDefined();
-   expect(/isSameOriginRequest\(/.test(def!.text),`${a.file} ${target}`).toBe(true);
+   // route() performs the origin check centrally before the handler runs.
+   const centralOrigin=/^export\s+const\s+\w+\s*=\s*route\(/.test(def!.text.trim());
+   expect(centralOrigin||/isSameOriginRequest\(/.test(def!.text),`${a.file} ${target}`).toBe(true);
   }
  });
 

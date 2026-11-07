@@ -6,7 +6,7 @@ import {
   endProjectMember,
   updateProjectMember,
 } from "@/modules/projects/member-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -44,7 +44,10 @@ async function handlePATCH(
     return apiErrorResponse(error);
   }
 }
-export const PATCH = secured(handlePATCH);
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePATCH(request as Parameters<typeof handlePATCH>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePATCH>[1]),
+);
 
 async function handleDELETE(
   request: Request,
@@ -71,7 +74,10 @@ async function handleDELETE(
     return apiErrorResponse(error);
   }
 }
-export const DELETE = secured(handleDELETE);
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as Parameters<typeof handleDELETE>[1]),
+);
 
 /** Historic POST /members/:id/remove adapter. Unlike DELETE it requires an
  * explicit action so a misrouted form POST cannot silently remove someone.
@@ -91,4 +97,7 @@ async function handlePOST(request:Request,route:RouteContext){
    {headers:{"Deprecation":"true","Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

@@ -5,7 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {
  CourseProgressRetakeError,previewAdminCourseProgressRetake,startAdminCourseProgressRetake,
 } from "@/modules/courses/admin-progress-retake-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const cache={"Cache-Control":"private, no-store"};
@@ -35,7 +35,10 @@ async function handleGET(request:Request){
   return NextResponse.json(state,{headers:cache});
  }catch(error){return failure(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["offeringId", "membershipId"] },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:cache});
@@ -51,4 +54,7 @@ async function handlePOST(request:Request){
   return NextResponse.json(result,{headers:cache});
  }catch(error){return failure(error);}
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["offeringId", "membershipId"] },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

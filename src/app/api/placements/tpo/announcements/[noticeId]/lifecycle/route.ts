@@ -5,7 +5,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {mutateTpoNotice} from "@/modules/announcements/tpo-placement-notice-lifecycle";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{noticeId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -47,7 +47,10 @@ async function handlePOST(request:Request,{params}:{params:Promise<{noticeId:str
   throw error;
  }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);
 
 
 /** Legacy DELETE maps to a version-checked soft delete. A request with no
@@ -85,7 +88,10 @@ async function handleDELETE(request:Request,{params}:{params:Promise<{noticeId:s
   throw error;
  }
 }
-export const DELETE = secured(handleDELETE, { csrf: "enforce" });
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as Parameters<typeof handleDELETE>[1]),
+);
 /** Legacy PUT /undo is restore or send-undo. Content edits have a separate
  * versioned editor; unknown legacy PUT bodies must never silently mutate.
  */
@@ -121,4 +127,7 @@ async function handlePUT(request:Request,{params}:{params:Promise<{noticeId:stri
   throw error;
  }
 }
-export const PUT = secured(handlePUT, { csrf: "enforce" });
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePUT(request as Parameters<typeof handlePUT>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePUT>[1]),
+);

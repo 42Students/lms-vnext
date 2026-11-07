@@ -2,7 +2,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getSuperAdminBatchRosterOverview} from "@/modules/admin-ui/super-admin-batch-roster-service";
 import {superAdminBatchRosterCsv} from "@/modules/admin-ui/super-admin-batch-roster-export-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handleGET(_request:Request,{params}:{params:Promise<{batchId:string}>}){
  try{
@@ -20,4 +20,7 @@ async function handleGET(_request:Request,{params}:{params:Promise<{batchId:stri
   }});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);

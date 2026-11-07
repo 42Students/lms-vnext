@@ -9,7 +9,7 @@ import {
   collegeCourseCatalogueExportQuerySchema,
   renderCollegeCourseCatalogueCsv,
 } from "@/modules/courses/college-course-catalogue-export-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -52,4 +52,7 @@ async function handleGET(request: Request): Promise<Response> {
     return apiErrorResponse(error);
   }
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

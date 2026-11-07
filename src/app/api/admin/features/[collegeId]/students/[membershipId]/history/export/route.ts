@@ -3,7 +3,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {studentRuleHistoryCursorSchema} from "@/modules/module-access/admin-student-rule-history-model";
 import {listSuperAdminStudentRuleHistory} from "@/modules/module-access/admin-student-rule-history-service";
 import {studentRuleHistoryCsv} from "@/modules/module-access/admin-student-rule-history-export";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handleGET(request:Request,{params}:{params:Promise<{collegeId:string;membershipId:string}>}){
  try{
@@ -23,4 +23,7 @@ async function handleGET(request:Request,{params}:{params:Promise<{collegeId:str
   }});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);

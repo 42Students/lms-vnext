@@ -4,7 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {openTpoMessageThread,sendThreadMessage,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 import {hasMembershipRole} from "@/modules/identity/context";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 const input=z.strictObject({
  recruiterUserId:z.string().uuid(),
  jobId:z.string().uuid().nullable().optional(),
@@ -43,4 +43,7 @@ async function handlePOST(request:Request){
   throw error;
  }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

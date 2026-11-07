@@ -14,7 +14,7 @@ function csvResponse(header:string[],rows:(string|number|null)[][],file:string,t
 }
 
 import {listCollegeTermMappings} from "@/modules/academics/college-term-mapping-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
@@ -36,4 +36,7 @@ async function handleGET(request:Request){
    rows,"semester-course-mapping.csv",matching.length>records.length);
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

@@ -79,7 +79,9 @@ describe("private roster export routes require recent server-side sign-in", () =
     expect(source).toContain('from "@/auth/recent-device-auth"');
     // Wrapper form: route() resolves the request actor (auth) before the handler body runs.
     const wrapped = source.includes('from "@/security/route"') && /=\s*route\(\s*\{\s*auth:\s*"user"/.test(source);
-    const context = wrapped ? source.search(/=\s*route\(/) : source.indexOf("getCurrentRequestContext()");
+    // Wrapper form with an in-handler actor lookup: the handler body still resolves the actor before the recent-auth guard.
+    const own = source.indexOf("getCurrentRequestContext()");
+    const context = wrapped && own < 0 ? source.search(/=\s*route\(/) : own;
     const recent = source.indexOf("await requireRecentDeviceAuthentication(context.user.id)");
     const firstRead = source.indexOf(lookup);
     expect(context, path + ": no request actor").toBeGreaterThan(0);

@@ -9,7 +9,7 @@ import { loadAcademicCollegeScope } from "@/modules/academics/scope";
 import { CoursesServiceError } from "@/modules/courses/errors";
 import { loadCourseScope } from "@/modules/courses/scope";
 import { requirePermission } from "@/modules/permissions/policy";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -68,4 +68,7 @@ async function handleGET(request: Request, { params }: RouteContext) {
     return apiErrorResponse(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["collegeId", "courseId"] },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);

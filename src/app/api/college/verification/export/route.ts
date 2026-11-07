@@ -5,7 +5,7 @@ import {exportCollegeVerificationCsv} from "@/modules/verification/staff-export-
 import {parseVerificationExportQuery} from "@/modules/verification/export-query";
 import {VerificationQueueLimitError} from "@/modules/verification/staff-queue-service";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -27,4 +27,7 @@ async function handleGET(request:Request){
   return apiErrorResponse(error);
  }
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

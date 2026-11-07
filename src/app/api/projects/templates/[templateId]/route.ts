@@ -11,7 +11,7 @@ import {
   getProjectTemplateDetail,
   reviseProjectTemplate,
 } from "@/modules/projects/template-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 const TEMPLATE_MAX_BYTES = 8 * 1024 * 1024;
@@ -46,7 +46,10 @@ async function handleGET(request:Request,{params}:RouteContext) {
    {headers:privateHeaders});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["collegeId"] },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);
 
 async function handlePATCH(
   request: Request,
@@ -131,7 +134,10 @@ async function handlePATCH(
     return apiErrorResponse(error);
   }
 }
-export const PATCH = secured(handlePATCH);
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["collegeId"] },
+  ({ request, params }) => handlePATCH(request as Parameters<typeof handlePATCH>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePATCH>[1]),
+);
 
 /** Version-checked PUT alias. Section-only legacy updates merge just the
  * submitted section into the immutable current blueprint; never a blind write.
@@ -141,7 +147,10 @@ async function handlePUT(request:Request,context:RouteContext) {
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return PATCH(request,context);
 }
-export const PUT = secured(handlePUT, { csrf: "enforce" });
+export const PUT = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["collegeId"] },
+  ({ request, params }) => handlePUT(request as Parameters<typeof handlePUT>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePUT>[1]),
+);
 
 async function handleDELETE(
   request: Request,
@@ -167,4 +176,7 @@ async function handleDELETE(
     return apiErrorResponse(error);
   }
 }
-export const DELETE = secured(handleDELETE);
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["collegeId"] },
+  ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as Parameters<typeof handleDELETE>[1]),
+);

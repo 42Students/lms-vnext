@@ -8,7 +8,7 @@ import {
 
 import { retireCollegeBatch, CollegeBatchRetireError }
   from "@/modules/academics/college-batch-retire-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ cohortId: string }> };
@@ -35,7 +35,10 @@ async function handlePATCH(request: Request, { params }: RouteContext) {
     return apiErrorResponse(error);
   }
 }
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePATCH(request as Parameters<typeof handlePATCH>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePATCH>[1]),
+);
 
 /** Legacy BatchController used PUT. Keep that method as a compatibility
  * alias, while the scoped vNext API remains PATCH. The request still requires
@@ -44,7 +47,10 @@ export const PATCH = secured(handlePATCH, { csrf: "enforce" });
 async function handlePUT(request:Request,route:RouteContext) {
   return PATCH(request,route);
 }
-export const PUT = secured(handlePUT);
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePUT(request as Parameters<typeof handlePUT>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePUT>[1]),
+);
 
 /** Retire/archive is intentionally not the legacy destructive SQL DELETE.
  * This preserves references to enrollments and academic periods. Only the
@@ -65,4 +71,7 @@ async function handleDELETE(request:Request,{params}:RouteContext) {
     return apiErrorResponse(error);
   }
 }
-export const DELETE = secured(handleDELETE, { csrf: "enforce" });
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as Parameters<typeof handleDELETE>[1]),
+);

@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
 import {GET as listScopedPlacementJobs} from "../route";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 
@@ -28,4 +28,7 @@ async function handleGET(request:Request){
  });
  return listScopedPlacementJobs(scopedRequest);
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

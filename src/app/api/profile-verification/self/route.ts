@@ -8,7 +8,7 @@ import {createProfileVerificationRepository} from "@/modules/profile-verificatio
 import {verifyPrivateDocumentReceipt} from "@/modules/profile-verification/private-receipts";
 import {submitOwnVerification} from "@/modules/profile-verification/service";
 import {getOwnLearnerVerificationStatus} from "@/modules/placements/learner-verification-status-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 
 const requestSchema=z.strictObject({
@@ -29,7 +29,10 @@ async function handleGET(){
   throw error;
  }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  () => handleGET(),
+);
 
 /** Only the authenticated active learner may submit their own stored profile snapshot.
  * The DB04 writer locks the row, checks the version and validates CLEAN private receipts.
@@ -69,4 +72,7 @@ async function handlePOST(request:Request){
   throw error;
  }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

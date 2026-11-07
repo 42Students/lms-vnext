@@ -7,7 +7,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {tpoAuditCsv} from "@/modules/placements/tpo-audit-csv-model";
 import {tpoAuditXlsx} from "@/modules/placements/tpo-audit-xlsx-model";
 import {getTpoAuditLog,tpoAuditQuerySchema,type TpoAuditRow} from "@/modules/placements/tpo-audit-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Page through the actual college-scoped union, never export unfiltered raw history. */
@@ -81,4 +81,7 @@ async function handleGET(request:Request){
   return response;
  }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["id"] },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

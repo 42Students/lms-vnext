@@ -47,8 +47,9 @@ describe("College contact CSV read route role and failure matrix", () => {
       const response = await GET(new Request("https://lms.example/api/college/contacts/export?" + query));
       expect(response.status).toBe(400);
     }
-    // Step-up (15-minute sign-in) resolves the actor once per request before the handler validates filters.
-    expect(mocks.context).toHaveBeenCalledTimes(3);
+    // route() rejects the duplicate key centrally before authentication; the other two requests resolve the actor
+    // once (step-up) before the handler validates filters.
+    expect(mocks.context).toHaveBeenCalledTimes(2);
     expect(mocks.exportCsv).not.toHaveBeenCalled();
   });
 

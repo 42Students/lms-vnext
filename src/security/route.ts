@@ -7,7 +7,7 @@ import { allowRequestShared } from "@/security/shared-store";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { requirePermission, type PlatformPermission } from "@/modules/permissions/policy";
-import { runWithTenantScope, scopeFromActor } from "@/db/tenant-context";
+import { offerRequestValue, runWithTenantScope, scopeFromActor } from "@/db/tenant-context";
 import { writeStructuredLog } from "@/observability/logger";
 import { createRoute } from "@/security/route-core";
 
@@ -51,5 +51,10 @@ export const route = createRoute<Context, PlatformPermission>({
       role: actor?.membership?.roles?.[0] ?? null,
     });
   },
-  runInScope: (context, fn) => runWithTenantScope(scopeFromActor(context as never), fn),
+  // A handler (or the service it calls) that still resolves its own actor reuses the one resolved here, once, instead of repeating the session lookup.
+  runInScope: (context, fn) =>
+    runWithTenantScope(scopeFromActor(context as never), () => {
+      offerRequestValue("request-context", context);
+      return fn();
+    }),
 });

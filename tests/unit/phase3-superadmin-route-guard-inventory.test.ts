@@ -42,6 +42,26 @@ const TWO_HOP_ALLOWED: Record<string, { delegate: string; reason: string }> = {
     delegate: "src/modules/tenant-domains/service.ts",
     reason: "route() resolves the actor; previewTenantHostResolution requires Super Admin without a narrowed scope and the admin-scope.select permission.",
   },
+  "src/app/api/admin/faculty-assignment/export/route.ts": {
+    delegate: "src/modules/admin-ui/super-admin-faculty-assignments-service.ts",
+    reason: "route() resolves the actor; the CSV service delegates to listAdminFacultyAssignments, which requires Super Admin.",
+  },
+  "src/app/api/admin/features/[collegeId]/students/[membershipId]/history/export/route.ts": {
+    delegate: "src/modules/module-access/admin-trace-service.ts",
+    reason: "route() resolves the actor (step-up); listSuperAdminStudentRuleHistory verifies the learner through getSuperAdminLearnerAccessTrace, which requires Super Admin.",
+  },
+  "src/app/api/admin/onboarding/resolve-preview/route.ts": {
+    delegate: "src/modules/tenant-domains/service.ts",
+    reason: "route() resolves the actor; previewTenantHostResolutionWithRuntime reaches the tenant-domains service, which requires Super Admin.",
+  },
+  "src/app/api/tenant-domains/route.ts": {
+    delegate: "src/modules/tenant-domains/service.ts",
+    reason: "route() resolves the actor; the runtime wrappers call the tenant-domains service, which requires Super Admin and college.manage.",
+  },
+  "src/app/api/tenant-domains/[domainId]/route.ts": {
+    delegate: "src/modules/tenant-domains/service.ts",
+    reason: "route() resolves the actor; the runtime wrappers call the tenant-domains service, which requires Super Admin and college.manage.",
+  },
   "src/app/api/admin/placements/organization-jobs/route.ts": {
     delegate: "src/modules/placements/organization-application-search-service.ts",
     reason: "route() resolves the actor; the job search resolves its scope in the application-search service, which requires Super Admin and the persisted placements.read grant.",

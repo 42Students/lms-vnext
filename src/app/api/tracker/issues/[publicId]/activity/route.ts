@@ -9,7 +9,7 @@ export const runtime="nodejs";
 type Params={params:Promise<{publicId:string}>};
 const headers={"cache-control":"private, no-store"};
 import {listMyTrackerReportHistory} from "@/modules/bug-tracker/reporter-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 async function handleGET(_request:Request,{params}:Params){
   if(!trackerAdminRuntimeEnabled())
     return NextResponse.json({error:"DB10_TRACKER_MIGRATIONS_PENDING"},{status:503,headers});
@@ -31,4 +31,7 @@ async function handleGET(_request:Request,{params}:Params){
       {headers});
   }catch(error){return bugTrackerApiError(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);

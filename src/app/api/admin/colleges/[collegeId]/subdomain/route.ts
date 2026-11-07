@@ -4,7 +4,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {changeManagedCollegeSubdomain,getManagedCollegeSubdomain,ManagedSubdomainError} from "@/modules/tenant-domains/managed-subdomain-service";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 type Params={params:Promise<{collegeId:string}>};
 async function handleGET(_request:Request,{params}:Params){
@@ -19,7 +19,10 @@ async function handleGET(_request:Request,{params}:Params){
   return apiErrorResponse(error);
  }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);
 /** Legacy /tenant/colleges/{id}/subdomain contract:
  * GET -> scoped state, PUT -> ALLOT/CHANGE, DELETE -> REMOVE.
  * All writers retain same-origin checks, college UUID mapping, and CAS.
@@ -47,8 +50,17 @@ async function mutate(request:Request,{params}:Params,legacyVerb?:"PUT"|"DELETE"
  }catch(error){return apiErrorResponse(error);}
 }
 async function handlePOST(request:Request,params:Params){return mutate(request,params);}
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);
 async function handlePUT(request:Request,params:Params){return mutate(request,params,"PUT");}
-export const PUT = secured(handlePUT);
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePUT(request as Parameters<typeof handlePUT>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePUT>[1]),
+);
 async function handleDELETE(request:Request,params:Params){return mutate(request,params,"DELETE");}
-export const DELETE = secured(handleDELETE);
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as Parameters<typeof handleDELETE>[1]),
+);

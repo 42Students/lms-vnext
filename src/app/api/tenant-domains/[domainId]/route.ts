@@ -9,7 +9,7 @@ import {
   setPrimaryTenantDomainWithRuntime,
 } from "@/modules/tenant-domains/runtime";
 import { tenantDomainActionSchema,tenantDomainHostSchema } from "@/modules/tenant-domains/validation";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -62,7 +62,10 @@ async function handlePATCH(
     return apiErrorResponse(error);
   }
 }
-export const PATCH = secured(handlePATCH);
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePATCH(request as Parameters<typeof handlePATCH>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePATCH>[1]),
+);
 
 async function handleDELETE(
   request: Request,
@@ -87,4 +90,7 @@ async function handleDELETE(
     return apiErrorResponse(error);
   }
 }
-export const DELETE = secured(handleDELETE);
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as Parameters<typeof handleDELETE>[1]),
+);

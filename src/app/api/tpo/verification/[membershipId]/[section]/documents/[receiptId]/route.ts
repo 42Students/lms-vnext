@@ -6,7 +6,7 @@ import {VerificationStateError} from "@/modules/profile-verification/domain";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {openCollegeVerificationDocument} from "@/modules/verification/staff-private-document-service";
 import {requireTpoVerificationActor} from "@/modules/verification/tpo-staff-auth";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handleGET(request:Request,{params}:{params:Promise<{membershipId:string;section:string;receiptId:string}>}){
  try{
@@ -27,4 +27,7 @@ async function handleGET(request:Request,{params}:{params:Promise<{membershipId:
   return apiErrorResponse(error);
  }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);

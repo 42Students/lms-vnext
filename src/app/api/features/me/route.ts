@@ -1,7 +1,7 @@
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getPrincipalModuleFlags} from "@/modules/module-access/learner-shell-access";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 /** Legacy GET features/me: authenticated current-principal only, no caller
  * college or role override and no cache of another person's access.
@@ -18,4 +18,7 @@ async function handleGET(){
     headers:{"cache-control":"no-store"},
   });
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  () => handleGET(),
+);

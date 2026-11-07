@@ -2,7 +2,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getOwnLearnerEducationCatalog} from "@/modules/people/learner-profile-education-catalog-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 async function handleGET(request:Request){
@@ -17,4 +17,7 @@ async function handleGET(request:Request){
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["q"] },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

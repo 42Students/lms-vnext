@@ -8,7 +8,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
 import { seedDevE2eCollegeFixtures } from "@/modules/people/dev-e2e-seed-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -61,4 +61,7 @@ async function handlePOST(request: Request) {
     return apiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

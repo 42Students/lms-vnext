@@ -5,7 +5,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { manageCollegeStudyMember } from "@/modules/groups/college-member-management-service";
 import { GroupServiceError } from "@/modules/groups/service";
 import { GroupActorAccessError } from "@/modules/groups/actor-access";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -30,4 +30,7 @@ async function handlePOST(
     return apiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

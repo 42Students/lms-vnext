@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
 import {GET as getProjectResources} from "../route";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
@@ -23,4 +23,7 @@ async function handleGET(request:Request,context:RouteContext){
  original.searchParams.set("view","audit");
  return getProjectResources(new Request(original.toString(),{headers:request.headers}),context);
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["page", "collegeId"] },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);

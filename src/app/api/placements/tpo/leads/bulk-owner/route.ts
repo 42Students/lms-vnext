@@ -7,7 +7,7 @@ import {
   bulkAssignTpoLeadOwner,
   listTpoLeadOwners,
 } from "@/modules/placements/tpo-bulk-lead-owner-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -23,7 +23,10 @@ async function handleGET() {
     return tpoCrmApiErrorResponse(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  () => handleGET(),
+);
 
 async function handlePOST(request: Request) {
   if (!await tpoCrmTablesReady()) {
@@ -41,4 +44,7 @@ async function handlePOST(request: Request) {
     return tpoCrmApiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

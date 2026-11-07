@@ -3,7 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {getTpoTeamAskSummary,listOwnTpoTeamAsks,
  listTpoTeamMentions,lookupTpoTeamAsk} from "@/modules/placements/tpo-team-asks-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 async function handleGET(request:Request){
@@ -35,4 +35,7 @@ async function handleGET(request:Request){
   throw error;
  }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

@@ -6,7 +6,7 @@ import {readBoundedJsonBody} from "@/lib/bounded-json-body";
 import {apiErrorResponse} from "@/lib/api-error";
 import {undoCollegeApplicationStage,COLLEGE_STAGE_UNDO_TOO_LATE}
  from "@/modules/placements/college-stage-undo-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"private, no-store"} as const;
@@ -33,4 +33,7 @@ async function handlePOST(request:Request,{params}:Params){
   return response;
  }
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

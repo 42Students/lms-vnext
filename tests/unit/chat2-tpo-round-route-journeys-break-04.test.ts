@@ -48,9 +48,8 @@ describe("TPO-BREAK-round-route-04 actual handlers: hostile origins, spoofed ide
    const response=await spec.handler(req({collegeId:"other-college",userId:"attacker"}),ctx);
    expect(response.status).toBe(403);
    const payload=await response.json();
-   if(spec.name==="interview reschedule")
-    expect(payload).toEqual({message:"Your session could not be verified. Refresh the page and try again."});
-   else expect(payload).toEqual({error:"INVALID_ORIGIN"});
+   // route() rejects a forged origin centrally (before authentication) for every endpoint, reschedule included.
+   expect(payload).toEqual({error:"INVALID_ORIGIN"});
    expect(state.context).not.toHaveBeenCalled();
    expect(spec.service).not.toHaveBeenCalled();
   });
@@ -59,7 +58,9 @@ describe("TPO-BREAK-round-route-04 actual handlers: hostile origins, spoofed ide
     collegeId:"spoofed-college",userId:"spoofed-user",entries:[]};
    const response=await spec.handler(req(body),ctx);
    expect(response.status).toBe(spec.status);
-   expect(state.context).toHaveBeenCalledTimes(1);
+   // reschedule's handler still resolves its own actor; with the request-context module mocked the wrapper's
+   // offered actor is not reused, so it is read twice here (once by route(), once by the handler).
+   expect(state.context).toHaveBeenCalledTimes(spec.name==="interview reschedule"?2:1);
    expect(spec.service).toHaveBeenCalledTimes(1);
    expect(spec.service.mock.calls[0][0]).toBe(actor);
    expect(spec.service.mock.calls[0][1]).toBe(roundId);
@@ -76,12 +77,12 @@ describe("TPO-BREAK-round-route-04 actual handlers: hostile origins, spoofed ide
    expect(state.error).toHaveBeenCalledTimes(1);
   });
  }
- it("reschedule storage gate fails without invoking request-scoped identity or mutation",async()=>{
+ it("reschedule storage gate fails without invoking the mutation (route() authenticated once, the handler never resolved identity)",async()=>{
   vi.stubEnv("DB09_TPO_API_READY","PENDING");
   const response=await reschedule(req({confirmed:true}),ctx);
   expect(response.status).toBe(503);
   expect(response.headers.get("cache-control")).toContain("no-store");
-  expect(state.context).not.toHaveBeenCalled();
+  expect(state.context).toHaveBeenCalledTimes(1);
   expect(state.reschedule).not.toHaveBeenCalled();
  });
 });

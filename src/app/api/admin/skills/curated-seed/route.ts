@@ -8,7 +8,7 @@ import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { reconcileCuratedSkillSynonyms } from "@/modules/skills/curated-synonym-seed-service";
 import { skillsCatalogReadiness } from "@/modules/skills/catalog-readiness";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -43,4 +43,7 @@ async function handlePOST(request: Request) {
       {headers:{"Cache-Control":"private, no-store"}});
   }catch(error){return apiErrorResponse(error);}
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

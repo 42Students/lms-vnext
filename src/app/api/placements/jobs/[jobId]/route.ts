@@ -8,7 +8,7 @@ import {
   updatePlacementJob,
 } from "@/modules/placements/job-service";
 import {updatePlacementJobInputSchema,placementJobIdSchema} from "@/modules/placements/validation";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -33,7 +33,10 @@ async function handleGET(
     return apiErrorResponse(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);
 
 async function handlePATCH(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request)) {
@@ -50,7 +53,10 @@ async function handlePATCH(request: Request, { params }: RouteContext) {
     return apiErrorResponse(error);
   }
 }
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePATCH(request as Parameters<typeof handlePATCH>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePATCH>[1]),
+);
 
 async function handleDELETE(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request)) {
@@ -75,7 +81,10 @@ async function handleDELETE(request: Request, { params }: RouteContext) {
     return apiErrorResponse(error);
   }
 }
-export const DELETE = secured(handleDELETE, { csrf: "enforce" });
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as Parameters<typeof handleDELETE>[1]),
+);
 
 /** PUT adapter for historic job editors. It never chooses a tenant or creates
  * a new job; the existing UUID scope, draft-only policy and CAS remain in
@@ -121,4 +130,7 @@ async function handlePUT(request:Request,{params}:RouteContext){
   });
  }catch(error){return apiErrorResponse(error);}
 }
-export const PUT = secured(handlePUT, { csrf: "enforce" });
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePUT(request as Parameters<typeof handlePUT>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePUT>[1]),
+);

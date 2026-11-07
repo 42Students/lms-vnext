@@ -4,7 +4,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { confirmCollegeGroupCsv, confirmCollegeGroupManual } from "@/modules/groups/college-group-import-service";
 import { GroupCsvPreviewNotFoundError } from "@/modules/groups/college-group-csv-preview-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 async function handlePOST(request: Request) {
@@ -25,4 +25,7 @@ async function handlePOST(request: Request) {
     return apiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce", stepUp: true });
+export const POST = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

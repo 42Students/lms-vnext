@@ -7,7 +7,7 @@ import {listAdminTenantSettings,saveAdminTenantSettings,addUnlistedTenantSetting
  from "@/modules/platform-settings/admin-editor-service";
 import {listOrganizationTenantSettings,saveOrganizationTenantSettings,removeOrganizationTenantSetting,OrganizationSettingsError}
  from "@/modules/platform-settings/organization-settings-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -23,7 +23,10 @@ async function handleGET(request:Request){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);
 async function handlePATCH(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -53,7 +56,10 @@ async function handlePATCH(request:Request){
   return apiErrorResponse(error);
  }
 }
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePATCH(request as Parameters<typeof handlePATCH>[0]),
+);
 
 /** Legacy TenantSettings PUT adapter: an arbitrary map is NOT accepted
  * without explicit per-key versions and the current verified scope. Convert
@@ -91,7 +97,10 @@ async function handlePUT(request:Request){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export const PUT = secured(handlePUT, { csrf: "enforce" });
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePUT(request as Parameters<typeof handlePUT>[0]),
+);
 
 /** SA-tenants-modules-40: separately guarded free-form inventory edits. */
 async function handlePOST(request:Request){
@@ -108,7 +117,10 @@ async function handlePOST(request:Request){
   return apiErrorResponse(error);
  }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);
 async function handleDELETE(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
@@ -128,4 +140,7 @@ async function handleDELETE(request:Request){
   return apiErrorResponse(error);
  }
 }
-export const DELETE = secured(handleDELETE, { csrf: "enforce" });
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleDELETE(request as Parameters<typeof handleDELETE>[0]),
+);

@@ -5,7 +5,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {
   setCourseQuizResults,
 } from "@/modules/courses/quiz-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -40,11 +40,17 @@ async function handlePOST(
     return apiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);
 
 /** Legacy PATCH results maps to the same authorized results transition as POST. */
 async function handlePATCH(request: Request, route: RouteContext) {
   if (!isSameOriginRequest(request)) return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   return POST(request, route);
 }
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePATCH(request as Parameters<typeof handlePATCH>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePATCH>[1]),
+);

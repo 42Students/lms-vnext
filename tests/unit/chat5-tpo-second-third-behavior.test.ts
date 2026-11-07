@@ -25,7 +25,10 @@ function method(code:string,verb:string){
  const wrapped=code.indexOf("export const "+verb+" = route(");
  if(wrapped>=0){
   const next=code.indexOf(String.fromCharCode(10)+"export const ",wrapped+10);
-  const slice=code.slice(wrapped,next<0?undefined:next);
+  let slice=code.slice(wrapped,next<0?undefined:next);
+  // A wrapped route may delegate to a named handler function; its body is part of the method under test.
+  const handlerAt=code.indexOf("async function handle"+verb+"(");
+  if(handlerAt>=0&&handlerAt<wrapped)slice=code.slice(handlerAt,next<0?undefined:next);
   return {slice,guard:0,wrapped:true,fileHasWrapperImport:code.includes('import { route } from "@/security/route"')};
  }
  const start=Math.max(code.indexOf("export async function "+verb+"("),code.indexOf("async function handle"+verb+"("));

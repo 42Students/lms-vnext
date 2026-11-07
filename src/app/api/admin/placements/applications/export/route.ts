@@ -1,6 +1,6 @@
 import {exportSuperAdminScopedDirectory} from "@/modules/admin-ui/super-admin-scoped-csv-service";
 import {listAdminPlacementApplications} from "@/modules/admin-ui/super-admin-placement-applications-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 // Legacy POST /refresh rebuilt a cached global search index. The vNext export
 // and application directory query tenant-scoped PostgreSQL directly: there is
@@ -13,4 +13,7 @@ async function handleGET(request:Request){
   loader:(context,query)=>listAdminPlacementApplications(context,query),
  });
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

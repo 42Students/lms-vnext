@@ -1,7 +1,7 @@
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listSuperAdminCompanyDirectory} from "@/modules/placements/admin-company-directory-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 /** Search currently authorized, active company relationships only. The
  * merge writer still independently checks same-college source/target scope. */
@@ -21,4 +21,7 @@ async function handleGET(request:Request){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["q", "page"] },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

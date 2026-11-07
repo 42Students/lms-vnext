@@ -15,7 +15,7 @@ function csvResponse(header:string[],rows:(string|number|null)[][],file:string,t
 
 import {collegeClassQuerySchema} from "@/modules/academics/college-structure-directory-model";
 import {listCollegeClasses} from "@/modules/academics/college-structure-directory-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;
@@ -51,4 +51,7 @@ async function handleGET(request:Request){
    "maxStudents","students","status"],rows,"classes.csv",false);
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

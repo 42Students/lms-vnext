@@ -3,7 +3,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {parseFacultyFollowUpSearchParams} from "@/modules/courses/faculty-response-followup-model";
 import {getFacultyResponseFollowUps} from "@/modules/courses/faculty-response-followup-service";
 import {facultyFollowUpPageCsv} from "@/modules/courses/faculty-followup-export";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  const raw:Record<string,string|string[]>={};
@@ -24,4 +24,7 @@ async function handleGET(request:Request){
   }});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

@@ -8,7 +8,7 @@ import {
 import { apiErrorResponse } from "@/lib/api-error";
 import { organizationIdSchema } from "@/modules/organizations/validation";
 import { listOrganizations } from "@/modules/organizations/service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -41,7 +41,10 @@ async function handleGET(_request: Request,{params}:RouteContext) {
   return apiErrorResponse(error);
  }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);
 
 async function handlePATCH(
   request: Request,
@@ -79,7 +82,10 @@ async function handlePATCH(
     return apiErrorResponse(error);
   }
 }
-export const PATCH = secured(handlePATCH);
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePATCH(request as Parameters<typeof handlePATCH>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePATCH>[1]),
+);
 
 /** Legacy PUT /fetch-update callers may send the same complete name payload.
  * Keep the vNext origin, role, schema and archived-parent checks in PATCH. */
@@ -88,7 +94,10 @@ async function handlePUT(request: Request, context: RouteContext) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   return PATCH(request, context);
 }
-export const PUT = secured(handlePUT, { csrf: "enforce" });
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePUT(request as Parameters<typeof handlePUT>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePUT>[1]),
+);
 
 async function handleDELETE(
   request: Request,
@@ -115,4 +124,7 @@ async function handleDELETE(
     return apiErrorResponse(error);
   }
 }
-export const DELETE = secured(handleDELETE);
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as Parameters<typeof handleDELETE>[1]),
+);

@@ -6,7 +6,7 @@ import { tpoRecruiterInviteApiErrorResponse } from "@/lib/tpo-recruiter-invite-a
 import { issueTpoRecruiterInvite } from "@/modules/placements/tpo-recruiter-invite-service";
 import {deliverTpoRecruiterInviteEmail} from "@/modules/placements/tpo-recruiter-invite-email-delivery";
 import {outboundQueueRuntimeEnabled} from "@/modules/operations/outbound-delivery-queue";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ leadId: string }> };
@@ -67,4 +67,7 @@ async function handlePOST(request: Request, { params }: RouteContext) {
     return tpoRecruiterInviteApiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

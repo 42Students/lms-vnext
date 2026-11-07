@@ -14,7 +14,7 @@ import {
   revokeEligibilityOverride,
   setEligibilityOverride,
 } from "@/modules/placements/eligibility-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -56,7 +56,10 @@ async function handleGET(
     return apiErrorResponse(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);
 
 /** Both legacy POST and modern PUT use the same tenant-scoped membership
  * identity and optimistic override receipt. Never accept a raw legacy numeric
@@ -129,13 +132,19 @@ async function handlePUT(request:Request,route:RouteContext){
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return updateOverride(request,route);
 }
-export const PUT = secured(handlePUT, { csrf: "enforce" });
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePUT(request as Parameters<typeof handlePUT>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePUT>[1]),
+);
 async function handlePOST(request:Request,route:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return updateOverride(request,route);
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);
 
 async function handleDELETE(
   request: Request,
@@ -171,4 +180,7 @@ async function handleDELETE(
     return apiErrorResponse(error);
   }
 }
-export const DELETE = secured(handleDELETE);
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as Parameters<typeof handleDELETE>[1]),
+);

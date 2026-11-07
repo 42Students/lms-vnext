@@ -19,7 +19,7 @@ import { readSkillCatalog, recordSkillSelection, invalidateSkillCatalogSearchCac
 import { skillsCatalogRuntimeEnabled, skillsCatalogSchemaReady, skillsCatalogReadiness } from "@/modules/skills/catalog-readiness";
 import { parseSkillCatalogQuery } from "@/modules/skills/catalog-validation";
 import { skillUsageNameSchema } from "@/modules/skills/usage-normalization";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -107,7 +107,10 @@ async function handlePOST(request:Request) {
     return apiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);
 
 
 type ReadMode = "search" | "popular" | "categories" | "category" | "exists" | "stats";
@@ -290,7 +293,10 @@ async function handleGET(request: Request) {
     return mapped;
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);
 
 const skillSelectionSchema=z.strictObject({
   skillId:z.uuid().optional(),

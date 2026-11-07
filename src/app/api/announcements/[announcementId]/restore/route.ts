@@ -4,7 +4,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { announcementApiError } from "@/lib/announcement-api-error";
 import { restoreAnnouncement } from "@/modules/announcements/service";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -31,4 +31,7 @@ async function handlePOST(
     return announcementApiError(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

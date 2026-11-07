@@ -6,7 +6,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrRecruiterReplySchema} from "@/modules/placements/hr-conversation-reply-model";
 import {openRecruiterMessageThread,sendRecruiterThreadMessage,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{threadId:string}>}){
  if(!isSameOriginRequest(request))
@@ -53,4 +53,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{threadId:str
  }
  return NextResponse.redirect(new URL("/hr/conversations/"+resolvedThreadId,request.url),303);
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

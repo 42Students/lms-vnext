@@ -3,7 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getFacultyQuizQuestionCsvForDownload} from "@/modules/courses/faculty-quiz-question-csv-service";
 import {facultyCsvAttachmentHeaders} from "@/modules/courses/faculty-report-csv-request";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -28,4 +28,7 @@ async function handleGET(request:Request,{params}:RouteContext){
   return new Response("\uFEFF"+result.csv,{status:200,headers});
  }catch(error){return apiErrorResponse(error)}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["deliveryId"] },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);

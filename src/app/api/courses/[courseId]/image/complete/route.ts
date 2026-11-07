@@ -5,7 +5,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 import { apiErrorResponse } from "@/lib/api-error";
 import { CourseImageError, completeCourseImage } from "@/modules/courses/course-image-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 const schema = z.object({ receiptId: z.string().uuid() }).strict();
@@ -39,4 +39,7 @@ async function handlePOST(request: Request, { params }: RouteContext) {
     return response;
   }
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

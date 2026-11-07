@@ -5,7 +5,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {editHrJobRound,hrRoundEditorUnavailableMessage} from "@/modules/placements/hr-round-editor-service";
 import {hrRoundFormSchema} from "@/modules/placements/hr-round-editor-model";
 import {PlacementsServiceError} from "@/modules/placements/errors";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{jobId:string}>}){
  if(!isSameOriginRequest(request))
@@ -48,4 +48,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{jobId:string
   throw error;
  }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

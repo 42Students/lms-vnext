@@ -5,7 +5,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { announcementApiError } from "@/lib/announcement-api-error";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { announcementStatisticsForAdmin } from "@/modules/announcements/service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,4 +32,7 @@ async function handleGET() {
     return announcementApiError(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  () => handleGET(),
+);

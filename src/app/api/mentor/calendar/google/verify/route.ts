@@ -5,7 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {mentorGoogleVerifyCalendarAccess} from "@/modules/projects/mentor-google-calendar-provider";
 import {getMentorGoogleAccessToken,mentorGoogleConnectionState}
  from "@/modules/projects/mentor-google-calendar-connection-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 const headers={"Cache-Control":"private, no-store"};
 
@@ -31,4 +31,7 @@ async function handlePOST(request:Request){
    {status:502,headers});
  }
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

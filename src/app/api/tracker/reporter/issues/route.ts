@@ -5,7 +5,7 @@ import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { bugTrackerApiError } from "@/lib/bug-tracker-api-error";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 import { createBugTrackerIssueForAdmin } from "@/modules/bug-tracker/report-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -34,4 +34,7 @@ async function handlePOST(request: Request) {
     return bugTrackerApiError(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

@@ -99,7 +99,10 @@ describe("chat-14 mentor route guards and friendly API error handling",()=>{
         for(const method of route.methods)
           expect(source).toMatch(new RegExp("export\\s+const\\s+"+method+"\\s*=\\s*route\\(\\s*\\{\\s*auth:\\s*\"user\""));
         expect(source.indexOf("= route(")).toBeGreaterThanOrEqual(0);
-        expect(source.indexOf("= route(")).toBeLessThan(source.lastIndexOf(decoder));
+        // Either the decode is inlined in the wrapper callback, or the wrapper delegates to the handler that holds it.
+        const wrapper=source.slice(source.indexOf("= route("));
+        expect(wrapper.includes(decoder)||/=>\s*handle\w*\(/.test(wrapper)).toBe(true);
+        expect(source.lastIndexOf(decoder)).toBeGreaterThanOrEqual(0);
       }else{
         expect(source.indexOf("isSameOriginRequest(request)")).toBeGreaterThanOrEqual(0);
         expect(source.indexOf("isSameOriginRequest(request)")).toBeLessThan(source.lastIndexOf(decoder));

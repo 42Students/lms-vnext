@@ -5,7 +5,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {writeHrInterviewSlot,writeHrInterviewSlotsBatch} from "@/modules/placements/hr-interview-slot-service";
 import {parseIstLocalSlot} from "@/modules/placements/hr-interview-slot-model";
 import {PlacementsServiceError} from "@/modules/placements/errors";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{jobId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -58,4 +58,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{jobId:string
   throw error;
  }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

@@ -58,7 +58,8 @@ describe("PROJ-BREAK-LEARNER-ROUTES-01 actual Next.js Learner task route actions
    const body={action:"STATUS",status:"IN_PROGRESS",expectedUpdatedAt:version,userId:"attacker",collegeId:"foreign"};
    const response=await spec.handler(request(spec.method,body),ctx);
    expect(response.status).toBe(200);
-   expect(state.context).toHaveBeenCalledTimes(1);
+   // route() resolves the actor once; task progress also resolves its own (mocked here, so no reuse).
+   expect(state.context).toHaveBeenCalledTimes(spec.service===state.progress?2:1);
    expect(spec.service).toHaveBeenCalledTimes(1);
    expect(spec.service.mock.calls[0][0]).toBe(actor);
    expect(JSON.stringify(await response.json())).not.toContain("attacker");

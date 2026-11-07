@@ -99,7 +99,8 @@ describe("chat-16 recruiter conversations route-level expired session and CSRF j
     const response = await open(req("open", { collegeId: "invalid" }));
     expect(response.status).toBe(400);
     expect(await response.json()).toEqual({ error: "INVALID_BODY" });
-    expect(getCurrentRequestContext).not.toHaveBeenCalled();
+    // route() authenticates (one session read) before the handler validates the body; storage is never reached.
+    expect(getCurrentRequestContext).toHaveBeenCalledTimes(1);
     expect(openRecruiterMessageThread).not.toHaveBeenCalled();
   });
 
@@ -159,7 +160,7 @@ describe("chat-16 recruiter conversations route-level expired session and CSRF j
     },
   );
 
-  it("HR-BREAK-REPLY-17 rejects blank message before fetching the recruiter session", async () => {
+  it("HR-BREAK-REPLY-17 rejects blank message before sending (one central session read)", async () => {
     const request = new Request(
       "https://lms.example.org/api/placements/recruiter/conversations/" + threadId + "/reply",
       { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -167,7 +168,8 @@ describe("chat-16 recruiter conversations route-level expired session and CSRF j
     );
     const response = await replyOne(request, { params: Promise.resolve({ threadId }) });
     expect(response.status).toBe(400);
-    expect(getCurrentRequestContext).not.toHaveBeenCalled();
+    // route() authenticates once before the handler rejects the blank message; the message is never sent.
+    expect(getCurrentRequestContext).toHaveBeenCalledTimes(1);
     expect(sendRecruiterThreadMessage).not.toHaveBeenCalled();
   });
 

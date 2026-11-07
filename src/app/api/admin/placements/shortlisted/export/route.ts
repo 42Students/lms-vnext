@@ -1,6 +1,6 @@
 import {exportSuperAdminScopedDirectory} from "@/modules/admin-ui/super-admin-scoped-csv-service";
 import {listSuperAdminShortlisted} from "@/modules/admin-ui/super-admin-placement-shortlisted-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 const statuses=["ALL","SUBMITTED","WITHDRAWN"] as const;
 async function handleGET(request:Request){
@@ -8,4 +8,7 @@ async function handleGET(request:Request){
   filename:"shortlisted.csv",statuses,loader:(context,query)=>listSuperAdminShortlisted(context,query),
  });
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

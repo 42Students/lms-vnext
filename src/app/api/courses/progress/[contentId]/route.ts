@@ -11,7 +11,7 @@ import {
   listMyLearnerContentProgressBatch,
   saveLearnerContentProgress,
 } from "@/modules/courses/progress-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -49,7 +49,10 @@ async function handleGET(
     return apiErrorResponse(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["contentIds"] },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);
 
 async function handlePUT(
   request: Request,
@@ -95,7 +98,10 @@ async function handlePUT(
     return apiErrorResponse(error);
   }
 }
-export const PUT = secured(handlePUT);
+export const PUT = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["contentIds"] },
+  ({ request, params }) => handlePUT(request as Parameters<typeof handlePUT>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePUT>[1]),
+);
 
 /** Legacy administrative retake command. A content ID is a scope fence,
  * not permission to overwrite a single previous attempt. The batch creates
@@ -185,4 +191,7 @@ async function handlePOST(request:Request,{params}:RouteContext){
   return apiErrorResponse(error);
  }
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["contentIds"] },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

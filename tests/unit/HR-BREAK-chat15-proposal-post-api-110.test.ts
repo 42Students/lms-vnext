@@ -38,11 +38,11 @@ describe("HR-PROPOSAL-API-110 real recruiter proposal POST boundary",()=>{
   expect(m.ctx).not.toHaveBeenCalled();
   expect(m.send).not.toHaveBeenCalled();
  });
- it("malformed draft is refused before querying company grants",async()=>{
+ it("malformed draft is refused after authentication but before sending",async()=>{
   m.read.mockResolvedValue({...payload,draft:{...draft,title:""}});
   const r=await POST(request());
   expect(r.status).toBe(400);
-  expect(m.ctx).not.toHaveBeenCalled();expect(m.send).not.toHaveBeenCalled();
+  expect(m.send).not.toHaveBeenCalled();
  });
  it("cached recruiter grant cannot act on a different logged-in principal",async()=>{
   m.ctx.mockResolvedValue({...actor,recruiter:{...actor.recruiter,userId:"other"}});

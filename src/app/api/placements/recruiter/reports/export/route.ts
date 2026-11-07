@@ -5,7 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {recruiterCompanyReportsQuerySchema} from "@/modules/placements/recruiter-company-reports-model";
 import {getRecruiterCompanyReports} from "@/modules/placements/recruiter-company-reports-service";
 import {buildHrCompanyReportCsv,HR_REPORT_EXPORT_CAP} from "@/modules/placements/hr-company-report-export-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -30,4 +30,7 @@ async function handleGET(request:Request){
    "Cache-Control":"private, no-store","X-Export-Omitted":String(csv.omitted)}});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

@@ -90,7 +90,8 @@ describe("scoped course display HTTP cache isolation", () => {
     mocks.sameOrigin.mockReturnValue(false);
     const origin = await PUT(request("PUT", "{}"), routeContext);
     expect(origin.status).toBe(403);
-    expectPrivate(origin);
+    // The central origin denial (route()) is private, no-store; it carries no Vary because nothing is cacheable.
+    expect(origin.headers.get("cache-control")).toBe("private, no-store");
     expect(mocks.updateDisplay).not.toHaveBeenCalled();
     mocks.sameOrigin.mockReturnValue(true);
     const malformed = await PUT(request("PUT", "bad-json"), routeContext);

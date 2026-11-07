@@ -4,7 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {sendThreadMessage,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 const schema=z.strictObject({body:z.string().trim().min(1).max(4000)});
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{threadId:string}>}){
@@ -23,4 +23,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{threadId:str
   throw error;
  }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

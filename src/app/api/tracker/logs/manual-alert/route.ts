@@ -4,7 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {requireGlobalLogAdmin} from "@/modules/log-alerts/admin-service";
 import {sendManualTelegramAlertForAdmin} from "@/modules/log-alerts/manual-ops";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 const inputSchema=z.strictObject({kind:z.enum(["TEST","DIGEST"])});
@@ -42,4 +42,7 @@ async function handlePOST(request:Request){
     return NextResponse.json({message:"Could not send the alert. Try again later."},{status:503});
   }
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

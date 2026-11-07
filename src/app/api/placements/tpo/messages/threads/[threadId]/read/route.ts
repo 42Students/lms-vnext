@@ -4,7 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {listThreadMessages,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 const confirm=z.strictObject({confirmed:z.literal(true)});
 export const runtime="nodejs";
 /** POST is the only TPO read acknowledgement; GET remains read-only. */
@@ -24,4 +24,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{threadId:str
   throw error;
  }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

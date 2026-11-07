@@ -7,7 +7,7 @@ import {
   PrivateDiversityPolicyError, readPrivateTpoDiversityOutreach, savePrivateTpoDiversityOutreach,
   reviewPrivateTpoDiversityOutreach,
 } from "@/modules/placements/tpo-diversity-outreach-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 const noStore = { "Cache-Control": "private, no-store" };
@@ -24,7 +24,10 @@ async function handleGET(_request: Request, { params }: Params) {
     return apiErrorResponse(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);
 async function handlePOST(request: Request, { params }: Params) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403, headers: noStore });
@@ -48,4 +51,7 @@ async function handlePOST(request: Request, { params }: Params) {
     return apiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

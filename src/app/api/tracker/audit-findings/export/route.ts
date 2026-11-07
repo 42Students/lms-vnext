@@ -4,7 +4,7 @@ import {listBugTrackerIssuesForAdmin} from "@/modules/bug-tracker/admin-service"
 import {trackerAdminRuntimeEnabled} from "@/modules/bug-tracker/readiness";
 import {parseAuditFindingsSearchParams,trackerAuditFindingsInput} from "@/modules/bug-tracker/audit-findings-board-model";
 import {auditFindingsCsv} from "@/modules/bug-tracker/audit-findings-csv-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  if(!trackerAdminRuntimeEnabled())return Response.json({error:"DB10_TRACKER_MIGRATIONS_PENDING"},{status:503,headers:{"cache-control":"private, no-store"}});
@@ -24,4 +24,7 @@ async function handleGET(request:Request){
   }});
  }catch(error){return bugTrackerApiError(error);}
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

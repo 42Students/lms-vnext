@@ -7,7 +7,7 @@ import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { tpoRoundAttendanceCsv } from "@/modules/placements/tpo-operations-export-model";
 import { buildTpoNoShowReport } from "@/modules/placements/tpo-no-show-model";
 import { placementRoundIdSchema } from "@/modules/placements/validation";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -47,4 +47,7 @@ async function handleGET(_request: Request, { params }: RouteContext) {
     return response;
   }
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);

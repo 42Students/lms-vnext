@@ -38,7 +38,9 @@ describe("LEARNER-COURSE-FILE-ROUTE-02 signed learner download security and reco
    expect(response.status).toBe(400);
    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   }
-  expect(state.context).not.toHaveBeenCalled();
+  // route() authenticates each of the 5 requests once (download is a repeatableQuery key, so the handler itself
+  // rejects the duplicate); the file service and storage are never reached.
+  expect(state.context).toHaveBeenCalledTimes(5);
   expect(state.file).not.toHaveBeenCalled();
   expect(state.head).not.toHaveBeenCalled();
  });

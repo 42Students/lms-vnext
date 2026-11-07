@@ -3,7 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {readOwnApplicationResume,updateOwnApplicationResume}
  from "@/modules/placements/learner-application-resume-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 type Params={params:Promise<{applicationId:string}>};
 const headers={"Cache-Control":"private, no-store"};
@@ -24,7 +24,10 @@ async function handleGET(_request:Request,{params}:Params){
   await getCurrentRequestContext(),(await params).applicationId),{headers});}
  catch(error){return errorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);
 async function handlePOST(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers});
@@ -33,4 +36,7 @@ async function handlePOST(request:Request,{params}:Params){
   await getCurrentRequestContext(),(await params).applicationId,body),{headers});}
  catch(error){return errorResponse(error);}
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

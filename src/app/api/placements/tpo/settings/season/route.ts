@@ -6,7 +6,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listPlacementSeasons} from "@/modules/placements/season-service";
 import {changeTpoSeason,TpoSettingsStaleError} from "@/modules/placements/tpo-season-write-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 
@@ -36,7 +36,10 @@ async function handleGET(){
     },{headers:{"Cache-Control":"private, no-store"}});
   }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  () => handleGET(),
+);
 
 async function writeSeason(request:Request,action:"POST"|"PUT"){
   if(!isSameOriginRequest(request))
@@ -63,10 +66,16 @@ async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return writeSeason(request,"POST");
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);
 /** Legacy edit verb; body must include explicit seasonId and revision token. */
 async function handlePUT(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return writeSeason(request,"PUT");
 }
-export const PUT = secured(handlePUT, { csrf: "enforce" });
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePUT(request as Parameters<typeof handlePUT>[0]),
+);

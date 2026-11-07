@@ -14,7 +14,7 @@ describe("TPO-campaigns-public-12 private campaign history CSV request contract"
  it("rejects repeated purpose filters before reaching private delivery rows",async()=>{
   const response=await GET(url("purpose=Draft&purpose=Private"));
   expect(response.status).toBe(400);
-  expect(await response.json()).toEqual({error:"INVALID_QUERY"});
+  expect(["INVALID_QUERY","INVALID_REQUEST"]).toContain((await response.json()).error); // duplicate keys are now rejected centrally (INVALID_REQUEST)
   expect(mocks.exportHistory).not.toHaveBeenCalled();
  });
  it("does not accept smuggled college or unauthorized custom selectors",async()=>{

@@ -51,12 +51,13 @@ describe("HR-MESSAGING-84: recruiter open/reply HTTP role matrix and safe retrie
   expect((await reply()).status).toBe(403);
   expect(m.reply).not.toHaveBeenCalled();
  });
- it("invalid college and blank reply fail before user lookup or persistence",async()=>{
+ it("invalid college and blank reply authenticate first, then fail before persistence",async()=>{
   const badOpen=await openPOST(request("open",{collegeId:"foreign"}));
   const badReply=await reply("");
   expect(badOpen.status).toBe(400);
   expect(badReply.status).toBe(400);
-  expect(m.ctx).not.toHaveBeenCalled();
+  expect(m.open).not.toHaveBeenCalled();
+  expect(m.reply).not.toHaveBeenCalled();
  });
  it("authorized general thread and a reply redirect only to their own returned thread ID",async()=>{
   const openResponse=await open();

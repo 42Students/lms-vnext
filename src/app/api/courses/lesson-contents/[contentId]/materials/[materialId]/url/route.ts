@@ -7,7 +7,7 @@ import {
 import { StorageFileError } from "@/modules/storage/file-errors";
 import { authorizeOrNotFound } from "@/modules/storage/file-access";
 import { z } from "zod";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -95,4 +95,7 @@ async function handleGET(request: Request, { params }: RouteContext) {
     return apiErrorResponse(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["deliveryId"] },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);

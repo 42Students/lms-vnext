@@ -4,7 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {exportTpoMessagingHistory} from "@/modules/messaging/receipt-history-service";
 import {messagingHistoryCsv} from "@/modules/messaging/receipt-history-export-model";
 import {z} from "zod";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  const context=await getCurrentRequestContext();
@@ -37,4 +37,7 @@ async function handleGET(request:Request){
   "X-Export-Scope":"All filtered batches",
  }});
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

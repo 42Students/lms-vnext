@@ -10,7 +10,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { requirePersistedTpoMembership } from "@/modules/placements/tpo-persisted-actor-service";
 import { deliverDueTpoNotices } from "@/modules/announcements/tpo-notice-delivery-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -68,7 +68,10 @@ async function handleGET(_request: Request, { params }: Params) {
     return apiErrorResponse(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);
 
 async function handlePOST(request: Request, { params }: Params) {
   if (!isSameOriginRequest(request)) {
@@ -99,4 +102,7 @@ async function handlePOST(request: Request, { params }: Params) {
     return apiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

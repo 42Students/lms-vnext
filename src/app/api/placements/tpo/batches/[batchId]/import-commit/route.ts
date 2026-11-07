@@ -7,7 +7,7 @@ import {getBatchEligibilityImportPreview} from "@/modules/placements/tpo-batch-i
 import {tpoSheetRowSchema} from "@/modules/placements/tpo-eligibility-sheet-model";
 import {decidePlacementParticipation,PlacementBatchError} from "@/modules/placements/batch-participation-service";
 import {placementTableExists} from "@/modules/placements/staged-tables";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 const inputSchema=z.object({
  rows:z.array(tpoSheetRowSchema).min(1).max(5000),
@@ -58,4 +58,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{batchId:stri
   return apiErrorResponse(error);
  }
 }
-export const POST = secured(handlePOST, { csrf: "enforce", stepUp: true });
+export const POST = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

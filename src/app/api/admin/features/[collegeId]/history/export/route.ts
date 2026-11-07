@@ -3,7 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {collegePolicyHistoryQuery} from "@/modules/module-access/admin-college-rule-history-model";
 import {listCollegeFeatureHistory} from "@/modules/module-access/admin-college-rule-history-service";
 import {collegePolicyHistoryCsv} from "@/modules/module-access/admin-college-rule-history-export";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handleGET(request:Request,{params}:{params:Promise<{collegeId:string}>}){
  try{
@@ -24,4 +24,7 @@ async function handleGET(request:Request,{params}:{params:Promise<{collegeId:str
   }});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET, { stepUp: true });
+export const GET = route(
+  { auth: "user", permission: "service-enforced", stepUp: true },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);

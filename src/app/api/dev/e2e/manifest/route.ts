@@ -9,7 +9,7 @@ import {
   devFixtureManifestEnabled,
   readProvisionedDevFixtureManifest,
 } from "@/modules/e2e/dev-fixture-manifest";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -70,4 +70,7 @@ async function handleGET(request: Request) {
     });
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

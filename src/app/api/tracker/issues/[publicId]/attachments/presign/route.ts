@@ -4,7 +4,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {trackerAdminRuntimeEnabled} from "@/modules/bug-tracker/readiness";
 import {presignTrackerAttachment} from "@/modules/bug-tracker/attachment-storage-service";
 import {bugTrackerApiError} from "@/lib/bug-tracker-api-error";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{publicId:string}>}){
  if(!isSameOriginRequest(request))
@@ -19,4 +19,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{publicId:str
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return bugTrackerApiError(error);}
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
+);

@@ -7,7 +7,7 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrDriveProposalSchema} from "@/modules/placements/hr-drive-proposal-model";
 import {readRecruiterJsonBody,RecruiterJsonBodyError} from "@/modules/placements/recruiter-json-request";
 import {sendRecruiterDriveProposal,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 async function handlePOST(request:Request){
@@ -39,4 +39,7 @@ async function handlePOST(request:Request){
   return apiErrorResponse(error);
  }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

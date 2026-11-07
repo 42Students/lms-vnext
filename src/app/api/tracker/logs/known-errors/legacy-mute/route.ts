@@ -6,7 +6,7 @@ import {alertEnvironment} from "@/modules/log-alerts/signature";
 import {logAlertsRuntimeEnabled} from "@/modules/log-alerts/readiness";
 import {muteLegacyKnownErrorForAdmin} from "@/modules/log-alerts/admin-service";
 import {legacyKnownErrorMuteLookupSchema} from "@/modules/log-alerts/validation";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 async function handlePOST(request:Request){
@@ -24,4 +24,7 @@ async function handlePOST(request:Request){
   return NextResponse.json({item},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return logAlertApiError(error);}
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

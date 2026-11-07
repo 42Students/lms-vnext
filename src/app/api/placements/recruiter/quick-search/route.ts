@@ -5,7 +5,7 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {recruiterDriveListQuerySchema} from "@/modules/placements/recruiter-drive-list-model";
 import {searchOwnRecruiterDrives} from "@/modules/placements/recruiter-drive-search-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 const uuid=z.string().uuid();
@@ -55,4 +55,7 @@ async function handleGET(request:NextRequest){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["q", "collegeId"] },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

@@ -11,7 +11,7 @@ import {
  independentAuditImporterReady,syncIndependentAuditInbox,
 } from "@/modules/bug-tracker/independent-audit-inbox-importer";
 import {independentAuditGithubConfigured} from "@/modules/bug-tracker/independent-audit-github-client";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -38,7 +38,10 @@ async function handleGET(){
   },{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  () => handleGET(),
+);
 
 /** Manual Sync now must satisfy origin, active unscoped Super Admin,
  * a fresh device session and a persisted grant locked for the real write. */
@@ -67,4 +70,7 @@ async function handlePOST(request:Request){
   return NextResponse.json({result},{status:result.busy?409:200,headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);

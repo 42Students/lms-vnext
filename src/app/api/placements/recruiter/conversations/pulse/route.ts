@@ -7,7 +7,7 @@ import { getDb } from "@/db/client";
 import { apiErrorResponse } from "@/lib/api-error";
 import { placementTpoMessages, placementTpoMessageThreads } from "@/db/schema/tpo-collaboration";
 import { hasActiveRecruiter } from "@/modules/identity/context";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 
@@ -56,4 +56,7 @@ async function handleGET(request:Request) {
   });
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["collegeId", "threadId"] },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);
