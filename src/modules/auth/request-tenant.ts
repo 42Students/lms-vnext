@@ -4,6 +4,7 @@ import { drizzleTenantDomainRepository } from "@/modules/tenant-domains/reposito
 import { resolveTenantFromHost } from "@/modules/tenant-domains/service";
 import {normalizeRequestHost} from "@/modules/tenant-domains/validation";
 import { getPlatformHosts } from "./config";
+import { runAsSystem } from "@/db/tenant-context";
 
 /**
  * Maps the request `Host` to a tenant.
@@ -38,7 +39,14 @@ function hostWithoutPort(raw: string) {
   return raw.trim().toLowerCase().replace(/:\d+$/, "");
 }
 
-export async function resolveRequestTenant(
+/** Host -> tenant is a pre-actor lookup (login page, every college-host check), so it runs in a named system scope. */
+export function resolveRequestTenant(
+  hostHeader: string | null | undefined,
+): Promise<RequestTenant> {
+  return runAsSystem("tenant:resolve-host", () => resolveRequestTenantUnscoped(hostHeader));
+}
+
+async function resolveRequestTenantUnscoped(
   hostHeader: string | null | undefined,
 ): Promise<RequestTenant> {
   const rawHost = hostWithoutPort(hostHeader ?? "");

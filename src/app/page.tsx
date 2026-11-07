@@ -4,6 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { safeReturnTo } from "@/lib/return-to";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { runAsSystem } from "@/db/tenant-context";
 import { LoginForm } from "@/components/auth/login-form";
 import { PageHeader } from "@/components/ui/page-header";
 import styles from "./login-shell.module.css";
@@ -24,7 +25,11 @@ async function optionalPublicBranding(collegeId: string) {
   }
 }
 
-export async function generateMetadata({searchParams}:{
+export function generateMetadata(args: Parameters<typeof generateMetadataInner>[0]) {
+  return runAsSystem("public-page:login-metadata", () => generateMetadataInner(args));
+}
+
+async function generateMetadataInner({searchParams}:{
  searchParams:Promise<{legacy?:string|string[]}>;
 }):Promise<Metadata> {
  const query=await searchParams;
@@ -103,7 +108,11 @@ const messages: Record<string, AuthMessage> = {
   },
 };
 
-export default async function HomePage({
+export default function HomePage(props: Parameters<typeof HomePageInner>[0]) {
+  return runAsSystem("public-page:login", () => HomePageInner(props));
+}
+
+async function HomePageInner({
   searchParams,
 }: {
   searchParams: Promise<{
