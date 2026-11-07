@@ -1,0 +1,41 @@
+name: UX public auth entry acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/app/roll-number-login/**
+      - src/components/auth/learner-roll-number-login.tsx
+      - src/app/verify-email/**
+      - tests/e2e/ux-public-auth-entry.spec.ts
+      - .github/workflows/ux-public-auth-entry-acceptance.yml
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Lint scoped entry flows and browser acceptance spec
+        run: npx eslint src/app/roll-number-login/page.tsx src/components/auth/learner-roll-number-login.tsx src/app/verify-email/page.tsx src/app/verify-email/layout.tsx tests/e2e/ux-public-auth-entry.spec.ts
+      - name: Preserve email-proof fragment and origin invariants
+        run: node --test tests/db004-email-link-route-security.test.mjs
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Verify desktop and mobile auth entry UX
+        run: npx playwright test tests/e2e/ux-public-auth-entry.spec.ts --project=chromium --reporter=line
+      - name: Check TypeScript
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
