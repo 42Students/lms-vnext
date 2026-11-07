@@ -9,6 +9,10 @@ on:
       - docs/database-workflow.md
       - docs/parity/README.md
       - scripts/tracker.mjs
+      - scripts/ux-groups.mjs
+      - tests/ux-groups.test.mjs
+      - docs/audit/ui-surfaces/ui-surfaces.json
+      - docs/planning/ui-surfaces.md
       - scripts/verify-db08-cross-parent-source.mjs
       - src/modules/placements/result-service.ts
       - src/db/schema/placements.ts
@@ -65,6 +69,10 @@ jobs:
           node-version: '22'
       - name: Validate the canonical tracker and open task selection
         run: node scripts/tracker.mjs --check
+      - name: Validate UX group coverage and honest PICKED/DOING/DONE evidence
+        run: |
+          node scripts/ux-groups.mjs --check
+          node --test tests/ux-groups.test.mjs
       - name: Verify domain, phase and closure-first rendering
         run: |
           node scripts/tracker.mjs --domains
