@@ -17894,10 +17894,10 @@
         "type": "JOURNEY",
         "area": "superadmin",
         "title": "Superadmin · Projects / Templates → Projects / Templates (part 2)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-superadmin-templates-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [],
         "surfaceIds": [],
@@ -17907,7 +17907,8 @@
           "/superadmin/projects/templates/[templateId]/overview",
           "/superadmin/projects/templates/new"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "Fix missing new-project-template alias and preserve guarded legacy index/detail/overview links; exact-SHA negative/positive SSR, desktop/mobile browser evidence and security review required for DONE."
       },
       {
         "id": "UX-G089",
