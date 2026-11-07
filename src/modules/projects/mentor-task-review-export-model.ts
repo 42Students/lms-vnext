@@ -19,7 +19,7 @@ export function mentorReviewedTasksCsv(rows:readonly MentorReviewedTaskExportRow
       taskReviewDecisionLabel(row.status),when].map(csvSafeCell).join(","));
   }
   const hidden=(Number.isSafeInteger(omitted)&&omitted>0?omitted:0)+Math.max(0,rows.length-limited.length);
-  if(hidden>0)lines.push(["","Truncated","",hidden+" additional reviewed versions","",""]
+  if(hidden>0)lines.push(["Truncated export","",hidden+" additional reviewed versions","","",""]
     .map(csvSafeCell).join(","));
   return "\uFEFF"+lines.join("\r\n")+"\r\n";
 }
