@@ -13399,11 +13399,11 @@
         "type": "JOURNEY",
         "area": "activity",
         "title": "Activity · Home → EventId (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-activity-group-chat-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [
           "src/app/(authenticated)/activity/[eventId]/error.tsx",
           "src/app/(authenticated)/activity/[eventId]/loading.tsx",
@@ -13421,8 +13421,46 @@
           "PAGE-0003"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Source UX pass in progress for /activity and /activity/[eventId]; do not close without executed checks and desktop/mobile browser evidence."
+        "evidence": [
+          {
+            "commitSha": "08884be93e807dd1c17680cc25b3fec398452b05",
+            "parityDoc": "docs/parity/pages/shared/UX-G004-activity.md",
+            "tests": [
+              {
+                "command": "npx eslint src/modules/activity/ux-query.ts src/app/(authenticated)/activity/... tests/unit/UX-G004-activity-navigation.test.ts tests/e2e/ux-activity-journey.spec.ts && npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42385487679"
+              },
+              {
+                "command": "npx vitest run tests/unit/UX-G004-activity-navigation.test.ts tests/unit/UX-activity-index-01.test.ts tests/unit/UX-activity-event-detail-01.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42385487679 (3 files, 10/10 tests passed)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-activity-journey.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42385487679 (3/3 browser cases passed, seeded activity event)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42385487679 artifact ux-g004-evidence; scoped filters, 7/30-day inclusive dates, screenshot"
+              },
+              {
+                "viewport": "mobile 320x780",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42385487679 artifact ux-g004-evidence; seeded real college-created event, keyboard drilldown, no horizontal overflow, screenshot"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42385487679 artifact ux-g004-evidence; feed no overflow, College Admin allowed, Learner redirected, screenshot"
+              }
+            ],
+            "regressionReview": "Existing UX-activity-index-01 and UX-activity-event-detail-01 contracts executed PASS; ActivityCenter shared component source unchanged except caller-supplied scoped reset destination. Same activity services, CSV export APIs, labels and permission gates preserved.",
+            "securityReview": "Backend authorization still checked by getCurrentRequestContext, isSuperAdmin, hasMembershipRole, listActivityEvents and getActivityEventDetail; mobile cards display only previously authorized result.items. Pinned superadmin tenant scope is not overwritten by query links; lesser-role URL helper omits superadmin-only search and college selection. Learner denial browser tested."
+          }
+        ],
+        "notes": "Activity Log → event detail six-surface UX improvement accepted at exact SHA 08884be93e807dd1c17680cc25b3fec398452b05. Focused lint, TS, 10/10 Vitest and 3/3 Chromium desktop/mobile test cases passed in run 42385487679, with real activity event drilldown, College Admin allowed and Learner denied. Separate DB/API/security/release acceptance unaffected."
       },
       {
         "id": "UX-G005",
