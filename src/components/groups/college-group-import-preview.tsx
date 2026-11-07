@@ -11,6 +11,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
+import { groupCsvValidationLabel, type GroupImportRow } from "@/modules/groups/college-group-csv-preview-model";
 
 type ImportResult = {
   requested: number; added: number; waitlisted: number; errors: number;
@@ -19,7 +20,7 @@ type ImportResult = {
 };
 type Result = {
   groupId: string; status: string; total: number; ready: number; blocked: number;
-  rows: { rowNumber: number; email: string; status: string }[];
+  rows: { rowNumber: number; email: string; status: GroupImportRow["status"] }[];
   warning: string; errorCsv: string;
 };
 
@@ -32,6 +33,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
   const [manualText, setManualText] = useState("");
   const [manualKind, setManualKind] = useState<"ROLL_NUMBER"|"MEMBERSHIP_ID"|"LEGACY_LEARNER_ID">("ROLL_NUMBER");
   const [error, setError] = useState("");
+  const [manualError, setManualError] = useState("");
   const [pending, startTransition] = useTransition();
   const [reading, setReading] = useState(false);
   async function load(file: File | null) {
@@ -40,6 +42,9 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
     setError("");
     setResult(null);
     setImported(null);
+    // Never leave the old CSV eligible for confirmation when a new file fails.
+    setCsv("");
+    setReading(false);
     if (file.size > 524288) {
       setError("CSV file exceeds the 512 KiB maximum.");
       return;
@@ -47,7 +52,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
     setReading(true);
     try { const next = await file.text(); if (revision === csvRevision.current) setCsv(next); }
     catch { if (revision === csvRevision.current) setError("The selected CSV could not be read."); }
-    finally { setReading(false); }
+    finally { if (revision === csvRevision.current) setReading(false); }
   }
   function preview(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -105,9 +110,9 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
   function confirmManual() {
     const identifiers = manualText.split(/[\r\n,]+/).map(item=>item.trim()).filter(Boolean);
     if (!identifiers.length || identifiers.length > 2000 || pending) {
-      setError("Provide between 1 and 2,000 learner identifiers."); return;
+      setManualError("Provide between 1 and 2,000 learner identifiers."); return;
     }
-    setError("");
+    setManualError("");
     setManualResult(null);
     startTransition(async () => {
       try {
@@ -123,7 +128,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
         }
         setManualResult(payload as ImportResult);
       } catch (cause) {
-        setError(cause instanceof Error ? cause.message : "Unable to import members");
+        setManualError(cause instanceof Error ? cause.message : "Unable to import members");
       }
     });
   }
@@ -141,11 +146,11 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       <Disclosure title="CSV contents" className="min-w-0">
         <Label stack className="mt-3 min-w-0">CSV contents
           <Textarea rows={8} maxLength={524288} value={csv}
-            onChange={(event) => { csvRevision.current++; setCsv(event.target.value); setResult(null); setImported(null); setError(""); }}
+            onChange={(event) => { csvRevision.current++; setReading(false); setCsv(event.target.value); setResult(null); setImported(null); setError(""); }}
             className="font-mono text-sm" />
         </Label>
       </Disclosure>
-      {error ? <Alert tone="error">{error}</Alert> : null}
+      {error && !result ? <Alert tone="error">{error}</Alert> : null}
     </form>
     {result ? <section aria-label="Student group CSV validation report" className="min-w-0 space-y-3">
       <Heading level={2} size="lg" className="text-[var(--lms-heading)]">
@@ -153,6 +158,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       </Heading>
       <p role="status" className="text-sm text-body">Preview only. No memberships have been changed. Confirm import to apply the validated rows.</p>
       {result.warning ? <Alert tone="warning">{result.warning}</Alert> : null}
+      {error ? <Alert tone="error">{error}</Alert> : null}
       {!imported && result.ready > 0 ? <Button type="button" loading={pending}
         disabled={pending || reading} onClick={confirm}>
         Confirm import of {result.ready} eligible learner{result.ready===1?"":"s"}
@@ -171,7 +177,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
             columns={[
               {key:"row",header:"Row",mobilePriority:"primary",cell:row=>row.rowNumber},
               {key:"email",header:"Email",mobilePriority:"secondary",cell:row=><span className="break-all">{row.email}</span>},
-              {key:"validation",header:"Validation",mobilePriority:"secondary",cell:row=>row.status.replaceAll("_"," ")},
+              {key:"validation",header:"Validation",mobilePriority:"secondary",cell:row=>groupCsvValidationLabel(row.status)},
             ]}/>
         </div>
       )}
@@ -205,7 +211,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
         Only active learners of this college can be added.</p>
       <Label className="block space-y-2">Identifier type
         <Select value={manualKind} disabled={pending} onChange={event=>{
-          setManualKind(event.target.value as typeof manualKind);setManualResult(null);
+          setManualKind(event.target.value as typeof manualKind);setManualResult(null);setManualError("");
         }}>
           <option value="ROLL_NUMBER">Roll number</option>
           <option value="MEMBERSHIP_ID">Membership ID</option>
@@ -214,10 +220,11 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       </Label>
       <Label className="block space-y-2">Learner identifiers
         <Textarea rows={5} value={manualText} disabled={pending} maxLength={524288}
-          onChange={event=>{setManualText(event.target.value);setManualResult(null);}}/>
+          onChange={event=>{setManualText(event.target.value);setManualResult(null);setManualError("");}}/>
       </Label>
       <Button type="button" loading={pending} disabled={pending||!manualText.trim()}
         onClick={confirmManual}>Confirm manual import</Button>
+      {manualError ? <Alert tone="error">{manualError}</Alert> : null}
       {manualResult ? <div className="min-w-0 space-y-3">
         <Heading level={3}>Manual import: {manualResult.requested} requested, {manualResult.added} added, {manualResult.waitlisted} waitlisted, {manualResult.errors} errors</Heading>
         {manualResult.errors>0?<TextLink href={"data:text/csv;charset=utf-8,"+encodeURIComponent(manualResult.errorCsv)}
