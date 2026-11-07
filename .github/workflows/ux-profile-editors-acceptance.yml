@@ -39,8 +39,8 @@ jobs:
           node --test tests/ux-profile-g143-g150.test.mjs
       - name: Create temporary, unshipped profile component preview
         run: |
-          mkdir -p src/app/__ux-profile-proof
-          cp tests/fixtures/ux-profile-proof-page.tsx src/app/__ux-profile-proof/page.tsx
+          mkdir -p src/app/ux-profile-proof-preview
+          cp tests/fixtures/ux-profile-proof-page.tsx src/app/ux-profile-proof-preview/page.tsx
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
       - name: Desktop and mobile real profile component interactions
