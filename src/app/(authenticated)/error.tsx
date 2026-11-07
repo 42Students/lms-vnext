@@ -9,5 +9,5 @@ export default function AuthenticatedError({ error, reset }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return <GracefulErrorBoundary error={error} reset={reset} legacyWorkspaceCopy insideShell />;
+  return <div className="min-w-0 max-w-full"><GracefulErrorBoundary error={error} reset={reset} legacyWorkspaceCopy insideShell /></div>;
 }
