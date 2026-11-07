@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  collegeGroupCsvPreviewSchema, groupCsvValidationLabel, groupPreviewErrorCsv, neutralCsvCell, parseMemberEmailCsv,
+  collegeGroupCsvPreviewSchema, groupCsvPreviewErrorMessage, groupCsvValidationLabel, groupPreviewErrorCsv, neutralCsvCell, parseMemberEmailCsv,
 } from "@/modules/groups/college-group-csv-preview-model";
 
 describe("Student Group email import dry-run", () => {
@@ -40,6 +40,11 @@ describe("Student Group email import dry-run", () => {
     expect(groupCsvValidationLabel("CAPACITY_FULL")).toMatch(/capacity is full/i);
     expect(groupCsvValidationLabel("PREVIOUSLY_REMOVED")).toMatch(/Previously removed/i);
     expect(groupCsvValidationLabel("READY")).toBe("Ready to add");
+  });
+  it("does not expose unknown internal CSV import error codes", () => {
+    expect(groupCsvPreviewErrorMessage("INVALID_CSV_QUOTE")).toMatch(/malformed quotation marks/i);
+    expect(groupCsvPreviewErrorMessage("CSV_ROW_LIMIT")).toMatch(/2,000 learner rows/i);
+    expect(groupCsvPreviewErrorMessage("INTERNAL_DATABASE_SECRET")).not.toContain("SECRET");
   });
   it("neutralizes formulas and escapes CSV quotations in the error export", () => {
     for (const value of ["=HYPERLINK(\"http://host\")", "+SUM(1,2)", "-3", "@cmd", "\t=1"]) {
