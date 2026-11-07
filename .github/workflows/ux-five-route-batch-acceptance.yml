@@ -17,12 +17,18 @@ on:
       - src/app/(authenticated)/teacher/response-followups/**
       - src/app/(authenticated)/teacher/results/**
       - src/modules/admin-ui/legacy-department-links.ts
+      - src/modules/courses/super-admin-content-directory-model.ts
+      - tests/unit/chat10-superadmin-legacy-content-alias.test.ts
       - src/components/ux/ux-five-route-error-preview.tsx
       - src/app/e2e/ux-five-route-recovery/**
       - tests/unit/legacy-department-links.test.ts
       - tests/unit/ux-g025-g036-g044-g087-g097-route-batch.test.ts
       - tests/e2e/ux-five-route-recovery.spec.ts
       - .github/workflows/ux-five-route-batch-acceptance.yml
+
+concurrency:
+  group: ux-five-route-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -64,6 +70,7 @@ jobs:
             'src/app/(authenticated)/teacher/response-followups/page.tsx' \
             'src/app/(authenticated)/teacher/results/page.tsx' \
             src/modules/admin-ui/legacy-department-links.ts \
+            src/modules/courses/super-admin-content-directory-model.ts \
             src/components/ux/ux-five-route-error-preview.tsx \
             src/app/e2e/ux-five-route-recovery/page.tsx \
             tests/unit/legacy-department-links.test.ts \
