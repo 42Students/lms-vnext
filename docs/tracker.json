@@ -15444,7 +15444,7 @@
         ],
         "newRouteOnly": [],
         "evidence": [],
-        "notes": "College invitation UX: scoped email-code recovery, accessible form/loading/error states and regression evidence; keep security/API boundaries unchanged. DONE requires focused tests and desktop/mobile browser proof."
+        "notes": "Scoped college-invitation source improvements committed at dbcc4066, 24ac2f60, a5f3a9e4; unit/browser checks authored b07cc149/03c1aa9d. Shared join form changed as dependency. Exact-SHA CI, desktop/mobile READY flow, negative cases and browser screenshot evidence remain pending. See docs/audit/ux/college-join-token.md. DO NOT mark DONE yet."
       },
       {
         "id": "UX-G046",
