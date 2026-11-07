@@ -49,6 +49,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
  const [review,setReview]=useState<WeekConfirm|null>(null);
  const [leads,setLeads]=useState<TpoCalendarLeadOption[]>([]);
  const [loadingLeads,setLoadingLeads]=useState(false);
+ const leadRequestRevision=useRef(0);
  const [leadQuery,setLeadQuery]=useState("");
  const [leadId,setLeadId]=useState("");
  const [note,setNote]=useState("");
@@ -72,7 +73,8 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
     setMessage("Pick a future date and time");return;
    }
   }catch{setMessage("Invalid IST time.");return;}
-  setMessage("");setLeadId("");setLeadQuery("");setNote("");
+  const revision=++leadRequestRevision.current;
+  setMessage("");setLeadId("");setLeadQuery("");setNote("");setLeads([]);
   setSlot(selected);
   setLoadingLeads(true);
   try{
@@ -81,9 +83,9 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
    });
    if(!response.ok)throw Error("Could not load recruiter leads.");
    const raw=await response.json() as {leads?:TpoCalendarLeadOption[]};
-   setLeads(Array.isArray(raw.leads)?raw.leads:[]);
-  }catch(error){setMessage(error instanceof Error?error.message:"Could not load leads.");}
-  finally{setLoadingLeads(false);}
+   if(revision===leadRequestRevision.current)setLeads(Array.isArray(raw.leads)?raw.leads:[]);
+  }catch(error){if(revision===leadRequestRevision.current)setMessage(error instanceof Error?error.message:"Could not load leads.");}
+  finally{if(revision===leadRequestRevision.current)setLoadingLeads(false);}
  }
  async function moveFollowup(followupId:string,day:string,hour:number,confirmed=false){
   if(!canCreate||saving)return;
@@ -156,7 +158,9 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
    setReview({kind:"DISCARD",prompts:["Discard this unfinished follow-up?"],index:0});
    return;
   }
-  setSlot(null);setMessage("");if(triggerRef.current?.isConnected)triggerRef.current.focus();
+  leadRequestRevision.current++;
+  setSlot(null);setMessage("");setLeads([]);setLoadingLeads(false);
+  if(triggerRef.current?.isConnected)triggerRef.current.focus();
  }
  const height=(LAST-FIRST)*HEIGHT;
  return <section aria-label="TPO weekly time calendar" className="space-y-3">
@@ -167,7 +171,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
      placeholder="Company or event"/>
    </Label>
   </div>
-  <Disclosure title="How to use this calendar"><p className="mt-[var(--lms-space-2)] max-w-prose">Click an empty hour to add a recruiter follow-up, or drag an existing follow-up onto another hour to move it. Events with an unknown duration use a 30-minute visual marker; it is not a booked time range. Overlapping events share their time lane.</p></Disclosure>
+  <Disclosure title="How to use this calendar"><p className="mt-[var(--lms-space-2)] max-w-prose">Select an empty hour to add a recruiter follow-up. Select an existing follow-up to move it using the keyboard, or drag it to another hour. Events with an unknown duration use a 30-minute visual marker; it is not a booked time range. Overlapping events share their time lane.</p></Disclosure>
   <div tabIndex={0} role="region" aria-label="Recruiter follow-up weekly calendar, scroll horizontally for more days" className={"overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_0%,black_94%,transparent_100%)] bg-surface focus-ring "+weekStyles["grid"]}>
    <div className={"grid min-w-[56rem] "+weekStyles["weekColumns"]}>
     <div className={"sticky left-0 z-(--lms-z-raised) border-b border-r bg-surface "+weekStyles["corner"]}>IST</div>
