@@ -68,6 +68,7 @@ export function CollegeSlotManager({ options, row }: {
   const limit = options.programs.find(p => p.id === programId)?.durationTerms ?? 12;
   const locked = Boolean(row?.hasEnrollmentHistory);
   const knownIdentity = !row || Boolean(row.programId && row.semesterNumber);
+  const hasUnsavedChanges = open && snapshot() !== initialDraft.current;
 
   function snapshot() {
     return JSON.stringify({ programId, periodId, term, year, name, description, credits, minPick, maxPick });
@@ -218,16 +219,21 @@ export function CollegeSlotManager({ options, row }: {
     });
   }
 
-  return <div className="min-w-0">
+  return <div className="min-w-0 space-y-2">
     <Button aria-label={editing ? `Edit elective slot ${row?.name ?? ""}` : "New slot"} variant={editing ? "secondary" : "primary"} type="button" disabled={pending || row?.status === "ARCHIVED" || (!editing && options.programs.length === 0)}
       onClick={openEditor}
       className="min-h-11 w-full sm:w-auto md:min-h-9">
       {row ? "Edit slot" : "New slot"}
     </Button>
+    {!editing && options.programs.length === 0 ?
+      <p role="status" className="max-w-prose text-sm text-muted-foreground">Create a program in this college before adding elective slots.</p> : null}
     <Dialog open={open} onOpenChange={next => { if (!next) requestClose(); else openEditor(); }}
       title={editing ? "Edit Elective Slot" : "New Elective Slot"} dismissible={!pending}
       className="max-w-[640px]">
     <form ref={formRef} noValidate onSubmit={submit} className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
+      {editing?<p role="status" className="md:col-span-2 text-xs text-muted-foreground">
+        {hasUnsavedChanges ? "Unsaved changes. Save or cancel to review them." : "No changes to save yet."}
+      </p>:null}
       {row ? <p role="note" className="md:col-span-2 text-xs text-muted-foreground">
         {locked
           ? "Enrollment history exists. Program, semester, academic year, credits and choice limits are locked; name and description remain editable."
@@ -261,9 +267,9 @@ export function CollegeSlotManager({ options, row }: {
         className={fieldClass} value={minPick} onChange={event => setMinPick(event.target.value)} /></Field>
       <Field label="Maximum choices" error={fieldErrors["maxPick"]}><Input name="maxPick" aria-invalid={Boolean(fieldErrors["maxPick"])} disabled={locked} type="number" min={1} max={10} title="You can select up to 10 electives"
         className={fieldClass} value={maxPick} onChange={event => setMaxPick(event.target.value)} /></Field>
-      {error ? <p role="alert" className="md:col-span-2 text-sm text-error">{error}</p> : null}
+      {error ? <p role="alert" className="md:col-span-2 break-words text-sm text-error" id="elective-slot-form-error">{error}</p> : null}
       <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row md:col-span-2 [&>button]:min-h-11 [&>button]:w-full sm:[&>button]:w-auto md:[&>button]:min-h-9">
-        <Button variant="primary" type="submit" disabled={pending}
+        <Button variant="primary" type="submit" disabled={pending || (editing && !hasUnsavedChanges)}
           >
           {pending ? "Saving…" : editing ? "Save Changes" : "Create Slot"}
         </Button>
