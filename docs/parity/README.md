@@ -53,7 +53,9 @@ For manageable, independently reviewable UX work:
 3. **Pass checklist:** clear labels and information hierarchy; discoverable next action; preserved filter/search/deep-link state; useful loading/empty/error/success copy; focus/keyboard/touch/mobile behavior; accessible dialogs; regression-safe data and permissions. Preserve all already-working capabilities; do not reopen unrelated DB/API/security work.
 4. **Closure is evidence-backed:** record the scoped group and source paths **inside its existing** `docs/parity/<account>.md` page-family section, including changed commit, executed checks and desktop/mobile browser results. A source edit or authored test alone is `IMPLEMENTED / VERIFY`, **not UX CLOSED**. Do not create a parallel status spreadsheet or alter accepted DB/API/UI tracker tasks for cosmetic polish.
 
-**First scoped group:** `UX-NOTIF-01`, shared Notifications inbox journey, is documented in [shared-public-ops.md](shared-public-ops.md). Its shared-component regressions require review at all call sites.
+**Canonical group status board (2026-11-07):** `docs/tracker.json#uxReview.groups` contains 188 claimable groups covering the 2,080-entry registry snapshot plus 83 newer route-only entries. UX progress is separate from previously accepted DB/API/UI engineering packages and SECURITY controls; the board does not change `currentWorkstream: SECURITY`. Use `npm run ux:groups -- --summary`, `--unpicked --area learn`, `--group UX-G001`, or `--check`. Other chats use `--pick UX-Gxxx --by chat-id` then `--start` and finally `--done --evidence-file path`; claim mutations require a fresh `main` fetch/reconciliation before push. This is **inside the existing canonical tracker**, not a separate tracker. The entry list is a snapshot, not proof that no hidden surfaces remain.
+
+**First scoped group:** `UX-G001` (detailed acceptance label `UX-NOTIF-01`), shared Notifications inbox journey, is documented in [shared-public-ops.md](shared-public-ops.md). Its status is `DOING`, not `DONE`, until executed focused tests and desktop/mobile/shared-call-site proof are recorded.
 
 ### Stable page contract — required for *every* page before acceptance
 
