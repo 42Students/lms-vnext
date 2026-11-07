@@ -5,7 +5,7 @@ import { verifyTenantDomainWithRuntime } from "@/modules/tenant-domains/runtime"
 export const runtime = "nodejs";
 
 export const POST = route(
-  { auth: "user", permission: "college.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const { domainId } = params;

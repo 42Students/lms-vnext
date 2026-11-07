@@ -6,7 +6,7 @@ import {parseFacultyAssignmentMethodsQuery} from "@/modules/courses/faculty-assi
 
 export const runtime="nodejs";
 export const GET = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const context = __actor!;
     const {deliveryId}=params;

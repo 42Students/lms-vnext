@@ -90,4 +90,5 @@ describe("COURSES-BREAK-ROUTES-01 real Learner/Faculty course mutation route bou
 vi.mock("@/modules/permissions/policy", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/modules/permissions/policy")>()),
   requirePermission: () => undefined,
+  requireActorPermission: () => undefined,
 }));

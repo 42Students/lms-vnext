@@ -5,7 +5,7 @@ import { removeDriveDayCoordinator } from "@/modules/placements/drive-day-coordi
 export const runtime = "nodejs";
 
 export const DELETE = route(
-  { auth: "user", permission: "placements.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const { jobId, assignmentId } =

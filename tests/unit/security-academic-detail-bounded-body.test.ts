@@ -184,4 +184,5 @@ describe("section enrollment GET resource selector isolation", () => {
 vi.mock("@/modules/permissions/policy", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/modules/permissions/policy")>()),
   requirePermission: () => undefined,
+  requireActorPermission: () => undefined,
 }));

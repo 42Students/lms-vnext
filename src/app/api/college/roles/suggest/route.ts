@@ -6,7 +6,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 export const runtime="nodejs";
 export const GET = route(
-  { auth: "user", permission: "people.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {
     const context = actor!;
     if(!context.membership||!hasMembershipRole(context,"COLLEGE_ADMIN")||

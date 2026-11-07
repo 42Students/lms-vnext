@@ -115,6 +115,24 @@ export function extractApiMethods(source, fileName = "route.ts") {
       })(node);
       calls = [...inner].sort();
     }
+    // route()/internalRoute() whose callback delegates to a local handler (`({request}) => handlePOST(request)`): the guard calls
+    // that handler makes are this method's own guard calls, exactly as they were behind secured().
+    if (node) {
+      const inner = new Set(calls);
+      const seen = new Set();
+      const queue = [...calls];
+      while (queue.length) {
+        const c = queue.pop();
+        if (seen.has(c)) continue;
+        seen.add(c);
+        const body = localFunctions.get(c);
+        if (body && c !== name) {
+          wrappedBodies.push(body);
+          for (const x of calledIdentifiers(body)) { inner.add(x); queue.push(x); }
+        }
+      }
+      calls = [...inner].sort();
+    }
     // route() (auth other than "public") resolves the session and, for mutations, checks Origin; internalRoute() rejects
     // any Origin and demands a machine credential. webhookRoute() is signature-based and is credited with neither.
     // The identifier only counts when this file imports it from the central module (a local function named route() is not a guard).
@@ -206,6 +224,10 @@ export function inventoryApi(root = API_ROOT) {
 const REVIEWED_EVIDENCE_MOVES = [
   { file: "src/app/api/tracker/audit-findings/sync/route.ts", method: "POST", reason: "DIRECT_PERMISSION_EVIDENCE_REMOVED",
     rationale: "The persisted-grant check now runs inside the importer's write transaction (assertPersistedPlatformPermission in independent-audit-inbox-importer.ts); the handler keeps requirePermission via authorizedContext()." },
+  { file: "src/app/api/auth/session/route.ts", method: "POST", reason: "DIRECT_ORIGIN_EVIDENCE_REMOVED",
+    rationale: "POST is a thin alias that calls the exported DELETE route; DELETE's handler checks isSameOriginRequest before any cookie change, so the origin check still runs for every POST." },
+  { file: "src/app/api/projects/templates/[templateId]/route.ts", method: "PUT", reason: "DIRECT_PERMISSION_EVIDENCE_REMOVED",
+    rationale: "PUT is a version-checked alias that delegates to the exported PATCH route, whose handler resolves the actor and calls the template permission service; no write is possible through PUT without it." },
 ];
 export function directGuardEvidenceRegressions(beforeSource, afterSource, fileName = "route.ts") {
   const oldMethods = new Map(extractApiMethods(beforeSource, fileName)

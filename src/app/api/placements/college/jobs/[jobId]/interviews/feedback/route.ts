@@ -8,7 +8,7 @@ import {submitCollegeInterviewFeedback} from "@/modules/placements/college-round
 export const runtime="nodejs";
 type Props={params:Promise<{jobId:string}>};
 export const POST = route(
-  { auth: "user", permission: "placements.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     const {jobId}=params;

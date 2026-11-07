@@ -27,6 +27,6 @@ async function handleGET(request:Request){
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(
-  { auth: "user", permission: "admin-scope.select" },
+  { auth: "user", permission: "service-enforced" },
   ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
 );

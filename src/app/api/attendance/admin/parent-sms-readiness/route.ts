@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 
 /** Returns consent state only. Phone, evidence reference and SMS body stay private. */
 export const GET = route(
-  { auth: "user", permission: "academics.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const search = new URL(request.url).searchParams;

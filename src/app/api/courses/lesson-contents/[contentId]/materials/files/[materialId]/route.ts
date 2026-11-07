@@ -35,7 +35,7 @@ async function handlePOST(request:Request,context:Route){
  return act(request,context,"COMPLETE");
 }
 export const POST = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
 );
 async function handleDELETE(request:Request,context:Route){
@@ -44,7 +44,7 @@ async function handleDELETE(request:Request,context:Route){
  return act(request,context,"REMOVE");
 }
 export const DELETE = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as Parameters<typeof handleDELETE>[1]),
 );
 async function handlePATCH(request:Request,context:Route){
@@ -53,6 +53,6 @@ async function handlePATCH(request:Request,context:Route){
  return act(request,context,"EDIT");
 }
 export const PATCH = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   ({ request, params }) => handlePATCH(request as Parameters<typeof handlePATCH>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePATCH>[1]),
 );

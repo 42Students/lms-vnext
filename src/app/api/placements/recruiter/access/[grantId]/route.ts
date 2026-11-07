@@ -5,7 +5,7 @@ import { leaveOwnRecruiterCollegeAccess } from "@/modules/placements/recruiter-p
 export const runtime = "nodejs";
 
 export const DELETE = route(
-  { auth: "user", permission: "placements.recruiter.read" },
+  { auth: "user", permission: "service-enforced" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const { grantId } = params;

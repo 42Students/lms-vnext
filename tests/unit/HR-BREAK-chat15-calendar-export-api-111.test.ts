@@ -44,3 +44,5 @@ describe("HR-CALENDAR-API-111 actual read-only exporter",()=>{
   expect(m.calendar).not.toHaveBeenCalled();
  });
 });
+// These export routes now require a recent sign-in (step-up); the check itself is covered elsewhere.
+vi.mock("@/auth/recent-device-auth", () => ({ requireRecentDeviceAuthentication: vi.fn().mockResolvedValue(undefined) }));

@@ -155,6 +155,6 @@ async function handleGET(request: Request) {
   });
 }
 export const GET = route(
-  { auth: "user", permission: "admin-scope.select", stepUp: true },
+  { auth: "user", permission: "service-enforced", stepUp: true },
   ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
 );

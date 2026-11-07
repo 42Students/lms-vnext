@@ -25,7 +25,7 @@ export const GET = route(
 );
 
 export const POST = route(
-  { auth: "user", permission: "placements.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const body = await boundedRequestJson(request);

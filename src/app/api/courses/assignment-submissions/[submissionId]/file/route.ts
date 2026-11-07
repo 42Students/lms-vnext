@@ -56,6 +56,6 @@ async function handleGET(
   }
 }
 export const GET = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
 );

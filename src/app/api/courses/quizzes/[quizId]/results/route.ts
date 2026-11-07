@@ -42,7 +42,7 @@ async function handlePOST(
   }
 }
 export const POST = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
 );
 
@@ -52,6 +52,6 @@ async function handlePATCH(request: Request, route: RouteContext) {
   return POST(request, route);
 }
 export const PATCH = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   ({ request, params }) => handlePATCH(request as Parameters<typeof handlePATCH>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePATCH>[1]),
 );

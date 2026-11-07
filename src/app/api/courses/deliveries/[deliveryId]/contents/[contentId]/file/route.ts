@@ -148,6 +148,6 @@ async function handleGET(request:Request,{params}:RouteContext){
  }});
 }
 export const GET = route(
-  { auth: "user", permission: "courses.manage", repeatableQuery: ["download", "materialId", "index"] },
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["download", "materialId", "index"] },
   ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
 );

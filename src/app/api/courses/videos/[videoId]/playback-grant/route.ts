@@ -5,7 +5,7 @@ import { issueVideoPlaybackGrant } from "@/modules/courses/lesson-video-service"
 export const runtime = "nodejs";
 
 export const POST = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { videoId } = params;

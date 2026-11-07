@@ -4,7 +4,7 @@ import {listAssignmentSubmissionLinks} from "@/modules/courses/assignment-submis
 
 export const runtime="nodejs";
 export const GET = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const {submissionId}=params;

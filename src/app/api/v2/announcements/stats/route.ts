@@ -33,6 +33,6 @@ async function handleGET() {
   }
 }
 export const GET = route(
-  { auth: "user", permission: "admin-scope.select" },
+  { auth: "user", permission: "service-enforced" },
   () => handleGET(),
 );

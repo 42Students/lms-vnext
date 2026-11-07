@@ -12,7 +12,7 @@ type Route = { params: Promise<{ templateId: string }> };
  * Uses immutable UUID template IDs and cookie-backed Super Admin auth.
  */
 export const GET = route(
-  { auth: "user", permission: "project-template.read" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     const {templateId} = params;

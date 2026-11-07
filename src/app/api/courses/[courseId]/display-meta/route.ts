@@ -13,7 +13,7 @@ export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const privateHeaders={"Cache-Control":"private, no-store",Vary:"Cookie"} as const;
 export const GET = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ context: __actor, params }) => {
     const context = __actor!;
     try {

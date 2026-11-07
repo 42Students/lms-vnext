@@ -10,7 +10,7 @@ type Route={params:Promise<{contentId:string}>};
 const noStore={"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"};
 
 export const POST = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     const {contentId}=params;

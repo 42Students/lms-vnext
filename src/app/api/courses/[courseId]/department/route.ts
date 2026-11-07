@@ -9,7 +9,7 @@ export const runtime="nodejs";
 /** A same-college department reassignment is possible only without any
  * offering history. The service locks, authorizes and audits the move. */
 export const POST = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const {courseId}=params;

@@ -94,3 +94,6 @@ describe("PROJ-BREAK-MENTOR-55..59 real HTTP route handler input trust boundarie
   expect(state.calls).toHaveLength(0);
  });
 });
+
+// These export routes now require a recent sign-in (step-up); the check itself is covered elsewhere.
+vi.mock("@/auth/recent-device-auth", () => ({ requireRecentDeviceAuthentication: vi.fn().mockResolvedValue(undefined) }));

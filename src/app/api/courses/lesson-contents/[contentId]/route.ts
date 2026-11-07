@@ -24,7 +24,7 @@ export const GET = route(
 );
 
 export const PATCH = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { contentId } = params;

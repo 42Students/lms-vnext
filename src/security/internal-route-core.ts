@@ -46,10 +46,13 @@ export type InternalRouteConfig<B> = {
 };
 
 const MIN_SECRET_BYTES = 32;
+const MAX_SECRET_BYTES = 256;
 
 export function credentialMatches(provided: string | null, expected: string | undefined): boolean {
   if (!provided || !expected) return false;
-  if (Buffer.byteLength(expected, "utf8") < MIN_SECRET_BYTES) return false;
+  const bytes = Buffer.byteLength(expected, "utf8");
+  // A short, oversized, padded or whitespace-containing server secret is a misconfiguration, never a pass.
+  if (bytes < MIN_SECRET_BYTES || bytes > MAX_SECRET_BYTES || expected !== expected.trim() || /\s/u.test(expected)) return false;
   const a = Buffer.from(provided, "utf8");
   const b = Buffer.from(expected, "utf8");
   return a.length === b.length && timingSafeEqual(a, b);

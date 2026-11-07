@@ -10,7 +10,7 @@ import {
 export const runtime = "nodejs";
 
 export const PATCH = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { lessonId } = params;
@@ -47,7 +47,7 @@ export const PATCH = route(
  * not the old Spring/Axios API or a third-party messaging channel.
  */
 export const DELETE = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const { lessonId } = params;

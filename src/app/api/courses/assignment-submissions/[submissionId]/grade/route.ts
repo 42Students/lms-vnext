@@ -9,7 +9,7 @@ import { gradeAssignmentSubmissionInputSchema } from "@/modules/courses/assignme
 export const runtime = "nodejs";
 
 export const PATCH = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { submissionId } = params;

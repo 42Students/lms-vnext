@@ -94,7 +94,7 @@ describe("learner private profile endpoint",()=>{
   expect(m.save).not.toHaveBeenCalled();
  });
  it("retains no-store on the public profile API discovery response",async()=>{
-  const res=await OPTIONS();
+  const res=await OPTIONS(new Request("https://campus.example.test/api/profile/me",{method:"OPTIONS"}));
   expect(res.status).toBe(200);
   expect(res.headers.get("cache-control")).toBe("no-store");
  });

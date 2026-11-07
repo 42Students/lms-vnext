@@ -63,3 +63,5 @@ describe("HR-PROPOSAL-API-101 employer discussion export",()=>{
   expect(m.error).toHaveBeenCalledTimes(1);
  });
 });
+// These export routes now require a recent sign-in (step-up); the check itself is covered elsewhere.
+vi.mock("@/auth/recent-device-auth", () => ({ requireRecentDeviceAuthentication: vi.fn().mockResolvedValue(undefined) }));

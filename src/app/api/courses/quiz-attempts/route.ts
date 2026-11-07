@@ -7,7 +7,7 @@ import {
 export const runtime = "nodejs";
 
 export const GET = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const url = new URL(request.url);

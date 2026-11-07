@@ -8,7 +8,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {retryQueuedAttendanceParentSmsForCollege} from "@/modules/attendance/parent-sms-service";
 export const runtime="nodejs";
 export const POST = route(
-  { auth: "user", permission: "academics.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const input=z.object({collegeId:z.string().uuid()}).strict().parse(await boundedRequestJson(request));

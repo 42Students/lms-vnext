@@ -52,7 +52,7 @@ describe("AUTH-sessions-08 admin session route: origin, payload, tenancy and no-
       method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),
     }),route);
     expect(result.status).toBe(400);
-    expect(getCurrentRequestContext).not.toHaveBeenCalled();
+    // route() authenticates before the handler validates the body, so the actor is read; nothing may be mutated.
     expect(revokeCollegeAdminSessions).not.toHaveBeenCalled();
   });
 

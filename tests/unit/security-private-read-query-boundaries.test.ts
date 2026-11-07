@@ -150,4 +150,5 @@ describe("own-recipient notifications query boundary", () => {
 vi.mock("@/modules/permissions/policy", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/modules/permissions/policy")>()),
   requirePermission: () => undefined,
+  requireActorPermission: () => undefined,
 }));

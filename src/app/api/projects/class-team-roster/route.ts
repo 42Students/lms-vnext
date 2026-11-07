@@ -8,7 +8,7 @@ import { loadClassTeamRoster } from "@/modules/projects/class-team-roster-servic
 export const runtime = "nodejs";
 const querySchema = z.object({ collegeId: z.string().uuid(), classId: z.string().uuid() }).strict();
 export const GET = route(
-  { auth: "user", permission: "projects.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const url = new URL(request.url);

@@ -34,10 +34,12 @@ describe("SA-colleges-admins-R02 administrator history export isolation",()=>{
  ])("refuses malformed/ambiguous export URL %s before any history read",async query=>{
   const response=await GET(url(query),params);
   expect(response.status).toBe(400);
-  expect(await response.text()).toContain("Choose a valid history page");
+  // A repeated key is refused centrally (INVALID_REQUEST) before authentication; every other bad shape reaches the handler after it.
+  const centrallyRejected=query==="page=1&page=2";
+  expect(await response.text()).toContain(centrallyRejected?"INVALID_REQUEST":"Choose a valid history page");
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   expect(mocks.history).not.toHaveBeenCalled();
-  expect(mocks.context).not.toHaveBeenCalled();
+  if(centrallyRejected)expect(mocks.context).not.toHaveBeenCalled();
  });
  it("exports the authorized page with a BOM, safe headers, and the scoped context",async()=>{
   const response=await GET(url("page=2"),params);
@@ -58,3 +60,6 @@ describe("SA-colleges-admins-R02 administrator history export isolation",()=>{
   );
  });
 });
+
+// These export routes now require a recent sign-in (step-up); the check itself is covered elsewhere.
+vi.mock("@/auth/recent-device-auth", () => ({ requireRecentDeviceAuthentication: vi.fn().mockResolvedValue(undefined) }));

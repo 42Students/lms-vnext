@@ -72,7 +72,8 @@ describe("machine-only notification scheduler",()=>{
    const response=await scheduledNotification(req(schedulerUrl,{
     headers:{"x-notification-scheduler-key":key},body,
    }));
-   expect(response.status).toBe(503);
+   // internalRoute() treats a missing, short, padded or oversized server secret as a denial (403), never as a pass.
+   expect(response.status).toBe(403);
   }
   expect(scheduler).not.toHaveBeenCalled();
  });

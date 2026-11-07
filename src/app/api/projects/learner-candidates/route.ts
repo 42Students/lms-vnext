@@ -7,7 +7,7 @@ import { listStandaloneProjectLearnerCandidates } from "@/modules/projects/class
 
 export const runtime="nodejs";
 export const GET = route(
-  { auth: "user", permission: "projects.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const input=z.strictObject({

@@ -30,7 +30,7 @@ import {GET as learnerWorkspaceRoute} from "@/app/api/courses/learner/workspace/
 const quizId="11111111-1111-4111-8111-111111111111";
 const assignmentId="22222222-2222-4222-8222-222222222222";
 const deliveryId="33333333-3333-4333-8333-333333333333";
-const actor={user:{id:"44444444-4444-4444-8444-444444444444"}};
+const actor={user:{id:"44444444-4444-4444-8444-444444444444",identityUid:"44444444-4444-4444-8444-444444444444",platformStatus:"ACTIVE",systemRoles:[]},membership:{id:"membership-1",collegeId:"college-1",organizationId:"org-1",status:"ACTIVE",roles:["LEARNER"]},adminScope:null};
 const quizParams={params:Promise.resolve({quizId})};
 const assignmentParams={params:Promise.resolve({assignmentId})};
 const post=(path:string,body:unknown)=>new Request("https://campus.invalid"+path,{
@@ -131,4 +131,5 @@ describe("COURSES7-07 / COURSES7-08 authenticated learner assessment HTTP bounda
 vi.mock("@/modules/permissions/policy", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/modules/permissions/policy")>()),
   requirePermission: () => undefined,
+  requireActorPermission: () => undefined,
 }));

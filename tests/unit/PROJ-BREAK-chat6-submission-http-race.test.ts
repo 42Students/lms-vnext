@@ -85,4 +85,5 @@ describe("PROJ-BREAK-submissions-10/11 authenticating shared draft writes at HTT
 vi.mock("@/modules/permissions/policy", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/modules/permissions/policy")>()),
   requirePermission: () => undefined,
+  requireActorPermission: () => undefined,
 }));

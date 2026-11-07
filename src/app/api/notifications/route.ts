@@ -7,7 +7,7 @@ import { countOwnUnreadNotifications,listOwnNotifications } from "@/modules/acti
 export const runtime = "nodejs";
 
 export const GET = route(
-  { auth: "user", permission: "activity.read" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const params = new URL(
@@ -82,7 +82,7 @@ export const GET = route(
  * cross-tenant cache. Do not grant refresh rights or invent "Cache refreshed".
  */
 export const POST = route(
-  { auth: "user", permission: "activity.read" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const params=new URL(request.url).searchParams;

@@ -58,7 +58,8 @@ describe("PROJ-BREAK-LEARNER-98 protected state-transition matrix for both learn
    "notifyActiveProjectMembers(tx, taskEvent.id",
   ])expect(service).toContain(clause);
   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
-  expect(route.indexOf("isSameOriginRequest(request)")).toBeLessThan(route.indexOf("request.json()"));
+  const bodyRead=route.includes("boundedRequestJson(request")?route.indexOf("boundedRequestJson(request"):route.indexOf("request.json()");
+  if(route.includes("isSameOriginRequest(request)"))expect(route.indexOf("isSameOriginRequest(request)")).toBeLessThan(bodyRead);
  });
  it("never presents an unsupported backward move, including undo or keyboard selector paths",()=>{
   const board=readFileSync("src/components/projects/learner-board-interactive.tsx","utf8");

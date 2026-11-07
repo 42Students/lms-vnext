@@ -8,7 +8,7 @@ import {createLearnerAssignmentResourceReadGrant}
 export const runtime="nodejs";
 type Params={params:Promise<{deliveryId:string;assignmentId:string;resourceId:string}>};
 export const GET = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ context: __actor, params }) => {
     const __ctx = __actor!;
     const {deliveryId,assignmentId,resourceId}=params;

@@ -6,7 +6,7 @@ import { correctAdminAttendance } from "@/modules/attendance/admin-service";
 export const runtime = "nodejs";
 
 export const PATCH = route(
-  { auth: "user", permission: "academics.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { scheduleEventId } = params;

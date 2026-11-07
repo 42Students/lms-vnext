@@ -173,8 +173,13 @@ describe("state-changing API routes", () => {
           "src/modules/storage/scan-verdict-request-guard.ts"),"utf8"):"";
       if(delegate)expect(source).toContain("scannerCallbackRequestRejection(");
       const implementation=source+"\\n"+delegate;
-      expect(implementation).toContain('request.headers.has("origin")');
-      expect(implementation).toContain("timingSafeEqual(");
+      if(source.includes("internalRoute(")){
+        // internalRoute() rejects any browser Origin and compares the credential in constant time, centrally.
+        expect(source).toContain('from "@/security/internal-route"');
+      }else{
+        expect(implementation).toContain('request.headers.has("origin")');
+        expect(implementation).toContain("timingSafeEqual(");
+      }
       expect(implementation).toContain(secretName);
       expect(implementation).toContain(headerName);
       expect(source).not.toContain("getCurrentRequestContext");

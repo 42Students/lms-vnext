@@ -7,7 +7,7 @@ import { listProjectTeamClasses } from "@/modules/projects/class-team-roster-ser
 
 export const runtime = "nodejs";
 export const GET = route(
-  { auth: "user", permission: "projects.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const url = new URL(request.url);

@@ -5,7 +5,7 @@ import { listLessonVideosForViewer } from "@/modules/courses/lesson-video-servic
 export const runtime = "nodejs";
 
 export const GET = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { lessonId } = params;

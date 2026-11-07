@@ -67,9 +67,15 @@
   "src/app/api/academics/enrollments/route.ts": {
    "service-enforced": 2
   },
+  "src/app/api/academics/faculty-assignments/[assignmentId]/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/academics/faculty-assignments/route.ts": {
    "direct-db-in-route": 1,
    "service-enforced": 3
+  },
+  "src/app/api/academics/faculty-suggestions/route.ts": {
+   "service-enforced": 1
   },
   "src/app/api/academics/periods/route.ts": {
    "service-enforced": 2
@@ -187,6 +193,9 @@
   "src/app/api/admin/faculty-assignment/export/route.ts": {
    "service-enforced": 1
   },
+  "src/app/api/admin/faculty-assignment/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/admin/faculty/bulk-import/route.ts": {
    "direct-db-in-route": 1,
    "service-enforced": 1
@@ -197,6 +206,9 @@
   "src/app/api/admin/faculty/memberships/[membershipId]/retire/route.ts": {
    "direct-db-in-route": 1,
    "service-enforced": 2
+  },
+  "src/app/api/admin/faculty/schedules/reassign/route.ts": {
+   "service-enforced": 1
   },
   "src/app/api/admin/faculty/search/route.ts": {
    "service-enforced": 2
@@ -337,16 +349,37 @@
    "direct-db-in-route": 1,
    "service-enforced": 1
   },
+  "src/app/api/announcements/[announcementId]/restore/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/announcements/[announcementId]/route.ts": {
+   "service-enforced": 2
+  },
   "src/app/api/announcements/admin/route.ts": {
    "service-enforced": 2
   },
   "src/app/api/announcements/mine/route.ts": {
    "service-enforced": 1
   },
+  "src/app/api/attendance/admin/current-record/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/attendance/admin/departments/export/route.ts": {
    "service-enforced": 1
   },
+  "src/app/api/attendance/admin/parent-contacts/retry/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/attendance/admin/parent-contacts/route.ts": {
+   "service-enforced": 2
+  },
+  "src/app/api/attendance/admin/parent-sms-readiness/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/attendance/admin/policy/route.ts": {
+   "service-enforced": 4
+  },
+  "src/app/api/attendance/admin/sessions/[scheduleEventId]/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/attendance/faculty/route.ts": {
@@ -377,8 +410,12 @@
   "src/app/api/college/contacts/export/route.ts": {
    "service-enforced": 1
   },
+  "src/app/api/college/course-progress/learners/[membershipId]/contents/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/college/course-progress/start-attempt/route.ts": {
-   "direct-db-in-route": 1
+   "direct-db-in-route": 1,
+   "service-enforced": 1
   },
   "src/app/api/college/departments/[departmentId]/route.ts": {
    "service-enforced": 2
@@ -427,7 +464,8 @@
    "service-enforced": 2
   },
   "src/app/api/college/roles/suggest/route.ts": {
-   "direct-db-in-route": 1
+   "direct-db-in-route": 1,
+   "service-enforced": 1
   },
   "src/app/api/college/students/[membershipId]/section/route.ts": {
    "service-enforced": 2
@@ -482,8 +520,12 @@
   "src/app/api/company-share/[token]/email-code/route.ts": {
    "service-enforced": 1
   },
+  "src/app/api/courses/[courseId]/department/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/courses/[courseId]/display-meta/route.ts": {
-   "direct-db-in-route": 1
+   "direct-db-in-route": 1,
+   "service-enforced": 1
   },
   "src/app/api/courses/[courseId]/display/route.ts": {
    "service-enforced": 2
@@ -497,14 +539,45 @@
   "src/app/api/courses/[courseId]/image/status/route.ts": {
    "service-enforced": 1
   },
+  "src/app/api/courses/[courseId]/restore/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/courses/[courseId]/route.ts": {
    "direct-db-in-route": 1,
    "service-enforced": 3
   },
+  "src/app/api/courses/admin-content-export/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/assignment-submission-files/[fileId]/download-grant/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/assignment-submissions/[submissionId]/descriptive-points/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/assignment-submissions/[submissionId]/file/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/assignment-submissions/[submissionId]/files/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/assignment-submissions/[submissionId]/grade/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/assignment-submissions/[submissionId]/links/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/assignment-submissions/[submissionId]/publish/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/courses/assignment-submissions/route.ts": {
-   "direct-db-in-route": 1
+   "direct-db-in-route": 1,
+   "service-enforced": 1
   },
   "src/app/api/courses/assignments/[assignmentId]/file-upload/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/assignments/[assignmentId]/methods/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/courses/assignments/[assignmentId]/my-submission/route.ts": {
@@ -523,6 +596,12 @@
    "service-enforced": 1
   },
   "src/app/api/courses/assignments/[assignmentId]/submission-files/route.ts": {
+   "service-enforced": 2
+  },
+  "src/app/api/courses/assignments/[assignmentId]/submit-files/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/assignments/[assignmentId]/submit/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/courses/assignments/[assignmentId]/transition/route.ts": {
@@ -535,7 +614,11 @@
    "service-enforced": 1
   },
   "src/app/api/courses/by-slug/[slug]/route.ts": {
-   "direct-db-in-route": 1
+   "direct-db-in-route": 1,
+   "service-enforced": 1
+  },
+  "src/app/api/courses/college-content-authoring/route.ts": {
+   "service-enforced": 1
   },
   "src/app/api/courses/college-content-visibility/route.ts": {
    "service-enforced": 1
@@ -543,11 +626,24 @@
   "src/app/api/courses/college-lesson-visibility/route.ts": {
    "service-enforced": 2
   },
+  "src/app/api/courses/college/assignments/[deliveryId]/submissions/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/college/learner-progress/export/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/courses/deliveries/[deliveryId]/assignments/[assignmentId]/materials/route.ts": {
    "service-enforced": 3
   },
+  "src/app/api/courses/deliveries/[deliveryId]/assignments/[assignmentId]/resources/[resourceId]/url/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/deliveries/[deliveryId]/assignments/[assignmentId]/resources/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/courses/deliveries/[deliveryId]/contents/[contentId]/file/route.ts": {
-   "direct-db-in-route": 1
+   "direct-db-in-route": 1,
+   "service-enforced": 1
   },
   "src/app/api/courses/deliveries/[deliveryId]/discussions/[messageId]/route.ts": {
    "service-enforced": 2
@@ -561,10 +657,19 @@
   "src/app/api/courses/deliveries/[deliveryId]/discussions/route.ts": {
    "service-enforced": 2
   },
+  "src/app/api/courses/deliveries/[deliveryId]/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/courses/deliveries/route.ts": {
    "service-enforced": 2
   },
+  "src/app/api/courses/faculty/assignment-stats/route.ts": {
+   "service-enforced": 2
+  },
   "src/app/api/courses/faculty/assignments/[deliveryId]/command/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/faculty/assignments/[deliveryId]/methods/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/courses/faculty/assignments/[deliveryId]/resources/route.ts": {
@@ -591,6 +696,9 @@
   "src/app/api/courses/faculty/reports/[kind]/[assessmentId]/csv/route.ts": {
    "service-enforced": 1
   },
+  "src/app/api/courses/faculty/reports/quiz/[quizId]/question-csv/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/courses/faculty/response-followups/csv/route.ts": {
    "service-enforced": 1
   },
@@ -598,31 +706,77 @@
    "service-enforced": 1
   },
   "src/app/api/courses/faculty/shell-counts/route.ts": {
-   "direct-db-in-route": 1
+   "direct-db-in-route": 1,
+   "service-enforced": 1
+  },
+  "src/app/api/courses/learner/due-notices/route.ts": {
+   "service-enforced": 1
   },
   "src/app/api/courses/learner/route.ts": {
    "direct-db-in-route": 1,
    "service-enforced": 1
   },
-  "src/app/api/courses/learning-paths/route.ts": {
+  "src/app/api/courses/learner/workspace/route.ts": {
    "service-enforced": 1
+  },
+  "src/app/api/courses/learning-paths/[learningPathId]/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/learning-paths/[learningPathId]/transition/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/learning-paths/route.ts": {
+   "service-enforced": 2
   },
   "src/app/api/courses/lesson-contents/[contentId]/discussions/route.ts": {
    "service-enforced": 2
+  },
+  "src/app/api/courses/lesson-contents/[contentId]/materials/[materialId]/url/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/lesson-contents/[contentId]/materials/files/[materialId]/route.ts": {
+   "service-enforced": 3
+  },
+  "src/app/api/courses/lesson-contents/[contentId]/materials/files/route.ts": {
+   "service-enforced": 1
   },
   "src/app/api/courses/lesson-contents/[contentId]/materials/route.ts": {
    "service-enforced": 2
   },
   "src/app/api/courses/lesson-contents/[contentId]/route.ts": {
+   "service-enforced": 2
+  },
+  "src/app/api/courses/lesson-contents/[contentId]/transition/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/lesson-contents/order/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/courses/lesson-contents/route.ts": {
    "service-enforced": 2
   },
+  "src/app/api/courses/lessons/[lessonId]/learner-videos/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/lessons/[lessonId]/restore/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/lessons/[lessonId]/route.ts": {
+   "service-enforced": 2
+  },
   "src/app/api/courses/lessons/[lessonId]/videos/route.ts": {
+   "service-enforced": 2
+  },
+  "src/app/api/courses/lessons/reorder-all/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/lessons/reorder/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/courses/lessons/route.ts": {
+   "service-enforced": 2
+  },
+  "src/app/api/courses/offerings/[offeringId]/route.ts": {
    "service-enforced": 2
   },
   "src/app/api/courses/offerings/route.ts": {
@@ -631,17 +785,29 @@
   "src/app/api/courses/progress/[contentId]/route.ts": {
    "service-enforced": 3
   },
+  "src/app/api/courses/quiz-attempts/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/courses/quizzes/[quizId]/faculty-results/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/courses/quizzes/[quizId]/my-attempts/route.ts": {
    "service-enforced": 1
   },
+  "src/app/api/courses/quizzes/[quizId]/results/route.ts": {
+   "service-enforced": 2
+  },
   "src/app/api/courses/quizzes/[quizId]/route.ts": {
    "direct-db-in-route": 1,
    "service-enforced": 4
   },
+  "src/app/api/courses/quizzes/[quizId]/submit/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/courses/quizzes/[quizId]/transition/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/quizzes/my-attempts/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/courses/quizzes/route.ts": {
@@ -662,6 +828,21 @@
   "src/app/api/courses/teaching-assignments/route.ts": {
    "service-enforced": 2
   },
+  "src/app/api/courses/videos/[videoId]/complete/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/videos/[videoId]/playback-grant/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/videos/[videoId]/route.ts": {
+   "service-enforced": 2
+  },
+  "src/app/api/courses/videos/[videoId]/thumbnail/complete/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/courses/videos/[videoId]/thumbnail/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/departments/[departmentId]/route.ts": {
    "service-enforced": 2
   },
@@ -670,6 +851,9 @@
   },
   "src/app/api/dev/e2e/manifest/route.ts": {
    "direct-db-in-route": 1,
+   "service-enforced": 1
+  },
+  "src/app/api/e2e/seed/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/features/me/route.ts": {
@@ -780,6 +964,9 @@
   "src/app/api/notifications/read-all/route.ts": {
    "service-enforced": 1
   },
+  "src/app/api/notifications/route.ts": {
+   "service-enforced": 2
+  },
   "src/app/api/notifications/staff-read/route.ts": {
    "service-enforced": 1
   },
@@ -883,11 +1070,23 @@
   "src/app/api/placements/college/jobs/[jobId]/archive/route.ts": {
    "service-enforced": 2
   },
+  "src/app/api/placements/college/jobs/[jobId]/company/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/placements/college/jobs/[jobId]/duplicate/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/placements/college/jobs/[jobId]/extend-deadline/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/college/jobs/[jobId]/interviews/[interviewId]/feedback/route.ts": {
    "service-enforced": 2
+  },
+  "src/app/api/placements/college/jobs/[jobId]/interviews/feedback/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/placements/college/jobs/[jobId]/interviews/preview/route.ts": {
+   "service-enforced": 1
   },
   "src/app/api/placements/college/jobs/[jobId]/interviews/route.ts": {
    "service-enforced": 2
@@ -895,16 +1094,37 @@
   "src/app/api/placements/college/jobs/[jobId]/pipeline/route.ts": {
    "service-enforced": 2
   },
+  "src/app/api/placements/college/jobs/[jobId]/pipeline/undo/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/placements/college/jobs/[jobId]/reopen/route.ts": {
    "service-enforced": 1
   },
-  "src/app/api/placements/companies/[relationshipId]/history/route.ts": {
+  "src/app/api/placements/college/learners/[membershipId]/summary/route.ts": {
    "service-enforced": 1
+  },
+  "src/app/api/placements/college/students/[membershipId]/profile/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/placements/college/students/[membershipId]/resume/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/placements/companies/[relationshipId]/history/route.ts": {
+   "service-enforced": 2
+  },
+  "src/app/api/placements/companies/[relationshipId]/restore/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/placements/companies/[relationshipId]/route.ts": {
+   "service-enforced": 2
   },
   "src/app/api/placements/companies/route.ts": {
-   "service-enforced": 1
+   "service-enforced": 2
   },
   "src/app/api/placements/drive-day/[roundId]/attendance/export/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/placements/drive-day/[roundId]/attendance/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/drive-day/[roundId]/no-shows/export/route.ts": {
@@ -916,7 +1136,13 @@
   "src/app/api/placements/drive-day/mine/route.ts": {
    "actor-owned": 1
   },
+  "src/app/api/placements/interviews/withdrawal-request/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/placements/job-types/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/placements/jobs/[jobId]/applicants/export/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/jobs/[jobId]/applications/route.ts": {
@@ -932,7 +1158,16 @@
    "direct-db-in-route": 1,
    "service-enforced": 2
   },
+  "src/app/api/placements/jobs/[jobId]/coordinators/[assignmentId]/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/placements/jobs/[jobId]/coordinators/route.ts": {
+   "service-enforced": 2
+  },
+  "src/app/api/placements/jobs/[jobId]/delete-impact/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/placements/jobs/[jobId]/drive-day/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/jobs/[jobId]/eligibility-policy/route.ts": {
@@ -945,7 +1180,7 @@
    "service-enforced": 1
   },
   "src/app/api/placements/jobs/[jobId]/evaluation-config/route.ts": {
-   "service-enforced": 1
+   "service-enforced": 2
   },
   "src/app/api/placements/jobs/[jobId]/offers/[offerId]/letter/route.ts": {
    "service-enforced": 2
@@ -956,11 +1191,20 @@
   "src/app/api/placements/jobs/[jobId]/offers/lifecycle/route.ts": {
    "service-enforced": 1
   },
+  "src/app/api/placements/jobs/[jobId]/requests/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/placements/jobs/[jobId]/roles/[roleOptionId]/route.ts": {
+   "service-enforced": 2
+  },
   "src/app/api/placements/jobs/[jobId]/roles/route.ts": {
+   "service-enforced": 2
+  },
+  "src/app/api/placements/jobs/[jobId]/rounds/reorder/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/jobs/[jobId]/rounds/route.ts": {
-   "service-enforced": 1
+   "service-enforced": 2
   },
   "src/app/api/placements/jobs/[jobId]/route.ts": {
    "service-enforced": 4
@@ -1032,6 +1276,9 @@
    "actor-owned": 3
   },
   "src/app/api/placements/recorded-outside/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/placements/recruiter/access/[grantId]/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/recruiter/activity/export/route.ts": {
@@ -1125,6 +1372,9 @@
   "src/app/api/placements/recruiter/profile/details/route.ts": {
    "service-enforced": 1
   },
+  "src/app/api/placements/recruiter/profile/name/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/placements/recruiter/profile/route.ts": {
    "direct-db-in-route": 1,
    "service-enforced": 2
@@ -1141,8 +1391,11 @@
   "src/app/api/placements/recruiter/team/export/route.ts": {
    "service-enforced": 1
   },
-  "src/app/api/placements/recruiters/route.ts": {
+  "src/app/api/placements/recruiters/[grantId]/route.ts": {
    "service-enforced": 1
+  },
+  "src/app/api/placements/recruiters/route.ts": {
+   "service-enforced": 2
   },
   "src/app/api/placements/registration/route.ts": {
    "service-enforced": 2
@@ -1181,11 +1434,14 @@
   "src/app/api/placements/results/me/route.ts": {
    "actor-owned": 1
   },
+  "src/app/api/placements/rounds/[roundId]/actions/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/placements/rounds/[roundId]/results/route.ts": {
    "service-enforced": 2
   },
   "src/app/api/placements/rounds/[roundId]/route.ts": {
-   "service-enforced": 1
+   "service-enforced": 2
   },
   "src/app/api/placements/seasons/[seasonId]/actions/route.ts": {
    "service-enforced": 1
@@ -1471,6 +1727,9 @@
   "src/app/api/placements/tpo/leads/views/route.ts": {
    "service-enforced": 2
   },
+  "src/app/api/placements/tpo/messages/notifications/read/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/placements/tpo/messages/pulse/route.ts": {
    "service-enforced": 1
   },
@@ -1644,6 +1903,9 @@
   "src/app/api/placements/tpo/students/saved-views/route.ts": {
    "service-enforced": 2
   },
+  "src/app/api/placements/tpo/team/asks/[askId]/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/placements/tpo/team/asks/route.ts": {
    "service-enforced": 1
   },
@@ -1710,11 +1972,17 @@
   "src/app/api/profile/learner/default-resume/route.ts": {
    "service-enforced": 2
   },
+  "src/app/api/profile/me/contacts/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/profile/me/education-config/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/profile/me/route.ts": {
    "service-enforced": 3
+  },
+  "src/app/api/profile/me/sections/route.ts": {
+   "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/activity/route.ts": {
    "service-enforced": 1
@@ -1842,8 +2110,17 @@
   "src/app/api/projects/[projectId]/resource-audit/route.ts": {
    "service-enforced": 1
   },
-  "src/app/api/projects/[projectId]/resource-files/route.ts": {
+  "src/app/api/projects/[projectId]/resource-files/[fileId]/complete/route.ts": {
    "service-enforced": 1
+  },
+  "src/app/api/projects/[projectId]/resource-files/[fileId]/download-grant/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/projects/[projectId]/resource-files/[fileId]/route.ts": {
+   "service-enforced": 2
+  },
+  "src/app/api/projects/[projectId]/resource-files/route.ts": {
+   "service-enforced": 2
   },
   "src/app/api/projects/[projectId]/resources/[resourceId]/route.ts": {
    "service-enforced": 2
@@ -1920,7 +2197,16 @@
   "src/app/api/projects/[projectId]/submissions/[submissionId]/review/route.ts": {
    "service-enforced": 1
   },
+  "src/app/api/projects/[projectId]/submissions/[submissionId]/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/projects/[projectId]/submissions/[submissionId]/submit/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/projects/[projectId]/submissions/route.ts": {
+   "service-enforced": 2
+  },
+  "src/app/api/projects/[projectId]/tasks/[taskId]/assignee/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/projects/[projectId]/tasks/[taskId]/comments/route.ts": {
@@ -1977,6 +2263,12 @@
   "src/app/api/projects/[projectId]/undelete/route.ts": {
    "service-enforced": 1
   },
+  "src/app/api/projects/class-team-classes/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/projects/class-team-roster/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/projects/class-team-workspaces/route.ts": {
    "service-enforced": 1
   },
@@ -1984,6 +2276,9 @@
    "service-enforced": 2
   },
   "src/app/api/projects/deleted/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/projects/learner-candidates/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/projects/legacy/[legacyId]/route.ts": {
@@ -2031,6 +2326,9 @@
   "src/app/api/projects/templates/[templateId]/unpublish/route.ts": {
    "service-enforced": 1
   },
+  "src/app/api/projects/templates/[templateId]/versions/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/projects/templates/route.ts": {
    "service-enforced": 2
   },
@@ -2046,6 +2344,15 @@
    "service-enforced": 1
   },
   "src/app/api/teacher/classes/[deliveryId]/learners/search/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/tenant-domains/[domainId]/ensure-token/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/tenant-domains/[domainId]/route.ts": {
+   "service-enforced": 2
+  },
+  "src/app/api/tenant-domains/[domainId]/verify/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/tenant-domains/route.ts": {
@@ -2087,6 +2394,9 @@
   "src/app/api/tracker/audit-findings/export/route.ts": {
    "service-enforced": 1
   },
+  "src/app/api/tracker/audit-findings/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/tracker/audit-findings/sync/route.ts": {
    "service-enforced": 2
   },
@@ -2122,6 +2432,9 @@
    "direct-db-in-route": 1,
    "service-enforced": 2
   },
+  "src/app/api/tracker/live-logs/export/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/tracker/live-logs/route.ts": {
    "service-enforced": 2
   },
@@ -2152,6 +2465,12 @@
   "src/app/api/v1/attendance/bulk/route.ts": {
    "service-enforced": 1
   },
+  "src/app/api/v1/class/create/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/v1/class/update/[sectionId]/route.ts": {
+   "service-enforced": 1
+  },
   "src/app/api/v1/learner/placement/announcements/unread/route.ts": {
    "service-enforced": 1
   },
@@ -2171,6 +2490,12 @@
    "service-enforced": 1
   },
   "src/app/api/v1/tpo/requests/pending/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/v2/announcements/search/route.ts": {
+   "service-enforced": 1
+  },
+  "src/app/api/v2/announcements/stats/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/v2/colleges/[[...path]]/route.ts": {

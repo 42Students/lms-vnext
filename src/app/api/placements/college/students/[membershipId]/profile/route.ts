@@ -7,7 +7,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {editCollegeStudentPlacementProfile} from "@/modules/placements/college-placement-profile-service";
 export const runtime="nodejs";
 export const PATCH = route(
-  { auth: "user", permission: "placements.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     const {membershipId}=params;

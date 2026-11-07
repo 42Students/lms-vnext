@@ -59,3 +59,5 @@ describe("HR-NOTIFICATIONS-API-113 employer CSV role and page changes",()=>{
   expect((await response.text())).not.toContain("private.notifications");
  });
 });
+// These export routes now require a recent sign-in (step-up); the check itself is covered elsewhere.
+vi.mock("@/auth/recent-device-auth", () => ({ requireRecentDeviceAuthentication: vi.fn().mockResolvedValue(undefined) }));

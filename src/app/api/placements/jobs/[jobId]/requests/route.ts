@@ -5,7 +5,7 @@ import { listPlacementJobRequests } from "@/modules/placements/request-service";
 export const runtime = "nodejs";
 
 export const GET = route(
-  { auth: "user", permission: "placements.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const { jobId } = params;

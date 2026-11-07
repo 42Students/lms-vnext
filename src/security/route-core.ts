@@ -111,7 +111,8 @@ export type RouteArgs<Context, B> = {
   requestId: string;
 };
 
-export type RouteContext = { params?: Promise<Record<string, string>> | Record<string, string> };
+// Catch-all segments arrive as string[] at runtime; Next type-checks the exported handler against that shape, so accept it here.
+export type RouteContext = { params?: Promise<Record<string, string | string[]>> | Record<string, string | string[]> };
 
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 
@@ -202,7 +203,7 @@ export function createRoute<Context, Permission extends string = string>(deps: R
         if (config.query) config.query.parse(query);
 
         // Public routes are throttled by address before any work; authenticated routes by actor once known.
-        const routeParams = routeContext?.params ? await routeContext.params : {};
+        const routeParams = (routeContext?.params ? await routeContext.params : {}) as Record<string, string>;
         const pattern = routePattern(url.pathname, routeParams);
         if (config.auth === "public" && config.rateLimit !== false && deps.allowRequest && deps.clientAddress) {
           const budget = config.rateLimit

@@ -69,6 +69,6 @@ async function handleGET(request: Request, { params }: RouteContext) {
   }
 }
 export const GET = route(
-  { auth: "user", permission: "courses.read", repeatableQuery: ["collegeId", "courseId"] },
+  { auth: "user", permission: "service-enforced", repeatableQuery: ["collegeId", "courseId"] },
   ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
 );

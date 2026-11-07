@@ -6,7 +6,7 @@ import { reorderPlacementRounds } from "@/modules/placements/round-service";
 export const runtime = "nodejs";
 
 export const POST = route(
-  { auth: "user", permission: "placements.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor, params }) => {
     const context = actor!;
     const { jobId } = params;

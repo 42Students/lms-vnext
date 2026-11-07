@@ -51,3 +51,5 @@ describe("HR-DRIVES-EXPORT-118 authorized job CSV query boundary",()=>{
   expect((await result.text())).not.toContain("private table");
  });
 });
+// These export routes now require a recent sign-in (step-up); the check itself is covered elsewhere.
+vi.mock("@/auth/recent-device-auth", () => ({ requireRecentDeviceAuthentication: vi.fn().mockResolvedValue(undefined) }));

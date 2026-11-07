@@ -10,7 +10,7 @@ export const dynamic="force-dynamic";
 /** Authorized scoped GET. No private storage keys or unreleased playback
  * tokens are returned; client aborts superseded searches on filter changes. */
 export const GET = route(
-  { auth: "user", permission: "courses.manage" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const params=new URL(request.url).searchParams;

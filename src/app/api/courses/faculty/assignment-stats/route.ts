@@ -8,7 +8,7 @@ import {
 export const runtime="nodejs";
 /** Single and max-100 bulk legacy stats, now keyed by authorized UUIDs. */
 export const GET = route(
-  { auth: "user", permission: "courses.read" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const url=new URL(request.url);
@@ -19,7 +19,7 @@ export const GET = route(
   },
 );
 export const POST = route(
-  { auth: "user", permission: "courses.read" },
+  { auth: "user", permission: "service-enforced" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const stats=await getFacultyAssignmentSubmissionStatsBulk(context,await boundedRequestJson(request));

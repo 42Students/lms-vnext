@@ -37,6 +37,6 @@ async function handleGET(request: Request) {
   }
 }
 export const GET = route(
-  { auth: "user", permission: "admin-scope.select" },
+  { auth: "user", permission: "service-enforced" },
   ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
 );

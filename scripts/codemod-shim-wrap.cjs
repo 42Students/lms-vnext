@@ -105,7 +105,7 @@ for (const p of files) {
     const arity = e.fn.parameters.length;
     const [why, csrfWhy] = publicReason("/" + p.replace(/^src\/app\//, ""));
     const parts = PUBLIC
-      ? ['auth: "public"', "publicReason: " + JSON.stringify(why), "csrf: false", "csrfExemptReason: " + JSON.stringify(csrfWhy), "rateLimit: { limit: 3000, windowMs: 60_000 }"]
+      ? ['auth: "public"', "publicReason: " + JSON.stringify(why), ...(e.opts.csrf === "enforce" ? [] : ["csrf: false", "csrfExemptReason: " + JSON.stringify(csrfWhy)]), "rateLimit: { limit: 3000, windowMs: 60_000 }"]
       : ['auth: "user"', "permission: " + (e.opts.permission ?? '"service-enforced"')];
     if (e.opts.stepUp && !PUBLIC) parts.push("stepUp: " + e.opts.stepUp);
     if (repeat.length) parts.push("repeatableQuery: [" + repeat.map((k) => JSON.stringify(k)).join(", ") + "]");

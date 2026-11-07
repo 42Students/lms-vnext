@@ -110,7 +110,10 @@ async function handlePOST(request: Request) {
       { status: 503, headers });
   }
 }
+// Names of the deployment variable and request header that carry the scheduler credential (names only, no values).
+const WORKER_ENV = "DB10_NOTIFICATION_SCHEDULER_SECRET";
+const WORKER_HEADER = "x-notification-scheduler-key";
 export const POST = internalRoute(
-  { name: "internal.operations.notification-scheduler", credential: { kind: "header", header: "x-notification-scheduler-key", secretEnv: "DB10_NOTIFICATION_SCHEDULER_SECRET" }, denied: { status: 403, body: { error: "FORBIDDEN" } }, invalid: { error: "INVALID_JOB" } },
+  { name: "internal.operations.notification-scheduler", credential: { kind: "header", header: WORKER_HEADER, secretEnv: WORKER_ENV }, denied: { status: 403, body: { error: "FORBIDDEN" } }, invalid: { error: "INVALID_JOB" } },
   ({ request }) => handlePOST(request),
 );

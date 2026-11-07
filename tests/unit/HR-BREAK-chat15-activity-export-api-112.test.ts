@@ -59,3 +59,5 @@ describe("HR-ACTIVITY-API-112 employer-scoped 200-row event export",()=>{
   expect((await response.text())).not.toContain("private_schema");
  });
 });
+// These export routes now require a recent sign-in (step-up); the check itself is covered elsewhere.
+vi.mock("@/auth/recent-device-auth", () => ({ requireRecentDeviceAuthentication: vi.fn().mockResolvedValue(undefined) }));

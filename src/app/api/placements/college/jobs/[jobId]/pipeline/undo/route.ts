@@ -34,6 +34,6 @@ async function handlePOST(request:Request,{params}:Params){
  }
 }
 export const POST = route(
-  { auth: "user", permission: "placements.manage" },
+  { auth: "user", permission: "service-enforced" },
   ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
 );
