@@ -1,6 +1,6 @@
 "use client";
 
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -25,13 +25,19 @@ export function RecruiterPendingInvitations({invitations,total,hasMore}:{
  const router=useRouter();
  const [decision,setDecision]=useState<Decision|null>(null);
  const [busy,setBusy]=useState(false);
+ const busyRef=useRef(false);
  const [completed,setCompleted]=useState<string[]>([]);
  const [error,setError]=useState("");
  const [success,setSuccess]=useState("");
  const visible=invitations.filter(item=>!completed.includes(item.collegeId));
- if(!visible.length)return success?<p role="status" className="text-sm text-success">{success}</p>:null;
+ if(!visible.length)return <div className="min-w-0 space-y-3">
+  {success?<p role="status" className="text-sm text-success">{success}</p>:null}
+  <p className="text-sm text-body">No invitations are awaiting your decision.</p>
+  <a href="/dashboard" className="inline-flex min-h-11 items-center text-sm text-link underline focus-ring">Back to dashboard</a>
+ </div>;
  async function respond(){
-  if(!decision||busy)return;
+  if(!decision||busyRef.current)return;
+  busyRef.current=true;
   setBusy(true);setError("");setSuccess("");
   try{
    const response=await fetch(
@@ -52,7 +58,7 @@ export function RecruiterPendingInvitations({invitations,total,hasMore}:{
    router.refresh();
   }catch(cause){
    setError(cause instanceof Error?cause.message:"Could not respond to the invitation.");
-  }finally{setBusy(false);}
+  }finally{busyRef.current=false;setBusy(false);}
  }
  return <section aria-labelledby="recruiter-pending-invitations" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
   <div className="flex flex-wrap items-center justify-between gap-2">
@@ -71,10 +77,10 @@ export function RecruiterPendingInvitations({invitations,total,hasMore}:{
      <p className="break-words text-xs text-body">{item.company}</p>
      {item.invitedContact?<p className="break-all text-xs text-muted-foreground">Invited work email: {item.invitedContact}</p>:null}
     </div>
-    <div className="flex shrink-0 flex-wrap gap-2">
-     <Button size="sm" variant="primary" disabled={busy}
+    <div className="flex w-full shrink-0 flex-wrap gap-2 sm:w-auto">
+     <Button size="sm" variant="primary" className="min-h-11 flex-1 sm:min-h-9 sm:flex-none" disabled={busy}
       onClick={()=>{setError("");setDecision({collegeId:item.collegeId,collegeName:item.collegeName,action:"accept"});}}>Accept</Button>
-     <Button size="sm" variant="secondary" disabled={busy}
+     <Button size="sm" variant="secondary" className="min-h-11 flex-1 sm:min-h-9 sm:flex-none" disabled={busy}
       onClick={()=>{setError("");setDecision({collegeId:item.collegeId,collegeName:item.collegeName,action:"decline"});}}>Decline</Button>
     </div>
    </li>)}
