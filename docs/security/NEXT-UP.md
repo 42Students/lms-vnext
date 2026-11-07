@@ -25,3 +25,7 @@ Owner call 2026-11-08: both are treated as closed for the build. What is left is
 | 9 | Pen test and enterprise readiness pack | After 1 to 8 | SEC-24, SEC-25 | Owner decision |
 
 Recommended start: 1 (small, unblocks several controls), then 3 and 4 in parallel, with 2 whenever the owner is ready to touch repository settings.
+
+## Progress 2026-11-08 (autonomous run; owner items are in OWNER-ACTIONS.md)
+
+Done: 1 dev secrets (17 generated, production readiness fails closed on missing ones), CSP font fix and nonce CSP verified on dev (flag `CSP_NONCE=on`), 6 durable audit trail (append-only table, wired into route(), actions, login, scope, internal denials; on dev), Gate 0 diagnosed, SEC-01/02/07/09/11/12/16/21 assessed, evidence docs for the unauthenticated sweep (533 GET and 782 mutating routes: no unauthenticated data), the cross-college API probe and the role-by-route matrix, which found and fixed a learner-readable staff dashboard and several 500-for-403 responses. Waiting on the owner: items 1 (rotation), 2 (repo settings), 5 (bucket and scanner), 7 (restore test). Still open for me: 3 privileged-login MFA design (needs decisions 8 and 9), 4 per-handler permission names (volume).
