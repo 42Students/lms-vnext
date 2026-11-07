@@ -229,6 +229,7 @@ export function LoginForm({
   const [selectedAccountKey,setSelectedAccountKey]=useState<string|null>(null);
   const [accountLanding,setAccountLanding]=useState("/dashboard");
   const codeRef=useRef<HTMLInputElement>(null);
+  const retryBlocked=cooldown>0 && (errorCode==="TOO_MANY_REQUESTS"||errorCode==="OTP_ATTEMPTS_EXCEEDED");
 
   useEffect(()=>{if(error)errorSummaryRef.current?.focus();},[error]);
   useEffect(() => {
@@ -326,7 +327,7 @@ export function LoginForm({
       if (!result.ok) { setNotice(null); return fail(result.data.error,result.data.retryAfterSeconds); }
       setErrorCode(null);
       setNotice(channel === "PHONE" ? "Your code is on its way." :
-        "We sent a code to " + result.data.maskedContact + ". It expires in 5 minutes.");
+        "We sent a code to " + result.data.maskedContact + ". It expires in "+Math.max(1,Math.ceil(result.data.expiresInSeconds/60))+" minutes.");
       setAttempt(result.data);
       setAcceptedTerms(false);
       saveLoginAttempt({
@@ -676,9 +677,11 @@ export function LoginForm({
           <Button
             type="submit"
             className="min-h-11 w-full md:min-h-9"
-            disabled={busy}
+            disabled={busy || retryBlocked}
           >
-            {busy ? "Sending code…" : legacySuperAdmin?"Send OTP":"Send code"}
+            {busy ? "Sending code…" : retryBlocked
+              ? "Try again in "+Math.floor(cooldown/60)+":"+String(cooldown%60).padStart(2,"0")
+              : legacySuperAdmin?"Send OTP":"Send code"}
           </Button>
           <LoginConsent />
         </form>
@@ -718,9 +721,11 @@ export function LoginForm({
               name="code"
               ref={codeRef}
               value={code}
-              onChange={(event) =>
-                setCode(event.target.value.replace(/\D/g, "").slice(0, 6))
-              }
+              onChange={(event) => {
+                setCode(event.target.value.replace(/\D/g, "").slice(0, 6));
+                setError(null);
+                setErrorCode(null);
+              }}
               inputMode="numeric"
               autoComplete="one-time-code"
               placeholder="Enter OTP"
@@ -739,11 +744,11 @@ export function LoginForm({
               <Input
                 name="secondCode"
                 value={secondCode}
-                onChange={(event) =>
-                  setSecondCode(
-                    event.target.value.replace(/\D/g, "").slice(0, 6),
-                  )
-                }
+                onChange={(event) => {
+                  setSecondCode(event.target.value.replace(/\D/g, "").slice(0, 6));
+                  setError(null);
+                  setErrorCode(null);
+                }}
                 inputMode="numeric"
                 autoComplete="off"
                 placeholder="123456"
