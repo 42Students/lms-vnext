@@ -721,3 +721,19 @@ https://github.com/42Students/lms-vnext/actions/runs/42397765940
 single canonical tracker.** Passing a scoped UX batch does not attest all
 legacy parity, database/security hardening, provider activation or production
 release readiness; these have their own gates.
+
+
+**2026-11-07 later same-batch evidence update:** Additional safe recovery
+links were added to hiring activity, company reports, proposal history and
+messages, and the notifications fallback now points to the canonical recruiter
+home rather than the ambiguous /hr alias. Latest source commit:
+f13a9b8a16a2cafb28f57aa396d150fa7a61cbb9.
+Current exact-SHA acceptance:
+https://github.com/42Students/lms-vnext/actions/runs/42398234801
+(Actions queue congested at verification time; neither the pending status nor
+the cancelled superseded runs count as passed tests). The acceptance workflow
+now has cancel-in-progress=false, allowing a started runner to complete while
+other writers advance main. ALL FIVE UX groups must remain DOING unless the
+latest compatible run produces actual SUCCESS on both jobs; no queued/skipped
+tests can be counted as acceptance. The generic legacy/full CI status remains
+independent of this UX batch.
