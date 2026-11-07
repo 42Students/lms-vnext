@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { validTelegramCallbackChat, validTelegramCallbackOperator, validTelegramAcknowledgementId, validTelegramWebhookSecret } from "@/modules/log-alerts/telegram-webhook";
+import { validTelegramCallbackChat, validTelegramCallbackOperator, validTelegramAcknowledgementId, validTelegramWebhookSecret, acknowledgedTelegramMessageText } from "@/modules/log-alerts/telegram-webhook";
 import { knownErrorMutationSchema } from "@/modules/log-alerts/validation";
 
 const app = process.env.APP_ENV;
@@ -69,6 +69,25 @@ describe("Telegram acknowledgement", () => {
     ]) {
       expect(validTelegramAcknowledgementId(raw)).toBeNull();
     }
+  });
+
+  it("keeps generated diagnostics in acknowledgement edits but never personal data", () => {
+    const original = "Time: 2099-01-01T01:02:03.000Z\nRequest ID: af02b19c\nDeploy: aabbccddee\nError alice@example.com";
+    const message = acknowledgedTelegramMessageText(original);
+    expect(message).toContain("Time: 2099-01-01T01:02:03.000Z");
+    expect(message).toContain("Request ID: af02b19c");
+    expect(message).toContain("Deploy: aabbccddee");
+    expect(message).not.toContain("alice@example.com");
+    expect(message.endsWith("\n\n✅ Acknowledged")).toBe(true);
+    expect(acknowledgedTelegramMessageText(message)).toBe(message);
+    expect(acknowledgedTelegramMessageText(message+"\n\n✅ Acknowledged")).toBe(message);
+  });
+  it("bounds the acknowledgement message by Unicode characters, preserving the final status", () => {
+    const original = Array.from({length:25}, (_,index) => "Alert "+index+" "+"🙂".repeat(150)).join("\n");
+    const message = acknowledgedTelegramMessageText(original);
+    expect(Array.from(message).length).toBeLessThanOrEqual(3500);
+    expect(message.endsWith("...\n\n✅ Acknowledged")).toBe(true);
+    expect(message).not.toContain("\uFFFD");
   });
   it("GR-123 Logs admin action accepts acknowledgement without exposing identities", () => {
     expect(knownErrorMutationSchema.safeParse({ action: "ACKNOWLEDGE" }).success).toBe(true);
