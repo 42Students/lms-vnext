@@ -76,7 +76,17 @@ export function CollegeContactProfileForm({ initial }: {
           }),
         });
         const data = await response.json().catch(() => null);
-        if (!response.ok) throw new Error(data?.error || "Unable to update college contacts");
+        if (!response.ok) {
+          const code = data?.error;
+          const message = code === "COLLEGE_PROFILE_STALE"
+            ? "These details changed in another session. Your unsaved edits are still here. Copy them before refreshing."
+            : code === "COLLEGE_PROFILE_UNCHANGED"
+              ? "No changes were saved. Review the details and try again."
+              : code === "COLLEGE_NOT_FOUND"
+                ? "This college profile is no longer available. Return to your college dashboard."
+                : "Unable to update college contacts. Please try again.";
+          throw new Error(message);
+        }
         if (data?.profile && Number.isInteger(data.profile.version)) {
           const profile = data.profile as CollegeContactProfileView;
           setSaved(profile);
@@ -129,7 +139,7 @@ export function CollegeContactProfileForm({ initial }: {
       {dirty ? "Unsaved changes. Review the public details before confirming." : "No unsaved changes."}
     </p>
     {error ? <p role="alert" className="min-w-0 break-words text-sm text-error md:col-span-2 leading-[22px]">
-      {error}. If this profile changed elsewhere, refresh before retrying.
+      {error}
     </p> : null}
     {success ? <p role="status" className="min-w-0 break-words text-sm text-success md:col-span-2 leading-[22px]">
       {success}
