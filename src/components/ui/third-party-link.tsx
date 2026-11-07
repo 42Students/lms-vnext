@@ -33,11 +33,11 @@ export function ThirdPartyLink({ href, label, ariaLabel }: { href: string; label
   }
 
   return <span className="inline-flex min-w-0 flex-col gap-[var(--lms-space-2)]">
-    {safeHref ? <a href={safeHref} rel="noopener noreferrer" aria-label={ariaLabel ? `${ariaLabel} (external website)` : undefined} className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px] font-semibold leading-5 text-[var(--lms-link-text)] underline underline-offset-2 transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-ring"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="mr-2 size-4 shrink-0"><rect x="3" y="5" width="13" height="14" rx="2"/><path d="m16 10 5-3v10l-5-3"/></svg>{label}{!ariaLabel?<span className="sr-only"> (external website)</span>:null}</a> :
+    {safeHref ? <a href={safeHref} rel="noopener noreferrer" aria-label={ariaLabel ? `${ariaLabel} (external website)` : undefined} className="inline-flex min-h-11 min-w-0 max-w-full md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-[14px] font-semibold leading-5 text-[var(--lms-link-text)] underline underline-offset-2 transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-ring"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="mr-2 size-4 shrink-0"><rect x="3" y="5" width="13" height="14" rx="2"/><path d="m16 10 5-3v10l-5-3"/></svg><span className="min-w-0 break-words [overflow-wrap:anywhere]">{label}</span>{!ariaLabel?<span className="sr-only"> (external website)</span>:null}</a> :
       <span role="alert" className="text-[13px] leading-[22px] text-[var(--lms-body-text)]">This link is unavailable.</span>}
     {safeHref ? <span className="flex flex-wrap gap-3">
       <Button variant="link" size="sm" type="button" onClick={() => { setCopyStatus("");setShowFallback(value=>!value); }}
-        aria-expanded={showFallback} aria-controls={showFallback ? fallbackId : undefined}
+        aria-expanded={showFallback} aria-controls={fallbackId}
         className="min-h-11 md:min-h-[var(--lms-control-height)] px-2 text-[14px] font-semibold underline! hover:underline! focus-visible:underline! underline-offset-2 hover:bg-[var(--lms-primary-subtle)] aria-expanded:bg-[var(--lms-primary-subtle)] aria-expanded:text-[var(--lms-primary-text)]">
         {showFallback ? "Hide link" : "Show link to copy"}
       </Button>
@@ -46,8 +46,9 @@ export function ThirdPartyLink({ href, label, ariaLabel }: { href: string; label
         Copy link
       </Button>
     </span> : null}
-    {showFallback && safeHref ? <span id={fallbackId} role="status" className="min-w-0 space-y-[var(--lms-space-2)] text-[13px] leading-[22px] text-[var(--lms-body-text)]">
-      <span className="block">The link could not be opened. Copy the destination below to try another browser.</span>
+    {safeHref ? <span id={fallbackId} role={showFallback ? "status" : undefined}
+      className={showFallback ? "min-w-0 space-y-[var(--lms-space-2)] text-[13px] leading-[22px] text-[var(--lms-body-text)]" : "hidden"}>
+      <span className="block">If this link does not open here, copy the verified address below and use another browser.</span>
       <span className="block select-text break-all">{safeHref}</span>
       {copyStatus ? <span className="block" aria-live="polite">{copyStatus}</span> : null}
     </span> : null}
