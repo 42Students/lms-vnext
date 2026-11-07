@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 import {
   assertDepartmentAttendanceExportComplete,
   assertDepartmentAttendanceExportPage,
@@ -102,5 +103,34 @@ describe("UX-G172 college administration outbound UX", () => {
     expect(capped).toContain("EXPORT TRUNCATED");
     expect(capped).toContain("Narrow filters");
     expect(capped.split("\r\n")).toHaveLength(TENANT_DIRECTORY_CSV_CAP + 2);
+  });
+});
+
+describe("UX-G170/G172 API and fixture boundaries", () => {
+  it("keeps the real download routes authenticated, private and non-sniffable", () => {
+    const paths = [
+      "src/app/api/attendance/admin/departments/export/route.ts",
+      "src/app/api/admin/colleges/[collegeId]/readiness/export/route.ts",
+      "src/app/api/admin/tenants/export/route.ts",
+    ];
+    for (const path of paths) {
+      const route = readFileSync(path, "utf8");
+      expect(route).toMatch(/auth:\s*"user"/);
+      expect(route).toContain("private, no-store");
+      expect(route).toContain("nosniff");
+      expect(route).toContain("text/csv; charset=utf-8");
+    }
+    expect(readFileSync(paths[0]!, "utf8")).toContain("stepUp: true");
+    expect(readFileSync(paths[1]!, "utf8")).toContain("stepUp: true");
+    expect(readFileSync(paths[2]!, "utf8")).toContain("requireRecentDeviceAuthentication");
+  });
+
+  it("prevents the browser proof fixture from exposing live data or running in production", () => {
+    const fixture = readFileSync("src/app/e2e/ux-g170-g172-csv/page.tsx", "utf8");
+    expect(fixture).toContain('process.env.NODE_ENV !== "development"');
+    expect(fixture).toContain('process.env.UX_EXPORT_FIXTURE !== "1"');
+    expect(fixture).toContain("notFound()");
+    expect(fixture).not.toContain("getDb()");
+    expect(fixture).not.toContain("getCurrentRequestContext");
   });
 });
