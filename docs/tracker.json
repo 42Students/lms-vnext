@@ -16848,10 +16848,10 @@
         "type": "JOURNEY",
         "area": "privacy-policy",
         "title": "Privacy Policy · Home (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-privacy-superadmin-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/privacy-policy/error.tsx",
@@ -16864,7 +16864,8 @@
           "PAGE-0516"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Scoped route UX acceptance: canonical policy anchors/readability and retired superadmin bookmark safe signin flow. Do not close without exact SHA typecheck, unit/SSR, and desktop/mobile browser proof."
       },
       {
         "id": "UX-G079",
@@ -17233,10 +17234,10 @@
         "type": "JOURNEY",
         "area": "superadmin-login",
         "title": "Superadmin Login · Home (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-privacy-superadmin-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/superadmin-login/error.tsx",
@@ -17249,7 +17250,8 @@
           "PAGE-0520"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Scoped route UX acceptance: canonical policy anchors/readability and retired superadmin bookmark safe signin flow. Do not close without exact SHA typecheck, unit/SSR, and desktop/mobile browser proof."
       },
       {
         "id": "UX-G090",
