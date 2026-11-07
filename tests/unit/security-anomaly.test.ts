@@ -35,3 +35,12 @@ describe("audit anomaly detector (SEC-19)", () => {
     for (let i = 0; i < 100; i++) expect(observe({ event: "api.mutation", outcome: "ok", userId: "u1" })).toHaveLength(0);
   });
 });
+
+describe("object enumeration rule", () => {
+  it("flags thirty not-found answers for one user in five minutes once", () => {
+    const observe = createAnomalyDetector();
+    let findings = 0;
+    for (let i = 0; i < 60; i++) findings += observe({ event: "api.not_found", outcome: "not_found", userId: "u3" }).filter((f) => f.rule === "object_enumeration").length;
+    expect(findings).toBe(1);
+  });
+});

@@ -48,6 +48,14 @@ function safeDetail(detail: Record<string, unknown> | undefined): Record<string,
 
 const observeAnomaly = createAnomalyDetector();
 
+/** Feeds the tripwire only (no database row): for high-volume, low-severity signals such as 404s. */
+export function observeSecurityEvent(input: SecurityAuditInput): void {
+  for (const finding of observeAnomaly(input)) {
+    console.warn(JSON.stringify({ severity: "WARNING", event: "security.anomaly", rule: finding.rule, count: finding.count, subject: finding.key.split(":")[0] }));
+    recordFinding(input, finding);
+  }
+}
+
 export function recordSecurityEvent(input: SecurityAuditInput): void {
   // The tripwire runs even when the database trail is off: a finding is a structured WARNING and, when the trail is on, a row.
   for (const finding of observeAnomaly(input)) {

@@ -14,6 +14,8 @@ export type AnomalyRule = {
 export const ANOMALY_RULES: readonly AnomalyRule[] = [
   { name: "repeated_denials", key: (e) => (e.event === "api.denied" && e.outcome === "denied" && e.userId ? `u:${e.userId}` : null), threshold: 20, windowMs: 5 * 60_000 },
   { name: "login_probing", key: (e) => (e.event === "auth.login_rejected" && e.ipTag ? `ip:${e.ipTag}` : null), threshold: 10, windowMs: 5 * 60_000 },
+  // Walking ids shows up as many 404s from one signed-in user (RLS makes another college's rows simply absent).
+  { name: "object_enumeration", key: (e) => (e.event === "api.not_found" && e.userId ? `u:${e.userId}` : null), threshold: 30, windowMs: 5 * 60_000 },
   { name: "bulk_export", key: (e) => (e.event === "api.export" && e.userId ? `u:${e.userId}` : null), threshold: 10, windowMs: 10 * 60_000 },
 ];
 

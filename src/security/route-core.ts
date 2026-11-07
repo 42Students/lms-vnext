@@ -269,7 +269,7 @@ export function createRoute<Context, Permission extends string = string>(deps: R
       if (download) hardenDownload(response);
       if (deps.onAudit && config.auth === "user") {
         const status = response.status;
-        if (!SAFE_METHODS.has(request.method.toUpperCase()) || download || status === 401 || status === 403 || status === 429) {
+        if (!SAFE_METHODS.has(request.method.toUpperCase()) || download || status === 401 || status === 403 || status === 404 || status === 429) {
           try {
             deps.onAudit({
               requestId,

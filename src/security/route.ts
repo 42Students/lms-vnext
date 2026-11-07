@@ -9,7 +9,7 @@ import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { requireActorPermission, type PlatformPermission } from "@/modules/permissions/policy";
 import { offerRequestValue, runAsSystem, runWithTenantScope, scopeFromActor } from "@/db/tenant-context";
 import { writeStructuredLog } from "@/observability/logger";
-import { recordSecurityEvent } from "@/security/audit-store";
+import { observeSecurityEvent, recordSecurityEvent } from "@/security/audit-store";
 import { createRoute } from "@/security/route-core";
 
 type Context = Awaited<ReturnType<typeof getCurrentRequestContext>>;
@@ -39,6 +39,11 @@ export const route = createRoute<Context, PlatformPermission>({
   defaultPublicLimit: { limit: 120, windowMs: 60_000 },
   onAudit: (event) => {
     const actor = event.context as { user?: { id?: string }; membership?: { id?: string; collegeId?: string; roles?: string[] } | null } | null;
+    if (event.status === 404) {
+      // Not-found answers are only counted (enumeration tripwire), never stored one by one.
+      observeSecurityEvent({ event: "api.not_found", outcome: "not_found", userId: actor?.user?.id ?? null });
+      return;
+    }
     recordSecurityEvent({
       event: event.download === true ? "api.export" : event.status >= 400 ? "api.denied" : "api.mutation",
       outcome: event.status === 429 ? "rate_limited" : event.status === 401 || event.status === 403 ? "denied" : event.status >= 400 ? "error" : "ok",
