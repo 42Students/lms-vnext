@@ -34,7 +34,7 @@ describe("graceful route screens", () => {
     expect(fallback).toContain('!landing.startsWith("//")');
   });
   it("GR-14 provides an accessible forbidden page with a role-safe home link", () => {
-    expect(source("src/app/forbidden/page.tsx")).toContain("You do not have access to this page");
+    expect(source("src/app/forbidden/page.tsx")).toContain("You don't have access to this page");
     expect(source("src/app/forbidden/page.tsx")).toContain('homeHref="/dashboard"');
   });
   it("GR-15 rejects external redirect tricks and retains safe route targets", () => {
