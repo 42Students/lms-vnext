@@ -11,7 +11,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
-import { groupCsvValidationLabel, type GroupImportRow } from "@/modules/groups/college-group-csv-preview-model";
+import { groupCsvPreviewErrorMessage, groupCsvValidationLabel, type GroupImportRow } from "@/modules/groups/college-group-csv-preview-model";
 
 type ImportResult = {
   requested: number; added: number; waitlisted: number; errors: number;
@@ -73,7 +73,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
           const code = typeof payload === "object" && payload !== null &&
             "error" in payload && typeof payload.error === "string"
             ? payload.error : "Import preview failed";
-          throw new Error(code);
+          throw new Error(groupCsvPreviewErrorMessage(code));
         }
         if (revision === csvRevision.current) setResult(payload as Result);
       } catch (cause) {
