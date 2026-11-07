@@ -26,7 +26,7 @@ export function mentorPortfolioActivityCsv(
   lines.push([row.id,row.projectTitle,row.label,row.importance,recorded].map(csvSafeCell).join(","));
  }
  const hidden=(Number.isSafeInteger(omitted)&&omitted>0?omitted:0)+Math.max(0,rows.length-limited.length);
- if(hidden>0)lines.push(["","Truncated",hidden+" additional matching events","",""]
+ if(hidden>0)lines.push(["Truncated export","",hidden+" additional matching events","",""]
   .map(csvSafeCell).join(","));
  return "\uFEFF"+lines.join("\r\n")+"\r\n";
 }
