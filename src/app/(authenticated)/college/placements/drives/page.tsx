@@ -77,7 +77,9 @@ export default async function CollegeDrivesPage({ searchParams }: {
   }
   // A closed/expired deadline is distinct from an administrator closing a job.
   // Every date is presented in the college's India-time legacy format.
-  if(data.total>0&&query.page>data.totalPages)redirect(driveListHref({...query,page:data.totalPages}));
+  // Even an empty filtered roster has one logical page. An old bookmark
+  // pointing at page 5 must never announce "Page 5 of 1" with no recovery.
+  if(query.page>data.totalPages)redirect(driveListHref({...query,page:data.totalPages}));
   const formatter = createDateFormatter("en-IN", {day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata"});
   const expired=(job:(typeof data.items)[number])=>Boolean(job.applicationDeadline&&job.applicationDeadline.getTime()<Date.now());
   const jobStatus=(job:(typeof data.items)[number])=>{
