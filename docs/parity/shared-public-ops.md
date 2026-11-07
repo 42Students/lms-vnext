@@ -370,3 +370,7 @@ The wave-3 UI source graph identifies previously unexpanded shared descendants. 
 - **System states and operations:** legacy `src/components/Common/PageShell.jsx`, `PanelStates.jsx`, `ErrorBoundary/JobsErrorBoundary.js`, `src/components/tracker/TrackerShell.jsx`, `AuditFindingDrawer.jsx` and `ClaudeReportModal.jsx` need route/provider reachability and accessible action/stale/error state verification, not speculative duplicates in the page count.
 
 These source findings do not count as browser, API, PostgreSQL, UX or release proof. **No global/shared family was marked green.**
+
+## UX-G004 — Activity Log and event detail (2026-11-07)
+
+[Six-surface scope, source changes and exact-SHA browser acceptance ledger](pages/shared/UX-G004-activity.md). This UX group owns the shared Activity Log to event-detail journey, not the Notifications UX-G001 group or any DB/API/security parity gate. Canonical live status and ownership remain in `docs/tracker.json#uxReview.groups`; source edits and authored tests alone do not close browser or release acceptance.
