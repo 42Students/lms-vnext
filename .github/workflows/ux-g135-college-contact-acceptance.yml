@@ -1,5 +1,9 @@
 name: UX-G135 College contact profile acceptance
 
+concurrency:
+  group: ux-g135-college-contact-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   workflow_dispatch:
   push:
