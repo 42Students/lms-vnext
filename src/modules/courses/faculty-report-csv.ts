@@ -20,8 +20,9 @@ export type FacultyReportCsvInput = z.infer<typeof facultyReportCsvSchema>;
 
 /** Spreadsheet imports may evaluate formulas even when a CSV cell is quoted. */
 export function neutralizeFacultyCsvCell(value: string | number | null) {
+  if (typeof value === "number") return String(value); // Numbers are typed report totals, not spreadsheet formulas.
   const text = value === null ? "" : String(value);
-  return /^[\s\u00AD\u200B-\u200F\u202A-\u202E\u2060\u2066-\u2069\uFEFF]*[=+@-]/u.test(text) ? "'" + text : text;
+  return /^[\p{Cc}\p{Cf}\p{M}\p{Zs}\p{Zl}\p{Zp}]*[=+@-]/u.test(text) ? "'" + text : text;
 }
 
 function cell(value: string | number | null) {
