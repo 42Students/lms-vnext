@@ -19,5 +19,5 @@ export function exportClassTeamsCsv(
    rows.push([team.name,id,rolls.get(id)??""].map(safeCsv).join(","));
   }
  }
- return rows.join("\r\n")+"\r\n";
+ // Include a UTF-8 signature so Excel preserves non-Latin team and roll labels.\n return "\uFEFF"+rows.join("\r\n")+"\r\n";
 }
