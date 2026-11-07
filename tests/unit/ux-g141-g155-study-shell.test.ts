@@ -25,6 +25,7 @@ describe("UX-G141 study group action and import safeguards", () => {
   it("does not permit a failed replacement upload to reuse a previous CSV", () => {
     const csv = source("src/components/groups/college-group-import-preview.tsx");
     expect(csv).toContain('setCsv("");');
+    expect(csv).toContain("fieldset disabled={pending || reading}");
     expect(csv).toContain("revision === csvRevision.current");
     expect(csv).toContain("setManualError(");
     expect(csv).toContain("groupCsvValidationLabel(row.status)");
