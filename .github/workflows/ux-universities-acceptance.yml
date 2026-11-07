@@ -19,6 +19,7 @@ jobs:
     timeout-minutes: 20
     env:
       NEXT_TELEMETRY_DISABLED: "1"
+      NODE_OPTIONS: "--max-old-space-size=6144"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -30,14 +31,14 @@ jobs:
         run: |
           npx eslint src/app/universities/page.tsx src/app/universities/error.tsx src/app/universities/loading.tsx tests/e2e/ux-universities-journey.spec.ts
           node --test tests/ux-universities-group.test.mjs
-      - name: Typecheck and UX guard
-        run: |
-          npm run typecheck
-          npm run ux:guard
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
       - name: Desktop and mobile browser acceptance
         run: npx playwright test tests/e2e/ux-universities-journey.spec.ts --project=chromium --reporter=line
+      - name: Typecheck and UX guard
+        run: |
+          npm run typecheck
+          npm run ux:guard
       - name: Preserve viewport screenshot evidence
         if: always()
         uses: actions/upload-artifact@v4
