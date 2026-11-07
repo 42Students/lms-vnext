@@ -391,7 +391,7 @@ async function MembershipDashboard({
         description={`Hello, welcome to ${college?.name ?? roleLabel}. Your active roles share one landing page, scoped to this membership.`}
       />
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div role="region" aria-label="Dashboard summary metrics" className="grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {college ? (
           <MetricCard
             label="College"
@@ -513,7 +513,7 @@ async function MembershipDashboard({
       </div>
       {hasWorkspace("COLLEGE_ADMIN") ? <>
         <CollegeAdminDashboardActions />
-        <nav aria-label="More college administration" className="flex flex-wrap gap-3">
+        <nav aria-label="More college administration" className="flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap [&_a]:min-h-11 [&_a]:w-full sm:[&_a]:w-auto">
           <ButtonLink variant="secondary" href="/college/people">Manage students</ButtonLink>
           <ButtonLink variant="secondary" href="/college/academics">Academic setup</ButtonLink>
         </nav>
