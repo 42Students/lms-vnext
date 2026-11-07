@@ -1,19 +1,21 @@
-# UX rollout: /universities
+# UX-G123 — Universities public journey
 
-**Source:** `src/app/universities/page.tsx`  
-**Lane:** chat-17, public second-half  
-**Status:** Implemented in source; test execution and device/browser sign-off pending orchestrator.
+**Owner:** ux-universities-chat-2026-11-07  
+**Source:** `src/app/universities/{page,error,loading}.tsx`  
+**Status:** Code and automated coverage authored; desktop/mobile *execution evidence* pending.
 
-## Previous weakness
-Five campus roles need predictable grouping and mobile-first scanning without changing role names.
+## Workflow review and changes
+- The shared university hero intentionally omitted CTAs for audience pages, leaving the first demo action near the foot of a long page. Added a route-local, early **Request a Demo** action linking to the existing `/request-demo` journey.
+- Added a labeled, keyboard-accessible in-page navigation for capabilities and the six-stage student journey, with anchored scroll targets and touch-sized actions. No JavaScript navigation or account state required.
+- Removed overhanging absolute connector arrows in the six-stage desktop grid to avoid collisions and unneeded horizontal scroll at intermediate widths.
+- Added brief human-operated stage context; retained existing academics, learning, assessment, projects, placements, recruitment, and administration capability descriptions. No unshipped AI or automated-outcomes claims.
+- The route error boundary now returns public visitors to `/`, not the authenticated `/dashboard`. Shared retry behavior and sanitized error messaging are unchanged.
+- The route loading state identifies the destination and shows a responsive skeleton with the existing slow-loading recovery action.
 
-## Changes (legacy wording unchanged)
-Retained all campus role labels and descriptions; grouped them inside the responsive shared MarketingFeatureGrid / layout and inherited accessible navigation and CTA targets.
-
-## States and safety
-Static campuses roles and request-demo navigation.
-
-## Tests and acceptance
-- `UX-public-universities-01` in `tests/ux-public-second-half.test.mjs` (added to `ux:audit:source`).
-- Audit on 320/360/390/768/1280, keyboard/focus, real browser and assistive technology is orchestrator-owned; no fabricated passes.
-- Existing platform/tenant privacy, auth and route semantics remain authoritative.
+## Acceptance evidence
+- Source assertions: `node --test tests/ux-universities-group.test.mjs` (must be executed).
+- Browser tests: `npx playwright test tests/e2e/ux-universities-journey.spec.ts --project=chromium` (must be executed at desktop 1280×800 and mobile 390×844).
+- Browser test captures full-page attachments, keyboard link focus, exact internal destinations, and horizontal overflow / runtime errors.
+- Run `npm run typecheck`, `npm run ux:guard`, and cross-page marketing regression before claiming DONE.
+- No private data requests, auth, RLS, API contract, placement eligibility, or role decision changes in this group.
+- **Do not mark UX-G123 DONE** until exact-SHA test results, rendered desktop/mobile proof, and regression review are recorded in `docs/parity/shared-public-ops.md`.
