@@ -2,7 +2,7 @@
 import { facultyScheduleFieldsChanged, facultyScheduleErrorMessage } from "@/modules/attendance/faculty-schedule-mutation-model";
 
 import {useRouter} from "next/navigation";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Alert } from "@/components/ui/alert";
 import {Button} from "@/components/ui/button";
@@ -31,6 +31,7 @@ export function FacultyAttendanceScheduleEditor({
   const [startsAt,setStartsAt]=useState("");
   const [endsAt,setEndsAt]=useState("");
   const [busy,setBusy]=useState(false);
+  const writeLock=useRef(false);
   const [confirmOpen,setConfirmOpen]=useState(false);
   const [error,setError]=useState<string|null>(null);
   const [success,setSuccess]=useState<string|null>(null);
@@ -60,7 +61,7 @@ export function FacultyAttendanceScheduleEditor({
     }
   }
   async function save(confirmed=false){
-    if(busy)return;
+    if(busy||writeLock.current)return;
     if(action==="RESCHEDULE"&&!selected){
       setError("Choose an unmarked attendance session you own.");return;
     }
@@ -71,6 +72,7 @@ export function FacultyAttendanceScheduleEditor({
     if(timingError){setError(timingError);return;}
     if(unchanged){setError("No schedule details changed; nothing was saved.");return;}
     if(!confirmed){setConfirmOpen(true);return;}
+    writeLock.current=true;
     setBusy(true);setError(null);setSuccess(null);
     try{
       const payload={
@@ -88,7 +90,7 @@ export function FacultyAttendanceScheduleEditor({
       setSuccess(action==="CREATE"?"Session scheduled.":"Session rescheduled.");
       router.refresh();
     }catch(e){setError(e instanceof Error?e.message:"Session update failed.");}
-    finally{setBusy(false);setConfirmOpen(false);}
+    finally{writeLock.current=false;setBusy(false);setConfirmOpen(false);}
   }
   return <section aria-label="Faculty attendance session scheduling"
     className="min-w-0 space-y-4 border-t border-[var(--lms-canvas-border)] pt-4">
