@@ -15,3 +15,14 @@
 - Screenshots: quiz phone 320 and desktop 1280. Existing quiz submission tests and data/tenant controls are not modified. Release-grade accessibility review stays independent from this scoped acceptance.
 
 **Source modified:** quiz `page.tsx`, `loading.tsx`, `error.tsx`. No lesson, quiz answer, grading or attempt authorization code changed. Closure evidence is added below when the run finishes.
+
+
+## Acceptance receipt — verified green (2026-11-07)
+
+- **Exact source SHA:** `aff8ef1ef0eb4eb84aebd82aa86cb7bc11c115dd`, branch `main`.
+- **Workflow:** [UX-G002 and UX-G079 root quiz acceptance — run 42391169871](https://github.com/42Students/lms-vnext/actions/runs/42391169871); completed **success**.
+- Scoped ESLint **PASS**, full project TypeScript **PASS**, focused Vitest **5/5 PASS**, Chromium authenticated journeys **4/4 PASS**.
+- Evidence artifact: [`ux-g002-g079-evidence`](https://github.com/42Students/lms-vnext/actions/runs/42391169871/artifacts/13581392643) (SHA-256 `e747741bcb906f6eb7f69932d8744f38f6d50eaa5bf479a733a68ad3e10344cb`).
+- Captures: `test-results/ux-g002-root-desktop-1280.png`, `test-results/ux-g002-root-mobile-390.png`; quiz captures `test-results/ux-g079-quiz-phone-320.png`, `test-results/ux-g079-quiz-desktop-1280.png`.
+- Assertions cover keyboard focus, browser-visible states, no page-wide horizontal overflow, permitted internal return path and blocked protocol-relative destination, plus seeded learner quiz's non-submission recovery.
+- **Boundary:** all auth and role/tenant checks retained; this pass verifies the scoped UX journeys, not a global release/security signoff.
