@@ -28,6 +28,7 @@ test("UX-G143 faculty skills/metadata distinguish records and preserve unsaved s
  assert.match(m,/facultyMetadataDraftIssue/);
  assert.match(t,/useFacultyProfileUnsavedWarning/);
  assert.match(t,/facultyProfileTextDraftIssue/);
+ assert.match(s,/rows\.some\(row=>!row\.skill\.trim\(\)\)/, "Blank faculty skill drafts may not be saved");
 });
 test("UX-G150 learner actions and confirmation remain specific and cancellable",()=>{
  const p=read("src/components/profile/learner-profile-workspace.tsx");
