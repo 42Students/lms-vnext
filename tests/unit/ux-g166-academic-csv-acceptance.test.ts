@@ -26,6 +26,17 @@ describe("UX-G166 academic outbound CSV display contracts",()=>{
   expect(csv).toContain("Narrow your filters");
  });
 
+ it("caps even a directly called CSV serializer and never silently drops extras",()=>{
+  const csv=buildCollegeDirectoryCsv(["Name","Status"],[
+   ["A","ACTIVE"],["B","ACTIVE"],["C","ACTIVE"],
+  ],false,2);
+  expect(csvRows(csv)).toHaveLength(4);
+  expect(csv).toContain("EXPORT TRUNCATED");
+  expect(csv).toContain("Only the first 2 matching records");
+  expect(csv).not.toContain('"C"');
+  expect(()=>buildCollegeDirectoryCsv(["Name"],[],false,0)).toThrow(RangeError);
+ });
+
  it("protects each academic model's user-controlled display strings without dropping legacy fields",()=>{
   const csvs=[
    renderBatchCsv([{id:"batch-id",name:risky,code:"B",status:"ACTIVE",programId:"program-id",
