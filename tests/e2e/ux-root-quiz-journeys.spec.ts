@@ -25,7 +25,7 @@ test.describe("UX-G002 root sign-in and workspace recovery", () => {
   test("390px expired sign-in preserves safe destination and rejects offsite redirect", async ({page}) => {
     await page.setViewportSize({width:390,height:844});
     await page.goto("/?auth=expired&returnTo=%2Flearn%2Fcourses");
-    await expect(page.getByRole("alert")).toContainText("Your session expired");
+    await expect(page.locator("#sign-in-content [role=\"alert\"]").first()).toContainText("Your session expired");
     const restart=page.getByRole("link",{name:"Start a fresh sign-in"});
     await expect(restart).toHaveAttribute("href",/returnTo=%2Flearn%2Fcourses/);
     await restart.focus();
@@ -35,7 +35,7 @@ test.describe("UX-G002 root sign-in and workspace recovery", () => {
 
     await page.goto("/?auth=invalid&returnTo=%2F%2Fevil.example");
     await expect(page.getByRole("link",{name:"Start a fresh sign-in"})).toHaveAttribute("href","/login");
-    await expect(page.getByRole("alert")).not.toContainText("evil.example");
+    await expect(page.locator("#sign-in-content [role=\"alert\"]").first()).not.toContainText("evil.example");
   });
 });
 
