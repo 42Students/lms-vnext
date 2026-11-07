@@ -26,7 +26,8 @@ beforeEach(()=>{
 describe("chat-16 public company-share page private applicant and access states",()=>{
  it("UX-chat16-company-share-16 requires the six-character access proof before rendering applicants",async()=>{
   const html=renderToStaticMarkup(createElement(ToastProvider,null,await CompanySharePage(request())));
-  expect(metadata.robots).toEqual({index:false,follow:false});
+  expect(metadata.robots).toEqual({index:false,follow:false,noarchive:true});
+  expect(metadata.referrer).toBe("no-referrer");
   expect(html).toContain("Enter the six-character code the placement cell sent you.");
   expect(html).toContain("Enter the code from your placement cell");
   expect(html).toContain('method="post"');
