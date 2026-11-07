@@ -109,7 +109,7 @@ async function PublicPlacementsPage() {
           {visibleMetrics.length>0 ? (
             <>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                College-published figures for the 12 months preceding publication.
+                Placement results for the last 12 months. The student population uses the college's published snapshot.
               </p>
               <dl className="mt-5 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2"
                 aria-label="Public placements statistics">
@@ -127,6 +127,11 @@ async function PublicPlacementsPage() {
               Placement statistics are not available for public display.
             </p>
           )}
+          {published?.eligibilitySnapshotWarning ? (
+            <p role="note" className="mt-3 text-sm leading-6 text-muted-foreground">
+              {published.eligibilitySnapshotWarning}
+            </p>
+          ) : null}
           {published ? (
             <p className="mb-0 mt-4 text-xs leading-5 text-muted-foreground">
               Published{" "}

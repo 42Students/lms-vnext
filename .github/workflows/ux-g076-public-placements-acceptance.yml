@@ -54,3 +54,44 @@ jobs:
             test-results/
             playwright-report/
           if-no-files-found: ignore
+
+  published-college:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      PLATFORM_HOSTS: "localhost,127.0.0.1"
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Prepare guarded disposable E2E PostgreSQL
+        run: npm run db:e2e:prepare
+      - name: Seed only the synthetic verified college public publication
+        run: node --import tsx scripts/ux-g076-public-placements-e2e-seed.ts
+      - name: Route synthetic college host to local Next server
+        run: echo "127.0.0.1 public-g076.localhost" | sudo tee -a /etc/hosts
+      - name: Install headless Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Published tenant desktop/mobile page and privacy acceptance
+        run: npx playwright test tests/e2e/ux-g076-published-college.spec.ts --project=chromium --reporter=line

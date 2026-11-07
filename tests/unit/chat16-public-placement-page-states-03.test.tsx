@@ -82,7 +82,7 @@ describe("chat-16 public placement page privacy and partial availability",()=>{
  it("UX-chat16-public-placements-snapshot-03 renders public aggregate only and an explicit date",async()=>{
   const html=renderToStaticMarkup(await PublicPlacementsPage());
   expect(html).toContain("Published College");
-  expect(html).toContain("College-published figures for the 12 months preceding publication.");
+  expect(html).toContain("Placement results for the last 12 months.");
   expect(html).toContain("Individual student and employer records are not shown.");
   expect(html).toContain("College placements overview");
   expect(html).toContain("Students placed");
@@ -91,6 +91,14 @@ describe("chat-16 public placement page privacy and partial availability",()=>{
   expect(html).toContain('aria-label="Public placements statistics"');
   expect(html).toContain('data-public-recruit-enabled="false"');
   expect(html).not.toContain("private-student-email@example.org");
+ });
+ it("UX-G076 tells visitors when the published eligible-student snapshot is stale",async()=>{
+  vi.mocked(getPublicPlacementStatistics).mockResolvedValue({
+    ...metrics,eligibilitySnapshotWarning:"The eligible student count is an older published snapshot. Ask the placement cell to refresh it.",
+  } as Awaited<ReturnType<typeof getPublicPlacementStatistics>>);
+  const html=renderToStaticMarkup(await PublicPlacementsPage());
+  expect(html).toContain('role="note"');
+  expect(html).toContain("Ask the placement cell to refresh it.");
  });
  it("UX-G076 safely shows an empty state when metrics are not approved for display",async()=>{
   vi.mocked(getPublicPlacementPageContent).mockResolvedValue({

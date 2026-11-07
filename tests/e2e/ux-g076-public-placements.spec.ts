@@ -24,10 +24,13 @@ for (const viewport of [
   });
   test("UX-G076 "+viewport.name+": platform host cannot impersonate a published college", async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
-    const response = await page.goto("/placements");
-    expect(response?.status()).toBe(404);
+    await page.goto("/placements");
+    // Next.js can stream the not-found state after an HTTP 200 shell response.
+    // Verify the actual rendered disclosure boundary rather than the initial status.
     await expect(page.getByRole("heading", { level: 1, name: "This page isn't available" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Go to home" })).toHaveAttribute("href", "/");
+    await expect(page.getByTestId("placements.public")).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Placement outcomes" })).toHaveCount(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
   });
 }
