@@ -64,7 +64,7 @@ describe("UX-G161 tracker recoverability and formula safety", () => {
 describe("UX-G178 people CSV completeness and deduplication", () => {
  it("deduplicates overlapping membership pages and respects configured cap", () => {
   type Member = Parameters<typeof appendUniquePeopleCsvRows>[0][number];
-  const member=(id:string)=>({membership:{id}}) as Member;
+  const member=(id:string)=>({membership:{id}}) as unknown as Member;
   const rows:Member[]=[];
   appendUniquePeopleCsvRows(rows,[member("a"),member("b"),member("a")],3);
   appendUniquePeopleCsvRows(rows,[member("b"),member("c"),member("d")],3);
