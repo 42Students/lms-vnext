@@ -252,7 +252,7 @@ export function AnnouncementAdminWorkspace({
   }
 
   function saveEdit() {
-    if (!editing || pending || flight.current) return;
+    if (!editing || pending || flight.current || (requiresPublicationConsent&&!editConsent)) return;
      const form = editFormRef.current;
     if (!form) return;
     const data = new FormData(form);
@@ -309,7 +309,12 @@ export function AnnouncementAdminWorkspace({
       </div>
       <Dialog open={createOpen} onOpenChange={next => { if (!pending) setCreateOpen(next); }}
        dismissible={!pending} title="Create announcement" className="max-w-[600px]">
-        <section className="space-y-4 pt-[var(--lms-space-3)]">
+        <form className="space-y-4 pt-[var(--lms-space-3)]" onSubmit={event=>{
+          event.preventDefault();
+          if(pending||flight.current||!target||!title.trim()||!message.trim()||!createTiming.valid)return;
+          if(requiresPublicationConsent)setReviewPublish(true);
+          else create();
+        }}>
         <div>
 
           <p className="mt-1 text-sm text-body">
@@ -336,11 +341,11 @@ export function AnnouncementAdminWorkspace({
             </Label>
             <Label stack className="min-w-0">
               Title
-              <Input className="w-full" value={title} maxLength={255} onChange={(e) => setTitle(e.target.value)} />
+              <Input className="w-full" required value={title} maxLength={255} onChange={(e) => setTitle(e.target.value)} />
             </Label>
             <Label stack className="min-w-0 md:col-span-2">
               Message
-              <Textarea rows={6} className="w-full" value={message} maxLength={10000} onChange={(e) => setMessage(e.target.value)} />
+              <Textarea rows={6} className="w-full" required value={message} maxLength={10000} onChange={(e) => setMessage(e.target.value)} />
             </Label>
             <Label stack className="min-w-0">
               Schedule · local time
@@ -354,15 +359,19 @@ export function AnnouncementAdminWorkspace({
               <Checkbox checked={pinned} onChange={(e) => setPinned(e.target.checked)} />
               Pin for recipients
             </Label>
+            <p className="md:col-span-2 text-xs leading-5 text-muted-foreground">
+              {title.length}/255 title characters · {message.length}/10,000 message characters.
+              Leave Schedule empty to publish immediately; Show until is optional.
+            </p>
             {!createTiming.valid?<p role="alert" className="md:col-span-2 text-sm text-danger-text">Invalid timing: expiry must follow the schedule.</p>:null}
             <div className="md:col-span-2 flex min-w-0 justify-stretch md:justify-end [&>button]:w-full md:[&>button]:w-auto">
-              <Button disabled={pending || !title.trim() || !message.trim() || !target || !createTiming.valid} onClick={requiresPublicationConsent?()=>setReviewPublish(true):create}>
+              <Button type="submit" disabled={pending || !title.trim() || !message.trim() || !target || !createTiming.valid}>
                 {requiresPublicationConsent?"Review publication":pending?"Creating…":"Create announcement"}
               </Button>
             </div>
           </div>
         )}
-        </section>
+        </form>
       </Dialog>
 
       <section className="min-w-0 space-y-[var(--lms-space-3)]">
@@ -476,12 +485,12 @@ export function AnnouncementAdminWorkspace({
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button variant="secondary" disabled={pending} onClick={() => setEditing(null)}>Cancel</Button>
-            <Button disabled={pending || !editing || (requiresPublicationConsent&&!editConsent)} onClick={saveEdit}>{pending ? "Saving…" : requiresPublicationConsent ? "Confirm reviewed changes" : "Save"}</Button>
+            <Button type="submit" form="announcement-edit-form" disabled={pending || !editing || (requiresPublicationConsent&&!editConsent)}>{pending ? "Saving…" : requiresPublicationConsent ? "Confirm reviewed changes" : "Save"}</Button>
           </div>
         }
       >
         {editing ? (
-          <form id="announcement-edit-form" ref={editFormRef} className="grid gap-[var(--lms-space-4)]">
+          <form id="announcement-edit-form" ref={editFormRef} onSubmit={event=>{event.preventDefault();saveEdit();}} className="grid gap-[var(--lms-space-4)]">
             {requiresPublicationConsent?<Label variant="choice" className="flex items-start gap-2">
               <Checkbox checked={editConsent} onChange={e=>setEditConsent(e.target.checked)} />
               I reviewed the audience and notice contents and consent to applying changes to recipients.
@@ -512,11 +521,11 @@ export function AnnouncementAdminWorkspace({
             </Label>
             <Label stack className="min-w-0">
               Title
-              <Input name="title" defaultValue={editing.title} maxLength={editing.senderType === "SUPER_ADMIN" ? 200 : 255} className="w-full" />
+              <Input name="title" required defaultValue={editing.title} maxLength={editing.senderType === "SUPER_ADMIN" ? 200 : 255} className="w-full" />
             </Label>
             <Label stack className="min-w-0">
               Message
-              <Textarea rows={6} name="message" defaultValue={editing.message} maxLength={editing.senderType === "SUPER_ADMIN" ? 8000 : 10000} className="w-full" />
+              <Textarea rows={6} name="message" required defaultValue={editing.message} maxLength={editing.senderType === "SUPER_ADMIN" ? 8000 : 10000} className="w-full" />
             </Label>
             <Label stack className="min-w-0">
               Schedule · local time
