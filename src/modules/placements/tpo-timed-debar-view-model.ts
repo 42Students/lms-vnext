@@ -24,8 +24,10 @@ export function timedDebarDraftError(input: {
  const reason = input.reason.trim();
  if (!reason) return "Enter a reason before reviewing this debarment.";
  if (reason.length > 500) return "Keep the reason within 500 characters.";
- if (input.duration === "DATE" &&
-     (!/^\d{4}-\d{2}-\d{2}$/.test(input.untilDate) || input.untilDate < input.today)) {
+ const validDate = /^\d{4}-\d{2}-\d{2}$/.test(input.untilDate) &&
+  !Number.isNaN(Date.parse(input.untilDate + "T00:00:00.000Z")) &&
+  new Date(input.untilDate + "T00:00:00.000Z").toISOString().slice(0, 10) === input.untilDate;
+ if (input.duration === "DATE" && (!validDate || input.untilDate < input.today)) {
   return "Choose today or a future date in India time.";
  }
  if (input.duration === "DRIVES" &&
