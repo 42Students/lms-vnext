@@ -79,7 +79,7 @@ export async function exportSuperAdminLearningDirectory(request:Request,kind:Kin
   }
   const max=pageOnly?20:kind==="LESSONS"||kind==="PROGRESS"?2000:500;
   const items=rows.slice(0,max);
-  if(!pageOnly&&total>max)items.push(["TRUNCATED: first "+max+" records","Narrow filters to export remaining records."]);
+  if(!pageOnly&&total>max)items.push(["TRUNCATED: first "+max+" records","Narrow filters to export remaining records.",...Array.from({length:Math.max(0,headers.length-2)},()=>"")]);
   const filename=pageOnly?
     (kind==="QUIZ"?"quizzes-college-":"assignments-college-")+collegeId+"-page-"+params.data.page+".csv":
     kind.toLowerCase().replace("progress","course-progress")+".csv";
