@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - src/app/placements/**
+      - scripts/ux-g076-public-placements-e2e-seed.ts
+      - tests/e2e/ux-g076-published-college.spec.ts
       - tests/unit/chat2-public-placements-page.test.ts
       - tests/unit/chat16-public-placement-page-states-03.test.tsx
       - tests/unit/ux-g076-public-placements.test.ts

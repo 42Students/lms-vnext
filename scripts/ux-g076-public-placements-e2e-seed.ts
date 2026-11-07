@@ -11,6 +11,7 @@ if(!url||process.env.DATABASE_URL!==url||process.env.TEST_DATABASE_URL!==url||
    !/\/[a-z0-9_]*_e2e(?:_[a-z0-9]+)*$/i.test(new URL(url).pathname)){
  throw new Error("UX_G076_REQUIRES_ISOLATED_E2E_DATABASE");
 }
+async function main(){
 const db=getDb();
 await db.insert(tenantDomains).values({
  collegeId:SEED_IDS.collegeA,
@@ -29,3 +30,6 @@ await db.insert(placementPublicPageContent).values({
  metricKeys:["STUDENTS"],
 }).onConflictDoNothing();
 console.log("UX-G076 disposable verified-host and public-only placement publication seeded");
+}
+
+void main().catch(error=>{console.error(error);process.exitCode=1;});
