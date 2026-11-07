@@ -1,5 +1,4 @@
 "use client";
-import { MenuSeparator } from "@/components/ui/menu";
 import { Dropdown } from "@/components/ui/dropdown";
 
 import {usePathname,useSearchParams} from "next/navigation";
@@ -21,11 +20,11 @@ export function TpoTopbarNewMenu({collegeId}:{collegeId:string}){
  const actions=[...links,{label:"View all follow-ups",href:"/tpo/follow-ups"}];
  return <Dropdown align="end" label="New placement work" trigger="+ New" mobileSheet
   triggerClassName="min-h-11 w-full justify-center border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-[color:var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-ring sm:w-auto md:min-h-9">
-  <nav aria-label={companyName?"Placement actions for "+companyName:"Placement actions"}
-   className="grid min-w-0 w-full gap-1 md:w-[min(19rem,calc(100vw_-_3rem))]">
-   {actions.map(item=><TextLink variant="bare" key={item.href} href={item.href} className={navClass}>{item.label}</TextLink>)}
-   {companyName?<MenuSeparator />:null}
+  <div className="grid min-w-0 w-full gap-1 md:w-[min(19rem,calc(100vw_-_3rem))]">
+   <nav aria-label={companyName?"Placement actions for "+companyName:"Placement actions"} className="grid gap-1">
+    {actions.map(item=><TextLink variant="bare" key={item.href} href={item.href} className={navClass}>{item.label}</TextLink>)}
+   </nav>
    <div className="min-w-0 border-t border-border pt-2"><TpoNewFollowupModal collegeId={collegeId}/></div>
-  </nav>
+  </div>
  </Dropdown>;
 }
