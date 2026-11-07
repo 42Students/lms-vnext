@@ -29,6 +29,7 @@ test.describe("UX-G083 pending recruiter invitations", () => {
     const destination = new URL(page.url());
     expect(["/", "/login"]).toContain(destination.pathname);
     expect(destination.searchParams.get("returnTo")).toBe("/recruiter-invitations");
+    await expect(page.locator("#sign-in-content")).toBeVisible();
     await expect(page.getByRole("heading", {name: "Server Error"})).toHaveCount(0);
     await expect(page.getByRole("heading", {name: "Recruiter invitations"})).toHaveCount(0);
     await expect(page.getByText("Pending college invitations")).toHaveCount(0);
