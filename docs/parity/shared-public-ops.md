@@ -204,6 +204,23 @@ Legacy includes:
 - [ ] cutover never produces a missing privacy-policy link.
 - [ ] current policy content/version/source is verified before launch.
 
+## UX-G075 — Public offline recovery (7 November 2026)
+
+**UX-group allocation:** `docs/tracker.json#uxReview.groups[UX-G075]`. The route `/offline` was one of the 83 route-only entries missing from the older generated 2,080-surface registry; it is a **single standalone UX group**, not a DB/API/security parity closure.
+
+**Source boundary:** `src/app/offline/page.tsx`, `src/app/offline/offline-recovery.tsx`; reuse existing `src/components/public/graceful-screen.tsx` without modifying the shared component. The root offline banner already suppresses duplicate notices on `/offline`. This group must not change session or tenant authorization.
+
+**UX contract:**
+- [x] Present a clear offline/reconnected state with understandable, role-neutral copy and an unambiguous retry CTA.
+- [x] If the browser still reports offline, do not navigate, reload, or erase context; present an accessible inline recovery instruction.
+- [x] On explicit retry while browser reports online, navigate to the **fixed same-origin** `/dashboard` destination so the existing role-aware landing handles authentication. Do not redirect automatically or accept user-controlled return URLs.
+- [x] Preserve a separate `/login` fallback, noindex metadata and shared footer/legal links.
+- [x] Keep the UI readable at mobile width, with keyboard-focusable controls and a polite live status announcement.
+
+**Browser acceptance:** `tests/e2e/ux-offline-recovery.spec.ts` executes both 1280×800 and 390×844 with online/offline transitions, blocked offline retry, same-origin dashboard retry (mock destination; no real auth/PII), link/meta checks, focus and horizontal overflow checks. Executed run/commit and outcome must be recorded before the canonical UX group can change to `DONE`.
+
+**Security regression boundary:** No auth/session/service/DB/storage code is changed. `navigator.onLine` is only a browser hint, not evidence that the backend is healthy. Retry is user-initiated, uses fixed `/dashboard` and is never an open redirect. Source-only implementation does not establish browser acceptance.
+
 # Error surfaces
 
 ## Page: 404
