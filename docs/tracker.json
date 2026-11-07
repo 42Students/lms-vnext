@@ -21019,10 +21019,10 @@
         "type": "KIT",
         "area": "ui",
         "title": "Ui · Shared UI kit (part 3)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-shared-ui-admin-exports-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/components/ui/tabs.tsx",
@@ -21041,7 +21041,8 @@
           "KIT-0036"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "UI kit and scoped Super Admin export UX implementation. Exact-SHA lint/typecheck/Vitest/browser verification; preserve role and CSV safety."
       },
       {
         "id": "UX-G166",
@@ -21117,10 +21118,10 @@
         "type": "OUTBOUND",
         "area": "admin-ui",
         "title": "Admin Ui · Outbound copy and exports (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-shared-ui-admin-exports-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/modules/admin-ui/super-admin-batch-roster-export-model.ts",
@@ -21137,7 +21138,8 @@
           "MESSAGE-0022"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "UI kit and scoped Super Admin export UX implementation. Exact-SHA lint/typecheck/Vitest/browser verification; preserve role and CSV safety."
       },
       {
         "id": "UX-G169",
