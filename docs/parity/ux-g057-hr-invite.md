@@ -21,3 +21,14 @@ Scope: `/hr-invite/[token]` (redirect-only compatibility page, loading, error). 
 `recruiterInviteHref`'s strict 8–512 char, safe-character schema and `notFound` behavior remain unchanged. `runAsSystem("public-page:hr-invite")` retained to avoid security scope drift. The canonical recruiter invite owns its own consent, role checks, work-email OTP, expiration/revocation and acceptance state machine; no alias code path mutates an invitation or performs a cross-host token exchange.
 
 **Closure gate:** exact-SHA scoped lint/source/alias and browser desktop/mobile checks green, evidence artifact reviewed, and tracker updated.
+
+
+## Executed closure evidence — 2026-11-07
+
+- **Exact source SHA**: `5e42b0859bfde020455d48442c85fe087576ab00`.
+- **[Passing acceptance workflow](https://github.com/42Students/lms-vnext/actions/runs/42390619702)**: scoped ESLint, Node source checks, existing HR invite redirect, malformed-token and canonical flow Vitest suites passed; 3/3 browser checks passed without retries.
+- **[Browser artifact](https://github.com/42Students/lms-vnext/actions/runs/42390619702/artifacts/13581266813)**: `hr-canonical-desktop.png` at 1280×800 and `hr-invalid-mobile.png` at 375×812 visually inspected. Desktop redirect retains canonical first-party URL and noindex/no-referrer metadata; invalid mobile link renders clear not-found text and recovery without clipping or leaking invitation details.
+- Next App Router may stream an initial HTTP 200 while rendering `notFound()`; browser acceptance checks the semantic denied page and unchanged URL rather than assuming that the initial streamed status is 404. Negative unit suites check `notFound()` for malformed tokens directly.
+- Cross-role/security review: alias does not fetch or mutate invitation data, validate a code, expose raw errors, or loosen the canonical recruiter invite authorization. All downstream role/consent work remains with the existing canonical invitation page.
+
+**UX-G057: DONE after scoped acceptance.**
