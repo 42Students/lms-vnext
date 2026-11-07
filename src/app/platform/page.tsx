@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import {
-  MarketingLayout, MarketingHero, MarketingFeatureGrid, MarketingCta,
+  MarketingLayout, MarketingHero, MarketingFeatureGrid, MarketingCta, marketingPageMetadata,
 } from "@/components/marketing/marketing-layout";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
-export const metadata: Metadata = {
-  title: "Platform | 42 LMS",
-  description: "One connected platform for learning, projects and placements.",
-};
+export const metadata: Metadata = marketingPageMetadata("/platform", "Platform | 42 LMS",
+  "One connected platform for learning, projects and placements.");
 
 /** Non-AI scope: seven former autonomous-agent promises become seven existing
  * people-operated workspaces. One-to-one legacy exception map:
@@ -57,7 +56,17 @@ export default function PlatformMarketingPage() {
       description="Connect academic delivery, guided projects, assessments and recruitment in one place, with people responsible for teaching, feedback and decisions."
       showExploreLink={false} />
 
-    <MarketingFeatureGrid title="Every role has a purpose-built workspace" items={WORKSPACES} />
+    <nav aria-label="Explore platform workflows"
+     className="flex min-w-0 flex-col gap-3 border-b border-[var(--lms-canvas-border)] py-6 sm:flex-row sm:flex-wrap sm:items-center">
+     <p className="text-sm font-semibold text-[var(--lms-heading)] sm:mr-2">Explore the platform</p>
+     <ButtonLink variant="secondary" href="#platform-workspaces" className="min-h-11 w-full sm:w-auto">Role workspaces</ButtonLink>
+     <ButtonLink variant="secondary" href="#platform-lifecycle" className="min-h-11 w-full sm:w-auto">Talent lifecycle</ButtonLink>
+     <ButtonLink variant="primary" href="/request-demo" className="min-h-11 w-full sm:ml-auto sm:w-auto">Request a Demo</ButtonLink>
+    </nav>
+
+    <div id="platform-workspaces" className="min-w-0 scroll-mt-24">
+     <MarketingFeatureGrid title="Every role has a purpose-built workspace" items={WORKSPACES} />
+    </div>
     <MarketingFeatureGrid title="Everything you need to develop talent" items={PILLARS} />
 
     <section className="relative left-1/2 w-screen -translate-x-1/2 border-y border-[var(--lms-canvas-border)] bg-[color:var(--lms-primary-subtle)] py-14 md:py-20"
@@ -78,17 +87,17 @@ export default function PlatformMarketingPage() {
       </div>
     </section>
 
-    <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)]"
+    <section id="platform-lifecycle" className="min-w-0 scroll-mt-24 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)]"
       aria-labelledby="platform-lifecycle-heading">
       <Heading level={2} size="xl" id="platform-lifecycle-heading" className="leading-7 text-[var(--lms-heading)]">
         A complete talent lifecycle
       </Heading>
-      <ol className="flex min-w-0 flex-wrap items-center gap-2">
-        {LIFECYCLE.map((step,index)=><li key={step} className="inline-flex items-center gap-2">
-          <span className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 py-2 text-sm font-semibold">
-            {step}
+      <ol className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {LIFECYCLE.map((step,index)=><li key={step} className="flex min-w-0 items-center gap-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-primary-subtle)] p-4">
+          <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-full bg-surface font-bold text-[var(--lms-primary-text)]">
+            {index+1}
           </span>
-          {index<LIFECYCLE.length-1?<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[var(--lms-primary-text)]"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>:null}
+          <span className="min-w-0 break-words text-sm font-semibold text-[var(--lms-heading)]">{step}</span>
         </li>)}
       </ol>
       <p className="text-sm leading-6 text-body">The steps are managed by learners, educators, mentors and placement teams.</p>
