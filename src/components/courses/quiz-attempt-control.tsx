@@ -334,7 +334,7 @@ export function QuizAttemptControl({
             <p className="m-0 text-sm font-semibold text-foreground">
               Quiz attempt
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p role="status" aria-live="polite" className="mt-1 text-xs text-muted-foreground">
               {answered} of{" "}
               {quiz.questions.length} questions
               answered
@@ -343,10 +343,11 @@ export function QuizAttemptControl({
           <Button
             size="sm"
             variant="ghost"
-            className="min-h-11 md:min-h-9"
+            className="min-h-11 w-full sm:w-auto md:min-h-9"
             disabled={submitting}
-            onClick={() => {
-              setQuiz(null);
+            onClick={async () => {
+               if (answered > 0 && !(await askConfirm("Your selected answers have not been submitted and will be lost. Close this quiz attempt?"))) return;
+               setQuiz(null);
               setAnswers({});
               setError(null);
             }}
@@ -380,7 +381,7 @@ export function QuizAttemptControl({
               <fieldset
                 id={"quiz-question-"+question.id}
                 key={question.id}
-                className="rounded-lg border border-border bg-surface p-4"
+                className="min-w-0 scroll-mt-24 rounded-lg border border-border bg-surface p-4"
                 disabled={submitting}
               >
                 <legend className="max-w-full break-words px-1 text-sm font-semibold text-foreground">
@@ -425,7 +426,7 @@ export function QuizAttemptControl({
                             }
                             className="mt-0.5"
                           />
-                          <span>
+                          <span className="min-w-0 break-words">
                             {option.text}
                           </span>
                         </Label>
@@ -444,15 +445,15 @@ export function QuizAttemptControl({
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <Button
-            className="min-h-11 md:min-h-9"
-            disabled={submitting}
+            className="min-h-11 w-full sm:w-auto md:min-h-9"
+            disabled={submitting || quiz.questions.length === 0}
             onClick={submitAttempt}
           >
             {submitting
               ? "Submitting…"
               : "Submit quiz"}
           </Button>
-          <span className="text-xs text-muted-foreground">
+          <span className="min-w-0 break-words text-xs text-muted-foreground">
             Answers cannot be changed after
             submission.
           </span>
