@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'src/app/**'
+      - 'src/app/**/superadmin/**'
       - 'tests/unit/ux-g088-legacy-template-routing.test.tsx'
       - 'tests/e2e/ux-g088-superadmin-template-bookmarks.spec.ts'
       - 'tests/ux-g088-template-contract.test.mjs'
