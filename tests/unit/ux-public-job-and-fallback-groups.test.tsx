@@ -54,7 +54,8 @@ describe("UX-G058/G187/G188 public jobs and recovery", () => {
     expect(source).toContain("robots: { index: false, follow: false }");
     expect(source).toContain('let homeHref = "/dashboard"');
     expect(source).toContain("getShellNavigation(context)[0]?.href");
-    expect(source).toContain("showSignIn = false");
+    expect(source).toContain("hasActiveRecruiter(context) || isSuperAdmin(context)");
+    expect(source).toContain("context.membership");
     expect(source).toContain('alternateHref={showSignIn ? "/login" : undefined}');
     expect(source).toContain('homeHref={homeHref}');
     expect(source).not.toContain("redirect(");
