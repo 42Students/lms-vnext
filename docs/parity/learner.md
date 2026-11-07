@@ -1543,3 +1543,8 @@ No page family is newly marked green by this section. Source FE SHA: `9d56bb7a34
 ## UX-G079 — Quiz entry and recovery (2026-11-07)
 
 [UX-G079 quiz entry/loading/error scope and exact-SHA acceptance](pages/learner/UX-G079-quiz.md). This is a bounded journey UX pass only; existing quiz submission, authorization, grading, draft and deadline contracts are unchanged. UX group status lives in `docs/tracker.json#uxReview.groups`.
+
+
+## UX-G139 — Learner quiz/progress and Super Admin lesson controls (2026-11-07)
+
+[UX-G139 four-surface course learning UX review](pages/learner/UX-G139-course-controls.md) covers quiz exit confirmation, answered-question navigation, progress verification, lesson form validation and responsive content search. The canonical group status remains in `docs/tracker.json#uxReview.groups` until exact-SHA unit and browser acceptance succeeds.
