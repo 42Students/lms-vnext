@@ -16546,18 +16546,47 @@
         "type": "JOURNEY",
         "area": "offline",
         "title": "Offline · Home (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-offline-ux-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [],
         "surfaceIds": [],
         "newRouteOnly": [
           "/offline"
         ],
-        "evidence": [],
-        "notes": "Public /offline recovery UX. Scoped to offline route; do not modify auth/permissions. Claimed for complete UX pass and browser regression."
+        "evidence": [
+          {
+            "commitSha": "fc1c77b6f429751a5338b7437120a48d01854137",
+            "parityDoc": "docs/parity/shared-public-ops.md",
+            "tests": [
+              {
+                "command": "npx eslint src/app/offline/page.tsx src/app/offline/offline-recovery.tsx tests/e2e/ux-offline-recovery.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42384763728"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-offline-recovery.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42384763728 (2/2 browser tests passed)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42384763728 — UX-G075 desktop 1280x800, offline/online retry and keyboard"
+              },
+              {
+                "viewport": "mobile",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42384763728 — UX-G075 mobile 390x844, no overflow, offline/online retry"
+              }
+            ],
+            "regressionReview": "Scoped to /offline recovery only; shared GracefulScreen and root offline banner unchanged. Return-to-sign-in path, noindex, footer/legal links, focus and both viewport journeys verified. No functional API changes.",
+            "securityReview": "Only fixed same-origin /dashboard navigation on explicit online retry; no user-controlled redirect, authentication bypass, data/tenant access, storage mutations or provider calls. Browser offline state is a hint, not proof of backend health."
+          }
+        ],
+        "notes": "Public /offline recovery UX. Scoped to offline route; do not modify auth/permissions. Claimed for complete UX pass and browser regression. Accepted UX at exact SHA fc1c77b with focused lint and desktop/mobile browser run 42384763728; does not certify global security/release."
       },
       {
         "id": "UX-G076",
