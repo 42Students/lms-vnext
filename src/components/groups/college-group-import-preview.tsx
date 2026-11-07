@@ -138,8 +138,10 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
         Upload a CSV with one column named <code>Email</code>. Maximum 2,000 rows and 512 KiB.
         Only currently active learners in this college are eligible.
       </p>
-      <FileUpload label="Select CSV file" accept=".csv,text/csv" maxBytes={524288}
-        onFiles={files=>void load(files?.[0]??null)}/>
+      <fieldset disabled={pending || reading} className="min-w-0 border-0 p-0">
+        <FileUpload label="Select CSV file" accept=".csv,text/csv" maxBytes={524288}
+          onFiles={files=>void load(files?.[0]??null)}/>
+      </fieldset>
       <Button type="submit" loading={pending || reading} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={reading || pending || !csv.trim()}>
         {pending ? "Validating…" : "Preview members"}
       </Button>
