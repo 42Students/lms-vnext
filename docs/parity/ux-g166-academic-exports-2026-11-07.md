@@ -42,3 +42,10 @@ All files are under `src/modules/academics/`. Group evidence is for the full 13-
 - Additional optional query keys (including caller-supplied `page` and `pageSize`) are rejected for class exports; server chooses its own pages.
 - The common pagination helper has other consumers in the courses module; their focused tests and regression checks must remain green.
 - No group should transition to DONE until completed exact-SHA unit, CI, desktop and mobile evidence is recorded in `docs/tracker.json#uxReview`.
+
+## Verified scoped closure (2026-11-08)
+
+- **DONE (export UX scope)**. [Dedicated exact-SHA acceptance run](https://github.com/42Students/lms-vnext/actions/runs/42415932747) succeeded for commit `551efef21f9fd943515ff8fc6204a1f7b84d22fe`.
+- Scoped ESLint, full TypeScript, 4 Vitest suites / 30 cases, and 2/2 Chromium desktop/mobile synthetic download journeys passed, including actual UTF-8 CSV bytes, formula neutralization, row-cap display, 44px actions and overflow checks.
+- Screenshots/download evidence: artifact `ux-g166-academic-csv-evidence`, ID `13591662042`.
+- Code review covers all 13 registered models/services. The tested development-only fixture is **not** a live user/tenant login; independent database authorization and production release remain separate gates and are not claimed here.

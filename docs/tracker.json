@@ -21587,11 +21587,11 @@
         "type": "OUTBOUND",
         "area": "academics",
         "title": "Academics · Outbound copy and exports (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-academics-exports-2026-11-07",
         "pickedAt": "2026-11-07T16:56:57.390Z",
         "startedAt": "2026-11-07T16:57:03.808Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/modules/academics/college-academic-export-model.ts",
           "src/modules/academics/college-academic-export-service.ts",
@@ -21625,14 +21625,27 @@
         "newRouteOnly": [],
         "evidence": [
           {
-            "type": "UX_IMPLEMENTATION_PENDING",
+            "type": "source",
             "commitSha": "59f4e7b49fd0c22be16a4829d13f1229097044a4",
             "parityDoc": "docs/parity/ux-g166-academic-exports-2026-11-07.md",
-            "ciRun": "https://github.com/42Students/lms-vnext/actions/runs/42395199517",
-            "summary": "All 13 academic export source files audited, common CSV and pager hardened, classes cap and truncation implemented, eight-model and browser tests authored; focused run queued.",
-            "verification": "Await exact-SHA unit, TypeScript and desktop/mobile browser pass before DONE."
+            "description": "All 13 registered academic CSV export surfaces reviewed and selectively hardened; protected role scope and API headers retained."
+          },
+          {
+            "type": "ci",
+            "runId": 42415932747,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42415932747",
+            "conclusion": "success",
+            "commitSha": "551efef21f9fd943515ff8fc6204a1f7b84d22fe",
+            "results": "Scoped ESLint, full TypeScript, 4 Vitest files/30 cases, two desktop/mobile Chromium downloadable byte tests including UTF-8, neutralization, 1000-row cap, no overflow."
+          },
+          {
+            "type": "browser",
+            "artifactId": 13591662042,
+            "runId": 42415932747,
+            "description": "Two synthetic development-only browser proof screenshots, downloads and JSON results from the production serializers; not a live authorization claim."
           }
-        ]
+        ],
+        "notes": "DONE: 13-source academics outbound CSV UX pass, exact-SHA 551efef2, run 42415932747 green: lint, TS, 30/30 unit, 2/2 Chromium 1280x800 and 390x844 download cases, artifact 13591662042. Existing route step-up/permission code untouched; live tenant authorization independent release/security acceptance not claimed."
       },
       {
         "id": "UX-G167",
