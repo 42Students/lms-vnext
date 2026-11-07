@@ -89,6 +89,9 @@ export default async function NotificationsPage({searchParams}:{searchParams:Pro
  if(category)baseParams.set("category",category);
  if(params.classId)baseParams.set("classId",params.classId);
  if(params.courseId)baseParams.set("courseId",params.courseId);
+ const clearSearchParams=new URLSearchParams(baseParams);
+ clearSearchParams.delete("q");
+ const clearSearchHref=inbox+"?"+clearSearchParams.toString();
  const retryHref=inbox+"?"+baseParams.toString();
  const nextHref=page.nextCursor?inbox+"?"+new URLSearchParams({
   ...Object.fromEntries(baseParams),
@@ -114,14 +117,22 @@ export default async function NotificationsPage({searchParams}:{searchParams:Pro
     contextLine:item.receiverType.replaceAll("_"," ")+" announcement",
   })),
  ].sort((a,b)=>b.createdAt.localeCompare(a.createdAt)||a.id.localeCompare(b.id));
- const emptyText=view==="unread"?"No unread notifications yet":
+ const emptyText=query?(view==="unread"?"No unread notifications match your search":"No notifications match your search"):
+  view==="unread"?"No unread notifications yet":
   category?"No "+(categoryChoices.find(item=>item.id===category)?.label??"")+" notifications yet":
   "No notifications yet";
  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
   <PageHeader title="Notifications"
    description="Course updates, announcements and activity for your selected workspace."/>
   <NotificationToolbar view={view} unreadCount={unreadCount}
-   categories={categoryCounts} {...(category !== undefined ? {selectedCategory:category} : {})}/>
+   categories={categoryCounts} {...(category !== undefined ? {selectedCategory:category} : {})}
+   preservedParams={{
+    ...(query&&!invalidQuery?{q:query}:{}),
+    ...(params.classId&&!invalidScope?{classId:params.classId}:{}),
+    ...(params.courseId&&!invalidScope?{courseId:params.courseId}:{}),
+   }}
+   confirmMarkAll
+   confirmMessage="Mark every unread notification in your inbox as read, including items hidden by the current filters?"/>
   <form action={inbox} method="get" role="search"
    className="flex min-w-0 flex-wrap items-end gap-2">
    <input type="hidden" name="view" value={view}/>
@@ -133,7 +144,7 @@ export default async function NotificationsPage({searchParams}:{searchParams:Pro
      placeholder="Search title or message" className="mt-1 w-full"/>
    </Label>
    <Button type="submit">Search</Button>
-   {query?<TextLink href={inbox+"?view="+view} className="inline-flex min-h-11 items-center text-sm">Clear</TextLink>:null}
+   {query?<TextLink href={clearSearchHref} className="inline-flex min-h-11 items-center text-sm">Clear search</TextLink>:null}
   </form>
   {invalid?<Alert tone="error">
    The notification filters or page link are invalid.{" "}
@@ -148,9 +159,10 @@ export default async function NotificationsPage({searchParams}:{searchParams:Pro
   </Alert>:null}
   {!invalid&&(!failedNotifications||items.length>0)?<>
    <NotificationList items={items} emptyText={emptyText}
-    emptyAction={items.length===0&&category?<TextLink href={inbox+"?view=all"}
-      className="inline-flex min-h-11 items-center">All</TextLink>
-     :view==="unread"?<TextLink href={inbox+"?view=all"} className="inline-flex min-h-11 items-center">All</TextLink>:null}/>
+    emptyAction={items.length===0&&query?<TextLink href={clearSearchHref}
+      className="inline-flex min-h-11 items-center">Clear search</TextLink>
+     :items.length===0&&(category||view==="unread")?<TextLink href={inbox+"?view=all"}
+      className="inline-flex min-h-11 items-center">View all notifications</TextLink>:null}/>
    {nextHref?<div className="flex justify-center"><ButtonLink variant="secondary" href={nextHref}>
     Older notifications
    </ButtonLink></div>:null}
