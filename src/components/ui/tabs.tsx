@@ -99,7 +99,7 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
               : "inline-flex min-h-11 md:min-h-[28px] shrink-0 items-center justify-center gap-2 whitespace-nowrap border-0 border-transparent text-[var(--lms-neutral-400)] hover:bg-transparent relative after:pointer-events-none after:absolute after:bottom-0 after:left-1/2 after:h-[4px] after:w-0 after:-translate-x-1/2 after:bg-[var(--lms-primary)] after:opacity-0 aria-[current=page]:after:w-full aria-[current=page]:after:opacity-100 after:transition-[width,opacity] after:duration-[var(--lms-motion-fast)] after:ease-[var(--lms-motion-ease)] motion-reduce:after:transition-none px-0 pb-[12px] pt-0 text-[13px] leading-4 font-semibold focus-visible:rounded-t-[var(--lms-control-radius)] focus-ring hover:text-[var(--lms-primary-text)] aria-[current=page]:text-[var(--lms-primary-text)]"}>
               {tabLabel(item)}</Link>)}
       </nav></ScrollCue>}
-      {renderPanel ? <section id={`${id}-panel`} role="tabpanel" tabIndex={0} aria-labelledby={activeIndex >= 0 ? `${id}-tab-${activeIndex}` : undefined} className="min-w-0 pt-[var(--lms-space-4)]">{selected?.content}</section> : null}
+      {renderPanel && selected ? <section id={`${id}-panel`} role="tabpanel" tabIndex={0} aria-labelledby={activeIndex >= 0 ? `${id}-tab-${activeIndex}` : undefined} className="min-w-0 pt-[var(--lms-space-4)]">{selected?.content}</section> : null}
     </div>
   );
 }
