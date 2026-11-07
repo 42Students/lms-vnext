@@ -409,7 +409,13 @@ These source findings do not count as browser, API, PostgreSQL, UX or release pr
 
 **Evidence required for closure:** `node --test tests/ux-universities-group.test.mjs`; `npx playwright test tests/e2e/ux-universities-journey.spec.ts --project=chromium` with 1280×800 desktop and 390×844 mobile screenshots; `npm run typecheck`; `npm run ux:guard`; marketing links/CTA regression; explicit no private role or API contract change review.
 
-**State:** Implemented in source; runtime executions and visual proofs not yet recorded. Do not count as UX DONE until evidence above is collected and cited.
+**State:** **UX-G123 DONE (scoped acceptance), 7 November 2026.** Source SHA: `835e21ff8b1b4b82b15e1edae82a872e9d7fae6e`.
+
+**Executed evidence:** [GitHub Actions UX-G123 run](https://github.com/42Students/lms-vnext/actions/runs/42386799736) — scoped ESLint and 3/3 Node source contracts passed; desktop (1280×800) and mobile (390×844) Playwright each passed, including focus, anchor shortcuts, actual `/request-demo` navigation, no overflow or page errors. [Artifact containing both viewport screenshots](https://github.com/42Students/lms-vnext/actions/runs/42386799736/artifacts/13579304583) — desktop.png and mobile.png (730,066 uploaded bytes). `npm run typecheck` passed in the same run.
+
+**Global guard caveat (not attributed to UX-G123):** `npm run ux:guard` reported two `unverified-touch-class` violations on concurrently owned `src/app/campaign-unsubscribe/[token]/page.tsx:19` and `src/app/college-join/[token]/loading.tsx:6`; **zero violations under `src/app/universities/`**. The workflow is red due to those unrelated changes, so no repository-wide green CI claim is made.
+
+**Regression/security review:** Only Universities route-local page/error/loading files changed. Shared marketing shell, canonical metadata, seven truthful capability modules, /request-demo handler, API contracts, all tenant/auth/RLS checks and cross-role workflows remain unchanged. Both browser tests followed the real public demo path; error fallback stays public (/), never an authenticated dashboard.
 
 
 ## UX-G076 — Public placements and retired shared-job links (7 November 2026)
