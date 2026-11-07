@@ -29,6 +29,8 @@
     "test:load:reads": "tsx scripts/load-read.ts",
     "status": "tsx scripts/project-status.ts",
     "progress": "node scripts/tracker.mjs",
+    "ux:groups": "node scripts/ux-groups.mjs",
+    "test:ux:groups": "node --test tests/ux-groups.test.mjs",
     "smoke:authenticated": "tsx scripts/smoke-authenticated.ts",
     "parity:status": "tsx scripts/parity-status.ts",
     "parity:pages": "tsx scripts/page-parity-status.ts",
