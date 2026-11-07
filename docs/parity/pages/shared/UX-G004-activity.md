@@ -25,6 +25,17 @@ The existing error routes retain `GracefulErrorBoundary` and the loading routes 
 - Existing source contracts: `tests/unit/UX-activity-index-01.test.ts`, `tests/unit/UX-activity-event-detail-01.test.ts`.
 - Browser: `tests/e2e/ux-activity-journey.spec.ts` targets 1280px and 320/390px, keyboard focus, mobile overflow, raw-event drill-down when records exist, and learner denial.
 - Workflow: `.github/workflows/ux-activity-acceptance.yml` runs source lint, TypeScript, focused Vitest, disposable PostgreSQL-backed authenticated Playwright, and uploads viewport evidence.
-- **Closure rule:** Mark `DONE` only after checking a successful exact-SHA workflow run, screenshots for 320/390/1280px, meaningful detail navigation with a seeded event, and no regression to College Admin/Super Admin permissions. Without those receipts, retain `DOING`, regardless of commits.
+- **Closure rule:** Passed; see the executed acceptance receipt below. The three viewport captures, seeded real-event drilldown and authority checks are verified in the exact-SHA run.
 
 **Out of scope:** DB/API activity taxonomy or CSV authorization, the legacy audit storage gaps, and wider security certification. UI changes must not be interpreted as closing those independent workstreams.
+
+## Executed acceptance receipt — PASS
+
+- **Target source SHA:** `08884be93e807dd1c17680cc25b3fec398452b05` (latest UX-G004 source + tests, on `main`).
+- **GitHub Actions:** [UX-G004 Activity Log acceptance — run 42385487679](https://github.com/42Students/lms-vnext/actions/runs/42385487679), **completed: success**, 2026-11-07.
+- **Focused lint:** pass; **full TypeScript typecheck:** pass with canonical `NODE_OPTIONS=--max-old-space-size=6144`. Earlier attempts on 4GB default heap failed by JavaScript out-of-memory, not a code diagnostic; those runs were superseded.
+- **Vitest:** **3/3 files, 10/10 tests passed**, including prior activity index/detail source contracts and new scoped-filter regression.
+- **PostgreSQL:** disposable E2E database preparation passed; seeded admin/college/learner sessions authenticated in test DB.
+- **Playwright:** **3/3 Chromium tests passed** (29.2 seconds in run output): 1280px filter/date behavior, 320px auditable-college-created event → real detail drilldown + keyboard focus + no horizontal overflow, and 390px feed / College Admin access / learner denied. A real created-college event was seeded through the authorized UI, not mocked.
+- **Evidence artifact:** `ux-g004-evidence` (artifact ID `13579546590`, 444,083 bytes) includes viewport screenshots and browser evidence, visible in the same Actions run under Artifacts.
+- **Final status:** the six-surface **UX-G004 review is DONE**. This is **UX acceptance only**; DB/API/security/release gates remain separately governed by their own evidence.
