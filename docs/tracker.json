@@ -21351,7 +21351,16 @@
           "MESSAGE-0013"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "UX_IMPLEMENTATION_PENDING",
+            "commitSha": "59f4e7b49fd0c22be16a4829d13f1229097044a4",
+            "parityDoc": "docs/parity/ux-g166-academic-exports-2026-11-07.md",
+            "ciRun": "https://github.com/42Students/lms-vnext/actions/runs/42395199517",
+            "summary": "All 13 academic export source files audited, common CSV and pager hardened, classes cap and truncation implemented, eight-model and browser tests authored; focused run queued.",
+            "verification": "Await exact-SHA unit, TypeScript and desktop/mobile browser pass before DONE."
+          }
+        ]
       },
       {
         "id": "UX-G167",
@@ -21465,7 +21474,16 @@
           "MESSAGE-0026"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "UX_IMPLEMENTATION_PENDING",
+            "commitSha": "597653b8fe745a00f6f02a2bbdd364cb7d9502dd",
+            "parityDoc": "docs/parity/ux-g170-attendance-csv-2026-11-07.md",
+            "ciRun": "https://github.com/42Students/lms-vnext/actions/runs/42394826109",
+            "summary": "Attendance CSV serializer, Unicode formula neutralization and paginated export drift checks implemented; initial exact-SHA typecheck failure corrected; rerun queued.",
+            "verification": "Await exact-SHA unit, TypeScript and desktop/mobile browser pass before DONE."
+          }
+        ]
       },
       {
         "id": "UX-G171",
@@ -21525,7 +21543,16 @@
           "MESSAGE-0030"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "UX_IMPLEMENTATION_PENDING",
+            "commitSha": "e480c761265067fbd7a844653244a6316d2bc074",
+            "parityDoc": "docs/parity/ux-g172-college-csv-2026-11-07.md",
+            "ciRun": "https://github.com/42Students/lms-vnext/actions/runs/42394826109",
+            "summary": "College history/readiness CSV escaping and BOM improved; existing tenant directory cap and route guards preserved; focused rerun queued.",
+            "verification": "Await exact-SHA unit, TypeScript and desktop/mobile browser pass before DONE."
+          }
+        ]
       },
       {
         "id": "UX-G173",
