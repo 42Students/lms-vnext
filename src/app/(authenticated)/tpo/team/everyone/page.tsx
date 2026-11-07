@@ -19,7 +19,13 @@ export default async function TpoEveryonePage({searchParams}:{
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const raw=(await searchParams).page;
- const page=typeof raw==="string"&&/^[1-9][0-9]{0,3}$/.test(raw)?Number(raw):1;
+ const validPage=raw===undefined||(typeof raw==="string"&&/^[1-9][0-9]{0,3}$/.test(raw));
+ if(!validPage)return <section role="alert" className="min-w-0 space-y-3">
+  <PageHeader title="Everyone conversation" description="The requested message page is invalid." />
+  <Alert tone="warning">No messages were loaded. Use a valid message page or return to the latest updates.</Alert>
+  <TextLink href="/tpo/team/everyone" className="inline-flex min-h-11 items-center">View newest messages</TextLink>
+ </section>;
+ const page=typeof raw==="string"?Number(raw):1;
  const result=await readTpoTeamEveryone(context,page).catch(error=>{
   if(error instanceof AuthorizationError)throw error;
   return {status:"FAILED" as const};
@@ -29,7 +35,7 @@ export default async function TpoEveryonePage({searchParams}:{
    actions={<PageBackLink href="/tpo/team?tab=conversations" label="Team conversations" />} />
   {result.status==="FAILED"?<Alert tone="error">
    <p>Could not load Everyone right now. Your messages were not changed.</p>
-   <TextLink href="/tpo/team/everyone" className="mt-2 inline-flex min-h-11 items-center md:min-h-9">Retry Everyone</TextLink>
+   <TextLink href={"/tpo/team/everyone?page="+page} className="mt-2 inline-flex min-h-11 items-center md:min-h-9">Retry this page</TextLink>
   </Alert>:result.status==="NOT_REGISTERED"?<p role="status" className="border-l-2 border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] px-4 py-3">
    Everyone is not available until its database migration is registered. No team messages were loaded.
   </p>:<>
@@ -43,6 +49,7 @@ export default async function TpoEveryonePage({searchParams}:{
       </li>)}
      </ol>:<EmptyState title={TPO_EVERYONE_WELCOME} description="Write the first message to Everyone below." />}
     <nav aria-label="Everyone message pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
+     <span role="status" className="text-muted-foreground">Page {result.page} of {result.pages}</span>
      {result.page>1?<TextLink href={"/tpo/team/everyone?page="+(result.page-1)} className="inline-flex min-h-11 items-center md:min-h-9">Newer messages</TextLink>:null}
      {result.page<result.pages?<TextLink href={"/tpo/team/everyone?page="+(result.page+1)} className="inline-flex min-h-11 items-center md:min-h-9">Older messages</TextLink>:null}
     </nav>
