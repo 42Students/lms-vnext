@@ -510,3 +510,66 @@ this is only scoped UX closure, not deployment, security, or role-parity sign-of
 ## UX-G002 — Root sign-in and authenticated workspace recovery (2026-11-07)
 
 [UX-G002 root journey scope, fix, and exact-SHA acceptance](pages/shared/UX-G002-root.md). The shared root sign-in continues to honor validated return paths and tenant policy; the platform marketing redirect now excludes legacy Super Admin OTP requests. UX group status lives only in `docs/tracker.json#uxReview.groups`.
+
+
+## UX-G078 — Canonical privacy policy usability (7 November 2026)
+
+Canonical UX group: UX-G078 in docs/tracker.json. Source: src/app/privacy-policy/page.tsx,
+public/assets/static/privacy-policy-view.html (reviewed, not altered), and route
+loading/error boundaries. This is not legal-content approval or privacy/release certification.
+
+The canonical indexed /privacy-policy page continues to render the complete
+trusted checked-in Android/web policy without redirecting to an asset URL.
+All 13 existing section anchors and legal statements/effective date are intact.
+Enhancements: keyboard skip link, visible scoped focus treatment, 44px minimum
+section navigation targets, single-column mobile links, scroll target offset,
+and print-friendly styling. Canonical metadata and privacy contact are preserved.
+
+Source and SSR regression: tests/unit/UX-G078-policy-render.test.tsx; old
+policy-render assertions remain in tests/unit/UX-chat16-public-auth-legacy-bookmarks-03.test.ts
+and UX-public-legacy-redirects-02.test.ts. Browser test
+tests/e2e/ux-g078-g089-public-routes.spec.ts covers desktop 1280x800 and
+mobile 390x844 keyboard navigation, section anchors, canonical/contact, no
+overflow or uncaught errors.
+
+The historical mixed public-UX source file tests/ux-public-second-half.test.mjs
+had 2 passes and 9 failures at the first attempt, on unrelated other
+marketing/root, forbidden, request-demo, company-share and shared marketing
+surfaces. The privacy case passed. Those failures have NOT been removed,
+weakened, or counted as green: the scoped acceptance uses only the named
+policy case, independent SSR/negative checks and actual browser journeys.
+The broader red mixed suite remains a separate cross-group obligation.
+
+Initial source commit:
+https://github.com/42Students/lms-vnext/commit/e3c0d95216dea31859a1ce5c2fa7e796672de6c3
+First acceptance run:
+https://github.com/42Students/lms-vnext/actions/runs/42390560149
+(Scoped ESLint and TypeScript, plus 4 Vitest files/13 unit tests PASS;
+unrelated mixed-suite negatives caused the job to stop before browser.)
+Revised exact-SHA verification:
+https://github.com/42Students/lms-vnext/actions/runs/42390895781
+at source SHA 670881e5be5e1091f76ee59156fd1c4eb0ad108b.
+Do not mark DONE until final successful browser/SSR evidence is recorded.
+
+## UX-G089 — Retired Super Admin sign-in bookmark usability (7 November 2026)
+
+Canonical UX group: UX-G089 in docs/tracker.json, route /superadmin-login
+and its loading/error. The alias remains a direct safe redirect to the existing
+first-party OTP entry /login?legacy=superadmin. It cannot mint a session,
+grant a role, bypass server role checks or trust foreign return hosts.
+The alias has noindex/nofollow metadata. Its route-local error screen
+hides exception details, provides Try again and a fixed secure sign-in link;
+loading copy explains the secure sign-in transition. Minimum 44px actions
+and responsive wrapping support mobile and keyboard use.
+
+The existing actual redirect unit test remains. New focused source tests in
+tests/unit/UX-G089-superadmin-bookmark.test.ts and actual browser test in
+tests/e2e/ux-g078-g089-public-routes.spec.ts verify the fixed safe redirect,
+absence of privileged-session shortcuts, accessible recovery, correct OTP
+login context at desktop/mobile and no horizontal overflow.
+No real OTP, credential, role fixture or production tenant data is used.
+
+Exact-SHA run is shared with UX-G078:
+https://github.com/42Students/lms-vnext/actions/runs/42390895781
+at 670881e5be5e1091f76ee59156fd1c4eb0ad108b.
+The independent authorization, security and release gates remain open.
