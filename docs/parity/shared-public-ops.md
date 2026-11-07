@@ -248,7 +248,11 @@ The global boundary handles cases where even the Next root layout fails. It stil
 
 **Acceptance scope:** Chromium loads a no-app-stylesheet preview containing the **exact CSS literal extracted from `global-error.tsx`**, at desktop/mobile sizes. It verifies visible headings, metadata, focusable controls, emergency layout and no horizontal overflow. This is a controlled CSS-failure preview, **not** a claim that a real production root-layout crash was induced. The shared Vitest checks document structure, redaction, one-time chunk recovery and fixture production guard. The true production layout-failure chaos drill remains a separate global release test.
 
-**Evidence:** `tests/unit/ux-root-global-errors.test.ts` and `tests/e2e/ux-root-global-errors.spec.ts`, running in `.github/workflows/ux-root-global-errors-acceptance.yml`. Do not mark either `DONE` before an exact commit, executed unit/lint, and desktop/mobile browser evidence exist.
+**Executed UX acceptance (2026-11-07):** [GitHub Actions run 42392075010](https://github.com/42Students/lms-vnext/actions/runs/42392075010), exact tested commit [`ff4af9bbd86a7be0b7e07db1caab57468d421561`](https://github.com/42Students/lms-vnext/commit/ff4af9bbd86a7be0b7e07db1caab57468d421561), **SUCCESS**. Scoped ESLint **PASS**; `npx vitest run tests/unit/ux-root-global-errors.test.ts tests/unit/graceful-root-screens.test.ts --reporter=dot` **14/14 PASS**; `npx playwright test tests/e2e/ux-root-global-errors.spec.ts --project=chromium --reporter=line` **4/4 PASS** (root error and global stylesheet preview, each at desktop 1280×800 and mobile 390×844); `npm run typecheck` with a 6-GiB Node heap **PASS**. Synthetic test error content remained absent from the user-visible fallback; the test intercepted and checked sanitized client-error reporting. Root clipboard support reference copying passed in a real browser. Responsive, focus and emergency no-stylesheet checks passed. The old GR-14 test was realigned to the already-accepted access-denied UX wording; no existing permission was relaxed.
+
+**Disposition:** `UX-G185 DONE` and `UX-G186 DONE` for the scoped UX pass, independently of full GR-11/GR-82 release and real-production layout-chaos acceptance. Global browser evidence is a **no-stylesheet preview**, not a claim of a production root-layout failure injection. All test-only exception triggering is disabled in production at source.
+
+
 
 ## UX-G075 — Public offline recovery (7 November 2026)
 
