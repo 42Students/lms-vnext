@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   legacyDepartmentDestination,
   legacyProgramDestination,
+  legacyAdminBookmarkHref,
 } from "@/modules/admin-ui/legacy-department-links";
 import type { RequestContext } from "@/modules/identity/context";
 
@@ -18,6 +19,32 @@ const collegeAdmin: RequestContext = {
     roles: ["COLLEGE_ADMIN"],
   },
 };
+
+describe("Legacy Admin bookmark query safety", () => {
+  it("keeps bounded Super Admin program directory filters", () => {
+    expect(legacyAdminBookmarkHref("/admin/programs", {
+      q: "  data science  ", page: "3", pageSize: "25",
+      collegeId: "foreign-college", redirect: "https://external.example",
+    })).toBe("/admin/programs?page=3&pageSize=25&q=data+science");
+  });
+  it("does not retain forbidden or malformed query state", () => {
+    expect(legacyAdminBookmarkHref("/admin/programs", {
+      q: "x".repeat(101), page: "0", pageSize: "500",
+      organizationId: "foreign-org", returnTo: "//external.example",
+    })).toBe("/admin/programs");
+    expect(legacyAdminBookmarkHref("/admin/departments", {
+      type: "program", collegeId: "forged", page: "40",
+    })).toBe("/admin/departments?type=program");
+    expect(legacyAdminBookmarkHref("/dashboard", {type: "program", q: "foo"}))
+      .toBe("/dashboard");
+  });
+  it("rejects duplicate query values from legacy bookmarks", () => {
+    expect(legacyAdminBookmarkHref("/admin/programs", {page: ["1", "2"]}))
+      .toBe("/admin/programs");
+    expect(legacyAdminBookmarkHref("/admin/departments", {type: ["department", "program"]}))
+      .toBe("/admin/departments");
+  });
+});
 
 describe("legacy College/Super Admin Department bookmarks", () => {
   it("redirects College Admin to the actual college-scoped page", () => {
