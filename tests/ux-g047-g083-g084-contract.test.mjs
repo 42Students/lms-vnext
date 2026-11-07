@@ -34,6 +34,9 @@ test("G047 company-share token view stays private and enforces code, grant, expi
 });
 
 test("G083 pending recruiter invitations authorize before reading actor-bound data",()=>{
+ assert.match(pending,/SessionAuthenticationError/);
+ assert.match(pending,/redirect\("\/login\?"\+query\.toString\(\)\)/);
+ assert.match(pending,/returnTo:"\/recruiter-invitations"/);
  assert.match(pending,/platformStatus!=="ACTIVE"/);
  assert.match(pending,/throw new AuthorizationError/);
  assert.match(pending,/listSignedInRecruiterPendingInvites\(context\)/);
