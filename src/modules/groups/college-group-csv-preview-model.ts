@@ -14,6 +14,20 @@ export type GroupImportRow = {
     "ALREADY_MEMBER" | "PREVIOUSLY_REMOVED" | "GROUP_NOT_ACTIVE" | "CAPACITY_FULL" | "COLUMN_COUNT";
 };
 
+/** Never render server exception text or internal validation codes as UI copy. */
+export function groupCsvPreviewErrorMessage(code: string): string {
+  const messages: Readonly<Record<string, string>> = {
+    CSV_HEADER_EMAIL_REQUIRED: "The first CSV row must be a single column named Email.",
+    INVALID_CSV_QUOTE: "This CSV has malformed quotation marks. Check the affected row.",
+    UNTERMINATED_CSV_QUOTE: "A quoted CSV field is missing its closing quotation mark.",
+    CSV_ROW_LIMIT: "This file exceeds the limit of 2,000 learner rows.",
+    GROUP_NOT_FOUND: "This study group is unavailable. Return to the group list and try again.",
+    UNAUTHORIZED: "You do not have permission to import learners into this group.",
+    FORBIDDEN: "You do not have permission to import learners into this group.",
+  };
+  return messages[code] ?? "The import could not be completed. Check your file and try again.";
+}
+
 /** Plain-language explanations of validation rows for the dry-run UI. */
 export function groupCsvValidationLabel(status: GroupImportRow["status"]): string {
   const labels: Record<GroupImportRow["status"], string> = {
