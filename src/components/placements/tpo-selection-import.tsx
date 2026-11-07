@@ -73,7 +73,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
   {reading?<p role="status" className="text-sm text-body leading-[22px]">Reading selection CSV…</p>:null}
   {entries.length?<div className="space-y-2">
    <p role="status" className="text-sm leading-[22px]">{entries.length} matched · {unmatched.length} unmatched</p>
-   <div className="max-h-80 min-w-0 overflow-auto border-y border-border print:max-h-none print:overflow-visible">
+   <div role="region" aria-label="Matched selection import preview, scroll for more rows" tabIndex={0} className="max-h-80 min-w-0 overflow-auto overscroll-contain border-y border-border focus-ring print:max-h-none print:overflow-visible">
     <DataTable<SelectionImportEntry> caption="Selection import preview" rows={entries}
      getRowKey={item=>item.applicationId} empty={<EmptyState title="No matched selections yet."/>}
      columns={[
