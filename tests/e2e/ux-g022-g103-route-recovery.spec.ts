@@ -40,7 +40,7 @@ test.describe("UX-G022/G103 project-template and TPO route recovery", () => {
     await page.goto("/tpo/follow-ups?scope=FORGED&window=NEXT_7_DAYS");
     await expect(page.getByText("Invalid follow-up filters.")).toBeVisible();
     await expect(page.getByRole("link",{name:"Clear filters"})).toBeVisible();
-    await expect(page.getByRole("region",{name:"Follow-up ownership"})).toHaveCount(0);
+    await expect(page.getByRole("navigation",{name:"Follow-up ownership"})).toHaveCount(0);
     await page.screenshot({path:"test-results/ux-g103-followups-desktop.png",fullPage:true});
   });
 
