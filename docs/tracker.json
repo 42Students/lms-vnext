@@ -15751,8 +15751,19 @@
           "PAGE-0204"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Claimed for independent route UX tests and desktop/mobile evidence. Preserve authorization and tenant isolation, no DONE without exact-SHA passing proof."
+        "evidence": [
+          {
+            "type": "source",
+            "ref": "ccddb5e191b389387da821503fd87f3c84a4f2ce",
+            "url": "https://github.com/42Students/lms-vnext/commit/ccddb5e191b389387da821503fd87f3c84a4f2ce"
+          },
+          {
+            "type": "acceptance_pending",
+            "ref": "42392546252",
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42392546252"
+          }
+        ],
+        "notes": "Source implementation committed to main, documented at docs/ux/UX-G049-G048-G122.md. Dedicated exact-SHA acceptance GitHub Actions 42392546252 (head ccddb5e191b389387da821503fd87f3c84a4f2ce) queued due shared runner backlog; no executed lint/TypeScript/browser result yet. 24 scoped live source invariants inspected and present. Keep DOING until actual passing CI and authenticated scope regression evidence; security and release gates remain independent."
       },
       {
         "id": "UX-G049",
@@ -15777,8 +15788,19 @@
         "newRouteOnly": [
           "/e2e/chat17-ui-kit"
         ],
-        "evidence": [],
-        "notes": "Claimed for independent route UX tests and desktop/mobile evidence. Preserve authorization and tenant isolation, no DONE without exact-SHA passing proof."
+        "evidence": [
+          {
+            "type": "source",
+            "ref": "ccddb5e191b389387da821503fd87f3c84a4f2ce",
+            "url": "https://github.com/42Students/lms-vnext/commit/ccddb5e191b389387da821503fd87f3c84a4f2ce"
+          },
+          {
+            "type": "acceptance_pending",
+            "ref": "42392546252",
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42392546252"
+          }
+        ],
+        "notes": "Source implementation committed to main, documented at docs/ux/UX-G049-G048-G122.md. Dedicated exact-SHA acceptance GitHub Actions 42392546252 (head ccddb5e191b389387da821503fd87f3c84a4f2ce) queued due shared runner backlog; no executed lint/TypeScript/browser result yet. 24 scoped live source invariants inspected and present. Keep DOING until actual passing CI and authenticated scope regression evidence; security and release gates remain independent."
       },
       {
         "id": "UX-G050",
@@ -19502,8 +19524,19 @@
           "PAGE-0499"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Claimed for independent route UX tests and desktop/mobile evidence. Preserve authorization and tenant isolation, no DONE without exact-SHA passing proof."
+        "evidence": [
+          {
+            "type": "source",
+            "ref": "ccddb5e191b389387da821503fd87f3c84a4f2ce",
+            "url": "https://github.com/42Students/lms-vnext/commit/ccddb5e191b389387da821503fd87f3c84a4f2ce"
+          },
+          {
+            "type": "acceptance_pending",
+            "ref": "42392546252",
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42392546252"
+          }
+        ],
+        "notes": "Source implementation committed to main, documented at docs/ux/UX-G049-G048-G122.md. Dedicated exact-SHA acceptance GitHub Actions 42392546252 (head ccddb5e191b389387da821503fd87f3c84a4f2ce) queued due shared runner backlog; no executed lint/TypeScript/browser result yet. 24 scoped live source invariants inspected and present. Keep DOING until actual passing CI and authenticated scope regression evidence; security and release gates remain independent."
       },
       {
         "id": "UX-G123",
