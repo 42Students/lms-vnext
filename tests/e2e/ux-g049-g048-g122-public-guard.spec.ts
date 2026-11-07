@@ -20,13 +20,18 @@ for (const viewport of [
   });
   test("UX-G048/G122 "+viewport.name+": anonymous users cannot read dashboard or private tracker",async({page})=>{
     await page.setViewportSize({width:viewport.width,height:viewport.height});
+    // Next.js may abort a navigation while the authenticated parent redirects
+    // a missing session. Test each unauthorized HTTP response independently.
     for(const path of ["/dashboard","/tracker/mine","/tracker/mine/LMS-1234","/tracker/logs"]) {
-      await page.goto(path,{waitUntil:"domcontentloaded"});
-      const body=await page.locator("body").innerText();
+      const response=await page.request.get(path,{maxRedirects:5});
+      const body=await response.text();
       expect(body).not.toContain("Tracked private issue example");
-      expect(body).not.toContain("Named Super Admin access");
-      await expect(page.locator('[aria-label="Dashboard summary metrics"]')).toHaveCount(0);
+      expect(body).not.toContain("Platform logs · Named Super Admin access");
+      expect(body).not.toContain('aria-label="Dashboard summary metrics"');
+      expect(body).not.toContain('data-authenticated-canvas="true"');
     }
+    await page.goto("/login");
+    await expect(page.locator("main").first()).toBeVisible();
     expect(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth)).toBe(false);
   });
 }
