@@ -1,6 +1,8 @@
 import { expect, test, type BrowserContext } from "@playwright/test";
 import { SEED_IDS } from "../../scripts/db-seed-data";
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { authenticateGracefulRole } from "./support/roles";
 
 /** Real first-party OTP/device-session acceptance on the disposable E2E DB.
@@ -10,7 +12,7 @@ import { authenticateGracefulRole } from "./support/roles";
 async function signInWithSeededOtp(
   context: BrowserContext,
   email: "superadmin.seed@example.com" | "faculty.seed@example.com",
-  {superAdmin = false, selectedRole}: {superAdmin?: boolean; selectedRole?: "TPO"} = {},
+  {superAdmin = false, selectedRole}: {superAdmin?: boolean; selectedRole?: "TPO" | "FACULTY"} = {},
 ) {
   const baseUrl = "http://localhost:3000";
   const otp = process.env.AUTH_TEST_OTP;
@@ -35,7 +37,7 @@ async function signInWithSeededOtp(
   expect(cookies.some(cookie => cookie.name === "lms_session"),
     "step-up acceptance requires a first-party device cookie").toBe(true);
 
-  if (selectedRole === "TPO") {
+  if (selectedRole) {
     // The E2E preparation script grants TPO to this seeded faculty membership;
     // a role-selection cookie alone is never a permission or membership grant.
     const selection = await context.request.post(baseUrl + "/api/auth/memberships", {
@@ -95,6 +97,51 @@ test.describe("UX-G169/G171/G174/G177 CSV export journeys", () => {
     expect(csv).toContain('"matching_total"');
     expect(csv).not.toMatch(/recipient_email|recipient_phone|handset_delivered/i);
     writeFileSync("test-results/ux-g177-messaging.csv",csv,"utf8");
+  });
+
+  test("Faculty exports persisted Section assignment and quiz, not another Section", async ({page,context}) => {
+    const fixture=JSON.parse(readFileSync(join(tmpdir(),"lms-vnext-ux-g174-fixture.json"),"utf8")) as {
+      assignmentId:string;quizId:string;deliveryId:string;otherDeliveryId:string;
+    };
+    await signInWithSeededOtp(context,"faculty.seed@example.com",{selectedRole:"FACULTY"});
+    await page.setViewportSize({width:390,height:844});
+    for(const [kind,assessmentId] of [
+      ["assignment",fixture.assignmentId],["quiz",fixture.quizId],
+    ] as const){
+      const url="/api/courses/faculty/reports/"+kind+"/"+assessmentId+
+        "/csv?deliveryId="+fixture.deliveryId;
+      const result=await page.request.get(url);
+      expect(result.status(),"Faculty should download authorized "+kind).toBe(200);
+      expect(result.headers()["content-type"]).toContain("text/csv");
+      expect(result.headers()["content-disposition"]).toContain("attachment;");
+      const csv=await result.text();
+      expect(csv.startsWith("\uFEFF")).toBe(true);
+      expect(csv).toContain('"Learner","Response"');
+      expect(csv).not.toMatch(/learner.seed@example.com|membershipId|phoneE164/);
+      writeFileSync("test-results/ux-g174-"+kind+".csv",csv);
+      const mismatched=await page.request.get(
+        "/api/courses/faculty/reports/"+kind+"/"+assessmentId+
+        "/csv?deliveryId="+fixture.otherDeliveryId);
+      expect(mismatched.status(),"other Section rejected").not.toBe(200);
+      expect(mismatched.headers()["content-type"]??"").not.toContain("text/csv");
+      const duplicate=await page.request.get(url+"&deliveryId="+fixture.otherDeliveryId);
+      expect(duplicate.status(),"duplicate Section selector rejected").toBeGreaterThanOrEqual(400);
+    }
+  });
+
+  test("Learner cannot export real faculty assessments",async ({page,context})=>{
+    const fixture=JSON.parse(readFileSync(join(tmpdir(),"lms-vnext-ux-g174-fixture.json"),"utf8")) as {
+      assignmentId:string;quizId:string;deliveryId:string;
+    };
+    await authenticateGracefulRole(context,"learner");
+    for(const [kind,id] of [
+      ["assignment",fixture.assignmentId],["quiz",fixture.quizId],
+    ] as const){
+      const r=await page.request.get("/api/courses/faculty/reports/"+kind+
+        "/"+id+"/csv?deliveryId="+fixture.deliveryId);
+      expect([401,403],"Learner is not Faculty").toContain(r.status());
+      expect(r.headers()["content-type"]??"").not.toContain("text/csv");
+    }
   });
 
   test("learner cannot use faculty report export to access an arbitrary assessment", async ({ page, context }) => {
