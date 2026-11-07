@@ -15620,10 +15620,10 @@
         "type": "JOURNEY",
         "area": "enterprises",
         "title": "Enterprises · Home (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-marketing-trio-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/enterprises/error.tsx",
@@ -15636,7 +15636,8 @@
           "PAGE-0508"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Public marketing page-local UX: improve discovery, demo CTA, responsive journey and graceful loading/error. Exact viewport browser and repository proof required for DONE."
       },
       {
         "id": "UX-G051",
@@ -15701,10 +15702,10 @@
         "type": "JOURNEY",
         "area": "home",
         "title": "Home · Home (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-marketing-trio-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/home/error.tsx",
@@ -15717,7 +15718,8 @@
           "PAGE-0510"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Public marketing page-local UX: improve discovery, demo CTA, responsive journey and graceful loading/error. Exact viewport browser and repository proof required for DONE."
       },
       {
         "id": "UX-G053",
@@ -16820,10 +16822,10 @@
         "type": "JOURNEY",
         "area": "platform",
         "title": "Platform · Home (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-marketing-trio-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/platform/error.tsx",
@@ -16836,7 +16838,8 @@
           "PAGE-0515"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Public marketing page-local UX: improve discovery, demo CTA, responsive journey and graceful loading/error. Exact viewport browser and repository proof required for DONE."
       },
       {
         "id": "UX-G078",
