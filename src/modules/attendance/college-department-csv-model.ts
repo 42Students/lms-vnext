@@ -24,7 +24,7 @@ export function departmentAttendanceCsv(rows: readonly DepartmentAttendanceExpor
     row.name, row.markedSessions, row.recordedRows, row.absent,
     row.late, row.excused, row.medical,
   ].map(value => spreadsheetCsvCell(value)).join(","));
-  return "\ufeff" + [headers.map(attendanceCsvCell).join(","), ...body].join("\r\n") + "\r\n";
+  return "\ufeff" + [headers.map(spreadsheetCsvCell).join(","), ...body].join("\r\n") + "\r\n";
 }
 
 /** Detect observed count drift when a directory changes during a paginated export. */
