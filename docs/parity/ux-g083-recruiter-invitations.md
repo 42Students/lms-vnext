@@ -32,3 +32,15 @@ Scope: `/recruiter-invitations`, authenticated pending-invite approval entry for
 - Latest test-change SHA `664f5894a2a730c7841bccaaee6b9b6ee18b63e8`; [exact-SHA CI rerun 42393260091](https://github.com/42Students/lms-vnext/actions/runs/42393260091) queued as of the record. Do not mark DONE until lint/unit/browser all pass and final screenshots are reviewed.
 
 **Current tracker status: DOING.**
+
+
+## Verified closure — 2026-11-07
+
+- **Exact accepted source SHA**: `664f5894a2a730c7841bccaaee6b9b6ee18b63e8`.
+- **[Clean CI run 42393260091](https://github.com/42Students/lms-vnext/actions/runs/42393260091)**: scoped ESLint, source privacy/security contracts, existing company-share and recruiter-invite regression suites, the new server-side authorized/denied/empty/temporary-failure and all five session-recovery cases passed. Chromium **4/4 passed without retries**.
+- **[Screenshot artifact 13582756976](https://github.com/42Students/lms-vnext/actions/runs/42393260091/artifacts/13582756976)**: reviewed `pending-invitations-anonymous-mobile.png` (375×812). The final screen shows the fully mounted sign-in form with usable email/phone options, no 500 page and no recruiter invitation details. No horizontal overflow. Other suite screenshots cover token denied/ready/pending consent paths.
+- **Fresh main verification**: `page.tsx`, `loading.tsx`, `error.tsx` and `recruiter-pending-invitations.tsx` blob SHA values exactly match the accepted commit despite concurrent changes elsewhere.
+- **Regression/security boundaries**: `getCurrentRequestContext` remains required before actor-scoped list access. Inactive platform status is denied, `AuthorizationError` remains unmasked, and session errors redirect only to first-party login with fixed safe returnTo. Confirmation POST endpoints, tenant verification, grant changes and client-supplied IDs remain untouched. Busy ref prevents rapid duplicate decisions.
+- **Limit of verification**: no real recruiter account, college consent or production API was used; those remain independent end-to-end deployment gates.
+
+**UX-G083: DONE — exact-SHA, mobile screenshot and security-review gates met.**
