@@ -182,14 +182,22 @@ export function LearnerProfileWorkspace(props: {
 }) {
   const router=useRouter();
   // Draft stays mounted until the native-accessible confirmation resolves.
-  const [pendingPrompt,setPendingPrompt]=useState<{message:string;resolve:(accepted:boolean)=>void}|null>(null);
+  const [pendingPrompt,setPendingPrompt]=useState<{message:string}|null>(null);
+  const promptResolverRef=useRef<((accepted:boolean)=>void)|null>(null);
+  useEffect(()=>()=>{promptResolverRef.current?.(false);promptResolverRef.current=null;},[]);
   function askConfirm(message:string):Promise<boolean>{
-    return new Promise(resolve=>setPendingPrompt({message,resolve}));
+    return new Promise(resolve=>{
+      // A second confirmation must never strand an earlier awaiting action.
+      promptResolverRef.current?.(false);
+      promptResolverRef.current=resolve;
+      setPendingPrompt({message});
+    });
   }
   function completePrompt(accepted:boolean){
-    const current=pendingPrompt;
+    const resolve=promptResolverRef.current;
+    promptResolverRef.current=null;
     setPendingPrompt(null);
-    current?.resolve(accepted);
+    resolve?.(accepted);
   }
 
   const lastRefreshAt=useRef(0);
