@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { MarketingLayout } from "@/components/marketing/marketing-layout";
 import { Heading } from "@/components/ui/heading";
-import { ButtonLink } from "@/components/ui/button-link";
-import { TextLink } from "@/components/ui/text-link";
+import { DemoContactActions } from "@/components/marketing/demo-contact-actions";
 
 const SITE = "https://42lms.com";
 const DEMO_TITLE = "Request a Demo — 42 LMS";
@@ -114,21 +113,7 @@ export default function RequestDemoPage() {
             <p className="leading-6 text-[color:color-mix(in_srgb,var(--lms-white)_85%,transparent)]">
               Email us and a specialist will reach out to schedule your demo. No form data is collected on this page.
             </p>
-            <div className="mt-[20px] flex flex-wrap justify-start gap-3">
-              <ButtonLink variant="secondary" href={DEMO_MAILTO}>
-                Email us to book a demo
-                <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"
-                  fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14m-6-6 6 6-6 6" />
-                </svg>
-              </ButtonLink>
-            </div>
-            <p className="mt-4 text-sm leading-6 text-[color:color-mix(in_srgb,var(--lms-white)_75%,transparent)]">
-              or write to{" "}
-              <TextLink href={"mailto:" + DEMO_EMAIL} className="text-[color:var(--lms-primary-light)]">
-                {DEMO_EMAIL}
-              </TextLink>
-            </p>
+<DemoContactActions email={DEMO_EMAIL} mailtoHref={DEMO_MAILTO} />
           </article>
         </div>
       </section>
