@@ -22,6 +22,10 @@ export const SECRET_REGISTRY: readonly SecretSpec[] = [
   machine("AUTH_EMAIL_VERIFICATION_SECRET", "email verification signing"),
   machine("TPO_RECRUITER_OTP_HMAC_SECRET", "recruiter OTP HMAC"),
   machine("LOG_ALERT_ACCOUNT_HASH_KEY", "log alert account hashing"),
+  // Optional in production (a deployment without inbound mail does not need them) but validated when present (SEC-15).
+  machine("INBOUND_MAIL_HMAC_SECRET", "inbound mail worker signature", false),
+  machine("RECRUITER_MESSAGE_INBOUND_HMAC_SECRET", "recruiter message inbound signature", false),
+  machine("RECRUITER_MESSAGE_REPLY_TOKEN_SECRET", "recruiter message reply token", false),
   key("DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64", "outbound global email HMAC"),
   key("DB10_NOTIFICATION_DEDUPE_KEY_BASE64", "notification dedupe HMAC"),
   key("DB10_OUTBOUND_ENCRYPTION_KEY_BASE64", "outbound payload encryption"),
