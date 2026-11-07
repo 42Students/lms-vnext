@@ -1,0 +1,106 @@
+name: UX-G131 G162 G183 announcements and verification acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/components/announcements/announcement-admin-workspace.tsx'
+      - 'src/components/announcements/super-admin-college-broadcast-form.tsx'
+      - 'src/components/verification/SuperAdminVerificationPanel.tsx'
+      - 'src/components/verification/TpoVerificationPanel.tsx'
+      - 'src/components/verification/VerificationFilterPanel.tsx'
+      - 'src/components/verification/VerificationReviewDrawer.tsx'
+      - 'src/modules/verification/notification-copy.ts'
+      - 'src/modules/verification/staff-export-service.ts'
+      - 'tests/unit/ux-g131-g162-g183-acceptance.test.ts'
+      - 'tests/unit/chat12-verification-round2.test.ts'
+      - 'tests/e2e/ux-g131-g162-verification-announcements.spec.ts'
+      - '.github/workflows/ux-g131-g162-g183-acceptance.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ux-g131-g162-g183-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  focused-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: 'true'
+      DB10_ANNOUNCEMENTS_READY: DB10_VERIFIED
+      APP_ENV: development
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Scope-owned ESLint and global type safety
+        run: |
+          npx eslint \
+            src/components/announcements/announcement-admin-workspace.tsx \
+            src/components/announcements/super-admin-college-broadcast-form.tsx \
+            src/components/verification/SuperAdminVerificationPanel.tsx \
+            src/components/verification/TpoVerificationPanel.tsx \
+            src/components/verification/VerificationFilterPanel.tsx \
+            src/components/verification/VerificationReviewDrawer.tsx \
+            src/modules/verification/notification-copy.ts \
+            src/modules/verification/staff-export-service.ts \
+            tests/unit/ux-g131-g162-g183-acceptance.test.ts \
+            tests/unit/chat12-verification-round2.test.ts \
+            tests/e2e/ux-g131-g162-verification-announcements.spec.ts
+          npm run typecheck
+      - name: Focused unit and prior-role regression
+        run: |
+          npx vitest run \
+            tests/unit/ux-g131-g162-g183-acceptance.test.ts \
+            tests/unit/chat12-verification-round2.test.ts \
+            tests/unit/super-admin-broadcast-ui.test.ts \
+            tests/unit/chat4-college-verification-misc-gap-closure.test.ts \
+            --reporter=dot
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Prepare isolated disposable E2E PostgreSQL
+        run: npm run db:e2e:prepare
+      - name: Generate ephemeral test-only credentials
+        shell: bash
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Responsive authenticated browser acceptance and learner access negative
+        run: npx playwright test tests/e2e/ux-g131-g162-verification-announcements.spec.ts --project=chromium --reporter=line
+      - name: Preserve screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-g131-g162-g183-browser-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 14
