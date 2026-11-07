@@ -13,11 +13,14 @@ export const metadata: Metadata = {
  * multi-role or not-yet-selected sessions use the workspace dashboard. */
 export default async function NotFound() {
   let homeHref = "/dashboard";
+  let showSignIn = true;
   try {
     const context = await getCurrentRequestContext();
     const landing = getShellNavigation(context)[0]?.href;
-    if (landing?.startsWith("/") && !landing.startsWith("//"))
+    if (landing?.startsWith("/") && !landing.startsWith("//")) {
       homeHref = landing;
+      showSignIn = false;
+    }
   } catch {
     // No signed-in role exists: the centralized dashboard handles sign-in.
   }
@@ -27,5 +30,7 @@ export default async function NotFound() {
   // the error heading/copy into JSON API responses.
   return <GracefulScreen title="Page not found"
     message="The page you are looking for doesn't exist, moved, or is no longer available."
-    homeHref={homeHref} homeLabel="Go to Home"/>;
+    homeHref={homeHref} homeLabel="Go to Home"
+    alternateHref={showSignIn ? "/login" : undefined}
+    alternateLabel={showSignIn ? "Sign in" : undefined}/>;
 }

@@ -71,7 +71,7 @@ describe("chat-16 real public platform and root recovery page rendering",()=>{
  });
  it("UX-chat16-loading-20 displays visible, accessible loading affordances",()=>{
   const html=renderToStaticMarkup(<RootLoading/>);
-  expect(html).toContain("Loading sign in...");
+  expect(html).toContain("Loading 42 LMS...");
   expect(html).toContain('data-slot=');
   expect(html).not.toContain("undefined");
  });
