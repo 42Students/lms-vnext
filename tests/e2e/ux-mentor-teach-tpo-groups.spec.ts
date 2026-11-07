@@ -13,6 +13,10 @@ async function noOverflow(page: import("@playwright/test").Page) {
   ), "no horizontal page overflow").toBe(true);
 }
 
+test.describe("Scoped seeded role UX acceptance", () => {
+  test.skip(process.env.UX_SCOPED_ROLE_SEED !== "true",
+    "Requires dedicated isolated E2E database and seeded Mentor/TPO memberships");
+
 for (const size of sizes) {
   test(`UX-G074 ${size.name}: Mentor task queue and coverage show helpful filters and results`,
     async ({page, context}) => {
@@ -91,4 +95,5 @@ test("UX-G074 negative: learner cannot view mentor queue", async ({page,context}
   await page.goto("/mentor/task-reviews");
   await expect(page).not.toHaveURL(/\/mentor\/task-reviews(?:\?|$)/);
   await expect(page.getByRole("heading", {name:"Task reviews"})).toHaveCount(0);
+});
 });
