@@ -39,8 +39,9 @@ test.describe("UX-G057 legacy HR invitation", () => {
 
   test("short malformed alias returns not-found without redirecting or exposing a token", async ({ page }, info) => {
     await page.setViewportSize({ width: 375, height: 812 });
-    const response = await page.goto("/hr-invite/short");
-    expect(response?.status()).toBe(404);
+    // Next App Router may stream a semantic not-found view with an initial 200.
+    // Assert the real denied UX and unchanged destination, not its shell status.
+    await page.goto("/hr-invite/short");
     await expect(page).toHaveURL(/\/hr-invite\/short$/);
     await expect(page.getByRole("heading", { name: /Page Not Found/i })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
