@@ -44,7 +44,7 @@ jobs:
         run: |
           actual="$(git rev-parse HEAD)"
           test "$actual" = "$GITHUB_SHA"
-          printf '%s\\n' "$actual" > ux-study-shell-source-sha.txt
+          printf '%s\n' "$actual" > ux-study-shell-source-sha.txt
 
       - name: Scoped ESLint
         run: |
