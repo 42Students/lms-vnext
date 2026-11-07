@@ -52,6 +52,9 @@ describe("UX-G162 — verification review control clarity", () => {
     expect(source).toContain("selected on this page");
     expect(source).toContain("collegeBulkReviewPayload");
     expect(source).toContain("skipped");
+    // A new send-back batch cannot inherit a previously used rejection reason.
+    expect(source).toContain('setReason("");setBulkAction("SEND_BACK");');
+    expect(source).toContain("current.includes(key)||current.length>=20");
   });
   it("clears stale validation, supports TPO page-filter reset and retains guard checks", () => {
     const filters = read("src/components/verification/VerificationFilterPanel.tsx");
