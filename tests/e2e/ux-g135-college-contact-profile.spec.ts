@@ -24,6 +24,26 @@ test.describe("UX-G135 college contact profile draft recovery",()=>{
    expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width+1);
    await page.screenshot({path:info.outputPath("discard-"+width+".png"),fullPage:true});
   });
+  test("blocks invalid email and non-HTTPS policy URLs at "+width+"px",async ({page})=>{
+   await page.setViewportSize({width,height:800});
+   let writes=0;
+   await page.route("**/api/colleges/contact-profile",async route=>{
+    writes++; await route.fulfill({status:200,contentType:"application/json",body:"{}"});
+   });
+   await page.goto("/e2e/ux-g135-contact-profile");
+   const email=page.getByRole("textbox",{name:"Support email"});
+   const terms=page.getByRole("textbox",{name:"Terms of use URL (HTTPS)"});
+   await email.fill("invalid-email");
+   await page.getByRole("button",{name:"Confirm and save changes"}).click();
+   expect(await email.evaluate((el:HTMLInputElement)=>el.checkValidity())).toBe(false);
+   await email.fill("valid@example.edu");
+   await terms.fill("http://example.edu/unsafe");
+   await page.getByRole("button",{name:"Confirm and save changes"}).click();
+   expect(await terms.evaluate((el:HTMLInputElement)=>el.checkValidity())).toBe(false);
+   await expect(page.getByRole("alertdialog",{name:"Update college contact profile?"})).toHaveCount(0);
+   expect(writes).toBe(0);
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width+1);
+  });
   test("save review, stale refusal and success at "+width+"px",async ({page},info)=>{
    await page.setViewportSize({width,height:800});
    let writes=0;
@@ -48,7 +68,7 @@ test.describe("UX-G135 college contact profile draft recovery",()=>{
    await expect(name).toHaveValue("Updated College");
    await page.getByRole("button",{name:"Confirm and save changes"}).click();
    await dialog.getByRole("button",{name:"Save changes"}).click();
-   await expect(page.getByRole("alert")).toContainText("CONTACT_PROFILE_STALE");
+   await expect(page.getByRole("alert")).toContainText("These details changed in another session.");
    await expect(name).toHaveValue("Updated College");
    await page.getByRole("button",{name:"Confirm and save changes"}).click();
    await dialog.getByRole("button",{name:"Save changes"}).click();
