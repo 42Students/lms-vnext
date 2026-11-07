@@ -54,7 +54,7 @@ export default async function ActivityDetailPage({
         actions={<PageBackLink href="/activity" label="Back to activity" />}
       />
 
-      <section className="min-w-0 space-y-4 border-b border-border pb-5" aria-label="Event overview">
+      <section className="min-w-0 space-y-4 border-b border-border pb-5">
         <div className="flex flex-wrap gap-2">
           <StatusBadge>{event.module}</StatusBadge>
           <StatusBadge tone={event.importance==="CRITICAL"?"error":event.importance==="HIGH"?"warning":event.importance==="MEDIUM"?"info":"neutral"}>{event.importance}</StatusBadge>
