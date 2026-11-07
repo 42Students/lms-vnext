@@ -32,7 +32,7 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
   if(changed&&!pending&&!skillsIssue)void onSave("skills",rows);
  }
  return <form id={facultyProfileAnchor("skills")} className="min-w-0 scroll-mt-6 space-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]"
-   aria-label="Skills" onSubmit={submit}>
+   aria-label="Skills" aria-busy={pending} onSubmit={submit}>
   <div>
    <Heading level={2} size="base" className="leading-6 text-[var(--lms-heading)] md:text-lg">Skills</Heading>
    <p className="mt-1 text-sm text-muted-foreground leading-[22px]">Add up to 100 professional skills and optional proficiency levels. Changes are saved only when you submit.</p>
@@ -61,14 +61,14 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
     <div className="flex min-w-0 flex-wrap gap-[var(--lms-space-2)] sm:col-span-2 [&>button]:min-h-11">
       <Button variant="secondary" type="button" disabled={pending||index===0||!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)}
        onClick={async()=>{setRows(current=>facultyMoveSkillRecord(current,skill.id,index-1));setChanged(true);}}
-       >Move up</Button>
+       aria-label={`Move skill ${index+1} up`}>Move up</Button>
       <Button variant="secondary" type="button" disabled={pending||index===rows.length-1||!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)}
        onClick={async()=>{setRows(current=>facultyMoveSkillRecord(current,skill.id,index+1));setChanged(true);}}
-       >Move down</Button>
+       aria-label={`Move skill ${index+1} down`}>Move down</Button>
     </div>
     <Button variant="secondary" type="button" disabled={pending} onClick={async()=>{if(!(await askConfirm("Remove skill "+(index+1)+" from the unsaved draft?")))return;
       setRows(current=>removeFacultySkillDraft(current,skill.id));setChanged(true);}}
-     className="w-full text-error sm:w-auto">Remove</Button>
+     aria-label={`Remove skill ${index+1} from draft`} className="w-full text-error sm:w-auto">Remove</Button>
    </div>)}
   </div>
   <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
