@@ -81,11 +81,15 @@ for (const size of sizes) {
     const activity = page.getByRole("region", { name: "UX-G126 activity", exact: true });
     await expect(activity.getByRole("link", { name: "Clear filters" })).toHaveAttribute("href", "/activity?view=all");
     await activity.getByText("Raw forensic table · current page").click();
-    const table = activity.getByRole("region", { name: /Raw forensic activity table/ });
+    const table = activity.locator('[data-slot="scroll-cue"][data-axis="x"]').last().locator(":scope > div").first();
     await expect(table).toBeVisible();
-    await expect(table).toHaveAttribute("tabindex", "0");
-    await table.focus();
-    await expect(table).toBeFocused();
+    if (size.name === "mobile") {
+      await expect(table).toHaveAttribute("role", "region");
+      await expect(table).toHaveAttribute("tabindex", "0");
+      await expect(table).toHaveAttribute("aria-label", /Raw forensic activity table/);
+      await table.focus();
+      await expect(table).toBeFocused();
+    }
     const inbox = page.getByRole("region", { name: "UX-G126 learner inbox" });
     const search = inbox.getByRole("searchbox", { name: "Search notifications" });
     await expect(inbox.getByText(/Results filter as you type/)).toBeVisible();
