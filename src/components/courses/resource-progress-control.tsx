@@ -97,21 +97,22 @@ export function ResourceProgressControl({
   }
 
   return (
-    <div className="min-w-0 space-y-2 border-t border-border pt-3">
+    <div className="min-w-0 space-y-2 border-t border-border pt-3" aria-busy={saving}>
       <p className="text-xs text-body">
         {contentType==="LIVE_CLASS"?"Attended this session?":"Finished with these materials?"}
         {" "}Only mark complete when you have reviewed the lesson.
       </p>
-      {!verified?<div role="status" className="text-xs text-warning-text">
+      {!verified?<div role="status" aria-live="polite" className="flex min-w-0 flex-col items-start gap-2 text-xs text-warning-text sm:flex-row sm:items-center">
         {progressUnavailable?"Lesson completion state could not be fully verified. Retry before changing completion.":"Checking saved progress…"}
         {progressUnavailable?<Button type="button" variant="secondary" size="sm"
+          className="min-h-11 w-full sm:w-auto md:min-h-9"
           onClick={()=>setReloadKey(key=>key+1)}>Retry progress</Button>:null}
       </div>:null}
       {complete ? (
         <div className="flex flex-wrap items-center gap-2">
           <Badge role="status" tone="success" className="inline-flex min-h-11 items-center px-3 md:min-h-9">Marked as complete</Badge>
           {contentType==="RESOURCE"?<Button variant="secondary" size="sm" disabled={!verified||saving}
-            onClick={()=>setResetOpen(true)} className="min-h-11 md:min-h-9">Mark incomplete to rewatch</Button>:null}
+            onClick={()=>setResetOpen(true)} className="min-h-11 w-full sm:w-auto md:min-h-9">Mark incomplete to rewatch</Button>:null}
         </div>
       ) : (
         <Button size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9"
