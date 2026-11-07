@@ -39,7 +39,7 @@ export default async function AdminVerificationEntry({searchParams}:{searchParam
         description="Students' education and identity, checked against their documents."
       />
       <Banner tone="info" role="status">
-        Choose a college in the header to see its students waiting for verification.{" "}
+        Choose a college at the top to see its students waiting for verification.{" "}
         <TextLink href="/admin/colleges" className="inline-flex min-h-11 items-center md:min-h-9">Browse college directory</TextLink>
       </Banner>
     </div>
