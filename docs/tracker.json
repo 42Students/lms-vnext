@@ -16545,9 +16545,9 @@
         "type": "JOURNEY",
         "area": "offline",
         "title": "Offline · Home (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
+        "status": "PICKED",
+        "pickedBy": "chat-offline-ux-2026-11-07",
+        "pickedAt": "2026-11-07",
         "startedAt": null,
         "completedAt": null,
         "sourceFiles": [],
@@ -16555,7 +16555,8 @@
         "newRouteOnly": [
           "/offline"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "Public /offline recovery UX. Scoped to offline route; do not modify auth/permissions. Claimed for complete UX pass and browser regression."
       },
       {
         "id": "UX-G076",
