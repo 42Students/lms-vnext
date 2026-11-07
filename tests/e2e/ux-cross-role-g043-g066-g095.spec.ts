@@ -23,6 +23,7 @@ for(const group of groups)for(const viewport of [
   await expect(page.getByText("Retry invoked: 1")).toBeVisible();
   await expect(page.locator(`a[href="${group.fallback}"]`).first()).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)).toBe(false);
+  await mkdir("ux-cross-role-evidence",{recursive:true});
   const png=await page.screenshot({path:`ux-cross-role-evidence/${group.group}-${viewport.label}.png`,fullPage:false});
   await testInfo.attach(`${group.group}-${viewport.label}.png`,{body:png,contentType:"image/png"});
   await page.getByRole("button",{name:"Show loading"}).click();
