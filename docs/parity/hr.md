@@ -650,3 +650,74 @@ This section enumerates *actual code and database gates*, not a claim of execute
 | Drive Recorded Outside Platform | **Registered** `placement_outside_drive_records` in canonical schema and migration **0079**, with relationship/college composite FK and recorded actor provenance; distinct from platform jobs. | The form and service now use registered records without a missing-table feature flag; TPO writes need a persisted TPO membership and scoped `placements.manage`; HR writes require exact ACTIVE employer relationship/grant and `placements.recruiter.outside.record`. | Verify persistence, immutability, tenant isolation, idempotency policy, mobile UX and real PostgreSQL journal replay; a staff record is not a published learner job. |
 
 **Remaining orchestrator acceptance:** migrations 0078 and 0079 are registered; execute complete journal replay, schema drift, tenant/FK/concurrency checks, browser parity and downstream participant workflows before marking this family DONE. Do not mark any of the three detailed checkboxes or parent matrix rows DONE until producer→consumer and browser/mobile proofs execute.
+
+
+## UX five-group HR pass: G053, G054, G055, G056, G142 (2026-11-07)
+
+**Canonical ownership and scope:** The five groups are claimed as a single
+concurrent-safe HR recruiter UX batch in docs/tracker.json:
+- UX-G053 — hiring activity, calendar, colleges, company/team, reports,
+  conversations inbox: 6 page routes × page/loading/error = 18 files.
+- UX-G054 — conversation detail, employer job interview-slots/messages/round
+  editor/removal, drives listing: 6 routes × page/loading/error = 18 files.
+- UX-G055 — request drive, proposal history, recorded-outside recruitment,
+  recruiter Today, messages alias and notifications: 6 routes × page/loading/error = 18 files.
+- UX-G056 — recruiter placements, job detail including not-found, profile,
+  round results: 4 routes plus job not-found = 13 files.
+- UX-G142 — 10 interactive HR controls (draft authoring, applicant review,
+  conversation reply, name/designation, notification bell, private rating,
+  profile details, request cancellation and round inline editing).
+**Total: 77 tracked source surfaces/files.**
+
+**UX implementation:** The existing server-revalidated recruiter/college grants
+and identity checks remain intact, as do optimistic-write/confirmation guards.
+Across targeted route error boundaries, both user-initiated retry and context-safe
+return navigation now remain available at 44px minimum touch height; loading
+copy names the exact hiring operation (interview slots, round editor, removal,
+recorded-outside recruitment and drive messages). Error copy never interprets
+a failed data read as zero events, lost messages, missing drive results or changed
+applicant access. The drive-draft error fallback no longer logs a raw exception
+to the browser console. Job detail retry remains paired with a protected return.
+
+Client control refinements: unsent recruiter replies preserve external/new-tab
+and download navigation instead of wrongly hijacking it into a draft-discard
+dialog; designation editing can discard changes and does not save unchanged
+values; notification bell shows an explicit NO_ACCESS state and rejects
+malformed/unverified responses rather than silently showing a blank drawer;
+round editor actions use touch-sized controls; failed private applicant-rating
+writes are announced as errors rather than success-like status messages.
+No new administrative write, test sign-in, exposed applicant data or cross-tenant
+fallback was introduced.
+
+**Acceptance coverage:**
+- tests/unit/UX-hr-five-groups-batch.test.tsx inventories all 77 tracked
+  source files and 22 server-authorized route pages, 22 loading and 22 error
+  states; renders 5 real error boundaries with injected sentinel secrets and
+  proves the token is not displayed, safe links and retry remain; checks
+  HR component controls and notification-response generation/race handling.
+- tests/e2e/ux-hr-five-groups-anonymous.spec.ts verifies both 1280×800
+  desktop and 390×844 mobile across four unprivileged entry points; no
+  authenticated HR canvas, session issuance or private applicant data.
+- tests/e2e/ux-hr-five-groups-authorized.spec.ts runs in a disposable
+  PostgreSQL 17 database, seeded with first-party synthetic recruiter and
+  learner identities and ephemeral per-run auth secrets. Both viewports
+  exercise 9 actual recruiter route entries and notifications drawer; an
+  authenticated learner is denied all tested direct HR paths. Exact
+  authenticated browser acceptance does not require external production
+  credentials or bypass server policy.
+- .github/workflows/ux-hr-five-groups-acceptance.yml orchestrates scoped
+  lint, full TypeScript checks, unit/SSR tests, browser captures and the
+  real seeded role-specific test job. Browser artifacts are preserved.
+
+**Evidence and status:** Code commits
+df5154d960c35c6955b55e7256b6b97d11d0aa0b and
+1cccf0987d7b4a43d34883ac9accd6438aa6218c.
+Acceptance source commit 37914b5af5ee3d9615b6aef83a2439e97137c053
+and follow-up unit fix 272640a344b5e7b34f0c202d130ab8157c61cec5.
+The exact-SHA GitHub Actions run is
+https://github.com/42Students/lms-vnext/actions/runs/42397765940
+(two jobs: source/unit/anonymous and disposable-PG17 authorized browser).
+**DOING until both required jobs succeed and the result is recorded in the
+single canonical tracker.** Passing a scoped UX batch does not attest all
+legacy parity, database/security hardening, provider activation or production
+release readiness; these have their own gates.
