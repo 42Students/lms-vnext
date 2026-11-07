@@ -26,6 +26,10 @@ import { runAsSystem } from "@/db/tenant-context";
  */
 async function PublicPlacementsPage() {
   const tenant = await resolveRequestTenant((await headers()).get("host"));
+  // A failed domain-directory lookup is retryable, not proof of unpublication.
+  if (tenant.kind === "unavailable") {
+    throw new Error("PUBLIC_PLACEMENTS_TENANT_LOOKUP_UNAVAILABLE");
+  }
   if (tenant.kind !== "college") notFound();
   // A missing/unfinished publication table is an infrastructure error,
   // not evidence that a college explicitly unpublished its page.
@@ -79,51 +83,68 @@ async function PublicPlacementsPage() {
     return value===null?[]:[{key,label:PUBLIC_METRIC_LABELS[key],value}];
   });
   return (
-    <div className="min-h-screen bg-[color:var(--lms-neutral-50)] px-4 py-8">
-      <main data-testid="placements.public" className="mx-auto flex w-full max-w-[760px] flex-col gap-6">
-        <section className="min-w-0 rounded-[8px] border border-border bg-surface p-5 shadow-none sm:p-6"
+    <div className="min-h-dvh bg-[color:var(--lms-neutral-50)] px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-8 sm:pt-10">
+      <main data-testid="placements.public" className="mx-auto flex w-full max-w-[760px] min-w-0 flex-col gap-5 sm:gap-6">
+        <section className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 sm:p-6"
           aria-labelledby="placements-public-heading">
-          <Heading level={1} size="2xl" id="placements-public-heading" className="m-0 break-words leading-tight text-[color:var(--lms-heading)] sm:text-[30px]">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Public placements overview</p>
+          <Heading level={1} size="2xl" id="placements-public-heading"
+            className="m-0 break-words leading-tight text-[color:var(--lms-heading)] sm:text-[30px]">
             {college?.collegeName??"College placements"}
           </Heading>
           {published&&content?.about ? (
-            <p className="mt-4 whitespace-pre-wrap break-words text-sm leading-6 text-body">
+            <p className="mb-0 mt-4 whitespace-pre-wrap break-words text-sm leading-6 text-body">
               {content.about}
             </p>
-          ) : null}
+          ) : (
+            <p className="mb-0 mt-3 text-sm leading-6 text-body">
+              Placement information published by this college.
+            </p>
+          )}
+        </section>
+        <section aria-labelledby="public-placement-outcomes"
+          className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 sm:p-6">
+          <Heading level={2} size="lg" id="public-placement-outcomes"
+            className="m-0 text-[color:var(--lms-heading)]">Placement outcomes</Heading>
           {visibleMetrics.length>0 ? (
             <>
-              <dl className="mt-8 flex flex-wrap gap-8" aria-label="Public placements statistics">
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                College-published figures for the 12 months preceding publication.
+              </p>
+              <dl className="mt-5 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2"
+                aria-label="Public placements statistics">
                 {visibleMetrics.map(metric=>(
-                  <div key={metric.key} className="min-w-[112px] max-w-full">
-                    <dt className="text-sm text-muted-foreground">{metric.label}</dt>
-                    <dd className="mt-1 break-words text-2xl font-semibold tabular-nums text-foreground">
-                      {metric.value}
-                    </dd>
+                  <div key={metric.key}
+                    className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-[color:var(--lms-neutral-50)] p-4">
+                    <dt className="break-words text-sm text-muted-foreground">{metric.label}</dt>
+                    <dd className="mb-0 mt-2 break-words text-2xl font-semibold tabular-nums text-foreground">{metric.value}</dd>
                   </div>
                 ))}
               </dl>
-              <p className="mb-0 mt-3 text-sm text-muted-foreground">
-                Live numbers over the last 12 months.
-              </p>
-              {published ? <p className="mt-1 text-xs text-muted-foreground">
-                College-published figures last updated{" "}
-                <time dateTime={published.publishedAt}>
-                  {istDateFormatter.format(new Date(published.publishedAt))}
-                </time>. Individual records are never displayed here.
-              </p> : null}
             </>
+          ) : (
+            <p role="status" className="mb-0 mt-3 text-sm leading-6 text-body">
+              Placement statistics are not available for public display.
+            </p>
+          )}
+          {published ? (
+            <p className="mb-0 mt-4 text-xs leading-5 text-muted-foreground">
+              Published{" "}
+              <time dateTime={published.publishedAt}>
+                {istDateFormatter.format(new Date(published.publishedAt))}
+              </time>. Individual student and employer records are not shown.
+            </p>
           ) : null}
         </section>
-        <section aria-label="Recruit from us" className="min-w-0 rounded-[8px] border border-border bg-surface p-5 shadow-none sm:p-6 [&>section]:mt-0 [&>section]:border-t-0 [&>section]:pt-0">
+        <section aria-label="Recruit from us"
+          className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 sm:p-6 [&>section]:mt-0 [&>section]:border-0 [&>section]:p-0 [&>section]:shadow-none">
           <PublicRecruitFromUs collegeName={college?.collegeName ?? ""}
             enabled={Boolean(published) && process.env["DB09_TPO_API_READY"] === "DB09_VERIFIED" &&
               process.env["PUBLIC_JOIN_TRUSTED_PROXY_READY"] === "VERIFIED"}/>
         </section>
       </main>
     </div>
-  );
-}
+  );}
 
 // Public page, no actor: runs in a named system scope so row-level security (when enforced) still lets it read
 // the one record its link points at. The scope name shows in the database session.

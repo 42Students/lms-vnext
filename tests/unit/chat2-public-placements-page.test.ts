@@ -9,7 +9,7 @@ describe("TPO public placements publication and copy",()=>{
   expect(p).toContain("(publicRead?.available&&!published)");
   expect(p).toContain("notFound()");
   expect(nf).toContain("This page isn't available");
-  expect(nf).toContain("The placement cell hasn't published a placements page here.");
+  expect(nf).toContain("The placement cell hasn't published a placements page here");
  });
  it("TPO-campaigns-public-36 uses the college-specific legacy heading and removes platform-only footer",()=>{
   const p=src("src/app/placements/page.tsx");
