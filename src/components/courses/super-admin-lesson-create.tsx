@@ -75,7 +75,7 @@ type Path={id:string;courseName:string;cohortName:string;periodName:string};
    <Input type="search" value={courseSearch} onChange={event=>setCourseSearch(event.target.value)}
      placeholder="Search courses" aria-label="Search courses" disabled={pending}
      className="min-h-11 w-full md:min-h-9"/>
-   <Select required value={pathId} disabled={pending} onChange={event=>{setPathId(event.target.value);setFieldErrors(({path: _path,...rest})=>rest);}}
+   <Select required value={pathId} disabled={pending} aria-invalid={Boolean(fieldErrors.path)} onChange={event=>{setPathId(event.target.value);setFieldErrors(({path: _path,...rest})=>rest);}}
     className="min-h-11 w-full md:min-h-9">
     <option value="">Select course</option>
     {paths.filter(path=>path.id===pathId||(path.courseName+" "+path.cohortName+" "+path.periodName)
@@ -98,7 +98,7 @@ type Path={id:string;courseName:string;cohortName:string;periodName:string};
     onChange={event=>setDescription(event.target.value)}
     className="min-h-11 w-full md:min-h-9"/>
   </Label>
-  <p className="text-xs text-muted-foreground">A new lesson is appended to its course. You can reorder lessons after saving. Content is a separate, individually validated step; creating the lesson does not create or publish any resource, assignment or quiz.</p>
+  <p className="min-w-0 break-words text-xs text-muted-foreground">A new lesson is appended to its course. You can reorder lessons after saving. Content is a separate, individually validated step; creating the lesson does not create or publish any resource, assignment or quiz.</p>
   <Label className="flex min-h-11 items-center gap-2">
    <Checkbox disabled={pending} checked={visibleToStudents}
     onChange={event=>setVisibleToStudents(event.target.checked)}/>
@@ -114,7 +114,7 @@ type Path={id:string;courseName:string;cohortName:string;periodName:string};
      <TextLink href="/admin/resources" className="ml-2 inline-flex min-h-11 items-center">Add lesson content →</TextLink>
     </p>:null}
    </Alert>:null}
-  <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||!pathId||!name.trim()}>
+  <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||!pathId||!name.trim()} aria-busy={pending}>
     <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none" className="mr-2 inline-block">
      <path d="M8 2.5v11M2.5 8h11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>{pending?"Saving…":"Create Lesson & Add Another"}
