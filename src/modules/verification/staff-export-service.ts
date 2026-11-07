@@ -41,6 +41,7 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
   membershipId:collegeMemberships.id,learnerName:users.displayName,
   section:profileVerifications.section,status:profileVerifications.status,
   submittedAt:profileVerifications.submittedAt,decidedAt:profileVerifications.decidedAt,
+  reviewedBy:profileVerifications.decidedByName,
   snapshot:profileVerifications.submittedSnapshot,
  }).from(profileVerifications)
  .innerJoin(collegeMemberships,eq(collegeMemberships.id,profileVerifications.learnerMembershipId))
