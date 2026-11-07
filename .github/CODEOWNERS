@@ -19,3 +19,11 @@
 /docs/security/                 @techbyphani
 /package.json                   @techbyphani
 /package-lock.json              @techbyphani
+
+# Supply chain and deployment surfaces (SEC-18-016, SEC-18-021): dependency, workflow, deployment and migration changes.
+/package.json                   @techbyphani
+/package-lock.json              @techbyphani
+/.github/                       @techbyphani
+/deploy/                        @techbyphani
+/drizzle/                       @techbyphani
+/scripts/security/              @techbyphani
