@@ -43,6 +43,9 @@ spec:
             - { name: DB_TENANT_SCOPE, value: "on" }
             - { name: SECURITY_SHARED_STORE, value: "on" }
             - { name: PGOPTIONS, value: "-c app.rls_mode=enforce" }
+            # Durable append-only security audit trail (migration 0341) and nonce-based script CSP, on in dev first.
+            - { name: SECURITY_AUDIT_DB, value: "on" }
+            - { name: CSP_NONCE, value: "on" }
             - { name: DB09_TPO_API_READY, value: "DB09_VERIFIED" }
           securityContext:
             allowPrivilegeEscalation: false
