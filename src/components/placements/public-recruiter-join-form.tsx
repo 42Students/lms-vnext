@@ -90,6 +90,26 @@ export function PublicRecruiterJoinForm({
    setFieldErrors(current=>({...current,[field]:undefined}));
    if(focusField===field){setError("");setFocusField(null);}
   }
+  function changeWorkEmail() {
+    if(submittingRef.current || pending) return;
+    // A code is bound to the address it was sent to. Changing that address
+    // must discard its verification step and company lookup, not just unlock
+    // the field. Keep the recruiter's other contact details.
+    setSentTo("");
+    setCode("");
+    setKnownCompany(null);
+    setCompanyName("");
+    setError("");
+    setFieldErrors({});
+    setFocusField(null);
+    emailRef.current?.focus();
+    emailRef.current?.select();
+  }
+  useEffect(()=>{
+    // The OTP input is mounted only after setSentTo commits. A microtask in
+    // sendCode runs too early and can leave keyboard users on the email field.
+    if(sentTo && !joined) codeRef.current?.focus();
+  }, [sentTo, joined]);
   useEffect(()=>{
    if(!error)return;
    const target=focusField==="email"?emailRef.current:
@@ -131,7 +151,6 @@ export function PublicRecruiterJoinForm({
       if(responseData?.companyName)setCompanyName(responseData.companyName);
       setSentTo(parsed.data);
       setCode("");
-      queueMicrotask(()=>codeRef.current?.focus());
     } catch {
       showError(joinErrorMessage(null,"SEND"));
     } finally {
@@ -202,6 +221,8 @@ export function PublicRecruiterJoinForm({
           <div role="alert" className="space-y-3">
            <PageHeader title="Recruiter verification unavailable" />
            <p className="text-sm text-body">{blockedReason}</p>
+           <p className="text-sm text-body">Already registered? You can still sign in with your work email.</p>
+           <ButtonLink variant="secondary" href="/login" className="min-h-11 w-full sm:w-auto">Sign in</ButtonLink>
           </div>
         ) : joined ? (
           <>
@@ -235,6 +256,12 @@ export function PublicRecruiterJoinForm({
                     : "Your company email. Personal emails such as Gmail can't be used. You'll sign in with it."}
                 </span>
               </Label>
+              {sentTo ? (
+                <Button variant="link" size="inline" type="button" disabled={pending}
+                  onClick={changeWorkEmail} className="min-h-11 w-full justify-start sm:w-auto">
+                  Change work email
+                </Button>
+              ) : null}
               <Label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)]">
                 Your name
                 <Input ref={nameRef} type="text" required autoComplete="name" value={name} maxLength={150}
