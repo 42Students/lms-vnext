@@ -2,7 +2,7 @@ import "server-only";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { listCollegePeopleWithRuntime } from "./runtime";
-import { PEOPLE_CSV_CAP, peopleCsvQuery, renderPeopleCsv } from "./college-people-export-model";
+import { PEOPLE_CSV_CAP, peopleCsvQuery, renderPeopleCsv, appendUniquePeopleCsvRows } from "./college-people-export-model";
 
 export async function exportCollegePeopleCsv(context: RequestContext, raw: unknown) {
   const filter = peopleCsvQuery.parse(raw);
@@ -19,10 +19,10 @@ export async function exportCollegePeopleCsv(context: RequestContext, raw: unkno
       collegeId: own.collegeId, limit: 100, offset, ...filter,
     });
     if (offset === 0) total = page.pagination.total;
-    rows.push(...page.items);
+    appendUniquePeopleCsvRows(rows, page.items);
     if (page.items.length < 100 || offset + 100 >= total) break;
   }
-  const truncated = total > PEOPLE_CSV_CAP;
+  const truncated = total > PEOPLE_CSV_CAP || rows.length < Math.min(total, PEOPLE_CSV_CAP);
   return { csv: renderPeopleCsv(rows, truncated),
     total, exported: rows.length, truncated };
 }
