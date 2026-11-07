@@ -70,7 +70,7 @@ jobs:
       - name: Prepare guarded disposable E2E database
         run: npm run db:e2e:prepare
       - name: Real database tenant authorization integration
-        run: npx vitest run tests/integration/college-department-attendance-export.test.ts
+        run: npx vitest run --config vitest.db.config.ts tests/integration/college-department-attendance-export.test.ts
       - name: Configure ephemeral OTP-only test credentials
         run: |
           echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
