@@ -13,10 +13,11 @@ export default function LearnerQuizAttemptPage() {
       <div className="mx-auto min-h-dvh w-full min-w-0">
         <TextLink
           href="/learn/allQuizzes"
-          className="inline-flex min-h-11 items-center px-4 text-sm md:min-h-9"
+          aria-label="Cancel quiz and return to All Quizzes"
+          className="inline-flex min-h-11 max-w-full items-center gap-3 px-4 py-2 text-sm focus-ring md:min-h-9"
         >
-          <Img src="/assets/images/legacy-42lms-logo.svg" alt="42Learn" width={130} height={40} className="mr-3 h-10 w-[132px] object-contain" />
-          <span>Cancel quiz · All Quizzes</span>
+          <Img src="/assets/images/legacy-42lms-logo.svg" alt="" width={130} height={40} className="h-10 w-[132px] shrink-0 object-contain" />
+          <span className="min-w-0 break-words">Cancel quiz · All Quizzes</span>
         </TextLink>
         <div className="min-h-[calc(100dvh-4rem)]">
           <Suspense fallback={<PageLoading label="Loading quiz…" variant="form" count={4}/>}>
