@@ -72,6 +72,69 @@ try {
   const own = await asApp({ ...enforce, "app.college_id": A }, "INSERT INTO rls_probe (college_id) VALUES ($1) RETURNING id", [A]);
   check("enforce mode: college A can write its own row", own.rowCount === 1);
 
+  // 2b. Update/delete denial, row-move denial (SEC-06-008, 019 to 021) on the same probe table.
+  await client.query(`GRANT UPDATE, DELETE ON rls_probe TO rls_probe_user`);
+  const updOther = await asApp({ ...enforce, "app.college_id": A }, "UPDATE rls_probe SET college_id = college_id WHERE college_id = $1", [B]);
+  check("enforce mode: college A cannot UPDATE a college B row", updOther.rowCount === 0);
+  const delOther = await asApp({ ...enforce, "app.college_id": A }, "DELETE FROM rls_probe WHERE college_id = $1", [B]);
+  check("enforce mode: college A cannot DELETE a college B row", delOther.rowCount === 0);
+  let moveDenied = false;
+  try {
+    await asApp({ ...enforce, "app.college_id": A }, "UPDATE rls_probe SET college_id = $1 WHERE college_id = $2", [B, A]);
+  } catch (error) {
+    moveDenied = /row-level security/i.test(String(error.message));
+  }
+  check("enforce mode: college A cannot move its own row into college B", moveDenied);
+  const delOwn = await asApp({ ...enforce, "app.college_id": A }, "DELETE FROM rls_probe WHERE college_id = $1", [A]);
+  check("enforce mode: college A can delete its own rows", delOwn.rowCount >= 1);
+
+  // 2c. Parent-derived policy (migration 0338): a child is visible exactly when its parent is.
+  await client.query(`DROP TABLE IF EXISTS rls_probe_child`);
+  await client.query(`CREATE TABLE rls_probe_child (id serial PRIMARY KEY, probe_id integer NOT NULL REFERENCES rls_probe(id))`);
+  await client.query(`ALTER TABLE rls_probe_child ENABLE ROW LEVEL SECURITY`);
+  const derived = `app_rls_bypass() OR EXISTS (SELECT 1 FROM "rls_probe" AS p WHERE p."id" = "rls_probe_child"."probe_id")`;
+  await client.query(`CREATE POLICY tenant_isolation_derived ON rls_probe_child USING (${derived}) WITH CHECK (${derived})`);
+  await client.query(`GRANT SELECT, INSERT, UPDATE, DELETE ON rls_probe_child TO rls_probe_user`);
+  await client.query(`GRANT USAGE ON SEQUENCE rls_probe_child_id_seq TO rls_probe_user`);
+  const parents = (await client.query("SELECT id, college_id FROM rls_probe ORDER BY id")).rows;
+  const pa = parents.find((r) => r.college_id === A)?.id;
+  const pb = parents.find((r) => r.college_id === B)?.id;
+  await client.query(`INSERT INTO rls_probe_child (probe_id) VALUES ($1), ($2)`, [pa, pb]);
+  const countChild = async (s) => (await asApp(s, "SELECT count(*)::int AS n FROM rls_probe_child")).rows[0].n;
+  check("derived, inert mode: all child rows", (await countChild({})) === 2);
+  check("derived, enforce, no scope: no child rows", (await countChild(enforce)) === 0);
+  check("derived, enforce, college A: only A's child rows", (await countChild({ ...enforce, "app.college_id": A })) === 1);
+  check("derived, enforce, platform scope: all child rows", (await countChild({ ...enforce, "app.platform": "on" })) === 2);
+  check("derived, enforce, system scope: all child rows", (await countChild({ ...enforce, "app.system": "job" })) === 2);
+  const childDel = await asApp({ ...enforce, "app.college_id": A }, "DELETE FROM rls_probe_child WHERE probe_id = $1", [pb]);
+  check("derived: college A cannot DELETE a college B child row", childDel.rowCount === 0);
+  let childInsertDenied = false;
+  try {
+    await asApp({ ...enforce, "app.college_id": A }, "INSERT INTO rls_probe_child (probe_id) VALUES ($1)", [pb]);
+  } catch (error) {
+    childInsertDenied = /row-level security/i.test(String(error.message));
+  }
+  check("derived: college A cannot attach a child to a college B parent", childInsertDenied);
+
+  // 2d. Catalog: every derived table in the plan is protected, no SECURITY DEFINER function exists in public.
+  const { readFileSync } = await import("node:fs");
+  const plan = JSON.parse(readFileSync("docs/security/assessments/derived-policy-plan.json", "utf8")).plan;
+  const derivedCat = await client.query(
+    `SELECT c.relname, c.relrowsecurity AS rls, c.relforcerowsecurity AS forced,
+            EXISTS (SELECT 1 FROM pg_policies p WHERE p.schemaname = 'public' AND p.tablename = c.relname AND p.policyname = 'tenant_isolation_derived') AS policy
+     FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace AND n.nspname = 'public'
+     WHERE c.relkind = 'r' AND c.relname = ANY($1)`,
+    [Object.keys(plan)],
+  );
+  const derivedBad = Object.keys(plan).filter((t) => !derivedCat.rows.some((r) => r.relname === t && r.rls && r.forced && r.policy));
+  check(`all ${Object.keys(plan).length} parent-derived tables have RLS, FORCE and the derived policy`, derivedBad.length === 0, derivedBad.join(","));
+  const forcedBad = (await client.query(
+    `SELECT c.relname FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace AND n.nspname = 'public'
+     WHERE c.relkind = 'r' AND c.relname NOT LIKE 'rls_probe%' AND EXISTS (SELECT 1 FROM pg_policies p WHERE p.schemaname = 'public' AND p.tablename = c.relname AND p.policyname = 'tenant_isolation') AND NOT c.relforcerowsecurity`)).rows.map((r) => r.relname);
+  check("every tenant_isolation table has FORCE ROW LEVEL SECURITY", forcedBad.length === 0, forcedBad.join(","));
+  const definers = (await client.query(`SELECT p.proname FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace AND n.nspname = 'public' WHERE p.prosecdef`)).rows.map((r) => r.proname);
+  check("no SECURITY DEFINER function in schema public (SEC-06-013/014)", definers.length === 0, definers.join(","));
+
   // 3. Global-read variant (migrations 0334 + 0336): platform-owned NULL-college rows are readable (SELECT only) by every
   //    college; update, delete and insert stay strict, so only a platform or system scope can change a global row.
   const variantTables = await client.query(
@@ -115,6 +178,7 @@ try {
   const globalSystem = await asApp({ ...enforce, "app.system": "seed" }, "INSERT INTO rls_probe_global (college_id) VALUES (NULL) RETURNING id");
   check("variant: a system scope can write a global row", globalSystem.rowCount === 1);
 } finally {
+  await client.query("DROP TABLE IF EXISTS rls_probe_child").catch(() => {});
   await client.query("DROP TABLE IF EXISTS rls_probe_global").catch(() => {});
   await client.query("DROP TABLE IF EXISTS rls_probe").catch(() => {});
   await client.end();

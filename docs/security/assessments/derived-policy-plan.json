@@ -1,0 +1,810 @@
+{
+ "generated": "2026-11-07",
+ "note": "child table -> anchor foreign key; policy = app_rls_bypass() OR EXISTS(parent row visible)",
+ "plan": {
+  "cohorts": {
+   "via": "start_period_id",
+   "parent": "academic_periods",
+   "parentCol": "id",
+   "level": 1
+  },
+  "programs": {
+   "via": "department_id",
+   "parent": "departments",
+   "parentCol": "id",
+   "level": 1
+  },
+  "learner_program_enrollments": {
+   "via": "membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "section_enrollments": {
+   "via": "academic_period_id",
+   "parent": "academic_periods",
+   "parentCol": "id",
+   "level": 1
+  },
+  "section_faculty_assignments": {
+   "via": "membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "learner_content_progress": {
+   "via": "membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "assignment_submissions": {
+   "via": "membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "project_task_submissions": {
+   "via": "project_id",
+   "parent": "project_instances",
+   "parentCol": "id",
+   "level": 1
+  },
+  "project_members": {
+   "via": "membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "project_submission_reviews": {
+   "via": "project_id",
+   "parent": "project_instances",
+   "parentCol": "id",
+   "level": 1
+  },
+  "project_evaluations": {
+   "via": "project_id",
+   "parent": "project_instances",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_job_eligibility_policies": {
+   "via": "job_id",
+   "parent": "placement_jobs",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_candidate_academic_evidence": {
+   "via": "membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_eligibility_overrides": {
+   "via": "job_id",
+   "parent": "placement_jobs",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_candidate_preferences": {
+   "via": "membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_job_rounds": {
+   "via": "job_id",
+   "parent": "placement_jobs",
+   "parentCol": "id",
+   "level": 1
+  },
+  "course_discussion_messages": {
+   "via": "sender_membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "learner_profile_education_entries": {
+   "via": "learner_membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "learner_profile_identity_summaries": {
+   "via": "learner_membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "learner_profile_private_document_bindings": {
+   "via": "learner_membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "learner_profile_video_intros": {
+   "via": "learner_membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "faculty_course_associations": {
+   "via": "membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "profile_private_document_receipts": {
+   "via": "owning_membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "profile_verification_academic_marks": {
+   "via": "learner_membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "profile_verifications": {
+   "via": "learner_membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "profile_verification_tpo_grants": {
+   "via": "membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_batch_registration_events": {
+   "via": "registration_id",
+   "parent": "placement_batch_registrations",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_debarment_drive_events": {
+   "via": "debarment_id",
+   "parent": "placement_debarments",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_debarment_history": {
+   "via": "debarment_id",
+   "parent": "placement_debarments",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_public_join_challenges": {
+   "via": "link_id",
+   "parent": "placement_public_join_links",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_tpo_share_events": {
+   "via": "share_id",
+   "parent": "placement_tpo_share_links",
+   "parentCol": "id",
+   "level": 1
+  },
+  "bug_report_attachments": {
+   "via": "bug_report_id",
+   "parent": "bug_reports",
+   "parentCol": "id",
+   "level": 1
+  },
+  "bug_report_activities": {
+   "via": "bug_report_id",
+   "parent": "bug_reports",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_external_offer_events": {
+   "via": "offer_id",
+   "parent": "placement_external_offers",
+   "parentCol": "id",
+   "level": 1
+  },
+  "project_delivery_events": {
+   "via": "actor_membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_public_join_rate_events": {
+   "via": "link_id",
+   "parent": "placement_public_join_links",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_tpo_notice_audiences": {
+   "via": "announcement_id",
+   "parent": "announcements",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_tpo_notice_recipients": {
+   "via": "announcement_id",
+   "parent": "announcements",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_tpo_application_stages": {
+   "via": "job_id",
+   "parent": "placement_jobs",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_college_application_stages": {
+   "via": "job_id",
+   "parent": "placement_jobs",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_waitlist_promotions": {
+   "via": "job_id",
+   "parent": "placement_jobs",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_drive_selections": {
+   "via": "job_id",
+   "parent": "placement_jobs",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_company_share_selections": {
+   "via": "share_id",
+   "parent": "placement_company_applicant_shares",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_recruiter_message_mail_state": {
+   "via": "thread_id",
+   "parent": "placement_tpo_message_threads",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_recruiter_inbound_email_events": {
+   "via": "thread_id",
+   "parent": "placement_tpo_message_threads",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_interview_private_events": {
+   "via": "job_id",
+   "parent": "placement_jobs",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_applications": {
+   "via": "job_id",
+   "parent": "placement_jobs",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_job_role_options": {
+   "via": "job_id",
+   "parent": "placement_jobs",
+   "parentCol": "id",
+   "level": 1
+  },
+  "sections": {
+   "via": "academic_period_id",
+   "parent": "academic_periods",
+   "parentCol": "id",
+   "level": 1
+  },
+  "group_backed_class_offerings": {
+   "via": "academic_period_id",
+   "parent": "academic_periods",
+   "parentCol": "id",
+   "level": 1
+  },
+  "identity_email_ownership_proofs": {
+   "via": "verification_link_id",
+   "parent": "identity_email_verification_links",
+   "parentCol": "id",
+   "level": 1
+  },
+  "faculty_profiles": {
+   "via": "membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "elective_offerings": {
+   "via": "group_id",
+   "parent": "lms_groups",
+   "parentCol": "id",
+   "level": 1
+  },
+  "project_meeting_history": {
+   "via": "project_id",
+   "parent": "project_instances",
+   "parentCol": "id",
+   "level": 1
+  },
+  "project_resource_audit": {
+   "via": "project_id",
+   "parent": "project_instances",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_recruiter_college_grants": {
+   "via": "company_relationship_id",
+   "parent": "placement_company_relationships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "learner_profiles": {
+   "via": "membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "learner_profile_import_undo_journal": {
+   "via": "membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "attendance_records": {
+   "via": "membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_tpo_messages": {
+   "via": "thread_id",
+   "parent": "placement_tpo_message_threads",
+   "parentCol": "id",
+   "level": 1
+  },
+  "lms_group_member_events": {
+   "via": "group_id",
+   "parent": "lms_groups",
+   "parentCol": "id",
+   "level": 1
+  },
+  "project_releases": {
+   "via": "project_id",
+   "parent": "project_instances",
+   "parentCol": "id",
+   "level": 1
+  },
+  "project_sprints": {
+   "via": "project_id",
+   "parent": "project_instances",
+   "parentCol": "id",
+   "level": 1
+  },
+  "project_task_comments": {
+   "via": "author_membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "project_resources": {
+   "via": "project_id",
+   "parent": "project_instances",
+   "parentCol": "id",
+   "level": 1
+  },
+  "project_submissions": {
+   "via": "created_by_membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "project_meetings": {
+   "via": "project_id",
+   "parent": "project_instances",
+   "parentCol": "id",
+   "level": 1
+  },
+  "course_offerings": {
+   "via": "academic_period_id",
+   "parent": "academic_periods",
+   "parentCol": "id",
+   "level": 1
+  },
+  "courses": {
+   "via": "department_id",
+   "parent": "departments",
+   "parentCol": "id",
+   "level": 1
+  },
+  "course_teaching_assignments": {
+   "via": "membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "in_app_notifications": {
+   "via": "event_id",
+   "parent": "activity_events",
+   "parentCol": "id",
+   "level": 1
+  },
+  "quiz_attempts": {
+   "via": "membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_round_candidate_slots": {
+   "via": "job_id",
+   "parent": "placement_jobs",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_learner_general_request_events": {
+   "via": "request_id",
+   "parent": "placement_learner_general_requests",
+   "parentCol": "id",
+   "level": 1
+  },
+  "lms_group_members": {
+   "via": "group_id",
+   "parent": "lms_groups",
+   "parentCol": "id",
+   "level": 1
+  },
+  "lms_group_rules": {
+   "via": "group_id",
+   "parent": "lms_groups",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_college_interviews": {
+   "via": "job_id",
+   "parent": "placement_jobs",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_drive_change_requests": {
+   "via": "job_id",
+   "parent": "placement_jobs",
+   "parentCol": "id",
+   "level": 1
+  },
+  "learner_profile_images": {
+   "via": "learner_membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1
+  },
+  "placement_job_diversity_outreach": {
+   "via": "job_id",
+   "parent": "placement_jobs",
+   "parentCol": "id",
+   "level": 1
+  },
+  "project_tasks": {
+   "via": "project_id",
+   "parent": "project_instances",
+   "parentCol": "id",
+   "level": 1
+  },
+  "messaging_delivery_receipts": {
+   "via": "batch_id",
+   "parent": "messaging_delivery_batches",
+   "parentCol": "id",
+   "level": 1
+  },
+  "course_section_deliveries": {
+   "via": "offering_id",
+   "parent": "course_offerings",
+   "parentCol": "id",
+   "level": 2
+  },
+  "course_learning_paths": {
+   "via": "offering_id",
+   "parent": "course_offerings",
+   "parentCol": "id",
+   "level": 2
+  },
+  "project_evaluation_items": {
+   "via": "evaluation_id",
+   "parent": "project_evaluations",
+   "parentCol": "id",
+   "level": 2
+  },
+  "placement_application_screening_history": {
+   "via": "application_id",
+   "parent": "placement_applications",
+   "parentCol": "id",
+   "level": 2
+  },
+  "placement_job_round_events": {
+   "via": "round_id",
+   "parent": "placement_job_rounds",
+   "parentCol": "id",
+   "level": 2
+  },
+  "placement_application_status_history": {
+   "via": "application_id",
+   "parent": "placement_applications",
+   "parentCol": "id",
+   "level": 2
+  },
+  "placement_application_screenings": {
+   "via": "application_id",
+   "parent": "placement_applications",
+   "parentCol": "id",
+   "level": 2
+  },
+  "placement_round_results": {
+   "via": "application_id",
+   "parent": "placement_applications",
+   "parentCol": "id",
+   "level": 2
+  },
+  "placement_application_round_exceptions": {
+   "via": "application_id",
+   "parent": "placement_applications",
+   "parentCol": "id",
+   "level": 2
+  },
+  "placement_round_attendance": {
+   "via": "application_id",
+   "parent": "placement_applications",
+   "parentCol": "id",
+   "level": 2
+  },
+  "cohort_progression_state": {
+   "via": "cohort_id",
+   "parent": "cohorts",
+   "parentCol": "id",
+   "level": 2
+  },
+  "program_term_courses": {
+   "via": "course_id",
+   "parent": "courses",
+   "parentCol": "id",
+   "level": 2
+  },
+  "program_terms": {
+   "via": "program_id",
+   "parent": "programs",
+   "parentCol": "id",
+   "level": 2
+  },
+  "cohort_progression_events": {
+   "via": "cohort_id",
+   "parent": "cohorts",
+   "parentCol": "id",
+   "level": 2
+  },
+  "placement_application_notes": {
+   "via": "application_id",
+   "parent": "placement_applications",
+   "parentCol": "id",
+   "level": 2
+  },
+  "profile_verification_events": {
+   "via": "verification_id",
+   "parent": "profile_verifications",
+   "parentCol": "id",
+   "level": 2
+  },
+  "placement_offers": {
+   "via": "application_id",
+   "parent": "placement_applications",
+   "parentCol": "id",
+   "level": 2
+  },
+  "assignment_submission_links": {
+   "via": "submission_id",
+   "parent": "assignment_submissions",
+   "parentCol": "id",
+   "level": 2
+  },
+  "placement_college_application_stage_history": {
+   "via": "stage_id",
+   "parent": "placement_college_application_stages",
+   "parentCol": "id",
+   "level": 2
+  },
+  "placement_drive_change_request_messages": {
+   "via": "request_id",
+   "parent": "placement_drive_change_requests",
+   "parentCol": "id",
+   "level": 2
+  },
+  "placement_recruiter_selection_items": {
+   "via": "application_id",
+   "parent": "placement_applications",
+   "parentCol": "id",
+   "level": 2
+  },
+  "placement_recruiter_private_reviews": {
+   "via": "application_id",
+   "parent": "placement_applications",
+   "parentCol": "id",
+   "level": 2
+  },
+  "placement_legacy_application_status_events": {
+   "via": "application_id",
+   "parent": "placement_applications",
+   "parentCol": "id",
+   "level": 2
+  },
+  "section_schedule_events": {
+   "via": "section_id",
+   "parent": "sections",
+   "parentCol": "id",
+   "level": 2
+  },
+  "placement_application_private_artifacts": {
+   "via": "application_id",
+   "parent": "placement_applications",
+   "parentCol": "id",
+   "level": 2
+  },
+  "quiz_attempt_answers": {
+   "via": "attempt_id",
+   "parent": "quiz_attempts",
+   "parentCol": "id",
+   "level": 2
+  },
+  "placement_application_legacy_status_history": {
+   "via": "application_id",
+   "parent": "placement_applications",
+   "parentCol": "id",
+   "level": 2
+  },
+  "placement_application_legacy_auto_screening": {
+   "via": "application_id",
+   "parent": "placement_applications",
+   "parentCol": "id",
+   "level": 2
+  },
+  "course_lessons": {
+   "via": "learning_path_id",
+   "parent": "course_learning_paths",
+   "parentCol": "id",
+   "level": 3
+  },
+  "placement_joining_outcomes": {
+   "via": "offer_id",
+   "parent": "placement_offers",
+   "parentCol": "id",
+   "level": 3
+  },
+  "placement_joining_history": {
+   "via": "offer_id",
+   "parent": "placement_offers",
+   "parentCol": "id",
+   "level": 3
+  },
+  "section_schedule_event_courses": {
+   "via": "delivery_id",
+   "parent": "course_section_deliveries",
+   "parentCol": "id",
+   "level": 3
+  },
+  "attendance_sessions": {
+   "via": "schedule_event_id",
+   "parent": "section_schedule_events",
+   "parentCol": "id",
+   "level": 3
+  },
+  "placement_offer_status_history": {
+   "via": "offer_id",
+   "parent": "placement_offers",
+   "parentCol": "id",
+   "level": 3
+  },
+  "lesson_content_delivery_sequences": {
+   "via": "delivery_id",
+   "parent": "course_section_deliveries",
+   "parentCol": "id",
+   "level": 3
+  },
+  "lesson_contents": {
+   "via": "lesson_id",
+   "parent": "course_lessons",
+   "parentCol": "id",
+   "level": 4
+  },
+  "course_assignments": {
+   "via": "lesson_id",
+   "parent": "course_lessons",
+   "parentCol": "id",
+   "level": 4
+  },
+  "course_quizzes": {
+   "via": "lesson_id",
+   "parent": "course_lessons",
+   "parentCol": "id",
+   "level": 4
+  },
+  "course_assignment_resources": {
+   "via": "assignment_id",
+   "parent": "course_assignments",
+   "parentCol": "id",
+   "level": 5
+  },
+  "course_assignment_materials": {
+   "via": "assignment_id",
+   "parent": "course_assignments",
+   "parentCol": "id",
+   "level": 5
+  },
+  "lesson_content_materials": {
+   "via": "lesson_content_id",
+   "parent": "lesson_contents",
+   "parentCol": "id",
+   "level": 5
+  },
+  "quiz_questions": {
+   "via": "quiz_id",
+   "parent": "course_quizzes",
+   "parentCol": "id",
+   "level": 5
+  },
+  "quiz_options": {
+   "via": "question_id",
+   "parent": "quiz_questions",
+   "parentCol": "id",
+   "level": 6
+  },
+  "placement_learner_requests": {
+   "via": "learner_membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1,
+   "manual": true
+  },
+  "learner_profile_education_documents": {
+   "via": "learner_membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1,
+   "manual": true
+  }
+ },
+ "unresolved": [
+  "announcement_broadcast_groups",
+  "audit_finding_events",
+  "audit_finding_file",
+  "audit_finding_syncs",
+  "audit_findings",
+  "bug_tracker_access",
+  "bug_tracker_sessions",
+  "colleges",
+  "identity_device_sessions",
+  "log_alert_daily_counts",
+  "log_alert_observed_events",
+  "log_alert_signature_accounts",
+  "log_alert_signatures",
+  "log_alert_states",
+  "membership_roles",
+  "module_access_rules",
+  "organizations",
+  "outbound_global_email_suppressions",
+  "outbound_suppressions",
+  "placement_companies",
+  "placement_company_aliases",
+  "placement_company_domains",
+  "placement_company_merge_history",
+  "placement_recruiter_profiles",
+  "placement_recruiter_public_contacts",
+  "platform_broadcasts",
+  "platform_legacy_org_override_archives",
+  "platform_setting_overrides",
+  "project_template_legacy_events",
+  "project_template_versions",
+  "project_templates",
+  "scheduled_job_leases",
+  "security_shared_store",
+  "skill_synonyms",
+  "skill_usage",
+  "skills",
+  "system_roles",
+  "users"
+ ]
+}

@@ -2,6 +2,19 @@ import { z } from "zod";
 import type { AdminScope } from "@/modules/identity/context";
 
 export const ADMIN_SCOPE_COOKIE_NAME = "lms_admin_scope";
+/** Companion cookie holding the epoch-seconds expiry of the selected scope. The server enforces it on every request,
+ * so a copied or replayed scope cookie stops working after the window (SEC-05-022). */
+export const ADMIN_SCOPE_EXPIRY_COOKIE_NAME = "lms_admin_scope_exp";
+/** A Super Admin acting inside an organization or college must re-select after this long. */
+export const ADMIN_SCOPE_MAX_AGE_SECONDS = 4 * 60 * 60;
+
+/** True unless the expiry value is a whole number of seconds that is still in the future and not further
+ * ahead than the maximum window (a tampered far-future value is also expired). Missing means expired. */
+export function adminScopeExpired(expiryValue: string | null | undefined, nowMs: number = Date.now()): boolean {
+  if (!expiryValue || !/^\d{1,12}$/.test(expiryValue)) return true;
+  const expiresAtMs = Number(expiryValue) * 1000;
+  return !(expiresAtMs > nowMs && expiresAtMs <= nowMs + (ADMIN_SCOPE_MAX_AGE_SECONDS + 60) * 1000);
+}
 
 const uuidSchema = z.string().uuid();
 

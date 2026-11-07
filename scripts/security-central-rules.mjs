@@ -5,6 +5,8 @@ export const RULES = {
   "sensitive-without-step-up": "sensitive action (bulk export/import, role or permission change, user disable/delete, secret/integration or tenant settings) without step-up authentication (stepUp: true, or requireRecentDeviceAuthentication)",
   "raw-request-json": "route reads the body with request.json() instead of the bounded reader/wrapper",
   "direct-db-in-route": "route imports getDb directly instead of going through the data layer",
+  "table-without-tenant-classification": "table has no college_id, no derived policy and is not listed in docs/security/table-classification.json",
+  "sql-raw-dynamic": "sql.raw() is called with anything but a fixed string literal (SQL injection risk; use bound parameters)",
   "tenant-table-without-rls": "table has a college_id column but no tenant RLS policy (run: node scripts/generate-rls-migration.mjs)",
   "server-action-unguarded": "file declares a \"use server\" action but never calls guardAction() from @/security/action (permission, rate limit, audit)",
   "service-enforced": "route declares permission 'service-enforced' (replace with a named permission)",
@@ -61,4 +63,15 @@ export function scanServerAction(path, source) {
   const directives = [...source.matchAll(/^[ \t]*["']use server["'];?[ \t]*\r?$/gm)];
   if (!directives.length || /\bguardAction\s*\(/.test(source)) return [];
   return directives.map(() => ({ rule: "server-action-unguarded" }));
+}
+
+// sql.raw() puts its argument into the statement unescaped. Only a fixed string literal is allowed; anything built from
+// variables or interpolation must use bound parameters. Static schema constants (src/db/schema) are out of scope.
+export function scanSqlRaw(path, source) {
+  const p = path.split(String.fromCharCode(92)).join("/");
+  if (!/^src\/.+\.(?:ts|tsx)$/.test(p) || p.startsWith("src/db/schema/")) return [];
+  const all = [...source.matchAll(/\bsql\.raw\(/g)].length;
+  if (!all) return [];
+  const fixed = [...source.matchAll(/\bsql\.raw\(\s*(?:'[^'\n]*'|"[^"\n]*"|`[^`$\n]*`)\s*\)/g)].length;
+  return Array.from({ length: Math.max(0, all - fixed) }, () => ({ rule: "sql-raw-dynamic" }));
 }

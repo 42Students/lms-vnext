@@ -7,11 +7,13 @@ import {privateAuthJson,privateAuthResponse} from "@/modules/auth/private-respon
 import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "@/modules/auth/bounded-json";
 import {
   ADMIN_SCOPE_COOKIE_NAME,
+  ADMIN_SCOPE_EXPIRY_COOKIE_NAME,
+  ADMIN_SCOPE_MAX_AGE_SECONDS,
   encodeAdminScopeCookie,
 } from "@/auth/admin-scope";
+import { writeStructuredLog } from "@/observability/logger";
 import { isSameOriginRequest } from "@/auth/origin";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { SESSION_MAX_AGE_SECONDS } from "@/auth/session";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
   listAdminScopeChoices,
@@ -77,9 +79,27 @@ response.cookies.set(
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         path: "/",
-        maxAge: cleared?0:SESSION_MAX_AGE_SECONDS,
+        maxAge: cleared?0:ADMIN_SCOPE_MAX_AGE_SECONDS,
       },
     );
+response.cookies.set(
+      ADMIN_SCOPE_EXPIRY_COOKIE_NAME,
+      cleared?"":String(Math.floor(Date.now()/1000)+ADMIN_SCOPE_MAX_AGE_SECONDS),
+      {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: cleared?0:ADMIN_SCOPE_MAX_AGE_SECONDS,
+      },
+    );
+writeStructuredLog("INFO","admin_scope.audit",{
+      outcome:cleared?"cleared":"entered",
+      userId:context.user.id,
+      organizationId:scope.organizationId??null,
+      collegeId:scope.collegeId??null,
+      ttlSeconds:cleared?0:ADMIN_SCOPE_MAX_AGE_SECONDS,
+    });
 return response;
 } catch (error) {
     if(error instanceof AdminScopeServiceError)return privateAuthJson({
@@ -113,6 +133,14 @@ response.cookies.set(ADMIN_SCOPE_COOKIE_NAME, "", {
       path: "/",
       maxAge: 0,
     });
+response.cookies.set(ADMIN_SCOPE_EXPIRY_COOKIE_NAME, "", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 0,
+      });
+writeStructuredLog("INFO","admin_scope.audit",{ outcome:"cleared", userId:context.user.id });
 return response;
 } catch (error) {
     return privateAuthResponse(apiErrorResponse(error));

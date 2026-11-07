@@ -1,0 +1,50 @@
+{
+ "generated": "2026-11-07",
+ "note": "Every table without college_id and without a derived policy must be listed here with a reason. scripts/rls-tenant-tables.mjs fails security:central for a table in no list.",
+ "user_owned_unscoped": [
+  "identity_device_sessions",
+  "placement_recruiter_profiles",
+  "placement_recruiter_public_contacts",
+  "platform_broadcasts",
+  "system_roles"
+ ],
+ "infrastructure_unscoped": [
+  "audit_finding_events",
+  "audit_finding_file",
+  "audit_finding_syncs",
+  "audit_findings",
+  "bug_tracker_access",
+  "bug_tracker_sessions",
+  "log_alert_daily_counts",
+  "log_alert_observed_events",
+  "log_alert_signature_accounts",
+  "log_alert_signatures",
+  "log_alert_states",
+  "scheduled_job_leases",
+  "security_shared_store"
+ ],
+ "platform_reference_unscoped": [
+  "announcement_broadcast_groups",
+  "outbound_global_email_suppressions",
+  "outbound_suppressions",
+  "placement_companies",
+  "placement_company_aliases",
+  "placement_company_domains",
+  "placement_company_merge_history",
+  "platform_legacy_org_override_archives",
+  "platform_setting_overrides",
+  "project_template_legacy_events",
+  "project_template_versions",
+  "project_templates",
+  "skill_synonyms",
+  "skill_usage",
+  "skills"
+ ],
+ "identity_core_pending_review": [
+  "colleges",
+  "membership_roles",
+  "module_access_rules",
+  "organizations",
+  "users"
+ ]
+}

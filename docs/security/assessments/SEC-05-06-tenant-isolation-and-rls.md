@@ -80,3 +80,23 @@ Read from the live dev database (read-only job) and code:
 - **SEC-05-012 caches:** no `unstable_cache` or `revalidate` and no module-level cross-request cache found; the `new Map` hits in services are per-call local variables. IMPLEMENTED_UNVERIFIED (nothing to leak found); re-check any in-memory cache added later.
 - **SEC-05-011 search:** no external search index; search is SQL `ILIKE` inside services (111 modules), so it inherits each service's college filter and, once enforced, RLS. Per-service review still open.
 - **SEC-05-022 time-limited cross-college authority:** GAP. The Super Admin scope cookie (`lms_admin_scope`) carries no expiry; the header comment says authorization is verified server-side, but there is no time limit on a Super Admin acting inside a college. Owner decision: add a short expiry plus an audit line when a scope is entered.
+
+## Update 2026-11-07 (build complete, nothing run)
+
+Done in code, still untested:
+
+- **SEC-06-003 / 002 / 004:** migration `0338` (127 child tables), classification file for the rest, `security:central` rule `table-without-tenant-classification`. The per-table review record is [derived-policy-plan.json](derived-policy-plan.json) (anchor per table) plus [table-classification.json](../table-classification.json). Identity core tables (`users`, `organizations`, `colleges`, `membership_roles`, `module_access_rules`) stay unscoped pending a per-query review: this is a known residual, not a pass.
+- **SEC-06-008 / 019 to 024:** acceptance script now covers read, insert, update, delete, row-move out of the college, derived children, FORCE on every tenant table and zero SECURITY DEFINER functions. Runs in the CI `database` job.
+- **SEC-06-018:** `sql-raw-dynamic` ratchet rule; all current `sql.raw` uses reviewed (fixed literals, plus the shared store's constants).
+- **SEC-06-025:** `scripts/rls-perf-probe.mjs`, to run on dev after 0338.
+- **SEC-06-001:** inventory script already exists (`scripts/security/pg-rls-readonly-audit.mjs`, runtime URL); dev catalog was read by hand on 2026-11-07.
+- **SEC-06-026:** rollback was exercised for real on 2026-11-07 (pool starvation, rolled back within minutes); runbook updated.
+- **SEC-06-012:** role split written as steps, owner-gated (needs `cloudsqlsuperuser`).
+- **SEC-05-022:** GAP closed in code: the Super Admin scope now expires after 4 hours, enforced on the server through the `lms_admin_scope_exp` cookie (missing, past or tampered far-future = no scope), and `admin_scope.audit` lines record entering and clearing a scope. Unit test `tests/unit/sec05-admin-scope-expiry.test.ts` written, not run.
+- **SEC-05-005 / 006 / 008:** the database now answers for every method of every route that reads tenant rows (RLS on 112 plus 127 tables, enforced on dev); `scripts/rls-isolation-sweep.mjs` proves it table by table with two real colleges. Handlers that use identity-core tables remain service-enforced.
+- **SEC-05-009 / 010 (existence leaks, counts):** with RLS enforced, another college's row is simply absent, so object lookups return not-found and counts exclude it. Exception to review: global identity (`users` by email) is deliberately visible across colleges for sign-in and invites.
+- **SEC-05-013 (jobs):** see rollout doc: named system scope, tenant chosen inside each job; per-job review of the eight routes is still owed.
+- **SEC-05-018 / 019 (multi-membership):** `context-service.ts` requires the active membership to belong to the signed-in user, the college and organization to be ACTIVE, re-reads the roles from the database and narrows to the selected role, then `resolveCurrentRequestContext` rejects anything but exactly one granted role and re-checks the host-derived tenant. IMPLEMENTED_UNVERIFIED; negative tests (foreign membership id, revoked role, two memberships) are owed at the CI pass.
+- **SEC-05-023 (backups, support tools, scripts):** no support or impersonation tool exists in the repo apart from the Super Admin scope above (now time-limited and audited). Database scripts refuse non-local hosts unless dev is allowed explicitly. Backups are Cloud SQL's own; no on-demand backups by owner rule; restore and retention are an ops decision, not code. PARTIAL.
+
+Remaining after the final run: execute and record evidence for everything above, the owner-gated role split, the identity-core review, and the independent audit.

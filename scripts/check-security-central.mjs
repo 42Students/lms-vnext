@@ -2,7 +2,7 @@
 // Ratchet: per route file and rule the count may never exceed the baseline. `--update` can only lower counts.
 import { readFileSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
-import { RULES, scanRoute, scanServerAction } from "./security-central-rules.mjs";
+import { RULES, scanRoute, scanServerAction, scanSqlRaw } from "./security-central-rules.mjs";
 import { analyse } from "./rls-tenant-tables.mjs";
 
 const BASELINE_PATH = "docs/security/central-security-baseline.json";
@@ -16,10 +16,17 @@ for (const p of files) {
 const srcFiles = execFileSync("git", ["ls-files", "-z", "--", "src"], { encoding: "utf8", maxBuffer: 1 << 26 }).split("\0").filter((p) => /[.](?:ts|tsx)$/.test(p));
 for (const p of srcFiles) {
   let s; try { s = readFileSync(p, "utf8"); } catch { continue; }
+  if (s.includes("sql.raw(")) for (const f of scanSqlRaw(p, s)) ((counts[p] ??= {})[f.rule] = (counts[p][f.rule] ?? 0) + 1);
   if (!s.includes("use server")) continue;
   for (const f of scanServerAction(p, s)) ((counts[p] ??= {})[f.rule] = (counts[p][f.rule] ?? 0) + 1);
 }
-{ const { missing } = analyse(); if (missing.length) counts["drizzle (database)"] = { "tenant-table-without-rls": missing.length }; }
+{
+  const { missing, unclassified } = analyse();
+  const dbCounts = {};
+  if (missing.length) dbCounts["tenant-table-without-rls"] = missing.length;
+  if (unclassified.length) dbCounts["table-without-tenant-classification"] = unclassified.length;
+  if (Object.keys(dbCounts).length) counts["drizzle (database)"] = dbCounts;
+}
 const totals = Object.fromEntries(Object.keys(RULES).map((r) => [r, 0]));
 for (const r of Object.values(counts)) for (const [k, n] of Object.entries(r)) totals[k] += n;
 // Converting an existing off-wrapper route may add interim "service-enforced" debt once; brand-new routes may not.

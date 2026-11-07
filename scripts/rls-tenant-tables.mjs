@@ -29,6 +29,19 @@ function balancedBody(sql, open) {
   return sql.slice(open + 1);
 }
 
+function readJson(path) {
+  try {
+    return JSON.parse(readFileSync(path, "utf8"));
+  } catch {
+    return null;
+  }
+}
+const derivedTables = () => Object.keys(readJson("docs/security/assessments/derived-policy-plan.json")?.plan ?? {});
+const classifiedTables = () => {
+  const c = readJson("docs/security/table-classification.json") ?? {};
+  return Object.values(c).filter(Array.isArray).flat();
+};
+
 export function analyse(migrations = readMigrations()) {
   const tables = new Map(); // name -> { college: boolean }
   const policies = new Set();
@@ -50,5 +63,8 @@ export function analyse(migrations = readMigrations()) {
   }
   const tenantTables = [...tables].filter(([, v]) => v.college).map(([k]) => k).sort();
   const missing = tenantTables.filter((t) => !policies.has(t));
-  return { tenantTables, policies, missing };
+  // Tables without college_id must be derived (policy through a parent) or listed in the classification file.
+  const covered = new Set([...policies, ...derivedTables(), ...classifiedTables()]);
+  const unclassified = [...tables].filter(([k, v]) => !v.college && !covered.has(k)).map(([k]) => k).sort();
+  return { tenantTables, policies, missing, unclassified };
 }

@@ -20,6 +20,8 @@ import { resolveRequestTenant } from "@/modules/auth/request-tenant";
 import { isTenantAccessAllowed } from "@/modules/auth/tenant-access";
 import {
   ADMIN_SCOPE_COOKIE_NAME,
+  ADMIN_SCOPE_EXPIRY_COOKIE_NAME,
+  adminScopeExpired,
   decodeAdminScopeCookie,
 } from "./admin-scope";
 
@@ -66,9 +68,10 @@ async function resolveCurrentRequestContext() {
     cookieStore.get(MEMBERSHIP_COOKIE_NAME)?.value ?? null;
   const roleCookie = cookieStore.get(ROLE_COOKIE_NAME)?.value;
   const activeRole = (MEMBERSHIP_ROLES as readonly string[]).includes(roleCookie ?? "") ? (roleCookie as MembershipRole) : null;
-  const adminScope = decodeAdminScopeCookie(
-    cookieStore.get(ADMIN_SCOPE_COOKIE_NAME)?.value,
-  );
+  // The scope cookie is only honoured inside its server-checked window (SEC-05-022).
+  const adminScope = adminScopeExpired(cookieStore.get(ADMIN_SCOPE_EXPIRY_COOKIE_NAME)?.value)
+    ? null
+    : decodeAdminScopeCookie(cookieStore.get(ADMIN_SCOPE_COOKIE_NAME)?.value);
 
   const context = await resolveRequestContext({
     identityUid,
