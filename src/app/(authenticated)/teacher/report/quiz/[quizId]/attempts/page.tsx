@@ -9,6 +9,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { Tabs } from "@/components/ui/tabs";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { facultyQuizAttemptsQuerySchema,facultyQuizAttemptSearchSchema,facultyQuizAttemptsHref } from "@/modules/courses/faculty-quiz-attempts-model";
 import { getFacultyQuizAttemptDrilldown } from "@/modules/courses/faculty-quiz-attempts-service";
 import { Heading } from "@/components/ui/heading";
@@ -30,9 +31,10 @@ export default async function FacultyQuizAttemptPage({
   const parsed=facultyQuizAttemptsQuerySchema.safeParse({
     quizId,...(search.success?search.data:{deliveryId:undefined}),
   });
-  if(!parsed.success)return <section role="alert" className="space-y-3">
-    <PageHeader title={"Invalid Quiz Section or pagination"} />
-    <TextLink href="/teacher/allQuizzes" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center">All Quizzes</TextLink>
+  if(!parsed.success)return <section className="min-w-0 space-y-3">
+    <PageHeader title="Individual Quiz attempts" />
+    <ErrorState title="Invalid quiz attempt filters" description="The section, search, sort or page information in this link could not be verified. No learner attempt details were loaded."
+      action={<TextLink href="/teacher/allQuizzes" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center">Choose a Quiz again</TextLink>}/>
   </section>;
   const context=await getCurrentRequestContext();
   let data: Awaited<ReturnType<typeof getFacultyQuizAttemptDrilldown>>;
@@ -86,7 +88,7 @@ export default async function FacultyQuizAttemptPage({
         {value:"OLDEST", label:"Oldest first", href:facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,"OLDEST",data.query.q,data.query.view)},
       ]} />
     </Disclosure>
-    <form method="get" className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
+    <form method="get" role="search" aria-label="Find learner quiz attempts" className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
       <Input type="hidden" name="deliveryId" value={data.query.deliveryId} />
       {data.query.order!=="NEWEST"?<Input type="hidden" name="order" value={data.query.order}/>:null}
       {data.query.view!=="ALL"?<Input type="hidden" name="view" value={data.query.view}/>:null}
@@ -97,8 +99,19 @@ export default async function FacultyQuizAttemptPage({
       </Label>
       <Button type="submit" variant="primary" className="w-full sm:w-auto">Search</Button>
       <TextLink href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,data.query.order,"",data.query.view)}
-        className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-[var(--lms-control-height)]">Clear</TextLink>
+        className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-[var(--lms-control-height)]">Clear search</TextLink>
     </form>
+    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <p role="status" aria-live="polite" className="text-sm leading-6 text-body">
+        Showing {data.items.length} of {data.total} recorded attempt{data.total===1?"":"s"}
+        {" · "}{data.query.view==="LATEST"?"Latest attempt per learner":"All attempts"}
+        {" · "}{data.query.order==="OLDEST"?"Oldest first":"Newest first"}
+        {data.query.q?" · Search: "+data.query.q:""}
+      </p>
+      {(data.query.q||data.query.view!=="ALL"||data.query.order!=="NEWEST")?
+        <TextLink href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,"NEWEST","","ALL")}
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">Reset all attempt filters</TextLink>:null}
+    </div>
     {data.items.length===0?<EmptyState title="No matching Quiz attempts"
       description={data.query.q||data.query.view!=="ALL"?"No attempts match these filters in your authorized Section. Clear the filters to see the full history.":"There are no persisted attempts in your authorized Section. This does not mean that results were published."} />
     : <ol className="divide-y divide-border border-y border-border">{data.items.map(item=>
