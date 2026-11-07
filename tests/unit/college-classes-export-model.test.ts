@@ -6,10 +6,11 @@ import {
 
 describe("College classes safe CSV export", () => {
   it("validates filters and excludes client-selected tenant and paging", () => {
-    expect(CLASSES_EXPORT_CAP).toBe(Number.MAX_SAFE_INTEGER);
+    expect(CLASSES_EXPORT_CAP).toBe(1000);
     expect(collegeClassesExportSchema.parse({q:" science "})).toMatchObject({q:"science"});
     expect(collegeClassesExportSchema.safeParse({collegeId:"fake"}).success).toBe(false);
     expect(collegeClassesExportSchema.safeParse({page:7}).success).toBe(false);
+    expect(collegeClassesExportSchema.safeParse({pageSize:100}).success).toBe(false);
     expect(readClassesExportParams(new URLSearchParams("q=x&q=y"))).toBeNull();
     expect(collegeClassesExportSchema.safeParse({maximumCapacity:0}).success).toBe(false);
     expect(collegeClassesExportSchema.safeParse({minimumCapacity:50,maximumCapacity:49}).success).toBe(false);
@@ -23,7 +24,7 @@ describe("College classes safe CSV export", () => {
     const href = classesExportHref({q:"Math & Science",status:"ARCHIVED"});
     expect(new URL(href,"http://local").searchParams.get("q")).toBe("Math & Science");
   });
-  it("exports every filtered class with the current columns and safe CSV escaping", () => {
+  it("exports bounded class rows with the current columns, escaping and transparent truncation", () => {
     const row = {
       id: "class-1", name: "=1+1", linkedProgramId: "prog-1",
       cohortId: "batch-1", periodStart: "2026-10-01",
@@ -37,8 +38,9 @@ describe("College classes safe CSV export", () => {
     expect(csv).toContain('"prog-1"');
     expect(csv).toContain('"batch-1"');
     expect(csv).toContain('"50"');
-    expect(csv.split("\r\n")).toHaveLength(3);
-    expect(csv).not.toContain("EXPORT TRUNCATED");
+    expect(csv.split("\r\n")).toHaveLength(4);
+    expect(csv).toContain("EXPORT TRUNCATED");
+    expect(csv).toContain("Narrow your filters");
     // Imported/older class records can omit optional values. Preserve the
     // exact CSV column count and encode missing values as blank cells.
     const sparseCsv=renderCollegeClassesCsv([{
