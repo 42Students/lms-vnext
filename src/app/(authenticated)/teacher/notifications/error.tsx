@@ -15,7 +15,7 @@ export default function FacultyNotificationsError({ reset }: {
         Couldn't load notifications. Please try again.
       </p>
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
-        <Button onClick={reset} className="w-full sm:w-auto">Retry</Button>
+        <Button type="button" onClick={reset} className="min-h-11 w-full sm:w-auto">Retry</Button>
         <PageBackLink href="/teacher/courses" label="Back to Courses" />
       </div>
     </section>
