@@ -99,7 +99,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
           const code = typeof payload === "object" && payload !== null &&
             "error" in payload && typeof payload.error === "string"
             ? payload.error : "Import failed";
-          throw new Error(code);
+          throw new Error(groupCsvPreviewErrorMessage(code));
         }
         if (revision === csvRevision.current) setImported(payload as ImportResult);
       } catch (cause) {
@@ -124,7 +124,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
         if (!response.ok) {
           const code=payload && typeof payload==="object" && "error" in payload &&
             typeof payload.error==="string" ? payload.error : "Manual import failed";
-          throw new Error(code);
+          throw new Error(groupCsvPreviewErrorMessage(code));
         }
         setManualResult(payload as ImportResult);
       } catch (cause) {
