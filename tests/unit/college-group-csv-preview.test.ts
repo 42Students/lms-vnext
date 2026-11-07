@@ -11,10 +11,21 @@ describe("Student Group email import dry-run", () => {
         { rowNumber: 3, value: "b@example.com", validColumns: true },
       ]);
     expect(parseMemberEmailCsv("email\na,b\n")[0].validColumns).toBe(false);
+    // Preserves an empty final quoted record, and unescapes doubled quotes.
+    expect(parseMemberEmailCsv('email\n""')).toEqual([
+      { rowNumber: 2, value: "", validColumns: true },
+    ]);
+    expect(parseMemberEmailCsv('email\n"a""b@example.com"')).toEqual([
+      { rowNumber: 2, value: 'a"b@example.com', validColumns: true },
+    ]);
   });
   it("rejects missing header, oversize files and malformed quoting", () => {
     expect(() => parseMemberEmailCsv("not_email\na@example.com")).toThrow("CSV_HEADER_EMAIL_REQUIRED");
     expect(() => parseMemberEmailCsv('email\n"unterminated')).toThrow("UNTERMINATED_CSV_QUOTE");
+    expect(() => parseMemberEmailCsv('email\n"alice@example.com"oops'))
+      .toThrow("INVALID_CSV_QUOTE");
+    expect(() => parseMemberEmailCsv('email\n"alice@example.com" "'))
+      .toThrow("INVALID_CSV_QUOTE");
     expect(() => parseMemberEmailCsv("email\n" + "a@example.com\n".repeat(2001)))
       .toThrow("CSV_ROW_LIMIT");
     expect(collegeGroupCsvPreviewSchema.safeParse({
