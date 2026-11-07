@@ -97,7 +97,7 @@ export default async function CollegePlacementsPage({searchParams}:{
             <span className="ml-1">New drive</span>
            </ButtonLink>
            <ButtonLink variant="secondary" href="/college/placements/drives">
-            All drives ({draft&&closed?draft.total+closed.total:"—"} closed / draft)
+            Browse all drives ({all?.total??"—"})
            </ButtonLink>
           </div>
         }
