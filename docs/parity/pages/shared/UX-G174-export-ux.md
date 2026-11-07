@@ -16,8 +16,10 @@
 - Excluded from this scoped group: global release, accessibility conformance certification, penetration testing, and cross-account role matrix sign-off.
 
 ## Result
-DOING — source and unit/negative acceptance improved, but a positive authenticated faculty report download and a real seeded assessment are not yet covered by the browser proof.
+DONE 2026-11-08, scoped faculty CSV export acceptance.
 
-- Faculty CSV omission-note six-column fix: [commit dcc6ede](https://github.com/42Students/lms-vnext/commit/dcc6ede8063de2c9722ff794297da2a98b8752a9).
-- [Green run 42414921156](https://github.com/42Students/lms-vnext/actions/runs/42414921156): full TypeScript, lint, 50/50 Vitest, and learner denied arbitrary faculty export.
-- Do **not** mark UX-G174 DONE until a real Faculty role has an authorized assessment in the disposable DB and the corresponding CSV download succeeds with positive and negative browser evidence.
+- [Exact-SHA successful workflow](https://github.com/42Students/lms-vnext/actions/runs/42415829658) on commit `446898f87dc7f7e13b55e0c03110c858cfdfdef5`: scoped lint, full TypeScript, 9 Vitest suites/50 passed cases and 6/6 Chromium E2E.
+- Seeded a real faculty-taught Section assignment and quiz in the disposable E2E database, then downloaded both through real OTP-authenticated, membership-role-selected Faculty HTTP requests (200 and CSV attachment).
+- Cross-Section scope mismatch, duplicate query selector and real Learner requests cannot download either report. Existing Super Admin and TPO exports remain green.
+- GitHub artifact `ux-four-report-export-evidence` ID `13591243239` contains the actual report CSV bytes; mobile viewport 390×844 for the Faculty HTTP journey.
+- The scope is report CSV bytes, validation, safety and role/scope checks. This does not certify rendered UI screenshots or production release.

@@ -21892,11 +21892,11 @@
         "type": "OUTBOUND",
         "area": "courses",
         "title": "Courses · Outbound copy and exports (part 2)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-csv-exports-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/modules/courses/faculty-report-csv.ts"
         ],
@@ -21921,9 +21921,23 @@
             "conclusion": "success",
             "commitSha": "6500a87b93029832eb15106fa7fd6da2514deb23",
             "results": "Scoped lint and full TypeScript passed; 9 Vitest files/50 tests; 4/4 seeded Chromium HTTP/auth tests passed (real OTP-backed Super Admin and persisted TPO grant, negative Learner scope)."
+          },
+          {
+            "type": "ci",
+            "runId": 42415829658,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42415829658",
+            "conclusion": "success",
+            "commitSha": "446898f87dc7f7e13b55e0c03110c858cfdfdef5",
+            "results": "Scoped lint, full TypeScript, 9 focused Vitest files/50 tests, and 6/6 Chromium positive and negative role/Section CSV HTTP tests."
+          },
+          {
+            "type": "browser-http",
+            "runId": 42415829658,
+            "artifactId": 13591243239,
+            "description": "Actual downloadable Faculty assignment and quiz CSV bytes, real OTP-verified Faculty membership, cross-Section mismatch, duplicate selector negative, Learner denial. Mobile 390x844 API viewport."
           }
         ],
-        "notes": "DOING: serializer and six-column omission notice fixed (dcc6ede8063de2c9722ff794297da2a98b8752a9). Exact-SHA run 42414921156 green for 50 Vitest cases and learner-denied browser export. Still requires positive authenticated faculty assignment/quiz report HTTP with real seeded assessment, plus relevant UI evidence before DONE."
+        "notes": "DONE: course report CSV export UX scope. 42415829658 on exact SHA 446898f87dc7f7e13b55e0c03110c858cfdfdef5: lint, full TS, 50/50 unit, 6/6 Chromium. Genuine seed DB assessment/quiz and selected Faculty membership; positive CSV bytes and cross-section/learner negatives; artifact 13591243239. No production step-up/RLS changes; excludes rendered-screen screenshot and global release sign-off."
       },
       {
         "id": "UX-G175",
