@@ -101,6 +101,14 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
       {colleges.find(row=>row.id===id)?.label??"Placement cell"} ×
      </Button>)}
     </div>:null}
+   <div className="flex flex-wrap items-center gap-2">
+    <Button type="button" variant="secondary" size="sm" disabled={pending||matchingColleges.length===0||matchingColleges.every(item=>selected.includes(item.id))}
+     onClick={()=>{setAudienceTouched(true);setSelected(prev=>[...new Set([...prev,...matchingColleges.map(item=>item.id)])]);}}>
+     Select matching ({matchingColleges.length})
+    </Button>
+    <Button type="button" variant="ghost" size="sm" disabled={pending||selected.length===0}
+     onClick={()=>{setAudienceTouched(true);setSelected([]);}}>Clear selection</Button>
+   </div>
    <fieldset className="max-h-52 min-w-0 space-y-[var(--lms-space-2)] overflow-y-auto rounded-[var(--lms-control-radius)] border border-border p-3">
     <legend className="sr-only">Select placement cells</legend>
     {matchingColleges.map(item=><Label variant="choice" key={item.id} className="flex min-h-11 items-center gap-3 md:min-h-9">
@@ -110,7 +118,10 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
     </Label>)}
     {matchingColleges.length===0?<p className="text-sm text-muted-foreground">No placement cells match this search.</p>:null}
    </fieldset>
-   <p role="status" className="text-xs text-muted-foreground">{selected.length} placement {selected.length===1?"cell":"cells"} selected</p>
+   <p role="status" className="text-xs text-muted-foreground">
+    {selected.length} placement {selected.length===1?"cell":"cells"} selected · {matchingColleges.length} matching the current search.
+    Search only changes the visible choices, not the saved selection.
+   </p>
   </div>:null}
   {audienceTouched&&mode==="SELECTED_COLLEGES"&&selected.length===0?<p role="alert" className="text-sm text-danger-text">Pick at least one</p>:null}
   <p className="text-xs text-muted-foreground">Placement-cell messages use the legacy 200-character title and 8,000-character body limits.</p>
