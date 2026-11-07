@@ -37,7 +37,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Mobile and desktop invalid-invitation recovery
-        run: npx playwright test tests/e2e/ux-g045-college-join.spec.ts --project=chromium --reporter=line
+        run: npx playwright test tests/e2e/ux-g045-college-join.spec.ts --project=chromium --reporter=line,html
       - name: Preserve browser evidence
         if: always()
         uses: actions/upload-artifact@v4

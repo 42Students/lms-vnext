@@ -43,10 +43,11 @@ test.describe("UX-G045 college join invitation recovery", () => {
       });
       await page.route("**/api/public/college-join/join", async route => {
         joined.push(route.request().postDataJSON() as Record<string, string>);
-        await route.fulfill({
-          status: 200, contentType: "application/json",
-          body: JSON.stringify({ outcome: "JOINED", signInEmail: "recruiter@glowtech.io" }),
-        });
+        // A wrong email code must not render a success state.
+        await route.fulfill(joined.length === 1
+          ? { status: 400, contentType: "application/json", body: JSON.stringify({ error: "WRONG_CODE" }) }
+          : { status: 200, contentType: "application/json",
+              body: JSON.stringify({ outcome: "JOINED", signInEmail: "recruiter@glowtech.io" }) });
       });
 
       // Fixture is development-only; it renders the real production form
@@ -94,12 +95,19 @@ test.describe("UX-G045 college join invitation recovery", () => {
       ]);
       expect(joined).toHaveLength(0);
 
+      await code.fill("111111");
+      await page.getByRole("button", { name: "Join Example College placements" }).click();
+      await expect(page.getByRole("alert").filter({ hasText: "That code isn't right." }).first()).toBeVisible();
+      await expect(code).toBeFocused();
+      await expect(page.getByRole("heading", { name: "You now have access to Example College" })).toHaveCount(0);
+      expect(joined).toHaveLength(1);
+
       await code.fill("654321");
       await page.getByRole("button", { name: "Join Example College placements" }).click();
       await expect(page.getByRole("heading", { name: "You now have access to Example College" })).toBeVisible();
       await expect(page.getByRole("link", { name: "Sign in" })).toBeVisible();
-      expect(joined).toHaveLength(1);
-      expect(joined[0]).toMatchObject({
+      expect(joined).toHaveLength(2);
+      expect(joined[1]).toMatchObject({
         email: "recruiter@glowtech.io", name: "Recruiter Example",
         companyName: "Glow Tech", code: "654321",
       });
