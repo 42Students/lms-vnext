@@ -17,6 +17,7 @@ on:
       - src/modules/admin-ui/super-admin-scoped-csv-model.ts
       - src/modules/admin-ui/super-admin-scoped-csv-service.ts
       - tests/unit/ux-g165-shared-controls.test.tsx
+      - tests/unit/UX-kit-projects-hardening-chat17.test.tsx
       - tests/unit/ux-g168-admin-export-ux.test.ts
       - tests/e2e/ux-shared-admin-exports.spec.ts
       - .github/workflows/ux-g165-g168-acceptance.yml
