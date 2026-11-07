@@ -37,7 +37,11 @@ spec:
             - secretRef: { name: vnext-integrations }
             - secretRef: { name: vnext-auth }
           env:
-            - { name: DB_POOL_MAX, value: "3" }
+            - { name: DB_POOL_MAX, value: "10" }
+            # Tenant row-level security on dev (docs/security/rls-rollout.md). Roll back by deleting these three.
+            - { name: DB_TENANT_SCOPE, value: "on" }
+            - { name: SECURITY_SHARED_STORE, value: "on" }
+            - { name: PGOPTIONS, value: "-c app.rls_mode=enforce" }
             - { name: DB09_TPO_API_READY, value: "DB09_VERIFIED" }
           securityContext:
             allowPrivilegeEscalation: false

@@ -50,3 +50,12 @@ It proves the policy mechanics. It does not prove that application code sets the
 - The role is not the database owner (`cloudsqlsuperuser` is), so `ALTER DATABASE ... SET app.rls_mode` is not available to it. Enforcement is therefore set per process: the web Deployment gets `PGOPTIONS=-c app.rls_mode=enforce` (node-pg reads `PGOPTIONS`). The migrator Job and CronJobs do not set it, so they are not subject to the policies. Rollback: unset `PGOPTIONS` on the Deployment.
 - Real fix for production: a separate owner role for migrations and a runtime role that owns nothing and has no CREATEROLE or CREATEDB (SEC-06-011, SEC-06-012). FORCE is the interim guard, not a replacement.
 - Zero `SECURITY DEFINER` functions. 113 tables have RLS enabled, 115 policies, 165 tables have no `college_id` (parent-derived tenancy still to be listed, SEC-06-003).
+
+## Dev enforcement ON since 2026-11-07 (image c35cfbfe)
+
+Web pods in `lms-dev-2026` run with `DB_TENANT_SCOPE=on`, `SECURITY_SHARED_STORE=on`, `PGOPTIONS=-c app.rls_mode=enforce`, `DB_POOL_MAX=10` (also in `deploy/k8s/dev/lms-vnext-deployment.yaml`). Migration 0337 applied (113 tables RLS-enabled and forced).
+
+- Executed probe against the real dev database with the real runtime role and `app.rls_mode=enforce` (read-only job, rolled back): system scope sees 171 membership rows; no scope sees 0; college A sees only its own 154 and 0 of college B's; update and delete of college B rows affect 0 rows; platform scope sees all; a malformed college id errors instead of widening access. This is manual evidence, not CI evidence.
+- First attempt with all three switches and `DB_POOL_MAX=3` made the pod unready (`timeout exceeded when trying to connect`): the shared store adds one database call per request and 3 connections were not enough. Rolled back within minutes, then re-enabled in two steps (scope plus enforce, then shared store with pool 10). Stable since; login pages 200 on vnext, testa, testb; no connection timeouts in the pod log.
+- NOT yet tested under enforcement: signed-in pages and APIs (no test login performed), background CronJobs (they do not set PGOPTIONS, so they are not enforced). Click-through of each role is the next check, at the CI/e2e pass.
+- Rollback: delete the three variables from the Deployment (`kubectl set env deployment/lms-vnext DB_TENANT_SCOPE- SECURITY_SHARED_STORE- PGOPTIONS-`).
