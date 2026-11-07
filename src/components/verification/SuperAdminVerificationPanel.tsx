@@ -159,9 +159,9 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
      className="min-h-11 md:min-h-[var(--lms-control-height)]">Select first 20 waiting</Button>
     <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys([]);setBulkAction(null);}}
      className="min-h-11 md:min-h-[var(--lms-control-height)]">Clear selection</Button>
-    <Button variant="secondary" type="button" disabled={bulkBusy||!chosen.length} onClick={()=>{setActionsOpen(false);setBulkAction("VERIFY");setAcknowledged(false);}}
+    <Button variant="secondary" type="button" disabled={bulkBusy||!chosen.length} onClick={()=>{setActionsOpen(false);setBulkMessage("");setBulkFailed(false);setReason("");setBulkAction("VERIFY");setAcknowledged(false);}}
      className="min-h-11 md:min-h-[var(--lms-control-height)]">Verify without opening</Button>
-    <Button variant="secondary" type="button" disabled={bulkBusy||!chosen.length} onClick={()=>{setActionsOpen(false);setBulkAction("SEND_BACK");}}
+    <Button variant="secondary" type="button" disabled={bulkBusy||!chosen.length} onClick={()=>{setActionsOpen(false);setBulkMessage("");setBulkFailed(false);setReason("");setBulkAction("SEND_BACK");}}
      className="min-h-11 md:min-h-[var(--lms-control-height)]">Send back</Button>
    </div>
    {candidates.length>50?<p role="status" className="text-xs text-muted-foreground">
@@ -172,7 +172,9 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
       <Label variant="choice" className="flex min-h-11 items-center gap-[var(--lms-space-2)]">
        <Checkbox disabled={bulkBusy||(!selectedKeys.includes(verificationSelectionKey(row))&&selectedKeys.length>=20)}
         checked={selectedKeys.includes(verificationSelectionKey(row))}
-        onChange={e=>{const key=verificationSelectionKey(row);setSelectedKeys(current=>e.target.checked?[...current,key]:current.filter(k=>k!==key));setBulkAction(null);}}/>
+        onChange={e=>{const key=verificationSelectionKey(row);setSelectedKeys(current=>e.target.checked?
+        current.includes(key)||current.length>=20?current:[...current,key]:
+        current.filter(k=>k!==key));setBulkAction(null);}}/>
        {row.learnerName} · {row.section} {missingEvidence(row)?"(missing document)":""}
       </Label>
     </li>)}
