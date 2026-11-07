@@ -20491,11 +20491,11 @@
         "type": "COMPONENT",
         "area": "people",
         "title": "People · Interactive components (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-faculty-learner-profile-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07T17:50:00.196Z",
         "sourceFiles": [
           "src/components/people/faculty-profile-editor.tsx",
           "src/components/people/faculty-profile-metadata.tsx",
@@ -20511,8 +20511,42 @@
           "OVERLAY-0091"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Complete the faculty editor and learner profile component UX. Verify direct component behavior at desktop/mobile in CI-only test preview, preserving all permissions and data."
+        "evidence": [
+          {
+            "commitSha": "1b7d4fd3644da00372641db3975cec71fbb071cf",
+            "parityDoc": "docs/parity/ux-profile-editors.md",
+            "tests": [
+              {
+                "command": "node --test tests/ux-profile-g143-g150.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42396588929 (4/4 source contracts passed)"
+              },
+              {
+                "command": "npx eslint src/components/people/faculty-profile-*.tsx src/components/profile/learner-profile-workspace.tsx tests/fixtures/ux-profile-proof-page.tsx tests/e2e/ux-profile-editors.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42396588929 (scope lint passed; expanded command in workflow)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-profile-editors.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42396588929 (4/4 actual production component interactions passed in a synthetic fixture)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42396588929/artifacts/13584151589 (faculty-desktop.png)"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42396588929/artifacts/13584151589 (faculty-mobile.png)"
+              }
+            ],
+            "regressionReview": "Own-profile editors preserve validation, versioned saves, unsaved warnings, managed-document receipts, review labels, cancellation and editable sections. Blank skill rows are blocked before save; keyboard/screen-reader control names reviewed with real desktop/mobile Chromium. Fixture uses synthetic data and does not prove authorized DB writes.",
+            "securityReview": "Only presentation, stateful confirmation resolution and client-side blank-row save validation changed. No auth, tenant, RBAC, RLS, API, persistence, secrets, identity receipt, role or access policy was edited. No security tests weakened."
+          }
+        ],
+        "notes": "DONE scoped: 4/4 Node contracts, scoped ESLint, 4/4 actual-component desktop/mobile Chromium interactions; screenshots artifact https://github.com/42Students/lms-vnext/actions/runs/42396588929/artifacts/13584151589. Global TypeScript at exact SHA failed only in concurrently owned project CSV export files (class-team-csv-export.ts, learner-project-activity-csv-model.ts), fixed subsequently on main; separate later CI rerun queued. This is NOT a claim repo-wide CI green. Final visual proof follow-up queued to avoid capturing transitional dialog animation."
       },
       {
         "id": "UX-G144",
@@ -20777,11 +20811,11 @@
         "type": "COMPONENT",
         "area": "profile",
         "title": "Profile · Interactive components (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-faculty-learner-profile-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07T17:50:00.196Z",
         "sourceFiles": [
           "src/components/profile/learner-profile-workspace.tsx"
         ],
@@ -20789,8 +20823,42 @@
           "OVERLAY-0130"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Complete the faculty editor and learner profile component UX. Verify direct component behavior at desktop/mobile in CI-only test preview, preserving all permissions and data."
+        "evidence": [
+          {
+            "commitSha": "1b7d4fd3644da00372641db3975cec71fbb071cf",
+            "parityDoc": "docs/parity/ux-profile-editors.md",
+            "tests": [
+              {
+                "command": "node --test tests/ux-profile-g143-g150.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42396588929 (4/4 source contracts passed)"
+              },
+              {
+                "command": "npx eslint src/components/people/faculty-profile-*.tsx src/components/profile/learner-profile-workspace.tsx tests/fixtures/ux-profile-proof-page.tsx tests/e2e/ux-profile-editors.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42396588929 (scope lint passed; expanded command in workflow)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-profile-editors.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42396588929 (4/4 actual production component interactions passed in a synthetic fixture)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42396588929/artifacts/13584151589 (learner-desktop.png)"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42396588929/artifacts/13584151589 (learner-mobile.png)"
+              }
+            ],
+            "regressionReview": "Learner profile controls announce collection and record targets; confirmation promises resolve on replacement/unmount. Private identity values are masked; untouched optimistic updates, API ownership gates, 409 conflicts, mobile quick links and real learner workflows retained. CI-only fixture does not prove authenticated writes.",
+            "securityReview": "Only presentation, stateful confirmation resolution and client-side blank-row save validation changed. No auth, tenant, RBAC, RLS, API, persistence, secrets, identity receipt, role or access policy was edited. No security tests weakened."
+          }
+        ],
+        "notes": "DONE scoped: 4/4 Node contracts, scoped ESLint, 4/4 actual-component desktop/mobile Chromium interactions; screenshots artifact https://github.com/42Students/lms-vnext/actions/runs/42396588929/artifacts/13584151589. Global TypeScript at exact SHA failed only in concurrently owned project CSV export files (class-team-csv-export.ts, learner-project-activity-csv-model.ts), fixed subsequently on main; separate later CI rerun queued. This is NOT a claim repo-wide CI green. Final visual proof follow-up queued to avoid capturing transitional dialog animation."
       },
       {
         "id": "UX-G151",
