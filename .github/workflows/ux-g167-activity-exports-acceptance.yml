@@ -1,0 +1,68 @@
+name: UX-G167 Activity CSV exports
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/modules/activity/college-activity-export-*
+      - src/modules/activity/super-admin-audit-export-*
+      - tests/unit/college-activity-export-model.test.ts
+      - tests/unit/super-admin-audit-export-model.test.ts
+      - tests/e2e/ux-g167-activity-exports.spec.ts
+      - .github/workflows/ux-g167-activity-exports-acceptance.yml
+permissions:
+  contents: read
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: "true"
+      APP_ENV: development
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Focused static and CSV regressions
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: |
+          npx eslint src/modules/activity/college-activity-export-model.ts src/modules/activity/college-activity-export-service.ts src/modules/activity/super-admin-audit-export-model.ts src/modules/activity/super-admin-audit-export-service.ts tests/unit/college-activity-export-model.test.ts tests/unit/super-admin-audit-export-model.test.ts tests/e2e/ux-g167-activity-exports.spec.ts
+          npm run typecheck
+          npx vitest run tests/unit/college-activity-export-model.test.ts tests/unit/super-admin-audit-export-model.test.ts
+      - run: npx playwright install --with-deps chromium
+      - run: npm run db:e2e:prepare
+      - name: Ephemeral test authentication
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - run: npx playwright test tests/e2e/ux-g167-activity-exports.spec.ts --project=chromium --reporter=line
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ux-g167-viewport-evidence
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
