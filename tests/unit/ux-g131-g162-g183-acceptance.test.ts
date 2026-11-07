@@ -94,5 +94,13 @@ describe("UX-G183 — verified decisions and export copy", () => {
     }]).csv;
     expect(csv).toContain("Reviewed by");
     expect(csv).toContain("'=IMPORTDATA");
+    expect(csv).not.toContain('"=IMPORTDATA');
+    const protectedUnicode = verificationCsv([{
+      learnerName: "Student", section: "IDENTITY", status: "SENT_BACK",
+      submittedAt: "7 Nov 2026", reviewedAt: "7 Nov 2026",
+      reviewedBy: "\u200b=HYPERLINK(\"https://example.invalid\")",
+    }]);
+    expect(protectedUnicode.truncated).toBe(false);
+    expect(protectedUnicode.csv).toContain("'\u200b=HYPERLINK");
   });
 });
