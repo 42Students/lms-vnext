@@ -30,7 +30,7 @@ export async function exportSuperAdminFacultyAssignments(request:Request){
    if(page>=result.totalPages)break;
   }
   const cap=300;
-  if(total>cap)rows.push(["TRUNCATED: showing first 300 assignments","Narrow filters to export remaining rows."]);
+  if(total>cap)rows.push(["TRUNCATED: showing first 300 assignments","Narrow filters to export remaining rows.", ...Array.from({length:columns.length-2},()=>"")]);
   return new Response("\uFEFF"+placementReportCsv(columns,rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8","Cache-Control":"private, no-store",
    "Content-Disposition":'attachment; filename="faculty-assignments.csv"',
