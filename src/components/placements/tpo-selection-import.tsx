@@ -23,9 +23,9 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
   if(busy||needsRefresh)return;
   const revision=++fileRevision.current;
   setEntries([]);setUnmatched([]);setError("");setDone("");
-  if(!file)return;
+  if(!file){setReading(false);return;}
   if(!file.name.toLowerCase().endsWith(".csv")||file.size>2_000_000){
-   setError("Choose a CSV file under 2 MB. Excel files should be saved as CSV first.");return;
+   setReading(false);setError("Choose a CSV file under 2 MB. Excel files should be saved as CSV first.");return;
   }
   setReading(true);
   try{
@@ -57,7 +57,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
     count+=chunk.length;
    }
    setDone(count+" selection(s) recorded. Students have not been notified; verify and release from the selection register.");
-   setEntries([]);router.refresh();
+   setEntries([]);setNeedsRefresh(true);router.refresh();
   }catch(e){
    setNeedsRefresh(true);
    setError((e instanceof Error?e.message:"Import failed")+
@@ -98,7 +98,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
   </Disclosure>:null}
   {error?<InlineNotice tone="error" message={error}/>:null}
   {needsRefresh?<div role="alert" className="space-y-2 rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm">
-   <p>The import outcome must be reconciled before another submission to avoid duplicate selections.</p>
+   <p>{error?"The import outcome must be reconciled before another submission to avoid duplicate selections.":"Reload the selection register before importing again to see the latest recorded learners."}</p>
    <Button variant="secondary" type="button" onClick={()=>window.location.reload()} className="min-h-11">Reload selection register</Button>
   </div>:null}
   {done?<InlineNotice tone="success" message={done}/>:null}
