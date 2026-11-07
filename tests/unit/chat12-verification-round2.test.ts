@@ -39,7 +39,7 @@ describe("chat-12 verified TPO verification workflows",()=>{
   expect(verificationDecisionNotice({section:"EDUCATION",action:"VERIFIED",reviewerName:"Priya",reason:null}))
    .toEqual({title:"Your education is verified",body:"Verified by Priya. Companies and the placement cell now see it as verified."});
   expect(verificationDecisionNotice({section:"IDENTITY",action:"SENT_BACK",reviewerName:null,reason:"Wrong document"}))
-   .toEqual({title:"Your identity needs a change",body:"Wrong document Fix it on your profile and send it again."});
+   .toEqual({title:"Your identity needs a change",body:"Wrong document. Fix it on your profile and send it again."});
   expect(src("src/modules/profile-verification/transaction-writer.ts")).toContain("verificationDecisionNotice({");
  });
  it("TPO-requests-verification-32 exports each authorized TPO verification status view across bounded pages",()=>{
