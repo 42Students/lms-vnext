@@ -39,5 +39,9 @@ for (const viewport of [
       await testInfo.attach(`UX-G123-${viewport.name}.png`, {
         body: screenshot, contentType: "image/png",
       });
+      // The early CTA must reach the actual public inquiry journey, not just carry an href.
+      await demo.click();
+      await expect(page).toHaveURL(/\/request-demo$/);
+      await expect(page.getByRole("heading", { level: 1, name: "See 42 LMS in action" })).toBeVisible();
     });
 }
