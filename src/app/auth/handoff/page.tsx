@@ -1,5 +1,14 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { safeReturnTo } from "@/lib/return-to";
+
+/** Old credential-bearing handoff URLs must never be indexed or used as referrers. */
+export const dynamic = "force-dynamic";
+export const metadata: Metadata = {
+  title: "Continue securely to sign in | 42LMS",
+  robots: { index: false, follow: false, noarchive: true },
+  referrer: "no-referrer",
+};
 
 /**
  * Legacy handoff tokens could carry credentials between unrelated domains.
