@@ -44,13 +44,13 @@ test.describe("UX-G058/G187/G188 public journeys", () => {
     test("root loading announces progress and offers bounded retry at " + width + "px",
       async ({ page }, testInfo) => {
         await page.setViewportSize({ width, height: 800 });
-        await page.clock.install();
         await page.goto("/e2e/ux-g187-loading");
         await expect(page.getByRole("heading", { name: "Loading 42 LMS..." })).toBeVisible();
         await expect(page.getByRole("status", { name: "Loading 42 LMS..." })).toBeVisible();
         await expect(page.getByRole("button", { name: "Try again" })).toHaveCount(0);
-        await page.clock.fastForward(13_000);
-        await expect(page.getByText("This is taking longer than expected.")).toBeVisible();
+        // Exercise the real 12s effect rather than advancing a fake clock
+        // ahead of React hydration / the effect registration.
+        await expect(page.getByText("This is taking longer than expected.")).toBeVisible({ timeout: 20_000 });
         await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width + 1);
         await page.screenshot({ path: testInfo.outputPath("root-loading-" + width + ".png"), fullPage: true });
