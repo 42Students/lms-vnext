@@ -102,6 +102,12 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
    if(first)document.getElementById("invite-"+first)?.focus();
   },[fieldErrors]);
   const [codeSent,setCodeSent]=useState(false);
+  const [codeDeliveryCount,setCodeDeliveryCount]=useState(0);
+  // The verification field mounts only after the successful send response.
+  // Move focus after commit so keyboard and mobile users can enter the OTP.
+  useEffect(()=>{
+    if(codeSent && state==="ready")document.getElementById("invite-code")?.focus();
+  },[codeSent,codeDeliveryCount,state]);
   const [code,setCode]=useState("");
   const [name,setName]=useState("");
   const [designation,setDesignation]=useState("");
@@ -241,6 +247,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       // anonymous response; acceptance must attest the same address.
       setCodeSentTo(email);
       setCodeSent(true);
+      setCodeDeliveryCount(value=>value+1);
       setCode("");
       setFieldErrors({});
     }catch(error){
