@@ -21,3 +21,14 @@ Scope: `/recruiter-invitations`, authenticated pending-invite approval entry for
 ## Regression/security review
 
 `getCurrentRequestContext()` is mandatory. Server uses actual user platformStatus and `listSignedInRecruiterPendingInvites(context)`, never user IDs from URLs. AuthorizationError is still rethrown rather than hidden by recovery copy. The POST route and its consent and scope checks are unchanged. No new anonymous access to ungranted college data. Exact-SHA tests and visual evidence needed for DONE.
+
+
+## Execution status — waiting on exact-SHA rerun
+
+- The initial accepted batch source `5db9b53ce1c7fcd9cea96412812c25a51c378e21` passed scoped lint/SSR/privacy and 4/4 Chromium checks at [run 42392314518](https://github.com/42Students/lms-vnext/actions/runs/42392314518). Review of its `pending-invitations-anonymous-mobile.png` showed only an intermediate loading frame. Its server logs also showed `SessionAuthenticationError: SESSION_MISSING`, meaning the original denial test was insufficient to validate usable sign-in recovery. That run is **not** accepted as G083 completion evidence.
+- The route now catches `SessionAuthenticationError` locally and redirects missing, expired, revoked, invalid, or step-up-required sessions to first-party `/login`, retaining only fixed `returnTo=/recruiter-invitations` and a safe auth reason. Other failures still throw, including genuine authorization denial.
+- `tests/unit/ux-g083-recruiter-invitations-server.test.tsx` covers all five redirect codes and confirms no invitation lookup on invalid sessions.
+- Browser case now waits for the final `#sign-in-content` element before screenshot, requires no 500 and ensures no private invitations or accept/decline actions are displayed.
+- Latest test-change SHA `664f5894a2a730c7841bccaaee6b9b6ee18b63e8`; [exact-SHA CI rerun 42393260091](https://github.com/42Students/lms-vnext/actions/runs/42393260091) queued as of the record. Do not mark DONE until lint/unit/browser all pass and final screenshots are reviewed.
+
+**Current tracker status: DOING.**
