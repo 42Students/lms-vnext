@@ -31,3 +31,8 @@ Everything else on the security list that does not need you is done or running (
 ## Parked proof work (SEC-05 and SEC-06)
 
 15. One CI run on main, tracker evidence from it, and the independent GPT audit (`audit-brief-2026-11-07.md`).
+
+## Added later 2026-11-08
+
+16. **Is the NSRIT data on dev real?** The vNext dev database holds NSRIT (154 members) loaded from the legacy LMS dev database. If those are real students, dev needs production-grade protection and a data-processing basis, or the data should be replaced with synthetic data (SEC-10-016, SEC-22).
+17. **Key rotation rules** for the outbound encryption key (rotation strands sealed payloads until key versions exist): decide whether to schedule versioning work (SEC-10-015).
