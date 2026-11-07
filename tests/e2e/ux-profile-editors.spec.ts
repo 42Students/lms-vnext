@@ -24,7 +24,10 @@ for(const viewport of [{name:"desktop",width:1280,height:800},{name:"mobile",wid
     await expect(page.getByRole("heading",{name:"Profile completion checklist"})).toBeVisible();
     await expect(page.getByRole("button",{name:"Add Skills record"})).toBeVisible();
     await page.getByRole("button",{name:"Add Skills record"}).click();
-    await expect(page.getByRole("dialog")).toBeVisible();
+    const dialog=page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    // Capture fully presented content, not the translucent 250ms entrance frame.
+    await expect.poll(()=>dialog.evaluate(element=>getComputedStyle(element).opacity)).toBe("1");
    }
    expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)).toBe(false);
    expect(errors).toEqual([]);
