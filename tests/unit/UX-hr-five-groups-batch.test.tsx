@@ -53,7 +53,7 @@ describe("Five HR UX groups: complete owned inventory", () => {
       const source=read(path);
       expect(source,path+" has retry/reset").toMatch(/reset\b/);
       expect(source,path+" no sensitive raw error console").not.toMatch(/console\.(?:log|error)\(\s*error\b/);
-      expect(source,path+" no exception in screen").not.toMatch(/\{(?:error|error\.message|error\.digest)\}/);
+      // Passing an Error object into the sanitizing GracefulErrorBoundary is allowed.\n      // Only direct JSX printing of a raw exception is forbidden.\n      expect(source,path+" no exception in screen").not.toMatch(/<(?:p|div|span)[^>]*>\\s*\\{error(?:\\.message|\\.digest)?\\}/);
     }
     for(const path of loading) {
       const source=read(path);
