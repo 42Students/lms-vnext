@@ -27,16 +27,30 @@ export function parsePeopleCsvParams(params: URLSearchParams) {
 export function neutralizePeopleCsv(value: string) {
   return spreadsheetCsvCell(value);
 }
+/** Offset pages can overlap when directory membership changes during export.
+ * Keep the same person once and never exceed the documented download cap. */
+export function appendUniquePeopleCsvRows(
+ rows: PersonMembershipView[], page: readonly PersonMembershipView[],
+ cap: number = PEOPLE_CSV_CAP,
+): void {
+ const seen = new Set(rows.map(item => item.membership.id));
+ for (const item of page) {
+  if (rows.length >= cap) break;
+  if (seen.has(item.membership.id)) continue;
+  seen.add(item.membership.id);
+  rows.push(item);
+ }
+}
 export function renderPeopleCsv(rows: readonly PersonMembershipView[], truncated: boolean) {
   const header = ["Membership ID", "Name", "Email", "Phone", "Roles", "Status", "Joined UTC"];
   const lines = [header.map(neutralizePeopleCsv).join(",")];
-  for (const item of rows) {
+  for (const item of rows.slice(0, PEOPLE_CSV_CAP)) {
     const data = [item.membership.id, item.user.displayName ?? "", item.user.email ?? "",
       item.user.phoneE164 ?? "", item.membership.roles.join("; "), item.membership.status,
       item.membership.createdAt.toISOString()];
     lines.push(data.map(neutralizePeopleCsv).join(","));
   }
-  if (truncated) lines.push(["EXPORT TRUNCATED", "", "", "",
+  if (truncated || rows.length > PEOPLE_CSV_CAP) lines.push(["EXPORT TRUNCATED", "", "", "",
     "Only the first 1000 matching memberships were exported. Narrow filters.", "", ""]
     .map(neutralizePeopleCsv).join(","));
   return "\ufeff" + lines.join("\r\n");
