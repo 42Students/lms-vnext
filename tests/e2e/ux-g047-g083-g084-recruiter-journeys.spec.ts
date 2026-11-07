@@ -25,6 +25,11 @@ test.describe("UX-G083 pending recruiter invitations", () => {
   test("unauthenticated browser cannot see the private invitation list", async ({ page }, info) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await page.goto("/recruiter-invitations");
+    await expect(page).toHaveURL(/\\/(?:login\\?|\\?returnTo=)/);
+    const destination = new URL(page.url());
+    expect(["/", "/login"]).toContain(destination.pathname);
+    expect(destination.searchParams.get("returnTo")).toBe("/recruiter-invitations");
+    await expect(page.getByRole("heading", {name: "Server Error"})).toHaveCount(0);
     await expect(page.getByRole("heading", {name: "Recruiter invitations"})).toHaveCount(0);
     await expect(page.getByText("Pending college invitations")).toHaveCount(0);
     await expect(page.getByRole("button", {name: "Accept"})).toHaveCount(0);
