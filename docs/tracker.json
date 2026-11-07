@@ -15571,7 +15571,7 @@
                 "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851 (4/4 scoped source and owned-file inventory contract tests passed)"
               },
               {
-                "command": "npx eslint [scoped G043 G066 G095 edited files and CI-only fixture]",
+                "command": "npx eslint 'src/app/(authenticated)/college/students/import/page.tsx' 'src/app/(authenticated)/college/students/register/page.tsx' 'src/app/(authenticated)/college/students/import/error.tsx' 'src/app/(authenticated)/college/students/register/error.tsx' 'src/app/(authenticated)/college/verification/error.tsx' 'src/app/(authenticated)/college/videos/error.tsx' 'src/app/(authenticated)/learn/profile/verification/error.tsx' 'src/app/(authenticated)/learn/projects/error.tsx' 'src/app/(authenticated)/learn/projects/[projectId]/loading.tsx' 'src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx' 'src/app/(authenticated)/teacher/live-classes/page.tsx' 'src/app/(authenticated)/teacher/live-classes/error.tsx' 'src/app/(authenticated)/teacher/notifications/error.tsx' 'src/app/(authenticated)/teacher/profile/error.tsx' 'src/app/(authenticated)/teacher/profile/contacts/error.tsx' tests/fixtures/ux-cross-role-proof-page.tsx tests/e2e/ux-cross-role-g043-g066-g095.spec.ts",
                 "passed": true,
                 "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851 (scope ESLint step passed; see exact file list in workflow)"
               },
@@ -16829,7 +16829,7 @@
                 "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851 (4/4 scoped source and owned-file inventory contract tests passed)"
               },
               {
-                "command": "npx eslint [scoped G043 G066 G095 edited files and CI-only fixture]",
+                "command": "npx eslint 'src/app/(authenticated)/college/students/import/page.tsx' 'src/app/(authenticated)/college/students/register/page.tsx' 'src/app/(authenticated)/college/students/import/error.tsx' 'src/app/(authenticated)/college/students/register/error.tsx' 'src/app/(authenticated)/college/verification/error.tsx' 'src/app/(authenticated)/college/videos/error.tsx' 'src/app/(authenticated)/learn/profile/verification/error.tsx' 'src/app/(authenticated)/learn/projects/error.tsx' 'src/app/(authenticated)/learn/projects/[projectId]/loading.tsx' 'src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx' 'src/app/(authenticated)/teacher/live-classes/page.tsx' 'src/app/(authenticated)/teacher/live-classes/error.tsx' 'src/app/(authenticated)/teacher/notifications/error.tsx' 'src/app/(authenticated)/teacher/profile/error.tsx' 'src/app/(authenticated)/teacher/profile/contacts/error.tsx' tests/fixtures/ux-cross-role-proof-page.tsx tests/e2e/ux-cross-role-g043-g066-g095.spec.ts",
                 "passed": true,
                 "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851 (scope ESLint step passed; see exact file list in workflow)"
               },
@@ -18441,7 +18441,7 @@
                 "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851 (4/4 scoped source and owned-file inventory contract tests passed)"
               },
               {
-                "command": "npx eslint [scoped G043 G066 G095 edited files and CI-only fixture]",
+                "command": "npx eslint 'src/app/(authenticated)/college/students/import/page.tsx' 'src/app/(authenticated)/college/students/register/page.tsx' 'src/app/(authenticated)/college/students/import/error.tsx' 'src/app/(authenticated)/college/students/register/error.tsx' 'src/app/(authenticated)/college/verification/error.tsx' 'src/app/(authenticated)/college/videos/error.tsx' 'src/app/(authenticated)/learn/profile/verification/error.tsx' 'src/app/(authenticated)/learn/projects/error.tsx' 'src/app/(authenticated)/learn/projects/[projectId]/loading.tsx' 'src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx' 'src/app/(authenticated)/teacher/live-classes/page.tsx' 'src/app/(authenticated)/teacher/live-classes/error.tsx' 'src/app/(authenticated)/teacher/notifications/error.tsx' 'src/app/(authenticated)/teacher/profile/error.tsx' 'src/app/(authenticated)/teacher/profile/contacts/error.tsx' tests/fixtures/ux-cross-role-proof-page.tsx tests/e2e/ux-cross-role-g043-g066-g095.spec.ts",
                 "passed": true,
                 "proof": "https://github.com/42Students/lms-vnext/actions/runs/42397390851 (scope ESLint step passed; see exact file list in workflow)"
               },
@@ -20624,7 +20624,7 @@
                 "proof": "https://github.com/42Students/lms-vnext/actions/runs/42396588929 (4/4 source contracts passed)"
               },
               {
-                "command": "npx eslint src/components/people/faculty-profile-*.tsx src/components/profile/learner-profile-workspace.tsx tests/fixtures/ux-profile-proof-page.tsx tests/e2e/ux-profile-editors.spec.ts",
+                "command": "npx eslint src/components/people/faculty-profile-editor.tsx src/components/people/faculty-profile-repeatable.tsx src/components/people/faculty-profile-skills.tsx src/components/people/faculty-profile-metadata.tsx src/components/people/faculty-profile-text-section.tsx src/components/profile/learner-profile-workspace.tsx tests/fixtures/ux-profile-proof-page.tsx tests/e2e/ux-profile-editors.spec.ts",
                 "passed": true,
                 "proof": "https://github.com/42Students/lms-vnext/actions/runs/42396588929 (scope lint passed; expanded command in workflow)"
               },
@@ -20936,7 +20936,7 @@
                 "proof": "https://github.com/42Students/lms-vnext/actions/runs/42396588929 (4/4 source contracts passed)"
               },
               {
-                "command": "npx eslint src/components/people/faculty-profile-*.tsx src/components/profile/learner-profile-workspace.tsx tests/fixtures/ux-profile-proof-page.tsx tests/e2e/ux-profile-editors.spec.ts",
+                "command": "npx eslint src/components/people/faculty-profile-editor.tsx src/components/people/faculty-profile-repeatable.tsx src/components/people/faculty-profile-skills.tsx src/components/people/faculty-profile-metadata.tsx src/components/people/faculty-profile-text-section.tsx src/components/profile/learner-profile-workspace.tsx tests/fixtures/ux-profile-proof-page.tsx tests/e2e/ux-profile-editors.spec.ts",
                 "passed": true,
                 "proof": "https://github.com/42Students/lms-vnext/actions/runs/42396588929 (scope lint passed; expanded command in workflow)"
               },
