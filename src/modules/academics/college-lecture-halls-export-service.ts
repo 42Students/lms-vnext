@@ -19,14 +19,25 @@ export async function exportCollegeLectureHalls(
   upcoming:query.upcoming==="ALL"?undefined:query.upcoming,
  };
  const first=await listLectureHalls(context,{...filters,limit,offset:0});
+ const total=first.pagination.total;
  const rows=[...first.items];
- for(let offset=limit;offset<Math.min(first.pagination.total,LECTURE_HALLS_EXPORT_CAP);offset+=limit){
+ if(!Number.isSafeInteger(total)||total<0||rows.length>limit)
+  throw new Error("LECTURE_HALL_EXPORT_STALE");
+ for(let offset=limit;offset<Math.min(total,LECTURE_HALLS_EXPORT_CAP);offset+=limit){
   const page=await listLectureHalls(context,{...filters,limit,offset});
+  // A changing count or duplicate page must not result in an incomplete,
+  // apparently authoritative list of classrooms.
+  if(page.pagination.total!==total||page.items.length>limit)
+   throw new Error("LECTURE_HALL_EXPORT_STALE");
   rows.push(...page.items);
  }
- const truncated=first.pagination.total>LECTURE_HALLS_EXPORT_CAP;
+ const selected=rows.slice(0,LECTURE_HALLS_EXPORT_CAP);
+ if(selected.length!==Math.min(total,LECTURE_HALLS_EXPORT_CAP)||
+    new Set(selected.map(row=>row.id)).size!==selected.length)
+  throw new Error("LECTURE_HALL_EXPORT_STALE");
+ const truncated=total>LECTURE_HALLS_EXPORT_CAP;
  return {csv:format==="superadmin"
-   ? renderSuperAdminLectureHallsCsv(rows.slice(0,LECTURE_HALLS_EXPORT_CAP),truncated)
+   ? renderSuperAdminLectureHallsCsv(selected,truncated)
    : renderLectureHallsCsv(rows.slice(0,LECTURE_HALLS_EXPORT_CAP),truncated),
-  truncated,cap:LECTURE_HALLS_EXPORT_CAP,exported:Math.min(rows.length,LECTURE_HALLS_EXPORT_CAP)};
+  truncated,cap:LECTURE_HALLS_EXPORT_CAP,exported:selected.length};
 }
