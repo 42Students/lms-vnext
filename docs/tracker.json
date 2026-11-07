@@ -15525,10 +15525,10 @@
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Students / Import → Videos (part 16)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-profile-cross-role-2026-11-07",
+        "pickedAt": "2026-11-07T17:00:00.000Z",
+        "startedAt": "2026-11-07T17:00:00.000Z",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/college/students/import/error.tsx",
@@ -15559,7 +15559,8 @@
           "PAGE-0203"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Review role-focused learner/teacher/college UX routes as group, implement safely with in-scope file ownership, add exact source tests and browser proof. No DONE without all acceptance requirements."
       },
       {
         "id": "UX-G044",
@@ -16744,10 +16745,10 @@
         "type": "JOURNEY",
         "area": "learn",
         "title": "Learn · Profile / Verification → Quizzes / My Attempts (part 8)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-profile-cross-role-2026-11-07",
+        "pickedAt": "2026-11-07T17:00:00.000Z",
+        "startedAt": "2026-11-07T17:00:00.000Z",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/learn/profile/verification/error.tsx",
@@ -16782,7 +16783,8 @@
         "newRouteOnly": [
           "/learn/quizzes/my-attempts"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "Review role-focused learner/teacher/college UX routes as group, implement safely with in-scope file ownership, add exact source tests and browser proof. No DONE without all acceptance requirements."
       },
       {
         "id": "UX-G067",
@@ -18317,10 +18319,10 @@
         "type": "JOURNEY",
         "area": "teacher",
         "title": "Teacher · Courses / DeliveryId → Profile / Contacts (part 5)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-profile-cross-role-2026-11-07",
+        "pickedAt": "2026-11-07T17:00:00.000Z",
+        "startedAt": "2026-11-07T17:00:00.000Z",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/error.tsx",
@@ -18359,7 +18361,8 @@
         "newRouteOnly": [
           "/teacher/fileExplorer"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "Review role-focused learner/teacher/college UX routes as group, implement safely with in-scope file ownership, add exact source tests and browser proof. No DONE without all acceptance requirements."
       },
       {
         "id": "UX-G096",
