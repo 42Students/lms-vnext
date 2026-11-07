@@ -42,6 +42,12 @@ export type RouteDeps<Context> = {
   /** Runs the handler inside the actor's database scope (row-level security reads it). Optional so the core stays framework-free. */
   runInScope?: <T>(context: Context, fn: () => T) => T;
   /**
+   * Public routes have no actor, so under row-level security enforcement they would see no rows at all. They run
+   * inside a NAMED system scope instead (reason = "public:<route pattern>"), so the database session shows which
+   * unauthenticated route read the data. Row-level security therefore does not narrow these reviewed public routes.
+   */
+  runInPublicScope?: <T>(reason: string, fn: () => T) => T;
+  /**
    * Audit trail hook (layer L9). Called for authenticated routes after every state-changing request and every
    * 401/403/429 outcome. It receives identifiers only: never the body, query values or headers. A throwing hook
    * never changes the response.
@@ -243,7 +249,11 @@ export function createRoute<Context, Permission extends string = string>(deps: R
 
         const params = routeParams;
         const run = () => handler({ request, context, body, query, params, requestId });
-        const response = await (context !== null && deps.runInScope ? deps.runInScope(context, run) : run());
+        const response = await (context !== null && deps.runInScope
+          ? deps.runInScope(context, run)
+          : context === null && config.auth === "public" && deps.runInPublicScope
+            ? deps.runInPublicScope("public:" + pattern, run)
+            : run());
         return withHeaders(response, requestId);
       } catch (error) {
         return withHeaders(deps.onError(error), requestId);

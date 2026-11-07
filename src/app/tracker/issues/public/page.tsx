@@ -3,6 +3,7 @@ import {getDb} from "@/db/client";
 import {db10BugReports} from "@/db/schema/db10-bug-tracker";
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { runAsSystem } from "@/db/tenant-context";
 
 export const dynamic="force-dynamic";
 export const metadata={title:"Public issue updates · 42 Tracker"};
@@ -11,7 +12,7 @@ export const metadata={title:"Public issue updates · 42 Tracker"};
  * description, evidence or private thread is ever queried for public SSR.
  * DB capability is explicitly gated until migration and review are enabled.
  */
-export default async function PublicIssuesPage(){
+async function PublicIssuesPage(){
  const enabled=process.env["PUBLIC_ISSUE_CATALOG_READY"]==="true";
  const result=!enabled?{ok:false as const,items:[]}:
    await getDb().select({
@@ -41,4 +42,10 @@ export default async function PublicIssuesPage(){
        </li>)}
     </ol>}
  </main>;
+}
+
+// Public page, no actor: runs in a named system scope so row-level security (when enforced) still lets it read
+// the one record its link points at. The scope name shows in the database session.
+export default async function PublicIssuesPagePublic() {
+  return runAsSystem("public-page:tracker-issues-public", () => PublicIssuesPage());
 }

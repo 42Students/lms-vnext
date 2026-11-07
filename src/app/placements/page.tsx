@@ -11,6 +11,7 @@ import { publicPlacementTableReady } from "@/modules/placements/public-page/read
 import { readOptionalPublicPlacementData } from "@/modules/placements/public-page/optional-read-model";
 import { Heading } from "@/components/ui/heading";
 import { istDateFormatter } from "@/lib/format-date";
+import { runAsSystem } from "@/db/tenant-context";
 
 /** Public route: never loads private placements, identities, or employer contacts.
  * A verified public publication producer and code delivery are still required
@@ -23,7 +24,7 @@ import { istDateFormatter } from "@/lib/format-date";
  * requires enabled + published_at + fresh college-scoped aggregate evidence.
  * Do not infer a legacy updated_by actor from anonymous public reads.
  */
-export default async function PublicPlacementsPage() {
+async function PublicPlacementsPage() {
   const tenant = await resolveRequestTenant((await headers()).get("host"));
   if (tenant.kind !== "college") notFound();
   // A missing/unfinished publication table is an infrastructure error,
@@ -122,4 +123,10 @@ export default async function PublicPlacementsPage() {
       </main>
     </div>
   );
+}
+
+// Public page, no actor: runs in a named system scope so row-level security (when enforced) still lets it read
+// the one record its link points at. The scope name shows in the database session.
+export default async function PublicPlacementsPagePublic() {
+  return runAsSystem("public-page:placements-index", () => PublicPlacementsPage());
 }

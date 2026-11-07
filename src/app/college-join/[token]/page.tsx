@@ -2,8 +2,9 @@ import { PublicJoinPreviewRetry } from "@/components/placements/public-join-prev
 import { PublicRecruiterJoinForm } from "@/components/placements/public-recruiter-join-form";
 import { getPublicJoinPreview } from "@/modules/placements/public-join/preview-service";
 import {publicJoinUnavailable,publicJoinUnavailableCopy} from "@/modules/placements/public-join/readiness-state";
+import { runAsSystem } from "@/db/tenant-context";
 
-export default async function CollegeJoinPage({
+async function CollegeJoinPage({
   params,
 }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
@@ -18,4 +19,10 @@ export default async function CollegeJoinPage({
     await publicJoinUnavailable().catch(()=>"RATE_TABLE_MISSING" as const):null;
   const blocked=readiness===null?null:publicJoinUnavailableCopy(readiness);
   return <PublicRecruiterJoinForm token={token} scope="COLLEGE" preview={preview} blockedReason={blocked} />;
+}
+
+// Public page, no actor: runs in a named system scope so row-level security (when enforced) still lets it read
+// the one record its link points at. The scope name shows in the database session.
+export default async function CollegeJoinPagePublic(props: Parameters<typeof CollegeJoinPage>[0]) {
+  return runAsSystem("public-page:college-join", () => CollegeJoinPage(props));
 }

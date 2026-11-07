@@ -2,8 +2,9 @@ import {notFound} from "next/navigation";
 import {readPublicExternalJob} from "@/modules/placements/public-external-job-service";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Heading } from "@/components/ui/heading";
+import { runAsSystem } from "@/db/tenant-context";
 export const dynamic="force-dynamic";
-export default async function ExternalJobPage({params}:{
+async function ExternalJobPage({params}:{
  params:Promise<{slug:string}>;
 }){
  const {slug}=await params;
@@ -22,4 +23,10 @@ export default async function ExternalJobPage({params}:{
    Continue to employer website ↗
   </ButtonLink>
  </main>;
+}
+
+// Public page, no actor: runs in a named system scope so row-level security (when enforced) still lets it read
+// the one record its link points at. The scope name shows in the database session.
+export default async function ExternalJobPagePublic(props: Parameters<typeof ExternalJobPage>[0]) {
+  return runAsSystem("public-page:jobs-external", () => ExternalJobPage(props));
 }
