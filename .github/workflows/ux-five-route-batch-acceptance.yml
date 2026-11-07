@@ -47,6 +47,12 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Record exact checkout SHA
+        run: |
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$GITHUB_SHA"
+          printf '%s\\n' "$actual" > ux-five-source-sha.txt
+
       - name: Scoped ESLint
         run: |
           npx eslint \
@@ -108,5 +114,6 @@ jobs:
           path: |
             test-results/
             playwright-report/
+            ux-five-source-sha.txt
             ux-five-route-results.json
           if-no-files-found: ignore
