@@ -15809,11 +15809,11 @@
         "type": "JOURNEY",
         "area": "e2e",
         "title": "E2e · Chat17 Ui Kit → Superadmin Login (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-e2e-dashboard-tracker-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [
           "src/app/e2e/superadmin-login/error.tsx",
           "src/app/e2e/superadmin-login/loading.tsx",
@@ -15834,12 +15834,13 @@
             "url": "https://github.com/42Students/lms-vnext/commit/ccddb5e191b389387da821503fd87f3c84a4f2ce"
           },
           {
-            "type": "acceptance_pending",
+            "type": "scoped-executed",
             "ref": "42392546252",
-            "url": "https://github.com/42Students/lms-vnext/actions/runs/42392546252"
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42392546252",
+            "detail": "G049 2/2 Chromium; lint/TypeScript and 32/32 unit tests pass. Shared workflow RED only on G048/G122 browser test."
           }
         ],
-        "notes": "Source implementation committed to main, documented at docs/ux/UX-G049-G048-G122.md. Dedicated exact-SHA acceptance GitHub Actions 42392546252 (head ccddb5e191b389387da821503fd87f3c84a4f2ce) queued due shared runner backlog; no executed lint/TypeScript/browser result yet. 24 scoped live source invariants inspected and present. Keep DOING until actual passing CI and authenticated scope regression evidence; security and release gates remain independent."
+        "notes": "G049 independently verified on exact code SHA ccddb5e191b389387da821503fd87f3c84a4f2ce in Actions 42392546252: ESLint and full TS pass, five Vitest files/32 tests pass, and BOTH G049 Chromium browser cases pass (1280x800 desktop and 390x844 mobile); no session creation/phone disclosure, noindex and safe signin navigation. IMPORTANT overall shared workflow conclusion was failure due unrelated G048/G122 browser navigation abort; those groups remain DOING and were not falsely marked green. This is only G049 scoped UX closure, not global CI/release/security signoff."
       },
       {
         "id": "UX-G050",
