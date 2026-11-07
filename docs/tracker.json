@@ -17370,18 +17370,57 @@
         "type": "JOURNEY",
         "area": "roll-number-login",
         "title": "Roll Number Login · Home (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-public-auth-entry-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [],
         "surfaceIds": [],
         "newRouteOnly": [
           "/roll-number-login"
         ],
-        "evidence": [],
-        "notes": "Scoped UX pass on public entry/verification only. Preserve server-side auth/verification, request security, bearer handling and redirect semantics. Evidence required before DONE."
+        "evidence": [
+          {
+            "commitSha": "521bc310727592e91e5d54728b15d42edd83de1a",
+            "parityDoc": "docs/parity/pages/shared/UX-G086-roll-number-login.md",
+            "tests": [
+              {
+                "command": "npx eslint src/app/roll-number-login/page.tsx src/components/auth/learner-roll-number-login.tsx src/app/verify-email/page.tsx src/app/verify-email/layout.tsx tests/e2e/ux-public-auth-entry.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391360746"
+              },
+              {
+                "command": "node --test tests/db004-email-link-route-security.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391360746 — 3/3 source-invariant tests passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-public-auth-entry.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391360746 — 9/9 Chromium browser acceptance cases passed"
+              },
+              {
+                "command": "npm run typecheck (NODE_OPTIONS=--max-old-space-size=6144)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391360746 — TypeScript exit 0"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391360746 — UX-G086 desktop browser cases, source SHA 521bc310727592e91e5d54728b15d42edd83de1a"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391360746 — UX-G086 mobile browser cases, source SHA 521bc310727592e91e5d54728b15d42edd83de1a"
+              }
+            ],
+            "regressionReview": "Desktop/mobile roll-number flow, focus, no overflow, two-step communication, masked delivery address, control busy/disabled state, retained values on synthetic 429/invalid OTP, retry step and fallback to /login. 4 dedicated browser scenarios; no changes to start/verify API or permission gates.",
+            "securityReview": "No backend, tenant, auth-provider, storage, login/verification API or RLS changes. Existing email fragment stripping, same-origin no-store JSON redemption, session/device/tenant gates preserved and DB004 security-source tests passed. OTP and email requests intercepted with synthetic responses; no real outbound sends."
+          }
+        ],
+        "notes": "Scoped UX pass on public entry/verification only. Preserve server-side auth/verification, request security, bearer handling and redirect semantics. Evidence required before DONE. Scoped UX accepted on commit 521bc310727592e91e5d54728b15d42edd83de1a via successful run 42391360746 (scoped lint, 3/3 security tests, 9/9 browser, full TypeScript). See docs/parity/pages/shared/UX-G086-roll-number-login.md"
       },
       {
         "id": "UX-G087",
@@ -19162,18 +19201,57 @@
         "type": "JOURNEY",
         "area": "verify-email",
         "title": "Verify Email · Home (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-public-auth-entry-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [],
         "surfaceIds": [],
         "newRouteOnly": [
           "/verify-email"
         ],
-        "evidence": [],
-        "notes": "Scoped UX pass on public entry/verification only. Preserve server-side auth/verification, request security, bearer handling and redirect semantics. Evidence required before DONE."
+        "evidence": [
+          {
+            "commitSha": "521bc310727592e91e5d54728b15d42edd83de1a",
+            "parityDoc": "docs/parity/pages/shared/UX-G124-email-verification.md",
+            "tests": [
+              {
+                "command": "npx eslint src/app/roll-number-login/page.tsx src/components/auth/learner-roll-number-login.tsx src/app/verify-email/page.tsx src/app/verify-email/layout.tsx tests/e2e/ux-public-auth-entry.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391360746"
+              },
+              {
+                "command": "node --test tests/db004-email-link-route-security.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391360746 — 3/3 source-invariant tests passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-public-auth-entry.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391360746 — 9/9 Chromium browser acceptance cases passed"
+              },
+              {
+                "command": "npm run typecheck (NODE_OPTIONS=--max-old-space-size=6144)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391360746 — TypeScript exit 0"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391360746 — UX-G124 desktop browser cases, source SHA 521bc310727592e91e5d54728b15d42edd83de1a"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391360746 — UX-G124 mobile browser cases, source SHA 521bc310727592e91e5d54728b15d42edd83de1a"
+              }
+            ],
+            "regressionReview": "Desktop/mobile valid proof and malformed fragment plus declined-server negative case; React Strict Mode effect replay repaired without storing or exposing bearer. DOM and Referer checked for no leak, POST once only after deliberate confirm, no URL token, no automatic redirect, fixed recovery links. 5 dedicated browser scenarios.",
+            "securityReview": "No backend, tenant, auth-provider, storage, login/verification API or RLS changes. Existing email fragment stripping, same-origin no-store JSON redemption, session/device/tenant gates preserved and DB004 security-source tests passed. OTP and email requests intercepted with synthetic responses; no real outbound sends."
+          }
+        ],
+        "notes": "Scoped UX pass on public entry/verification only. Preserve server-side auth/verification, request security, bearer handling and redirect semantics. Evidence required before DONE. Scoped UX accepted on commit 521bc310727592e91e5d54728b15d42edd83de1a via successful run 42391360746 (scoped lint, 3/3 security tests, 9/9 browser, full TypeScript). See docs/parity/pages/shared/UX-G124-email-verification.md"
       },
       {
         "id": "UX-G125",
