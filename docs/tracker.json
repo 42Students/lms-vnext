@@ -13394,6 +13394,44 @@
               "390px expired sign-in"
             ],
             "role": "anonymous"
+          },
+          {
+            "commitSha": "aff8ef1ef0eb4eb84aebd82aa86cb7bc11c115dd",
+            "parityDoc": "docs/parity/pages/shared/UX-G002-root.md",
+            "tests": [
+              {
+                "command": "npx eslint src/app/page.tsx src/app/(authenticated)/{error,loading}.tsx src/app/quiz/{page,error,loading}.tsx and group test paths",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391169871"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391169871"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g002-g079-root-quiz.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391169871 — 5/5 Vitest cases passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-root-quiz-journeys.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391169871 — 4/4 desktop/mobile cases passed"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391169871 — root desktop 1280px"
+              },
+              {
+                "viewport": "mobile",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391169871 — expired sign-in mobile 390px"
+              }
+            ],
+            "regressionReview": "Existing shared root and authenticated shell states tested; actual desktop root and mobile expired sign-in journeys, with disposable E2E auth DB; shared permissions and business APIs left unchanged.",
+            "securityReview": "Root sign-in and session expiry recovery test uses disposable identities; scope is UX navigation and error recovery only, with no authentication or tenant-authorization bypass."
           }
         ],
         "notes": "Scoped UX surfaces improved and exact-SHA CI green (5 Vitest, 4 Chromium mobile/desktop; lint and full typecheck). Global release/security gates remain separate."
@@ -17168,6 +17206,44 @@
             "type": "parity",
             "ref": "docs/parity/shared-public-ops.md",
             "detail": "UX-G078 and UX-G089 final scoped evidence section. Historical mixed public source file remains red 9/11 in unrelated cross-group checks; not an acceptance waiver."
+          },
+          {
+            "commitSha": "102c0927b982a07f1dcec27c2ed40eefb5e9d24b",
+            "parityDoc": "docs/parity/shared-public-ops.md",
+            "tests": [
+              {
+                "command": "npx eslint src/app/privacy-policy/page.tsx src/app/superadmin-login/{page,error,loading}.tsx and scoped tests",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391328381"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391328381"
+              },
+              {
+                "command": "npx vitest run tests/unit/UX-G078-policy-render.test.tsx tests/unit/UX-G089-superadmin-bookmark.test.ts tests/unit/UX-chat16-public-auth-legacy-bookmarks-03.test.ts tests/unit/UX-public-legacy-redirects-02.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391328381 — focused tests passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g078-g089-public-routes.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391328381 — 4/4 browser cases passed"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391328381 — privacy policy desktop Chromium"
+              },
+              {
+                "viewport": "mobile",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391328381 — privacy policy mobile Chromium"
+              }
+            ],
+            "regressionReview": "Privacy page exact-copy/legal-anchor regression and desktop/mobile accessible routing tested. The unrelated historical mixed public suite failures are documented separately and not waived.",
+            "securityReview": "Legal copy and public policy address remain controlled; no backend, identity, consent or tenant authorization changes. Unrelated mixed suite remains open."
           }
         ],
         "notes": "Scoped UX DONE with exact SHA 102c0927b982a07f1dcec27c2ed40eefb5e9d24b and Actions 42391328381 passing lint, TypeScript, 13 SSR/unit and 4 desktop/mobile browser tests; original full mixed public suite has 9 unrelated failures documented in docs/parity/shared-public-ops.md. No broader security/role or release sign-off."
@@ -17218,6 +17294,44 @@
               "1280px quiz error/recovery"
             ],
             "role": "seeded learner"
+          },
+          {
+            "commitSha": "aff8ef1ef0eb4eb84aebd82aa86cb7bc11c115dd",
+            "parityDoc": "docs/parity/pages/learner/UX-G079-quiz.md",
+            "tests": [
+              {
+                "command": "npx eslint src/app/page.tsx src/app/(authenticated)/{error,loading}.tsx src/app/quiz/{page,error,loading}.tsx and group test paths",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391169871"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391169871"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g002-g079-root-quiz.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391169871 — 5/5 Vitest cases passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-root-quiz-journeys.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391169871 — 4/4 desktop/mobile cases passed"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391169871 — quiz desktop 1280px"
+              },
+              {
+                "viewport": "mobile",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391169871 — quiz mobile 320px"
+              }
+            ],
+            "regressionReview": "Existing quiz route recovery and error loading tested with seeded learner and desktop/mobile contexts; business mutation/data semantics preserved.",
+            "securityReview": "Seeded learner flow retained current auth guards, no changes to quiz evaluation policy or tenant authorization."
           }
         ],
         "notes": "Scoped UX surfaces improved and exact-SHA CI green (5 Vitest, 4 Chromium mobile/desktop; lint and full typecheck). Global release/security gates remain separate."
@@ -17640,6 +17754,44 @@
             "type": "parity",
             "ref": "docs/parity/shared-public-ops.md",
             "detail": "UX-G078 and UX-G089 final scoped evidence section. Historical mixed public source file remains red 9/11 in unrelated cross-group checks; not an acceptance waiver."
+          },
+          {
+            "commitSha": "102c0927b982a07f1dcec27c2ed40eefb5e9d24b",
+            "parityDoc": "docs/parity/shared-public-ops.md",
+            "tests": [
+              {
+                "command": "npx eslint src/app/privacy-policy/page.tsx src/app/superadmin-login/{page,error,loading}.tsx and scoped tests",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391328381"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391328381"
+              },
+              {
+                "command": "npx vitest run tests/unit/UX-G078-policy-render.test.tsx tests/unit/UX-G089-superadmin-bookmark.test.ts tests/unit/UX-chat16-public-auth-legacy-bookmarks-03.test.ts tests/unit/UX-public-legacy-redirects-02.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391328381 — focused tests passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g078-g089-public-routes.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391328381 — 4/4 browser cases passed"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391328381 — super-admin bookmark desktop Chromium"
+              },
+              {
+                "viewport": "mobile",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391328381 — super-admin bookmark mobile Chromium"
+              }
+            ],
+            "regressionReview": "Legacy superadmin bookmark and public route navigation regression tested on desktop/mobile with same existing login path and guard logic.",
+            "securityReview": "No new session or super-admin authorization pathway; public bookmark recovery retains normal sign-in guards."
           }
         ],
         "notes": "Scoped UX DONE with exact SHA 102c0927b982a07f1dcec27c2ed40eefb5e9d24b and Actions 42391328381 passing lint, TypeScript, 13 SSR/unit and 4 desktop/mobile browser tests; original full mixed public suite has 9 unrelated failures documented in docs/parity/shared-public-ops.md. No broader security/role or release sign-off."
