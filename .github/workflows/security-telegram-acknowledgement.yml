@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "src/modules/log-alerts/telegram-webhook.ts"
+      - "src/modules/log-alerts/telegram-notifier.ts"
       - "tests/unit/graceful-telegram-webhook.test.ts"
       - "tests/unit/security-telegram-acknowledgement-authorization.test.ts"
       - ".github/workflows/security-telegram-acknowledgement.yml"
@@ -12,6 +13,7 @@ on:
     branches: [main]
     paths:
       - "src/modules/log-alerts/telegram-webhook.ts"
+      - "src/modules/log-alerts/telegram-notifier.ts"
       - "tests/unit/graceful-telegram-webhook.test.ts"
       - "tests/unit/security-telegram-acknowledgement-authorization.test.ts"
       - ".github/workflows/security-telegram-acknowledgement.yml"
@@ -37,6 +39,8 @@ jobs:
       - run: npm ci
       - name: Verify exact tested revision
         run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Scoped notifier and callback lint
+        run: npx eslint src/modules/log-alerts/telegram-notifier.ts src/modules/log-alerts/telegram-webhook.ts tests/unit/graceful-telegram-webhook.test.ts
       - name: Telegram sender, callback and route regression
         run: npx vitest run tests/unit/graceful-telegram-webhook.test.ts tests/unit/security-telegram-acknowledgement-authorization.test.ts tests/unit/graceful-webhook-route.test.ts
       - name: Full TypeScript gate
