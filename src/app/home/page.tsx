@@ -82,6 +82,14 @@ export default function HomeMarketingPage() {
       title="Build employable graduates. Create stronger talent pipelines."
       description="One connected platform for learning, hands-on projects, mentoring and placements—built for universities and the employers who recruit from them." />
 
+    <nav aria-label="Explore 42 LMS by audience"
+     className="flex min-w-0 flex-col gap-3 border-b border-[var(--lms-canvas-border)] py-6 sm:flex-row sm:flex-wrap sm:items-center">
+     <p className="text-sm font-semibold text-[var(--lms-heading)] sm:mr-2">Find your path</p>
+     <TextLink variant="bare" href="/universities" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 py-3 text-sm font-semibold text-[var(--lms-primary-text)] focus-ring sm:w-auto">For Universities</TextLink>
+     <TextLink variant="bare" href="/enterprises" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 py-3 text-sm font-semibold text-[var(--lms-primary-text)] focus-ring sm:w-auto">For Enterprises</TextLink>
+     <TextLink variant="bare" href="#home-journey" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 py-3 text-sm font-semibold text-[var(--lms-primary-text)] focus-ring sm:w-auto">See the learner journey</TextLink>
+    </nav>
+
     {/* 2. Personalization: the legacy quote band, without retired AI promises. */}
     <section aria-labelledby="home-personalization" className="relative left-1/2 w-screen -translate-x-1/2 bg-[color:var(--lms-neutral-50)] px-5 py-16 md:py-24">
       <div className="mx-auto max-w-[1180px] text-center">
@@ -149,7 +157,7 @@ export default function HomeMarketingPage() {
     <MarketingFeatureGrid title="Everything you need to develop talent" items={pillars} />
 
     {/* 7. Horizontal lifecycle with step arrows (four approved non-AI stages). */}
-    <section aria-labelledby="home-journey-heading" className="relative left-1/2 w-screen -translate-x-1/2 bg-surface px-5 py-16 md:py-20">
+    <section id="home-journey" aria-labelledby="home-journey-heading" className="relative left-1/2 w-screen -translate-x-1/2 scroll-mt-24 bg-surface px-5 py-16 md:py-20">
       <div className="mx-auto max-w-[1180px] space-y-8">
         <p className="text-xs font-bold uppercase tracking-[.16em] text-[var(--lms-primary-text)]">Continuous talent development</p>
         <Heading level={2} id="home-journey-heading" className="text-2xl md:text-3xl text-[var(--lms-heading)]">Learn. Build. Demonstrate. Get hired.</Heading>
