@@ -141,13 +141,14 @@ export default async function ActivityPage({
   const rawMode=one(params["mode"])==="raw" && isSuperAdmin(context);
   const rawSize=one(params["size"]);
   const pageSize=rawMode && (rawSize==="50"||rawSize==="100")?Number(rawSize):25;
-  const selectedRange=range==="today"||range==="7d"||range==="30d"?range:
-    range==="ALL"?"all":one(params["from"])||one(params["to"])?"custom":"30d";
   // Raw forensic lookups default to all-time, as in legacy Audit Logs.
   // The Important activity feed still defaults to the last 30 IST days.
   const forensicLookup=selectedPreset==="all" && Boolean(
     one(params["actorUserId"])||one(params["actorName"])||one(params["eventType"])||
     one(params["subjectType"])||one(params["subjectId"])||one(params["q"]));
+  const selectedRange=range==="today"||range==="7d"||range==="30d"?range:
+    range==="ALL"?"all":one(params["from"])||one(params["to"])?"custom":
+    forensicLookup?"all":"30d";
   const defaultFrom=one(params["from"])??(!one(params["to"])&&!forensicLookup?
     range==="ALL"?undefined:
     range==="today"?today:range==="7d"?ago(6):ago(29):undefined);
@@ -157,13 +158,16 @@ export default async function ActivityPage({
       params, view, from, to, range:rangeKey, rawMode,
       superAdmin:isSuperAdmin(context), pinnedCollegeId:selectedCollegeId,
     });
+  // Keep the default rolling window highlighted after switching categories;
+  // explicit date inputs remain a custom range until a preset is chosen.
+  const categoryRange = range ?? (!one(params["from"]) && !one(params["to"]) && !forensicLookup ? "30d" : undefined);
   const presetLinks=[
-   {id:"important" as const,name:"Important",href:quick(defaultFrom,one(params["to"]),"important",range)},
-   {id:"setup" as const,name:"Academic setup",href:quick(defaultFrom,one(params["to"]),"setup",range)},
-   {id:"people" as const,name:"People & access",href:quick(defaultFrom,one(params["to"]),"people",range)},
-   {id:"teaching" as const,name:"Teaching",href:quick(defaultFrom,one(params["to"]),"teaching",range)},
-   {id:"projects" as const,name:"Projects",href:quick(defaultFrom,one(params["to"]),"projects",range)},
-   {id:"all" as const,name:"Everything",href:quick(defaultFrom,one(params["to"]),"all",range)},
+   {id:"important" as const,name:"Important",href:quick(defaultFrom,one(params["to"]),"important",categoryRange)},
+   {id:"setup" as const,name:"Academic setup",href:quick(defaultFrom,one(params["to"]),"setup",categoryRange)},
+   {id:"people" as const,name:"People & access",href:quick(defaultFrom,one(params["to"]),"people",categoryRange)},
+   {id:"teaching" as const,name:"Teaching",href:quick(defaultFrom,one(params["to"]),"teaching",categoryRange)},
+   {id:"projects" as const,name:"Projects",href:quick(defaultFrom,one(params["to"]),"projects",categoryRange)},
+   {id:"all" as const,name:"Everything",href:quick(defaultFrom,one(params["to"]),"all",categoryRange)},
   ];
   const resetQuery = new URLSearchParams({view:"important"});
   if (rawMode) resetQuery.set("mode","raw");
