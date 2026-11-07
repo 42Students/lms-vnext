@@ -1,0 +1,57 @@
+name: UX-G143 G150 profile editors acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/components/people/faculty-profile-editor.tsx'
+      - 'src/components/people/faculty-profile-metadata.tsx'
+      - 'src/components/people/faculty-profile-repeatable.tsx'
+      - 'src/components/people/faculty-profile-skills.tsx'
+      - 'src/components/people/faculty-profile-text-section.tsx'
+      - 'src/components/profile/learner-profile-workspace.tsx'
+      - 'tests/ux-profile-g143-g150.test.mjs'
+      - 'tests/e2e/ux-profile-editors.spec.ts'
+      - 'tests/fixtures/ux-profile-proof-page.tsx'
+      - '.github/workflows/ux-profile-editors-acceptance.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  profiles:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      NODE_OPTIONS: "--max-old-space-size=6144"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Scoped profile lint and source contracts
+        run: |
+          npx eslint src/components/people/faculty-profile-editor.tsx src/components/people/faculty-profile-repeatable.tsx src/components/people/faculty-profile-skills.tsx src/components/people/faculty-profile-metadata.tsx src/components/people/faculty-profile-text-section.tsx src/components/profile/learner-profile-workspace.tsx tests/fixtures/ux-profile-proof-page.tsx tests/e2e/ux-profile-editors.spec.ts
+          node --test tests/ux-profile-g143-g150.test.mjs
+      - name: Create temporary, unshipped profile component preview
+        run: |
+          mkdir -p src/app/__ux-profile-proof
+          cp tests/fixtures/ux-profile-proof-page.tsx src/app/__ux-profile-proof/page.tsx
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop and mobile real profile component interactions
+        run: npx playwright test tests/e2e/ux-profile-editors.spec.ts --project=chromium --reporter=line
+      - name: Save four viewport screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-profile-proof-${{ github.sha }}
+          path: ux-profile-evidence/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Global TypeScript compatibility
+        run: npm run typecheck
