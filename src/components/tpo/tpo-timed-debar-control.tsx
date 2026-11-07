@@ -2,7 +2,7 @@
 import {Textarea} from "@/components/ui/textarea";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
-import {useRef,useState} from "react";
+import {useId,useRef,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
@@ -16,7 +16,7 @@ type Pending={action:"DEBAR"}|{action:"LIFT";id:string};
 export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string;initial:TpoTimedDebarRow[]}){
  const [rows,setRows]=useState(initial);
  const [reason,setReason]=useState("");
- const [liftReason,setLiftReason]=useState("");
+ const [liftReasons,setLiftReasons]=useState<Record<string,string>>({});
  const [duration,setDuration]=useState<"DATE"|"DRIVES"|"MANUAL">("DATE");
  const [untilDate,setUntilDate]=useState("");
  const [untilDrives,setUntilDrives]=useState("1");
@@ -26,6 +26,7 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
  const [error,setError]=useState("");
  const [notice,setNotice]=useState("");
  const active=rows.filter(row=>row.active);
+ const dateHelpId=useId();
  const today=todayInIndia();
  const draftError=timedDebarDraftError({reason,duration,untilDate,untilDrives,today});
  const invalidDate=duration==="DATE"&&untilDate!==""&&untilDate<today;
@@ -35,9 +36,16 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
    const message=timedDebarDraftError({reason,duration,untilDate,untilDrives,today:todayInIndia()});
    if(message){setConfirm(null);setError(message);return;}
   }
+  if(confirm.action==="LIFT" && (
+   !active.some(row=>row.id===confirm.id) ||
+   !(liftReasons[confirm.id]??"").trim() ||
+   (liftReasons[confirm.id]??"").trim().length>500
+  )){
+   setConfirm(null);setError("Enter a reason to lift the active restriction.");return;
+  }
   locked.current=true;setPending(true);setError("");setNotice("");
   const payload=confirm.action==="LIFT"
-   ?{action:"LIFT",debarmentId:confirm.id,reason:liftReason.trim()}
+   ?{action:"LIFT",debarmentId:confirm.id,reason:(liftReasons[confirm.id]??"").trim()}
    :{action:"DEBAR",reason:reason.trim(),
      untilDate:duration==="DATE"?untilDate:null,
      untilDrives:duration==="DRIVES"?Number(untilDrives):null};
@@ -46,7 +54,8 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
     method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
     body:JSON.stringify(payload),
    });
-   setRows(result.rows);setConfirm(null);setReason("");setLiftReason("");
+   if(!Array.isArray(result.rows))throw new Error("Updated history was not returned. Reload and try again.");
+   setRows(result.rows);setConfirm(null);setReason("");setLiftReasons({});
    setNotice(confirm.action==="LIFT"?"Debarment lifted.":"Debarment saved.");
   }catch(e){setError(e instanceof Error?e.message:"Could not save this change. Please try again.");}
   finally{locked.current=false;setPending(false);}
@@ -64,8 +73,8 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
      <option value="DATE">Until a date</option><option value="DRIVES">For N drives</option><option value="MANUAL">Until lifted</option>
     </Select></Label>
    {duration==="DATE"?<Label stack className="min-w-0">Until date (IST)
-    <Input className="min-h-11 w-full min-w-0 md:min-h-9" disabled={pending||active.length>0} type="date" min={today} value={untilDate} aria-invalid={invalidDate} aria-describedby="tpo-debar-date-help" onChange={e=>{setUntilDate(e.target.value);setError("");}}
-     /><span id="tpo-debar-date-help" className={invalidDate?"text-xs text-error":"text-xs text-body"}>{invalidDate?"This date has passed in India. Choose today or later.":"Dates follow India Standard Time (IST)."}</span></Label>:null}
+    <Input className="min-h-11 w-full min-w-0 md:min-h-9" disabled={pending||active.length>0} type="date" min={today} value={untilDate} aria-invalid={invalidDate} aria-describedby={dateHelpId} onChange={e=>{setUntilDate(e.target.value);setError("");}}
+     /><span id={dateHelpId} className={invalidDate?"text-xs text-error":"text-xs text-body"}>{invalidDate?"This date has passed in India. Choose today or later.":"Dates follow India Standard Time (IST)."}</span></Label>:null}
    {duration==="DRIVES"?<Label stack className="min-w-0">Number of drives
     <Input className="min-h-11 w-full min-w-0 md:min-h-9" disabled={pending||active.length>0} type="number" min={1} max={10000} value={untilDrives} onChange={e=>{setUntilDrives(e.target.value);setError("");}}
      /></Label>:null}
@@ -84,9 +93,9 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
     {row.liftedAt?<p className="text-sm leading-[22px]">Lifted · {row.liftedReason??"No reason recorded"}</p>:null}
     {row.active?<div className="min-w-0 space-y-2">
      <Label stack className="min-w-0">Reason for lifting
-      <Textarea className="w-full min-w-0" value={liftReason} maxLength={500} disabled={pending} onChange={e=>{setLiftReason(e.target.value);setError("");}}
+      <Textarea className="w-full min-w-0" value={liftReasons[row.id]??""} maxLength={500} disabled={pending} onChange={e=>{setLiftReasons(current=>({...current,[row.id]:e.target.value}));setError("");}}
        /></Label>
-     <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||!liftReason.trim()}
+     <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||!(liftReasons[row.id]??"").trim()}
       onClick={()=>{setError("");setConfirm({action:"LIFT",id:row.id});}}
       >Review lift</Button>
     </div>:null}
@@ -103,7 +112,7 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
    </div>}>
    <div className="min-w-0 space-y-2">
     <p className="text-sm leading-[22px]">The student&apos;s existing applications will remain recorded.</p>
-    <p className="break-words text-sm text-body leading-[22px]">Reason: {confirm?.action==="LIFT"?liftReason.trim():reason.trim()}</p>
+    <p className="break-words text-sm text-body leading-[22px]">Reason: {confirm?.action==="LIFT"?(liftReasons[confirm.id]??"").trim():reason.trim()}</p>
     {confirm?.action==="DEBAR"?<p className="text-sm text-body leading-[22px]">{duration==="DATE"?"Until: "+untilDate+" IST":duration==="DRIVES"?"Drives: "+untilDrives:"Until lifted"}</p>:null}
     {error&&confirm?<InlineNotice tone="error" message={error}/>:null}
    </div>
