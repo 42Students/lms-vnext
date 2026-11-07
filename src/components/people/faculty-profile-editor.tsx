@@ -108,6 +108,7 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
         {facultyProfileCompleteness(document).completed} of {facultyProfileCompleteness(document).total} sections · {facultyProfileCompleteness(document).percent}%
       </strong>
     </div>
+    <progress className="mt-3 h-2 w-full accent-[var(--lms-primary)]" max={100} value={facultyProfileCompleteness(document).percent} aria-label="Profile completeness percentage" />
     <p className="mt-2 text-xs text-muted-foreground">Select Edit or Add in a profile section to keep your record up to date. This is not a verification or hiring-eligibility score.</p>
   </section>
   {error?<Alert tone="error" className="max-w-[80ch] space-y-[var(--lms-space-2)]">
