@@ -13,7 +13,7 @@ on:
       - src/modules/colleges/admin-tenant-export-model.ts
       - src/app/e2e/ux-g170-g172-csv/**
       - tests/unit/ux-g170-g172-csv-acceptance.test.ts
-      - tests/e2e/ux-g170-g172-csv.spec.ts tests/e2e/ux-g170-g172-authenticated-csv.spec.ts
+      - tests/e2e/ux-g170-g172-csv.spec.ts
       - tests/e2e/ux-g170-g172-authenticated-csv.spec.ts
       - .github/workflows/ux-g170-g172-csv-acceptance.yml
 
@@ -57,7 +57,7 @@ jobs:
       - run: npm ci
       - name: Scoped lint
         run: |
-          npx eslint src/modules/attendance/college-department-csv-model.ts src/modules/attendance/college-department-csv-service.ts src/modules/attendance/learner-attendance-history-csv-model.ts src/modules/colleges/admin-history-export-model.ts src/modules/colleges/admin-readiness-export-model.ts src/modules/colleges/admin-tenant-export-model.ts src/app/e2e/ux-g170-g172-csv/page.tsx tests/unit/ux-g170-g172-csv-acceptance.test.ts tests/e2e/ux-g170-g172-csv.spec.ts
+          npx eslint src/modules/attendance/college-department-csv-model.ts src/modules/attendance/college-department-csv-service.ts src/modules/attendance/learner-attendance-history-csv-model.ts src/modules/colleges/admin-history-export-model.ts src/modules/colleges/admin-readiness-export-model.ts src/modules/colleges/admin-tenant-export-model.ts src/app/e2e/ux-g170-g172-csv/page.tsx tests/unit/ux-g170-g172-csv-acceptance.test.ts tests/e2e/ux-g170-g172-csv.spec.ts tests/e2e/ux-g170-g172-authenticated-csv.spec.ts
       - name: Full TypeScript verification
         env:
           NODE_OPTIONS: --max-old-space-size=6144
