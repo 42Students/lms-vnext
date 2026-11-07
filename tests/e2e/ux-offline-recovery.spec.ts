@@ -32,7 +32,7 @@ for (const viewport of [
         await expect(page.getByRole("heading", { level: 1, name: "You're offline" })).toBeVisible();
         await retry.click();
         await expect(page.getByRole("status")).toContainText(/Still offline/i);
-        await expect(page.getByText(/Still offline\. Check Wi-Fi/)).toBeVisible();
+        await expect(page.locator("main").getByText(/Still offline\. Check Wi-Fi/)).toBeVisible();
         await expect(page).toHaveURL(/\/offline$/);
       } finally {
         await context.setOffline(false);
