@@ -13,9 +13,13 @@ vi.mock("next/navigation",()=>({
   notFound:vi.fn(()=>{throw new Error("NOT_FOUND");}),
 }));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:vi.fn()}));
-vi.mock("@/modules/identity/context",()=>({isSuperAdmin:vi.fn()}));
-vi.mock("@/modules/permissions/policy",()=>({
-  requirePermission:vi.fn(), AuthorizationError:class AuthorizationError extends Error {},
+vi.mock("@/modules/identity/context",async(importOriginal)=>({
+  ...(await importOriginal<typeof import("@/modules/identity/context")>()),
+  isSuperAdmin:vi.fn(),
+}));
+vi.mock("@/modules/permissions/policy",async(importOriginal)=>({
+  ...(await importOriginal<typeof import("@/modules/permissions/policy")>()),
+  requirePermission:vi.fn(),
 }));
 vi.mock("@/db/client",()=>({getDb:vi.fn()}));
 
