@@ -20316,7 +20316,16 @@
           "OVERLAY-0081"
         ],
         "newRouteOnly": [],
-        "evidence": [{"commitSha":"baadc516e47b9228513002ce52f3c03d72509dfb","parityDoc":"docs/parity/ux-g141-g155-g175-2026-11-07.md","tests":[],"browser":[],"regressionReview":"Source and focused unit/browser specifications committed; exact-SHA CI results, shared call-site checks and desktop/mobile browser screenshots require independent verification before DONE.","securityReview":"No auth/RLS/backend permission loosening; CSV service still scopes college-admin permission to current membership and college. The synthetic browser route returns 404 unless development and explicit UX_STUDY_SHELL_FIXTURE=1."}],
+        "evidence": [
+          {
+            "commitSha": "baadc516e47b9228513002ce52f3c03d72509dfb",
+            "parityDoc": "docs/parity/ux-g141-g155-g175-2026-11-07.md",
+            "tests": [],
+            "browser": [],
+            "regressionReview": "Source and focused unit/browser specifications committed; exact-SHA CI results, shared call-site checks and desktop/mobile browser screenshots require independent verification before DONE.",
+            "securityReview": "No auth/RLS/backend permission loosening; CSV service still scopes college-admin permission to current membership and college. The synthetic browser route returns 404 unless development and explicit UX_STUDY_SHELL_FIXTURE=1."
+          }
+        ],
         "notes": "Scoped UX code, tests and path-triggered browser CI committed on main. Pending exact-SHA executed results, desktop/mobile screenshots, and same-college/role regression. docs/parity/ux-g141-g155-g175-2026-11-07.md"
       },
       {
@@ -20857,7 +20866,16 @@
           "OVERLAY-0164"
         ],
         "newRouteOnly": [],
-        "evidence": [{"commitSha":"baadc516e47b9228513002ce52f3c03d72509dfb","parityDoc":"docs/parity/ux-g141-g155-g175-2026-11-07.md","tests":[],"browser":[],"regressionReview":"Source and focused unit/browser specifications committed; exact-SHA CI results, shared call-site checks and desktop/mobile browser screenshots require independent verification before DONE.","securityReview":"No auth/RLS/backend permission loosening; CSV service still scopes college-admin permission to current membership and college. The synthetic browser route returns 404 unless development and explicit UX_STUDY_SHELL_FIXTURE=1."}],
+        "evidence": [
+          {
+            "commitSha": "baadc516e47b9228513002ce52f3c03d72509dfb",
+            "parityDoc": "docs/parity/ux-g141-g155-g175-2026-11-07.md",
+            "tests": [],
+            "browser": [],
+            "regressionReview": "Source and focused unit/browser specifications committed; exact-SHA CI results, shared call-site checks and desktop/mobile browser screenshots require independent verification before DONE.",
+            "securityReview": "No auth/RLS/backend permission loosening; CSV service still scopes college-admin permission to current membership and college. The synthetic browser route returns 404 unless development and explicit UX_STUDY_SHELL_FIXTURE=1."
+          }
+        ],
         "notes": "Scoped UX code, tests and path-triggered browser CI committed on main. Pending exact-SHA executed results, desktop/mobile screenshots, and same-college/role regression. docs/parity/ux-g141-g155-g175-2026-11-07.md"
       },
       {
@@ -21319,7 +21337,7 @@
         ],
         "newRouteOnly": [],
         "evidence": [],
-        "notes": "Fixing outbound CSV Unicode/formula safety and readable output; verify exact-SHA tests and desktop/mobile download before DONE."
+        "notes": "Code and unit/browser acceptance tests committed on main (b7708246, a826f87a, 733126d4, e4f54812, bcae8554). Focused workflow https://github.com/42Students/lms-vnext/actions/runs/42393523442 queued, not passing yet. Evidence doc docs/parity/pages/shared/UX-G167-activity-exports.md. No DONE without exact-SHA green Chromium screenshots, lint/TS/Vitest and regression review."
       },
       {
         "id": "UX-G168",
@@ -21572,7 +21590,16 @@
           "MESSAGE-0048"
         ],
         "newRouteOnly": [],
-        "evidence": [{"commitSha":"baadc516e47b9228513002ce52f3c03d72509dfb","parityDoc":"docs/parity/ux-g141-g155-g175-2026-11-07.md","tests":[],"browser":[],"regressionReview":"Source and focused unit/browser specifications committed; exact-SHA CI results, shared call-site checks and desktop/mobile browser screenshots require independent verification before DONE.","securityReview":"No auth/RLS/backend permission loosening; CSV service still scopes college-admin permission to current membership and college. The synthetic browser route returns 404 unless development and explicit UX_STUDY_SHELL_FIXTURE=1."}],
+        "evidence": [
+          {
+            "commitSha": "baadc516e47b9228513002ce52f3c03d72509dfb",
+            "parityDoc": "docs/parity/ux-g141-g155-g175-2026-11-07.md",
+            "tests": [],
+            "browser": [],
+            "regressionReview": "Source and focused unit/browser specifications committed; exact-SHA CI results, shared call-site checks and desktop/mobile browser screenshots require independent verification before DONE.",
+            "securityReview": "No auth/RLS/backend permission loosening; CSV service still scopes college-admin permission to current membership and college. The synthetic browser route returns 404 unless development and explicit UX_STUDY_SHELL_FIXTURE=1."
+          }
+        ],
         "notes": "Scoped UX code, tests and path-triggered browser CI committed on main. Pending exact-SHA executed results, desktop/mobile screenshots, and same-college/role regression. docs/parity/ux-g141-g155-g175-2026-11-07.md"
       },
       {
@@ -21595,7 +21622,7 @@
         ],
         "newRouteOnly": [],
         "evidence": [],
-        "notes": "Telegram outbound acknowledgement readability/safe redaction in progress; evidence-gated."
+        "notes": "Webhook acknowledgement copy and tests on main (7e17b0a8, 3ac76be9). Generated diagnostics preserved, untrusted callback text redacted, duplicate acknowledgement idempotent and Unicode 3500 char cap. Focused workflow https://github.com/42Students/lms-vnext/actions/runs/42393127294 queued. Evidence doc docs/parity/pages/shared/UX-G176-telegram-alerts.md. No DONE without exact-SHA test and rendered-consumer proof."
       },
       {
         "id": "UX-G177",
