@@ -1,0 +1,57 @@
+name: UX-G043 G066 G095 cross-role UX acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/app/(authenticated)/college/students/**'
+      - 'src/app/(authenticated)/college/verification/**'
+      - 'src/app/(authenticated)/college/videos/**'
+      - 'src/app/(authenticated)/learn/profile/verification/**'
+      - 'src/app/(authenticated)/learn/projects/**'
+      - 'src/app/(authenticated)/teacher/profile/**'
+      - 'src/app/(authenticated)/teacher/live-classes/**'
+      - 'src/app/(authenticated)/teacher/notifications/**'
+      - 'src/app/(authenticated)/teacher/courses/**'
+      - 'tests/ux-cross-role-g043-g066-g095.test.mjs'
+      - 'tests/e2e/ux-cross-role-g043-g066-g095.spec.ts'
+      - 'tests/fixtures/ux-cross-role-proof-page.tsx'
+      - '.github/workflows/ux-cross-role-g043-g066-g095.yml'
+permissions:
+  contents: read
+jobs:
+  cross-role:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      NODE_OPTIONS: "--max-old-space-size=6144"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Scoped UX lint and group source assertions
+        run: |
+          npx eslint 'src/app/(authenticated)/college/students/import/page.tsx' 'src/app/(authenticated)/college/students/register/page.tsx' 'src/app/(authenticated)/college/students/import/error.tsx' 'src/app/(authenticated)/college/students/register/error.tsx' 'src/app/(authenticated)/college/verification/error.tsx' 'src/app/(authenticated)/college/videos/error.tsx' 'src/app/(authenticated)/learn/profile/verification/error.tsx' 'src/app/(authenticated)/learn/projects/error.tsx' 'src/app/(authenticated)/learn/projects/[projectId]/loading.tsx' 'src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx' 'src/app/(authenticated)/teacher/live-classes/page.tsx' 'src/app/(authenticated)/teacher/live-classes/error.tsx' 'src/app/(authenticated)/teacher/notifications/error.tsx' 'src/app/(authenticated)/teacher/profile/error.tsx' 'src/app/(authenticated)/teacher/profile/contacts/error.tsx' tests/fixtures/ux-cross-role-proof-page.tsx tests/e2e/ux-cross-role-g043-g066-g095.spec.ts
+          node --test tests/ux-cross-role-g043-g066-g095.test.mjs
+      - name: Add CI-only error/loading preview
+        run: |
+          mkdir -p src/app/ux-cross-role-proof-preview
+          cp tests/fixtures/ux-cross-role-proof-page.tsx src/app/ux-cross-role-proof-preview/page.tsx
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Check error/loading interactions at desktop and mobile widths
+        run: npx playwright test tests/e2e/ux-cross-role-g043-g066-g095.spec.ts --project=chromium --reporter=line
+      - name: Save six route screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-cross-role-${{ github.sha }}
+          path: ux-cross-role-evidence/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: TypeScript compatibility
+        run: npm run typecheck
