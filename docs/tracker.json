@@ -14525,11 +14525,11 @@
         "type": "JOURNEY",
         "area": "auth",
         "title": "Auth · Handoff (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-auth-handoff-ux-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07T16:28:00Z",
         "sourceFiles": [
           "src/app/auth/handoff/error.tsx",
           "src/app/auth/handoff/loading.tsx",
@@ -14541,8 +14541,42 @@
           "PAGE-0501"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Retired handoff public entry UX, privacy and safe redirect. Exact-SHA lint, server-level negative checks, desktop/mobile browser and proof required for DONE."
+        "evidence": [
+          {
+            "commitSha": "59a720e4403d692f18faeb390c912b8ef68fb6a1",
+            "parityDoc": "docs/parity/ux-g026-auth-handoff.md",
+            "tests": [
+              {
+                "command": "npx eslint src/app/auth/handoff/{page,error,loading}.tsx tests/e2e/ux-g026-auth-handoff.spec.ts tests/unit/ux-g026-auth-handoff-security.test.ts && node --test tests/ux-g026-auth-handoff-contract.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391254741 (Lint and safe-handoff source contracts: success)"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g026-auth-handoff-security.test.ts tests/unit/chat16-public-legacy-invite-handoff-16.test.ts tests/unit/chat16-legacy-auth-invite-alias-pages-16.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391254741 (Existing handoff and adversarial redirect regressions: success)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g026-auth-handoff.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391254741 (2 passed, no retries)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391254741/artifacts/13581826436 (handoff-desktop-rejected.png, 1280x800, inspected clear)"
+              },
+              {
+                "viewport": "mobile",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42391254741/artifacts/13581826436 (handoff-mobile-safe-return.png, 375x812, inspected clear, no overflow)"
+              }
+            ],
+            "regressionReview": "Login root and all shared public components remain unchanged. The route error boundary still uses centralized telemetry, retry, public home but now uses insideShell to avoid nested main and duplicate headings. Existing legacy handoff and HR invite tests passed.",
+            "securityReview": "Retired handoff noindex/nofollow/noarchive/no-referrer and force dynamic; old bearer tokens never exchanged, stored, logged or forwarded. Malicious return destinations and nonallowlisted credentials are stripped; only bounded safe first-party return paths survive. Auth, OTP, roles, tenant and cookie handlers untouched."
+          }
+        ],
+        "notes": "Retired handoff UX, error/loading and bearer safety closed with clean lint/unit/security checks and 2/2 desktop/mobile browser acceptance. See docs/parity/ux-g026-auth-handoff.md. Live OTP providers remain separate release gates."
       },
       {
         "id": "UX-G027",
