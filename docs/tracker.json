@@ -18826,11 +18826,11 @@
         "type": "JOURNEY",
         "area": "universities",
         "title": "Universities · Home (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-universities-chat-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07T15:35:00Z",
         "sourceFiles": [
           "src/app/universities/error.tsx",
           "src/app/universities/loading.tsx",
@@ -18842,8 +18842,51 @@
           "PAGE-0521"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Universities public landing journey: responsive UX, CTAs, error/loading states, accessibility and SEO; implementation and verification in progress."
+        "evidence": [
+          {
+            "commitSha": "835e21ff8b1b4b82b15e1edae82a872e9d7fae6e",
+            "parityDoc": "docs/parity/shared-public-ops.md",
+            "tests": [
+              {
+                "command": "npx eslint src/app/universities/page.tsx src/app/universities/error.tsx src/app/universities/loading.tsx tests/e2e/ux-universities-journey.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386799736 (scoped lint success)"
+              },
+              {
+                "command": "node --test tests/ux-universities-group.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386799736 (3/3 source contracts passed)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-universities-journey.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386799736 (2/2 browser tests passed; demo route and keyboard/accessibility/overflow assertions)"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386799736 (tsc --noEmit exit 0; subsequent global ux:guard failed for unrelated files)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "width": 1280,
+                "height": 800,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386799736/artifacts/13579304583 (ux-g123-evidence/desktop.png)"
+              },
+              {
+                "viewport": "mobile",
+                "width": 390,
+                "height": 844,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386799736/artifacts/13579304583 (ux-g123-evidence/mobile.png)"
+              }
+            ],
+            "regressionReview": "Existing marketing layout, canonical metadata, role/tenant workflows and product descriptions remain unchanged. Both browser viewports navigate the actual /request-demo route and verify anchors, page errors, overflow and focus. Source route contract tests passed. Global ux:guard is red only for concurrently owned campaign-unsubscribe/[token]/page.tsx:19 and college-join/[token]/loading.tsx:6; no G123 violation; documented without falsely claiming overall CI green.",
+            "securityReview": "Route-only changes under /universities. No auth, RLS, tenant, API, persistence, token or provider code touched. Same-origin demo link and public home error recovery verified; no sensitive output or role bypass introduced."
+          }
+        ],
+        "notes": "Verified UX-G123 route-only acceptance: source lint 3/3, browser desktop/mobile 2/2, 2 screenshots, full typecheck pass. Scope-local close only; global ux:guard independently fails in concurrently owned unsubscribe and college-join paths (documented; no false global green)."
       },
       {
         "id": "UX-G124",
