@@ -1,0 +1,32 @@
+name: UX-G075 offline recovery acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/app/offline/**
+      - src/components/public/graceful-screen.tsx
+      - tests/e2e/ux-offline-recovery.spec.ts
+      - .github/workflows/ux-offline-acceptance.yml
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install headless Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop and mobile offline UX browser acceptance
+        run: npx playwright test tests/e2e/ux-offline-recovery.spec.ts --project=chromium --reporter=line
