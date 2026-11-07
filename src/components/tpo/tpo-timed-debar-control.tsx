@@ -8,7 +8,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Disclosure} from "@/components/ui/disclosure";
 import {InlineNotice} from "@/components/ui/inline-notice";
-import type {TpoTimedDebarRow} from "@/modules/placements/tpo-timed-debar-view-model";
+import { todayInIndia, timedDebarDraftError, type TpoTimedDebarRow } from "@/modules/placements/tpo-timed-debar-view-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 const endpoint=(id:string)=>"/api/placements/tpo/students/"+encodeURIComponent(id)+"/debarments";
@@ -26,8 +26,15 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
  const [error,setError]=useState("");
  const [notice,setNotice]=useState("");
  const active=rows.filter(row=>row.active);
+ const today=todayInIndia();
+ const draftError=timedDebarDraftError({reason,duration,untilDate,untilDrives,today});
+ const invalidDate=duration==="DATE"&&untilDate!==""&&untilDate<today;
  async function apply(){
   if(!confirm||locked.current)return;
+  if(confirm.action==="DEBAR"){
+   const message=timedDebarDraftError({reason,duration,untilDate,untilDrives,today:todayInIndia()});
+   if(message){setConfirm(null);setError(message);return;}
+  }
   locked.current=true;setPending(true);setError("");setNotice("");
   const payload=confirm.action==="LIFT"
    ?{action:"LIFT",debarmentId:confirm.id,reason:liftReason.trim()}
@@ -57,14 +64,13 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
      <option value="DATE">Until a date</option><option value="DRIVES">For N drives</option><option value="MANUAL">Until lifted</option>
     </Select></Label>
    {duration==="DATE"?<Label stack className="min-w-0">Until date (IST)
-    <Input className="min-h-11 w-full min-w-0 md:min-h-9" disabled={pending||active.length>0} type="date" value={untilDate} onChange={e=>setUntilDate(e.target.value)}
-     /></Label>:null}
+    <Input className="min-h-11 w-full min-w-0 md:min-h-9" disabled={pending||active.length>0} type="date" min={today} value={untilDate} aria-invalid={invalidDate} aria-describedby="tpo-debar-date-help" onChange={e=>{setUntilDate(e.target.value);setError("");}}
+     /><span id="tpo-debar-date-help" className={invalidDate?"text-xs text-error":"text-xs text-body"}>{invalidDate?"This date has passed in India. Choose today or later.":"Dates follow India Standard Time (IST)."}</span></Label>:null}
    {duration==="DRIVES"?<Label stack className="min-w-0">Number of drives
-    <Input className="min-h-11 w-full min-w-0 md:min-h-9" disabled={pending||active.length>0} type="number" min={1} max={10000} value={untilDrives} onChange={e=>setUntilDrives(e.target.value)}
+    <Input className="min-h-11 w-full min-w-0 md:min-h-9" disabled={pending||active.length>0} type="number" min={1} max={10000} value={untilDrives} onChange={e=>{setUntilDrives(e.target.value);setError("");}}
      /></Label>:null}
    <Button variant="primary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
-    disabled={pending||active.length>0||reason.trim().length===0||duration==="DATE"&&!untilDate||
-      duration==="DRIVES"&&(!Number.isInteger(Number(untilDrives))||Number(untilDrives)<1||Number(untilDrives)>10000)}
+    disabled={pending||active.length>0||Boolean(draftError)}
     onClick={()=>{setError("");setConfirm({action:"DEBAR"});}}>Review debarment</Button>
    {active.length>0?<p className="text-xs text-muted-foreground leading-[20px]">Lift the current debarment before creating another.</p>:null}
   </Disclosure>
@@ -86,14 +92,14 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
     </div>:null}
    </article>)}
   </div>
-  <Dialog open={confirm!==null} onOpenChange={open=>{if(!open&&!pending)setConfirm(null);}}
+  <Dialog open={confirm!==null} dismissible={!pending} onOpenChange={open=>{if(!open&&!pending)setConfirm(null);}}
    title={confirm?.action==="LIFT"?"Lift debarment":"Confirm debarment"}
    description={confirm?.action==="LIFT"
     ?"Lift this restriction and record the reason. The history remains available."
     :"This blocks new placement applications for the student. The reason and duration will be recorded."}
    footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
     <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>setConfirm(null)}>Cancel</Button>
-    <Button variant={confirm?.action==="DEBAR"?"danger":"primary"} className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending} onClick={()=>void apply()}>{pending?"Saving…":"Confirm"}</Button>
+    <Button variant={confirm?.action==="DEBAR"?"danger":"primary"} className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending} onClick={()=>void apply()}>{pending?"Saving…":confirm?.action==="LIFT"?"Lift restriction":"Apply debarment"}</Button>
    </div>}>
    <div className="min-w-0 space-y-2">
     <p className="text-sm leading-[22px]">The student&apos;s existing applications will remain recorded.</p>
