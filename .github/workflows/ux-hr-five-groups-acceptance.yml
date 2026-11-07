@@ -14,7 +14,7 @@ on:
 
 concurrency:
   group: ux-hr-five-group-acceptance
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 permissions:
   contents: read
