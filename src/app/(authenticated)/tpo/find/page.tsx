@@ -44,7 +44,7 @@ export default async function TpoRecordFinder({searchParams}:{searchParams:Promi
      className="mt-[6px] block min-h-11 w-full min-w-0 md:min-h-9" placeholder="Find a student, recruiter, company or drive"/>
    </Label><Button type="submit" className="min-h-11 w-full self-end sm:w-auto md:min-h-9">Find</Button>
   </form>
-  {invalid?<Alert tone="error" role="alert">Search must contain 2–100 characters.</Alert>:!text?<EmptyState title="Type a name or a roll number, for example 21CS001"/>:<>
+  {invalid?<Alert tone="error" role="alert">Search must contain 2–100 characters. <TextLink href="/tpo/find" className="inline-flex min-h-11 items-center font-semibold md:min-h-9">Clear invalid search</TextLink></Alert>:!text?<EmptyState title="Type a name or a roll number, for example 21CS001"/>:<>
    {!hasMatches?<EmptyState title={"No student, recruiter, company or drive matches \""+(rawText??"")+"\""}
     action={<TextLink href="/tpo/find" className="inline-flex min-h-11 items-center md:min-h-9">Clear search</TextLink>}/>:null}
    {foundBatches.length>0?<section className="min-w-0 space-y-2"><Heading level={2} size="base" className="leading-6 text-[var(--lms-heading)]">Batches ({foundBatches.length}{batches.batches.length>30?"+":""})</Heading>
