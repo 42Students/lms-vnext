@@ -1,9 +1,9 @@
 import { collegeClassBaseQuerySchema,withCollegeClassCapacityCheck } from "./college-structure-directory-model";
-import { escapeActivityCsvCell } from "@/modules/activity/college-activity-export-model";
+import { buildCollegeDirectoryCsv } from "./college-directory-export-model";
 
 /** All filtered classes are exported using server-authored pages. */
-export const CLASSES_EXPORT_CAP = Number.MAX_SAFE_INTEGER;
-export const collegeClassesExportSchema = withCollegeClassCapacityCheck(collegeClassBaseQuerySchema.omit({ page: true }));
+export const CLASSES_EXPORT_CAP = 1000;
+export const collegeClassesExportSchema = withCollegeClassCapacityCheck(collegeClassBaseQuerySchema.omit({ page: true, pageSize: true }));
 
 export type ClassExportRow = {
   id: string; name: string; linkedProgramId: string | null;
@@ -36,16 +36,18 @@ export function classesExportHref(raw: { q: string; programId?: string | undefin
   return "/api/academics/college-classes-export" + (params.size ? "?" + params.toString() : "");
 }
 
-export function renderCollegeClassesCsv(rows: readonly ClassExportRow[], _truncated = false) {
+/** Preserve the existing legacy columns; a bounded export tells people when
+ * additional filtered classes are omitted instead of silently truncating. */
+export function renderCollegeClassesCsv(rows: readonly ClassExportRow[], truncated = false) {
   const headers = ["ID", "Class/Section Name", "Program ID", "Batch ID", "Start Date", "End Date", "Minimum Students", "Maximum Students"];
-  const lines = [headers.map(escapeActivityCsvCell).join(",")];
-  for (const row of rows) lines.push([
+  const items = rows.slice(0, CLASSES_EXPORT_CAP).map(row => [
     row.id ?? "", row.name ?? "", row.linkedProgramId ?? "", row.cohortId ?? "",
     row.periodStart ?? "", row.periodEnd ?? "",
     row.minSize == null ? "" : String(row.minSize),
     row.capacity == null ? "" : String(row.capacity),
-  ].map(escapeActivityCsvCell).join(","));
-  return "\ufeff" + lines.join("\r\n");
+  ]);
+  return buildCollegeDirectoryCsv(headers, items,
+    truncated || rows.length > CLASSES_EXPORT_CAP, CLASSES_EXPORT_CAP);
 }
 
 export function readClassesExportParams(params: URLSearchParams) {
