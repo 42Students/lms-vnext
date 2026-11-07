@@ -78,3 +78,9 @@ describe("private API response cache isolation", () => {
     }
   });
 });
+
+describe("private API cross-origin resource policy", () => {
+  it("answers same-origin only", () => {
+    expect(PRIVATE_API_HEADERS.find((h) => h.key === "Cross-Origin-Resource-Policy")?.value).toBe("same-origin");
+  });
+});

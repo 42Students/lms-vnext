@@ -49,6 +49,8 @@ export const CONTENT_SECURITY_POLICY = [
  */
 export const PRIVATE_API_HEADERS = [
   { key: "Cache-Control", value: "private, no-store, max-age=0" },
+  // Another origin cannot embed or read an API response as a subresource (SEC-12); the app itself is same-origin.
+  { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
 ] as const;
 
 export const BASE_SECURITY_HEADERS = [
