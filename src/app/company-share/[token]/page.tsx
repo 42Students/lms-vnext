@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import authStyles from "@/components/public/public-auth-skin.module.css";
 import { Button } from "@/components/ui/button";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
@@ -22,7 +23,12 @@ import { formatNumberIN } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
 
 export const dynamic="force-dynamic";
-export const metadata={robots:{index:false,follow:false},title:"Shared applicants · 42Students",other:{referrer:"no-referrer"}};
+/** Share URLs contain bearer tokens and protected applicant search queries. */
+export const metadata: Metadata = {
+ robots: { index: false, follow: false, noarchive: true },
+ referrer: "no-referrer",
+ title: "Shared applicants · 42Students",
+};
 export default async function CompanySharePage({
  params,searchParams,
 }:{params:Promise<{token:string}>;searchParams:Promise<{page?:string;q?:string;access?:string}>}){
@@ -32,7 +38,7 @@ export default async function CompanySharePage({
  const result=await getPublicCompanyApplicantShare(token,page??1,"VIEW",q??"",proof).catch(()=>null);
  if(result===null)return <main className={`${authStyles.page} mx-auto max-w-[1000px] px-4 py-12`}>
   <section aria-label="Shared applicants unavailable" className="mx-auto mt-12 max-w-[480px] rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-5">
-   <ErrorState title="We couldn't load this share" description="We could not load this share. Please retry." action={<ButtonLink variant="secondary" href={"/company-share/"+encodeURIComponent(token)}>Retry</ButtonLink>}/>
+   <ErrorState title="We couldn't load this share" description="We could not load this share. Please retry." action={<ButtonLink variant="secondary" className="min-h-11 w-full sm:w-auto" href={"/company-share/"+encodeURIComponent(token)}>Retry</ButtonLink>}/>
   </section>
  </main>;
  if(result.kind==="CODE_REQUIRED"){
