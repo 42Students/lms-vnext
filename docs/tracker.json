@@ -20079,7 +20079,28 @@
           "WIDGET-0028"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "39d4a6bdf6e13949000e72f1d20ab6a71d6d55d0",
+            "parityDoc": "docs/parity/ux-g160-g133.md",
+            "acceptance": "PARTIAL_ONLY__CI_QUEUED__DO_NOT_MARK_DONE",
+            "tests": [
+              {
+                "command": "git hash-object exact source src/modules/auth/login-retry-time-model.ts (18455f737a994ee30fbd6e9aa01fa6f31b68c118); tsc --target ES2022 --module commonjs; node assertions",
+                "passed": true,
+                "proof": "docs/parity/ux-g160-g133.md: 6/6 assertions executed on SHA-matching source"
+              },
+              {
+                "command": "Dedicated scoped ESLint/Vitest/Playwright/TypeScript workflow",
+                "passed": false,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42395215712 — QUEUED; no pass reported"
+              }
+            ],
+            "browser": [],
+            "regressionReview": "Production UI code committed; focused Vitest and 1280x800/390x844 real-component Playwright tests authored. Full runner results and screenshots not yet available.",
+            "securityReview": "No backend authorization, tenant isolation, schema, provider or credential changes. Development-only synthetic fixture fails closed in production. Actual authentication/security E2E remains separate."
+          }
+        ]
       },
       {
         "id": "UX-G134",
@@ -21125,7 +21146,28 @@
           "WIDGET-0154"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "3769ca6bedf1c27c21589436a4b0ac3a643c5638",
+            "parityDoc": "docs/parity/ux-g160-g133.md",
+            "acceptance": "PARTIAL_ONLY__CI_QUEUED__DO_NOT_MARK_DONE",
+            "tests": [
+              {
+                "command": "git hash-object exact source src/modules/placements/tpo-timed-debar-view-model.ts (00babb6df1d0d4ac405df1bdc21f8c2b1733f941); tsc --target ES2022 --module commonjs; node assertions",
+                "passed": true,
+                "proof": "docs/parity/ux-g160-g133.md: 10/10 assertions executed on SHA-matching source"
+              },
+              {
+                "command": "Dedicated scoped ESLint/Vitest/Playwright/TypeScript workflow",
+                "passed": false,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42395215712 — QUEUED; no pass reported"
+              }
+            ],
+            "browser": [],
+            "regressionReview": "Production UI code committed; focused Vitest and 1280x800/390x844 real-component Playwright tests authored. Full runner results and screenshots not yet available.",
+            "securityReview": "No backend authorization, tenant isolation, schema, provider or credential changes. Development-only synthetic fixture fails closed in production. Actual authentication/security E2E remains separate."
+          }
+        ]
       },
       {
         "id": "UX-G161",
