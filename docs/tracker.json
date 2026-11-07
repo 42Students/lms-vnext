@@ -19729,10 +19729,10 @@
         "type": "COMPONENT",
         "area": "colleges",
         "title": "Colleges · Interactive components (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-external-jobs-global-states-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/components/colleges/college-contact-profile-form.tsx"
@@ -19741,7 +19741,8 @@
           "WIDGET-0036"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "College contact-profile form UX: safe dirty-state and discard/retry usability, validation focus, 375/1280 browser and unit proof; API and tenant contract unchanged."
       },
       {
         "id": "UX-G136",
