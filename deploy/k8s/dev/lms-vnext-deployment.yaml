@@ -36,6 +36,7 @@ spec:
             - secretRef: { name: vnext-db }
             - secretRef: { name: vnext-integrations }
             - secretRef: { name: vnext-auth }
+            - secretRef: { name: vnext-keys }
           env:
             - { name: DB_POOL_MAX, value: "10" }
             # Tenant row-level security on dev (docs/security/rls-rollout.md). Roll back by deleting these three.
