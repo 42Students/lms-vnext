@@ -15524,10 +15524,10 @@
         "type": "JOURNEY",
         "area": "company-join",
         "title": "Company Join · Token (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-company-hr-ux-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/company-join/[token]/error.tsx",
@@ -15540,7 +15540,8 @@
           "PAGE-0505"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Full public-invitation UX acceptance, including link privacy, loading/error, mobile, cross-role regression. DONE requires executed source, browser desktop/mobile, security evidence."
       },
       {
         "id": "UX-G047",
@@ -15928,10 +15929,10 @@
         "type": "JOURNEY",
         "area": "hr-invite",
         "title": "Hr Invite · Token (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-company-hr-ux-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/hr-invite/[token]/error.tsx",
@@ -15944,7 +15945,8 @@
           "PAGE-0511"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Full public-invitation UX acceptance, including link privacy, loading/error, mobile, cross-role regression. DONE requires executed source, browser desktop/mobile, security evidence."
       },
       {
         "id": "UX-G058",
