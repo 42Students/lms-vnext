@@ -63,7 +63,10 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
      value.toLocaleLowerCase("en-IN").includes(query));
  }),[colleges,filter]);
  const allowed=shown.filter(row=>row.canAssign);
- const targets=selected.map(id=>colleges.find(row=>row.id===id)??{
+ // Keep the original college name for selections from another page, but
+ // rely on the fresh server CAS and authorization for the actual mutation.
+ const targets=selected.map(id=>colleges.find(row=>row.id===id)??
+  savedSelection.find(row=>row.id===id)??{
    id,name:"Selected college "+id.slice(0,8),assigned:false,canAssign:true,
  }).filter(row=>operation==="assign"?!row.assigned:row.assigned||!colleges.some(college=>college.id===row.id));
 
