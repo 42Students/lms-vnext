@@ -66,6 +66,14 @@ describe("chat-16 public placement page privacy and partial availability",()=>{
   expect(getPublicPlacementStatistics).not.toHaveBeenCalled();
   expect(getPublicCollegeBranding).not.toHaveBeenCalled();
  });
+ it("UX-G076 transient tenant lookup outage is retryable, never published or 404",async()=>{
+  vi.mocked(resolveRequestTenant).mockResolvedValue({kind:"unavailable",host:"college.example.edu"});
+  await expect(PublicPlacementsPage()).rejects.toThrow("PUBLIC_PLACEMENTS_TENANT_LOOKUP_UNAVAILABLE");
+  expect(notFound).not.toHaveBeenCalled();
+  expect(publicPlacementTableReady).not.toHaveBeenCalled();
+  expect(getPublicCollegeBranding).not.toHaveBeenCalled();
+  expect(getPublicPlacementStatistics).not.toHaveBeenCalled();
+ });
  it("UX-chat16-public-placements-unpublished-02 never renders an unpublished college page",async()=>{
   vi.mocked(getPublicPlacementStatistics).mockResolvedValue(null);
   await expect(PublicPlacementsPage()).rejects.toThrow("NOT_FOUND");
@@ -74,8 +82,8 @@ describe("chat-16 public placement page privacy and partial availability",()=>{
  it("UX-chat16-public-placements-snapshot-03 renders public aggregate only and an explicit date",async()=>{
   const html=renderToStaticMarkup(await PublicPlacementsPage());
   expect(html).toContain("Published College");
-  expect(html).toContain("College-published figures last updated");
-  expect(html).toContain("Individual records are never displayed here.");
+  expect(html).toContain("College-published figures for the 12 months preceding publication.");
+  expect(html).toContain("Individual student and employer records are not shown.");
   expect(html).toContain("College placements overview");
   expect(html).toContain("Students placed");
   expect(html).toContain("Companies that hired");
@@ -83,6 +91,14 @@ describe("chat-16 public placement page privacy and partial availability",()=>{
   expect(html).toContain('aria-label="Public placements statistics"');
   expect(html).toContain('data-public-recruit-enabled="false"');
   expect(html).not.toContain("private-student-email@example.org");
+ });
+ it("UX-G076 safely shows an empty state when metrics are not approved for display",async()=>{
+  vi.mocked(getPublicPlacementPageContent).mockResolvedValue({
+    ready:true,about:"College overview",metricKeys:[],updatedAt:null,
+  });
+  const html=renderToStaticMarkup(await PublicPlacementsPage());
+  expect(html).toContain("Placement statistics are not available for public display.");
+  expect(html).not.toContain('aria-label="Public placements statistics"');
  });
  it("UX-chat16-public-placements-outage-04 distinguishes service outage from explicit unpublishing",async()=>{
   vi.mocked(getPublicPlacementStatistics).mockRejectedValue(new Error("private query failed"));

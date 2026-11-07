@@ -144,7 +144,8 @@ async function PublicPlacementsPage() {
         </section>
       </main>
     </div>
-  );}
+  );
+}
 
 // Public page, no actor: runs in a named system scope so row-level security (when enforced) still lets it read
 // the one record its link points at. The scope name shows in the database session.
