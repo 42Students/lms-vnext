@@ -32,12 +32,12 @@ export function buildSuperAdminAuditCsv(rows:readonly SuperAdminAuditRow[],trunc
   hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23",
  });
  const lines=[header.map(escapeActivityCsvCell).join(",")];
- for(const row of rows)lines.push([
+ for(const row of rows.slice(0,SUPER_ADMIN_AUDIT_CSV_CAP))lines.push([
   fmt.format(row.occurredAt)+" IST",row.actorName??"System",
   collegeActivityAction(row.eventType),collegeActivityItem(row),row.eventType,"Redacted",
   row.module,row.importance,row.subjectId,row.summary,
  ].map(escapeActivityCsvCell).join(","));
- if(truncated)lines.push(["EXPORT TRUNCATED","","","","","","",
+ if(truncated||rows.length>SUPER_ADMIN_AUDIT_CSV_CAP)lines.push(["EXPORT TRUNCATED","","","","","","",
   "Only the latest "+SUPER_ADMIN_AUDIT_CSV_CAP+" events were exported. Narrow filters for older records.","",""]
   .map(escapeActivityCsvCell).join(","));
  return "\ufeff"+lines.join("\r\n");
