@@ -26,6 +26,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Check scoped UX source and browser spec lint
+        run: npx eslint src/app/offline/page.tsx src/app/offline/offline-recovery.tsx tests/e2e/ux-offline-recovery.spec.ts
       - name: Install headless Chromium
         run: npx playwright install --with-deps chromium
       - name: Desktop and mobile offline UX browser acceptance
