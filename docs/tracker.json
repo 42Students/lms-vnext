@@ -15530,10 +15530,10 @@
         "type": "JOURNEY",
         "area": "forbidden",
         "title": "Forbidden · Home (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-public-recovery-ux-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/forbidden/error.tsx",
@@ -15546,7 +15546,8 @@
           "PAGE-0509"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Scoped public UX pass in this chat: source changes, regression and browser acceptance required for DONE. Avoid security/auth implementation and shared component rewrites."
       },
       {
         "id": "UX-G052",
@@ -16250,17 +16251,18 @@
         "type": "JOURNEY",
         "area": "maintenance",
         "title": "Maintenance · Home (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-public-recovery-ux-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [],
         "surfaceIds": [],
         "newRouteOnly": [
           "/maintenance"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "Scoped public UX pass in this chat: source changes, regression and browser acceptance required for DONE. Avoid security/auth implementation and shared component rewrites."
       },
       {
         "id": "UX-G069",
@@ -16884,10 +16886,10 @@
         "type": "JOURNEY",
         "area": "request-demo",
         "title": "Request Demo · Home (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-public-recovery-ux-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/request-demo/error.tsx",
@@ -16900,7 +16902,8 @@
           "PAGE-0519"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Scoped public UX pass in this chat: source changes, regression and browser acceptance required for DONE. Avoid security/auth implementation and shared component rewrites."
       },
       {
         "id": "UX-G086",
