@@ -28,7 +28,8 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
  const data=await getFacultyLiveClasses(await getCurrentRequestContext(),parsed.data);
  return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader eyebrow="Faculty · Courses" title="Live classes"
-   description="Registered published live sessions for your active teaching Sections." />
+   description="Registered published live sessions for your active teaching Sections."
+   actions={<TextLink href="/teacher/courses" className="inline-flex min-h-11 items-center">My teaching courses</TextLink>} />
   <Disclosure title="Schedule or manage a live class" className="min-w-0 border-y border-border" contentClassName="min-w-0 pb-4 pt-3">
     <FacultyLiveClassEditor
       choices={data.lessonChoices}
