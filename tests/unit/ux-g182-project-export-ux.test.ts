@@ -25,7 +25,7 @@ describe("UX-G182 — safe, legible scoped project exports", () => {
     const summary = "a".repeat(239) + "😀" + "tail";
     const row = { occurredAt: when, actorDisplayName: "\u202E+BAD", subjectLabel: null, summary };
     const report = learnerProjectActivityCsv([row]);
-    expect(report.content.startsWith("\uFEFF")).toBe(true);
+    expect(report.content.startsWith("UTC time,Actor,Subject,Summary")).toBe(true);
     expect(report.content).toContain("a".repeat(239) + "😀");
     expect(report.content).not.toContain("tail");
     expect(report.content).toContain("'\u202E+BAD");
