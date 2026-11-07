@@ -25,6 +25,8 @@ import { StorageFileError } from "@/modules/storage/file-errors";
 import { logError } from "@/observability/logger";
 import {StudentRuleConflict} from "@/modules/module-access/admin-student-rule-write";
 
+const PLAIN_ROLE_DENIALS = new Set(["FACULTY_ROLE_REQUIRED", "TPO_ROLE_REQUIRED", "PENDING_RECRUITER_ACCESS_DENIED"]);
+
 /**
  * GR-06 / GR-07: retain machine error keys for existing callers, but always
  * supply customer-safe message, a reference and the x-request-id header.
@@ -394,6 +396,11 @@ export function apiErrorResponse(error: unknown) {
       { error: error.code },
       { status },
     );
+  }
+
+  // Role refusals that older services throw as plain errors are denials (403), not server faults (500).
+  if (error instanceof Error && PLAIN_ROLE_DENIALS.has(error.message.replace(/^Error: /, ""))) {
+    return respond({ error: "FORBIDDEN" }, { status: 403 });
   }
 
   const isOutage = isDatabaseUnavailableError(error);

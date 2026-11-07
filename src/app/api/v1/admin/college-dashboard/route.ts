@@ -2,6 +2,7 @@ import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { requirePermission } from "@/modules/permissions/policy";
+import { hasMembershipRole } from "@/modules/identity/context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getCollegeDashboardAttendance } from "@/modules/admin-ui/college-dashboard-attendance-service";
 import { getCollegeDashboardLowAttendance } from "@/modules/admin-ui/college-dashboard-risk-service";
@@ -24,6 +25,10 @@ export const GET = route(
     const membership = context.membership;
     if (!membership || membership.status !== "ACTIVE") {
       return NextResponse.json({error:"COLLEGE_MEMBERSHIP_REQUIRED"},{status:403});
+    }
+    // Operational dashboard for staff: academics.read alone also admits learners (found by the role matrix, 2026-11-08).
+    if (!hasMembershipRole(context, "COLLEGE_ADMIN") && !hasMembershipRole(context, "FACULTY")) {
+      return NextResponse.json({error:"FORBIDDEN"},{status:403});
     }
     requirePermission(context, "academics.read", {
       collegeId:membership.collegeId,organizationId:membership.organizationId,
