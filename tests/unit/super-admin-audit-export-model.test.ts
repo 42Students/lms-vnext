@@ -18,5 +18,24 @@ describe("Super Admin audit export",()=>{
   expect(csv).toContain("EXPORT TRUNCATED");
   expect(csv).toContain(String(SUPER_ADMIN_AUDIT_CSV_CAP));
   expect(csv).not.toContain("Actor Email");
+  const controlPrefix = buildSuperAdminAuditCsv([{
+   occurredAt:new Date("2026-10-14T18:30:00.000Z"),
+   module:"PLATFORM",importance:"HIGH",eventType:"test",subjectType:"test",
+   subjectId:"\u2066=9+1",subjectLabel:"\u0301@title",
+   summary:"\u200b=FORMULA",actorName:"\u0001+INJECT",
+  }],false);
+  for (const prefix of ["\u2066=9+1", "\u200b=FORMULA", "\u0001+INJECT"]) {
+   expect(controlPrefix).toContain("\"'"+prefix+"\"");
+  }
+  expect(controlPrefix).not.toContain("Actor Email");
+  const row = {
+   occurredAt:new Date("2026-10-14T18:30:00.000Z"),
+   module:"PLATFORM",importance:"HIGH",eventType:"test",subjectType:"test",
+   subjectId:"opaque",subjectLabel:"opaque",summary:"safe",actorName:"System",
+  };
+  const excessive = buildSuperAdminAuditCsv(
+   Array.from({length:SUPER_ADMIN_AUDIT_CSV_CAP+1},()=>row),false);
+  expect(excessive.split("\r\n")).toHaveLength(SUPER_ADMIN_AUDIT_CSV_CAP+2);
+  expect(excessive).toContain("EXPORT TRUNCATED");
  });
 });
