@@ -8,6 +8,7 @@ on:
       - 'src/app/company-join/**'
       - 'src/app/hr-invite/**'
       - 'tests/ux-g046-g057-invitation-contract.test.mjs'
+      - 'tests/unit/ux-g046-company-join-journey.test.tsx'
       - 'tests/e2e/ux-g046-g057-public-invitations.spec.ts'
       - 'tests/unit/UX-hr-invite-token-01.test.ts'
       - '.github/workflows/ux-public-invitations-acceptance.yml'
@@ -35,6 +36,7 @@ jobs:
       - name: Existing company and HR invite flow regressions
         run: |
           npx vitest run \
+            tests/unit/ux-g046-company-join-journey.test.tsx \
             tests/unit/UX-company-join-01.test.ts \
             tests/unit/UX-hr-invite-token-01.test.ts \
             tests/unit/recruiter-invite-alias-model.test.ts \
