@@ -78,6 +78,7 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
    missingMarksheet:section==="EDUCATION"&&marks.missing>0},evaluatedAt);
   return {learnerName:row.learnerName?.trim()||"Learner",section,status:row.status,
    submittedAt:fmt.format(row.submittedAt),reviewedAt:row.decidedAt?fmt.format(row.decidedAt):"",
+   reviewedBy:row.reviewedBy?.trim()||"",
    ...(section==="EDUCATION"?{educationEntryCount:marks.count,missingDocumentCount:marks.missing}:{}),
    attentionFlags:flags.map(flag=>flag.replaceAll("_"," ").toLowerCase()).join("; "),
   };
