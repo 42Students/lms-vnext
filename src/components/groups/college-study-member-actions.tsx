@@ -34,6 +34,10 @@ export function CollegeStudyMemberActions({
   const [manualId, setManualId] = useState("");
   const [action, setAction] = useState<CollegeStudyMemberAction | null>(null);
   const [error, setError] = useState<string | null>(null);
+  function reviewAction(next: CollegeStudyMemberAction) {
+    setError(null);
+    setAction(next);
+  }
   async function send(payload: CollegeStudyMemberAction) {
     const response = await fetch(`/api/college/groups/${groupId}/members`, {
       method: "POST", headers: { "content-type": "application/json" },
@@ -63,12 +67,11 @@ export function CollegeStudyMemberActions({
     <form onSubmit={(event) => {
       event.preventDefault();
       const membershipId = selection || manualId.trim();
-      if (!/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(membershipId)) {
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(membershipId)) {
         setError("Select a learner or provide a valid membership UUID.");
         return;
       }
-      setError(null);
-      setAction({ action: "ADD", membershipId });
+      reviewAction({ action: "ADD", membershipId });
     }} className="grid min-w-0 grid-cols-1 items-end gap-3 border-t border-border pt-4 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
       <Label stack className="min-w-0">
         Add learner
@@ -99,16 +102,16 @@ export function CollegeStudyMemberActions({
           </span>
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
             <Button size="sm" variant="secondary" className="min-h-11 w-full md:min-h-9 sm:w-auto" disabled={pending}
-              onClick={() => setAction({
+              onClick={() => reviewAction({
                 action: "LOCK", membershipId: member.membershipId, locked: !member.isLocked,
               })}>{member.isLocked ? "Unlock" : "Lock"}</Button>
             <Button size="sm" variant="danger" className="min-h-11 w-full md:min-h-9 sm:w-auto" disabled={pending}
-              onClick={() => setAction({ action: "REMOVE", membershipId: member.membershipId })}>
+              onClick={() => reviewAction({ action: "REMOVE", membershipId: member.membershipId })}>
               Remove
             </Button>
             <Dropdown mobileSheet align="end" label={"Additional actions for "+(member.displayName??"member")} trigger="More actions">
             <Button size="sm" variant="danger" className="min-h-11 w-full md:min-h-9" disabled={pending}
-              onClick={() => setAction({ action: "REMOVE_AND_LOCK",
+              onClick={() => reviewAction({ action: "REMOVE_AND_LOCK",
                 membershipId: member.membershipId, expectedVersion: member.version, confirm: true })}>
               Remove &amp; lock
             </Button>
@@ -118,11 +121,13 @@ export function CollegeStudyMemberActions({
       )}
     </div>
     {error ? <Alert tone="error">{error}</Alert> : null}
-    <ConfirmDialog open={action !== null} onOpenChange={(value) => { if (!value && !pending) setAction(null); }}
+    <ConfirmDialog open={action !== null} onOpenChange={(value) => { if (!value && !pending) { setAction(null); setError(null); } }}
       title={action ? collegeStudyMemberLabel(action) : "Confirm membership action"}
       description={`Study group: ${name}. Changes are audited; removing an active member may promote a waitlisted learner. Remove & lock also blocks self-rejoining until an admin changes the lock.`}
       confirmLabel={action?.action === "REMOVE_AND_LOCK" ? "Remove & lock" : action?.action === "REMOVE" ? "Remove member" : "Confirm"}
       confirmVariant={action?.action === "REMOVE" || action?.action === "REMOVE_AND_LOCK" ? "danger" : "primary"}
-      pending={pending} onConfirm={confirm} />
+      pending={pending} onConfirm={confirm}>
+      {error ? <Alert tone="error">{error}</Alert> : null}
+    </ConfirmDialog>
   </div>;
 }
