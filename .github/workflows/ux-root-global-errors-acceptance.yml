@@ -11,6 +11,7 @@ on:
       - src/components/public/graceful-error-boundary.tsx
       - src/components/public/root-error-reference.tsx
       - tests/unit/ux-root-global-errors.test.ts
+      - tests/unit/graceful-root-screens.test.ts
       - tests/e2e/ux-root-global-errors.spec.ts
       - .github/workflows/ux-root-global-errors-acceptance.yml
 
