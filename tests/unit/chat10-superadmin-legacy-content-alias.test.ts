@@ -15,6 +15,23 @@ describe("legacy Super Admin lesson-content links",()=>{
   expect(legacySuperAdminLessonContentHref({type:"video",classId:"17"}))
    .toBe("/admin/videos");
  });
+ it("drops untrusted college/return selectors while preserving bounded content state",()=>{
+  const link=legacySuperAdminLessonContentHref({
+   type:"resources",q:"  introduction  ",status:"PUBLISHED",page:"2",
+   collegeId:"foreign-college",organizationId:"foreign-org",
+   returnTo:"https://malicious.example",redirect:"//malicious.example",
+  });
+  expect(link).toBe("/admin/resources?q=introduction&status=PUBLISHED&page=2");
+  expect(link).not.toContain("foreign");
+  expect(link).not.toContain("malicious");
+ });
+ it("rejects malformed or duplicate Section selector values",()=>{
+  const invalid=legacySuperAdminLessonContentHref({
+   type:"video",deliveryId:["bad","11111111-1111-4111-8111-111111111111"],
+   scope:"SECTION",page:"-4",q:"x".repeat(101),
+  });
+  expect(invalid).toBe("/admin/videos");
+ });
  it("keeps explicitly selected scoped vNext filters",()=>{
   const delivery="11111111-1111-4111-8111-111111111111";
   expect(legacySuperAdminLessonContentHref({type:"resource",deliveryId:delivery,scope:"SECTION"}))
