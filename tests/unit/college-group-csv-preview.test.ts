@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  collegeGroupCsvPreviewSchema, groupPreviewErrorCsv, neutralCsvCell, parseMemberEmailCsv,
+  collegeGroupCsvPreviewSchema, groupCsvValidationLabel, groupPreviewErrorCsv, neutralCsvCell, parseMemberEmailCsv,
 } from "@/modules/groups/college-group-csv-preview-model";
 
 describe("Student Group email import dry-run", () => {
@@ -34,6 +34,12 @@ describe("Student Group email import dry-run", () => {
     expect(collegeGroupCsvPreviewSchema.safeParse({
       groupId: "10000000-0000-4000-8000-000000000001", csv: "a".repeat(524289),
     }).success).toBe(false);
+  });
+  it("labels inactive groups separately from capacity limits", () => {
+    expect(groupCsvValidationLabel("GROUP_NOT_ACTIVE")).toMatch(/Activate the group/i);
+    expect(groupCsvValidationLabel("CAPACITY_FULL")).toMatch(/capacity is full/i);
+    expect(groupCsvValidationLabel("PREVIOUSLY_REMOVED")).toMatch(/Previously removed/i);
+    expect(groupCsvValidationLabel("READY")).toBe("Ready to add");
   });
   it("neutralizes formulas and escapes CSV quotations in the error export", () => {
     for (const value of ["=HYPERLINK(\"http://host\")", "+SUM(1,2)", "-3", "@cmd", "\t=1"]) {
