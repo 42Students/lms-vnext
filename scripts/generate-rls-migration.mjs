@@ -44,6 +44,8 @@ const body = missing
   .map(
     (t) => `ALTER TABLE "${t}" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
+ALTER TABLE "${t}" FORCE ROW LEVEL SECURITY;
+--> statement-breakpoint
 DROP POLICY IF EXISTS tenant_isolation ON "${t}";
 --> statement-breakpoint
 CREATE POLICY tenant_isolation ON "${t}" USING (app_rls_allows("college_id")) WITH CHECK (app_rls_allows("college_id"));`,

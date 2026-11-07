@@ -43,3 +43,10 @@ Roll back with `ALTER DATABASE <name> RESET app.rls_mode;` (new connections pick
 - enforce mode: college A cannot insert a college B row, and can insert its own.
 
 It proves the policy mechanics. It does not prove that application code sets the scope everywhere; that is step 1 above and is verified route by route.
+
+## Dev findings 2026-11-07 (read from the live dev database, read-only job)
+
+- The runtime role `lms_vnext_app` is not a superuser and has no BYPASSRLS, but it OWNS all 278 tables and has CREATEROLE and CREATEDB. Table owners ignore RLS unless the table is `FORCE`d, so enforcement would have protected nothing. Migration `0337_rls_force_for_owner.sql` forces RLS on every table that has the `tenant_isolation` policy (the generator now emits FORCE for new tables). Still inert until the mode is `enforce`.
+- The role is not the database owner (`cloudsqlsuperuser` is), so `ALTER DATABASE ... SET app.rls_mode` is not available to it. Enforcement is therefore set per process: the web Deployment gets `PGOPTIONS=-c app.rls_mode=enforce` (node-pg reads `PGOPTIONS`). The migrator Job and CronJobs do not set it, so they are not subject to the policies. Rollback: unset `PGOPTIONS` on the Deployment.
+- Real fix for production: a separate owner role for migrations and a runtime role that owns nothing and has no CREATEROLE or CREATEDB (SEC-06-011, SEC-06-012). FORCE is the interim guard, not a replacement.
+- Zero `SECURITY DEFINER` functions. 113 tables have RLS enabled, 115 policies, 165 tables have no `college_id` (parent-derived tenancy still to be listed, SEC-06-003).

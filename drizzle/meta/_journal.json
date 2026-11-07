@@ -2360,6 +2360,13 @@
       "when": 1793985591493,
       "tag": "0336_rls_global_read_select_only",
       "breakpoints": true
+    },
+    {
+      "idx": 337,
+      "version": "7",
+      "when": 1793985651493,
+      "tag": "0337_rls_force_for_owner",
+      "breakpoints": true
     }
   ]
 }
