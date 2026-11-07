@@ -217,7 +217,11 @@ Legacy includes:
 - [x] Preserve a separate `/login` fallback, noindex metadata and shared footer/legal links.
 - [x] Keep the UI readable at mobile width, with keyboard-focusable controls and a polite live status announcement.
 
-**Browser acceptance:** `tests/e2e/ux-offline-recovery.spec.ts` executes both 1280×800 and 390×844 with online/offline transitions, blocked offline retry, same-origin dashboard retry (mock destination; no real auth/PII), link/meta checks, focus and horizontal overflow checks. Executed run/commit and outcome must be recorded before the canonical UX group can change to `DONE`.
+**Browser acceptance:** `tests/e2e/ux-offline-recovery.spec.ts` executes both 1280×800 and 390×844 with online/offline transitions, blocked offline retry, same-origin dashboard retry (mock destination; no real auth/PII), link/meta checks, focus and horizontal overflow checks.
+
+**Executed UX verification (7 November 2026):** [GitHub Actions run 42384763728](https://github.com/42Students/lms-vnext/actions/runs/42384763728) at exact source/test/workflow SHA [`fc1c77b6f429751a5338b7437120a48d01854137`](https://github.com/42Students/lms-vnext/commit/fc1c77b6f429751a5338b7437120a48d01854137) **PASSED**. Scoped ESLint completed successfully. `npx playwright test tests/e2e/ux-offline-recovery.spec.ts --project=chromium --reporter=line` completed **2/2 passing**, with independently named desktop (1280×800) and mobile (390×844) browser scenarios. Each scenario verified visible recovery messages, blocked retry while offline, screen-reader live notice, focus, no horizontal overflow, canonical noindex/link attributes and navigation to a stubbed same-origin `/dashboard` only after reconnection. No real credentials, tenant data, or network mutation was used. The source-only differences did not touch the shared graceful-screen component or the already-present root offline-banner exception.
+
+**UX-G075 disposition:** **DONE (scoped UX acceptance)**, separate from the independent global parity/security/release gates. New route-only inventory path `/offline` is accounted for; regenerate the global registry separately to reconcile all 83 newer pages without renumbering accepted group identities.
 
 **Security regression boundary:** No auth/session/service/DB/storage code is changed. `navigator.onLine` is only a browser hint, not evidence that the backend is healthy. Retry is user-initiated, uses fixed `/dashboard` and is never an open redirect. Source-only implementation does not establish browser acceptance.
 
