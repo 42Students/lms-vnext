@@ -16,4 +16,9 @@
 - Excluded from this scoped group: global release, accessibility conformance certification, penetration testing, and cross-account role matrix sign-off.
 
 ## Result
-Pending exact-SHA acceptance; do not mark DONE before the run is green.
+DONE (scope: outbound CSV UX only), accepted 2026-11-08 on exact checkout SHA `6500a87b93029832eb15106fa7fd6da2514deb23`.
+
+- [Successful dedicated GitHub Actions run](https://github.com/42Students/lms-vnext/actions/runs/42414921156): scoped lint, full TypeScript, 9 Vitest files / 50 cases, 4/4 real Chromium/HTTP acceptance cases.
+- Browser verification used a real OTP-verified session for Super Admin (two factor) and a genuine seeded TPO role for messaging; Learner was denied privileged exports. No step-up or tenant/role checks were weakened.
+- Evidence artifact `ux-four-report-export-evidence` (GitHub artifact 13590724676) includes actual UTF-8 CSV output. Viewports: 1280px desktop for admin and 320/390px mobile for role-negative and TPO acceptance.
+- This is export/HTTP-byte acceptance, not a claim of rendered UI screenshots, exhaustive cross-role certification, or production release acceptance.

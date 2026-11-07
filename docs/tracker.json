@@ -21693,11 +21693,11 @@
         "type": "OUTBOUND",
         "area": "announcements",
         "title": "Announcements · Outbound copy and exports (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-csv-exports-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/modules/announcements/admin-csv-model.ts"
         ],
@@ -21716,14 +21716,21 @@
             "path": "docs/parity/pages/shared/UX-G169-export-ux.md"
           },
           {
-            "type": "ci-pending",
-            "runId": 42392582571,
-            "url": "https://github.com/42Students/lms-vnext/actions/runs/42392582571",
-            "conclusion": "pending",
-            "description": "GitHub Actions runner backlog; preliminary 13/13 new unit cases, full typecheck/lint passed earlier run; corrected regression and HTTP browser acceptance still queued"
+            "type": "ci",
+            "runId": 42414921156,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42414921156",
+            "conclusion": "success",
+            "commitSha": "6500a87b93029832eb15106fa7fd6da2514deb23",
+            "results": "Scoped lint and full TypeScript passed; 9 Vitest files/50 tests; 4/4 seeded Chromium HTTP/auth tests passed (real OTP-backed Super Admin and persisted TPO grant, negative Learner scope)."
+          },
+          {
+            "type": "browser-http",
+            "runId": 42414921156,
+            "artifactId": 13590724676,
+            "description": "Authenticated Chromium desktop 1280x800 and mobile 320/390 viewport API/CSV acceptance, retained CSV artifacts. This export-only scope has no separate rendered screenshot claim."
           }
         ],
-        "notes": "Source changes and scoped parity review complete; 13 new Vitest cases passed and lint/typecheck passed in previous run. Final exact-SHA CI run 42392582571 pending because GitHub Actions runners are queued. Do NOT mark DONE until all selected regressions and authenticated browser export checks pass."
+        "notes": "DONE: export-specific CSV/role-scope UX accepted at exact SHA 6500a87b93029832eb15106fa7fd6da2514deb23. Run 42414921156: lint, typecheck, 50/50 Vitest and 4/4 Chromium seeded tests; privileged positive via real OTP-backed session, Learner negative, UTF-8/CSV evidence artifact 13590724676. This is browser-authenticated HTTP/CSV evidence at desktop/mobile viewports, not rendered screenshot or global release sign-off. See docs/parity/pages/shared/UX-G169-export-ux.md."
       },
       {
         "id": "UX-G170",
@@ -21762,11 +21769,11 @@
         "type": "OUTBOUND",
         "area": "bug-tracker",
         "title": "Bug Tracker · Outbound copy and exports (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-csv-exports-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/modules/bug-tracker/audit-findings-csv-model.ts"
         ],
@@ -21785,14 +21792,21 @@
             "path": "docs/parity/pages/shared/UX-G171-export-ux.md"
           },
           {
-            "type": "ci-pending",
-            "runId": 42392582571,
-            "url": "https://github.com/42Students/lms-vnext/actions/runs/42392582571",
-            "conclusion": "pending",
-            "description": "GitHub Actions runner backlog; preliminary 13/13 new unit cases, full typecheck/lint passed earlier run; corrected regression and HTTP browser acceptance still queued"
+            "type": "ci",
+            "runId": 42414921156,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42414921156",
+            "conclusion": "success",
+            "commitSha": "6500a87b93029832eb15106fa7fd6da2514deb23",
+            "results": "Scoped lint and full TypeScript passed; 9 Vitest files/50 tests; 4/4 seeded Chromium HTTP/auth tests passed (real OTP-backed Super Admin and persisted TPO grant, negative Learner scope)."
+          },
+          {
+            "type": "browser-http",
+            "runId": 42414921156,
+            "artifactId": 13590724676,
+            "description": "Authenticated Chromium desktop 1280x800 and mobile 320/390 viewport API/CSV acceptance, retained CSV artifacts. This export-only scope has no separate rendered screenshot claim."
           }
         ],
-        "notes": "Source changes and scoped parity review complete; 13 new Vitest cases passed and lint/typecheck passed in previous run. Final exact-SHA CI run 42392582571 pending because GitHub Actions runners are queued. Do NOT mark DONE until all selected regressions and authenticated browser export checks pass."
+        "notes": "DONE: export-specific CSV/role-scope UX accepted at exact SHA 6500a87b93029832eb15106fa7fd6da2514deb23. Run 42414921156: lint, typecheck, 50/50 Vitest and 4/4 Chromium seeded tests; privileged positive via real OTP-backed session, Learner negative, UTF-8/CSV evidence artifact 13590724676. This is browser-authenticated HTTP/CSV evidence at desktop/mobile viewports, not rendered screenshot or global release sign-off. See docs/parity/pages/shared/UX-G171-export-ux.md."
       },
       {
         "id": "UX-G172",
@@ -21901,14 +21915,15 @@
             "path": "docs/parity/pages/shared/UX-G174-export-ux.md"
           },
           {
-            "type": "ci-pending",
-            "runId": 42392582571,
-            "url": "https://github.com/42Students/lms-vnext/actions/runs/42392582571",
-            "conclusion": "pending",
-            "description": "GitHub Actions runner backlog; preliminary 13/13 new unit cases, full typecheck/lint passed earlier run; corrected regression and HTTP browser acceptance still queued"
+            "type": "ci",
+            "runId": 42414921156,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42414921156",
+            "conclusion": "success",
+            "commitSha": "6500a87b93029832eb15106fa7fd6da2514deb23",
+            "results": "Scoped lint and full TypeScript passed; 9 Vitest files/50 tests; 4/4 seeded Chromium HTTP/auth tests passed (real OTP-backed Super Admin and persisted TPO grant, negative Learner scope)."
           }
         ],
-        "notes": "Source changes and scoped parity review complete; 13 new Vitest cases passed and lint/typecheck passed in previous run. Final exact-SHA CI run 42392582571 pending because GitHub Actions runners are queued. Do NOT mark DONE until all selected regressions and authenticated browser export checks pass."
+        "notes": "DOING: serializer and six-column omission notice fixed (dcc6ede8063de2c9722ff794297da2a98b8752a9). Exact-SHA run 42414921156 green for 50 Vitest cases and learner-denied browser export. Still requires positive authenticated faculty assignment/quiz report HTTP with real seeded assessment, plus relevant UI evidence before DONE."
       },
       {
         "id": "UX-G175",
@@ -21968,11 +21983,11 @@
         "type": "OUTBOUND",
         "area": "messaging",
         "title": "Messaging · Outbound copy and exports (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-csv-exports-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/modules/messaging/receipt-history-export-model.ts"
         ],
@@ -21991,14 +22006,21 @@
             "path": "docs/parity/pages/shared/UX-G177-export-ux.md"
           },
           {
-            "type": "ci-pending",
-            "runId": 42392582571,
-            "url": "https://github.com/42Students/lms-vnext/actions/runs/42392582571",
-            "conclusion": "pending",
-            "description": "GitHub Actions runner backlog; preliminary 13/13 new unit cases, full typecheck/lint passed earlier run; corrected regression and HTTP browser acceptance still queued"
+            "type": "ci",
+            "runId": 42414921156,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42414921156",
+            "conclusion": "success",
+            "commitSha": "6500a87b93029832eb15106fa7fd6da2514deb23",
+            "results": "Scoped lint and full TypeScript passed; 9 Vitest files/50 tests; 4/4 seeded Chromium HTTP/auth tests passed (real OTP-backed Super Admin and persisted TPO grant, negative Learner scope)."
+          },
+          {
+            "type": "browser-http",
+            "runId": 42414921156,
+            "artifactId": 13590724676,
+            "description": "Authenticated Chromium desktop 1280x800 and mobile 320/390 viewport API/CSV acceptance, retained CSV artifacts. This export-only scope has no separate rendered screenshot claim."
           }
         ],
-        "notes": "Source changes and scoped parity review complete; 13 new Vitest cases passed and lint/typecheck passed in previous run. Final exact-SHA CI run 42392582571 pending because GitHub Actions runners are queued. Do NOT mark DONE until all selected regressions and authenticated browser export checks pass."
+        "notes": "DONE: export-specific CSV/role-scope UX accepted at exact SHA 6500a87b93029832eb15106fa7fd6da2514deb23. Run 42414921156: lint, typecheck, 50/50 Vitest and 4/4 Chromium seeded tests; privileged positive via real OTP-backed session, Learner negative, UTF-8/CSV evidence artifact 13590724676. This is browser-authenticated HTTP/CSV evidence at desktop/mobile viewports, not rendered screenshot or global release sign-off. See docs/parity/pages/shared/UX-G177-export-ux.md."
       },
       {
         "id": "UX-G178",

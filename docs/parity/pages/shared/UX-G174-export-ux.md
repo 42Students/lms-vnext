@@ -16,4 +16,8 @@
 - Excluded from this scoped group: global release, accessibility conformance certification, penetration testing, and cross-account role matrix sign-off.
 
 ## Result
-Pending exact-SHA acceptance; do not mark DONE before the run is green.
+DOING — source and unit/negative acceptance improved, but a positive authenticated faculty report download and a real seeded assessment are not yet covered by the browser proof.
+
+- Faculty CSV omission-note six-column fix: [commit dcc6ede](https://github.com/42Students/lms-vnext/commit/dcc6ede8063de2c9722ff794297da2a98b8752a9).
+- [Green run 42414921156](https://github.com/42Students/lms-vnext/actions/runs/42414921156): full TypeScript, lint, 50/50 Vitest, and learner denied arbitrary faculty export.
+- Do **not** mark UX-G174 DONE until a real Faculty role has an authorized assessment in the disposable DB and the corresponding CSV download succeeds with positive and negative browser evidence.
