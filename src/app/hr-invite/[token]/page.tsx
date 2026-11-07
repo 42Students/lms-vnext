@@ -1,7 +1,16 @@
+import type { Metadata } from "next";
 import {notFound,redirect} from "next/navigation";
 import {z} from "zod";
 import {recruiterInviteHref} from "@/modules/placements/recruiter-invite-alias-model";
 import { runAsSystem } from "@/db/tenant-context";
+/** A compatibility URL still carries a bearer invitation token. */
+export const dynamic = "force-dynamic";
+export const metadata: Metadata = {
+  title: "Open recruiter invitation | 42LMS",
+  robots: { index: false, follow: false, noarchive: true },
+  referrer: "no-referrer",
+};
+
 async function LegacyHrInvite({params}:{params:Promise<{token:string}>}) {
  const {token}=await params;
  try {redirect(recruiterInviteHref(token));}
