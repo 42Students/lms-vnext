@@ -1539,3 +1539,7 @@ No page family is newly marked green by this section. Source FE SHA: `9d56bb7a34
 - Placement/job subviews in `Placements/JobDetailContent.jsx`, `JobsListContent.jsx`, `OfferCard.jsx` and `RoundTrack.jsx` need exact apply/round/offer/deep-link state reconciliation. A page wrapper alone cannot close them.
 
 **Evidence status:** 484 imported-source files now represented in the static import graph, with zero unexplored *tree-resolved UI-folder* imports under that parser; this is NOT zero unresolved product behaviors. No runtime, real storage/PG, browser or cross-role acceptance executed and no Implementation Green asserted.
+
+## UX-G079 — Quiz entry and recovery (2026-11-07)
+
+[UX-G079 quiz entry/loading/error scope and exact-SHA acceptance](pages/learner/UX-G079-quiz.md). This is a bounded journey UX pass only; existing quiz submission, authorization, grading, draft and deadline contracts are unchanged. UX group status lives in `docs/tracker.json#uxReview.groups`.
