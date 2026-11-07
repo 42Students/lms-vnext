@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { verificationDecisionNotice } from "@/modules/verification/notification-copy";
 import { verificationCsv } from "@/modules/verification/queue-export";
+import { addBroadcastAudienceSelection, MAX_BROADCAST_RECIPIENT_COLLEGES } from "@/modules/announcements/super-admin-college-broadcast-model";
 
 const read = (path: string) => readFileSync(path, "utf8");
 
@@ -24,6 +25,21 @@ describe("UX-G131 — announcement authoring, audience and confirmation", () => 
     expect(source).toContain("reviewedCollegeIds:");
     expect(source).toContain("publishConsent:true");
     expect(source).toContain("confirmVariant=\"danger\"");
+  });
+});
+
+describe("UX-G131 — recipient bulk-selection upper bound", () => {
+  it("preserves earlier choices, deduplicates and never exceeds the server's exact 500-college cap", () => {
+    const selected = Array.from({length: 499}, (_, i) => "college-" + i);
+    const next = addBroadcastAudienceSelection(selected, ["college-0", "college-499", "college-500"]);
+    expect(next).toHaveLength(MAX_BROADCAST_RECIPIENT_COLLEGES);
+    expect(next).toContain("college-499");
+    expect(next).not.toContain("college-500");
+    expect(next.slice(0, 499)).toEqual(selected);
+    expect(addBroadcastAudienceSelection([], ["one", "one", "two"])).toEqual(["one", "two"]);
+    const form = read("src/components/announcements/super-admin-college-broadcast-form.tsx");
+    expect(form).toContain("count<=MAX_BROADCAST_RECIPIENT_COLLEGES");
+    expect(form).toContain("addBroadcastAudienceSelection(prev,matchingColleges.map(item=>item.id))");
   });
 });
 
