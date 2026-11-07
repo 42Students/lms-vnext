@@ -32,7 +32,7 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
   try{if(dirty&&!pending)void onSave("metadata",facultyMetadataFromDraft(initial,rows));}
   catch(error){setError(error instanceof Error?error.message:"Invalid metadata");}
  }
- return <form id={facultyProfileAnchor("metadata")} aria-label="Additional metadata" onSubmit={submit}
+ return <form id={facultyProfileAnchor("metadata")} aria-label="Additional metadata" aria-busy={pending} onSubmit={submit}
   className="min-w-0 scroll-mt-6 space-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
   <Heading level={2} size="base" className="leading-6 text-[var(--lms-heading)] md:text-lg">Additional metadata</Heading>
   <p className="text-sm text-muted-foreground leading-[22px]">Edit optional text fields. Existing non-text metadata is preserved unchanged. Never enter passwords or identity numbers.</p>
@@ -54,12 +54,13 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
     <Input className="mt-[var(--lms-space-2)] min-h-11 md:min-h-9 w-full min-w-0"
      maxLength={5000} disabled={pending} value={row.value} onChange={event=>edit(row.id,"value",event.target.value)}/>
    </Label>
-   <Button variant="secondary" type="button" disabled={pending} className="min-h-11 md:min-h-9 px-3"
+   <Button variant="secondary" type="button" disabled={pending} aria-label={`Remove metadata field ${index+1} from draft`} className="min-h-11 md:min-h-9 px-3"
     onClick={async()=>{if(!(await askConfirm("Remove metadata field "+row.key+" from this unsaved draft?")))return;
      setRows(current=>removeFacultyMetadataDraftEntry(current,row.id));setDirty(true);}}>
     Remove draft
    </Button>
   </div>)}
+  <p className="text-xs text-muted-foreground" role="status">{rows.length} of 100 metadata fields in this draft.</p>
   {dirty&&issue?<Alert tone="error">{issue}</Alert>:null}
   {error?<Alert tone="error">{error}</Alert>:null}
   <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap [&>button]:w-full sm:[&>button]:w-auto">
