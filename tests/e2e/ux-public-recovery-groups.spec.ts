@@ -67,13 +67,12 @@ for (const viewport of viewports) {
       await noHorizontalOverflow(page);
       await alternate.focus();
       await expect(alternate).toBeFocused();
-      await page.route("**/dashboard", route => route.fulfill({
-        status: 200, contentType: "text/html",
-        body: "<!doctype html><html lang='en'><title>Workspace</title><body><h1>Workspace reached</h1></body></html>",
-      }));
-      await home.click();
-      await expect(page).toHaveURL(/\/dashboard$/);
-      await expect(page.getByRole("heading", { name: "Workspace reached" })).toBeVisible();
+      // The anonymous browser cannot resolve an authenticated dashboard.
+      // Test the real public fallback, while the workspace destination above
+      // is contract-checked as a fixed same-origin href.
+      await alternate.click();
+      await expect(page).toHaveURL(/\/login$/);
+      await expect(page.getByRole("tab", { name: "Email" })).toBeVisible();
       expect(pageErrors).toEqual([]);
     });
 
