@@ -93,6 +93,19 @@ export function legacySuperAdminLessonContentHref(raw:Record<string,string|strin
  });
  return adminContentHref(kind,valid.success?valid.data:{});
 }
+/** Shared, safely bounded handoff for both old content entry routes. */
+export function legacySuperAdminContentHandoffHref(raw:Record<string,string|string[]|undefined>):string{
+ const mapped=legacySuperAdminLessonContentHref(raw);
+ const [pathname,existing]=mapped.split("?");
+ const search=new URLSearchParams(existing??"");
+ const lessonSearch=raw["lessonSearch"];
+ const lessonPage=raw["lessonPage"];
+ if(typeof lessonSearch==="string"&&lessonSearch.trim()&&lessonSearch.length<=100)
+  search.set("lessonSearch",lessonSearch.trim());
+ if(typeof lessonPage==="string"&&/^[1-9][0-9]{0,3}$/.test(lessonPage))
+  search.set("lessonPage",lessonPage);
+ return (pathname??"/admin/videos")+(search.size?"?"+search.toString():"");
+}
 /** Legacy badge exposed only the item's flag; actual student access must
  * additionally require published parents. Preserve both meanings separately.
  */
