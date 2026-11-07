@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { mkdir } from "node:fs/promises";
 
 /** UX-G123: public desktop/mobile acceptance, no test account or private data. */
 for (const viewport of [
@@ -30,8 +31,13 @@ for (const viewport of [
       await expect(page.getByRole("listitem").filter({ hasText: "Mentored projects and milestones" })).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
       expect(failures).toEqual([]);
+      // Write outside Playwright's cleaned outputDir so CI can always retain evidence.
+      await mkdir("ux-g123-evidence", { recursive: true });
+      const screenshot = await page.screenshot({
+        path: `ux-g123-evidence/${viewport.name}.png`, fullPage: true,
+      });
       await testInfo.attach(`UX-G123-${viewport.name}.png`, {
-        body: await page.screenshot({ fullPage: true }), contentType: "image/png",
+        body: screenshot, contentType: "image/png",
       });
     });
 }
