@@ -16,7 +16,8 @@ export async function exportSuperAdminScopedDirectory(request:Request,config:{
   await requireRecentDeviceAuthentication(context.user.id);
   const query=parseSuperAdminScopedCsvParams(new URL(request.url).searchParams);
   if(!scopedCsvStatusAllowed(query.status,config.statuses)){
-   return new Response("Unsupported status filter",{status:400,headers:{"Cache-Control":"private, no-store"}});
+   return Response.json({error:"UNSUPPORTED_EXPORT_STATUS"},{status:400,
+    headers:{"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"}});
   }
   // CSV always uses fixed 25-row chunks. A manually edited pageSize=10
   // previously fetched only 100 of the promised first 250 matching records;
