@@ -215,7 +215,7 @@ export function PublicRecruiterJoinForm({
             </div>
             <PageHeader title="This link is no longer valid" />
             <p className="mt-3 max-w-prose break-words text-sm leading-6 text-body">Ask the placement cell for a new one. Already joined? Sign in with your work email.</p>
-            <ButtonLink variant="primary" href="/login" className="mt-4 w-full">Sign in</ButtonLink>
+            <ButtonLink variant="primary" href="/login" className="mt-4 min-h-11 w-full">Sign in</ButtonLink>
           </>
         ) : blockedReason ? (
           <div role="alert" className="space-y-3">
@@ -231,7 +231,7 @@ export function PublicRecruiterJoinForm({
             <p className="mt-3 text-sm text-body">
               {"Sign in with your work email, "+signInEmail+", on the college's placement address. We'll email you a code each time."}
             </p>
-            <ButtonLink variant="primary" href="/login" className="mt-4 w-full">Sign in</ButtonLink>
+            <ButtonLink variant="primary" href="/login" className="mt-4 min-h-11 w-full">Sign in</ButtonLink>
           </>
         ) : (
           <>
@@ -257,8 +257,8 @@ export function PublicRecruiterJoinForm({
                 </span>
               </Label>
               {sentTo ? (
-                <Button variant="link" size="inline" type="button" disabled={pending}
-                  onClick={changeWorkEmail} className="min-h-11 w-full justify-start sm:w-auto">
+                <Button variant="link" size="lg" type="button" disabled={pending}
+                  onClick={changeWorkEmail} className="min-h-11 w-full justify-start px-0 underline sm:w-auto">
                   Change work email
                 </Button>
               ) : null}
