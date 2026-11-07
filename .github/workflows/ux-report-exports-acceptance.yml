@@ -13,6 +13,7 @@ on:
       - tests/unit/UX-G169-G171-G174-G177-exports.test.ts
       - tests/unit/HR-BREAK-chat19-messaging-csv-unicode.test.ts
       - tests/e2e/ux-report-export-journeys.spec.ts
+      - scripts/db-e2e-prepare.ts
       - .github/workflows/ux-report-exports-acceptance.yml
 concurrency:
   group: ux-export-${{ github.ref }}
@@ -41,6 +42,7 @@ jobs:
       TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
       E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
       E2E_AUTH_ENABLED: "true"
+      UX_G174_SEED_REPORTS: "true"
       # The isolated db:e2e:prepare step applies the checked-in DB10 migrations
       # before the browser exercises these operator-gated report endpoints.
       DB10_ANNOUNCEMENTS_READY: DB10_VERIFIED
