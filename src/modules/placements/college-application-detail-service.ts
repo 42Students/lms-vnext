@@ -5,6 +5,7 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {evaluatePlacementEligibility} from "./eligibility-service";
 import {z} from "zod";
+import {PlacementsServiceError} from "./errors";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,learnerProfiles,placementApplications,
  placementApplicationScreenings,placementApplicationScreeningHistory,
@@ -50,7 +51,7 @@ async function scoped(ctx:RequestContext,rawJobId:unknown,rawId:unknown){
  .innerJoin(placementJobRoleOptions,eq(placementJobRoleOptions.id,placementApplications.roleOptionId))
  .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
  .where(and(eq(placementApplications.id,id),eq(placementApplications.jobId,jobId))).limit(1);
- if(!application)throw Error("Application not found in this college drive");
+ if(!application)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
  return {collegeId,jobId,application};
 }
 /** All-job, college-scoped learner summary backing legacy AdminJobController.
@@ -68,7 +69,7 @@ export async function getCollegeLearnerPlacementSummary(
   .from(collegeMemberships).where(and(
    eq(collegeMemberships.id,membershipId),
    eq(collegeMemberships.collegeId,collegeId))).limit(1);
- if(!member)throw Error("Learner not found in this college");
+ if(!member)throw new PlacementsServiceError("PLACEMENT_LEARNER_MEMBERSHIP_NOT_FOUND");
  const portfolio=await db.select({
   id:placementApplications.id,jobId:placementApplications.jobId,
   job:placementJobs.title,role:placementJobRoleOptions.title,

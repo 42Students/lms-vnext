@@ -1,5 +1,6 @@
 import "server-only";
 import {z} from "zod";
+import {PlacementsServiceError} from "./errors";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {and,asc,desc,eq,exists,ilike,inArray,ne,lt,gt,gte,notExists,not,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
@@ -55,7 +56,7 @@ async function scope(ctx:RequestContext,raw:unknown){
  const [job]=await getDb().select({id:placementJobs.id,title:placementJobs.title,
   status:placementJobs.status,companyRelationshipId:placementJobs.companyRelationshipId}).from(placementJobs).where(and(eq(placementJobs.id,jobId),
   eq(placementJobs.collegeId,collegeId))).limit(1);
- if(!job)throw Error("Placement drive not found");
+ if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  return {collegeId,job};
 }
 function viewSlot(s:typeof slots.$inferSelect,outcome?:string,feedback?:string|null,editNotes?:string|null,conflictKinds:readonly string[]=[]){

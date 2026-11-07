@@ -19,6 +19,7 @@ import { AcademicsServiceError } from "@/modules/academics/errors";
 import { CoursesServiceError } from "@/modules/courses/errors";
 import { ProjectsServiceError } from "@/modules/projects/errors";
 import { PlacementsServiceError } from "@/modules/placements/errors";
+import { TpoPublicJoinLinkError } from "@/modules/placements/tpo-public-join-link-service";
 import { ActivityServiceError } from "@/modules/activity/errors";
 import { StorageFileError } from "@/modules/storage/file-errors";
 import { logError } from "@/observability/logger";
@@ -295,6 +296,10 @@ export function apiErrorResponse(error: unknown) {
               : 409,
       },
     );
+  }
+
+  if (error instanceof TpoPublicJoinLinkError && error.code === "NOT_FOUND") {
+    return respond({ error: "NOT_FOUND" }, { status: 404 });
   }
 
   if (error instanceof PlacementsServiceError) {
