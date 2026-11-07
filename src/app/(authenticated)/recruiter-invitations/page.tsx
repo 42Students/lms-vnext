@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
@@ -8,6 +9,10 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import { TextLink } from "@/components/ui/text-link";
 
 export const dynamic="force-dynamic";
+export const metadata: Metadata = {
+ robots: { index: false, follow: false, noarchive: true },
+ referrer: "no-referrer",
+};
 
 /** A signed-in existing recruiter can approve a pending invite before they
  * have any active college grant. This route intentionally lives outside
@@ -26,7 +31,7 @@ export default async function RecruiterInvitationsPage(){
    <PageHeader title="Recruiter invitations"/>
    <ErrorState title="Could not load your invitations"
     description="The invitation list is unavailable. No invitation has been accepted or declined."
-    action={<TextLink href="/recruiter-invitations">Retry</TextLink>}/>
+    action={<TextLink href="/recruiter-invitations" className="inline-flex min-h-11 items-center">Retry</TextLink>}/>
   </div>;
  }
  return <div className="min-w-0 space-y-4">
@@ -37,6 +42,6 @@ export default async function RecruiterInvitationsPage(){
     total={invitations.length} hasMore={false}/>:
    <EmptyState title="No pending recruiter invitations"
     description="Any college invitations awaiting your decision will appear here. You can still use other authorized roles."
-    action={<TextLink href="/dashboard">Back to dashboard</TextLink>}/>}
+    action={<TextLink href="/dashboard" className="inline-flex min-h-11 items-center">Back to dashboard</TextLink>}/>}
  </div>;
 }
