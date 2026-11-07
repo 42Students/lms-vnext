@@ -3,7 +3,7 @@
 import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 const base = process.env.SWEEP_BASE;
-if (!base || !/^https://[a-z0-9.-]*development.42lms.com$|^http://localhost:[0-9]+$/.test(base)) throw new Error("set SWEEP_BASE to a dev or local origin (never production)");
+if (!base || !/^https:\/\/[a-z0-9.-]*development\.42lms\.com$|^http:\/\/localhost:[0-9]+$/.test(base)) throw new Error("set SWEEP_BASE to a dev or local origin (never production)");
 const otp = process.env.SWEEP_OTP;
 const data = JSON.parse(readFileSync("scratch/nsrit-members.json", "utf8"));
 const jar = new Map();
