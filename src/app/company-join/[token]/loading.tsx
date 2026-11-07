@@ -4,8 +4,8 @@ import { PageHeader } from "@/components/ui/page-header";
 export default function Loading() {
   return <main style={{ minHeight: "100dvh" }} className={`${authStyles["page"]} mx-auto flex w-full max-w-xl min-w-0 items-center px-4 pb-8 pt-24 md:py-12`}>
     <div className="w-full min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
-      <PageHeader title="Loading company invitation..." />
-      <Skeleton variant="line" count={4} label="Loading company invitation..." />
+      <PageHeader title="Opening company invitation" />
+      <Skeleton variant="line" count={4} label="Checking invitation access…" />
     </div>
   </main>;
 }
