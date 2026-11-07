@@ -40,7 +40,7 @@ export default async function FacultyResponseFollowUpsPage({
         className="w-full sm:w-auto">
         Results overview
       </ButtonLink>} />
-    <form action="/teacher/response-followups" method="get"
+    <form action="/teacher/response-followups" method="get" role="search" aria-label="Filter Faculty response follow-ups"
       className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
       <Label stack>Search
         <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
@@ -87,7 +87,7 @@ export default async function FacultyResponseFollowUpsPage({
         className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm sm:w-auto md:min-h-9">Clear</TextLink>
     </form>
     <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <p className="text-sm text-body leading-[22px]">
+      <p role="status" aria-live="polite" className="text-sm text-body leading-[22px]">
         {formatNumberIN(data.total)} matching past-due published assessment{data.total === 1 ? "" : "s"}
       </p>
       <ButtonLink variant="secondary" href={facultyFollowUpCsvHref({...data.query,page:data.page})}
