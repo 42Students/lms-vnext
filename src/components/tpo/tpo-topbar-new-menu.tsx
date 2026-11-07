@@ -7,7 +7,7 @@ import {TPO_TOPBAR_QUICK_LINKS} from "@/modules/placements/tpo-topbar-links";
 import { TextLink } from "@/components/ui/text-link";
 export function TpoTopbarNewMenu({collegeId}:{collegeId:string}){
  const pathname=usePathname(),query=useSearchParams();
- const companyName=pathname==="/tpo/companies"?(query.get("name")||"").trim().slice(0,150):"";
+ const companyName=pathname==="/tpo/companies"?(query.get("name")||"").replace(/[\u0000-\u001f\u007f]/g," ").replace(/\s+/g," ").trim().slice(0,150):"";
  const companyPrefix=companyName?" for "+companyName:"";
  const navClass="flex min-h-11 w-full min-w-0 items-center rounded-[var(--lms-control-radius)] px-[var(--lms-space-3)] py-2 text-left text-[14px] leading-5 text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-ring break-words [overflow-wrap:anywhere] md:min-h-9 motion-reduce:transition-none";
  const links=companyName?[{
