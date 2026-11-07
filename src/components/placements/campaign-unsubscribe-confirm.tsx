@@ -32,7 +32,7 @@ export function CampaignUnsubscribeConfirm({token,cell}:{token:string;cell:boole
   finally{window.clearTimeout(timeout);pendingRef.current=false;setPending(false);}
  }
  return <form onSubmit={event=>void confirm(event)} aria-busy={pending} aria-describedby="unsubscribe-details" className="mt-4 space-y-3">
-  {error?<div ref={errorRef} tabIndex={-1} role="alert" className="outline-none"><InlineNotice tone="error" message={error}/></div>:null}
+  {error?<div ref={errorRef} tabIndex={-1} className="outline-none"><InlineNotice tone="error" message={error} role="alert"/></div>:null}
   {pending||confirmed?<p role="status" aria-live="polite" className="text-sm leading-6 text-[var(--lms-muted-text)]">
    {confirmed?"Your request was received. Opening confirmation…":"Submitting your unsubscribe request…"}
   </p>:null}
