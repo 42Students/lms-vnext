@@ -216,9 +216,12 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
      </div>
      <p className="text-sm text-[var(--lms-body-text)]">The student sees your reason and fixes it on their profile.</p>
      <Label stack>Or write what needs to change
-      <Textarea rows={3} value={additional} onChange={event=>setAdditional(event.target.value)}
+      <Textarea rows={3} value={additional} onChange={event=>{setAdditional(event.target.value);setError("");}}
        maxLength={500} placeholder="Or write what needs to change" disabled={saving}/>
      </Label>
+     <p role="status" className="text-xs text-muted-foreground">
+      {[reason,additional.trim()].filter(Boolean).join(": ").length}/500 characters in the student-facing reason.
+     </p>
      {error?<p role="alert" className="text-sm text-warning">{error}</p>:null}
     </div>
    </Dialog>
