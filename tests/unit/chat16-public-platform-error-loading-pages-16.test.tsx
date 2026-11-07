@@ -51,7 +51,7 @@ describe("chat-16 real public platform and root recovery page rendering",()=>{
    expect(html).not.toContain("private recruiter address");
    expect(html).not.toContain("sensitive-internal-digest");
   }
-  expect(global).toMatch(/<html lang="en"(?:\\s[^>]*)?>/);
+  expect(global).toMatch(/<html lang="en"(?:\s[^>]*)?>/);
   expect(global).toContain("<body>");
  });
  it("UX-chat16-errors-18 failed chunk load has a recoverable update state without leaking error",()=>{
