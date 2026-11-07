@@ -13377,10 +13377,10 @@
         "type": "JOURNEY",
         "area": "account",
         "title": "Account · Security (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-root-quiz-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/account/security/error.tsx",
@@ -13393,7 +13393,8 @@
           "PAGE-0001"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Implementation underway: signed-in device management and direct login UX. Preserve role/tenant/session invariants; close after exact-SHA CI and desktop/mobile browser evidence."
       },
       {
         "id": "UX-G004",
@@ -16560,10 +16561,10 @@
         "type": "JOURNEY",
         "area": "login",
         "title": "Login · Home (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-root-quiz-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/login/error.tsx",
@@ -16576,7 +16577,8 @@
           "PAGE-0512"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Implementation underway: signed-in device management and direct login UX. Preserve role/tenant/session invariants; close after exact-SHA CI and desktop/mobile browser evidence."
       },
       {
         "id": "UX-G068",
