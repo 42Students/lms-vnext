@@ -17,7 +17,10 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
  const selected=():Fields=>({ageBand:query["ageBand"]??"ANY",enrollment:query["enrollment"]??"ALL",waitingState:query["waitingState"]??"ALL",membershipId:query["membershipId"]??"",q:query["q"]??"",marksheets:query["marksheets"]??"ANY",attention:query["attention"]??"ALL",waitingSince:query["waitingSince"]??"",submittedFrom:query["submittedFrom"]??"",
   programId:query["programId"]??"",sectionId:query["sectionId"]??"",batchId:query["batchId"]??"",branchId:query["branchId"]??""});
  const [fields,setFields]=useState<Fields>(selected),[error,setError]=useState("");
- const change=(key:keyof Fields,value:string)=>setFields(old=>({...old,[key]:value}));
+ const change=(key:keyof Fields,value:string)=>{
+  setFields(old=>({...old,[key]:value}));
+  setError("");
+ };
  function istDay(daysBeforeToday=0){
   const date=new Date(Date.now()-daysBeforeToday*24*60*60*1000);
   return createDateFormatter("sv-SE", {timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(date);
@@ -143,7 +146,7 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
      </Select>{classChoices?.truncated&&<span className="block text-xs">First 200 classes shown.</span>}
     </Label>
    </div>
-   {error&&<p role="alert" className="text-sm">{error}</p>}
+   {error&&<p role="alert" className="text-sm text-danger-text" aria-live="assertive">{error}</p>}
    <div className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap">
     <Button variant="primary" type="submit" className="min-h-[var(--lms-control-height)] ">Apply filters</Button>
     <Button variant="secondary" type="button" onClick={()=>{setFields(empty);apply(empty);}} className="min-h-[var(--lms-control-height)] ">Clear extra filters</Button>
