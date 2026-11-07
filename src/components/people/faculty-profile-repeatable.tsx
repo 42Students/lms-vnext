@@ -65,7 +65,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
     if (changed && !pending && !missingRequired && !sectionIssue) void onSave(section, rows);
   }
   return (
-    <form id={facultyProfileAnchor(section)} aria-label={title} onSubmit={submit}
+    <form id={facultyProfileAnchor(section)} aria-label={title} aria-busy={pending} onSubmit={submit}
       className="min-w-0 scroll-mt-6 space-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
       <div>
         <Heading level={2} size="base" className="leading-6 text-[var(--lms-heading)] md:text-lg">{title}</Heading>
@@ -88,10 +88,12 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
             <legend className="px-1 text-xs font-semibold text-muted-foreground">Record {index + 1}</legend>
             <Button variant="secondary" type="button" className="mb-3 min-h-11 md:min-h-9 px-3"
               aria-expanded={!collapsedIds.includes(row.id)}
+              aria-controls={`${facultyProfileAnchor(section)}-record-${row.id}`}
+              aria-label={`${collapsedIds.includes(row.id)?"Show":"Hide"} fields for ${title} record ${index+1}`}
               onClick={()=>setCollapsedIds(current=>toggleFacultyProfileCollapsed(current,row.id))}>
               {collapsedIds.includes(row.id)?"Show record fields":"Hide record fields"}
             </Button>
-            {!collapsedIds.includes(row.id)?<div className="grid min-w-0 gap-3 sm:grid-cols-2">
+            {!collapsedIds.includes(row.id)?<div id={`${facultyProfileAnchor(section)}-record-${row.id}`} className="grid min-w-0 gap-3 sm:grid-cols-2">
               {fields.map(field => {
                 const value = row[field.name];
                 const currentDegreeEndYear = section === "education" && field.name === "endYear" &&
@@ -127,10 +129,10 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
             <Button variant="secondary" type="button" disabled={pending || rows.length >= maxItems} onClick={async () => {
               setRows(current=>duplicateFacultyProfileDraftRow(current,row.id,maxItems,crypto.randomUUID()));
               setSearch(current=>facultyProfileSearchAfterInsertion(current));setChanged(true);
-            }} className="mt-[var(--lms-space-3)] mr-[var(--lms-space-2)] min-h-11 w-full sm:w-auto md:min-h-9">
+            }} aria-label={`Duplicate ${title} record ${index+1} as draft`} className="mt-[var(--lms-space-3)] mr-[var(--lms-space-2)] min-h-11 w-full sm:w-auto md:min-h-9">
               Duplicate draft
             </Button>
-            <Button variant="secondary" type="button" disabled={pending || facultyProfileRecordHasManagedDocument(row)} onClick={() => setRemoveTarget(row.id)} className="mt-[var(--lms-space-3)] min-h-11 w-full text-error sm:w-auto md:min-h-9">
+            <Button variant="secondary" type="button" disabled={pending || facultyProfileRecordHasManagedDocument(row)} onClick={() => setRemoveTarget(row.id)} aria-label={`Remove ${title} record ${index+1} from draft`} className="mt-[var(--lms-space-3)] min-h-11 w-full text-error sm:w-auto md:min-h-9">
               Remove draft record
             </Button>
             {facultyProfileRecordHasManagedDocument(row) ? <p className="mt-2 text-xs text-muted-foreground leading-5">This entry has a managed document. Contact your College to remove it.</p> : null}
