@@ -33,6 +33,11 @@ for (const size of sizes) {
     await dialog.getByRole("button", { name: "Cancel" }).click();
     await page.getByRole("alertdialog").getByRole("button", { name: "Discard" }).click();
     await expect(dialog).toHaveCount(0);
+    await group.getByRole("button", { name: "Remove setting demo.group.001" }).click();
+    const remove = page.getByRole("alertdialog", { name: 'Remove "demo.group.001"?' });
+    await expect(remove).toBeVisible();
+    await remove.getByRole("button", { name: "Cancel" }).click();
+    await expect(group.getByText("demo.group.001")).toBeVisible();
     await expect(group.getByRole("region", { name: /Other stored settings table/ })).toHaveAttribute("tabindex", "0");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     expect(errors).toEqual([]);
