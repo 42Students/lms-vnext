@@ -410,3 +410,52 @@ These source findings do not count as browser, API, PostgreSQL, UX or release pr
 **Evidence required for closure:** `node --test tests/ux-universities-group.test.mjs`; `npx playwright test tests/e2e/ux-universities-journey.spec.ts --project=chromium` with 1280×800 desktop and 390×844 mobile screenshots; `npm run typecheck`; `npm run ux:guard`; marketing links/CTA regression; explicit no private role or API contract change review.
 
 **State:** Implemented in source; runtime executions and visual proofs not yet recorded. Do not count as UX DONE until evidence above is collected and cited.
+
+
+## UX-G076 — Public placements and retired shared-job links (7 November 2026)
+
+**Canonical group:** docs/tracker.json UX-G076. Scope: /placements and
+/placements/jobs/[jobId], including route-level error, loading and not-found.
+This scoped UX work does not advance DB/API/security/release certification.
+
+**Source revisions:** [implementation commit](https://github.com/42Students/lms-vnext/commit/dee9805696652c9c8fafacd6ae016970d2acb72a),
+[SSR/browser contract](https://github.com/42Students/lms-vnext/commit/095be6e0cb5377f4ddd877a3d1f1f5fa53d88306),
+and [disposable published-college acceptance fixture](https://github.com/42Students/lms-vnext/commit/5ef5b1e3a6a9eadac89ffabb4744cda56aeb5e0f).
+
+**UX and privacy changes:** The published page has responsive overview,
+outcome cards, suppression-aware empty states, clear 12-month live-aggregate
+basis and separate snapshot freshness warning, and a preserved recruiter
+contact surface. Anonymous access still depends on a verified current college
+host and explicitly published aggregate rows; individual learner, applicant,
+employer and placement details remain private. Unknown/unpublished tenant hosts
+are given an anonymous 404 presentation; a temporary domain-directory outage
+is retryable rather than misclassified as unpublished. Route loading and
+errors have accessible messages, mobile-friendly retry and safe-home controls.
+Retired job URLs are noindex, expose no individual job, applicant or employer
+records, and have safe workspace sign-in/public-information links. Existing
+work-email OTP and publication/proxy readiness gates remain unchanged.
+
+**Exact-SHA execution:** [UX-G076 Actions run 42386887182](https://github.com/42Students/lms-vnext/actions/runs/42386887182)
+at source SHA 5ef5b1e3a6a9eadac89ffabb4744cda56aeb5e0f.
+The published-college job passed disposable PostgreSQL 17 e2e preparation,
+synthetic verified host and publication seed, and Chromium 2/2 actual-page
+desktop 1280x800/mobile 390x844 browser cases. Those cases asserted that
+publicly approved metrics, college description, recruiter section and privacy
+copy appeared, while private learner data and unapproved metrics did not;
+both viewports had no horizontal overflow or uncaught browser errors.
+Synthetic records and host routing were local to the test job; there was
+no live provider, credential or production-tenant access.
+
+**Separate focused job:** exact run 42386887182 also checks scoped lint,
+full TypeScript, server-rendered/negative disclosure tests and two-viewport
+retired-link and anonymous page navigation. Do not mark this group DONE until
+that job has a successful conclusion; the earlier failing run
+[42386249758](https://github.com/42Students/lms-vnext/actions/runs/42386249758)
+had 2/4 browser passes due to an incorrect HTTP-404 assertion on streaming
+Next.js output. The revised test asserts the rendered non-disclosure state
+instead of the potentially already streamed HTTP response status.
+
+**Cross-role and security boundary:** No role/RLS/membership checks, private
+placement authorization or shared kit code changed; neither this source
+implementation nor seeded browser fixtures constitute public-enquiry provider,
+independent security, deployment, functional parity or release proof.
