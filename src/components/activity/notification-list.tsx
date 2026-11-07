@@ -83,6 +83,7 @@ function formatWhen(value: string) {
 export function NotificationList({
   items,
   emptyText = "No notifications yet",
+  emptyDescription,
   emptyAction,
   onSelect,
   readEndpoint = "/api/notifications",
@@ -90,6 +91,7 @@ export function NotificationList({
 }: {
   items: readonly NotificationListItem[];
   emptyText?: string;
+  emptyDescription?: string;
   emptyAction?: ReactNode;
   onSelect?: (item: NotificationListItem) => void;
   variant?: "default" | "tpo";
@@ -139,7 +141,7 @@ export function NotificationList({
         <p className={readEndpoint==="/api/learn/notifications"
           ? "mx-auto max-w-[320px] text-[14px] leading-[1.5] text-[var(--lms-neutral-500)]"
           : "mt-2 text-sm text-muted-foreground"}>
-          {readEndpoint==="/api/tpo/notifications"?"Your placement updates will appear here.":readEndpoint==="/api/mentor/notifications"?"You'll see project updates here when available.":"You'll see course updates and announcements here when available."}
+          {emptyDescription ?? (readEndpoint==="/api/tpo/notifications"?"Your placement updates will appear here.":readEndpoint==="/api/mentor/notifications"?"You'll see project updates here when available.":"You'll see course updates and announcements here when available.")}
         </p>
         {emptyAction}
       </div>
