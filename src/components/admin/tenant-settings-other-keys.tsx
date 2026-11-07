@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 
 type Entry = {key:string;value:string;version:number};
 const KEY_PATTERN = /^[A-Za-z][A-Za-z0-9._-]*$/;
-const PAGE_SIZE = 200;
+const PAGE_SIZE = 50;
 
 export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeading=true}:{
  scopeType:"GLOBAL"|"COLLEGE";collegeId?:string;ready:boolean;entries:readonly Entry[];showHeading?:boolean;
@@ -25,11 +25,14 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeadi
  const [key,setKey]=useState(""),[value,setValue]=useState("");
  const [addOpen,setAddOpen]=useState(false),[confirmDiscard,setConfirmDiscard]=useState(false);
  const [visibleCount,setVisibleCount]=useState(PAGE_SIZE);
+ const [filter,setFilter]=useState("");
  const [busy,setBusy]=useState(false),[message,setMessage]=useState("");
  const [messageTone,setMessageTone]=useState<"success"|"error">("success");
  const [pendingRemoval,setPendingRemoval]=useState<Entry|null>(null);
  const others=entries.filter(entry=>LEGACY_TENANT_SETTING_MAP.get(entry.key)?.scope!==scopeType)
   .sort((a,b)=>a.key.localeCompare(b.key,"en"));
+ // Filter identifiers only; sensitive stored values never enter search state.
+ const matching=others.filter(entry=>entry.key.toLocaleLowerCase("en-IN").includes(filter.trim().toLocaleLowerCase("en-IN")));
  const target={scopeType,...(collegeId?{collegeId}:{})};
  const documentedSpec=LEGACY_TENANT_SETTING_MAP.get(key.trim());
  const invalidKey=key.length>0&&!KEY_PATTERN.test(key);
@@ -93,7 +96,16 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeadi
   </div>
   <p className="max-w-prose text-sm leading-[22px] text-body">Keys stored at this scope that are not in the documented list above — a new backend setting this screen does not name yet, or a value left at a scope that never reads it. Never enter passwords, credentials, tokens or secrets.</p>
   {!ready?<Alert tone="warning">Stored setting changes are unavailable in this scope.</Alert>:null}
-  <div className="min-w-0 overflow-x-auto" role="region" aria-label="Other stored settings table" tabIndex={0}>
+  {others.length>0?<div className="flex min-w-0 flex-wrap items-end gap-3">
+   <Label stack className="min-w-0 flex-1 sm:max-w-sm">Find a setting by key
+    <Input type="search" value={filter} maxLength={120} autoComplete="off" placeholder="Filter key names" className="min-h-11 w-full md:min-h-9"
+     onChange={event=>{setFilter(event.target.value);setVisibleCount(PAGE_SIZE);}} />
+   </Label>
+   {filter?<Button variant="secondary" type="button" onClick={()=>{setFilter("");setVisibleCount(PAGE_SIZE);}} className="min-h-11 md:min-h-9">Clear search</Button>:null}
+   <p role="status" className="w-full text-xs text-body">{matching.length} of {others.length} key names match</p>
+  </div>:null}
+  <p className="text-xs text-muted-foreground">On narrow screens, scroll the table horizontally for values and actions.</p>
+  <div className="min-w-0 overflow-x-auto" role="region" aria-label="Other stored settings table, scroll horizontally for values and actions" tabIndex={0}>
    <Table className="min-w-[600px]">
     <thead><tr className="border-b border-border bg-surface-subtle">
      <th scope="col" className="w-[300px] px-3 py-2 font-semibold">Key</th>
@@ -101,8 +113,8 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeadi
      <th scope="col" className="w-[60px] px-3 py-2 font-semibold"><span className="sr-only">Actions</span></th>
     </tr></thead>
     <tbody>
-     {others.length===0?<tr><td colSpan={3} className="px-3 py-6 text-center text-body">No other keys stored at this scope.</td></tr>:
-      others.slice(0,visibleCount).map(entry=>{
+     {matching.length===0?<tr><td colSpan={3} className="px-3 py-6 text-center text-body">{others.length===0?"No other keys stored at this scope.":"No stored key names match your search. Clear the filter to see all keys."}</td></tr>:
+      matching.slice(0,visibleCount).map(entry=>{
        const documented=LEGACY_TENANT_SETTING_MAP.get(entry.key);
        return <tr key={entry.key} className="border-b border-border align-top hover:bg-surface-subtle">
         <td className="max-w-[300px] break-all px-3 py-2 font-mono text-xs">
@@ -122,9 +134,9 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeadi
     </tbody>
    </Table>
   </div>
-  {others.length>visibleCount?<div className="flex flex-wrap items-center justify-between gap-2 text-xs text-body">
-   <span>Showing {Math.min(visibleCount,others.length)} of {others.length} keys</span>
-   <Button type="button" variant="secondary" onClick={()=>setVisibleCount(count=>count+PAGE_SIZE)}>Show next {Math.min(PAGE_SIZE,others.length-visibleCount)} keys</Button>
+  {matching.length>visibleCount?<div className="flex flex-wrap items-center justify-between gap-2 text-xs text-body">
+   <span>Showing {Math.min(visibleCount,matching.length)} of {matching.length} matching keys</span>
+   <Button type="button" variant="secondary" onClick={()=>setVisibleCount(count=>count+PAGE_SIZE)}>Show next {Math.min(PAGE_SIZE,matching.length-visibleCount)} keys</Button>
   </div>:null}
   {message&&!addOpen&&!pendingRemoval?<Alert tone={messageTone}>{message}</Alert>:null}
   <Dialog open={addOpen} onOpenChange={open=>{if(!open)closeAdd();}} title="Add a setting"
