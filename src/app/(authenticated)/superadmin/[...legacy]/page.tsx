@@ -102,6 +102,14 @@ async function nestedProjectDestination(
     if (route === "templates") return "/admin/projects/templates";
   }
 
+  // The old /templates/new entry point is an action, never a template slug.
+  // Check its stronger manage permission before handing off to the vNext form.
+  if (route === "templates" && segments.length === 3 &&
+      segments[2]?.toLowerCase() === "new") {
+    requirePermission(context, "project-template.manage");
+    return "/admin/projects/templates/new";
+  }
+
   if (route === "templates" &&
       (segments.length === 3 ||
        (segments.length === 4 && (subroute === "overview" || subroute === "colleges")))) {
@@ -184,7 +192,8 @@ export default async function LegacySuperAdminRedirect({
   // The historic template root redirected to /overview with its query
   // intact. Preserve bounded, harmless view state through the UUID crosswalk
   // without trusting arbitrary college identifiers or redirect targets.
-  if (destination.startsWith("/admin/projects/templates/")) {
+  if (destination.startsWith("/admin/projects/templates/") &&
+      destination !== "/admin/projects/templates/new") {
     for (const key of ["tab","view","version"] as const) {
       const value=query[key];
       if(typeof value==="string"&&/^[a-zA-Z0-9_-]{1,64}$/.test(value))
