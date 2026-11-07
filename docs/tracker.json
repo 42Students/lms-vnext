@@ -21222,10 +21222,10 @@
         "type": "ROUTE-STATE",
         "area": "error.tsx",
         "title": "Error.Tsx · Shared route states (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-root-error-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/error.tsx"
@@ -21234,17 +21234,18 @@
           "ROUTE-STATE-1013"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Root/global error recovery UX review; exact-SHA regression and browser evidence required before DONE. No telemetry/security loosening."
       },
       {
         "id": "UX-G186",
         "type": "ROUTE-STATE",
         "area": "global-error.tsx",
         "title": "Global Error.Tsx · Shared route states (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-root-error-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/global-error.tsx"
@@ -21253,7 +21254,8 @@
           "ROUTE-STATE-1016"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Root/global error recovery UX review; exact-SHA regression and browser evidence required before DONE. No telemetry/security loosening."
       },
       {
         "id": "UX-G187",
