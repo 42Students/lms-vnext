@@ -13,6 +13,11 @@ export function proxy(request: NextRequest) {
   const forwardHeaders = new Headers(request.headers);
   forwardHeaders.set("x-lms-path", path + request.nextUrl.search);
   forwardHeaders.set("x-request-id", requestId);
+  // Test harness pages exist only for the development server. Their own guard calls notFound(), but that renders a 200
+  // loading shell; refuse them outright in any production build so the routes do not even appear to exist (SEC-12/16).
+  if (process.env.NODE_ENV === "production" && (path === "/e2e" || path.startsWith("/e2e/"))) {
+    return new NextResponse("Not found", { status: 404, headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store", "x-request-id": requestId } });
+  }
   if (process.env["MAINTENANCE_MODE"] === "1" && path !== "/ready" && path !== "/api/hello") {
     const html = `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

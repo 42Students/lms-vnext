@@ -13,3 +13,8 @@ Method: code read of `src/security/internal-route-core.ts`, `internal-route.ts`,
 | Queues and idempotency | Outbound email/notification dispatch uses delivery keys with a shared claim store (fails closed when the store is on) | IMPLEMENTED_UNVERIFIED |
 
 Owner decisions flagged: whether internal paths should be blocked at the ingress for the public internet (needs ingress change).
+
+## Addendum 2026-11-08: reachability checks on dev
+
+- Internal routes are reachable from the public internet and answer 403 without the secret (`/api/internal/alerts/tick`, `/operations/notification-scheduler`, `/e2e/seed` all 403). `/api/internal/e2e/seed` has four more layers (env gate, 32-byte operator secret, same-origin, Super Admin session) and answers 503 unless the fixture writer is enabled.
+- The development test harness pages under `/e2e/*` answered HTTP 200 with a loading shell on the production-built image: each page calls `notFound()` when `NODE_ENV` is not development, but the 404 UI renders after the shell has already been sent as 200. Fixed: the request proxy now answers a plain 404 for `/e2e` and `/e2e/*` in any production build. No data was exposed.
