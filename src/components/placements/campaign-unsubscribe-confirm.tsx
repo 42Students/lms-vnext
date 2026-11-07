@@ -31,10 +31,13 @@ export function CampaignUnsubscribeConfirm({token,cell}:{token:string;cell:boole
   }catch{setError("That didn’t work. Please try again.");}
   finally{window.clearTimeout(timeout);pendingRef.current=false;setPending(false);}
  }
- return <form onSubmit={event=>void confirm(event)} aria-busy={pending} className="mt-4 space-y-3">
+ return <form onSubmit={event=>void confirm(event)} aria-busy={pending} aria-describedby="unsubscribe-details" className="mt-4 space-y-3">
   {error?<div ref={errorRef} tabIndex={-1} role="alert" className="outline-none"><InlineNotice tone="error" message={error}/></div>:null}
+  {pending||confirmed?<p role="status" aria-live="polite" className="text-sm leading-6 text-[var(--lms-muted-text)]">
+   {confirmed?"Your request was received. Opening confirmation…":"Submitting your unsubscribe request…"}
+  </p>:null}
   <Button type="submit" loading={pending} disabled={pending||confirmed||!token.trim()}
-   aria-busy={pending} className="min-h-11 w-auto md:min-h-9">
+   aria-busy={pending} className="min-h-11 w-full sm:w-auto">
    {cell?"Unsubscribe":"Confirm unsubscribe"}
   </Button>
  </form>;
