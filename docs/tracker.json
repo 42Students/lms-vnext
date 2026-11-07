@@ -15953,17 +15953,18 @@
         "type": "JOURNEY",
         "area": "jobs",
         "title": "Jobs · External/Slug (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-external-jobs-global-states-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [],
         "surfaceIds": [],
         "newRouteOnly": [
           "/jobs/external/[slug]"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "Scoped public route UX and recovery, keep authorization and business behavior unchanged. Exact-SHA tests, desktop/mobile browser and evidence for DONE."
       },
       {
         "id": "UX-G059",
@@ -21072,10 +21073,10 @@
         "type": "ROUTE-STATE",
         "area": "loading.tsx",
         "title": "Loading.Tsx · Shared route states (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-external-jobs-global-states-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/loading.tsx"
@@ -21084,17 +21085,18 @@
           "ROUTE-STATE-1021"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Scoped public route UX and recovery, keep authorization and business behavior unchanged. Exact-SHA tests, desktop/mobile browser and evidence for DONE."
       },
       {
         "id": "UX-G188",
         "type": "ROUTE-STATE",
         "area": "not-found.tsx",
         "title": "Not Found.Tsx · Shared route states (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-external-jobs-global-states-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/not-found.tsx"
@@ -21103,7 +21105,8 @@
           "ROUTE-STATE-1024"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Scoped public route UX and recovery, keep authorization and business behavior unchanged. Exact-SHA tests, desktop/mobile browser and evidence for DONE."
       }
     ]
   }
