@@ -628,3 +628,8 @@ Closure is governed by `docs/tracker.json#uxReview.groups` and the scoped exact-
 ## CSV export UX review (2026-11-07)
 
 The four separately tracked export groups have dedicated review evidence: [UX-G169 announcements](pages/shared/UX-G169-export-ux.md), [UX-G171 audit findings](pages/shared/UX-G171-export-ux.md), [UX-G174 faculty reports](pages/shared/UX-G174-export-ux.md), [UX-G177 messaging receipts](pages/shared/UX-G177-export-ux.md). Each preserves existing authorization, tenant scope, report bounds, and PII exclusions; `docs/tracker.json#uxReview.groups` remains the single status source.
+
+
+## UX-G165 — Shared UI kit acceptance (2026-11-07)
+
+[UX-G165 tabs, textarea, external links, toasts, tooltips and confirm-flow review](pages/shared/UX-G165-ui-kit.md). Preserve existing working controls; the exact-SHA acceptance and the canonical status are recorded separately.
