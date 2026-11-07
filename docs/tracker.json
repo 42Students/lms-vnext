@@ -19770,10 +19770,10 @@
         "type": "COMPONENT",
         "area": "announcements",
         "title": "Announcements · Interactive components (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-announcements-verification-20261107",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/components/announcements/announcement-admin-workspace.tsx",
@@ -19784,7 +19784,8 @@
           "OVERLAY-0041"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Owned for announcements authoring, verification review/filters and verification notification/export user experience; CI and responsive browser acceptance outstanding."
       },
       {
         "id": "UX-G132",
@@ -20895,10 +20896,10 @@
         "type": "COMPONENT",
         "area": "verification",
         "title": "Verification · Interactive components (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-announcements-verification-20261107",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/components/verification/SuperAdminVerificationPanel.tsx",
@@ -20913,7 +20914,8 @@
           "OVERLAY-0207"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Owned for announcements authoring, verification review/filters and verification notification/export user experience; CI and responsive browser acceptance outstanding."
       },
       {
         "id": "UX-G163",
@@ -21562,10 +21564,10 @@
         "type": "OUTBOUND",
         "area": "verification",
         "title": "Verification · Outbound copy and exports (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-announcements-verification-20261107",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/modules/verification/notification-copy.ts",
@@ -21576,7 +21578,8 @@
           "MESSAGE-0115"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Owned for announcements authoring, verification review/filters and verification notification/export user experience; CI and responsive browser acceptance outstanding."
       },
       {
         "id": "UX-G184",
