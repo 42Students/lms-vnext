@@ -204,6 +204,30 @@ Legacy includes:
 - [ ] cutover never produces a missing privacy-policy link.
 - [ ] current policy content/version/source is verified before launch.
 
+## UX-G068, UX-G051, UX-G085 — Public recovery and demo-contact UX (7 November 2026)
+
+These are **three independent status groups** in the sole canonical `docs/tracker.json#uxReview.groups`. They share one focused browser suite, but closure is recorded against each group separately; they do not certify the broader GR, parity, security or release programs.
+
+### UX-G068: maintenance recovery — `/maintenance`
+
+**Source:** `src/app/maintenance/page.tsx` and `maintenance-recovery.tsx`. This newer route was absent from the old generated 2,080-entry registry and appears in the supplementary 83-route census. The route retains noindex/nofollow metadata, sign-in fallback and branded public shell.
+
+**Scoped improvements:** explicit Try again attempts the **fixed same-origin** `/dashboard` path, delegating maintenance/auth/role rules to the normal application; offline browser state blocks navigation with visible and screen-reader announced recovery guidance. No timer, automatic page loop, or backend authorization/maintenance setting was modified. `navigator.onLine` is a network hint, never an authoritative health check.
+
+### UX-G051: access-denied recovery — `/forbidden`
+
+**Source:** `src/app/forbidden/{page,loading,error}.tsx`; optional, default-inert `alternateHref` and `alternateLabel` support added to `src/components/public/graceful-screen.tsx`. Existing loading and error boundaries were reviewed and retained.
+
+**Scoped improvements:** plain-language denial explains account/workspace context without revealing protected resource detail. Primary action opens the permission-aware `/dashboard`; secondary action opens `/login` for account change. Both links are fixed internal paths, noindex is preserved, and no retry or permission-changing control is offered on denied access. The shared component rejects non-local alternate URLs and otherwise leaves previous callers unchanged.
+
+### UX-G085: request-demo contact — `/request-demo`
+
+**Source:** `src/app/request-demo/{page,loading,error}.tsx`, `src/components/marketing/demo-contact-actions.tsx`. Existing marketing layout, structured metadata, description and full subject/body `mailto:` message remain intact. No backend lead form or new stored personal data is introduced.
+
+**Scoped improvements:** the primary mailto CTA stays available, and users without an email client can copy the published contact address with one action. Success is announced through a polite live region; denied/missing Clipboard API yields actionable manual-copy instructions and leaves the address visible as a mailto link. Controls support keyboard/mobile interaction.
+
+**Shared executable acceptance:** `tests/e2e/ux-public-recovery-groups.spec.ts` exercises desktop (1280×800), mobile (390×844), noindex/route navigation, keyboard focus, no horizontal overflow, maintenance offline/online transitions and safe retry with an intercepted dashboard destination, permission-denied recovery links, successful clipboard copy and denied-clipboard fallback. The dedicated `.github/workflows/ux-public-recovery-acceptance.yml` runs scoped ESLint, full TypeScript check and the seven Playwright scenarios. **Do not mark any of these UX groups DONE until the corresponding executed run is successful and its exact commit/verification record is entered.**
+
 ## UX-G075 — Public offline recovery (7 November 2026)
 
 **UX-group allocation:** `docs/tracker.json#uxReview.groups[UX-G075]`. The route `/offline` was one of the 83 route-only entries missing from the older generated 2,080-surface registry; it is a **single standalone UX group**, not a DB/API/security parity closure.
