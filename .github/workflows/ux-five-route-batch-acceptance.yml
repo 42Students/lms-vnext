@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - src/app/(authenticated)/admin/tenants/setup/page.tsx
+      - src/app/(authenticated)/admin/tenants/setup/error.tsx
+      - src/app/(authenticated)/admin/videos/error.tsx
       - src/app/(authenticated)/admin/verification/page.tsx
       - src/app/(authenticated)/admin/videos/page.tsx
       - src/app/(authenticated)/college/placements/**
@@ -43,15 +45,19 @@ jobs:
         run: |
           npx eslint \
             'src/app/(authenticated)/admin/tenants/setup/page.tsx' \
+            'src/app/(authenticated)/admin/tenants/setup/error.tsx' \
+            'src/app/(authenticated)/admin/videos/error.tsx' \
             'src/app/(authenticated)/admin/verification/page.tsx' \
             'src/app/(authenticated)/admin/videos/page.tsx' \
             'src/app/(authenticated)/college/placements/page.tsx' \
             'src/app/(authenticated)/college/placements/drives/page.tsx' \
+            'src/app/(authenticated)/college/placements/drives/error.tsx' \
             'src/app/(authenticated)/college-admin/departments/error.tsx' \
             'src/app/(authenticated)/college-admin/programs/error.tsx' \
             'src/app/(authenticated)/superadmin/departments/page.tsx' \
             'src/app/(authenticated)/superadmin/programs/page.tsx' \
             'src/app/(authenticated)/superadmin/not-found.tsx' \
+            'src/app/(authenticated)/superadmin/loading.tsx' \
             'src/app/(authenticated)/superadmin/error.tsx' \
             'src/app/(authenticated)/superadmin/[...legacy]/error.tsx' \
             'src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx' \
