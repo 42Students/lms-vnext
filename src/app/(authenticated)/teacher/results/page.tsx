@@ -46,7 +46,7 @@ export default async function FacultyAssessmentResultsPage({
           All Assignments
         </TextLink>
       </div>} />
-    <form method="get" action="/teacher/results"
+    <form method="get" action="/teacher/results" role="search" aria-label="Filter assessment results"
       className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
       <Label stack className="w-full min-w-0">Search
         <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
@@ -102,7 +102,7 @@ export default async function FacultyAssessmentResultsPage({
         Filter
       </Button>
       <TextLink variant="bare" href="/teacher/results" className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-[var(--lms-teal-deep)] sm:w-auto focus-ring">
-        Clear
+        Clear all filters
       </TextLink>
     </form>
     <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
