@@ -30,6 +30,10 @@ jobs:
         run: |
           npx eslint src/app/universities/page.tsx src/app/universities/error.tsx src/app/universities/loading.tsx tests/e2e/ux-universities-journey.spec.ts
           node --test tests/ux-universities-group.test.mjs
+      - name: Typecheck and UX guard
+        run: |
+          npm run typecheck
+          npm run ux:guard
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
       - name: Desktop and mobile browser acceptance
@@ -40,6 +44,7 @@ jobs:
         with:
           name: ux-g123-universities-${{ github.sha }}
           path: |
+            ux-g123-evidence/
             test-results/
             playwright-report/
           if-no-files-found: warn
