@@ -28,6 +28,6 @@ async function handleGET(request: Request) {
   } catch (error) { return apiErrorResponse(error); }
 }
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.read" },
   ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
 );

@@ -6,7 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {remindTpoBatch,TpoBatchReminderError} from "@/modules/placements/tpo-batch-reminder-service";
 export const runtime="nodejs";
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     try {

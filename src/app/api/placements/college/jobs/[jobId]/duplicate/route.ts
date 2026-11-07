@@ -6,7 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {duplicateCollegeDrive} from "@/modules/placements/college-drive-clone-service";
 export const runtime="nodejs";
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request: req, context: __actor, params }) => {
     const __ctx = __actor!;
     const {jobId}=params;

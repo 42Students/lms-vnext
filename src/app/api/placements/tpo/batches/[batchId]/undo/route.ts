@@ -14,7 +14,7 @@ import { undoPlacementParticipation, PlacementBatchError } from "@/modules/place
 export const runtime="nodejs";
 const inputSchema=z.object({actionId:z.string().uuid()}).strict();
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: __actor, params }) => {
     const ctx = __actor!;
     try {

@@ -37,7 +37,7 @@ async function handlePATCH(request: Request, { params }: RouteContext) {
   }
 }
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "college.manage" },
   ({ request, params }) => handlePATCH(request as Parameters<typeof handlePATCH>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePATCH>[1]),
 );
 
@@ -64,6 +64,6 @@ async function handleDELETE(request: Request, { params }: RouteContext) {
   }
 }
 export const DELETE = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "college.manage" },
   ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as Parameters<typeof handleDELETE>[1]),
 );

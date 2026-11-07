@@ -19,7 +19,7 @@ function fail(e:unknown){
 /** Manual apply is separate from Save: re-check authorized scope and rule
  * under locks, with an optimistic group version. */
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   async ({ request, context: __actor, params }) => {
     const ctx = __actor!;
     try {
@@ -35,7 +35,7 @@ return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
   },
 );
 export const DELETE = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     try {

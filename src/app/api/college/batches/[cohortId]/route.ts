@@ -36,7 +36,7 @@ async function handlePATCH(request: Request, { params }: RouteContext) {
   }
 }
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   ({ request, params }) => handlePATCH(request as Parameters<typeof handlePATCH>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePATCH>[1]),
 );
 
@@ -48,7 +48,7 @@ async function handlePUT(request:Request,route:RouteContext) {
   return PATCH(request,route);
 }
 export const PUT = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   ({ request, params }) => handlePUT(request as Parameters<typeof handlePUT>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePUT>[1]),
 );
 
@@ -72,6 +72,6 @@ async function handleDELETE(request:Request,{params}:RouteContext) {
   }
 }
 export const DELETE = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as Parameters<typeof handleDELETE>[1]),
 );

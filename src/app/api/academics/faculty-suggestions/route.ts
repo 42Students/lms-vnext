@@ -12,7 +12,7 @@ export const dynamic="force-dynamic";
  * Management directories retain their separate, paginated read endpoint.
  */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const collegeId=isSuperAdmin(context)?context.adminScope?.collegeId:context.membership?.collegeId;

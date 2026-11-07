@@ -17,7 +17,7 @@ type RouteContext = {
 };
 
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   async ({ request, context: __actor, params }) => {
     const context = __actor!;
     try {

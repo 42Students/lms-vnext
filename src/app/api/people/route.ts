@@ -5,7 +5,7 @@ import { listCollegePeopleWithRuntime } from "@/modules/people/runtime";
 export const runtime = "nodejs";
 
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "people.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const searchParams = new URL(request.url).searchParams;

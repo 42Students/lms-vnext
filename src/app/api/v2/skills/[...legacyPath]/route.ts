@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { isSameOriginRequest } from "@/auth/origin";
 import { GET as readSkills, POST as selectSkill } from "@/app/api/skills/route";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -40,7 +40,10 @@ async function handleGET(request: Request, { params }: Context) {
   if (parsed.skillName) target.searchParams.set("skillName", parsed.skillName);
   return readSkills(new Request(target, { headers: request.headers }));
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as unknown as Parameters<typeof handleGET>[1]),
+);
 
 /** Legacy POST /api/v2/skills/{skillName}/select, now same-origin and
  * authenticated. The route never accepts an arbitrary reporter/learner ID. */
@@ -62,4 +65,7 @@ async function handlePOST(request: Request, { params }: Context) {
   if (!outcome.ok) return outcome;
   return NextResponse.json({ status: "success", message: "Selection recorded", data: null }, { headers });
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as unknown as Parameters<typeof handlePOST>[1]),
+);

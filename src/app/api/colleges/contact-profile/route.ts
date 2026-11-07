@@ -11,7 +11,7 @@ import {
 export const runtime = "nodejs";
 
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "college.manage" },
   async ({ request, context: __actor }) => {
     const context = __actor!;
     try {

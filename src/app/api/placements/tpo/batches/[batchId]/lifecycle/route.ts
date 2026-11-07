@@ -7,7 +7,7 @@ import {changeTpoBatchLifecycle} from "@/modules/placements/tpo-batch-lifecycle-
 import {TpoBatchLifecycleError} from "@/modules/placements/tpo-batch-lifecycle-model";
 export const runtime="nodejs";
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     try {

@@ -69,6 +69,6 @@ async function handleGET(
   }
 }
 export const GET = route(
-  { auth: "user", permission: "service-enforced", stepUp: true },
+  { auth: "user", permission: "placements.manage", stepUp: true },
   ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
 );

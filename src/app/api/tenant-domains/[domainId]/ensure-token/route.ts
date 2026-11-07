@@ -8,7 +8,7 @@ import {ensureTenantDomainVerificationTokenWithRuntime} from "@/modules/tenant-d
 export const runtime="nodejs";
 type Params={params:Promise<{domainId:string}>};
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "college.manage" },
   async ({ context: __actor, params }) => {
     const __ctx = __actor!;
     const {domainId}=params;

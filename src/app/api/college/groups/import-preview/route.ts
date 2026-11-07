@@ -24,6 +24,6 @@ async function handlePOST(request: Request) {
   }
 }
 export const POST = route(
-  { auth: "user", permission: "service-enforced", stepUp: true },
+  { auth: "user", permission: "academics.manage", stepUp: true },
   ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
 );

@@ -8,7 +8,7 @@ import {writeCollegeGroupDetail,CollegeGroupDetailWriteError}
 export const runtime="nodejs";
 type RouteContext={params:Promise<{groupId:string}>};
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     try {

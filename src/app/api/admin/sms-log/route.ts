@@ -10,7 +10,7 @@ export const runtime="nodejs";
 /** POST avoids recording pasted contact details in URLs, browser history or
  * proxy access logs. The service enforces GLOBAL Super Admin access. */
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "admin-scope.select" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const _p=await readBoundedJsonRequest(request,8192);

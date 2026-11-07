@@ -7,7 +7,7 @@ import {listSuperAdminCompanyDirectory} from "@/modules/placements/admin-company
 import {superAdminCompanyCsv} from "@/modules/placements/admin-company-directory-export-model";
 export const runtime="nodejs";
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.read" },
   async ({ request, context: __actor }) => {
     const context = __actor!;
     const params=new URL(request.url).searchParams;

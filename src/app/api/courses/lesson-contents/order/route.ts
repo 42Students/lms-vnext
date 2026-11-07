@@ -44,6 +44,6 @@ async function handlePUT(request: Request) {
   }
 }
 export const PUT = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   ({ request }) => handlePUT(request as Parameters<typeof handlePUT>[0]),
 );

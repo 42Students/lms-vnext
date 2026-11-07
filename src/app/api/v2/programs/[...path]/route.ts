@@ -6,7 +6,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { listPrograms } from "@/modules/academics/program-service";
 import { recordScopedProgramSelection } from "@/modules/academics/legacy-program-popularity";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 type Context = { params: Promise<{ path: string[] }> };
@@ -58,7 +58,10 @@ async function handleGET(request: Request, { params }: Context) {
     method:"GET",headers:request.headers,signal:request.signal,
   }));
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as unknown as Parameters<typeof handleGET>[1]),
+);
 
 /** The old cache recorded program selections only in JVM memory. A bounded
  * worker-local score preserves the ranking hint; no user-level tracking,
@@ -86,4 +89,7 @@ async function handlePOST(request: Request, { params }: Context) {
     return apiErrorResponse(error);
   }
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as unknown as Parameters<typeof handlePOST>[1]),
+);

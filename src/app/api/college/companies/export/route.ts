@@ -10,7 +10,7 @@ export const runtime="nodejs";
 // Bound memory, database pagination and response size for tenant exports.
 export const COLLEGE_COMPANY_EXPORT_CAP=5000;
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: __actor }) => {
     const context = __actor!;
     const raw=Object.fromEntries(new URL(request.url).searchParams);

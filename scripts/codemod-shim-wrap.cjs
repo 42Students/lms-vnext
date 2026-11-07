@@ -21,7 +21,7 @@ const only = fi > 0 ? new Set(fs.readFileSync(process.argv[fi + 1], "utf8").spli
 const files = cp.execFileSync("git", ["ls-files", "src/app/api"], { encoding: "utf8" }).split("\n").filter((f) => f.endsWith("/route.ts") && (!only || only.has(f)));
 const skip = {}; let cur = "";
 const bump = (k) => { skip[k] = (skip[k] || 0) + 1; if (process.env.WHY) console.log(k, cur); };
-const METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"];
+const METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"];
 let converted = 0;
 
 // Routes that must stay public or machine-authenticated are handled by hand.
@@ -57,7 +57,7 @@ for (const p of files) {
   if (!/@\/security\/secure-handler["']/.test(src)) continue;
   if (/@\/security\/route["']/.test(src) && !/\bsecured\(/.test(src)) continue;
   if (!PUBLIC && !process.env.FORCE_USER && NOT_USER.test("/" + p.replace(/^src\/app\//, ""))) { bump("not-user-path"); continue; }
-  if (p.includes("[...") || p.includes("faculty-document/[membershipId]/attachments")) { bump("catch-all-or-manual"); continue; }
+  
   const sf = ts.createSourceFile(p, src, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
   const fnDecls = new Map();
   for (const s of sf.statements) if (ts.isFunctionDeclaration(s) && s.name) fnDecls.set(s.name.text, s);
@@ -71,6 +71,7 @@ for (const p of files) {
     if (!d || !ts.isIdentifier(d.name) || !/^(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)$/.test(d.name.text)) continue;
     if (!METHODS.includes(d.name.text)) { bad = "method"; break; }
     const c = d.initializer;
+    if (c && ts.isIdentifier(c)) continue; // alias such as export const PUT = PATCH: stays valid once PATCH is a route()
     if (!c || !ts.isCallExpression(c) || c.expression.getText() !== "secured" || !ts.isIdentifier(c.arguments[0])) { bad = "not-secured-ident"; break; }
     const fn = fnDecls.get(c.arguments[0].text);
     if (!fn || fn.parameters.length > 2) { bad = "handler-shape"; break; }
@@ -97,7 +98,7 @@ for (const p of files) {
   if (!PUBLIC && !process.env.FORCE_USER && !resolvesSession(p, 2)) { bump("no-session-found"); continue; }
   // getAll() on a computed key cannot be mapped to repeatableQuery safely.
   // getAll(key).length comparisons only detect repeats (route() already rejects them); any other computed read needs a manual look.
-  if ([...src.matchAll(/getAll\(\s*([^"')\s][^)]*)\)(\s*\.length)?/g)].some((m) => !m[2])) { bump("getall-computed"); continue; }
+  if ([...src.matchAll(/getAll\(\s*([^"')\s][^)]*)\)(\s*\.length)?/g)].some((m) => !m[2]) && !process.env.ALLOW_GETALL) { bump("getall-computed"); continue; }
   const repeat = [...new Set([...src.matchAll(/getAll\(\s*["']([^"']+)["']\s*\)/g)].map((m) => m[1]))];
   const edits = [];
   for (const e of exported) {
@@ -111,7 +112,7 @@ for (const p of files) {
     const destruct = arity >= 2 ? "{ request, params }" : "{ request }";
     const call = arity === 0 ? e.fnName + "()" : arity === 1
       ? `${e.fnName}(request as Parameters<typeof ${e.fnName}>[0])`
-      : `${e.fnName}(request as Parameters<typeof ${e.fnName}>[0], { params: Promise.resolve(params) } as Parameters<typeof ${e.fnName}>[1])`;
+      : `${e.fnName}(request as Parameters<typeof ${e.fnName}>[0], { params: Promise.resolve(params) } as unknown as Parameters<typeof ${e.fnName}>[1])`;
     const out = `export const ${e.name} = route(\n  { ${parts.join(", ")} },\n  (${arity === 0 ? "" : destruct}) => ${call},\n);`;
     edits.push([e.stmt.getStart(), e.stmt.getEnd(), out]);
   }

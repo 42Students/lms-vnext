@@ -6,7 +6,7 @@ import {RECOVERY_ENTITY_TYPES} from "@/modules/admin-ui/recovery-type-registry";
 import {apiErrorResponse} from "@/lib/api-error";
 export const runtime="nodejs";
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "admin-scope.select" },
   async ({ context: actor }) => {
     const context = actor!;
     requirePermission(context,"admin-scope.select");

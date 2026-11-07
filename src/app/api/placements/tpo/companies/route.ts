@@ -9,7 +9,7 @@ import { listTpoCompanies } from "@/modules/placements/tpo-company-memory-servic
 export const runtime = "nodejs";
 
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: __actor }) => {
     const context = __actor!;
     try {

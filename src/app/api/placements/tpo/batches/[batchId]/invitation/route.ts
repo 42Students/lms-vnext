@@ -10,7 +10,7 @@ export const runtime = "nodejs";
 type Params = { params: Promise<{ batchId: string }> };
 
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     try {
@@ -32,7 +32,7 @@ return NextResponse.json(result, { headers: { "Cache-Control": "private, no-stor
 );
 
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     try {

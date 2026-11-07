@@ -11,7 +11,7 @@ const querySchema=z.strictObject({
  q:z.string().trim().max(100).default(""),
 });
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "people.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const params=new URL(request.url).searchParams;

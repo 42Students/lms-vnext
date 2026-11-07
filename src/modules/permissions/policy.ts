@@ -292,6 +292,23 @@ export function can(
   }
 }
 
+/**
+ * Central, route-level permission gate: "does this actor hold the permission in the workspace they are acting in".
+ * It checks against the actor's own selected scope (admin scope for a Super Admin, membership college otherwise).
+ * The service called by the route still checks the concrete target resource. Calling `requirePermission` with an
+ * empty scope would deny every membership role, because college permissions need a college to compare against.
+ */
+export function requireActorPermission(
+  context: RequestContext | null | undefined,
+  permission: PlatformPermission,
+) {
+  const scope: ResourceScope = {
+    collegeId: context?.adminScope?.collegeId ?? context?.membership?.collegeId ?? null,
+    organizationId: context?.adminScope?.organizationId ?? context?.membership?.organizationId ?? null,
+  };
+  requirePermission(context, permission, scope);
+}
+
 export class AuthorizationError extends Error {
   constructor(permission: PlatformPermission) {
     super(`Missing permission: ${permission}`);

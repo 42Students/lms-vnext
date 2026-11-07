@@ -12,7 +12,7 @@ export const runtime="nodejs";
 
 /** Remote and bounded recruiter lookup: tenant-scoped, no contact fields. */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const params=new URL(request.url).searchParams;

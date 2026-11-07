@@ -62,6 +62,6 @@ async function handlePOST(request: Request) {
   }
 }
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "system-role.manage" },
   ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
 );

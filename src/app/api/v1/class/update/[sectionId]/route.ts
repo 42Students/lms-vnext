@@ -14,7 +14,7 @@ export const runtime = "nodejs";
  * Numeric legacy IDs cannot identify a new UUID section; the caller must
  * map its old identity to a scoped persisted section before mutation. */
 export const PUT = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   async ({ request, context: __actor, params }) => {
     const context = __actor!;
     try {

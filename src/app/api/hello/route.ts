@@ -1,9 +1,14 @@
 import {NextResponse} from "next/server";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 /** Legacy stub: all methods respond with 404 and {message:"Not found"}, never 200 Hello. */
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
+const config = {
+  auth: "public",
+  publicReason: "Retired legacy stub: every method answers 404 and touches no data.",
+  csrf: false,
+  csrfExemptReason: "The route never changes state; every method returns the same 404.",
+} as const;
 function retired(){return NextResponse.json({message:"Not found"},{status:404,headers:{"Cache-Control":"no-store"}});}
-export const GET=secured(retired),POST=secured(retired),PUT=secured(retired),PATCH=secured(retired),DELETE=secured(retired),OPTIONS=secured(retired);
-function handleHEAD(){return new Response(null,{status:404,headers:{"Cache-Control":"no-store","Content-Type":"application/json"}});}
-export const HEAD = secured(handleHEAD);
+export const GET=route(config,retired),POST=route(config,retired),PUT=route(config,retired),PATCH=route(config,retired),DELETE=route(config,retired),OPTIONS=route(config,retired);
+export const HEAD = route(config, () => new Response(null,{status:404,headers:{"Cache-Control":"no-store","Content-Type":"application/json"}}));

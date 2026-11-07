@@ -12,7 +12,7 @@ export const runtime="nodejs";
 /** Live workload counts from current Faculty grants, never shared with
  * the College, Mentor, Recruiter, or TPO navigation. */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.read" },
   async ({ context: actor }) => {
     const context = actor!;
     const assessments=await getFacultyAssessmentOverview(context);

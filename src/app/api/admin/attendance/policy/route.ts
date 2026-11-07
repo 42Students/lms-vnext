@@ -37,6 +37,6 @@ async function handleGET(request:Request){
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(
-  { auth: "user", permission: "service-enforced", repeatableQuery: ["collegeId"] },
+  { auth: "user", permission: "academics.manage", repeatableQuery: ["collegeId"] },
   ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
 );

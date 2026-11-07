@@ -53,6 +53,6 @@ async function handleGET(request: Request): Promise<Response> {
   }
 }
 export const GET = route(
-  { auth: "user", permission: "service-enforced", stepUp: true },
+  { auth: "user", permission: "courses.read", stepUp: true },
   ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
 );

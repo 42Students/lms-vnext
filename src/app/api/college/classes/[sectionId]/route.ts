@@ -12,7 +12,7 @@ import { deleteCollegeSection, CollegeSectionLifecycleError } from "@/modules/ac
 export const runtime = "nodejs";
 
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   async ({ request, context: __actor, params }) => {
     const context = __actor!;
     try {
@@ -34,7 +34,7 @@ return NextResponse.json({ section });
 
 /** Dependency-free hard delete only. Historical children always block it. */
 export const DELETE = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   async ({ request, context: __actor, params }) => {
     const context = __actor!;
     try {

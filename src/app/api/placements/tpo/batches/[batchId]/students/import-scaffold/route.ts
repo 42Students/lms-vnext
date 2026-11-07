@@ -25,6 +25,6 @@ async function handleGET(request:Request,{params}:{params:Promise<{batchId:strin
  }catch(error){const response=apiErrorResponse(error);response.headers.set("Cache-Control","private, no-store, max-age=0");return response;}
 }
 export const GET = route(
-  { auth: "user", permission: "service-enforced", stepUp: true },
+  { auth: "user", permission: "placements.manage", stepUp: true },
   ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
 );

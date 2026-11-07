@@ -7,7 +7,7 @@ import {updateCollegeOfferingMetadata,CollegeOfferingMetadataError}
   from "@/modules/courses/college-offering-metadata-service";
 export const runtime="nodejs";
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     try {

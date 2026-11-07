@@ -16,7 +16,7 @@ import {listSuperAdminBroadcastColleges,publishSuperAdminCollegeBroadcast} from 
 import {listAnnouncementsForAdmin} from "@/modules/announcements/service";
 import {parseAnnouncementAdminApiQuery} from "@/modules/announcements/admin-api-query";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 
 /** Source broadcast IDs are distinct from individual recipient copies.
@@ -77,7 +77,10 @@ async function handlePATCH(request:Request){
    {headers:{"cache-control":"private, no-store"}});
  }catch(error){return announcementApiError(error);}
 }
-export const PATCH = secured(handlePATCH, { csrf: "enforce" });
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePATCH(request as Parameters<typeof handlePATCH>[0]),
+);
 export const PUT=PATCH;
 
 async function handleDELETE(request:Request){
@@ -98,7 +101,10 @@ async function handleDELETE(request:Request){
    {headers:{"cache-control":"private, no-store"}});
  }catch(error){return announcementApiError(error);}
 }
-export const DELETE = secured(handleDELETE, { csrf: "enforce" });
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleDELETE(request as Parameters<typeof handleDELETE>[0]),
+);
 
 
 /** Preserve legacy composer field names, but never infer consent or expand an
@@ -138,7 +144,10 @@ async function handlePOST(request:Request){
   },{status:201,headers:{"cache-control":"private, no-store"}});
  }catch(error){return announcementApiError(error);}
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
+);
 
 
 /** Legacy broadcast picker and history read, scoped by the same authoritative
@@ -208,4 +217,7 @@ async function handleGET(request:Request){
   },{headers:{"cache-control":"private, no-store"}});
  }catch(error){return announcementApiError(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

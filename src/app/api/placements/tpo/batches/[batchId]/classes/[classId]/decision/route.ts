@@ -15,7 +15,7 @@ const command=z.discriminatedUnion("decision",[
  z.strictObject({decision:z.literal("NOT_DECIDED"),expectedVersion:z.string().min(1)}),
 ]);
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: __actor, params }) => {
     const ctx = __actor!;
     const {batchId,classId}=params;

@@ -9,7 +9,7 @@ type Params={params:Promise<{id:string}>};
 /** Full plain text is available only after a separate global-Super-Admin read.
  * An unknown ID returns the same generic 404 as a deleted email. */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "admin-scope.select" },
   async ({ context: __actor, params }) => {
     const __ctx = __actor!;
     const {id}=params;

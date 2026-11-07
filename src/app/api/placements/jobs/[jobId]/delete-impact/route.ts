@@ -11,7 +11,7 @@ export const runtime = "nodejs";
  * read is scoped by the same job policy as GET /api/placements/jobs/{jobId}.
  */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const { jobId } = params;

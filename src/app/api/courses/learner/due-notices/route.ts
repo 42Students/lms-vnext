@@ -7,7 +7,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 export const runtime="nodejs";
 /** Learner-only live reminder read; no externally scheduled delivery is claimed. */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.read" },
   async ({ context: __actor }) => {
     const __ctx = __actor!;
     const overview=await getLearnerAssessmentOverview(__ctx);

@@ -9,7 +9,7 @@ import {
   GET as canonicalGetDetail, PATCH as canonicalPatch, DELETE as canonicalDelete,
 } from "@/app/api/academics/programs/[programId]/route";
 import { listPrograms } from "@/modules/academics/program-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 type Context = { params: Promise<{ action: string[] }> };
@@ -62,7 +62,10 @@ async function handleGET(request: Request, { params }: Context) {
     return apiErrorResponse(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as unknown as Parameters<typeof handleGET>[1]),
+);
 
 async function handlePOST(request: Request, { params }: Context) {
   if (!isSameOriginRequest(request))
@@ -74,7 +77,10 @@ async function handlePOST(request: Request, { params }: Context) {
   url.searchParams.set("legacy","1");
   return canonicalPost(new Request(url,request));
 }
-export const POST = secured(handlePOST, { csrf: "enforce" });
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as unknown as Parameters<typeof handlePOST>[1]),
+);
 
 async function handlePUT(request: Request, { params }: Context) {
   if (!isSameOriginRequest(request))
@@ -113,7 +119,10 @@ async function handlePUT(request: Request, { params }: Context) {
     return apiErrorResponse(error);
   }
 }
-export const PUT = secured(handlePUT, { csrf: "enforce" });
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePUT(request as Parameters<typeof handlePUT>[0], { params: Promise.resolve(params) } as unknown as Parameters<typeof handlePUT>[1]),
+);
 
 async function handleDELETE(request: Request, { params }: Context) {
   if (!isSameOriginRequest(request))
@@ -126,4 +135,7 @@ async function handleDELETE(request: Request, { params }: Context) {
     method:"DELETE",headers:request.headers,body:JSON.stringify({confirm:true}),
   }),{params:Promise.resolve({programId:id!})});
 }
-export const DELETE = secured(handleDELETE, { csrf: "enforce" });
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as unknown as Parameters<typeof handleDELETE>[1]),
+);

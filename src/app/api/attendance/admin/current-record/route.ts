@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 
 /** Scopes both event and learner through the selected college delivery. */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const search = new URL(request.url).searchParams;

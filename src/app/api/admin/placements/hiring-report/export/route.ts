@@ -11,7 +11,7 @@ export const runtime="nodejs";
 /** Read-only selected-college or organization export with the legacy summary, funnel,
  * company/job rows and company totals as separate CSV sections. */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.read" },
   async ({ request, context: __actor }) => {
     const context = __actor!;
     const params=new URL(request.url).searchParams;

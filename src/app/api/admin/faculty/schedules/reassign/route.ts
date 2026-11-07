@@ -8,7 +8,7 @@ import {reassignSuperAdminFacultySchedules,SuperAdminFacultyScheduleReassignErro
 
 export const runtime="nodejs";
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   async ({ request, context: __actor }) => {
     const context = __actor!;
     try {

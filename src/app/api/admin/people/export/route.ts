@@ -6,7 +6,7 @@ import { exportSuperAdminUsers } from "@/modules/people/admin-users-export-servi
 import { readSuperAdminPeopleExportParams } from "@/modules/people/admin-users-export-model";
 export const runtime = "nodejs";
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "people.manage" },
   async ({ request, context: __actor }) => {
     const context = __actor!;
     await requireRecentDeviceAuthentication(context.user.id);

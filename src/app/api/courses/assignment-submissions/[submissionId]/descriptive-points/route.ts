@@ -9,7 +9,7 @@ import {descriptiveAssignmentPointsSchema} from "@/modules/courses/assignment-de
 export const runtime="nodejs";
 type Params={params:Promise<{submissionId:string}>};
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     try {

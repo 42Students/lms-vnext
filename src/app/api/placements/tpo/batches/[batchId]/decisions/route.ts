@@ -9,7 +9,7 @@ import { tpoBatchDecisionSchema } from "@/modules/placements/tpo-batch-decision-
 export const runtime="nodejs";
 type Params={params:Promise<{batchId:string}>};
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: __actor, params }) => {
     const ctx = __actor!;
     try {

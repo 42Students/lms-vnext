@@ -5,7 +5,7 @@ import { listSubmissionFiles } from "@/modules/courses/assignment-submission-fil
 export const runtime = "nodejs";
 
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const { submissionId } = params;

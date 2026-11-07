@@ -22,6 +22,6 @@ async function handleGET(request:Request){
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(
-  { auth: "user", permission: "service-enforced", repeatableQuery: ["q", "page"] },
+  { auth: "user", permission: "placements.read", repeatableQuery: ["q", "page"] },
   ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
 );

@@ -14,6 +14,6 @@ async function handlePOST(request:Request,{params}:{params:Promise<{batchId:stri
  }catch(error){return apiErrorResponse(error);}
 }
 export const POST = route(
-  { auth: "user", permission: "service-enforced", stepUp: true },
+  { auth: "user", permission: "placements.manage", stepUp: true },
   ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
 );

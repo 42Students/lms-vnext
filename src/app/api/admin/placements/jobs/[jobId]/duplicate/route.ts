@@ -6,7 +6,7 @@ import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {duplicateCollegeDrive} from "@/modules/placements/college-drive-clone-service";
 export const runtime="nodejs";
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     const {jobId}=params,ctx=__ctx;

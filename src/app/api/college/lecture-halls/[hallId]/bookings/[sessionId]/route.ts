@@ -7,7 +7,7 @@ import {cancelCollegeHallBooking,CollegeHallCancelError}
   from "@/modules/academics/college-hall-cancel-service";
 export const runtime="nodejs";
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     try {

@@ -4,7 +4,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import {parseSuperAdminQuizQuery} from "@/modules/admin-ui/super-admin-quiz-query-model";
 import {listCollegeAssessmentAggregate} from "@/modules/courses/college-assessment-aggregate-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -33,4 +33,7 @@ async function handleGET(request:Request){
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "courses.read" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

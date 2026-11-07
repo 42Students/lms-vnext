@@ -3,7 +3,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {listCollegeAdminHistory} from "@/modules/colleges/admin-session-service";
 import {collegeAdminHistoryCsv} from "@/modules/colleges/admin-history-export-model";
 import {parseAdminSessionHistoryPage} from "@/modules/colleges/admin-session-query-model";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 async function handleGET(request:Request,{params}:{params:Promise<{collegeId:string;userId:string}>}){
@@ -33,4 +33,7 @@ async function handleGET(request:Request,{params}:{params:Promise<{collegeId:str
   return response;
  }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
+);

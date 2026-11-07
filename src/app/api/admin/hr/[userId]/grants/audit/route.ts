@@ -5,7 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getSuperAdminRecruiterGrantAudit} from "@/modules/placements/super-admin-recruiter-grant-audit-service";
 export const runtime="nodejs";
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "admin-scope.select" },
   async ({ context: __actor, params }) => {
     const __ctx = __actor!;
     const {userId}=params;

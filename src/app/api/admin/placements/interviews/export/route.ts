@@ -24,6 +24,6 @@ async function handleGET(request:Request){
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(
-  { auth: "user", permission: "service-enforced", stepUp: true },
+  { auth: "user", permission: "placements.read", stepUp: true },
   ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
 );

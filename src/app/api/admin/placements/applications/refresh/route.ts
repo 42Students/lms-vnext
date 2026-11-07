@@ -33,6 +33,6 @@ async function handlePOST(request:Request){
  }catch(error){return apiErrorResponse(error);}
 }
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.read" },
   ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
 );

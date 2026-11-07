@@ -10,7 +10,7 @@ export const dynamic="force-dynamic";
  * College identity comes exclusively from the signed-in membership, never from
  * a request-supplied legacy numeric ID or UUID query parameter. */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "college.read" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const url=new URL(request.url);

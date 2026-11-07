@@ -9,7 +9,7 @@ const escape=(value:string)=>value.replaceAll("\\","\\\\").replaceAll(";","\\;")
  .replaceAll(",","\\,").replaceAll("\n","\\n");
 const stamp=(d:Date)=>d.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,"");
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const q=new URL(request.url).searchParams;

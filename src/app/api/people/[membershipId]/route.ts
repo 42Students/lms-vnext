@@ -5,7 +5,7 @@ import { getPersonMembershipDetailWithRuntime } from "@/modules/people/runtime";
 export const runtime = "nodejs";
 
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "people.manage" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const { membershipId } = params;

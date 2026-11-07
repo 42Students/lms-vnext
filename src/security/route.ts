@@ -6,7 +6,7 @@ import { clientIp } from "@/auth/ip-rate-limit";
 import { allowRequestShared } from "@/security/shared-store";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedJsonBody } from "@/lib/bounded-json-body";
-import { requirePermission, type PlatformPermission } from "@/modules/permissions/policy";
+import { requireActorPermission, type PlatformPermission } from "@/modules/permissions/policy";
 import { offerRequestValue, runWithTenantScope, scopeFromActor } from "@/db/tenant-context";
 import { writeStructuredLog } from "@/observability/logger";
 import { createRoute } from "@/security/route-core";
@@ -20,7 +20,7 @@ type Context = Awaited<ReturnType<typeof getCurrentRequestContext>>;
 export const route = createRoute<Context, PlatformPermission>({
   getContext: getCurrentRequestContext,
   requirePermission: (context, permission) =>
-    requirePermission(context as never, permission as PlatformPermission),
+    requireActorPermission(context as never, permission as PlatformPermission),
   isSameOrigin: isSameOriginRequest,
   readJson: readBoundedJsonBody,
   onError: apiErrorResponse,

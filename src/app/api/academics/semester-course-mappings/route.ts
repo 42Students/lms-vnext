@@ -14,7 +14,7 @@ export const runtime = "nodejs";
  */
 
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   async ({ request, context: __actor }) => {
     const context = __actor!;
     try {
@@ -51,7 +51,7 @@ return NextResponse.json({ mapping: row,
  * It never mutates credits while updating 1-based displayOrder.
  */
 export const PUT = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.manage" },
   async ({ request, context: __actor }) => {
     const context = __actor!;
     try {

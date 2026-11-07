@@ -8,7 +8,7 @@ import { changeCollegeOfferingLifecycle, CollegeOfferingLifecycleError }
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ offeringId: string }> };
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ request, context: __actor, params }) => {
     const __ctx = __actor!;
     try {

@@ -10,7 +10,7 @@ import {
 } from "@/modules/people/runtime";
 
 import {updateOwnLearnerProfileDocument} from "@/modules/people/learner-profile-document-edit-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 const MAX_PROFILE_DOCUMENT_BYTES = 2 * 1024 * 1024;
@@ -51,7 +51,10 @@ async function handleGET(request: Request) {
     return apiErrorResponse(error);
   }
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);
 
 async function handlePUT(request: Request) {
   if (!isSameOriginRequest(request)) {
@@ -76,7 +79,10 @@ async function handlePUT(request: Request) {
     return apiErrorResponse(error);
   }
 }
-export const PUT = secured(handlePUT);
+export const PUT = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request }) => handlePUT(request as Parameters<typeof handlePUT>[0]),
+);
 
 /** Stable route replacement directory for legacy LearnerProfileController consumers. */
 export const LEARNER_PROFILE_ROUTE_REPLACEMENTS = {
@@ -111,4 +117,7 @@ async function handleOPTIONS() {
     administrativeProfile: "GET /api/college/students/{membershipId}/profile (requires authorized college context)",
   }, { headers: { Allow: "GET, PUT, OPTIONS", "Cache-Control": "no-store" } });
 }
-export const OPTIONS = secured(handleOPTIONS);
+export const OPTIONS = route(
+  { auth: "user", permission: "service-enforced" },
+  () => handleOPTIONS(),
+);

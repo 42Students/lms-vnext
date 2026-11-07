@@ -10,7 +10,7 @@ import {
  revokeFacultyAdminDocumentAttachment,
  openFacultyDocumentForAdmin,
 } from "@/modules/people/faculty-admin-document-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -39,7 +39,10 @@ async function handlePOST(request:Request,{params}:Params){
    await getCurrentRequestContext(),membershipId,input.value),{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
-export const POST = secured(handlePOST);
+export const POST = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as unknown as Parameters<typeof handlePOST>[1]) as Promise<Response>,
+);
 async function handlePATCH(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
@@ -51,7 +54,10 @@ async function handlePATCH(request:Request,{params}:Params){
    await getCurrentRequestContext(),membershipId,input.value),{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
-export const PATCH = secured(handlePATCH);
+export const PATCH = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handlePATCH(request as Parameters<typeof handlePATCH>[0], { params: Promise.resolve(params) } as unknown as Parameters<typeof handlePATCH>[1]) as Promise<Response>,
+);
 async function handleDELETE(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
@@ -63,7 +69,10 @@ async function handleDELETE(request:Request,{params}:Params){
    await getCurrentRequestContext(),membershipId,input.value),{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
-export const DELETE = secured(handleDELETE);
+export const DELETE = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as unknown as Parameters<typeof handleDELETE>[1]) as Promise<Response>,
+);
 /** Read grants can never be issued from an object key; the current profile
  * must still reference a CLEAN, non-revoked receipt owned by that member. */
 async function handleGET(request:Request,{params}:Params){
@@ -77,4 +86,7 @@ async function handleGET(request:Request,{params}:Params){
    }),{headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as unknown as Parameters<typeof handleGET>[1]) as Promise<Response>,
+);

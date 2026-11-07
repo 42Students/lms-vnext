@@ -6,7 +6,7 @@ import {listCollegeInterviewerSuggestions} from "@/modules/placements/college-in
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const query=new URL(request.url).searchParams;

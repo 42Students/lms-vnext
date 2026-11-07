@@ -5,7 +5,7 @@ import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-s
 export const runtime = "nodejs";
 
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const collegeId =

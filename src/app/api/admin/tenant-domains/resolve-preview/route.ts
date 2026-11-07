@@ -8,7 +8,7 @@ export const runtime="nodejs";
 
 /** Read-only global administrator preview of the effective verified host. */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "admin-scope.select" },
   async ({ request, context: __actor }) => {
     const __ctx = __actor!;
     const query=new URL(request.url).searchParams;

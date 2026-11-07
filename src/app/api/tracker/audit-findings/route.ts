@@ -3,7 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {parseIndependentFindingFilters} from "@/modules/bug-tracker/independent-audit-findings-model";
 import {listIndependentAuditFindings} from "@/modules/bug-tracker/independent-audit-findings-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -26,4 +26,7 @@ async function handleGET(request:Request){
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "admin-scope.select" },
+  ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
+);

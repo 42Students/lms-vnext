@@ -13,7 +13,7 @@ type Params={params:Promise<{deliveryId:string;assignmentId:string}>};
 /** An enrolled learner's resource list never exposes private object keys.
  * PDF and file links are resolved separately through the signed-read route. */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ context: actor, params }) => {
     const context = actor!;
     const {deliveryId,assignmentId}=params;

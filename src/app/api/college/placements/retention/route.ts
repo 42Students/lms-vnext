@@ -11,7 +11,7 @@ export const runtime="nodejs";
  * and always caps this private sample at 200 applications.
  */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ context: actor }) => {
     const context = actor!;
     const first=await getCollegeApplicationRetentionReport(context,{

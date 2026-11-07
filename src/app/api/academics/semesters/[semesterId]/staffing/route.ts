@@ -12,7 +12,7 @@ export const dynamic="force-dynamic";
  * This is a read-only report: mapping writes use separate authorized routes.
  */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "academics.read" },
   async ({ context: __actor, params }) => {
     const __ctx = __actor!;
     try {

@@ -47,6 +47,6 @@ async function handlePOST(request:Request,{params}:RouteContext){
  }catch(error){return apiErrorResponse(error);}
 }
 export const POST = route(
-  { auth: "user", permission: "service-enforced", repeatableQuery: ["done"] },
+  { auth: "user", permission: "admin-scope.select", repeatableQuery: ["done"] },
   ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
 );

@@ -10,7 +10,7 @@ export const runtime="nodejs";
 /** Canonical CAS PATCH for triage. The old POST /{id}/done?done=true|false
  * is translated under the same Super Admin guard at [id]/done/route.ts. */
 export const PATCH = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "admin-scope.select" },
   async ({ request, context: __actor }) => {
     const context = __actor!;
     const body=await readBoundedJsonBody(request,8192);

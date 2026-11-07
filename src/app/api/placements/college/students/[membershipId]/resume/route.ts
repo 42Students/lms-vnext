@@ -9,7 +9,7 @@ export const dynamic="force-dynamic";
 type Context={params:Promise<{membershipId:string}>};
 
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ context: __actor, params }) => {
     const context = __actor!;
     try {

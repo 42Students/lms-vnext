@@ -17,7 +17,7 @@ export const runtime="nodejs";
  * Uses the one registered vNext authoring transaction; no opaque historical
  * resource DTO is silently ignored or written without verified uploads. */
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ request, context: __actor }) => {
     const ctx = __actor!;
     const parsed=await readBoundedJsonRequest(request,8192);

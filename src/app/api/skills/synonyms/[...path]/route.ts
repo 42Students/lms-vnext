@@ -6,7 +6,7 @@ import { skillsCatalogRuntimeEnabled } from "@/modules/skills/catalog-readiness"
 import {
   listSkillSynonymsForParent, searchSkillsByExactSynonym, skillSynonymExists,
 } from "@/modules/skills/catalog-service";
-import { secured } from "@/security/secure-handler";
+import { route } from "@/security/route";
 
 export const runtime = "nodejs";
 type Context = {params:Promise<{path:string[]}>};
@@ -40,4 +40,7 @@ async function handleGET(request:Request,{params}:Context) {
     return NextResponse.json({error:"NOT_FOUND"},{status:404});
   }catch(error){return apiErrorResponse(error);}
 }
-export const GET = secured(handleGET);
+export const GET = route(
+  { auth: "user", permission: "service-enforced" },
+  ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as unknown as Parameters<typeof handleGET>[1]),
+);
