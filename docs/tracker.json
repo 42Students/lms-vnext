@@ -16954,10 +16954,10 @@
         "type": "JOURNEY",
         "area": "mentor",
         "title": "Mentor · Task Reviews → Team Coverage (part 6)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-mentor-teach-tpo-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/mentor/task-reviews/error.tsx",
@@ -16976,7 +16976,8 @@
           "PAGE-0302"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "UX enhancement, browser/seeded role regression, evidence required. No auth/RLS changes."
       },
       {
         "id": "UX-G075",
@@ -17801,10 +17802,10 @@
         "type": "JOURNEY",
         "area": "teach",
         "title": "Teach · Courses → Courses / DeliveryId (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-mentor-teach-tpo-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/teach/courses/[deliveryId]/error.tsx",
@@ -17823,7 +17824,8 @@
           "PAGE-0326"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "UX enhancement, browser/seeded role regression, evidence required. No auth/RLS changes."
       },
       {
         "id": "UX-G091",
@@ -19310,10 +19312,10 @@
         "type": "JOURNEY",
         "area": "tpo",
         "title": "Tpo · Team / Everyone → Verification (part 23)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-mentor-teach-tpo-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/tpo/team/everyone/error.tsx",
@@ -19332,7 +19334,8 @@
           "PAGE-0492"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "UX enhancement, browser/seeded role regression, evidence required. No auth/RLS changes."
       },
       {
         "id": "UX-G121",
