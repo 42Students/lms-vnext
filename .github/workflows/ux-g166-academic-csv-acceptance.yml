@@ -1,0 +1,60 @@
+name: UX-G166 academic CSV and pagination acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/modules/academics/college-directory-export-model.ts
+      - src/modules/academics/college-classes-export-model.ts
+      - src/modules/academics/college-classes-export-service.ts
+      - src/modules/academics/college-lecture-halls-export-service.ts
+      - src/app/e2e/ux-g166-academic-csv/**
+      - tests/unit/ux-g166-academic-csv-acceptance.test.ts
+      - tests/unit/college-classes-export-model.test.ts
+      - tests/e2e/ux-g166-academic-csv.spec.ts
+      - .github/workflows/ux-g166-academic-csv-acceptance.yml
+permissions:
+  contents: read
+jobs:
+  academic-csv:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      UX_G166_FIXTURE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Scoped ESLint
+        run: |
+          npx eslint src/modules/academics/college-directory-export-model.ts src/modules/academics/college-classes-export-model.ts src/modules/academics/college-classes-export-service.ts src/modules/academics/college-lecture-halls-export-service.ts src/app/e2e/ux-g166-academic-csv/page.tsx tests/unit/ux-g166-academic-csv-acceptance.test.ts tests/unit/college-classes-export-model.test.ts tests/e2e/ux-g166-academic-csv.spec.ts
+      - name: Full TypeScript
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: Unit and existing security regression
+        run: |
+          npx vitest run tests/unit/ux-g166-academic-csv-acceptance.test.ts tests/unit/college-classes-export-model.test.ts tests/unit/chat4-college-admin-export-boundaries.test.ts tests/unit/chat4-college-export-signin-ledger.test.ts
+      - name: Chromium dependencies
+        run: npx playwright install --with-deps chromium
+      - name: Real downloadable CSV desktop/mobile proof
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: ux-g166-browser-results.json
+        run: |
+          set -euo pipefail
+          npx playwright test tests/e2e/ux-g166-academic-csv.spec.ts --project=chromium --reporter=line,json,html
+          node -e 'const s=require("./ux-g166-browser-results.json").stats;if(s.expected!==2||s.unexpected!==0||s.skipped!==0||s.flaky!==0){console.error("UX-G166 browser gate failed",s);process.exit(1)}'
+      - name: Preserve desktop/mobile evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-g166-academic-csv-evidence
+          path: |
+            test-results/
+            playwright-report/
+            ux-g166-browser-results.json
+          if-no-files-found: ignore
