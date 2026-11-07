@@ -9,6 +9,7 @@ import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { requireActorPermission, type PlatformPermission } from "@/modules/permissions/policy";
 import { offerRequestValue, runAsSystem, runWithTenantScope, scopeFromActor } from "@/db/tenant-context";
 import { writeStructuredLog } from "@/observability/logger";
+import { recordSecurityEvent } from "@/security/audit-store";
 import { createRoute } from "@/security/route-core";
 
 type Context = Awaited<ReturnType<typeof getCurrentRequestContext>>;
@@ -38,6 +39,19 @@ export const route = createRoute<Context, PlatformPermission>({
   defaultPublicLimit: { limit: 120, windowMs: 60_000 },
   onAudit: (event) => {
     const actor = event.context as { user?: { id?: string }; membership?: { id?: string; collegeId?: string; roles?: string[] } | null } | null;
+    recordSecurityEvent({
+      event: event.download === true ? "api.export" : event.status >= 400 ? "api.denied" : "api.mutation",
+      outcome: event.status === 429 ? "rate_limited" : event.status === 401 || event.status === 403 ? "denied" : event.status >= 400 ? "error" : "ok",
+      requestId: event.requestId,
+      userId: actor?.user?.id ?? null,
+      membershipId: actor?.membership?.id ?? null,
+      collegeId: actor?.membership?.collegeId ?? null,
+      role: actor?.membership?.roles?.[0] ?? null,
+      method: event.method,
+      path: event.path,
+      status: event.status,
+      detail: { durationMs: event.durationMs },
+    });
     writeStructuredLog(event.status >= 400 ? "WARNING" : "INFO", "api.audit", {
       requestId: event.requestId,
       method: event.method,

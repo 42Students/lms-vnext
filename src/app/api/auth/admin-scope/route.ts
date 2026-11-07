@@ -12,6 +12,7 @@ import {
   encodeAdminScopeCookie,
 } from "@/auth/admin-scope";
 import { writeStructuredLog } from "@/observability/logger";
+import { recordSecurityEvent } from "@/security/audit-store";
 import { isSameOriginRequest } from "@/auth/origin";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -93,6 +94,7 @@ response.cookies.set(
         maxAge: cleared?0:ADMIN_SCOPE_MAX_AGE_SECONDS,
       },
     );
+recordSecurityEvent({ event:"admin_scope."+(cleared?"cleared":"entered"), outcome:"ok", userId:context.user.id, collegeId:scope.collegeId??null, target:scope.organizationId??null, detail:{ ttlSeconds:cleared?0:ADMIN_SCOPE_MAX_AGE_SECONDS } });
 writeStructuredLog("INFO","admin_scope.audit",{
       outcome:cleared?"cleared":"entered",
       userId:context.user.id,

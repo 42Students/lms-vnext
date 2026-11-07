@@ -102,3 +102,8 @@ This table is a working note, not a status source. Control states live only in `
 | `app/health`, `app/ready` | Left outside `route()` on purpose | Probes must work when the database or shared store is down, so they cannot depend on the wrapper's stores. They return no tenant data |
 | `app/company-share/[token]/access` (POST) | Own origin check, 2 KiB body cap, token check, code check | Public by design; candidate for `webhookRoute()`-style wrapper later |
 | Pages writing to the database | Only `tracker/logs` (audit row on each Super Admin view, intentional) | Other `.insert/.update/.delete` matches in pages were URL or hash calls |
+
+## Durable audit trail (SEC-19), added 2026-11-08
+
+Table `security_audit_events` (migration 0341, schema `src/db/schema/security-audit-events.ts`, writer `src/security/audit-store.ts`). Append-only for every role: a trigger refuses UPDATE, DELETE and TRUNCATE, and the runtime role keeps only INSERT and SELECT when it exists. Tenant table (`college_id`, nullable for platform events) with the usual tenant policy. Written fire-and-forget (bounded, never blocks or fails a request, falls back to the structured log with one warning) when `SECURITY_AUDIT_DB=on`. Sources today: every denied (401/403/429), mutating and exported request through `route()` (`api.denied`, `api.mutation`, `api.export`), every guarded server action (`action.<name>`), Super Admin scope entered and cleared (`admin_scope.*`). The structured logs remain the first copy.
+Not yet: login outcomes, step-up failures and role/permission changes as typed events; an admin view; retention and export policy (decision: keep 400 days, ship older rows to cold storage, owner to confirm).

@@ -2,6 +2,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { allowRequestShared } from "@/security/shared-store";
 import { requireActorPermission, type PlatformPermission } from "@/modules/permissions/policy";
 import { writeStructuredLog } from "@/observability/logger";
+import { recordSecurityEvent } from "@/security/audit-store";
 
 export class ActionRateLimitError extends Error {
   constructor() {
@@ -30,7 +31,15 @@ type ActionGuardConfig = {
 export async function guardAction(config: ActionGuardConfig) {
   const context = await getCurrentRequestContext();
   const actor = context as { user: { id: string }; membership?: { id?: string; collegeId?: string } | null };
-  const audit = (outcome: string) =>
+  const audit = (outcome: string) => {
+    recordSecurityEvent({
+      event: "action." + config.name,
+      outcome,
+      userId: actor.user.id,
+      membershipId: actor.membership?.id ?? null,
+      collegeId: actor.membership?.collegeId ?? null,
+      target: config.permission,
+    });
     writeStructuredLog(outcome === "ok" ? "INFO" : "WARNING", "action.audit", {
       action: config.name,
       outcome,
@@ -38,6 +47,7 @@ export async function guardAction(config: ActionGuardConfig) {
       membershipId: actor.membership?.id ?? null,
       collegeId: actor.membership?.collegeId ?? null,
     });
+  };
   try {
     requireActorPermission(context as never, config.permission);
   } catch (error) {

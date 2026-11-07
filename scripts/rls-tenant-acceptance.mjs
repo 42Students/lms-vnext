@@ -135,6 +135,24 @@ try {
   const definers = (await client.query(`SELECT p.proname FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace AND n.nspname = 'public' WHERE p.prosecdef`)).rows.map((r) => r.proname);
   check("no SECURITY DEFINER function in schema public (SEC-06-013/014)", definers.length === 0, definers.join(","));
 
+  // 2e. Security audit trail is append-only for every role (migration 0341, SEC-19).
+  await client.query("INSERT INTO security_audit_events (event, outcome) VALUES ('acceptance.probe', 'ok')");
+  for (const [label, sql] of [
+    ["UPDATE", "UPDATE security_audit_events SET outcome = 'tampered' WHERE event = 'acceptance.probe'"],
+    ["DELETE", "DELETE FROM security_audit_events WHERE event = 'acceptance.probe'"],
+    ["TRUNCATE", "TRUNCATE security_audit_events"],
+  ]) {
+    let refused = false;
+    try {
+      await client.query(sql);
+    } catch (error) {
+      refused = /append-only/i.test(String(error.message));
+    }
+    check(`security_audit_events refuses ${label} even for the table owner`, refused);
+  }
+  const auditCount = await client.query("SELECT count(*)::int AS n FROM security_audit_events WHERE event = 'acceptance.probe' AND outcome = 'ok'");
+  check("security_audit_events keeps the original row untouched", auditCount.rows[0].n === 1);
+
   // 3. Global-read variant (migrations 0334 + 0336): platform-owned NULL-college rows are readable (SELECT only) by every
   //    college; update, delete and insert stay strict, so only a platform or system scope can change a global row.
   const variantTables = await client.query(
