@@ -2,6 +2,7 @@ import "server-only";
 import { getDb } from "@/db/client";
 import { runAsSystem } from "@/db/tenant-context";
 import { securityAuditEvents } from "@/db/schema/security-audit-events";
+import { createAnomalyDetector } from "@/security/anomaly";
 
 /**
  * Durable security audit trail (SEC-19). Off unless SECURITY_AUDIT_DB=on (the migration must be applied first).
@@ -45,7 +46,22 @@ function safeDetail(detail: Record<string, unknown> | undefined): Record<string,
   }
 }
 
+const observeAnomaly = createAnomalyDetector();
+
 export function recordSecurityEvent(input: SecurityAuditInput): void {
+  // The tripwire runs even when the database trail is off: a finding is a structured WARNING and, when the trail is on, a row.
+  for (const finding of observeAnomaly(input)) {
+    console.warn(JSON.stringify({ severity: "WARNING", event: "security.anomaly", rule: finding.rule, count: finding.count, subject: finding.key.split(":")[0] }));
+    recordFinding(input, finding);
+  }
+  writeRow(input);
+}
+
+function recordFinding(input: SecurityAuditInput, finding: { rule: string; key: string; count: number }) {
+  writeRow({ event: "security.anomaly", outcome: "flagged", userId: input.userId ?? null, collegeId: input.collegeId ?? null, ipTag: input.ipTag ?? null, target: finding.rule, detail: { rule: finding.rule, count: finding.count } });
+}
+
+function writeRow(input: SecurityAuditInput): void {
   if (!enabled()) return;
   if (inFlight >= MAX_IN_FLIGHT) {
     dropped += 1;
