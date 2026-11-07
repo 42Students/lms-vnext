@@ -13353,10 +13353,10 @@
         "type": "JOURNEY",
         "area": "(root)",
         "title": "(Root) · Home (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-root-quiz-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/error.tsx",
@@ -13369,7 +13369,8 @@
           "PAGE-0513"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Root sign-in and learner quiz route UX implementation underway; acceptance requires exact source SHA, executed tests, responsive keyboard browser evidence, and unchanged auth/quiz contracts."
       },
       {
         "id": "UX-G003",
@@ -16873,10 +16874,10 @@
         "type": "JOURNEY",
         "area": "quiz",
         "title": "Quiz · Home (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-root-quiz-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/quiz/error.tsx",
@@ -16889,7 +16890,8 @@
           "PAGE-0517"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Root sign-in and learner quiz route UX implementation underway; acceptance requires exact source SHA, executed tests, responsive keyboard browser evidence, and unchanged auth/quiz contracts."
       },
       {
         "id": "UX-G080",
