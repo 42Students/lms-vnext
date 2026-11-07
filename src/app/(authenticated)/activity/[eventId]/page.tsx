@@ -46,7 +46,7 @@ export default async function ActivityDetailPage({
 
   const { event, actor } = detail;
   return (
-    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
+    <div className="min-w-0 max-w-full space-y-4 break-words md:space-y-6">
       <Breadcrumbs items={[{ label: "Activity Log", href: "/activity" }, { label: event.summary }]} />
       <PageHeader
         title={event.summary}
@@ -54,7 +54,7 @@ export default async function ActivityDetailPage({
         actions={<PageBackLink href="/activity" label="Back to activity" />}
       />
 
-      <section className="min-w-0 space-y-4 border-b border-border pb-5">
+      <section className="min-w-0 space-y-4 border-b border-border pb-5" aria-label="Event overview">
         <div className="flex flex-wrap gap-2">
           <StatusBadge>{event.module}</StatusBadge>
           <StatusBadge tone={event.importance==="CRITICAL"?"error":event.importance==="HIGH"?"warning":event.importance==="MEDIUM"?"info":"neutral"}>{event.importance}</StatusBadge>
@@ -120,7 +120,7 @@ export default async function ActivityDetailPage({
             This event has no structured context.
           </p>
         ) : (
-          <pre className="max-h-96 max-w-full overflow-auto whitespace-pre-wrap break-words border-y border-border bg-[var(--lms-neutral-50)] p-4 text-xs leading-6 text-body md:p-6">
+          <pre role="region" aria-label="Event context JSON, scrollable" tabIndex={0} className="max-h-96 max-w-full overflow-auto whitespace-pre-wrap break-words border-y border-border bg-[var(--lms-neutral-50)] p-4 text-xs leading-6 text-body outline-offset-2 focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)] md:p-6">
             {JSON.stringify(event.metadata, null, 2)}
           </pre>
         )}
