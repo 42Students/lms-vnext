@@ -1,0 +1,57 @@
+name: UX-G135 College contact profile acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/components/colleges/college-contact-profile-form.tsx
+      - src/app/e2e/ux-g135-contact-profile/**
+      - tests/unit/ux-g135-college-contact-profile.test.tsx
+      - tests/e2e/ux-g135-college-contact-profile.spec.ts
+      - .github/workflows/ux-g135-college-contact-acceptance.yml
+
+permissions:
+  contents: read
+
+jobs:
+  scoped:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Scoped lint
+        run: npx eslint src/components/colleges/college-contact-profile-form.tsx src/app/e2e/ux-g135-contact-profile/page.tsx tests/unit/ux-g135-college-contact-profile.test.tsx tests/e2e/ux-g135-college-contact-profile.spec.ts
+      - name: TypeScript
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: Unit and existing college regression
+        run: npx vitest run tests/unit/ux-g135-college-contact-profile.test.tsx tests/unit/UX-college-college-college-profile-01.test.ts
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Browser acceptance with strict result count
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: ux-g135-results.json
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx playwright test tests/e2e/ux-g135-college-contact-profile.spec.ts --project=chromium --reporter=line,html,json
+          node -e 'const s=require("./ux-g135-results.json").stats;console.log("Browser proof:",s);if(s.expected!==4||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
+      - name: Upload screenshots and HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-g135-contact-proof
+          path: |
+            test-results/
+            playwright-report/
+            ux-g135-results.json
+          if-no-files-found: ignore
