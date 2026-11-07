@@ -65,6 +65,7 @@ export function AddProjectMemberControl({
   const [searching, setSearching] = useState(false);
   const searchRequest = useRef(0);
   const [pending, setPending] = useState(false);
+  const mutationLock = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const dirty=Boolean(query.trim()||roleLabel.trim()||isPrimary||
     role!=="LEARNER"||membershipId);
@@ -120,11 +121,13 @@ export function AddProjectMemberControl({
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (mutationLock.current || pending || searching) return;
     if (!membershipId) {
       setError("Choose an eligible college member.");
       return;
     }
 
+    mutationLock.current = true;
     setPending(true);
     setError(null);
     try {
@@ -155,6 +158,7 @@ export function AddProjectMemberControl({
           : "Could not add the Project member.",
       );
     } finally {
+      mutationLock.current = false;
       setPending(false);
     }
   }
@@ -304,7 +308,7 @@ export function AddProjectMemberControl({
               type="submit"
               className="w-full sm:w-auto"
               loading={pending}
-              disabled={pending || !membershipId}
+              disabled={pending || searching || !membershipId}
             >
               {pending ? "Adding…" : "Add teammate"}
             </Button>
