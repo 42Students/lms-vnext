@@ -17095,11 +17095,11 @@
         "type": "JOURNEY",
         "area": "privacy-policy",
         "title": "Privacy Policy · Home (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-privacy-superadmin-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [
           "src/app/privacy-policy/error.tsx",
           "src/app/privacy-policy/loading.tsx",
@@ -17111,8 +17111,25 @@
           "PAGE-0516"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Scoped route UX acceptance: canonical policy anchors/readability and retired superadmin bookmark safe signin flow. Do not close without exact SHA typecheck, unit/SSR, and desktop/mobile browser proof."
+        "evidence": [
+          {
+            "type": "source",
+            "ref": "e3c0d95216dea31859a1ce5c2fa7e796672de6c3",
+            "url": "https://github.com/42Students/lms-vnext/commit/e3c0d95216dea31859a1ce5c2fa7e796672de6c3"
+          },
+          {
+            "type": "ci",
+            "ref": "42391328381",
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42391328381",
+            "detail": "Exact source/test/workflow SHA 102c0927b982a07f1dcec27c2ed40eefb5e9d24b; scoped ESLint, full TypeScript, 4 Vitest files/13 tests, 1 targeted legacy policy test, Chromium desktop/mobile 4/4 journeys. All passed."
+          },
+          {
+            "type": "parity",
+            "ref": "docs/parity/shared-public-ops.md",
+            "detail": "UX-G078 and UX-G089 final scoped evidence section. Historical mixed public source file remains red 9/11 in unrelated cross-group checks; not an acceptance waiver."
+          }
+        ],
+        "notes": "Scoped UX DONE with exact SHA 102c0927b982a07f1dcec27c2ed40eefb5e9d24b and Actions 42391328381 passing lint, TypeScript, 13 SSR/unit and 4 desktop/mobile browser tests; original full mixed public suite has 9 unrelated failures documented in docs/parity/shared-public-ops.md. No broader security/role or release sign-off."
       },
       {
         "id": "UX-G079",
@@ -17548,11 +17565,11 @@
         "type": "JOURNEY",
         "area": "superadmin-login",
         "title": "Superadmin Login · Home (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-privacy-superadmin-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [
           "src/app/superadmin-login/error.tsx",
           "src/app/superadmin-login/loading.tsx",
@@ -17564,8 +17581,25 @@
           "PAGE-0520"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Scoped route UX acceptance: canonical policy anchors/readability and retired superadmin bookmark safe signin flow. Do not close without exact SHA typecheck, unit/SSR, and desktop/mobile browser proof."
+        "evidence": [
+          {
+            "type": "source",
+            "ref": "e3c0d95216dea31859a1ce5c2fa7e796672de6c3",
+            "url": "https://github.com/42Students/lms-vnext/commit/e3c0d95216dea31859a1ce5c2fa7e796672de6c3"
+          },
+          {
+            "type": "ci",
+            "ref": "42391328381",
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42391328381",
+            "detail": "Exact source/test/workflow SHA 102c0927b982a07f1dcec27c2ed40eefb5e9d24b; scoped ESLint, full TypeScript, 4 Vitest files/13 tests, 1 targeted legacy policy test, Chromium desktop/mobile 4/4 journeys. All passed."
+          },
+          {
+            "type": "parity",
+            "ref": "docs/parity/shared-public-ops.md",
+            "detail": "UX-G078 and UX-G089 final scoped evidence section. Historical mixed public source file remains red 9/11 in unrelated cross-group checks; not an acceptance waiver."
+          }
+        ],
+        "notes": "Scoped UX DONE with exact SHA 102c0927b982a07f1dcec27c2ed40eefb5e9d24b and Actions 42391328381 passing lint, TypeScript, 13 SSR/unit and 4 desktop/mobile browser tests; original full mixed public suite has 9 unrelated failures documented in docs/parity/shared-public-ops.md. No broader security/role or release sign-off."
       },
       {
         "id": "UX-G090",
