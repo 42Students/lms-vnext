@@ -19587,10 +19587,10 @@
         "type": "COMPONENT",
         "area": "activity",
         "title": "Activity · Interactive components (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-elective-settings-activity-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/components/activity/activity-center.tsx",
@@ -19601,7 +19601,8 @@
           "OVERLAY-0009"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "UX pass on shared component: state/accessibility/recovery, with executed tests required for DONE. Avoid API/RBAC changes."
       },
       {
         "id": "UX-G127",
@@ -19749,10 +19750,10 @@
         "type": "COMPONENT",
         "area": "admin",
         "title": "Admin · Interactive components (part 4)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-elective-settings-activity-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/components/admin/tenant-settings-other-keys.tsx"
@@ -19761,7 +19762,8 @@
           "OVERLAY-0039"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "UX pass on shared component: state/accessibility/recovery, with executed tests required for DONE. Avoid API/RBAC changes."
       },
       {
         "id": "UX-G131",
@@ -20070,10 +20072,10 @@
         "type": "COMPONENT",
         "area": "electives",
         "title": "Electives · Interactive components (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-elective-settings-activity-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/components/electives/college-slot-manager.tsx"
@@ -20082,7 +20084,8 @@
           "WIDGET-0061"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "UX pass on shared component: state/accessibility/recovery, with executed tests required for DONE. Avoid API/RBAC changes."
       },
       {
         "id": "UX-G141",
