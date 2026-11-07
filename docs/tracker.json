@@ -14431,10 +14431,10 @@
         "type": "JOURNEY",
         "area": "admin",
         "title": "Admin · Projects / Templates → Projects / Workspaces (part 18)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-announcements-verification-20261107",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/admin/projects/templates/[templateId]/tasks/error.tsx",
@@ -14470,7 +14470,8 @@
           "/admin/projects/workspaces/[workspaceId]/summary",
           "/admin/projects/workspaces/deleted"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "Claimed as additional UX batch: 12 route-state/page surfaces each. Strict DONE requires scoped implementation, tests, desktop/mobile browser evidence and role/privacy regression."
       },
       {
         "id": "UX-G023",
@@ -18723,10 +18724,10 @@
         "type": "JOURNEY",
         "area": "tpo",
         "title": "Tpo · Drive Day / RoundId → Home (part 6)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-announcements-verification-20261107",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/error.tsx",
@@ -18762,7 +18763,8 @@
           "/tpo/drives/[jobId]/edit",
           "/tpo/drives/new"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "Claimed as additional UX batch: 12 route-state/page surfaces each. Strict DONE requires scoped implementation, tests, desktop/mobile browser evidence and role/privacy regression."
       },
       {
         "id": "UX-G104",
