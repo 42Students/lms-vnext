@@ -100,3 +100,15 @@ Done in code, still untested:
 - **SEC-05-023 (backups, support tools, scripts):** no support or impersonation tool exists in the repo apart from the Super Admin scope above (now time-limited and audited). Database scripts refuse non-local hosts unless dev is allowed explicitly. Backups are Cloud SQL's own; no on-demand backups by owner rule; restore and retention are an ops decision, not code. PARTIAL.
 
 Remaining after the final run: execute and record evidence for everything above, the owner-gated role split, the identity-core review, and the independent audit.
+
+## Update 2026-11-07 (deployed and checked on dev)
+
+Executed on dev (image 59de793a, migrations through 0340), with the real runtime role. Evidence is manual job output, not CI; the tracker needs the CI run.
+
+- SEC-06-003/002/004: 245 of 278 tables locked (112 tenant, 127 derived, colleges, organizations, users, membership_roles, module_access_rules); the other 33 are classified unscoped in table-classification.json. Sweep: all isolation checks passed (619).
+- SEC-06-005/006/007/008/009/019-024: policies enabled and forced on all 245; read, update, delete and insert denial shown by the sweep and the earlier probe; the acceptance script covers them again in CI.
+- SEC-06-010/011/012/013/014: probe result above (runtime principal clean, no definer functions, role split executed).
+- SEC-06-025: performance within budget (see rollout doc).
+- SEC-06-026: rollout and a real rollback were both exercised on dev.
+- SEC-05-005/006/008/009/010: database now answers for every route that reads tenant rows; signed-in role smoke for five roles passed.
+- Still open for closure: CI run and tracker evidence for every control, the independent audit, browser click-through, and production (role split and policies are dev only).

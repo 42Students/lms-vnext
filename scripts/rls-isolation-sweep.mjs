@@ -105,6 +105,24 @@ try {
       (await count({ "app.college_id": A }, "SELECT count(*)::int AS n FROM organizations")) >= 1 &&
       (await count({ "app.college_id": A }, "SELECT count(*)::int AS n FROM organizations o WHERE NOT EXISTS (SELECT 1 FROM colleges c WHERE c.organization_id = o.id)")) === 0);
   }
+  // Signed-in smoke at the database layer: for every role present in college A, a real member must still see
+  // their own user row, college, organization, memberships and roles under enforcement (a blank page would show here).
+  const roles = await q(SYS, `SELECT DISTINCT ON (r.role) r.role, m.id AS membership_id, m.user_id, m.college_id
+                                FROM membership_roles r JOIN college_memberships m ON m.id = r.membership_id
+                               WHERE m.college_id IN ($1, $2) ORDER BY r.role, m.college_id`, [A, B]);
+  for (const r of roles) {
+    const scope = { "app.user_id": r.user_id, "app.college_id": r.college_id, "app.role": r.role };
+    const own = await count(scope, "SELECT count(*)::int AS n FROM users WHERE id = $1", [r.user_id]);
+    const col = await count(scope, "SELECT count(*)::int AS n FROM colleges WHERE id = $1", [r.college_id]);
+    const org = await count(scope, "SELECT count(*)::int AS n FROM organizations");
+    const mem = await count(scope, "SELECT count(*)::int AS n FROM college_memberships WHERE id = $1", [r.membership_id]);
+    const rol = await count(scope, "SELECT count(*)::int AS n FROM membership_roles WHERE membership_id = $1", [r.membership_id]);
+    const rules = await count(scope, "SELECT count(*)::int AS n FROM module_access_rules");
+    const totalRules = await count(SYS, "SELECT count(*)::int AS n FROM module_access_rules");
+    check(`signed-in ${r.role}: sees own user, college, organization, membership and roles`, own === 1 && col === 1 && org >= 1 && mem === 1 && rol >= 1, JSON.stringify({ own, col, org, mem, rol }));
+    check(`signed-in ${r.role}: module rules readable and narrower than all`, rules <= totalRules && (totalRules === 0 || rules > 0), `${rules}/${totalRules}`);
+  }
+  console.log(`signed-in roles exercised: ${roles.map((r) => r.role).join(", ")}`);
   console.log(`sweep: colleges ${A} and ${B}; ${tables.length} policied tables swept, ${withRows} with data in A or B; ${passes.length} checks passed`);
 } finally {
   await client.query("ROLLBACK").catch(() => {});
