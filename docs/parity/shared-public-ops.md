@@ -624,3 +624,7 @@ behavior was not changed to satisfy those assertions.
 - [UX-G067 direct /login UX](pages/shared/UX-G067-login.md): non-indexed credential entry, direct fresh-sign-in error action and named loading feedback.
 
 Closure is governed by `docs/tracker.json#uxReview.groups` and the scoped exact-SHA acceptance workflow.
+
+## CSV export UX review (2026-11-07)
+
+The four separately tracked export groups have dedicated review evidence: [UX-G169 announcements](pages/shared/UX-G169-export-ux.md), [UX-G171 audit findings](pages/shared/UX-G171-export-ux.md), [UX-G174 faculty reports](pages/shared/UX-G174-export-ux.md), [UX-G177 messaging receipts](pages/shared/UX-G177-export-ux.md). Each preserves existing authorization, tenant scope, report bounds, and PII exclusions; `docs/tracker.json#uxReview.groups` remains the single status source.
