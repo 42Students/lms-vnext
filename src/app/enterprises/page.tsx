@@ -1,6 +1,7 @@
 import type {Metadata} from "next";
 import {MarketingLayout,MarketingHero,MarketingFeatureGrid,MarketingCta} from "@/components/marketing/marketing-layout";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 const SITE="https://42lms.com";
 const CANONICAL=SITE+"/enterprises";
 const DESCRIPTION="Build stronger workforces with structured learning, applied projects, evidence of skills and connected recruiting workflows for companies and colleges.";
@@ -47,6 +48,13 @@ export default function EnterprisesPage(){
    dangerouslySetInnerHTML={{__html:JSON.stringify(jsonLd).replace(/</g,"\\u003c")}} />
   <MarketingHero eyebrow="For Enterprises" title="Build High-Performing Workforces"
     description="Build practical capabilities through structured learning, projects, assessments and campus recruiting workflows—without unbuilt AI or external-system integration promises."/>
+  <nav aria-label="Explore enterprise solutions"
+   className="flex min-w-0 flex-col gap-3 border-b border-[var(--lms-canvas-border)] py-6 sm:flex-row sm:flex-wrap sm:items-center">
+   <p className="text-sm font-semibold text-[var(--lms-heading)] sm:mr-2">Explore enterprise workflows</p>
+   <ButtonLink variant="secondary" href="#enterprise-workflows" className="min-h-11 w-full sm:w-auto">Learning and hiring</ButtonLink>
+   <ButtonLink variant="secondary" href="#enterprise-capabilities" className="min-h-11 w-full sm:w-auto">Capabilities</ButtonLink>
+   <ButtonLink variant="primary" href="/request-demo" className="min-h-11 w-full sm:ml-auto sm:w-auto">Request a Demo</ButtonLink>
+  </nav>
   <section aria-labelledby="enterprises-audience-heading" className="relative left-1/2 w-screen -translate-x-1/2 bg-surface px-5 py-14 md:py-20">
    <div className="mx-auto grid max-w-[1180px] items-start gap-10 lg:grid-cols-[1.2fr_.8fr]">
     <div className="min-w-0">
@@ -77,7 +85,7 @@ export default function EnterprisesPage(){
     </aside>
    </div>
   </section>
-  <section aria-labelledby="enterprise-integrations-heading" className="relative left-1/2 w-screen -translate-x-1/2 bg-[var(--lms-primary-subtle)] px-5 py-14 md:py-20">
+  <section id="enterprise-workflows" aria-labelledby="enterprise-integrations-heading" className="relative left-1/2 w-screen -translate-x-1/2 bg-[var(--lms-primary-subtle)] px-5 py-14 md:py-20">
    <div className="mx-auto max-w-[1180px] space-y-5">
     <Heading level={2} id="enterprise-integrations-heading" className="text-2xl md:text-3xl text-[var(--lms-heading)]">Connected learning and hiring workflows</Heading>
     <p className="max-w-[75ch] text-sm leading-6 text-[var(--lms-body-text)]">42 LMS workflows are available inside the platform. External GitHub, Slack, Teams, CRM and ERP integration is not advertised as a live feature.</p>
@@ -88,6 +96,7 @@ export default function EnterprisesPage(){
     </ul>
    </div>
   </section>
+  <div id="enterprise-capabilities" className="min-w-0 scroll-mt-24">
   <MarketingFeatureGrid title="One platform for workforce capability" items={[
    {title:"Learning and Assessments",description:"Offer structured course delivery, progress records, assignments and assessment workflows."},
    {title:"Applied Skills",description:"Use project work and mentor feedback to create evidence of practical skills."},
@@ -96,6 +105,7 @@ export default function EnterprisesPage(){
    {title:"Recruiting Operations",description:"Coordinate applications, screening, interviews and offers with verified recruiter access."},
    {title:"Analytics & Insights",description:"Review progress and placement metrics grounded in saved records."},
   ]}/>
+  </div>
   <MarketingCta title="Turn workforce capability into business performance"
    subline="Connect structured learning, practical projects and recruiting workflows. Talk to our team about the modules available for your organization."/>
  </MarketingLayout>;
