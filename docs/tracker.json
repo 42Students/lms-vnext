@@ -15622,11 +15622,11 @@
         "type": "JOURNEY",
         "area": "enterprises",
         "title": "Enterprises · Home (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-marketing-trio-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07T16:20:00Z",
         "sourceFiles": [
           "src/app/enterprises/error.tsx",
           "src/app/enterprises/loading.tsx",
@@ -15638,8 +15638,46 @@
           "PAGE-0508"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Public marketing page-local UX: improve discovery, demo CTA, responsive journey and graceful loading/error. Exact viewport browser and repository proof required for DONE."
+        "evidence": [
+          {
+            "commitSha": "38fa70d71d4b282b73f18d32b7e2b21c1be61bfe",
+            "parityDoc": "docs/parity/shared-public-ops.md",
+            "tests": [
+              {
+                "command": "node --test tests/ux-marketing-trio-group.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390390665 (3/3 Node source-contract tests passed, includes UX-G050)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-marketing-trio.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390390665 (6/6 Chromium cases passed; 2 cases for UX-G050)"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390390665 (global TypeScript compatibility step successful)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "width": 1280,
+                "height": 800,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390390665/artifacts/13580969005 (ux-marketing-trio-evidence/enterprises-desktop.png)"
+              },
+              {
+                "viewport": "mobile",
+                "width": 390,
+                "height": 844,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390390665/artifacts/13580969005 (ux-marketing-trio-evidence/enterprises-mobile.png)"
+              }
+            ],
+            "regressionReview": "Enterprise shortcuts correctly reach /request-demo and the capabilities/workflows anchors; existing outcomes disclaimer and non-AI claims remain intact. Existing marketing shell untouched; scoped ESLint passed. Real browser assertions checked visible headings, keyboard focus, internal links, no overflow and no page errors.",
+            "securityReview": "Changes are public page/error/loading components only. No API, authentication, RBAC, RLS, tenant, persistence, messaging or personal-data functionality changed, and no security assertion weakened."
+          }
+        ],
+        "notes": "Scoped source lint+contracts, 6/6 Chromium desktop/mobile cases, six screenshots and full TypeScript successful. Evidence run https://github.com/42Students/lms-vnext/actions/runs/42390390665. No claim of globally green security/deploy gates."
       },
       {
         "id": "UX-G051",
@@ -15704,11 +15742,11 @@
         "type": "JOURNEY",
         "area": "home",
         "title": "Home · Home (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-marketing-trio-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07T16:20:00Z",
         "sourceFiles": [
           "src/app/home/error.tsx",
           "src/app/home/loading.tsx",
@@ -15720,8 +15758,46 @@
           "PAGE-0510"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Public marketing page-local UX: improve discovery, demo CTA, responsive journey and graceful loading/error. Exact viewport browser and repository proof required for DONE."
+        "evidence": [
+          {
+            "commitSha": "38fa70d71d4b282b73f18d32b7e2b21c1be61bfe",
+            "parityDoc": "docs/parity/shared-public-ops.md",
+            "tests": [
+              {
+                "command": "node --test tests/ux-marketing-trio-group.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390390665 (3/3 Node source-contract tests passed, includes UX-G052)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-marketing-trio.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390390665 (6/6 Chromium cases passed; 2 cases for UX-G052)"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390390665 (global TypeScript compatibility step successful)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "width": 1280,
+                "height": 800,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390390665/artifacts/13580969005 (ux-marketing-trio-evidence/home-desktop.png)"
+              },
+              {
+                "viewport": "mobile",
+                "width": 390,
+                "height": 844,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390390665/artifacts/13580969005 (ux-marketing-trio-evidence/home-mobile.png)"
+              }
+            ],
+            "regressionReview": "Home audience navigation reaches /universities and learner journey anchor; shared hero/demo and content retained. Existing marketing shell untouched; scoped ESLint passed. Real browser assertions checked visible headings, keyboard focus, internal links, no overflow and no page errors.",
+            "securityReview": "Changes are public page/error/loading components only. No API, authentication, RBAC, RLS, tenant, persistence, messaging or personal-data functionality changed, and no security assertion weakened."
+          }
+        ],
+        "notes": "Scoped source lint+contracts, 6/6 Chromium desktop/mobile cases, six screenshots and full TypeScript successful. Evidence run https://github.com/42Students/lms-vnext/actions/runs/42390390665. No claim of globally green security/deploy gates."
       },
       {
         "id": "UX-G053",
@@ -16826,11 +16902,11 @@
         "type": "JOURNEY",
         "area": "platform",
         "title": "Platform · Home (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-marketing-trio-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07T16:20:00Z",
         "sourceFiles": [
           "src/app/platform/error.tsx",
           "src/app/platform/loading.tsx",
@@ -16842,8 +16918,46 @@
           "PAGE-0515"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Public marketing page-local UX: improve discovery, demo CTA, responsive journey and graceful loading/error. Exact viewport browser and repository proof required for DONE."
+        "evidence": [
+          {
+            "commitSha": "38fa70d71d4b282b73f18d32b7e2b21c1be61bfe",
+            "parityDoc": "docs/parity/shared-public-ops.md",
+            "tests": [
+              {
+                "command": "node --test tests/ux-marketing-trio-group.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390390665 (3/3 Node source-contract tests passed, includes UX-G077)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-marketing-trio.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390390665 (6/6 Chromium cases passed; 2 cases for UX-G077)"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390390665 (global TypeScript compatibility step successful)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "width": 1280,
+                "height": 800,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390390665/artifacts/13580969005 (ux-marketing-trio-evidence/platform-desktop.png)"
+              },
+              {
+                "viewport": "mobile",
+                "width": 390,
+                "height": 844,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390390665/artifacts/13580969005 (ux-marketing-trio-evidence/platform-mobile.png)"
+              }
+            ],
+            "regressionReview": "Platform shortcuts and numbered lifecycle work on desktop and mobile; demo link reaches /request-demo and human-operated role/workflow copy remains. Existing marketing shell untouched; scoped ESLint passed. Real browser assertions checked visible headings, keyboard focus, internal links, no overflow and no page errors.",
+            "securityReview": "Changes are public page/error/loading components only. No API, authentication, RBAC, RLS, tenant, persistence, messaging or personal-data functionality changed, and no security assertion weakened."
+          }
+        ],
+        "notes": "Scoped source lint+contracts, 6/6 Chromium desktop/mobile cases, six screenshots and full TypeScript successful. Evidence run https://github.com/42Students/lms-vnext/actions/runs/42390390665. No claim of globally green security/deploy gates."
       },
       {
         "id": "UX-G078",
