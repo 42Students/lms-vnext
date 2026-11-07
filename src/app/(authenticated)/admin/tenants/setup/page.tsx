@@ -9,7 +9,7 @@ import {Banner} from "@/components/ui/banner";
 import {EmptyState} from "@/components/ui/empty-state";
 import {getSuperAdminTenantLifecycleDetail,getSuperAdminTenantLifecycleDirectory} from "@/modules/colleges/admin-tenant-lifecycle-service";
 import {CollegeServiceError} from "@/modules/colleges/service";
-import {can,requirePermission} from "@/modules/permissions/policy";
+import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {parseSuperAdminTenantSetupQuery,selectedSuperAdminTenantSetupTab} from "@/modules/admin-ui/tenant-setup-query-model";
 import {superAdminTenantSetupSteps} from "@/modules/colleges/admin-tenant-setup-journey";
@@ -81,18 +81,19 @@ export default async function SuperAdminTenantSetup({
  if(tab==="STRUCTURE"&&globallyScoped){
   // Stop dependent tenant reads if organization authority cannot be verified.
   try{organizations=await listOrganizations(context);}
-  catch{organizationFailed=true;}
+  catch(error){if(error instanceof AuthorizationError)throw error;organizationFailed=true;}
   if(!organizationFailed){
    try{list=await getSuperAdminTenantLifecycleDirectory(context,{
     status:"ALL",q:directoryFilters.q,page:directoryFilters.page,
    });}
-   catch{collegesFailed=true;}
+   catch(error){if(error instanceof AuthorizationError)throw error;collegesFailed=true;}
   }
  }else if(tab==="LAUNCH"&&id){
   try {
    college=await getSuperAdminTenantLifecycleDetail(context,id);
    requirePermission(context,"college.read",{organizationId:college.organizationId,collegeId:college.id});
   }catch(error){
+   if(error instanceof AuthorizationError)throw error;
    if(error instanceof CollegeServiceError&&error.code==="COLLEGE_NOT_FOUND")notFound();
    detailFailed=true;
   }
@@ -104,6 +105,10 @@ export default async function SuperAdminTenantSetup({
     allowed?readAdminCollegeSignInPolicy(context,college.id):Promise.resolve(null),
     allowed?getCollegeBranding(context,college.id):Promise.resolve(null),
    ]);
+   if(r.status==="rejected"&&r.reason instanceof AuthorizationError)throw r.reason;
+   if(m.status==="rejected"&&m.reason instanceof AuthorizationError)throw m.reason;
+   if(si.status==="rejected"&&si.reason instanceof AuthorizationError)throw si.reason;
+   if(b.status==="rejected"&&b.reason instanceof AuthorizationError)throw b.reason;
    if(r.status==="fulfilled")readiness=r.value;else readinessFailed=true;
    if(m.status==="fulfilled")managed=m.value;else managedFailed=true;
    if(si.status==="fulfilled")signin=si.value;else signinFailed=true;
