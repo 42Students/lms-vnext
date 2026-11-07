@@ -9,7 +9,8 @@ import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
 function dateText(value: string) {
-  return istDateTimeFormatter.format(new Date(value)) + " IST";
+  const date = new Date(value);
+  return Number.isFinite(date.getTime()) ? istDateTimeFormatter.format(date) + " IST" : "Time unavailable";
 }
 
 export default async function FacultyStudentDetailPage({
