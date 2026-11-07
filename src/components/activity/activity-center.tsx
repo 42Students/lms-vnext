@@ -237,7 +237,7 @@ export function ActivityCenter({
     return <EmptyState
       title={emptyTitle??(emptyActionHref.includes("/projects")?"No activity recorded yet":"Nothing important happened in this period.")}
       description={emptyDescription??"No activity in this period. Try another date, category or search."}
-      action={<ButtonLink variant="secondary" href={emptyActionHref}>Reset</ButtonLink>}
+      action={<ButtonLink variant="secondary" href={emptyActionHref}>Clear filters</ButtonLink>}
     />;
   }
 
@@ -394,7 +394,8 @@ export function ActivityCenter({
 
       <Disclosure title="Raw forensic table · current page" className="min-w-0">
        <p className="text-xs text-muted-foreground">One representative event appears per activity group. IP and user-agent source values were not retained. Use individual details for full audit records.</p>
-       <div className="mt-3 w-full overflow-x-auto"><Table className="min-w-[960px]">
+       <div className="mt-3 w-full overflow-x-auto" role="region" tabIndex={0}
+        aria-label="Raw forensic activity table, scroll horizontally for all columns"><Table className="min-w-[960px]">
         <thead><tr>{RAW_AUDIT_FORENSIC_HEADERS.map(label=>
          <th scope="col" key={label} className="border-b border-border px-3 py-2">{label}</th>)}</tr></thead>
         <tbody>{groups.map(group=>{
