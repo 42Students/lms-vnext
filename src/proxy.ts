@@ -5,6 +5,7 @@
  */
 import { NextResponse, type NextRequest } from "next/server";
 import { createRequestId } from "@/lib/request-id";
+import { buildContentSecurityPolicy } from "@/security/headers";
 
 export function proxy(request: NextRequest) {
   const requestId = createRequestId();
@@ -49,8 +50,20 @@ export function proxy(request: NextRequest) {
     response.headers.set("x-request-id",requestId);
     return response;
   }
+  // Nonce-based script policy: Next reads the nonce from the request CSP header and stamps its own inline scripts.
+  // Off unless CSP_NONCE=on: statically rendered pages carry no nonce, so enable per environment after a browser check.
+  if (process.env["CSP_NONCE"] !== "on") {
+    const plain = NextResponse.next({ request: { headers: forwardHeaders } });
+    plain.headers.set("x-request-id", requestId);
+    return plain;
+  }
+  const nonce = btoa(crypto.randomUUID());
+  const csp = buildContentSecurityPolicy(nonce);
+  forwardHeaders.set("Content-Security-Policy", csp);
+  forwardHeaders.set("x-nonce", nonce);
   const response = NextResponse.next({ request: { headers: forwardHeaders } });
   response.headers.set("x-request-id", requestId);
+  response.headers.set("Content-Security-Policy", csp);
   return response;
 }
 

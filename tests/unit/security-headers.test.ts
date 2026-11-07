@@ -87,3 +87,15 @@ describe("content security policy and transport security", () => {
     for (const feature of ["payment=()", "usb=()", "bluetooth=()", "serial=()"]) expect(policy).toContain(feature);
   });
 });
+
+describe("nonce content security policy (SEC-12)", () => {
+  it("returns the static policy without a nonce and a nonce plus strict-dynamic policy with one", async () => {
+    const { buildContentSecurityPolicy, CONTENT_SECURITY_POLICY } = await import("@/security/headers");
+    expect(buildContentSecurityPolicy()).toBe(CONTENT_SECURITY_POLICY);
+    const withNonce = buildContentSecurityPolicy("abc123");
+    expect(withNonce).toContain("script-src 'nonce-abc123' 'strict-dynamic'");
+    expect(withNonce).toContain("object-src 'none'");
+    expect(withNonce).toContain("frame-ancestors 'none'");
+    expect(withNonce.split(";").filter((part) => part.trim().startsWith("script-src")).length).toBe(1);
+  });
+});

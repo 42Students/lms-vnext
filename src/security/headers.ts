@@ -7,6 +7,21 @@ const isDevelopmentBuild = process.env.NODE_ENV !== "production";
  * server (React refresh needs it). www.youtube.com is allowed for script-src
  * only because the lesson player loads https://www.youtube.com/iframe_api.
  */
+/**
+ * Per-request policy (SEC-12): scripts run only with this request's nonce, and 'strict-dynamic' lets those scripts load
+ * the ones they need (the YouTube player). 'unsafe-inline' and the host list stay for browsers that do not understand
+ * nonces and are ignored by those that do. The static policy below remains as the fallback for responses that do not pass
+ * through the proxy.
+ */
+export function buildContentSecurityPolicy(nonce?: string) {
+  if (!nonce) return CONTENT_SECURITY_POLICY;
+  const evalPart = isDevelopmentBuild ? " 'unsafe-eval'" : "";
+  return CONTENT_SECURITY_POLICY.replace(
+    /script-src [^;]*/,
+    `script-src 'nonce-${nonce}' 'strict-dynamic' 'self' 'unsafe-inline' https://www.youtube.com${evalPart}`,
+  );
+}
+
 export const CONTENT_SECURITY_POLICY = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline' https://www.youtube.com${isDevelopmentBuild ? " 'unsafe-eval'" : ""}`,
