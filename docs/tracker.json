@@ -15671,10 +15671,10 @@
         "type": "JOURNEY",
         "area": "dashboard",
         "title": "Dashboard · Home (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-e2e-dashboard-tracker-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/dashboard/error.tsx",
@@ -15687,17 +15687,18 @@
           "PAGE-0204"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Claimed for independent route UX tests and desktop/mobile evidence. Preserve authorization and tenant isolation, no DONE without exact-SHA passing proof."
       },
       {
         "id": "UX-G049",
         "type": "JOURNEY",
         "area": "e2e",
         "title": "E2e · Chat17 Ui Kit → Superadmin Login (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-e2e-dashboard-tracker-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/e2e/superadmin-login/error.tsx",
@@ -15712,7 +15713,8 @@
         "newRouteOnly": [
           "/e2e/chat17-ui-kit"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "Claimed for independent route UX tests and desktop/mobile evidence. Preserve authorization and tenant isolation, no DONE without exact-SHA passing proof."
       },
       {
         "id": "UX-G050",
@@ -19234,10 +19236,10 @@
         "type": "JOURNEY",
         "area": "tracker",
         "title": "Tracker · Logs → Mine / PublicId (part 2)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-e2e-dashboard-tracker-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/tracker/logs/error.tsx",
@@ -19254,7 +19256,8 @@
           "PAGE-0499"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Claimed for independent route UX tests and desktop/mobile evidence. Preserve authorization and tenant isolation, no DONE without exact-SHA passing proof."
       },
       {
         "id": "UX-G123",
