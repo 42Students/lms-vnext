@@ -1,5 +1,6 @@
 import {MarketingLayout,MarketingHero,MarketingFeatureGrid,MarketingCta,marketingPageMetadata} from "@/components/marketing/marketing-layout";
 import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 const title="For Universities — 42 LMS";
 const description="Develop employable graduates: evaluate performance across exams, assignments, projects, and interviews, identify gaps early, and improve career readiness.";
 // Legacy AI-only claims are intentionally retired. Layout/card/badge cardinality
@@ -39,6 +40,16 @@ export default function UniversitiesPage(){
  return <MarketingLayout path="/universities" pageTitle={title} pageDescription={description}>
   <MarketingHero eyebrow="For Universities" title="Develop employable graduates through learning and placements"
     description="Bring academics, applied projects and campus placements together to strengthen student outcomes."/>
+  <nav aria-label="Explore university solutions"
+    className="mx-auto flex w-full min-w-0 flex-col gap-3 border-b border-[var(--lms-canvas-border)] py-6 sm:flex-row sm:flex-wrap sm:items-center">
+    <p className="mb-1 text-sm font-semibold text-[var(--lms-heading)] sm:mb-0 sm:mr-2">Explore campus workflows</p>
+    <ButtonLink variant="secondary" href="#university-capabilities"
+      className="min-h-11 w-full sm:w-auto">Campus capabilities</ButtonLink>
+    <ButtonLink variant="secondary" href="#university-journey"
+      className="min-h-11 w-full sm:w-auto">Student journey</ButtonLink>
+    <ButtonLink variant="primary" href="/request-demo"
+      className="min-h-11 w-full sm:ml-auto sm:w-auto">Request a Demo</ButtonLink>
+  </nav>
   <section aria-labelledby="university-audience-heading"
     className="relative left-1/2 w-screen -translate-x-1/2 bg-surface py-14 md:py-20">
     <div className="mx-auto grid max-w-[1180px] gap-8 px-5 lg:grid-cols-[1.05fr_.95fr] lg:gap-12">
@@ -74,17 +85,20 @@ export default function UniversitiesPage(){
       </li>)}
     </ul>
   </section>
-  <div className="min-w-0" aria-label="Campus capabilities">
+  <div id="university-capabilities" className="min-w-0 scroll-mt-24" aria-label="Campus capabilities">
     <MarketingFeatureGrid title="For the entire campus" items={capabilities}/>
   </div>
-  <section aria-labelledby="university-journey-heading"
-    className="relative left-1/2 w-screen -translate-x-1/2 bg-[var(--lms-primary-subtle)] py-14 md:py-20">
+  <section id="university-journey" aria-labelledby="university-journey-heading"
+    className="relative left-1/2 w-screen -translate-x-1/2 scroll-mt-24 bg-[var(--lms-primary-subtle)] py-14 md:py-20">
     <div className="mx-auto max-w-[1180px] space-y-7 px-5">
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--lms-primary-text)]">Connected journey</p>
       <Heading level={2} id="university-journey-heading"
         className="text-2xl md:text-3xl text-[var(--lms-heading)]">
         From classroom to career
       </Heading>
+      <p className="max-w-2xl text-base leading-7 text-[var(--lms-body-text)]">
+        Follow the work from course setup through placement decisions. Each step is managed by the people responsible for it.
+      </p>
       <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {journey.map((stage,index)=><li key={stage.label}
           className="relative flex min-w-0 items-start gap-4 rounded-[14px] border border-[var(--lms-canvas-border)] bg-surface p-5">
@@ -95,13 +109,11 @@ export default function UniversitiesPage(){
             <Heading level={3} className="text-[var(--lms-heading)]">{stage.label}</Heading>
             <p className="mt-1 text-sm leading-6 text-[var(--lms-body-text)]">{stage.description}</p>
           </div>
-          {index<journey.length-1?<span aria-hidden="true"
-            className="absolute -right-3 top-1/2 z-(--lms-z-raised) hidden text-xl text-[var(--lms-primary-text)] lg:block">→</span>:null}
         </li>)}
       </ol>
     </div>
   </section>
-  <MarketingCta title="Prepare graduates for meaningful opportunities"
-    subline="Connect teaching, progress and placements with clear responsibilities across the college."/>
+  <MarketingCta title="See how 42 LMS could work for your campus"
+    subline="Walk through learning, projects and placements with your academic and placement teams."/>
  </MarketingLayout>;
 }
