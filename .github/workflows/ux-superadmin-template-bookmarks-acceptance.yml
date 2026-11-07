@@ -1,0 +1,52 @@
+name: UX-G088 legacy template bookmarks acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/app/(authenticated)/superadmin/[...legacy]/page.tsx'
+      - 'tests/unit/ux-g088-legacy-template-routing.test.tsx'
+      - 'tests/e2e/ux-g088-superadmin-template-bookmarks.spec.ts'
+      - 'tests/ux-g088-template-contract.test.mjs'
+      - '.github/workflows/ux-superadmin-template-bookmarks-acceptance.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  template-bookmarks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Scoped lint and source routing contracts
+        run: |
+          npx eslint 'src/app/(authenticated)/superadmin/[...legacy]/page.tsx' tests/unit/ux-g088-legacy-template-routing.test.tsx tests/e2e/ux-g088-superadmin-template-bookmarks.spec.ts
+          node --test tests/ux-g088-template-contract.test.mjs
+      - name: Existing legacy alias and new security regression suites
+        run: |
+          npx vitest run \
+            tests/unit/chat13-legacy-superadmin-bookmarks.test.ts \
+            tests/unit/ux-g088-legacy-template-routing.test.tsx
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop/mobile protected legacy bookmark browser checks
+        run: npx playwright test tests/e2e/ux-g088-superadmin-template-bookmarks.spec.ts --project=chromium --reporter=line
+      - name: Preserve screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-g088-legacy-template-browser-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: warn
+          retention-days: 14
