@@ -85,8 +85,8 @@ export default async function MentorTaskReviewsPage({
           </Select>
         </Label>
         <div className="flex min-w-0 flex-wrap items-center gap-2 md:col-span-1">
-          <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
-          {hasFilters?<TextLink href="/mentor/task-reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm">Clear</TextLink>:null}
+          <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply filters</Button>
+          {hasFilters?<TextLink href="/mentor/task-reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm">Clear filters</TextLink>:null}
         </div>
         <Disclosure title="More task review filters" defaultOpen={hasAdvancedFilters} className="md:col-span-3" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-3">
         <Label stack>
@@ -132,7 +132,7 @@ export default async function MentorTaskReviewsPage({
 
       </form>
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3 text-sm">
-        <p className="text-sm text-body leading-[22px]">{data.total === 0 ? "No matching submissions" : "Showing " + data.first + "–" + data.last + " of " + data.total + " pending submissions"}</p>
+        <p role="status" aria-live="polite" className="text-sm text-body leading-[22px]">{data.total === 0 ? (hasFilters ? "No task reviews match your filters" : "No pending task reviews") : "Showing " + data.first + "–" + data.last + " of " + data.total + " pending submissions"}</p>
         <div className="flex flex-wrap items-center gap-3">
         <TextLink href={mentorTaskReviewExportHref(linkQuery)} download
           className="inline-flex min-h-11 items-center md:min-h-9">
@@ -142,7 +142,7 @@ export default async function MentorTaskReviewsPage({
         </div>
       </div>
       {data.items.length === 0
-        ? <EmptyState title="No pending task reviews"
+        ? <EmptyState title={hasFilters ? "No task reviews match your filters" : "No pending task reviews"}
             description={data.total > 0
               ? "This page is outside the matching result range. Return to page 1."
               : "No submitted tasks currently need review in your assigned projects. Older reviewed submissions are not pending."}
