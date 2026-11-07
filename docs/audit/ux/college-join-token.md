@@ -20,3 +20,9 @@
 - Scoped acceptance run [42387237926](https://github.com/42Students/lms-vnext/actions/runs/42387237926): 17/17 Vitest, 4/4 Chromium at 375px and 1280px, scoped ESLint PASS. Browser screenshot/HTML report: [artifact 13579374692](https://github.com/42Students/lms-vnext/actions/runs/42387237926/artifacts/13579374692). Exact tested SHA `98de5b5cc549513337e9a1ed04343f65933ffccb`.
 - Early desktop Chrome regression (36px recovery target, run 42386704992) was resolved by a measured 44px recovery target at both widths; the subsequent full browser pass is recorded above. The simulated invalid-OTP rejection prevents falsely reporting a successful join.
 - See `docs/parity/shared-public-ops.md` for an explicit scope, retained security controls and live-provider/DB limitations. Independent typecheck run pending; retain `DOING` until recorded.
+
+## UX-G045 final closure (2026-11-07)
+
+- **DONE** at exact accepted source SHA `3fb85a0bf15636e52172589ccb4a82ce12a9cd56`: [workflow 42387417330](https://github.com/42Students/lms-vnext/actions/runs/42387417330). Scoped ESLint, full TypeScript typecheck, 17/17 focused Vitest, 4/4 Playwright Chromium tests (375px and 1280px) all passed.
+- [Browser screenshots and HTML report artifact 13580351772](https://github.com/42Students/lms-vnext/actions/runs/42387417330/artifacts/13580351772). Review/evidence in `docs/parity/shared-public-ops.md`. The previous 36px desktop hit-area failure was fixed and measured passing. Invalid-token browser is real; READY recruitment and email-code/network responses were mocked in the development-only harness.
+- All live provider delivery, tenant/authorization/database acceptance and full release gates stay separate, with no production readiness inference. Shared COMPANY use of form retains its API path and existing regression contract.

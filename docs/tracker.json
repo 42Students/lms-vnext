@@ -15461,11 +15461,11 @@
         "type": "JOURNEY",
         "area": "college-join",
         "title": "College Join · Token (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-college-join-ux-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [
           "src/app/college-join/[token]/error.tsx",
           "src/app/college-join/[token]/loading.tsx",
@@ -15477,8 +15477,47 @@
           "PAGE-0504"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Scoped college-invitation source improvements committed at dbcc4066, 24ac2f60, a5f3a9e4; unit/browser checks authored b07cc149/03c1aa9d. Shared join form changed as dependency. Exact-SHA CI, desktop/mobile READY flow, negative cases and browser screenshot evidence remain pending. See docs/audit/ux/college-join-token.md. DO NOT mark DONE yet."
+        "evidence": [
+          {
+            "commitSha": "3fb85a0bf15636e52172589ccb4a82ce12a9cd56",
+            "parityDoc": "docs/parity/shared-public-ops.md",
+            "tests": [
+              {
+                "command": "npx eslint 'src/app/college-join/[token]/page.tsx' 'src/app/college-join/[token]/loading.tsx' 'src/app/college-join/[token]/error.tsx' src/components/placements/public-recruiter-join-form.tsx tests/unit/UX-college-join-02.test.tsx tests/e2e/ux-g045-college-join.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42387417330 (scoped ESLint successful)"
+              },
+              {
+                "command": "npx vitest run tests/unit/UX-college-join-01.test.ts tests/unit/UX-college-join-02.test.tsx tests/unit/chat16-public-recruiter-join-pages-26.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42387417330 (3 files, 17/17 unit/SSR and source regression tests passing)"
+              },
+              {
+                "command": "NODE_OPTIONS=--max-old-space-size=6144 npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42387417330 (current exact commit TypeScript check passing)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g045-college-join.spec.ts --project=chromium --reporter=line,html",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42387417330 (4/4 Chromium browser tests passing, no failing retries)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "mobile 375x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42387417330/artifacts/13580351772 (real invalid-token route; mocked READY flow; wrong code rejected; email correction, resend, success; 44px hit areas; no horizontal overflow; attached screenshot)"
+              },
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42387417330/artifacts/13580351772 (same two flows; fixed previously failing 36px recovery-control regression to measured 44px; attached screenshot)"
+              }
+            ],
+            "regressionReview": "Reviewed source scope, page/loading/error and shared form: preview failure/retry remains distinct from invalid/revoked; server readiness only probed for READY; COMPANY/COLLEGE endpoints, code stage, pending guards, error focus and success sign-in preserved. Typecheck, original UX-college-join-01 and chat16 SSR regression suite executed green. Loading width and reduced-motion skeleton aligned.",
+            "securityReview": "No API, DB schema, tenant/role authorization, RLS, notification service, token validation, or provider configuration changed. Invalid token exercised on actual route, not only fixture. Synthetic READY UI harness is inaccessible outside development and its send/join requests were entirely intercepted in browser; this is UX acceptance, not real OTP/provider/DB/security or release parity certification."
+          }
+        ],
+        "notes": "DONE — scoped college invitation UX accepted at exact SHA 3fb85a0bf15636e52172589ccb4a82ce12a9cd56. https://github.com/42Students/lms-vnext/actions/runs/42387417330 confirms scoped ESLint, TypeScript, 17/17 Vitest and 4/4 Chromium 375px/1280px (browser report https://github.com/42Students/lms-vnext/actions/runs/42387417330/artifacts/13580351772). Includes wrong email recovery, resend, rejected wrong code, focus and minimum target checks. READY browser data and OTP are mocked; independent live-provider/DB/security/legacy parity remain separate. Shared recruiter form is also reused by COMPANY scope; existing regressions passed."
       },
       {
         "id": "UX-G046",
