@@ -36,7 +36,7 @@ test.describe("UX-G027 campaign opt-out", () => {
     });
     await page.goto("/campaign-unsubscribe/placeholder-token");
     await page.getByRole("button", { name: "Unsubscribe" }).click();
-    await expect(page.getByRole("alert")).toContainText("That didn’t work. Please try again.");
+    await expect(page.locator('[data-slot="inline-notice"][role="alert"]')).toContainText("That didn’t work. Please try again.");
     await expect(page.getByRole("button", { name: "Unsubscribe" })).toBeEnabled();
     expect(new URL(page.url()).pathname).toContain("/campaign-unsubscribe/placeholder-token");
     await page.screenshot({ path: testInfo.outputPath("mobile-retry.png"), fullPage: true });
