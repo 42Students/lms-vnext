@@ -14609,7 +14609,8 @@
           "PAGE-0115"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [{"commitSha":"b4c10531be3135af861b7f0cd3a56acf15e60f06","parityDoc":"docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md","tests":[],"browser":[],"regressionReview":"Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.","securityReview":"Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."}],
+        "notes": "Engineering changes and regression harness committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md"
       },
       {
         "id": "UX-G026",
@@ -15189,7 +15190,8 @@
           "/college/placements/companies",
           "/college/placements/job-settings"
         ],
-        "evidence": []
+        "evidence": [{"commitSha":"b4c10531be3135af861b7f0cd3a56acf15e60f06","parityDoc":"docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md","tests":[],"browser":[],"regressionReview":"Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.","securityReview":"Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."}],
+        "notes": "Engineering changes and regression harness committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md"
       },
       {
         "id": "UX-G037",
@@ -15581,7 +15583,8 @@
           "/college-admin/students",
           "/college-admin/teachers"
         ],
-        "evidence": []
+        "evidence": [{"commitSha":"b4c10531be3135af861b7f0cd3a56acf15e60f06","parityDoc":"docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md","tests":[],"browser":[],"regressionReview":"Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.","securityReview":"Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."}],
+        "notes": "Engineering changes and regression harness committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md"
       },
       {
         "id": "UX-G045",
@@ -17927,7 +17930,8 @@
           "/superadmin/lesson-content",
           "/superadmin/projects/at-risk"
         ],
-        "evidence": []
+        "evidence": [{"commitSha":"b4c10531be3135af861b7f0cd3a56acf15e60f06","parityDoc":"docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md","tests":[],"browser":[],"regressionReview":"Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.","securityReview":"Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."}],
+        "notes": "Engineering changes and regression harness committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md"
       },
       {
         "id": "UX-G088",
@@ -18399,7 +18403,8 @@
           "PAGE-0362"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [{"commitSha":"b4c10531be3135af861b7f0cd3a56acf15e60f06","parityDoc":"docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md","tests":[],"browser":[],"regressionReview":"Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.","securityReview":"Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."}],
+        "notes": "Engineering changes and regression harness committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md"
       },
       {
         "id": "UX-G098",
