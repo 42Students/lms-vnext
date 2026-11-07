@@ -22,7 +22,9 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
  const [search,setSearch]=useState("");
  const { askConfirm, dialog } = useConfirmFlow();
  const visibleSkills=rows.map((skill,index)=>({skill,index})).filter(({skill})=>facultyProfileSkillMatches(skill,facultyProfileActiveSearch(search,rows.length)));
- const skillsIssue=facultyProfileSkillsIssue(rows);
+ const skillsIssue=rows.some(row=>!row.skill.trim())
+  ? "Enter a skill name or remove the unsaved row before saving."
+  : facultyProfileSkillsIssue(rows);
  useFacultyProfileUnsavedWarning(changed);
  function edit(id:string,field:"skill"|"proficiency",value:string){
   setRows(current=>current.map(row=>row.id===id?{...row,[field]:value}:row));setChanged(true);
