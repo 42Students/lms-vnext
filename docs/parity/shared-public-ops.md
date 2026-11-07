@@ -398,3 +398,13 @@ These source findings do not count as browser, API, PostgreSQL, UX or release pr
 ## UX-G004 — Activity Log and event detail (2026-11-07)
 
 [Six-surface scope, source changes and exact-SHA browser acceptance ledger](pages/shared/UX-G004-activity.md). This UX group owns the shared Activity Log to event-detail journey, not the Notifications UX-G001 group or any DB/API/security parity gate. Canonical live status and ownership remain in `docs/tracker.json#uxReview.groups`; source edits and authored tests alone do not close browser or release acceptance.
+
+## UX-G123 — Universities journey (7 November 2026)
+
+**Scope:** `/universities` public marketing journey, loading and failure states, anchored sections and demo CTA. Group status in `docs/tracker.json#uxReview` is authoritative.
+
+**Code implemented:** Route-local early demo link, accessible capabilities/journey shortcuts, deterministic section targets, removal of overlapping journey arrows, contextual loading skeleton and public safe-home error fallback. Existing shared marketing copy, SEO/canonical metadata, capability modules, privacy/auth, and request-demo workflow are untouched.
+
+**Evidence required for closure:** `node --test tests/ux-universities-group.test.mjs`; `npx playwright test tests/e2e/ux-universities-journey.spec.ts --project=chromium` with 1280×800 desktop and 390×844 mobile screenshots; `npm run typecheck`; `npm run ux:guard`; marketing links/CTA regression; explicit no private role or API contract change review.
+
+**State:** Implemented in source; runtime executions and visual proofs not yet recorded. Do not count as UX DONE until evidence above is collected and cited.
