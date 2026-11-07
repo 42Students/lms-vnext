@@ -159,6 +159,7 @@ export default async function NotificationsPage({searchParams}:{searchParams:Pro
   </Alert>:null}
   {!invalid&&(!failedNotifications||items.length>0)?<>
    <NotificationList items={items} emptyText={emptyText}
+    emptyDescription={query?"Try a different search or clear your search to see more updates.":undefined}
     emptyAction={items.length===0&&query?<TextLink href={clearSearchHref}
       className="inline-flex min-h-11 items-center">Clear search</TextLink>
      :items.length===0&&(category||view==="unread")?<TextLink href={inbox+"?view=all"}
