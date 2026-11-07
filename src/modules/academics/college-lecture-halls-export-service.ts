@@ -38,6 +38,6 @@ export async function exportCollegeLectureHalls(
  const truncated=total>LECTURE_HALLS_EXPORT_CAP;
  return {csv:format==="superadmin"
    ? renderSuperAdminLectureHallsCsv(selected,truncated)
-   : renderLectureHallsCsv(rows.slice(0,LECTURE_HALLS_EXPORT_CAP),truncated),
+   : renderLectureHallsCsv(selected,truncated),
   truncated,cap:LECTURE_HALLS_EXPORT_CAP,exported:selected.length};
 }
