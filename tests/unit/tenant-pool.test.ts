@@ -98,3 +98,37 @@ describe("tenant context robustness", () => {
     expect(s).toMatchObject({ userId: "u", collegeId: "c", role: null, platform: false });
   });
 });
+
+// Regression (found on dev 2026-11-07): pg-pool's own query() calls this.connect(callback). A wrapper that ignores the
+// callback leaks the checked-out connection and never answers, which empties the pool and hangs every request.
+describe("tenant-scoped pool: callback-style connect", () => {
+  it("honours connect(callback) and releases the connection, scoped or not", async () => {
+    const { pool, released } = fakePool();
+    const wrapped = withTenantScope(pool, true);
+    const viaCallback = (): Promise<unknown> =>
+      new Promise((resolve, reject) => {
+        (wrapped.connect as unknown as (cb: (e: Error | undefined, c?: { release: (e?: Error) => void }) => void) => void)((error, client) => {
+          if (error || !client) return reject(error);
+          client.release();
+          resolve("done");
+        });
+      });
+    await expect(viaCallback()).resolves.toBe("done");
+    await runWithTenantScope(scope, async () => {
+      await expect(viaCallback()).resolves.toBe("done");
+    });
+    await new Promise((r) => setTimeout(r, 0));
+    expect(released.length).toBe(2);
+  });
+
+  it("query() with a callback answers and releases", async () => {
+    const { pool, released } = fakePool();
+    const wrapped = withTenantScope(pool, true);
+    const result = await new Promise((resolve, reject) => {
+      (wrapped.query as unknown as (sql: string, cb: (e: Error | null, r?: unknown) => void) => void)("select 1", (e, r) => (e ? reject(e) : resolve(r)));
+    });
+    expect(result).toEqual({ rows: [] });
+    await new Promise((r) => setTimeout(r, 0));
+    expect(released.length).toBe(1);
+  });
+});

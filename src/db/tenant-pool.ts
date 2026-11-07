@@ -22,7 +22,7 @@ export function withTenantScope(pool: Pool, enabled: boolean): Pool {
 
   const originalConnect = pool.connect.bind(pool) as () => Promise<PoolClient>;
 
-  async function scopedConnect(): Promise<PoolClient> {
+  async function scopedConnectPromise(): Promise<PoolClient> {
     const client = (await originalConnect()) as Releasable;
     const scope = currentTenantScope();
     if (!scope) return client;
@@ -47,19 +47,43 @@ export function withTenantScope(pool: Pool, enabled: boolean): Pool {
     return client;
   }
 
-  (pool as unknown as { connect: () => Promise<PoolClient> }).connect = scopedConnect;
+  type ConnectCallback = (error: Error | undefined, client?: PoolClient, done?: (err?: Error | boolean) => void) => void;
 
-  const originalQuery = pool.query.bind(pool) as (...args: unknown[]) => unknown;
+  /**
+   * pg-pool's own `pool.query()` (and other internals) call `this.connect(callback)`. Because this replaces
+   * `connect`, the callback form MUST still be honoured: ignoring it leaks the checked-out connection and the callback
+   * never fires, which empties the pool and hangs every request (found on dev 2026-11-07).
+   */
+  function scopedConnect(callback?: ConnectCallback): Promise<PoolClient> | undefined {
+    const promise = scopedConnectPromise();
+    if (typeof callback !== "function") return promise;
+    promise.then(
+      (client) => callback(undefined, client, (err) => client.release(err)),
+      (error: unknown) => callback(error instanceof Error ? error : new Error("tenant scope failed")),
+    );
+    return undefined;
+  }
+
+  (pool as unknown as { connect: typeof scopedConnect }).connect = scopedConnect;
+
   (pool as unknown as { query: (...args: unknown[]) => unknown }).query = (...args: unknown[]) => {
-    if (!currentTenantScope() || typeof args[args.length - 1] === "function") return originalQuery(...args);
-    return (async () => {
-      const client = await scopedConnect();
+    const last = args[args.length - 1];
+    const callback = typeof last === "function" ? (last as (error: Error | null, result?: unknown) => void) : null;
+    const queryArgs = callback ? args.slice(0, -1) : args;
+    const run = async () => {
+      const client = await scopedConnectPromise();
       try {
-        return await (client.query as (...a: unknown[]) => Promise<unknown>)(...args);
+        return await (client.query as (...a: unknown[]) => Promise<unknown>)(...queryArgs);
       } finally {
         client.release();
       }
-    })();
+    };
+    if (!callback) return run();
+    run().then(
+      (result) => callback(null, result),
+      (error: unknown) => callback(error instanceof Error ? error : new Error("query failed")),
+    );
+    return undefined;
   };
 
   return pool;
