@@ -1,0 +1,55 @@
+name: UX HR five-group acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/app/(authenticated)/hr/**
+      - src/components/hr/**
+      - tests/unit/UX-hr-five-groups-batch.test.tsx
+      - tests/e2e/ux-hr-five-groups-anonymous.spec.ts
+      - .github/workflows/ux-hr-five-groups-acceptance.yml
+
+concurrency:
+  group: ux-hr-five-group-acceptance
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      PLATFORM_HOSTS: "localhost,127.0.0.1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Scoped HR source lint and full TypeScript
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: |
+          npx eslint 'src/app/(authenticated)/hr' 'src/components/hr' tests/unit/UX-hr-five-groups-batch.test.tsx tests/e2e/ux-hr-five-groups-anonymous.spec.ts
+          npm run typecheck
+      - name: Five-group inventory, SSR recovery, component safeguards
+        run: npx vitest run tests/unit/UX-hr-five-groups-batch.test.tsx
+      - name: Chromium dependencies
+        run: npx playwright install --with-deps chromium
+      - name: Desktop and mobile anonymous access and page evidence
+        run: npx playwright test tests/e2e/ux-hr-five-groups-anonymous.spec.ts --project=chromium --reporter=line
+      - name: Preserve viewport captures and failure details
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-hr-five-groups-viewport-evidence
+          path: |
+            test-results/ux-hr-five-groups/
+            playwright-report/
+          if-no-files-found: ignore
