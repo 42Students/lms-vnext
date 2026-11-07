@@ -31,9 +31,11 @@ jobs:
       - run: npm ci
       - name: Check scoped source and browser test lint
         run: npx eslint src/app/maintenance/page.tsx src/app/maintenance/maintenance-recovery.tsx src/app/forbidden/page.tsx src/components/public/graceful-screen.tsx src/app/request-demo/page.tsx src/components/marketing/demo-contact-actions.tsx tests/e2e/ux-public-recovery-groups.spec.ts
-      - name: Typecheck all dependent TSX paths
-        run: npm run typecheck
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Desktop and mobile public UX browser acceptance
         run: npx playwright test tests/e2e/ux-public-recovery-groups.spec.ts --project=chromium --reporter=line
+      - name: Typecheck all dependent TSX paths
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
