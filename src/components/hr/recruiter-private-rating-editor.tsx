@@ -87,7 +87,7 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
     className="w-full"/>
   </Label>
   <p className="text-xs text-muted-foreground">{note.length}/1000 characters</p>
-  {message?<p role="status" className="text-sm text-body">{message}</p>:null}
+  {message?<p role={/could not|not saved|changed|was not/i.test(message)?"alert":"status"} className="text-sm text-body">{message}</p>:null}
   <div className="flex flex-wrap gap-2">
    <Button type="submit" loading={pending} disabled={!ready||!dirty||pending}
     >

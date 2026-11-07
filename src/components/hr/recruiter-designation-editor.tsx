@@ -8,12 +8,14 @@ export function RecruiterDesignationEditor({initialTitle,updatedAt}:{initialTitl
  const router=useRouter();
  const [title,setTitle]=useState(initialTitle??"");
  const [version,setVersion]=useState(updatedAt);
+ const [savedTitle,setSavedTitle]=useState(initialTitle??"");
+ const dirty=title!==savedTitle;
  const [saving,setSaving]=useState(false);
  const [error,setError]=useState("");
  const [success,setSuccess]=useState("");
  async function save(event:FormEvent<HTMLFormElement>) {
   event.preventDefault();
-  if(saving)return;
+  if(saving||!dirty)return;
   setSaving(true);setError("");setSuccess("");
   try {
    const response=await fetch("/api/placements/recruiter/profile",{method:"PATCH",
@@ -24,7 +26,7 @@ export function RecruiterDesignationEditor({initialTitle,updatedAt}:{initialTitl
      setError(response.status===409?"This profile changed since you opened it. Refresh before saving.":"Designation could not be saved.");
      return;
    }
-   setTitle(payload.profile.title??"");setVersion(payload.profile.updatedAt);
+   setTitle(payload.profile.title??"");setSavedTitle(payload.profile.title??"");setVersion(payload.profile.updatedAt);
    setSuccess("Designation saved.");router.refresh();
   }catch{setError("Could not save designation. Check your connection and try again.");}
   finally{setSaving(false);}
@@ -33,10 +35,13 @@ export function RecruiterDesignationEditor({initialTitle,updatedAt}:{initialTitl
   <form onSubmit={event=>void save(event)} className="space-y-2">
    <Label htmlFor="hr-recruiter-designation" className="block">Designation</Label>
    <div className="flex flex-wrap gap-2">
-    <Input id="hr-recruiter-designation" value={title} onChange={event=>setTitle(event.target.value)}
-       maxLength={160} className="min-w-48 flex-1"/>
-    <Button type="submit" disabled={saving||title.length>160} loading={saving} className="min-h-11 md:min-h-9">
+    <Input id="hr-recruiter-designation" value={title} onChange={event=>{setTitle(event.target.value);setError("");setSuccess("");}}
+       maxLength={160} className="min-w-0 w-full flex-1 sm:min-w-48"/>
+    <Button type="submit" disabled={saving||!dirty||title.length>160} loading={saving} className="min-h-11 md:min-h-9">
       {saving?"Saving…":"Save designation"}</Button>
+    <Button type="button" variant="secondary" disabled={saving||!dirty}
+      onClick={()=>{setTitle(savedTitle);setError("");setSuccess("");}}
+      className="min-h-11 md:min-h-9">Discard changes</Button>
    </div>
    {error?<p role="alert" className="text-[12px] leading-5 text-[var(--lms-error)]">{error}</p>:null}
    {success?<p role="status" className="text-sm text-muted-foreground">{success}</p>:null}

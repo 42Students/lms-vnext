@@ -98,8 +98,8 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
      <div key={row.id} className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-border py-2">
        <span className="min-w-0 flex-1 break-words text-sm">{row.name}</span>
        <div className="flex gap-2">
-         <Button type="button" variant="secondary" onClick={()=>edit(row)}>Change</Button>
-         <Button type="button" variant="secondary" onClick={()=>{
+         <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={()=>edit(row)}>Change</Button>
+         <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={()=>{
            edit(row);setConfirmRemove(true);
          }}>Remove</Button>
        </div>
@@ -134,7 +134,7 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
        variant="secondary" className="mt-2 min-h-11 w-full border-error text-error md:w-auto md:min-h-9">Remove</Button></Disclosure>:null}
      <div className="flex min-w-0 flex-wrap justify-end gap-2 md:col-span-2 [&_button]:flex-1 sm:[&_button]:flex-none">
       <Button type="button" disabled={pending} onClick={requestClose}
-       variant="secondary">Cancel</Button>
+       variant="secondary" className="min-h-11 md:min-h-9">Cancel</Button>
       <Button type="submit" loading={pending} disabled={pending}
        >
        {pending?"Saving…":active?"Save changes":"Add round"}</Button>

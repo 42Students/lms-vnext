@@ -46,7 +46,9 @@ function RecruiterConversationReplyFormState({threadId,quoteId,quoteLabel,histor
    const target=event.target;
    if(!(target instanceof Element))return;
    const anchor=target.closest("a[href]");
-   if(!(anchor instanceof HTMLAnchorElement)||event.defaultPrevented||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey)return;
+   if(!(anchor instanceof HTMLAnchorElement)||event.defaultPrevented||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey||anchor.hasAttribute("download")||(anchor.target!==""&&anchor.target!=="_self"))return;
+   // External or new-tab links must keep their browser behavior. Draft warnings
+   // apply only to same-tab navigation within the current LMS origin.
    const destination=new URL(anchor.href,window.location.href);
    if(destination.origin!==window.location.origin || (destination.pathname===window.location.pathname &&
       destination.search===window.location.search && destination.hash===window.location.hash))return;

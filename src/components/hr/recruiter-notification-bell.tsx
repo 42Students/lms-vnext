@@ -33,6 +33,13 @@ export function RecruiterNotificationBell(){
    if(collegeId && payload.status==="READY" && payload.collegeId!==collegeId){
     setData(null);setError("Couldn't load notifications. Try again.");return;
    }
+   // The bell must never present a malformed or stale tenant feed as empty.
+   if(!payload || !["READY","CHOOSE_COLLEGE","NO_ACCESS"].includes(payload.status) ||
+      !Number.isInteger(payload.unread) || payload.unread<0 ||
+      (payload.status==="READY"&&!Array.isArray(payload.rows)) ||
+      (payload.status==="CHOOSE_COLLEGE"&&!Array.isArray(payload.choices))) {
+     setData(null);setError("Couldn't verify notifications. Try again.");return;
+   }
    setData(payload);setError("");
   }catch{
    if(!requestGate.current.isCurrent(request))return;
@@ -70,6 +77,7 @@ export function RecruiterNotificationBell(){
       }}
       variant="secondary" className="min-h-11 w-full justify-start text-left md:min-h-9">
       {item.collegeName}</Button>)}</div>:null}
+   {data?.status==="NO_ACCESS"?<EmptyState title="No recruiter notification access" description="Choose an authorized recruiter workspace or ask your placement cell to review your access."/>:null}
    {data?.status==="READY"&&data.rows?.length===0?
      <EmptyState title="No notifications yet" description="New placement notifications will appear here."/>:null}
    {data?.status==="READY"&&data.rows?.length?
