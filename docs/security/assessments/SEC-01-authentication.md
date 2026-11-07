@@ -27,3 +27,8 @@ Files read: `src/modules/auth/login-service.ts` (startLogin, verifyLogin), `src/
 ## Cost of doing all 448
 
 SEC-01 took one pass for about half its controls. At that rate the 448 take roughly 25 passes across the remaining groups, and every result still needs CI evidence before the tracker will take it.
+
+## Update 2026-11-08: account enumeration measured on dev (SEC-01-003)
+
+POST `/api/auth/login/start` answers **404 `NOT_REGISTERED`** for an unknown email or phone and **200 with an `attemptId`** for a known one, so anyone can learn whether an address has an account. The 200 body also returns a masked second contact (a phone login shows `le*******@vnext.test`; an email login shows `********1104`). Rate limit is 10 per window per client. This matches the old LMS behaviour and its wording ("Sign-in is not available for these details."), so changing it is a product decision, not a code fix: a uniform "code sent" answer for unknown contacts is the secure form, at the price of users with a typo waiting for a code that never comes. **Owner decision needed** (flagged in `NEXT-UP.md`). Cheap mitigations that do not change wording: stricter per-client budget on `login/start`, and stop returning the masked second contact before the code is verified.
+Login events (started, succeeded, rejected with the error code) now also go to the durable `security_audit_events` trail.

@@ -7,6 +7,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { allowRequest, clientIp } from "@/auth/ip-rate-limit";
 import { authAuditTag, safeAuthAuditFields } from "./auth-audit-privacy";
 import { logError, writeStructuredLog } from "@/observability/logger";
+import { recordSecurityEvent } from "@/security/audit-store";
 import { AuthConfigError } from "./config";
 import { LoginError, loginErrorMessage } from "./login-service";
 import { resolveRequestTenant } from "./request-tenant";
@@ -27,6 +28,8 @@ export function auditLogin(
 ) {
   // The caller's event fields may include untrusted labels. Never let them
   // overwrite the security-owned route, component or one-way IP tag.
+  // Durable trail (SEC-19): outcome and route only; contacts, codes and tokens never reach it (same fields as the log).
+  recordSecurityEvent({ event, outcome: /fail|reject|denied|lock/i.test(event) ? "denied" : "ok", path: context.route, ipTag: ipTag(context.ip), detail: safeAuthAuditFields(fields) });
   writeStructuredLog("INFO", event, {
     ...safeAuthAuditFields(fields),
     component: "auth-audit",
@@ -41,6 +44,7 @@ export function loginErrorResponse(
 ) {
   if (error instanceof LoginError) {
     if (audit) {
+      recordSecurityEvent({ event: "auth.login_rejected", outcome: "denied", path: audit.route, ipTag: ipTag(audit.ip), status: error.status, detail: { code: error.code } });
       writeStructuredLog("WARNING", "auth.login_rejected", {
         component: "auth-audit",
         route: audit.route,
