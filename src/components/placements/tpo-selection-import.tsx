@@ -16,8 +16,12 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
  const [unmatched,setUnmatched]=useState<Array<{line:number;value:string;reason:string}>>([]);
  const [error,setError]=useState("");const [busy,setBusy]=useState(false);const importRef=useRef(false);const [done,setDone]=useState("");
  const [reading,setReading]=useState(false);
+ const fileRevision=useRef(0);
+ const [needsRefresh,setNeedsRefresh]=useState(false);
  const [confirmOpen,setConfirmOpen]=useState(false);
  async function read(file:File|null){
+  if(busy||needsRefresh)return;
+  const revision=++fileRevision.current;
   setEntries([]);setUnmatched([]);setError("");setDone("");
   if(!file)return;
   if(!file.name.toLowerCase().endsWith(".csv")||file.size>2_000_000){
@@ -26,18 +30,19 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
   setReading(true);
   try{
    const prepared=prepareSelectionImport(await file.text(),candidates,"");
+   if(revision!==fileRevision.current)return;
    setEntries(prepared.accepted);setUnmatched(prepared.unmatched);
    if(!prepared.accepted.length)setError("No rows can be recorded. Check the unmatched list below.");
-  }catch(e){setError(e instanceof Error?e.message:"Could not read file");}
-  finally{setReading(false);}
+  }catch(e){if(revision===fileRevision.current)setError(e instanceof Error?e.message:"Could not read file");}
+  finally{if(revision===fileRevision.current)setReading(false);}
  }
  async function confirm(){
-  if(busy||importRef.current||!entries.length)return;
+  if(busy||reading||needsRefresh||importRef.current||!entries.length)return;
   importRef.current=true;
 
   setBusy(true);setError("");setDone("");
+  let count=0;
   try{
-   let count=0;
    for(let i=0;i<entries.length;i+=100){
     const chunk=entries.slice(i,i+100);
     const response=await fetch("/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/selections",{
@@ -53,15 +58,18 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
    }
    setDone(count+" selection(s) recorded. Students have not been notified; verify and release from the selection register.");
    setEntries([]);router.refresh();
-  }catch(e){setError((e instanceof Error?e.message:"Import failed")+
-   ". Already recorded rows remain saved. Refresh before retrying.");}finally{importRef.current=false;setBusy(false);setConfirmOpen(false);}
+  }catch(e){
+   setNeedsRefresh(true);
+   setError((e instanceof Error?e.message:"Import failed")+
+    ". "+count+" row(s) confirmed before the error. Reload the register before retrying; already recorded rows may remain saved.");
+  }finally{importRef.current=false;setBusy(false);setConfirmOpen(false);}
  }
  return <section aria-labelledby="tpo-selection-import-title" className="min-w-0 space-y-3 border-b border-border pb-4">
   <Heading level={2} size="base" id="tpo-selection-import-title" className="text-[var(--lms-heading)] leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px]">Import the company&apos;s selection list</Heading>
   <p className="text-sm text-body leading-[22px]">Use CSV with Application ID, Email or Student name. Optional Role and Package LPA columns.
    Rows are matched to this drive&apos;s eligible applicants. Unmatched and duplicate entries are never recorded.</p>
   <FileUpload className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Selection list (CSV)" accept=".csv,text/csv" maxBytes={2_000_000}
-     disabled={busy||reading} onFiles={files=>void read(files?.[0]??null)}/>
+     disabled={busy||reading||needsRefresh} onFiles={files=>void read(files?.[0]??null)}/>
   {reading?<p role="status" className="text-sm text-body leading-[22px]">Reading selection CSV…</p>:null}
   {entries.length?<div className="space-y-2">
    <p role="status" className="text-sm leading-[22px]">{entries.length} matched · {unmatched.length} unmatched</p>
@@ -74,7 +82,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
       {key:"package",header:"Package",cell:item=>item.annualCtcInr==null?"—":"₹"+item.annualCtcInr/100000+" LPA",mobilePriority:"secondary"},
      ]}/>
    </div>
-   <Button variant="primary" type="button" disabled={busy} onClick={()=>setConfirmOpen(true)}
+   <Button variant="primary" type="button" disabled={busy||reading||needsRefresh} onClick={()=>setConfirmOpen(true)}
     className="min-h-11 w-full px-4 sm:w-auto md:min-h-9 print:hidden">
     {busy?"Recording…":"Confirm and record "+entries.length+" selections"}
    </Button>
@@ -89,6 +97,10 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
    <div role="region" aria-label="Unmatched selection import rows" tabIndex={0} className="mt-2 max-h-64 min-w-0 overflow-auto border-y border-border print:max-h-none print:overflow-visible"><DataTable caption="Unmatched selection import rows" rows={unmatched} getRowKey={row=>String(row.line)} empty={<EmptyState title="No unmatched rows."/>} columns={[{key:"line",header:"Row",mobilePriority:"primary",cell:row=>row.line},{key:"identity",header:"Identifier",mobilePriority:"secondary",cell:row=>row.value||"Empty identifier"},{key:"reason",header:"Reason",mobilePriority:"secondary",cell:row=>row.reason}]}/></div>
   </Disclosure>:null}
   {error?<InlineNotice tone="error" message={error}/>:null}
+  {needsRefresh?<div role="alert" className="space-y-2 rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm">
+   <p>The import outcome must be reconciled before another submission to avoid duplicate selections.</p>
+   <Button variant="secondary" type="button" onClick={()=>window.location.reload()} className="min-h-11">Reload selection register</Button>
+  </div>:null}
   {done?<InlineNotice tone="success" message={done}/>:null}
  </section>;
 }
