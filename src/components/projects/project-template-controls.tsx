@@ -1,6 +1,6 @@
 "use client";
 
-import {type FormEvent,useEffect,useState} from "react";
+import {type FormEvent,useEffect,useRef,useState} from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -19,6 +19,7 @@ export function CreateProjectTemplateControl() {
   const { showToast } = useToast();
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
+  const mutationLock = useRef(false);
   const [error, setError] =
     useState<string | null>(null);
   const [slug, setSlug] = useState("");
@@ -48,6 +49,8 @@ export function CreateProjectTemplateControl() {
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
+    if (mutationLock.current || pending) return;
+    mutationLock.current = true;
     setPending(true);
     setError(null);
     try {
@@ -118,6 +121,7 @@ export function CreateProjectTemplateControl() {
           : "Could not create the template.",
       );
     } finally {
+      mutationLock.current = false;
       setPending(false);
     }
   }
