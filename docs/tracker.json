@@ -15388,10 +15388,10 @@
         "type": "JOURNEY",
         "area": "college-join",
         "title": "College Join · Token (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-college-join-ux-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/college-join/[token]/error.tsx",
@@ -15404,7 +15404,8 @@
           "PAGE-0504"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "College invitation UX: scoped email-code recovery, accessible form/loading/error states and regression evidence; keep security/API boundaries unchanged. DONE requires focused tests and desktop/mobile browser proof."
       },
       {
         "id": "UX-G046",
