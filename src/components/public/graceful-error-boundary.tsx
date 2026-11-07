@@ -35,7 +35,13 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", l
     const id = createRequestId();
     // Chat-16 accepts UUID report IDs; the visible 8-digit reference remains searchable.
     const reportId = `00000000-0000-4000-8000-0000${id}`;
-    const timer = setTimeout(() => setRequestId(id), 0);
+    const timer = setTimeout(() => {
+      setRequestId(id);
+      // Root/global failures replace the current view. Move keyboard focus
+      // to the accessible status heading; shell and stale-chunk paths have no
+      // such element and are intentionally left untouched.
+      document.getElementById("root-error-status")?.focus();
+    }, 0);
     const kind = stale ? "stale_chunk" : /(?:Auth|Session|Unauthorized)/i.test(error.name) ? "auth_lost" : "render";
     void fetch("/api/client-errors", {
       method: "POST",
@@ -105,7 +111,7 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", l
       window.location.assign(new URL("/",window.location.origin).href);
     };
     return <main role="alert" data-root-error="true" aria-labelledby="root-error-status" aria-describedby="root-error-guidance" className="flex min-h-dvh w-full min-w-0 flex-col items-center justify-center bg-[color:var(--lms-neutral-50)] p-8 text-center">
-      <Heading level={1} id="root-error-status" className="m-0 text-[64px] leading-none text-[color:var(--lms-primary-hover)]">500</Heading>
+      <Heading level={1} id="root-error-status" tabIndex={-1} className="m-0 text-[64px] leading-none text-[color:var(--lms-primary-hover)]">500</Heading>
       <Heading level={2} size="2xl" className="mb-2 mt-4 leading-[32px] text-[color:var(--lms-neutral-900)]">Server Error</Heading>
       <p id="root-error-guidance" className="mb-8 max-w-[420px] text-sm leading-[22px] text-[color:var(--lms-text-muted)]">
         Something went wrong on our side. Please try again in a moment.
