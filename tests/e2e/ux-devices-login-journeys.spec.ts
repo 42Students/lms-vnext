@@ -77,9 +77,9 @@ test.describe("UX-G003 account device-security real sign-in", () => {
       await page.setViewportSize({width:1280,height:800});
       await page.goto("/account/security");
       await expect(page.getByRole("heading",{name:"Signed-in devices"})).toBeVisible();
-      await expect(page.getByRole("button",{name:"Sign out everywhere else"}).first()).toBeVisible();
-      await page.getByRole("button",{name:"Sign out everywhere else"}).first().click();
-      await page.getByRole("button",{name:"Sign out everywhere else"}).last().click();
+      const disclosure=page.locator("details").filter({hasText:"Sign out everywhere else"}).first();
+      await disclosure.locator("summary").click();
+      await disclosure.getByRole("button",{name:"Sign out everywhere else"}).click();
       const dialog=page.getByRole("alertdialog");
       await expect(dialog).toContainText("This device stays signed in");
       await dialog.getByRole("button",{name:"Sign out everywhere else"}).click();
