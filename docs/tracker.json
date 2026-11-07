@@ -14525,10 +14525,10 @@
         "type": "JOURNEY",
         "area": "auth",
         "title": "Auth · Handoff (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-auth-handoff-ux-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/auth/handoff/error.tsx",
@@ -14541,7 +14541,8 @@
           "PAGE-0501"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Retired handoff public entry UX, privacy and safe redirect. Exact-SHA lint, server-level negative checks, desktop/mobile browser and proof required for DONE."
       },
       {
         "id": "UX-G027",
