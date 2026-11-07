@@ -102,7 +102,7 @@ export function NotificationToolbar({
             const active=item.id===(selectedCategory??"all");
             return <TextLink variant="bare" key={item.id} href={link} scroll={false}
               aria-current={active?"page":undefined}
-              aria-label={item.label+" ("+item.unread+" in loaded view)"}
+              aria-label={item.label+" ("+item.unread+" unread)"}
               className={"inline-flex min-h-11 shrink-0 items-center gap-2 rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold md:min-h-9 "+(
                 active?"border-primary bg-primary-subtle text-primary-text":"border-border text-body hover:border-primary"
               )}>
