@@ -15570,11 +15570,11 @@
         "type": "JOURNEY",
         "area": "forbidden",
         "title": "Forbidden · Home (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-public-recovery-ux-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [
           "src/app/forbidden/error.tsx",
           "src/app/forbidden/loading.tsx",
@@ -15586,8 +15586,42 @@
           "PAGE-0509"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Scoped public UX pass in this chat: source changes, regression and browser acceptance required for DONE. Avoid security/auth implementation and shared component rewrites."
+        "evidence": [
+          {
+            "commitSha": "b8e9372eec9181a608ee5988f5d2d87b4845420c",
+            "parityDoc": "docs/parity/shared-public-ops.md",
+            "tests": [
+              {
+                "command": "npx eslint src/app/maintenance/page.tsx src/app/maintenance/maintenance-recovery.tsx src/app/forbidden/page.tsx src/components/public/graceful-screen.tsx src/app/request-demo/page.tsx src/components/marketing/demo-contact-actions.tsx tests/e2e/ux-public-recovery-groups.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386318763"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-public-recovery-groups.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386318763 — 7/7 passed"
+              },
+              {
+                "command": "npm run typecheck (NODE_OPTIONS=--max-old-space-size=6144)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386318763"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386318763 — UX-G051 desktop Chromium 1280x800"
+              },
+              {
+                "viewport": "mobile",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386318763 — UX-G051 mobile Chromium 390x844"
+              }
+            ],
+            "regressionReview": "Forbidden: denial copy, restricted link destinations, accessible mobile/desktop recovery to the real public sign-in page, focus, noindex and overflow checks. Existing route loading/error code kept; shared GracefulScreen addition optional with inert defaults.",
+            "securityReview": "No API, authentication, role, RLS, tenant, storage or service modifications. All navigation links are fixed same-origin routes; no sensitive data or real email send in tests. Full release/security validation remains separate."
+          }
+        ],
+        "notes": "Scoped public UX pass in this chat: source changes, regression and browser acceptance required for DONE. Avoid security/auth implementation and shared component rewrites. Scoped UX accepted: Chromium 7/7, ESLint and tsc pass at b8e9372eec9181a608ee5988f5d2d87b4845420c; see parity doc and evidence run 42386318763."
       },
       {
         "id": "UX-G052",
@@ -16291,18 +16325,52 @@
         "type": "JOURNEY",
         "area": "maintenance",
         "title": "Maintenance · Home (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-public-recovery-ux-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [],
         "surfaceIds": [],
         "newRouteOnly": [
           "/maintenance"
         ],
-        "evidence": [],
-        "notes": "Scoped public UX pass in this chat: source changes, regression and browser acceptance required for DONE. Avoid security/auth implementation and shared component rewrites."
+        "evidence": [
+          {
+            "commitSha": "b8e9372eec9181a608ee5988f5d2d87b4845420c",
+            "parityDoc": "docs/parity/shared-public-ops.md",
+            "tests": [
+              {
+                "command": "npx eslint src/app/maintenance/page.tsx src/app/maintenance/maintenance-recovery.tsx src/app/forbidden/page.tsx src/components/public/graceful-screen.tsx src/app/request-demo/page.tsx src/components/marketing/demo-contact-actions.tsx tests/e2e/ux-public-recovery-groups.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386318763"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-public-recovery-groups.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386318763 — 7/7 passed"
+              },
+              {
+                "command": "npm run typecheck (NODE_OPTIONS=--max-old-space-size=6144)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386318763"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386318763 — UX-G068 desktop Chromium 1280x800"
+              },
+              {
+                "viewport": "mobile",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386318763 — UX-G068 mobile Chromium 390x844"
+              }
+            ],
+            "regressionReview": "Maintenance: retry while offline blocks navigation and announces recovery; explicit online retry navigates only to fixed dashboard path, tested with safe intercepted destination; noindex and sign-in fallback. Existing route loading/error code kept; shared GracefulScreen addition optional with inert defaults.",
+            "securityReview": "No API, authentication, role, RLS, tenant, storage or service modifications. All navigation links are fixed same-origin routes; no sensitive data or real email send in tests. Full release/security validation remains separate."
+          }
+        ],
+        "notes": "Scoped public UX pass in this chat: source changes, regression and browser acceptance required for DONE. Avoid security/auth implementation and shared component rewrites. Scoped UX accepted: Chromium 7/7, ESLint and tsc pass at b8e9372eec9181a608ee5988f5d2d87b4845420c; see parity doc and evidence run 42386318763."
       },
       {
         "id": "UX-G069",
@@ -16927,11 +16995,11 @@
         "type": "JOURNEY",
         "area": "request-demo",
         "title": "Request Demo · Home (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-public-recovery-ux-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [
           "src/app/request-demo/error.tsx",
           "src/app/request-demo/loading.tsx",
@@ -16943,8 +17011,42 @@
           "PAGE-0519"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Scoped public UX pass in this chat: source changes, regression and browser acceptance required for DONE. Avoid security/auth implementation and shared component rewrites."
+        "evidence": [
+          {
+            "commitSha": "b8e9372eec9181a608ee5988f5d2d87b4845420c",
+            "parityDoc": "docs/parity/shared-public-ops.md",
+            "tests": [
+              {
+                "command": "npx eslint src/app/maintenance/page.tsx src/app/maintenance/maintenance-recovery.tsx src/app/forbidden/page.tsx src/components/public/graceful-screen.tsx src/app/request-demo/page.tsx src/components/marketing/demo-contact-actions.tsx tests/e2e/ux-public-recovery-groups.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386318763"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-public-recovery-groups.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386318763 — 7/7 passed"
+              },
+              {
+                "command": "npm run typecheck (NODE_OPTIONS=--max-old-space-size=6144)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386318763"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386318763 — UX-G085 desktop Chromium 1280x800"
+              },
+              {
+                "viewport": "mobile",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42386318763 — UX-G085 mobile Chromium 390x844"
+              }
+            ],
+            "regressionReview": "Request demo: mailto CTA remains with full subject/body; copy-email success and denied-clipboard fallback; address still visible, mobile/desktop layout and keyboard focus. Existing route loading/error code kept; shared GracefulScreen addition optional with inert defaults.",
+            "securityReview": "No API, authentication, role, RLS, tenant, storage or service modifications. All navigation links are fixed same-origin routes; no sensitive data or real email send in tests. Full release/security validation remains separate."
+          }
+        ],
+        "notes": "Scoped public UX pass in this chat: source changes, regression and browser acceptance required for DONE. Avoid security/auth implementation and shared component rewrites. Scoped UX accepted: Chromium 7/7, ESLint and tsc pass at b8e9372eec9181a608ee5988f5d2d87b4845420c; see parity doc and evidence run 42386318763."
       },
       {
         "id": "UX-G086",
