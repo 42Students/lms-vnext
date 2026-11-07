@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "./taxonomy";
 import {collegeActivityItem} from "./college-activity-presentation";
 
@@ -27,8 +28,9 @@ export type ActivityExportRow = {
 };
 
 export function escapeActivityCsvCell(value: string): string {
-  const neutral = /^[\s]*[=+@\-\t\r]/.test(value) ? "'" + value : value;
-  return '"' + neutral.replaceAll('"', '""') + '"';
+  // Shared CSV neutralization also handles bidi controls, Unicode combining
+  // marks and other invisible prefixes that spreadsheets may strip first.
+  return spreadsheetCsvCell(value);
 }
 
 export function buildCollegeActivityCsv(
@@ -41,7 +43,7 @@ export function buildCollegeActivityCsv(
     dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
   });
   const lines=[columns.map(escapeActivityCsvCell).join(",")];
-  for(const row of rows){
+  for(const row of rows.slice(0, COLLEGE_ACTIVITY_EXPORT_CAP)){
     lines.push([
       timestamp.format(row.occurredAt)+" IST",
       row.actorName?.trim()||row.actorEmail?.trim()||"System",
@@ -51,7 +53,7 @@ export function buildCollegeActivityCsv(
       "Redacted",
     ].map(escapeActivityCsvCell).join(","));
   }
-  if(truncated){
+  if(truncated || rows.length > COLLEGE_ACTIVITY_EXPORT_CAP){
     lines.push([
       "EXPORT TRUNCATED",
       "",
