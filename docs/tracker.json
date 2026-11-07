@@ -14609,7 +14609,16 @@
           "PAGE-0115"
         ],
         "newRouteOnly": [],
-        "evidence": [{"commitSha":"b4c10531be3135af861b7f0cd3a56acf15e60f06","parityDoc":"docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md","tests":[],"browser":[],"regressionReview":"Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.","securityReview":"Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."}],
+        "evidence": [
+          {
+            "commitSha": "b4c10531be3135af861b7f0cd3a56acf15e60f06",
+            "parityDoc": "docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md",
+            "tests": [],
+            "browser": [],
+            "regressionReview": "Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.",
+            "securityReview": "Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."
+          }
+        ],
         "notes": "Engineering changes and regression harness committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md"
       },
       {
@@ -15190,7 +15199,16 @@
           "/college/placements/companies",
           "/college/placements/job-settings"
         ],
-        "evidence": [{"commitSha":"b4c10531be3135af861b7f0cd3a56acf15e60f06","parityDoc":"docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md","tests":[],"browser":[],"regressionReview":"Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.","securityReview":"Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."}],
+        "evidence": [
+          {
+            "commitSha": "b4c10531be3135af861b7f0cd3a56acf15e60f06",
+            "parityDoc": "docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md",
+            "tests": [],
+            "browser": [],
+            "regressionReview": "Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.",
+            "securityReview": "Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."
+          }
+        ],
         "notes": "Engineering changes and regression harness committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md"
       },
       {
@@ -15583,7 +15601,16 @@
           "/college-admin/students",
           "/college-admin/teachers"
         ],
-        "evidence": [{"commitSha":"b4c10531be3135af861b7f0cd3a56acf15e60f06","parityDoc":"docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md","tests":[],"browser":[],"regressionReview":"Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.","securityReview":"Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."}],
+        "evidence": [
+          {
+            "commitSha": "b4c10531be3135af861b7f0cd3a56acf15e60f06",
+            "parityDoc": "docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md",
+            "tests": [],
+            "browser": [],
+            "regressionReview": "Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.",
+            "securityReview": "Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."
+          }
+        ],
         "notes": "Engineering changes and regression harness committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md"
       },
       {
@@ -16032,10 +16059,10 @@
         "type": "JOURNEY",
         "area": "hr",
         "title": "Hr · Activity → Conversations (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-hr-five-groups-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/hr/activity/error.tsx",
@@ -16078,17 +16105,18 @@
           "PAGE-0211"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "HR recruiting UX five-group cohort; role-grant/privacy behavior retained; verify route states, mobile/desktop journey, component interactions, tests, and exact SHA acceptance evidence before DONE."
       },
       {
         "id": "UX-G054",
         "type": "JOURNEY",
         "area": "hr",
         "title": "Hr · Conversations / ThreadId → Drives / JobId (part 2)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-hr-five-groups-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/hr/conversations/[threadId]/error.tsx",
@@ -16131,17 +16159,18 @@
           "PAGE-0217"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "HR recruiting UX five-group cohort; role-grant/privacy behavior retained; verify route states, mobile/desktop journey, component interactions, tests, and exact SHA acceptance evidence before DONE."
       },
       {
         "id": "UX-G055",
         "type": "JOURNEY",
         "area": "hr",
         "title": "Hr · Drives / New → Notifications (part 3)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-hr-five-groups-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/hr/drives/new/error.tsx",
@@ -16184,17 +16213,18 @@
           "PAGE-0222"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "HR recruiting UX five-group cohort; role-grant/privacy behavior retained; verify route states, mobile/desktop journey, component interactions, tests, and exact SHA acceptance evidence before DONE."
       },
       {
         "id": "UX-G056",
         "type": "JOURNEY",
         "area": "hr",
         "title": "Hr · Placements → Round Results (part 4)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-hr-five-groups-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/hr/placements/error.tsx",
@@ -16227,7 +16257,8 @@
           "PAGE-0226"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "HR recruiting UX five-group cohort; role-grant/privacy behavior retained; verify route states, mobile/desktop journey, component interactions, tests, and exact SHA acceptance evidence before DONE."
       },
       {
         "id": "UX-G057",
@@ -17930,7 +17961,16 @@
           "/superadmin/lesson-content",
           "/superadmin/projects/at-risk"
         ],
-        "evidence": [{"commitSha":"b4c10531be3135af861b7f0cd3a56acf15e60f06","parityDoc":"docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md","tests":[],"browser":[],"regressionReview":"Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.","securityReview":"Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."}],
+        "evidence": [
+          {
+            "commitSha": "b4c10531be3135af861b7f0cd3a56acf15e60f06",
+            "parityDoc": "docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md",
+            "tests": [],
+            "browser": [],
+            "regressionReview": "Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.",
+            "securityReview": "Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."
+          }
+        ],
         "notes": "Engineering changes and regression harness committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md"
       },
       {
@@ -18403,7 +18443,16 @@
           "PAGE-0362"
         ],
         "newRouteOnly": [],
-        "evidence": [{"commitSha":"b4c10531be3135af861b7f0cd3a56acf15e60f06","parityDoc":"docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md","tests":[],"browser":[],"regressionReview":"Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.","securityReview":"Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."}],
+        "evidence": [
+          {
+            "commitSha": "b4c10531be3135af861b7f0cd3a56acf15e60f06",
+            "parityDoc": "docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md",
+            "tests": [],
+            "browser": [],
+            "regressionReview": "Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.",
+            "securityReview": "Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."
+          }
+        ],
         "notes": "Engineering changes and regression harness committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md"
       },
       {
@@ -20399,10 +20448,10 @@
         "type": "COMPONENT",
         "area": "hr",
         "title": "Hr · Interactive components (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-hr-five-groups-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/components/hr/hr-drive-draft-form.tsx",
@@ -20429,7 +20478,8 @@
           "OVERLAY-0086"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "HR recruiting UX five-group cohort; role-grant/privacy behavior retained; verify route states, mobile/desktop journey, component interactions, tests, and exact SHA acceptance evidence before DONE."
       },
       {
         "id": "UX-G143",
