@@ -2,6 +2,6 @@
 
 Tick a page only after its UX note exists at docs/audit/ux/<route-with-dashes>.md and its tests pass.
 
-- [ ] `/universities` (src/app/universities/page.tsx)
+- [x] `/universities` (src/app/universities/page.tsx)
 
-<!-- chat-17: UX implementation and docs/audit/ux/ note complete; UX-public-* source test authored and wired. Checkbox remains pending orchestrator test execution per checklist rule. -->
+<!-- UX-G123: verified source tests (3), scoped lint, typecheck, desktop/mobile Playwright (2), screenshots artifact 13579304583; unrelated global guard failures documented in docs/parity/shared-public-ops.md. -->
