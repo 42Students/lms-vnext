@@ -1,0 +1,10 @@
+# UX-G135 — College public contact profile form (2026-11-07)
+
+Status: `DOING` pending exact-SHA successful workflow evidence in `docs/tracker.json#uxReview.groups`.
+
+- Scope: `src/components/colleges/college-contact-profile-form.tsx`, consumed by the existing college-profile page. No change to the server's tenant authorization, field whitelist, optimistic version contract or update API.
+- Before: `Reset` immediately deleted every unsaved field edit with no confirmation. After: a dirty-state screen reader announcement accompanies changes, and Reset opens a cancellable danger-style confirmation. Cancel retains every unsaved field; confirmation restores the last successfully saved name, public support email/phone, terms and privacy URLs. Pending save disables discard.
+- Submit still shows the existing confirmation review before the PATCH with `expectedVersion` and `confirm:true`. Failed/stale saves leave the user's draft intact; success refreshes the visible saved profile. None of the added UI stores or exposes private college data.
+- Development-only test page `/e2e/ux-g135-contact-profile` mounts the real component with synthetic public contacts and does not render outside `NODE_ENV=development`. Playwright intercepts **every** write; no production contact profile or authorization test account is used.
+- Focused unit checks `tests/unit/ux-g135-college-contact-profile.test.tsx` and existing `UX-college-college-college-profile-01.test.ts`; Chromium tests `tests/e2e/ux-g135-college-contact-profile.spec.ts` at 390 and 1280 test destructive reset cancellation, confirmed reset, failed/stale save, successful versioned save, responsive overflow and screenshot proof.
+- Dedicated `.github/workflows/ux-g135-college-contact-acceptance.yml` requires ESLint, TypeScript, unit tests and exactly **4/4** browser scenarios with zero flaky/unexpected/skipped outcomes. Update status to DONE **only after execution passes** and attach the exact commit/run/artifact.
