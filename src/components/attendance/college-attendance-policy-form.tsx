@@ -46,6 +46,10 @@ export function CollegeAttendancePolicyForm({
     );
   const [saving, setSaving] = useState(false);
   const [resetOpen,setResetOpen]=useState(false);
+  const [saveReview,setSaveReview]=useState(false);
+  const thresholdValid=/^\d+$/.test(threshold)&&Number(threshold)>=1&&Number(threshold)<=100;
+  const hoursValid=/^\d+$/.test(correctionHours)&&Number(correctionHours)>=1&&Number(correctionHours)<=168;
+  const validDraft=thresholdValid&&hoursValid;
   const {pending,run}=useGuardedAction({timeoutMs:35000});
   const [message, setMessage] =
     useState<SaveMessage | null>(null);
@@ -74,8 +78,16 @@ export function CollegeAttendancePolicyForm({
     }
   }
 
-  async function save(event:FormEvent<HTMLFormElement>){
+  function save(event:FormEvent<HTMLFormElement>){
     event.preventDefault();
+    if(saving||pending)return;
+    if(!validDraft){setMessage({kind:"error",text:"Enter a whole-number threshold from 1 to 100 and correction window from 1 to 168 hours."});return;}
+    setMessage(null);setSaveReview(true);
+  }
+
+  async function confirmSave(){
+    if(saving||pending||!validDraft)return;
+    setSaveReview(false);
     await persistPolicy({
       eligibilityThresholdPercent:Number(threshold),
       correctionWindowHours:Number(correctionHours),
@@ -229,7 +241,7 @@ export function CollegeAttendancePolicyForm({
           type="submit"
           className="min-h-11 w-full sm:w-auto md:min-h-9"
           loading={saving || pending}
-          disabled={saving || pending}
+          disabled={saving || pending || !validDraft}
         >
           {saving
             ? "Saving policy…"
@@ -242,6 +254,11 @@ export function CollegeAttendancePolicyForm({
         </span>
       </div>
     </form>
+    <ConfirmDialog open={saveReview} onOpenChange={open=>{if(!saving&&!pending)setSaveReview(open);}}
+      title="Apply attendance policy changes?"
+      description={"Eligibility threshold: "+threshold+"%. Correction window: "+correctionHours+" hours. Existing attendance marks are unchanged, but eligibility indicators and the correction deadline will change."}
+      confirmLabel="Save policy" confirmVariant="primary" pending={saving||pending}
+      confirmDisabled={!validDraft} onConfirm={()=>void confirmSave()}/>
     <ConfirmDialog open={resetOpen} onOpenChange={open=>{if(!saving&&!pending)setResetOpen(open);}}
       title="Reset attendance policy to default?"
       description="The threshold will return to 75% and the correction window to 24 hours. This also affects which past sessions may be corrected; existing attendance records are not changed."
