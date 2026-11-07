@@ -4,6 +4,8 @@ export type ReadinessPayload = {
   timestamp: string;
   dependencies: {
     database: "ok" | "unavailable";
+    /** Only present (and "invalid") when production secrets are missing or weak; see readiness-runtime.ts. */
+    configuration?: "invalid";
   };
 };
 
