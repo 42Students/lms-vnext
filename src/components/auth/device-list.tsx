@@ -35,14 +35,22 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
     setBusy(key);
     startTransition(async () => {
       try {
-        const response = await fetch(url, { method: "DELETE" });
+        const response = await fetch(url, { method: "DELETE", credentials: "same-origin" });
         if (response.ok) {
           showToast({ title: success, tone: "success" });
           setConfirmation(null);
           if(key==="all-including-current"||key==="current")router.replace("/login");
           else router.refresh();
+        } else if (response.status === 401) {
+          setConfirmation(null);
+          showToast({ title: "Your session expired. Sign in again.", tone: "error" });
+          router.replace("/login");
+        } else if (response.status === 404 || response.status === 409) {
+          setConfirmation(null);
+          showToast({ title: "Your device list changed. Review the latest sessions.", tone: "error" });
+          router.refresh();
         } else {
-          showToast({ title: "That didn't work. Try again.", tone: "error" });
+          showToast({ title: "Unable to sign out this device. Retry.", tone: "error" });
         }
       } catch {
         showToast({ title: "That didn't work. Try again.", tone: "error" });
