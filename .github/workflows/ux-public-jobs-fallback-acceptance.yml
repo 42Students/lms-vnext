@@ -12,6 +12,7 @@ on:
       - src/app/e2e/ux-g058-external-job/**
       - src/app/e2e/ux-g187-loading/**
       - tests/unit/ux-public-job-and-fallback-groups.test.tsx
+      - tests/unit/chat16-public-platform-error-loading-pages-16.test.tsx
       - tests/e2e/ux-public-jobs-fallback.spec.ts
       - .github/workflows/ux-public-jobs-fallback-acceptance.yml
 
