@@ -465,3 +465,18 @@ instead of the potentially already streamed HTTP response status.
 placement authorization or shared kit code changed; neither this source
 implementation nor seeded browser fixtures constitute public-enquiry provider,
 independent security, deployment, functional parity or release proof.
+
+
+**Final UX-G076 verification (7 November 2026):** The same exact-SHA
+[Actions run 42386887182](https://github.com/42Students/lms-vnext/actions/runs/42386887182)
+has completed **SUCCESS** for both jobs. Scoped ESLint and repository TypeScript
+checks passed. Three Vitest files passed **17/17** server-render, guard,
+unpublished, outage, stale-snapshot and disclosure checks; anonymous
+not-found and private retired-job-link Chromium desktop/mobile tests passed
+**4/4**. The independent disposable PG17 verified-college published
+desktop/mobile browser job passed **2/2**. Evidence is source and execution
+SHA 5ef5b1e3a6a9eadac89ffabb4744cda56aeb5e0f, browser matrices
+1280x800 and 390x844. The prior pending-workflow instruction above is
+superseded by this completed record. Canonical group status is **DONE**,
+committed in [tracker closure 99e72758d74eb56aaedd070bb0bf856bfa729898](https://github.com/42Students/lms-vnext/commit/99e72758d74eb56aaedd070bb0bf856bfa729898);
+this is only scoped UX closure, not deployment, security, or role-parity sign-off.
