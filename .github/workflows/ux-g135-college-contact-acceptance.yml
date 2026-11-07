@@ -44,7 +44,7 @@ jobs:
         run: |
           set -euo pipefail
           npx playwright test tests/e2e/ux-g135-college-contact-profile.spec.ts --project=chromium --reporter=line,html,json
-          node -e 'const s=require("./ux-g135-results.json").stats;console.log("Browser proof:",s);if(s.expected!==4||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
+          node -e 'const s=require("./ux-g135-results.json").stats;console.log("Browser proof:",s);if(s.expected!==6||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
       - name: Upload screenshots and HTML report
         if: always()
         uses: actions/upload-artifact@v4
