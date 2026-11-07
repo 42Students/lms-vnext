@@ -139,7 +139,7 @@ async function readyFile(projectId: string, actor: RequestContext = mentor, name
 
 beforeAll(() => {
   process.env.APP_ENV = "test";
-  process.env.R2_ACCOUNT_ID = "test-account";
+  process.env.R2_ACCOUNT_ID = "testaccount";
   process.env.R2_ACCESS_KEY = "TESTACCESSKEYID";
   process.env.R2_SECRET_KEY = "test-secret-not-real";
   process.env.R2_PRIVATE_BUCKET = "test-private";

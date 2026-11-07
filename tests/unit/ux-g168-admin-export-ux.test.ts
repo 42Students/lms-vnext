@@ -78,7 +78,7 @@ describe("UX-G168 readable and safe privileged CSV exports", () => {
     const lines=(await response.text()).split("\r\n").filter(Boolean);
     expect(lines).toHaveLength(302);
     expect(lines.at(-1)).toContain("TRUNCATED: showing first 300 assignments");
-    expect((lines.at(-1)?.match(/"/g)??[]).toHaveLength(14);
+    expect((lines.at(-1)?.match(/"/g)??[])).toHaveLength(14);
     expect(response.headers.get("X-Export-Truncated")).toBe("true");
   });
 
@@ -99,7 +99,7 @@ describe("UX-G168 readable and safe privileged CSV exports", () => {
     const lines=(await response.text()).split("\r\n").filter(Boolean);
     expect(lines).toHaveLength(502);
     expect(lines.at(-1)).toContain("TRUNCATED: first 500 records");
-    expect((lines.at(-1)?.match(/"/g)??[]).toHaveLength(26);
+    expect((lines.at(-1)?.match(/"/g)??[])).toHaveLength(26);
     expect(response.headers.get("X-Export-Truncated")).toBe("true");
   });
 });

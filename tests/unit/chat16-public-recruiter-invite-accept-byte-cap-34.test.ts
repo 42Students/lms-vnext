@@ -28,7 +28,7 @@ describe("chat-16 recruiter invitation OTP acceptance body, availability and sco
  it("PUBLIC-INVITE-SIZE-34 refuses 8KB+ UTF-8 before invoking identity/grant creation",async()=>{
   const res=await POST(req("é".repeat(5000)),context);
   expect(res.status).toBe(413);
-  expect(res.headers.get("cache-control")).toBe("no-store");
+  expect(res.headers.get("cache-control")).toBe("private, no-store");
   expect(acceptPublicTpoRecruiterInviteOtp).not.toHaveBeenCalled();
  });
  it("PUBLIC-INVITE-SIZE-35 denies malformed/forged fields and failed origin before grant write",async()=>{
@@ -46,7 +46,7 @@ describe("chat-16 recruiter invitation OTP acceptance body, availability and sco
   vi.stubEnv("TPO_RECRUITER_OTP_DELIVERY_READY","VERIFIED");
   const response=await POST(req(JSON.stringify({code:"123456",name:"Recruiter"})),context);
   expect(response.status).toBe(200);
-  expect(response.headers.get("cache-control")).toBe("no-store");
+  expect(response.headers.get("cache-control")).toBe("private, no-store");
   expect(await response.json()).toEqual({
    accepted:true,outcome:"JOINED",signInEmail:"recruiter@example.org",
   });

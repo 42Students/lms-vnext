@@ -78,7 +78,7 @@ beforeEach(() => {
   head.mockReset();
   getStream.mockReset();
   del.mockReset();
-  process.env.R2_ACCOUNT_ID = "test-account";
+  process.env.R2_ACCOUNT_ID = "testaccount";
   process.env.R2_ACCESS_KEY = "TESTACCESSKEYID";
   process.env.R2_SECRET_KEY = "test-secret-not-real";
   process.env.R2_PRIVATE_BUCKET = "test-private";

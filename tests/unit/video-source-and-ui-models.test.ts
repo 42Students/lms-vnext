@@ -23,7 +23,7 @@ import {
 import { STORAGE_FILE_ERROR_STATUS } from "@/modules/storage/file-errors";
 
 const r2Env = {
-  R2_ACCOUNT_ID: "test-account",
+  R2_ACCOUNT_ID: "testaccount",
   R2_ACCESS_KEY: "TESTACCESSKEYID",
   R2_SECRET_KEY: "test-secret-not-real",
   R2_PRIVATE_BUCKET: "test-private",

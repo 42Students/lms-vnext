@@ -85,7 +85,7 @@ describe("chat-16 public recruiter invitation code request and acceptance routes
  it("REC-INVITE-HTTP-19 sends codes only through a dedicated delivery adapter and confirms delivery acceptance",async()=>{
   const response=await sendCode(req("send-code"),ctx);
   expect(response.status).toBe(200);
-  expect(response.headers.get("Cache-Control")).toBe("no-store");
+  expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   expect(await response.json()).toEqual({status:"CODE_SENT",sent:true});
   expect(requestRecruiterInviteOtp).toHaveBeenCalledExactlyOnceWith(
    token,expect.any(Function),"recruiter@example.org",
@@ -116,7 +116,7 @@ describe("chat-16 public recruiter invitation code request and acceptance routes
   vi.mocked(acceptPublicTpoRecruiterInviteOtp).mockResolvedValue(result);
   const response=await acceptCode(req("accept",{code:"123456",name:"Recruiter"}),ctx);
   expect(response.status).toBe(200);
-  expect(response.headers.get("Cache-Control")).toBe("no-store");
+  expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   expect(await response.json()).toEqual(result);
   expect(acceptPublicTpoRecruiterInviteOtp).toHaveBeenCalledExactlyOnceWith(
    token,"123456",{code:"123456",name:"Recruiter"},

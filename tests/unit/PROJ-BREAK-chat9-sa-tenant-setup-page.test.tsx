@@ -16,7 +16,8 @@ vi.mock("@/auth/request-context",()=>({
     }:null,
   }),
 }));
-vi.mock("@/modules/permissions/policy",()=>({
+vi.mock("@/modules/permissions/policy",async(importOriginal)=>({
+  ...(await importOriginal<typeof import("@/modules/permissions/policy")>()),
   requirePermission:()=>{
     if(!state.allowed)throw Error("Missing permission: admin-scope.select");
   },

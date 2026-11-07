@@ -26,7 +26,7 @@ describe("UX-G149 TPO placement recovery source contracts", () => {
  });
  it("locks waitlist promotions until fresh seat availability is obtained", () => {
   const src = read("tpo-waitlist-promotion-control.tsx");
-  expect((src.match(/setRequiresRefresh\(true\)/g)??[]).toHaveLength(2);
+  expect((src.match(/setRequiresRefresh\(true\)/g)??[])).toHaveLength(2);
   expect(src).toContain("!preview.storageReady||requiresRefresh||inFlight.current");
   expect(src).toContain("expectedPreviewToken:preview.previewToken");
   expect(src).toContain("requiresRefresh?window.location.reload():router.refresh()");
