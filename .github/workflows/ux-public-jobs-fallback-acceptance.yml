@@ -1,0 +1,56 @@
+name: UX-G058 G187 G188 Public journey acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/app/jobs/external/**
+      - src/components/placements/public-external-job-details.tsx
+      - src/app/loading.tsx
+      - src/app/not-found.tsx
+      - src/app/e2e/ux-g058-external-job/**
+      - src/app/e2e/ux-g187-loading/**
+      - tests/unit/ux-public-job-and-fallback-groups.test.tsx
+      - tests/e2e/ux-public-jobs-fallback.spec.ts
+      - .github/workflows/ux-public-jobs-fallback-acceptance.yml
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Scoped ESLint
+        run: |
+          npx eslint 'src/app/jobs/external/[slug]/page.tsx' 'src/app/jobs/external/[slug]/loading.tsx' 'src/app/jobs/external/[slug]/error.tsx' src/components/placements/public-external-job-details.tsx src/app/loading.tsx src/app/not-found.tsx src/app/e2e/ux-g058-external-job/page.tsx src/app/e2e/ux-g187-loading/page.tsx tests/unit/ux-public-job-and-fallback-groups.test.tsx tests/e2e/ux-public-jobs-fallback.spec.ts
+      - name: Full TypeScript check
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: Focused UX and existing security regression
+        run: |
+          npx vitest run tests/unit/ux-public-job-and-fallback-groups.test.tsx tests/unit/security-public-external-job-page-boundary.test.ts tests/unit/chat16-public-platform-error-loading-pages-16.test.tsx tests/unit/public-error-pages.test.ts
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop/mobile real route and fixture acceptance
+        run: npx playwright test tests/e2e/ux-public-jobs-fallback.spec.ts --project=chromium --reporter=line,html
+      - name: Preserve viewport screenshots and HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-public-jobs-fallback-evidence
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
