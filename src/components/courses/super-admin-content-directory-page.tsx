@@ -146,7 +146,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
     <Heading level={2} size="lg" className="mb-3 text-foreground">
       {kind==="VIDEOS"?"Add Video":kind==="LIVE_CLASSES"?"Add Live Class":"Add Resource"}
     </Heading>
-  <form method="get" className="mb-3 flex min-w-0 flex-wrap items-end gap-2" role="search">
+  <form method="get" aria-label="Find a course or lesson to add content" className="mb-3 flex min-w-0 flex-wrap items-end gap-2" role="search">
     {Object.entries({
       q:data.query.q,status:data.query.status,page:String(data.query.page),
       pageSize:String(data.query.pageSize),
@@ -154,12 +154,12 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
       deliveryId:data.query.deliveryId??"",scope:data.query.scope,
     }).filter(([,value])=>Boolean(value)).map(([key,value])=>
       <input key={key} type="hidden" name={key} value={value}/>)}
-    <Label stack className="min-w-[12rem] flex-1">
+    <Label stack className="min-w-0 flex-1 basis-full sm:basis-[12rem]">
       Find a course or lesson
       <Input name="lessonSearch" type="search" maxLength={100}
         defaultValue={lessonSearch} placeholder="Search course, code or lesson"/>
     </Label>
-    <Button type="submit" variant="secondary">Find lessons</Button>
+    <Button type="submit" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">Find lessons</Button>
   </form>
   {lessonsResult.status==="fulfilled"
    ?<SuperAdminContentAuthoring kind={kind} lessons={lessons} sections={sections} allowVideoUpload/>
@@ -167,9 +167,9 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
     Existing content remains available. <TextLink href={adminContentHref(kind,parsed.data)}>Retry loading course and lesson choices</TextLink>
    </Banner>}
   {lessonsResult.status==="fulfilled"?
-    <nav aria-label="Authoring lesson pages" className="mt-2 flex items-center justify-between gap-3 text-sm">
+    <nav aria-label="Authoring lesson pages" className="mt-2 flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
       {lessonPage>1?<TextLink href={authoringPageHref(lessonPage-1)}>Previous lessons</TextLink>:<span/>}
-      <span>Lesson page {lessonPage} · Up to 50 lessons per page</span>
+      <span role="status" className="min-w-0 break-words text-xs text-muted-foreground">Lesson page {lessonPage} · Up to 50 lessons per page</span>
       {hasNextLessons?<TextLink href={authoringPageHref(lessonPage+1)}>Next lessons</TextLink>:<span/>}
     </nav>:null}
   {sectionsResult.status==="rejected"?<Banner tone="warning">Classes could not be loaded.
