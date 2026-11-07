@@ -1,0 +1,68 @@
+name: UX-G141 G155 G175 study groups and shell acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/components/groups/college-group-actions.tsx
+      - src/components/groups/college-group-import-preview.tsx
+      - src/components/groups/college-study-member-actions.tsx
+      - src/modules/groups/college-group-csv-preview-model.ts
+      - src/modules/groups/college-group-csv-preview-service.ts
+      - src/components/shell/learner-notification-bell.tsx
+      - src/components/shell/mobile-navigation.tsx
+      - src/components/shell/route-announcer.tsx
+      - src/app/e2e/ux-g141-g155-study-shell/**
+      - tests/unit/college-group-csv-preview.test.ts
+      - tests/unit/ux-g141-g155-study-shell.test.ts
+      - tests/e2e/ux-g141-g155-study-shell.spec.ts
+      - .github/workflows/ux-study-shell-acceptance.yml
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      UX_STUDY_SHELL_FIXTURE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Scoped ESLint
+        run: |
+          npx eslint src/components/groups/college-group-actions.tsx src/components/groups/college-group-import-preview.tsx src/components/groups/college-study-member-actions.tsx src/modules/groups/college-group-csv-preview-model.ts src/modules/groups/college-group-csv-preview-service.ts src/components/shell/learner-notification-bell.tsx src/components/shell/mobile-navigation.tsx src/components/shell/route-announcer.tsx src/app/e2e/ux-g141-g155-study-shell/page.tsx tests/unit/college-group-csv-preview.test.ts tests/unit/ux-g141-g155-study-shell.test.ts tests/e2e/ux-g141-g155-study-shell.spec.ts
+      - name: Full TypeScript check
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: Unit and affected shared-callsite regressions
+        run: |
+          npx vitest run tests/unit/college-group-csv-preview.test.ts tests/unit/ux-g141-g155-study-shell.test.ts tests/unit/UX-group-import-preview-table-chat17.test.ts tests/unit/chat9-shell-notifications-auth-graceful.test.ts tests/unit/chat13-legacy-topbar-accessibility-contract.test.ts
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Actual desktop and mobile component browser acceptance
+        shell: bash
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: ux-study-shell-results.json
+        run: |
+          set -euo pipefail
+          npx playwright test tests/e2e/ux-g141-g155-study-shell.spec.ts --project=chromium --reporter=line,html,json
+          node -e 'const stats=require("./ux-study-shell-results.json").stats;console.log("Browser acceptance:",stats);if(stats.expected!==6||stats.unexpected!==0||stats.flaky!==0||stats.skipped!==0){process.exit(1)}'
+      - name: Preserve mobile and desktop screenshots and reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-study-shell-acceptance-evidence
+          path: |
+            test-results/
+            playwright-report/
+            ux-study-shell-results.json
+          if-no-files-found: ignore
