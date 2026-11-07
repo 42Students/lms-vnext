@@ -1,4 +1,5 @@
 import { AsyncLocalStorage } from "node:async_hooks";
+import * as React from "react";
 
 /**
  * Request-scoped database identity (docs/security/central-security-architecture.md, layer L5).
@@ -21,8 +22,25 @@ export type TenantScope = {
 type Holder = { scope?: TenantScope; memo?: Map<string, unknown> };
 const storage = new AsyncLocalStorage<Holder>();
 
+/**
+ * Per-request fallback for server components. Next renders layouts, pages and Suspense children in sibling async
+ * chains, so the AsyncLocalStorage holder opened by one component does not reach the others, and a query from a
+ * component that never resolved the actor itself would run with no scope (empty under row-level security).
+ * React's request cache gives every component of one render the same box. Outside a render `cache` does not
+ * memoize, so the box is simply a fresh empty object and the fallback is never used.
+ */
+const reactCache = (React as unknown as { cache?: <F extends () => unknown>(fn: F) => F }).cache;
+const makeRequestBox = (): { scope?: TenantScope } => ({});
+const requestBox: () => { scope?: TenantScope } = typeof reactCache === "function" ? reactCache(makeRequestBox) : makeRequestBox;
+
 export function currentTenantScope(): TenantScope | undefined {
-  return storage.getStore()?.scope;
+  const holder = storage.getStore();
+  if (holder?.scope) return holder.scope;
+  try {
+    return requestBox().scope;
+  } catch {
+    return undefined;
+  }
 }
 
 /**
@@ -60,6 +78,12 @@ export function runWithTenantHolder<T>(fn: () => T): T {
 export function bindTenantScope(scope: TenantScope): void {
   const holder = storage.getStore();
   if (holder && !holder.scope) holder.scope = scope;
+  try {
+    const box = requestBox();
+    if (!box.scope) box.scope = scope;
+  } catch {
+    // not inside a render: the holder above is the only carrier
+  }
 }
 
 /**
