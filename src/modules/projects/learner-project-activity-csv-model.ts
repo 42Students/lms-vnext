@@ -13,6 +13,6 @@ export function learnerProjectActivityCsv(rows:readonly {
   Number.isFinite(row.occurredAt?.getTime())?row.occurredAt.toISOString():"Unknown",
   row.actorDisplayName??"System",row.subjectLabel??"",row.summary,
  ].map(csvCell).join(","));
- return {content:"\uFEFF"+["UTC time,Actor,Subject,Summary",...data].join("\r\n")+"\r\n",
+ return {content:["UTC time,Actor,Subject,Summary",...data].join("\r\n")+"\r\n",
    truncated:rows.length>MAX_ROWS};
 }
