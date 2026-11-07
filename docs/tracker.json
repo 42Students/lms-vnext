@@ -20979,10 +20979,10 @@
         "type": "OUTBOUND",
         "area": "announcements",
         "title": "Announcements · Outbound copy and exports (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-csv-exports-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/modules/announcements/admin-csv-model.ts"
@@ -20991,7 +20991,8 @@
           "MESSAGE-0023"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Improving report/export safety, accessible worksheet behavior and stable CSV schema. Close only after exact-SHA lint, TS, established and new focused tests, browser download evidence."
       },
       {
         "id": "UX-G170",
@@ -21021,10 +21022,10 @@
         "type": "OUTBOUND",
         "area": "bug-tracker",
         "title": "Bug Tracker · Outbound copy and exports (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-csv-exports-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/modules/bug-tracker/audit-findings-csv-model.ts"
@@ -21033,7 +21034,8 @@
           "MESSAGE-0027"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Improving report/export safety, accessible worksheet behavior and stable CSV schema. Close only after exact-SHA lint, TS, established and new focused tests, browser download evidence."
       },
       {
         "id": "UX-G172",
@@ -21110,10 +21112,10 @@
         "type": "OUTBOUND",
         "area": "courses",
         "title": "Courses · Outbound copy and exports (part 2)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-csv-exports-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/modules/courses/faculty-report-csv.ts"
@@ -21122,7 +21124,8 @@
           "MESSAGE-0046"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Improving report/export safety, accessible worksheet behavior and stable CSV schema. Close only after exact-SHA lint, TS, established and new focused tests, browser download evidence."
       },
       {
         "id": "UX-G175",
@@ -21171,10 +21174,10 @@
         "type": "OUTBOUND",
         "area": "messaging",
         "title": "Messaging · Outbound copy and exports (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-csv-exports-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/modules/messaging/receipt-history-export-model.ts"
@@ -21183,7 +21186,8 @@
           "MESSAGE-0051"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Improving report/export safety, accessible worksheet behavior and stable CSV schema. Close only after exact-SHA lint, TS, established and new focused tests, browser download evidence."
       },
       {
         "id": "UX-G178",
