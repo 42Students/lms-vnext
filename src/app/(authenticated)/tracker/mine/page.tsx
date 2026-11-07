@@ -17,6 +17,7 @@ export default async function MyTrackerReportsPage(){
   if(!trackerAdminRuntimeEnabled())return <div className="space-y-4">
     <PageHeader title="My reports" description="See the issues you have reported."/>
     <Banner tone="warning">Reports are temporarily unavailable. Try again soon.</Banner>
+    <ButtonLink variant="secondary" href="/tracker/mine" className="min-h-11 w-full sm:w-auto">Try loading reports again</ButtonLink>
   </div>;
   let reports;
   try{reports=await listMyTrackerReports(context);}
@@ -28,8 +29,9 @@ export default async function MyTrackerReportsPage(){
   return <section className="min-w-0 max-w-full space-y-6">
     <PageHeader title="My reports" description="See the issues you have reported."
       actions={<ButtonLink variant="primary" href="/tracker" className="w-full md:w-auto">Report an issue</ButtonLink>}/>
+    {reports.length>0?<p role="status" className="text-sm text-muted-foreground">{reports.length} report{reports.length===1?"":"s"} found</p>:null}
     {!reports.length?<EmptyState title="No reports yet" description="You have not reported any issues yet." action={<ButtonLink variant="primary" href="/tracker">Report an issue</ButtonLink>}/>:
-      <ul className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{reports.map(item=><li key={item.publicId}
+      <ul aria-label="Your reported issues" className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{reports.map(item=><li key={item.publicId}
         className="min-w-0 py-[var(--lms-space-3)]">
         <TextLink href={"/tracker/mine/"+encodeURIComponent(item.publicId)}
           className="inline-flex min-h-11 min-w-0 items-center break-all md:min-h-9">{item.publicId}</TextLink>
