@@ -37,7 +37,6 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
   const [pending, startTransition] = useTransition();
   const [reading, setReading] = useState(false);
   async function load(file: File | null) {
-    if (!file) return;
     const revision = ++csvRevision.current;
     setError("");
     setResult(null);
@@ -45,6 +44,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
     // Never leave the old CSV eligible for confirmation when a new file fails.
     setCsv("");
     setReading(false);
+    if (!file) return;
     if (file.size > 524288) {
       setError("CSV file exceeds the 512 KiB maximum.");
       return;
@@ -139,7 +139,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
         Only currently active learners in this college are eligible.
       </p>
       <FileUpload label="Select CSV file" accept=".csv,text/csv" maxBytes={524288}
-        disabled={pending||reading} onFiles={files=>void load(files?.[0]??null)}/>
+        onFiles={files=>void load(files?.[0]??null)}/>
       <Button type="submit" loading={pending || reading} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={reading || pending || !csv.trim()}>
         {pending ? "Validating…" : "Preview members"}
       </Button>
