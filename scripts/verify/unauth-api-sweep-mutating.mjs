@@ -1,7 +1,7 @@
 import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 const base = process.env.SWEEP_BASE;
-if (!base || !/^https://[a-z0-9.-]*development.42lms.com$|^http://localhost:[0-9]+$/.test(base)) throw new Error("set SWEEP_BASE to a dev or local origin (never production)");
+if (!base || !/^https:\/\/[a-z0-9.-]*development\.42lms\.com$|^http:\/\/localhost:[0-9]+$/.test(base)) throw new Error("set SWEEP_BASE to a dev or local origin (never production)");
 const files = execSync("git ls-files src/app/api", { encoding: "utf8" }).split("\n").filter((f) => f.endsWith("/route.ts"));
 const ZERO = "00000000-0000-4000-8000-000000000000";
 const targets = [];
