@@ -187,7 +187,7 @@ describe("UX-kit-HARDEN-01 shared primitives: a11y, validation, phone and failur
     expect(render(<ThirdPartyLink href="https://user:pass@trusted.example" label="Open"/>)).not.toContain("<a ");
     const html=render(<ThirdPartyLink href="https://example.org/" label="Open meeting"/>);
     expect(html).toContain('href="https://example.org/"');
-    expect(source("third-party-link")).toContain("The link could not be opened.");
+    expect(source("third-party-link")).toContain("If this link does not open here");
     expect(html).toContain("Copy link");
     // Legacy in-app/WebView navigation uses the current tab; do not fork a new window.
     expect(html).not.toContain('target="_blank"');
