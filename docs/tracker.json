@@ -15645,10 +15645,10 @@
         "type": "JOURNEY",
         "area": "company-share",
         "title": "Company Share · Token (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-recruiter-public-batch-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/company-share/[token]/error.tsx",
@@ -15663,7 +15663,8 @@
           "PAGE-0506"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "End-to-end UX group acceptance: scoped fixes, negative and positive regression, desktop/mobile browser, privacy and security review; only DONE after green exact-SHA CI and documented screenshots."
       },
       {
         "id": "UX-G048",
@@ -17341,27 +17342,28 @@
         "type": "JOURNEY",
         "area": "recruiter-invitations",
         "title": "Recruiter Invitations · Home (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-recruiter-public-batch-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [],
         "surfaceIds": [],
         "newRouteOnly": [
           "/recruiter-invitations"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "End-to-end UX group acceptance: scoped fixes, negative and positive regression, desktop/mobile browser, privacy and security review; only DONE after green exact-SHA CI and documented screenshots."
       },
       {
         "id": "UX-G084",
         "type": "JOURNEY",
         "area": "recruiter-invite",
         "title": "Recruiter Invite · Token (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-recruiter-public-batch-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/recruiter-invite/[token]/error.tsx",
@@ -17374,7 +17376,8 @@
           "PAGE-0518"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "End-to-end UX group acceptance: scoped fixes, negative and positive regression, desktop/mobile browser, privacy and security review; only DONE after green exact-SHA CI and documented screenshots."
       },
       {
         "id": "UX-G085",
