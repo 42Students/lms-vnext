@@ -17149,17 +17149,18 @@
         "type": "JOURNEY",
         "area": "roll-number-login",
         "title": "Roll Number Login · Home (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-public-auth-entry-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [],
         "surfaceIds": [],
         "newRouteOnly": [
           "/roll-number-login"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "Scoped UX pass on public entry/verification only. Preserve server-side auth/verification, request security, bearer handling and redirect semantics. Evidence required before DONE."
       },
       {
         "id": "UX-G087",
@@ -18940,17 +18941,18 @@
         "type": "JOURNEY",
         "area": "verify-email",
         "title": "Verify Email · Home (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-public-auth-entry-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [],
         "surfaceIds": [],
         "newRouteOnly": [
           "/verify-email"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "Scoped UX pass on public entry/verification only. Preserve server-side auth/verification, request security, bearer handling and redirect semantics. Evidence required before DONE."
       },
       {
         "id": "UX-G125",
