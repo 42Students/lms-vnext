@@ -89,8 +89,8 @@ export default async function MentorTeamCoveragePage({
             </Select>
           </Label>
           <div className="flex min-w-0 flex-wrap items-center gap-2 md:col-span-1">
-            <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
-            {hasFilters?<TextLink href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm">Clear</TextLink>:null}
+            <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply filters</Button>
+            {hasFilters?<TextLink href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm">Clear filters</TextLink>:null}
           </div>
           <Disclosure title="More team coverage filters" defaultOpen={hasAdvancedFilters} className="md:col-span-3" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-3">
           <Label stack>Project state
@@ -122,12 +122,16 @@ export default async function MentorTeamCoveragePage({
            ] as const).map(([label,value])=>
              <StatTile key={label} label={label} value={value} className="min-h-0 rounded-none border-0 bg-transparent px-0 py-2" />)}
          </section>
-        <p className="text-sm text-body leading-[22px]">
-          {formatNumberIN(data.total)} matching project{data.total === 1 ? "" : "s"}
+        <p role="status" aria-live="polite" className="text-sm text-body leading-[22px]">
+          {data.total === 0 ? (hasFilters ? "No projects match the current filters" : "No current assigned projects") :
+            "Showing " + formatNumberIN((data.page-1)*data.pageSize+1) + "–" +
+            formatNumberIN((data.page-1)*data.pageSize+data.items.length) + " of " +
+            formatNumberIN(data.total) + " matching projects"}
+          {hasFilters ? " · Filters applied" : ""}
         </p>
         {data.items.length === 0
           ? data.projectCount===0
-            ? <EmptyState title="No currently assigned active projects"
+            ? <EmptyState title="No current project assignments"
                 description="There are no current non-archived project assignments for this mentor. No historical team or staffing status is inferred."
                 action={<TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Projects</TextLink>} />
             : <EmptyState title="No projects match these filters"
