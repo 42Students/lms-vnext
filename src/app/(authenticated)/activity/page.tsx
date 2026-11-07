@@ -13,6 +13,7 @@ import { DateInput } from "@/components/ui/date-input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {sanitizeActivityMetadata} from "@/modules/activity/metadata-sanitizer";
+import { activityQuickHref } from "@/modules/activity/ux-query";
 import {
   hasMembershipRole,
   isSuperAdmin,
@@ -141,7 +142,7 @@ export default async function ActivityPage({
   const rawSize=one(params["size"]);
   const pageSize=rawMode && (rawSize==="50"||rawSize==="100")?Number(rawSize):25;
   const selectedRange=range==="today"||range==="7d"||range==="30d"?range:
-    range==="ALL"?"all":"30d";
+    range==="ALL"?"all":one(params["from"])||one(params["to"])?"custom":"30d";
   // Raw forensic lookups default to all-time, as in legacy Audit Logs.
   // The Important activity feed still defaults to the last 30 IST days.
   const forensicLookup=selectedPreset==="all" && Boolean(
@@ -152,16 +153,10 @@ export default async function ActivityPage({
     range==="today"?today:range==="7d"?ago(6):ago(29):undefined);
   const requestedCollegeId = one(params["collegeId"]);
   const quick=(from?:string,to?:string,view:PresetName=selectedPreset,
-    rangeKey:string|undefined=range)=>{
-   const q=new URLSearchParams({
-    ...(from?{from}:{}),...(to?{to}:{}),
-    ...(!from&&!to?{range:"ALL"}:rangeKey?{range:rangeKey}:{}),
-    view,
-    ...(rawMode?{mode:"raw"}:{}),
-    ...(selectedCollegeId || !requestedCollegeId ? {} : {collegeId: requestedCollegeId})
-   });
-   return "/activity?"+q.toString();
-  };
+    rangeKey:string|undefined=range)=>activityQuickHref({
+      params, view, from, to, range:rangeKey, rawMode,
+      superAdmin:isSuperAdmin(context), pinnedCollegeId:selectedCollegeId,
+    });
   const presetLinks=[
    {id:"important" as const,name:"Important",href:quick(defaultFrom,one(params["to"]),"important",range)},
    {id:"setup" as const,name:"Academic setup",href:quick(defaultFrom,one(params["to"]),"setup",range)},
@@ -170,6 +165,12 @@ export default async function ActivityPage({
    {id:"projects" as const,name:"Projects",href:quick(defaultFrom,one(params["to"]),"projects",range)},
    {id:"all" as const,name:"Everything",href:quick(defaultFrom,one(params["to"]),"all",range)},
   ];
+  const resetQuery = new URLSearchParams({view:"important"});
+  if (rawMode) resetQuery.set("mode","raw");
+  if (requestedCollegeId && !selectedCollegeId && isSuperAdmin(context)) {
+    resetQuery.set("collegeId",requestedCollegeId);
+  }
+  const resetHref = "/activity?" + resetQuery.toString();
   const retryQuery=new URLSearchParams();
   for(const [key,value] of Object.entries(params)){
     if(typeof value==="string" && value.length<=500)retryQuery.set(key,value);
@@ -386,8 +387,8 @@ export default async function ActivityPage({
           <div role="group" aria-label="Activity date range" className="inline-flex flex-wrap gap-1 rounded-[var(--lms-control-radius)] bg-muted p-1">
             {([
               {key:"today",label:"Today",href:quick(today,today,selectedPreset,"today")},
-              {key:"7d",label:"7 days",href:quick(ago(7),today,selectedPreset,"7d")},
-              {key:"30d",label:"30 days",href:quick(ago(30),today,selectedPreset,"30d")},
+              {key:"7d",label:"7 days",href:quick(ago(6),today,selectedPreset,"7d")},
+              {key:"30d",label:"30 days",href:quick(ago(29),today,selectedPreset,"30d")},
               {key:"all",label:"All time",href:quick(undefined,undefined,selectedPreset,"ALL")},
             ] as const).map(item=><TextLink variant="bare" key={item.key} href={item.href}
               aria-current={selectedRange===item.key?"page":undefined}
@@ -395,7 +396,7 @@ export default async function ActivityPage({
                 (selectedRange===item.key?"bg-surface text-primary-text shadow-sm":"text-body hover:bg-surface")}>{item.label}</TextLink>)}
           </div>
           <TextLink href={retryHref} className="inline-flex min-h-11 items-center md:min-h-9">Refresh</TextLink>
-          <span role="status" className="text-xs tabular-nums text-muted-foreground">{result.items.length} raw events loaded</span>
+          <span role="status" className="text-xs tabular-nums text-muted-foreground">{result.items.length} raw events loaded{result.nextCursor ? ` · ${result.remainingCount} older` : ""}</span>
         </div>
         {selectedPreset==="important"?<p className="text-xs text-muted-foreground">Deletions and restores, promotions, suspensions, impersonation, module access and feature changes, and identity views.</p>:null}
         <div role="group" aria-label="Activity display" className="flex flex-wrap gap-3 text-sm">
@@ -561,7 +562,7 @@ export default async function ActivityPage({
         <div className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] md:col-span-2 xl:col-span-4">
           <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
           <TextLink
-            href="/activity?view=important"
+            href={resetHref}
             className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm md:w-auto md:min-h-9"
           >
             Reset
@@ -577,7 +578,35 @@ export default async function ActivityPage({
             Raw events in newest-first order. IP addresses are not retained in vNext;
             the audit record uses privacy-safe provenance instead.
           </p>
-          <div className="w-full min-w-0 overflow-x-auto rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)]">
+          {result.items.length ? (
+            <ol aria-label="Audit log events" className="space-y-3 sm:hidden">
+              {result.items.map(({event,actor})=>(
+                <li key={event.id} className="min-w-0 space-y-3 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
+                  <time dateTime={event.occurredAt.toISOString()} className="block text-xs text-muted-foreground">
+                    {istDateTimeFormatter.format(event.occurredAt)} IST
+                  </time>
+                  <p className="break-all font-semibold text-foreground">{event.eventType}</p>
+                  <dl className="grid min-w-0 gap-2 text-sm">
+                    <div><dt className="font-semibold text-muted-foreground">Entity</dt>
+                      <dd className="min-w-0 break-words">{event.subjectType} · {event.subjectLabel??event.subjectId}</dd></div>
+                    <div><dt className="font-semibold text-muted-foreground">Actor</dt>
+                      <dd className="min-w-0 break-words">{actor?.displayName??actor?.email??"System"}</dd></div>
+                    <div><dt className="font-semibold text-muted-foreground">College</dt>
+                      <dd className="min-w-0 break-all">{event.collegeId??"—"}</dd></div>
+                    <div><dt className="font-semibold text-muted-foreground">Organization</dt>
+                      <dd className="min-w-0 break-all">{event.organizationId??"—"}</dd></div>
+                  </dl>
+                  <TextLink href={"/activity/"+encodeURIComponent(event.id)}
+                    className="inline-flex min-h-11 items-center">View event details</TextLink>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p role="status" className="text-sm text-muted-foreground sm:hidden">
+              No audit logs match these filters. <TextLink href={resetHref}>Clear filters</TextLink>
+            </p>
+          )}
+          <div className="hidden w-full min-w-0 overflow-x-auto rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] sm:block">
             <Table className="min-w-[1120px]">
               <thead className="bg-[var(--lms-neutral-100)] text-[var(--lms-heading)]">
                 <tr>{RAW_AUDIT_FORENSIC_HEADERS.map(label=>(
@@ -588,7 +617,11 @@ export default async function ActivityPage({
                 {result.items.map(({event,actor})=>(
                   <tr key={event.id} className="border-t border-[var(--lms-canvas-border)] align-top">
                     <td className="whitespace-nowrap px-3 py-3">{istDateTimeFormatter.format(event.occurredAt)}</td>
-                    <td className="max-w-[240px] break-all px-3 py-3">{event.eventType}</td>
+                    <td className="max-w-[240px] break-all px-3 py-3">
+                      {event.eventType}
+                      <TextLink href={"/activity/"+encodeURIComponent(event.id)}
+                        className="mt-1 block min-h-11 py-2">View event details</TextLink>
+                    </td>
                     <td className="max-w-[220px] break-words px-3 py-3">
                       <span className="block text-xs text-muted-foreground">{event.subjectType}</span>
                       <span>{event.subjectLabel??event.subjectId}</span>
@@ -615,6 +648,7 @@ export default async function ActivityPage({
         todayKey={today}
         yesterdayKey={ago(1)}
         nextHref={result.nextCursor ? "/activity?"+nextParams.toString() : null}
+        emptyActionHref={resetHref}
       />}
     </div>
   );
