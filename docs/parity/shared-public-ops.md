@@ -506,3 +506,7 @@ this is only scoped UX closure, not deployment, security, or role-parity sign-of
 **Cross-role/security regression:** Route-local pages only; no auth, role, RLS, tenant, server-side API, PII, or storage logic changed. Existing shared `MarketingLayout` and /request-demo flow preserved. Human-operated learning/placements descriptions and the enterprise outcomes disclaimer remain; unbuilt AI and third-party integrations are not advertised. Group-level browser tests exercise real public destinations, not mocked success.
 
 **Release boundary:** Source/browser scoped acceptance is evidence for each route group, **not** a claim that every repository-wide security, UX guard, CI, deployment, or cross-role workflow is green. The workflow's separately recorded global TypeScript result remains authoritative; record failures without weakening gate assertions.
+
+## UX-G002 — Root sign-in and authenticated workspace recovery (2026-11-07)
+
+[UX-G002 root journey scope, fix, and exact-SHA acceptance](pages/shared/UX-G002-root.md). The shared root sign-in continues to honor validated return paths and tenant policy; the platform marketing redirect now excludes legacy Super Admin OTP requests. UX group status lives only in `docs/tracker.json#uxReview.groups`.
