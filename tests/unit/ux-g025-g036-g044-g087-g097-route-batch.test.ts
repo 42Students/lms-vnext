@@ -4,6 +4,16 @@ import { readFileSync } from "node:fs";
 const source = (path: string) => readFileSync(path, "utf8");
 const route = (path: string) => source("src/app/(authenticated)/" + path);
 
+describe("Five-group development acceptance fixture isolation", () => {
+  it("never deploys the fixture without development and an explicit opt-in", () => {
+    const page = source("src/app/e2e/ux-five-route-recovery/page.tsx");
+    expect(page).toContain('process.env.NODE_ENV !== "development"');
+    expect(page).toContain('process.env["UX_FIVE_ROUTE_FIXTURE"] !== "1"');
+    expect(page).toContain("notFound()");
+    expect(page).not.toContain("setCookie");
+  });
+});
+
 describe("UX-G025 Super Admin setup/content routing and denial safety", () => {
   it("normalizes only supported legacy content filters and preserves lesson search", () => {
     const videos = route("admin/videos/page.tsx");
@@ -19,6 +29,11 @@ describe("UX-G025 Super Admin setup/content routing and denial safety", () => {
     for (const result of ["r","m","si","b"])
       expect(setup).toContain('if('+result+'.status==="rejected"&&'+result+'.reason instanceof AuthorizationError)throw '+result+'.reason;');
     expect(setup).toContain('if(error instanceof CollegeServiceError&&error.code==="COLLEGE_NOT_FOUND")notFound();');
+  });
+  it("offers safe recovery from admin setup and content read failures", () => {
+    expect(route("admin/tenants/setup/error.tsx")).toContain('href="/admin/tenants/directory"');
+    expect(route("admin/videos/error.tsx")).toContain('href="/admin/lessons"');
+    expect(route("admin/verification/page.tsx")).toContain('href="/admin/colleges"');
   });
   it("keeps the global verification entry college-scoped", () => {
     const verification = route("admin/verification/page.tsx");
@@ -42,6 +57,12 @@ describe("UX-G036 college placements page and drive guard", () => {
     const home = route("college/placements/page.tsx");
     expect(home).toContain('Browse all drives ({all?.total??"—"})');
     expect(home).not.toContain('draft&&closed?draft.total+closed.total:"—"} closed / draft');
+  });
+  it("provides a safe alternate path if a college drive read fails", () => {
+    const fallback = route("college/placements/drives/error.tsx");
+    expect(fallback).toContain('href="/college/placements"');
+    expect(fallback).toContain("onClick={reset}");
+    expect(fallback).not.toContain("error.message");
   });
   it("keeps calendar and interview routes bound to College Admin memberships", () => {
     expect(route("college/placements/calendar/page.tsx")).toContain("hasMembershipRole");
@@ -78,6 +99,9 @@ describe("UX-G087 Super Admin legacy page recovery", () => {
     const crosswalk = route("superadmin/[...legacy]/page.tsx");
     expect(crosswalk).toContain("requirePermission(context,");
     expect(crosswalk).toContain("getProjectAdminCollegeId(context)");
+  });
+  it("labels the root handoff with its actual destination", () => {
+    expect(route("superadmin/loading.tsx")).toContain("Opening Super Admin dashboard");
   });
   it("links unresolved old bookmarks to an existing role-safe dashboard", () => {
     expect(route("superadmin/not-found.tsx")).toContain('href="/dashboard"');
