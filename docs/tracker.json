@@ -16595,10 +16595,10 @@
         "type": "JOURNEY",
         "area": "placements",
         "title": "Placements · Home → Jobs / JobId (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-public-placements-chat-2026-11-07",
+        "pickedAt": "2026-11-07",
+        "startedAt": "2026-11-07",
         "completedAt": null,
         "sourceFiles": [
           "src/app/placements/error.tsx",
@@ -16615,7 +16615,8 @@
         "newRouteOnly": [
           "/placements/jobs/[jobId]"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "Public placements page and private shared-job link UX pass. Preserve security gates; evidence-driven DONE pending executed tests, desktop/mobile browser verification, cross-role regression."
       },
       {
         "id": "UX-G077",
