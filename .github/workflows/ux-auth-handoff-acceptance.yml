@@ -1,0 +1,53 @@
+name: UX-G026 retired handoff acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/app/auth/handoff/**'
+      - 'tests/unit/ux-g026-auth-handoff-security.test.ts'
+      - 'tests/ux-g026-auth-handoff-contract.test.mjs'
+      - 'tests/e2e/ux-g026-auth-handoff.spec.ts'
+      - '.github/workflows/ux-auth-handoff-acceptance.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  handoff-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Lint and safe-handoff source contracts
+        run: |
+          npx eslint src/app/auth/handoff/page.tsx src/app/auth/handoff/error.tsx src/app/auth/handoff/loading.tsx tests/e2e/ux-g026-auth-handoff.spec.ts tests/unit/ux-g026-auth-handoff-security.test.ts
+          node --test tests/ux-g026-auth-handoff-contract.test.mjs
+      - name: Existing handoff and adversarial redirect regressions
+        run: |
+          npx vitest run \
+            tests/unit/ux-g026-auth-handoff-security.test.ts \
+            tests/unit/chat16-public-legacy-invite-handoff-16.test.ts \
+            tests/unit/chat16-legacy-auth-invite-alias-pages-16.test.ts
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop/mobile handoff security UX
+        run: npx playwright test tests/e2e/ux-g026-auth-handoff.spec.ts --project=chromium --reporter=line
+      - name: Upload desktop/mobile screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-g026-browser-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: warn
+          retention-days: 14
