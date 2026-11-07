@@ -40,12 +40,11 @@
   "skill_usage",
   "skills"
  ],
- "identity_core_pending_review": [
-  "module_access_rules"
- ],
+ "identity_core_pending_review": [],
  "identity_core_policied": [
   "colleges",
   "organizations",
-  "users"
+  "users",
+  "module_access_rules"
  ]
 }

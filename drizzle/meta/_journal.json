@@ -2381,6 +2381,13 @@
       "when": 1793985771493,
       "tag": "0339_rls_identity_core",
       "breakpoints": true
+    },
+    {
+      "idx": 340,
+      "version": "7",
+      "when": 1793985831493,
+      "tag": "0340_rls_module_access_rules",
+      "breakpoints": true
     }
   ]
 }
