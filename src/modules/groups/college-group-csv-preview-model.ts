@@ -11,8 +11,24 @@ export type GroupImportRow = {
   rowNumber: number;
   email: string;
   status: "READY" | "INVALID_EMAIL" | "DUPLICATE_CSV" | "NOT_FOUND" |
-    "ALREADY_MEMBER" | "PREVIOUSLY_REMOVED" | "CAPACITY_FULL" | "COLUMN_COUNT";
+    "ALREADY_MEMBER" | "PREVIOUSLY_REMOVED" | "GROUP_NOT_ACTIVE" | "CAPACITY_FULL" | "COLUMN_COUNT";
 };
+
+/** Plain-language explanations of validation rows for the dry-run UI. */
+export function groupCsvValidationLabel(status: GroupImportRow["status"]): string {
+  const labels: Record<GroupImportRow["status"], string> = {
+    READY: "Ready to add",
+    INVALID_EMAIL: "Invalid email address",
+    DUPLICATE_CSV: "Duplicate email in this file",
+    NOT_FOUND: "No active learner found in this college",
+    ALREADY_MEMBER: "Already belongs to this group",
+    PREVIOUSLY_REMOVED: "Previously removed from this group",
+    GROUP_NOT_ACTIVE: "Activate the group before importing",
+    CAPACITY_FULL: "Group capacity is full",
+    COLUMN_COUNT: "Expected one email column",
+  };
+  return labels[status];
+}
 
 export function parseMemberEmailCsv(csv: string): Array<{ rowNumber: number; value: string; validColumns: boolean }> {
   const body = csv.charCodeAt(0) === 0xfeff ? csv.slice(1) : csv;
