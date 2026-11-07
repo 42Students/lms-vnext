@@ -1,4 +1,5 @@
 import {describe,expect,it} from "vitest";
+import {readFileSync} from "node:fs";
 import {buildCollegeDirectoryCsv,collectCollegeExportRows} from "@/modules/academics/college-directory-export-model";
 import {renderBatchCsv,renderSemesterCsv} from "@/modules/academics/college-academic-export-model";
 import {renderCollegeClassesCsv,CLASSES_EXPORT_CAP,collegeClassesExportSchema} from "@/modules/academics/college-classes-export-model";
@@ -104,5 +105,36 @@ describe("UX-G166 export freshness and pager behavior",()=>{
   await expect(collectCollegeExportRows(async()=>({
     total:-1,totalPages:1,items:[],
   }),2,4)).rejects.toThrow("COLLEGE_EXPORT_STALE");
+ });
+});
+
+describe("UX-G166 route and fixture boundaries",()=>{
+ it("keeps authenticated, step-up-protected CSV routes private and non-sniffable",()=>{
+  const routes=[
+   "src/app/api/academics/college-academic-export/batches/route.ts",
+   "src/app/api/academics/college-academic-export/semesters/route.ts",
+   "src/app/api/academics/college-classes-export/route.ts",
+   "src/app/api/academics/college-electives-export/route.ts",
+   "src/app/api/academics/college-faculty-assignment-export/route.ts",
+   "src/app/api/academics/college-lecture-halls-export/route.ts",
+   "src/app/api/academics/college-offering-mappings-export/route.ts",
+  ];
+  for(const path of routes){
+   const source=readFileSync(path,"utf8");
+   expect(source).toContain('auth: "user"');
+   expect(source).toContain("stepUp: true");
+   expect(source).toContain("private, no-store");
+   expect(source).toContain("nosniff");
+   expect(source).toContain("text/csv; charset=utf-8");
+  }
+ });
+
+ it("denies synthetic export browser fixture outside development",()=>{
+  const fixture=readFileSync("src/app/e2e/ux-g166-academic-csv/page.tsx","utf8");
+  expect(fixture).toContain('process.env.NODE_ENV!=="development"');
+  expect(fixture).toContain('process.env.UX_G166_FIXTURE!=="1"');
+  expect(fixture).toContain("notFound()");
+  expect(fixture).not.toContain("getCurrentRequestContext");
+  expect(fixture).not.toContain("getDb()");
  });
 });
