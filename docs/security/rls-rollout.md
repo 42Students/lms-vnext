@@ -86,3 +86,19 @@ Written, not applied to any database, not tested (tests and CI run once, at the 
 - Migrations now run as `lms_vnext_migrator` through secret `vnext-db-migrator` (verified: migrate Job completed). The web Deployment and the auth-purge CronJob keep `vnext-db` (purge Job re-run: succeeded).
 - Web pods: Ready, login pages 200 on vnext, testa, testb; no permission-denied or timeout lines in the pod log. nsrit.development.42lms.com answers in 0.4 s from inside the cluster but 30 s from outside (consistent), so the delay is in the path in front of the pod, not in the app or the database.
 - Not done: signed-in clicking in a browser (needs test logins you name), and the single CI run with tracker evidence.
+
+## Signed-in click-through under enforcement, 2026-11-07 (dev, image 356deba9) and the three bugs it found
+
+Signed in on https://vnext.development.42lms.com with the seeded test accounts (dev only). With `DB_TENANT_SCOPE=on`, `SECURITY_SHARED_STORE=on` and `PGOPTIONS=-c app.rls_mode=enforce` all running, these now work:
+
+- College admin (TESTA): dashboard (college, departments, people counts), 16 `/college/*` pages (all 200, real data), the Departments, Programs and Courses pages (hard load and in-app navigation), the workspace API.
+- Learner (7 pages), faculty (6), mentor (2 real pages), TPO (5), recruiter and Super Admin (`/api/colleges` lists every college, `/admin/colleges`, `/admin/courses`, `/admin/features`, `/admin/audit` with rows). The shared faculty with TESTA and TESTB memberships saw both in the workspace picker before any college was chosen, then selected one.
+- Sign-in itself: email code request, code verification, SUPER_ADMIN second code.
+
+Bugs found by doing this and fixed (none showed up in the database-level sweep, which is why clicking was necessary):
+
+1. **Pool wrapper leaked every unscoped query (`src/db/tenant-pool.ts`).** pg-pool's own `query()` calls `this.connect(callback)`; the wrapper replaced `connect` and ignored the callback, so each such query held a connection forever until the pool was empty and requests hung (the pod looked idle, the database showed idle sessions, no log lines). It also explains why the first attempt with all switches on and a small pool failed on 2026-11-07. Fixed to honour the callback form; reproduced and verified against the dev database with a 2-connection pool; regression tests added in `tests/unit/tenant-pool.test.ts`.
+2. **Host-to-college lookup and the login page ran with no scope (`resolveRequestTenant`, `src/app/page.tsx`).** Under enforcement a college host showed "This address isn't set up yet". Both now run in a named system scope (`tenant:resolve-host`, `public-page:login`).
+3. **Sibling server components had no scope.** Next renders layouts, pages and Suspense children in separate async chains, so the AsyncLocalStorage holder opened by one did not reach the others. `tenant-context.ts` now also keeps the actor scope in React's per-request cache and reads it as a fallback (ALS scope still wins).
+
+Other dev findings: `testa` and `testb` are not routed to vNext on the dev ingress (only `vnext` and `nsrit` are); they land on the legacy app, so college logins on dev use the platform host and choose the college after sign-in. The shared store is back ON (it was only ever off because of bug 1).
