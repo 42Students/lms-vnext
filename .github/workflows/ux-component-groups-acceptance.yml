@@ -16,6 +16,11 @@ on:
 permissions:
   contents: read
 
+# Parallel chats push frequently. Only the newest acceptance run is needed.
+concurrency:
+  group: ux-component-groups-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   browser:
     runs-on: ubuntu-latest
