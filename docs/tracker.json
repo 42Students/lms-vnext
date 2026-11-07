@@ -20316,7 +20316,8 @@
           "OVERLAY-0081"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [{"commitSha":"baadc516e47b9228513002ce52f3c03d72509dfb","parityDoc":"docs/parity/ux-g141-g155-g175-2026-11-07.md","tests":[],"browser":[],"regressionReview":"Source and focused unit/browser specifications committed; exact-SHA CI results, shared call-site checks and desktop/mobile browser screenshots require independent verification before DONE.","securityReview":"No auth/RLS/backend permission loosening; CSV service still scopes college-admin permission to current membership and college. The synthetic browser route returns 404 unless development and explicit UX_STUDY_SHELL_FIXTURE=1."}],
+        "notes": "Scoped UX code, tests and path-triggered browser CI committed on main. Pending exact-SHA executed results, desktop/mobile screenshots, and same-college/role regression. docs/parity/ux-g141-g155-g175-2026-11-07.md"
       },
       {
         "id": "UX-G142",
@@ -20856,7 +20857,8 @@
           "OVERLAY-0164"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [{"commitSha":"baadc516e47b9228513002ce52f3c03d72509dfb","parityDoc":"docs/parity/ux-g141-g155-g175-2026-11-07.md","tests":[],"browser":[],"regressionReview":"Source and focused unit/browser specifications committed; exact-SHA CI results, shared call-site checks and desktop/mobile browser screenshots require independent verification before DONE.","securityReview":"No auth/RLS/backend permission loosening; CSV service still scopes college-admin permission to current membership and college. The synthetic browser route returns 404 unless development and explicit UX_STUDY_SHELL_FIXTURE=1."}],
+        "notes": "Scoped UX code, tests and path-triggered browser CI committed on main. Pending exact-SHA executed results, desktop/mobile screenshots, and same-college/role regression. docs/parity/ux-g141-g155-g175-2026-11-07.md"
       },
       {
         "id": "UX-G156",
@@ -21570,7 +21572,8 @@
           "MESSAGE-0048"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [{"commitSha":"baadc516e47b9228513002ce52f3c03d72509dfb","parityDoc":"docs/parity/ux-g141-g155-g175-2026-11-07.md","tests":[],"browser":[],"regressionReview":"Source and focused unit/browser specifications committed; exact-SHA CI results, shared call-site checks and desktop/mobile browser screenshots require independent verification before DONE.","securityReview":"No auth/RLS/backend permission loosening; CSV service still scopes college-admin permission to current membership and college. The synthetic browser route returns 404 unless development and explicit UX_STUDY_SHELL_FIXTURE=1."}],
+        "notes": "Scoped UX code, tests and path-triggered browser CI committed on main. Pending exact-SHA executed results, desktop/mobile screenshots, and same-college/role regression. docs/parity/ux-g141-g155-g175-2026-11-07.md"
       },
       {
         "id": "UX-G176",
