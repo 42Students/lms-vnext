@@ -15525,11 +15525,11 @@
         "type": "JOURNEY",
         "area": "company-join",
         "title": "Company Join · Token (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-company-hr-ux-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07T16:20:00Z",
         "sourceFiles": [
           "src/app/company-join/[token]/error.tsx",
           "src/app/company-join/[token]/loading.tsx",
@@ -15541,8 +15541,42 @@
           "PAGE-0505"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Full public-invitation UX acceptance, including link privacy, loading/error, mobile, cross-role regression. DONE requires executed source, browser desktop/mobile, security evidence."
+        "evidence": [
+          {
+            "commitSha": "5e42b0859bfde020455d48442c85fe087576ab00",
+            "parityDoc": "docs/parity/ux-g046-company-join.md",
+            "tests": [
+              {
+                "command": "npx eslint scoped company-join/hr-invite pages and browser spec && node --test tests/ux-g046-g057-invitation-contract.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390619702 (Check scoped JSX and browser spec lint: success)"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g046-company-join-journey.test.tsx tests/unit/UX-company-join-01.test.ts tests/unit/UX-hr-invite-token-01.test.ts tests/unit/recruiter-invite-alias-model.test.ts tests/unit/chat16-public-legacy-invite-handoff-16.test.ts tests/unit/chat16-legacy-auth-invite-alias-pages-16.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390619702 (Existing company and HR invite flow regressions: success)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g046-g057-public-invitations.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390619702 (3 passed, zero retries)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390619702/artifacts/13581266813 (company-invalid-desktop.png, 1280x800; inspected no clipping)"
+              },
+              {
+                "viewport": "mobile",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390619702/artifacts/13581266813 (company-invalid-mobile.png, 320x720; inspected no clipping)"
+              }
+            ],
+            "regressionReview": "PublicRecruiterJoinForm and PublicJoinPreviewRetry remain unmodified, so already-closed College Join UI is intact. Mocked ready/unavailable/invalid/provider-error SSR tests and existing company scope/OTP unit tests passed; browser invalid link does not expose active verification form.",
+            "securityReview": "Noindex/nofollow/noarchive and no-referrer on bearer URL; force dynamic. No join or OTP on GET; unchanged RLS, preview token verification and company-domain email proof. Failed readiness blocks verification rather than exposing a live form."
+          }
+        ],
+        "notes": "Company token UX closed with exact-SHA scoped lint/source/negative unit & desktop/mobile browser tests; screenshots visually inspected. Live provider OTP acceptance is a separate release gate. See docs/parity/ux-g046-company-join.md"
       },
       {
         "id": "UX-G047",
@@ -16006,11 +16040,11 @@
         "type": "JOURNEY",
         "area": "hr-invite",
         "title": "Hr Invite · Token (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-company-hr-ux-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07T16:20:00Z",
         "sourceFiles": [
           "src/app/hr-invite/[token]/error.tsx",
           "src/app/hr-invite/[token]/loading.tsx",
@@ -16022,8 +16056,42 @@
           "PAGE-0511"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Full public-invitation UX acceptance, including link privacy, loading/error, mobile, cross-role regression. DONE requires executed source, browser desktop/mobile, security evidence."
+        "evidence": [
+          {
+            "commitSha": "5e42b0859bfde020455d48442c85fe087576ab00",
+            "parityDoc": "docs/parity/ux-g057-hr-invite.md",
+            "tests": [
+              {
+                "command": "npx eslint scoped company-join/hr-invite pages and browser spec && node --test tests/ux-g046-g057-invitation-contract.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390619702 (Check scoped JSX and browser spec lint: success)"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g046-company-join-journey.test.tsx tests/unit/UX-company-join-01.test.ts tests/unit/UX-hr-invite-token-01.test.ts tests/unit/recruiter-invite-alias-model.test.ts tests/unit/chat16-public-legacy-invite-handoff-16.test.ts tests/unit/chat16-legacy-auth-invite-alias-pages-16.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390619702 (Existing company and HR invite flow regressions: success)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g046-g057-public-invitations.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390619702 (3 passed, zero retries)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390619702/artifacts/13581266813 (hr-canonical-desktop.png, 1280x800; inspected no clipping)"
+              },
+              {
+                "viewport": "mobile",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42390619702/artifacts/13581266813 (hr-invalid-mobile.png, 375x812; inspected no clipping)"
+              }
+            ],
+            "regressionReview": "Legacy alias redirects solely to unchanged canonical recruiter invitation; existing redirect, malformed-token and privacy tests passed. No duplicate form, no new auth/role paths. Next streaming may initially return 200 while rendering not-found; semantic page and notFound() unit negative proof captured.",
+            "securityReview": "Noindex/nofollow/noarchive and no-referrer on bearer URL; force dynamic. Validated same-origin alias only, invalid tokens produce notFound(); no cross-host exchange or data mutation; downstream role/OTP/consent security unchanged."
+          }
+        ],
+        "notes": "HR legacy alias UX closed with exact-SHA scoped lint/source/negative unit & desktop/mobile browser tests; screenshots visually inspected. Live provider OTP acceptance is a separate release gate. See docs/parity/ux-g057-hr-invite.md"
       },
       {
         "id": "UX-G058",
