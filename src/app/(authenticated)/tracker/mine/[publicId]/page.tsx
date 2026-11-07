@@ -13,6 +13,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { formatDateTimeIst } from "@/lib/format-date";
 export const dynamic="force-dynamic";
+export const metadata={robots:{index:false,follow:false},title:"My Report · 42 Tracker"};
 export default async function MyTrackerReportDetail({
   params,
 }:{params:Promise<{publicId:string}>}){
@@ -30,6 +31,7 @@ export default async function MyTrackerReportDetail({
   if(!trackerAdminRuntimeEnabled())return <div className="min-w-0 space-y-4">
     <PageHeader title="My report" description={publicId}/>
     <Banner tone="warning">Reports are temporarily unavailable. Try again soon.</Banner>
+    <TextLink href={"/tracker/mine/"+encodeURIComponent(publicId)} className="inline-flex min-h-11 items-center">Try loading this report again</TextLink>
   </div>;
   let report;
   try{report=await getMyTrackerReport(context,publicId);}
@@ -71,7 +73,7 @@ export default async function MyTrackerReportDetail({
     <section className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
       <Heading level={2} size="base" className="text-[var(--lms-heading)]">Screenshots ({screenshots.length})</Heading>
       {screenshotsResult.status==="rejected"?<Banner tone="warning" role="alert">
-        Screenshots could not be loaded. <TextLink href={"/tracker/mine/"+encodeURIComponent(publicId)}>Retry screenshots</TextLink>
+        Screenshots could not be loaded. <TextLink href={"/tracker/mine/"+encodeURIComponent(publicId)} className="inline-flex min-h-11 items-center">Retry screenshots</TextLink>
       </Banner>:screenshots.length===0 ? <p className="text-sm text-muted-foreground">No screenshots attached.</p> :
         <TrackerScreenshotGallery publicId={publicId} screenshots={screenshots}/>}
       <p className="text-xs text-muted-foreground">Preview links are issued only after checking your report ownership and the private file scan.</p>
@@ -79,7 +81,7 @@ export default async function MyTrackerReportDetail({
     <section className="space-y-3">
       <Heading level={2} size="base" className="text-[var(--lms-heading)]">Activity</Heading>
       {historyResult.status==="rejected"?<Banner tone="warning" role="alert">
-        Activity could not be loaded. <TextLink href={"/tracker/mine/"+encodeURIComponent(publicId)}>Retry activity</TextLink>
+        Activity could not be loaded. <TextLink href={"/tracker/mine/"+encodeURIComponent(publicId)} className="inline-flex min-h-11 items-center">Retry activity</TextLink>
       </Banner>:history.length===0?<p className="text-sm text-muted-foreground">No status changes yet.</p>:
         <ol className="space-y-3">{history.map(row=><li key={row.id} className="border-b border-border pb-3 text-sm">
           <span className="font-semibold">{row.type}</span>
