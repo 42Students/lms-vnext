@@ -1,0 +1,48 @@
+name: UX-G045 College invitation acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/app/college-join/**
+      - src/components/placements/public-recruiter-join-form.tsx
+      - tests/unit/UX-college-join-01.test.ts
+      - tests/unit/UX-college-join-02.test.tsx
+      - tests/e2e/ux-g045-college-join.spec.ts
+      - .github/workflows/ux-college-join-acceptance.yml
+
+permissions:
+  contents: read
+
+jobs:
+  scoped-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Lint the invitation recovery and its acceptance checks
+        run: |
+          npx eslint 'src/app/college-join/[token]/page.tsx' 'src/app/college-join/[token]/loading.tsx' 'src/app/college-join/[token]/error.tsx' src/components/placements/public-recruiter-join-form.tsx tests/unit/UX-college-join-02.test.tsx tests/e2e/ux-g045-college-join.spec.ts
+      - name: Server-render and source regression checks
+        run: npx vitest run tests/unit/UX-college-join-01.test.ts tests/unit/UX-college-join-02.test.tsx tests/unit/chat16-public-recruiter-join-pages-26.test.ts
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Mobile and desktop invalid-invitation recovery
+        run: npx playwright test tests/e2e/ux-g045-college-join.spec.ts --project=chromium --reporter=line
+      - name: Preserve browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-g045-college-join-evidence
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
