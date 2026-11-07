@@ -74,6 +74,7 @@ export function PublicRecruiterJoinForm({
   const [companyName, setCompanyName] = useState("");
   const [code, setCode] = useState("");
   const [sentTo, setSentTo] = useState("");
+  const [codeDeliveryCount, setCodeDeliveryCount] = useState(0);
   const [knownCompany,setKnownCompany]=useState<string|null>(null);
   const [joined, setJoined] = useState(false);
   const [alreadyJoined,setAlreadyJoined]=useState(false);
@@ -109,7 +110,7 @@ export function PublicRecruiterJoinForm({
     // The OTP input is mounted only after setSentTo commits. A microtask in
     // sendCode runs too early and can leave keyboard users on the email field.
     if(sentTo && !joined) codeRef.current?.focus();
-  }, [sentTo, joined]);
+  }, [sentTo, joined, codeDeliveryCount]);
   useEffect(()=>{
    if(!error)return;
    const target=focusField==="email"?emailRef.current:
@@ -151,6 +152,7 @@ export function PublicRecruiterJoinForm({
       if(responseData?.companyName)setCompanyName(responseData.companyName);
       setSentTo(parsed.data);
       setCode("");
+      setCodeDeliveryCount(value => value + 1);
     } catch {
       showError(joinErrorMessage(null,"SEND"));
     } finally {

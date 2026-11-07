@@ -57,6 +57,7 @@ describe("UX-G045 college join recovery and accessible states", () => {
     expect(source).toContain('Change work email');
     // Code input is mounted after the successful API response, not during its microtask.
     expect(source).toContain('if(sentTo && !joined) codeRef.current?.focus();');
+    expect(source).toContain("setCodeDeliveryCount(value => value + 1)");
     expect(source).not.toContain("queueMicrotask(()=>codeRef.current?.focus())");
     expect(source).toContain('readOnly={Boolean(sentTo)}');
     expect(source).toContain('if(submittingRef.current)return;');

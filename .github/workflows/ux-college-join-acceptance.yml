@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - src/app/college-join/**
+      - src/app/e2e/ux-g045-college-join/**
       - src/components/placements/public-recruiter-join-form.tsx
       - tests/unit/UX-college-join-01.test.ts
       - tests/unit/UX-college-join-02.test.tsx
