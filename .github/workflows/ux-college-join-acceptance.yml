@@ -34,6 +34,10 @@ jobs:
           npx eslint 'src/app/college-join/[token]/page.tsx' 'src/app/college-join/[token]/loading.tsx' 'src/app/college-join/[token]/error.tsx' src/components/placements/public-recruiter-join-form.tsx tests/unit/UX-college-join-02.test.tsx tests/e2e/ux-g045-college-join.spec.ts
       - name: Server-render and source regression checks
         run: npx vitest run tests/unit/UX-college-join-01.test.ts tests/unit/UX-college-join-02.test.tsx tests/unit/chat16-public-recruiter-join-pages-26.test.ts
+      - name: Typecheck current source including the UI fixture
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Mobile and desktop invalid-invitation recovery
