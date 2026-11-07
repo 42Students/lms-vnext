@@ -78,9 +78,9 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
    <Heading level={3}>Debarment history</Heading>
    {rows.length===0?<p role="status" className="text-sm text-body leading-[22px]">No timed debarment is recorded for this student.</p>:null}
    {rows.map(row=><article key={row.id} className="min-w-0 space-y-2 border-b border-border py-3">
-    <p className="break-words font-semibold">{row.active?"Active":"Ended"} · {row.reason}</p>
-    <p className="text-sm text-body leading-[22px]">{row.untilDate?"Until "+row.untilDate+" IST":row.untilDrives!==null
-     ?"For "+row.untilDrives+" drives ("+row.drivesCounted+" counted)":"Until lifted"}</p>
+    <p className="break-words font-semibold">{row.active?"Active restriction":"Ended restriction"} · {row.reason}</p>
+    <p className="text-sm text-body leading-[22px]">{row.untilDate?"Through "+row.untilDate+" (IST, inclusive)":row.untilDrives!==null
+     ?"For "+row.untilDrives+" drives · "+row.drivesCounted+" counted · "+Math.max(0,row.untilDrives-row.drivesCounted)+" remaining":"Until manually lifted"}</p>
     {row.liftedAt?<p className="text-sm leading-[22px]">Lifted · {row.liftedReason??"No reason recorded"}</p>:null}
     {row.active?<div className="min-w-0 space-y-2">
      <Label stack className="min-w-0">Reason for lifting
