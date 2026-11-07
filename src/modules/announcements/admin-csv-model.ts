@@ -1,13 +1,10 @@
 import {announcementVisibilityAt} from "./visibility-model";
+import { safeMetadataCsvCell } from "@/modules/shared/metadata-export-csv-cell";
 export type AnnouncementCsvRow={
  id:string;receiverType:string;title:string;createdAt:Date;scheduledAt:Date|null;
  expiresAt:Date|null;deletedAt:Date|null;isPinned:boolean;version:number;
 };
-function csvCell(value:string){
- const flattened=value.replace(/[\r\n\t]/g," ");
- const safe=/^[\s\uFEFF]*[=+\-@]/u.test(flattened)?"'"+flattened:flattened;
- return '"'+safe.replaceAll('"','""')+'"';
-}
+const csvCell = safeMetadataCsvCell;
 /** Audited metadata only: no message, sender ID, student contact or deletion actor. */
 export function announcementHistoryCsv(rows:readonly AnnouncementCsvRow[],now:number){
  const headers=["Notice ID","Audience","Title","Visibility","Pinned","Created (UTC)","Scheduled (UTC)","Expires (UTC)","Version"];
@@ -16,5 +13,5 @@ export function announcementHistoryCsv(rows:readonly AnnouncementCsvRow[],now:nu
   row.isPinned?"Yes":"No",row.createdAt.toISOString(),
   row.scheduledAt?.toISOString()??"",row.expiresAt?.toISOString()??"",String(row.version),
  ]);
- return [headers,...data].map(record=>record.map(csvCell).join(",")).join("\r\n")+"\r\n";
+ return "\uFEFF"+[headers,...data].map(record=>record.map(csvCell).join(",")).join("\r\n")+"\r\n";
 }
