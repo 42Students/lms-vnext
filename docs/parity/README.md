@@ -42,6 +42,19 @@
 
 Do not inflate the page denominator by counting each row, component, transient toast, or screenshot as a separate route. **Count page families, child surfaces, actions and scenarios separately** and link them by stable IDs. Do not demand a meaningless Cartesian product of every state × every control; use explicit critical-path and risk-based combinations, with full negative testing for write/privacy/security paths.
 
+### Grouped UX improvement passes (7 November 2026)
+
+The generated [UI surface registry](../audit/ui-surfaces/UI-SURFACES.md) is the **coverage input**, not a second completion tracker. Its recorded 2,080 entries (521 pages, 1,041 route states, 207 overlays, 160 widgets, 36 UI-kit components and 115 messages) come from an older scan; a subsequent [route-only census](../planning/ui-surfaces.md) listed 604 pages on 2026-11-05. **Regenerate and reconcile before using any denominator as a current completion percentage.** Registry sequence IDs can change when source files are added, so group ownership primarily by route/component file and stable user journey.
+
+For manageable, independently reviewable UX work:
+
+1. **One group = one bounded user journey or shared component family**, normally 5–20 registry entries: page(s), tabs, form/modal/drawer, loading/empty/error states, feedback, mobile and keyboard flows. More complex families stay separate even if small; never split one destructive or permissioned action across groups.
+2. **Suggested order:** shared navigation/feedback and notification primitives; Learner courses/assessments/placements; Faculty authoring/reporting; Mentor projects; College/Super Admin administration; TPO placements; Recruiter hiring; cross-role/public/operational surfaces. Parallel groups must not edit the same shared files concurrently.
+3. **Pass checklist:** clear labels and information hierarchy; discoverable next action; preserved filter/search/deep-link state; useful loading/empty/error/success copy; focus/keyboard/touch/mobile behavior; accessible dialogs; regression-safe data and permissions. Preserve all already-working capabilities; do not reopen unrelated DB/API/security work.
+4. **Closure is evidence-backed:** record the scoped group and source paths **inside its existing** `docs/parity/<account>.md` page-family section, including changed commit, executed checks and desktop/mobile browser results. A source edit or authored test alone is `IMPLEMENTED / VERIFY`, **not UX CLOSED**. Do not create a parallel status spreadsheet or alter accepted DB/API/UI tracker tasks for cosmetic polish.
+
+**First scoped group:** `UX-NOTIF-01`, shared Notifications inbox journey, is documented in [shared-public-ops.md](shared-public-ops.md). Its shared-component regressions require review at all call sites.
+
 ### Stable page contract — required for *every* page before acceptance
 
 Keep the following data within the appropriate `docs/parity/<account>.md` section. If a family needs its own file for safe multi-chat edits, place it at `docs/parity/pages/<account>/<stable-page-id>.md` and link it **from the account specification**; move ownership of its detailed checks rather than copy them to a second tracker. Never silently replace legacy audit findings.
