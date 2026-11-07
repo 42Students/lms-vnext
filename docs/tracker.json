@@ -17650,18 +17650,57 @@
         "type": "JOURNEY",
         "area": "recruiter-invitations",
         "title": "Recruiter Invitations · Home (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-recruiter-public-batch-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07T17:12:00Z",
         "sourceFiles": [],
         "surfaceIds": [],
         "newRouteOnly": [
           "/recruiter-invitations"
         ],
-        "evidence": [],
-        "notes": "End-to-end UX group acceptance: scoped fixes, negative and positive regression, desktop/mobile browser, privacy and security review; only DONE after green exact-SHA CI and documented screenshots."
+        "evidence": [
+          {
+            "commitSha": "664f5894a2a730c7841bccaaee6b9b6ee18b63e8",
+            "parityDoc": "docs/parity/ux-g083-recruiter-invitations.md",
+            "tests": [
+              {
+                "command": "npx eslint scoped recruiter invitation page, loading, error, client and browser tests",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42393260091 (Lint UI and all new tests: success)"
+              },
+              {
+                "command": "node --test tests/ux-g047-g083-g084-contract.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42393260091 (Source security and UX invariants: success)"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g083-recruiter-invitations-server.test.tsx tests/unit/chat16-public-company-share-page-16.test.ts tests/unit/security-company-share-code-form.test.ts tests/unit/company-share-code-live-grant-guard.test.ts tests/unit/company-share-mobile-cards.test.ts tests/unit/UX-recruiter-invite-token-01.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42393260091 (Existing privacy, consent, role and server-page regressions: success)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g047-g083-g084-recruiter-journeys.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42393260091 (4/4 passed without retry; G083 final login UI mounted)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42393260091/artifacts/13582756976 (desktop suite privacy/consent screens; inspected at 1280x800)"
+              },
+              {
+                "viewport": "mobile",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42393260091/artifacts/13582756976 (pending-invitations-anonymous-mobile.png at 375x812, inspected mounted sign-in/no private data/no overflow)"
+              }
+            ],
+            "regressionReview": "No changes to authenticated layout, recruiter consent endpoints, recruiter ownership lookup, invite status transitions or role grants. The actor-identified list remains server-selected. Server page tests pass pending/empty/error/auth-denied/suspended plus five session recovery cases. `busyRef` retains no-duplicate POST guard and final all-reviewed empty UX.",
+            "securityReview": "Page is force-dynamic and noindex/nofollow/noarchive/no-referrer. SESSION_MISSING/EXPIRED/REVOKED/INVALID/RECENT_SIGN_IN_REQUIRED redirect to first-party /login with fixed returnTo, avoiding streaming 500 while never querying invites. AuthorizationError rethrown, platform status ACTIVE required, no user ID from URL, no tenant isolation bypass."
+          }
+        ],
+        "notes": "Recruiter pending-invitations privacy and session-recovery UX verified with exact-SHA (4/4 browser, five session cases) and manually inspected 375px sign-in screenshot. Source files unchanged on latest main. See docs/parity/ux-g083-recruiter-invitations.md."
       },
       {
         "id": "UX-G084",
