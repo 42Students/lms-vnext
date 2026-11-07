@@ -2,7 +2,7 @@
 // Ratchet: per route file and rule the count may never exceed the baseline. `--update` can only lower counts.
 import { readFileSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
-import { RULES, scanRoute } from "./security-central-rules.mjs";
+import { RULES, scanRoute, scanServerAction } from "./security-central-rules.mjs";
 import { analyse } from "./rls-tenant-tables.mjs";
 
 const BASELINE_PATH = "docs/security/central-security-baseline.json";
@@ -12,6 +12,12 @@ const counts = {};
 for (const p of files) {
   let s; try { s = readFileSync(p, "utf8"); } catch { continue; }
   for (const f of scanRoute(p, s)) ((counts[p] ??= {})[f.rule] = (counts[p][f.rule] ?? 0) + 1);
+}
+const srcFiles = execFileSync("git", ["ls-files", "-z", "--", "src"], { encoding: "utf8", maxBuffer: 1 << 26 }).split("\0").filter((p) => /[.](?:ts|tsx)$/.test(p));
+for (const p of srcFiles) {
+  let s; try { s = readFileSync(p, "utf8"); } catch { continue; }
+  if (!s.includes("use server")) continue;
+  for (const f of scanServerAction(p, s)) ((counts[p] ??= {})[f.rule] = (counts[p][f.rule] ?? 0) + 1);
 }
 { const { missing } = analyse(); if (missing.length) counts["drizzle (database)"] = { "tenant-table-without-rls": missing.length }; }
 const totals = Object.fromEntries(Object.keys(RULES).map((r) => [r, 0]));

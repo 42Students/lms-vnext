@@ -10,6 +10,7 @@ import {
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
+import { guardAction } from "@/security/action";
 import { requirePermission } from "@/modules/permissions/policy";
 import { joinGroup } from "@/modules/groups/service";
 import {Button} from "@/components/ui/button";
@@ -120,6 +121,7 @@ export default async function CollegeElectiveAllocatePage({
   ]);
 
   async function allocate(formData: FormData) {
+    await guardAction({ name: "college.electives.allocate", permission: "academics.manage" });
     const { context, slot: current } = await scopedSlot(slotId);
     const groupId = String(formData.get("offeringGroup") ?? "");
     const checkedGroup = uuid.safeParse(groupId);

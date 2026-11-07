@@ -6,6 +6,7 @@ export const RULES = {
   "raw-request-json": "route reads the body with request.json() instead of the bounded reader/wrapper",
   "direct-db-in-route": "route imports getDb directly instead of going through the data layer",
   "tenant-table-without-rls": "table has a college_id column but no tenant RLS policy (run: node scripts/generate-rls-migration.mjs)",
+  "server-action-unguarded": "file declares a \"use server\" action but never calls guardAction() from @/security/action (permission, rate limit, audit)",
   "service-enforced": "route declares permission 'service-enforced' (replace with a named permission)",
   "actor-owned": "route declares permission 'actor-owned' (no registry permission; only for self-service routes whose authority is the actor's own identity or grants, reviewed individually)",
 };
@@ -50,4 +51,14 @@ export function scanRoute(path, source) {
   for (const _ of source.matchAll(/permission:\s*["']service-enforced["']/g)) out.push({ rule: "service-enforced" });
   for (const _ of source.matchAll(/permission:\s*["']actor-owned["']/g)) out.push({ rule: "actor-owned" });
   return out;
+}
+
+// Server actions are a second way into the system besides API routes. A file with a "use server" directive must call
+// guardAction() from @/security/action, or each of its directives is counted against the baseline.
+export function scanServerAction(path, source) {
+  const p = path.split(String.fromCharCode(92)).join("/");
+  if (!/^src\/.+\.(?:ts|tsx)$/.test(p) || p.startsWith("src/app/api/")) return [];
+  const directives = [...source.matchAll(/^[ \t]*["']use server["'];?[ \t]*\r?$/gm)];
+  if (!directives.length || /\bguardAction\s*\(/.test(source)) return [];
+  return directives.map(() => ({ rule: "server-action-unguarded" }));
 }

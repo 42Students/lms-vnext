@@ -14,6 +14,7 @@ import { listElectiveOfferings } from "@/modules/electives/service";
 import { createCourseTeachingAssignment, endCourseTeachingAssignment,
   listCourseTeachingAssignments } from "@/modules/courses/teaching-assignment-service";
 import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
+import { guardAction } from "@/security/action";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
@@ -163,6 +164,7 @@ export default async function ElectiveRoster({
     ].map(csvCell).join(",")),
   ].join("\r\n");
   async function mutate(form: FormData) {
+    await guardAction({ name: "college.electives.roster.mutate", permission: "academics.manage" });
     if (form.get("confirm") !== "yes") redirect(back + "?error=Please%20confirm");
     const { context, slot, offering } = await scoped(slotId, offeringId);
     if (slot.status !== "ACTIVE" || offering.status !== "ACTIVE")
@@ -187,6 +189,7 @@ export default async function ElectiveRoster({
   }
   async function changeFaculty(form: FormData) {
     "use server";
+    await guardAction({ name: "college.electives.roster.change-faculty", permission: "academics.manage" });
     const { context, slot, offering } = await scoped(slotId, offeringId);
     if (slot.status !== "ACTIVE" || offering.status !== "ACTIVE")
       redirect(back + "?error=Archived%20offerings%20are%20read-only");

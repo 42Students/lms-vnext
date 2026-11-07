@@ -92,3 +92,13 @@ This table is a working note, not a status source. Control states live only in `
 | L9 audit | One structured audit line from both wrappers for writes, 401/403/429 and downloads | Redacting logger as a central pass |
 | L10 internal / webhook wrappers | `internalRoute()` (10 routes: alerts tick, notification release, mentor email dispatch and the four plain-header schedulers), `webhookRoute()`. Its credential check refuses a missing, short (<32 bytes), oversized (>256) or whitespace-padded server secret. Signature-based and bespoke machine routes (inbound mail, recruiter inbound, audit-findings sync, scan-verdict, telegram, e2e seed, recruiter reminders) run as `auth: "public"` routes with a written reason and keep their own credential checks | Move those onto `webhookRoute()` / `internalRoute()` (response shapes are pinned by tests) |
 | L11 config | `secret-registry.ts` + startup validation (warnings only); a test fails when code adds an unregistered internal credential | Enforce (fail closed) in production once the registry is verified against live config |
+
+## Entry points outside `src/app/api` (reviewed 2026-11-07)
+
+| Entry point | Status | Note |
+|---|---|---|
+| Server actions (`"use server"`): `college/electives/[slotId]/allocate` (`allocate`), `.../offerings/[offeringId]/roster` (`mutate`, `changeFaculty`) | Gated by `guardAction()` in `src/security/action.ts`: named permission against the actor's own scope, per-user rate limit, structured audit line | Rule `server-action-unguarded` in `security:central` fails the build on any `"use server"` file that never calls `guardAction()`. Debt: actions do not yet run inside the actor's database scope like `route()` handlers; Next's own same-origin check covers forgery |
+| `src/proxy.ts` | Reviewed: request id, maintenance page, two legacy redirects. No authentication or data access | Nothing to enforce centrally |
+| `app/health`, `app/ready` | Left outside `route()` on purpose | Probes must work when the database or shared store is down, so they cannot depend on the wrapper's stores. They return no tenant data |
+| `app/company-share/[token]/access` (POST) | Own origin check, 2 KiB body cap, token check, code check | Public by design; candidate for `webhookRoute()`-style wrapper later |
+| Pages writing to the database | Only `tracker/logs` (audit row on each Super Admin view, intentional) | Other `.insert/.update/.delete` matches in pages were URL or hash calls |
