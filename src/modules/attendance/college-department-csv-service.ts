@@ -2,7 +2,7 @@ import "server-only";
 
 import type { RequestContext } from "@/modules/identity/context";
 import { listCollegeDepartmentInsights } from "@/modules/admin-ui/college-department-insights-service";
-import { departmentAttendanceCsv, departmentAttendanceExportQuerySchema } from "./college-department-csv-model";
+import { assertDepartmentAttendanceExportComplete, assertDepartmentAttendanceExportPage, departmentAttendanceCsv, departmentAttendanceExportQuerySchema } from "./college-department-csv-model";
 
 const MAX_EXPORT_DEPARTMENTS = 2500;
 
@@ -20,11 +20,11 @@ export async function exportCollegeDepartmentAttendance(context: RequestContext,
     const next = await listCollegeDepartmentInsights(context, "ATTENDANCE", {
       q: query.q, page,
     });
+    assertDepartmentAttendanceExportPage(first, next);
     records.push(...next.items);
   }
-  if (records.length !== first.total) {
-    // Concurrent edits to the department index cannot result in a partial export.
-    throw new Error("DEPARTMENT_ATTENDANCE_EXPORT_STALE");
-  }
+  // Detect observed pagination drift and duplicate IDs. A single DB snapshot
+  // would be needed to guarantee point-in-time consistency across all pages.
+  assertDepartmentAttendanceExportComplete(records, first.total);
   return { csv: departmentAttendanceCsv(records), rows: records.length };
 }
