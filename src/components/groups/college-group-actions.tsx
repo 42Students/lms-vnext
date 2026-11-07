@@ -3,7 +3,7 @@
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
-import { useId, useState, useTransition } from "react";
+import { useId, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Disclosure } from "@/components/ui/disclosure";
@@ -38,6 +38,7 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
   const router = useRouter();
   const editorFormId = useId();
   const [pending, startTransition] = useTransition();
+  const mutationInFlight = useRef(false);
   const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState<"ACTIVATE" | "CLOSE" | "ARCHIVE" | null>(null);
   const [draft, setDraft] = useState<Draft>(() => draftOf(group ?? null));
@@ -73,6 +74,7 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
   }
 
   function save() {
+    if (pending || mutationInFlight.current) return;
     const name = draft.name.trim();
     const capacity = draft.capacity.trim() === "" ? null : Number(draft.capacity);
     if (name.length === 0 || name.length > 150) {
@@ -85,6 +87,7 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
       setError("Description must be at most 1000 characters and capacity must be 1–10000 if supplied.");
       return;
     }
+    mutationInFlight.current = true;
     startTransition(async () => {
       try {
         await send(group
@@ -92,12 +95,15 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
           : { name, description: draft.description, capacity });
       } catch (cause) {
         setError(cause instanceof Error ? cause.message : "Unable to save group.");
+      } finally {
+        mutationInFlight.current = false;
       }
     });
   }
 
   function changeStatus() {
-    if (!group || !confirm) return;
+    if (!group || !confirm || pending || mutationInFlight.current) return;
+    mutationInFlight.current = true;
     startTransition(async () => {
       try {
         await send({
@@ -108,6 +114,8 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
       } catch (cause) {
         setError(cause instanceof Error ? cause.message : "Unable to change group status.");
         setConfirm(null);
+      } finally {
+        mutationInFlight.current = false;
       }
     });
   }
