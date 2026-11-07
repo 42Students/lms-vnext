@@ -65,6 +65,7 @@ describe("PROJ-BREAK-TPO-ROLE-01 Projects and placements per-account scope",()=>
  it("Super Admin cannot use a selected-college scope to read another college's project",()=>{
   const root={
    ...context(["TPO"]),
+   membership:null,
    user:{...context(["TPO"]).user,systemRoles:["SUPER_ADMIN"]},
    adminScope:{collegeId:"collegeA",organizationId:"orgA"},
   } as unknown as RequestContext;

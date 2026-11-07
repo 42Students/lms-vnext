@@ -130,7 +130,7 @@ describe("platform authorization policy", () => {
 
   it("requires COLLEGE_ADMIN for tenant mutations", () => {
     const faculty = memberContext(["FACULTY"]);
-    const admin = memberContext(["FACULTY", "COLLEGE_ADMIN"]);
+    const admin = memberContext(["COLLEGE_ADMIN"]);
 
     expect(
       can(faculty, "department.manage", { collegeId: "college-1" }),
@@ -276,13 +276,14 @@ describe("platform authorization policy", () => {
     expect(
       can(memberContext(["TPO"]), "placements.manage", ownCollege),
     ).toBe(true);
+    // A request context carries exactly ONE selected role: a stale two-role context grants nothing (no union of powers).
     expect(
       can(
         memberContext(["FACULTY", "TPO"]),
         "placements.manage",
         ownCollege,
       ),
-    ).toBe(true);
+    ).toBe(false);
     expect(
       can(
         memberContext(["COLLEGE_ADMIN"]),

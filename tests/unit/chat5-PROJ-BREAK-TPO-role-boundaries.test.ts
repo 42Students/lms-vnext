@@ -47,7 +47,7 @@ describe("IIT Dharwad project isolation: TPO cross-product breaker",()=>{
   expect(can(actor(["MENTOR"]),"projects.manage",valid)).toBe(false);
  });
  it("PROJ-BREAK-TPO-04 honors Super Admin acting-college boundary on project reads and writes",()=>{
-  const admin={...actor(["TPO"],{superAdmin:true}),adminScope:{collegeId:college,organizationId:org}};
+  const admin={...actor(["TPO"],{superAdmin:true}),membership:null,adminScope:{collegeId:college,organizationId:org}};
   expect(can(admin,"projects.manage",{collegeId:college,organizationId:org})).toBe(true);
   expect(can(admin,"projects.read",{collegeId:other,organizationId:org})).toBe(false);
   expect(can(admin,"projects.manage",{collegeId:college,organizationId:otherOrg})).toBe(false);

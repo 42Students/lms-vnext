@@ -9,7 +9,7 @@ const context=(roles:readonly MembershipRole[],
  opts:{status?:"ACTIVE"|"SUSPENDED";userStatus?:"ACTIVE"|"DISABLED";collegeId?:string;organizationId?:string;scope?:RequestContext["adminScope"];superAdmin?:boolean;removed?:boolean}={}
 ):RequestContext=>({
  user:{id:own,identityUid:"iit-hardening-test",platformStatus:(opts.userStatus??"ACTIVE") as RequestContext["user"]["platformStatus"],systemRoles:opts.superAdmin?["SUPER_ADMIN"]:[]},
- membership:opts.removed?null:{
+ membership:(opts.removed||opts.superAdmin)?null:{
   id:own,collegeId:opts.collegeId??own,organizationId:opts.organizationId??org,
   status:(opts.status??"ACTIVE") as NonNullable<RequestContext["membership"]>["status"],
   roles:roles as NonNullable<RequestContext["membership"]>["roles"]

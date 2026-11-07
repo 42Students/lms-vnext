@@ -44,7 +44,7 @@ describe("IIT Dharwad Projects breaker — live permission matrix for every acco
   expect(can(null,"projects.read",own)).toBe(false);
  });
  it("PROJ-BREAK-idor-05 Super Admin acts only inside selected college or organization",()=>{
-  const superAdmin={...make([]),user:{
+  const superAdmin={...make([]),membership:null,user:{
    ...make([]).user,systemRoles:["SUPER_ADMIN" as const]}};
   expect(can(superAdmin,"projects.manage",own)).toBe(true);
   const scoped={...superAdmin,adminScope:{collegeId:collegeA,organizationId:orgA}};
