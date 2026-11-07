@@ -1,7 +1,22 @@
 import {describe,expect,it} from "vitest";
-import {legacySuperAdminLessonContentHref} from "@/modules/courses/super-admin-content-directory-model";
+import {legacySuperAdminContentHandoffHref,legacySuperAdminLessonContentHref} from "@/modules/courses/super-admin-content-directory-model";
 
 describe("legacy Super Admin lesson-content links",()=>{
+ it("preserves safe lesson chooser state for both old content entry points",()=>{
+  const link=legacySuperAdminContentHandoffHref({
+   type:"resources",classId:"0",lessonSearch:"  Intro  ",lessonPage:"4",
+   collegeId:"different-tenant",returnTo:"https://external.invalid",
+  });
+  expect(link).toBe("/admin/resources?scope=SHARED&lessonSearch=Intro&lessonPage=4");
+ });
+ it("does not forward malformed lesson chooser or external-navigation parameters",()=>{
+  const link=legacySuperAdminContentHandoffHref({
+   type:"video",q:"lessons",lessonPage:"99999",lessonSearch:"x".repeat(101),
+   redirect:"https://external.invalid",organizationId:"foreign",
+  });
+  expect(link).toBe("/admin/videos?q=lessons");
+ });
+
  it("preserves the old shared classId=0 meaning",()=>{
   expect(legacySuperAdminLessonContentHref({type:"resources",classId:"0"}))
    .toBe("/admin/resources?scope=SHARED");
