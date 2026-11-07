@@ -21629,11 +21629,11 @@
         "type": "ROUTE-STATE",
         "area": "error.tsx",
         "title": "Error.Tsx · Shared route states (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-root-error-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [
           "src/app/error.tsx"
         ],
@@ -21641,19 +21641,58 @@
           "ROUTE-STATE-1013"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Root/global error recovery UX review; exact-SHA regression and browser evidence required before DONE. No telemetry/security loosening."
+        "evidence": [
+          {
+            "commitSha": "ff4af9bbd86a7be0b7e07db1caab57468d421561",
+            "parityDoc": "docs/parity/shared-public-ops.md",
+            "tests": [
+              {
+                "command": "npx eslint src/app/error.tsx src/app/global-error.tsx src/app/e2e/ux-root-error-fixture/page.tsx src/components/public/graceful-error-boundary.tsx src/components/public/root-error-reference.tsx tests/unit/ux-root-global-errors.test.ts tests/e2e/ux-root-global-errors.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392075010"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-root-global-errors.test.ts tests/unit/graceful-root-screens.test.ts --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392075010 — 14/14 tests"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-root-global-errors.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392075010 — 4/4 scenarios"
+              },
+              {
+                "command": "npm run typecheck (NODE_OPTIONS=--max-old-space-size=6144)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392075010"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392075010 — actual root error recovery and sanitized telemetry"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392075010 — actual root error recovery, reference copy and focus"
+              }
+            ],
+            "regressionReview": "Existing GR-11/12 and GR-14 root-screen unit contracts executed, 14/14 PASS. Shared public fallback root-only branch preserves sanitized report and stale-chunk at-most-once logic; authenticated shell branch remains separate. Root 500 code, go-back, home and Try again retained.",
+            "securityReview": "Locally generated 8-character support code only; neither exception text, Next digest, URL token nor private identifiers displayed or copied. Error event report sends vetted fixed text only. Browser fixture refuses activation unless NODE_ENV=development and UX_ROOT_ERROR_FIXTURE=1, so not available in production. No authorization or tenant change."
+          }
+        ],
+        "notes": "Root/global error recovery UX review; exact-SHA regression and browser evidence required before DONE. No telemetry/security loosening. UX accepted at exact SHA ff4af9bbd86a7be0b7e07db1caab57468d421561; 14/14 unit, 4/4 desktop/mobile Chromium, scoped lint and typecheck PASS (run 42392075010). Global stylesheet scenario is a controlled preview, not production chaos."
       },
       {
         "id": "UX-G186",
         "type": "ROUTE-STATE",
         "area": "global-error.tsx",
         "title": "Global Error.Tsx · Shared route states (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-root-error-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [
           "src/app/global-error.tsx"
         ],
@@ -21661,8 +21700,47 @@
           "ROUTE-STATE-1016"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Root/global error recovery UX review; exact-SHA regression and browser evidence required before DONE. No telemetry/security loosening."
+        "evidence": [
+          {
+            "commitSha": "ff4af9bbd86a7be0b7e07db1caab57468d421561",
+            "parityDoc": "docs/parity/shared-public-ops.md",
+            "tests": [
+              {
+                "command": "npx eslint src/app/error.tsx src/app/global-error.tsx src/app/e2e/ux-root-error-fixture/page.tsx src/components/public/graceful-error-boundary.tsx src/components/public/root-error-reference.tsx tests/unit/ux-root-global-errors.test.ts tests/e2e/ux-root-global-errors.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392075010"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-root-global-errors.test.ts tests/unit/graceful-root-screens.test.ts --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392075010 — 14/14 tests"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-root-global-errors.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392075010 — 4/4 scenarios"
+              },
+              {
+                "command": "npm run typecheck (NODE_OPTIONS=--max-old-space-size=6144)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392075010"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392075010 — actual global CSS literal preview without app stylesheet"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392075010 — global emergency CSS mobile preview and keyboard focus"
+              }
+            ],
+            "regressionReview": "Self-contained html/head/body title, robots, viewport and emergency CSS validated without app stylesheet, with mobile/desktop overflow and keyboard focus. Shared GracefulErrorBoundary reused for error telemetry; no layout, auth, server API or tenant code changed. True production root-layout chaos is a separate global release acceptance.",
+            "securityReview": "Locally generated 8-character support code only; neither exception text, Next digest, URL token nor private identifiers displayed or copied. Error event report sends vetted fixed text only. Browser fixture refuses activation unless NODE_ENV=development and UX_ROOT_ERROR_FIXTURE=1, so not available in production. No authorization or tenant change."
+          }
+        ],
+        "notes": "Root/global error recovery UX review; exact-SHA regression and browser evidence required before DONE. No telemetry/security loosening. UX accepted at exact SHA ff4af9bbd86a7be0b7e07db1caab57468d421561; 14/14 unit, 4/4 desktop/mobile Chromium, scoped lint and typecheck PASS (run 42392075010). Global stylesheet scenario is a controlled preview, not production chaos."
       },
       {
         "id": "UX-G187",
