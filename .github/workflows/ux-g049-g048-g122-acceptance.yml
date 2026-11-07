@@ -1,0 +1,57 @@
+name: UX-G049 G048 G122 acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/app/e2e/superadmin-login/**
+      - src/app/(authenticated)/dashboard/**
+      - src/app/(authenticated)/tracker/logs/**
+      - src/app/(authenticated)/tracker/mine/**
+      - tests/unit/ux-g049-g048-g122-source.test.ts
+      - tests/e2e/ux-g049-g048-g122-public-guard.spec.ts
+      - .github/workflows/ux-g049-g048-g122-acceptance.yml
+
+concurrency:
+  group: ux-g049-g048-g122-main
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  scoped-ux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      PLATFORM_HOSTS: "localhost,127.0.0.1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Source scoped lint and full TypeScript
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: |
+          npx eslint 'src/app/e2e/superadmin-login/**/*.tsx' 'src/app/(authenticated)/dashboard/**/*.tsx' 'src/app/(authenticated)/tracker/logs/**/*.tsx' 'src/app/(authenticated)/tracker/mine/**/*.tsx' tests/unit/ux-g049-g048-g122-source.test.ts tests/e2e/ux-g049-g048-g122-public-guard.spec.ts
+          npm run typecheck
+      - name: UX regression and role isolation
+        run: npx vitest run tests/unit/ux-g049-g048-g122-source.test.ts tests/unit/HR-BREAK-tracker-pages-01.test.ts tests/unit/HR-BREAK-chat15-tracker-mine-page-98.test.tsx tests/unit/chat15-hr-tracker-page-render-52.test.tsx tests/unit/UX-chat16-public-auth-legacy-bookmarks-03.test.ts
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop and mobile public boundary
+        run: npx playwright test tests/e2e/ux-g049-g048-g122-public-guard.spec.ts --project=chromium --reporter=line
+      - name: Upload failing traces
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ux-g049-g048-g122-traces
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
