@@ -11,6 +11,10 @@ on:
       - tests/e2e/ux-activity-journey.spec.ts
       - .github/workflows/ux-activity-acceptance.yml
 
+concurrency:
+  group: ux-g004-activity-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -47,6 +51,8 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Focused lint and TypeScript
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
         run: |
           npx eslint src/modules/activity/ux-query.ts 'src/app/(authenticated)/activity/page.tsx' 'src/app/(authenticated)/activity/[eventId]/page.tsx' 'src/app/(authenticated)/activity/[eventId]/loading.tsx' tests/unit/UX-G004-activity-navigation.test.ts tests/e2e/ux-activity-journey.spec.ts
           npm run typecheck
