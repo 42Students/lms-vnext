@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { safeMetadataCsvCell } from "@/modules/shared/metadata-export-csv-cell";
 import { announcementHistoryCsv } from "@/modules/announcements/admin-csv-model";
 import { auditFindingsCsv } from "@/modules/bug-tracker/audit-findings-csv-model";
-import { facultyReportCsv, facultyReportCsvFilename, neutralizeFacultyCsvCell } from "@/modules/courses/faculty-report-csv";
+import { facultyReportCsv, facultyReportCsvFilename, facultyReportCsvNoticeRow, neutralizeFacultyCsvCell } from "@/modules/courses/faculty-report-csv";
 import { messagingHistoryCsv } from "@/modules/messaging/receipt-history-export-model";
 
 const at = new Date("2026-11-07T12:00:00Z");
@@ -79,6 +79,20 @@ describe("UX-G174 faculty assessment export", () => {
     expect(csv).toContain("'\u034F=IMPORT(1)");
     expect(csv).not.toMatch(/student_email|phone_number/i);
     expect(facultyReportCsvFilename("quiz","Java / 123","A")).toBe("faculty-quiz-report-java-123-a.csv");
+  });
+});
+
+describe("UX-G174 faculty report notice row integrity", () => {
+  it("keeps an omitted-rows notice in the six-column report schema", () => {
+    expect(facultyReportCsvNoticeRow(null)).toBe("");
+    expect(facultyReportCsvNoticeRow("70 additional learners were omitted"))
+      .toBe('"70 additional learners were omitted","","","","",""\r\n');
+    const notice = facultyReportCsvNoticeRow("70 additional learners, 500-row limit");
+    expect(notice).toBe('"70 additional learners, 500-row limit","","","","",""\r\n');
+  });
+  it("quotes and neutralizes potentially unsafe notice copy", () => {
+    const notice = facultyReportCsvNoticeRow('=IMPORTXML("remote")');
+    expect(notice).toBe('"\'=IMPORTXML(""remote"")","","","","",""\r\n');
   });
 });
 

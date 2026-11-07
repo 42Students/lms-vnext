@@ -8,6 +8,7 @@ on:
       - src/modules/announcements/admin-csv-model.ts
       - src/modules/bug-tracker/audit-findings-csv-model.ts
       - src/modules/courses/faculty-report-csv.ts
+      - src/modules/courses/faculty-report-csv-service.ts
       - src/modules/messaging/receipt-history-export-model.ts
       - tests/unit/UX-G169-G171-G174-G177-exports.test.ts
       - tests/unit/HR-BREAK-chat19-messaging-csv-unicode.test.ts
@@ -54,13 +55,13 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Scoped lint
-        run: npx eslint src/modules/shared/metadata-export-csv-cell.ts src/modules/announcements/admin-csv-model.ts src/modules/bug-tracker/audit-findings-csv-model.ts src/modules/courses/faculty-report-csv.ts src/modules/messaging/receipt-history-export-model.ts tests/unit/UX-G169-G171-G174-G177-exports.test.ts tests/unit/HR-BREAK-chat19-messaging-csv-unicode.test.ts tests/e2e/ux-report-export-journeys.spec.ts
+        run: npx eslint src/modules/shared/metadata-export-csv-cell.ts src/modules/announcements/admin-csv-model.ts src/modules/bug-tracker/audit-findings-csv-model.ts src/modules/courses/faculty-report-csv.ts src/modules/courses/faculty-report-csv-service.ts src/modules/messaging/receipt-history-export-model.ts tests/unit/UX-G169-G171-G174-G177-exports.test.ts tests/unit/HR-BREAK-chat19-messaging-csv-unicode.test.ts tests/e2e/ux-report-export-journeys.spec.ts
       - name: Full TypeScript
         env:
           NODE_OPTIONS: --max-old-space-size=6144
         run: npm run typecheck
       - name: CSV export focused and pre-existing regressions
-        run: npx vitest run tests/unit/UX-G169-G171-G174-G177-exports.test.ts tests/unit/super-admin-db10-announcement-csv.test.ts tests/unit/audit-findings-export.test.ts tests/unit/faculty-report-csv.test.ts tests/unit/messaging-receipt-history-csv.test.ts tests/unit/messaging-history-export-contract.test.ts tests/unit/HR-BREAK-chat19-messaging-csv-unicode.test.ts tests/unit/chat19-invisible-mark-export-matrix.test.ts
+        run: npx vitest run tests/unit/UX-G169-G171-G174-G177-exports.test.ts tests/unit/super-admin-db10-announcement-csv.test.ts tests/unit/audit-findings-export.test.ts tests/unit/faculty-report-csv.test.ts tests/unit/COURSES-BREAK-FACULTY-04.test.ts tests/unit/messaging-receipt-history-csv.test.ts tests/unit/messaging-history-export-contract.test.ts tests/unit/HR-BREAK-chat19-messaging-csv-unicode.test.ts tests/unit/chat19-invisible-mark-export-matrix.test.ts
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Prepare disposable E2E database

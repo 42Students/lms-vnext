@@ -29,6 +29,13 @@ function cell(value: string | number | null) {
   return '"' + neutralizeFacultyCsvCell(value).replaceAll('"', '""') + '"';
 }
 
+/** A supplementary export notice must keep the same six fields as its report.
+ * Use the ordinary CSV serializer so future notices cannot introduce formulas.
+ */
+export function facultyReportCsvNoticeRow(notice: string | null): string {
+  return notice ? [notice, "", "", "", "", ""].map(cell).join(",") + "\r\n" : "";
+}
+
 /** Serialize only rows provided by the server-authorized Section report. */
 export function facultyReportCsv(input: FacultyReportCsvInput) {
   const checked = facultyReportCsvSchema.parse(input);

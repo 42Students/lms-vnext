@@ -7,7 +7,7 @@ import {
   getFacultyAssignmentReport, getFacultyQuizReport,
 } from "./faculty-assessment-report-service";
 import {
-  facultyReportCsv, facultyReportCsvFilename, capFacultyReportCsvRows,
+  facultyReportCsv, facultyReportCsvFilename, facultyReportCsvNoticeRow, capFacultyReportCsvRows,
   type FacultyReportCsvInput, facultyCsvLearnerLabel,
 } from "./faculty-report-csv";
 import { facultyReportCsvRequestSchema } from "./faculty-report-csv-request";
@@ -97,10 +97,9 @@ export async function getFacultyReportCsvForDownload(
   omittedRows+=bounded.omittedRows;
   input={...input,rows:bounded.rows};
   const notice=facultyQuizCsvNotice(omittedRows);
-  // The notice is seven CSV fields like ordinary rows; numeric, server
-  // authored metadata only. It cannot introduce a spreadsheet formula.
-  const noteRow=notice?
-    '"' + notice.replaceAll('"','""') + '","","","",""\r\n':"";
+  // A supplementary notice is serialized as a complete six-column CSV row.
+  // Keep it in the same schema as the assessment report.
+  const noteRow=facultyReportCsvNoticeRow(notice);
   return {
     filename:facultyReportCsvFilename(input.kind,input.title,input.sectionName),
     csv:facultyReportCsv(input)+noteRow,
