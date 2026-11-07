@@ -41,9 +41,10 @@
   "skills"
  ],
  "identity_core_pending_review": [
+  "module_access_rules"
+ ],
+ "identity_core_policied": [
   "colleges",
-  "membership_roles",
-  "module_access_rules",
   "organizations",
   "users"
  ]

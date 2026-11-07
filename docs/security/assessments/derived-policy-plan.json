@@ -765,6 +765,14 @@
    "parentCol": "id",
    "level": 1,
    "manual": true
+  },
+  "membership_roles": {
+   "via": "membership_id",
+   "parent": "college_memberships",
+   "parentCol": "id",
+   "level": 1,
+   "manual": true,
+   "migration": "0339"
   }
  },
  "unresolved": [
@@ -782,7 +790,6 @@
   "log_alert_signature_accounts",
   "log_alert_signatures",
   "log_alert_states",
-  "membership_roles",
   "module_access_rules",
   "organizations",
   "outbound_global_email_suppressions",
