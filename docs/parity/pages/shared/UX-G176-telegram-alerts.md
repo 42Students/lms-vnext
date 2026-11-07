@@ -1,6 +1,6 @@
 # UX-G176 · Log-alert Telegram outbound feedback
 
-**Status:** DOING until exact-SHA test evidence and reviewer acceptance. This is not production incident-response authorization certification.
+**Status:** DONE — scoped Telegram alert copy and acknowledgement UX acceptance (2026-11-08). This is not production incident-response authorization certification.
 
 ## Scope
 - `src/modules/log-alerts/telegram-notifier.ts`: outbound alert wording, generated metadata, bounded transport and redaction; source reviewed without weakening the existing safety boundaries.
@@ -17,3 +17,10 @@
 - Tests: `tests/unit/graceful-telegram-webhook.test.ts` (commit `3ac76be97f6b073c22cf1aa36a19fd83746bdaf5`), covering no PII echo, preserved diagnostic fields, duplicate callbacks and Unicode bounds.
 - Existing focused path workflow: `.github/workflows/security-telegram-acknowledgement.yml`. It runs Vitest acknowledgement and authorization cases plus TypeScript at a pinned checkout; its queued conclusion must be checked.
 - Complete review still requires provider transport regression and real rendered-copy / consumer evidence where available. Do not mark DONE or infer production provider connectivity from tests alone.
+
+## Accepted evidence (2026-11-08)
+
+- [Exact-SHA green workflow](https://github.com/42Students/lms-vnext/actions/runs/42416611424), commit `f06a99eaa8694eb4a80d0c87eb665b6c8028e7cd`: scoped ESLint, 3 Vitest suites / 16 tests, full TypeScript.
+- Outbound transport regression added in `tests/unit/graceful-telegram-webhook.test.ts`: verifies the actual injected Bot API payload keeps generated diagnostics, redacts unsafe email, exposes the signed-incident acknowledgement button and fails safely on provider refusal.
+- Repeated callbacks, unauthorized operator/chat, invalid signature, Unicode 3500-character limit, acknowledgement idempotence remain regression-covered.
+- No live Telegram delivery, production credential connection, or end-to-end incident response certification is claimed. Those remain separate operational gates.

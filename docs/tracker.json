@@ -21988,11 +21988,11 @@
         "type": "OUTBOUND",
         "area": "log-alerts",
         "title": "Log Alerts · Outbound copy and exports (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-activity-exports-20261107",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/modules/log-alerts/telegram-notifier.ts",
           "src/modules/log-alerts/telegram-webhook.ts"
@@ -22002,8 +22002,23 @@
           "MESSAGE-0050"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Webhook acknowledgement copy and tests on main (7e17b0a8, 3ac76be9). Generated diagnostics preserved, untrusted callback text redacted, duplicate acknowledgement idempotent and Unicode 3500 char cap. Focused workflow https://github.com/42Students/lms-vnext/actions/runs/42393127294 queued. Evidence doc docs/parity/pages/shared/UX-G176-telegram-alerts.md. No DONE without exact-SHA test and rendered-consumer proof."
+        "evidence": [
+          {
+            "type": "source",
+            "commitSha": "6afb02237eac346b24d284b613a108fd107db492",
+            "parityDoc": "docs/parity/pages/shared/UX-G176-telegram-alerts.md",
+            "description": "Rendered outbound Bot API message payload regression including safe diagnostic fields, PII redaction, acknowledged callback and provider ok:false."
+          },
+          {
+            "type": "ci",
+            "runId": 42416611424,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42416611424",
+            "conclusion": "success",
+            "commitSha": "f06a99eaa8694eb4a80d0c87eb665b6c8028e7cd",
+            "results": "Exact checkout SHA, scoped ESLint, 3 Vitest files/16 cases, and full TypeScript passed."
+          }
+        ],
+        "notes": "DONE: Telegram outbound acknowledgement-copy UX. Exact SHA f06a99eaa8, run 42416611424 green: 3 Vitest files/16 cases, scoped lint, TypeScript. Production payload rendered through injected fetch checks safe diagnostics, PII redaction, actionable acknowledgement, idempotent status, provider rejection, Unicode truncation. No actual provider send or production incident authorization certification claimed."
       },
       {
         "id": "UX-G177",
