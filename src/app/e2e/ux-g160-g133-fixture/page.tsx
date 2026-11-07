@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { DeviceList } from "@/components/auth/device-list";
+import { LoginForm } from "@/components/auth/login-form";
 import { TpoTimedDebarControl } from "@/components/tpo/tpo-timed-debar-control";
 import { TpoTopbarNewMenu } from "@/components/tpo/tpo-topbar-new-menu";
 import { ToastProvider } from "@/components/ui/toast";
@@ -45,6 +46,11 @@ export default function AuthTpoUxFixture() {
           {id:"fixture-other",label:"Other test browser",current:false,
            createdAt:"2026-11-06T09:00:00.000Z",lastSeenAt:"2026-11-06T10:00:00.000Z"},
         ]}/>
+      </section>
+      <section data-ux-fixture="login" className="space-y-3 rounded-xl border border-border p-4">
+        <h2 className="text-xl font-semibold">Synthetic sign-in</h2>
+        <LoginForm collegeName="Fixture college" defaultChannel="EMAIL"
+          allowedChannels={["EMAIL","PHONE"]} skipStoredAttempt/>
       </section>
       <section data-ux-fixture="topbar" className="space-y-3 rounded-xl border border-border p-4">
         <h2 className="text-xl font-semibold">New placement actions</h2>
