@@ -52,7 +52,7 @@ describe("secret registry", () => {
 
   it("has unique names and the validator never throws on an empty environment", () => {
     expect(new Set(SECRET_REGISTRY.map((s) => s.name)).size).toBe(SECRET_REGISTRY.length);
-    expect(validateSecretConfig({ NODE_ENV: "production" }).length).toBe(SECRET_REGISTRY.length);
+    expect(validateSecretConfig({ NODE_ENV: "production" }).length).toBe(SECRET_REGISTRY.filter((s) => s.requiredInProduction).length);
     expect(validateSecretConfig({})).toEqual([]);
   });
 });
