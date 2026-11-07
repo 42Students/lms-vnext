@@ -16227,18 +16227,57 @@
         "type": "JOURNEY",
         "area": "jobs",
         "title": "Jobs · External/Slug (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-external-jobs-global-states-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [],
         "surfaceIds": [],
         "newRouteOnly": [
           "/jobs/external/[slug]"
         ],
-        "evidence": [],
-        "notes": "Scoped public route UX and recovery, keep authorization and business behavior unchanged. Exact-SHA tests, desktop/mobile browser and evidence for DONE."
+        "evidence": [
+          {
+            "commitSha": "ccfeaf20405e74d8920e1cb8ef2131c701d084e9",
+            "parityDoc": "docs/audit/ux/ux-g058-g187-g188-public-journeys.md",
+            "tests": [
+              {
+                "command": "npx eslint scoped sources and tests",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392289294 (scoped lint PASS)"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392289294 (full TypeScript PASS)"
+              },
+              {
+                "command": "npx vitest run 4 focused UX and security unit files",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392289294 (18/18 tests PASS)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-public-jobs-fallback.spec.ts --project=chromium --reporter=line,html,json",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392289294 (6 expected, 0 unexpected, 0 flaky, 0 skipped)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "mobile 390x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392289294/artifacts/13581779012 (synthetic employer handoff, real invalid-slug branded denial and root timed loading, screenshots)"
+              },
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392289294/artifacts/13581779012 (same scenarios and screenshots)"
+              }
+            ],
+            "regressionReview": "Existing tenant-sensitive public-external-job boundary, error-page tests and root/public SSR tests were all executed green (18/18); only route/local visual recovery changed. Public external job details: employer handoff is explicit, responsive; 44px outbound action opens separate HTTPS employer tab; invalid slug cannot disclose a job",
+            "securityReview": "Production job authorization and active-tenant/publication/HTTPS URL validation remain server-owned and were not modified; browser valid-job scenario uses a development-only synthetic fixture."
+          }
+        ],
+        "notes": "DONE at exact tested SHA ccfeaf20405e74d8920e1cb8ef2131c701d084e9; https://github.com/42Students/lms-vnext/actions/runs/42392289294 (ESLint, TypeScript, 18/18 Vitest, 6/6 Chromium with 0 flaky/skipped), screenshot artifact https://github.com/42Students/lms-vnext/actions/runs/42392289294/artifacts/13581779012. Public external job details: employer handoff is explicit, responsive; 44px outbound action opens separate HTTPS employer tab; invalid slug cannot disclose a job. Production job authorization and active-tenant/publication/HTTPS URL validation remain server-owned and were not modified; browser valid-job scenario uses a development-only synthetic fixture."
       },
       {
         "id": "UX-G059",
@@ -21875,11 +21914,11 @@
         "type": "ROUTE-STATE",
         "area": "loading.tsx",
         "title": "Loading.Tsx · Shared route states (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-external-jobs-global-states-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [
           "src/app/loading.tsx"
         ],
@@ -21887,19 +21926,58 @@
           "ROUTE-STATE-1021"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Scoped public route UX and recovery, keep authorization and business behavior unchanged. Exact-SHA tests, desktop/mobile browser and evidence for DONE."
+        "evidence": [
+          {
+            "commitSha": "ccfeaf20405e74d8920e1cb8ef2131c701d084e9",
+            "parityDoc": "docs/audit/ux/ux-g058-g187-g188-public-journeys.md",
+            "tests": [
+              {
+                "command": "npx eslint scoped sources and tests",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392289294 (scoped lint PASS)"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392289294 (full TypeScript PASS)"
+              },
+              {
+                "command": "npx vitest run 4 focused UX and security unit files",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392289294 (18/18 tests PASS)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-public-jobs-fallback.spec.ts --project=chromium --reporter=line,html,json",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392289294 (6 expected, 0 unexpected, 0 flaky, 0 skipped)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "mobile 390x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392289294/artifacts/13581779012 (synthetic employer handoff, real invalid-slug branded denial and root timed loading, screenshots)"
+              },
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392289294/artifacts/13581779012 (same scenarios and screenshots)"
+              }
+            ],
+            "regressionReview": "Existing tenant-sensitive public-external-job boundary, error-page tests and root/public SSR tests were all executed green (18/18); only route/local visual recovery changed. Global root loading now says Loading 42 LMS rather than falsely implying sign-in; 12s delayed recovery retains accessible status and retry",
+            "securityReview": "Existing PublicPageLoading and GracefulPageLoading machinery unchanged; browser timed loading fixture runs only in development and does not certify every route's network loading."
+          }
+        ],
+        "notes": "DONE at exact tested SHA ccfeaf20405e74d8920e1cb8ef2131c701d084e9; https://github.com/42Students/lms-vnext/actions/runs/42392289294 (ESLint, TypeScript, 18/18 Vitest, 6/6 Chromium with 0 flaky/skipped), screenshot artifact https://github.com/42Students/lms-vnext/actions/runs/42392289294/artifacts/13581779012. Global root loading now says Loading 42 LMS rather than falsely implying sign-in; 12s delayed recovery retains accessible status and retry. Existing PublicPageLoading and GracefulPageLoading machinery unchanged; browser timed loading fixture runs only in development and does not certify every route's network loading."
       },
       {
         "id": "UX-G188",
         "type": "ROUTE-STATE",
         "area": "not-found.tsx",
         "title": "Not Found.Tsx · Shared route states (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-external-jobs-global-states-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-07",
         "sourceFiles": [
           "src/app/not-found.tsx"
         ],
@@ -21907,8 +21985,47 @@
           "ROUTE-STATE-1024"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Scoped public route UX and recovery, keep authorization and business behavior unchanged. Exact-SHA tests, desktop/mobile browser and evidence for DONE."
+        "evidence": [
+          {
+            "commitSha": "ccfeaf20405e74d8920e1cb8ef2131c701d084e9",
+            "parityDoc": "docs/audit/ux/ux-g058-g187-g188-public-journeys.md",
+            "tests": [
+              {
+                "command": "npx eslint scoped sources and tests",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392289294 (scoped lint PASS)"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392289294 (full TypeScript PASS)"
+              },
+              {
+                "command": "npx vitest run 4 focused UX and security unit files",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392289294 (18/18 tests PASS)"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-public-jobs-fallback.spec.ts --project=chromium --reporter=line,html,json",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392289294 (6 expected, 0 unexpected, 0 flaky, 0 skipped)"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "mobile 390x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392289294/artifacts/13581779012 (synthetic employer handoff, real invalid-slug branded denial and root timed loading, screenshots)"
+              },
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392289294/artifacts/13581779012 (same scenarios and screenshots)"
+              }
+            ],
+            "regressionReview": "Existing tenant-sensitive public-external-job boundary, error-page tests and root/public SSR tests were all executed green (18/18); only route/local visual recovery changed. Role-aware 404 now offers anonymous sign-in recovery without misclassifying a generic Dashboard navigation link as authenticated",
+            "securityReview": "NotFound remains noindex and safe; development streaming 404 UI may respond HTTP 200, so this UX acceptance covers UI/denial, not production HTTP status or role/tenant authorization."
+          }
+        ],
+        "notes": "DONE at exact tested SHA ccfeaf20405e74d8920e1cb8ef2131c701d084e9; https://github.com/42Students/lms-vnext/actions/runs/42392289294 (ESLint, TypeScript, 18/18 Vitest, 6/6 Chromium with 0 flaky/skipped), screenshot artifact https://github.com/42Students/lms-vnext/actions/runs/42392289294/artifacts/13581779012. Role-aware 404 now offers anonymous sign-in recovery without misclassifying a generic Dashboard navigation link as authenticated. NotFound remains noindex and safe; development streaming 404 UI may respond HTTP 200, so this UX acceptance covers UI/denial, not production HTTP status or role/tenant authorization."
       }
     ]
   }
