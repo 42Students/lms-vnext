@@ -21212,8 +21212,25 @@
           "MESSAGE-0023"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Improving report/export safety, accessible worksheet behavior and stable CSV schema. Close only after exact-SHA lint, TS, established and new focused tests, browser download evidence."
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "8c4055b6c9e9a71c6d735b4ea4a3350263fb8a93",
+            "description": "Source, tests and exact-SHA acceptance workflow on main; pending final browser CI"
+          },
+          {
+            "type": "document",
+            "path": "docs/parity/pages/shared/UX-G169-export-ux.md"
+          },
+          {
+            "type": "ci-pending",
+            "runId": 42392582571,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42392582571",
+            "conclusion": "pending",
+            "description": "GitHub Actions runner backlog; preliminary 13/13 new unit cases, full typecheck/lint passed earlier run; corrected regression and HTTP browser acceptance still queued"
+          }
+        ],
+        "notes": "Source changes and scoped parity review complete; 13 new Vitest cases passed and lint/typecheck passed in previous run. Final exact-SHA CI run 42392582571 pending because GitHub Actions runners are queued. Do NOT mark DONE until all selected regressions and authenticated browser export checks pass."
       },
       {
         "id": "UX-G170",
@@ -21255,8 +21272,25 @@
           "MESSAGE-0027"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Improving report/export safety, accessible worksheet behavior and stable CSV schema. Close only after exact-SHA lint, TS, established and new focused tests, browser download evidence."
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "8c4055b6c9e9a71c6d735b4ea4a3350263fb8a93",
+            "description": "Source, tests and exact-SHA acceptance workflow on main; pending final browser CI"
+          },
+          {
+            "type": "document",
+            "path": "docs/parity/pages/shared/UX-G171-export-ux.md"
+          },
+          {
+            "type": "ci-pending",
+            "runId": 42392582571,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42392582571",
+            "conclusion": "pending",
+            "description": "GitHub Actions runner backlog; preliminary 13/13 new unit cases, full typecheck/lint passed earlier run; corrected regression and HTTP browser acceptance still queued"
+          }
+        ],
+        "notes": "Source changes and scoped parity review complete; 13 new Vitest cases passed and lint/typecheck passed in previous run. Final exact-SHA CI run 42392582571 pending because GitHub Actions runners are queued. Do NOT mark DONE until all selected regressions and authenticated browser export checks pass."
       },
       {
         "id": "UX-G172",
@@ -21345,8 +21379,25 @@
           "MESSAGE-0046"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Improving report/export safety, accessible worksheet behavior and stable CSV schema. Close only after exact-SHA lint, TS, established and new focused tests, browser download evidence."
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "8c4055b6c9e9a71c6d735b4ea4a3350263fb8a93",
+            "description": "Source, tests and exact-SHA acceptance workflow on main; pending final browser CI"
+          },
+          {
+            "type": "document",
+            "path": "docs/parity/pages/shared/UX-G174-export-ux.md"
+          },
+          {
+            "type": "ci-pending",
+            "runId": 42392582571,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42392582571",
+            "conclusion": "pending",
+            "description": "GitHub Actions runner backlog; preliminary 13/13 new unit cases, full typecheck/lint passed earlier run; corrected regression and HTTP browser acceptance still queued"
+          }
+        ],
+        "notes": "Source changes and scoped parity review complete; 13 new Vitest cases passed and lint/typecheck passed in previous run. Final exact-SHA CI run 42392582571 pending because GitHub Actions runners are queued. Do NOT mark DONE until all selected regressions and authenticated browser export checks pass."
       },
       {
         "id": "UX-G175",
@@ -21407,8 +21458,25 @@
           "MESSAGE-0051"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Improving report/export safety, accessible worksheet behavior and stable CSV schema. Close only after exact-SHA lint, TS, established and new focused tests, browser download evidence."
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "8c4055b6c9e9a71c6d735b4ea4a3350263fb8a93",
+            "description": "Source, tests and exact-SHA acceptance workflow on main; pending final browser CI"
+          },
+          {
+            "type": "document",
+            "path": "docs/parity/pages/shared/UX-G177-export-ux.md"
+          },
+          {
+            "type": "ci-pending",
+            "runId": 42392582571,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42392582571",
+            "conclusion": "pending",
+            "description": "GitHub Actions runner backlog; preliminary 13/13 new unit cases, full typecheck/lint passed earlier run; corrected regression and HTTP browser acceptance still queued"
+          }
+        ],
+        "notes": "Source changes and scoped parity review complete; 13 new Vitest cases passed and lint/typecheck passed in previous run. Final exact-SHA CI run 42392582571 pending because GitHub Actions runners are queued. Do NOT mark DONE until all selected regressions and authenticated browser export checks pass."
       },
       {
         "id": "UX-G178",
