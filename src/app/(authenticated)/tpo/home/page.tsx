@@ -59,7 +59,9 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
    {([["Drives","/college/placements/drives"],["Calendar","/college/placements/calendar"],["Placements","/college/placements"]] as const).map(([label,href])=><li key={href} className="p-4"><TextLink href={href} className="inline-flex min-h-11 items-center text-[14px] md:min-h-9">{label}</TextLink></li>)}
   </ul>
  </div>;
- // Validate ambiguous incoming filters after the TPO role check but before\n // optional module reads: invalid URLs should always offer a safe reset.\n if(Array.isArray(routeQuery.seasonId)||Array.isArray(routeQuery.team)){
+ // Validate ambiguous incoming filters after the TPO role check but before
+ // optional module reads: invalid URLs should always offer a safe reset.
+ if(Array.isArray(routeQuery.seasonId)||Array.isArray(routeQuery.team)){
   return <div className="min-w-0 space-y-4 md:space-y-6">
    <PageHeader title="Home" />
    <ErrorState title="Invalid placement home filters"
