@@ -2,10 +2,10 @@
  "note": "DRAFT. Not read by any validator. Merge into docs/tracker.json only after a passing CI run: fill commitSha (40 hex) and runUrl, then run node scripts/tracker.mjs --check. Never VERIFIED from here.",
  "generatedFrom": "docs/security/assessments/*.md",
  "counts": {
-  "IMPLEMENTED_UNVERIFIED": 167,
+  "IMPLEMENTED_UNVERIFIED": 168,
   "GAP_CONFIRMED": 94,
-  "PARTIAL_EVIDENCE": 198,
-  "UNASSESSED": 6
+  "PARTIAL_EVIDENCE": 200,
+  "UNASSESSED": 3
  },
  "controls": {
   "SEC-01-001": {
@@ -1431,6 +1431,27 @@
     "See the source assessment for control-specific missing proof"
    ]
   },
+  "SEC-05-012": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "The only cross-request, process-level cache in src is the skill catalog search cache (src/modules/skills/catalog-service.ts: 256 entries, 20 second TTL, keyed by query mode, text, category and limit); the skill catalog is platform-wide reference data and authorization happens in the route before it is read. All other Maps are per-request locals and no Next data cache (unstable_cache, force-cache, revalidate) is used.",
+   "source": "docs/security/assessments/SEC-05-07-14-last-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
   "SEC-05-013": {
    "currentTrackerState": "PARTIAL_EVIDENCE",
    "proposedState": "PARTIAL_EVIDENCE",
@@ -2266,6 +2287,22 @@
    "assessedAt": "2026-11-08",
    "finding": "`membership_roles` follows its membership by policy; unique and check constraints exist in the schema but were not reviewed one by one",
    "source": "docs/security/assessments/SEC-07-database-privilege-and-integrity.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-07-012": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "383 unique indexes exist; many are scoped by department or college (for example courses_active_department_name_trim_uq), but some are global (courses_slug_uq), so uniqueness is not consistently tenant-scoped.",
+   "source": "docs/security/assessments/SEC-05-07-14-last-batch-2026-11-08.md",
    "evidence": [
     {
      "type": "EXECUTED_SCOPED_TEST",
@@ -4798,6 +4835,22 @@
     "Independent review",
     "See the source assessment for control-specific missing proof"
    ]
+  },
+  "SEC-14-023": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Faculty attendance and schedule writes re-check the persisted teaching assignment inside the transaction and are bounded to the active delivery (COURSES-BREAK-FACULTY-14 and the attendance integration suites); no fraud-pattern detection beyond that.",
+   "source": "docs/security/assessments/SEC-05-07-14-last-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-14-024": {
    "currentTrackerState": "PARTIAL_EVIDENCE",

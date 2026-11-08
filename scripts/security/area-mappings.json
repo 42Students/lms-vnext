@@ -1012,6 +1012,30 @@
         "SEC-13-015"
       ],
       "finding": "vNext has no billing or payment workflow today, so there is nothing to validate; revisit if one is added."
+    },
+    {
+      "source": "SEC-05-07-14-last-batch-2026-11-08.md",
+      "state": "IU",
+      "ids": [
+        "SEC-05-012"
+      ],
+      "finding": "The only cross-request, process-level cache in src is the skill catalog search cache (src/modules/skills/catalog-service.ts: 256 entries, 20 second TTL, keyed by query mode, text, category and limit); the skill catalog is platform-wide reference data and authorization happens in the route before it is read. All other Maps are per-request locals and no Next data cache (unstable_cache, force-cache, revalidate) is used."
+    },
+    {
+      "source": "SEC-05-07-14-last-batch-2026-11-08.md",
+      "state": "P",
+      "ids": [
+        "SEC-07-012"
+      ],
+      "finding": "383 unique indexes exist; many are scoped by department or college (for example courses_active_department_name_trim_uq), but some are global (courses_slug_uq), so uniqueness is not consistently tenant-scoped."
+    },
+    {
+      "source": "SEC-05-07-14-last-batch-2026-11-08.md",
+      "state": "P",
+      "ids": [
+        "SEC-14-023"
+      ],
+      "finding": "Faculty attendance and schedule writes re-check the persisted teaching assignment inside the transaction and are bounded to the active delivery (COURSES-BREAK-FACULTY-14 and the attendance integration suites); no fraud-pattern detection beyond that."
     }
   ]
 }
