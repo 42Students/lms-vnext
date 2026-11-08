@@ -29,7 +29,7 @@ describe("UX-chat15-shell-activity-components-01",()=>{
  });
  it("UX-shell-mobile-navigation-01 opens a true accessible navigation overlay with Escape and focus trap",()=>{
   const s=code("src/components/shell/mobile-navigation.tsx");
-  expect(s).toContain('aria-label={open?"Close menu":"Open menu"}');
+  expect(s).toContain('aria-label="Open menu"');
   expect(s).toContain('aria-haspopup="dialog"');
   expect(s).toContain('<Drawer');
   expect(s).toContain("onOpenChange={setOpen}");

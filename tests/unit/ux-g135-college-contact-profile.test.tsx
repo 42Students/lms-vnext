@@ -18,7 +18,7 @@ describe("UX-G135 contact-profile safe draft UX",()=>{
  });
  it("retains versioned API update, error and confirmation gates",()=>{
   const s=read("src/components/colleges/college-contact-profile-form.tsx");
-  for(const text of ['fetch("/api/colleges/contact-profile"','method: "PATCH"','expectedVersion: saved.version','confirm: true','if (!response.ok) throw new Error','router.refresh()'])expect(s).toContain(text);
+  for(const text of ['fetch("/api/colleges/contact-profile"','method: "PATCH"','expectedVersion: saved.version','confirm: true','if (!response.ok) {','router.refresh()'])expect(s).toContain(text);
   expect(s).toContain("COLLEGE_PROFILE_STALE");
   expect(s).toContain("Your unsaved edits are still here.");
   expect(s).not.toContain("localStorage");

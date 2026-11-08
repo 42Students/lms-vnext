@@ -9,7 +9,7 @@ describe("Faculty attendance schedule editor accessibility",()=>{
   expect(s).toContain('this Faculty attendance session?"}');
   expect(s).toContain("onConfirm={()=>void save(true)}");
   expect(s).not.toContain("window.confirm");
-  expect(s).toContain('finally{setBusy(false);setConfirmOpen(false);}');
+  expect(s).toContain('finally{writeLock.current=false;setBusy(false);setConfirmOpen(false);}');
  });
  it("UX-teacher-courses-deliveryId-attendanceDetail-04 uses accessible shared labels and 44px input controls",()=>{
   const s=source();

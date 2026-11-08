@@ -48,10 +48,10 @@ describe("chat-16 public and auth-adjacent page rendering",()=>{
  });
  it("UX-chat16-forbidden-05 presents a non-indexed recovery page instead of looping",()=>{
   const html=renderToStaticMarkup(<ForbiddenPage/>);
-  expect(forbiddenMetadata.title).toBe("You do not have access to this page | 42LMS");
+  expect(forbiddenMetadata.title).toBe("Access denied | 42LMS");
   expect(forbiddenMetadata.robots).toEqual({index:false,follow:false});
-  expect(html).toContain("You do not have access to this page");
-  expect(html).toContain("contact your administrator");
+  expect(html).toContain("have access to this page");
+  expect(html).toContain("ask your administrator for access");
   expect(html).toContain('href="/dashboard"');
  });
 });

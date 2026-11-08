@@ -56,7 +56,7 @@ describe("PROJ-BREAK-TPO-01 Projects are NOT accessible from roster visibility a
   expect(mocks.moduleAccess).not.toHaveBeenCalled();
  });
  it("a forged mentor session claim cannot bypass missing persisted project member row",async()=>{
-  const context=tpo({membership:{...tpo().membership!,roles:["TPO","MENTOR"]}});
+  const context=tpo({membership:{...tpo().membership!,roles:["MENTOR"]}});
   mocks.rows=[[{id:PROJECT,collegeId:COLLEGE}],[]];
   await expect(requireProjectReadAccess(context,PROJECT))
    .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});

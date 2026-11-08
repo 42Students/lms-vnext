@@ -30,7 +30,7 @@ describe("SA-tenants-modules-SETUP-08 tenant setup role and journey",()=>{
   expect(context).toBeLessThan(gate);
   expect(gate).toBeLessThan(parse);
   expect(parse).toBeLessThan(read);
-  expect(source).toContain('import {can,requirePermission} from "@/modules/permissions/policy"');
+  expect(source).toContain('import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy"');
   expect(source).toContain('requirePermission(context,"college.read",{');
   expect(source).toContain('organizationId:college.organizationId,collegeId:college.id');
  });

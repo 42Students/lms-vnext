@@ -21,7 +21,7 @@ const semester=(name:string)=>({
  totalCredits:24,isActive:true,mappedCourses:6,
 });
 const batch=(name:string)=>({
- id:"99999999-9999-4999-8999-999999999999",name,code:"CSE-2099",status:"ACTIVE",
+ id:"99999999-9999-4999-8999-"+name.replace(/\D/g,"").padStart(12,"0").slice(-12),name,code:"CSE-2099",status:"ACTIVE",
  programId:"55555555-5555-4555-8555-555555555555",programName:"Computing",programCode:"CSE",
  academicYear:null,startDate:null,endDate:null,
  currentTermNumber:4,currentAcademicYearStart:2098,

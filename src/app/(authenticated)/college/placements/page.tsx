@@ -165,7 +165,7 @@ export default async function CollegePlacementsPage({searchParams}:{
       </section>
       <nav aria-label="Placement workspaces" className="flex min-w-0 flex-col gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] sm:flex-row sm:flex-wrap">
       <ButtonLink variant="secondary" href="/college/placements/interviews" className="w-full sm:w-auto">Interviews</ButtonLink>
-      <ButtonLink variant="secondary" href="/college/placements/drives" className="w-full sm:w-auto">All drives ({draft&&closed?draft.total+closed.total:"—"} closed / draft)</ButtonLink>
+      <ButtonLink variant="secondary" href="/college/placements/drives" className="w-full sm:w-auto">All drives ({all?.total??"—"})</ButtonLink>
       </nav>
 
       <CollegeRetentionInlinePreview/>

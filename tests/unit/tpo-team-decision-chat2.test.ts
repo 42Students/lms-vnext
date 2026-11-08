@@ -25,7 +25,7 @@ describe("TPO Team decisions",()=>{
   expect(service).toContain("if(input.markDecision)");
   expect(service).toContain('eventType:"placements.tpo_team.decision_marked"');
   expect(service).toContain('Boolean(existing.metadata["markDecision"])');
-  expect(route).toContain('form?.get("markDecision")==="true"');
+  expect(route).toContain('form.get("markDecision")==="true"');
   expect(composer).toContain("Will be pinned as a decision");
  });
  it("TPO-inbox-team-23 renders a pinned decision strip, per-message tag and guarded toggle",()=>{

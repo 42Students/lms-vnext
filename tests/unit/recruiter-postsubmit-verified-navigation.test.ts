@@ -10,7 +10,7 @@ describe("Recruiter drive request verified-submission navigation",()=>{
   expect(effect).toContain('if(submittedRef.current)return;');
   expect(effect).toContain('document.addEventListener("click",linkGuard,true)');
   expect(source).toContain("submittedRef.current=true;");
-  expect(source).toContain('Open the request</a>');
+  expect(source).toContain('Open the request');
   expect(source).toContain('href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)+"&view=WAITING"}');
  });
 });

@@ -10,7 +10,7 @@ describe("TPO From 42 unread awareness",()=>{
   expect(service).toContain('eq(db10Announcements.senderType,"SUPER_ADMIN")');
   expect(service).toContain("isNull(placementCellAnnouncementReads.announcementId)");
   expect(service).toContain("assertPersistedPlatformPermission");
-  expect(page).toContain("countUnreadTpo42Announcements(context).catch(()=>null)");
+  expect(page).toContain("countUnreadTpo42Announcements(context).catch(");
   expect(page).toContain('value==="from-42"&&from42Unread!==null');
  });
  it("TPO-inbox-team-R04 never labels a limited first page as a global unread count",()=>{

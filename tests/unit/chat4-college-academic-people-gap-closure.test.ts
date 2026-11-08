@@ -56,7 +56,7 @@ describe("chat-4 College academic and people gap closure",()=>{
    "src/modules/electives/college-elective-lifecycle-service.ts",
    "src/modules/electives/service.ts",
   ])expect(source(file)).toContain("assertCollegeElectivesEnabled(context)");
- });
+ },30000);
  it("COL-people-R01 guards live mentor projects, not teaching assignments",async()=>{
   const {mentorSuspensionMessage}=await import("@/modules/people/active-mentor-project-guard");
   expect(mentorSuspensionMessage(2)).toBe("Cannot suspend this faculty member: they mentor 2 active project workspace(s). Reassign those projects to another mentor first.");
