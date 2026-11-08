@@ -255,14 +255,6 @@
     },
     {
       "source": "SEC-17-cloud-network-infrastructure.md",
-      "state": "G",
-      "ids": [
-        "SEC-17-003"
-      ],
-      "finding": "No egress NetworkPolicy exists: the pod can reach any address."
-    },
-    {
-      "source": "SEC-17-cloud-network-infrastructure.md",
       "state": "P",
       "ids": [
         "SEC-17-014",
@@ -1036,6 +1028,14 @@
         "SEC-14-023"
       ],
       "finding": "Faculty attendance and schedule writes re-check the persisted teaching assignment inside the transaction and are bounded to the active delivery (COURSES-BREAK-FACULTY-14 and the attendance integration suites); no fraud-pattern detection beyond that."
+    },
+    {
+      "source": "SEC-17-cloud-network-infrastructure.md",
+      "state": "IU",
+      "ids": [
+        "SEC-17-003"
+      ],
+      "finding": "Egress NetworkPolicy lms-vnext-egress-restricted (deploy/k8s/dev/lms-vnext-egress-policy.yaml) applied on dev 2026-11-08: the web pod may reach DNS, the Cloud SQL address on 5432 and public HTTPS only. Checked live: /ready 200, sign-in works, https://example.com reachable from the pod, the metadata server and a private pod address time out. Dev only; production not touched."
     }
   ]
 }

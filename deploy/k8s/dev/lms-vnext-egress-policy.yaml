@@ -1,0 +1,39 @@
+# SEC-17-003: restrict what the vNext web pod may reach. Dev only; applied and checked on 2026-11-08.
+# Allowed: DNS, the Cloud SQL private address on 5432, and HTTPS (443) to public addresses only (providers:
+# Exotel, ZeptoMail, Cloudflare R2, Google, Telegram). Blocked: every private range other than the database
+# (other pods and namespaces, the node network), the metadata server (169.254.169.254) and every other port.
+# Roll back with: kubectl -n lms-dev-2026 delete networkpolicy lms-vnext-egress-restricted
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: lms-vnext-egress-restricted
+  namespace: lms-dev-2026
+spec:
+  podSelector:
+    matchLabels:
+      app: lms-vnext
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 10.180.16.3/32
+      ports:
+        - port: 5432
+          protocol: TCP
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+              - 192.168.0.0/16
+              - 169.254.0.0/16
+      ports:
+        - port: 443
+          protocol: TCP

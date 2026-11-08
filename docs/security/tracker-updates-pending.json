@@ -2,8 +2,8 @@
  "note": "DRAFT. Not read by any validator. Merge into docs/tracker.json only after a passing CI run: fill commitSha (40 hex) and runUrl, then run node scripts/tracker.mjs --check. Never VERIFIED from here.",
  "generatedFrom": "docs/security/assessments/*.md",
  "counts": {
-  "IMPLEMENTED_UNVERIFIED": 168,
-  "GAP_CONFIRMED": 94,
+  "IMPLEMENTED_UNVERIFIED": 169,
+  "GAP_CONFIRMED": 93,
   "PARTIAL_EVIDENCE": 200,
   "UNASSESSED": 3
  },
@@ -5453,9 +5453,9 @@
   },
   "SEC-17-003": {
    "currentTrackerState": "UNASSESSED",
-   "proposedState": "GAP_CONFIRMED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
-   "finding": "No egress NetworkPolicy exists: the pod can reach any address.",
+   "finding": "Egress NetworkPolicy lms-vnext-egress-restricted (deploy/k8s/dev/lms-vnext-egress-policy.yaml) applied on dev 2026-11-08: the web pod may reach DNS, the Cloud SQL address on 5432 and public HTTPS only. Checked live: /ready 200, sign-in works, https://example.com reachable from the pod, the metadata server and a private pod address time out. Dev only; production not touched.",
    "source": "docs/security/assessments/SEC-17-cloud-network-infrastructure.md",
    "evidence": [
     {
@@ -5465,7 +5465,12 @@
      "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
     }
    ],
-   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
   },
   "SEC-17-004": {
    "currentTrackerState": "UNASSESSED",
