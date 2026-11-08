@@ -34,7 +34,8 @@ export default async function MentorTeamMeetingsPage({
   );
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid meeting history filters"} />
-    <TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center">Projects</TextLink>
+    <p className="text-sm text-body">The filter link is invalid or contains duplicate values. Clear it to return to this project’s meeting log.</p>
+    <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-meetings"} className="inline-flex min-h-11 items-center">Clear invalid filters</TextLink>
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getMentorTeamMeetings(context,parsed.data);

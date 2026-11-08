@@ -39,7 +39,8 @@ export default async function MentorTeamHistoryPage({
   );
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid team history filters"} />
-    <TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center">Back to projects</TextLink>
+    <p className="text-sm text-body">The filter link is invalid or contains duplicate values. Clear it to stay within this project’s team history.</p>
+    <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"} className="inline-flex min-h-11 items-center">Clear invalid filters</TextLink>
   </section>;
 
   const context = await getCurrentRequestContext();

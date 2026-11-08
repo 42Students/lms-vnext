@@ -28,7 +28,7 @@ export default async function MentorProjectTimelinePage({
   if(!parsed.success)return <div className="min-w-0 space-y-4">
     <PageHeader title="Release & Sprint timeline"/>
     <ErrorState title="Invalid timeline selector" description="Choose valid release, sprint and page filters."
-      action={<TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center md:min-h-9">Projects</TextLink>}/>
+      action={<TextLink href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"/timeline"} className="inline-flex min-h-11 items-center md:min-h-9">Clear invalid filters</TextLink>}/>
   </div>;
   const data=await getMentorProjectTimeline(
     await getCurrentRequestContext(),parsed.data,

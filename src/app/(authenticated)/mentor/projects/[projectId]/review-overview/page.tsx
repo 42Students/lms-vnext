@@ -28,7 +28,8 @@ export default async function MentorReviewOverviewPage({
  );
  if(!parsed.success)return <section role="alert">
  <PageHeader title={"Invalid project review filters"} />
- <TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center">Projects</TextLink>
+ <p className="text-sm text-body">The filter link is invalid or contains duplicate values. Clear it to return to this project’s delivery reviews.</p>
+ <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"} className="inline-flex min-h-11 items-center">Clear invalid filters</TextLink>
  </section>;
  const data=await getMentorDeliveryReviewOverview(await getCurrentRequestContext(),parsed.data);
  const filtered=data.query.status!=="ALL"||data.query.feedback!=="ALL"||data.query.version!==undefined;

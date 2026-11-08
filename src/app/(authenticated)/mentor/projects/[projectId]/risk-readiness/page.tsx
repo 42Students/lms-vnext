@@ -28,7 +28,8 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
   );
   if(!parsed.success)return <section role="alert">
     <PageHeader title={"Invalid risk/readiness filters"} />
-    <TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center">Projects</TextLink>
+    <p className="text-sm text-body">The filter link is invalid or contains duplicate values. Clear it to return to this project’s risk and readiness evidence.</p>
+    <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/risk-readiness"} className="inline-flex min-h-11 items-center">Clear invalid filters</TextLink>
   </section>;
   const data=await getMentorRiskReadiness(await getCurrentRequestContext(),parsed.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);

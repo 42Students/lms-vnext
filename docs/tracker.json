@@ -27652,10 +27652,10 @@
         "type": "JOURNEY",
         "area": "mentor",
         "title": "Mentor · Projects / ProjectId → Projects / ProjectId (part 4)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-g072-mentor-project-recovery-20261108",
+        "pickedAt": "2026-11-08",
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/mentor/projects/[projectId]/review-overview/error.tsx",
@@ -27698,7 +27698,8 @@
           "PAGE-0294"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08: Started scoped Mentor project-local recovery UX pass. Invalid review-overview, risk-readiness, team-history, team-meetings and timeline query selectors now offer a clear-filter route within the same project; seeded desktop/mobile and forbidden-learner Playwright regression committed. OPEN: execute exact-SHA tests, inspect all six page/error/loading families, capture real desktop/mobile screenshots, verify role/tenant denials before marking DONE."
       },
       {
         "id": "UX-G073",
