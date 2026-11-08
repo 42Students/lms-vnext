@@ -32,6 +32,8 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
  const [error,setError]=useState("");
  const eligible=new Set(rows.map(row=>row.id));
  const validSelected=selected.filter(id=>eligible.has(id));
+ const firstPageIds=rows.slice(0,25).map(row=>row.id);
+ const firstPageSelected=firstPageIds.length>0&&firstPageIds.every(id=>validSelected.includes(id));
  const outside=rows.filter(row=>validSelected.includes(row.id)&&!row.registered).length;
  function setChoice(code:TpoStudentNudgeTemplate){
   setTemplate(code);setMessage(tpoStudentNudgeTemplates[code]);setError("");setNotice("");
@@ -59,8 +61,9 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
   <Heading level={2}>Send a message</Heading>
   <p className="text-sm text-body">Choose up to 25 learners on this page. Messages are delivered in-app and audited.</p>
   <Label variant="choice" className="flex min-h-11 min-w-0 items-center gap-2">
-   <Checkbox checked={validSelected.length===Math.min(rows.length,25)}
-    disabled={pending} onChange={e=>setSelected(e.target.checked?rows.slice(0,25).map(row=>row.id):[])} />
+   <Checkbox checked={firstPageSelected}
+    disabled={pending||guardedPending}
+    onChange={e=>setSelected(e.target.checked?firstPageIds:[])} />
    Select first {Math.min(rows.length,25)} on this page
   </Label>
   <ScrollCue axis="y" label="Students available for message" className="min-w-0 border-y border-border" viewportClassName="max-h-48 space-y-0 py-1">
