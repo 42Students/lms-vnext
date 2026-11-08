@@ -39,6 +39,13 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
   ?Number(raw["page"]):1;
  const sort=raw["sort"]==="percent-desc"?"percent-desc":"percent-asc";
  const back=<TextLink href="/admin/course-progress" className="inline-flex min-h-11 items-center md:min-h-9">Back to Course Progress</TextLink>;
+ const invalidPage=raw["page"]!==undefined&&(typeof raw["page"]!=="string"||!/^[1-9][0-9]{0,6}$/.test(raw["page"]));
+ const invalidPageSize=raw["pageSize"]!==undefined&&(typeof raw["pageSize"]!=="string"||!["20","50","100"].includes(raw["pageSize"]));
+ const invalidSort=raw["sort"]!==undefined&&(typeof raw["sort"]!=="string"||!["percent-asc","percent-desc"].includes(raw["sort"]));
+ if(!validKeys||invalidPage||invalidPageSize||invalidSort)return <div className="space-y-6">
+  <PageHeader title="Course Progress"/>
+  <ErrorState title="Invalid progress filters" description="The page, rows-per-page or sort link is invalid. No progress report was loaded. Return to Course Progress to select valid filters." action={back}/>
+ </div>;
  if(!offeringId||invalidDelivery)return <div className="space-y-6">
   <PageHeader title="Course Progress"/>
   <ErrorState title="Choose a course offering" description="Course and class are required. Select a valid class and its taught course from Course Progress first; this page uses their authorized course offering, not separate legacy numeric IDs." action={back}/>
