@@ -18,3 +18,15 @@
 - Unchanged invariants: server-side tenant/role authorization, quiz question correctness and submission, deadline and result publication, recorded progress, learner identity, and graded state. UI-only affordances cannot grant access.
 
 **Closure receipt:** pending execution evidence at writing; do not interpret source implementation alone as a closed group.
+
+
+## Executed closure acceptance — 2026-11-08
+
+[GitHub Actions run 42453942900](https://github.com/42Students/lms-vnext/actions/runs/42453942900) **passed every step** against exact source SHA `6ebc3719d0ccb38ae562ded56095a497d4db9b9d`. The run explicitly verifies the checkout SHA before testing.
+
+- Focused ESLint on all four group-owned course components plus acceptance tests, and full TypeScript: **passed**.
+- `npx vitest run tests/unit/ux-g139-course-controls.test.ts tests/unit/learner-course-page-parity.test.ts tests/unit/chat6-superadmin-middle-lessons-role-25.test.tsx`: **17/17 passed** in three files.
+- `npx playwright test tests/e2e/ux-g139-course-controls.spec.ts --project=chromium --reporter=line`: **3/3 passed**, with disposable seeded PostgreSQL and ephemeral authentication. This verified 390px selected-college Super Admin lesson search and state-preserving navigation, 1280px Super Admin lesson creation or honest no-course empty state, and learner access denial to restricted authoring.
+- [Artifact 13607296086](https://github.com/42Students/lms-vnext/actions/runs/42453942900/artifacts/13607296086) retains viewport screenshots `ux-g139-resources-mobile-390.png` and `ux-g139-lessons-desktop-1280.png` and test traces/results.
+
+**Security/regression assessment:** Scoped browser checks use the server-enforced Admin college chooser and exercise unauthorized learner denial. Existing quiz answer submission/result publication checks, resource progress mutation authority and lesson-creation API guards remain unchanged. The selected test journeys cover the authoring/permission boundary, while learner quiz/progress UX contracts are verified by unit tests rather than a claim of additional learner browser snapshots. This is scoped UX acceptance and not full production security certification. Group may transition to DONE based on executed proof.
