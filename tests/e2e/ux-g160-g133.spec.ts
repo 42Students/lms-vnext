@@ -101,7 +101,8 @@ for (const viewport of viewports) {
    await page.goto(fixture);
    const devices=page.locator('[data-ux-fixture="devices"]');
    await devices.getByRole("button",{name:"Sign out device: Other test browser"}).click();
-   // ConfirmDialog intentionally uses alertdialog for destructive session revocation.\n   const confirm=page.getByRole("alertdialog",{name:"Sign out Other test browser"});
+   // ConfirmDialog intentionally uses alertdialog for destructive session revocation.
+   const confirm=page.getByRole("alertdialog",{name:"Sign out Other test browser"});
    await expect(confirm).toBeVisible();
    await confirm.getByRole("button",{name:"Sign out Other test browser"}).click();
    await expect(page.getByText("Your device list changed. Review the latest sessions.")).toBeVisible();
