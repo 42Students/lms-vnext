@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   AnnouncementAdminWorkspace,
@@ -32,7 +33,7 @@ export default async function AnnouncementsPage({
   // An authorization denial is never converted into a harmless empty inbox.
   const ownInbox = await getCollegeNoticeInbox(context, {unreadOnly: params.unread ?? "0"})
     .catch(error => {
-      if (error instanceof AuthorizationError) throw error;
+      if (error instanceof AuthorizationError) notFound();
       return null;
     });
   const unreadQuery = new URLSearchParams({
