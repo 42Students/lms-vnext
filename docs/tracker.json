@@ -17753,11 +17753,11 @@
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Home → Activity / EventId (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-gpt6-ux-mentor-tracker-20261108",
         "pickedAt": "2026-11-08T09:00:00.000Z",
         "startedAt": "2026-11-08T09:00:00.000Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T09:24:00.000Z",
         "sourceFiles": [
           "src/app/(authenticated)/college/academics/error.tsx",
           "src/app/(authenticated)/college/academics/loading.tsx",
@@ -17795,7 +17795,41 @@
           "PAGE-0159"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "2270a32a517093062071d18df79c722fe752b50e",
+            "parityDoc": "docs/parity/pages/college/UX-G028.md",
+            "tests": [
+              {
+                "command": "test \"$(git rev-parse HEAD)\" = \"$GITHUB_SHA\"; node --test tests/ux-g028-g065-contract.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464854097 — exact-SHA checkout, 5/5 source authorization and recovery contracts passed"
+              },
+              {
+                "command": "npx eslint scoped College/Learner routes and browser tests; npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464854097 — scoped lint and full TypeScript passed"
+              },
+              {
+                "command": "npm run db:e2e:prepare; npx playwright test tests/e2e/ux-g028-g065-role-recovery.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464854097 — 9/9 authenticated seeded PostgreSQL Chromium cases passed, including College positive and Learner negative, desktop/mobile"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464854097/artifacts/13612360496 — College Activity invalid-filter recovery screenshot; malformed event ID denial and no overflow checked"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464854097/artifacts/13612360496 — College Activity invalid-filter recovery screenshot; malformed event ID denial and no overflow checked"
+              }
+            ],
+            "regressionReview": "All 16 registered College dashboard, academics, section and activity route/state sources were inventoried in parity doc. Exact SHA 2270a32 suite green: 5/5 source authorization contracts, scoped lint/full TypeScript, 9/9 authenticated seeded College/Learner browser checks at both viewports. Source-only and browser evidence scope explicitly bounded to affected activity/event and navigation recovery, not whole-app release.",
+            "securityReview": "Wrong-role Learner cannot view College Activity invalid filters or malformed event detail. Current College Admin role/tenant service checks preserved; invalid ID does not load private event; no API grant, mutation, or tenant scope changed. Production audit-history completeness and independent SECURITY gate remain open."
+          }
+        ]
       },
       {
         "id": "UX-G029",
@@ -20213,7 +20247,17 @@
         "newRouteOnly": [
           "/learn/profile/gallery"
         ],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "ci-partial",
+            "runId": 42464854097,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42464854097",
+            "conclusion": "success",
+            "commitSha": "2270a32a517093062071d18df79c722fe752b50e",
+            "artifactId": 13612360496,
+            "results": "Exact SHA lint, TypeScript, five source contracts and nine seeded College/Learner browser cases with screenshots; G065 invalid notification/history and data-access pagination recovered. Still DOING: newly inventoried /learn/profile/gallery route has not been implemented or formally reconciled; do not claim full G065 group coverage or DONE."
+          }
+        ]
       },
       {
         "id": "UX-G066",
