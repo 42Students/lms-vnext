@@ -13,7 +13,7 @@ describe("UX-tracker-issues-01",()=>{
   expect(code).toContain("<ErrorState");
   expect(code).toContain("<TrackerIssuesFilterBar");
   expect(source("src/components/tracker/tracker-issues-filter-bar.tsx")).toContain('<Button type="submit"');
-  expect(code).toContain("No matching issues.");
+  expect(code).toContain("No issues match these filters");
   expect(code).toContain("TrackerIssueSavedViews");
   expect(code).toContain("TrackerIssueBulkActions");
   expect(code).toContain("min-h-11");

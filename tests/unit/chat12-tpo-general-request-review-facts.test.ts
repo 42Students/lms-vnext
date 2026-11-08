@@ -38,7 +38,7 @@ describe("TPO general requests review evidence",()=>{
   expect(ui).toContain('rel="noopener noreferrer" referrerPolicy="no-referrer"');
   expect(ui).not.toContain('target="_blank"');
   const notice=src("src/components/ui/inline-notice.tsx");
-  expect(notice).toContain('role={tone === "error" ? "alert" : "status"}');
+  expect(notice).toContain('tone === "error" ? "alert" : "status"');
  });
  it("TPO-requests-verification-01 includes request-specific dispute, registration and post-placement facts",()=>{
   expect(tpoGeneralRequestReviewFacts("ABSENCE_DISPUTE",{applicationId:"app",roundId:"round"}).facts.length).toBe(2);

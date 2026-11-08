@@ -110,7 +110,7 @@ describe("chat-5 TPO drive closure and correction journeys",()=>{
   expect(component).toContain("friendlyApiError({})");
   expect(component).toContain("<ConfirmDialog");
   expect(component).toContain('<InlineNotice tone="error" role="alert" message={error}/>');
-  expect(src("src/components/ui/inline-notice.tsx")).toContain('role={tone === "error" ? "alert" : "status"}');
+  expect(src("src/components/ui/inline-notice.tsx")).toContain('tone === "error" ? "alert" : "status"');
   expect(component).not.toContain("await fetch(");
   expect(component).not.toContain("window.confirm(");
  });

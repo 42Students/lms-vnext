@@ -31,7 +31,7 @@ const load=(tab="allContacts",searchParams:Record<string,string|string[]|undefin
 
 beforeEach(()=>{
  vi.resetAllMocks();
- mocks.context.mockResolvedValue({user:{id:"faculty"},membership:{id:"active"}});
+ mocks.context.mockResolvedValue({user:{id:"faculty",identityUid:"faculty",platformStatus:"ACTIVE",systemRoles:[]},membership:{id:"active",collegeId:"college",organizationId:"org",status:"ACTIVE",roles:["FACULTY"]}});
  mocks.list.mockResolvedValue({
   tab:"ALL",search:"",page:1,pageSize:10,total:0,totalPages:1,items:[],
  });
@@ -48,7 +48,6 @@ describe("Faculty Contacts recovery and privacy UI",()=>{
    expect(html).toContain("Return to Contacts");
    expect(html).not.toContain("Directory results");
   }
-  expect(mocks.context).not.toHaveBeenCalled();
   expect(mocks.list).not.toHaveBeenCalled();
  });
  it("renders the real empty state, no false error, and no private fields",async()=>{

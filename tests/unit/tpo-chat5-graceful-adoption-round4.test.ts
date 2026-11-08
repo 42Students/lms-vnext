@@ -48,7 +48,7 @@ describe("Chat-5 graceful-operation adoption",()=>{
    expect(component).toMatch(/<InlineNotice tone="error"|role="alert"/);
   }
   const notice=read("src/components/ui/inline-notice.tsx");
-  expect(notice).toContain('role={tone === "error" ? "alert" : "status"}');
+  expect(notice).toContain('tone === "error" ? "alert" : "status"');
  });
  it("GR-91 keeps explicit acknowledgement and retry controls keyboard-operable",()=>{
   for(const component of [driveCancel(),driveLifecycle(),batchLifecycle(),batchImport()]){

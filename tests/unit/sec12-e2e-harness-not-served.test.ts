@@ -28,6 +28,11 @@ describe("SEC-12/16 test harness pages are not served in production", () => {
     expect(call("/e2e-guide").status).not.toBe(404);
   });
 
+  it("is the reason the UI consistency guard skips src/app/e2e", async () => {
+    const { readFileSync } = await import("node:fs");
+    expect(readFileSync("scripts/check-ui-consistency.mjs", "utf8")).toContain('path.startsWith("src/app/e2e/")');
+  });
+
   it("leaves the harness reachable for the development server", () => {
     vi.stubEnv("NODE_ENV", "development");
     expect(call("/e2e/ux-g135-contact-profile").status).not.toBe(404);

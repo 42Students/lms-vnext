@@ -70,7 +70,7 @@ describe("College Courses & Content gap closure",()=>{
   expect(fail).toContain("Course details could not be loaded");
   expect(fail).toContain("Retry");
   expect(fail).toContain("<ErrorState");
-  expect(read("src/components/ui/error-state.tsx")).toContain('role="alert"');
+  expect(read("src/components/ui/error-state.tsx")).toContain('role ?? "alert"');
   expect(fail).not.toContain("{error.message}");
  });
  it("COL-courses-content-11 Faculty Assignment form selects multiple courses by program, batch, class, semester and year",()=>{

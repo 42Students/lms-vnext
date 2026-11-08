@@ -24,7 +24,7 @@ describe("TPO Inbox and Team round-4 failure recovery",()=>{
  it("TPO-inbox-team-47 preserves the last read-progress response when refresh fails",()=>{
   const c=progress();
   expect(c).toContain("setData(result)");
-  expect(c).toContain("apiFetch<Summary>");
+  expect(c).toContain("apiFetch<unknown>");
   expect(c).toContain("timeoutMs:15000");
   expect(c).toContain("pending.current");
   expect(c).not.toContain("setData(null)");

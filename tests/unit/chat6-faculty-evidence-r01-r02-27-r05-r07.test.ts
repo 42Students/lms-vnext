@@ -38,7 +38,7 @@ describe("chat-6 faculty audit evidence verified from current source",()=>{
   it("FAC-assessments-R05 honors the legacy content query only for an authorized quiz",()=>{
     const page=src("src/app/(authenticated)/teacher/allQuizzes/page.tsx");
     const overview=src("src/components/courses/faculty-assessment-overview.tsx");
-    expect(page).toContain('searchParams:Promise<{content?:string}>');
+    expect(page).toContain('searchParams:Promise<{content?:string|string[]}>');
     expect(page).toContain("initialQuizId");
     expect(page).toContain("getFacultyAssessmentOverview(context)");
     expect(page).toContain("initialQuizId={initialQuizId}");

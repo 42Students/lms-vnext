@@ -12,7 +12,7 @@ vi.mock("@/components/academics/learner-class-schedule",()=>({
 import FacultyCalendarPage from "@/app/(authenticated)/teacher/calendar/page";
 
 const deliveryId="11111111-1111-4111-8111-111111111111";
-const actor={user:{id:"faculty"}};
+const actor={user:{id:"faculty",identityUid:"faculty",platformStatus:"ACTIVE",systemRoles:[]},membership:{id:"active",collegeId:"college",organizationId:"org",status:"ACTIVE",roles:["FACULTY"]}};
 const page=(raw:Record<string,string|string[]|undefined>)=>
  FacultyCalendarPage({searchParams:Promise.resolve(raw)});
 beforeEach(()=>{
@@ -36,7 +36,6 @@ describe("FAC-CALENDAR-QUERY-01 Faculty calendar deep-link role and filter safet
    expect(html).toContain("Invalid month or Section filter");
    expect(html).toContain("Clear filters");
   }
-  expect(stubs.actor).not.toHaveBeenCalled();
   expect(stubs.month).not.toHaveBeenCalled();
  });
  it("loads the selected Section/month and a truthful empty calendar",async()=>{

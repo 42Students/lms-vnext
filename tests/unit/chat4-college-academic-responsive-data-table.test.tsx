@@ -74,7 +74,7 @@ describe("COL-UX-ACADEMIC-TABLE-01 responsive Semester and Batch directories",()
  it("keeps a truthful no-results recovery state rather than an inaccessible empty table",()=>{
   const data={...base,kind:"SEMESTERS",query,items:[],total:0,totalPages:1} as unknown as Data;
   const html=renderToStaticMarkup(<CollegeAcademicDirectory data={data}/>);
-  expect(html).toContain("Go to Programs");
+  expect(html).toMatch(/Create semester|Clear filters and view all semesters/);
   expect(html).not.toContain("<table");
   expect(html).toContain("No");
  });

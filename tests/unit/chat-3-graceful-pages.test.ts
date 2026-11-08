@@ -93,7 +93,7 @@ describe("Chat-3 graceful-operation coverage for touched pages",()=>{
   expect(load("src/components/ui/alert.tsx")).toContain('role={tone === "error" ? "alert" : role ?? "status"}');
   expect(attendance()).toContain('apiFetch<void>(');
   expect(courseError()).toContain("<ErrorState");
-  expect(load("src/components/ui/error-state.tsx")).toContain('role="alert"');
+  expect(load("src/components/ui/error-state.tsx")).toContain('role ?? "alert"');
   expect(courseError()).not.toContain("{error.message}");
   expect(attendance()).not.toContain("body?.error");
   expect(attendance()).not.toContain("body?.message");

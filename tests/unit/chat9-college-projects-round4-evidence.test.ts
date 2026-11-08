@@ -71,7 +71,7 @@ describe("College Projects gap closure round 4",()=>{
   const page=source("src/app/(authenticated)/college/projects/page.tsx");
   expect(page).toContain("Select a college to continue.");
   expect(page).toContain('<ErrorState title="No college selected"');
-  expect(source("src/components/ui/error-state.tsx")).toContain('role="alert"');
+  expect(source("src/components/ui/error-state.tsx")).toContain('role ?? "alert"');
  });
  it("COL-projects-21 gives archived-workspace recovery and the existing creation/reassignment actions",()=>{
   const page=source("src/app/(authenticated)/college/projects/page.tsx");

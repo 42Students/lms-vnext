@@ -43,7 +43,7 @@ describe("College Admin read-first page boundaries", () => {
           "src/components/ui/graceful-page-loading.tsx"),"utf8");
         const skeleton = readFileSync(join(process.cwd(),
           "src/components/ui/skeleton.tsx"),"utf8");
-        expect(shared).toContain("<Skeleton label={label}");
+        expect(shared).toContain("<Skeleton decorative label={label}");
         expect(shared).toContain('role="status"');
         expect(shared).toContain("Try again");
         expect(skeleton).toContain('role="status" aria-live="polite"');

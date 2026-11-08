@@ -102,6 +102,6 @@ describe("TPO settings final-sprint hardening (chat-11)", () => {
     expect(ui).not.toContain("result?.error??");
     expect(ui).toContain('<InlineNotice tone="error" message={error}');
     const notice=readFileSync("src/components/ui/inline-notice.tsx","utf8");
-    expect(notice).toContain('role={tone === "error" ? "alert" : "status"}');
+    expect(notice).toContain('tone === "error" ? "alert" : "status"');
   });
 });

@@ -21,7 +21,7 @@ describe("TPO placement announcement round-4 evidence",()=>{
   const file=src("src/components/tpo/tpo-notice-read-progress.tsx");
   expect(file).toContain("setData(result)");
   expect(file).not.toContain("setData(null)");
-  expect(file).toContain("apiFetch<Summary>");
+  expect(file).toContain("apiFetch<unknown>");
   expect(receipt()).toContain(".limit(500)");
  });
  it("TPO-inbox-team-48 shows scheduled and ended author notices with their dates",()=>{

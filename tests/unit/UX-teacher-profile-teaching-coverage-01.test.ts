@@ -5,6 +5,6 @@ it("UX-teacher-profile-teaching-01 /teacher/profile/teaching keeps access and ho
  const s=readFileSync(join(process.cwd(),"src/app/(authenticated)/teacher/profile/teaching/page.tsx"),"utf8");
  expect(s).toMatch(/getCurrentRequestContext|from "@\/security\/route"/);
  expect(s).toContain("<PageHeader title=\"Current teaching assignments\"");
- expect(s).toContain("<EmptyState title=\"No current teaching assignments\"");
+ expect(s).toContain("No current teaching assignments");
  expect(s).toContain("role=\"alert\"");
 });

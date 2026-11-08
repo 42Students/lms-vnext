@@ -51,7 +51,7 @@ describe("chat-4 final sprint TPO recruiter gaps B",()=>{
   expect(error).toContain("Retry");
   expect(loading).toContain('<GracefulPageLoading label="Loading Recruiters"/>');
   const loadingShell=source("src/components/ui/graceful-page-loading.tsx");
-  expect(loadingShell).toContain('<Skeleton label={label}');
+  expect(loadingShell).toContain('<Skeleton decorative label={label}');
   expect(loadingShell).toContain("This is taking longer than expected. Please try again.");
   const skeleton=source("src/components/ui/skeleton.tsx");
   expect(skeleton).toContain('role="status" aria-live="polite"');

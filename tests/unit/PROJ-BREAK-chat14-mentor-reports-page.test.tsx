@@ -24,7 +24,7 @@ vi.mock("@/components/ui/button",()=>({
  Button:({children}:{children:ReactNode})=><button>{children}</button>,
 }));
 vi.mock("@/auth/request-context",()=>({
- getCurrentRequestContext:async()=>({user:{id:"mentor"}}),
+ getCurrentRequestContext:async()=>({user:{id:"mentor",identityUid:"mentor",platformStatus:"ACTIVE",systemRoles:[]},membership:{id:"active",collegeId:"college",organizationId:"org",status:"ACTIVE",roles:["MENTOR"]}}),
 }));
 vi.mock("@/modules/projects/mentor-reports-service",()=>({
  getMentorReports:async(_:unknown,query:Record<string,unknown>)=>{

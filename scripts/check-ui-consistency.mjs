@@ -18,6 +18,9 @@ export function scanTracked(root = process.cwd()) {
   const exempt = new Set(exemptFiles());
   for (const path of files) {
     if (exempt.has(path)) continue;
+    // Development-only test harness pages: the request proxy answers 404 for /e2e in production builds
+    // (pinned by tests/unit/sec12-e2e-harness-not-served.test.ts), so no user ever sees them.
+    if (path.startsWith("src/app/e2e/")) continue;
     let source;
     try { source = readFileSync(`${root}/${path}`, "utf8"); } catch { continue; }
     for (const f of scanFile(path, source)) {

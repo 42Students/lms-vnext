@@ -18,7 +18,7 @@ describe("chat-14 final sprint",()=>{
   expect(read("src/lib/api-fetch.ts")).toContain('new CustomEvent("lms:network-notice"');
   const banner=read("src/components/auth/connection-failure-notice.tsx");
   expect(banner).toContain('<InlineNotice tone="error"');
-  expect(read("src/components/ui/inline-notice.tsx")).toContain('role={tone === "error" ? "alert" : "status"}');
+  expect(read("src/components/ui/inline-notice.tsx")).toContain('tone === "error" ? "alert" : "status"');
   expect(read("src/app/(authenticated)/layout.tsx")).toMatch(/<ConnectionFailureNotice\s*\/>/);
   const shell=read("src/components/shell/shell-connectivity-notice.tsx");
   expect(shell).toContain("offline");

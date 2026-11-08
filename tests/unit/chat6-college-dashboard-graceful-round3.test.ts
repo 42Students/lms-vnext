@@ -29,7 +29,7 @@ describe("College Admin dashboard graceful degradation",()=>{
  it("GR-90 and GR-91 render a keyboard retry and alert rather than false zeroes",()=>{
   const fallback=code("src/components/admin/college-dashboard-section-failure.tsx");
   expect(fallback).toContain("<ErrorState");
-  expect(code("src/components/ui/error-state.tsx")).toContain('role="alert"');
+  expect(code("src/components/ui/error-state.tsx")).toContain('role ?? "alert"');
   expect(fallback).toContain("Could not load this right now. Try again.");
   expect(fallback).toContain('href="/college"');
   expect(fallback).toMatch(/focus-(?:ring|outline)|<(?:TextLink|ButtonLink|Button|Select|Input|Textarea|ErrorState|EmptyState|Pagination|FilterBar|NeedsDoingChips|Tabs|Disclosure)\b/);
