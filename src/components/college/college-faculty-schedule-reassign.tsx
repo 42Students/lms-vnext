@@ -51,7 +51,7 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
     headers:{"content-type":"application/json"},
     body:JSON.stringify({replacementMembershipId:selected,confirmed:true})});
    const body=await response.json().catch(()=>null);
-   if(!response.ok)throw Error(body?.error??"Reassignment failed");
+   if(!response.ok)throw Error(friendlyApiError({status:response.status,code:body?.error}));
    setReceipt(body as Receipt);router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Reassignment failed");}
   finally{inFlightRef.current=false;setBusy(false);}
