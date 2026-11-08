@@ -72,7 +72,8 @@ export default async function TpoByBranchReportPage({
       {workspace.noSeason ? (
         <EmptyState
           title="No placement season available"
-          description="Branch placement outcomes require a selected placement season."
+          description="Branch placement outcomes require a selected placement season. Missing season evidence must not be interpreted as zero."
+          action={<TextLink href="/tpo/settings/season" className="inline-flex min-h-11 items-center md:min-h-9">Review placement seasons</TextLink>}
         />
       ) : (
         <ReportTable
