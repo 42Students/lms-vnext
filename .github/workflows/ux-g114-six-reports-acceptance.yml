@@ -55,12 +55,12 @@ jobs:
         run: |
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           npx eslint tests/e2e/ux-g114-tpo-reports.spec.ts \
-            'src/app/(authenticated)/tpo/reports/branch-season/' \
-            'src/app/(authenticated)/tpo/reports/by-branch/' \
-            'src/app/(authenticated)/tpo/reports/by-company/' \
-            'src/app/(authenticated)/tpo/reports/ctc/' \
-            'src/app/(authenticated)/tpo/reports/failure-reasons/' \
-            'src/app/(authenticated)/tpo/reports/intelligence/'
+            'src/app/(authenticated)/tpo/reports/joining-followups/' \
+            'src/app/(authenticated)/tpo/reports/joining-status/' \
+            'src/app/(authenticated)/tpo/reports/leads/' \
+            'src/app/(authenticated)/tpo/reports/offers-acceptance/' \
+            'src/app/(authenticated)/tpo/reports/offers-expiry/' \
+            'src/app/(authenticated)/tpo/reports/placed-branch/'
           npm run typecheck
           npm run ux:groups -- --check
       - name: Assert report recovery regression contracts
