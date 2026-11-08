@@ -211,10 +211,14 @@ async function main() {
 
     const userIds: Record<string, string> = {};
     for (const account of TEST_ACCOUNTS) {
+      // The disposable E2E database may already contain this same verified
+      // fixture identity under a different test contact. Reuse its ID.
+      const identityUid = `lms_test_${account.phone.replace(/\D/g, "")}`;
       const existing = await one<{ id: string }>(
         client,
-        `SELECT id FROM users WHERE phone_e164 = $1 OR lower(email) = $2 LIMIT 1`,
-        [account.phone, account.email],
+        `SELECT id FROM users WHERE phone_e164 = $1 OR lower(email) = $2
+         OR identity_uid = $3 LIMIT 1`,
+        [account.phone, account.email, identityUid],
       );
       const user =
         existing ??
@@ -223,7 +227,7 @@ async function main() {
           `INSERT INTO users (identity_uid, phone_e164, email, display_name)
            VALUES ($1, $2, $3, $4) RETURNING id`,
           [
-            `lms_test_${account.phone.replace(/\D/g, "")}`,
+            identityUid,
             account.phone,
             account.email,
             account.name,
