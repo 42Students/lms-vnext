@@ -8,6 +8,7 @@ import {useCollegeConfirmation} from "@/components/college/use-college-confirmat
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import { Label } from "@/components/ui/label";
+import {friendlyApiError} from "@/lib/friendly-error";
 import { Disclosure } from "@/components/ui/disclosure";
 type Faculty={id:string;name:string|null};
 type Receipt={total:number;reassigned:number;skipped:number;
@@ -31,7 +32,7 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
   setSelected("");setOptions([]);setUpcoming(0);setLoaded(false);setTruncated(false);
   try{const response=await fetch(base,{cache:"no-store"});
    const body=await response.json().catch(()=>null);
-   if(!response.ok)throw Error(body?.error??"Could not read faculty schedules");
+   if(!response.ok)throw Error(friendlyApiError({status:response.status,code:body?.error}));
    setOptions(body.faculty??[]);setUpcoming(body.upcoming??0);setLoaded(true);
    if(body.truncated){setTruncated(true);setError("More than 200 upcoming sessions; this bulk action cannot safely move all of them.");}
   }catch(e){setError(e instanceof Error?e.message:"Could not load schedules");}
