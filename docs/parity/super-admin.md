@@ -1249,3 +1249,7 @@ Ten formerly `UNPICKED` canonical UX groups were claimed in [commit 78c8fd1](htt
 | UX-G014 | Unscoped interview calendar warning links to the college directory; selected-college permission enforcement remains required | `3a433c1` — `admin/placements/calendar/page.tsx` |
 
 **Regression specification authored:** `tests/unit/ux-g005-g014-admin-route-recovery.test.ts` in `e52a291`; it guards ten source-level recovery/tenant constraints and read-before-filter ordering. This source guard is **not** browser proof. At this checkpoint no corresponding exact-SHA ESLint/TypeScript/Vitest/Playwright success has been observed. The required follow-up is to execute the scoped tests, then verify each group's complete sourceFiles list, real authorized and denied role behavior, desktop 1280×800 + mobile 390×844, accessible keyboard/touch/focus, empty/error/retry, and preserve all other pages/modals before marking any group `DONE`. Security/release and legacy-capability parity gates are independently open.
+
+### UX-G015–G024 error recovery checkpoint (2026-11-08; not closed)
+
+Super Admin placement, project, recruiter, academic-directory and settings error routes received an in-shell recovery and contextual return-link pass. The ten-group source audit and outstanding browser/role checks are recorded in [the error recovery checkpoint](ux-admin-college-error-recovery-2026-11-08.md). UX-G015–G021, UX-G023 and UX-G024 remain DOING in the canonical tracker until complete journey acceptance; no DB/API/security gate was advanced.
