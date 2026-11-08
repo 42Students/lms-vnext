@@ -19789,11 +19789,11 @@
         "type": "JOURNEY",
         "area": "learn",
         "title": "Learn · Home → AllQuizzes / QuizId (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-gpt6-ux-multirole-20261108",
         "pickedAt": "2026-11-08T08:16:37.275Z",
         "startedAt": "2026-11-08T08:16:37.275Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T08:41:41.013Z",
         "sourceFiles": [
           "src/app/(authenticated)/learn/allAssignments/[assignmentId]/error.tsx",
           "src/app/(authenticated)/learn/allAssignments/[assignmentId]/loading.tsx",
@@ -19831,7 +19831,46 @@
           "PAGE-0261"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "3f7da02cfa48a24545cc5d1d82969061ef4c03df",
+            "parityDoc": "docs/parity/ux-g059-g070-g080-route-acceptance.md",
+            "tests": [
+              {
+                "command": "Exact-SHA checkout and scoped ESLint",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462946348 — passed"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g059-learner-assessments.test.tsx --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462946348 — 4/4 unit tests passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g059-learner-assessments.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462946348 — 2/2 desktop/mobile browser cases passed"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462946348 — full TypeScript pass"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462946348/artifacts/13609759697 — ux-g059-desktop.png"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462946348/artifacts/13609759697 — ux-g059-mobile.png"
+              }
+            ],
+            "regressionReview": "Exact SHA validated; ESLint, 4 pure/SSR unit scenarios, 2 rendered-component Chromium desktop/mobile tests (no JS errors/no horizontal overflow), and full TypeScript passed. Existing service authorization and publication logic is untouched; live cross-role integration remains separate.",
+            "securityReview": "Assignment page recovery is based on authorized assessment overview results and selected course ID; invalid query and permission errors still reject. No change to endpoints, tenant scoping, quiz result publication, file signing, user grants or mutations. Development-only fixture cannot retrieve real learner data."
+          }
+        ]
       },
       {
         "id": "UX-G060",
