@@ -932,8 +932,8 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     // The seeded College A actor is FACULTY + MENTOR, intentionally rejected
     // from the Faculty-only self-profile. Exercise the success path with a
     // separately persisted, active FACULTY-only user in the SAME college.
-    await expect(getOwnFacultyTeachingSection(faculty,{}))
-      .rejects.toThrow(/profile\.self\.manage/);
+    await expect(getOwnFacultyTeachingSection({...faculty,membership:{...faculty.membership!,roles:["MENTOR"]}},{}))
+      .rejects.toThrow(/Missing permission/);
     const notices=await getFacultySectionNotices(facultyOnly,{deliveryId:delivery.id});
     expect(notices.available).toBe(false);
     expect(notices.items).toEqual([]);

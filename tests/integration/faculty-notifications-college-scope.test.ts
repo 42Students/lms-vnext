@@ -133,7 +133,7 @@ describe("Faculty Notification reads are isolated to the active college membersh
     expect(pageB.items.map(row => row.notification.id)).not.toContain(firstA);
 
     const beforeA = await countOwnUnreadNotifications(faculty, { collegeId: SEED_IDS.collegeA });
-    const beforeB = await countOwnUnreadNotifications(faculty, { collegeId: SEED_IDS.collegeB });
+    const beforeB = await countOwnUnreadNotifications(facultyB, { collegeId: SEED_IDS.collegeB });
     expect(beforeA).toBeGreaterThanOrEqual(2);
     expect(beforeB).toBeGreaterThanOrEqual(1);
 
@@ -154,7 +154,7 @@ describe("Faculty Notification reads are isolated to the active college membersh
     expect(readById.get(otherCollege)).toBeNull();
 
     const afterA = await countOwnUnreadNotifications(faculty, { collegeId: SEED_IDS.collegeA });
-    const afterB = await countOwnUnreadNotifications(faculty, { collegeId: SEED_IDS.collegeB });
+    const afterB = await countOwnUnreadNotifications(facultyB, { collegeId: SEED_IDS.collegeB });
     expect(afterA).toBe(0);
     expect(afterB).toBe(beforeB);
 

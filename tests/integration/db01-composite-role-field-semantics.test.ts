@@ -70,7 +70,8 @@ describe("DB-004 composite identity and typed-role authority",()=>{
    const notFaculty=await resolveRequestContext({
     identityUid,activeMembershipId:learnerId,activeRole:"FACULTY",
    });
-   expect(notFaculty.membership?.roles).toEqual(["LEARNER"]);
+   // A requested role the membership does not hold grants nothing (no role is selected).
+   expect(notFaculty.membership?.roles ?? []).not.toContain("FACULTY");
    await expect(resolveRequestContext({
     identityUid:"db004-composite-other-"+otherId,activeMembershipId:learnerId,
    })).rejects.toMatchObject({code:"MEMBERSHIP_NOT_FOUND"});

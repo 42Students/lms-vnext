@@ -527,7 +527,7 @@ describe("Faculty registered report/history positive and scope denials",()=>{
    // The authenticated context must expose the same grants, not a fabricated
    // FACULTY-only role list that would bypass the intended denial.
    const dualRoleFaculty:RequestContext={
-    ...faculty,membership:{...faculty.membership!,roles: ["FACULTY"]},
+    ...faculty,membership:{...faculty.membership!,roles: ["MENTOR"]},
    };
    await expect(getOwnFacultyContactAvailability(dualRoleFaculty,{})).rejects.toBeDefined();
   }finally{

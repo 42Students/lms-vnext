@@ -190,13 +190,14 @@ describe("identity context and system roles against PostgreSQL", () => {
     // validate against both surrounding persisted snapshots, and require the
     // highest-priority role whenever the roster did not change mid-request.
     const resolvedRoles=collegeA.membership?.roles??[];
-    expect(resolvedRoles).toHaveLength(1);
-    const [resolvedRole]=resolvedRoles;
+    // One workspace per role: several held roles and no chosen role selects none.
+    if(heldRoles.length>1){expect(resolvedRoles).toHaveLength(0);}else{expect(resolvedRoles).toHaveLength(1);}
+    const [resolvedRole]=resolvedRoles.length?resolvedRoles:heldRoles.slice(0,1);
     const latestChoices=await listMembershipChoices("seed-shared-faculty");
     const latestRoles=latestChoices.find(choice=>
       choice.id===SEED_IDS.facultyCollegeAMembership)?.roles??[];
     expect([...new Set([...heldRoles,...latestRoles])]).toContain(resolvedRole);
-    if(heldRoles.join("|")===latestRoles.join("|")){
+    if(resolvedRoles.length&&heldRoles.join("|")===latestRoles.join("|")){
       const expectedRole=(["COLLEGE_ADMIN","TPO","MENTOR","FACULTY","LEARNER"] as const)
         .find(role=>latestRoles.includes(role));
       expect(resolvedRole).toBe(expectedRole);

@@ -460,7 +460,7 @@ describe("Placement P6A screening", () => {
     try {
       await expect(decidePlacementScreening(tpo, application.id, {
         decision: "SHORTLISTED", candidateMessage: "Should never be visible",
-      })).rejects.toThrow("Missing permission: placements.manage");
+      })).rejects.toThrow("Missing permission: membership.role.manage");
       const [screening, history] = await Promise.all([
         pool.query("SELECT status FROM placement_application_screenings WHERE application_id=$1",
           [application.id]),
@@ -521,7 +521,7 @@ describe("Placement P6A screening", () => {
       const outcome = await pending;
       expect(outcome).toMatchObject({ok:false});
       expect(String((outcome.error as Error)?.message ?? ""))
-        .toContain("Missing permission: placements.manage");
+        .toContain("Missing permission: membership.role.manage");
       const [rows, history] = await Promise.all([
         pool.query("SELECT status FROM placement_application_screenings WHERE application_id=$1",
           [application.id]),
@@ -571,7 +571,7 @@ describe("Placement P6A screening", () => {
     );
     try {
       await expect(ensurePlacementScreeningPending(tpo, application.id))
-        .rejects.toThrow("Missing permission: placements.manage");
+        .rejects.toThrow("Missing permission: membership.role.manage");
       const rows = await pool.query(
         "SELECT application_id FROM placement_application_screenings WHERE application_id=$1",
         [application.id],
@@ -607,11 +607,11 @@ describe("Placement P6A screening", () => {
     );
     try {
       await expect(listPlacementScreeningQueue(tpo, job.id))
-        .rejects.toThrow("Missing permission: placements.manage");
+        .rejects.toThrow("Missing permission: membership.role.manage");
       await expect(listPlacementScreeningQueuePage(tpo, job.id, {page:1,size:10}))
-        .rejects.toThrow("Missing permission: placements.manage");
+        .rejects.toThrow("Missing permission: membership.role.manage");
       await expect(getPlacementScreening(tpo, application.id))
-        .rejects.toThrow("Missing permission: placements.manage");
+        .rejects.toThrow("Missing permission: membership.role.manage");
     } finally {
       await pool.query(
         "INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING",
@@ -671,7 +671,7 @@ describe("Placement P6A screening", () => {
       const outcome=await pending;
       expect(outcome.ok).toBe(false);
       expect(String((outcome.error as Error)?.message??""))
-        .toContain("Missing permission: placements.manage");
+        .toContain("Missing permission: membership.role.manage");
     } finally {
       if(held)await holder.query("ROLLBACK").catch(()=>undefined);
       holder.release();

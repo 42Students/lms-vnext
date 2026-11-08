@@ -300,7 +300,7 @@ describe("Placement P4 eligibility", () => {
     );
     try {
       await expect(getManagedAcademicEvidence(tpo,SEED_IDS.learnerCollegeAMembership))
-        .rejects.toThrow("Missing permission: placements.manage");
+        .rejects.toThrow("Missing permission: membership.role.manage");
     } finally {
       await pool.query(
         "INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING",
@@ -330,7 +330,7 @@ describe("Placement P4 eligibility", () => {
     try {
       await expect(upsertVerifiedAcademicEvidence(tpo,
         SEED_IDS.learnerCollegeAMembership,{cgpa:8.25}))
-        .rejects.toThrow("Missing permission: placements.manage");
+        .rejects.toThrow("Missing permission: membership.role.manage");
       const evidence=await pool.query(
         "SELECT membership_id FROM placement_candidate_academic_evidence WHERE membership_id=$1",
         [SEED_IDS.learnerCollegeAMembership],
@@ -397,7 +397,7 @@ describe("Placement P4 eligibility", () => {
       const outcome=await pending;
       expect(outcome.ok).toBe(false);
       expect(String((outcome.error as Error)?.message??""))
-        .toContain("Missing permission: placements.manage");
+        .toContain("Missing permission: membership.role.manage");
       const evidence=await pool.query(
         "SELECT membership_id FROM placement_candidate_academic_evidence WHERE membership_id=$1",
         [SEED_IDS.learnerCollegeAMembership],

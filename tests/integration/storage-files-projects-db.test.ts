@@ -58,8 +58,8 @@ const scopedSuperAdmin: RequestContext = {
 };
 const collegeAdmin = user(SEED_IDS.collegeAdminUser, "seed-college-admin", member(SEED_IDS.collegeAdminMembership, SEED_IDS.collegeA, ["COLLEGE_ADMIN"]));
 const learner = user(SEED_IDS.learnerUser, "seed-learner", member(SEED_IDS.learnerCollegeAMembership, SEED_IDS.collegeA, ["LEARNER"]));
-const mentor = user(SEED_IDS.facultyUser, "seed-faculty", member(SEED_IDS.facultyCollegeAMembership, SEED_IDS.collegeA, ["FACULTY", "MENTOR"]));
-const outsider = user(SEED_IDS.facultyUser, "seed-faculty-b", member(SEED_IDS.facultyCollegeBMembership, SEED_IDS.collegeB, ["FACULTY", "MENTOR"]));
+const mentor = user(SEED_IDS.facultyUser, "seed-faculty", member(SEED_IDS.facultyCollegeAMembership, SEED_IDS.collegeA, ["MENTOR"]));
+const outsider = user(SEED_IDS.facultyUser, "seed-faculty-b", member(SEED_IDS.facultyCollegeBMembership, SEED_IDS.collegeB, ["MENTOR"]));
 
 const SLUG = "sfp-";
 

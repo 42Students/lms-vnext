@@ -118,7 +118,8 @@ describe("DB-004 atomic device authorization and revocation", () => {
       // Revoking the Super Admin role does not make a stale credential fresh.
       await pool.query("delete from system_roles where user_id=$1",[userId]);
       await pool.query(`
-        update identity_device_sessions set last_seen_at=clock_timestamp()-interval '7 hours'
+        update identity_device_sessions set created_at=clock_timestamp()-interval '7 hours 1 minute',
+               last_seen_at=clock_timestamp()-interval '7 hours'
          where id=$1`,[sessionId]);
       expect((await resolveSession(token)).ok).toBe(true);
     });

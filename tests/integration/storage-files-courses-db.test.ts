@@ -79,7 +79,7 @@ const ctx = (userId: string, membershipId: string, collegeId: string, roles: Mem
   },
 });
 const collegeAdmin = ctx(SEED_IDS.collegeAdminUser, SEED_IDS.collegeAdminMembership, SEED_IDS.collegeA, ["COLLEGE_ADMIN"]);
-const faculty = ctx(SEED_IDS.facultyUser, SEED_IDS.facultyCollegeAMembership, SEED_IDS.collegeA, ["FACULTY", "MENTOR"]);
+const faculty = ctx(SEED_IDS.facultyUser, SEED_IDS.facultyCollegeAMembership, SEED_IDS.collegeA, ["FACULTY"]);
 // Seed data already enrolls its learner in another live program. Use a
 // dedicated, persisted college membership rather than bypassing the
 // one-active-program-per-learner constraint for these storage tests.
