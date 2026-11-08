@@ -14,7 +14,7 @@ test.describe("UX-G132 attendance controls: real role and responsive acceptance"
       await page.setViewportSize(size);
       await page.goto("/college/attendance");
       await expect(page.getByRole("heading",{level:1,name:"Attendance"})).toBeVisible();
-      await expect(page.getByRole("link",{name:"Attendance policy"})).toBeVisible();
+      await expect(page.getByRole("navigation",{name:"Attendance views"}).getByRole("link",{name:"Attendance policy"})).toBeVisible();
       await checkViewport(page);
       await page.screenshot({path:info.outputPath(`college-attendance-${size.name}.png`),fullPage:true});
     });
