@@ -27,7 +27,14 @@ export default async function AnnouncementsPage({
 }) {
   const context = await getCurrentRequestContext();
   const params = await searchParams;
-  const ownInbox = await getCollegeNoticeInbox(context, {unreadOnly: params.unread ?? "0"});
+  // Personal notifications are independent of the announcement catalogue. A failed
+  // inbox read must not suppress otherwise available announcement management.
+  // An authorization denial is never converted into a harmless empty inbox.
+  const ownInbox = await getCollegeNoticeInbox(context, {unreadOnly: params.unread ?? "0"})
+    .catch(error => {
+      if (error instanceof AuthorizationError) throw error;
+      return null;
+    });
   const unreadQuery = new URLSearchParams({
     ...(params.deleted === "1" ? {deleted:"1"} : {}),
     ...(params.unread === "1" ? {} : {unread:"1"}),
@@ -39,30 +46,30 @@ export default async function AnnouncementsPage({
       <div className="min-w-0 overflow-x-clip space-y-6">
         <PageHeader
           title="Announcements"
-          description="College-wide announcements are temporarily unavailable. Personal notifications are still available below."
+          description="College-wide announcements are temporarily unavailable. Personal notifications are shown below when their inbox is available."
         />
       <section aria-label="Personal college notifications" className="space-y-3 border-t border-border pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <Heading level={2} className="text-[var(--lms-heading)] text-[length:var(--lms-font-lg)] leading-[26px] md:text-[length:var(--lms-font-xl)] md:leading-[28px]">Your college notifications</Heading>
-            <p className="mt-1 text-sm text-muted-foreground">{collegeNoticeUnreadLabel(ownInbox.unreadCount)}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{ownInbox ? collegeNoticeUnreadLabel(ownInbox.unreadCount) : "Inbox temporarily unavailable"}</p>
           </div>
           <TextLink href={unreadHref} className="inline-flex min-h-11 items-center md:min-h-9">
             {params.unread === "1" ? "Show all notifications" : "Unread only"}
           </TextLink>
         </div>
         <p className="text-sm text-body">These are persisted notifications addressed to your own account and associated with this college. They are not college-wide announcements or proof of message delivery to students or faculty.</p>
-        {ownInbox.items.length === 0 ? <EmptyState title="No college notifications" description={params.unread === "1" ? "No unread notifications for your account in this college." : "No persisted notifications for your account in this college."}/>
+        {!ownInbox ? <Alert tone="warning" title="Personal notifications unavailable">The inbox could not be refreshed. This is not an empty notifications list. Open your personal inbox to retry.</Alert> : ownInbox.items.length === 0 ? <EmptyState title="No college notifications" description={params.unread === "1" ? "No unread notifications for your account in this college." : "No persisted notifications for your account in this college."}/>
           : <ul className="divide-y divide-border">{ownInbox.items.map(item => <li key={item.id} className="py-3">
             <p className="font-semibold text-foreground">{item.title}</p>
             <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
             <p className="mt-2 text-xs text-muted-foreground">{istDateTimeFormatter.format(new Date(item.createdAt))} · {item.readAt ? "Read" : "Unread"}</p>
             {item.actionHref ? <TextLink href={item.actionHref} className="inline-flex min-h-11 items-center md:min-h-9">Open related page</TextLink> : null}
           </li>)}</ul>}
-        <TextLink href="/notifications" className="inline-flex min-h-11 items-center md:min-h-9">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</TextLink>
+        <TextLink href="/notifications" className="inline-flex min-h-11 items-center md:min-h-9">{ownInbox?.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</TextLink>
       </section>
         <Alert tone="warning" title="College-wide announcements are unavailable">
-          You can still view your personal college notifications above. Creating and managing college-wide announcements is currently unavailable.
+          Creating and managing college-wide announcements is currently unavailable. Personal notifications remain accessible from the personal inbox when its service is available.
         </Alert>
       </div>
     );
@@ -183,14 +190,14 @@ export default async function AnnouncementsPage({
           </TextLink>
         </div>
         <p className="text-sm text-body">These are persisted notifications addressed to your own account and associated with this college. They are not college-wide announcements or proof of message delivery to students or faculty.</p>
-        {ownInbox.items.length === 0 ? <EmptyState title="No college notifications" description={params.unread === "1" ? "No unread notifications for your account in this college." : "No persisted notifications for your account in this college."}/>
+        {!ownInbox ? <Alert tone="warning" title="Personal notifications unavailable">The inbox could not be refreshed. This is not an empty notifications list. Open your personal inbox to retry.</Alert> : ownInbox.items.length === 0 ? <EmptyState title="No college notifications" description={params.unread === "1" ? "No unread notifications for your account in this college." : "No persisted notifications for your account in this college."}/>
           : <ul className="divide-y divide-border">{ownInbox.items.map(item => <li key={item.id} className="py-3">
             <p className="font-semibold text-foreground">{item.title}</p>
             <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.body}</p>
             <p className="mt-2 text-xs text-muted-foreground">{istDateTimeFormatter.format(new Date(item.createdAt))} · {item.readAt ? "Read" : "Unread"}</p>
             {item.actionHref ? <TextLink href={item.actionHref} className="inline-flex min-h-11 items-center md:min-h-9">Open related page</TextLink> : null}
           </li>)}</ul>}
-        <TextLink href="/notifications" className="inline-flex min-h-11 items-center md:min-h-9">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</TextLink>
+        <TextLink href="/notifications" className="inline-flex min-h-11 items-center md:min-h-9">{ownInbox?.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</TextLink>
       </section>
       </Disclosure>
 
