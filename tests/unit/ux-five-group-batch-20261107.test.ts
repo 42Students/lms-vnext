@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { appendUniquePeopleCsvRows, PEOPLE_CSV_CAP } from "@/modules/people/college-people-export-model";
 import {neutralStudentCsvCell,studentImportReportCsv} from "@/modules/people/college-student-csv-model";
+import {neutralizeContactCell} from "@/modules/people/college-contacts-export-model";
 import { trackerLogCsv } from "@/components/tracker/tracker-live-logs-explorer";
 import { trackerReportSchema } from "@/modules/bug-tracker/report-input-model";
 
@@ -140,6 +141,14 @@ describe("UX-G161 tracker recoverability and formula safety", () => {
 });
 
 describe("UX-G178 people CSV completeness and deduplication", () => {
+ it("defuses invisible combining marks in college contacts CSV without changing ordinary labels", () => {
+  for(const dangerous of ["\u20DD=HYPERLINK(1)","\u0903@SUM(1,2)","\u2060+CMD","\u034F-2+5"]) {
+   expect(neutralizeContactCell(dangerous)).toBe('"' + "'" + dangerous + '"');
+  }
+  expect(neutralizeContactCell("College Faculty")).toBe('"College Faculty"');
+  expect(neutralizeContactCell('"Quoted"')).toBe('"""Quoted"""');
+ });
+
  it("defuses invisible Unicode formulas in student import report cells", () => {
   for(const dangerous of ["\u2060=HYPERLINK(1)","\u200B@SUM(1,2)","\u034F+CMD","\uFEFF-1+2","\u2028=1"]) {
    expect(neutralStudentCsvCell(dangerous)).toBe('"' + "'" + dangerous + '"');
