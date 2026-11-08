@@ -77,4 +77,28 @@ describe("UX-G092 Faculty course and contact recovery", () => {
     expect(source).toContain('href={backHref}');
     expect(source).toContain('type="button" onClick={reset}');
   });
+  it("keeps report, course and tab recovery accessible", () => {
+    const reportError = read(
+      "src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/error.tsx",
+    );
+    expect(reportError).toContain("Retry report");
+    expect(reportError).toContain('href="/teacher/courses"');
+    expect(reportError).toContain("min-h-11");
+
+    const courseError = read(
+      "src/app/(authenticated)/teacher/courses/[deliveryId]/error.tsx",
+    );
+    expect(courseError).toContain('<section role="alert"');
+    expect(courseError).toContain('type="button" onClick={reset}');
+
+    const tabError = read(
+      "src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/error.tsx",
+    );
+    expect(tabError).toContain(
+      "This course is not available to your Faculty account",
+    );
+    expect(tabError).toContain('type="button" onClick={reset}');
+    expect(tabError).toContain("min-h-11");
+  });
+
 });
