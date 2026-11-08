@@ -72,3 +72,9 @@ Everything else on the security list that does not need you is done or running (
 36. **Approve patch deadlines** in `policies/vulnerability-and-patch-policy.md`, and name the incident roster (SEC-20-004).
 37. **Name the independent reviewer.** 364 controls are built and wait for review (`docs/security/AUDIT-HANDOFF.md`); nothing can become VERIFIED without that person.
 38. **Status:** 364 controls need review, 129 need the owner (organisation, legal, console, cost or deferred MFA). None is left partly done. The list is in `docs/security/MASTER-SECURITY-TODO.md` after regeneration.
+
+## Built after the closure pass (2026-11-08, evening), waiting on you only to switch on
+
+39. **Uniform sign-in start (SEC-01-003).** `AUTH_UNIFORM_UNKNOWN_CONTACT=1` makes the sign-in start answer an unknown, disabled or out-of-college contact exactly like a real one. It changes the legacy "not registered" wording, so it is off. Tell me when to switch it on for dev.
+40. **Outbound encryption key rotation recipe (SEC-09-011).** To rotate: set `DB10_OUTBOUND_DIGEST_KEY_BASE64` = the old key (frozen forever), `DB10_OUTBOUND_ENCRYPTION_KEY_BASE64` = new key, `DB10_OUTBOUND_ENCRYPTION_KEY_ID=v2`, `DB10_OUTBOUND_ENCRYPTION_KEY_PREVIOUS_BASE64` = old key. Messages queued before the change still open; remove the previous key once the queue has no v1 rows. The app refuses a rotated cipher key without the frozen digest key.
+41. **Not built, and why:** dual approval and separation of duties (SEC-13-010, SEC-03-022) need a pending-approval table (a migration you approve) and a screen the UX lane owns; separate database logins per worker class (SEC-16) do not fit today's design because the workers are HTTP calls into the web process; data-subject requests (SEC-22) need your lawful-basis and retention decisions first; image signing (SEC-18-017) needs a registry push from CI, but images are pushed from your laptop; `security.txt` needs a contact address (item 22).
