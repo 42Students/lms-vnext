@@ -7,7 +7,7 @@ import { Select } from "@/components/ui/select";
 
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { useRouter } from "next/navigation";
@@ -26,6 +26,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   const router=useRouter();
   const {ask,confirmation}=useCollegeConfirmation();
   const {pending,run:guardedRun}=useGuardedAction({busyLabel:"Registering..."});
+  const registrationInFlight=useRef(false);
   const [result,setResult]=useState<string|null>(null);
   const [savedMemberId,setSavedMemberId]=useState<string|null>(null);
   const [error,setError]=useState("");
@@ -46,7 +47,9 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   const availableBatches=choices.batches.filter(batch=>batch.programId===programId);
   const availableClasses=choices.classes.filter(section=>section.cohortId===cohortId);
   async function submit(event:FormEvent<HTMLFormElement>) {
-    event.preventDefault();setError("");setFieldErrors({});setResult(null);setSavedMemberId(null);
+    event.preventDefault();
+    if(pending||registrationInFlight.current)return;
+    setError("");setFieldErrors({});setResult(null);setSavedMemberId(null);
     const invalid:Record<string,string>={};
     if(!firstName.trim())invalid["firstName"]="Enter the first name";
     if(!phoneE164.trim())invalid["mobile"]="Enter the mobile number";
@@ -65,8 +68,13 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
       }
       return;
     }
-    if(!(await ask("Register this student and enroll them in the selected batch?")))return;
-    void guardedRun(async()=>{
+    registrationInFlight.current=true;
+    if(!(await ask("Register this student and enroll them in the selected batch?"))){
+      registrationInFlight.current=false;
+      return;
+    }
+    try {
+    await guardedRun(async()=>{
       try {
         const body=await apiFetch<{
           status?:string;membershipId?:string;failures?:string[];
@@ -87,6 +95,8 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
       }catch(reason){setError("Failed to register student: "+
         (reason instanceof Error?reason.message:"Registration failed"));}
     });
+    }catch{setError("Registration did not finish. Check the student roster before retrying.");}
+    finally{registrationInFlight.current=false;}
   }
   return <>{confirmation}<form onSubmit={event=>{void submit(event);}} className="grid min-w-0 max-w-4xl gap-4 sm:grid-cols-2">
     <Label stack>First Name
