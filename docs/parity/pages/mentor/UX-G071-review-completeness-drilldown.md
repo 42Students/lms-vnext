@@ -1,6 +1,6 @@
 # UX-G071 — Mentor delivery review completeness drilldown
 
-Status: **DOING — scoped implementation; not group accepted**.
+Status: **DONE — scoped route UX accepted 2026-11-09; release gates separate**.
 
 ## Source implementation
 
@@ -32,3 +32,11 @@ Status: **DOING — scoped implementation; not group accepted**.
 - [Desktop/mobile browser tests 88154369](https://github.com/42Students/lms-vnext/commit/8815436971847786ad0836c2e9d2cc5619bd9dcc) verify a persisted delivery-version list link, exact version detail, stored draft summary and back navigation to the same project; [3f568b03](https://github.com/42Students/lms-vnext/commit/3f568b032ee04d28dfd0381f825eca60b8ee07bb) additionally visits stored completed meeting notes at both viewport sizes, checks outcome, date/status and the Meeting history link.
 - [Required exact-SHA browser run 42497511686](https://github.com/42Students/lms-vnext/actions/runs/42497511686) covers all five route families and isolation denials, including missing version and meeting IDs, malformed pager recovery, responsive screenshots and no overflow. **Its final executed conclusion must be inspected before DONE**.
 - A stale global UX tracker test had hardcoded G001=DOING even though G001 legitimately became DONE; [commit 8730828a](https://github.com/42Students/lms-vnext/commit/8730828afd25f079ec06070402b37166a0d668f1) now verifies unrelated tracker state was preserved instead. [Fresh source CI](https://github.com/42Students/lms-vnext/actions/runs/42496651258) was queued at review time; the old failing unit run does not certify G071 source.
+
+
+## Accepted scoped G071 route UX — 9 November 2026
+
+- Green [exact-SHA run](https://github.com/42Students/lms-vnext/actions/runs/42523512164) at e1ec47985965b041553787b5745c8af20a1c09d6: full TypeScript, scoped lint, focused Mentor Vitest and tracker verification.
+- 3/3 real PostgreSQL-seeded Chromium tests: 1280px and 390px, list/detail return, recorded closeout, resources search drawer, meeting notes and negative Learner role. Zero skipped; [screenshots](https://github.com/42Students/lms-vnext/actions/runs/42523512164/artifacts/13634378195).
+- All 15 page/error/loading source surfaces reviewed. Next.js streamed 404 behavior is checked by rendered noindex and absence of protected details.
+- Scoped route UX only. Existing independent provider, production authorization, overall security and release acceptance remain separate.

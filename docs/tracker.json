@@ -27571,11 +27571,11 @@
         "type": "JOURNEY",
         "area": "mentor",
         "title": "Mentor · Projects / ProjectId → Projects / ProjectId (part 3)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-g071-review-links-20261108",
         "pickedAt": "2026-11-08T15:04:05.504Z",
         "startedAt": "2026-11-08T15:04:05.504Z",
-        "completedAt": null,
+        "completedAt": "2026-11-09",
         "sourceFiles": [
           "src/app/(authenticated)/mentor/projects/[projectId]/closeout/error.tsx",
           "src/app/(authenticated)/mentor/projects/[projectId]/closeout/loading.tsx",
@@ -27643,9 +27643,42 @@
             "status": "queued",
             "workflow": ".github/workflows/ux-g071-mentor-review-source-acceptance.yml",
             "conclusion": "No executed passing receipt yet. This workflow covers exact SHA, targeted lint, TS and unit; authentic browser and cross-tenant gates remain open."
+          },
+          {
+            "commitSha": "e1ec47985965b041553787b5745c8af20a1c09d6",
+            "parityDoc": "docs/parity/pages/mentor/UX-G071-review-completeness-drilldown.md",
+            "tests": [
+              {
+                "command": "Exact SHA scoped ESLint and npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42523512164"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g071-mentor-review-drilldown.test.ts and node --test tests/ux-groups.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42523512164"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g071-mentor-route-surfaces.spec.ts --project=chromium --workers=1 --reporter=line,json (3/3 passed, 0 skipped)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42523512164"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42523512164/artifacts/13634378195"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42523512164/artifacts/13634378195"
+              }
+            ],
+            "regressionReview": "Five persisted Mentor route families: closeout, resource directory, delivery-version review detail and roundtrip, meeting notes, review completeness; responsive filter drawer, errors and empty states. No new mutations.",
+            "securityReview": "Actual seeded assigned Mentor plus independent Learner denial and missing-identifier non-disclosure, existing project scope and service checks retained. Production security/release separately open."
           }
         ],
-        "notes": "2026-11-08: committed Mentor review-list/detail roundtrip, same-project filter recovery, all five aria-busy loading states and six tests. NOT CLOSED: exact-SHA executed CI/browser, tenant denial and all 15 G071 surfaces."
+        "notes": "G071 route UX DONE 2026-11-09: 15 page/error/loading source files reviewed; exact-SHA seeded PG17 Chromium desktop/mobile positive and Learner denial, 3/3 passed with zero skipped; scope lint, TS, unit + tracker checks green at run 42523512164, screenshot 13634378195. No mutation or authorization grant; production release separate."
       },
       {
         "id": "UX-G072",
