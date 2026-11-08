@@ -25622,11 +25622,11 @@
         "type": "COMPONENT",
         "area": "tpo",
         "title": "Tpo · Interactive components (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-tpo-components-20261108",
         "pickedAt": "2026-11-08T08:30:16.037Z",
         "startedAt": "2026-11-08T08:30:16.037Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T08:52:17.608Z",
         "sourceFiles": [
           "src/components/tpo/recruiter-lead-csv-import.tsx",
           "src/components/tpo/recruiter-lead-detail-workspace.tsx",
@@ -25662,7 +25662,46 @@
           "OVERLAY-0175"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "e303838e63053958df3ab40da889cfd7ca8e274d",
+            "parityDoc": "docs/parity/ux-g156-2026-11-08.md",
+            "tests": [
+              {
+                "command": "npx eslint src/components/tpo/{tpo-batch-invitation-control,tpo-batch-class-decision,tpo-audit-saved-views}.tsx src/app/e2e/ux-g156-fixture/{page,client}.tsx tests/unit/ux-g156-interactions.test.ts tests/e2e/ux-g156.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464186855 lint succeeded"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g156-interactions.test.ts --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464186855 4/4 units"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g156.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464186855 8/8 browser cases, no flaky retries"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464186855 TypeScript integrity passed"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464186855/artifacts/13611595591 exact counts, malformed-receipt recovery, class 409 conflict, malformed audit list and single visible error"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464186855/artifacts/13611595591 same four real component paths, mobile layout and no horizontal overflow"
+              }
+            ],
+            "regressionReview": "No guessed batch invitation count from invitable snapshot; malformed send and reminder replies require explicit refresh; class decision conflict stays in alert dialog; malformed saved audit views are rejected, and only one error is rendered in the active location. Other group-owned TPO recruiter/batch components source-reviewed but not individually browser-certified.",
+            "securityReview": "No server authorization/tenant scoping altered. Existing exact-version guards preserved; no provider delivery claimed without evidence. Synthetic fixture requires development environment plus UX_G156_FIXTURE=1. Mocked API response checks are not live security tests."
+          }
+        ]
       },
       {
         "id": "UX-G157",
