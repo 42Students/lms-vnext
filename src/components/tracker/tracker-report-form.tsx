@@ -338,7 +338,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         <legend className="px-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Where did this happen?</legend>
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           <Label className={label}>Page
-            <Select className={field} required value={page} onChange={event => {
+            <Select className={field} aria-label="Page" required value={page} onChange={event => {
               setDraft(current=>({...current,page:event.target.value,screen:"",section:""}));
             }}>
               <option value="" disabled>Search or select page → screen → section</option>
@@ -347,7 +347,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
             {fieldErrors["page"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["page"]}</span>:null}
           </Label>
           <Label className={label}>Screen
-            <Select className={field} required={Boolean(selectedPage?.children?.length)}
+            <Select className={field} aria-label="Screen" required={Boolean(selectedPage?.children?.length)}
               disabled={!selectedPage?.children?.length}
               value={screen} onChange={event => setDraft(current=>({...current,screen:event.target.value,section:""}))}>
               <option value="">Select screen</option>
@@ -356,7 +356,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
             {fieldErrors["screen"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["screen"]}</span>:null}
           </Label>
           <Label className={label}>Section
-            <Select className={field} name="section" key={page + ":" + screen}
+            <Select className={field} aria-label="Section" name="section" key={page + ":" + screen}
               required={Boolean(selectedScreen?.children?.length)} disabled={!selectedScreen?.children?.length} value={draft.section}
               onChange={event=>patch("section",event.target.value)}>
               <option value="">Select section</option>
@@ -368,7 +368,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       </fieldset>
       <div className="grid gap-4 md:grid-cols-3">
         <Label className={label + " md:col-span-2"}>What kind of issue?
-          <Select className={field} name="issueType" required value={draft.issueType} onChange={event=>patch("issueType",event.target.value)}>
+          <Select className={field} aria-label="What kind of issue?" name="issueType" required value={draft.issueType} onChange={event=>patch("issueType",event.target.value)}>
             <option value="" disabled>Search issue type</option>
             {ISSUE_TYPE_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </Select>
