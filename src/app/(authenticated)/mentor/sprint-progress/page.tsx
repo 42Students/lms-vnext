@@ -27,6 +27,8 @@ function first(value: string | string[] | undefined) {
 export default async function MentorSprintProgressPage({
   searchParams,
 }: { searchParams: Promise<Params> }) {
+  const context = await getCurrentRequestContext();
+  if (!hasMembershipRole(context, "MENTOR")) redirect("/dashboard");
   const raw = await searchParams;
   const parsed = mentorSprintProgressQuerySchema.safeParse(Object.values(raw).some(Array.isArray)?null:{
     state: first(raw.state) ?? undefined,
@@ -39,10 +41,9 @@ export default async function MentorSprintProgressPage({
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title="Sprint progress" description="Invalid sprint progress filters" />
+    <p className="text-sm text-body">The filters could not be applied. No sprint progress data was loaded.</p>
     <TextLink href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>
   </section>;
-  const context = await getCurrentRequestContext();
-  if (!hasMembershipRole(context, "MENTOR")) redirect("/dashboard");
   const data = await getMentorSprintProgress(context, parsed.data);
   const hasFilters = Boolean(data.query.search || data.query.projectId || data.query.state !== "ALL" || data.query.taskAttention !== "ALL" || data.query.release !== "ALL" || data.query.order !== "PROJECT");
   const hasAdvancedFilters = data.query.state !== "ALL" || data.query.taskAttention !== "ALL" || data.query.release !== "ALL" || data.query.order !== "PROJECT";
