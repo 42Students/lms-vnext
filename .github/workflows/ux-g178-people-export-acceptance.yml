@@ -1,0 +1,66 @@
+name: UX-G178 People CSV database and privacy acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/modules/people/**'
+      - 'tests/integration/college-people-export.test.ts'
+      - 'tests/unit/college-people-export-model.test.ts'
+      - '.github/workflows/ux-g178-people-export-acceptance.yml'
+permissions:
+  contents: read
+concurrency:
+  group: ux-g178-people-export-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  real-data-boundaries:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      DB03_ISOLATED_TEST_DATABASE: '1'
+      APP_ENV: development
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exact SHA, scoped lint and full TypeScript
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npx eslint tests/integration/college-people-export.test.ts
+          npm run typecheck
+      - name: Unit boundary, CSV encoding and contacts export regressions
+        run: |
+          npx vitest run --reporter=dot \
+            tests/unit/college-people-export-model.test.ts \
+            tests/unit/college-contacts-export-dedup.test.ts \
+            tests/unit/college-contacts-export-model.test.ts \
+            tests/unit/college-contacts-export-service.test.ts \
+            tests/unit/college-contacts-export-service-validation.test.ts \
+            tests/unit/private-bulk-csv-security.test.ts \
+            tests/unit/ux-five-group-batch-20261107.test.ts
+      - name: Prepare disposable PostgreSQL with fail-closed database target
+        run: npm run db:e2e:prepare
+      - name: Real 105-member pagination and cross-college CSV isolation
+        run: npx vitest run --config vitest.db.config.ts tests/integration/college-people-export.test.ts --reporter=dot
