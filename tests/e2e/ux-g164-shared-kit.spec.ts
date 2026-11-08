@@ -17,7 +17,8 @@ for (const viewport of [
     await expect(form.getByText("Enter a workspace label.")).toBeVisible();
     await input.fill("Test workspace");
     await expect(input).not.toHaveAttribute("aria-invalid", "true");
-    await form.getByRole("switch", { name: "Email updates" }).check();
+    // The native input is visually hidden behind the styled track; click its visible label.
+    await form.getByText("Email updates", { exact: true }).click();
     await expect(form.getByRole("switch", { name: "Email updates" })).toBeChecked();
     await expect(form.getByRole("status")).toHaveAttribute("aria-live", "polite");
     await form.getByRole("button", { name: "Dismiss notice" }).click();
