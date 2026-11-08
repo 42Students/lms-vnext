@@ -420,6 +420,114 @@
         "SEC-08-020"
       ],
       "finding": "Bulk exports require step-up (15-minute fresh login), are audited as api.export events and feed the bulk-export tripwire."
+    },
+    {
+      "source": "SEC-11-12-batch-2026-11-08.md",
+      "state": "IU",
+      "ids": [
+        "SEC-12-003",
+        "SEC-12-004",
+        "SEC-12-005",
+        "SEC-12-007"
+      ],
+      "finding": "Rich text goes through a strict rebuild (sanitizeCourseDisplayHtml in src/modules/courses/course-display-validation.ts): all text is escaped, only a short tag allowlist is reconstructed and every attribute is dropped. Only 8 files use dangerouslySetInnerHTML: 3 course components fed by that sanitizer and 5 static marketing/policy pages. Unit tests: course-display-content.test.ts and chat7-superadmin-course-authoring-break.test.ts."
+    },
+    {
+      "source": "SEC-11-12-batch-2026-11-08.md",
+      "state": "P",
+      "ids": [
+        "SEC-12-006"
+      ],
+      "finding": "No client code builds HTML from location, hash or query; the CSP (nonce scripts, connect-src 'self') blocks injected script, but no DOM-XSS scanner or Trusted Types is in place."
+    },
+    {
+      "source": "SEC-11-12-batch-2026-11-08.md",
+      "state": "IU",
+      "ids": [
+        "SEC-12-012",
+        "SEC-12-013"
+      ],
+      "finding": "No Access-Control-Allow-* header is set anywhere in src, so browsers enforce same-origin; credentialed cross-origin access and wildcard CORS do not exist."
+    },
+    {
+      "source": "SEC-11-12-batch-2026-11-08.md",
+      "state": "IU",
+      "ids": [
+        "SEC-12-014"
+      ],
+      "finding": "Search of src for secrets in query strings (token, otp, password, secret, code) finds none; share and invite tokens travel in the path and are stored hashed, sign-in codes only in POST bodies."
+    },
+    {
+      "source": "SEC-11-12-batch-2026-11-08.md",
+      "state": "IU",
+      "ids": [
+        "SEC-12-015",
+        "SEC-12-016"
+      ],
+      "finding": "Browser storage holds interface preferences only (table columns and sort, recent searches, last selected college or membership key, a sign-out broadcast key); no token, code or personal data. Sign-out writes lms:signout so other tabs leave, the session cookie is HttpOnly and server-revoked."
+    },
+    {
+      "source": "SEC-11-12-batch-2026-11-08.md",
+      "state": "P",
+      "ids": [
+        "SEC-12-018"
+      ],
+      "finding": "No third-party script tags or analytics widgets in src; the only third-party content is the YouTube iframe API for lesson video. No subresource integrity or formal inventory of embeds."
+    },
+    {
+      "source": "SEC-11-12-batch-2026-11-08.md",
+      "state": "IU",
+      "ids": [
+        "SEC-12-019"
+      ],
+      "finding": "Authorization is enforced in route() and the services; the role-by-route matrix and unauthenticated gate test the server regardless of what the UI hides."
+    },
+    {
+      "source": "SEC-11-12-batch-2026-11-08.md",
+      "state": "IU",
+      "ids": [
+        "SEC-11-009",
+        "SEC-11-012",
+        "SEC-11-017"
+      ],
+      "finding": "Upload types are an allowlist (src/modules/storage/file-policy.ts: documents, three image types, zip for some flows; no HTML, SVG or executables). Signed links force attachment unless the type is a PDF or png/jpeg/gif/webp, filenames are ASCII-cleaned and percent-encoded in Content-Disposition, and responses carry private, no-store."
+    },
+    {
+      "source": "SEC-11-12-batch-2026-11-08.md",
+      "state": "P",
+      "ids": [
+        "SEC-11-011",
+        "SEC-11-013",
+        "SEC-11-015",
+        "SEC-11-016"
+      ],
+      "finding": "Zip is accepted for some flows but the server never extracts uploads, there are no conversion or preview workers, and object keys are opaque and scope-prefixed rather than user paths. Nothing is proved by a hostile-archive or traversal test."
+    },
+    {
+      "source": "SEC-11-12-batch-2026-11-08.md",
+      "state": "IU",
+      "ids": [
+        "SEC-11-014",
+        "SEC-11-019"
+      ],
+      "finding": "File access is decided from database rows (owner, college, resource) at every signed-URL request, with a 5-minute ceiling, so ended memberships stop working on the next request; same-college learner probe found no foreign data."
+    },
+    {
+      "source": "SEC-11-12-batch-2026-11-08.md",
+      "state": "P",
+      "ids": [
+        "SEC-11-004",
+        "SEC-11-020"
+      ],
+      "finding": "Signed links are short-lived; the legacy bucket is public (see SEC-11-001). Bulk exports are audited as api.export events; individual file downloads are not yet audited."
+    },
+    {
+      "source": "SEC-11-12-batch-2026-11-08.md",
+      "state": "G",
+      "ids": [
+        "SEC-11-018"
+      ],
+      "finding": "No retention or deletion policy is defined for submitted documents (owner and legal decision; SEC-22)."
     }
   ]
 }
