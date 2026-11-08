@@ -28,12 +28,20 @@ describe("mentor legacy sidebar", () => {
       ]);
   });
 
-  it("keeps all role workspaces for a multi-role member", () => {
-    const nav = getShellNavigation({
+  it("keeps each role in its own workspace for a multi-role member", () => {
+    const mentorNav = getShellNavigation(mentor);
+    expect(mentorNav.some((item) => item.href === "/mentor/calendar")).toBe(true);
+    expect(mentorNav.some((item) => item.href === "/teacher/courses")).toBe(false);
+    const facultyNav = getShellNavigation({
+      ...mentor,
+      membership: { ...mentor.membership!, roles: ["FACULTY"] },
+    });
+    expect(facultyNav.some((item) => item.href === "/teacher/courses")).toBe(true);
+    // Holding both roles with none selected shows only the dashboard.
+    const both = getShellNavigation({
       ...mentor,
       membership: { ...mentor.membership!, roles: ["MENTOR", "FACULTY"] },
     });
-    expect(nav.some((item) => item.href === "/teacher/courses")).toBe(true);
-    expect(nav.some((item) => item.href === "/mentor/calendar")).toBe(true);
+    expect(both.map((item) => item.href)).toEqual(["/dashboard"]);
   });
 });

@@ -38,7 +38,7 @@ describe("UX-tpo-LAST-THIRD-01 TPO route boundary permission matrix",()=>{
    {collegeId:"college-a",organizationId:"org-b"},
    {collegeId:"college-b",organizationId:"org-b"},
   ])expect(can(member,"placements.manage",resource)).toBe(false);
-  const admin:RequestContext={...member,user:{...member.user,systemRoles:["SUPER_ADMIN"]},
+  const admin:RequestContext={...member,membership:null,user:{...member.user,systemRoles:["SUPER_ADMIN"]},
    adminScope:{collegeId:"college-b",organizationId:"org-b"}};
   expect(canOpenTpoWorkspace(admin)).toBe(false);
  });

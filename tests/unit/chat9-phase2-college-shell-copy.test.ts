@@ -33,12 +33,13 @@ describe("legacy College Admin exact sidebar copy", () => {
     expect(getShellNavigation(context).some(item=>item.label==="My College")).toBe(false);
     expect(getShellNavigation(context).some(item=>item.label==="Placement Evidence")).toBe(false);
   });
-  it("keeps college navigation visible for multi-role faculty administrators", () => {
+  it("keeps college navigation to the College Admin role and shows only the dashboard when two roles are held", () => {
+    const items=getShellNavigation(context);
+    expect(items.some(item=>item.href==="/college/verification" && item.label==="Profile verification")).toBe(true);
+    expect(items.some(item=>item.href==="/teacher/courses")).toBe(false);
     const mixed: RequestContext = {
       ...context,membership:{...context.membership!,roles:["COLLEGE_ADMIN","FACULTY"]},
     };
-    const items=getShellNavigation(mixed);
-    expect(items.some(item=>item.href==="/college/verification" && item.label==="Profile verification")).toBe(true);
-    expect(items.some(item=>item.href==="/teacher/courses")).toBe(true);
+    expect(getShellNavigation(mixed).map(item=>item.href)).toEqual(["/dashboard"]);
   });
 });

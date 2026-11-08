@@ -18,9 +18,9 @@ function context(
   };
 }
 describe("Faculty Notifications account access", () => {
-  it("accepts active Faculty, including active multi-role memberships", () => {
+  it("accepts active Faculty and refuses a context holding several roles with none selected", () => {
     expect(requireFacultyNotificationsAccess(context(["FACULTY"])).id).toBe("faculty-membership");
-    expect(requireFacultyNotificationsAccess(context(["FACULTY","MENTOR"])).id).toBe("faculty-membership");
+    expect(() => requireFacultyNotificationsAccess(context(["FACULTY","MENTOR"]))).toThrow(AuthorizationError);
   });
   it.each(["LEARNER","MENTOR","TPO","COLLEGE_ADMIN"] as const)(
     "rejects a %s-only membership", (role) => {

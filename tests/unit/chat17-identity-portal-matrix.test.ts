@@ -66,12 +66,17 @@ describe("WEAK-identity role-journey denied portal and project scope matrix",()=
     expect(PORTAL_PERMISSION_DENIED).toMatch(/don't have permission/);
   });
 
-  it("WEAK-identity-06 multiple roles resolve in documented priority without promoting to Super Admin",()=>{
+  it("WEAK-identity-06 several held roles select none, so the denial lands on the dashboard, and never promote to Super Admin",()=>{
+    // One workspace per role: only a single selected role has a portal home.
     expect(deniedPortalHome(actor({roles:["LEARNER","MENTOR"]})))
-      .toBe("/mentor/projects?access=denied");
+      .toBe("/dashboard?access=denied");
     expect(deniedPortalHome(actor({roles:["MENTOR","TPO"]})))
-      .toBe("/tpo/home?access=denied");
+      .toBe("/dashboard?access=denied");
     expect(deniedPortalHome(actor({roles:["FACULTY","COLLEGE_ADMIN"]})))
+      .toBe("/dashboard?access=denied");
+    expect(deniedPortalHome(actor({roles:["MENTOR"]})))
+      .toBe("/mentor/projects?access=denied");
+    expect(deniedPortalHome(actor({roles:["COLLEGE_ADMIN"]})))
       .toBe("/college?access=denied");
     expect(deniedPortalHome(actor({superAdmin:true,membership:null})))
       .toBe("/admin/tenants?access=denied");

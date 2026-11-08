@@ -53,14 +53,19 @@ describe("PROJ-BREAK-chat3-FACULTY-02 mentor and teacher route isolation",()=>{
     .rejects.toThrow("REDIRECT:/dashboard");
   }
  });
- it("grants a dual-role active Faculty/Mentor each route while preserving the Faculty skip target",async()=>{
-  mocks.context.mockResolvedValue(principal(["FACULTY","MENTOR"]));
+ it("grants each selected role its own route and sends a context holding both roles to the dashboard",async()=>{
+  // One workspace per role: Mentor opens the Mentor route, Faculty the Faculty route.
+  mocks.context.mockResolvedValue(principal(["MENTOR"]));
   await expect(MentorLayout({children:content})).resolves.toBe(content);
+  mocks.context.mockResolvedValue(principal(["FACULTY"]));
   const page=await TeacherLayout({children:content});
   const html=renderToStaticMarkup(page);
   expect(html).toContain('href="#faculty-page-content"');
   expect(html).toContain('id="faculty-page-content"');
   expect(html).toContain("Role-private projects content");
   expect(mocks.redirect).not.toHaveBeenCalled();
+  mocks.context.mockResolvedValue(principal(["FACULTY","MENTOR"]));
+  await expect(MentorLayout({children:content})).rejects.toThrow("REDIRECT:/dashboard");
+  await expect(TeacherLayout({children:content})).rejects.toThrow("REDIRECT:/dashboard");
  });
 });

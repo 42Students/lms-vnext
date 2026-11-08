@@ -41,7 +41,7 @@ vi.mock("@/modules/module-access/service",()=>({
 }));
 
 function faculty(roles:string[]=[
-  "FACULTY","MENTOR",
+  "MENTOR",
 ]):RequestContext {
   return {
     user:{id:userId,identityUid:"faculty-account",platformStatus:"ACTIVE",systemRoles:[]},

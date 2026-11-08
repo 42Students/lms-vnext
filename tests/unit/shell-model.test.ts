@@ -122,12 +122,9 @@ describe("authenticated shell model", () => {
     expect(learnerHrefs).not.toContain("/college/placements/calendar");
   });
 
-  it("hides legacy Student Groups from College Admin navigation for all role mixes", () => {
-    for (const roles of [
-      ["COLLEGE_ADMIN"],
-      ["COLLEGE_ADMIN", "FACULTY"],
-      ["COLLEGE_ADMIN", "MENTOR", "LEARNER"],
-    ] as const) {
+  it("hides legacy Student Groups from College Admin navigation", () => {
+    // One workspace per role: a request carries exactly one selected role.
+    for (const roles of [["COLLEGE_ADMIN"]] as const) {
       const links = getShellNavigation(context(roles)).map((item) => item.href);
       expect(links).not.toContain("/college/groups");
       // Legacy grouped sidebar: Students live under People.
@@ -207,39 +204,33 @@ describe("authenticated shell model", () => {
   });
 
   it("gives faculty teaching navigation without admin navigation", () => {
-    const shellContext = context(["FACULTY", "MENTOR"]);
+    const shellContext = context(["FACULTY"]);
 
     expectInOrder(labels(shellContext), [
-      "Dashboard",
       "Courses",
       "Class Schedule",
       "All Quizzes",
       "All assignments",
-      "Projects",
-      "Meetings",
     ]);
     expect(hrefs(shellContext)).toContain("/teacher/courses");
-    expect(hrefs(shellContext)).toContain("/mentor/projects");
     expect(hasAdminLinks(shellContext)).toBe(false);
-    expect(getShellRoleLabel(shellContext)).toBe(
-      "Faculty · Mentor",
-    );
+    expect(getShellRoleLabel(shellContext)).toBe("Faculty");
   });
 
-  it("keeps College Admin workspaces additive for faculty and mentor roles", () => {
-    const shellContext = context([
-      "COLLEGE_ADMIN",
-      "FACULTY",
-      "MENTOR",
-    ]);
+  it("gives a Mentor the mentoring navigation without teaching or admin navigation", () => {
+    const shellContext = context(["MENTOR"]);
 
-    // Teaching and mentoring come first, the admin workspace is added after.
-    expectInOrder(hrefs(shellContext), [
-      "/teacher/courses",
-      "/mentor/projects",
-      "/college",
-      "/college/departments",
-    ]);
+    expectInOrder(labels(shellContext), ["Projects", "Meetings"]);
+    expect(hrefs(shellContext)).toContain("/mentor/projects");
+    expect(hrefs(shellContext)).not.toContain("/teacher/courses");
+    expect(hasAdminLinks(shellContext)).toBe(false);
+    expect(getShellRoleLabel(shellContext)).toBe("Mentor");
+  });
+
+  it("gives the College Admin role the admin workspace", () => {
+    const shellContext = context(["COLLEGE_ADMIN"]);
+
+    expectInOrder(hrefs(shellContext), ["/college", "/college/departments"]);
     expectInOrder(labels(shellContext), [
       "Dashboard",
       "Academic Setup",
@@ -247,27 +238,19 @@ describe("authenticated shell model", () => {
       "Profile verification",
       "Placements",
     ]);
-    expect(getShellRoleLabel(shellContext)).toBe(
-      "College Admin · Faculty · Mentor",
-    );
+    // Teaching and mentoring entries belong to those roles, not to College Admin.
+    expect(hrefs(shellContext)).not.toContain("/teacher/courses");
+    expect(hrefs(shellContext)).not.toContain("/mentor/projects");
+    expect(getShellRoleLabel(shellContext)).toBe("College Admin");
   });
 
-  it("keeps both learner and faculty Course entry points for a dual-role membership", () => {
-    const shellContext = context([
-      "LEARNER",
-      "FACULTY",
-    ]);
+  it("shows only the dashboard when several roles are held and none is selected", () => {
+    const shellContext = context(["LEARNER", "FACULTY"]);
 
-    expect(hrefs(shellContext)).toContain("/learn/courses");
-    expect(hrefs(shellContext)).toContain("/teacher/courses");
-    expectInOrder(labels(shellContext), [
-      "Dashboard",
-      "Quizzes",
-      "Assignments",
-      "My Placements",
-      "All Quizzes",
-      "All assignments",
-    ]);
+    // One workspace per role: roles are never merged into one sidebar.
+    expect(hrefs(shellContext)).toEqual(["/dashboard"]);
+    expect(hrefs(context(["LEARNER"]))).toContain("/learn/courses");
+    expect(hrefs(context(["FACULTY"]))).toContain("/teacher/courses");
     expect(hasAdminLinks(shellContext)).toBe(false);
   });
 
@@ -305,18 +288,17 @@ describe("authenticated shell model", () => {
   });
 
   it("gives TPO memberships the placement command center", () => {
-    const shellContext = context(["FACULTY", "TPO"]);
+    const shellContext = context(["TPO"]);
 
     expectInOrder(labels(shellContext), [
-      "Dashboard",
-      "Courses",
+      "Home",
       "Placement eligibility",
       "Engage",
       "Drives",
       "Students",
       "Calendar",
     ]);
-    expect(hrefs(shellContext)).toContain("/teacher/courses");
+    expect(hrefs(shellContext)).not.toContain("/teacher/courses");
     expect(hrefs(shellContext)).toContain("/tpo/calendar");
     expect(hrefs(shellContext)).toContain("/tpo/students");
     expect(hrefs(shellContext)).toContain("/tpo/team");
@@ -325,9 +307,7 @@ describe("authenticated shell model", () => {
     expect(hrefs(shellContext)).toContain("/tpo/settings");
     expect(hrefs(shellContext)).toContain("/tpo/notifications");
     expect(hasAdminLinks(shellContext)).toBe(false);
-    expect(getShellRoleLabel(shellContext)).toBe(
-      "Faculty · TPO",
-    );
+    expect(getShellRoleLabel(shellContext)).toBe("TPO");
   });
 
   it("exposes the placement calendar only to the matching college roles", () => {
@@ -359,9 +339,8 @@ describe("authenticated shell model", () => {
       },
     ]);
 
-    const mixed = getShellNavigation(context(["FACULTY", "TPO"]));
     expectInOrder(
-      mixed.map((item) => item.href),
+      tpoNavigation.map((item) => item.href),
       [
         "/tpo/recruiters",
         "/tpo/placements",
@@ -395,29 +374,19 @@ describe("authenticated shell model", () => {
     }
   });
 
-  it("qualifies a repeated label by the area it opens and keeps both destinations", () => {
-    const dual = getShellNavigation(context(["LEARNER", "FACULTY"]));
-
-    const courses = dual.filter((item) =>
-      item.label.startsWith("Courses"),
+  it("needs no label qualification because one role has one workspace", () => {
+    for (const role of ["LEARNER", "FACULTY", "MENTOR", "TPO", "COLLEGE_ADMIN"] as const) {
+      const names = labels(context([role]));
+      expect(new Set(names).size).toBe(names.length);
+      expect(names.filter((name) => name.includes(" · "))).toEqual([]);
+    }
+    const admin = getShellNavigation(context(["COLLEGE_ADMIN"]));
+    expect(admin.find((item) => item.href === "/college/courses")?.label).toBe(
+      "Courses & Content",
     );
-    expect(courses.map((item) => [item.label, item.href])).toEqual([
-      ["Courses · Learning", "/learn/courses"],
-      ["Courses · Teaching", "/teacher/courses"],
-    ]);
-
-    const admin = getShellNavigation(
-      context(["COLLEGE_ADMIN", "FACULTY", "MENTOR"]),
+    expect(admin.find((item) => item.href === "/college/projects")?.label).toBe(
+      "Projects",
     );
-    expect(
-      admin.find((item) => item.href === "/college/courses")?.label,
-    ).toBe("Courses & Content");
-    expect(
-      admin.find((item) => item.href === "/mentor/projects")?.label,
-    ).toBe("Projects · Mentoring");
-    expect(
-      admin.find((item) => item.href === "/college/projects")?.label,
-    ).toBe("Projects · College");
   });
 
   it("leaves labels alone when they are not repeated", () => {
@@ -427,28 +396,21 @@ describe("authenticated shell model", () => {
     expect(labels(context(["LEARNER"]))).not.toContainEqual(
       expect.stringContaining("·"),
     );
-    expect(labels(context(["FACULTY", "TPO"]))).toContain("Courses");
+    expect(labels(context(["FACULTY"]))).toContain("Courses");
   });
 
-  it("does not drop any destination when it qualifies labels", () => {
-    const all = context([
-      "LEARNER",
-      "FACULTY",
-      "MENTOR",
-      "TPO",
-      "COLLEGE_ADMIN",
-    ]);
-    const destinations = hrefs(all);
-    expect(new Set(destinations).size).toBe(destinations.length);
-    for (const href of [
-      "/learn/courses",
-      "/teacher/courses",
-      "/college/courses",
-      "/learn/notifications",
-      "/teacher/notifications",
-      "/mentor/notifications",
-    ]) {
-      expect(destinations).toContain(href);
+  it("keeps every role's own destinations and never repeats one inside a role", () => {
+    const expected: Record<string, string[]> = {
+      LEARNER: ["/learn/courses", "/learn/notifications"],
+      FACULTY: ["/teacher/courses", "/teacher/notifications"],
+      MENTOR: ["/mentor/projects", "/mentor/notifications"],
+      COLLEGE_ADMIN: ["/college/courses"],
+      TPO: ["/tpo/home", "/tpo/notifications"],
+    };
+    for (const [role, wanted] of Object.entries(expected)) {
+      const destinations = hrefs(context([role as MembershipRole]));
+      expect(new Set(destinations).size).toBe(destinations.length);
+      for (const href of wanted) expect(destinations).toContain(href);
     }
   });
 
@@ -486,21 +448,15 @@ describe("authenticated shell model", () => {
     ]);
   });
 
-  it("filters only learner-owned optional links on mixed-role memberships", () => {
-    const navigation = getShellNavigation(
-      context(["LEARNER", "FACULTY"]),
-      {
-        projectsEnabled: true,
-        placementsEnabled: false,
-      },
-    );
+  it("filters learner-owned optional links by current access", () => {
+    const navigation = getShellNavigation(context(["LEARNER"]), {
+      projectsEnabled: true,
+      placementsEnabled: false,
+    });
     const navHrefs = navigation.map((item) => item.href);
 
     expect(navHrefs).toContain("/learn/projects");
-    expect(
-      navigation.map((item) => item.label),
-    ).not.toContain("My Placements");
-    expect(navHrefs).toContain("/teacher/courses");
+    expect(navigation.map((item) => item.label)).not.toContain("My Placements");
   });
 
   it("does not add a non-legacy Drive Day row to the learner sidebar",()=>{

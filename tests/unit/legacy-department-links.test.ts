@@ -74,14 +74,18 @@ describe("legacy College/Super Admin Department bookmarks", () => {
       .toBe("/dashboard");
     expect(legacyDepartmentDestination({
       ...collegeAdmin,
+      membership: null,
       user: {
-        ...collegeAdmin.user, systemRoles: ["SUPER_ADMIN"],
+        
+...collegeAdmin.user, systemRoles: ["SUPER_ADMIN"],
       },
     }, "SUPER_ADMIN")).toBe("/admin/departments");
     expect(legacyDepartmentDestination({
       ...collegeAdmin,
+      membership: null,
       user: {
-        ...collegeAdmin.user, systemRoles: ["SUPER_ADMIN"],
+        
+...collegeAdmin.user, systemRoles: ["SUPER_ADMIN"],
         platformStatus: "DISABLED",
       },
     }, "SUPER_ADMIN")).toBe("/dashboard");
@@ -93,7 +97,9 @@ describe("legacy College/Super Admin Department bookmarks", () => {
       .toBe("/dashboard");
     expect(legacyProgramDestination({
       ...collegeAdmin,
-      user: { ...collegeAdmin.user, systemRoles: ["SUPER_ADMIN"] },
+      membership: null,
+      user: { 
+...collegeAdmin.user, systemRoles: ["SUPER_ADMIN"] },
     }, "SUPER_ADMIN")).toBe("/admin/programs");
     expect(legacyProgramDestination({
       ...collegeAdmin,

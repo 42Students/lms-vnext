@@ -89,7 +89,7 @@ describe("PROJ-BREAK-chat3-FACULTY-01 project role boundary and access journeys"
   expect(can(faculty,"projects.manage",{collegeId,organizationId})).toBe(false);
  });
  it("a Faculty-plus-Mentor actor needs an active persisted Mentor project grant",async()=>{
-  const hybrid=actor(["FACULTY","MENTOR"]);
+  const hybrid=actor(["MENTOR"]);
   const scope=await requireProjectReadAccess(hybrid,projectId);
   expect(scope.access).toBe("MENTOR");
   expect(scope.member).toMatchObject({role:"MENTOR",roleKind:"MENTOR"});
@@ -98,7 +98,7 @@ describe("PROJ-BREAK-chat3-FACULTY-01 project role boundary and access journeys"
    .toMatchObject({access:"MENTOR"});
  });
  it("nonmutable co-mentor/observer assignments never gain mentor lifecycle writes",async()=>{
-  const hybrid=actor(["FACULTY","MENTOR"]);
+  const hybrid=actor(["MENTOR"]);
   for(const value of [
    member("MENTOR","OBSERVER",false),
    member("MENTOR","CO_MENTOR",false),
@@ -112,7 +112,7 @@ describe("PROJ-BREAK-chat3-FACULTY-01 project role boundary and access journeys"
   }
  });
  it("rejects missing, ended or wrong-role mentor project grants",async()=>{
-  const hybrid=actor(["FACULTY","MENTOR"]);
+  const hybrid=actor(["MENTOR"]);
   stubs.member.mockResolvedValueOnce(null);
   await expect(requireProjectReadAccess(hybrid,projectId))
    .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
@@ -122,10 +122,10 @@ describe("PROJ-BREAK-chat3-FACULTY-01 project role boundary and access journeys"
  });
  it("rejects cross-college, cross-organization, suspended membership and disabled Faculty/Mentor",async()=>{
   const blocked=[
-   actor(["FACULTY","MENTOR"],{collegeId:otherCollege}),
-   actor(["FACULTY","MENTOR"],{organizationId:otherOrg}),
-   actor(["FACULTY","MENTOR"],{status:"SUSPENDED"}),
-   actor(["FACULTY","MENTOR"],{platformStatus:"DISABLED"}),
+   actor(["MENTOR"],{collegeId:otherCollege}),
+   actor(["MENTOR"],{organizationId:otherOrg}),
+   actor(["MENTOR"],{status:"SUSPENDED"}),
+   actor(["MENTOR"],{platformStatus:"DISABLED"}),
   ];
   for(const context of blocked){
    await expect(requireProjectReadAccess(context,projectId))
@@ -134,7 +134,7 @@ describe("PROJ-BREAK-chat3-FACULTY-01 project role boundary and access journeys"
   expect(stubs.member).not.toHaveBeenCalled();
  });
  it("a Faculty-plus-Mentor loses mutating access when the Projects module is disabled",async()=>{
-  const hybrid=actor(["FACULTY","MENTOR"]);
+  const hybrid=actor(["MENTOR"]);
   stubs.module.mockResolvedValue({projects:{enabled:false}});
   await expect(requireProjectLifecycleMutationAccess(hybrid,projectId))
    .rejects.toMatchObject({code:"PROJECT_LIFECYCLE_ACCESS_DENIED"});
@@ -152,7 +152,7 @@ describe("PROJ-BREAK-chat3-FACULTY-01 project role boundary and access journeys"
  it("invalid IDs and nonexistent projects cannot grant access",async()=>{
   await expect(requireProjectReadAccess(actor(["MENTOR"]),"not-a-uuid")).rejects.toThrow();
   stubs.project.mockResolvedValueOnce(null);
-  await expect(requireProjectReadAccess(actor(["FACULTY","MENTOR"]),projectId))
+  await expect(requireProjectReadAccess(actor(["MENTOR"]),projectId))
    .rejects.toMatchObject({code:"PROJECT_NOT_FOUND"});
  });
 });

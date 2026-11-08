@@ -84,9 +84,11 @@ describe("PHASE2-ROLE TPO workspace access decision",()=>{
   expect(canOpenTpoWorkspace(ctx({membership:null,systemRoles:["SUPER_ADMIN"]}))).toBe(false);
  });
 
- it("PHASE2-ROLE-08 holding TPO plus another role keeps the TPO scope",()=>{
-  const c=ctx({roles:["LEARNER","TPO"]});
-  expect(getTpoWorkspaceAccessDecision(c)).toEqual({allowed:true,scope:"TPO"});
+ it("PHASE2-ROLE-08 holding TPO plus another role selects none; the selected TPO role keeps the TPO scope",()=>{
+  // One workspace per role: two held roles with none selected grants nothing.
+  expect(getTpoWorkspaceAccessDecision(ctx({roles:["LEARNER","TPO"]})))
+   .toEqual({allowed:false,status:403,reason:"NO_ACTIVE_MEMBERSHIP"});
+  expect(getTpoWorkspaceAccessDecision(ctx({roles:["TPO"]}))).toEqual({allowed:true,scope:"TPO"});
  });
 });
 
@@ -205,13 +207,13 @@ describe("PHASE2-ROLE denied portal redirect",()=>{
   expect(deniedPortalHome(ctx({membership:null}))).toBe("/dashboard"+END);
  });
 
- it("PHASE2-ROLE-22 the redirect priority is super admin, recruiter, TPO, college admin, faculty, mentor, learner",()=>{
-  expect(deniedPortalHome(ctx({systemRoles:["SUPER_ADMIN"],recruiter:true,roles:["TPO"]}))).toBe("/admin/tenants"+END);
+ it("PHASE2-ROLE-22 the redirect priority is super admin, recruiter, then the single selected role; several held roles land on the dashboard",()=>{
+  expect(deniedPortalHome(ctx({membership:null,systemRoles:["SUPER_ADMIN"],recruiter:true}))).toBe("/admin/tenants"+END);
   expect(deniedPortalHome(ctx({recruiter:true,roles:["TPO","COLLEGE_ADMIN"]}))).toBe("/hr/home"+END);
-  expect(deniedPortalHome(ctx({roles:["LEARNER","COLLEGE_ADMIN","TPO"]}))).toBe("/tpo/home"+END);
-  expect(deniedPortalHome(ctx({roles:["LEARNER","FACULTY","COLLEGE_ADMIN"]}))).toBe("/college"+END);
-  expect(deniedPortalHome(ctx({roles:["LEARNER","MENTOR","FACULTY"]}))).toBe("/teacher/courses"+END);
-  expect(deniedPortalHome(ctx({roles:["LEARNER","MENTOR"]}))).toBe("/mentor/projects"+END);
+  expect(deniedPortalHome(ctx({roles:["LEARNER","COLLEGE_ADMIN","TPO"]}))).toBe("/dashboard"+END);
+  expect(deniedPortalHome(ctx({roles:["LEARNER","FACULTY","COLLEGE_ADMIN"]}))).toBe("/dashboard"+END);
+  expect(deniedPortalHome(ctx({roles:["LEARNER","MENTOR"]}))).toBe("/dashboard"+END);
+  expect(deniedPortalHome(ctx({roles:["TPO"]}))).toBe("/tpo/home"+END);
  });
 
  it("PHASE2-ROLE-23 a suspended membership or disabled account falls back to the dashboard, never to a privileged portal",()=>{
