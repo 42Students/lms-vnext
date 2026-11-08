@@ -82,6 +82,20 @@ describe("UX-G154 project write safety", () => {
     plan.indexOf('await askConfirm("Save changes as a new template version?")'));
   expect(plan).toContain("saveLock.current = false");
  });
+ it("releases unsaved-draft navigation only after an authorized template create", () => {
+  const create=source("src/components/projects/super-admin-template-create-form.tsx");
+  const guard=source("src/components/projects/project-editor-discard-guard.ts");
+  expect(guard).toContain("function allowNavigationAfterSave()");
+  expect(guard).toContain("leaveConfirmed.current=true");
+  expect(guard).toContain("if(leaveConfirmed.current)return");
+  const persisted=create.indexOf('await projectMutation("/api/projects/templates","POST",payload)');
+  const permitted=create.indexOf("guard.allowNavigationAfterSave()");
+  const navigation=create.indexOf('router.push("/admin/projects/templates/"+encodeURIComponent(result.template.id)+"/overview")');
+  expect(persisted).toBeGreaterThan(0);
+  expect(permitted).toBeGreaterThan(persisted);
+  expect(navigation).toBeGreaterThan(permitted);
+  expect(create.slice(persisted,permitted)).not.toContain("router.push");
+ });
  it("preserves cross-page selected college labels without trusting them for authorization", () => {
   const src=source("src/components/projects/super-admin-template-college-bulk.tsx");
   expect(src).toContain("savedSelection.find(row=>row.id===id)");
