@@ -36,3 +36,24 @@
 - [Unit coverage 71951696](https://github.com/42Students/lms-vnext/commit/71951696e127142d6033c52eb7c0253615cf61d8) checks all three mutation paths, the lock's try/finally release, stale-version UI guidance and unchanged expectedVersion. [CI scope 056354d4](https://github.com/42Students/lms-vnext/commit/056354d41ae629fc81831bd7a0f7996610e99bd9) lints this source and runs the complete group Vitest regressions.
 - [Browser fix 466c1cc0](https://github.com/42Students/lms-vnext/commit/466c1cc00e9498b9a2841c1a59cfbe85b9627df3) verifies the exact persisted View issue route after an HTTP 201 report POST without racing body consumption during navigation. The existing browser suite still requires two viewports and denial of privileged log export from a Learner. [Latest exact-SHA G154+G161 run 42495926875](https://github.com/42Students/lms-vnext/actions/runs/42495926875) was **pending**, not a pass.
 - Remaining G161 acceptance gaps: true issue workflow mutations, known-error link/recovery, attachments, provider-backed Telegram dispatch and restricted live logs on real authorized/denied identities. **DOING remains** until group-wide proof is complete.
+
+## 8 November 2026 — isolated G161 closure attempt (this chat)
+
+**Still DOING; do not infer DONE from submitted tests or earlier partial passes.**
+
+Concrete source fixes now on `main`:
+- `audit-finding-status-action.tsx`: current-version triage draft also resets on finding identity change.
+- `independent-finding-actions.tsx`: reset action-specific drafts for each finding/version, freeze edits on CAS conflict and show explicit refresh recovery; do not retry an uncertain update with an obsolete version.
+- `tracker-workflow-panel.tsx`: engineering save and retest HTTP 409 now request fresh issue props and block repeated stale writes, as status changes already did.
+- `known-errors-workspace.tsx`: synchronize linked issue ID after a server-proven refresh and clear consumed triage drafts only after a successful update.
+- `tracker-quick-report-launcher.tsx`: do not copy URL query parameters (which may contain token material) into diagnostic report context.
+
+Verification authored:
+- `tests/unit/ux-g161-finding-actions-recovery.test.ts`: seven focused source contracts for these state and privacy recovery paths. **Authored, not an executed pass.**
+- `tests/e2e/ux-g161-scoped-browser.spec.ts`: four isolated real-browser scenarios: report/create plus status CAS and stale rejection, Learner role denials, authorized Logs invalid filter/unconfigured recovery, and quick-report query privacy; desktop 1280x800 and mobile 390x844 screenshots.
+- `.github/workflows/ux-g161-scoped-browser-acceptance.yml`: dedicated exact-SHA lint, typecheck, focused regression, seeded PostgreSQL and Chromium acceptance with screenshots; latest workflow dispatch is [42497872675](https://github.com/42Students/lms-vnext/actions/runs/42497872675), **pending at the time of documentation**. This avoids coupling G161's status to the separate G154 template assignment failure.
+- `.github/workflows/ux-g161-finding-actions-acceptance.yml`: independent recovery source job [42497869564](https://github.com/42Students/lms-vnext/actions/runs/42497869564), **pending at the time of documentation**.
+
+Earlier shared [run 42495926875](https://github.com/42Students/lms-vnext/actions/runs/42495926875) passed the two G161 browser cases but failed its G154 template-assignment assertion (403 instead of 200). This cannot serve as group-wide exact-SHA closure.
+
+**Remaining independent acceptance:** execute and inspect the above jobs (including TypeScript and browser traces); real authorized issue workflow status/save/retest and denial/409 cases; independent audit-finding status, severity, comments, duplicate/fix commit and history; known-error triage and linkage in persistence-ready environment; live-log details/redaction/CSV/export and permission negatives with a configured provider; screenshot upload confirm/retry; actual Telegram test/digest provider acceptance, rate limit and error paths; keyboard/focus and 320px/390px/1280px across all eight components. Provider delivery must never be inferred from request acceptance. Only update `docs/tracker.json#uxReview` to DONE with executed green evidence and browser screenshots.
