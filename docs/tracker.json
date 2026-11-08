@@ -21287,11 +21287,11 @@
         "type": "JOURNEY",
         "area": "recruiter",
         "title": "Recruiter · Drives / JobId → Drives / JobId (part 2)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-gpt6-ux-multirole-20261108",
         "pickedAt": "2026-11-08T08:34:15.260Z",
         "startedAt": "2026-11-08T08:34:15.260Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T09:11:00.000Z",
         "sourceFiles": [
           "src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/error.tsx",
           "src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/loading.tsx",
@@ -21333,18 +21333,57 @@
           "PAGE-0312"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "236fcf26282bf407b2b34cb9882d5988e5d6f972",
+            "parityDoc": "docs/parity/ux-g081-g082-recruiter-drive-journeys.md",
+            "tests": [
+              {
+                "command": "test \"$(git rev-parse HEAD)\" = \"$GITHUB_SHA\"; scoped recruiter ESLint",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463920367 — exact checkout and lint success"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g081-g082-recruiter-drive-journeys.test.tsx --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463920367 — unit suite success"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g081-g082-recruiter-drive-journeys.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463920367 — both responsive browser cases success"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463920367 — TypeScript success"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463920367/artifacts/13611290879 — screenshot ux-g081-g082-desktop.png of recruiter route recovery/loading/discussion fixture"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463920367/artifacts/13611290879 — screenshot ux-g081-g082-mobile.png, no overflow"
+              }
+            ],
+            "regressionReview": "Verified successful exact-SHA 236fcf2 checkout, scoped lint, all recruiter unit assertions, two rendered-component Chromium viewport cases and full TypeScript. All 12 recruiter route errors are rendered and checked for sensitive exception exclusion, plus loading and drive-scoped discussion. Screenshots retained. Engineering UX closure only; fixture was synthetic, so signed-in tenant/college end-to-end acceptance remains separate.",
+            "securityReview": "Only recruiter UI recovery/loading/link semantics changed. No role, company/college scope, backend permission, request validation or tenant grants were altered. URL encoding and private error-text exclusion tested. Signed-in cross-role/tenant security acceptance not certified."
+          }
+        ]
       },
       {
         "id": "UX-G082",
         "type": "JOURNEY",
         "area": "recruiter",
         "title": "Recruiter · Drives / New → Profile (part 3)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-gpt6-ux-multirole-20261108",
         "pickedAt": "2026-11-08T08:34:15.260Z",
         "startedAt": "2026-11-08T08:34:15.260Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T09:11:00.000Z",
         "sourceFiles": [
           "src/app/(authenticated)/recruiter/drives/new/error.tsx",
           "src/app/(authenticated)/recruiter/drives/new/loading.tsx",
@@ -21386,7 +21425,46 @@
           "PAGE-0320"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "236fcf26282bf407b2b34cb9882d5988e5d6f972",
+            "parityDoc": "docs/parity/ux-g081-g082-recruiter-drive-journeys.md",
+            "tests": [
+              {
+                "command": "test \"$(git rev-parse HEAD)\" = \"$GITHUB_SHA\"; scoped recruiter ESLint",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463920367 — exact checkout and lint success"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g081-g082-recruiter-drive-journeys.test.tsx --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463920367 — unit suite success"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g081-g082-recruiter-drive-journeys.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463920367 — both responsive browser cases success"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463920367 — TypeScript success"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463920367/artifacts/13611290879 — screenshot ux-g081-g082-desktop.png of recruiter route recovery/loading/discussion fixture"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463920367/artifacts/13611290879 — screenshot ux-g081-g082-mobile.png, no overflow"
+              }
+            ],
+            "regressionReview": "Verified successful exact-SHA 236fcf2 checkout, scoped lint, all recruiter unit assertions, two rendered-component Chromium viewport cases and full TypeScript. All 12 recruiter route errors are rendered and checked for sensitive exception exclusion, plus loading and drive-scoped discussion. Screenshots retained. Engineering UX closure only; fixture was synthetic, so signed-in tenant/college end-to-end acceptance remains separate.",
+            "securityReview": "Only recruiter UI recovery/loading/link semantics changed. No role, company/college scope, backend permission, request validation or tenant grants were altered. URL encoding and private error-text exclusion tested. Signed-in cross-role/tenant security acceptance not certified."
+          }
+        ]
       },
       {
         "id": "UX-G083",
