@@ -94,7 +94,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
         showToast({tone:"error",title:reason instanceof FriendlyFetchError && reason.status===409 ?
           "Issue changed elsewhere" : "Could not update issue status.",
           description:reason instanceof Error ? reason.message : friendlyApiError({})});
-        if (reason instanceof FriendlyFetchError && reason.status===409) {
+        if (!(reason instanceof FriendlyFetchError) || reason.status===409 || reason.status>=500) {
           setNeedsRefresh(true);
           router.refresh();
         }
@@ -120,7 +120,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
       }catch(reason){
         showToast({tone:"error",title:reason instanceof FriendlyFetchError&&reason.status===409?"Issue changed elsewhere":"Engineering details could not be saved.",
           description:reason instanceof Error?reason.message:friendlyApiError({})});
-        if(reason instanceof FriendlyFetchError&&reason.status===409){
+        if(!(reason instanceof FriendlyFetchError)||reason.status===409||reason.status>=500){
           setNeedsRefresh(true);
           router.refresh();
         }
@@ -142,7 +142,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
       }catch(reason){
         showToast({tone:"error",title:reason instanceof FriendlyFetchError&&reason.status===409?"Issue changed elsewhere":"Retest result could not be saved.",
           description:reason instanceof Error?reason.message:friendlyApiError({})});
-        if(reason instanceof FriendlyFetchError&&reason.status===409){
+        if(!(reason instanceof FriendlyFetchError)||reason.status===409||reason.status>=500){
           setNeedsRefresh(true);
           router.refresh();
         }
