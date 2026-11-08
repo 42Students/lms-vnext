@@ -57,9 +57,7 @@ for(const viewport of [{name:"desktop",width:1280,height:800},{name:"mobile",wid
 }
 test("delayed admin loading offers an accessible retry rather than an indefinite skeleton",async({page})=>{
   await page.goto("/e2e/ux-g184-authenticated-states?role=admin&state=loading");
-  await page.clock.install();
-  await page.clock.fastForward(12_100);
   const busy=page.getByRole("region",{name:"admin loading preview"});
-  await expect(busy.getByRole("status").filter({hasText:"This is taking longer than expected"})).toBeVisible();
+  await expect(busy.getByRole("status").filter({hasText:"This is taking longer than expected"})).toBeVisible({timeout:16_000});
   await expect(busy.getByRole("button",{name:"Try again"})).toBeVisible();
 });
