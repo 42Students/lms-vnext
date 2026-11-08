@@ -1,0 +1,97 @@
+name: UX-G114 TPO joining, offers and leads authenticated acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tests/e2e/ux-g114-tpo-reports.spec.ts'
+      - 'src/app/(authenticated)/tpo/reports/joining-followups/**'
+      - 'src/app/(authenticated)/tpo/reports/joining-status/**'
+      - 'src/app/(authenticated)/tpo/reports/leads/**'
+      - 'src/app/(authenticated)/tpo/reports/offers-acceptance/**'
+      - 'src/app/(authenticated)/tpo/reports/offers-expiry/**'
+      - 'src/app/(authenticated)/tpo/reports/placed-branch/**'
+      - '.github/workflows/ux-g114-six-reports-acceptance.yml'
+permissions:
+  contents: read
+concurrency:
+  group: ux-g114-six-reports-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  report-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: 'true'
+      UX_G114_REPORT_ACCEPTANCE: 'true'
+      APP_ENV: development
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_OPTIONS: --max-old-space-size=6144
+      PLAYWRIGHT_JSON_OUTPUT_NAME: ux-g114-six-reports.json
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact SHA, scoped lint, TypeScript and UX tracker integrity
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npx eslint tests/e2e/ux-g114-tpo-reports.spec.ts \
+            'src/app/(authenticated)/tpo/reports/branch-season/' \
+            'src/app/(authenticated)/tpo/reports/by-branch/' \
+            'src/app/(authenticated)/tpo/reports/by-company/' \
+            'src/app/(authenticated)/tpo/reports/ctc/' \
+            'src/app/(authenticated)/tpo/reports/failure-reasons/' \
+            'src/app/(authenticated)/tpo/reports/intelligence/'
+          npm run typecheck
+          npm run ux:groups -- --check
+      - name: Assert report recovery regression contracts
+        run: npx vitest run tests/unit/tpo-ux-g110-g119-recovery.test.ts
+      - name: Prepare disposable PostgreSQL
+        run: npm run db:e2e:prepare
+      - name: Seed real TPO and learner test-only members
+        env:
+          ALLOW_TEST_SEED: I_ACCEPT
+          UX_ROLE_MEMBERSHIPS_ONLY: '1'
+        run: npx tsx scripts/seed-test-tenants.ts
+      - name: Generate test-only identity and session keys
+        shell: bash
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Verify 26 scoped G114 report journeys and learner denials, zero skips
+        run: |
+          npx playwright test tests/e2e/ux-g114-tpo-reports.spec.ts --project=chromium --workers=2 --reporter=line,json
+          node -e 'const s=require("./ux-g114-six-reports.json").stats; console.log(s); if(s.expected!==26||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
+      - name: Save report screenshots and failure traces
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g114-six-reports-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+            ux-g114-six-reports.json
+          if-no-files-found: ignore
+          retention-days: 14
