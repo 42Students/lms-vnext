@@ -1,0 +1,77 @@
+name: TPO UX G110-G119 recovery acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/app/(authenticated)/tpo/placements/schedule-conflicts/page.tsx'
+      - 'src/app/(authenticated)/tpo/recruiters/page.tsx'
+      - 'src/app/(authenticated)/tpo/reports/after-college/page.tsx'
+      - 'src/app/(authenticated)/tpo/reports/branch-season/page.tsx'
+      - 'src/app/(authenticated)/tpo/reports/joining-followups/page.tsx'
+      - 'src/app/(authenticated)/tpo/reports/placement-summary/page.tsx'
+      - 'src/app/(authenticated)/tpo/settings/blocked-dates/page.tsx'
+      - 'src/app/(authenticated)/tpo/settings/public-link/error.tsx'
+      - 'src/app/(authenticated)/tpo/settings/team/page.tsx'
+      - 'src/app/(authenticated)/tpo/students/preparation-plan/page.tsx'
+      - 'src/app/e2e/ux-g110-g119-recovery/**'
+      - 'tests/unit/tpo-ux-g110-g119-recovery.test.ts'
+      - 'tests/e2e/ux-g110-g119-recovery.spec.ts'
+      - '.github/workflows/ux-g110-g119-recovery-acceptance.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  scoped-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      UX_TPO_G110_G119_FIXTURE: "1"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact triggering source SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Scoped lint
+        run: |
+          npx eslint \
+            "src/app/(authenticated)/tpo/placements/schedule-conflicts/page.tsx" \
+            "src/app/(authenticated)/tpo/recruiters/page.tsx" \
+            "src/app/(authenticated)/tpo/reports/after-college/page.tsx" \
+            "src/app/(authenticated)/tpo/reports/branch-season/page.tsx" \
+            "src/app/(authenticated)/tpo/reports/joining-followups/page.tsx" \
+            "src/app/(authenticated)/tpo/reports/placement-summary/page.tsx" \
+            "src/app/(authenticated)/tpo/settings/blocked-dates/page.tsx" \
+            "src/app/(authenticated)/tpo/settings/public-link/error.tsx" \
+            "src/app/(authenticated)/tpo/settings/team/page.tsx" \
+            "src/app/(authenticated)/tpo/students/preparation-plan/page.tsx" \
+            "src/app/e2e/ux-g110-g119-recovery/page.tsx" \
+            tests/unit/tpo-ux-g110-g119-recovery.test.ts \
+            tests/e2e/ux-g110-g119-recovery.spec.ts
+      - name: Positive and negative unit/source contracts
+        run: npx vitest run tests/unit/tpo-ux-g110-g119-recovery.test.ts --reporter=dot
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop and mobile rendered recovery acceptance
+        run: npx playwright test tests/e2e/ux-g110-g119-recovery.spec.ts --project=chromium --reporter=line
+      - name: TypeScript integrity
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: Save browser screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: tpo-ux-g110-g119-recovery-${{ github.run_id }}
+          path: |
+            test-results/**
+            playwright-report/**
+          if-no-files-found: ignore
+          retention-days: 7
