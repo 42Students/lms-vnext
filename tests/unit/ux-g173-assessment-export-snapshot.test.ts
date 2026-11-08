@@ -65,4 +65,16 @@ describe("UX-G173 assessment export snapshot safety",()=>{
       reader as unknown as Reader)).rejects.toThrow("COLLEGE_ASSESSMENT_EXPORT_STALE");
     expect(reader).toHaveBeenCalledTimes(1);
   });
+  it("rejects oversized and wrong-page responses in legacy current-page export mode",async()=>{
+    const oversized=vi.fn(async()=>({...first(),
+      items:Array.from({length:21},(_,i)=>row(i)),page:2,
+    }));
+    await expect(exportCollegeAssessments(context,"QUIZ",
+      {exportMode:"PAGE",page:2},oversized as unknown as Reader))
+      .rejects.toThrow("COLLEGE_ASSESSMENT_EXPORT_STALE");
+    const mismatched=vi.fn(async()=>({...first(),page:1}));
+    await expect(exportCollegeAssessments(context,"QUIZ",
+      {exportMode:"PAGE",page:2},mismatched as unknown as Reader))
+      .rejects.toThrow("COLLEGE_ASSESSMENT_EXPORT_STALE");
+  });
 });
