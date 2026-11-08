@@ -56,7 +56,6 @@ jobs:
           echo "$GITHUB_SHA" > ux-g125-source-sha.txt
       - name: Verify UX tracker, source lint and TypeScript
         run: |
-          npm run ux:groups -- --check
           npx eslint \
             src/components/academics/academics-actions.tsx \
             src/components/academics/academics-create-panel.tsx \
@@ -84,6 +83,8 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Authenticated desktop/mobile and denied learner export
         run: npx playwright test tests/e2e/ux-g125-academic-actions.spec.ts --project=chromium --reporter=line
+      - name: Validate canonical UX board completion proofs
+        run: npm run ux:groups -- --check
       - name: Archive exact-SHA viewport screenshots and traces
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
