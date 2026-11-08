@@ -48,3 +48,15 @@ Do not count this file, the source-readback assertions, the existing engineering
 ## Pinned source-contract readback
 
 Pinned source readback at `c566aa77705bdb6838ed6627a5107b0e9f1bb78c`: **56/56** error boundaries across the ten groups passed connector-executed readback assertions (16 + 17 + 12 + 11). The assertions checked Retry presence, in-shell rendering or a return link, and absence of direct `error.message`, `error.stack` or `JSON.stringify(error)` exposure. This is source-only verification; the committed Node test, TypeScript, runtime/browser flows and authorization-negative cases still require execution and review.
+
+## Executed desktop/mobile recovery acceptance (8 November 2026)
+
+**Passing exact source SHA:** `c1e4bc63a9f69c18096d0e0beb9d2558a59b7e6e`.  
+**GitHub Actions run:** https://github.com/42Students/lms-vnext/actions/runs/42478299021 — job `error-recovery`, **SUCCESS**.  
+**Screenshot artifact:** `ux-g015-g029-error-recovery-42478299021`, GitHub artifact ID `13616926179` (40 component/viewport screenshots, artifact generated and retained seven days).
+
+The executed run passed `npm ci`, exact-SHA assertion, `npm run ux:groups -- --check`, ten Node source-contract subtests covering 56 boundaries, scoped fixture/Playwright ESLint, full `npm run typecheck`, Chromium installation, and **2/2 Playwright tests**. Playwright exercised 20 real error components (two from each group) at **1280×800 and 390×844**. It asserted visible keyboard-invokable Retry, click and Enter reset callbacks, safe relative navigation, absence of sensitive exception text, no horizontal document overflow, and zero browser uncaught errors.
+
+The first run (42477933500 at `df8eaa7`) failed TypeScript due to 20 wrongly prefixed fixture imports. All 20 were corrected at `c1e4bc6`; the new run above is passing. The failure is retained as evidence rather than erased.
+
+**Acceptance boundary:** This certifies the 56-boundary source-recovery contract and sampled rendered recovery behavior. It does **not** certify six-route happy paths, data mutations, per-college authorization, all overlays, forms, loading/empty states, or overall UX-G015–G029 closure. Continue the existing group DOING states. A separate seeded role-and-tenant acceptance for UX-G029 is tracked at `.github/workflows/ux-g029-college-journeys-acceptance.yml`.
