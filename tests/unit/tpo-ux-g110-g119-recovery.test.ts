@@ -157,6 +157,15 @@ describe("TPO UX G114–G119: recovery controls and empty reports", () => {
     }
   });
 
+  it("G113: two report loading skeletons announce progress nonvisually", () => {
+    for (const segment of ["by-branch", "by-company"]) {
+      const source = page(`reports/${segment}/loading.tsx`);
+      expect(source).toContain('role="status"');
+      expect(source).toContain('aria-live="polite"');
+      expect(source).toContain('className="sr-only"');
+    }
+  });
+
   it("G117: all six public and policy settings error routes provide a safe way home", () => {
     for (const segment of ["recruiters", "rules", "season", "see"]) {
       const source = page(`settings/${segment}/error.tsx`);
