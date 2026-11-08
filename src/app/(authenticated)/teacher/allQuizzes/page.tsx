@@ -8,16 +8,19 @@ import { getFacultyAssessmentOverview } from "@/modules/courses/faculty-assessme
 import { TextLink } from "@/components/ui/text-link";
 
 export default async function FacultyAllQuizzesPage({searchParams}:{
- searchParams:Promise<{content?:string}>;
+ searchParams:Promise<{content?:string|string[]}>;
 }) {
   const context = await getCurrentRequestContext();
   const rawId=(await searchParams).content;
-  const initialQuizId=rawId&&/^[0-9a-f]{8}-[0-9a-f-]{27,36}$/i.test(rawId)?rawId:null;
+  // Duplicate or malformed deep-link selectors never preselect a quiz.
+  const initialQuizId=typeof rawId==="string"&&/^[0-9a-f]{8}-[0-9a-f-]{27,36}$/i.test(rawId)?rawId:null;
+  const invalidShortcut=rawId!==undefined&&!initialQuizId;
   const overview = await getFacultyAssessmentOverview(context);
   return (
     <div className="min-w-0 max-w-full space-y-4">
       <PageHeader title="My Quizzes"
         actions={<FacultyAssessmentCreate kind="QUIZ" lessons={overview.lessonChoices} />} />
+      {invalidShortcut?<p role="status" className="text-sm text-body">That quiz shortcut is invalid; showing all your authorized quizzes instead.{" "}<TextLink href="/teacher/allQuizzes" className="inline-flex min-h-11 items-center">Clear shortcut</TextLink></p>:null}
       <div aria-label="Quiz totals" className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
         <div className="flex flex-wrap items-center gap-2">
           <Badge tone="neutral">{overview.quizzes.length} {overview.quizzes.length===1?"Quiz":"Quizzes"}</Badge>
