@@ -147,7 +147,7 @@ describe("UX-G161 tracker recoverability and formula safety", () => {
  it("locks status changes while waiting for the refreshed version", () => {
   const src=source("src/components/tracker/audit-finding-status-action.tsx");
   expect(src).toContain("setStale(true);router.refresh()");
-  expect(src).toContain("},[current,version])");
+  expect(src).toContain("},[publicId,current,version])");
   expect(src).toContain("auditFindingStatusPayload(version,status)");
  });
 });
