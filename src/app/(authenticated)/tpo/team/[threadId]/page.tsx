@@ -43,7 +43,13 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  const parsed=tpoThreadIdSchema.safeParse(threadId);
  if(!parsed.success)notFound();
  const query=await searchParams;
- const rawPage=Array.isArray(query.page)?query.page[0]:query.page;
+ if(Object.values(query).some(Array.isArray))return <div className="min-w-0 space-y-4">
+  <PageHeader title="Team conversation" />
+  <ErrorState title="Conflicting conversation filters"
+   description="This link repeats a page or message reference. No private messages were loaded from the ambiguous link."
+   action={<ButtonLink variant="secondary" href={"/tpo/team/"+encodeURIComponent(threadId)}>Clear conversation filters</ButtonLink>} />
+ </div>;
+ const rawPage=query.page;
  const parsedPage=tpoMessagePageSchema.safeParse(rawPage ?? 1);
  const rawMessage=Array.isArray(query.m)?query.m[0]:query.m;
  const highlightId=rawMessage&&tpoThreadIdSchema.safeParse(rawMessage).success?rawMessage:undefined;
