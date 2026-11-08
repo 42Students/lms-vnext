@@ -32845,11 +32845,11 @@
         "type": "OUTBOUND",
         "area": "projects",
         "title": "Projects · Outbound copy and exports (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-project-exports-20261107",
         "pickedAt": "2026-11-07T16:50:16.836Z",
         "startedAt": "2026-11-07T16:50:16.836Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T14:50:40.114Z",
         "sourceFiles": [
           "src/modules/projects/class-team-csv-export.ts",
           "src/modules/projects/learner-project-activity-csv-model.ts",
@@ -32878,9 +32878,52 @@
             "commitSha": "c234a180ef32171d1ed4a90b231fbabf0aa0238b",
             "results": "Exact checkout, scoped lint, full TypeScript, 10 Vitest suites/41 tests, 15 real Chromium scenarios: seven CSV serializer sample+empty downloads at 1280px and 390px, anonymous protected mentor-export HTTP denial; no skips/flaky/unexpected. Development-only fixture, not actual authenticated OTP device API acceptance.",
             "artifactId": 13609811143
+          },
+          {
+            "commitSha": "80dc3ef76f612c9e1cde6748a999870a84b0303a",
+            "parityDoc": "docs/parity/pages/projects/UX-G182-project-csv-exports.md",
+            "tests": [
+              {
+                "command": "npx eslint tests/e2e/ux-g182-real-device-exports.spec.ts && npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42489661370"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g182-project-export-ux.test.ts tests/unit/mentor-calendar-export-model.test.ts tests/unit/mentor-project-activity-export.test.ts --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42489661370"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g182-real-device-exports.spec.ts --project=chromium --workers=1 --reporter=line,json",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42489661370"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g182-project-export-ux.test.ts tests/unit/project-class-team-csv-export.test.ts tests/unit/learner-project-activity-csv-model.test.ts tests/unit/mentor-project-activity-export.test.ts tests/unit/mentor-calendar-export-model.test.ts tests/unit/mentor-activity-portfolio-csv.test.ts tests/unit/mentor-task-review-export.test.ts tests/unit/PROJ-BREAK-chat6-export-integrity.test.ts tests/unit/PROJ-BREAK-LEARNER-02.test.ts tests/unit/PROJ-BREAK-SA-42-learner-activity-export-unicode.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461048230"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g182-project-downloads.spec.ts --project=chromium",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461048230"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42489661370/artifacts/13622105420"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42489661370/artifacts/13622105420"
+              }
+            ],
+            "regressionReview": "Full seven-serializer bounded/empty/Unicode/truncated export suite 41/41 tests, real synthesized desktop/mobile downloads 15/15, subsequent grapheme-boundary regression run 42487701732 green, and fresh-device real 3/3 browser scenarios at exact SHA 80dc3ef76f612c9e1cde6748a999870a84b0303a. Existing class/learner CSV schemas, spreadsheet neutralization, headers, row caps, filenames and download bytes unchanged or explicitly verified.",
+            "securityReview": "Real first-party OTP start/verify in disposable seeded PG17 (no E2E impersonation as privileged factor), persisted assigned Mentor membership, five true API CSV responses scoped to permitted Mentor work, real browser file bytes with no PII/link leakage, wrong-college Faculty switch returns non-CSV denial; prior anonymous and seeded E2E impersonation denial also green. Production step-up and tenant permission checks unchanged."
           }
         ],
-        "notes": " 2026-11-08: exact-SHA G182 CI passed 41/41 Vitest and 15/15 responsive browser with artifact 13609811143. Remains DOING until real recent-device-authenticated positive download and tenant/role scoping on live API; no step-up bypass."
+        "notes": " 2026-11-08: exact-SHA G182 CI passed 41/41 Vitest and 15/15 responsive browser with artifact 13609811143. Remains DOING until real recent-device-authenticated positive download and tenant/role scoping on live API; no step-up bypass. 2026-11-08: full 7-serializer responsive and real OTP/tenant-scoped export acceptance green; real run 42489661370 artifact 13622105420; group DONE."
       },
       {
         "id": "UX-G183",
