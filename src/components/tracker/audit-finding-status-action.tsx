@@ -15,7 +15,7 @@ export function AuditFindingStatusAction({publicId,current,version}:{publicId:st
  const inFlight=useRef(false);
  const [feedback,setFeedback]=useState("");
  const [stale,setStale]=useState(false);
- useEffect(()=>{setStatus(current as BugStatus);setStale(false);setFeedback("");setReview(false);},[current,version]);
+ useEffect(()=>{setStatus(current as BugStatus);setStale(false);setFeedback("");setReview(false);},[publicId,current,version]);
  async function submit(){
   if(inFlight.current||!canChangeAuditFindingStatus(current,status,pending))return;
   inFlight.current=true;
