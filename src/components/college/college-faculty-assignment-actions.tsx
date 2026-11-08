@@ -295,10 +295,12 @@ export function CollegeFacultyAssignmentEnd({
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [confirming,setConfirming]=useState(false);
+  const endingRef=useRef(false);
   const [success,setSuccess]=useState("");
   const [error, setError] = useState<string | null>(null);
   async function end() {
-
+    if(saving||endingRef.current)return;
+    endingRef.current=true;
     setError(null);
     setSaving(true);
     try {
@@ -311,6 +313,7 @@ export function CollegeFacultyAssignmentEnd({
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Assignment could not be ended.");
     } finally {
+      endingRef.current=false;
       setSaving(false);
     }
   }
