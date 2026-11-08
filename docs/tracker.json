@@ -20451,11 +20451,11 @@
         "type": "JOURNEY",
         "area": "mentor",
         "title": "Mentor · Notifications → Projects / ProjectId (part 2)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-gpt6-ux-multirole-20261108",
         "pickedAt": "2026-11-08T08:16:37.275Z",
         "startedAt": "2026-11-08T08:16:37.275Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T08:44:10.058Z",
         "sourceFiles": [
           "src/app/(authenticated)/mentor/notifications/error.tsx",
           "src/app/(authenticated)/mentor/notifications/loading.tsx",
@@ -20493,7 +20493,46 @@
           "PAGE-0295"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "af137b7d4db2eda063e157a00f899865ec2b7623",
+            "parityDoc": "docs/parity/ux-g059-g070-g080-route-acceptance.md",
+            "tests": [
+              {
+                "command": "Exact-SHA checkout and scoped ESLint",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463187143 — passed"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g070-mentor-route-recovery.test.tsx --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463187143 — 6/6 unit cases passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g070-mentor-route-recovery.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463187143 — 2/2 desktop/mobile rendered-component browser cases passed"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463187143 — TypeScript passed"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463187143/artifacts/13610852237 — ux-g070-desktop.png"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463187143/artifacts/13610852237 — ux-g070-mobile.png"
+              }
+            ],
+            "regressionReview": "At exact af137b7d revision, scoped lint, six unit cases, two rendered desktop/mobile Chromium cases (including no JS errors/no horizontal overflow), full TypeScript and screenshot upload all passed. Invalid-filter recovery is handled by the same new project-specific component used by both server pages; authenticated live-user integration is separately gated.",
+            "securityReview": "Project ID is encoded and clean navigation still requires original server-side project membership checks. No additional data is returned by the error state. Client fallback does not log provider exception contents. No RBAC, tenant isolation, module access policy, database, endpoint or credential scope changed."
+          }
+        ]
       },
       {
         "id": "UX-G071",
