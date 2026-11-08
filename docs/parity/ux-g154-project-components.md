@@ -25,3 +25,10 @@
 - Added synchronous mutation locks for published-template lifecycle/duplicate actions and member primary/remove actions, with source-contract regression tests; a second click cannot race React's deferred pending-state update.
 - The separate real database template creation + metadata PATCH + publication browser path has run successfully as an individual test within earlier mixed workflows. The dedicated full suite including bulk assignment CAS, stale-version conflict and cleanup is newly authored and still requires a completely green exact-SHA run.
 - Remaining open: all eight component states, negative/positive team and college assignments, duplicate replay, stale-search rejection, responsive/keyboard modality and scope review. **Keep DOING until those are evidenced.**
+
+## 8 November 2026 — template plan/metadata duplicate-submit guard
+
+- [Metadata edit fix abf38535](https://github.com/42Students/lms-vnext/commit/abf38535a5099e90d1954c220d0146d466f5aa80) adds a synchronous ref lock before a template overview PATCH. Invalid/stale drafts continue to fail before the lock; the lock is released in `finally` so correction/retry remains possible.
+- [Sprint/task plan editor fix 898275e2](https://github.com/42Students/lms-vnext/commit/898275e2718954c66bc1e7f34492689b4c3bb14f) guards the confirmation dialog through the entire awaited mutation and releases the lock on cancel, conflict or error. Server `expectedVersion` compare-and-set remains intact.
+- [Regression assertions ca43e0a9](https://github.com/42Students/lms-vnext/commit/ca43e0a980ba41d3ba7dea2bf29ea79930e19d39) verify both guards; [shared workflow a0d9291d](https://github.com/42Students/lms-vnext/commit/a0d9291d3ef55a9fc10cefbca5c106cc0d65fc7c) lints both changed editors with the pre-existing group checks.
+- The initial exact-SHA [run 42488245047](https://github.com/42Students/lms-vnext/actions/runs/42488245047) was **cancelled** amid parallel `main` pushes; cancellation is not successful acceptance. The complete project team/template/assignment/CAS desktop-mobile matrix remains open; keep **DOING**.
