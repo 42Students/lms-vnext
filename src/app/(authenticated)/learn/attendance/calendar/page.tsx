@@ -29,7 +29,6 @@ import { createDateFormatter } from "@/lib/format-date";
 
 export const dynamic = "force-dynamic";
 type Params = {month?:string|string[];deliveryId?:string|string[];status?:string|string[]};
-const first = (value:string|string[]|undefined) => Array.isArray(value)?value[0]:value;
 
 const statusNames:Record<string,string> = {
   PRESENT:"Present",ABSENT:"Absent",EXCUSED:"Excused",MEDICAL:"Medical",
@@ -44,10 +43,13 @@ export default async function LearnerAttendanceCalendarPage({
   searchParams,
 }:{searchParams:Promise<Params>}) {
   const raw=await searchParams;
+  // Repeated query keys are not a reliable course/month selection. Let Zod
+  // reject arrays and show the clear-filters recovery state instead of
+  // silently choosing the first value from an ambiguous bookmark.
   const parsed=learnerAttendanceCalendarQuerySchema.safeParse({
-    month:first(raw.month)??undefined,
-    deliveryId:first(raw.deliveryId)??undefined,
-    status:first(raw.status)??undefined,
+    month:raw.month??undefined,
+    deliveryId:raw.deliveryId??undefined,
+    status:raw.status??undefined,
   });
   if(!parsed.success) return <section className="min-w-0 space-y-4">
     <PageHeader title="Attendance calendar" />
