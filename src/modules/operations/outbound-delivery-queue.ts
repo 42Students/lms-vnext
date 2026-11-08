@@ -9,7 +9,7 @@ import {
   OutboundDeliveryError,
   parseOutboundIntent,
 } from "./outbound-delivery-contract";
-import { bindGlobalEmailSuppressionHashToOutbox, deriveGlobalEmailSuppressionHash, sealOutboundDelivery } from "./outbound-delivery-envelope";
+import { bindGlobalEmailSuppressionHashToOutbox, deriveGlobalEmailSuppressionHash, sealOutboundDelivery, outboundKeyRingFromEnv } from "./outbound-delivery-envelope";
 import {
   validOutboundCompletion,
   type OutboundCompletionInput,
@@ -96,7 +96,7 @@ export async function queueOutboundDeliveryInTransaction(
   if (intent.channel === "EMAIL" && encryptionKey === globalEmailKey) {
     throw new OutboundDeliveryError("OUTBOUND_KEY_UNAVAILABLE");
   }
-  const envelope = sealOutboundDelivery(intent, encryptionKey);
+  const envelope = sealOutboundDelivery(intent, outboundKeyRingFromEnv());
   // Global email recipient HMAC is intentionally different from the
   // organization-scoped recipientHash. Null for SMS and WhatsApp.
   const globalEmailSuppressionHash = deriveGlobalEmailSuppressionHash(

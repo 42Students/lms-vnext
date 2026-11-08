@@ -3,6 +3,7 @@ import { sql } from "drizzle-orm";
 import { getOutboundDispatchDb, requireOutboundDispatchPrincipal } from "./outbound-dispatch-principal";
 import {
   openOutboundDelivery,
+  outboundKeyRingFromEnv,
   deriveGlobalEmailSuppressionHashForAddress,
   type SealedOutboundDelivery,
 } from "./outbound-delivery-envelope";
@@ -72,11 +73,11 @@ async function openLiveOutboundClaim(
     limit 1
   `);
   const row = result.rows[0];
-  if (!row || row.key_id !== "v1") return null;
+  if (!row || !/^v[0-9]{1,6}$/.test(row.key_id)) return null;
   const sealed: SealedOutboundDelivery = {
     id: row.id,
     schemaVersion: 1,
-    keyId: "v1",
+    keyId: row.key_id,
     organizationId: row.organization_id,
     collegeId: row.college_id,
     sourceEventId: row.source_event_id,
@@ -92,7 +93,7 @@ async function openLiveOutboundClaim(
     expiresAt: row.expires_at?.toISOString() ?? null,
   };
   const intent = openOutboundDelivery(
-    sealed, process.env["DB10_OUTBOUND_ENCRYPTION_KEY_BASE64"] ?? "",
+    sealed, outboundKeyRingFromEnv(),
   );
   // This worker has only the recruiter EMAIL contract. An injected provider
   // is NOT proof of TRAI/DLT registration, SMS opt-in or WhatsApp approval.

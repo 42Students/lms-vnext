@@ -121,7 +121,7 @@ export function legacyInterviewReminderVariables(input:InterviewReminderTemplate
 export type SealedOutboundDelivery = {
   id: string;
   schemaVersion: 1;
-  keyId: "v1";
+  keyId: string;
   organizationId: string;
   collegeId: string;
   sourceEventId: string;
@@ -136,6 +136,45 @@ export type SealedOutboundDelivery = {
   notBefore: string | null;
   expiresAt: string | null;
 };
+
+/**
+ * Key versioning (SEC-09-011, SEC-10-002). A bare string is the single v1 key,
+ * exactly as before. A ring lets the cipher key rotate: new envelopes use
+ * currentId, older ones open with the key named in their own keyId, and the
+ * recipient/idempotency/request digests keep deriving from digestMaster so
+ * dedupe and opt-out lookups do not change when the cipher key does.
+ * Rotation: DB10_OUTBOUND_DIGEST_KEY_BASE64 = the old master (frozen),
+ * DB10_OUTBOUND_ENCRYPTION_KEY_BASE64 = new master, ..._KEY_ID = v2,
+ * DB10_OUTBOUND_ENCRYPTION_KEY_PREVIOUS_BASE64 = old master (ID v1).
+ */
+export type OutboundKeyRing = {
+  currentId: string;
+  keys: Record<string, string>;
+  digestMaster: string;
+};
+
+const KEY_ID = /^v[0-9]{1,6}$/;
+
+function resolveRing(arg: string | OutboundKeyRing): OutboundKeyRing {
+  if (typeof arg === "string") return { currentId: "v1", keys: { v1: arg }, digestMaster: arg };
+  return arg;
+}
+
+export function outboundKeyRingFromEnv(env: NodeJS.ProcessEnv = process.env): string | OutboundKeyRing {
+  const current = env["DB10_OUTBOUND_ENCRYPTION_KEY_BASE64"] ?? "";
+  const currentId = env["DB10_OUTBOUND_ENCRYPTION_KEY_ID"] || "v1";
+  const previous = env["DB10_OUTBOUND_ENCRYPTION_KEY_PREVIOUS_BASE64"] ?? "";
+  const previousId = env["DB10_OUTBOUND_ENCRYPTION_KEY_PREVIOUS_ID"] || "v1";
+  const digest = env["DB10_OUTBOUND_DIGEST_KEY_BASE64"] ?? "";
+  if (currentId === "v1" && !previous && !digest) return current;
+  if (!KEY_ID.test(currentId) || !KEY_ID.test(previousId)) throw new OutboundDeliveryError("OUTBOUND_KEY_UNAVAILABLE");
+  // Rotating the cipher key without freezing the digest key would change every digest.
+  if (currentId !== "v1" && !digest) throw new OutboundDeliveryError("OUTBOUND_KEY_UNAVAILABLE");
+  if (previous && previousId === currentId) throw new OutboundDeliveryError("OUTBOUND_KEY_UNAVAILABLE");
+  const keys: Record<string, string> = { [currentId]: current };
+  if (previous) keys[previousId] = previous;
+  return { currentId, keys, digestMaster: digest || current };
+}
 
 function keyMaterial(keyBase64: string) {
   if (!/^(?:[A-Za-z0-9+/]{4}){10}(?:[A-Za-z0-9+/]{3}=)$/.test(keyBase64)) {
@@ -156,9 +195,11 @@ function keyMaterial(keyBase64: string) {
 
 /** Pre-claim secret readiness: validate with the SAME strict decoder used
  * for encryption/decryption, without exposing a derived key or payload. */
-export function outboundEncryptionKeyConfigured(raw: string): boolean {
+export function outboundEncryptionKeyConfigured(raw: string | OutboundKeyRing): boolean {
   try {
-    keyMaterial(raw);
+    const ring = resolveRing(raw);
+    for (const key of Object.values(ring.keys)) keyMaterial(key);
+    keyMaterial(ring.digestMaster);
     return true;
   } catch {
     return false;
@@ -196,10 +237,12 @@ function binding(record: Pick<SealedOutboundDelivery,
  */
 export function sealOutboundDelivery(
   rawIntent: unknown,
-  keyBase64: string,
+  keyBase64: string | OutboundKeyRing,
 ): SealedOutboundDelivery {
   const intent = parseOutboundIntent(rawIntent);
-  const { cipherKey, digestKey } = keyMaterial(keyBase64);
+  const ring = resolveRing(keyBase64);
+  const { cipherKey } = keyMaterial(ring.keys[ring.currentId] ?? "");
+  const { digestKey } = keyMaterial(ring.digestMaster);
   const plaintext = JSON.stringify(intent);
   const recipientHash = digest(digestKey, "recipient", JSON.stringify([
     intent.organizationId, intent.channel, intent.recipient,
@@ -214,7 +257,7 @@ export function sealOutboundDelivery(
   const common = {
     id,
     schemaVersion: 1 as const,
-    keyId: "v1" as const,
+    keyId: ring.currentId,
     organizationId: intent.organizationId,
     collegeId: intent.collegeId,
     sourceEventId: intent.sourceEventId,
@@ -315,16 +358,18 @@ function sameOutboundInstant(original: string | undefined, stored: string | null
 /** Only a privileged background sender should ever decrypt this. */
 export function openOutboundDelivery(
   sealed: SealedOutboundDelivery,
-  keyBase64: string,
+  keyBase64: string | OutboundKeyRing,
 ): OutboundDeliveryIntent {
-  const { cipherKey, digestKey } = keyMaterial(keyBase64);
+  const ring = resolveRing(keyBase64);
+  const { digestKey } = keyMaterial(ring.digestMaster);
   try {
-    if (sealed.schemaVersion !== 1 || sealed.keyId !== "v1" ||
+    if (sealed.schemaVersion !== 1 || !KEY_ID.test(sealed.keyId) || !ring.keys[sealed.keyId] ||
         !/^[0-9a-f]{64}$/.test(sealed.requestDigest) ||
         !/^[0-9a-f]{64}$/.test(sealed.recipientHash) ||
         !/^[0-9a-f]{64}$/.test(sealed.idempotencyKey)) {
       throw new Error("invalid envelope");
     }
+    const { cipherKey } = keyMaterial(ring.keys[sealed.keyId]);
     const decipher = createDecipheriv(
       "aes-256-gcm",
       cipherKey,
