@@ -1,3 +1,6 @@
+import {redirect} from "next/navigation";
+import {hasMembershipRole} from "@/modules/identity/context";
+import {assertMentorProjectRecoveryAccess} from "@/modules/projects/mentor-project-recovery-guard";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { Pagination } from "@/components/ui/pagination";
 import { Tabs } from "@/components/ui/tabs";
@@ -37,11 +40,16 @@ export default async function MentorTeamHistoryPage({
   const parsed = mentorTeamHistoryQuerySchema.safeParse(
     normalized ? {projectId,...normalized} : null,
   );
-  if (!parsed.success) return <section role="alert" className="space-y-3">
+  if (!parsed.success){
+ const recoveryContext=await getCurrentRequestContext();
+ if(!hasMembershipRole(recoveryContext,"MENTOR"))redirect("/dashboard");
+ await assertMentorProjectRecoveryAccess(recoveryContext,projectId);
+ return  <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid team history filters"} />
     <p className="text-sm text-body">The filter link is invalid or contains duplicate values. Clear it to stay within this project’s team history.</p>
     <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"} className="inline-flex min-h-11 items-center">Clear invalid filters</TextLink>
   </section>;
+ }
 
   const context = await getCurrentRequestContext();
   const data = await getMentorTeamHistory(context, parsed.data);
