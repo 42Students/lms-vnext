@@ -67,7 +67,7 @@ describe("UX-G161 finding editor recovery contract",()=>{
   expect(actions).toContain("if(reason.status>=500)setStale(true);");
   expect(actions).toContain("The result could not be confirmed. Refresh this finding before trying again.");
   const panel=source("tracker-workflow-panel.tsx");
-  expect((panel.match(/reason.status>=500/g)??[]).toHaveLength(3);
+  expect(panel.match(/reason.status>=500/g)??[]).toHaveLength(3);
   expect(panel).toContain("setNeedsRefresh(true);");
   expect(panel).toContain("router.refresh();");
  });
