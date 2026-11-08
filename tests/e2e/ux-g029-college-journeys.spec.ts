@@ -67,13 +67,15 @@ test.describe("UX-G029 College Admin complete route-level navigation and recover
       await authenticateGracefulRole(context, "learner");
       await page.setViewportSize(viewport);
       for (const path of ["/college/announcements", "/college/attendance/settings"]) {
-        const response = await page.goto(path, { waitUntil:"commit" });
-        const denied = response?.status() === 401 || response?.status() === 403 ||
-          response?.status() === 404 ||
-          !new URL(page.url()).pathname.startsWith("/college/") ||
-          await page.getByText(/access denied|not authorized|permission denied|no access/i).count() > 0;
-        expect(denied, `Learner must not read privileged ${path} content`).toBe(true);
-        await expect(page.getByRole("button",{name:/Save setting|Publish announcement/i})).toHaveCount(0);
+        // Next.js may send HTTP 200 before a streamed notFound() boundary
+        // commits. Await the rendered page and assert the actual denied UI,
+        // rather than incorrectly treating a request's first byte as final.
+        await page.goto(path, { waitUntil:"domcontentloaded" });
+        const fallback = page.getByRole("heading", {name:/page not found|access denied|not authorized/i})
+          .or(page.getByText(/the page you are looking for|permission denied|no access/i));
+        await expect(fallback.first(), `Learner must see a denied state for ${path}`).toBeVisible();
+        await expect(page.getByRole("button",{name:/\+ Create announcement|Save setting|Publish announcement/i})).toHaveCount(0);
+        await expect(page.getByText(/Your college notifications|Eligibility threshold/i)).toHaveCount(0);
       }
     });
   }
