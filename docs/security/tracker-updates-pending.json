@@ -2,9 +2,9 @@
  "note": "DRAFT. Not read by any validator. Merge into docs/tracker.json only after a passing CI run: fill commitSha (40 hex) and runUrl, then run node scripts/tracker.mjs --check. Never VERIFIED from here.",
  "generatedFrom": "docs/security/assessments/*.md",
  "counts": {
-  "IMPLEMENTED_UNVERIFIED": 148,
-  "GAP_CONFIRMED": 40,
-  "PARTIAL_EVIDENCE": 158,
+  "IMPLEMENTED_UNVERIFIED": 159,
+  "GAP_CONFIRMED": 54,
+  "PARTIAL_EVIDENCE": 178,
   "UNASSESSED": 6
  },
  "controls": {
@@ -2857,6 +2857,27 @@
     "See the source assessment for control-specific missing proof"
    ]
   },
+  "SEC-09-002": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "The secret registry records a purpose for every entry; the workflow 'Security - full-history secret scan' scans all history; cryptography is node:crypto (AES-256-GCM, HMAC-SHA256, randomBytes, timingSafeEqual), no home-made primitives.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
   "SEC-09-003": {
    "currentTrackerState": "PARTIAL_EVIDENCE",
    "proposedState": "PARTIAL_EVIDENCE",
@@ -2910,12 +2931,81 @@
     "See the source assessment for control-specific missing proof"
    ]
   },
+  "SEC-09-006": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "The secret registry records a purpose for every entry; the workflow 'Security - full-history secret scan' scans all history; cryptography is node:crypto (AES-256-GCM, HMAC-SHA256, randomBytes, timingSafeEqual), no home-made primitives.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
   "SEC-09-007": {
    "currentTrackerState": "PARTIAL_EVIDENCE",
    "proposedState": "PARTIAL_EVIDENCE",
    "assessedAt": "2026-11-08",
    "finding": "Secrets live in Kubernetes Secrets, never in git; startup and readiness logs name a secret without its value; production readiness fails closed on an invalid configuration; incident runbook exists. Not a managed secret store; history scan not done.",
    "source": "docs/security/assessments/SEC-09-12-21-secrets-browser-backup.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-09-008": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "The runtime uses static database and provider credentials in Kubernetes Secrets (no workload identity), and keys are not held in a managed KMS; provider-default encryption at rest only.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-09-009": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Dev has its own generated secrets in vnext-keys; the production secrets were not touched or compared here. The R2 key is the legacy object-scoped key and provider keys are not scoped per environment.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-09-010": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Dev has its own generated secrets in vnext-keys; the production secrets were not touched or compared here. The R2 key is the legacy object-scoped key and provider keys are not scoped per environment.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
    "evidence": [
     {
      "type": "EXECUTED_SCOPED_TEST",
@@ -2973,6 +3063,43 @@
     }
    ],
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-09-015": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "The runtime uses static database and provider credentials in Kubernetes Secrets (no workload identity), and keys are not held in a managed KMS; provider-default encryption at rest only.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-09-016": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "The secret registry records a purpose for every entry; the workflow 'Security - full-history secret scan' scans all history; cryptography is node:crypto (AES-256-GCM, HMAC-SHA256, randomBytes, timingSafeEqual), no home-made primitives.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
   },
   "SEC-09-017": {
    "currentTrackerState": "UNASSESSED",
@@ -4688,6 +4815,22 @@
    ],
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
+  "SEC-15-002": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Providers and the data class sent to each are partly listed in data-inventory.md; outbound fetches go through guarded helpers (recruiter ZIP SSRF boundary has its own workflow) but cloud-metadata blocking is not tested; provider results never choose the actor; emergency disablement exists only as flags (MAINTENANCE_MODE, PRIVATE_STORAGE_SCANNER_READY, module access rules).",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
   "SEC-15-003": {
    "currentTrackerState": "PARTIAL_EVIDENCE",
    "proposedState": "PARTIAL_EVIDENCE",
@@ -4741,6 +4884,27 @@
    ],
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
+  "SEC-15-006": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "Scan verdicts must match file id, college id and generation; inbound mail is idempotent by providerMessageId and deliveries claim a key in the shared store (fails closed); structured logs name secrets and routes without values.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
   "SEC-15-007": {
    "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
@@ -4783,12 +4947,187 @@
     "See the source assessment for control-specific missing proof"
    ]
   },
+  "SEC-15-009": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "Scan verdicts must match file id, college id and generation; inbound mail is idempotent by providerMessageId and deliveries claim a key in the shared store (fails closed); structured logs name secrets and routes without values.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
+  "SEC-15-011": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Providers and the data class sent to each are partly listed in data-inventory.md; outbound fetches go through guarded helpers (recruiter ZIP SSRF boundary has its own workflow) but cloud-metadata blocking is not tested; provider results never choose the actor; emergency disablement exists only as flags (MAINTENANCE_MODE, PRIVATE_STORAGE_SCANNER_READY, module access rules).",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-15-012": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "Scan verdicts must match file id, college id and generation; inbound mail is idempotent by providerMessageId and deliveries claim a key in the shared store (fails closed); structured logs name secrets and routes without values.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
+  "SEC-15-013": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Providers and the data class sent to each are partly listed in data-inventory.md; outbound fetches go through guarded helpers (recruiter ZIP SSRF boundary has its own workflow) but cloud-metadata blocking is not tested; provider results never choose the actor; emergency disablement exists only as flags (MAINTENANCE_MODE, PRIVATE_STORAGE_SCANNER_READY, module access rules).",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
   "SEC-15-014": {
    "currentTrackerState": "PARTIAL_EVIDENCE",
    "proposedState": "PARTIAL_EVIDENCE",
    "assessedAt": "2026-11-08",
    "finding": "Provider list known; separate credentials per provider on dev; signatures cover the body but not a timestamp (inbound mail is idempotent by providerMessageId; scan verdicts are bound to file, college and generation); calendar tokens are encrypted before storage.",
    "source": "docs/security/assessments/SEC-15-integrations-webhooks.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-15-015": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Providers and the data class sent to each are partly listed in data-inventory.md; outbound fetches go through guarded helpers (recruiter ZIP SSRF boundary has its own workflow) but cloud-metadata blocking is not tested; provider results never choose the actor; emergency disablement exists only as flags (MAINTENANCE_MODE, PRIVATE_STORAGE_SCANNER_READY, module access rules).",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-15-016": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "Scan verdicts must match file id, college id and generation; inbound mail is idempotent by providerMessageId and deliveries claim a key in the shared store (fails closed); structured logs name secrets and routes without values.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
+  "SEC-15-017": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Providers and the data class sent to each are partly listed in data-inventory.md; outbound fetches go through guarded helpers (recruiter ZIP SSRF boundary has its own workflow) but cloud-metadata blocking is not tested; provider results never choose the actor; emergency disablement exists only as flags (MAINTENANCE_MODE, PRIVATE_STORAGE_SCANNER_READY, module access rules).",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-16-001": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Workers and the web app share one runtime database role and pod identity; scheduler, mail, storage and analytics privileges are not separated.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-16-002": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Workers and the web app share one runtime database role and pod identity; scheduler, mail, storage and analytics privileges are not separated.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-16-003": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Jobs run in named system scopes rather than a Super Admin identity and take college_id from the rows they process; per-job re-checks of revoked memberships and dead-letter handling were not reviewed for all eight services; denied calls are audited as internal.denied, there is no reprocessing tool to audit.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
    "evidence": [
     {
      "type": "EXECUTED_SCOPED_TEST",
@@ -4836,12 +5175,97 @@
    ],
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
+  "SEC-16-006": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Jobs run in named system scopes rather than a Super Admin identity and take college_id from the rows they process; per-job re-checks of revoked memberships and dead-letter handling were not reviewed for all eight services; denied calls are audited as internal.denied, there is no reprocessing tool to audit.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-16-007": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Jobs run in named system scopes rather than a Super Admin identity and take college_id from the rows they process; per-job re-checks of revoked memberships and dead-letter handling were not reviewed for all eight services; denied calls are audited as internal.denied, there is no reprocessing tool to audit.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-16-008": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Jobs run in named system scopes rather than a Super Admin identity and take college_id from the rows they process; per-job re-checks of revoked memberships and dead-letter handling were not reviewed for all eight services; denied calls are audited as internal.denied, there is no reprocessing tool to audit.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-16-009": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "Internal routes accept only schema-bound, size-bounded bodies (or none) and refuse query strings.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
   "SEC-16-010": {
    "currentTrackerState": "PARTIAL_EVIDENCE",
    "proposedState": "PARTIAL_EVIDENCE",
    "assessedAt": "2026-11-08",
    "finding": "Jobs run in a named system scope and take college_id from the rows they process (no caller-supplied tenant); dispatch uses delivery keys with a shared claim store; denials are audited as internal.denied without the credential. Machine calls have no timestamp or nonce.",
    "source": "docs/security/assessments/SEC-16-background-jobs.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-16-011": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Jobs run in named system scopes rather than a Super Admin identity and take college_id from the rows they process; per-job re-checks of revoked memberships and dead-letter handling were not reviewed for all eight services; denied calls are audited as internal.denied, there is no reprocessing tool to audit.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
    "evidence": [
     {
      "type": "EXECUTED_SCOPED_TEST",
@@ -4874,6 +5298,38 @@
    "assessedAt": "2026-11-08",
    "finding": "Jobs run in a named system scope and take college_id from the rows they process (no caller-supplied tenant); dispatch uses delivery keys with a shared claim store; denials are audited as internal.denied without the credential. Machine calls have no timestamp or nonce.",
    "source": "docs/security/assessments/SEC-16-background-jobs.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-16-014": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Workers and the web app share one runtime database role and pod identity; scheduler, mail, storage and analytics privileges are not separated.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-16-015": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Jobs run in named system scopes rather than a Super Admin identity and take college_id from the rows they process; per-job re-checks of revoked memberships and dead-letter handling were not reviewed for all eight services; denied calls are audited as internal.denied, there is no reprocessing tool to audit.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
    "evidence": [
     {
      "type": "EXECUTED_SCOPED_TEST",
@@ -4932,6 +5388,75 @@
    "assessedAt": "2026-11-08",
    "finding": "No egress NetworkPolicy exists: the pod can reach any address.",
    "source": "docs/security/assessments/SEC-17-cloud-network-infrastructure.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-17-004": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Database roles are split (runtime and migrator); images are not scanned or pinned by digest in the manifest; dev and production use separate namespaces and secrets; the schema-drift CI job and Dependabot exist but there is no cluster drift detection or image scan.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-17-005": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No workload identity for cloud access and no compromised-workload isolation test.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-17-006": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "The vNext pod runs non-root with a read-only root filesystem, dropped capabilities and RuntimeDefault seccomp; the same-origin check uses the actual Host header, never X-Forwarded-Host, and forwarded client addresses are hardened for rate limits.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
+  "SEC-17-007": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Database roles are split (runtime and migrator); images are not scanned or pinned by digest in the manifest; dev and production use separate namespaces and secrets; the schema-drift CI job and Dependabot exist but there is no cluster drift detection or image scan.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
    "evidence": [
     {
      "type": "EXECUTED_SCOPED_TEST",
@@ -5005,12 +5530,49 @@
     "See the source assessment for control-specific missing proof"
    ]
   },
+  "SEC-17-013": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "The vNext pod runs non-root with a read-only root filesystem, dropped capabilities and RuntimeDefault seccomp; the same-origin check uses the actual Host header, never X-Forwarded-Host, and forwarded client addresses are hardened for rate limits.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
   "SEC-17-014": {
    "currentTrackerState": "PARTIAL_EVIDENCE",
    "proposedState": "PARTIAL_EVIDENCE",
    "assessedAt": "2026-11-08",
    "finding": "Google load balancer with pre-shared certificates and HSTS; deployment manifests are version controlled; /e2e/* now 404 on production builds while /api/internal/* stays reachable behind secrets (owner decision).",
    "source": "docs/security/assessments/SEC-17-cloud-network-infrastructure.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-17-017": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Database roles are split (runtime and migrator); images are not scanned or pinned by digest in the manifest; dev and production use separate namespaces and secrets; the schema-drift CI job and Dependabot exist but there is no cluster drift detection or image scan.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
    "evidence": [
     {
      "type": "EXECUTED_SCOPED_TEST",
@@ -5037,12 +5599,60 @@
    ],
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
+  "SEC-17-019": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Database roles are split (runtime and migrator); images are not scanned or pinned by digest in the manifest; dev and production use separate namespaces and secrets; the schema-drift CI job and Dependabot exist but there is no cluster drift detection or image scan.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-17-020": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Database roles are split (runtime and migrator); images are not scanned or pinned by digest in the manifest; dev and production use separate namespaces and secrets; the schema-drift CI job and Dependabot exist but there is no cluster drift detection or image scan.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
   "SEC-17-022": {
    "currentTrackerState": "PARTIAL_EVIDENCE",
    "proposedState": "PARTIAL_EVIDENCE",
    "assessedAt": "2026-11-08",
    "finding": "Google load balancer with pre-shared certificates and HSTS; deployment manifests are version controlled; /e2e/* now 404 on production builds while /api/internal/* stays reachable behind secrets (owner decision).",
    "source": "docs/security/assessments/SEC-17-cloud-network-infrastructure.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-17-023": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No workload identity for cloud access and no compromised-workload isolation test.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
    "evidence": [
     {
      "type": "EXECUTED_SCOPED_TEST",
@@ -5886,6 +6496,171 @@
    "assessedAt": "2026-11-08",
    "finding": "No recovery point or recovery time targets are defined and no restore test has been done (owner decision on cost).",
    "source": "docs/security/assessments/SEC-09-12-21-secrets-browser-backup.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-21-006": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No restore test, backup integrity check, corruption or ransomware scenario, restoration runbook or outage test exists (restore test is an owner cost decision).",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-21-007": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No restore test, backup integrity check, corruption or ransomware scenario, restoration runbook or outage test exists (restore test is an owner cost decision).",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-21-008": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No restore test, backup integrity check, corruption or ransomware scenario, restoration runbook or outage test exists (restore test is an owner cost decision).",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-21-009": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No restore test, backup integrity check, corruption or ransomware scenario, restoration runbook or outage test exists (restore test is an owner cost decision).",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-21-010": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No restore test, backup integrity check, corruption or ransomware scenario, restoration runbook or outage test exists (restore test is an owner cost decision).",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-21-011": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "/ready reports database and configuration health and error-level logs reach the Telegram alert module; rate limiting degrades to per-process memory when the shared store is down.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-21-012": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "/ready reports database and configuration health and error-level logs reach the Telegram alert module; rate limiting degrades to per-process memory when the shared store is down.",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-21-013": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No restore test, backup integrity check, corruption or ransomware scenario, restoration runbook or outage test exists (restore test is an owner cost decision).",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-21-014": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "A failed dependency never opens an authorization fallback: database errors deny, the shared store claim fails closed, and only rate limiting degrades (availability, not access).",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
+  "SEC-21-015": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No restore test, backup integrity check, corruption or ransomware scenario, restoration runbook or outage test exists (restore test is an owner cost decision).",
+   "source": "docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md",
    "evidence": [
     {
      "type": "EXECUTED_SCOPED_TEST",

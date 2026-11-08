@@ -703,6 +703,149 @@
         "SEC-10-007"
       ],
       "finding": "data-inventory.md lists the 96 tables holding personal data; API responses are built per route and some return whole rows. Field-level response review is not done."
+    },
+    {
+      "source": "SEC-09-15-16-17-21-batch-2026-11-08.md",
+      "state": "IU",
+      "ids": [
+        "SEC-09-002",
+        "SEC-09-006",
+        "SEC-09-016"
+      ],
+      "finding": "The secret registry records a purpose for every entry; the workflow 'Security - full-history secret scan' scans all history; cryptography is node:crypto (AES-256-GCM, HMAC-SHA256, randomBytes, timingSafeEqual), no home-made primitives."
+    },
+    {
+      "source": "SEC-09-15-16-17-21-batch-2026-11-08.md",
+      "state": "P",
+      "ids": [
+        "SEC-09-009",
+        "SEC-09-010"
+      ],
+      "finding": "Dev has its own generated secrets in vnext-keys; the production secrets were not touched or compared here. The R2 key is the legacy object-scoped key and provider keys are not scoped per environment."
+    },
+    {
+      "source": "SEC-09-15-16-17-21-batch-2026-11-08.md",
+      "state": "G",
+      "ids": [
+        "SEC-09-008",
+        "SEC-09-015"
+      ],
+      "finding": "The runtime uses static database and provider credentials in Kubernetes Secrets (no workload identity), and keys are not held in a managed KMS; provider-default encryption at rest only."
+    },
+    {
+      "source": "SEC-09-15-16-17-21-batch-2026-11-08.md",
+      "state": "P",
+      "ids": [
+        "SEC-15-002",
+        "SEC-15-011",
+        "SEC-15-013",
+        "SEC-15-015",
+        "SEC-15-017"
+      ],
+      "finding": "Providers and the data class sent to each are partly listed in data-inventory.md; outbound fetches go through guarded helpers (recruiter ZIP SSRF boundary has its own workflow) but cloud-metadata blocking is not tested; provider results never choose the actor; emergency disablement exists only as flags (MAINTENANCE_MODE, PRIVATE_STORAGE_SCANNER_READY, module access rules)."
+    },
+    {
+      "source": "SEC-09-15-16-17-21-batch-2026-11-08.md",
+      "state": "IU",
+      "ids": [
+        "SEC-15-006",
+        "SEC-15-009",
+        "SEC-15-012",
+        "SEC-15-016"
+      ],
+      "finding": "Scan verdicts must match file id, college id and generation; inbound mail is idempotent by providerMessageId and deliveries claim a key in the shared store (fails closed); structured logs name secrets and routes without values."
+    },
+    {
+      "source": "SEC-09-15-16-17-21-batch-2026-11-08.md",
+      "state": "IU",
+      "ids": [
+        "SEC-16-009"
+      ],
+      "finding": "Internal routes accept only schema-bound, size-bounded bodies (or none) and refuse query strings."
+    },
+    {
+      "source": "SEC-09-15-16-17-21-batch-2026-11-08.md",
+      "state": "P",
+      "ids": [
+        "SEC-16-003",
+        "SEC-16-006",
+        "SEC-16-007",
+        "SEC-16-008",
+        "SEC-16-011",
+        "SEC-16-015"
+      ],
+      "finding": "Jobs run in named system scopes rather than a Super Admin identity and take college_id from the rows they process; per-job re-checks of revoked memberships and dead-letter handling were not reviewed for all eight services; denied calls are audited as internal.denied, there is no reprocessing tool to audit."
+    },
+    {
+      "source": "SEC-09-15-16-17-21-batch-2026-11-08.md",
+      "state": "G",
+      "ids": [
+        "SEC-16-001",
+        "SEC-16-002",
+        "SEC-16-014"
+      ],
+      "finding": "Workers and the web app share one runtime database role and pod identity; scheduler, mail, storage and analytics privileges are not separated."
+    },
+    {
+      "source": "SEC-09-15-16-17-21-batch-2026-11-08.md",
+      "state": "IU",
+      "ids": [
+        "SEC-17-006",
+        "SEC-17-013"
+      ],
+      "finding": "The vNext pod runs non-root with a read-only root filesystem, dropped capabilities and RuntimeDefault seccomp; the same-origin check uses the actual Host header, never X-Forwarded-Host, and forwarded client addresses are hardened for rate limits."
+    },
+    {
+      "source": "SEC-09-15-16-17-21-batch-2026-11-08.md",
+      "state": "P",
+      "ids": [
+        "SEC-17-004",
+        "SEC-17-007",
+        "SEC-17-017",
+        "SEC-17-019",
+        "SEC-17-020"
+      ],
+      "finding": "Database roles are split (runtime and migrator); images are not scanned or pinned by digest in the manifest; dev and production use separate namespaces and secrets; the schema-drift CI job and Dependabot exist but there is no cluster drift detection or image scan."
+    },
+    {
+      "source": "SEC-09-15-16-17-21-batch-2026-11-08.md",
+      "state": "G",
+      "ids": [
+        "SEC-17-005",
+        "SEC-17-023"
+      ],
+      "finding": "No workload identity for cloud access and no compromised-workload isolation test."
+    },
+    {
+      "source": "SEC-09-15-16-17-21-batch-2026-11-08.md",
+      "state": "P",
+      "ids": [
+        "SEC-21-011",
+        "SEC-21-012"
+      ],
+      "finding": "/ready reports database and configuration health and error-level logs reach the Telegram alert module; rate limiting degrades to per-process memory when the shared store is down."
+    },
+    {
+      "source": "SEC-09-15-16-17-21-batch-2026-11-08.md",
+      "state": "IU",
+      "ids": [
+        "SEC-21-014"
+      ],
+      "finding": "A failed dependency never opens an authorization fallback: database errors deny, the shared store claim fails closed, and only rate limiting degrades (availability, not access)."
+    },
+    {
+      "source": "SEC-09-15-16-17-21-batch-2026-11-08.md",
+      "state": "G",
+      "ids": [
+        "SEC-21-006",
+        "SEC-21-007",
+        "SEC-21-008",
+        "SEC-21-009",
+        "SEC-21-010",
+        "SEC-21-013",
+        "SEC-21-015"
+      ],
+      "finding": "No restore test, backup integrity check, corruption or ransomware scenario, restoration runbook or outage test exists (restore test is an owner cost decision)."
     }
   ]
 }
