@@ -116,7 +116,8 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <TextLink href="/learn/my-placements" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Back to My Placements</TextLink>
 
         {hadInvalidNoticeFilters ? <Banner tone="warning" className="mt-2">Some notice filters were invalid and have been reset to safe defaults.</Banner> : null}
-        {ready && (!collegeNoticesRead.available || !personalAlerts.available) ? (
+        {ready && (!collegeNoticesRead.available || !receiptsRead.available ||
+          !personalAlerts.available || !unreadCount.available) ? (
           <Banner tone="error" role="alert" className="mt-2" action={
             <TextLink href="/learn/my-placements/announcements"
               className="inline-flex min-h-9 items-center">Retry</TextLink>
