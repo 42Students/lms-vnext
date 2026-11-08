@@ -27,7 +27,7 @@ test("UX-G073: all Mentor report and review routes authorize before parsing inva
 test("UX-G073: actionable recovery never misrepresents failed reads as empty", () => {
   for (const route of ["reports", "review-history", "task-review-history", "sprint-progress"]) {
     const source = read("mentor/" + route + "/page.tsx");
-    assert.match(source, /No (project report data|review history|task decisions|sprint progress data) was loaded/);
+    assert.match(source, /No (project report data|review history|task decisions|sprint progress data) (was|were) loaded/);
     assert.match(source, new RegExp('href="/mentor/' + route + '"'));
   }
   const queue=read("mentor/reviews/page.tsx");
