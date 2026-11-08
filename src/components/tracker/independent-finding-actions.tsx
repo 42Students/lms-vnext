@@ -88,6 +88,9 @@ export function IndependentFindingActions({externalId,version,status,severity,cu
   }catch(reason){
    if(reason instanceof FriendlyFetchError){
     if(reason.code==="STALE_VERSION"||reason.status===409)setStale(true);
+    // A provider failure after a committed transaction has an unknown result.
+    // Require a fresh revision before any subsequent mutation.
+    if(reason.status>=500)setStale(true);
     const messages:Record<string,string>={
      STALE_VERSION:"The finding changed. Refresh and retry.",
      INVALID_STATUS_TRANSITION:"This status change is not allowed. Check the finding history and choose a valid next step.",
@@ -101,7 +104,10 @@ export function IndependentFindingActions({externalId,version,status,severity,cu
     };
     setError(messages[reason.code??""]??reason.fieldErrors["reason"]??reason.fieldErrors["note"]??
       reason.fieldErrors["duplicateOf"]??reason.fieldErrors["assignee"]??reason.fieldErrors["sha"]??reason.fieldErrors["repo"]??reason.message);
-   }else setError(reason instanceof Error?reason.message:friendlyApiError({}));
+   }else{
+    setStale(true);
+    setError("The result could not be confirmed. Refresh this finding before trying again.");
+   }
   }
   finally{lock.current=false;setPending(false);}
  }
