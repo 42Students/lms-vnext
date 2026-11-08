@@ -61,3 +61,16 @@ test("delayed admin loading offers an accessible retry rather than an indefinite
   await expect(busy.getByRole("status").filter({hasText:"This is taking longer than expected"})).toBeVisible({timeout:16_000});
   await expect(busy.getByRole("button",{name:"Try again"})).toBeVisible();
 });
+// The development-only witness must not become a public entry point or a way
+// to select unapproved role/state combinations.
+test("invalid or unsupported role-state preview combinations fail closed",async({request})=>{
+  for(const query of [
+    "role=admin&state=unknown",
+    "role=unknown&state=error",
+    "role=college-admin&state=loading",
+  ]) {
+    const result=await request.get("/e2e/ux-g184-authenticated-states?"+query);
+    expect(result.status()).toBe(404);
+    expect(await result.text()).not.toContain("Authenticated route state acceptance");
+  }
+});
