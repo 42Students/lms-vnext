@@ -95,7 +95,7 @@ export function FacultyAttendanceScheduleEditor({
   return <section aria-label="Faculty attendance session scheduling"
     className="min-w-0 space-y-4 border-t border-[var(--lms-canvas-border)] pt-4">
     <div className="min-w-0 space-y-1">
-      <Heading level={2} size="base" className="m-0 leading-6 text-[var(--lms-heading)]">Schedule an attendance session</Heading>
+      <Heading level={2} size="base" className="m-0 leading-6 text-[var(--lms-heading)]">{action==="CREATE"?"Schedule an attendance session":"Reschedule an attendance session"}</Heading>
       <p className="m-0 max-w-prose text-[13px] leading-5 text-muted-foreground">
         Times are entered in IST (Asia/Kolkata) and saved as UTC instants.
         Only sessions you scheduled and have not marked for attendance can be rescheduled.
@@ -156,6 +156,7 @@ export function FacultyAttendanceScheduleEditor({
     <ConfirmDialog open={confirmOpen}
       onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
       title={"Confirm "+(action==="CREATE"?"schedule":"reschedule")+" this Faculty attendance session?"}
+      description={`Session: ${title.trim()}. Start: ${startsAt.replace("T"," ")} IST. End: ${endsAt.replace("T"," ")} IST.${location.trim()?" Location: "+location.trim()+".":""} ${action==="RESCHEDULE"?"This updates the selected unmarked session.":"This creates one session for this course."}`}
       confirmLabel={"Confirm "+(action==="CREATE"?"schedule":"reschedule")}
       confirmVariant="primary" pending={busy} onConfirm={()=>void save(true)}/>
   </section>;
