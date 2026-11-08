@@ -62,7 +62,9 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
   </form>
       <TpoReportPresentation />
       <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/joining-followups" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
-  {!report.season?<EmptyState title="No placement season" description="Joining follow-ups require a persisted placement season."/>:<>
+  {!report.season?<EmptyState title="No placement season"
+    description="Joining follow-ups require a recorded placement season. No joining outcomes are inferred."
+    action={<ButtonLink variant="secondary" href="/tpo/settings/season">Review placement seasons</ButtonLink>}/>:<>
    <section className="grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-3" aria-label="Joining evidence">{Object.entries(report.counts).map(([label,n])=><StatTile key={label} label={label.replaceAll(/([A-Z])/g," $1").trim()} value={n} className="min-h-[104px]" />)}</section>
    <Disclosure title="Joining date methodology" className="border-y border-border py-3"><p className="pt-3 text-sm text-body leading-[22px]">
     Due means a persisted joining date on or before {report.todayIst} IST. Upcoming means a recorded calendar date strictly after today and within seven IST calendar days. No date is unknown, never late.
@@ -70,7 +72,10 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
    </p></Disclosure>
    {report.truncated?<Alert tone="warning">First 500 accepted offers examined; counts may be incomplete.</Alert>:null}
    {!report.rows.length?<EmptyState title="No matching joining follow-ups"
-    description="No accepted offers remain in the selected open state."/>:
+    description={report.state === "ALL"
+      ? "No open joining follow-ups were found for this season. Check recorded joining outcomes for completed or closed cases."
+      : "No open joining follow-ups match this status. Try All open to widen the view."}
+    action={<ButtonLink variant="secondary" href="/tpo/reports/joining-status">View joining outcomes</ButtonLink>}/>:
     <section className="grid gap-3" aria-label="Pending and deferred joining offers">
      {report.rows.map(o=><article key={o.offerId} className="min-w-0 border-b border-border py-4">
        <Heading level={2} size="lg" className="leading-[1.4] text-[var(--lms-heading)]">{o.companyName} · {o.roleTitle}</Heading>
