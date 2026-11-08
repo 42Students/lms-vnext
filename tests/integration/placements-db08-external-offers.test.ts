@@ -163,9 +163,9 @@ describe("W04 external placement submission and review", () => {
     );
     try {
       await expect(listManagedExternalOffers(tpo, SEED_IDS.collegeA))
-        .rejects.toThrow("Missing permission: placements.manage");
+        .rejects.toThrow("Missing permission: membership.role.manage");
       await expect(reviewExternalOffer(tpo, {offerId:pending.id,action:"VERIFY"}))
-        .rejects.toThrow("Missing permission: placements.manage");
+        .rejects.toThrow("Missing permission: membership.role.manage");
       const status = await pool.query(
         "SELECT status,reviewed_by_user_id FROM placement_external_offers WHERE id=$1",
         [pending.id],
@@ -247,7 +247,7 @@ describe("W04 external placement submission and review", () => {
       const outcome=await operation;
       expect(outcome.ok).toBe(false);
       expect(String((outcome.error as Error)?.message??""))
-        .toContain("Missing permission: placements.manage");
+        .toContain("Missing permission: membership.role.manage");
       const [status,history]=await Promise.all([
         pool.query("SELECT status FROM placement_external_offers WHERE id=$1",[pending.id]),
         pool.query("SELECT next_status FROM placement_external_offer_events WHERE offer_id=$1",[pending.id]),
