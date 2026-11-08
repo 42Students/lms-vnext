@@ -1,0 +1,95 @@
+name: UX-G161 isolated Tracker browser and workflow acceptance
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tests/e2e/ux-g161-scoped-browser.spec.ts'
+      - 'src/components/tracker/audit-finding-status-action.tsx'
+      - 'src/components/tracker/independent-finding-actions.tsx'
+      - 'src/components/tracker/tracker-quick-report-launcher.tsx'
+      - 'tests/unit/ux-g161-finding-actions-recovery.test.ts'
+      - 'tests/unit/ux-five-group-batch-20261107.test.ts'
+      - '.github/workflows/ux-g161-scoped-browser-acceptance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ux-g161-isolated-browser-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  tracker-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: 'true'
+      DB10_TRACKER_READY: DB10_VERIFIED
+      APP_ENV: development
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_OPTIONS: --max-old-space-size=6144
+      PLAYWRIGHT_JSON_OUTPUT_NAME: ux-g161-scoped-results.json
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact checkout SHA and source quality
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npx eslint tests/e2e/ux-g161-scoped-browser.spec.ts \
+            tests/unit/ux-g161-finding-actions-recovery.test.ts \
+            src/components/tracker/audit-finding-status-action.tsx \
+            src/components/tracker/independent-finding-actions.tsx \
+            src/components/tracker/tracker-quick-report-launcher.tsx
+          npm run typecheck
+          npx vitest run tests/unit/ux-g161-finding-actions-recovery.test.ts \
+            tests/unit/ux-five-group-batch-20261107.test.ts \
+            tests/unit/chat6-independent-finding-actions-round10.test.ts \
+            tests/unit/chat15-independent-finding-validation.test.ts --reporter=dot
+          node --test tests/ux-groups.test.mjs
+      - name: Prepare seeded isolated PostgreSQL
+        run: npm run db:e2e:prepare
+      - name: Install ephemeral test identity credentials
+        shell: bash
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run actual G161 seeded workflows and role negatives
+        run: |
+          npx playwright test tests/e2e/ux-g161-scoped-browser.spec.ts --project=chromium --reporter=line,json
+          node -e 'const s=require("./ux-g161-scoped-results.json").stats;if(s.expected!==4||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
+      - name: Preserve desktop/mobile screenshots and errors
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g161-scoped-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+            ux-g161-scoped-results.json
+          if-no-files-found: ignore
+          retention-days: 14
