@@ -13,6 +13,7 @@ test.describe("UX-G161 Tracker — isolated persisted and responsive acceptance"
   await page.setViewportSize({width:1280,height:800});
   await page.goto("/tracker");
   await expect(page.getByRole("heading",{level:1,name:"What went wrong?"})).toBeVisible();
+  // The authenticated actor must not impersonate an arbitrary report author.
   await page.getByRole("textbox",{name:"Reporter"}).fill("G161 acceptance");
   await page.getByLabel("Account used").selectOption("SUPER_ADMIN");
   await page.getByLabel("Environment").selectOption("DEVELOPMENT");
@@ -21,6 +22,12 @@ test.describe("UX-G161 Tracker — isolated persisted and responsive acceptance"
   await where.nth(1).selectOption("Overview");
   await page.getByLabel("What kind of issue?").selectOption("UI / Alignment");
   await page.getByLabel("What went wrong?").fill("G161: persisted Tracker workflow and stale revision acceptance.");
+  const deniedIdentity=page.waitForResponse(r=>
+   r.url().endsWith("/api/tracker/issues")&&r.request().method()==="POST");
+  await page.getByRole("button",{name:"Report issue",exact:true}).click();
+  expect((await deniedIdentity).status(),"Server must reject a mismatched reporter name").toBe(400);
+  // Recover in place without recreating or relaxing the validated identity.
+  await page.getByRole("textbox",{name:"Reporter"}).fill("Seed Superadmin");
   const receipt=page.waitForResponse(r=>
    r.url().endsWith("/api/tracker/issues")&&r.request().method()==="POST");
   await page.getByRole("button",{name:"Report issue",exact:true}).click();
@@ -106,12 +113,13 @@ test.describe("UX-G161 Tracker — isolated persisted and responsive acceptance"
   const telegramReceipt=await unconfiguredTelegram.json() as {configured:boolean;accepted:boolean};
   expect(telegramReceipt.configured).toBe(false);
   expect(telegramReceipt.accepted).toBe(false);
-  const badExport=await page.request.get("/api/tracker/live-logs/export?"+
-   new URLSearchParams({from:"2026-11-01T00:00:00.000Z",to:"2026-11-01T00:00:00.000Z"}));
-  expect(badExport.status()).toBe(400);
-  const unavailableExport=await page.request.get("/api/tracker/live-logs/export?"+
+  // Export is protected by a recent OTP-backed device session. The ephemeral
+  // E2E role cookie is deliberately NOT an OTP/device-auth substitute.
+  // This test proves fail-closed before the provider or range is evaluated.
+  const stepUpDenied=await page.request.get("/api/tracker/live-logs/export?"+
    new URLSearchParams({from:"2026-11-01T00:00:00.000Z",to:"2026-11-02T00:00:00.000Z"}));
-  expect(unavailableExport.status()).toBe(503);
+  expect(stepUpDenied.status(),"No privileged export without a fresh real device session").toBe(401);
+  expect(stepUpDenied.headers()["content-type"]??"").not.toContain("application/x-ndjson");
   await expect(page.getByText(/Cloud log collection not configured/)).toBeVisible();
   await expect(page.getByText(/Known errors persistence is not enabled/)).toBeVisible();
   await page.screenshot({path:info.outputPath("g161-logs-unconfigured-desktop.png"),fullPage:true});
