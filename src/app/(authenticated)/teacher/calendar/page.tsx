@@ -6,6 +6,8 @@ import {Disclosure} from "@/components/ui/disclosure";
 import {getFacultyClassSchedule} from "@/modules/courses/faculty-schedule-service";
 import { Alert } from "@/components/ui/alert";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { redirect } from "next/navigation";
+import { hasActiveMembership, hasMembershipRole } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { CalendarGrid } from "@/components/ui/calendar-grid";
@@ -29,6 +31,8 @@ type Params=Record<string,string|string[]|undefined>;
 export default async function FacultyCalendarPage({
   searchParams,
 }:{searchParams:Promise<Params>}) {
+  const context=await getCurrentRequestContext();
+  if(!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY"))redirect("/dashboard");
   const raw=await searchParams;
   const accepted=Object.keys(raw).every(key=>key==="month"||key==="deliveryId")&&
     Object.values(raw).every(value=>!Array.isArray(value));
@@ -44,12 +48,12 @@ export default async function FacultyCalendarPage({
       raw.startDate>raw.endDate;
     return <section role="alert" className="space-y-3">
     <PageHeader title={reversed?"startDate must be before or equal to endDate":invalidDate} />
+    <p className="text-sm text-body">These calendar filters could not be applied. No class schedule data was loaded.</p>
     <TextLink href="/teacher/calendar" className="inline-flex min-h-11 items-center md:min-h-9">
       Clear filters
     </TextLink>
   </section>;
   }
-  const context=await getCurrentRequestContext();
   const [primary,upcomingRead,prototypeRead]=await Promise.all([
     getFacultyIstMonth(context,input.data),
     getFacultyClassSchedule(context,{startAt:new Date()}).then(value=>({available:true as const,value}))
