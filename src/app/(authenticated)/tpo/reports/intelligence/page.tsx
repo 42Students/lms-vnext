@@ -76,7 +76,8 @@ export default async function TpoPerformanceIntelligencePage({
       <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports/intelligence" />
       <ReportScopeNote note={workspace.registrationScopeNote} />
       {workspace.noSeason ? (
-        <EmptyState title="No placement season exists." description="No company funnel or package performance is inferred."/>
+        <EmptyState title="No placement season exists." description="No company funnel or package performance is inferred."
+          action={<ButtonLink variant="secondary" href="/tpo/settings/season">Review placement seasons</ButtonLink>}/>
       ) : null}
       <section aria-label="Company funnel">
         <Heading level={2} size="lg" className="mb-2 leading-[1.4] text-[var(--lms-heading)]">Company funnel</Heading>
