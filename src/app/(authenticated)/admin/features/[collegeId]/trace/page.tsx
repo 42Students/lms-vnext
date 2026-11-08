@@ -73,7 +73,10 @@ export default async function SuperAdminLearnerAccessTracePage({
 
   const paramsValue = await searchParams;
   const strictParams = strictTraceRouteParams(paramsValue);
-  if (!strictParams) notFound();
+  if (!strictParams) return <div className="min-w-0 space-y-4 md:space-y-6">
+    <PageHeader title="Learner access trace" description="Read-only, selected-college module access explanation." />
+    <ErrorState title="Invalid learner search link" description="This link has unsupported or repeated search filters. No learner data was loaded." action={<ButtonLink variant="secondary" href={adminModuleTraceHref(collegeId)}>Clear filters</ButtonLink>} />
+  </div>;
 
   const membershipId =
     strictParams.membershipId;
