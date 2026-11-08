@@ -464,7 +464,7 @@ export function FacultyAttendanceWorkspace({
     membershipId: string,
     isAbsent: boolean,
   ) {
-    if (markingWindow !== "OPEN" || submitting || submitLock.current || writeUnknown) return;
+    if (markingWindow !== "OPEN" || submitting || submitLock.current || writeUnknown || confirmingAttendance) return;
     setAbsent((current) => {
       const next = new Set(current);
       if (isAbsent) next.add(membershipId);
@@ -1039,11 +1039,13 @@ export function FacultyAttendanceWorkspace({
                     size="md"
                     variant="secondary"
                     disabled={
-                      workspace.roster.length === 0 || markingWindow !== "OPEN" || submitting
+                      workspace.roster.length === 0 || markingWindow !== "OPEN" || submitting ||
+                       writeUnknown || submitLock.current || confirmingAttendance
                     }
-                    onClick={() =>
-                      setAbsent(new Set())
-                    }
+                    onClick={() => {
+                      if (writeUnknown || submitLock.current || confirmingAttendance) return;
+                      setAbsent(new Set());
+                    }}
                   >
                     Mark all present
                   </Button>
@@ -1051,18 +1053,13 @@ export function FacultyAttendanceWorkspace({
                     size="md"
                     variant="secondary"
                     disabled={
-                      workspace.roster.length === 0 || markingWindow !== "OPEN" || submitting
+                      workspace.roster.length === 0 || markingWindow !== "OPEN" || submitting ||
+                       writeUnknown || submitLock.current || confirmingAttendance
                     }
-                    onClick={() =>
-                      setAbsent(
-                        new Set(
-                          workspace.roster.map(
-                            (learner) =>
-                              learner.membershipId,
-                          ),
-                        ),
-                      )
-                    }
+                    onClick={() => {
+                      if (writeUnknown || submitLock.current || confirmingAttendance) return;
+                      setAbsent(new Set(workspace.roster.map((learner) => learner.membershipId)));
+                    }}
                   >
                     Mark all absent
                   </Button>
@@ -1101,7 +1098,7 @@ export function FacultyAttendanceWorkspace({
                                 className={"min-h-11 rounded-lg border px-[16px] text-[13px] font-semibold md:min-h-9 " +
                                   (!isAbsent ? "border-[color-mix(in_srgb,var(--lms-success-strong)_28%,transparent)] bg-[color-mix(in_srgb,var(--lms-success-strong)_8%,transparent)] text-[color:var(--lms-success-strong)]" : "border-[color:var(--lms-neutral-300)] bg-[color:var(--lms-neutral-50)] text-[color:var(--lms-text-muted)]")}
                                 variant="secondary"
-                                disabled={markingWindow !== "OPEN" || submitting}
+                                disabled={markingWindow !== "OPEN" || submitting || writeUnknown || submitLock.current || confirmingAttendance}
                                 aria-pressed={!isAbsent}
                                 aria-label={`Mark ${learnerName(
                                   learner,
@@ -1120,7 +1117,7 @@ export function FacultyAttendanceWorkspace({
                                 className={"min-h-11 rounded-lg border px-[16px] text-[13px] font-semibold md:min-h-9 " +
                                   (isAbsent ? "border-[color-mix(in_srgb,var(--lms-error)_28%,transparent)] bg-[color-mix(in_srgb,var(--lms-error)_8%,transparent)] text-[color:var(--lms-error)]" : "border-[color:var(--lms-neutral-300)] bg-[color:var(--lms-neutral-50)] text-[color:var(--lms-text-muted)]")}
                                 variant="secondary"
-                                disabled={markingWindow !== "OPEN" || submitting}
+                                disabled={markingWindow !== "OPEN" || submitting || writeUnknown || submitLock.current || confirmingAttendance}
                                 aria-pressed={isAbsent}
                                 aria-label={`Mark ${learnerName(
                                   learner,
