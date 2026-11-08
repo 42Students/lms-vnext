@@ -10,7 +10,7 @@ const scenarios: readonly {
  {group:"G154",role:"superadmin",path:"/admin/projects/templates/new",heading:/Create project template/i},
  {group:"G161",role:"superadmin",path:"/tracker",heading:/What went wrong\?/i},
  {group:"G178",role:"college",path:"/college/people/manage",heading:/(People|Directory|Manage)/i},
- {group:"G184",role:"faculty",path:"/teacher/courses",heading:/My Courses/i},
+ // The protected teacher recovery destination renders the faculty prototype with an h1 of "Courses".\n {group:"G184",role:"faculty",path:"/teacher/courses",heading:/^Courses$/i},
 ];
 
 test.describe("UX five-group batch — authenticated viewport smoke and screenshots",()=>{
