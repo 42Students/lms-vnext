@@ -15,6 +15,7 @@ const sizes = [
 ] as const;
 
 test.describe("UX-G113 six real scoped read-only reports and invalid report bookmarks", () => {
+  test.skip(process.env.UX_G113_REPORT_ACCEPTANCE !== "true", "Dedicated seeded report acceptance only");
   test.beforeAll(() => {
     if (process.env.E2E_AUTH_ENABLED !== "true" || !process.env.E2E_AUTH_SECRET || !process.env.E2E_DATABASE_URL) {
       throw new Error("Real disposable PostgreSQL with seeded authenticated TPO is mandatory");
