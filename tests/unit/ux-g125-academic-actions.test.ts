@@ -106,3 +106,15 @@ describe("UX-G125 academic empty-state navigation", () => {
     expect(component).toContain('window.removeEventListener("hashchange",revealLinkedForm)');
   });
 });
+
+
+describe("UX-G125 academic directory empty-state actions", () => {
+  it("links zero-result directories to the creation form on the same page", () => {
+    const directory=source("src/components/academics/college-academic-directory.tsx");
+    expect(directory).toContain('href={semesters ? "#college-semester-create" : "#college-batch-create"}');
+    expect(source("src/components/academics/college-cohort-management.tsx"))
+      .toContain('id="college-batch-create"');
+    expect(source("src/components/academics/college-semester-management.tsx"))
+      .toContain('id="college-semester-create"');
+  });
+});
