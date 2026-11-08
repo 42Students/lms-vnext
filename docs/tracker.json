@@ -17513,9 +17513,23 @@
             "browser": [],
             "regressionReview": "Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.",
             "securityReview": "Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."
+          },
+          {
+            "type": "ci",
+            "runId": 42459811327,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42459811327",
+            "conclusion": "success",
+            "commitSha": "8b2f5bc1c877124cae1a31275689e3c01bc43a55",
+            "results": "Exact checkout SHA, scoped ESLint, full TypeScript, focused unit+role safety regressions and 4/4 desktop 1280px/mobile 390px synthetic recovery Chromium scenarios; no skipped tests. Scoped synthetic preview only—not signed-in role, tenant or all state acceptance."
+          },
+          {
+            "type": "browser",
+            "artifactId": 13608638217,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42459811327/artifacts/13608638217",
+            "scope": "Synthetic dev-gated rendering of five-route recovery controls at desktop/mobile. Signed-in authorized and cross-role/tenant browser coverage still required before DONE."
           }
         ],
-        "notes": "Second pass: bounded shared content handoffs, empty filtered college drives, five real error recovery components, and exact-checkout-SHA CI artifacts committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md"
+        "notes": "Second pass: bounded shared content handoffs, empty filtered college drives, five real error recovery components, and exact-checkout-SHA CI artifacts committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md Synthetic recovery/lint/type/unit browser run 42459811327 PASS 2026-11-08 and artifact 13608638217 recorded; still DOING: real authenticated role/tenant, deep links and broader group state matrix pending."
       },
       {
         "id": "UX-G026",
@@ -18103,9 +18117,23 @@
             "browser": [],
             "regressionReview": "Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.",
             "securityReview": "Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."
+          },
+          {
+            "type": "ci",
+            "runId": 42459811327,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42459811327",
+            "conclusion": "success",
+            "commitSha": "8b2f5bc1c877124cae1a31275689e3c01bc43a55",
+            "results": "Exact checkout SHA, scoped ESLint, full TypeScript, focused unit+role safety regressions and 4/4 desktop 1280px/mobile 390px synthetic recovery Chromium scenarios; no skipped tests. Scoped synthetic preview only—not signed-in role, tenant or all state acceptance."
+          },
+          {
+            "type": "browser",
+            "artifactId": 13608638217,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42459811327/artifacts/13608638217",
+            "scope": "Synthetic dev-gated rendering of five-route recovery controls at desktop/mobile. Signed-in authorized and cross-role/tenant browser coverage still required before DONE."
           }
         ],
-        "notes": "Second pass: bounded shared content handoffs, empty filtered college drives, five real error recovery components, and exact-checkout-SHA CI artifacts committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md"
+        "notes": "Second pass: bounded shared content handoffs, empty filtered college drives, five real error recovery components, and exact-checkout-SHA CI artifacts committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md Synthetic recovery/lint/type/unit browser run 42459811327 PASS 2026-11-08 and artifact 13608638217 recorded; still DOING: real authenticated role/tenant, deep links and broader group state matrix pending."
       },
       {
         "id": "UX-G037",
@@ -18540,9 +18568,28 @@
             "browser": [],
             "regressionReview": "Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.",
             "securityReview": "Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."
+          },
+          {
+            "type": "ci",
+            "runId": 42459811327,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42459811327",
+            "conclusion": "success",
+            "commitSha": "8b2f5bc1c877124cae1a31275689e3c01bc43a55",
+            "results": "Exact checkout SHA, scoped ESLint, full TypeScript, focused unit+role safety regressions and 4/4 desktop 1280px/mobile 390px synthetic recovery Chromium scenarios; no skipped tests. Scoped synthetic preview only—not signed-in role, tenant or all state acceptance."
+          },
+          {
+            "type": "browser",
+            "artifactId": 13608638217,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42459811327/artifacts/13608638217",
+            "scope": "Synthetic dev-gated rendering of five-route recovery controls at desktop/mobile. Signed-in authorized and cross-role/tenant browser coverage still required before DONE."
+          },
+          {
+            "type": "source",
+            "commitSha": "8b2f5bc1c877124cae1a31275689e3c01bc43a55",
+            "description": "Department and Program Retry controls now enforce 44px minimum desktop/mobile, verified by Chromium bounding-box assertion."
           }
         ],
-        "notes": "Second pass: bounded shared content handoffs, empty filtered college drives, five real error recovery components, and exact-checkout-SHA CI artifacts committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md"
+        "notes": "Second pass: bounded shared content handoffs, empty filtered college drives, five real error recovery components, and exact-checkout-SHA CI artifacts committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md Synthetic recovery/lint/type/unit browser run 42459811327 PASS 2026-11-08 and artifact 13608638217 recorded; still DOING: real authenticated role/tenant, deep links and broader group state matrix pending."
       },
       {
         "id": "UX-G045",
@@ -21140,9 +21187,23 @@
             "browser": [],
             "regressionReview": "Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.",
             "securityReview": "Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."
+          },
+          {
+            "type": "ci",
+            "runId": 42459811327,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42459811327",
+            "conclusion": "success",
+            "commitSha": "8b2f5bc1c877124cae1a31275689e3c01bc43a55",
+            "results": "Exact checkout SHA, scoped ESLint, full TypeScript, focused unit+role safety regressions and 4/4 desktop 1280px/mobile 390px synthetic recovery Chromium scenarios; no skipped tests. Scoped synthetic preview only—not signed-in role, tenant or all state acceptance."
+          },
+          {
+            "type": "browser",
+            "artifactId": 13608638217,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42459811327/artifacts/13608638217",
+            "scope": "Synthetic dev-gated rendering of five-route recovery controls at desktop/mobile. Signed-in authorized and cross-role/tenant browser coverage still required before DONE."
           }
         ],
-        "notes": "Second pass: bounded shared content handoffs, empty filtered college drives, five real error recovery components, and exact-checkout-SHA CI artifacts committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md"
+        "notes": "Second pass: bounded shared content handoffs, empty filtered college drives, five real error recovery components, and exact-checkout-SHA CI artifacts committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md Synthetic recovery/lint/type/unit browser run 42459811327 PASS 2026-11-08 and artifact 13608638217 recorded; still DOING: real authenticated role/tenant, deep links and broader group state matrix pending."
       },
       {
         "id": "UX-G088",
@@ -21712,9 +21773,23 @@
             "browser": [],
             "regressionReview": "Five-group source files, targeted unit tests, legacy scope tests and synthetic recovery browser scenarios authored on main; no exact-SHA green run yet verified. Authenticated cross-role/tenant and real page browser checks are still open.",
             "securityReview": "Reviewed intended routing/security invariants: no raw error data, role denial before placement module resolution, current membership/scope checks retained, all legacy query state allowlisted, dev fixture 404 outside explicit development flag. Final role and tenant regression execution pending."
+          },
+          {
+            "type": "ci",
+            "runId": 42459811327,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42459811327",
+            "conclusion": "success",
+            "commitSha": "8b2f5bc1c877124cae1a31275689e3c01bc43a55",
+            "results": "Exact checkout SHA, scoped ESLint, full TypeScript, focused unit+role safety regressions and 4/4 desktop 1280px/mobile 390px synthetic recovery Chromium scenarios; no skipped tests. Scoped synthetic preview only—not signed-in role, tenant or all state acceptance."
+          },
+          {
+            "type": "browser",
+            "artifactId": 13608638217,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42459811327/artifacts/13608638217",
+            "scope": "Synthetic dev-gated rendering of five-route recovery controls at desktop/mobile. Signed-in authorized and cross-role/tenant browser coverage still required before DONE."
           }
         ],
-        "notes": "Second pass: bounded shared content handoffs, empty filtered college drives, five real error recovery components, and exact-checkout-SHA CI artifacts committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md"
+        "notes": "Second pass: bounded shared content handoffs, empty filtered college drives, five real error recovery components, and exact-checkout-SHA CI artifacts committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md Synthetic recovery/lint/type/unit browser run 42459811327 PASS 2026-11-08 and artifact 13608638217 recorded; still DOING: real authenticated role/tenant, deep links and broader group state matrix pending."
       },
       {
         "id": "UX-G098",
