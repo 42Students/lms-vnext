@@ -41,7 +41,7 @@ describe("chat-4 College Verification and Misc verification",()=>{
   expect(retained).toContain('failed&&!snapshot?<ErrorState title="Failed to load profile."');
   expect(retained).toContain("readOnly={failed}");
   expect(retained).toContain("onClick={retry}");
-  expect(editor).toContain("if(saving||readOnly)return;");
+  expect(editor).toContain("if(saving||saveInFlight.current||readOnly)return;");
   expect(editor).toContain("disabled={readOnly||saving||!dirty}");
   expect(editor).toContain("if(readOnly||dirty)return;");
   expect(editor).toContain("savedSnapshot.current=initial;");

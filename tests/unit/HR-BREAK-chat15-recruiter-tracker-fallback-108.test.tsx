@@ -45,7 +45,7 @@ describe("HR-TRACKER-FALLBACK-108 bounded recruiter and tracker page recovery",(
   expect(elements(fallback).some(el=>el.type===PageHeader &&
     (el.props as {title:string}).title==="Page not found")).toBe(true);
   expect(elements(fallback).some(el=>el.type===PageBackLink &&
-    (el.props as {href:string}).href==="/hr/home")).toBe(true);
+    (el.props as {href:string}).href==="/recruiter/home")).toBe(true);
  });
  it("visible retry button invokes its provided reset exactly once",()=>{
   const reset=vi.fn();
