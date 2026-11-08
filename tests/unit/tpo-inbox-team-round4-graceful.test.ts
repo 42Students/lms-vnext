@@ -94,7 +94,7 @@ describe("TPO Inbox and Team round-4 failure recovery",()=>{
   expect(c).toContain('status:"FAILED"');
   expect(c).toContain('<Alert tone="error">');
   expect(source("src/components/ui/alert.tsx")).toContain('role={tone === "error" ? "alert" : role ?? "status"}');
-  expect(c).toContain("Retry Everyone");
+  expect(c).toContain("Retry this page");
  });
  it("GR-71 distinguishes unavailable and empty Everyone history without a blank page",()=>{
   const c=source("src/app/(authenticated)/tpo/team/everyone/page.tsx");
@@ -126,7 +126,7 @@ describe("TPO Inbox and Team round-4 failure recovery",()=>{
  });
  it("GR-91 keeps retry and dismissal actions reachable by keyboard",()=>{
   const c=source("src/app/(authenticated)/tpo/team/everyone/page.tsx");
-  expect(c).toContain("Retry Everyone");
+  expect(c).toContain("Retry this page");
   expect(everyone()).toContain('import {Button} from "@/components/ui/button"');
   expect(source("src/components/ui/button.tsx")).toMatch(/focus-(?:ring|outline)/);
  });

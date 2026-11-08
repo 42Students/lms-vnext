@@ -152,7 +152,7 @@ describe("chat-5 TPO second-third: direct route authorization, negative and empt
  it("PLACEMENTS-WAIT-UI-10 prevents synchronous double-submit and contains broken JSON error responses",()=>{
   const control=src("src/components/placements/tpo-waitlist-promotion-control.tsx");
   expect(control).toContain("const inFlight=useRef(false)");
-  expect(control).toContain("if(!preview.next||inFlight.current||reason.trim().length<3)return");
+  expect(control).toContain("if(!preview.next||!preview.storageReady||requiresRefresh||inFlight.current||reason.trim().length<3)return");
   expect(control).toContain("inFlight.current=true");
   expect(control).toContain("inFlight.current=false");
   expect(control).toContain("apiFetch<{seatNumber?:number}>");

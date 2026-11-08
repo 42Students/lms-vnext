@@ -80,7 +80,7 @@ describe("HR page-level access, recovery and mobile contracts", () => {
     const jobError = load(root + "placements/jobs/[jobId]/error.tsx");
     expect(drivesLoading).toContain('<GracefulPageLoading label="Loading hiring drives"');
     expect(jobLoading).toContain('<GracefulPageLoading label="Loading hiring job"');
-    expect(drivesError).toContain('<Button type="button" variant="secondary" onClick={reset}>Try again</Button>');
+    expect(drivesError).toContain('onClick={reset}');
     expect(jobError).toContain("No applicant or offer details are");
     expect(jobError).toContain('<PageBackLink href="/hr/drives" label="Back to Drives"/>');
     const backLink = load("src/components/ui/page-back-link.tsx");

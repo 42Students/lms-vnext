@@ -86,7 +86,7 @@ describe("chat-4 College academic and people gap closure",()=>{
   }
   expect(deny(target("faculty",["FACULTY"]),"SUSPEND")).not.toThrow();
   expect(deny(target("faculty",["FACULTY"]),"ROLE_ADD","FACULTY")).not.toThrow();
-  const sa:RequestContext={...admin,user:{...admin.user,systemRoles:["SUPER_ADMIN"]}};
+  const sa:RequestContext={...admin,membership:null,user:{...admin.user,systemRoles:["SUPER_ADMIN"]}};
   expect(()=>assertMutableMembershipTarget(sa,target("other",["COLLEGE_ADMIN"]),"SUSPEND")).not.toThrow();
   const repository=source("src/modules/people/repository.ts");
   expect(repository).toContain('assertMutableMembershipTarget(mutation.context');
@@ -107,7 +107,7 @@ describe("chat-4 College academic and people gap closure",()=>{
   expect(tabs).toContain('return "/college/departments"');
   expect(tabs).toContain("group?.tabs.slice(0,6)");
   const departments=source("src/app/(authenticated)/college/departments/page.tsx");
-  expect(departments).toContain('<Link href="/college/academics"');
+  expect(departments).toContain('<TextLink href="/college/academics"');
   expect(departments).toContain("Academic periods and sections");
   expect(guide).toContain('key: "academic-periods", href: "/college/academics"');
   expect(guide.indexOf('key: "academic-periods"')).toBeLessThan(guide.indexOf('key: "batches"'));

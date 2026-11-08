@@ -29,7 +29,7 @@ describe("Public placements editorial content and selected numbers",()=>{
    employers:5,highestCtcInr:1000000,medianCtcInr:650000})).toBe("10 LPA");
   const publicPage=src("src/app/placements/page.tsx");
   expect(publicPage).toContain("metricKeys.flatMap(key");
-  expect(publicPage).toContain("Live numbers over the last 12 months.");
+  expect(publicPage).toContain("Placement results for the last 12 months.");
  });
  it("TPO-campaigns-public-34 does not confuse withheld population with zero",()=>{
   expect(formatPublicPlacementMetric("STUDENTS",{population:null,placed:null,offers:null,

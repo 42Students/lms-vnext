@@ -12,7 +12,7 @@ describe("TPO last third page-level UX coverage closure",()=>{
   expect(s).toContain("AuthorizationError");
   expect(s).toContain('result.status==="NOT_REGISTERED"');
   expect(s).toContain('result.status==="FAILED"');
-  expect(s).toContain("Retry Everyone");
+  expect(s).toContain("Retry this page");
   expect(s).toContain('role="status"');
   expect(s).toContain('aria-label="Everyone messages"');
   expect(s).toContain("Newer messages");

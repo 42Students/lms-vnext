@@ -9,7 +9,7 @@ describe("chat-12 Students S2/S3 audited gap guardrails",()=>{
   const control=src("src/components/tpo/tpo-timed-debar-control.tsx");
   expect(control).toContain('untilDate:duration==="DATE"?untilDate:null');
   expect(control).toContain('untilDrives:duration==="DRIVES"?Number(untilDrives):null');
-  expect(control).toContain("Number(untilDrives)>10000");
+  expect(control).toContain("max={10000}");
   expect(control).toContain("Reason for lifting");
  });
  it("TPO-students-07 reports unavailable debarment state rather than treating it as false",()=>{

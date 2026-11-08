@@ -84,8 +84,13 @@ describe("UX-tpo-first-third-everyone-01 team Everyone role, availability and pa
   await expect(everyonePage()).rejects.toBeInstanceOf(AuthorizationError);
  });
  it("uses bounded safe pages and explains missing Everyone storage without fabricated messages",async()=>{
-  const html=renderToStaticMarkup(await everyonePage({page:"999999999"}));
-  expect(mock.everyone).toHaveBeenCalledWith(context(["TPO"]),1);
+  // An out-of-range page is refused before any lookup, with a way back to the newest messages.
+  const invalid=renderToStaticMarkup(await everyonePage({page:"999999999"}));
+  expect(mock.everyone).not.toHaveBeenCalled();
+  expect(invalid).toContain("No messages were loaded");
+  expect(invalid).toContain("View newest messages");
+  const html=renderToStaticMarkup(await everyonePage({page:"2"}));
+  expect(mock.everyone).toHaveBeenCalledWith(context(["TPO"]),2);
   expect(html).toContain("Everyone is not available");
   expect(html).toContain("No team messages were loaded");
  });
@@ -93,7 +98,7 @@ describe("UX-tpo-first-third-everyone-01 team Everyone role, availability and pa
   mock.everyone.mockRejectedValueOnce(new Error("private database connection string"));
   const html=renderToStaticMarkup(await everyonePage());
   expect(html).toContain("Could not load Everyone right now.");
-  expect(html).toContain("Retry Everyone");
+  expect(html).toContain("Retry this page");
   expect(html).toContain('role="alert"');
   expect(html).not.toContain("private database connection string");
  });

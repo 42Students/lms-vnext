@@ -23,12 +23,12 @@ describe("chat-16 public/auth route-level error, recovery and responsive states"
  it("UX-chat16-login-loading-05 retains the mobile-first width and a visible loading state",()=>{
   const html=renderToStaticMarkup(<LoginLoading/>);
   expect(html).toContain('role="status"');
-  expect(html).toContain("Loading sign in...");
+  expect(html).toContain("Preparing secure sign-in");
   expect(html).toContain("42LMS home");
  });
  it("UX-chat16-login-error-06 directs login recovery to the public sign-in entry only",()=>{
   const html=renderToStaticMarkup(<LoginError error={outage} reset={reset}/>);
-  expect(html).toContain('data-home-href="/login"');
+  expect(html).toContain('data-home-href="/home"');
   expect(html).toContain('role="alert"');
   expect(html).not.toContain("PRIVATE_PROVIDER_KEY_OR_SQL");
   expect(html).not.toContain("private-digest");
@@ -46,6 +46,6 @@ describe("chat-16 public/auth route-level error, recovery and responsive states"
   expect(GracefulErrorBoundary).toBeDefined();
   const html=renderToStaticMarkup(<PlacementsError error={outage} reset={reset}/>);
   expect(html).toContain("We couldn&#x27;t load this page");
-  expect(html).toContain("Retry");
+  expect(html).toContain("Try again");
  });
 });

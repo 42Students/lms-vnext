@@ -55,7 +55,7 @@ describe("graceful shared UI primitives", () => {
   it("GR-56 third party failure supplies an accessible copy link", () => {
     const source = readFileSync("src/components/ui/third-party-link.tsx", "utf8");
     expect(source).toContain("Copy link");
-    expect(source).toContain("The link could not be opened.");
+    expect(source).toContain("This link is unavailable.");
   });
   it("GR-62 warns on unsaved changes and clears successful drafts", () => {
     const source = readFileSync("src/hooks/use-form-draft.ts", "utf8");

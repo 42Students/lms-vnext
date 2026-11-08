@@ -9,9 +9,10 @@ describe("learner assignment list recovery preserves legacy messaging and access
   expect(source).toContain('role="alert"');
  });
  it("offers a mobile-sized keyboard-accessible retry on the same learner route",()=>{
-  expect(source).toContain('href="/learn/allAssignments?retry=1"');
-  expect(source).toContain('min-h-11 items-center');
-  expect(source).toContain('focus-ring');
+  expect(source).toContain('CurrentPageRetry');
+  const retry = readFileSync("src/components/ui/current-page-retry.tsx", "utf8");
+  expect(retry).toContain('min-h-11');
+  expect(retry).toContain('<Button');
  });
  it("does not swallow unauthorized membership errors",()=>{
   expect(source).toContain('error instanceof AuthorizationError || error instanceof CoursesServiceError');

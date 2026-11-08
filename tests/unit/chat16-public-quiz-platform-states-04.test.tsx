@@ -50,7 +50,7 @@ describe("chat-16 public routes, quiz entry and resilient loading surfaces",()=>
    expect(html).toContain('role="status"');
    expect(html).toContain("Loading your page");
   }
-  expect(renderToStaticMarkup(<PlacementsLoading/>)).toContain("Loading placements...");
+  expect(renderToStaticMarkup(<PlacementsLoading/>)).toContain("Loading college placements overview");
   expect(renderToStaticMarkup(<PrivacyLoading/>)).toContain("Loading privacy policy...");
   expect(GracefulPageLoading).toBeDefined();
  });

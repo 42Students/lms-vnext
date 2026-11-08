@@ -14,7 +14,7 @@ describe("Chat-3 Round 9 restored contracts",()=>{
   expect(safe).not.toContain('target="_blank"');
   expect(safe).toContain('href={safeHref}');
   expect(safe).toContain('role="alert"');
-  expect(safe).toContain("The link could not be opened.");
+  expect(safe).toContain("This link is unavailable.");
   expect(src).toContain("Open employer portal");
  });
  it("api-origin-guard protects POST and DELETE assignment materials at route boundaries",()=>{

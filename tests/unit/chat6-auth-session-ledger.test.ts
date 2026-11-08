@@ -122,7 +122,7 @@ describe("auth and sessions: persisted device-token ownership and revocation", (
     fakes.execute.mockResolvedValueOnce({ rows: [{ id: "session-a", device_name: "laptop" }] });
     const list = await listActiveSessions("user-a");
     expect(list).toEqual([{ id: "session-a", device_name: "laptop" }]);
-    expect(statement(1).sql).toContain("WHERE user_id =");
+    expect(statement(1).sql).toContain("WHERE s.user_id =");
     expect(statement(1).sql).toContain("revoked_at IS NULL");
     expect(statement(1).params).toContain("user-a");
   });

@@ -41,7 +41,7 @@ describe("resilient one-time-code sign in", () => {
   });
   it("GR-30 suppresses repeated submissions while preserving input", () => {
     expect(login).toContain("runGuarded(() => post<");
-    expect(login).toContain("disabled={busy}");
+    expect(login).toContain("if (busy) return;");
   });
   it("GR-15 returns users to the page they left", () => {
     expect(login).toContain('new URLSearchParams(window.location.search).get("returnTo")');

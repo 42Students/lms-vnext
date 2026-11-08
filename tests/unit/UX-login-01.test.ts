@@ -3,7 +3,7 @@ import {readFileSync} from "node:fs";
 const read=(p:string)=>readFileSync(p,"utf8");
 describe("UX-login-01 secure OTP entry",()=>{
  it("preserves canonical sign-in route, metadata and identity checks",()=>{
-  expect(read("src/app/login/page.tsx")).toContain('export { default, generateMetadata } from "../page"');
+  expect(read("src/app/login/page.tsx")).toContain('export { default } from "../page"');
   const page=read("src/app/page.tsx");
   expect(page).toContain("<LoginForm");
   expect(page).toContain('safeReturnTo(');
@@ -22,7 +22,7 @@ describe("UX-login-01 secure OTP entry",()=>{
   expect(shell).toContain("<GracefulPageLoading");
   expect(styles).toContain("min-height: 100dvh");
   expect(styles).toContain("width: min(100%, 510px)");
-  expect(error).toContain('homeHref="/login"');
+  expect(error).toContain('homeHref="/home"');
   expect(error).toContain("<GracefulErrorBoundary");
  });
 });

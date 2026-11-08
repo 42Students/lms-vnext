@@ -112,7 +112,7 @@ describe("chat-17 confirmed BLOCKER/MAJOR learning cross-audit fixes", () => {
     expect(p).toContain('aria-label={ariaLabel ? `${ariaLabel} (external website)` : undefined}');
     expect(p).toContain('rel="noopener noreferrer"');
     expect(p).toContain("Copy link");
-    expect(p).toContain("Copy the destination below to try another browser.");
+    expect(p).toContain("Copy the link displayed below and open it in another browser.");
     expect(p).not.toContain('target="_blank"');
     expect(p).toContain("showFallback");
     expect(p).toContain("focus-ring");
