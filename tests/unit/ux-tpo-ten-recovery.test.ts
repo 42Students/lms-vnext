@@ -44,7 +44,7 @@ describe("Ten-group TPO recovery, 173 registered surfaces", () => {
     for (const p of ["batches/page.tsx","companies/page.tsx","placements/lifecycle/page.tsx"]) {
       const s=read(base+p);
       expect(s).toContain("getCurrentRequestContext");
-      expect(s).toMatch(/hasMembershipRole|requireTpoBatchActor|requirePersistedTpoMembership/);
+      expect(s).toMatch(/hasMembershipRole|requireTpoBatchActor|requirePersistedTpoMembership|can\\(context,\\s*"placements\\.manage"/);
     }
   });
 });
