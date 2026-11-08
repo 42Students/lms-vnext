@@ -59,3 +59,13 @@ All code is pushed on `main`, each group independently claimed by `chat-gpt6-ux-
 - Review: Actual route loader and error components were rendered; recruiter Today links and sanitized exception display were asserted. Existing HR-exported protected pages, server role checks, API payloads, membership-scoped queries and file permissions were not changed. Authenticated real-account integrations remain a separate gate.
 
 The independent UX-G080 group may now move to DONE with the above evidence.
+
+
+## UX-G059 exact-SHA closure proof
+
+- Exact commit `3f7da02cfa48a24545cc5d1d82969061ef4c03df`; CI <https://github.com/42Students/lms-vnext/actions/runs/42462946348>. Required steps passed: exact checkout SHA, scoped ESLint, unit tests, desktop/mobile Chromium, full TypeScript and screenshot artifact upload.
+- Unit `tests/unit/ux-g059-learner-assessments.test.tsx`: **4/4 passed**; responsive Playwright `tests/e2e/ux-g059-learner-assessments.spec.ts`: **2/2 passed**.
+- Artifact <https://github.com/42Students/lms-vnext/actions/runs/42462946348/artifacts/13609759697> — `ux-g059-desktop.png`, `ux-g059-mobile.png` showing real route error/loading states, course-scoped pagination recovery and no overflow.
+- Scope/security: Recovery uses totals and course ID returned from the authorized learner overview, never raw URL course scope. Existing authorization exceptions are still propagated, quiz attempt grades remain publication-gated, and backend submission/file grants remain unchanged. Browser fixtures are synthetic; no genuine tenant/role workflow is certified by this acceptance.
+
+UX-G059 may be closed independently with these facts.
