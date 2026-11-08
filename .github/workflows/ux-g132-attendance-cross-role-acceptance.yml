@@ -65,7 +65,7 @@ jobs:
       - name: Admin, College, Faculty, Learner and access-denied desktop/mobile
         run: |
           npx playwright test tests/e2e/ux-g132-attendance-cross-role.spec.ts tests/e2e/ux-g132-attendance-policy-mutation.spec.ts --project=chromium --reporter=line,json
-          node -e 'const s=require("./ux-g132-attendance-results.json").stats;if(s.expected!==14||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
+          node -e 'const s=require("./ux-g132-attendance-results.json").stats;if(s.expected!==15||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
       - name: Preserve screenshots and traces
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
