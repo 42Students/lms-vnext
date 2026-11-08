@@ -142,6 +142,11 @@ describe("TPO UX G114–G119: recovery controls and empty reports", () => {
     expect(branch).toContain("PLACEMENT_SEASON_NOT_FOUND");
     expect(branch).toContain("Season no longer available");
     expect(branch).toContain("Choose a current season");
+    for (const segment of ["by-branch", "intelligence"]) {
+      const source = page(`reports/${segment}/page.tsx`);
+      expect(source).toContain("Review placement seasons");
+      expect(source).toContain('href="/tpo/settings/season"');
+    }
   });
 
   it("G113: all six report error states offer retry and safe report navigation", () => {
