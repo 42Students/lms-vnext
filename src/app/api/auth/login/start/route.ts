@@ -9,6 +9,7 @@ import {
 } from "@/modules/auth/http";
 import { startLoginWithRuntime } from "@/modules/auth/runtime";
 import { route } from "@/security/route";
+import { decoyStartResult, isMaskedStartError, padToFloor, uniformStartEnabled } from "@/modules/auth/uniform-start";
 
 export const runtime = "nodejs";
 
@@ -76,6 +77,18 @@ async function handlePOST(request: Request) {
       nextStep: "VERIFY_CODE",
     }));
   } catch (error) {
+    if (uniformStartEnabled() && isMaskedStartError(error)) {
+      const channel = guarded.body.channel ?? (guarded.body.email ? "EMAIL" : "PHONE");
+      const contact = guarded.body.contact ??
+        (channel === "EMAIL" ? guarded.body.email : guarded.body.phone ?? guarded.body.phoneNumber) ?? "";
+      auditLogin("auth.login_start_masked", { route: "login-start", ip: guarded.ip }, { code: error.code });
+      await padToFloor(startedAt);
+      return privateAuthResponse(NextResponse.json({
+        ...decoyStartResult(channel, contact),
+        message: "OTP triggered",
+        nextStep: "VERIFY_CODE",
+      }));
+    }
     return loginErrorResponse(error, { route: "login-start", ip: guarded.ip });
   }
 }
