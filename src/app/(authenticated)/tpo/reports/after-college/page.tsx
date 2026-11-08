@@ -1,5 +1,7 @@
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { tpoReportHasAmbiguousFilters } from "@/modules/placements/tpo-report-url-guard";
+import { TpoReportInvalidFilters } from "@/components/placements/tpo-report-invalid-filters";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
@@ -27,6 +29,7 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
  const ctx=await getCurrentRequestContext();
  if(!ctx.membership||!hasMembershipRole(ctx,"TPO"))redirect("/dashboard");
  const raw=await searchParams;
+ if(tpoReportHasAmbiguousFilters(raw))return <TpoReportInvalidFilters path="/tpo/reports/after-college"/>;
  const batches=await listTpoBatches(ctx);
  const batchId=first(raw["batchId"])||undefined,branchId=first(raw["branchId"])||undefined;
  if(batchId&&!batches.batches.some(batch=>batch.id===batchId))
