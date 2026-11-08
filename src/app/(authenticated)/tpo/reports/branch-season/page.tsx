@@ -1,5 +1,7 @@
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { tpoReportHasAmbiguousFilters } from "@/modules/placements/tpo-report-url-guard";
+import { TpoReportInvalidFilters } from "@/components/placements/tpo-report-invalid-filters";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
@@ -26,6 +28,7 @@ export default async function TpoBranchSeasonPage({
     redirect("/dashboard");
   }
   const search = await searchParams;
+  if (tpoReportHasAmbiguousFilters(search)) return <TpoReportInvalidFilters path="/tpo/reports/branch-season" />;
   const seasonId = Array.isArray(search.seasonId) ? search.seasonId[0] : search.seasonId;
   const dashboard = await getTpoBranchSeasonDashboard(
     context, { ...(seasonId ? { seasonId } : {}) },
