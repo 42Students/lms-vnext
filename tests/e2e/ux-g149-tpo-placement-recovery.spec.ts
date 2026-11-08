@@ -25,12 +25,12 @@ for(const viewport of viewports){
     "app-001,Developer,12","missing-app,Developer,12"].join("\n")+"\n";
   await section.locator('input[type="file"]').setInputFiles({name:"selection.csv",mimeType:"text/csv",buffer:Buffer.from(csv)});
   await expect(section.getByRole("status").filter({hasText:"101 matched · 2 unmatched"})).toBeVisible();
-  await section.getByRole("button",{name:"Confirm and record 101 selections"}).click();
+  await section.getByRole("button",{name:"Confirm and record 101 selections"}).first().click();
   const dialog=page.getByRole("alertdialog",{name:"Record 101 matched company selections?"});
   await expect(dialog).toBeVisible();
   await dialog.getByRole("button",{name:"Cancel"}).click();
   expect(writes).toBe(0);
-  await section.getByRole("button",{name:"Confirm and record 101 selections"}).click();
+  await section.getByRole("button",{name:"Confirm and record 101 selections"}).first().click();
   await dialog.getByRole("button",{name:"Confirm and record 101 selections"}).click();
   await expect(section.getByText("100 row(s) confirmed before the error.",{exact:false})).toBeVisible();
   await expect(section.getByRole("button",{name:"Reload selection register"})).toBeVisible();
@@ -59,7 +59,7 @@ for(const viewport of viewports){
   await section.getByRole("button",{name:"Verify and release next offer"}).first().click();
   await dialog.getByRole("button",{name:"Verify and release next offer"}).click();
   await expect(section.getByRole("status").filter({hasText:"Offer actions are locked until the waitlist"})).toBeVisible();
-  await expect(section.getByRole("button",{name:"Verify and release next offer"})).toBeDisabled();
+  await expect(section.getByRole("button",{name:"Verify and release next offer"}).first()).toBeDisabled();
   expect(writes).toBe(1);
   await noOverflow(page);
   await page.screenshot({path:info.outputPath("waitlist-reconciliation-"+viewport.name+".png"),fullPage:true});
