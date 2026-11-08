@@ -4,6 +4,7 @@ import { PlacementCalendarWorkspace } from "@/components/placements/placement-ca
 import { Alert } from "@/components/ui/alert";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
+import { TextLink } from "@/components/ui/text-link";
 
 type SearchParams = {
   date?: string | string[];
@@ -33,6 +34,7 @@ export default async function SuperAdminPlacementInterviewCalendarPage({
           Select an Organization + College in the header to view interviews. Interview
           appointments are visible only for one explicitly selected college; the
           organization-wide view cannot display learner bookings.
+          <div className="mt-3"><TextLink href="/admin/colleges" className="inline-flex min-h-11 items-center md:min-h-9">Browse college directory</TextLink></div>
         </Alert>
       </div>
     );
