@@ -25309,11 +25309,11 @@
         "type": "COMPONENT",
         "area": "tpo",
         "title": "Tpo · Interactive components (part 4)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-tpo-components-20261108",
         "pickedAt": "2026-11-08T08:04:51.342Z",
         "startedAt": "2026-11-08T08:04:51.342Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T08:36:28.101Z",
         "sourceFiles": [
           "src/components/tpo/tpo-recruiter-message-reply.tsx",
           "src/components/tpo/tpo-spreadsheet-grid.tsx",
@@ -25349,7 +25349,46 @@
           "WIDGET-0153"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "41e72e2a0402597eae5c2c07811bf8b6de7b1b1d",
+            "parityDoc": "docs/parity/ux-g159-2026-11-08.md",
+            "tests": [
+              {
+                "command": "npx eslint src/components/tpo/tpo-team-{away-form,rename,message-actions}.tsx src/components/tpo/tpo-student-nudge-panel.tsx src/app/e2e/ux-g159-fixture/{page,ready}.tsx tests/unit/ux-g159-team.test.ts tests/e2e/ux-g159.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462518090 lint pass"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g159-team.test.ts --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462518090 5/5 unit checks"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g159.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462518090 8/8 browser cases, no flaky retries"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462518090 TypeScript successful"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462518090/artifacts/13609609958 desktop screenshots for IST date validation, draft preservation, stale message edit/delete, and exact 25-recipient selection"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462518090/artifacts/13609609958 mobile screenshots for the same component scenarios, no horizontal overflow"
+              }
+            ],
+            "regressionReview": "Actual TPO component fixture. Verified invalid/past IST away period never mutates, successful away payload uses +05:30 conversion and expectedUntil; rename 409 preserves draft; message edit/delete 409 keeps dialog and unsent edit; first-page nudge checkbox follows exact 25 IDs even if another selected row keeps count unchanged; hydration readiness ensured deterministic interaction. Remaining G159 components source-reviewed without separate browser certification.",
+            "securityReview": "Same-origin version/hash guarded mutations preserved; no authorization/tenant service changed. Fixture development-only NODE_ENV + UX_G159_FIXTURE gate, mocked API replies not live tenant proof."
+          }
+        ]
       },
       {
         "id": "UX-G160",
