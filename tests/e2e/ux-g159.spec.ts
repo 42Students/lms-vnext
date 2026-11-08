@@ -91,7 +91,7 @@ for(const viewport of sizes){
   await section.getByRole("button",{name:"Delete",exact:true}).click();
   const deletion=page.getByRole("alertdialog",{name:"Delete this message?"});
   await deletion.getByRole("button",{name:"Delete message"}).click();
-  await expect(deletion.getByText(/message changed or the edit window ended/)).toBeVisible();
+  await expect(deletion.getByText(/message changed or was removed/)).toBeVisible();
   await expect(deletion).toBeVisible();
   expect(actions).toEqual(["EDIT","DELETE"]);
   await screenshot(page,info,viewport.name+"-message");
