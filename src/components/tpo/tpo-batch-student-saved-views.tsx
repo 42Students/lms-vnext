@@ -66,8 +66,9 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
  const panelId=useId();
  const selectedView=views.find(view=>view.id===selected);
  const pinnedViews=views.filter(view=>view.pinned);
+ const pinLimitReached=pinned&&pinnedViews.length>=5&&!selectedView?.pinned;
  return <section aria-label="BATCH_STUDENTS saved views" className="min-w-0 space-y-2">
-  <Button variant="secondary" type="button" aria-expanded={open} aria-controls={panelId} onClick={toggle}
+  <Button variant="secondary" type="button" aria-expanded={open} aria-controls={panelId} onClick={toggle} disabled={busy||guarded}
    className="min-h-11 w-full sm:w-auto md:min-h-9">Saved batch views</Button>
   {open?<div id={panelId} role="region" aria-label="Saved batch view editor" className="min-w-0 space-y-3 border-y border-border py-4">
    <Heading level={3}>Saved views</Heading>
@@ -79,22 +80,25 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
       >{view.name}</Button>)}
    </div>:null}
    <Label className="block min-w-0">View name
-    <Input value={name} onChange={e=>{setName(e.target.value);setError("");setNotice("");}} maxLength={100}
+    <Input value={name} disabled={busy||guarded} onChange={e=>{setName(e.target.value);setError("");setNotice("");}} maxLength={100}
      className="mt-1 min-h-11 w-full md:min-h-9"/></Label>
    <Label variant="choice" className="flex min-h-11 items-center gap-2">
-    <Checkbox  checked={pinned} onChange={e=>setPinned(e.target.checked)}/>Pin view</Label>
+    <Checkbox checked={pinned} disabled={busy||guarded} onChange={e=>setPinned(e.target.checked)}/>Pin view</Label>
+   {pinLimitReached?<p role="alert" className="text-sm text-error">
+    Five views are already pinned. Unpin an existing view before pinning another.
+   </p>:null}
    <div className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-2">
-    <Button variant="primary" type="button" disabled={busy||guarded||!name.trim()} onClick={()=>void action({
+    <Button variant="primary" type="button" disabled={busy||guarded||pinLimitReached||!name.trim()} onClick={()=>void action({
      action:"CREATE",name:name.trim(),pinned,filters:current(),
     })} className="min-h-11 w-full md:min-h-9">Save current filters</Button>
-    <Button variant="secondary" type="button" disabled={busy||guarded||!selected||!name.trim()} onClick={()=>void action({
+    <Button variant="secondary" type="button" disabled={busy||guarded||pinLimitReached||!selected||!name.trim()} onClick={()=>void action({
      action:"UPDATE",id:selected,name:name.trim(),pinned,filters:current(),
     })} className="min-h-11 w-full md:min-h-9">Update selected</Button>
    </div>
    <ul className="grid min-w-0 grid-cols-1 gap-2">{views.map(view=><li key={view.id}
     className="grid min-w-0 grid-cols-1 gap-2 border-b border-border py-3 text-sm sm:grid-cols-[minmax(0,1fr)_auto_auto_auto] sm:items-center">
     <Label variant="choice" className="col-span-2 flex min-h-11 min-w-0 items-center gap-2 break-words sm:col-span-1">
-     <Radio  name="selected-batch-view" checked={selected===view.id}
+     <Radio name="selected-batch-view" disabled={busy||guarded} checked={selected===view.id}
       onChange={()=>{setSelected(view.id);setName(view.name);setPinned(view.pinned);}}/>
      {view.name}{view.pinned?" · Pinned":""}
     </Label>
@@ -106,7 +110,7 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
      className="min-h-11 w-full md:min-h-9">Delete</Button>
    </li>)}</ul>
    {selectedView?<p className="text-xs text-body">Selected: {selectedView.name}</p>:null}
-   {!views.length?<p className="text-sm">No saved batch views yet.</p>:null}
+   {!views.length&&!busy&&!error?<p role="status" className="text-sm">No saved batch views yet.</p>:null}
    {notice?<p role="status" className="text-sm">{notice}</p>:null}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   </div>:null}
@@ -118,6 +122,8 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
    onConfirm={()=>{if(!deleteTarget||busy||guarded)return;
     const id=deleteTarget.id;
     void run(async()=>{const result=await action({action:"DELETE",id});if(result)setDeleteTarget(null);});
-   }}/>
+   }}>
+   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  </ConfirmDialog>
  </section>;
 }
