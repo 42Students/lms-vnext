@@ -17572,11 +17572,11 @@
         "type": "JOURNEY",
         "area": "admin",
         "title": "Admin · Tenants / Setup → Videos (part 21)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-route-five-batch-20261107",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08T09:34:00.000Z",
         "sourceFiles": [
           "src/app/(authenticated)/admin/tenants/setup/error.tsx",
           "src/app/(authenticated)/admin/tenants/setup/loading.tsx",
@@ -17622,6 +17622,34 @@
             "artifactId": 13608638217,
             "url": "https://github.com/42Students/lms-vnext/actions/runs/42459811327/artifacts/13608638217",
             "scope": "Synthetic dev-gated rendering of five-route recovery controls at desktop/mobile. Signed-in authorized and cross-role/tenant browser coverage still required before DONE."
+          },
+          {
+            "commitSha": "629c60928cadb8e36a21c2c92560dc062bf8e4ca",
+            "parityDoc": "docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md",
+            "tests": [
+              {
+                "command": "test \"$(git rev-parse HEAD)\" = \"$GITHUB_SHA\"; npx eslint tests/e2e/ux-five-route-seeded-role-acceptance.spec.ts; npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249 — exact checkout SHA, scoped browser spec lint and full project TypeScript passed"
+              },
+              {
+                "command": "npm run db:e2e:prepare; ALLOW_TEST_SEED=I_ACCEPT UX_ROLE_MEMBERSHIPS_ONLY=1 npx tsx scripts/seed-test-tenants.ts; npx playwright test tests/e2e/ux-five-route-seeded-role-acceptance.spec.ts --project=chromium --reporter=line,json",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249 — 18/18 authenticated PostgreSQL 17 role-and-tenant browser journeys, 0 unexpected, 0 flaky, 0 skipped"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249/artifacts/13612107626 — G025/G036/G044/G087/G097 authenticated Super Admin, College Admin, Learner and Faculty positive/negative route screenshots including invalid filters, canonical legacy bookmarks and permission denial; no horizontal overflow"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249/artifacts/13612107626 — corresponding seeded responsive role/tenant browser evidence for all five route groups, no overflow and explicit denied-role fallbacks"
+              }
+            ],
+            "regressionReview": "Five group source inventories and recovery states reviewed in the parity document and existing partial evidence. On exact source SHA 629c609, complete TypeScript, scoped lint and 18/18 disposable-PG17 desktop/mobile Chromium scenarios passed with 0 flaky/unexpected/skipped. The browser fix awaits real redirects rather than comparing premature page URLs. Release-wide visual and DB parity checks remain separate.",
+            "securityReview": "Real role-negative paths: Learner denied Tenant Setup, College Admin aliases, college placement management and Super Admin directory; Super Admin bookmark strips untrusted collegeId, employeeId and external return; faculty invalid quiz attempt selector does not load private learner details. No backend authorization/RLS/tenant boundaries were weakened. Observed development client-telemetry network 500 outside browser assertions does not certify production incident intake, independently gated."
           }
         ],
         "notes": "Second pass: bounded shared content handoffs, empty filtered college drives, five real error recovery components, and exact-checkout-SHA CI artifacts committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md Synthetic recovery/lint/type/unit browser run 42459811327 PASS 2026-11-08 and artifact 13608638217 recorded; still DOING: real authenticated role/tenant, deep links and broader group state matrix pending."
@@ -18198,11 +18226,11 @@
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Placements → Placements / Job Settings (part 9)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-route-five-batch-20261107",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08T09:34:00.000Z",
         "sourceFiles": [
           "src/app/(authenticated)/college/placements/calendar/error.tsx",
           "src/app/(authenticated)/college/placements/calendar/loading.tsx",
@@ -18260,6 +18288,34 @@
             "artifactId": 13608638217,
             "url": "https://github.com/42Students/lms-vnext/actions/runs/42459811327/artifacts/13608638217",
             "scope": "Synthetic dev-gated rendering of five-route recovery controls at desktop/mobile. Signed-in authorized and cross-role/tenant browser coverage still required before DONE."
+          },
+          {
+            "commitSha": "629c60928cadb8e36a21c2c92560dc062bf8e4ca",
+            "parityDoc": "docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md",
+            "tests": [
+              {
+                "command": "test \"$(git rev-parse HEAD)\" = \"$GITHUB_SHA\"; npx eslint tests/e2e/ux-five-route-seeded-role-acceptance.spec.ts; npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249 — exact checkout SHA, scoped browser spec lint and full project TypeScript passed"
+              },
+              {
+                "command": "npm run db:e2e:prepare; ALLOW_TEST_SEED=I_ACCEPT UX_ROLE_MEMBERSHIPS_ONLY=1 npx tsx scripts/seed-test-tenants.ts; npx playwright test tests/e2e/ux-five-route-seeded-role-acceptance.spec.ts --project=chromium --reporter=line,json",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249 — 18/18 authenticated PostgreSQL 17 role-and-tenant browser journeys, 0 unexpected, 0 flaky, 0 skipped"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249/artifacts/13612107626 — G025/G036/G044/G087/G097 authenticated Super Admin, College Admin, Learner and Faculty positive/negative route screenshots including invalid filters, canonical legacy bookmarks and permission denial; no horizontal overflow"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249/artifacts/13612107626 — corresponding seeded responsive role/tenant browser evidence for all five route groups, no overflow and explicit denied-role fallbacks"
+              }
+            ],
+            "regressionReview": "Five group source inventories and recovery states reviewed in the parity document and existing partial evidence. On exact source SHA 629c609, complete TypeScript, scoped lint and 18/18 disposable-PG17 desktop/mobile Chromium scenarios passed with 0 flaky/unexpected/skipped. The browser fix awaits real redirects rather than comparing premature page URLs. Release-wide visual and DB parity checks remain separate.",
+            "securityReview": "Real role-negative paths: Learner denied Tenant Setup, College Admin aliases, college placement management and Super Admin directory; Super Admin bookmark strips untrusted collegeId, employeeId and external return; faculty invalid quiz attempt selector does not load private learner details. No backend authorization/RLS/tenant boundaries were weakened. Observed development client-telemetry network 500 outside browser assertions does not certify production incident intake, independently gated."
           }
         ],
         "notes": "Second pass: bounded shared content handoffs, empty filtered college drives, five real error recovery components, and exact-checkout-SHA CI artifacts committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md Synthetic recovery/lint/type/unit browser run 42459811327 PASS 2026-11-08 and artifact 13608638217 recorded; still DOING: real authenticated role/tenant, deep links and broader group state matrix pending."
@@ -18654,11 +18710,11 @@
         "type": "JOURNEY",
         "area": "college-admin",
         "title": "College Admin · Assignments → Teachers (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-route-five-batch-20261107",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08T09:34:00.000Z",
         "sourceFiles": [
           "src/app/(authenticated)/college-admin/departments/error.tsx",
           "src/app/(authenticated)/college-admin/departments/loading.tsx",
@@ -18716,6 +18772,34 @@
             "type": "source",
             "commitSha": "8b2f5bc1c877124cae1a31275689e3c01bc43a55",
             "description": "Department and Program Retry controls now enforce 44px minimum desktop/mobile, verified by Chromium bounding-box assertion."
+          },
+          {
+            "commitSha": "629c60928cadb8e36a21c2c92560dc062bf8e4ca",
+            "parityDoc": "docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md",
+            "tests": [
+              {
+                "command": "test \"$(git rev-parse HEAD)\" = \"$GITHUB_SHA\"; npx eslint tests/e2e/ux-five-route-seeded-role-acceptance.spec.ts; npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249 — exact checkout SHA, scoped browser spec lint and full project TypeScript passed"
+              },
+              {
+                "command": "npm run db:e2e:prepare; ALLOW_TEST_SEED=I_ACCEPT UX_ROLE_MEMBERSHIPS_ONLY=1 npx tsx scripts/seed-test-tenants.ts; npx playwright test tests/e2e/ux-five-route-seeded-role-acceptance.spec.ts --project=chromium --reporter=line,json",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249 — 18/18 authenticated PostgreSQL 17 role-and-tenant browser journeys, 0 unexpected, 0 flaky, 0 skipped"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249/artifacts/13612107626 — G025/G036/G044/G087/G097 authenticated Super Admin, College Admin, Learner and Faculty positive/negative route screenshots including invalid filters, canonical legacy bookmarks and permission denial; no horizontal overflow"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249/artifacts/13612107626 — corresponding seeded responsive role/tenant browser evidence for all five route groups, no overflow and explicit denied-role fallbacks"
+              }
+            ],
+            "regressionReview": "Five group source inventories and recovery states reviewed in the parity document and existing partial evidence. On exact source SHA 629c609, complete TypeScript, scoped lint and 18/18 disposable-PG17 desktop/mobile Chromium scenarios passed with 0 flaky/unexpected/skipped. The browser fix awaits real redirects rather than comparing premature page URLs. Release-wide visual and DB parity checks remain separate.",
+            "securityReview": "Real role-negative paths: Learner denied Tenant Setup, College Admin aliases, college placement management and Super Admin directory; Super Admin bookmark strips untrusted collegeId, employeeId and external return; faculty invalid quiz attempt selector does not load private learner details. No backend authorization/RLS/tenant boundaries were weakened. Observed development client-telemetry network 500 outside browser assertions does not certify production incident intake, independently gated."
           }
         ],
         "notes": "Second pass: bounded shared content handoffs, empty filtered college drives, five real error recovery components, and exact-checkout-SHA CI artifacts committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md Synthetic recovery/lint/type/unit browser run 42459811327 PASS 2026-11-08 and artifact 13608638217 recorded; still DOING: real authenticated role/tenant, deep links and broader group state matrix pending."
@@ -21784,11 +21868,11 @@
         "type": "JOURNEY",
         "area": "superadmin",
         "title": "Superadmin · Home → Projects / At Risk (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-route-five-batch-20261107",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08T09:34:00.000Z",
         "sourceFiles": [
           "src/app/(authenticated)/superadmin/[...legacy]/error.tsx",
           "src/app/(authenticated)/superadmin/[...legacy]/loading.tsx",
@@ -21848,6 +21932,34 @@
             "artifactId": 13608638217,
             "url": "https://github.com/42Students/lms-vnext/actions/runs/42459811327/artifacts/13608638217",
             "scope": "Synthetic dev-gated rendering of five-route recovery controls at desktop/mobile. Signed-in authorized and cross-role/tenant browser coverage still required before DONE."
+          },
+          {
+            "commitSha": "629c60928cadb8e36a21c2c92560dc062bf8e4ca",
+            "parityDoc": "docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md",
+            "tests": [
+              {
+                "command": "test \"$(git rev-parse HEAD)\" = \"$GITHUB_SHA\"; npx eslint tests/e2e/ux-five-route-seeded-role-acceptance.spec.ts; npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249 — exact checkout SHA, scoped browser spec lint and full project TypeScript passed"
+              },
+              {
+                "command": "npm run db:e2e:prepare; ALLOW_TEST_SEED=I_ACCEPT UX_ROLE_MEMBERSHIPS_ONLY=1 npx tsx scripts/seed-test-tenants.ts; npx playwright test tests/e2e/ux-five-route-seeded-role-acceptance.spec.ts --project=chromium --reporter=line,json",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249 — 18/18 authenticated PostgreSQL 17 role-and-tenant browser journeys, 0 unexpected, 0 flaky, 0 skipped"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249/artifacts/13612107626 — G025/G036/G044/G087/G097 authenticated Super Admin, College Admin, Learner and Faculty positive/negative route screenshots including invalid filters, canonical legacy bookmarks and permission denial; no horizontal overflow"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249/artifacts/13612107626 — corresponding seeded responsive role/tenant browser evidence for all five route groups, no overflow and explicit denied-role fallbacks"
+              }
+            ],
+            "regressionReview": "Five group source inventories and recovery states reviewed in the parity document and existing partial evidence. On exact source SHA 629c609, complete TypeScript, scoped lint and 18/18 disposable-PG17 desktop/mobile Chromium scenarios passed with 0 flaky/unexpected/skipped. The browser fix awaits real redirects rather than comparing premature page URLs. Release-wide visual and DB parity checks remain separate.",
+            "securityReview": "Real role-negative paths: Learner denied Tenant Setup, College Admin aliases, college placement management and Super Admin directory; Super Admin bookmark strips untrusted collegeId, employeeId and external return; faculty invalid quiz attempt selector does not load private learner details. No backend authorization/RLS/tenant boundaries were weakened. Observed development client-telemetry network 500 outside browser assertions does not certify production incident intake, independently gated."
           }
         ],
         "notes": "Second pass: bounded shared content handoffs, empty filtered college drives, five real error recovery components, and exact-checkout-SHA CI artifacts committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md Synthetic recovery/lint/type/unit browser run 42459811327 PASS 2026-11-08 and artifact 13608638217 recorded; still DOING: real authenticated role/tenant, deep links and broader group state matrix pending."
@@ -22521,11 +22633,11 @@
         "type": "JOURNEY",
         "area": "teacher",
         "title": "Teacher · Report / Quiz → Results (part 7)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-route-five-batch-20261107",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08T09:34:00.000Z",
         "sourceFiles": [
           "src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/error.tsx",
           "src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/loading.tsx",
@@ -22571,6 +22683,34 @@
             "artifactId": 13608638217,
             "url": "https://github.com/42Students/lms-vnext/actions/runs/42459811327/artifacts/13608638217",
             "scope": "Synthetic dev-gated rendering of five-route recovery controls at desktop/mobile. Signed-in authorized and cross-role/tenant browser coverage still required before DONE."
+          },
+          {
+            "commitSha": "629c60928cadb8e36a21c2c92560dc062bf8e4ca",
+            "parityDoc": "docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md",
+            "tests": [
+              {
+                "command": "test \"$(git rev-parse HEAD)\" = \"$GITHUB_SHA\"; npx eslint tests/e2e/ux-five-route-seeded-role-acceptance.spec.ts; npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249 — exact checkout SHA, scoped browser spec lint and full project TypeScript passed"
+              },
+              {
+                "command": "npm run db:e2e:prepare; ALLOW_TEST_SEED=I_ACCEPT UX_ROLE_MEMBERSHIPS_ONLY=1 npx tsx scripts/seed-test-tenants.ts; npx playwright test tests/e2e/ux-five-route-seeded-role-acceptance.spec.ts --project=chromium --reporter=line,json",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249 — 18/18 authenticated PostgreSQL 17 role-and-tenant browser journeys, 0 unexpected, 0 flaky, 0 skipped"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249/artifacts/13612107626 — G025/G036/G044/G087/G097 authenticated Super Admin, College Admin, Learner and Faculty positive/negative route screenshots including invalid filters, canonical legacy bookmarks and permission denial; no horizontal overflow"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42466491249/artifacts/13612107626 — corresponding seeded responsive role/tenant browser evidence for all five route groups, no overflow and explicit denied-role fallbacks"
+              }
+            ],
+            "regressionReview": "Five group source inventories and recovery states reviewed in the parity document and existing partial evidence. On exact source SHA 629c609, complete TypeScript, scoped lint and 18/18 disposable-PG17 desktop/mobile Chromium scenarios passed with 0 flaky/unexpected/skipped. The browser fix awaits real redirects rather than comparing premature page URLs. Release-wide visual and DB parity checks remain separate.",
+            "securityReview": "Real role-negative paths: Learner denied Tenant Setup, College Admin aliases, college placement management and Super Admin directory; Super Admin bookmark strips untrusted collegeId, employeeId and external return; faculty invalid quiz attempt selector does not load private learner details. No backend authorization/RLS/tenant boundaries were weakened. Observed development client-telemetry network 500 outside browser assertions does not certify production incident intake, independently gated."
           }
         ],
         "notes": "Second pass: bounded shared content handoffs, empty filtered college drives, five real error recovery components, and exact-checkout-SHA CI artifacts committed. DOING pending executed CI + desktop/mobile authenticated browser + role/tenant acceptance. docs/parity/ux-g025-g036-g044-g087-g097-2026-11-07.md Synthetic recovery/lint/type/unit browser run 42459811327 PASS 2026-11-08 and artifact 13608638217 recorded; still DOING: real authenticated role/tenant, deep links and broader group state matrix pending."
