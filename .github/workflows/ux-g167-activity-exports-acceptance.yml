@@ -43,6 +43,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Verify exact checkout commit
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
       - name: Focused static and CSV regressions
         env:
           NODE_OPTIONS: --max-old-space-size=6144
