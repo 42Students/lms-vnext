@@ -44,7 +44,7 @@ export default async function IndependentFindingsPage({searchParams}:{
   description="Independent findings imported from the audit repository, not user bug reports."
   actions={<IndependentFindingsSyncControl ready={importerReady}/>}/><TrackerAdminNav/></>;
  if(!parsed)return <div className="min-w-0 space-y-4">{header}
-  <ErrorState title="Invalid audit findings filters." description="Independent findings imported from the audit repository, not user bug reports."
+  <ErrorState title="Invalid audit findings filters." description="Those filters could not be applied. No findings were loaded; reset to the default open-findings view."
    action={<TextLink href="/tracker/audit-findings?view=OPEN"
     className="inline-flex min-h-11 items-center md:min-h-9">Reset filters</TextLink>}/>
  </div>;
@@ -64,7 +64,7 @@ export default async function IndependentFindingsPage({searchParams}:{
    <Banner tone="error">Couldn&apos;t load findings. The last verified data has not been modified.</Banner>
    <ErrorState title="Couldn\u0027t load findings."
     description="Retry the same authorized search and filter set. No synchronization was attempted."
-    action={<TextLink href={independentFindingHref(parsed)}>Retry audit findings</TextLink>} />
+    action={<TextLink className="inline-flex min-h-11 items-center" href={independentFindingHref(parsed)}>Retry audit findings</TextLink>} />
   </div>;
  }
  const data=findingsResult.value;
