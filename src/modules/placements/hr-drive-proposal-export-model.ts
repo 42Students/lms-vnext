@@ -1,9 +1,8 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 /** Sanitized metadata only; private proposal descriptions and message bodies are excluded. */
 export type HrProposalCsvRow={referenceId:string;title:string;createdAt:Date};
 function csvCell(value:string|number){
- const raw=String(value);
- const safe=/^\s*[=+\-@]/u.test(raw)||/^[\t\r\n]/u.test(raw)?"'"+raw:raw;
- return '"'+safe.replaceAll('"','""')+'"';
+ return spreadsheetCsvCell(value);
 }
 export function hrDriveProposalHistoryCsv(rows:readonly HrProposalCsvRow[]){
  const columns=["proposal_reference","role_title","sent_at_utc","status"];
