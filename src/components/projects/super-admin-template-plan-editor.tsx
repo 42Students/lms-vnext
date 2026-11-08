@@ -9,7 +9,7 @@ import {useToast} from "@/components/ui/toast";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import type { ProjectTemplateBlueprint } from "@/modules/projects/validation";
 import { projectTemplateBlueprintSchema } from "@/modules/projects/validation";
 import {
@@ -45,6 +45,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
   const [expanded, setExpanded] = useState(true);
   const [removedTask,setRemovedTask]=useState<{task:Task;index:number}|null>(null);
   const [pending, setPending] = useState(false);
+  const saveLock = useRef(false);
   const [draft, setDraft] = useState(props.blueprint);
   const [version, setVersion] = useState(props.currentVersion);
   const [error, setError] = useState("");
@@ -139,7 +140,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
   }
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (pending) return;
+    if (pending || saveLock.current) return;
     if(!dirty){showToast({tone:"info",title:"No changes to save"});return;}
     if(draft.tasks.length>500){
       setError("Remove "+(draft.tasks.length-500)+" tasks. Maximum 500 items.");return;
@@ -196,9 +197,10 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
         (first?.message??"Invalid template plan."));
       return;
     }
-    if (!(await askConfirm("Save changes as a new template version?"))) return;
-    setPending(true); setError(""); setMessage("");
+    saveLock.current = true;
     try {
+      if (!(await askConfirm("Save changes as a new template version?"))) return;
+      setPending(true); setError(""); setMessage("");
       const result = await projectMutation(
         "/api/projects/templates/" + encodeURIComponent(props.templateId), "PATCH", {
           expectedVersion: version,
@@ -218,6 +220,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
       setError(props.section === "sprints" ? "Failed to save sprints. Review the template and try again." :
         "Failed to save tasks. Review the template and try again.");
     } finally {
+      saveLock.current = false;
       setPending(false);
     }
   }
