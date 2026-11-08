@@ -12,7 +12,7 @@ export default function FacultyCourseError({ error, reset }: {
     error.message === "FACULTY_ACCESS_DENIED" ||
     error.message === "FORBIDDEN";
   return (
-    <section className="min-w-0 space-y-4">
+    <section role="alert" className="min-w-0 space-y-4">
       <PageHeader title={accessDenied ? "Faculty access required" : "Could not load teacher course context"} />
       <p className="mt-2 text-sm text-body">
         {accessDenied
@@ -20,8 +20,8 @@ export default function FacultyCourseError({ error, reset }: {
           : "Please retry. If this continues, your course assignment may be missing or unavailable."}
       </p>
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
-        {!accessDenied ? <Button onClick={reset}>Try again</Button> : null}
-        <ButtonLink variant="secondary" href="/teacher/courses">Back to Courses</ButtonLink>
+        {!accessDenied ? <Button type="button" onClick={reset} className="min-h-11 w-full sm:w-auto md:min-h-9">Try again</Button> : null}
+        <ButtonLink variant="secondary" href="/teacher/courses" className="w-full sm:w-auto">Back to Courses</ButtonLink>
       </div>
     </section>
   );
