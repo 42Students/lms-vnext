@@ -33,6 +33,9 @@ const errors: Record<string, string> = {
   BATCH_ALREADY_INVITED: "Registration is open",
   BATCH_FINISHED: "This batch is finished. Reopen it first.",
 };
+function confirmedRecipientCount(value:unknown):value is number {
+ return typeof value==="number"&&Number.isSafeInteger(value)&&value>=0;
+}
 export function TpoBatchInvitationControl(props: Props) {
   const router = useRouter();
   const deadlineId=useId(),invitationId=useId();
@@ -50,18 +53,21 @@ export function TpoBatchInvitationControl(props: Props) {
     if (!date || date < props.minDate) { setError(!date ? TPO_INVITATION_COPY.pickDate : errors["DEADLINE_PASSED"] ?? "The registration deadline has to be in the future"); return; }
     setBusy(true);
     try {
-      const response = await fetch("/api/placements/tpo/batches/" + props.batchId + "/invitation", {
+      const response = await fetch("/api/placements/tpo/batches/" + encodeURIComponent(props.batchId) + "/invitation", {
         method: "POST", credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ deadline: date, expectedVersion: props.expectedVersion }),
       });
-      const body = await response.json() as { error?: string; notifiedCount?: number };
-      if (!response.ok)
-        throw new Error(response.status === 409 ? "Batch changed. Refresh before inviting." :
-          errors[body.error ?? ""] ?? "Could not invite this batch.");
-      setMessage((body.notifiedCount === 0 ? "Deadline set to " +
+      const body:unknown = await response.json().catch(()=>null);
+      const data=body&&typeof body==="object"?body as {error?:string;notifiedCount?:unknown}:null;
+      if(!response.ok)
+        throw new Error(response.status===409?"Batch changed. Refresh before inviting.":
+          errors[data?.error??""]??"Could not invite this batch.");
+      if(!confirmedRecipientCount(data?.notifiedCount))
+        throw new Error("The invitation may have saved, but its recipient count could not be verified. Refresh the batch before retrying.");
+      setMessage((data.notifiedCount===0 ? "Deadline set to " +
         (formatTpoBatchInviteSuccess(0, date).split("register by ")[1] ?? date) :
-        formatTpoBatchInviteSuccess(body.notifiedCount ?? props.invitable, date)) +
+        formatTpoBatchInviteSuccess(data.notifiedCount, date)) +
         ". In-app only; email delivery is not enabled.");
       router.refresh();
     } catch (cause) {
@@ -104,12 +110,15 @@ export function TpoBatchInvitationControl(props: Props) {
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({confirmed:true,expectedVersion:props.expectedVersion}),
       });
-      const data=await response.json() as {reminded?:number;alreadySent?:boolean};
+      const data:unknown=await response.json().catch(()=>null);
       if(!response.ok)throw new Error(response.status===409?
         "Registration changed or today’s reminder was already sent. Refresh to review the latest state.":
         "Could not send the reminder. Please try again.");
-      setMessage(data.alreadySent?"Already reminded today":
-        (data.reminded??0)>0?"Reminded "+data.reminded+" student"+(data.reminded===1?"":"s")+" in the app":
+      const receipt=data&&typeof data==="object"?data as {reminded?:unknown;alreadySent?:unknown}:null;
+      if(!confirmedRecipientCount(receipt?.reminded)||typeof receipt?.alreadySent!=="boolean")
+       throw new Error("Reminder outcome could not be verified. Refresh the batch before trying again.");
+      setMessage(receipt.alreadySent?"Already reminded today":
+        receipt.reminded>0?"Reminded "+receipt.reminded+" student"+(receipt.reminded===1?"":"s")+" in the app":
         "Everyone has chosen already");
       setRemindReview(false);router.refresh();
     }catch(cause){setError(cause instanceof Error?cause.message:"Could not send the reminder.")}
