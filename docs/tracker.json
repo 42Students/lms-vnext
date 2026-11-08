@@ -25596,11 +25596,11 @@
         "type": "COMPONENT",
         "area": "tpo",
         "title": "Tpo · Interactive components (part 2)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-tpo-components-20261108",
         "pickedAt": "2026-11-08T08:24:20.172Z",
         "startedAt": "2026-11-08T08:24:20.172Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T08:43:00.325Z",
         "sourceFiles": [
           "src/components/tpo/tpo-batch-student-saved-views.tsx",
           "src/components/tpo/tpo-bell-panel.tsx",
@@ -25636,7 +25636,46 @@
           "WIDGET-0142"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "5a7b87edeedfdce7d3644952e981d37ed8ba5ee7",
+            "parityDoc": "docs/parity/ux-g157-2026-11-08.md",
+            "tests": [
+              {
+                "command": "npx eslint src/components/tpo/{tpo-company-team-composer,tpo-blocked-dates-editor,tpo-batch-student-saved-views}.tsx src/app/e2e/ux-g157-fixture/{page,client}.tsx tests/unit/ux-g157-interactions.test.ts tests/e2e/ux-g157.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463165194 scoped lint"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g157-interactions.test.ts --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463165194 5/5 unit tests"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g157.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463165194 8/8 browser scenarios, no flaky retries"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463165194 TypeScript integrity"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463165194/artifacts/13611030702 screenshots cross-company draft isolation, blocked dates, fifth-pin limit and failed delete recovery, campaign provider-disabled"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42463165194/artifacts/13611030702 screenshots covering equivalent workflows and no horizontal overflow"
+              }
+            ],
+            "regressionReview": "A keyed actor+company message composer remounts private drafts and restores only the matching session draft. Date range validation exposes >90-day failures. Batch saved views block a sixth pin, maintain controls and show failed deletion inside the dialog; campaign send not ready stays disabled. All other G157 components source-reviewed, not separately browser-certified.",
+            "securityReview": "No modification to server authorization or college scoping. Company message editor draft remains scoped to actor and company, same-origin API idempotency preserved. Development-only synthetic fixture requires NODE_ENV development and UX_G157_FIXTURE=1. Browser API mocks are not a live-tenant test."
+          }
+        ]
       },
       {
         "id": "UX-G158",
