@@ -1,4 +1,5 @@
 import "server-only";
+import { recordSecurityEvent } from "@/security/audit-store";
 
 import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -455,6 +456,18 @@ export const drizzleLoginRepository: LoginRepository = {
               AND user_id = ${userId}
               AND revoked_at IS NULL
           `);
+        }
+        // New-device detection (SEC-02-011): the counts are read before this sign-in's own row exists.
+        const agent = session.userAgent ? session.userAgent.slice(0, 512) : null;
+        const priorSessions = rowsOf(await tx.execute(sql`
+          SELECT count(*)::int AS total,
+                 count(*) FILTER (WHERE user_agent IS NOT DISTINCT FROM ${agent})::int AS same_device
+            FROM identity_device_sessions
+           WHERE user_id = ${userId}
+        `))[0] as { total?: unknown; same_device?: unknown } | undefined;
+        if (Number(priorSessions?.total ?? 0) > 0 && Number(priorSessions?.same_device ?? 0) === 0) {
+          // A short label only: never the raw agent string or address.
+          recordSecurityEvent({ event: "auth.new_device", outcome: "ok", userId, detail: { sessions: Number(priorSessions?.total ?? 0) } });
         }
         await tx.execute(sql`
           INSERT INTO identity_device_sessions (
