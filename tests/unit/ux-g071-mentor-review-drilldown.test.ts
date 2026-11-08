@@ -35,4 +35,10 @@ describe("UX-G071 Mentor delivery review drilldown",()=>{
       expect(source,segment).toContain("GracefulPageLoading");
     }
   });
+  it("offers a return to the same project's full version history",()=>{
+    const detail=readFileSync(join(process.cwd(),
+      "src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx"),"utf8");
+    expect(detail).toContain('href={"/mentor/projects/"+encodeURIComponent(data.projectId)+"/review-completeness"}');
+    expect(detail).toContain("All delivery versions");
+  });
 });
