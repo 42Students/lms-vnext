@@ -19,3 +19,10 @@
 - Security unchanged: permission-scoped attendance policy and faculty attendance routes remain authoritative. Client draft validation is not a permission substitute.
 
 **Do not transition to DONE** without exact-SHA unit/type/lint execution, desktop+mobile captures, role-negative evidence, regression/security reviews.
+
+## Executed cross-role and policy mutation evidence — 8 November 2026
+
+- [Exact-SHA run 42470168923](https://github.com/42Students/lms-vnext/actions/runs/42470168923) **SUCCEEDED** on `2f5993b190a27c6e4f46b9202e7ec5bbff36142e`: original 10 role/responsive scenarios plus two new persisted-policy/negative-authorization scenarios, with TypeScript and scoped lint. Browser artefacts include desktop/mobile screenshots and traces.
+- `tests/e2e/ux-g132-attendance-policy-mutation.spec.ts` exercises a server-authorized Super Admin selection of seeded college A, invalid threshold, confirmation cancellation, real compare-and-set PATCH/save with receipt, cross-college PATCH denial, restore to initial value, and mobile verification. A seeded College Admin's direct policy mutation is forbidden by the service despite the read-only UI.
+- The tested Super Admin editor lives at `/admin/attendance`; the separate College Admin settings route must not be mistaken for a platform role entrypoint. No routing or privilege constraints were weakened to make the test pass.
+- **Remaining DOING gaps:** faculty schedule conflict/double-submit and mark/correction positive/negative flows, reset-college-override confirmation, error recovery, full five-component focus and responsive review. Successful focused acceptance does not certify all G132 workflows or release security.
