@@ -6,6 +6,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {Skeleton} from "@/components/ui/skeleton";
 import {useRef,useState} from "react";
 import { istDateTimeFormatter } from "@/lib/format-date";
+import {friendlyApiError} from "@/lib/friendly-error";
 type Event={id:string;summary:string;kind:string;at:string;importance:string;authorId:string|null;authorName:string|null};
 export function CollegePersonAuditModal({membershipId,name,kind}:{membershipId:string;name:string;kind:"FACULTY"|"LEARNER"}){
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false);
@@ -18,7 +19,9 @@ export function CollegePersonAuditModal({membershipId,name,kind}:{membershipId:s
   try{const r=await fetch("/api/college/people/"+encodeURIComponent(membershipId)+"/audit?kind="+kind,{
    cache:"no-store"});
    const body=await r.json().catch(()=>null);
-   if(!r.ok||!body?.person)throw Error(body?.error??"Could not load audit trail");
+   if(!r.ok||!body?.person)throw Error(friendlyApiError({
+    status:r.status,code:typeof body?.error==="string"?body.error:null,
+   }));
    if(requestId.current!==currentRequest)return;
    setEvents(body.events??[]);setTruncated(body.truncated===true);
   }catch(e){if(requestId.current===currentRequest)setError(e instanceof Error?e.message:"Could not load audit trail");}
