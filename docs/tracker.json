@@ -27603,11 +27603,11 @@
         "type": "OUTBOUND",
         "area": "log-alerts",
         "title": "Log Alerts · Outbound copy and exports (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-activity-exports-20261107",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08T09:38:00.000Z",
         "sourceFiles": [
           "src/modules/log-alerts/telegram-notifier.ts",
           "src/modules/log-alerts/telegram-webhook.ts"
@@ -27636,6 +27636,39 @@
             "type": "acceptance-gap",
             "recordedAt": "2026-11-08",
             "reason": "Telegram acknowledgement scope has successful source/unit/TypeScript checks at run 42416611424 but no desktop/mobile browser evidence."
+          },
+          {
+            "commitSha": "2e401ecbbea5dfc33d940b5258fa5495c60976ef",
+            "parityDoc": "docs/parity/pages/shared/UX-G176-telegram-alerts.md",
+            "tests": [
+              {
+                "command": "test \"$(git rev-parse HEAD)\" = \"$GITHUB_SHA\"; npx eslint notifier, webhook and G176 fixture; npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42467433501 — exact source checkout, scoped lint and full TypeScript passed"
+              },
+              {
+                "command": "npx vitest run tests/unit/graceful-telegram-webhook.test.ts tests/unit/security-telegram-acknowledgement-authorization.test.ts tests/unit/graceful-webhook-route.test.ts --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42467433501 — all three notifier/redaction/callback authorization test suites passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g176-telegram-alert-copy.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42467433501 — desktop and mobile Chromium copy/acknowledgement 2/2 passed, no retries"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42467433501/artifacts/13612625646 — Telegram operator-facing text before/after acknowledgement, preserved safe request/time/deploy, source email redacted, one durable status, no overflow"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42467433501/artifacts/13612625646 — same sanitized outgoing/callback copy responsive rendering and no overflow, screenshot archived"
+              }
+            ],
+            "regressionReview": "The original notifier and webhook changes were reviewed in parity doc; green exact-source-SHA 2e401ec acceptance executed with lint, TypeScript, three regression suites and 2/2 browser viewport cases. The simulated operator UI uses production formatting helpers with known synthetic input, with a blocked dev-only fixture; actual Telegram Bot delivery and operator production setup are separate operational gates.",
+            "securityReview": "No live provider call or secret used by browser witness. Unit suites cover bounded Unicode, private email redaction, canonical UUID, operator allowlist, bound chat, production-only callback verification, duplicate acknowledgment, database idempotency and nonthrowing network errors; server-side permissions and persistent triage semantics unchanged. A live production webhook/Telegram operator review remains independently required."
           }
         ],
         "notes": "DONE: Telegram outbound acknowledgement-copy UX. Exact SHA f06a99eaa8, run 42416611424 green: 3 Vitest files/16 cases, scoped lint, TypeScript. Production payload rendered through injected fetch checks safe diagnostics, PII redaction, actionable acknowledgement, idempotent status, provider rejection, Unicode truncation. No actual provider send or production incident authorization certification claimed.",
