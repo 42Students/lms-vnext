@@ -1,33 +1,336 @@
 {
   "note": "Hand mapping of the area-level assessments (SEC-03, 04, 08, 09, 11, 12, 15, 16, 17, 21) to individual controls. Conservative: a control is listed only where the assessment text supports it. IU = IMPLEMENTED_UNVERIFIED, P = PARTIAL_EVIDENCE, G = GAP_CONFIRMED.",
   "rows": [
-    { "source": "SEC-03-04-08-access-control.md", "state": "IU", "ids": ["SEC-03-001", "SEC-03-005", "SEC-03-006", "SEC-03-007"], "finding": "Central policy.ts decisions, deny by default (733 of 782 mutating and 520 of 533 GET route pairs answer 401 unauthenticated) and server-side enforcement through route()." },
-    { "source": "SEC-03-04-08-access-control.md", "state": "IU", "ids": ["SEC-03-008", "SEC-03-009", "SEC-03-010"], "finding": "One request context carries one selected role (hasMembershipRole needs roles.length === 1; narrowToActiveRole selects none when several are held and none is chosen). No fallback to the highest-priority role." },
-    { "source": "SEC-03-04-08-access-control.md", "state": "IU", "ids": ["SEC-03-011"], "finding": "A Super Admin acts as the platform admin only with no selected membership (isSuperAdmin requires membership === null); platform scope is a separate admin-scope cookie that now expires after 4 hours." },
-    { "source": "SEC-03-04-08-access-control.md", "state": "IU", "ids": ["SEC-03-019", "SEC-03-020", "SEC-03-023", "SEC-03-024"], "finding": "Step-up (15-minute fresh login) on role and permission changes; authorization re-read from the database on every request; persisted-actor re-check inside protected write transactions; a revoked selected role is refused (membership.role.manage)." },
-    { "source": "SEC-03-04-08-access-control.md", "state": "P", "ids": ["SEC-03-004", "SEC-03-025", "SEC-03-026"], "finding": "33 named permissions for about 1,200 handlers (coarse; 118 handlers name one); role changes audited; role-by-route matrix baseline committed (fails when a role gains a route) but not every unauthorized role/action pair is tested." },
-    { "source": "SEC-03-04-08-access-control.md", "state": "P", "ids": ["SEC-04-001", "SEC-04-002", "SEC-04-003", "SEC-04-004", "SEC-04-005", "SEC-04-006", "SEC-04-007"], "finding": "Each role reaches a distinct role-shaped set of routes (matrix: learner 23, faculty 15, mentor 18, college admin 72, TPO 51 readable static GET routes on dev). Faculty and mentor scope to assigned sections and projects is enforced in services but not re-probed with seeded assignments." },
-    { "source": "SEC-03-04-08-access-control.md", "state": "IU", "ids": ["SEC-04-008"], "finding": "Same-college horizontal probe: 144 requests by a learner for other learners' ids, 108 x 403, 28 x 400, 4 x 404, no foreign data." },
-    { "source": "SEC-03-04-08-access-control.md", "state": "IU", "ids": ["SEC-08-001", "SEC-08-002", "SEC-08-004", "SEC-08-008", "SEC-08-023"], "finding": "Route inventory by the sweeps (533 GET and 782 mutating pairs), every route classified by route() auth mode, unauthenticated calls answer 401, role matrix finds function-level gaps, and the security:central ratchet fails a new route without classification." },
-    { "source": "SEC-03-04-08-access-control.md", "state": "IU", "ids": ["SEC-08-007", "SEC-08-019", "SEC-08-021"], "finding": "Cross-college probe: 120 GET routes called with another college's ids returned no foreign data (59 x 404, 37 x 403); failure semantics are consistent (wrong role 403, foreign id 404, plain errors mapped centrally)." },
-    { "source": "SEC-03-04-08-access-control.md", "state": "IU", "ids": ["SEC-08-013", "SEC-08-015", "SEC-08-016", "SEC-08-017"], "finding": "route() applies origin check, bounded body, rate limit and CSRF-equivalent same-origin enforcement before the handler." },
-    { "source": "SEC-03-04-08-access-control.md", "state": "P", "ids": ["SEC-08-003", "SEC-08-005", "SEC-08-006", "SEC-08-009", "SEC-08-010", "SEC-08-011", "SEC-08-018", "SEC-08-024"], "finding": "Partial: about 1,086 service-enforced handlers check roles and ownership in services (43 easy to convert to named permissions); Zod strictObject bodies are the pattern but not measured; mutating methods not probed with foreign ids (database policies refuse cross-college writes)." },
-    { "source": "SEC-09-12-21-secrets-browser-backup.md", "state": "IU", "ids": ["SEC-09-001", "SEC-09-005"], "finding": "One registry names every machine secret and key (21 entries) with kind, length and distinctness rules; CI workflows reject newly committed credentials and credential artifacts." },
-    { "source": "SEC-09-12-21-secrets-browser-backup.md", "state": "P", "ids": ["SEC-09-003", "SEC-09-007", "SEC-09-014", "SEC-09-018"], "finding": "Secrets live in Kubernetes Secrets, never in git; startup and readiness logs name a secret without its value; production readiness fails closed on an invalid configuration; incident runbook exists. Not a managed secret store; history scan not done." },
-    { "source": "SEC-09-12-21-secrets-browser-backup.md", "state": "G", "ids": ["SEC-09-004", "SEC-09-011", "SEC-09-012", "SEC-09-017"], "finding": "Open: the GCP key and production database password rotation is owner-only; no rotation runbook per secret, no rotation test, no key versioning (rotating DB10_OUTBOUND_ENCRYPTION_KEY_BASE64 needs re-encryption)." },
-    { "source": "SEC-09-12-21-secrets-browser-backup.md", "state": "IU", "ids": ["SEC-12-001", "SEC-12-008", "SEC-12-009", "SEC-12-011"], "finding": "Response headers on every dev response: CSP with frame-ancestors none, X-Frame-Options DENY, Permissions-Policy denying camera, microphone, geolocation, payment and usb." },
-    { "source": "SEC-09-12-21-secrets-browser-backup.md", "state": "P", "ids": ["SEC-12-002", "SEC-12-017"], "finding": "Nonce-based script CSP is built and switched on for dev (CSP_NONCE=on) with no violations on the pages checked; style-src still allows unsafe-inline; COOP same-origin-allow-popups and Cross-Origin-Resource-Policy same-origin on private API responses." },
-    { "source": "SEC-11-file-uploads-and-storage.md", "state": "IU", "ids": ["SEC-11-002", "SEC-11-003", "SEC-11-007", "SEC-11-010"], "finding": "File access is decided from rows (owner, college, resource), signed GET URLs are short-lived (5-minute ceiling), content type is checked by magic bytes after upload (mismatch QUARANTINED), size ceilings per kind." },
-    { "source": "SEC-11-file-uploads-and-storage.md", "state": "P", "ids": ["SEC-11-005", "SEC-11-006", "SEC-11-008"], "finding": "Signed URLs bind scope and object keys include the owner scope; malware scanning is designed fail-closed (upload stays VERIFYING until a scanner posts a CLEAN verdict) but no scanner is chosen or deployed." },
-    { "source": "SEC-11-file-uploads-and-storage.md", "state": "G", "ids": ["SEC-11-001"], "finding": "The private bucket does not exist: the legacy R2 key is object-scoped and the legacy bucket is public, so private uploads answer STORAGE_NOT_CONFIGURED (owner: create lms-vnext-private)." },
-    { "source": "SEC-15-integrations-webhooks.md", "state": "IU", "ids": ["SEC-15-004", "SEC-15-007", "SEC-15-008"], "finding": "Inbound machine endpoints verify an HMAC or shared secret over the raw body in constant time, refuse a browser Origin, bound the body, and use strict schemas." },
-    { "source": "SEC-15-integrations-webhooks.md", "state": "P", "ids": ["SEC-15-001", "SEC-15-003", "SEC-15-005", "SEC-15-014"], "finding": "Provider list known; separate credentials per provider on dev; signatures cover the body but not a timestamp (inbound mail is idempotent by providerMessageId; scan verdicts are bound to file, college and generation); calendar tokens are encrypted before storage." },
-    { "source": "SEC-16-background-jobs.md", "state": "IU", "ids": ["SEC-16-004"], "finding": "Every internal route goes through internalRoute(): browser Origin refused, query string refused, one named secret per route compared with timingSafeEqual, a missing or short server secret denies every call." },
-    { "source": "SEC-16-background-jobs.md", "state": "P", "ids": ["SEC-16-005", "SEC-16-010", "SEC-16-012", "SEC-16-013"], "finding": "Jobs run in a named system scope and take college_id from the rows they process (no caller-supplied tenant); dispatch uses delivery keys with a shared claim store; denials are audited as internal.denied without the credential. Machine calls have no timestamp or nonce." },
-    { "source": "SEC-17-cloud-network-infrastructure.md", "state": "IU", "ids": ["SEC-17-001", "SEC-17-002", "SEC-17-008", "SEC-17-009", "SEC-17-010"], "finding": "Cloud SQL on private IP; NetworkPolicy lms-vnext-ingress-from-lb-only; vNext pod non-root (uid 1001), RuntimeDefault seccomp, no privilege escalation, read-only root filesystem, all capabilities dropped, CPU and memory limits, service-account token not mounted." },
-    { "source": "SEC-17-cloud-network-infrastructure.md", "state": "G", "ids": ["SEC-17-003"], "finding": "No egress NetworkPolicy exists: the pod can reach any address." },
-    { "source": "SEC-17-cloud-network-infrastructure.md", "state": "P", "ids": ["SEC-17-014", "SEC-17-018", "SEC-17-022"], "finding": "Google load balancer with pre-shared certificates and HSTS; deployment manifests are version controlled; /e2e/* now 404 on production builds while /api/internal/* stays reachable behind secrets (owner decision)." },
-    { "source": "SEC-09-12-21-secrets-browser-backup.md", "state": "P", "ids": ["SEC-21-002"], "finding": "Cloud SQL forty-two-prod-1 has automatic daily backups, 7-day point-in-time recovery and deletion protection (recorded 2026-10-14); nothing proved by a restore." },
-    { "source": "SEC-09-12-21-secrets-browser-backup.md", "state": "G", "ids": ["SEC-21-001", "SEC-21-005"], "finding": "No recovery point or recovery time targets are defined and no restore test has been done (owner decision on cost)." }
+    {
+      "source": "SEC-03-04-08-access-control.md",
+      "state": "IU",
+      "ids": [
+        "SEC-03-001",
+        "SEC-03-005",
+        "SEC-03-006",
+        "SEC-03-007"
+      ],
+      "finding": "Central policy.ts decisions, deny by default (733 of 782 mutating and 520 of 533 GET route pairs answer 401 unauthenticated) and server-side enforcement through route()."
+    },
+    {
+      "source": "SEC-03-04-08-access-control.md",
+      "state": "IU",
+      "ids": [
+        "SEC-03-008",
+        "SEC-03-009",
+        "SEC-03-010"
+      ],
+      "finding": "One request context carries one selected role (hasMembershipRole needs roles.length === 1; narrowToActiveRole selects none when several are held and none is chosen). No fallback to the highest-priority role."
+    },
+    {
+      "source": "SEC-03-04-08-access-control.md",
+      "state": "IU",
+      "ids": [
+        "SEC-03-011"
+      ],
+      "finding": "A Super Admin acts as the platform admin only with no selected membership (isSuperAdmin requires membership === null); platform scope is a separate admin-scope cookie that now expires after 4 hours."
+    },
+    {
+      "source": "SEC-03-04-08-access-control.md",
+      "state": "IU",
+      "ids": [
+        "SEC-03-019",
+        "SEC-03-020",
+        "SEC-03-023",
+        "SEC-03-024"
+      ],
+      "finding": "Step-up (15-minute fresh login) on role and permission changes; authorization re-read from the database on every request; persisted-actor re-check inside protected write transactions; a revoked selected role is refused (membership.role.manage)."
+    },
+    {
+      "source": "SEC-03-04-08-access-control.md",
+      "state": "P",
+      "ids": [
+        "SEC-03-004",
+        "SEC-03-025",
+        "SEC-03-026"
+      ],
+      "finding": "33 named permissions for about 1,200 handlers (coarse; 118 handlers name one); role changes audited; role-by-route matrix baseline committed (fails when a role gains a route) but not every unauthorized role/action pair is tested."
+    },
+    {
+      "source": "SEC-03-04-08-access-control.md",
+      "state": "P",
+      "ids": [
+        "SEC-04-001",
+        "SEC-04-002",
+        "SEC-04-003",
+        "SEC-04-004",
+        "SEC-04-005",
+        "SEC-04-006",
+        "SEC-04-007"
+      ],
+      "finding": "Each role reaches a distinct role-shaped set of routes (matrix: learner 23, faculty 15, mentor 18, college admin 72, TPO 51 readable static GET routes on dev). Faculty and mentor scope to assigned sections and projects is enforced in services but not re-probed with seeded assignments."
+    },
+    {
+      "source": "SEC-03-04-08-access-control.md",
+      "state": "IU",
+      "ids": [
+        "SEC-04-008"
+      ],
+      "finding": "Same-college horizontal probe: 144 requests by a learner for other learners' ids, 108 x 403, 28 x 400, 4 x 404, no foreign data."
+    },
+    {
+      "source": "SEC-03-04-08-access-control.md",
+      "state": "IU",
+      "ids": [
+        "SEC-08-001",
+        "SEC-08-002",
+        "SEC-08-004",
+        "SEC-08-008",
+        "SEC-08-023"
+      ],
+      "finding": "Route inventory by the sweeps (533 GET and 782 mutating pairs), every route classified by route() auth mode, unauthenticated calls answer 401, role matrix finds function-level gaps, and the security:central ratchet fails a new route without classification."
+    },
+    {
+      "source": "SEC-03-04-08-access-control.md",
+      "state": "IU",
+      "ids": [
+        "SEC-08-007",
+        "SEC-08-019",
+        "SEC-08-021"
+      ],
+      "finding": "Cross-college probe: 120 GET routes called with another college's ids returned no foreign data (59 x 404, 37 x 403); failure semantics are consistent (wrong role 403, foreign id 404, plain errors mapped centrally)."
+    },
+    {
+      "source": "SEC-03-04-08-access-control.md",
+      "state": "IU",
+      "ids": [
+        "SEC-08-013",
+        "SEC-08-015",
+        "SEC-08-016",
+        "SEC-08-017"
+      ],
+      "finding": "route() applies origin check, bounded body, rate limit and CSRF-equivalent same-origin enforcement before the handler."
+    },
+    {
+      "source": "SEC-03-04-08-access-control.md",
+      "state": "P",
+      "ids": [
+        "SEC-08-003",
+        "SEC-08-005",
+        "SEC-08-006",
+        "SEC-08-009",
+        "SEC-08-010",
+        "SEC-08-011",
+        "SEC-08-018",
+        "SEC-08-024"
+      ],
+      "finding": "Partial: about 1,086 service-enforced handlers check roles and ownership in services (43 easy to convert to named permissions); Zod strictObject bodies are the pattern but not measured; mutating methods not probed with foreign ids (database policies refuse cross-college writes)."
+    },
+    {
+      "source": "SEC-09-12-21-secrets-browser-backup.md",
+      "state": "IU",
+      "ids": [
+        "SEC-09-001",
+        "SEC-09-005"
+      ],
+      "finding": "One registry names every machine secret and key (21 entries) with kind, length and distinctness rules; CI workflows reject newly committed credentials and credential artifacts."
+    },
+    {
+      "source": "SEC-09-12-21-secrets-browser-backup.md",
+      "state": "P",
+      "ids": [
+        "SEC-09-003",
+        "SEC-09-007",
+        "SEC-09-014",
+        "SEC-09-018"
+      ],
+      "finding": "Secrets live in Kubernetes Secrets, never in git; startup and readiness logs name a secret without its value; production readiness fails closed on an invalid configuration; incident runbook exists. Not a managed secret store; history scan not done."
+    },
+    {
+      "source": "SEC-09-12-21-secrets-browser-backup.md",
+      "state": "G",
+      "ids": [
+        "SEC-09-004",
+        "SEC-09-011",
+        "SEC-09-012",
+        "SEC-09-017"
+      ],
+      "finding": "Open: the GCP key and production database password rotation is owner-only; no rotation runbook per secret, no rotation test, no key versioning (rotating DB10_OUTBOUND_ENCRYPTION_KEY_BASE64 needs re-encryption)."
+    },
+    {
+      "source": "SEC-09-12-21-secrets-browser-backup.md",
+      "state": "IU",
+      "ids": [
+        "SEC-12-001",
+        "SEC-12-008",
+        "SEC-12-009",
+        "SEC-12-011"
+      ],
+      "finding": "Response headers on every dev response: CSP with frame-ancestors none, X-Frame-Options DENY, Permissions-Policy denying camera, microphone, geolocation, payment and usb."
+    },
+    {
+      "source": "SEC-09-12-21-secrets-browser-backup.md",
+      "state": "P",
+      "ids": [
+        "SEC-12-002",
+        "SEC-12-017"
+      ],
+      "finding": "Nonce-based script CSP is built and switched on for dev (CSP_NONCE=on) with no violations on the pages checked; style-src still allows unsafe-inline; COOP same-origin-allow-popups and Cross-Origin-Resource-Policy same-origin on private API responses."
+    },
+    {
+      "source": "SEC-11-file-uploads-and-storage.md",
+      "state": "IU",
+      "ids": [
+        "SEC-11-002",
+        "SEC-11-003",
+        "SEC-11-007",
+        "SEC-11-010"
+      ],
+      "finding": "File access is decided from rows (owner, college, resource), signed GET URLs are short-lived (5-minute ceiling), content type is checked by magic bytes after upload (mismatch QUARANTINED), size ceilings per kind."
+    },
+    {
+      "source": "SEC-11-file-uploads-and-storage.md",
+      "state": "P",
+      "ids": [
+        "SEC-11-005",
+        "SEC-11-006",
+        "SEC-11-008"
+      ],
+      "finding": "Signed URLs bind scope and object keys include the owner scope; malware scanning is designed fail-closed (upload stays VERIFYING until a scanner posts a CLEAN verdict) but no scanner is chosen or deployed."
+    },
+    {
+      "source": "SEC-11-file-uploads-and-storage.md",
+      "state": "G",
+      "ids": [
+        "SEC-11-001"
+      ],
+      "finding": "The private bucket does not exist: the legacy R2 key is object-scoped and the legacy bucket is public, so private uploads answer STORAGE_NOT_CONFIGURED (owner: create lms-vnext-private)."
+    },
+    {
+      "source": "SEC-15-integrations-webhooks.md",
+      "state": "IU",
+      "ids": [
+        "SEC-15-004",
+        "SEC-15-007",
+        "SEC-15-008"
+      ],
+      "finding": "Inbound machine endpoints verify an HMAC or shared secret over the raw body in constant time, refuse a browser Origin, bound the body, and use strict schemas."
+    },
+    {
+      "source": "SEC-15-integrations-webhooks.md",
+      "state": "P",
+      "ids": [
+        "SEC-15-001",
+        "SEC-15-003",
+        "SEC-15-005",
+        "SEC-15-014"
+      ],
+      "finding": "Provider list known; separate credentials per provider on dev; signatures cover the body but not a timestamp (inbound mail is idempotent by providerMessageId; scan verdicts are bound to file, college and generation); calendar tokens are encrypted before storage."
+    },
+    {
+      "source": "SEC-16-background-jobs.md",
+      "state": "IU",
+      "ids": [
+        "SEC-16-004"
+      ],
+      "finding": "Every internal route goes through internalRoute(): browser Origin refused, query string refused, one named secret per route compared with timingSafeEqual, a missing or short server secret denies every call."
+    },
+    {
+      "source": "SEC-16-background-jobs.md",
+      "state": "P",
+      "ids": [
+        "SEC-16-005",
+        "SEC-16-010",
+        "SEC-16-012",
+        "SEC-16-013"
+      ],
+      "finding": "Jobs run in a named system scope and take college_id from the rows they process (no caller-supplied tenant); dispatch uses delivery keys with a shared claim store; denials are audited as internal.denied without the credential. Machine calls have no timestamp or nonce."
+    },
+    {
+      "source": "SEC-17-cloud-network-infrastructure.md",
+      "state": "IU",
+      "ids": [
+        "SEC-17-001",
+        "SEC-17-002",
+        "SEC-17-008",
+        "SEC-17-009",
+        "SEC-17-010"
+      ],
+      "finding": "Cloud SQL on private IP; NetworkPolicy lms-vnext-ingress-from-lb-only; vNext pod non-root (uid 1001), RuntimeDefault seccomp, no privilege escalation, read-only root filesystem, all capabilities dropped, CPU and memory limits, service-account token not mounted."
+    },
+    {
+      "source": "SEC-17-cloud-network-infrastructure.md",
+      "state": "G",
+      "ids": [
+        "SEC-17-003"
+      ],
+      "finding": "No egress NetworkPolicy exists: the pod can reach any address."
+    },
+    {
+      "source": "SEC-17-cloud-network-infrastructure.md",
+      "state": "P",
+      "ids": [
+        "SEC-17-014",
+        "SEC-17-018",
+        "SEC-17-022"
+      ],
+      "finding": "Google load balancer with pre-shared certificates and HSTS; deployment manifests are version controlled; /e2e/* now 404 on production builds while /api/internal/* stays reachable behind secrets (owner decision)."
+    },
+    {
+      "source": "SEC-09-12-21-secrets-browser-backup.md",
+      "state": "P",
+      "ids": [
+        "SEC-21-002"
+      ],
+      "finding": "Cloud SQL forty-two-prod-1 has automatic daily backups, 7-day point-in-time recovery and deletion protection (recorded 2026-10-14); nothing proved by a restore."
+    },
+    {
+      "source": "SEC-09-12-21-secrets-browser-backup.md",
+      "state": "G",
+      "ids": [
+        "SEC-21-001",
+        "SEC-21-005"
+      ],
+      "finding": "No recovery point or recovery time targets are defined and no restore test has been done (owner decision on cost)."
+    },
+    {
+      "source": "runbooks/incident-response.md",
+      "state": "P",
+      "ids": [
+        "SEC-20-001",
+        "SEC-20-002",
+        "SEC-20-005",
+        "SEC-20-006",
+        "SEC-20-008",
+        "SEC-20-011",
+        "SEC-20-012",
+        "SEC-20-014"
+      ],
+      "finding": "Incident response runbook (draft 2026-11-08): roles and the first 15 minutes, where evidence is, containment steps, credential compromise, cross-college exposure, recovery and notification. Written, not rehearsed; credential rotation has no per-secret tooling or key versioning."
+    },
+    {
+      "source": "runbooks/incident-response.md",
+      "state": "G",
+      "ids": [
+        "SEC-20-004",
+        "SEC-20-017"
+      ],
+      "finding": "No on-call rota or emergency contact roster beyond the owner, and no tabletop exercise or rehearsal has been run (runbook section 7)."
+    },
+    {
+      "source": "data-inventory.md",
+      "state": "P",
+      "ids": [
+        "SEC-22-001",
+        "SEC-22-002"
+      ],
+      "finding": "data-inventory.md lists the 96 tables holding personal or sensitive columns by class; no written sensitivity level per class and processors are not yet recorded."
+    },
+    {
+      "source": "data-inventory.md",
+      "state": "G",
+      "ids": [
+        "SEC-22-003",
+        "SEC-22-004",
+        "SEC-22-005",
+        "SEC-22-006"
+      ],
+      "finding": "Open (owner and legal): lawful basis and purpose, retention by category, and a data-subject request flow for correction, deletion and export do not exist yet."
+    }
   ]
 }

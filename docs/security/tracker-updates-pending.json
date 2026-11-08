@@ -4,8 +4,8 @@
  "counts": {
   "IMPLEMENTED_UNVERIFIED": 107,
   "UNASSESSED": 29,
-  "GAP_CONFIRMED": 28,
-  "PARTIAL_EVIDENCE": 103
+  "GAP_CONFIRMED": 34,
+  "PARTIAL_EVIDENCE": 113
  },
  "controls": {
   "SEC-01-001": {
@@ -4303,6 +4303,166 @@
    ],
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
+  "SEC-20-001": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Incident response runbook (draft 2026-11-08): roles and the first 15 minutes, where evidence is, containment steps, credential compromise, cross-college exposure, recovery and notification. Written, not rehearsed; credential rotation has no per-secret tooling or key versioning.",
+   "source": "docs/security/assessments/runbooks/incident-response.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-20-002": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Incident response runbook (draft 2026-11-08): roles and the first 15 minutes, where evidence is, containment steps, credential compromise, cross-college exposure, recovery and notification. Written, not rehearsed; credential rotation has no per-secret tooling or key versioning.",
+   "source": "docs/security/assessments/runbooks/incident-response.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-20-004": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No on-call rota or emergency contact roster beyond the owner, and no tabletop exercise or rehearsal has been run (runbook section 7).",
+   "source": "docs/security/assessments/runbooks/incident-response.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-20-005": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Incident response runbook (draft 2026-11-08): roles and the first 15 minutes, where evidence is, containment steps, credential compromise, cross-college exposure, recovery and notification. Written, not rehearsed; credential rotation has no per-secret tooling or key versioning.",
+   "source": "docs/security/assessments/runbooks/incident-response.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-20-006": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Incident response runbook (draft 2026-11-08): roles and the first 15 minutes, where evidence is, containment steps, credential compromise, cross-college exposure, recovery and notification. Written, not rehearsed; credential rotation has no per-secret tooling or key versioning.",
+   "source": "docs/security/assessments/runbooks/incident-response.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-20-008": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Incident response runbook (draft 2026-11-08): roles and the first 15 minutes, where evidence is, containment steps, credential compromise, cross-college exposure, recovery and notification. Written, not rehearsed; credential rotation has no per-secret tooling or key versioning.",
+   "source": "docs/security/assessments/runbooks/incident-response.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-20-011": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Incident response runbook (draft 2026-11-08): roles and the first 15 minutes, where evidence is, containment steps, credential compromise, cross-college exposure, recovery and notification. Written, not rehearsed; credential rotation has no per-secret tooling or key versioning.",
+   "source": "docs/security/assessments/runbooks/incident-response.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-20-012": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Incident response runbook (draft 2026-11-08): roles and the first 15 minutes, where evidence is, containment steps, credential compromise, cross-college exposure, recovery and notification. Written, not rehearsed; credential rotation has no per-secret tooling or key versioning.",
+   "source": "docs/security/assessments/runbooks/incident-response.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-20-014": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Incident response runbook (draft 2026-11-08): roles and the first 15 minutes, where evidence is, containment steps, credential compromise, cross-college exposure, recovery and notification. Written, not rehearsed; credential rotation has no per-secret tooling or key versioning.",
+   "source": "docs/security/assessments/runbooks/incident-response.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-20-017": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No on-call rota or emergency contact roster beyond the owner, and no tabletop exercise or rehearsal has been run (runbook section 7).",
+   "source": "docs/security/assessments/runbooks/incident-response.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
   "SEC-21-001": {
    "currentTrackerState": "UNASSESSED",
    "proposedState": "GAP_CONFIRMED",
@@ -4341,6 +4501,102 @@
    "assessedAt": "2026-11-08",
    "finding": "No recovery point or recovery time targets are defined and no restore test has been done (owner decision on cost).",
    "source": "docs/security/assessments/SEC-09-12-21-secrets-browser-backup.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-22-001": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "data-inventory.md lists the 96 tables holding personal or sensitive columns by class; no written sensitivity level per class and processors are not yet recorded.",
+   "source": "docs/security/assessments/data-inventory.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-22-002": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "data-inventory.md lists the 96 tables holding personal or sensitive columns by class; no written sensitivity level per class and processors are not yet recorded.",
+   "source": "docs/security/assessments/data-inventory.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-22-003": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Open (owner and legal): lawful basis and purpose, retention by category, and a data-subject request flow for correction, deletion and export do not exist yet.",
+   "source": "docs/security/assessments/data-inventory.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-22-004": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Open (owner and legal): lawful basis and purpose, retention by category, and a data-subject request flow for correction, deletion and export do not exist yet.",
+   "source": "docs/security/assessments/data-inventory.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-22-005": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Open (owner and legal): lawful basis and purpose, retention by category, and a data-subject request flow for correction, deletion and export do not exist yet.",
+   "source": "docs/security/assessments/data-inventory.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-22-006": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Open (owner and legal): lawful basis and purpose, retention by category, and a data-subject request flow for correction, deletion and export do not exist yet.",
+   "source": "docs/security/assessments/data-inventory.md",
    "evidence": [
     {
      "type": "EXECUTED_SCOPED_TEST",
