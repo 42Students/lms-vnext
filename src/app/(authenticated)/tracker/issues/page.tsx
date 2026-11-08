@@ -42,13 +42,13 @@ export default async function TrackerIssuesPage({
       <div className="min-w-0 space-y-4">
         <PageHeader
           title="Issues"
-          description="Migration 0076 registers the tracker tables. This environment has not enabled their verified runtime flag."
+          description="Issue triage is temporarily unavailable while the tracker database setup is being verified."
         />
+        <TrackerAdminNav />
         <div className="flex min-h-11 items-center"><TextLink href="/tracker/issues/public" className="text-sm">View public issue summaries</TextLink></div>
-  <TrackerAdminNav />
         <Banner tone="warning">
-          <strong>Tracker database is not enabled.</strong>
-          Apply and verify migration 0076, then explicitly set DB10_TRACKER_READY=DB10_VERIFIED before enabling these issue reads.
+          <strong>Issue triage is unavailable right now.</strong>
+          Setup needs administrator verification before reported issues can be reviewed. No issue records were loaded.
         </Banner>
       </div>
     );
@@ -109,6 +109,7 @@ export default async function TrackerIssuesPage({
     </div>;
   }
   const current = parsed.display;
+  const hasFilters=Boolean(current.status||current.severity||current.environment||current.q||current.reporter||current.sort!=="newest");
   const next = new URLSearchParams();
   if (current.status) next.set("status", current.status);
   if (current.severity) next.set("severity", current.severity);
@@ -158,8 +159,9 @@ export default async function TrackerIssuesPage({
       </p>
 
       {page.items.length === 0 ? (
-        <EmptyState title="No matching issues." description="Review and triage reported LMS issues."
-          action={<ButtonLink variant="secondary" href="/tracker/issues">Reset</ButtonLink>}/>
+        <EmptyState title={hasFilters?"No issues match these filters":"No reported issues yet"}
+          description={hasFilters?"Try a different search or clear filters to review all reported issues.":"There are no submitted issues to triage in this view. You can still report a new LMS issue."}
+          action={<ButtonLink variant="secondary" href={hasFilters?"/tracker/issues":"/tracker"}>{hasFilters?"Clear filters":"Report issue"}</ButtonLink>}/>
       ) : (
         <div className="grid min-w-0 gap-3" role="list" aria-label="Reported issues">
           {page.items.map(issue=>(
