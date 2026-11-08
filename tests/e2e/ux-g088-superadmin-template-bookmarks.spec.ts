@@ -15,7 +15,9 @@ test.describe("UX-G088 protected legacy project template bookmarks",()=>{
       const target=new URL(page.url());
       expect(target.origin).toBe("http://localhost:3000");
       expect(["/","/login"]).toContain(target.pathname);
-      expect(target.searchParams.get("returnTo")).toBe(path);
+      // The legacy bookmark resolves to a canonical protected Admin URL before sign-in.
+      // Require the exact internal destination; an arbitrary return URL is never accepted.
+      expect(target.searchParams.get("returnTo")).toBe(path.replace(/^\/superadmin\//, "/admin/"));
       await expect(page.getByText("Create New Template")).toHaveCount(0);
       await expect(page.getByText("Global project template catalogue")).toHaveCount(0);
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
@@ -28,7 +30,8 @@ test.describe("UX-G088 protected legacy project template bookmarks",()=>{
     await expect(page.locator("#sign-in-content")).toBeVisible();
     const dest=new URL(page.url());
     expect(["/","/login"]).toContain(dest.pathname);
-    expect(dest.searchParams.get("returnTo")).toContain("/superadmin/projects/templates/new");
+    expect(dest.searchParams.get("returnTo")).toBe("/admin/projects/templates/new");
+    expect(dest.search).not.toContain("evil.invalid");
     await expect(page.getByText("Create New Template")).toHaveCount(0);
     await expect(page.getByRole("button",{name:/Create template/i})).toHaveCount(0);
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
