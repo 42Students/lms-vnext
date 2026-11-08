@@ -27719,6 +27719,16 @@
             "results": "Exact SHA verified; scoped ESLint, full TypeScript, focused Vitest and two desktop/mobile Chromium recovery-fixture tests passed, screenshots attached.",
             "outstanding": "Recovery-fixture UI does not verify real authenticated TPO pages, all assigned route states, business mutations, tenant denials or complete group acceptance; full scoped DONE not earned.",
             "closure": "DOING until independent authenticated per-route/action tests and evidence."
+          },
+          {
+            "type": "CI_PARTIAL_AUTHENTICATED_20261108",
+            "runId": 42487470793,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42487470793",
+            "commitSha": "fcdd690a592214c0a7d9db737a415abedef71f8f",
+            "conclusion": "success",
+            "results": "22/22 real TPO or Learner role Chromium desktop/mobile recovery+denial tests; isolated PG17 seeded role identities; zero skipped/flaky/unexpected. Scoped lint, full TS, tracker check, 13/13 Vitest passed.",
+            "scope": "URL guard/reset, private scope/role denial, responsive layouts and keyboard focus only, not complete G110-G119 group flows.",
+            "closure": "PARTIAL: all listed route actions/states, exports, real UI mutations, and full group regression remain required for DONE."
           }
         ]
       },
@@ -27784,6 +27794,16 @@
             "results": "Exact SHA verified; scoped ESLint, full TypeScript, focused Vitest and two desktop/mobile Chromium recovery-fixture tests passed, screenshots attached.",
             "outstanding": "Recovery-fixture UI does not verify real authenticated TPO pages, all assigned route states, business mutations, tenant denials or complete group acceptance; full scoped DONE not earned.",
             "closure": "DOING until independent authenticated per-route/action tests and evidence."
+          },
+          {
+            "type": "CI_PARTIAL_AUTHENTICATED_20261108",
+            "runId": 42487470793,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42487470793",
+            "commitSha": "fcdd690a592214c0a7d9db737a415abedef71f8f",
+            "conclusion": "success",
+            "results": "22/22 real TPO or Learner role Chromium desktop/mobile recovery+denial tests; isolated PG17 seeded role identities; zero skipped/flaky/unexpected. Scoped lint, full TS, tracker check, 13/13 Vitest passed.",
+            "scope": "URL guard/reset, private scope/role denial, responsive layouts and keyboard focus only, not complete G110-G119 group flows.",
+            "closure": "PARTIAL: all listed route actions/states, exports, real UI mutations, and full group regression remain required for DONE."
           }
         ]
       },
@@ -27845,6 +27865,16 @@
             "results": "Exact SHA verified; scoped ESLint, full TypeScript, focused Vitest and two desktop/mobile Chromium recovery-fixture tests passed, screenshots attached.",
             "outstanding": "Recovery-fixture UI does not verify real authenticated TPO pages, all assigned route states, business mutations, tenant denials or complete group acceptance; full scoped DONE not earned.",
             "closure": "DOING until independent authenticated per-route/action tests and evidence."
+          },
+          {
+            "type": "CI_PARTIAL_AUTHENTICATED_20261108",
+            "runId": 42487470793,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42487470793",
+            "commitSha": "fcdd690a592214c0a7d9db737a415abedef71f8f",
+            "conclusion": "success",
+            "results": "22/22 real TPO or Learner role Chromium desktop/mobile recovery+denial tests; isolated PG17 seeded role identities; zero skipped/flaky/unexpected. Scoped lint, full TS, tracker check, 13/13 Vitest passed.",
+            "scope": "URL guard/reset, private scope/role denial, responsive layouts and keyboard focus only, not complete G110-G119 group flows.",
+            "closure": "PARTIAL: all listed route actions/states, exports, real UI mutations, and full group regression remain required for DONE."
           }
         ]
       },
@@ -27910,6 +27940,16 @@
             "results": "Exact SHA verified; scoped ESLint, full TypeScript, focused Vitest and two desktop/mobile Chromium recovery-fixture tests passed, screenshots attached.",
             "outstanding": "Recovery-fixture UI does not verify real authenticated TPO pages, all assigned route states, business mutations, tenant denials or complete group acceptance; full scoped DONE not earned.",
             "closure": "DOING until independent authenticated per-route/action tests and evidence."
+          },
+          {
+            "type": "CI_PARTIAL_AUTHENTICATED_20261108",
+            "runId": 42487470793,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42487470793",
+            "commitSha": "fcdd690a592214c0a7d9db737a415abedef71f8f",
+            "conclusion": "success",
+            "results": "22/22 real TPO or Learner role Chromium desktop/mobile recovery+denial tests; isolated PG17 seeded role identities; zero skipped/flaky/unexpected. Scoped lint, full TS, tracker check, 13/13 Vitest passed.",
+            "scope": "URL guard/reset, private scope/role denial, responsive layouts and keyboard focus only, not complete G110-G119 group flows.",
+            "closure": "PARTIAL: all listed route actions/states, exports, real UI mutations, and full group regression remain required for DONE."
           }
         ]
       },
@@ -28235,6 +28275,16 @@
             "results": "Exact SHA verified; scoped ESLint, full TypeScript, focused Vitest and two desktop/mobile Chromium recovery-fixture tests passed, screenshots attached.",
             "outstanding": "Recovery-fixture UI does not verify real authenticated TPO pages, all assigned route states, business mutations, tenant denials or complete group acceptance; full scoped DONE not earned.",
             "closure": "DOING until independent authenticated per-route/action tests and evidence."
+          },
+          {
+            "type": "CI_PARTIAL_AUTHENTICATED_20261108",
+            "runId": 42487470793,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42487470793",
+            "commitSha": "fcdd690a592214c0a7d9db737a415abedef71f8f",
+            "conclusion": "success",
+            "results": "22/22 real TPO or Learner role Chromium desktop/mobile recovery+denial tests; isolated PG17 seeded role identities; zero skipped/flaky/unexpected. Scoped lint, full TS, tracker check, 13/13 Vitest passed.",
+            "scope": "URL guard/reset, private scope/role denial, responsive layouts and keyboard focus only, not complete G110-G119 group flows.",
+            "closure": "PARTIAL: all listed route actions/states, exports, real UI mutations, and full group regression remain required for DONE."
           }
         ]
       },
@@ -28296,6 +28346,16 @@
             "results": "Exact SHA verified; scoped ESLint, full TypeScript, focused Vitest and two desktop/mobile Chromium recovery-fixture tests passed, screenshots attached.",
             "outstanding": "Recovery-fixture UI does not verify real authenticated TPO pages, all assigned route states, business mutations, tenant denials or complete group acceptance; full scoped DONE not earned.",
             "closure": "DOING until independent authenticated per-route/action tests and evidence."
+          },
+          {
+            "type": "CI_PARTIAL_AUTHENTICATED_20261108",
+            "runId": 42487470793,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42487470793",
+            "commitSha": "fcdd690a592214c0a7d9db737a415abedef71f8f",
+            "conclusion": "success",
+            "results": "22/22 real TPO or Learner role Chromium desktop/mobile recovery+denial tests; isolated PG17 seeded role identities; zero skipped/flaky/unexpected. Scoped lint, full TS, tracker check, 13/13 Vitest passed.",
+            "scope": "URL guard/reset, private scope/role denial, responsive layouts and keyboard focus only, not complete G110-G119 group flows.",
+            "closure": "PARTIAL: all listed route actions/states, exports, real UI mutations, and full group regression remain required for DONE."
           }
         ]
       },
