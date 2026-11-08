@@ -1,5 +1,5 @@
 "use client";
-import {useId,useState} from "react";
+import {useId,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
@@ -20,6 +20,7 @@ export function MentorMeetingReschedule(props:{
   projectId:string;meetingId:string;startsAt:string;endsAt:string;updatedAt:string;
 }){
   const router=useRouter();
+  const inFlightRef=useRef(false);
   const validationId=useId();
   const helpId=useId();
   const {showToast}=useToast();
@@ -38,7 +39,8 @@ export function MentorMeetingReschedule(props:{
   const guard=useProjectEditorDiscardGuard(open||confirm,dirty,pending,()=>{setOpen(false);setConfirm(false);setError(null);});
   const changed=payload.startsAt!==props.startsAt||payload.endsAt!==props.endsAt;
   async function save(){
-    if(!parsed.success||!changed||pending)return;
+    if(!parsed.success||!changed||pending||inFlightRef.current)return;
+    inFlightRef.current=true;
     setPending(true);setError(null);
     try{
       await projectMutation("/api/projects/"+encodeURIComponent(props.projectId)+
@@ -56,7 +58,7 @@ export function MentorMeetingReschedule(props:{
       const message=caught instanceof FriendlyFetchError?caught.message:friendlyApiError({});
       setError(message);
       showToast({tone:"error",title:"Meeting not rescheduled",description:message});
-    }finally{setPending(false);}
+    }finally{inFlightRef.current=false;setPending(false);}
   }
   return <div className={styles["legacy"]+" "+styles["contents"]}>
     <Button variant="secondary" aria-haspopup="dialog" aria-expanded={open||confirm}
