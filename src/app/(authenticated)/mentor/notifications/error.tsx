@@ -1,18 +1,25 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
-import {PageHeader} from "@/components/ui/page-header";
+import { PageHeader } from "@/components/ui/page-header";
+import { ErrorState } from "@/components/ui/error-state";
+import { TextLink } from "@/components/ui/text-link";
+
+/** Do not log private provider exceptions or mistake a failed read for an
+ * empty inbox. The retry keeps the current mentor notification filters. */
 export default function MentorNotificationsError({
-  error,reset,
+  reset,
 }: {error:Error & {digest?:string};reset:()=>void}){
-  useEffect(()=>{console.error("Unable to load Mentor notifications",error);},[error]);
-  return <div className="min-w-0 max-w-full space-y-4" role="alert">
+  return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader eyebrow="Mentor" title="Notifications"/>
-    <div className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-      <p className="text-sm text-body">We couldn’t load your notifications. Please try again.</p>
-      <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>
-        Retry
-      </Button>
-    </div>
+    <ErrorState title="Notifications could not be loaded"
+      description="Your notification history was not changed. Retry this view, or return to your assigned projects."
+      action={<div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-3">
+        <Button type="button" variant="secondary"
+          className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>Retry notifications</Button>
+        <TextLink href="/mentor/projects"
+          className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">My projects</TextLink>
+      </div>}
+    />
   </div>;
 }

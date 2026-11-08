@@ -15,6 +15,7 @@ import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { MentorProjectFilterError } from "@/components/projects/mentor-project-filter-error";
 type Params={status?:string|string[];priority?:string|string[];
   sprintId?:string|string[];search?:string|string[];page?:string|string[]};
 export default async function MentorBoardReviewPage({
@@ -28,10 +29,8 @@ export default async function MentorBoardReviewPage({
   const validated=mentorBoardReviewQuerySchema.safeParse(
     normalized?{projectId,...normalized}:null,
   );
-  if(!validated.success)return <section role="alert" className="space-y-3">
-    <PageHeader title={"Invalid board filters"} />
-    <TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)]">Projects</TextLink>
-  </section>;
+  if(!validated.success)
+    return <MentorProjectFilterError projectId={projectId} kind="board" />;
   const data=await getMentorBoardReview(await getCurrentRequestContext(),validated.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);
   const filtered=data.enabled&&(Boolean(data.query.search)||data.query.status!=="ALL"||data.query.priority!=="ALL"||Boolean(data.query.sprintId&&data.query.sprintId!=="ALL"));

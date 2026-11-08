@@ -18,6 +18,7 @@ import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { MentorProjectFilterError } from "@/components/projects/mentor-project-filter-error";
 import { formatNumberIN } from "@/lib/safe-format";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
@@ -33,12 +34,8 @@ export default async function MentorProjectActivityHistoryPage({
   const parsed=mentorProjectActivityQuerySchema.safeParse(
     filters ? {projectId,...filters} : null,
   );
-  if(!parsed.success)return <section role="alert" className="space-y-3">
-    <PageHeader title="Invalid activity filters" />
-    <TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)]">
-      Return to projects
-    </TextLink>
-  </section>;
+  if(!parsed.success)
+    return <MentorProjectFilterError projectId={projectId} kind="activity" />;
   const context=await getCurrentRequestContext();
   const data=await getMentorProjectActivityHistory(context,parsed.data);
   const meetingKey=typeof raw.meetingKey==="string"&&raw.meetingKey.trim().length<=120
