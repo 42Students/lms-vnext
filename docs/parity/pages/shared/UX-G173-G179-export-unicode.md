@@ -65,3 +65,10 @@ The second pass added further noncosmetic changes and tests:
 ## Additional isolated multi-page behavior checks
 
 Seven further source-function tests passed under in-memory JavaScript execution of fetched `college-assessment-export-service.ts` (blob `4d14e7c551f2e89c8b223b796034bf3ea831cc40`): stable two-page export, changed totals, duplicate row IDs, changed college scope, missing final page data, oversized current-page data and mismatched current-page identity. The executable used mocked schema/reader dependencies, so **the total is now 16/16 isolated source-smoke checks**, not a claim of repository Vitest, authorized database access or responsive browser execution. The dedicated GitHub Actions acceptance job remains the required whole-group closure gate.
+
+## Browser fixture failure and remedy — 8 November 2026
+
+- [First exact-SHA run 42462222692](https://github.com/42Students/lms-vnext/actions/runs/42462222692) **FAILED browser acceptance**. Its checkout verification, dependency installation, scoped lint, complete TypeScript and all focused Vitest regressions **passed**. Both desktop/mobile Chromium cases timed out waiting for the `download` event when clicking the fixture's `data:text/csv` anchors. The failed run is preserved as evidence of the unverified UI, **not** a closure.
+- The fixture now reuses the same `Blob`, `URL.createObjectURL`, temporary `<a download>` click, and deferred cleanup pattern as the actual `CollegeContentCsvExport` UI. It is a development-only test component; no authenticated route, tenant query, production feature or security policy was relaxed.
+- The Playwright spec now interacts with an accessible **button** and checks its `data-filename` before expecting an actual downloaded file. The workflow's scope and ESLint include this new client component.
+- [Replacement exact-SHA acceptance run 42463744495](https://github.com/42Students/lms-vnext/actions/runs/42463744495) was queued on commit `a6ac0187e64ccea4536455ac8a28f01eb1d649dd`. A successful result, screenshot/download artifacts and final checked SHA are required for DONE.
