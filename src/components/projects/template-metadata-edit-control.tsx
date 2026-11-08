@@ -40,6 +40,7 @@ export function TemplateMetadataEditControl(props:Props){
  const router=useRouter(),{showToast}=useToast();
  const [open,setOpen]=useState(false);
  const [pending,setPending]=useState(false);
+ const submitLock=useRef(false);
  const [values,setValues]=useState<Fields>(()=>fromProps(props));
  const [changeNote,setChangeNote]=useState("");
  const [confirmed,setConfirmed]=useState(false);
@@ -75,7 +76,7 @@ export function TemplateMetadataEditControl(props:Props){
  const edit=(key:keyof Fields,value:string)=>setValues(old=>({...old,[key]:value}));
  async function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
-  if(pending||!confirmed)return;
+  if(pending||submitLock.current||!confirmed)return;
   if(!dirty){showToast({tone:"info",title:"No changes to save"});return;}
   if(stale||props.currentVersion!==version.current){
    setError("This template version changed. Refresh the comparison before saving.");return;
@@ -111,6 +112,7 @@ export function TemplateMetadataEditControl(props:Props){
    setError((issue?.path.join(".")||"Overview")+": "+(issue?.message??"Invalid values"));
    return;
   }
+  submitLock.current=true;
   setPending(true);setError("");
   try{
    const result=await projectMutation(
@@ -131,7 +133,7 @@ export function TemplateMetadataEditControl(props:Props){
    const detail=caught instanceof Error?caught.message:"Failed to save overview";
    setError(detail);
    showToast({tone:"error",title:"Failed to save overview",description:detail});
-  }finally{setPending(false);}
+  }finally{submitLock.current=false;setPending(false);}
  }
  return <>
   <Button type="button" size="sm" variant="secondary" onClick={()=>{
