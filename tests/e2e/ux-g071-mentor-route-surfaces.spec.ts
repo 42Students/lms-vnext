@@ -73,6 +73,21 @@ test.describe("UX-G071 five persisted Mentor review route families",()=>{
           "^http://localhost:3000"+base+"/review-completeness$","i"));
         await expect(page.getByRole("heading",{name:"Delivery version 1"})).toBeVisible();
 
+        // A completed meeting is persisted under this very project, and its
+        // notes page must read the stored outcome without leaking other data.
+        await page.goto(base+
+          "/meetings/77000000-0000-4000-8000-000000000071/notes");
+        await expect(page.getByRole("heading",{level:1,
+          name:"E2E Mentor review meeting"})).toBeVisible();
+        await expect(page.getByRole("heading",{name:"Persisted meeting outcome"}))
+          .toBeVisible();
+        await expect(page.getByText(
+          "Seeded documented retrospective for G071 browser acceptance."))
+          .toBeVisible();
+        await expect(page.getByRole("link",{name:"Meeting history"})).toBeVisible();
+        await page.screenshot({path:info.outputPath(
+          "g071-meeting-notes-"+viewport.name+".png"),fullPage:true});
+
         for(const suffix of ["/review-completeness?page=not-a-number",
           "/resources-directory?page=not-a-number"]){
           await page.goto(base+suffix);
