@@ -59,9 +59,16 @@ test.describe("UX-G132 — Faculty schedule version and responsive confirmation"
     }).getByRole("button",{name:"Confirm reschedule"}).click();
     const saved = await receipt;
     expect(saved.status(),"The changed session must be persisted").toBe(200);
-    const current = await saved.json() as {result:{id:string;updatedAt:string}};
-    expect(current.result.id).toBe(first.id);
-    expect(current.result.updatedAt).not.toBe(first.updatedAt);
+    // The editor starts router.refresh immediately after a 200 and can abort
+    // consuming that response body. Re-open the persisted session instead of
+    // mistaking the successful write for a timeout (and retrying it twice).
+    await expect(editor.getByText("Session rescheduled.")).toBeVisible();
+    await page.goto("/teacher/courses/"+deliveryId+"/attendanceDetail?schedule=1");
+    const persistedEditor=page.getByRole("region",{name:"Faculty attendance session scheduling"});
+    await persistedEditor.getByLabel("Action").selectOption("RESCHEDULE");
+    await persistedEditor.getByLabel("Unmarked session").selectOption(first.id);
+    await expect(persistedEditor.getByLabel("Start (IST)")).toHaveValue(newStart);
+    await expect(persistedEditor.getByLabel("End (IST)")).toHaveValue(newEnd);
     await page.screenshot({path:info.outputPath("g132-faculty-rescheduled-desktop.png"),fullPage:true});
 
     const staleStatus = await page.evaluate(async ({path,sessionId,expectedUpdatedAt,startsAt,endsAt}) => {
