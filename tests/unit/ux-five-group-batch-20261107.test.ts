@@ -15,6 +15,15 @@ describe("UX-G132 attendance write safety", () => {
   expect(src).toContain("if(!validDraft)");
   expect(src).toContain('readOnly = false');
  });
+ it("freezes all roster selections while a save outcome or confirmation is unresolved", () => {
+  const src = source("src/components/attendance/faculty-attendance-workspace.tsx");
+  const markOne = src.slice(src.indexOf("function markOne("), src.indexOf("function requestAttendanceConfirmation()"));
+  expect(markOne).toContain("submitLock.current || writeUnknown || confirmingAttendance");
+  const roster = src.slice(src.indexOf('aria-label="Attendance roster"'), src.indexOf('{selectedSession?.attendanceStatus==="MARKED"?('));
+  expect(roster.match(/disabled=\{markingWindow !== "OPEN" \|\| submitting \|\| writeUnknown \|\| submitLock\.current \|\| confirmingAttendance\}/g)).toHaveLength(2);
+  const bulk = src.slice(src.indexOf('className="take-attendance-panel__tools'), src.indexOf('aria-label="Attendance roster"'));
+  expect(bulk.match(/writeUnknown \|\| submitLock\.current \|\| confirmingAttendance/g)).toHaveLength(4);
+ });
  it("locks a faculty schedule mutation before the first network await", () => {
   const src = source("src/components/attendance/faculty-attendance-schedule-editor.tsx");
   expect(src).toContain("if(busy||writeLock.current)return");
