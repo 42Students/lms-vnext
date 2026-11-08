@@ -63,6 +63,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
           <p className="mt-1 text-xs text-muted-foreground">{date(attempt.submittedAt)}</p>
           <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-body"><StatusBadge tone={attempt.resultsVisible?"success":"neutral"}>{attempt.resultsVisible?"Results published":"Results pending"}</StatusBadge>{learnerAttemptResultLabel(attempt)}</p></div>
           <TextLink href={historyUrl+"&attemptId="+encodeURIComponent(attempt.id)}
+            aria-label={(attempt.resultsVisible?"View result":"View attempt")+" for attempt "+attempt.attemptNumber}
             aria-current={selected?.id===attempt.id?"page":undefined}
             className="inline-flex min-h-11 w-full shrink-0 items-center justify-center text-sm sm:w-auto md:min-h-9">
             {attempt.resultsVisible ? "View result" : "View attempt"}

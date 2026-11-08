@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import {CurrentPageRetry} from "@/components/ui/current-page-retry";
 import {reportPageReadFailure} from "@/observability/page-read-failure";
-import {notFound} from "next/navigation";
-import {learnerAssignmentListPage,learnerAssignmentListHref} from "@/modules/courses/learner-assignment-page-model";
+import {notFound,redirect} from "next/navigation";
+import {learnerAssignmentListPage,learnerAssignmentListHref,learnerAssignmentListRecoveryPage} from "@/modules/courses/learner-assignment-page-model";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { CoursesServiceError } from "@/modules/courses/errors";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
@@ -139,6 +139,11 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
   const coursesCount = new Set(items.map(item => item.courseId)).size;
   const totalAssignments=overview.pagination?.totals.assignments??items.length;
   const totalPages=Math.max(1,Math.ceil(totalAssignments/20));
+  const recoveredPage=learnerAssignmentListRecoveryPage(page,totalAssignments);
+  // Keep a learner in the authorized course after the filtered list shrinks.
+  // A stale link must not show a fabricated "empty" page 9 of 2.
+  if(recoveredPage!==null)
+    redirect(learnerAssignmentListHref(recoveredPage,overview.selectedCourseId));
   const thisMonth = createDateFormatter("en-CA", {timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit"});
   const snapshotMonth = thisMonth.format(new Date(overview.snapshotNowMs));
   const createdThisMonth = items.filter(item => thisMonth.format(new Date(item.createdAt)) === snapshotMonth).length;
@@ -152,6 +157,8 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
             <span className="rounded-lg border border-border px-3 py-1.5 font-medium">
               {totalAssignments} {totalAssignments === 1 ? "Assignment" : "Assignments"}
             </span>
+            <TextLink href={"/learn/allQuizzes"+(overview.selectedCourseId?"?course="+encodeURIComponent(overview.selectedCourseId):"")}
+              className="inline-flex min-h-11 items-center md:min-h-9">View quizzes</TextLink>
             {coursesCount > 0 ? (
               <span className="rounded-lg border border-border px-3 py-1.5 font-medium">
                 {coursesCount} {coursesCount === 1 ? "Course" : "Courses"} (this page)

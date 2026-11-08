@@ -56,7 +56,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <TextLink href="/learn/allAssignments" className="inline-flex min-h-11 max-w-full items-center md:min-h-9">← All Assignments</TextLink>
     <PageHeader title={item.title} />
-    <div className="grid min-w-0 grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-x-4 gap-y-2 border-b border-border pb-4 md:gap-x-6 md:pb-6">
+    <div className="grid min-w-0 grid-cols-1 gap-x-4 gap-y-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] md:gap-x-6 md:pb-6">
       <section aria-labelledby="assignment-due-title" className="min-w-0">
         <Heading level={2} size="xs" id="assignment-due-title" className="text-muted-foreground">Due</Heading>
         <p className="mt-1 break-words text-foreground">{formatDate(item.dueAt)}</p>

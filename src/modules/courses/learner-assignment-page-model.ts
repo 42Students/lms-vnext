@@ -13,3 +13,13 @@ export function learnerAssignmentListHref(page:number,selectedCourseId:string|nu
  if(page>1)query.set("page",String(page));
  return "/learn/allAssignments"+(query.size?"?"+query.toString():"");
 }
+
+/** A deleted/filtered result can leave a learner on a page that no longer
+ * exists. Recover only after the authorized overview supplies a count; never
+ * derive course or membership scope from raw URL input. */
+export function learnerAssignmentListRecoveryPage(page:number,total:number,pageSize=20):number|null{
+ if(!Number.isSafeInteger(page)||page<1||!Number.isSafeInteger(total)||total<0||
+    !Number.isSafeInteger(pageSize)||pageSize<1)return null;
+ const last=Math.max(1,Math.ceil(total/pageSize));
+ return page>last?last:null;
+}

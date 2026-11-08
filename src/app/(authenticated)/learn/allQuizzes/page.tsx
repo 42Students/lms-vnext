@@ -13,6 +13,7 @@ import {and,eq,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {courseQuizzes} from "@/db/schema";
 import { TextLink } from "@/components/ui/text-link";
+import {learnerAssignmentListHref} from "@/modules/courses/learner-assignment-page-model";
 
 export default async function LearnerQuizzesPage({searchParams}:{searchParams:Promise<{course?:string|string[];content?:string|string[]}>}) {
   const [context,query] = await Promise.all([getCurrentRequestContext(),searchParams]);
@@ -100,9 +101,9 @@ export default async function LearnerQuizzesPage({searchParams}:{searchParams:Pr
 
   return (
     <div className="min-w-0 max-w-full space-y-4">
-      <PageHeader
-        title="All Quizzes"
-      />
+      <PageHeader title="All Quizzes"
+        actions={<TextLink href={learnerAssignmentListHref(1,overview.selectedCourseId)}
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">View assignments</TextLink>} />
       {linkedWarning?<Alert tone="info" role="status">{linkedWarning}</Alert>:null}
       {/* The shared app canvas owns the white surface; avoid a second bordered
           PageShell/card around the legacy-style quiz table and its toolbar. */}
