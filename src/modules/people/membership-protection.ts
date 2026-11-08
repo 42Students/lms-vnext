@@ -13,6 +13,12 @@ export function assertMutableMembershipTarget(
  action:MembershipGuardAction,
  role?:MembershipRole,
 ){
+ // Self-approval prevention (SEC-13-009): nobody, Super Admin included, adds or removes a role on
+ // their own membership. A second administrator makes the change.
+ if(!isSuperAdmin(context)&&target.userId===context.user.id&&action==="ROLE_REMOVE"&&role==="COLLEGE_ADMIN")
+  throw new PeopleServiceError("MEMBERSHIP_SELF_LOCKOUT");
+ if(target.userId===context.user.id&&(action==="ROLE_ADD"||action==="ROLE_REMOVE"))
+  throw new PeopleServiceError("MEMBERSHIP_SELF_ROLE_CHANGE");
  if(isSuperAdmin(context))return;
  if(target.userId===context.user.id&&(
   action==="SUSPEND"||action==="END"||

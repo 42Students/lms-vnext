@@ -99,8 +99,10 @@ export function PersonMembershipActions({
               ? "For security, sign in again to change membership roles."
               : payload?.error==="MEMBERSHIP_PROTECTED"
               ? "Only a Super Admin can manage College Admin or TPO accounts."
-              : payload?.error==="MEMBERSHIP_SELF_LOCKOUT"
-                ? "You cannot remove your own protected access."
+              : payload?.error==="MEMBERSHIP_SELF_ROLE_CHANGE"
+                ? "Another administrator has to change your own roles."
+                : payload?.error==="MEMBERSHIP_SELF_LOCKOUT"
+                  ? "You cannot remove your own protected access."
                 : role==="COLLEGE_ADMIN"&&response.status===403
                   ? "Only a Super Admin can change the College Admin role."
                   : payload?.error==="LAST_MEMBERSHIP_ROLE"
