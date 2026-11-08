@@ -413,8 +413,7 @@
    "service-enforced": 1
   },
   "src/app/api/college/course-progress/start-attempt/route.ts": {
-   "direct-db-in-route": 1,
-   "service-enforced": 1
+   "direct-db-in-route": 1
   },
   "src/app/api/college/departments/[departmentId]/route.ts": {
    "service-enforced": 2
@@ -447,8 +446,7 @@
    "service-enforced": 1
   },
   "src/app/api/college/people/learners/search/route.ts": {
-   "direct-db-in-route": 1,
-   "service-enforced": 1
+   "direct-db-in-route": 1
   },
   "src/app/api/college/profile/route.ts": {
    "service-enforced": 2
@@ -463,8 +461,7 @@
    "service-enforced": 2
   },
   "src/app/api/college/roles/suggest/route.ts": {
-   "direct-db-in-route": 1,
-   "service-enforced": 1
+   "direct-db-in-route": 1
   },
   "src/app/api/college/students/[membershipId]/section/route.ts": {
    "service-enforced": 2
@@ -1119,13 +1116,7 @@
   "src/app/api/placements/companies/route.ts": {
    "service-enforced": 2
   },
-  "src/app/api/placements/drive-day/[roundId]/attendance/export/route.ts": {
-   "service-enforced": 1
-  },
   "src/app/api/placements/drive-day/[roundId]/attendance/route.ts": {
-   "service-enforced": 1
-  },
-  "src/app/api/placements/drive-day/[roundId]/no-shows/export/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/drive-day/[roundId]/roster/route.ts": {
@@ -1569,9 +1560,6 @@
    "service-enforced": 2
   },
   "src/app/api/placements/tpo/drive-day/[roundId]/check-in/route.ts": {
-   "service-enforced": 1
-  },
-  "src/app/api/placements/tpo/drive-day/[roundId]/refresh/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/placements/tpo/drive-day/export/route.ts": {
@@ -2464,9 +2452,6 @@
    "service-enforced": 1
   },
   "src/app/api/v1/class/update/[sectionId]/route.ts": {
-   "service-enforced": 1
-  },
-  "src/app/api/v1/learner/placement/announcements/unread/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/v1/new-program/[...action]/route.ts": {

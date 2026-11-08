@@ -46,6 +46,6 @@ async function handleGET() {
   }
 }
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.read" },
   () => handleGET(),
 );

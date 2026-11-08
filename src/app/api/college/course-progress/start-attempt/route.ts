@@ -21,7 +21,7 @@ const inputSchema=z.object({
 const freshMessage="This learner has no recorded progress for that course — they are already starting fresh.";
 
 export const POST = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "courses.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
     const membership=context.membership;

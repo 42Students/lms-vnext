@@ -15,7 +15,7 @@ type RouteContext={params:Promise<{roundId:string}>};
  * replace the operator's last known roster with a false empty state.
  */
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "placements.manage" },
   async ({ context: __actor, params }) => {
     const context = __actor!;
     try {
