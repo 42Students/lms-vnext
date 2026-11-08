@@ -35,6 +35,9 @@ function KnownErrorCard({ item }: { item: KnownError }) {
   const [confirmMute, setConfirmMute] = useState(false);
   const [commit, setCommit] = useState("");
   const [issuePublicId, setIssuePublicId] = useState(item.issuePublicId ?? "");
+  // Keep the link editor aligned with the latest server-verified signature.
+  // Do not replace an unsaved typed value on unrelated parent re-renders.
+  useEffect(() => { setIssuePublicId(item.issuePublicId ?? ""); }, [item.id, item.issuePublicId]);
 
   async function update(body: Record<string, unknown>) {
     try {
@@ -47,6 +50,9 @@ function KnownErrorCard({ item }: { item: KnownError }) {
         });
         showToast({ tone: "success", title: "Known error updated" });
         setConfirmMute(false);
+        setNote("");
+        setMuteReason("");
+        setCommit("");
         router.refresh();
       });
     } catch (error) {
