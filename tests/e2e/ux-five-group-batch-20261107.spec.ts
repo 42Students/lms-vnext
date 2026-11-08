@@ -99,9 +99,9 @@ test.describe("UX unfinished groups — role, form and step-up acceptance", () =
     expect(response.headers()["content-disposition"] ?? "").not.toContain("attachment");
   });
 
-  test("G182: E2E mentor role cannot use synthetic identity as a fresh-OTP export credential", async ({page,context}) => {
-    await authenticateGracefulRole(context, "mentor");
-    await page.goto("/mentor");
+  test("G182: even a seeded Super Admin identity cannot bypass fresh-OTP export protection", async ({page,context}) => {
+    await authenticateGracefulRole(context, "superadmin");
+    await page.goto("/tracker");
     for (const path of [
       "/api/mentor/calendar/export",
       "/api/mentor/task-review-history/export",
