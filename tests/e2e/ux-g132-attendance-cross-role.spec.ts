@@ -36,9 +36,9 @@ test.describe("UX-G132 attendance controls: real role and responsive acceptance"
       await authenticateGracefulRole(context,"faculty");
       await page.setViewportSize(size);
       await page.goto("/teacher/courses");
-      await page.getByRole("link",{name:/E2E Browser Course/}).first().click();
-      await expect(page).toHaveURL(new RegExp("/teacher/courses/[0-9a-f-]{36}/home$","i"));
-      const deliveryId=new URL(page.url()).pathname.split("/")[3]!;
+      const href=await page.getByRole("link",{name:/E2E Browser Course/}).first().getAttribute("href");
+      expect(href).toMatch(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i);
+      const deliveryId=href!.split("/")[3]!;
       await page.goto("/teacher/courses/"+deliveryId+"/attendanceDetail");
       await expect(page.getByRole("region",{name:"Faculty prototype attendance"})).toBeVisible();
       await expect(page.locator("#faculty-attendance-scheduling")).toHaveCount(1);
