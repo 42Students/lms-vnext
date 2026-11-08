@@ -26,6 +26,16 @@ describe("UX-G151 project interaction guards", () => {
     }
   });
 
+  it("serializes mentor task transitions and sprint moves", () => {
+    const component = source("src/components/projects/mentor-lane-board.tsx");
+    expect(component).toContain("const actionLock=useRef(false);");
+    expect(component).toContain("||readOnly||busy||actionLock.current||");
+    expect(component).toContain("if(readOnly||busy||actionLock.current||");
+    expect(component.match(/actionLock.current=true;/g)).toHaveLength(2);
+    expect(component.match(/finally\{actionLock.current=false;setBusy\(false\);\}/g)).toHaveLength(2);
+    expect(component).toContain("expectedUpdatedAt:");
+  });
+
   it("reinitializes native mobile selects when URL query props change", () => {
     const component = source("src/components/projects/learner-project-mobile-filters.tsx");
     for (const name of ["status", "attention", "work", "sort", "pageSize"]) {
