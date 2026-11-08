@@ -17927,10 +17927,10 @@
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Batch Promotion → Classes / Recurring Preview (part 3)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-college-route-batch-nov08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/college/batch-promotion/error.tsx",
@@ -17974,17 +17974,17 @@
         ],
         "newRouteOnly": [],
         "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
       },
       {
         "id": "UX-G031",
         "type": "JOURNEY",
         "area": "college",
         "title": "College · College Profile → Course Progress (part 4)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-college-route-batch-nov08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/college/college-profile/error.tsx",
@@ -18024,17 +18024,17 @@
           "/college/content-order"
         ],
         "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
       },
       {
         "id": "UX-G032",
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Courses → Electives / SlotId (part 5)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-college-route-batch-nov08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/college/courses/error.tsx",
@@ -18076,17 +18076,17 @@
           "/college/electives/[slotId]"
         ],
         "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
       },
       {
         "id": "UX-G033",
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Electives / SlotId → Faculty / Import (part 6)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-college-route-batch-nov08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/college/electives/[slotId]/allocate/error.tsx",
@@ -18130,17 +18130,17 @@
         ],
         "newRouteOnly": [],
         "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
       },
       {
         "id": "UX-G034",
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Groups → Lecture Halls (part 7)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-college-route-batch-nov08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/college/groups/[groupId]/error.tsx",
@@ -18184,17 +18184,17 @@
         ],
         "newRouteOnly": [],
         "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
       },
       {
         "id": "UX-G035",
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Lecture Halls / HallId → People / Manage (part 8)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-college-route-batch-nov08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/college/lecture-halls/[hallId]/error.tsx",
@@ -18235,7 +18235,7 @@
           "/college/otp-lockout"
         ],
         "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
       },
       {
         "id": "UX-G036",
@@ -18341,10 +18341,10 @@
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Placements / Jobs → Placements / Jobs (part 10)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-college-route-batch-nov08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/college/placements/jobs/[jobId]/applications/error.tsx",
@@ -18388,17 +18388,17 @@
         ],
         "newRouteOnly": [],
         "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
       },
       {
         "id": "UX-G038",
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Placements / New → Profile (part 11)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-college-route-batch-nov08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/college/placements/new/error.tsx",
@@ -18439,17 +18439,17 @@
           "/college/placements/team"
         ],
         "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
       },
       {
         "id": "UX-G039",
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Programs → Projects / At Risk (part 12)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-college-route-batch-nov08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/college/programs/error.tsx",
@@ -18493,17 +18493,17 @@
         ],
         "newRouteOnly": [],
         "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
       },
       {
         "id": "UX-G040",
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Projects / Audit → Projects / Templates (part 13)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-college-route-batch-nov08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/college/projects/audit/error.tsx",
@@ -18545,7 +18545,7 @@
           "/college/projects/deleted"
         ],
         "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
       },
       {
         "id": "UX-G041",
