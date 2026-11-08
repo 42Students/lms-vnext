@@ -1,6 +1,10 @@
 import {expect,test} from "@playwright/test";
 import {readFile} from "node:fs/promises";
 
+// First-run Next.js hydration must finish before a click can produce Blob bytes.
+// Serialize the two viewports to avoid first-start development-server contention.
+test.describe.configure({mode:"serial"});
+
 const exportsToCheck=[
  ["College content","college-content.csv",false],
  ["Lesson content","legacy-lesson-content.csv",false],
@@ -40,6 +44,7 @@ for(const viewport of [
    const card=page.getByRole("heading",{name:title}).locator("..");
    const action=card.getByRole("button",{name:"Download sample CSV"});
    await expect(action).toHaveAttribute("data-filename",filename);
+   await expect(action).toHaveAttribute("data-ready","true");
    expect((await action.boundingBox())?.height??0,filename).toBeGreaterThanOrEqual(44);
    const [download]=await Promise.all([page.waitForEvent("download"),action.click()]);
    expect(download.suggestedFilename()).toBe(filename);
