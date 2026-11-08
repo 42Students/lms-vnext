@@ -51,7 +51,7 @@ jobs:
           npx eslint tests/e2e/ux-g154-g161-functional.spec.ts
           npm run typecheck
       - name: Relevant project and tracker security regressions
-        run: npx vitest run tests/unit/ux-five-group-batch-20261107.test.ts tests/unit/audit-finding-status-action-model.test.ts --reporter=dot
+        run: npx vitest run tests/unit/ux-five-group-batch-20261107.test.ts tests/unit/audit-finding-status-action.test.ts --reporter=dot
       - name: Prepare isolated seeded E2E PostgreSQL
         run: npm run db:e2e:prepare
       - name: Ephemeral test authentication only
