@@ -753,6 +753,10 @@ jobs:
         env:
           NODE_OPTIONS: --max-old-space-size=6144
         run: npm run build
+      - name: Built output carries no secrets (SEC-09/12)
+        # Client chunks and server output are scanned for key blocks, cloud tokens, database URLs with a
+        # password, sensitive NEXT_PUBLIC_ names and any secret-looking environment value of this job.
+        run: node scripts/security/scan-built-bundles.mjs
       - name: Prepare disposable PostgreSQL 17 for strict standalone readiness
         # The reset guard rejects production/shared targets. DATABASE_URL is
         # empty ONLY for the destructive setup step, then restored for smoke.
