@@ -1,0 +1,81 @@
+name: UX-G025 G036 G044 G087 G097 seeded-role acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tests/e2e/ux-five-route-seeded-role-acceptance.spec.ts'
+      - '.github/workflows/ux-five-route-seeded-role-acceptance.yml'
+permissions:
+  contents: read
+concurrency:
+  group: ux-five-route-seeded-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  role-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: 'true'
+      APP_ENV: development
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_OPTIONS: --max-old-space-size=6144
+      PLAYWRIGHT_JSON_OUTPUT_NAME: ux-five-seeded-role-results.json
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify source SHA and scoped lint
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npx eslint tests/e2e/ux-five-route-seeded-role-acceptance.spec.ts
+          npm run typecheck
+      - name: Prepare isolated E2E PostgreSQL
+        run: npm run db:e2e:prepare
+      - name: Seed real role and cross-college memberships
+        env:
+          ALLOW_TEST_SEED: I_ACCEPT
+          UX_ROLE_MEMBERSHIPS_ONLY: '1'
+        run: npx tsx scripts/seed-test-tenants.ts
+      - name: Ephemeral test-only role authentication keys
+        shell: bash
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Real positive and negative seeded role desktop/mobile browser journeys
+        run: |
+          npx playwright test tests/e2e/ux-five-route-seeded-role-acceptance.spec.ts --project=chromium --reporter=line,json
+          node -e 'const s=require("./ux-five-seeded-role-results.json").stats;console.log(s);if(s.expected!==18||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
+      - name: Save evidence screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-five-seeded-role-browser-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+            ux-five-seeded-role-results.json
+          if-no-files-found: ignore
+          retention-days: 14
