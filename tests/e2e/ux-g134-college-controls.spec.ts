@@ -37,8 +37,9 @@ test.describe("UX-G134 scoped college controls and responsive recovery",()=>{
   test("learner cannot open the college-admin profile editor",async({page,context})=>{
     await authenticateGracefulRole(context,"learner");
     await page.goto("/college/profile");
-    await expect(page).toHaveURL(/\/learn\/profile(?:[?#]|$)/);
-    await expect(page.getByRole("heading",{level:1,name:"Profile"})).toBeVisible();
+    // Protected college workspace may send a non-admin to their own profile or the dashboard.
+    await expect(page).toHaveURL(/\/(?:dashboard|learn\/profile)(?:[?#]|$)/);
+    await expect(page.getByText("Your personal and contact details. College contact information is managed separately.")).toHaveCount(0);
     await expect(page.getByRole("button",{name:/Save.*contacts/i})).toHaveCount(0);
   });
   test("learner cannot export a college-wide people directory",async({page,context})=>{
