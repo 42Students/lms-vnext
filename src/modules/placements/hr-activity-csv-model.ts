@@ -1,8 +1,8 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 export const HR_ACTIVITY_CSV_CAP=200;
 export type HrActivityCsvRow={id:string;jobId:string;title:string;status:string;occurredAt:Date};
 function cell(text:string){
- const safe=/^\s*[=+\-@]/u.test(text)||/^[\t\r\n]/u.test(text)?"'"+text:text;
- return '"'+safe.replaceAll('"','""')+'"';
+ return spreadsheetCsvCell(text);
 }
 export function buildHrActivityCsv(rows:readonly HrActivityCsvRow[],additionalRows:boolean){
  const exportRows=rows.slice(0,HR_ACTIVITY_CSV_CAP);
