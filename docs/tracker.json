@@ -33669,6 +33669,26 @@
             "results": "Actual exact-SHA scoped lint and TypeScript, 10/10 focused model/source unit tests, isolated seeded PostgreSQL; 9 authenticated responsive Chromium tests total across G132/G154/G161/G178 and People CSV learner denial, screenshots artifact. Each group has a 1280x800 and 390x844 authorized page smoke; group-wide mutation/export flows NOT tested.",
             "outstanding": "Report creation and error recovery, known error transitions, Telegram test/digest, attachment/upload/export, stale-version conflicts, permission negatives, keyboard focus across all eight Tracker components.",
             "closure": "DOING remains required: existing 9 browser cases are page smoke and one denial, insufficient for the listed interactive/full export transitions. Do not reclassify as DONE from this partial proof."
+          },
+          {
+            "type": "ci-partial",
+            "runId": 42501048096,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42501048096",
+            "commitSha": "ade34f9eca18b450fecd88621157df33dc4f1b2c",
+            "conclusion": "success",
+            "artifactId": 13625238287,
+            "results": "Exact SHA source lint, TypeScript, 34/34 scoped Vitest regression tests, 4/4 authenticated Chromium scenarios on isolated seeded PostgreSQL, desktop and mobile screenshots. Proves persisted report identity mismatch rejection/recovery, authorized status CAS and stale-write denial, Learner privileged API denial, logs unconfigured/step-up denial, and quick-report private URL query omission.",
+            "outstanding": "Eight-component full functional closure remains pending: independent audit-finding status, severity, comments, duplicate/fix commit and history; Known Errors persisted triage/link states; attachment upload and retry; configured Cloud Log detail/redaction/CSV/full-range export with real recent OTP session; Telegram test/digest provider acceptance and throttle; comprehensive keyboard/focus and viewports.",
+            "closure": "Verified partial completion only; keep DOING until all scoped workflows and security negatives are evidenced."
+          },
+          {
+            "type": "ci-partial",
+            "runId": 42500570748,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42500570748",
+            "commitSha": "a8b0e9e20b0aed4e9b87459f3562e09522bbb182",
+            "conclusion": "success",
+            "results": "Exact SHA scoped lint and TypeScript, 3/3 focused Vitest suites and 13/13 finding recovery tests. Does not cover provider-backed or all eight browser workflows.",
+            "outstanding": "Group-wide browser and provider checks are tracked separately; no DONE classification from isolated source pass."
           }
         ]
       },
