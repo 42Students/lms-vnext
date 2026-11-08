@@ -1,0 +1,60 @@
+name: UX-G081 G082 recruiter drive journey acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/app/(authenticated)/recruiter/drives/[jobId]/**
+      - src/app/(authenticated)/recruiter/drives/new/**
+      - src/app/(authenticated)/recruiter/drives/proposals/**
+      - src/app/(authenticated)/recruiter/drives/recorded-outside/**
+      - src/app/(authenticated)/recruiter/home/error.tsx
+      - src/app/(authenticated)/recruiter/messages/error.tsx
+      - src/app/(authenticated)/recruiter/profile/error.tsx
+      - src/modules/placements/recruiter-drive-navigation.ts
+      - src/app/e2e/ux-recruiter-drive-journeys/**
+      - tests/unit/ux-g081-g082-recruiter-drive-journeys.test.tsx
+      - tests/e2e/ux-g081-g082-recruiter-drive-journeys.spec.ts
+      - .github/workflows/ux-g081-g082-recruiter-acceptance.yml
+permissions:
+  contents: read
+concurrency:
+  group: ux-g081-g082-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      E2E_AUTH_ENABLED: "true"
+      APP_ENV: development
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Scoped lint
+        run: npx eslint 'src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/page.tsx' 'src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/loading.tsx' 'src/app/(authenticated)/recruiter/drives/[jobId]/loading.tsx' 'src/app/(authenticated)/recruiter/drives/new/loading.tsx' 'src/app/(authenticated)/recruiter/drives/proposals/loading.tsx' 'src/app/(authenticated)/recruiter/drives/recorded-outside/loading.tsx' src/modules/placements/recruiter-drive-navigation.ts src/app/e2e/ux-recruiter-drive-journeys tests/unit/ux-g081-g082-recruiter-drive-journeys.test.tsx tests/e2e/ux-g081-g082-recruiter-drive-journeys.spec.ts
+      - name: Unit route assertions
+        run: npx vitest run tests/unit/ux-g081-g082-recruiter-drive-journeys.test.tsx --reporter=dot
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop/mobile recruiter UX
+        run: npx playwright test tests/e2e/ux-g081-g082-recruiter-drive-journeys.spec.ts --project=chromium --reporter=line
+      - name: TypeScript
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: Archive screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g081-g082-recruiter-desktop-mobile
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
