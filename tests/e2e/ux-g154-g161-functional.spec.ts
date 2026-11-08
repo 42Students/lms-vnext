@@ -72,7 +72,14 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
     await page.getByRole("textbox",{name:"Reporter"}).fill("Seed Superadmin");
     await page.getByLabel("Account used").selectOption("SUPER_ADMIN");
     await page.getByLabel("Environment").selectOption("DEVELOPMENT");
-    // The native selects live inside nested Label components whose accessible\n    // names include the option labels. Scope by the named fieldset instead of\n    // waiting for a non-existent exact \"Page\" accessible name.\n    const locationFields = page.getByRole("group",{name:"Where did this happen?"}).locator("select");\n    await locationFields.nth(0).selectOption("Dashboard");\n    await locationFields.nth(1).selectOption("Overview");
+    // Native selects live under one fieldset; use a stable accessible label
+    // and verify React retained both selected values before submission.
+    const locationFields = page.getByRole("group",{name:"Where did this happen?"}).locator("select");
+    await locationFields.nth(0).selectOption("Dashboard");
+    await expect(locationFields.nth(0)).toHaveValue("Dashboard");
+    await locationFields.nth(1).selectOption("Overview");
+    await expect(locationFields.nth(1)).toHaveValue("Overview");
+    await expect(locationFields.nth(0)).toHaveValue("Dashboard");
     await page.getByLabel("What kind of issue?").selectOption("UI / Alignment");
     await page.getByLabel("What went wrong?").fill("E2E UX acceptance: navigation label did not fit at mobile width.");
 
@@ -88,7 +95,10 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
           field instanceof HTMLTextAreaElement)
         .filter(field=>field.willValidate&&!field.validity.valid)
         .map(field=>field.getAttribute("name")??field.getAttribute("aria-label")??field.tagName));
-    expect(invalid,"Required report fields must be valid before submit").toEqual([]);
+    const locations=await locationFields.evaluateAll(fields=>fields.map(field=>({
+      label:field.getAttribute("aria-label"),value:(field as HTMLSelectElement).value,
+    })));
+    expect(invalid,"Required report fields must be valid: "+JSON.stringify(locations)).toEqual([]);
 
     const receipt = page.waitForResponse(r =>
       r.url().endsWith("/api/tracker/issues") && r.request().method()==="POST",
