@@ -4,6 +4,6 @@ import { PageHeader } from "@/components/ui/page-header";
 export default function Loading() {
  return <div className="min-w-0 space-y-4">
   <PageHeader title="Classes" />
-  <GracefulPageLoading shape="directory" />
+  <GracefulPageLoading label="Loading batch classes" shape="directory" />
  </div>;
 }
