@@ -27617,20 +27617,26 @@
         "evidence": [
           {
             "type": "SOURCE_IMPLEMENTED_CI_PENDING_20261108",
-            "commitSha": "e63fd41621d70d961feae3182ae3ea7ae7a76487",
+            "commitSha": "02091c00a5cf5a0fb37c924fd2e4448a4901ff14",
             "sourceCommits": [
               "23d2110814d709b35c6981d734c9dafe3495d207",
               "98f93a42470f99b91831e3059613907be70615ae",
-              "f2391aabbeeca6797d848d2b5c096deac804cad1"
+              "f2391aabbeeca6797d848d2b5c096deac804cad1",
+              "b6470015d9b40d8fe24b5937ea489d8bda3736cc",
+              "e7d9c80996a03f5e37b29096212b84a1af31c82d",
+              "5c6e2d0913253598cde15bef5ec4b35214bbf2a3",
+              "bb5bcc06ab943973e60e456ffcf3b7d97841a8a1",
+              "9432cba0c15d04f7fc1a5c71a6ce077dbfd0e63a",
+              "1a99e42ba98ef7c20f78d1812e73dde181f601ce"
             ],
             "parityDoc": "docs/parity/pages/mentor/UX-G071-review-completeness-drilldown.md",
             "tests": [
               "tests/unit/ux-g071-mentor-review-drilldown.test.ts"
             ],
-            "results": "Four focused tests authored, not yet executed. Source fix and regression proof remain partial; no browser/tenant evidence."
+            "results": "Six focused assertions authored; none claimed as executed. Five loading states improved; persisted review list/detail roundtrip now navigable. Full group browser, auth and cross-role acceptance pending."
           }
         ],
-        "notes": "2026-11-08: implemented version-list drilldown and same-project invalid query recovery on main. NOT CLOSED: remaining 15 G071 surfaces, authenticated desktop/mobile browser, regression and tenant-denial evidence."
+        "notes": "2026-11-08: committed Mentor review-list/detail roundtrip, same-project filter recovery, all five aria-busy loading states and six tests. NOT CLOSED: exact-SHA executed CI/browser, tenant denial and all 15 G071 surfaces."
       },
       {
         "id": "UX-G072",
