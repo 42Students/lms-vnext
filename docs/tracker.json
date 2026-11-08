@@ -25121,11 +25121,11 @@
         "type": "COMPONENT",
         "area": "tpo",
         "title": "Tpo · Interactive components (part 3)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-tpo-components-20261108",
         "pickedAt": "2026-11-08T07:51:14.273Z",
         "startedAt": "2026-11-08T07:51:14.273Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T08:06:47.790Z",
         "sourceFiles": [
           "src/components/tpo/tpo-due-followup-workspace.tsx",
           "src/components/tpo/tpo-everyone-controls.tsx",
@@ -25161,7 +25161,46 @@
           "OVERLAY-0191"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "ba2926c5abb068f22bab2cec257d382c35e0c376",
+            "parityDoc": "docs/parity/ux-g158-2026-11-08.md",
+            "tests": [
+              {
+                "command": "npx eslint src/components/tpo/tpo-notice-{delete-confirm,read-progress,undo-toast}.tsx src/app/e2e/ux-g158-fixture/page.tsx tests/unit/ux-g158-notices.test.ts tests/e2e/ux-g158.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461198132 scoped lint successful"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g158-notices.test.ts --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461198132 4/4 unit tests"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g158.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461198132 8/8 Chromium browser tests"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461198132 TypeScript integrity successful"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461198132/artifacts/13610180403 screenshots for deletion 409 recovery, invalid read status retry, undo retry, and keyboard drawer; no overflow"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461198132/artifacts/13610180403 screenshots for same four real-component scenarios; no overflow"
+              }
+            ],
+            "regressionReview": "Real TPO notice components rendered at desktop/mobile with mocked typed API responses. Cases: stale-version deletion remains in-place and restores focus, invalid read count rejects and reloads, unavailable unread names are not misreported as read, send undo handles first failure and retry success, keyboard shortcuts drawer closes via Escape; original request routes and expectedVersion forms preserved. Other G158 components source-reviewed but not separately browser-certified.",
+            "securityReview": "Server-side tenant and authorization guards untouched. Same-origin credentials and version-checked DELETE/UNDO_SEND mutation inputs preserved. Receipt input shape validation rejects malformed or impossible read counts. Acceptance fixture only available when NODE_ENV=development and UX_G158_FIXTURE=1. Test API mocks are not a live-tenant security test."
+          }
+        ]
       },
       {
         "id": "UX-G159",
