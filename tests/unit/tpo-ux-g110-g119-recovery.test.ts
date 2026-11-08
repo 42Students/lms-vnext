@@ -108,6 +108,12 @@ describe("TPO UX G114–G119: recovery controls and empty reports", () => {
     expect(summary).toContain("Review placement seasons");
     expect(summary).toContain("do not represent zero historical placements");
     expect(page("reports/branch-season/page.tsx")).toContain("Review placement seasons");
+    const branch = page("reports/branch-season/page.tsx");
+    expect(branch).toContain("tpoBranchSeasonQuerySchema.safeParse");
+    expect(branch).toContain("Invalid season filter");
+    expect(branch).toContain("PLACEMENT_SEASON_NOT_FOUND");
+    expect(branch).toContain("Season no longer available");
+    expect(branch).toContain("Choose a current season");
   });
 
   it("provides settings recovery without inventing blocked dates or assignments", () => {
