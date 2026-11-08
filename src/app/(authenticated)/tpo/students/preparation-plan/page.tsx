@@ -25,7 +25,10 @@ export default async function TpoPreparationCoursePlan(){
     <TextLink href="/tpo/settings/prep-readiness" className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9">Open existing preparation settings editor</TextLink>
    </div>}/>
   <p className="text-sm text-body leading-[22px]">This lists the college placement cell&apos;s recorded readiness-course selection. It is a planning preview, not a course enrollment, assignment, learner completion record, or outreach workflow.</p>
-  {!plan.ready?<Alert tone="warning">{!settings.ready?"Preparation settings storage is unavailable.":"Saved preparation settings could not be validated; ask an administrator to review them."}</Alert>:<>
+  {!plan.ready?<Alert tone="warning">
+    {!settings.ready?"Preparation settings storage is unavailable.":"Saved preparation settings could not be validated; ask an administrator to review them."}{" "}
+    <TextLink href="/tpo/settings/prep-readiness" className="inline-flex min-h-11 items-center md:min-h-9">Review preparation settings</TextLink>
+  </Alert>:<>
     <p role="status" className="text-sm leading-[22px]">Configured minimum completed courses: {plan.minimumCompleted}. {plan.courses.length} referenced courses are visible in the first 200 active course records.</p>
     {plan.unresolved>0?<Alert tone="warning">{plan.unresolved} configured course reference(s) are not in this bounded active catalog; their availability is unknown.</Alert>:null}
     {plan.courses.length===0?<EmptyState
