@@ -34,6 +34,22 @@ describe("UX-G182 — safe, legible scoped project exports", () => {
     expect(many.content.split("\r\n").filter(Boolean)).toHaveLength(101);
   });
 
+  it("keeps Devanagari conjuncts and joined emoji intact at the 240-point CSV limit", () => {
+    const row = { occurredAt: when, actorDisplayName: "Learner", subjectLabel: null, summary: "" };
+    const conjunct = "क्‍ष";
+    const emoji = "👩‍💻";
+    const splitConjunct = learnerProjectActivityCsv([{ ...row, summary: "a".repeat(238) + conjunct + "tail" }]);
+    expect(splitConjunct.content).toContain('"' + "a".repeat(238) + '"\r\n');
+    expect(splitConjunct.content).not.toContain("क्");
+    expect(splitConjunct.content).not.toContain("tail");
+    const wholeEmoji = learnerProjectActivityCsv([{ ...row, summary: "a".repeat(237) + emoji + "tail" }]);
+    expect(wholeEmoji.content).toContain("a".repeat(237) + emoji);
+    expect(wholeEmoji.content).not.toContain("tail");
+    const splitEmoji = learnerProjectActivityCsv([{ ...row, summary: "a".repeat(239) + emoji }]);
+    expect(splitEmoji.content).toContain('"' + "a".repeat(239) + '"\r\n');
+    expect(splitEmoji.content).not.toContain(emoji);
+  });
+
   it("caps project activity CSV at 200 even when its caller sends more rows", () => {
     const row = { id:"event-1", label:"=FORMULA", importance:"HIGH", occurredAt:when };
     const csv = mentorActivityCsv(Array.from({length:201},()=>row),2);
