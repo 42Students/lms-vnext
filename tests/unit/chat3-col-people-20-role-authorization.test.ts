@@ -118,6 +118,7 @@ describe("COL-people-20 persisted role mutation authorization", () => {
     for (const action of [addMembershipRole, removeMembershipRole]) {
       const { repository, calls } = repositoryFixture();
       await expect(action(actor([], ["SUPER_ADMIN"], {
+        membership: null,
         adminScope: {
           organizationId: "44444444-4444-4444-8444-444444444444",
           collegeId: "55555555-5555-4555-8555-555555555555",
@@ -130,6 +131,7 @@ describe("COL-people-20 persisted role mutation authorization", () => {
 
   it("COL-people-20 permits only scoped active Super Admin grant and revoke, preserving other roles", async () => {
     const context = actor([], ["SUPER_ADMIN"], {
+      membership: null,
       adminScope: { organizationId, collegeId },
     });
     const created = repositoryFixture();

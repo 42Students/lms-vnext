@@ -43,9 +43,11 @@ describe("Super Admin Projects and Placements page routes — independent securi
     expect(getProjectAdminCollegeId(adminA)).toBe("college-a");
     expect(can(adminA,"projects.manage",{collegeId:"college-a",organizationId:"org-a"})).toBe(true);
     expect(can(adminA,"projects.manage",{collegeId:"college-b",organizationId:"org-b"})).toBe(false);
+    // A Super Admin who selected a College Admin membership acts as that member of college B,
+    // never as the platform admin of the admin-selected college A.
     const dual=actor({membershipRole:"COLLEGE_ADMIN"});
-    expect(getProjectAdminCollegeId(dual)).toBe("college-a");
-    expect(can(dual,"projects.manage",{collegeId:"college-b",organizationId:"org-b"})).toBe(false);
+    expect(getProjectAdminCollegeId(dual)).toBe("college-b");
+    expect(can(dual,"projects.manage",{collegeId:"college-a",organizationId:"org-a"})).toBe(false);
     expect(getProjectAdminCollegeId(actor({collegeId:null}))).toBeNull();
     expect(getProjectAdminCollegeId(actor({status:"DISABLED"}))).toBeNull();
     expect(getProjectAdminCollegeId(actor({role:"NONE",membershipRole:"NONE"}))).toBeNull();
@@ -114,6 +116,6 @@ describe("Super Admin Projects and Placements page routes — independent securi
     expect(access).toContain('can(context, "projects.manage", {');
     expect(access).toContain("organizationId: scope.organizationId");
     expect(access).toContain("collegeId: scope.collegeId");
-    expect(access).toContain('throw new ProjectsServiceError(\n      "PROJECT_ACCESS_DENIED"');
+    expect(access.replace(/\r\n/g, "\n")).toContain('throw new ProjectsServiceError(\n      "PROJECT_ACCESS_DENIED"');
   });
 });

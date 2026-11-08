@@ -10,13 +10,12 @@ const base:RequestContext={
 };
 
 describe("SA-ADMIN-SELECTED-COLLEGE-11 tenant/role matrix for every Super Admin placement directory",()=>{
-  it("returns exactly the selected college and organization, regardless of unrelated account memberships",()=>{
+  it("returns exactly the selected college and organization, and refuses a Super Admin acting as a selected member",()=>{
     const dual:RequestContext={...base,membership:{
       id:"member-b",collegeId:"college-b",organizationId:"org-b",status:"ACTIVE",roles:["COLLEGE_ADMIN"],
     }};
-    expect(requireSuperAdminSelectedCollege(dual,"placements.read")).toEqual({
-      collegeId:"college-a",organizationId:"org-a",
-    });
+    // A Super Admin who has selected a membership is acting as that member, not as the platform admin.
+    expect(()=>requireSuperAdminSelectedCollege(dual,"placements.read")).toThrow();
     expect(requireSuperAdminSelectedCollege(base,"placements.manage")).toEqual({
       collegeId:"college-a",organizationId:"org-a",
     });

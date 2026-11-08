@@ -33,7 +33,9 @@ function context({
     },
     // Deliberately conflicting dual-role identity: a membership in college B
     // can NEVER silently replace the explicit admin selection of college A.
-    membership: {
+    // A Super Admin who selected a membership acts as that member (isSuperAdmin needs membership === null),
+    // so the platform-admin cases carry no membership; the conflicting membership remains for non-admins.
+    membership: superAdmin ? null : {
       id: "membership-b",
       organizationId: ORG_B,
       collegeId: COLLEGE_B,
