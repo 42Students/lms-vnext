@@ -58,6 +58,17 @@ for (const file of fs.readdirSync(dir).filter((f) => f.endsWith(".md") && f !== 
   }
 }
 
+// Hand-mapped area assessments (SEC-03/04/08/09/11/12/15/16/17/21): fill controls the table parser did not cover.
+const STATE = { IU: "IMPLEMENTED_UNVERIFIED", P: "PARTIAL_EVIDENCE", G: "GAP_CONFIRMED" };
+const overlay = JSON.parse(fs.readFileSync(path.join(__dirname, "area-mappings.json"), "utf8"));
+for (const row of overlay.rows) {
+  for (const id of row.ids) {
+    if (!tracker[id]) throw new Error("unknown control in area-mappings.json: " + id);
+    if (records[id] && records[id].state !== "UNASSESSED") continue;
+    records[id] = { state: STATE[row.state], finding: row.finding, source: row.source };
+  }
+}
+
 const out = {};
 const counts = {};
 for (const id of Object.keys(records).sort()) {
