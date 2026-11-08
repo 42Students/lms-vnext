@@ -51,12 +51,12 @@ for(const viewport of viewports){
   });
   await page.goto("/e2e/ux-g149-placement-recovery");
   const section=page.getByRole("region",{name:"Waitlist offer recovery"});
-  await section.getByRole("button",{name:"Verify and release next offer"}).click();
+  await section.getByRole("button",{name:"Verify and release next offer"}).first().click();
   const dialog=page.getByRole("alertdialog",{name:/Verify and release one offer to Synthetic learner 1/});
   await expect(dialog).toBeVisible();
   await dialog.getByRole("button",{name:"Cancel"}).click();
   expect(writes).toBe(0);
-  await section.getByRole("button",{name:"Verify and release next offer"}).click();
+  await section.getByRole("button",{name:"Verify and release next offer"}).first().click();
   await dialog.getByRole("button",{name:"Verify and release next offer"}).click();
   await expect(section.getByRole("status").filter({hasText:"Offer actions are locked until the waitlist"})).toBeVisible();
   await expect(section.getByRole("button",{name:"Verify and release next offer"})).toBeDisabled();
