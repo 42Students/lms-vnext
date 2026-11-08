@@ -16,7 +16,7 @@ import { listOwnLearnerAnnouncementReceipts } from "@/modules/announcements/lear
 import { LearnerNoticeReadAction } from "@/components/placements/learner-notice-read-action";
 import { LearnerNoticeReadOnView } from "@/components/placements/learner-notice-read-on-view";
 import { learnerPlacementNoticeFeed } from "@/modules/placements/learner-placement-announcement-model";
-import { learnerPlacementNoticeView } from "@/modules/placements/learner-placement-notice-view-model";
+import { learnerPlacementNoticeView, learnerNoticeUnreadCount } from "@/modules/placements/learner-placement-notice-view-model";
 import {getOwnLearnerPlacementAlerts,getUnreadOwnLearnerPlacementAlertCount} from "@/modules/placements/learner-placement-alerts-service";
 import {LearnerPlacementAlerts} from "@/components/placements/learner-placement-alerts";
 import {searchLearnerAlertPreview} from "@/modules/placements/learner-alert-preview-search-model";
@@ -84,8 +84,10 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
     : [];
   // College notices and personal updates have independent unread populations.
   // Unknown per-notice receipts must never be displayed as zero unread.
-  const hasNoticeReceipts=allNotices.every(row=>row.unread!==null);
-  const noticeUnread=hasNoticeReceipts?allNotices.filter(row=>row.unread===true).length:null;
+  const noticeUnread=learnerNoticeUnreadCount(allNotices,{
+    noticesAvailable:collegeNoticesRead.available,
+    receiptsAvailable:receiptsRead.available,
+  });
   const tabHref=(target:"announcements"|"updates")=>{
     const params=new URLSearchParams();
     if(target==="updates")params.set("show","updates");
