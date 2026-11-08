@@ -8,6 +8,7 @@ import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-requ
 import {getRecruiterPlacementWorkspace} from "@/modules/placements/recruiter-workspace-service";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import { TextLink } from "@/components/ui/text-link";
+import {recruiterDriveMessageHref} from "@/modules/placements/recruiter-drive-navigation";
 export const dynamic="force-dynamic";
 export default async function RecruiterChangeRequestsPage({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
@@ -26,7 +27,7 @@ export default async function RecruiterChangeRequestsPage({params}:{params:Promi
   <nav aria-label="Drive communication" className="flex flex-wrap gap-4 border-b border-border pb-3 text-sm font-semibold">
    <TextLink href="/recruiter/drives">Drives</TextLink>
    <TextLink href={"/recruiter/drives/"+encodeURIComponent(jobId)}>Drive details</TextLink>
-   <TextLink href="/recruiter/messages">Discussion and messages</TextLink>
+   <TextLink href={recruiterDriveMessageHref(jobId)}>Discussion and messages</TextLink>
   </nav>
   {!data.storageReady?<Alert tone="warning">
    {data.pendingMessage} The college cannot receive changes here until registration is complete.</Alert>:
