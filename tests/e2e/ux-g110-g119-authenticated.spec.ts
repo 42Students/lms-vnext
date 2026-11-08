@@ -69,7 +69,7 @@ test.describe("TPO UX G110–G119: authenticated route recovery and tenant-safe 
         expect(response?.status()).toBe(200);
         expect(new URL(page.url()).pathname).toBe(destination);
         await expect(page.getByRole("heading", { name: route.title, level: 1 })).toBeVisible();
-        await expect(page.getByRole("navigation", { name: "Settings sections" })).toBeVisible();
+        await expect(page.getByRole("navigation", { name: "Placement settings sections" })).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(2);
         await page.screenshot({ path: info.outputPath(`g117-${route.segment}-${size.name}.png`), fullPage: true });
       });
