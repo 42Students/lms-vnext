@@ -61,9 +61,13 @@ describe("UX-G030–G040 scoped College Admin recovery",()=>{
       const code=route(file);
       expect(code).toContain('href="'+href+'"');
       expect(code).toContain("onClick={reset}");
-      expect(code).not.toContain("error.message");
+      // A typed comparison against known internal codes is safe; rendering
+      // the original exception message or digest to the user is not.
+      expect(code).not.toMatch(/\\{\\s*error\\.message\\s*\\}/);
+      expect(code).not.toMatch(/\\{\\s*error\\.digest\\s*\\}/);
     }
     expect(route("profile/error.tsx")).toContain('homeHref="/college"');
+    expect(route("course-progress/error.tsx")).toContain('error.message==="COURSE_PROGRESS_FILTERS_UNAVAILABLE"');
   });
   it("keeps at least 44px touch-sized error retry controls on mobile",()=>{
     for(const file of ["classes/error.tsx","lessons/error.tsx","faculty/error.tsx","lecture-halls/error.tsx"]){
