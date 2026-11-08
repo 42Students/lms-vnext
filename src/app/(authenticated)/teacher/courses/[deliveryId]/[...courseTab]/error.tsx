@@ -18,7 +18,7 @@ export default function FacultyCourseTabError({error,reset}: {
   const title=accessDenied?"Faculty access required":
     roster?"Could not load class roster":
     syllabus?"Could not load syllabus":"Could not load teacher course context";
-  const description=accessDenied?"Sign in with a Faculty account to open this course.":
+  const description=accessDenied?"This course is not available to your Faculty account. Open your assigned courses to continue.":
     roster?"We couldn't load the class roster. Check your connection and try again.":
     syllabus?"Some course state could not be loaded. Please retry the syllabus.":
     "Please retry. If this continues, your course assignment may be missing or unavailable.";
@@ -26,8 +26,8 @@ export default function FacultyCourseTabError({error,reset}: {
     <PageHeader title={title} />
     <p className="max-w-xl text-sm leading-6 text-body">{description}</p>
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
-      {!accessDenied?<Button onClick={reset}>Try again</Button>:null}
-      <ButtonLink variant="secondary" href="/teacher/courses">
+      {!accessDenied?<Button type="button" onClick={reset} className="min-h-11 w-full sm:w-auto md:min-h-9">Try again</Button>:null}
+      <ButtonLink variant="secondary" href="/teacher/courses" className="w-full sm:w-auto">
         Back to courses
       </ButtonLink>
     </div>
