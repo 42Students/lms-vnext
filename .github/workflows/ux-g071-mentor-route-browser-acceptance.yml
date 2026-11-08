@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'tests/e2e/ux-g071-mentor-route-surfaces.spec.ts'
+      - 'scripts/db-e2e-prepare.ts'
       - 'tests/ux-groups.test.mjs'
       - '.github/workflows/ux-g071-mentor-route-browser-acceptance.yml'
 permissions:
@@ -36,6 +37,7 @@ jobs:
       E2E_AUTH_ENABLED: 'true'
       APP_ENV: development
       MENTOR_E2E_SEED_PROJECT: 'true'
+      UX_G071_SEED_REVIEW: 'true'
       PLATFORM_HOSTS: localhost,127.0.0.1
       NEXT_TELEMETRY_DISABLED: '1'
       NODE_OPTIONS: --max-old-space-size=6144
