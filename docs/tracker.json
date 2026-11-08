@@ -22265,11 +22265,11 @@
         "type": "OUTBOUND",
         "area": "placements",
         "title": "Placements · Outbound copy and exports (part 2)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-tpo-exports-2026-11-08",
         "pickedAt": "2026-11-08",
         "startedAt": "2026-11-08",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/modules/placements/learner-applications-csv-model.ts",
           "src/modules/placements/learner-csv-safe-cell-model.ts",
@@ -22305,8 +22305,35 @@
           "MESSAGE-0092"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Five learner/TPO batch/company CSV serializers improved and acceptance tests added. Exact-SHA CI, role/privacy review and mobile/desktop browser evidence pending. docs/parity/pages/tpo/UX-G180-exports.md"
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "e53ef924c632acf93f836e0f464509e28290d35e",
+            "description": "Five CSV model fixes, tests and acceptance workflow"
+          },
+          {
+            "type": "ci",
+            "runId": 42451651599,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42451651599",
+            "conclusion": "success",
+            "results": "Exact source SHA verified, scoped ESLint, full TypeScript, focused and prior Vitest, Chromium desktop/mobile download"
+          },
+          {
+            "type": "browser",
+            "artifactId": 13605184187,
+            "role": "synthetic, no tenant data",
+            "views": [
+              "1280px CSV downloads/screenshots",
+              "390px CSV downloads/screenshots"
+            ],
+            "description": "Real serializers on development-only synthetic route; production access and tenant scope unchanged"
+          },
+          {
+            "type": "document",
+            "path": "docs/parity/pages/tpo/UX-G180-exports.md"
+          }
+        ],
+        "notes": "Audited all 15 CSV modules, improved five. Exact SHA CI 42451651599 green (lint, full TypeScript, Vitest new and existing regressions, Chromium desktop/mobile synthetic exports). Role/tenant authorized production flows unchanged."
       },
       {
         "id": "UX-G181",
