@@ -591,6 +591,26 @@ async function main() {
       await projectMemberService.addProjectMember(collegeAdmin,project.id,{
         membershipId:ids.learnerCollegeAMembership,role:"LEARNER",
       });
+      // Opt-in G072 real task-feedback browser fixture: exercise the exact
+      // registered per-version feedback surface. Never seed in production.
+      if(process.env["UX_G072_SEED_TASK_FEEDBACK"]==="true"){
+        const workspace=await projectInstanceService.getProjectInstanceWorkspace(
+          collegeAdmin,project.id,
+        );
+        const task=workspace.tasks[0];
+        if(!task)throw Error("G072 requires a seeded registered task");
+        await dbClient.getDb().insert(dbSchema.projectTaskSubmissions).values({
+          id:"77000000-0000-4000-8000-000000000072",
+          projectId:project.id,taskId:task.id,version:1,
+          submittedByMembershipId:ids.learnerCollegeAMembership,
+          submissionUrl:"https://example.invalid/private-g072-task-source",
+          status:"CHANGES_REQUESTED",
+          reviewedByUserId:ids.facultyUser,
+          reviewedByMembershipId:ids.facultyCollegeAMembership,
+          reviewedAt:new Date("2026-10-07T10:00:00.000Z"),
+          feedback:"G072 persisted reviewer feedback: refine the delivery proof.",
+        });
+      }
       // Opt-in only for G071 five-route browser acceptance. The seeded person
       // must pass the production learner/project permission checks, and this
       // creates an actual persisted version 1 DRAFT, not a mocked detail.
