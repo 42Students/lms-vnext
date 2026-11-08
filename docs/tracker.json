@@ -20430,11 +20430,11 @@
         "type": "JOURNEY",
         "area": "mentor",
         "title": "Mentor · Home → FileExplorer (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-gpt6-ux-mentor-tracker-20261108",
         "pickedAt": "2026-11-08T08:11:00.000Z",
         "startedAt": "2026-11-08T08:11:00.000Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T09:18:00.000Z",
         "sourceFiles": [
           "src/app/(authenticated)/mentor/activity/error.tsx",
           "src/app/(authenticated)/mentor/activity/loading.tsx",
@@ -20472,7 +20472,41 @@
         "newRouteOnly": [
           "/mentor/account"
         ],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "66031a450002c211d5f2ae829ddcd5c15725625f",
+            "parityDoc": "docs/parity/pages/mentor/UX-G069.md",
+            "tests": [
+              {
+                "command": "test \"$(git rev-parse HEAD)\" = \"$GITHUB_SHA\"; node --test tests/ux-g069-g091-contract.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464850267 — exact checkout and 4/4 source authorization/recovery contracts passed"
+              },
+              {
+                "command": "npx eslint scoped Mentor Faculty route sources and browser spec; npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464850267 — lint and complete TypeScript passed"
+              },
+              {
+                "command": "npm run db:e2e:prepare; npx tsx scripts/seed-test-tenants.ts; npx playwright test tests/e2e/ux-g069-g091-role-recovery.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464850267 — disposable PostgreSQL 17, seeded authenticated Mentor/Faculty/Learner and 9/9 Chromium tests passed"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464850267/artifacts/13612076009 — g069-calendar-desktop.png, g091-contact-desktop.png, g091-quizzes-desktop.png; role-specific recovery, invalid-link privacy and overflow checked"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464850267/artifacts/13612076009 — g069-calendar-mobile.png, g091-contact-mobile.png, g091-quizzes-mobile.png; responsive recovery and overflow checked"
+              }
+            ],
+            "regressionReview": "Run 42464850267 succeeded at exact SHA 66031a4 with source contract 4/4, scoped lint, TypeScript, 9/9 seeded authorized and negative-role browser cases. Legacy aliases, malformed Mentor calendar/Faculty contacts, duplicated quiz shortcuts and learner denials exercised at desktop/mobile. Screenshots preserved. Business scheduling and global release remain separate.",
+            "securityReview": "Role gate before invalid-link parsing preserved for Mentor and Faculty; unauthorized Learner sees neither mentor project alias data nor Faculty calendar/contact invalid-input details. No role grants, tenant filter or sensitive service data access changed. A nonasserted development telemetry 500 appeared in workflow server logs, outside the nine verified UX scenarios; it is not independent global security certification."
+          }
+        ]
       },
       {
         "id": "UX-G070",
@@ -22033,11 +22067,11 @@
         "type": "JOURNEY",
         "area": "teacher",
         "title": "Teacher · Home → Contacts / ContactsTab (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-gpt6-ux-mentor-tracker-20261108",
         "pickedAt": "2026-11-08T08:11:00.000Z",
         "startedAt": "2026-11-08T08:11:00.000Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T09:18:00.000Z",
         "sourceFiles": [
           "src/app/(authenticated)/teacher/allAssignments/error.tsx",
           "src/app/(authenticated)/teacher/allAssignments/loading.tsx",
@@ -22076,7 +22110,41 @@
           "/teacher",
           "/teacher/assessments"
         ],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "66031a450002c211d5f2ae829ddcd5c15725625f",
+            "parityDoc": "docs/parity/pages/teacher/UX-G091.md",
+            "tests": [
+              {
+                "command": "test \"$(git rev-parse HEAD)\" = \"$GITHUB_SHA\"; node --test tests/ux-g069-g091-contract.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464850267 — exact checkout and 4/4 source authorization/recovery contracts passed"
+              },
+              {
+                "command": "npx eslint scoped Mentor Faculty route sources and browser spec; npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464850267 — lint and complete TypeScript passed"
+              },
+              {
+                "command": "npm run db:e2e:prepare; npx tsx scripts/seed-test-tenants.ts; npx playwright test tests/e2e/ux-g069-g091-role-recovery.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464850267 — disposable PostgreSQL 17, seeded authenticated Mentor/Faculty/Learner and 9/9 Chromium tests passed"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464850267/artifacts/13612076009 — g069-calendar-desktop.png, g091-contact-desktop.png, g091-quizzes-desktop.png; role-specific recovery, invalid-link privacy and overflow checked"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464850267/artifacts/13612076009 — g069-calendar-mobile.png, g091-contact-mobile.png, g091-quizzes-mobile.png; responsive recovery and overflow checked"
+              }
+            ],
+            "regressionReview": "Run 42464850267 succeeded at exact SHA 66031a4 with source contract 4/4, scoped lint, TypeScript, 9/9 seeded authorized and negative-role browser cases. Legacy aliases, malformed Mentor calendar/Faculty contacts, duplicated quiz shortcuts and learner denials exercised at desktop/mobile. Screenshots preserved. Business scheduling and global release remain separate.",
+            "securityReview": "Role gate before invalid-link parsing preserved for Mentor and Faculty; unauthorized Learner sees neither mentor project alias data nor Faculty calendar/contact invalid-input details. No role grants, tenant filter or sensitive service data access changed. A nonasserted development telemetry 500 appeared in workflow server logs, outside the nine verified UX scenarios; it is not independent global security certification."
+          }
+        ]
       },
       {
         "id": "UX-G092",
