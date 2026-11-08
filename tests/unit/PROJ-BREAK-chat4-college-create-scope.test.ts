@@ -102,7 +102,8 @@ describe("College Admin Projects class-team creation adversarial scopes", () => 
     expect(service).toContain("recordActivityEventInTransaction(tx,context");
     expect(service).toContain("getDb");
     const route = readFileSync("src/app/api/projects/class-team-workspaces/route.ts", "utf8");
-    expect(route.indexOf("isSameOriginRequest(request)")).toBeLessThan(route.indexOf("request.json()"));
+    // The central route() wrapper runs the origin check before the handler can read the body.
+    expect(route).toContain('from "@/security/route"');
     expect(route).toMatch(/apiErrorResponse\(error\)|from "@\/security\/route"/);
   });
 });

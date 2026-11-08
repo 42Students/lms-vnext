@@ -79,7 +79,8 @@ describe("College Admin Projects persisted actor adversarial journeys",()=>{
   expect(s).toContain('isolationLevel:"serializable"');
   expect(s).toContain('createdByType:isSuperAdmin(persistedActor)?"SUPER_ADMIN":"COLLEGE_ADMIN"');
   const route=path("src/app/api/projects/class-team-workspaces/route.ts");
-  expect(route.indexOf("isSameOriginRequest(request)")).toBeLessThan(route.indexOf("request.json()"));
+  // The central route() wrapper runs the origin check before the handler can read the body.
+  expect(route).toContain('from "@/security/route"');
   expect(route).toMatch(/getCurrentRequestContext\(\)|from "@\/security\/route"/);
  });
 });

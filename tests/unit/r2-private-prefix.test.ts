@@ -50,15 +50,15 @@ describe("key prefix", () => {
   it("is applied to presigned URLs", () => {
     const cfg = {
       endpoint: "https://acct.r2.cloudflarestorage.com",
-      bucket: "b",
+      bucket: "bkt",
       accessKeyId: "id",
       secretAccessKey: "s",
       keyPrefix: "vnext-dev/",
     };
     const url = new URL(presignUrl(cfg, { method: "GET", key: "private/x" }));
-    expect(url.pathname).toBe("/b/vnext-dev/private/x");
+    expect(url.pathname).toBe("/bkt/vnext-dev/private/x");
     const plain = new URL(presignUrl({ ...cfg, keyPrefix: undefined }, { method: "GET", key: "private/x" }));
-    expect(plain.pathname).toBe("/b/private/x");
+    expect(plain.pathname).toBe("/bkt/private/x");
   });
 
   it("is applied to upload grants while the logical key stays unprefixed", async () => {
