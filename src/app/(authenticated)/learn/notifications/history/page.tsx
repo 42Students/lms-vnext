@@ -1,4 +1,5 @@
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
+import { hasActiveMembership, hasMembershipRole } from "@/modules/identity/context";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { NotificationList, type NotificationListItem } from "@/components/activity/notification-list";
 import { PageHeader } from "@/components/ui/page-header";
@@ -20,11 +21,16 @@ export default async function LearnerNotificationHistoryPage({
     unread?: string | string[];
   }>;
 }) {
+  const context = await getCurrentRequestContext();
+  if (!hasActiveMembership(context) || !hasMembershipRole(context,"LEARNER")) redirect("/dashboard");
   const raw = await searchParams;
   const parsed = learnerNotificationHistoryQuerySchema.safeParse(raw);
-  if (!parsed.success) notFound();
+  if (!parsed.success) return <section role="alert" className="min-w-0 max-w-full space-y-4">
+    <PageHeader title="Personal notification history" description="Invalid history filters" />
+    <p className="text-sm text-body">That history link is invalid or expired. No personal notifications were loaded.</p>
+    <TextLink href="/learn/notifications/history" className="inline-flex min-h-11 items-center">View newest history</TextLink>
+  </section>;
 
-  const context = await getCurrentRequestContext();
   const page = await getOwnLearnerNotificationHistory(context, parsed.data);
   const items: NotificationListItem[] = page.items.map(({ notification, event }) => ({
     id: notification.id,
