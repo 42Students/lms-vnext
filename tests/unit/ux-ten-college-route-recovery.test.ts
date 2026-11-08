@@ -63,8 +63,8 @@ describe("UX-G030–G040 scoped College Admin recovery",()=>{
       expect(code).toContain("onClick={reset}");
       // A typed comparison against known internal codes is safe; rendering
       // the original exception message or digest to the user is not.
-      expect(code).not.toMatch(/\\{\\s*error\\.message\\s*\\}/);
-      expect(code).not.toMatch(/\\{\\s*error\\.digest\\s*\\}/);
+      expect(code).not.toContain("{error.message}");
+      expect(code).not.toContain("{error.digest}");
     }
     expect(route("profile/error.tsx")).toContain('homeHref="/college"');
     expect(route("course-progress/error.tsx")).toContain('error.message==="COURSE_PROGRESS_FILTERS_UNAVAILABLE"');
