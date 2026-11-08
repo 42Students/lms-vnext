@@ -9,7 +9,7 @@ export function legacyCollegeWorkspacesListHref(
   const params = new URLSearchParams();
   const q = source.q;
   if (typeof q === "string" && q.length <= 120 &&
-      !/[<>\\x00-\\x1f]/.test(q)) {
+      ![...q].some(char => char.charCodeAt(0) < 32 || char === "<" || char === ">")) {
     params.set("q", q);
   }
   const status = source.status;
