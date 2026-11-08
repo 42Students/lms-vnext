@@ -7,7 +7,7 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useRouter} from "next/navigation";
-import {useState} from "react";
+import {useId,useState} from "react";
 import {filterTpoBlockedDates,tpoBlockedDatesEmptyMessage} from "@/modules/placements/tpo-blocked-date-filter-model";
 import {groupTpoBlockedDays} from "@/modules/placements/tpo-blocked-range-display";
 import {tpoIndiaCalendarDay} from "@/modules/placements/tpo-local-date-model";
@@ -18,8 +18,14 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
  const [showPast,setShowPast]=useState(false);
  const {askConfirm,dialog}=useConfirmFlow();
  const today=tpoIndiaCalendarDay(new Date());
+ const rangeHelpId=useId();
  const rangeLength=startDay&&endDay?Math.round((Date.parse(endDay+"T00:00:00Z")-Date.parse(startDay+"T00:00:00Z"))/86400000)+1:0;
  const validRange=startDay>=today&&rangeLength>=1&&rangeLength<=90;
+ const rangeError=startDay&&endDay&&!validRange
+  ?endDay<startDay?"The end date must be on or after the start date."
+   :rangeLength>90?"A blocked range can contain at most 90 days."
+   :"Choose valid future dates to block."
+  :"";
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [search,setSearch]=useState(""),[month,setMonth]=useState("");
  const filtered=filterTpoBlockedDates(items,search,month);
@@ -45,10 +51,12 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
     void request("/api/placements/tpo/settings/blocked-dates","POST",{startDay,endDay,reason:reason.trim()||"Blocked"});}}>
    <Label stack className="min-w-0">From
     <Input type="date" required min={today} value={startDay} disabled={busy}
+     aria-describedby={rangeHelpId}
      onChange={e=>{setStartDay(e.target.value);if(endDay&&endDay<e.target.value)setEndDay(e.target.value);}}
      className="min-h-11 w-full md:min-h-9"/></Label>
    <Label stack className="min-w-0">Until
     <Input type="date" required min={startDay||today} value={endDay} disabled={busy}
+     aria-describedby={rangeHelpId} aria-invalid={Boolean(rangeError)}
      onChange={e=>setEndDay(e.target.value)}
      className="min-h-11 w-full md:min-h-9"/></Label>
    <Label stack className="min-w-0">Label (optional)
@@ -57,6 +65,12 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
    
    <Button type="submit" className="min-h-11 w-full md:min-h-9 xl:w-auto self-end"
     disabled={busy||!validRange||(reason.trim().length>0&&reason.trim().length<3)}>Block dates</Button>
+   <p id={rangeHelpId} role={rangeError?"alert":"status"}
+    className={"min-w-0 text-sm md:col-span-2 xl:col-span-4 "+(rangeError?"text-error":"text-muted-foreground")}>
+    {rangeError||(
+     validRange?"Blocking "+rangeLength+" "+(rangeLength===1?"day":"days")+" in India Standard Time.":
+     "Choose a start and end date in IST, up to 90 days.")}
+   </p>
    {reason.trim().length>0&&reason.trim().length<3?
     <div className="min-w-0 md:col-span-2 xl:col-span-4">
       <InlineNotice tone="error" message="Use at least 3 characters for a label, or leave it blank."/>
