@@ -88,16 +88,13 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
     noticesAvailable:collegeNoticesRead.available,
     receiptsAvailable:receiptsRead.available,
   });
-  const tabHref=(target:"announcements"|"updates")=>{
-    const params=new URLSearchParams();
-    if(target==="updates")params.set("show","updates");
-    if(filters.q)params.set("q",filters.q);
-    if(filters.alertQ)params.set("alertQ",filters.alertQ);
-    if(filters.pinned)params.set("pinned","1");
-    if(filters.unread)params.set("unread","1");
-    if(filters.source!=="all")params.set("source",filters.source);
-    return "/learn/my-placements/announcements"+(params.size?"?"+params.toString():"");
-  };
+  // The two views share URL state; switching tabs must not silently erase
+  // notice recency/sort or personal alert filters.
+  const tabHref=(target:"announcements"|"updates")=>learnerNoticeFilterHref({
+    show:target==="updates"?"updates":undefined,
+    pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,
+    q:queryText,alertQ,sort:sortKey,source,
+  });
   const searchedNotices=searchLearnerNotices(filterLearnerNoticesBySource(learnerPlacementNoticeView(allNotices,pinnedOnly),source),queryText);
   const notices=recentOnly ? filterLearnerRecentNotices(searchedNotices,new Date().getTime()) : searchedNotices;
   const sortedNotices=sortLearnerNotices(notices,sortKey);
