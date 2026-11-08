@@ -8,6 +8,7 @@ import {useCollegeConfirmation} from "@/components/college/use-college-confirmat
 import {useRef,useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
 import { Label } from "@/components/ui/label";
+import {friendlyApiError} from "@/lib/friendly-error";
 export function CollegeOfferingMetadataAction({offering}:{
   offering:{id:string;courseName:string;type:"CORE"|"ELECTIVE";credits:number|null;
     displayOrder:number;updatedAt:string};
@@ -41,7 +42,7 @@ export function CollegeOfferingMetadataAction({offering}:{
         });
         if(!response.ok){
           const payload=await response.json().catch(()=>({error:"OFFERING_EDIT_FAILED"})) as {error?:string};
-          throw new Error(payload.error??"OFFERING_EDIT_FAILED");
+          throw new Error(friendlyApiError({status:response.status,code:payload.error}));
         }
         setOpen(false);router.refresh();
       }catch(err){setError(err instanceof Error?err.message:"Offering edit failed");}
