@@ -1,4 +1,6 @@
 import {notFound} from "next/navigation";
+import {requirePermission} from "@/modules/permissions/policy";
+import {collegeIdSchema} from "@/modules/colleges/validation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {PageBackLink} from "@/components/ui/page-back-link";
@@ -14,13 +16,16 @@ export const dynamic="force-dynamic";
 export default async function SuperAdminCollegeFeatureHistory({params,searchParams}:{
  params:Promise<{collegeId:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
+ const context=await getCurrentRequestContext();
+ requirePermission(context,"admin-scope.select");
  const {collegeId}=await params;
+ if(!collegeIdSchema.safeParse(collegeId).success)notFound();
  const cursor=collegePolicyHistoryQuery.safeParse(await searchParams);
  if(!cursor.success)return <div className="min-w-0 space-y-4">
   <PageHeader title="Module-access changes" actions={<PageBackLink href={"/admin/features/"+encodeURIComponent(collegeId)} label="College module access"/>}/>
   <ErrorState title="Invalid history link" description="The history cursor could not be read. No module-access records were loaded." action={<ButtonLink variant="secondary" href={collegePolicyHistoryHref(collegeId,null)}>Start from recent changes</ButtonLink>}/>
  </div>;
- const result=await listCollegeFeatureHistory(await getCurrentRequestContext(),collegeId,cursor.data,15);
+ const result=await listCollegeFeatureHistory(context,collegeId,cursor.data,15);
  if(!result)notFound();
  return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader title="Module Access" description="Selected-college module rule history" />
