@@ -30,6 +30,32 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
     expect(result.template?.id).toMatch(/^[0-9a-f-]{36}$/i);
     await expect(page).toHaveURL(new RegExp("/admin/projects/templates/[0-9a-f-]{36}(?:/overview)?$","i"));
     await page.screenshot({path:info.outputPath("g154-draft-template-created-desktop.png"),fullPage:true});
+
+    // Exercise the persisted draft version editor, not only template creation.
+    await page.getByRole("button",{name:"Edit draft overview"}).click();
+    const editor=page.getByRole("dialog",{name:"Edit template overview"});
+    await expect(editor).toBeVisible();
+    await editor.getByRole("textbox",{name:"Title",exact:true})
+      .fill("E2E UX verified template — revised");
+    await editor.getByRole("checkbox").check();
+    const revision=page.waitForResponse(r=>
+      r.url().endsWith("/api/projects/templates/"+result.template!.id)&&
+      r.request().method()==="PATCH");
+    await editor.getByRole("button",{name:"Save overview"}).click();
+    expect((await revision).status(),"Template version revision must persist").toBe(200);
+    await expect(page.getByRole("heading",{level:1,
+      name:"E2E UX verified template — revised"})).toBeVisible();
+
+    // The publication dialog must produce a real authorized transition.
+    await page.getByRole("button",{name:"Publish",exact:true}).click();
+    const publishDialog=page.getByRole("dialog",{name:"Publish this template?"});
+    await expect(publishDialog).toBeVisible();
+    const published=page.waitForResponse(r=>
+      r.url().endsWith("/api/projects/templates/"+result.template!.id+"/publish")&&
+      r.request().method()==="POST");
+    await publishDialog.getByRole("button",{name:"Publish",exact:true}).click();
+    expect((await published).status(),"Publish must persist").toBe(200);
+    await expect(page.getByText("PUBLISHED",{exact:true}).first()).toBeVisible();
     await page.setViewportSize({width:390,height:844});
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(2);
     await page.screenshot({path:info.outputPath("g154-draft-template-created-mobile.png"),fullPage:true});
