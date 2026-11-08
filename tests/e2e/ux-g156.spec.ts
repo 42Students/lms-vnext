@@ -25,7 +25,7 @@ for(const viewport of screens){
    route.fulfill({status:200,contentType:"application/json",body:JSON.stringify({ready:true,views:[]})}));
   await ready(page);
   const section=page.locator('[data-ux-fixture="invite"]');
-  await section.getByRole("textbox",{name:"Registration deadline"}).fill("2030-01-01");
+  await section.getByLabel("Registration deadline").fill("2030-01-01");
   const button=section.getByRole("button",{name:/Invite/});
   await expect(button).toBeEnabled();
   await button.click();
