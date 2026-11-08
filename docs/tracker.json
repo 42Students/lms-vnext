@@ -30580,11 +30580,11 @@
         "type": "JOURNEY",
         "area": "tpo",
         "title": "Tpo · Reports / Joining Followups → Reports / Placed Branch (part 17)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-2026-11-08-tpo-ux-10",
         "pickedAt": "2026-11-08T11:17:08.957Z",
         "startedAt": "2026-11-08T11:24:14.547Z",
-        "completedAt": null,
+        "completedAt": "2026-11-09",
         "sourceFiles": [
           "src/app/(authenticated)/tpo/reports/joining-followups/error.tsx",
           "src/app/(authenticated)/tpo/reports/joining-followups/loading.tsx",
@@ -30637,8 +30637,42 @@
             "results": "Exact SHA verified; scoped ESLint, full TypeScript, focused Vitest and two desktop/mobile Chromium recovery-fixture tests passed, screenshots attached.",
             "outstanding": "Recovery-fixture UI does not verify real authenticated TPO pages, all assigned route states, business mutations, tenant denials or complete group acceptance; full scoped DONE not earned.",
             "closure": "DOING until independent authenticated per-route/action tests and evidence."
+          },
+          {
+            "commitSha": "be2cbb405086b82b8e9723d53863cf5b87d8b5eb",
+            "parityDoc": "docs/parity/pages/tpo/UX-G114.md",
+            "tests": [
+              {
+                "command": "Exact-SHA scoped ESLint, npm run typecheck and npm run ux:groups -- --check",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42521872614"
+              },
+              {
+                "command": "npx vitest run tests/unit/tpo-ux-g110-g119-recovery.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42521872614"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g114-tpo-reports.spec.ts --project=chromium --workers=2 --reporter=line,json (26/26, 0 skipped)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42521872614"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42521872614/artifacts/13633897099"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42521872614/artifacts/13633897099"
+              }
+            ],
+            "regressionReview": "All six real read-only report route, invalid repeated-filter, visible clear-link focus and responsive cases; error/loading files source-reviewed, no mutations introduced. Existing UX-G181 report CSV serializer regression remains separately accepted.",
+            "securityReview": "Real seeded TPO and Learner roles in disposable PostgreSQL; both viewports proved unauthorized Learner cannot reach report data. Existing server-side membership/service checks preserved. Production API provider, tenant and release certification separately open."
           }
-        ]
+        ],
+        "notes": "Scoped UX-G114 report presentation DONE 2026-11-09: all six page/loading/error source families reviewed; 26/26 exact-SHA authenticated PG17 Chromium desktop/mobile positive/invalid-filter/Learner-denial cases, 0 skipped/flaky; lint, TypeScript, tracker guard and focused Vitest green at run 42521872614; screenshot artifact 13633897099. Existing UX-G181 covers shared CSV UI serializer. Real provider/production API security and release are separately gated."
       },
       {
         "id": "UX-G115",
