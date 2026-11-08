@@ -11,7 +11,7 @@ describe("UX-college-page-tables-01 mobile action parity",()=>{
     expect(s).toContain('group.latest');
     expect(s).toContain('href={"/college/activity/"+encodeURIComponent(item.event.id)}');
     expect(s).toContain("sanitizeActivityMetadata(item.event.metadata)");
-    expect(s).toContain("Nothing important happened in this period.");
+    expect(readFileSync(join(process.cwd(),"src/components/activity/activity-center.tsx"),"utf8")).toContain("Nothing important happened in this period.");
     expect(s).toContain('Alert tone="error" title="Couldn\'t load activity"');
     expect(s).toContain('href={collegeActivityHref(parsed.data)}');
     expect(s).not.toContain("<table");

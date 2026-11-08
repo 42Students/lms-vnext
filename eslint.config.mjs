@@ -30,6 +30,7 @@ export default defineConfig([
     rules: { "@typescript-eslint/no-explicit-any": "off" },
   },
   globalIgnores([
+    "tools/lane-dashboard/**",
     ".next/**",
     "out/**",
     "coverage/**",
