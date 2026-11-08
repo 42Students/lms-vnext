@@ -59,7 +59,7 @@ describe("TPO UX G110–G119: filters must not produce ambiguous results", () =>
   it("rejects invalid or repeated draft recipient pages before service queries", () => {
     const draft = page("recruiters/campaigns/drafts/[campaignId]/page.tsx");
     expect(draft).toContain("Array.isArray(raw.page)");
-    expect(draft).toContain('!/[1-9]'); // explicit page validation, not coercion
+    expect(draft).toContain('!/^[1-9][0-9]{0,5}$/.test(raw.page)'); // explicit page validation
     expect(draft).toContain("Invalid recipient page");
     expect(draft).toContain("No campaign recipient records were loaded");
     expect(draft.indexOf("Array.isArray(raw.page)")).toBeLessThan(
