@@ -27,6 +27,31 @@ The older ad-hoc guards tested only ASCII whitespace before =, +, -, @. Unicode 
 - **Required focused checks:** `npx vitest run tests/unit/ux-g173-g179-csv-unicode-regression.test.ts tests/unit/hr-applicant-export-model.test.ts tests/unit/hr-team-csv-model.test.ts tests/unit/HR-BREAK-reports-01.test.ts`; `npm run typecheck`; changed-source lint, UX group board validation.
 - **Required browser checks:** With authorized College Admin/Recruiter test sessions, download and inspect full/empty/capped CSVs on desktop (1280px) and mobile (390px). Verify correct filenames and headers, safe quoting on a seeded Unicode formula value, role/tenant-negative access, that exports do not reveal contacts outside policy, and that existing filter controls and return navigation still work.
 - **Regression/security review:** This change touches pure export formatting only; no permissions, request parsing, business state transitions, row selection, tenant scopes, API response headers or database queries were edited. Consumer route and authorization checks still need run-time confirmation before closure.
-- **Group coverage:** These repairs cover 1 of 15 `UX-G173` source files and 9 of 15 `UX-G179` source files. The remaining registered surfaces must also pass scoped review before either **whole group** can be marked DONE.
+- **Group coverage:** These repairs now change **3 of 15** `UX-G173` source files and **10 of 15** `UX-G179` source files. All remaining registered source files are reviewed below, but an executed whole-group gate is still required before either group may be marked DONE.
 
 No release security certification is claimed by this export polish.
+
+## Further implementation and scope review — 8 November 2026
+
+The second pass added further noncosmetic changes and tests:
+
+- `college-assessment-export-service.ts`: rejects invalid page metadata, changed totals/page counts/college scope, incomplete responses, oversized pages and duplicate IDs as `COLLEGE_ASSESSMENT_EXPORT_STALE`. No partial download is returned after detecting observable drift; an actual database snapshot transaction is not claimed.
+- `faculty-quiz-csv-cap.ts`: nonfinite internal row limits recover to the documented 500-row cap rather than emitting an unexplained empty report. Finite caller-selected limits still respect the same bounds.
+- `hr-company-report-export-model.ts`: invalid total metadata cannot yield a `NaN` omitted-row count; valid report totals and the 200-row limit are preserved.
+- `company-share/audit-csv-model.ts`: uses `spreadsheetCsvCell` to protect Unicode spacing-mark prefixes. The real HTTP route already adds a UTF-8 BOM, so **the model deliberately does not add one**; the development fixture emulates the route-level prefix exactly once.
+- `hr-drive-proposal-export-model.ts`: now adds one UTF-8 BOM at the serializer because its actual API route does not add one. Private proposal descriptions and message bodies remain excluded.
+
+**Every G173 registered source file reviewed:** assessment model/service (page-vs-all, role-aware kind filters, 1,000-row cap), content CSV/model/service (content filtering, stable 1,000-row pager), course catalogue model (bounded filtered catalogue), lessons model/service (pagination and filters), progress model/service (college-admin authorization and scoped service reads), faculty quiz row cap/service (persisted scoped results and 500-row cap), question CSV model/service (aggregate question accuracy only), faculty request/service (strict URL query and persisted faculty Section scope). No role grants, tenant scopes, API routes, database writes or external dependencies were altered in these unmodified files.
+
+**Every G179 registered source file reviewed:** admin company directory exporter (explicit non-sensitive columns), applicant projection/service (persisted per-job and college scope; no third-party contacts), college directory CSV (same shared guard and blank unavailable contacts), share audit model/response headers (cap notice, no-referrer/no-store), and nine recruiter modules (activity, applicants, calendar, report, proposals, drives, inbox, offers, team). The nine recruiter exports preserve documented 200-row caps or caller-scoped page behavior, selected field sets, IST timestamps, masked contact, and existing footer/omitted signals. The actual company-share API adds the UTF-8 BOM at its response boundary.
+
+**Added authored tests:**
+
+- `tests/unit/ux-g173-assessment-export-snapshot.test.ts` — valid stable two-page export; total drift; college drift; duplicate row; incomplete page; oversized first page.
+- `tests/unit/ux-g179-audit-proposals-regression.test.ts` — Unicode spacing-mark neutralization, first-row cap notice, BOM in proposal history, empty header-only file, and public link privacy headers.
+- `tests/unit/ux-g173-g179-export-count-guards.test.ts` — NaN/infinite quiz limit and malformed recruiter total coverage.
+- `tests/e2e/ux-g173-g179-csv.spec.ts` — real serializers behind a strictly development-only synthetic fixture; fourteen downloads at 1280×800 and 390×844, 44px actions, zero horizontal overflow/JS errors, UTF-8 bytes, formula guards, empty/capped output.
+
+**Exact-SHA workflow:** `.github/workflows/ux-g173-g179-export-acceptance.yml` checks scoped ESLint, full TypeScript, focused and existing Vitest regressions, Chromium downloads and publishes a GitHub commit status with run URL. The workflow uses minimal `contents: read` and `statuses: write` permissions; it does not touch live data. Source commit alone is not a passing test result.
+
+**Acceptance still required:** verify the successful exact-SHA check and browser run/artifacts, review the changed route download filenames and headers after both desktop/mobile runs, and record the real GitHub run URL/commit SHA. Synthetic fixture evidence does not independently prove authorized persisted college/recruiter HTTP access; security release and cross-tenant sign-off remain separate.
