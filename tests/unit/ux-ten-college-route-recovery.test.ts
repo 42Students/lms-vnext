@@ -20,6 +20,51 @@ describe("UX-G030–G040 scoped College Admin recovery",()=>{
     expect(code).not.toContain("error.message");
     expect(code).not.toContain("error.digest");
   });
+  it("project detail and review subroutes return to the College project workspace",()=>{
+    for(const file of [
+      "projects/[projectId]/error.tsx",
+      "projects/[projectId]/readiness/error.tsx",
+      "projects/at-risk/error.tsx",
+      "projects/readiness/error.tsx",
+      "projects/reassign-mentor/error.tsx",
+      "projects/submissions/error.tsx",
+      "projects/templates/error.tsx",
+    ])expect(route(file)).toContain('homeHref="/college/projects"');
+  });
+  it("keeps Retry plus an alternate path on failed College Admin directories",()=>{
+    for(const [file,href] of [
+      ["batches/[cohortId]/students/error.tsx","/college/batches"],
+      ["batches/error.tsx","/college"],
+      ["branding/error.tsx","/college"],
+      ["classes/recurring-preview/error.tsx","/college/classes"],
+      ["companies/error.tsx","/college"],
+      ["contacts/[membershipId]/error.tsx","/college/contacts"],
+      ["course-progress/error.tsx","/college"],
+      ["departments/error.tsx","/college"],
+      ["domains/error.tsx","/college"],
+      ["electives/error.tsx","/college"],
+      ["electives/[slotId]/offerings/[offeringId]/roster/error.tsx","/college/electives"],
+      ["faculty-assignment/error.tsx","/college/faculty"],
+      ["faculty/error.tsx","/college"],
+      ["groups/[groupId]/error.tsx","/college/groups"],
+      ["groups/[groupId]/import-preview/error.tsx","/college/groups"],
+      ["groups/[groupId]/rule-preview/error.tsx","/college/groups"],
+      ["lecture-halls/error.tsx","/college"],
+      ["people/manage/error.tsx","/college/people"],
+      ["placements/jobs/[jobId]/applications/error.tsx","/college/placements"],
+      ["placements/jobs/[jobId]/interviews/error.tsx","/college/placements"],
+      ["placements/jobs/[jobId]/overview/error.tsx","/college/placements"],
+      ["placements/readiness-by-department/error.tsx","/college/placements"],
+      ["programs/error.tsx","/college"],
+      ["projects/[projectId]/[section]/error.tsx","/college/projects"],
+    ] as const){
+      const code=route(file);
+      expect(code).toContain('href="'+href+'"');
+      expect(code).toContain("onClick={reset}");
+      expect(code).not.toContain("error.message");
+    }
+    expect(route("profile/error.tsx")).toContain('homeHref="/college"');
+  });
   it("does not remove College Admin role guard",()=>{
     const code=route("placements/new/page.tsx");
     expect(code).toContain("hasMembershipRole(");

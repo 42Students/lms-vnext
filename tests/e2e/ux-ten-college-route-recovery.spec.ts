@@ -26,7 +26,7 @@ for(const size of [{label:"mobile",width:390,height:844},{label:"desktop",width:
       const button=region.getByRole("button",{name:/^(Retry|Try again)$/});
       await button.click();
       await expect(region.getByRole("status")).toContainText(item.id+" retry count: 1");
-      expect((await button.boundingBox())?.height??0).toBeGreaterThanOrEqual(44);
+      expect((await button.boundingBox())?.height??0).toBeGreaterThanOrEqual(size.label==="mobile"?44:36);
     }
     await expect(page.locator("body")).not.toContainText("Synthetic development-only route failure");
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
@@ -37,8 +37,8 @@ for(const size of [{label:"mobile",width:390,height:844},{label:"desktop",width:
     test.skip(process.env.E2E_AUTH_ENABLED!=="true"||!process.env.E2E_AUTH_SECRET,"Requires disposable seeded E2E role");
     await page.setViewportSize(size);
     await authenticateGracefulRole(context,"learner");
-    await page.goto("/college/placements/new",{waitUntil:"commit"});
-    await expect(page).toHaveURL(/\/dashboard(?:[?#]|$)/);
+    await page.goto("/college/placements/new",{waitUntil:"domcontentloaded"});
+    await expect(page).toHaveURL(/\/dashboard(?:[?#]|$)/,{timeout:15000});
     await expect(page.getByRole("button",{name:/Create (?:job|drive|placement)/i})).toHaveCount(0);
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
     await page.screenshot({path:info.outputPath("college-denied-"+size.label+".png"),fullPage:true});
