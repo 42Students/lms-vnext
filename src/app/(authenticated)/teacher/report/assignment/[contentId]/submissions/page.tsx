@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { Pagination } from "@/components/ui/pagination";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Input } from "@/components/ui/input";
@@ -25,18 +26,24 @@ type Params={deliveryId?:string|string[];filter?:string|string[];page?:string|st
 export default async function FacultyAssignmentSubmissionsPage({
   params,searchParams,
 }:{params:Promise<{contentId:string}>;searchParams:Promise<Params>}) {
+  const context=await getCurrentRequestContext();
+  if(context.user.platformStatus!=="ACTIVE" ||
+    context.membership?.status!=="ACTIVE" ||
+    !context.membership.roles.includes("FACULTY"))notFound();
   const [{contentId},raw]=await Promise.all([params,searchParams]);
   const search=facultySubmissionReportSearchSchema.safeParse(raw);
   const parsed=facultySubmissionReportPageQuerySchema.safeParse({
     assignmentId:contentId,...(search.success?search.data:{deliveryId:undefined}),
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
-    <PageHeader title={"Invalid Section submission filters"} />
-    <TextLink href="/teacher/allAssignments" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center">
+    <PageHeader title="Assignment submissions" description="Invalid Section submission filters" />
+    <p className="text-sm text-body">These filters could not be applied. No learner submission records were loaded.</p>
+    <TextLink href={"/teacher/report/assignment/"+encodeURIComponent(contentId)}
+      className="inline-flex min-h-11 items-center">Open assignment report</TextLink>
+    <TextLink href="/teacher/allAssignments" className="inline-flex min-h-11 items-center">
       Back to All Assignments
     </TextLink>
   </section>;
-  const context=await getCurrentRequestContext();
   const query=parsed.data;
   const report=await getFacultyAssignmentReport(context,query.assignmentId,query.deliveryId);
   const filtered=selectFacultyAssignmentSubmissions(
@@ -98,7 +105,9 @@ export default async function FacultyAssignmentSubmissionsPage({
       </div>
     </div>
     {data.items.length===0?<EmptyState title={empty.title}
-      description={empty.description} />
+      description={empty.description}
+      action={<TextLink href={facultySubmissionListHref({...query,filter:"ALL",q:"",publication:"ALL",order:"NEWEST",page:1})}
+        className="inline-flex min-h-11 items-center">Clear submission filters</TextLink>} />
       :<ol className="min-w-0 border-y border-[var(--lms-canvas-border)] divide-y divide-[var(--lms-canvas-border)]">
         {data.items.map(row=>{
           const late=report.assignment.dueAt!==null&&
