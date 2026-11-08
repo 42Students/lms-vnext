@@ -1,0 +1,55 @@
+name: UX-G071 Mentor review source and unit acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/**'
+      - 'src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx'
+      - 'src/app/(authenticated)/mentor/projects/[projectId]/closeout/loading.tsx'
+      - 'src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/loading.tsx'
+      - 'src/modules/projects/mentor-review-completeness-model.ts'
+      - 'tests/unit/ux-g071-mentor-review-drilldown.test.ts'
+      - '.github/workflows/ux-g071-mentor-review-source-acceptance.yml'
+
+permissions:
+  contents: read
+
+# Unlike the global push CI, preserve the exact-SHA acceptance run when
+# other UX or security chats push more commits to main.
+concurrency:
+  group: ux-g071-mentor-source-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  scoped-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exact SHA of source checkout
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Targeted lint
+        run: |
+          npx eslint \
+            'src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx' \
+            'src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/loading.tsx' \
+            'src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx' \
+            'src/app/(authenticated)/mentor/projects/[projectId]/closeout/loading.tsx' \
+            'src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/loading.tsx' \
+            src/modules/projects/mentor-review-completeness-model.ts \
+            tests/unit/ux-g071-mentor-review-drilldown.test.ts
+      - name: Type safety and focused G071 regressions
+        run: |
+          npm run typecheck
+          npx vitest run tests/unit/ux-g071-mentor-review-drilldown.test.ts --reporter=dot
+          node --test tests/ux-groups.test.mjs
