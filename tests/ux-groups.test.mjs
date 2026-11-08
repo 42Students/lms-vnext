@@ -45,7 +45,12 @@ test("unpicked group can be reserved, started and released without touching othe
   transitionUxGroup(doc,{action:"release",id,by:"chat-A"});
   assert.equal(group.status,"UNPICKED");
   assert.equal(group.pickedBy,null);
-  assert.equal(doc.uxReview.groups.find(g => g.id === "UX-G001").status,"DOING");
+  // This unrelated group may legitimately move to DONE as parallel UX chats close work.
+  // A state transition must preserve the tracker snapshot, not force a fixed status.
+  assert.equal(
+    doc.uxReview.groups.find(g => g.id === "UX-G001").status,
+    tracker.uxReview.groups.find(g => g.id === "UX-G001").status,
+  );
 });
 
 test("DONE refuses missing execution/browser evidence and requires DOING with same owner", () => {
