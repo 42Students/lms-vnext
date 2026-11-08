@@ -2,6 +2,7 @@ import { expect, test, type BrowserContext, type Page } from "@playwright/test";
 import { authenticateGracefulRole } from "./support/roles";
 
 const seeded = process.env.E2E_AUTH_ENABLED === "true" &&
+  process.env.MENTOR_E2E_SEED_PROJECT === "true" &&
   Boolean(process.env.E2E_AUTH_SECRET);
 
 async function authorizedMentorProject(page: Page, context: BrowserContext) {
