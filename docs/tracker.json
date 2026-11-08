@@ -21159,11 +21159,11 @@
         "type": "JOURNEY",
         "area": "admin",
         "title": "Admin · Placements / Screenings → Placements / Shortlisted (part 14)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-admin-college-ten-20261108",
         "pickedAt": "2026-11-08T11:23:00.000Z",
         "startedAt": "2026-11-08T11:23:00.000Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T12:38:00.000Z",
         "sourceFiles": [
           "src/app/(authenticated)/admin/placements/screenings/[applicationId]/error.tsx",
           "src/app/(authenticated)/admin/placements/screenings/[applicationId]/loading.tsx",
@@ -21205,7 +21205,31 @@
           "PAGE-0080"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "6268e24b34f1ce5dd1eb46a10dd1a5cd6d91c5df",
+            "parityDoc": "docs/parity/super-admin.md",
+            "tests": [
+              {
+                "command": "npx vitest run tests/unit/super-admin-placement-screenings-query.test.ts tests/unit/super-admin-placement-seasons-query.test.ts tests/unit/super-admin-placement-shortlisted-query.test.ts tests/unit/super-admin-screening-detail.test.ts tests/unit/super-admin-season-detail.test.ts tests/unit/super-admin-shortlisted-detail.test.ts tests/unit/chat13-admin-ui-placements-tenant-matrix.test.ts; npm run typecheck; scoped eslint; npm run ux:groups -- --check",
+                "passed": true,
+                "proof": "GitHub Actions 42480512970 at exact SHA 6268e24b34f1ce5dd1eb46a10dd1a5cd6d91c5df, 7/7 unit files and 25/25 tests, full tsc, lint, tracker registry check, PG17 isolated seed: SUCCESS"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "Chromium run 42480512970 seeded six real screening/season/shortlist directory+details, privacy and denied learner assertions, no overflow; screenshots artifact 13617871023"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "Chromium 42480512970 six routes no overflow, negative learner scope, private notes hidden, invalid season UUID; 4/4 browser tests across viewports, artifact 13617871023; rendered fallback proof 42478299021"
+              }
+            ],
+            "regressionReview": "Reviewed all six G018 route pages, loading/error states and search/detail status contracts; 25/25 screening/season/shortlist query+detail and selected college matrix unit tests pass. Authenticated directory/details responsive browser checks and bounded error-recovery tests green.",
+            "securityReview": "Disposable PG17 seeded College A pending and shortlisted applicant records, learner negative role checks prevent access to application IDs and private internal screening reasons, selected-college service gate and query predicates preserved, reviewer notes unexposed. No privileged writes, security policy or stored data paths modified; global 493-control security release unchanged."
+          }
+        ]
       },
       {
         "id": "UX-G019",
