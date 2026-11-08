@@ -1,0 +1,67 @@
+name: UX G015-G024 and G029 admin/college recovery acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/app/(authenticated)/admin/placements/**/error.tsx'
+      - 'src/app/(authenticated)/admin/projects/**/error.tsx'
+      - 'src/app/(authenticated)/admin/settings/**/error.tsx'
+      - 'src/app/(authenticated)/college/announcements/error.tsx'
+      - 'src/app/(authenticated)/college/attendance/**/error.tsx'
+      - 'src/components/ux/ux-admin-college-recovery-fixture.tsx'
+      - 'src/app/e2e/ux-admin-college-recovery/**'
+      - 'tests/ux-admin-college-error-recovery.test.mjs'
+      - 'tests/e2e/ux-admin-college-recovery.spec.ts'
+      - '.github/workflows/ux-g015-g029-recovery-acceptance.yml'
+
+concurrency:
+  group: ux-admin-college-recovery-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  error-recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      UX_ADMIN_COLLEGE_RECOVERY_FIXTURE: "1"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install exact lockfile dependencies
+        run: npm ci
+      - name: Exact source revision
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Verify canonical UX group inventory
+        run: npm run ux:groups -- --check
+      - name: Run 56-boundary source recovery contract
+        run: node --test tests/ux-admin-college-error-recovery.test.mjs
+      - name: Lint fixture and browser acceptance
+        run: |
+          npx eslint             src/components/ux/ux-admin-college-recovery-fixture.tsx             src/app/e2e/ux-admin-college-recovery/page.tsx             tests/e2e/ux-admin-college-recovery.spec.ts
+      - name: Full TypeScript compatibility
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: Chromium dependencies
+        run: npx playwright install --with-deps chromium
+      - name: Desktop and mobile rendered error components
+        run: npx playwright test tests/e2e/ux-admin-college-recovery.spec.ts --project=chromium --reporter=line
+      - name: Preserve rendered screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g015-g029-error-recovery-${{ github.run_id }}
+          path: |
+            test-results/**
+            playwright-report/**
+          if-no-files-found: ignore
+          retention-days: 7
