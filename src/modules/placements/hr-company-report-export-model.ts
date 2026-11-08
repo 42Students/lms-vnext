@@ -1,8 +1,8 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 import type {RecruiterReportRow} from "./recruiter-company-reports-model";
 export const HR_REPORT_EXPORT_CAP=200;
 function csvCell(v:string){
- const value=/^\s*[=+\-@]/u.test(v)||/^[\t\r\n]/u.test(v)?"'"+v:v;
- return '"'+value.replaceAll('"','""')+'"';
+ return spreadsheetCsvCell(v);
 }
 export function buildHrCompanyReportCsv(rows:readonly RecruiterReportRow[],total:number){
  const output=[["Drive","Status","Applied","Submitted","Withdrawn","Issued","Accepted",
