@@ -144,6 +144,19 @@ describe("TPO UX G114–G119: recovery controls and empty reports", () => {
     expect(branch).toContain("Choose a current season");
   });
 
+  it("G113: all six report error states offer retry and safe report navigation", () => {
+    for (const segment of [
+      "branch-season", "by-branch", "by-company",
+      "ctc", "failure-reasons", "intelligence",
+    ]) {
+      const source = page(`reports/${segment}/error.tsx`);
+      expect(source).toContain("Retry");
+      expect(source).toContain('href="/tpo/reports"');
+      expect(source).toContain("All reports");
+      expect(source).toContain("min-h-11");
+    }
+  });
+
   it("G117: all six public and policy settings error routes provide a safe way home", () => {
     for (const segment of ["recruiters", "rules", "season", "see"]) {
       const source = page(`settings/${segment}/error.tsx`);
