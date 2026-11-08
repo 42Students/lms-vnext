@@ -9,6 +9,7 @@ on:
       - 'src/app/(authenticated)/admin/projects/**/error.tsx'
       - 'src/app/(authenticated)/admin/settings/**/error.tsx'
       - 'src/app/(authenticated)/college/announcements/error.tsx'
+      - 'src/app/(authenticated)/college/announcements/page.tsx'
       - 'src/app/(authenticated)/college/attendance/**/error.tsx'
       - 'src/components/ux/ux-admin-college-recovery-fixture.tsx'
       - 'src/app/e2e/ux-admin-college-recovery/**'
@@ -46,7 +47,7 @@ jobs:
         run: node --test tests/ux-admin-college-error-recovery.test.mjs
       - name: Lint fixture and browser acceptance
         run: |
-          npx eslint             src/components/ux/ux-admin-college-recovery-fixture.tsx             src/app/e2e/ux-admin-college-recovery/page.tsx             tests/e2e/ux-admin-college-recovery.spec.ts
+          npx eslint "src/app/(authenticated)/college/announcements/page.tsx"             src/components/ux/ux-admin-college-recovery-fixture.tsx             src/app/e2e/ux-admin-college-recovery/page.tsx             tests/e2e/ux-admin-college-recovery.spec.ts
       - name: Full TypeScript compatibility
         env:
           NODE_OPTIONS: --max-old-space-size=6144
