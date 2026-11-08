@@ -219,7 +219,8 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
           </div>
         </Disclosure>
         <Label className="flex min-h-11 min-w-0 items-center gap-3 md:min-h-9">
-          <Checkbox checked={productionVerified} onChange={(e) => setProductionVerified(e.target.checked)} />
+          <Checkbox checked={productionVerified} disabled={pending||needsRefresh}
+            onChange={(e) => setProductionVerified(e.target.checked)} />
           Production verified
         </Label>
       </div>
