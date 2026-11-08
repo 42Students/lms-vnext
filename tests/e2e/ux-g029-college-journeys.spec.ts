@@ -73,7 +73,15 @@ test.describe("UX-G029 College Admin complete route-level navigation and recover
         await page.goto(path, { waitUntil:"domcontentloaded" });
         const fallback = page.getByRole("heading", {name:/page not found|access denied|not authorized/i})
           .or(page.getByText(/the page you are looking for|permission denied|no access/i));
-        await expect(fallback.first(), `Learner must see a denied state for ${path}`).toBeVisible();
+        // A legitimate role middleware redirect to the learner's dashboard
+        // is also a denied result. Do not accept an arbitrary redirect, an
+        // authorized college page, or a momentary loading placeholder.
+        await expect.poll(async () => {
+          const destination = new URL(page.url()).pathname;
+          if (destination === "/dashboard" || destination === "/login") return true;
+          return (await fallback.first().isVisible().catch(() => false));
+        }, {message:`Learner must see a 404 or scoped-dashboard redirect for ${path}`})
+          .toBe(true);
         await expect(page.getByRole("button",{name:/\+ Create announcement|Save setting|Publish announcement/i})).toHaveCount(0);
         await expect(page.getByText(/Your college notifications|Eligibility threshold/i)).toHaveCount(0);
       }
