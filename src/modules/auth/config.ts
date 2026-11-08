@@ -9,6 +9,8 @@
 export type AuthConfig = {
   /** Keyed-MAC secret for codes, contact fingerprints and session digests. */
   secret: string;
+  /** The secret being rotated out (AUTH_SECRET_PREVIOUS). Sessions signed with it still resolve; new ones never use it. */
+  previousSecret: string | null;
   appEnv: "development" | "production";
   /**
    * Fixed code for listed QA phones/emails. Only ever populated when
@@ -62,6 +64,11 @@ export function readAuthConfig(
 
   return {
     secret,
+    previousSecret:
+      typeof env.AUTH_SECRET_PREVIOUS === "string" && env.AUTH_SECRET_PREVIOUS.length >= MIN_AUTH_SECRET_LENGTH &&
+      env.AUTH_SECRET_PREVIOUS !== secret
+        ? env.AUTH_SECRET_PREVIOUS
+        : null,
     appEnv,
     testOtp,
     testPhones: testOtp ? list(env.AUTH_TEST_PHONES) : new Set(),

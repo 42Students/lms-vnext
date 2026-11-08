@@ -8132,7 +8132,7 @@
    "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
-   "finding": "security_audit_events is append-only: a trigger refuses UPDATE, DELETE and TRUNCATE and the runtime role is refused them (verified on dev 2026-11-08). Not hash-chained, so tamper evidence stops at the database privileges.",
+   "finding": "security_audit_events is append-only (trigger refuses UPDATE, DELETE and TRUNCATE; runtime role cannot) and, from migration 0342, hash-chained: an insert trigger sets chain_seq, prev_hash and row_hash = sha256 over the previous hash and the row, and the single head row can only move from inside that trigger. scripts/security/audit-chain-verify.mjs recomputes the chain (checked locally: clean chain passes, an owner-level edit of one row is reported, restoring it passes). Not yet applied to dev or production.",
    "source": "docs/security/assessments/SEC-14-23-24-25-26-remaining.md",
    "evidence": [
     {

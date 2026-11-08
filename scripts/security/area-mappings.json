@@ -355,7 +355,7 @@
       "ids": [
         "SEC-26-007"
       ],
-      "finding": "security_audit_events is append-only: a trigger refuses UPDATE, DELETE and TRUNCATE and the runtime role is refused them (verified on dev 2026-11-08). Not hash-chained, so tamper evidence stops at the database privileges."
+      "finding": "security_audit_events is append-only (trigger refuses UPDATE, DELETE and TRUNCATE; runtime role cannot) and, from migration 0342, hash-chained: an insert trigger sets chain_seq, prev_hash and row_hash = sha256 over the previous hash and the row, and the single head row can only move from inside that trigger. scripts/security/audit-chain-verify.mjs recomputes the chain (checked locally: clean chain passes, an owner-level edit of one row is reported, restoring it passes). Not yet applied to dev or production."
     },
     {
       "source": "SEC-14-23-24-25-26-remaining.md",
@@ -1045,6 +1045,14 @@
         "SEC-14-013"
       ],
       "finding": "Quiz submission (src/modules/courses/quiz-attempt-service.ts submitCourseQuiz) scores on the server, locks the quiz row, refuses anything not PUBLISHED, refuses a missing or passed dueAt (QUIZ_DEADLINE_NOT_CONFIGURED, deadline checked against the server clock) and re-checks the persisted membership inside the transaction. No dedicated replay or impersonation test, and answer-visibility rules live in model files that were not reviewed."
+    },
+    {
+      "source": "SEC-09-15-16-17-21-batch-2026-11-08.md",
+      "state": "IU",
+      "ids": [
+        "SEC-09-012"
+      ],
+      "finding": "Rotation overlap exists in code: AUTH_SECRET_PREVIOUS lets sessions signed under the old secret keep resolving while new ones use the new secret, and every internal machine secret accepts <NAME>_PREVIOUS next to <NAME> (both compared in constant time). Off unless the PREVIOUS variables are set."
     }
   ]
 }

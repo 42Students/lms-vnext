@@ -11,6 +11,7 @@ import {
   type StorageFileKind,
 } from "./file-policy";
 import { StorageFileError } from "./file-errors";
+import { recordSecurityEvent } from "@/security/audit-store";
 import {
   PrivateObjectStorageError,
   createPrivateUploadGrant,
@@ -436,6 +437,15 @@ export async function issueObjectReadUrl(
     key: object.objectKey,
     expiresSeconds: ttl,
     query,
+  });
+  // SEC-11-020: every signed file link is an audited sensitive access. The object key is never logged, only a
+  // short digest; the caller's route event carries the actor and path.
+  recordSecurityEvent({
+    event: "file.link_issued",
+    outcome: "ok",
+    collegeId: object.collegeId,
+    target: createHash("sha256").update(object.objectKey).digest("hex").slice(0, 16),
+    detail: { disposition: disposition ?? "none", ttlSeconds: ttl },
   });
   return { url, expiresAt: new Date(Date.now() + ttl * 1000), expiresInSeconds: ttl };
 }

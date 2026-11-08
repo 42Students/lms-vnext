@@ -113,13 +113,21 @@ export async function createSession(
   return { token, maxAgeSeconds: config.sessionMaxAgeSeconds };
 }
 
+/** Digests under which a presented token may be stored: current secret first, then the one being rotated out. */
+function sessionDigestCandidates(token: string): string[] {
+  const config = getAuthConfig();
+  const digests = [sessionDigest(config.secret, token)];
+  if (config.previousSecret) digests.push(sessionDigest(config.previousSecret, token));
+  return digests;
+}
+
 export async function resolveSession(
   token: string,
 ): Promise<
   | { ok: true; session: ResolvedSession }
   | { ok: false; reason: SessionLookupFailure }
 > {
-  const digest = sessionDigest(getAuthConfig().secret, token);
+  const digests = sessionDigestCandidates(token);
 
   // One atomic, row-locking eligibility write. The old SELECT-then-heartbeat
   // sequence could return ok:true even when a concurrent logout committed
@@ -134,7 +142,7 @@ export async function resolveSession(
       SELECT u.id, u.identity_uid, u.platform_status
       FROM users u
       JOIN identity_device_sessions candidate ON candidate.user_id = u.id
-      WHERE candidate.credential_digest = ${digest}
+      WHERE candidate.credential_digest IN ${digests}
         AND u.platform_status = 'ACTIVE'
       FOR SHARE OF u
     )
@@ -146,7 +154,7 @@ export async function resolveSession(
     END
     FROM active_user AS u
     WHERE s.user_id = u.id
-      AND s.credential_digest = ${digest}
+      AND s.credential_digest IN ${digests}
       AND s.revoked_at IS NULL
       AND s.expires_at > clock_timestamp()
       AND s.last_seen_at <= clock_timestamp()
@@ -180,7 +188,7 @@ export async function resolveSession(
            u.platform_status
       FROM identity_device_sessions s
       JOIN users u ON u.id = s.user_id
-     WHERE s.credential_digest = ${digest}
+     WHERE s.credential_digest IN ${digests}
      LIMIT 1
   `);
   const row = rowsOf(classified)[0];
@@ -193,13 +201,13 @@ export async function resolveSession(
 }
 
 export async function revokeSessionByToken(token: string) {
-  const digest = sessionDigest(getAuthConfig().secret, token);
+  const digests = sessionDigestCandidates(token);
   await getDb().execute(sql`
     UPDATE identity_device_sessions
     SET revoked_at = now(),
         revoked_by_user_id = user_id,
         revocation_reason = 'LOGOUT'
-    WHERE credential_digest = ${digest} AND revoked_at IS NULL
+    WHERE credential_digest IN ${digests} AND revoked_at IS NULL
   `);
 }
 

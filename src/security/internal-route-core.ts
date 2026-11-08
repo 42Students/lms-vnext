@@ -105,7 +105,11 @@ export function createInternalRoute(deps: InternalDeps) {
                 const auth = request.headers.get("authorization");
                 return auth?.startsWith("Bearer ") ? auth.slice("Bearer ".length) : null;
               })();
-        if (!credentialMatches(provided, deps.readSecret(cred.secretEnv))) return deny("CREDENTIAL");
+        // Rotation overlap (SEC-09-012): <NAME>_PREVIOUS is accepted next to <NAME> until the old value is removed.
+        // Both comparisons always run, so timing does not reveal which secret matched.
+        const currentOk = credentialMatches(provided, deps.readSecret(cred.secretEnv));
+        const previousOk = credentialMatches(provided, deps.readSecret(cred.secretEnv + "_PREVIOUS"));
+        if (!(currentOk || previousOk)) return deny("CREDENTIAL");
         if (deps.replayRequired?.()) {
           const stamp = request.headers.get("x-lms-timestamp");
           const nonce = request.headers.get("x-lms-nonce");

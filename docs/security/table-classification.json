@@ -21,6 +21,7 @@
   "log_alert_signatures",
   "log_alert_states",
   "scheduled_job_leases",
+  "security_audit_chain_head",
   "security_shared_store"
  ],
  "platform_reference_unscoped": [

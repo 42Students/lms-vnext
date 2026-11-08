@@ -7,7 +7,7 @@
  * Tenant table (college_id, nullable for platform events) so a college can later be shown its own trail through the
  * usual tenant policy; the writer runs in a named system scope.
  */
-import { index, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { bigint, index, integer, jsonb, pgTable, smallint, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const securityAuditEvents = pgTable(
   "security_audit_events",
@@ -27,6 +27,12 @@ export const securityAuditEvents = pgTable(
     target: text("target"),
     ipTag: text("ip_tag"),
     detail: jsonb("detail").notNull().default({}),
+    // Hash chain (SEC-26-007): set by the insert trigger, never by the application. Null only on rows written before
+    // migration 0342. row_hash = sha256(prev_hash | chain_seq | row content), so a missing, changed or reordered row
+    // breaks every later hash; scripts/security/audit-chain-verify.mjs checks it.
+    chainSeq: bigint("chain_seq", { mode: "number" }),
+    prevHash: text("prev_hash"),
+    rowHash: text("row_hash"),
   },
   (table) => [
     index("security_audit_events_time_idx").on(table.occurredAt),
@@ -35,3 +41,14 @@ export const securityAuditEvents = pgTable(
     index("security_audit_events_event_idx").on(table.event, table.occurredAt),
   ],
 );
+
+/**
+ * Single-row head of the audit hash chain. Updated only by the audit insert trigger: a trigger on this table refuses
+ * any change that does not come from inside another trigger (pg_trigger_depth), so the runtime role cannot rewind it.
+ * Not tenant data (no college_id), classified as infrastructure in docs/security/table-classification.json.
+ */
+export const securityAuditChainHead = pgTable("security_audit_chain_head", {
+  id: smallint("id").primaryKey().default(1),
+  lastSeq: bigint("last_seq", { mode: "number" }).notNull().default(0),
+  lastHash: text("last_hash").notNull().default("genesis"),
+});
