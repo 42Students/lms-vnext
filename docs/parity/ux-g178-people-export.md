@@ -18,3 +18,8 @@
 - Verify desktop/mobile download and error feedback with temporary authorized test accounts, plus a non-admin/foreign-college denial.
 
 **No DONE until all eleven related surfaces have supporting test/browser/privacy evidence and final security/regression reviews.**
+
+## Executed additional negative authorization browser proof — 8 November 2026
+
+- [Exact-SHA CI run 42469427421](https://github.com/42Students/lms-vnext/actions/runs/42469427421) **SUCCEEDED** at `9eedcf0e661d63ca383f03e66d47f9bda721d8b6`. The expanded shared suite completed 17 responsive/role/browser checks on isolated seeded PostgreSQL, including an authorized College Admin directory followed by a direct filtered People CSV call without a recent OTP device session. The endpoint denied export; no CSV content or attachment headers were returned.
+- This is deliberate protection of personal data, **not** successful positive CSV download acceptance. All eleven related serializer/import/export models still need complete malformed/empty/cap/overlap/privacy scenarios and a genuinely recent-device-authenticated positive download with current tenant scope. **G178 remains DOING.**
