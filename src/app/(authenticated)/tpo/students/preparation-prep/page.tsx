@@ -28,7 +28,10 @@ export default async function TpoPreparationNudgePage({searchParams}:{searchPara
    </div>}/>
   <p className="text-sm text-body">{rows.length} evidence-based candidates on the current 25-row page, from {view.roster.total} matching learner journeys. This is not a verified employability, course-assignment or contact/consent list.</p>
   {!view.definitions.registrationsAvailable?<Alert tone="warning">Placement registration records are unavailable; participation evidence may be incomplete.</Alert>:null}
-  {rows.length===0?<EmptyState title="No preparation-support candidates on this page."/>:<ul className="min-w-0 divide-y divide-border border-y border-border">{rows.map(row=><li key={row.membershipId} className="min-w-0 py-4">
+  {rows.length===0?<EmptyState
+    title={view.roster.total>0?"No preparation candidates on this page":"No preparation-support candidates recorded"}
+    description={view.roster.total>0?"This page has no visible candidates. Return to the first page to review the available learner journeys.":"There are no matching preparation-support journeys in the current evidence scope."}
+    action={view.roster.total>0?<TextLink href="/tpo/students/preparation-prep?page=1" className="inline-flex min-h-11 items-center md:min-h-9">Return to first page</TextLink>:null}/>:<ul className="min-w-0 divide-y divide-border border-y border-border">{rows.map(row=><li key={row.membershipId} className="min-w-0 py-4">
    <Heading level={2} className="break-words">{row.displayName}</Heading>
    <p className="text-xs text-muted-foreground">{row.branchName} · {row.cohortName} · {row.readinessSignal.replaceAll("_"," ").toLowerCase()}</p>
    <Disclosure title="Manual follow-up draft" className="mt-3 min-w-0 border-t border-border pt-2" contentClassName="pt-3">
