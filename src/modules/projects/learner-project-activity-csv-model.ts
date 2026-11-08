@@ -2,7 +2,15 @@
 const MAX_ROWS=100,MAX_CELL=240;
 function csvCell(value:string):string {
  // Truncate at Unicode code-point boundaries: do not break emoji or Indian scripts.
- const shortened=Array.from(value).slice(0,MAX_CELL).join("");
+ // Preserve complete grapheme clusters (e.g. Devanagari conjuncts and
+ // joined emoji) while enforcing the existing 240-code-point cell limit.
+ let shortened="",used=0;
+ for(const {segment} of new Intl.Segmenter("und",{granularity:"grapheme"}).segment(value)){
+  const points=Array.from(segment).length;
+  if(used+points>MAX_CELL) break;
+  shortened+=segment;
+  used+=points;
+ }
  const guarded=/^[\p{Cc}\p{Cf}\p{M}\p{Zs}\p{Zl}\p{Zp}]*[=+@\-]/u.test(shortened)?"'"+shortened:shortened;
  return '"'+guarded.replaceAll('"','""')+'"';
 }
