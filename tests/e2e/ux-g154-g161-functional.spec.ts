@@ -27,9 +27,13 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
     await page.getByRole("button",{name:"Create draft template"}).click();
     const saved = await createResponse;
     expect(saved.status(), "A draft template must be persisted, not merely acknowledged").toBe(201);
-    const result = await saved.json() as {template?:{id:string}};
-    expect(result.template?.id).toMatch(/^[0-9a-f-]{36}$/i);
+    // Template creation navigates immediately. The response body may be aborted
+    // by that route transition, so verify the committed UUID at the real page.
     await expect(page).toHaveURL(new RegExp("/admin/projects/templates/[0-9a-f-]{36}(?:/overview)?$","i"));
+    const templateId=new URL(page.url()).pathname
+      .match(/^\/admin\/projects\/templates\/([0-9a-f-]{36})(?:\/overview)?$/i)?.[1];
+    expect(templateId,"Persisted template UUID from authorized detail route")
+      .toMatch(/^[0-9a-f-]{36}$/i);
     await page.screenshot({path:info.outputPath("g154-draft-template-created-desktop.png"),fullPage:true});
 
     // Exercise the persisted draft version editor, not only template creation.
@@ -40,7 +44,7 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
       .fill("E2E UX verified template — revised");
     await editor.getByRole("checkbox").check();
     const revision=page.waitForResponse(r=>
-      r.url().endsWith("/api/projects/templates/"+result.template!.id)&&
+      r.url().endsWith("/api/projects/templates/"+templateId!)&&
       r.request().method()==="PATCH");
     await editor.getByRole("button",{name:"Save overview"}).click();
     expect((await revision).status(),"Template version revision must persist").toBe(200);
@@ -52,7 +56,7 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
     const publishDialog=page.getByRole("dialog",{name:"Publish this template?"});
     await expect(publishDialog).toBeVisible();
     const published=page.waitForResponse(r=>
-      r.url().endsWith("/api/projects/templates/"+result.template!.id+"/publish")&&
+      r.url().endsWith("/api/projects/templates/"+templateId!+"/publish")&&
       r.request().method()==="POST");
     await publishDialog.getByRole("button",{name:"Publish",exact:true}).click();
     expect((await published).status(),"Publish must persist").toBe(200);
@@ -60,7 +64,7 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
 
     // Verify the same published template can be assigned only via an exact
     // server-checked compare-and-set baseline; stale bulk edits must conflict.
-    const assignmentUrl="/api/projects/templates/"+result.template!.id+"/assignments";
+    const assignmentUrl="/api/projects/templates/"+templateId!+"/assignments";
     const baseline=await page.request.get(assignmentUrl);
     expect(baseline.status()).toBe(200);
     const before=await baseline.json() as {collegeIds:string[]};
@@ -134,14 +138,19 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
       throw new Error("Report POST never started; field validation: "+messages.join(" | ").slice(0,400));
     });
     expect(response.status(), "Report creation must commit to isolated DB").toBe(201);
-    const result = await response.json() as {issue?:{publicId:string}};
-    expect(result.issue?.publicId).toMatch(/^LMS-[0-9]+$/);
-    await expect(page.getByRole("link",{name:"View issue"})).toBeVisible();
+    // Route refresh may abort the POST body; the persisted View issue link is
+    // the user-facing receipt and must carry the server-assigned public ID.
+    const issueLink=page.getByRole("link",{name:"View issue"});
+    await expect(issueLink).toBeVisible();
+    const persistedHref=await issueLink.getAttribute("href");
+    const publicId=persistedHref?.match(/\/tracker\/issues\/(LMS-[0-9]+)$/)?.[1];
+    expect(publicId,"Persisted tracker issue ID in real View issue link")
+      .toMatch(/^LMS-[0-9]+$/);
     await page.screenshot({path:info.outputPath("g161-report-created-desktop.png"),fullPage:true});
     await page.setViewportSize({width:390,height:844});
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(2);
     await page.getByRole("link",{name:"View issue"}).click();
-    await expect(page).toHaveURL(new RegExp("/tracker/issues/"+result.issue!.publicId+"$"));
+    await expect(page).toHaveURL(new RegExp("/tracker/issues/"+publicId!+"$"));
     await page.screenshot({path:info.outputPath("g161-report-detail-mobile.png"),fullPage:true});
   });
 
