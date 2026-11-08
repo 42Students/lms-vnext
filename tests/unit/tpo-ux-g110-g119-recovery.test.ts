@@ -68,6 +68,31 @@ describe("TPO UX G110–G119: filters must not produce ambiguous results", () =>
     );
   });
 
+  it("rejects duplicate preparation and private conversation query parameters", () => {
+    const prep = page("students/preparation-prep/page.tsx");
+    const thread = page("team/[threadId]/page.tsx");
+    expect(prep).toContain("Array.isArray(raw.page)||!parsed.success");
+    expect(prep.indexOf("Array.isArray(raw.page)||!parsed.success")).toBeLessThan(
+      prep.indexOf("getTpoStudentsIntelligence(ctx"),
+    );
+    expect(thread).toContain("Object.values(query).some(Array.isArray)");
+    expect(thread.indexOf("Object.values(query).some(Array.isArray)")).toBeLessThan(
+      thread.indexOf("readTpoInternalConversation(context"),
+    );
+    expect(thread).toContain("No private messages were loaded");
+  });
+
+  it("keeps invalid learner IDs private while recovering malformed history pages", () => {
+    const history = page("students/[membershipId]/history/page.tsx");
+    expect(history).toContain("if (!tpoStudentHistoryQuerySchema.safeParse({ membershipId }).success) notFound()");
+    expect(history).toContain("Array.isArray(search.page) || !parsed.success");
+    expect(history).toContain("Invalid history page");
+    expect(history).toContain("Clear page filter");
+    expect(history.indexOf("Array.isArray(search.page) || !parsed.success")).toBeLessThan(
+      history.indexOf("getTpoStudentPlacementHistory(context"),
+    );
+  });
+
   it("does not silently default invalid or repeated team sort values", () => {
     const source = page("settings/team/page.tsx");
     expect(source).toContain("Array.isArray(rawSort)");
