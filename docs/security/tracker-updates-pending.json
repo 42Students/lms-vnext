@@ -2,10 +2,10 @@
  "note": "DRAFT. Not read by any validator. Merge into docs/tracker.json only after a passing CI run: fill commitSha (40 hex) and runUrl, then run node scripts/tracker.mjs --check. Never VERIFIED from here.",
  "generatedFrom": "docs/security/assessments/*.md",
  "counts": {
-  "IMPLEMENTED_UNVERIFIED": 111,
-  "UNASSESSED": 29,
+  "IMPLEMENTED_UNVERIFIED": 115,
+  "UNASSESSED": 26,
   "GAP_CONFIRMED": 37,
-  "PARTIAL_EVIDENCE": 123
+  "PARTIAL_EVIDENCE": 128
  },
  "controls": {
   "SEC-01-001": {
@@ -77,6 +77,22 @@
    ],
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
+  "SEC-01-009": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "A sign-in from a device name and agent not seen before records auth.new_device; per-IP and per-account limits exist for sign-in; login events are written to the append-only audit table. No risk score or step-up on a suspicious sign-in yet.",
+   "source": "docs/security/assessments/SEC-01-authentication.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
   "SEC-01-010": {
    "currentTrackerState": "UNASSESSED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
@@ -103,6 +119,22 @@
    "proposedState": "GAP_CONFIRMED",
    "assessedAt": "2026-11-08",
    "finding": "`src/auth/ip-rate-limit.ts` is a per-process `Map` (its own header says so). `route()` uses `allowRequestShared` (shared store), but the shared store is not enabled on dev (`SECURITY_SHARED_STORE` off)",
+   "source": "docs/security/assessments/SEC-01-authentication.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-01-012": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "A sign-in from a device name and agent not seen before records auth.new_device; per-IP and per-account limits exist for sign-in; login events are written to the append-only audit table. No risk score or step-up on a suspicious sign-in yet.",
    "source": "docs/security/assessments/SEC-01-authentication.md",
    "evidence": [
     {
@@ -155,6 +187,22 @@
     "Independent review",
     "See the source assessment for control-specific missing proof"
    ]
+  },
+  "SEC-01-015": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "A sign-in from a device name and agent not seen before records auth.new_device; per-IP and per-account limits exist for sign-in; login events are written to the append-only audit table. No risk score or step-up on a suspicious sign-in yet.",
+   "source": "docs/security/assessments/SEC-01-authentication.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-01-016": {
    "currentTrackerState": "UNASSESSED",
@@ -2090,6 +2138,27 @@
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Cross-college probe: 120 GET routes called with another college's ids returned no foreign data (59 x 404, 37 x 403); failure semantics are consistent (wrong role 403, foreign id 404, plain errors mapped centrally).",
+   "source": "docs/security/assessments/SEC-03-04-08-access-control.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
+  "SEC-08-020": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "Bulk exports require step-up (15-minute fresh login), are audited as api.export events and feed the bulk-export tripwire.",
    "source": "docs/security/assessments/SEC-03-04-08-access-control.md",
    "evidence": [
     {
@@ -4271,6 +4340,85 @@
    ],
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
+  "SEC-19-015": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "Anomaly tripwire (src/security/anomaly.ts) flags 20 denials per 5 minutes per user, 10 login probes per 5 minutes per client tag, 30 not-found answers per 5 minutes per user (object enumeration) and 10 exports per 10 minutes per user; findings go to the structured log, the alert module and security_audit_events. Fired as designed on dev.",
+   "source": "docs/security/assessments/SEC-19-logging-audit-detection.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
+  "SEC-19-016": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "Anomaly tripwire (src/security/anomaly.ts) flags 20 denials per 5 minutes per user, 10 login probes per 5 minutes per client tag, 30 not-found answers per 5 minutes per user (object enumeration) and 10 exports per 10 minutes per user; findings go to the structured log, the alert module and security_audit_events. Fired as designed on dev.",
+   "source": "docs/security/assessments/SEC-19-logging-audit-detection.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
+  "SEC-19-017": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "Anomaly tripwire (src/security/anomaly.ts) flags 20 denials per 5 minutes per user, 10 login probes per 5 minutes per client tag, 30 not-found answers per 5 minutes per user (object enumeration) and 10 exports per 10 minutes per user; findings go to the structured log, the alert module and security_audit_events. Fired as designed on dev.",
+   "source": "docs/security/assessments/SEC-19-logging-audit-detection.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
+  "SEC-19-018": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Denied internal machine calls are written as internal.denied without the credential; log retention and minimisation for the audit table are not defined (audit rows carry no contacts or codes, only user ids and one-way IP tags).",
+   "source": "docs/security/assessments/SEC-19-logging-audit-detection.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
   "SEC-19-019": {
    "currentTrackerState": "UNASSESSED",
    "proposedState": "PARTIAL_EVIDENCE",
@@ -4292,6 +4440,22 @@
    "proposedState": "PARTIAL_EVIDENCE",
    "assessedAt": "2026-11-08",
    "finding": "Telegram alerting exists for application errors (`log-alerts`); `security.anomaly` findings are now ERROR logs and so also reach the Telegram alert module (deduplicated there); no on-call rota, no alert delivery test",
+   "source": "docs/security/assessments/SEC-19-logging-audit-detection.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-19-021": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Denied internal machine calls are written as internal.denied without the credential; log retention and minimisation for the audit table are not defined (audit rows carry no contacts or codes, only user ids and one-way IP tags).",
    "source": "docs/security/assessments/SEC-19-logging-audit-detection.md",
    "evidence": [
     {

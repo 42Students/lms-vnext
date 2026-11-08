@@ -383,6 +383,43 @@
         "SEC-26-005"
       ],
       "finding": "Super Admin sign-in is two OTP codes (no hardware-backed or phishing-resistant factor), and there is no two-person or independent approval for Super Admin assignment or other high-impact platform operations (owner decision pending)."
+    },
+    {
+      "source": "SEC-19-logging-audit-detection.md",
+      "state": "IU",
+      "ids": [
+        "SEC-19-015",
+        "SEC-19-016",
+        "SEC-19-017"
+      ],
+      "finding": "Anomaly tripwire (src/security/anomaly.ts) flags 20 denials per 5 minutes per user, 10 login probes per 5 minutes per client tag, 30 not-found answers per 5 minutes per user (object enumeration) and 10 exports per 10 minutes per user; findings go to the structured log, the alert module and security_audit_events. Fired as designed on dev."
+    },
+    {
+      "source": "SEC-19-logging-audit-detection.md",
+      "state": "P",
+      "ids": [
+        "SEC-19-018",
+        "SEC-19-021"
+      ],
+      "finding": "Denied internal machine calls are written as internal.denied without the credential; log retention and minimisation for the audit table are not defined (audit rows carry no contacts or codes, only user ids and one-way IP tags)."
+    },
+    {
+      "source": "SEC-01-authentication.md",
+      "state": "P",
+      "ids": [
+        "SEC-01-009",
+        "SEC-01-012",
+        "SEC-01-015"
+      ],
+      "finding": "A sign-in from a device name and agent not seen before records auth.new_device; per-IP and per-account limits exist for sign-in; login events are written to the append-only audit table. No risk score or step-up on a suspicious sign-in yet."
+    },
+    {
+      "source": "SEC-03-04-08-access-control.md",
+      "state": "IU",
+      "ids": [
+        "SEC-08-020"
+      ],
+      "finding": "Bulk exports require step-up (15-minute fresh login), are audited as api.export events and feed the bulk-export tripwire."
     }
   ]
 }
