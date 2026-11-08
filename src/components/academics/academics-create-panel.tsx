@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useEffect,
   useRef,
   useState,
   useTransition,
@@ -86,6 +87,23 @@ export function AcademicsCreatePanel({
   const [pending, startTransition] =
     useTransition();
   const mutationInFlight=useRef(false);
+
+  // Empty-state links target these collapsed creation panels; reveal the
+  // relevant form before transferring keyboard focus to its summary.
+  useEffect(() => {
+    const revealLinkedForm = () => {
+      const target=window.location.hash.slice(1);
+      if(!["academic-create-period","academic-create-program",
+        "academic-create-cohort","academic-create-section"].includes(target))return;
+      const panel=document.getElementById(target);
+      if(!(panel instanceof HTMLDetailsElement))return;
+      panel.open=true;
+      panel.querySelector("summary")?.focus();
+    };
+    revealLinkedForm();
+    window.addEventListener("hashchange",revealLinkedForm);
+    return () => window.removeEventListener("hashchange",revealLinkedForm);
+  }, []);
 
   const [programDepartmentId, setProgramDepartmentId] =
     useState("");
