@@ -4,7 +4,9 @@ export function capFacultyQuizCsvRows<T,U>(
   attempted:readonly T[],missing:readonly U[],
   maxRows=FACULTY_QUIZ_CSV_MAX_ROWS,
 ) {
-  const safe=Math.max(1,Math.min(FACULTY_QUIZ_CSV_MAX_ROWS,Math.trunc(maxRows)));
+  const safe=Number.isFinite(maxRows)
+    ?Math.max(1,Math.min(FACULTY_QUIZ_CSV_MAX_ROWS,Math.trunc(maxRows)))
+    :FACULTY_QUIZ_CSV_MAX_ROWS;
   const selectedAttempts=attempted.slice(0,safe);
   const selectedMissing=missing.slice(0,Math.max(0,safe-selectedAttempts.length));
   const omittedRows=attempted.length+missing.length-
