@@ -795,3 +795,17 @@ jobs:
             cat /tmp/lms-vnext-smoke.log
             exit 1
           }
+      - name: Unauthenticated API gate (every route, no credentials; SEC-03-006, SEC-08-004)
+        shell: bash
+        env:
+          DATABASE_URL: postgresql://lms_runtime:lms_runtime_smoke@127.0.0.1:5432/lms_vnext_smoke_test
+        run: |
+          set -euo pipefail
+          PORT=3001 HOSTNAME=127.0.0.1 node .next/standalone/server.js > /tmp/lms-vnext-gate.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 40); do curl -fs http://127.0.0.1:3001/ready >/dev/null && break; sleep 1; done
+          SWEEP_BASE=http://127.0.0.1:3001 node scripts/verify/unauth-gate.mjs || {
+            tail -50 /tmp/lms-vnext-gate.log
+            exit 1
+          }
