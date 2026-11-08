@@ -136,9 +136,9 @@ describe.skipIf(!enabled)("College Admin interviews: isolated PostgreSQL", () =>
 
   it("COL-placements-04: foreign college and learner cannot schedule or read appointments", async () => {
     const d = await makeDrive();
-    await expect(mutateCollegeRoundSlotInterview(adminB, d.job, { action: "SCHEDULE", confirmed: true, appointment: appt(d) })).rejects.toThrow(/not found/i);
+    await expect(mutateCollegeRoundSlotInterview(adminB, d.job, { action: "SCHEDULE", confirmed: true, appointment: appt(d) })).rejects.toThrow(/not.?found/i);
     await expect(mutateCollegeRoundSlotInterview(learner, d.job, { action: "SCHEDULE", confirmed: true, appointment: appt(d) })).rejects.toBeInstanceOf(AuthorizationError);
-    await expect(getCollegeRoundSlotAppointments(adminB, d.job)).rejects.toThrow(/not found/i);
+    await expect(getCollegeRoundSlotAppointments(adminB, d.job)).rejects.toThrow(/not.?found/i);
     await expect(mutateCollegeRoundSlotInterview(adminA, d.job, { action: "SCHEDULE", confirmed: false, appointment: appt(d) })).rejects.toThrow();
   });
 

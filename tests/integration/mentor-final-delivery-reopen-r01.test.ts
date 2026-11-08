@@ -24,7 +24,7 @@ const admin: RequestContext = { user: { id: SEED_IDS.collegeAdminUser, identityU
 const mentor: RequestContext = { user: { id: SEED_IDS.facultyUser, identityUid: "mentor-r01",
   platformStatus: "ACTIVE", systemRoles: [] }, membership: { id: SEED_IDS.facultyCollegeAMembership,
   collegeId: SEED_IDS.collegeA, organizationId: SEED_IDS.organization,
-  status: "ACTIVE", roles: ["MENTOR", "FACULTY"] } };
+  status: "ACTIVE", roles: ["MENTOR"] } };
 
 describe.skipIf(!enabled)("MEN-projects-meetings-R01 mentor approval locks then reopens", () => {
   afterAll(async () => { await pool?.end(); await closeDatabaseConnection(); });
