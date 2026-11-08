@@ -42,3 +42,10 @@ npm run ux:groups -- --check
 ```
 
 For DONE, require a successful exact-commit CI/test run, desktop and mobile browser download/encoding/empty/truncated cases on authorized screens, and scoped regression/security sign-off. A cancelled workflow is **not** a pass. Do not mark this group DONE from source review alone.
+
+## Browser acceptance package added — 8 November 2026
+
+- Development-only route `/e2e/ux-g182-export-downloads` is enabled only when `NODE_ENV=development` and `UX_G182_EXPORT_FIXTURE=1`. It calls the seven **real** CSV serializers on synthetic, deterministic inputs. No database, tenant or authenticated user is read.
+- `tests/e2e/ux-g182-project-downloads.spec.ts` performs **14 responsive serializer download scenarios** (seven sample+empty CSV pairs at 1280px and 390px) plus **one anonymous API export-denial scenario** over the five protected mentor export endpoints. It checks exact filenames, downloaded bytes, headers, Unicode/emoji, spreadsheet formula escaping, first-column truncation guidance, empty exports, no restricted PII columns, and horizontal overflow.
+- `.github/workflows/ux-g182-project-export-acceptance.yml` runs an exact-trigger-SHA check, scoped ESLint, full TypeScript, seven-model focused/legacy unit regressions, and exactly 15 Chromium scenarios with zero unexpected/flaky/skipped results. The workflow stores browser screenshots and traces.
+- This is an **auth-safe, synthetic formatter browser witness**, not yet a positive signed-in mentor/learner download or tenant-crossing PostgreSQL witness. Those remain prerequisites for full requested group closure alongside executed CI results. Do not promote `UX-G182` from DOING on workflow creation alone.
