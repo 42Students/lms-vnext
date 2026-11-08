@@ -20977,11 +20977,11 @@
         "type": "JOURNEY",
         "area": "admin",
         "title": "Admin · Placements / Drives → Placements / Job Settings (part 11)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-admin-college-ten-20261108",
         "pickedAt": "2026-11-08T11:23:00.000Z",
         "startedAt": "2026-11-08T11:23:00.000Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T12:22:00.000Z",
         "sourceFiles": [
           "src/app/(authenticated)/admin/placements/drives/error.tsx",
           "src/app/(authenticated)/admin/placements/drives/loading.tsx",
@@ -21023,7 +21023,36 @@
           "PAGE-0063"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "b81f998c5caea4b0fbbb9e3e117c0bf5e0d8f710",
+            "parityDoc": "docs/parity/super-admin.md",
+            "tests": [
+              {
+                "command": "npx vitest run tests/unit/super-admin-interview-detail.test.ts tests/unit/super-admin-job-settings-detail.test.ts tests/unit/super-admin-placement-hiring-query.test.ts tests/unit/super-admin-placement-interviews-query.test.ts tests/unit/super-admin-placement-job-settings-query.test.ts tests/unit/super-admin-placement-detail-model.test.ts tests/unit/chat13-admin-ui-placements-tenant-matrix.test.ts; npm run typecheck; scoped eslint; npm run ux:groups -- --check",
+                "passed": true,
+                "proof": "GitHub Actions run 42479507910 job admin-placement exact SHA b81f998c5caea4b0fbbb9e3e117c0bf5e0d8f710: 7/7 Vitest files, 25/25 tests, tsc, eslint, tracker check, PostgreSQL 17 seed; success"
+              },
+              {
+                "command": "node --test tests/ux-admin-college-error-recovery.test.mjs",
+                "passed": true,
+                "proof": "GitHub Actions run 42478299021 exact SHA c1e4bc63a9f69c18096d0e0beb9d2558a59b7e6e: 10/10 source group tests (56/56 error boundaries), success"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "GitHub Actions 42479507910 Chromium G015 seeded Super Admin six routes, learner forbidden job/round, screenshots in artifact 13617091060; 4/4 responsive browser tests passed combined"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "GitHub Actions 42479507910 Chromium G015 six routes & learner negative; screenshots artifact 13617091060; plus rendered error recovery 42478299021 artifact 13616926179"
+              }
+            ],
+            "regressionReview": "Reviewed six G015 route surfaces and their existing bounded loading/errors. Browser proves real seeded job and round, hiring redirect, job policy read, invalid ID, mobile overflow, safe return; 25 passing superadmin placement detail/query/regression tests. Error state readback and keyboard recovery passing from 42478299021.",
+            "securityReview": "Authorized Super Admin selected college persisted before reads; real learner forbidden placement job/round; existing selected-college tenant matrix and detail service tests green. No changes to authorization, permission, tenant storage or data-write logic. Fixtures gated to disposable E2E and dev-only browser. No global release/security certification."
+          }
+        ]
       },
       {
         "id": "UX-G016",
