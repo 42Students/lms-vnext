@@ -16,7 +16,7 @@ export default async function PreviewCampaign({searchParams}:PageProps){
  const raw=await searchParams;
  const segment=Array.isArray(raw.segment)?raw.segment[0]:raw.segment;
  const query=engageAudienceQuerySchema.safeParse({segment});
- if(!query.success)return <div className="min-w-0 space-y-4"><PageHeader title="Audience preview"/><Alert tone="error">Invalid audience. <TextLink href="/tpo/recruiters/campaigns/preview">Reset</TextLink></Alert></div>;
+ if(Array.isArray(raw.segment)||!query.success)return <div className="min-w-0 space-y-4"><PageHeader title="Audience preview"/><Alert tone="error">Invalid or repeated audience segment. No recipients were queried. <TextLink href="/tpo/recruiters/campaigns/preview">Reset segment</TextLink></Alert></div>;
  const preview=await previewEngageCampaignAudience(context,query.data);
  return <div className="min-w-0 space-y-4">
   <PageHeader title="Audience preview"
