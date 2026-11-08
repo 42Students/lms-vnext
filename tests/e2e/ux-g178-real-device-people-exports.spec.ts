@@ -125,6 +125,40 @@ test.describe("UX-G178 genuine device-authenticated People CSV journeys",()=>{
         fullPage:true});
     });
 
+  test("College Admin receives actionable student and Faculty CSV preflight errors without writes",
+    async({page,context})=>{
+      await signInWithRealOtp(context,"collegeadmin.seed@example.com","COLLEGE_ADMIN");
+      for(const item of [
+        {url:"/api/people/student-import",body:{action:"PREVIEW",csv:"bad,header\r\nunknown,record"}},
+        {url:"/api/college/faculty/import",body:{action:"PREVIEW",csv:"bad,header\r\nunknown,record"}},
+      ]){
+        const preflight=await page.request.post(item.url,{
+          headers:{origin},data:item.body,
+        });
+        expect(preflight.status(),item.url+" should show a non-mutating preview").toBe(200);
+        const result=await preflight.json() as {
+          report:{preview:boolean;structuralErrors:string[];results:unknown[];valid:number};
+        };
+        expect(result.report.preview).toBe(true);
+        expect(result.report.structuralErrors).toContain("INVALID_CSV_HEADER");
+        expect(result.report.results).toHaveLength(0);
+        expect(result.report.valid).toBe(0);
+        const unconfirmed=await page.request.post(item.url,{
+          headers:{origin},
+          data:{...item.body,action:"IMPORT",confirm:false},
+        });
+        expect(unconfirmed.status(),item.url+" must reject unconfirmed imports")
+          .toBeGreaterThanOrEqual(400);
+        expect(unconfirmed.headers()["cache-control"]??"").not.toContain("public");
+      }
+      const forged=await page.request.post("/api/people/student-import",{
+        headers:{origin},data:{action:"PREVIEW",csv:"bad,header\r\nx,y",
+          collegeId:SEED_IDS.collegeB},
+      });
+      expect(forged.status(),"A client-provided target college is forbidden")
+        .toBeGreaterThanOrEqual(400);
+    });
+
   test("a seeded role cookie cannot stand in for fresh OTP authorization",
     async({page,context})=>{
       await authenticateGracefulRole(context,"college");
