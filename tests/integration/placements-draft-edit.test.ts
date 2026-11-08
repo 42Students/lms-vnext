@@ -46,7 +46,7 @@ const tpoA: RequestContext = {
     collegeId: SEED_IDS.collegeA,
     organizationId: SEED_IDS.organization,
     status: "ACTIVE",
-    roles: ["FACULTY", "TPO"],
+    roles: ["TPO"],
   },
 };
 
@@ -62,7 +62,7 @@ const tpoB: RequestContext = {
     collegeId: SEED_IDS.collegeB,
     organizationId: SEED_IDS.organization,
     status: "ACTIVE",
-    roles: ["FACULTY", "TPO"],
+    roles: ["TPO"],
   },
 };
 

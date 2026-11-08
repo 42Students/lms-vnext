@@ -26,7 +26,7 @@ const tpo: RequestContext = {
     collegeId: SEED_IDS.collegeA,
     organizationId: SEED_IDS.organization,
     status: "ACTIVE",
-    roles: ["FACULTY", "TPO"],
+    roles: ["TPO"],
   },
 };
 const learner: RequestContext = {

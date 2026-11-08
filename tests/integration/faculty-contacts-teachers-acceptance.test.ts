@@ -13,7 +13,7 @@ const faculty:RequestContext={
    platformStatus:"ACTIVE",systemRoles:[]},
  membership:{id:SEED_IDS.facultyCollegeAMembership,
    collegeId:SEED_IDS.collegeA,organizationId:SEED_IDS.organization,
-   status:"ACTIVE",roles:["FACULTY","MENTOR"]},
+   status:"ACTIVE",roles: ["FACULTY"]},
 };
 const learner:RequestContext={
  user:{id:SEED_IDS.learnerUser,identityUid:"seed-learner",

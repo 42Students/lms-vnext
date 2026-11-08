@@ -31,7 +31,7 @@ const tpo: RequestContext = {
     collegeId: SEED_IDS.collegeA,
     organizationId: SEED_IDS.organization,
     status: "ACTIVE",
-    roles: ["FACULTY", "MENTOR", "TPO"],
+    roles: ["TPO"],
   },
 };
 

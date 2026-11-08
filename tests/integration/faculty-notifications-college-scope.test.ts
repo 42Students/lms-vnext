@@ -38,7 +38,7 @@ const faculty: RequestContext = {
     id: testMembershipA,
     organizationId: SEED_IDS.organization,
     collegeId: SEED_IDS.collegeA,
-    status: "ACTIVE", roles: ["FACULTY", "MENTOR"],
+    status: "ACTIVE", roles: ["FACULTY"],
   },
 };
 const facultyB: RequestContext = {

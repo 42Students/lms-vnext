@@ -86,7 +86,7 @@ const faculty: RequestContext = {
     collegeId: SEED_IDS.collegeA,
     organizationId: SEED_IDS.organization,
     status: "ACTIVE",
-    roles: ["FACULTY", "MENTOR"],
+    roles: ["FACULTY"],
   },
 };
 

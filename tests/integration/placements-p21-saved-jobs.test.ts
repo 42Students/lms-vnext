@@ -33,7 +33,7 @@ const learner: RequestContext = {
 const tpo: RequestContext = {
   user: {id:SEED_IDS.facultyUser,identityUid:"seed-faculty",platformStatus:"ACTIVE",systemRoles:[]},
   membership: {id:SEED_IDS.facultyCollegeAMembership,organizationId:SEED_IDS.organization,
-    collegeId:SEED_IDS.collegeA,status:"ACTIVE",roles:["FACULTY","TPO"]},
+    collegeId:SEED_IDS.collegeA,status:"ACTIVE",roles: ["TPO"]},
 };
 
 async function clean() {

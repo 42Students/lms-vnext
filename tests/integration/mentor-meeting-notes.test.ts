@@ -24,7 +24,7 @@ const admin:RequestContext={user:{id:SEED_IDS.collegeAdminUser,identityUid:"admi
 const mentor:RequestContext={user:{id:SEED_IDS.facultyUser,identityUid:"mentor",
   platformStatus:"ACTIVE",systemRoles:[]},membership:{id:SEED_IDS.facultyCollegeAMembership,
   collegeId:SEED_IDS.collegeA,organizationId:SEED_IDS.organization,
-  status:"ACTIVE",roles:["MENTOR","FACULTY"]}};
+  status:"ACTIVE",roles: ["MENTOR"]}};
 const learner:RequestContext={user:{id:SEED_IDS.learnerUser,identityUid:"learner",
   platformStatus:"ACTIVE",systemRoles:[]},membership:{id:SEED_IDS.learnerCollegeAMembership,
   collegeId:SEED_IDS.collegeA,organizationId:SEED_IDS.organization,

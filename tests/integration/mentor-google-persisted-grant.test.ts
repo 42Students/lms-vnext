@@ -15,7 +15,7 @@ const mentor:RequestContext={
   platformStatus:"ACTIVE",systemRoles:[]},
  membership:{id:SEED_IDS.facultyCollegeAMembership,
   collegeId:SEED_IDS.collegeA,organizationId:SEED_IDS.organization,
-  status:"ACTIVE",roles:["FACULTY","MENTOR"]},
+  status:"ACTIVE",roles: ["MENTOR"]},
 };
 
 const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});

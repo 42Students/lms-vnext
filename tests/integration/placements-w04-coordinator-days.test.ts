@@ -36,7 +36,7 @@ const tpo: RequestContext = {
     platformStatus: "ACTIVE", systemRoles: [] },
   membership: { id: SEED_IDS.facultyCollegeAMembership,
     collegeId: SEED_IDS.collegeA, organizationId: SEED_IDS.organization,
-    status: "ACTIVE", roles: ["FACULTY", "TPO"] },
+    status: "ACTIVE", roles: ["TPO"] },
 };
 const applicant: RequestContext = {
   user: { id: SEED_IDS.learnerUser, identityUid: "seed-learner",
