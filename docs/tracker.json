@@ -26546,7 +26546,18 @@
           "MESSAGE-0113"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "ci-partial",
+            "runId": 42461048230,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42461048230",
+            "conclusion": "success",
+            "commitSha": "c234a180ef32171d1ed4a90b231fbabf0aa0238b",
+            "results": "Exact checkout, scoped lint, full TypeScript, 10 Vitest suites/41 tests, 15 real Chromium scenarios: seven CSV serializer sample+empty downloads at 1280px and 390px, anonymous protected mentor-export HTTP denial; no skips/flaky/unexpected. Development-only fixture, not actual authenticated OTP device API acceptance.",
+            "artifactId": 13609811143
+          }
+        ],
+        "notes": " 2026-11-08: exact-SHA G182 CI passed 41/41 Vitest and 15/15 responsive browser with artifact 13609811143. Remains DOING until real recent-device-authenticated positive download and tenant/role scoping on live API; no step-up bypass."
       },
       {
         "id": "UX-G183",
