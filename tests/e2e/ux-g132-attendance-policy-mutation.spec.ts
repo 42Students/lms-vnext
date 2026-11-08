@@ -82,8 +82,18 @@ test.describe("UX-G132 — persisted policy, review/cancel/reset and tenant deni
     await page.getByRole("alertdialog",{name:"Save attendance setting for this college?"})
       .getByRole("button",{name:"Save setting"}).click();
     expect((await restoredResponse).status()).toBe(200);
+    // router.refresh can race a second navigation and abort the browser's
+    // load event. Check the saved state through the real authorized GET, then
+    // resize the current editor without losing or spoofing the server receipt.
+    const verification=await page.request.get(
+      "/api/attendance/admin/policy?collegeId="+SEED_IDS.collegeA);
+    expect(verification.status()).toBe(200);
+    const persisted=await verification.json() as {
+      policy:{eligibilityThresholdPercent:number;correctionWindowHours:number}
+    };
+    expect(persisted.policy.eligibilityThresholdPercent).toBe(Number(original));
+    expect(persisted.policy.correctionWindowHours).toBe(Number(previousHours));
     await page.setViewportSize({width:390,height:844});
-    await page.goto("/admin/attendance");
     expect(await threshold.inputValue()).toBe(original);
     expect(await hours.inputValue()).toBe(previousHours);
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(2);
@@ -105,8 +115,11 @@ test.describe("UX-G132 — persisted policy, review/cancel/reset and tenant deni
 
     // The seeded browser term is July 2026–June 2027. A fixed future day
     // within that disposable term avoids depending on the runner timezone.
-    const startWall="2027-01-15T14:00";
-    const endWall="2027-01-15T15:00";
+    // Retries never collide with an earlier attempt that saved successfully
+    // before an unrelated browser assertion failed.
+    const slot=14+info.retry;
+    const startWall=`2027-01-15T${String(slot).padStart(2,"0")}:00`;
+    const endWall=`2027-01-15T${String(slot+1).padStart(2,"0")}:00`;
     await schedule.getByRole("textbox",{name:"Session title"}).fill("UX-G132 one-time schedule acceptance");
     await schedule.getByLabel("Start (IST)").fill(startWall);
     await schedule.getByLabel("End (IST)").fill(endWall);
@@ -139,8 +152,8 @@ test.describe("UX-G132 — persisted policy, review/cancel/reset and tenant deni
           startsAt,endsAt,description:null,location:null,confirm:true}),
       });
       return response.status;
-    },{deliveryId,startsAt:"2027-01-15T08:30:00.000Z",
-      endsAt:"2027-01-15T09:30:00.000Z"});
+    },{deliveryId,startsAt:new Date(startWall+":00+05:30").toISOString(),
+      endsAt:new Date(endWall+":00+05:30").toISOString()});
     expect(replay,"A second session cannot overlap an existing section booking").toBe(409);
     await page.setViewportSize({width:390,height:844});
     await page.goto("/teacher/courses/"+deliveryId+"/attendanceDetail?schedule=1");
