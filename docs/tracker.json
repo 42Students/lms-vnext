@@ -20768,11 +20768,11 @@
         "type": "COMPONENT",
         "area": "courses",
         "title": "Courses · Interactive components (part 4)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-shared-ui-admin-exports-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/components/courses/quiz-attempt-control.tsx",
           "src/components/courses/resource-progress-control.tsx",
@@ -20786,7 +20786,46 @@
           "WIDGET-0060"
         ],
         "newRouteOnly": [],
-        "evidence": [],
+        "evidence": [
+          {
+            "commitSha": "6ebc3719d0ccb38ae562ded56095a497d4db9b9d",
+            "parityDoc": "docs/parity/pages/learner/UX-G139-course-controls.md",
+            "tests": [
+              {
+                "command": "npx eslint src/components/courses/quiz-attempt-control.tsx src/components/courses/resource-progress-control.tsx src/components/courses/super-admin-content-directory-page.tsx src/components/courses/super-admin-lesson-create.tsx tests/unit/ux-g139-course-controls.test.ts tests/e2e/ux-g139-course-controls.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42453942900 — scoped lint passed"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42453942900 — full TypeScript passed"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g139-course-controls.test.ts tests/unit/learner-course-page-parity.test.ts tests/unit/chat6-superadmin-middle-lessons-role-25.test.tsx",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42453942900 — 17/17 tests passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g139-course-controls.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42453942900 — 3/3 seeded authenticated Chromium scenarios passed"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42453942900/artifacts/13607296086 — ux-g139-resources-mobile-390.png; selected college Super Admin lesson search, pagination and no document overflow"
+              },
+              {
+                "viewport": "desktop 1280x850",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42453942900/artifacts/13607296086 — ux-g139-lessons-desktop-1280.png; Super Admin lesson create or honest empty state and no overflow; learner role authoring denial E2E"
+              }
+            ],
+            "regressionReview": "Real seeded PostgreSQL Super Admin and learner browser tests passed; quiz answer, resource progress, authoring validation and legacy learner course navigation checks included among 17 green unit tests. Screenshots on desktop/mobile verified; no skipped run step.",
+            "securityReview": "Server-authorized selected-college scope via /api/auth/admin-scope tested, plus learner denial to Super Admin authoring. No bypass to tenant access, quiz result release or resource progress mutation; synthetic or unit coverage is not claimed as broad production penetration testing."
+          }
+        ],
         "notes": "Implemented all four registered controls: quiz unsent-answer Close confirmation/answered progress/mobile overflow; server-verified resource-progress retry; content-directory labelled responsive search; lesson-creation aria-invalid/busy state. Tests/unit/ux-g139-course-controls.test.ts and browser tests/e2e/ux-g139-course-controls.spec.ts plus workflow .github/workflows/ux-g139-course-controls-acceptance.yml. Workflow https://github.com/42Students/lms-vnext/actions/runs/42394405880 (SHA 70e0a9c0031131df6f5caf7e6c5a98602d603d09) queued; no green exact-SHA proof. Review docs/parity/pages/learner/UX-G139-course-controls.md. Keep DOING."
       },
       {
