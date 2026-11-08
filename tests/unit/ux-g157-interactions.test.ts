@@ -25,7 +25,7 @@ describe("UX-G157 TPO component recovery and privacy contracts",()=>{
   expect(ui).toContain('const pinLimitReached=');
   expect(ui).toContain("Five views are already pinned.");
   expect(ui).toContain('disabled={busy||guarded||pinLimitReached');
-  expect(ui).toContain('disabled={busy||guarded} onClick={toggle}');
+  expect(ui).toContain('onClick={toggle} disabled={busy||guarded}');
   expect(ui).toContain('role="alert" className="text-sm text-error">{error}');
   expect(ui).toContain('if(result)setDeleteTarget(null)');
  });
