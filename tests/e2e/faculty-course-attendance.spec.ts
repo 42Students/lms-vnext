@@ -60,7 +60,9 @@ test("Faculty Attendance desktop/mobile marks, corrects and shows real Section s
   await advanced.getByRole("button",{name:"Submit Attendance"}).click();
   await page.getByRole("alertdialog",{name:"Submit Attendance"}).getByRole("button",{name:"Confirm"}).click();
   const response=await marking;
-  expect(response.status(),await response.text()).toBe(200);
+  // A client-side router.refresh may cancel reading the original fetch body.
+  // Assert the HTTP status, then prove the persisted receipt in the UI below.
+  expect(response.status(), "First attendance submission must persist").toBe(200);
   await expect(page.getByText("Attendance was already submitted. Saving again performs a correction.")).toBeVisible();
   await advanced.getByRole("button",{name:"Mark all absent"}).click();
   await advanced.getByPlaceholder("What changed in the recorded attendance?")
@@ -70,7 +72,7 @@ test("Faculty Attendance desktop/mobile marks, corrects and shows real Section s
   await advanced.getByRole("button",{name:"Submit Attendance"}).click();
   await page.getByRole("alertdialog",{name:"Submit Attendance"}).getByRole("button",{name:"Confirm"}).click();
   const corrected=await correction;
-  expect(corrected.status(),await corrected.text()).toBe(200);
+  expect(corrected.status(), "Confirmed correction must persist").toBe(200);
   await expect(page.getByRole("alertdialog")).toHaveCount(0);
   await advanced.getByText("Attendance report",{exact:true}).click();
   await expect(page.getByRole("heading",{name:"Monthly class health"})).toBeVisible();
