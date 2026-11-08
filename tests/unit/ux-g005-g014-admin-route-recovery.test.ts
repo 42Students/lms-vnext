@@ -33,6 +33,14 @@ describe("Super Admin UX-G005–G014 scoped recovery source regressions",()=>{
   expect(assignments).toContain('if(dataResult.status==="rejected"&&dataResult.reason instanceof AuthorizationError)throw dataResult.reason;');
   expect(assignments).toContain('if(lessonsResult.status==="rejected"&&lessonsResult.reason instanceof AuthorizationError)throw lessonsResult.reason;');
  });
+ it("UX-G010/G011 guard invalid-link recovery behind Super Admin permission",()=>{
+  for(const name of ["features/[collegeId]/history/page.tsx","features/[collegeId]/trace/page.tsx"]){
+   const source=readFileSync("src/app/(authenticated)/admin/"+name,"utf8");
+   expect(source).toContain('requirePermission(context,"admin-scope.select")');
+   expect(source.indexOf('requirePermission(context,"admin-scope.select")'))
+    .toBeLessThan(source.indexOf('title="Invalid '+(name.includes("/trace/")?"learner search link":"history link")+'"'));
+  }
+ });
  it("UX-G009 validates filters before reading student progress",()=>{
   const s=readFileSync("src/app/(authenticated)/admin/course-progress/students/page.tsx","utf8");
   expect(s.indexOf('title="Invalid progress filters"'))
