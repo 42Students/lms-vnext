@@ -1,0 +1,98 @@
+name: UX-G001 shared notifications recipient and responsive acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/app/(authenticated)/notifications/**'
+      - 'src/components/activity/notification-list.tsx'
+      - 'src/components/activity/notification-toolbar.tsx'
+      - 'src/modules/activity/notification-context-model.ts'
+      - 'src/modules/activity/notification-filter-links.ts'
+      - 'tests/e2e/ux-g001-shared-notifications.spec.ts'
+      - '.github/workflows/ux-g001-shared-notifications-acceptance.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ux-g001-notifications-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  inbox:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: 'true'
+      APP_ENV: development
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Checkout exact source SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Scoped lint and full TypeScript
+        run: |
+          npx eslint \
+            'src/app/(authenticated)/notifications/page.tsx' \
+            'src/app/(authenticated)/notifications/error.tsx' \
+            'src/app/(authenticated)/notifications/loading.tsx' \
+            src/components/activity/notification-list.tsx \
+            src/components/activity/notification-toolbar.tsx \
+            src/modules/activity/notification-context-model.ts \
+            src/modules/activity/notification-filter-links.ts \
+            tests/e2e/ux-g001-shared-notifications.spec.ts
+          npm run typecheck
+      - name: Shared notification positive and negative regression
+        run: |
+          npx vitest run \
+            tests/unit/notification-cursor.test.ts \
+            tests/unit/notification-filter-links.test.ts \
+            tests/unit/notification-action.test.ts \
+            tests/unit/security-own-notification-workspace-scope.test.ts \
+            tests/unit/HR-BREAK-chat19-notification-ownership.test.ts \
+            tests/unit/HR-BREAK-chat19-notifications-page.test.ts
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Prepare isolated seeded PostgreSQL
+        run: npm run db:e2e:prepare
+      - name: Ephemeral browser identities
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Test desktop and mobile inbox with real recipient and denied cross-college writes
+        run: npx playwright test tests/e2e/ux-g001-shared-notifications.spec.ts --project=chromium --reporter=line
+      - name: Preserve screenshots and failure traces
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g001-inbox-browser-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 14
