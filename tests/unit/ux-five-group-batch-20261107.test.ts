@@ -137,10 +137,10 @@ describe("UX-G161 tracker recoverability and formula safety", () => {
   expect(src).toContain("const mutationLock = useRef(false)");
   expect(src).toContain("const [needsRefresh, setNeedsRefresh] = useState(false)");
   expect(src).toContain("if (pending || needsRefresh || mutationLock.current) return false");
-  expect((src.match(/startExclusiveMutation\\(async/g)??[]).length).toBe(3);
+  expect((src.match(/startExclusiveMutation\(async/g)??[]).length).toBe(3);
   expect(src).toContain("mutationLock.current = true");
   expect(src).toContain("finally { mutationLock.current = false; }");
-  expect((src.match(/setNeedsRefresh\\(true\\)/g)??[]).length).toBeGreaterThanOrEqual(3);
+  expect((src.match(/setNeedsRefresh\(true\)/g)??[]).length).toBeGreaterThanOrEqual(3);
   expect(src).toContain("Refresh the issue before making another change");
   expect(src).toContain("expectedVersion:issue.version");
  });
