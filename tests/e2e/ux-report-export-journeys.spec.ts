@@ -83,7 +83,7 @@ test.describe("UX-G169/G171/G174/G177 CSV export journeys", () => {
     expect(response.headers()["x-content-type-options"]).toBe("nosniff");
     expect(response.headers()["x-export-row-cap"]).toBe("250");
     const csv=await response.text();
-    expect(csv.startsWith("\\uFEFF")).toBe(true);
+    expect(csv.startsWith("\uFEFF")).toBe(true);
     expect(csv).toContain('"Record ID","Name","Context","Status","Additional persisted fields"');
     expect(csv).not.toMatch(/password|otp|auth_secret|phoneE164/i);
     writeFileSync("test-results/ux-g168-authorized-faculty.csv",csv,"utf8");
