@@ -28,7 +28,10 @@ export default async function TpoPreparationCoursePlan(){
   {!plan.ready?<Alert tone="warning">{!settings.ready?"Preparation settings storage is unavailable.":"Saved preparation settings could not be validated; ask an administrator to review them."}</Alert>:<>
     <p role="status" className="text-sm leading-[22px]">Configured minimum completed courses: {plan.minimumCompleted}. {plan.courses.length} referenced courses are visible in the first 200 active course records.</p>
     {plan.unresolved>0?<Alert tone="warning">{plan.unresolved} configured course reference(s) are not in this bounded active catalog; their availability is unknown.</Alert>:null}
-    {plan.courses.length===0?<EmptyState title="No active preparation courses in the configured subset."/>:<ul className="min-w-0 divide-y divide-border border-y border-border">{plan.courses.map(course=><li key={course.id} className="flex min-w-0 flex-col gap-1 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+    {plan.courses.length===0?<EmptyState
+      title="No active preparation courses in the configured subset"
+      description="The current saved selection has no visible active courses in this bounded catalog. Review the preparation settings before treating any learner as assigned or complete."
+      action={<TextLink href="/tpo/settings/prep-readiness" className="inline-flex min-h-11 items-center md:min-h-9">Review preparation settings</TextLink>}/>:<ul className="min-w-0 divide-y divide-border border-y border-border">{plan.courses.map(course=><li key={course.id} className="flex min-w-0 flex-col gap-1 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
       <Heading level={2} size="base" className="min-w-0 break-words leading-[26px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[30px] text-[var(--lms-heading)]">{course.name}</Heading><p className="shrink-0 text-xs text-muted-foreground leading-[20px]">{course.code}</p>
     </li>)}</ul>}
   </>}
