@@ -2,6 +2,7 @@
 
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export default function SuperAdminSettingsError({
   reset,
@@ -26,6 +27,7 @@ export default function SuperAdminSettingsError({
       >
         Retry
       </Button>
+      <ButtonLink variant="secondary" href="/dashboard" className="min-h-11 w-full sm:w-auto">Back to dashboard</ButtonLink>
     </section>
   );
 }
