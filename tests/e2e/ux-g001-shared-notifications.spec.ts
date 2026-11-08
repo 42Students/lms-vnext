@@ -97,8 +97,10 @@ test.describe("UX-G001 shared notification inbox — actual two-college recipien
         const confirm=page.getByRole("alertdialog",{name:"Mark all as read"});
         await expect(confirm).toContainText("including items hidden by the current filters");
         await confirm.getByRole("button",{name:"Cancel"}).click();
+        // A native dialog can remain in its close animation briefly; do not select the hidden confirm button.
+        await expect(confirm).toBeHidden();
         await expect(page.getByRole("link",{name:"Unread (1)"})).toBeVisible();
-        await page.getByRole("button",{name:"Mark all as read"}).click();
+        await page.getByRole("button",{name:"Mark all as read"}).first().click();
         const all=page.waitForResponse(r=>r.request().method()==="POST"&&new URL(r.url()).pathname==="/api/notifications/read-all");
         await page.getByRole("alertdialog",{name:"Mark all as read"}).getByRole("button",{name:"Mark all as read"}).click();
         expect((await all).ok()).toBe(true);
