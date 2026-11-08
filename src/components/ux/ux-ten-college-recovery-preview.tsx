@@ -10,6 +10,7 @@ import G037 from "@/app/(authenticated)/college/placements/jobs/[jobId]/error";
 import G038 from "@/app/(authenticated)/college/placements/new/error";
 import G039 from "@/app/(authenticated)/college/projects/error";
 import G040 from "@/app/(authenticated)/college/projects/audit/error";
+import CollegeCourseProgressError from "@/app/(authenticated)/college/course-progress/error";
 type Recovery = ComponentType<{error:Error & {digest?:string};reset:()=>void}>;
 const examples: {id:string;label:string;Boundary:Recovery}[] = [
   {id:"G030",label:"Batch promotion",Boundary:G030},
@@ -25,6 +26,11 @@ const examples: {id:string;label:string;Boundary:Recovery}[] = [
 ];
 // Stable identity avoids retriggering the real error-boundary telemetry effect.
 const syntheticError = new Error("Synthetic development-only route failure");
+// These errors are synthetic. Their text and digest must never appear in the UI.
+const privateCourseError = Object.assign(new Error("student@example.invalid access token sensitive-value"), {
+  digest: "sensitive-digest-value",
+});
+const metadataCourseError = new Error("COURSE_PROGRESS_FILTERS_UNAVAILABLE");
 export function UXTenCollegeRecoveryPreview() {
   const [counts,setCounts]=useState<Record<string,number>>({});
   return <div className="min-w-0 space-y-8">
@@ -33,5 +39,17 @@ export function UXTenCollegeRecoveryPreview() {
       <Boundary error={syntheticError} reset={()=>setCounts(previous=>({...previous,[id]:(previous[id]??0)+1}))}/>
       <p role="status">{id} retry count: {counts[id]??0}</p>
     </section>)}
+    <section aria-label="Course progress unknown failure" className="min-w-0 space-y-3 border-b border-border pb-6">
+      <h2 className="text-lg font-semibold">Course progress — unexpected failure</h2>
+      <CollegeCourseProgressError error={privateCourseError}
+        reset={()=>setCounts(previous=>({...previous,unknownCourse:(previous.unknownCourse??0)+1}))}/>
+      <p role="status">Unknown course retry count: {counts.unknownCourse??0}</p>
+    </section>
+    <section aria-label="Course progress metadata failure" className="min-w-0 space-y-3 border-b border-border pb-6">
+      <h2 className="text-lg font-semibold">Course progress — metadata failure</h2>
+      <CollegeCourseProgressError error={metadataCourseError}
+        reset={()=>setCounts(previous=>({...previous,metadataCourse:(previous.metadataCourse??0)+1}))}/>
+      <p role="status">Metadata course retry count: {counts.metadataCourse??0}</p>
+    </section>
   </div>;
 }
