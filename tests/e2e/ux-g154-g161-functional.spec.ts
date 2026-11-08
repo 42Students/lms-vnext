@@ -50,6 +50,20 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
     await page.getByLabel("What kind of issue?").selectOption("UI / Alignment");
     await page.getByLabel("What went wrong?").fill("E2E UX acceptance: navigation label did not fit at mobile width.");
 
+    // A blocked native required field previously looked like an API timeout.
+    // Report only its field name; never submit or log actual user content.
+    const reportForm=page.locator("form").filter({
+      has:page.getByRole("button",{name:"Report issue",exact:true}),
+    });
+    const invalid=await reportForm.evaluate(form=>
+      Array.from((form as HTMLFormElement).elements)
+        .filter((field):field is HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement=>
+          field instanceof HTMLInputElement || field instanceof HTMLSelectElement ||
+          field instanceof HTMLTextAreaElement)
+        .filter(field=>field.willValidate&&!field.validity.valid)
+        .map(field=>field.getAttribute("name")??field.getAttribute("aria-label")??field.tagName));
+    expect(invalid,"Required report fields must be valid before submit").toEqual([]);
+
     const receipt = page.waitForResponse(r =>
       r.url().endsWith("/api/tracker/issues") && r.request().method()==="POST");
     await page.getByRole("button",{name:"Report issue",exact:true}).click();
