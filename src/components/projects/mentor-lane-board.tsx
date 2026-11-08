@@ -7,7 +7,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Textarea} from "@/components/ui/textarea";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 import { Disclosure } from "@/components/ui/disclosure";
-import {useEffect,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import {useRouter,useSearchParams} from "next/navigation";
 import {groupLearnerBoardLanes,learnerTaskLane} from "@/modules/projects/learner-board-lanes-model";
 import {nextMentorBoardFocus} from "@/modules/projects/mentor-board-keyboard-focus-model";
@@ -49,6 +49,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  blockerAges?:Readonly<Record<string,{sinceIso:string|null;days:number|null}>>;
 }){
  const router=useRouter(),params=useSearchParams();
+ const actionLock=useRef(false);
  const [tasks,setTasks]=useState(initialTasks),[release,setRelease]=useState(params.get("release")??""),
  [sprint,setSprint]=useState(params.get("sprint")??""),[scope,setScope]=useState(params.get("scope")==="all"?"all":"current"),
  [priority,setPriority]=useState(params.get("priority")??""),
@@ -163,7 +164,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  async function move(id:string,status:string,isUndo=false,confirmed=false,
    suppliedBlockerReason?:string){
   const task=tasks.find(item=>item.id===id),sp=task?.sprintId?bySprint.get(task.sprintId):null;
-  if(!task||!sp||sp.status!=="ACTIVE"||readOnly||busy||
+  if(!task||!sp||sp.status!=="ACTIVE"||readOnly||busy||actionLock.current||
     !editable.includes(task.status as typeof editable[number])||
     !editable.includes(status as typeof editable[number])||task.status===status)return;
   if(!isUndo&&!confirmed){
@@ -176,6 +177,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     return;
   }
   if(confirmed)setPendingAction(null);
+  actionLock.current=true;
   setError("");setBusy(true);
   try{
    const result=await projectMutation("/api/projects/"+encodeURIComponent(projectId)+
@@ -187,7 +189,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    setTasks(rows=>rows.map(row=>row.id===id?{...row,...result.task}:row));
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Task transition failed.");}
-  finally{setBusy(false);}
+  finally{actionLock.current=false;setBusy(false);}
  }
  function drop(event:React.DragEvent<HTMLElement>,status:string){
   event.preventDefault();
@@ -197,12 +199,13 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  async function moveToSprint(id:string,targetSprintId:string|null,confirmed=false){
   const task=tasks.find(item=>item.id===id);
   const destination=targetSprintId?sprints.find(item=>item.id===targetSprintId):null;
-  if(readOnly||busy||!task||task.sprintId===targetSprintId||
+  if(readOnly||busy||actionLock.current||!task||task.sprintId===targetSprintId||
     !editable.includes(task.status as typeof editable[number])||
     (targetSprintId&&(!destination||destination.status==="COMPLETED"||
       !releases.some(item=>item.id===destination.releaseId&&item.status!=="SHIPPED"))))return;
   if(!confirmed){setPendingAction({kind:"SPRINT",id,targetSprintId});return;}
   setPendingAction(null);
+  actionLock.current=true;
   setError("");setBusy(true);
   try{
     const response=await projectMutation("/api/projects/"+encodeURIComponent(projectId)+
@@ -216,7 +219,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     router.refresh();
   }catch(reason){
     setError(reason instanceof Error?reason.message:"Sprint move failed. Reload the latest board.");
-  }finally{setBusy(false);}
+  }finally{actionLock.current=false;setBusy(false);}
  }
  const learnerChoices=members.filter(member=>member.role==="LEARNER");
  const creationSprints=sprints.filter(item=>item.status!=="COMPLETED"&&
