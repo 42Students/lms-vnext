@@ -15,20 +15,22 @@ export const dynamic="force-dynamic";
 export default async function FacultyProfileDetailsPage({searchParams}:{
  searchParams:Promise<{section?:string|string[]}>
 }){
- const raw=await searchParams;
- const section=Array.isArray(raw.section)?raw.section[0]:raw.section;
- // The old faculty About URL used ?section=connect-accounts or ?section=contacts.
- // The one-page vNext profile owns these live anchors; do not lose bookmarks.
- if(section==="connect-accounts"||section==="social-profiles")
-   redirect("/teacher/profile#social-profiles");
- if(section==="contacts")redirect("/teacher/profile#faculty-contact");
- if(section&&section!=="about")redirect("/teacher/profile#contacts");
  const context=await getCurrentRequestContext();
  // Active Faculty membership, not an unrelated Mentor/admin role, owns this
  // self-service document. Staff review/edit uses the separate admin route.
  if(context.user.platformStatus!=="ACTIVE" ||
     context.membership?.status!=="ACTIVE" ||
     !context.membership.roles.includes("FACULTY"))notFound();
+ const raw=await searchParams;
+ // Multiple or ambiguous section selectors must never choose an arbitrary entry.
+ if(Array.isArray(raw.section))redirect("/teacher/profile");
+ const section=raw.section;
+ // The old faculty About URL used ?section=connect-accounts or ?section=contacts.
+ // The one-page vNext profile owns these live anchors; do not lose bookmarks.
+ if(section==="connect-accounts"||section==="social-profiles")
+   redirect("/teacher/profile#social-profiles");
+ if(section==="contacts")redirect("/teacher/profile#faculty-contact");
+ if(section&&section!=="about")redirect("/teacher/profile#contacts");
  const ready=await facultyProfileDocumentStorageReady();
  const result=ready
   ?await loadOwnFacultyProfileDocumentStaged(context)
