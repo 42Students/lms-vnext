@@ -293,8 +293,8 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       <section hidden={activeView!=="updates"} aria-label="Personal placement updates" className="min-w-0 space-y-4">
       <div id="personal-updates" className="scroll-mt-24 border-t border-border pt-6"><Heading level={2} size="lg" className="text-foreground">Updates about you</Heading></div>
       <nav aria-label="Personal alert filter" className={placementFilterNavClass}>
-        <TextLink variant="bare" href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:false,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className={placementFilterPillClass} aria-current={!unreadOnly?"page":undefined}>All personal alerts</TextLink>
-        <TextLink variant="bare" href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:true,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className={placementFilterPillClass} aria-current={unreadOnly?"page":undefined}>Unread personal alerts</TextLink>
+        <TextLink variant="bare" href={learnerNoticeFilterHref({show:"updates",pinned:pinnedOnly,unread:false,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className={placementFilterPillClass} aria-current={!unreadOnly?"page":undefined}>All personal alerts</TextLink>
+        <TextLink variant="bare" href={learnerNoticeFilterHref({show:"updates",pinned:pinnedOnly,unread:true,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className={placementFilterPillClass} aria-current={unreadOnly?"page":undefined}>Unread personal alerts</TextLink>
       </nav>
       <form method="GET" action="/learn/my-placements/announcements" role="search" aria-label="Personal alert search" className="flex min-w-0 flex-wrap items-end gap-3">
         <Input type="hidden" name="show" value="updates"/>
@@ -314,7 +314,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       {alertQ ? (
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-xs text-muted-foreground">This search covers the latest 20 loaded personal alerts, not your full notification history.</p>
-          <TextLink href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,alertQ:"",sort:sortKey,source})}
+          <TextLink href={learnerNoticeFilterHref({show:"updates",pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,alertQ:"",sort:sortKey,source})}
             className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm">
             Clear personal alert search
           </TextLink>
@@ -324,7 +324,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <LearnerPlacementAlerts alerts={searchedAlerts} filtered={Boolean(alertQ)} unreadOnly={unreadOnly} /> :
         <Banner tone="warning" role="alert">
           Personal placement alerts are temporarily unavailable; the college notice results above remain accessible.
-          <TextLink href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})}
+          <TextLink href={learnerNoticeFilterHref({show:"updates",pinned:pinnedOnly,unread:unreadOnly,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})}
             className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center">Retry personal alerts</TextLink>
         </Banner>}
 
