@@ -123,7 +123,7 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
   }
 
   return (
-    <section aria-label={SEMESTER_COPY.createTitle}
+    <section id="college-semester-create" aria-label={SEMESTER_COPY.createTitle}
       className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)]">
       <Heading level={2} className="text-[var(--lms-heading)]">{SEMESTER_COPY.createTitle}</Heading>
       {programs.length === 0 ? (
