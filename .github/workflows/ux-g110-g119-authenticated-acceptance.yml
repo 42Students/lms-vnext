@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'tests/e2e/ux-g110-g119-authenticated.spec.ts'
+      - 'src/components/placements/tpo-settings-nav.tsx'
       - '.github/workflows/ux-g110-g119-authenticated-acceptance.yml'
 permissions:
   contents: read
@@ -47,7 +48,7 @@ jobs:
       - name: Source SHA, lint, typecheck and tracker
         run: |
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
-          npx eslint tests/e2e/ux-g110-g119-authenticated.spec.ts
+          npx eslint tests/e2e/ux-g110-g119-authenticated.spec.ts src/components/placements/tpo-settings-nav.tsx
           npm run typecheck
           npm run ux:groups -- --check
       - name: Preserve scoped recovery regression coverage
