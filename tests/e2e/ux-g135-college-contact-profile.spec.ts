@@ -68,7 +68,7 @@ test.describe("UX-G135 college contact profile draft recovery",()=>{
    await expect(name).toHaveValue("Updated College");
    await page.getByRole("button",{name:"Confirm and save changes"}).click();
    await dialog.getByRole("button",{name:"Save changes"}).click();
-   await expect(page.getByRole("alert")).toContainText("These details changed in another session.");
+   await expect(page.getByRole("alert").filter({hasText:"These details changed in another session."})).toContainText("Your unsaved edits are still here.");
    await expect(name).toHaveValue("Updated College");
    await page.getByRole("button",{name:"Confirm and save changes"}).click();
    await dialog.getByRole("button",{name:"Save changes"}).click();
