@@ -1,3 +1,4 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 import type {HrCalendarCategory} from "./hr-calendar-category-model";
 export const HR_CALENDAR_EXPORT_CAP=200;
 export type HrCalendarCsvEvent={
@@ -7,8 +8,7 @@ export type HrCalendarCsvDue={
  id:string;jobTitle:string;roundName:string;dueAt:Date;jobId:string;
 };
 function escapeCell(value:string){
- const safe=/^\s*[=+\-@]/u.test(value)||/^[\t\r\n]/u.test(value)?"'"+value:value;
- return '"'+safe.replaceAll('"','""')+'"';
+ return spreadsheetCsvCell(value);
 }
 export function buildHrCalendarCsv(events:readonly HrCalendarCsvEvent[],
  dues:readonly HrCalendarCsvDue[],category:HrCalendarCategory){
