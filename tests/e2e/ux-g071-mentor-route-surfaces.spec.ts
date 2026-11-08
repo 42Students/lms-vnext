@@ -105,9 +105,20 @@ test.describe("UX-G071 five persisted Mentor review route families",()=>{
           "/meetings/00000000-0000-4000-8000-000000000099/notes",
         ]){
           const response=await page.request.get(base+suffix);
-          expect([400,403,404],suffix+" must reject nonexistent details")
-            .toContain(response.status());
-          expect(await response.text()).not.toContain("Registered reviewer feedback");
+          const body=await response.text();
+          // Next.js streamed App Router notFound() may return HTTP 200 after
+          // the shell has started. Then require a real not-found document,
+          // noindex metadata and no private review evidence.
+          if(response.status()===200){
+            expect(body,suffix+" must render the not-found boundary").toMatch(
+              /This page could not be found|404: This page could not be found|Page Not Found/i);
+            expect(body).toMatch(/name=["']robots["'][^>]*content=["']noindex/i);
+          }else{
+            expect([400,403,404],suffix+" must reject nonexistent details")
+              .toContain(response.status());
+          }
+          expect(body).not.toContain("Registered reviewer feedback");
+          expect(body).not.toContain("E2E Mentor review completeness browser draft");
         }
         expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth))
           .toBeLessThanOrEqual(2);
@@ -130,9 +141,11 @@ test.describe("UX-G071 five persisted Mentor review route families",()=>{
         "/deliveries/00000000-0000-4000-8000-000000000099/review",
         "/meetings/00000000-0000-4000-8000-000000000099/notes",
       ]){
-        const res=await page.request.get("/mentor/projects/"+id+suffix,{maxRedirects:0});
-        expect([302,303,307,308,401,403,404],suffix).toContain(res.status());
-        expect(await res.text()).not.toContain("Persisted completion checklist");
+        await page.goto("/mentor/projects/"+id+suffix);
+        await expect(page,suffix+" must not show a Learner a Mentor route")
+          .not.toHaveURL(new RegExp("/mentor/projects/"+id+"/"));
+        await expect(page.getByText("Persisted completion checklist")).toHaveCount(0);
+        await expect(page.getByText("E2E Mentor review completeness browser draft")).toHaveCount(0);
       }
       expect(base).toContain("/mentor/projects");
     });
