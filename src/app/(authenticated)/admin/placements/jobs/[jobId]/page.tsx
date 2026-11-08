@@ -5,7 +5,6 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { z } from "zod";
 import { getPlacementJob } from "@/modules/placements/job-service";
 import { PageHeader } from "@/components/ui/page-header";
-import { Tabs } from "@/components/ui/tabs";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
@@ -67,7 +66,6 @@ export default async function AdminPlacementDrivePage({
     throw attentionRead.reason;
   const pipeline=pipelineRead.status==="fulfilled"?pipelineRead.value:null;
   const attention=attentionRead.status==="fulfilled"?attentionRead.value:[];
-  const job=jobRead.value;
   let workspace: Awaited<ReturnType<typeof PlacementDriveWorkspace>>;
   try {
     workspace = await PlacementDriveWorkspace({
@@ -85,21 +83,8 @@ export default async function AdminPlacementDrivePage({
         action={<TextLink href={root+preserved} prefetch={false}>Retry drive</TextLink>}/>
     </div>;
   }
-  const navItems=[
-    {label:"Overview",href:withReturn(root)},
-    {label:"Applications",href:withReturn(root+"/applications")},
-    {label:"Schedule",href:withReturn(root+"/schedule")},
-    {label:"Settings",href:withReturn(root+"/settings")},
-  ];
-  return (
-   <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
-    <nav aria-label="Drive breadcrumb" className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-      <TextLink href={backHref}>Drives</TextLink>
-      <span aria-hidden="true">›</span><span className="truncate">{job.title}</span>
-    </nav>
-    <Tabs ariaLabel="Drive workspace" value="Overview" renderPanel={false}
-      items={navItems.map(item=>({value:item.label,label:item.label,href:item.href}))}/>
-    {workspace}
-   </div>
-  );
+  // The parent [jobId] layout owns the breadcrumb and route tabs for all
+  // child pages. Rendering a second set here duplicated both nav landmarks,
+  // causing keyboard/assistive-tech users to traverse them twice.
+  return <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">{workspace}</div>;
 }
