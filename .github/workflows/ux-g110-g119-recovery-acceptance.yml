@@ -13,6 +13,12 @@ on:
       - 'src/app/(authenticated)/tpo/reports/after-college/page.tsx'
       - 'src/app/(authenticated)/tpo/reports/branch-season/page.tsx'
       - 'src/app/(authenticated)/tpo/reports/branch-season/error.tsx'
+      - 'src/app/(authenticated)/tpo/reports/joining-followups/error.tsx'
+      - 'src/app/(authenticated)/tpo/reports/joining-status/error.tsx'
+      - 'src/app/(authenticated)/tpo/reports/leads/error.tsx'
+      - 'src/app/(authenticated)/tpo/reports/offers-acceptance/error.tsx'
+      - 'src/app/(authenticated)/tpo/reports/offers-expiry/error.tsx'
+      - 'src/app/(authenticated)/tpo/reports/placed-branch/error.tsx'
       - 'src/app/(authenticated)/tpo/reports/by-branch/error.tsx'
       - 'src/app/(authenticated)/tpo/reports/by-company/error.tsx'
       - 'src/app/(authenticated)/tpo/reports/ctc/error.tsx'
@@ -67,6 +73,12 @@ jobs:
             "src/app/(authenticated)/tpo/reports/after-college/page.tsx" \
             "src/app/(authenticated)/tpo/reports/branch-season/page.tsx" \
             "src/app/(authenticated)/tpo/reports/branch-season/error.tsx" \
+            "src/app/(authenticated)/tpo/reports/joining-followups/error.tsx" \
+            "src/app/(authenticated)/tpo/reports/joining-status/error.tsx" \
+            "src/app/(authenticated)/tpo/reports/leads/error.tsx" \
+            "src/app/(authenticated)/tpo/reports/offers-acceptance/error.tsx" \
+            "src/app/(authenticated)/tpo/reports/offers-expiry/error.tsx" \
+            "src/app/(authenticated)/tpo/reports/placed-branch/error.tsx" \
             "src/app/(authenticated)/tpo/reports/by-branch/error.tsx" \
             "src/app/(authenticated)/tpo/reports/by-company/error.tsx" \
             "src/app/(authenticated)/tpo/reports/ctc/error.tsx" \
