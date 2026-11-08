@@ -16,6 +16,11 @@ on:
       - 'src/app/(authenticated)/tpo/reports/placement-summary/page.tsx'
       - 'src/app/(authenticated)/tpo/settings/blocked-dates/page.tsx'
       - 'src/app/(authenticated)/tpo/settings/public-link/error.tsx'
+      - 'src/app/(authenticated)/tpo/settings/public-page/error.tsx'
+      - 'src/app/(authenticated)/tpo/settings/recruiters/error.tsx'
+      - 'src/app/(authenticated)/tpo/settings/rules/error.tsx'
+      - 'src/app/(authenticated)/tpo/settings/season/error.tsx'
+      - 'src/app/(authenticated)/tpo/settings/see/error.tsx'
       - 'src/app/(authenticated)/tpo/settings/team/page.tsx'
       - 'src/app/(authenticated)/tpo/students/preparation-plan/page.tsx'
       - 'src/app/(authenticated)/tpo/students/preparation-prep/page.tsx'
@@ -59,6 +64,11 @@ jobs:
             "src/app/(authenticated)/tpo/reports/placement-summary/page.tsx" \
             "src/app/(authenticated)/tpo/settings/blocked-dates/page.tsx" \
             "src/app/(authenticated)/tpo/settings/public-link/error.tsx" \
+            "src/app/(authenticated)/tpo/settings/public-page/error.tsx" \
+            "src/app/(authenticated)/tpo/settings/recruiters/error.tsx" \
+            "src/app/(authenticated)/tpo/settings/rules/error.tsx" \
+            "src/app/(authenticated)/tpo/settings/season/error.tsx" \
+            "src/app/(authenticated)/tpo/settings/see/error.tsx" \
             "src/app/(authenticated)/tpo/settings/team/page.tsx" \
             "src/app/(authenticated)/tpo/students/preparation-plan/page.tsx" \
             "src/app/(authenticated)/tpo/students/preparation-prep/page.tsx" \
