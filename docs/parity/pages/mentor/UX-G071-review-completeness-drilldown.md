@@ -6,8 +6,10 @@ Status: **DOING — scoped implementation; not group accepted**.
 
 - Persisted final-delivery version rows now expose an accessible **View version details** link, routed by both authorized project and persisted submission IDs to the existing read-only review page.
 - Invalid review pagination keeps the mentor on the same project through a **Clear invalid filters** recovery link instead of discarding the project context.
+- Delivery details now include an **All delivery versions** return link to preserve navigation context.
+- All five route loading states expose `aria-busy` and a named loading region, including closeout, resources and review completeness.
 - Existing mentor project authorization and the destination's role/tenant checks remain unchanged; no new write path or storage access.
-- Added four focused unit/source assertions for link generation, ID encoding, keyboard-discoverable labels and invalid query recovery.
+- Added six focused unit/source assertions for link generation, ID encoding, discoverable labels, invalid query recovery, five accessible loading states, and version-list roundtrip navigation.
 
 ## Required before group DONE
 
