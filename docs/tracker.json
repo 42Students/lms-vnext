@@ -22313,11 +22313,11 @@
         "type": "OUTBOUND",
         "area": "placements",
         "title": "Placements · Outbound copy and exports (part 3)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-tpo-exports-2026-11-08",
         "pickedAt": "2026-11-08",
         "startedAt": "2026-11-08",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/modules/placements/tpo-eligibility-preview-csv-model.ts",
           "src/modules/placements/tpo-import-csv-parser.ts",
@@ -22351,8 +22351,35 @@
           "MESSAGE-0106"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Shared spreadsheet formula neutralization and recruiter export date/TSV resilience committed with focused tests and browser acceptance; await exact SHA CI before DONE. docs/parity/pages/tpo/UX-G181-exports.md"
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "c22794c6c315c17aa7a60a61afb1375f9c6facbd",
+            "description": "Seven CSV serializers and export UX acceptance committed on main"
+          },
+          {
+            "type": "ci",
+            "runId": 42451404640,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42451404640",
+            "conclusion": "success",
+            "results": "Exact source SHA: lint, full TypeScript, Vitest unit and TPO regression, Chromium desktop/mobile download tests"
+          },
+          {
+            "type": "browser",
+            "artifactId": 13605892613,
+            "role": "synthetic, no authenticated tenant records",
+            "views": [
+              "1280px six CSV download and content checks",
+              "390px six CSV download and content checks"
+            ],
+            "description": "Real serializer downloads, responsive screenshots, 44px action controls; fixture production-denied"
+          },
+          {
+            "type": "document",
+            "path": "docs/parity/pages/tpo/UX-G181-exports.md"
+          }
+        ],
+        "notes": "14 registered outbound files audited; seven source guards consolidated, recruiter export invalid dates and TSV fixed. Exact-SHA success at run 42451404640 (scoped ESLint, full TS, Vitest TPO regression, desktop/mobile Chromium). Synthetic browser does not prove live tenant auth; production API behavior and permissions unchanged."
       },
       {
         "id": "UX-G182",
