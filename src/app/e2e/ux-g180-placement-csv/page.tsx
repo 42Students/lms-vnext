@@ -3,6 +3,8 @@ import { serializeTpoCohortHistoryCsv } from "@/modules/placements/tpo-batch-his
 import { serializeTpoBatchStudentViewCsv } from "@/modules/placements/tpo-batch-student-filtered-export-model";
 import { companyDriveCsv } from "@/modules/placements/tpo-company-drive-export-model";
 import { companyEngagementCsv } from "@/modules/placements/tpo-company-engagement-csv-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export const dynamic = "force-dynamic";
 /** Development-only synthetic serializer fixture. Real endpoints and tenant data are untouched. */
@@ -26,16 +28,16 @@ export default function TpoBatchCompanyCsvProof() {
   }])},
  ];
  return <main className="mx-auto w-full max-w-3xl space-y-6 px-4 py-10">
-  <h1 className="text-2xl font-semibold">Placement CSV quality check</h1>
+  <Heading level={1} className="text-2xl font-semibold">Placement CSV quality check</Heading>
   <p className="text-sm text-body">Development-only sample files. No actual learner or company data.</p>
   <div className="grid min-w-0 gap-3 sm:grid-cols-2">{samples.map(sample=>
    <section key={sample.name} className="min-w-0 space-y-3 rounded-xl border border-border p-4">
-    <h2 className="break-words text-base font-semibold">{sample.title}</h2>
+    <Heading level={2} className="break-words text-base font-semibold">{sample.title}</Heading>
     <p className="break-all text-xs text-muted-foreground">{sample.name}</p>
-    <a className="focus-ring flex min-h-11 w-full items-center justify-center rounded-lg border border-border p-3 text-center text-sm font-semibold"
+    <ButtonLink variant="secondary" className="focus-ring flex min-h-11 w-full items-center justify-center rounded-lg border border-border p-3 text-center text-sm font-semibold"
       download={sample.name} href={"data:text/csv;charset=utf-8,"+encodeURIComponent(sample.csv)}>
       Download example CSV
-    </a>
+    </ButtonLink>
    </section>)}</div>
  </main>;
 }

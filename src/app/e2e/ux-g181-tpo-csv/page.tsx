@@ -5,6 +5,8 @@ import { recruiterLeadsCsv } from "@/modules/placements/tpo-recruiter-export-mod
 import { toTpoRequestsPageCsv } from "@/modules/placements/tpo-requests-page-csv-model";
 import { tpoRoundFailureCsv } from "@/modules/placements/tpo-round-failure-csv-model";
 import { tpoUnplacedFilteredCsv } from "@/modules/placements/tpo-unplaced-filtered-export-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export const dynamic = "force-dynamic";
 
@@ -42,19 +44,19 @@ export default function TpoCsvProof() {
   ];
   return <main className="mx-auto w-full max-w-3xl space-y-6 px-4 py-10">
     <header className="space-y-2">
-      <h1 className="text-2xl font-semibold">TPO CSV export quality check</h1>
+      <Heading level={1} className="text-2xl font-semibold">TPO CSV export quality check</Heading>
       <p className="text-sm text-body">Synthetic examples only. No live college or student data.</p>
     </header>
     <div className="grid min-w-0 gap-3 sm:grid-cols-2">
       {samples.map(sample => <section key={sample.file}
         className="min-w-0 space-y-3 rounded-xl border border-border p-4">
-        <h2 className="break-words text-base font-semibold">{sample.title}</h2>
+        <Heading level={2} className="break-words text-base font-semibold">{sample.title}</Heading>
         <p className="break-all text-xs text-muted-foreground">{sample.file}</p>
-        <a className="focus-ring flex min-h-11 w-full items-center justify-center rounded-lg border border-border p-3 text-center text-sm font-semibold"
+        <ButtonLink variant="secondary" className="focus-ring flex min-h-11 w-full items-center justify-center rounded-lg border border-border p-3 text-center text-sm font-semibold"
           download={sample.file}
           href={"data:text/csv;charset=utf-8," + encodeURIComponent(sample.csv)}>
           Download sample CSV
-        </a>
+        </ButtonLink>
       </section>)}
     </div>
   </main>;

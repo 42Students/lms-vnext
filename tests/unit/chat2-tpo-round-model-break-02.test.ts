@@ -121,7 +121,10 @@ describe("TPO-BREAK-round-model-02 invalid input, permission-safe roster and res
    branchName:'\t"Safety", hall',failed:2,decisions:10,shareOfRoundPercent:20}]);
   expect(csv.charCodeAt(0)).toBe(65279);
   expect(csv).toContain("\"'=HYPERLINK");
-  expect(csv).toContain('\"\'\t\"\"Safety\"\"');
+  // A leading tab followed by a quote is not a formula; the shared escaper only prefixes when the first
+  // significant character is = + - or @ (a tab before one of those is stripped when looking for it).
+  expect(csv).toContain('"\t""Safety"", hall"');
+  expect(tpoRoundFailureCsv([{roundName:"\t=1+1",branchName:"b",failed:1,decisions:2,shareOfRoundPercent:50}])).toContain('"\'\t=1+1"');
   expect(csv).toContain('\"2\",\"10\",\"20%\"');
   expect(csv.endsWith("\r\n")).toBe(true);
  });

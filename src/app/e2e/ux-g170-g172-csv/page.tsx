@@ -5,6 +5,8 @@ import { collegeAdminHistoryCsv } from "@/modules/colleges/admin-history-export-
 import { buildSuperAdminReadinessCsv } from "@/modules/colleges/admin-readiness-export-model";
 import { buildTenantDirectoryCsv } from "@/modules/colleges/admin-tenant-export-model";
 import type { CollegeReadinessEvaluation } from "@/modules/colleges/readiness-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export const dynamic = "force-dynamic";
 
@@ -56,17 +58,17 @@ export default function UxAttendanceCollegeCsvFixture() {
   ];
   return <main className="mx-auto w-full max-w-3xl space-y-6 px-4 py-10">
     <header className="space-y-2">
-      <h1 className="text-2xl font-semibold">Export quality check</h1>
+      <Heading level={1} className="text-2xl font-semibold">Export quality check</Heading>
       <p className="text-sm text-body">Development-only sample files. No live account or college data.</p>
     </header>
     <div className="grid min-w-0 gap-3 sm:grid-cols-2">
       {examples.map(sample => <section key={sample.key}
         className="min-w-0 space-y-3 rounded-xl border border-border p-4">
-        <h2 className="break-words text-base font-semibold">{sample.label}</h2>
+        <Heading level={2} className="break-words text-base font-semibold">{sample.label}</Heading>
         <p className="break-all text-xs text-muted-foreground">{sample.file}</p>
-        <a className="focus-ring flex min-h-11 w-full items-center justify-center rounded-lg border border-border px-3 py-2 text-center text-sm font-semibold no-underline"
+        <ButtonLink variant="secondary" className="focus-ring flex min-h-11 w-full items-center justify-center rounded-lg border border-border px-3 py-2 text-center text-sm font-semibold no-underline"
           href={"data:text/csv;charset=utf-8," + encodeURIComponent(sample.csv)}
-          download={sample.file}>Download sample CSV</a>
+          download={sample.file}>Download sample CSV</ButtonLink>
       </section>)}
     </div>
   </main>;

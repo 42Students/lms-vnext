@@ -2,6 +2,8 @@ import {notFound} from "next/navigation";
 import {renderBatchCsv,renderSemesterCsv} from "@/modules/academics/college-academic-export-model";
 import {renderCollegeClassesCsv} from "@/modules/academics/college-classes-export-model";
 import {renderLectureHallsCsv} from "@/modules/academics/college-lecture-halls-export-model";
+import { Heading } from "@/components/ui/heading";
+import { ButtonLink } from "@/components/ui/button-link";
 
 export const dynamic="force-dynamic";
 
@@ -32,17 +34,17 @@ export default function AcademicExportProof(){
  ];
  return <main className="mx-auto min-w-0 w-full max-w-3xl space-y-6 px-4 py-10">
   <header className="space-y-2">
-   <h1 className="text-2xl font-semibold">Academic CSV quality check</h1>
+   <Heading level={1} className="text-2xl font-semibold">Academic CSV quality check</Heading>
    <p className="text-sm text-body">Synthetic examples only. No real college, teacher, or learner records.</p>
   </header>
   <div className="grid min-w-0 gap-3 sm:grid-cols-2">
    {examples.map(example=><section key={example.id} className="min-w-0 space-y-3 rounded-xl border border-border p-4">
-    <h2 className="text-base font-semibold">{example.title}</h2>
+    <Heading level={2} className="text-base font-semibold">{example.title}</Heading>
     <p className="break-all text-xs text-muted-foreground">{example.filename}</p>
-    <a href={"data:text/csv;charset=utf-8,"+encodeURIComponent(example.csv)} download={example.filename}
+    <ButtonLink variant="secondary" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(example.csv)} download={example.filename}
       className="focus-ring flex min-h-11 w-full items-center justify-center rounded-lg border border-border p-3 text-center text-sm font-semibold">
      Download example CSV
-    </a>
+    </ButtonLink>
    </section>)}
   </div>
  </main>;

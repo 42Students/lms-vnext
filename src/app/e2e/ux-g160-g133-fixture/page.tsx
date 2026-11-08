@@ -6,6 +6,7 @@ import { TpoTimedDebarControl } from "@/components/tpo/tpo-timed-debar-control";
 import { TpoTopbarNewMenu } from "@/components/tpo/tpo-topbar-new-menu";
 import { ToastProvider } from "@/components/ui/toast";
 import type { TpoTimedDebarRow } from "@/modules/placements/tpo-timed-debar-view-model";
+import { Heading } from "@/components/ui/heading";
 
 export const dynamic = "force-dynamic";
 
@@ -28,18 +29,18 @@ export default function AuthTpoUxFixture() {
 
   return <main id="lms-main-content"
     className="mx-auto w-full max-w-[70rem] min-w-0 space-y-8 px-4 py-6 md:px-8">
-    <h1 className="text-2xl font-bold">UX control acceptance fixture</h1>
+    <Heading level={1} className="text-2xl font-bold">UX control acceptance fixture</Heading>
     <ToastProvider>
       <section data-ux-fixture="debar-active" className="space-y-3 rounded-xl border border-border p-4">
-        <h2 className="text-xl font-semibold">Existing restrictions</h2>
+        <Heading level={2} className="text-xl font-semibold">Existing restrictions</Heading>
         <TpoTimedDebarControl membershipId="00000000-0000-4000-8000-000000000111" initial={active}/>
       </section>
       <section data-ux-fixture="debar-create" className="space-y-3 rounded-xl border border-border p-4">
-        <h2 className="text-xl font-semibold">Create restriction</h2>
+        <Heading level={2} className="text-xl font-semibold">Create restriction</Heading>
         <TpoTimedDebarControl membershipId="00000000-0000-4000-8000-000000000222" initial={[]}/>
       </section>
       <section data-ux-fixture="devices" className="space-y-3 rounded-xl border border-border p-4">
-        <h2 className="text-xl font-semibold">Signed-in devices</h2>
+        <Heading level={2} className="text-xl font-semibold">Signed-in devices</Heading>
         <DeviceList devices={[
           {id:"fixture-current",label:"Current test browser",current:true,
            createdAt:"2026-11-07T09:00:00.000Z",lastSeenAt:"2026-11-07T10:00:00.000Z"},
@@ -48,12 +49,12 @@ export default function AuthTpoUxFixture() {
         ]}/>
       </section>
       <section data-ux-fixture="login" className="space-y-3 rounded-xl border border-border p-4">
-        <h2 className="text-xl font-semibold">Synthetic sign-in</h2>
+        <Heading level={2} className="text-xl font-semibold">Synthetic sign-in</Heading>
         <LoginForm collegeName="Fixture college" defaultChannel="EMAIL"
           allowedChannels={["EMAIL","PHONE"]} skipStoredAttempt/>
       </section>
       <section data-ux-fixture="topbar" className="space-y-3 rounded-xl border border-border p-4">
-        <h2 className="text-xl font-semibold">New placement actions</h2>
+        <Heading level={2} className="text-xl font-semibold">New placement actions</Heading>
         <Suspense fallback={<p role="status">Loading placement actions…</p>}>
           <TpoTopbarNewMenu collegeId="00000000-0000-4000-8000-000000000333"/>
         </Suspense>
