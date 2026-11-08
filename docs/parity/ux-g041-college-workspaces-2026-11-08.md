@@ -15,6 +15,12 @@
 - Creator error state has retry and a back-to-workspaces exit.
 
 ## Evidence and test plan
+- Local isolated TypeScript compilation succeeded for the two newly introduced
+  pure redirect helpers. Their locally checked Git blob hashes match main:
+  `6809b62e381ee9751fffa8b980dfc8693558bcf7` and
+  `07517b12ec7549249516bcbd1f8fbb2d22e0363b`.
+  Thirteen independent positive/negative cases passed in Node 22.16.
+  **This is helper-only verification, not a Vitest or browser pass.**
 - `tests/unit/ux-g041-college-class-workspace-handoff.test.ts`
 - `tests/e2e/ux-g041-college-workspace-handoff.spec.ts` (8 desktop/mobile
   scenarios including seeded college selection, bad-template negative cases,
