@@ -30,6 +30,9 @@ export function AuditFindingStatusAction({publicId,current,version}:{publicId:st
     setFeedback(response.status===409?"The finding changed elsewhere. Reload before changing its status.":"Status change was not saved.");
     return;
    }
+   // HTTP success can commit a write even when the response receipt is lost.
+   // Do not permit another attempt against the original revision.
+   setStale(true);
    const receipt:unknown=await response.json().catch(()=>null);
    const issue=receipt&&typeof receipt==="object"&&!Array.isArray(receipt)
      ?(receipt as {issue?:unknown}).issue:null;
@@ -38,7 +41,12 @@ export function AuditFindingStatusAction({publicId,current,version}:{publicId:st
       (issue as Record<string,unknown>)["publicId"]!==publicId)
      throw Error("Tracker update could not be confirmed.");
    setFeedback("Status saved; updating the board.");setReview(false);setStale(true);router.refresh();
-  }catch{setFeedback("Connection failure. No status change was confirmed.");}
+  }catch{
+   // The server may have committed before the response was interrupted.
+   // Refresh instead of risking a duplicate stale mutation.
+   setStale(true);
+   setFeedback("The outcome could not be confirmed. Refresh the finding before retrying.");
+  }
   finally{inFlight.current=false;setPending(false);}
  }
  return <div className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
