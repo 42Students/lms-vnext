@@ -21096,12 +21096,14 @@
         "type": "JOURNEY",
         "area": "superadmin",
         "title": "Superadmin · Projects / Templates → Projects / Templates (part 2)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-superadmin-templates-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
-        "sourceFiles": [],
+        "completedAt": "2026-11-08",
+        "sourceFiles": [
+          "src/app/(authenticated)/superadmin/[...legacy]/page.tsx"
+        ],
         "surfaceIds": [],
         "newRouteOnly": [
           "/superadmin/projects/templates",
@@ -21109,8 +21111,36 @@
           "/superadmin/projects/templates/[templateId]/overview",
           "/superadmin/projects/templates/new"
         ],
-        "evidence": [],
-        "notes": "Fix missing new-project-template alias and preserve guarded legacy index/detail/overview links; exact-SHA negative/positive SSR, desktop/mobile browser evidence and security review required for DONE."
+        "evidence": [
+          {
+            "type": "source",
+            "commitSha": "1517df148dfd500d8721288ce08abde0826c7d6b",
+            "description": "Protected super-admin legacy template bookmark navigation and exact checkout source."
+          },
+          {
+            "type": "ci",
+            "runId": 42458903109,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42458903109",
+            "conclusion": "success",
+            "commitSha": "1517df148dfd500d8721288ce08abde0826c7d6b",
+            "results": "All CI job steps passed: npm ci, scoped ESLint, 3/3 Node source-contract, 10/10 Vitest protected positive/negative SSR, 2/2 Playwright Chromium 1280px desktop and 320px mobile responsive anonymous denial/navigation."
+          },
+          {
+            "type": "browser",
+            "artifactId": 13608148980,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42458903109/artifacts/13608148980",
+            "views": [
+              "1280px desktop anonymous legacy bookmark redirect/denial",
+              "320px mobile anonymous responsive sign-in"
+            ],
+            "scope": "Anonymous browser negative access and destination checks; protected SSR unit tests cover granted and denied paths. Not live signed-in production acceptance."
+          },
+          {
+            "type": "document",
+            "path": "docs/parity/ux-g088-superadmin-template-bookmarks.md"
+          }
+        ],
+        "notes": "Scoped UX DONE 2026-11-08: exact SHA 1517df148dfd500d8721288ce08abde0826c7d6b green run 42458903109, all steps successful; 3 source-contract tests, 10 positive/negative SSR Vitest tests and 2 Chromium desktop/mobile anonymous denial/browser checks, artifact 13608148980. Protected canonical template creation now handles /new; signed-in production and global security/release gates remain separate."
       },
       {
         "id": "UX-G089",
