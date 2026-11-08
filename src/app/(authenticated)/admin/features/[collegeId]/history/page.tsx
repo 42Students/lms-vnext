@@ -4,6 +4,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {PageBackLink} from "@/components/ui/page-back-link";
 import {ModuleHistoryDrawer} from "@/components/admin/module-history-drawer";
 import {EmptyState} from "@/components/ui/empty-state";
+import {ErrorState} from "@/components/ui/error-state";
 import {collegePolicyHistoryQuery,collegePolicyHistoryHref} from "@/modules/module-access/admin-college-rule-history-model";
 import {listCollegeFeatureHistory} from "@/modules/module-access/admin-college-rule-history-service";
 import { ButtonLink } from "@/components/ui/button-link";
@@ -15,7 +16,10 @@ export default async function SuperAdminCollegeFeatureHistory({params,searchPara
 }){
  const {collegeId}=await params;
  const cursor=collegePolicyHistoryQuery.safeParse(await searchParams);
- if(!cursor.success)notFound();
+ if(!cursor.success)return <div className="min-w-0 space-y-4">
+  <PageHeader title="Module-access changes" actions={<PageBackLink href={"/admin/features/"+encodeURIComponent(collegeId)} label="College module access"/>}/>
+  <ErrorState title="Invalid history link" description="The history cursor could not be read. No module-access records were loaded." action={<ButtonLink variant="secondary" href={collegePolicyHistoryHref(collegeId,null)}>Start from recent changes</ButtonLink>}/>
+ </div>;
  const result=await listCollegeFeatureHistory(await getCurrentRequestContext(),collegeId,cursor.data,15);
  if(!result)notFound();
  return <div className="min-w-0 max-w-full space-y-4">
