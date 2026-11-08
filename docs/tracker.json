@@ -18735,11 +18735,11 @@
         "type": "JOURNEY",
         "area": "dashboard",
         "title": "Dashboard · Home (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-e2e-dashboard-tracker-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/app/(authenticated)/dashboard/error.tsx",
           "src/app/(authenticated)/dashboard/loading.tsx",
@@ -18761,9 +18761,37 @@
             "type": "acceptance_pending",
             "ref": "42392546252",
             "url": "https://github.com/42Students/lms-vnext/actions/runs/42392546252"
+          },
+          {
+            "type": "commit",
+            "commitSha": "df9da90ca987863cb708249e9370212b72bd8507",
+            "description": "Scoped source plus new named Super Admin and learner desktop/mobile Chromium cases run at exact checkout SHA."
+          },
+          {
+            "type": "ci",
+            "runId": 42460006660,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42460006660",
+            "conclusion": "success",
+            "commitSha": "df9da90ca987863cb708249e9370212b72bd8507",
+            "results": "Scoped ESLint and full TypeScript passed, five Vitest files/32 positive and negative role/source tests, 8/8 Chromium desktop 1280px/mobile 390px scenarios with no skips/flaky; disposable PostgreSQL17 with ephemeral signed role sessions."
+          },
+          {
+            "type": "browser",
+            "artifactId": 13609407089,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42460006660/artifacts/13609407089",
+            "views": [
+              "Anonymous dashboard and tracker privacy boundaries, desktop/mobile",
+              "Unscoped named Super Admin dashboard operations, desktop/mobile",
+              "Named Super Admin log filtering vs learner denied logs and personal reports, desktop/mobile"
+            ],
+            "scope": "Disposable seeded auth and explicit negative role checks. Other role dashboards/private tracker mutation and full production release/security gates remain independent."
+          },
+          {
+            "type": "document",
+            "path": "docs/ux/UX-G049-G048-G122.md"
           }
         ],
-        "notes": "Source implementation committed to main, documented at docs/ux/UX-G049-G048-G122.md. Dedicated exact-SHA acceptance GitHub Actions 42392546252 (head ccddb5e191b389387da821503fd87f3c84a4f2ce) queued due shared runner backlog; no executed lint/TypeScript/browser result yet. 24 scoped live source invariants inspected and present. Keep DOING until actual passing CI and authenticated scope regression evidence; security and release gates remain independent."
+        "notes": "Scoped UX DONE on 2026-11-08. Exact source/workflow SHA df9da90ca987863cb708249e9370212b72bd8507 and green run 42460006660: scoped ESLint, full TypeScript, 32/32 Vitest, 8/8 Chromium 1280/390 responsive, anonymous privacy, named Super Admin positive and learner-negative reporter/log checks, artifact 13609407089. Other role dashboard journeys and production security/release acceptance remain independent."
       },
       {
         "id": "UX-G049",
@@ -22949,11 +22977,11 @@
         "type": "JOURNEY",
         "area": "tracker",
         "title": "Tracker · Logs → Mine / PublicId (part 2)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-e2e-dashboard-tracker-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/app/(authenticated)/tracker/logs/error.tsx",
           "src/app/(authenticated)/tracker/logs/loading.tsx",
@@ -22979,9 +23007,37 @@
             "type": "acceptance_pending",
             "ref": "42392546252",
             "url": "https://github.com/42Students/lms-vnext/actions/runs/42392546252"
+          },
+          {
+            "type": "commit",
+            "commitSha": "df9da90ca987863cb708249e9370212b72bd8507",
+            "description": "Scoped source plus new named Super Admin and learner desktop/mobile Chromium cases run at exact checkout SHA."
+          },
+          {
+            "type": "ci",
+            "runId": 42460006660,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42460006660",
+            "conclusion": "success",
+            "commitSha": "df9da90ca987863cb708249e9370212b72bd8507",
+            "results": "Scoped ESLint and full TypeScript passed, five Vitest files/32 positive and negative role/source tests, 8/8 Chromium desktop 1280px/mobile 390px scenarios with no skips/flaky; disposable PostgreSQL17 with ephemeral signed role sessions."
+          },
+          {
+            "type": "browser",
+            "artifactId": 13609407089,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42460006660/artifacts/13609407089",
+            "views": [
+              "Anonymous dashboard and tracker privacy boundaries, desktop/mobile",
+              "Unscoped named Super Admin dashboard operations, desktop/mobile",
+              "Named Super Admin log filtering vs learner denied logs and personal reports, desktop/mobile"
+            ],
+            "scope": "Disposable seeded auth and explicit negative role checks. Other role dashboards/private tracker mutation and full production release/security gates remain independent."
+          },
+          {
+            "type": "document",
+            "path": "docs/ux/UX-G049-G048-G122.md"
           }
         ],
-        "notes": "Source implementation committed to main, documented at docs/ux/UX-G049-G048-G122.md. Dedicated exact-SHA acceptance GitHub Actions 42392546252 (head ccddb5e191b389387da821503fd87f3c84a4f2ce) queued due shared runner backlog; no executed lint/TypeScript/browser result yet. 24 scoped live source invariants inspected and present. Keep DOING until actual passing CI and authenticated scope regression evidence; security and release gates remain independent."
+        "notes": "Scoped UX DONE on 2026-11-08. Exact source/workflow SHA df9da90ca987863cb708249e9370212b72bd8507 and green run 42460006660: scoped ESLint, full TypeScript, 32/32 Vitest, 8/8 Chromium 1280/390 responsive, anonymous privacy, named Super Admin positive and learner-negative reporter/log checks, artifact 13609407089. Other role dashboard journeys and production security/release acceptance remain independent."
       },
       {
         "id": "UX-G123",
