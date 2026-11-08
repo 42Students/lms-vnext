@@ -633,3 +633,8 @@ The four separately tracked export groups have dedicated review evidence: [UX-G1
 ## UX-G165 — Shared UI kit acceptance (2026-11-07)
 
 [UX-G165 tabs, textarea, external links, toasts, tooltips and confirm-flow review](pages/shared/UX-G165-ui-kit.md). Preserve existing working controls; the exact-SHA acceptance and the canonical status are recorded separately.
+
+
+## UX-G001 — Shared notifications inbox (8 November 2026)
+
+[Scoped implemented surfaces, two-college browser cases and exact-SHA acceptance ledger](pages/shared/UX-G001-notifications.md). This group has green [GitHub Actions run 42460830534](https://github.com/42Students/lms-vnext/actions/runs/42460830534) at source `7b7680f7219aa3f2b950f1d1622e0c3d5fddb040`: scoped lint, full TypeScript, 35/35 unit regressions, and 2/2 real seeded browser journeys on desktop 1280×800 and mobile 390×844. Confirmed per-recipient read/mark-all, Cancel, no-match/invalid-query recovery, selected-college feed isolation and denied cross-college write. [Screenshots and traces](https://github.com/42Students/lms-vnext/actions/runs/42460830534/artifacts/13609736937). Status remains authoritative exclusively in `docs/tracker.json#uxReview.groups`; this paragraph is evidence, not a separate tracker or global security certification.
