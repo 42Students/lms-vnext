@@ -28,6 +28,24 @@ for(const size of [{label:"mobile",width:390,height:844},{label:"desktop",width:
       await expect(region.getByRole("status")).toContainText(item.id+" retry count: 1");
       expect((await button.boundingBox())?.height??0).toBeGreaterThanOrEqual(size.label==="mobile"?44:36);
     }
+    const unexpectedCourse=page.getByRole("region",{name:"Course progress unknown failure"});
+    await expect(unexpectedCourse.getByText("Course progress unavailable",{exact:true})).toBeVisible();
+    await expect(unexpectedCourse).toContainText("Course progress report could not be loaded");
+    await expect(unexpectedCourse.getByRole("link",{name:"College home"})).toHaveAttribute("href","/college");
+    await unexpectedCourse.getByRole("button",{name:"Retry"}).click();
+    await expect(unexpectedCourse.getByRole("status")).toHaveText("Unknown course retry count: 1");
+
+    const metadataCourse=page.getByRole("region",{name:"Course progress metadata failure"});
+    await expect(metadataCourse.getByText("Course-progress filters unavailable",{exact:true})).toBeVisible();
+    await expect(metadataCourse).toContainText("Some course-progress filters could not be loaded");
+    await metadataCourse.getByRole("button",{name:"Retry"}).click();
+    await expect(metadataCourse.getByRole("status")).toHaveText("Metadata course retry count: 1");
+
+    // Genuine user-visible fallback content, not raw error.message or digest.
+    await expect(page.locator("body")).not.toContainText("student@example.invalid");
+    await expect(page.locator("body")).not.toContainText("sensitive-value");
+    await expect(page.locator("body")).not.toContainText("sensitive-digest-value");
+    await expect(page.locator("body")).not.toContainText("COURSE_PROGRESS_FILTERS_UNAVAILABLE");
     await expect(page.locator("body")).not.toContainText("Synthetic development-only route failure");
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
     expect(failures).toEqual([]);
