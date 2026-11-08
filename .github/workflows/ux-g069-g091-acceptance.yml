@@ -4,10 +4,15 @@ on:
   push:
     branches: [main]
     paths:
-      - 'src/app/(authenticated)/mentor/**'
-      - 'src/app/(authenticated)/teacher/calendar/**'
-      - 'src/app/(authenticated)/teacher/contacts/**'
-      - 'src/app/(authenticated)/teacher/allQuizzes/**'
+      - 'src/app/(authenticated)/mentor/allQuizzes/page.tsx'
+      - 'src/app/(authenticated)/mentor/fileExplorer/page.tsx'
+      - 'src/app/(authenticated)/mentor/courses/page.tsx'
+      - 'src/app/(authenticated)/mentor/contacts/[[...contactsTab]]/page.tsx'
+      - 'src/app/(authenticated)/mentor/courses/[courseId]/[[...courseTab]]/page.tsx'
+      - 'src/app/(authenticated)/mentor/calendar/page.tsx'
+      - 'src/app/(authenticated)/teacher/calendar/page.tsx'
+      - 'src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx'
+      - 'src/app/(authenticated)/teacher/allQuizzes/page.tsx'
       - 'tests/ux-g069-g091-contract.test.mjs'
       - 'tests/e2e/ux-g069-g091-role-recovery.spec.ts'
       - '.github/workflows/ux-g069-g091-acceptance.yml'
