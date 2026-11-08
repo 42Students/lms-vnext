@@ -44,9 +44,20 @@ test("UX-G029: personal inbox outages do not masquerade as empty announcements",
     path.join(root, "src/app/(authenticated)/college/announcements/page.tsx"), "utf8",
   );
   assert.match(page, /getCollegeNoticeInbox\(context,[\s\S]*?\.catch\(error\s*=>/);
-  assert.match(page, /error instanceof AuthorizationError\) throw error/);
+  assert.match(page, /error instanceof AuthorizationError\) notFound\(\)/);
   assert.equal((page.match(/!ownInbox \? <Alert tone="warning" title="Personal notifications unavailable"/g) ?? []).length, 2);
   assert.match(page, /listAnnouncementsForAdmin\(context,/);
   assert.doesNotMatch(page, /ownInbox\s*\?\?\s*\{\s*items:\s*\[\]/,
     "An unavailable inbox must not be fabricated as a successful empty read");
+});
+
+test("UX-G029: forbidden attendance policy deep links resolve to a safe not-found state", () => {
+  const settings = fs.readFileSync(
+    path.join(root, "src/app/(authenticated)/college/attendance/settings/page.tsx"), "utf8",
+  );
+  assert.match(settings, /getCollegeAttendancePolicy\(context, collegeId\)/);
+  assert.match(settings, /error instanceof AuthorizationError/);
+  assert.match(settings, /error instanceof CoursesServiceError && error.code === "LEARNING_ACCESS_DENIED"/);
+  assert.match(settings, /notFound\(\)/);
+  assert.match(settings, /throw error;/, "Non-authorization failures must remain visible as genuine failures");
 });
