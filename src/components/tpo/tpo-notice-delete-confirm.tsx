@@ -29,7 +29,7 @@ export function TpoNoticeDeleteConfirm({id,version}:{id:string;version:number}){
   if(pending.current)return;
   pending.current=true;setSubmitting(true);setError("");
   try{
-   const response=await fetch(event.currentTarget.action,{
+   const response=await fetch("/api/placements/tpo/announcements/"+encodeURIComponent(id)+"/lifecycle",{
     method:"POST",credentials:"same-origin",
     headers:{Accept:"application/json"},
     body:new FormData(event.currentTarget),
