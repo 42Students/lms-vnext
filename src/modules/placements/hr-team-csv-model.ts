@@ -1,8 +1,8 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 export const HR_TEAM_CSV_CAP = 200;
 export type HrTeamCsvMember={displayName:string|null;title:string|null;email:string|null;isYou:boolean};
 function escapeCell(text:string){
- const safe=/^\s*[=+\-@]/u.test(text)||/^[\t\r\n]/u.test(text)?"'"+text:text;
- return '"'+safe.replaceAll('"','""')+'"';
+ return spreadsheetCsvCell(text);
 }
 export function buildHrTeamCsv(members:readonly HrTeamCsvMember[]){
  const exported=members.slice(0,HR_TEAM_CSV_CAP);
