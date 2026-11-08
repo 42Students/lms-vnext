@@ -70,10 +70,12 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
     const before=await baseline.json() as {collegeIds:string[]};
     expect(before.collegeIds).toEqual([]);
     const assignment=await page.request.put(assignmentUrl,{
+      headers:{origin:"http://localhost:3000"},
       data:{collegeIds:[SEED_IDS.collegeA],expectedCollegeIds:before.collegeIds},
     });
     expect(assignment.status(),"Authorized published template can be assigned").toBe(200);
     const stale=await page.request.put(assignmentUrl,{
+      headers:{origin:"http://localhost:3000"},
       data:{collegeIds:[SEED_IDS.collegeB],expectedCollegeIds:before.collegeIds},
     });
     expect(stale.status(),"Outdated college selection cannot overwrite current assignments").toBe(409);
@@ -81,6 +83,7 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
     expect((await after.json() as {collegeIds:string[]}).collegeIds)
       .toEqual([SEED_IDS.collegeA]);
     const restored=await page.request.put(assignmentUrl,{
+      headers:{origin:"http://localhost:3000"},
       data:{collegeIds:[],expectedCollegeIds:[SEED_IDS.collegeA]},
     });
     expect(restored.status(),"Restore disposable template assignment to unassigned").toBe(200);
