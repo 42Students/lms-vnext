@@ -30,6 +30,7 @@ describe("IIT Dharwad College Projects membership and Super Admin tenant scope",
  it("PROJ-BREAK-admin-idor-19 Super Admin requires an explicit selected college and never uses unrelated membership",()=>{
   const sa:RequestContext={
    ...context,
+   membership:null,
    user:{...context.user,systemRoles:["SUPER_ADMIN"]},
    adminScope:{organizationId:null,collegeId:null},
   };

@@ -89,8 +89,10 @@ describe("College Admin Projects scope resolution", () => {
   });
 
   it("prioritizes the selected Super Admin scope over an unrelated membership", () => {
+    // A Super Admin who selected a membership acts as that member, so the platform admin has none.
     const superAdmin = context({
       user: superAdminUser,
+      membership: null,
       adminScope: { organizationId: ORGANIZATION, collegeId: COLLEGE_B },
     });
     expect(getProjectAdminCollegeId(superAdmin)).toBe(COLLEGE_B);

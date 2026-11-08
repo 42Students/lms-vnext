@@ -34,7 +34,8 @@ describe("Super Admin project aggregate scope", () => {
     );
   });
 
-  it("does not fall back to membership for a Super Admin", () => {
+  it("treats a Super Admin holding a membership as that member, and one without as having no college", () => {
+    expect(getProjectAdminCollegeId(superAdminContext(null))).toBeNull();
     const context = superAdminContext(null);
 
     context.membership = {
@@ -45,6 +46,6 @@ describe("Super Admin project aggregate scope", () => {
       roles: ["COLLEGE_ADMIN"],
     };
 
-    expect(getProjectAdminCollegeId(context)).toBeNull();
+    expect(getProjectAdminCollegeId(context)).toBe(COLLEGE_A);
   });
 });

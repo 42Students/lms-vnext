@@ -17,6 +17,14 @@ const DELEGATED: Record<string, { delegate: string; reason: string }> = {
     delegate: "src/app/api/internal/placements/recruiter-message-inbound/route.ts",
     reason: "x-recruiter-mail-signature HMAC is verified in the same file before ingestion.",
   },
+  "src/app/api/internal/audit-findings/sync/route.ts": {
+    delegate: "src/modules/bug-tracker/audit-cron-request-guard.ts",
+    reason: "auditCronRequestRejection compares the scheduler secret with timingSafeEqual before any work.",
+  },
+  "src/app/api/internal/storage/scan-verdict/route.ts": {
+    delegate: "src/modules/storage/scan-verdict-request-guard.ts",
+    reason: "scannerCallbackRequestRejection compares the scanner webhook secret with timingSafeEqual before any work.",
+  },
 };
 
 describe("Phase 3: internal scheduler and inbound routes authenticate their callers", () => {

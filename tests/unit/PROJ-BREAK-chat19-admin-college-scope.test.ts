@@ -29,7 +29,8 @@ describe("PROJ-BREAK-HR-COLLEGE-01: project listing never guesses or widens sele
   expect(p.can).not.toHaveBeenCalled();
  });
  it("a Super Admin must explicitly select an acting college, never inherit an unrelated membership",()=>{
-  const sa:RequestContext={...base,user:{...base.user,systemRoles:["SUPER_ADMIN"]},
+  // A Super Admin who selected a membership acts as that member, so the platform-admin fixture has none.
+  const sa:RequestContext={...base,membership:null,user:{...base.user,systemRoles:["SUPER_ADMIN"]},
    adminScope:{collegeId:b,organizationId:"org-b"}};
   expect(getProjectAdminCollegeId(sa)).toBe(b);
   expect(p.can).toHaveBeenCalledWith(sa,"projects.manage",{collegeId:b,organizationId:"org-b"});
