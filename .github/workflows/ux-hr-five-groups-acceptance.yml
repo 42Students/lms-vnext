@@ -33,6 +33,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Verify exact triggering revision
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
       - name: Scoped HR source lint and full TypeScript
         env:
           NODE_OPTIONS: --max-old-space-size=6144
@@ -87,6 +89,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Verify exact triggering revision
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
       - name: Seed disposable PG17 and verified recruiter/learner identities
         run: npm run db:e2e:prepare
       - name: Generate per-run first-party E2E auth keys
