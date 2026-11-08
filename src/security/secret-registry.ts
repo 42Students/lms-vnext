@@ -26,6 +26,8 @@ export const SECRET_REGISTRY: readonly SecretSpec[] = [
   machine("INBOUND_MAIL_HMAC_SECRET", "inbound mail worker signature", false),
   machine("RECRUITER_MESSAGE_INBOUND_HMAC_SECRET", "recruiter message inbound signature", false),
   machine("RECRUITER_MESSAGE_REPLY_TOKEN_SECRET", "recruiter message reply token", false),
+  // Own key for company share access proofs so one leak cannot also forge sessions (SEC-15). Falls back to AUTH_SECRET when unset.
+  machine("COMPANY_SHARE_PROOF_SECRET", "company share access proof", false),
   key("DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64", "outbound global email HMAC"),
   key("DB10_NOTIFICATION_DEDUPE_KEY_BASE64", "notification dedupe HMAC"),
   key("DB10_OUTBOUND_ENCRYPTION_KEY_BASE64", "outbound payload encryption"),

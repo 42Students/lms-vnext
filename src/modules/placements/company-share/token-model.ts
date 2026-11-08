@@ -88,7 +88,9 @@ export function validCompanyShareAccessCode(code:unknown,salt:string,expected:st
 /** Proof is bound to a specific share and its challenge; it cannot authorize
  * another share and invalidates automatically if the challenge changes. */
 export function companyShareAccessProof(shareId:string,tokenHash:string,codeHash:string){
- const secret=process.env["AUTH_SECRET"]??process.env["NEXTAUTH_SECRET"];
+ // A dedicated key keeps a share-proof leak from also breaking session signing; AUTH_SECRET stays the fallback so
+ // a deployment without the new secret keeps working (SEC-15).
+ const secret=process.env["COMPANY_SHARE_PROOF_SECRET"]||process.env["AUTH_SECRET"]||process.env["NEXTAUTH_SECRET"];
  if(!secret||secret.length<32)return null;
  return createHmac("sha256",secret).update(shareId+"."+tokenHash+"."+codeHash).digest("hex");
 }
