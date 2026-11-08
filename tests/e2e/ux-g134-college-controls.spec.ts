@@ -37,7 +37,7 @@ test.describe("UX-G134 scoped college controls and responsive recovery",()=>{
   test("learner cannot open the college-admin profile editor",async({page,context})=>{
     await authenticateGracefulRole(context,"learner");
     await page.goto("/college/profile");
-    await expect(page).toHaveURL(/\\/learn\\/profile(?:[?#]|$)/);
+    await expect(page).toHaveURL(/\/learn\/profile(?:[?#]|$)/);
     await expect(page.getByRole("heading",{level:1,name:"Profile"})).toBeVisible();
     await expect(page.getByRole("button",{name:/Save.*contacts/i})).toHaveCount(0);
   });
