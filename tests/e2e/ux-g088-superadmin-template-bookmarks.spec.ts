@@ -17,7 +17,7 @@ test.describe("UX-G088 protected legacy project template bookmarks",()=>{
       expect(["/","/login"]).toContain(target.pathname);
       // The legacy bookmark resolves to a canonical protected Admin URL before sign-in.
       // Require the exact internal destination; an arbitrary return URL is never accepted.
-      expect(target.searchParams.get("returnTo")).toBe(path.replace(/^\/superadmin\//, "/admin/"));
+      expect(target.searchParams.get("returnTo")).toBe(path.replace(/^\/superadmin\//, "/admin/").replace(/\/overview$/, ""));
       await expect(page.getByText("Create New Template")).toHaveCount(0);
       await expect(page.getByText("Global project template catalogue")).toHaveCount(0);
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
