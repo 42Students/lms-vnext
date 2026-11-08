@@ -2,7 +2,7 @@
 
 Generated 2026-11-07 from `docs/tracker.json` (the only status source) and `control-catalog.md`. Regenerate with `node scratch/gen-master-todo.cjs` (copy kept at `scripts/security/gen-master-todo.cjs`). A box is ticked only when the tracker says VERIFIED: test proof, deployed proof and an independent reviewer.
 
-Totals: NEEDS_REVIEW 364, NEEDS_OWNER 129. Release sign-off: NOT approved.
+Totals: NEEDS_REVIEW 371, NEEDS_OWNER 122. Release sign-off: NOT approved.
 
 ## Work order
 
@@ -16,7 +16,7 @@ Totals: NEEDS_REVIEW 364, NEEDS_OWNER 129. Release sign-off: NOT approved.
 
 | Group | Title | Controls | Verified | Assessed | Unassessed |
 |---|---|---|---|---|---|
-| SEC-01 | Authentication and identity security | 18 | 0 | 11 | 7 |
+| SEC-01 | Authentication and identity security | 18 | 0 | 12 | 6 |
 | SEC-02 | Session and device security | 16 | 0 | 16 | 0 |
 | SEC-03 | RBAC — Role-Based Access Control | 27 | 0 | 25 | 2 |
 | SEC-04 | Role-by-role scope model | 8 | 0 | 8 | 0 |
@@ -24,19 +24,19 @@ Totals: NEEDS_REVIEW 364, NEEDS_OWNER 129. Release sign-off: NOT approved.
 | SEC-06 | PostgreSQL Row-Level Security | 26 | 0 | 26 | 0 |
 | SEC-07 | Database privilege and integrity security | 19 | 0 | 18 | 1 |
 | SEC-08 | API authorization and object-level security | 24 | 0 | 24 | 0 |
-| SEC-09 | Secrets, API keys, and cryptographic security | 18 | 0 | 10 | 8 |
-| SEC-10 | Encryption and sensitive data protection | 16 | 0 | 11 | 5 |
+| SEC-09 | Secrets, API keys, and cryptographic security | 18 | 0 | 11 | 7 |
+| SEC-10 | Encryption and sensitive data protection | 16 | 0 | 12 | 4 |
 | SEC-11 | File uploads, documents, and storage | 20 | 0 | 18 | 2 |
 | SEC-12 | Browser and frontend security | 19 | 0 | 19 | 0 |
-| SEC-13 | Application and business-logic security | 18 | 0 | 16 | 2 |
+| SEC-13 | Application and business-logic security | 18 | 0 | 17 | 1 |
 | SEC-14 | LMS-specific attack scenarios | 24 | 0 | 24 | 0 |
 | SEC-15 | Integrations, webhooks, and third-party services | 17 | 0 | 17 | 0 |
 | SEC-16 | Background jobs, queues, and internal services | 15 | 0 | 12 | 3 |
 | SEC-17 | Cloud, network, and infrastructure security | 23 | 0 | 14 | 9 |
-| SEC-18 | Secure development and software supply chain | 21 | 0 | 17 | 4 |
+| SEC-18 | Secure development and software supply chain | 21 | 0 | 18 | 3 |
 | SEC-19 | Security logging, audit trails, and detection | 21 | 0 | 20 | 1 |
 | SEC-20 | Incident response and breach containment | 19 | 0 | 16 | 3 |
-| SEC-21 | Backup, disaster recovery, and resilience | 15 | 0 | 5 | 10 |
+| SEC-21 | Backup, disaster recovery, and resilience | 15 | 0 | 7 | 8 |
 | SEC-22 | Privacy and data governance | 15 | 0 | 4 | 11 |
 | SEC-23 | Automated security testing | 25 | 0 | 25 | 0 |
 | SEC-24 | Independent security testing | 14 | 0 | 0 | 14 |
@@ -53,6 +53,8 @@ Totals: NEEDS_REVIEW 364, NEEDS_OWNER 129. Release sign-off: NOT approved.
   - Next proof: Independent review of the assessment docs/security/assessments/SEC-01-authentication.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
 - [ ] **SEC-01-002** [NEEDS_REVIEW] Enforce verified ownership of login email and phone numbers.
   - Next proof: Independent review of the assessment docs/security/assessments/SEC-01-10-14-batch-2026-11-08.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
+- [ ] **SEC-01-003** [NEEDS_REVIEW] Prevent account enumeration through login, recovery, and registration responses.
+  - Next proof: Independent review of the assessment scripts/security/dispositions.json and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
 - [ ] **SEC-01-010** [NEEDS_REVIEW] Protect against credential stuffing, OTP guessing, and authentication flooding.
   - Next proof: Independent review of the assessment docs/security/assessments/SEC-01-authentication.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
 - [ ] **SEC-01-011** [NEEDS_REVIEW] Use distributed rate limits, not exclusively per-instance counters.
@@ -71,7 +73,6 @@ Totals: NEEDS_REVIEW 364, NEEDS_OWNER 129. Release sign-off: NOT approved.
   - Next proof: Independent review of the assessment docs/security/assessments/SEC-01-authentication.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
 - [ ] **SEC-01-009** [NEEDS_OWNER] Introduce risk-based authentication for suspicious sign-ins.
   - Next proof: Independent review of the assessment docs/security/assessments/SEC-01-authentication.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
-- [ ] **SEC-01-003** [NEEDS_OWNER] Prevent account enumeration through login, recovery, and registration responses.
 - [ ] **SEC-01-004** [NEEDS_OWNER] Introduce passkeys/WebAuthn for strong authentication.
 - [ ] **SEC-01-006** [NEEDS_OWNER] Require strong MFA for College Admin and other privileged accounts.
 - [ ] **SEC-01-007** [NEEDS_OWNER] Enforce secure authenticator enrollment, replacement, removal, and recovery.
@@ -394,6 +395,8 @@ Totals: NEEDS_REVIEW 364, NEEDS_OWNER 129. Release sign-off: NOT approved.
   - Next proof: Independent review of the assessment docs/security/assessments/SEC-09-12-21-secrets-browser-backup.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
 - [ ] **SEC-09-006** [NEEDS_REVIEW] Scan historical Git commits, not only the latest source tree.
   - Next proof: Independent review of the assessment docs/security/assessments/SEC-09-15-16-17-21-batch-2026-11-08.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
+- [ ] **SEC-09-011** [NEEDS_REVIEW] Apply expiration and regular rotation where supported.
+  - Next proof: Independent review of the assessment scripts/security/dispositions.json and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
 - [ ] **SEC-09-012** [NEEDS_REVIEW] Support overlapping keys for safe zero-downtime rotation.
   - Next proof: Independent review of the assessment scripts/security/dispositions.json and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
 - [ ] **SEC-09-014** [NEEDS_REVIEW] Keep secrets out of request logs, exception logs, telemetry, and traces.
@@ -408,7 +411,6 @@ Totals: NEEDS_REVIEW 364, NEEDS_OWNER 129. Release sign-off: NOT approved.
 - [ ] **SEC-09-008** [NEEDS_OWNER] Prefer workload identity and short-lived credentials over static keys.
 - [ ] **SEC-09-009** [NEEDS_OWNER] Use different credentials for development, staging, and production.
 - [ ] **SEC-09-010** [NEEDS_OWNER] Scope each third-party key to minimum required privileges.
-- [ ] **SEC-09-011** [NEEDS_OWNER] Apply expiration and regular rotation where supported.
 - [ ] **SEC-09-013** [NEEDS_OWNER] Restrict access to production secrets by operator and service identity.
 - [ ] **SEC-09-015** [NEEDS_OWNER] Protect cryptographic keys with a managed KMS; consider HSM-backed controls for particularly sensitive signing operations.
 - [ ] **SEC-09-017** [NEEDS_OWNER] Manage encryption key versions and revocation.
@@ -435,12 +437,13 @@ Totals: NEEDS_REVIEW 364, NEEDS_OWNER 129. Release sign-off: NOT approved.
   - Next proof: Independent review of the assessment scripts/security/dispositions.json and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
 - [ ] **SEC-10-014** [NEEDS_REVIEW] Prevent sensitive responses from being cached inappropriately.
   - Next proof: Independent review of the assessment docs/security/assessments/SEC-10-encryption-and-sensitive-data.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
+- [ ] **SEC-10-015** [NEEDS_REVIEW] Test cryptographic key-loss and rotation procedures.
+  - Next proof: Independent review of the assessment scripts/security/dispositions.json and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
 - [ ] **SEC-10-004** [NEEDS_OWNER] Apply field-level encryption to selected highly sensitive values when justified by the threat model.
   - Next proof: Independent review of the assessment docs/security/assessments/SEC-10-encryption-and-sensitive-data.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
 - [ ] **SEC-10-002** [NEEDS_OWNER] Enforce TLS between internal services and databases where appropriate.
 - [ ] **SEC-10-006** [NEEDS_OWNER] Minimize data stored in the first place.
 - [ ] **SEC-10-007** [NEEDS_OWNER] Restrict personal data returned from APIs to explicitly required fields.
-- [ ] **SEC-10-015** [NEEDS_OWNER] Test cryptographic key-loss and rotation procedures.
 - [ ] **SEC-10-016** [NEEDS_OWNER] Verify that development and test environments do not contain unprotected production student data.
 
 ### SEC-11 - File uploads, documents, and storage
@@ -539,6 +542,8 @@ Totals: NEEDS_REVIEW 364, NEEDS_OWNER 129. Release sign-off: NOT approved.
   - Next proof: Independent review of the assessment docs/security/assessments/SEC-13-business-logic.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
 - [ ] **SEC-13-008** [NEEDS_REVIEW] Enforce optimistic or pessimistic concurrency control as appropriate.
   - Next proof: Independent review of the assessment docs/security/assessments/SEC-13-business-logic.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
+- [ ] **SEC-13-009** [NEEDS_REVIEW] Prevent self-approval of privileged requests.
+  - Next proof: Independent review of the assessment scripts/security/dispositions.json and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
 - [ ] **SEC-13-011** [NEEDS_REVIEW] Prevent unauthorized changes to historical academic records.
   - Next proof: Independent review of the assessment scripts/security/dispositions.json and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
 - [ ] **SEC-13-012** [NEEDS_REVIEW] Protect published assessments, scores, and evaluations from unauthorized modification.
@@ -559,7 +564,6 @@ Totals: NEEDS_REVIEW 364, NEEDS_OWNER 129. Release sign-off: NOT approved.
   - Next proof: Independent review of the assessment docs/security/assessments/SEC-13-business-logic.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
 - [ ] **SEC-13-004** [NEEDS_OWNER] Prevent unauthorized workflow skipping.
   - Next proof: Independent review of the assessment docs/security/assessments/SEC-13-business-logic.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
-- [ ] **SEC-13-009** [NEEDS_OWNER] Prevent self-approval of privileged requests.
 - [ ] **SEC-13-010** [NEEDS_OWNER] Apply dual approval to particularly sensitive administrative operations.
 
 ### SEC-14 - LMS-specific attack scenarios
@@ -744,6 +748,8 @@ Totals: NEEDS_REVIEW 364, NEEDS_OWNER 129. Release sign-off: NOT approved.
   - Next proof: Independent review of the assessment scripts/security/dispositions.json and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
 - [ ] **SEC-18-015** [NEEDS_OWNER] Use lockfiles and reproducible dependency installation.
   - Next proof: Run the same check on every pull request touching package files and confirm Docker builds use npm ci
+- [ ] **SEC-18-016** [NEEDS_REVIEW] Protect release artifacts from unauthorized modification.
+  - Next proof: Independent review of the assessment scripts/security/dispositions.json and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
 - [ ] **SEC-18-019** [NEEDS_REVIEW] Audit transitive dependencies and supply-chain changes.
   - Next proof: Independent review of the assessment docs/security/assessments/SEC-18-supply-chain-and-ci.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
 - [ ] **SEC-18-020** [NEEDS_REVIEW] Block known dangerous dependencies and insecure package versions.
@@ -758,7 +764,6 @@ Totals: NEEDS_REVIEW 364, NEEDS_OWNER 129. Release sign-off: NOT approved.
   - Next proof: Owner confirms the proposed deadlines and exception process; track a first critical advisory (next RCE fixed 2026-11-06) against them
 - [ ] **SEC-18-001** [NEEDS_OWNER] Enforce branch protection on `main`.
 - [ ] **SEC-18-006** [NEEDS_OWNER] Enforce MFA for developers and repository administrators.
-- [ ] **SEC-18-016** [NEEDS_OWNER] Protect release artifacts from unauthorized modification.
 - [ ] **SEC-18-017** [NEEDS_OWNER] Introduce signed build artifacts and provenance where practical.
 
 ### SEC-19 - Security logging, audit trails, and detection
@@ -847,6 +852,10 @@ Totals: NEEDS_REVIEW 364, NEEDS_OWNER 129. Release sign-off: NOT approved.
 
 - [ ] **SEC-21-002** [NEEDS_REVIEW] Enable automated production database backups.
   - Next proof: Independent review of the assessment scripts/security/dispositions.json and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
+- [ ] **SEC-21-005** [NEEDS_REVIEW] Test recovery against a disposable environment.
+  - Next proof: Independent review of the assessment scripts/security/dispositions.json and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
+- [ ] **SEC-21-006** [NEEDS_REVIEW] Verify backup data integrity.
+  - Next proof: Independent review of the assessment scripts/security/dispositions.json and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
 - [ ] **SEC-21-010** [NEEDS_REVIEW] Document restoration sequencing across databases, storage, and queues.
   - Next proof: Independent review of the assessment scripts/security/dispositions.json and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.
 - [ ] **SEC-21-011** [NEEDS_REVIEW] Establish availability monitoring.
@@ -858,8 +867,6 @@ Totals: NEEDS_REVIEW 364, NEEDS_OWNER 129. Release sign-off: NOT approved.
 - [ ] **SEC-21-001** [NEEDS_OWNER] Define recovery point and recovery time objectives.
 - [ ] **SEC-21-003** [NEEDS_OWNER] Protect backups with separate identities and encryption.
 - [ ] **SEC-21-004** [NEEDS_OWNER] Maintain isolated or immutable backups where practical.
-- [ ] **SEC-21-005** [NEEDS_OWNER] Test recovery against a disposable environment.
-- [ ] **SEC-21-006** [NEEDS_OWNER] Verify backup data integrity.
 - [ ] **SEC-21-007** [NEEDS_OWNER] Protect backup encryption keys.
 - [ ] **SEC-21-008** [NEEDS_OWNER] Test accidental deletion and database corruption recovery.
 - [ ] **SEC-21-009** [NEEDS_OWNER] Test ransomware-style recovery scenarios.
