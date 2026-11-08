@@ -27708,7 +27708,19 @@
           "PAGE-0436"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "CI_PARTIAL_RECOVERY_20261108",
+            "runId": 42479026195,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42479026195",
+            "commitSha": "30dbfecd95bd8dd7a066516565fd9a7a5094fbaf",
+            "conclusion": "success",
+            "artifactId": 13616203106,
+            "results": "Exact SHA verified; scoped ESLint, full TypeScript, focused Vitest and two desktop/mobile Chromium recovery-fixture tests passed, screenshots attached.",
+            "outstanding": "Recovery-fixture UI does not verify real authenticated TPO pages, all assigned route states, business mutations, tenant denials or complete group acceptance; full scoped DONE not earned.",
+            "closure": "DOING until independent authenticated per-route/action tests and evidence."
+          }
+        ]
       },
       {
         "id": "UX-G111",
@@ -27761,7 +27773,19 @@
           "PAGE-0444"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "CI_PARTIAL_RECOVERY_20261108",
+            "runId": 42479026195,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42479026195",
+            "commitSha": "30dbfecd95bd8dd7a066516565fd9a7a5094fbaf",
+            "conclusion": "success",
+            "artifactId": 13616203106,
+            "results": "Exact SHA verified; scoped ESLint, full TypeScript, focused Vitest and two desktop/mobile Chromium recovery-fixture tests passed, screenshots attached.",
+            "outstanding": "Recovery-fixture UI does not verify real authenticated TPO pages, all assigned route states, business mutations, tenant denials or complete group acceptance; full scoped DONE not earned.",
+            "closure": "DOING until independent authenticated per-route/action tests and evidence."
+          }
+        ]
       },
       {
         "id": "UX-G112",
@@ -27810,7 +27834,19 @@
           "PAGE-0459"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "CI_PARTIAL_RECOVERY_20261108",
+            "runId": 42479026195,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42479026195",
+            "commitSha": "30dbfecd95bd8dd7a066516565fd9a7a5094fbaf",
+            "conclusion": "success",
+            "artifactId": 13616203106,
+            "results": "Exact SHA verified; scoped ESLint, full TypeScript, focused Vitest and two desktop/mobile Chromium recovery-fixture tests passed, screenshots attached.",
+            "outstanding": "Recovery-fixture UI does not verify real authenticated TPO pages, all assigned route states, business mutations, tenant denials or complete group acceptance; full scoped DONE not earned.",
+            "closure": "DOING until independent authenticated per-route/action tests and evidence."
+          }
+        ]
       },
       {
         "id": "UX-G113",
@@ -27863,7 +27899,19 @@
           "PAGE-0453"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "CI_PARTIAL_RECOVERY_20261108",
+            "runId": 42479026195,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42479026195",
+            "commitSha": "30dbfecd95bd8dd7a066516565fd9a7a5094fbaf",
+            "conclusion": "success",
+            "artifactId": 13616203106,
+            "results": "Exact SHA verified; scoped ESLint, full TypeScript, focused Vitest and two desktop/mobile Chromium recovery-fixture tests passed, screenshots attached.",
+            "outstanding": "Recovery-fixture UI does not verify real authenticated TPO pages, all assigned route states, business mutations, tenant denials or complete group acceptance; full scoped DONE not earned.",
+            "closure": "DOING until independent authenticated per-route/action tests and evidence."
+          }
+        ]
       },
       {
         "id": "UX-G114",
@@ -27916,7 +27964,19 @@
           "PAGE-0460"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "CI_PARTIAL_RECOVERY_20261108",
+            "runId": 42479026195,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42479026195",
+            "commitSha": "30dbfecd95bd8dd7a066516565fd9a7a5094fbaf",
+            "conclusion": "success",
+            "artifactId": 13616203106,
+            "results": "Exact SHA verified; scoped ESLint, full TypeScript, focused Vitest and two desktop/mobile Chromium recovery-fixture tests passed, screenshots attached.",
+            "outstanding": "Recovery-fixture UI does not verify real authenticated TPO pages, all assigned route states, business mutations, tenant denials or complete group acceptance; full scoped DONE not earned.",
+            "closure": "DOING until independent authenticated per-route/action tests and evidence."
+          }
+        ]
       },
       {
         "id": "UX-G115",
@@ -27969,7 +28029,19 @@
           "PAGE-0471"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "CI_PARTIAL_RECOVERY_20261108",
+            "runId": 42479026195,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42479026195",
+            "commitSha": "30dbfecd95bd8dd7a066516565fd9a7a5094fbaf",
+            "conclusion": "success",
+            "artifactId": 13616203106,
+            "results": "Exact SHA verified; scoped ESLint, full TypeScript, focused Vitest and two desktop/mobile Chromium recovery-fixture tests passed, screenshots attached.",
+            "outstanding": "Recovery-fixture UI does not verify real authenticated TPO pages, all assigned route states, business mutations, tenant denials or complete group acceptance; full scoped DONE not earned.",
+            "closure": "DOING until independent authenticated per-route/action tests and evidence."
+          }
+        ]
       },
       {
         "id": "UX-G116",
@@ -28022,7 +28094,19 @@
           "PAGE-0472"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "CI_PARTIAL_RECOVERY_20261108",
+            "runId": 42479026195,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42479026195",
+            "commitSha": "30dbfecd95bd8dd7a066516565fd9a7a5094fbaf",
+            "conclusion": "success",
+            "artifactId": 13616203106,
+            "results": "Exact SHA verified; scoped ESLint, full TypeScript, focused Vitest and two desktop/mobile Chromium recovery-fixture tests passed, screenshots attached.",
+            "outstanding": "Recovery-fixture UI does not verify real authenticated TPO pages, all assigned route states, business mutations, tenant denials or complete group acceptance; full scoped DONE not earned.",
+            "closure": "DOING until independent authenticated per-route/action tests and evidence."
+          }
+        ]
       },
       {
         "id": "UX-G117",
@@ -28075,7 +28159,19 @@
           "PAGE-0478"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "CI_PARTIAL_RECOVERY_20261108",
+            "runId": 42479026195,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42479026195",
+            "commitSha": "30dbfecd95bd8dd7a066516565fd9a7a5094fbaf",
+            "conclusion": "success",
+            "artifactId": 13616203106,
+            "results": "Exact SHA verified; scoped ESLint, full TypeScript, focused Vitest and two desktop/mobile Chromium recovery-fixture tests passed, screenshots attached.",
+            "outstanding": "Recovery-fixture UI does not verify real authenticated TPO pages, all assigned route states, business mutations, tenant denials or complete group acceptance; full scoped DONE not earned.",
+            "closure": "DOING until independent authenticated per-route/action tests and evidence."
+          }
+        ]
       },
       {
         "id": "UX-G118",
@@ -28128,7 +28224,19 @@
           "PAGE-0484"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "CI_PARTIAL_RECOVERY_20261108",
+            "runId": 42479026195,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42479026195",
+            "commitSha": "30dbfecd95bd8dd7a066516565fd9a7a5094fbaf",
+            "conclusion": "success",
+            "artifactId": 13616203106,
+            "results": "Exact SHA verified; scoped ESLint, full TypeScript, focused Vitest and two desktop/mobile Chromium recovery-fixture tests passed, screenshots attached.",
+            "outstanding": "Recovery-fixture UI does not verify real authenticated TPO pages, all assigned route states, business mutations, tenant denials or complete group acceptance; full scoped DONE not earned.",
+            "closure": "DOING until independent authenticated per-route/action tests and evidence."
+          }
+        ]
       },
       {
         "id": "UX-G119",
@@ -28177,7 +28285,19 @@
           "PAGE-0491"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "CI_PARTIAL_RECOVERY_20261108",
+            "runId": 42479026195,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42479026195",
+            "commitSha": "30dbfecd95bd8dd7a066516565fd9a7a5094fbaf",
+            "conclusion": "success",
+            "artifactId": 13616203106,
+            "results": "Exact SHA verified; scoped ESLint, full TypeScript, focused Vitest and two desktop/mobile Chromium recovery-fixture tests passed, screenshots attached.",
+            "outstanding": "Recovery-fixture UI does not verify real authenticated TPO pages, all assigned route states, business mutations, tenant denials or complete group acceptance; full scoped DONE not earned.",
+            "closure": "DOING until independent authenticated per-route/action tests and evidence."
+          }
+        ]
       },
       {
         "id": "UX-G120",
