@@ -37,3 +37,81 @@ test.describe("UX five-group batch — authenticated viewport smoke and screensh
   expect(response.headers()["content-type"]??"").not.toContain("text/csv");
  });
 });
+
+
+test.describe("UX unfinished groups — role, form and step-up acceptance", () => {
+  test.skip(!enabled, "Only run with disposable E2E database and seeded roles.");
+
+  for (const size of [
+    {name: "desktop", width: 1280, height: 800},
+    {name: "mobile", width: 390, height: 844},
+  ] as const) {
+    test(`G132 ${size.name}: College Admin cannot mutate attendance policy`, async ({page,context}, info) => {
+      await authenticateGracefulRole(context, "college");
+      await page.setViewportSize(size);
+      await page.goto("/college/attendance/settings");
+      await expect(page.getByRole("heading", {name: "College attendance policy", exact: true})).toBeVisible();
+      await expect(page.getByText("These attendance policy fields are read-only for College Admin.")).toBeVisible();
+      await expect(page.getByRole("button", {name: /Save attendance policy|Reset to default/i})).toHaveCount(0);
+      await expect(page.getByRole("button", {name: "Reload attendance policy"})).toBeVisible();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(2);
+      await page.screenshot({path: info.outputPath(`g132-policy-readonly-${size.name}.png`), fullPage: true});
+    });
+
+    test(`G154 ${size.name}: empty global template cannot create and edited draft requires discard confirmation`, async ({page,context}, info) => {
+      await authenticateGracefulRole(context, "superadmin");
+      await page.setViewportSize(size);
+      await page.goto("/admin/projects/templates/new");
+      await expect(page.getByRole("heading", {level: 1, name: "Create project template"})).toBeVisible();
+      await page.getByRole("button", {name: "Create draft template"}).click();
+      await expect(page.getByText("Title is required")).toBeVisible();
+      await page.getByRole("textbox", {name: "Template title"}).fill("Unsaved example");
+      await page.getByRole("button", {name: "Cancel", exact: true}).click();
+      await expect(page.getByRole("dialog", {name: "Discard unsaved changes?"})).toBeVisible();
+      await page.screenshot({path: info.outputPath(`g154-template-discard-${size.name}.png`), fullPage: true});
+      expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(2);
+    });
+  }
+
+  test("G154: learner cannot author a global project template", async ({page,context}) => {
+    await authenticateGracefulRole(context, "learner");
+    await page.goto("/admin/projects/templates/new", {waitUntil: "commit"});
+    await expect(page.getByRole("button", {name: "Create draft template"})).toHaveCount(0);
+  });
+
+  test("G178: a seeded College Admin cannot export private People CSV without a fresh OTP device session", async ({page,context}) => {
+    await authenticateGracefulRole(context, "college");
+    await page.goto("/college/people/manage");
+    await expect(page.getByRole("heading", {level: 1, name: /(People|Directory|Manage)/i})).toBeVisible();
+    const response = await page.request.get("/api/college/people/export", {maxRedirects: 0});
+    expect([401, 403], "E2E identity must never substitute for a recent OTP device session").toContain(response.status());
+    expect(response.headers()["content-type"] ?? "").not.toContain("text/csv");
+    expect(response.headers()["content-disposition"] ?? "").not.toContain("attachment");
+  });
+
+  test("G161: non-admin reporter cannot read privileged tracker issue exports", async ({page,context}) => {
+    await authenticateGracefulRole(context, "learner");
+    await page.goto("/tracker");
+    await expect(page.getByRole("heading", {level: 1, name: /What went wrong/i})).toBeVisible();
+    const response = await page.request.get("/api/tracker/logs/export", {maxRedirects: 0});
+    expect(response.headers()["content-type"] ?? "").not.toContain("text/csv");
+    expect(response.headers()["content-disposition"] ?? "").not.toContain("attachment");
+  });
+
+  test("G182: E2E mentor role cannot use synthetic identity as a fresh-OTP export credential", async ({page,context}) => {
+    await authenticateGracefulRole(context, "mentor");
+    await page.goto("/mentor");
+    for (const path of [
+      "/api/mentor/calendar/export",
+      "/api/mentor/task-review-history/export",
+      "/api/mentor/activity/export",
+      "/api/mentor/reviews/export",
+      "/api/projects/00000000-0000-4000-8000-000000000001/mentor-activity-export",
+    ]) {
+      const response = await page.request.get(path, {maxRedirects: 0});
+      expect([401, 403, 302, 307, 308], `${path} must deny non-OTP E2E identity`).toContain(response.status());
+      expect(response.headers()["content-type"] ?? "").not.toContain("text/csv");
+      expect(response.headers()["content-disposition"] ?? "").not.toContain("attachment");
+    }
+  });
+});
