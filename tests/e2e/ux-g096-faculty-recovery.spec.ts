@@ -53,8 +53,12 @@ test.describe("UX-G096 Faculty profile and report navigation",()=>{
     await authenticateGracefulRole(context,"learner");
     await page.goto("/teacher/profile/teaching?page=INVALID");
     await expect(page.getByText("Invalid teaching profile filters")).toHaveCount(0);
-    await page.goto("/teacher/profile/details?section=contacts");
+    // A denied navigation may be aborted by Next while redirecting away;
+    // only that specific navigation abort is expected, never server failures.
+    await page.goto("/teacher/profile/details?section=contacts",{waitUntil:"domcontentloaded"})
+      .catch(error=>{if(!String(error).includes("net::ERR_ABORTED"))throw error;});
     await expect(page).not.toHaveURL(/\/teacher\/profile#faculty-contact/);
+    await expect(page.getByRole("heading",{name:"About & details"})).toHaveCount(0);
     await page.goto("/teacher/report/assignment/"+id+"/submissions?deliveryId=bad");
     await expect(page.getByText("Invalid Section submission filters")).toHaveCount(0);
   });
