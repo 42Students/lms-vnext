@@ -12,6 +12,9 @@ on:
       - .github/workflows/ux-g167-activity-exports-acceptance.yml
 permissions:
   contents: read
+concurrency:
+  group: ux-g167-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   acceptance:
     runs-on: ubuntu-latest
