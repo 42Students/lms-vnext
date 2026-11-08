@@ -53,6 +53,7 @@ export default async function CollegeSignInMethods({params}:{params:Promise<{col
     className="inline-flex min-h-11 items-center md:min-h-9">Reload</TextLink>
   </div>
   {policy.kind==="INVALID_POLICY"?<Alert tone="error">Stored sign-in method is invalid. Please contact an administrator.</Alert>:null}
+  {policy.kind==="MIGRATION_PENDING"?<Alert tone="warning">Sign-in policy setup is still pending for this college. The saved setting cannot be verified yet, so saving is disabled. Reload this page after setup is completed.</Alert>:null}
   <CollegeSigninMethodForm collegeId={college.id}
    method={policy.kind==="CONFIGURED"?policy.method:"EMAIL_AND_PHONE"}
    version={result.version??0}
