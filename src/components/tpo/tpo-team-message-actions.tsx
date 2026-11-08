@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import {useId,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {Textarea} from "@/components/ui/textarea";
 import {Dialog} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -24,7 +24,13 @@ export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,
     body:JSON.stringify({action,expectedBodyHash,...(action==="EDIT"?{body:draft.trim()}:{})}),
    });
    setMode(null);router.refresh();
-  }catch(reason){setError(reason instanceof Error?reason.message:"Could not save the message. Try again.");}
+  }catch(reason){
+   setError(reason instanceof FriendlyFetchError&&reason.status===409
+    ?"This message changed or the edit window ended. Your draft remains available; refresh the conversation."
+    :reason instanceof FriendlyFetchError&&reason.status===403
+     ?"You no longer have permission to change this message."
+     :reason instanceof Error?reason.message:"Could not save the message. Try again.");
+  }
   finally{pending.current=false;setBusy(false);}
  }
  return <div className="mt-2 flex min-w-0 flex-wrap items-center gap-2">
