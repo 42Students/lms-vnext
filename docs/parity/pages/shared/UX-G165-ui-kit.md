@@ -19,3 +19,10 @@
 - Existing accessibility and role/tenant authorization boundaries remain; these primitives must never act as permission checks. No newly introduced public routes or unauthorized content exposure.
 
 **Closure boundary:** scoped UX and behavior, not global release certification. Completion receipt appended after successful execution.
+
+## Verified closure (2026-11-08)
+
+- **DONE** for six registered UI primitives; [exact-checkout GitHub Actions run](https://github.com/42Students/lms-vnext/actions/runs/42448745272) succeeded on `d952f236caa7df3a5e3702bbe3000d2d43e85941`.
+- Scoped lint, full TypeScript, 6 Vitest suites / 86 passing unit and existing regression tests, and 3/3 Chromium browser journeys (authenticated seeded Super Admin at 390px/1280px and Learner-denied export).
+- Browser screenshots and report artifact `ux-g165-g168-evidence` ID `13604796811`. The scope covers primitive interactions, focus/labels/recovery and shared call sites; it does not claim global accessibility certification.
+- Companion UX-G168 remains independently open until a positive freshly authenticated admin CSV download is demonstrated; sharing the workflow run does not automatically close it.

@@ -21585,11 +21585,11 @@
         "type": "KIT",
         "area": "ui",
         "title": "Ui · Shared UI kit (part 3)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-shared-ui-admin-exports-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/components/ui/tabs.tsx",
           "src/components/ui/textarea.tsx",
@@ -21607,8 +21607,23 @@
           "KIT-0036"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Source improvements committed: external HTTPS link labelled copy fallback with stable ARIA controls; tabs hide empty inaccessible panel; confirmation prompts have readable fallback title. Textarea, popover and toasts reviewed. New SSR/unit suite tests/unit/ux-g165-shared-controls.test.tsx and existing UI kit regressions plus seeded browser acceptance in .github/workflows/ux-g165-g168-acceptance.yml. Workflow https://github.com/42Students/lms-vnext/actions/runs/42393532019 (SHA abcab15ea231068485b36efb0256e773783011c0) remains queued; exact-SHA test/browser proof NOT YET available. Source review docs/parity/pages/shared/UX-G165-ui-kit.md. Keep DOING."
+        "evidence": [
+          {
+            "type": "ci",
+            "runId": 42448745272,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42448745272",
+            "conclusion": "success",
+            "commitSha": "d952f236caa7df3a5e3702bbe3000d2d43e85941",
+            "results": "Exact tested SHA, scoped lint, full TypeScript, 6 Vitest suites/86 tests, 3/3 390 and 1280 viewport Chromium shared-admin UI journeys."
+          },
+          {
+            "type": "browser",
+            "runId": 42448745272,
+            "artifactId": 13604796811,
+            "description": "Authenticated seeded Super Admin faculty page desktop/mobile navigation, keyboard export controls, no horizontal overflow and denied Learner CSV path; actual screenshots in Actions artifact."
+          }
+        ],
+        "notes": "DONE scoped six UI-kit primitives: 42448745272 exact SHA d952f236c; scoped lint/TS, 86/86 Vitest (including UI-kit), 3/3 authenticated Chromium desktop/mobile page, focus, role negative, screenshot artifact 13604796811; no change to backend permissions; global a11y certification not claimed."
       },
       {
         "id": "UX-G166",
