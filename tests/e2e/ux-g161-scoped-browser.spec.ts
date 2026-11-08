@@ -70,6 +70,11 @@ test.describe("UX-G161 Tracker — isolated persisted and responsive acceptance"
   const logs=await page.request.get("/api/tracker/live-logs");
   expect(logs.status()).toBe(403);
   expect(logs.headers()["content-type"]??"").not.toContain("text/csv");
+  // Denied users cannot request a streamed export even with a valid date range.
+  const deniedExport=await page.request.get("/api/tracker/live-logs/export?"+
+   new URLSearchParams({from:"2026-11-01T00:00:00.000Z",to:"2026-11-02T00:00:00.000Z"}));
+  expect(deniedExport.status()).toBe(403);
+  expect(deniedExport.headers()["content-type"]??"").not.toContain("application/x-ndjson");
   const alert=await page.request.post("/api/tracker/logs/manual-alert",{
    headers:{origin},data:{kind:"TEST"},
   });
@@ -93,6 +98,20 @@ test.describe("UX-G161 Tracker — isolated persisted and responsive acceptance"
   await page.getByRole("link",{name:"Reset filter"}).click();
   await expect(page.getByRole("heading",{level:1,name:"Logs"})).toBeVisible();
   await expect(page.getByRole("heading",{name:"Live Logs"})).toBeVisible();
+  // Never report a provider send or a complete export when credentials are absent.
+  const unconfiguredTelegram=await page.request.post("/api/tracker/logs/manual-alert",{
+   headers:{origin},data:{kind:"TEST"},
+  });
+  expect(unconfiguredTelegram.status()).toBe(503);
+  const telegramReceipt=await unconfiguredTelegram.json() as {configured:boolean;accepted:boolean};
+  expect(telegramReceipt.configured).toBe(false);
+  expect(telegramReceipt.accepted).toBe(false);
+  const badExport=await page.request.get("/api/tracker/live-logs/export?"+
+   new URLSearchParams({from:"2026-11-01T00:00:00.000Z",to:"2026-11-01T00:00:00.000Z"}));
+  expect(badExport.status()).toBe(400);
+  const unavailableExport=await page.request.get("/api/tracker/live-logs/export?"+
+   new URLSearchParams({from:"2026-11-01T00:00:00.000Z",to:"2026-11-02T00:00:00.000Z"}));
+  expect(unavailableExport.status()).toBe(503);
   await expect(page.getByText(/Cloud log collection not configured/)).toBeVisible();
   await expect(page.getByText(/Known errors persistence is not enabled/)).toBeVisible();
   await page.screenshot({path:info.outputPath("g161-logs-unconfigured-desktop.png"),fullPage:true});
