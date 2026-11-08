@@ -1,3 +1,6 @@
+import {redirect} from "next/navigation";
+import {hasMembershipRole} from "@/modules/identity/context";
+import {assertMentorProjectRecoveryAccess} from "@/modules/projects/mentor-project-recovery-guard";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
@@ -26,11 +29,16 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
       taskPriority:first(raw.taskPriority)??undefined,page:first(raw.page)??undefined,
     },
   );
-  if(!parsed.success)return <section role="alert">
+  if(!parsed.success){
+ const recoveryContext=await getCurrentRequestContext();
+ if(!hasMembershipRole(recoveryContext,"MENTOR"))redirect("/dashboard");
+ await assertMentorProjectRecoveryAccess(recoveryContext,projectId);
+ return  <section role="alert">
     <PageHeader title={"Invalid risk/readiness filters"} />
     <p className="text-sm text-body">The filter link is invalid or contains duplicate values. Clear it to return to this project’s risk and readiness evidence.</p>
     <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/risk-readiness"} className="inline-flex min-h-11 items-center">Clear invalid filters</TextLink>
   </section>;
+ }
   const data=await getMentorRiskReadiness(await getCurrentRequestContext(),parsed.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);
   const filtered=data.query.focus!=="ALL"||data.query.taskPriority!=="ALL";
