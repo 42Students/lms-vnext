@@ -15,6 +15,15 @@ import { Label } from "@/components/ui/label";
 
 const endpoint="/api/placements/tpo/audit/saved-views";
 type Result={ready:boolean;views:TpoAuditSavedView[]};
+function isAuditSavedViewList(value:unknown):value is Result {
+ if(!value||typeof value!=="object")return false;
+ const obj=value as Partial<Result>;
+ return typeof obj.ready==="boolean"&&Array.isArray(obj.views)&&obj.views.every(view=>
+  view&&typeof view.id==="string"&&typeof view.name==="string"&&
+  typeof view.pinned==="boolean"&&
+  (view.revision===null||typeof view.revision==="string")&&
+  tpoAuditSavedFiltersSchema.safeParse(view.filters).success);
+}
 type MutationResult={id:string;filters?:TpoAuditSavedFilters};
 export function TpoAuditSavedViews({filters}:{filters:{
  kind:string;from?:string;to?:string;q:string;who?:string;
@@ -32,7 +41,8 @@ export function TpoAuditSavedViews({filters}:{filters:{
  const inFlight=useRef(false);
  const selectedView=views.find(view=>view.id===selected);
  const load=useCallback(async(signal?:AbortSignal)=>{
-  const response=await apiFetch<Result>(endpoint,{credentials:"same-origin",...(signal ? {signal} : {})});
+  const response=await apiFetch<unknown>(endpoint,{credentials:"same-origin",...(signal ? {signal} : {})});
+  if(!isAuditSavedViewList(response))throw new Error("Saved audit views could not be verified.");
   setReady(response.ready);
   setViews(response.views);
   return response;
