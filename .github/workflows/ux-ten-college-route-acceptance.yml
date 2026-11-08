@@ -1,0 +1,82 @@
+name: UX-G030-G040 College route recovery acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/components/ux/ux-ten-college-recovery-preview.tsx'
+      - 'src/app/e2e/ux-ten-college-recovery/page.tsx'
+      - 'tests/unit/ux-ten-college-route-recovery.test.ts'
+      - 'tests/e2e/ux-ten-college-route-recovery.spec.ts'
+      - '.github/workflows/ux-ten-college-route-acceptance.yml'
+permissions:
+  contents: read
+concurrency:
+  group: ux-ten-college-route-main
+  cancel-in-progress: true
+jobs:
+  college-recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: 'true'
+      UX_TEN_COLLEGE_FIXTURE: '1'
+      APP_ENV: development
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Check exact checkout, scoped lint and TypeScript
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npx eslint 'src/app/(authenticated)/college/batch-promotion/error.tsx' 'src/app/(authenticated)/college/college-profile/error.tsx' 'src/app/(authenticated)/college/courses/error.tsx' 'src/app/(authenticated)/college/electives/[slotId]/allocate/error.tsx' 'src/app/(authenticated)/college/groups/error.tsx' 'src/app/(authenticated)/college/lecture-halls/[hallId]/loading.tsx' 'src/app/(authenticated)/college/placements/jobs/[jobId]/error.tsx' 'src/app/(authenticated)/college/placements/new/error.tsx' 'src/app/(authenticated)/college/projects/error.tsx' 'src/app/(authenticated)/college/projects/audit/error.tsx' src/components/ux/ux-ten-college-recovery-preview.tsx src/app/e2e/ux-ten-college-recovery/page.tsx tests/unit/ux-ten-college-route-recovery.test.ts tests/e2e/ux-ten-college-route-recovery.spec.ts
+          npm run typecheck
+      - name: Focused route recovery unit and guard tests
+        run: npx vitest run tests/unit/ux-ten-college-route-recovery.test.ts
+      - name: Prepare isolated PostgreSQL
+        run: npm run db:e2e:prepare
+      - name: Seed role memberships
+        env:
+          ALLOW_TEST_SEED: I_ACCEPT
+          UX_ROLE_MEMBERSHIPS_ONLY: '1'
+        run: npx tsx scripts/seed-test-tenants.ts
+      - name: Create ephemeral browser credentials
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Browser recovery and denied-role tests (desktop and mobile)
+        run: npx playwright test tests/e2e/ux-ten-college-route-recovery.spec.ts --project=chromium --reporter=line
+      - name: Preserve screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-ten-college-route-browser
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 14
