@@ -27634,6 +27634,15 @@
               "tests/unit/ux-g071-mentor-review-drilldown.test.ts"
             ],
             "results": "Six focused assertions authored; none claimed as executed. Five loading states improved; persisted review list/detail roundtrip now navigable. Full group browser, auth and cross-role acceptance pending."
+          },
+          {
+            "type": "SCOPED_CI_QUEUED_20261108",
+            "commitSha": "3d05dfe4b2b2e51f40a3eb452fb03aabf38e786e",
+            "runId": 42493462887,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42493462887",
+            "status": "queued",
+            "workflow": ".github/workflows/ux-g071-mentor-review-source-acceptance.yml",
+            "conclusion": "No executed passing receipt yet. This workflow covers exact SHA, targeted lint, TS and unit; authentic browser and cross-tenant gates remain open."
           }
         ],
         "notes": "2026-11-08: committed Mentor review-list/detail roundtrip, same-project filter recovery, all five aria-busy loading states and six tests. NOT CLOSED: exact-SHA executed CI/browser, tenant denial and all 15 G071 surfaces."
