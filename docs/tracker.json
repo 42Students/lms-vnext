@@ -27820,11 +27820,11 @@
         "type": "ROUTE-STATE",
         "area": "(authenticated)",
         "title": "(Authenticated) · Shared route states (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-batch5-20261107",
         "pickedAt": "2026-11-07T16:59:58.715Z",
         "startedAt": "2026-11-07T16:59:58.715Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/app/(authenticated)/admin/error.tsx",
           "src/app/(authenticated)/admin/loading.tsx",
@@ -27856,7 +27856,42 @@
           "ROUTE-STATE-0708"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "8b59040638b6e7230336ba261adf3d93921e2b60",
+            "parityDoc": "docs/parity/pages/shared/UX-G184-authenticated-route-states.md",
+            "tests": [
+              {
+                "command": "Exact SHA and scoped ESLint + full TypeScript",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462246710"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-root-global-errors.test.ts tests/unit/ux-five-group-batch-20261107.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462246710 — 14/14"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g184-authenticated-route-states.spec.ts --project=chromium (27-case accepted revision)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462246710 — 27/27, no skipped/flaky"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462246710/artifacts/13610284011 — 13 actual route-state components"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462246710/artifacts/13610284011 — 13 actual route-state components"
+              }
+            ],
+            "regressionReview": "13 registered route-state source files unchanged after pinned green run. All 13 states checked at desktop and mobile plus delayed loading, safe retry, correct role destinations, no exception/digest leak or horizontal overflow. Separate 28th invalid role-state negative test committed later and its workflow 42465803268 still queued; not counted as passed.",
+            "securityReview": "Dev-only preview is gated by NODE_ENV and UX_G184_ROUTE_STATE_FIXTURE. No real tenants, auth, permission, or RLS changes. No production privileged role identity granted by the test fixture."
+          }
+        ],
+        "notes": "DONE scoped 2026-11-08 on unchanged registered sources at exact SHA 8b59040638b6e7230336ba261adf3d93921e2b60: run 42462246710 GREEN (14 unit, 27 desktop/mobile Chromium at 1280x800 and 390x844, screenshot artifact 13610284011, ESLint, TypeScript). Separate additional negative fail-closed 28th test at SHA 8d721b... run 42465803268 was queued when recorded and is NOT claimed passed; reopen if regression. See docs/parity/pages/shared/UX-G184-authenticated-route-states.md."
       },
       {
         "id": "UX-G185",
