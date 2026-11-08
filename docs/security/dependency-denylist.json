@@ -1,0 +1,13 @@
+{
+ "note": "Packages and version ranges that must not appear in package-lock.json. 'below' means every version under that value is refused. Add an entry when an advisory says not to use a package; remove it only when the advisory is withdrawn.",
+ "deny": [
+  { "name": "event-stream", "reason": "2018 malicious flatmap-stream incident" },
+  { "name": "flatmap-stream", "reason": "2018 malicious package injected into event-stream" },
+  { "name": "node-ipc", "below": "9.2.2", "reason": "2022 protestware that wipes files on some hosts" },
+  { "name": "colors", "below": "1.4.1", "reason": "2022 sabotage release" },
+  { "name": "faker", "below": "5.5.4", "reason": "2022 sabotage release (use @faker-js/faker)" },
+  { "name": "ua-parser-js", "below": "0.7.30", "reason": "2021 hijacked releases" },
+  { "name": "coa", "below": "2.0.3", "reason": "2021 hijacked releases" },
+  { "name": "rc", "below": "1.2.9", "reason": "2021 hijacked releases" }
+ ]
+}
