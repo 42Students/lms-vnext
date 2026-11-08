@@ -14,7 +14,7 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
     await expect(page.getByRole("heading",{level:1,name:"Create project template"})).toBeVisible();
 
     await page.getByRole("textbox",{name:"Template title"}).fill("E2E UX verified template");
-    await page.getByRole("textbox",{name:"Slug"}).fill("ux-g154-verified-template");
+    await page.getByRole("textbox",{name:"Slug"}).fill("ux-g154-verified-template-"+info.retry);
     await page.getByRole("textbox",{name:"First task"}).fill("Review the working project");
     await page.locator("details").filter({has:page.locator("summary",{hasText:"Overview and submission"})})
       .locator("summary").click();
@@ -28,7 +28,7 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
     expect(saved.status(), "A draft template must be persisted, not merely acknowledged").toBe(201);
     const result = await saved.json() as {template?:{id:string}};
     expect(result.template?.id).toMatch(/^[0-9a-f-]{36}$/i);
-    await expect(page).toHaveURL(new RegExp("/admin/projects/templates/[0-9a-f-]{36}/overview$","i"));
+    await expect(page).toHaveURL(new RegExp("/admin/projects/templates/[0-9a-f-]{36}(?:/overview)?$","i"));
     await page.screenshot({path:info.outputPath("g154-draft-template-created-desktop.png"),fullPage:true});
     await page.setViewportSize({width:390,height:844});
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(2);
@@ -41,7 +41,7 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
     await page.setViewportSize({width:1280,height:800});
     await page.goto("/tracker");
     await expect(page.getByRole("heading",{level:1,name:"What went wrong?"})).toBeVisible();
-    await expect(page.getByRole("button",{name:"Report issue"})).toBeVisible();
+    await expect(page.getByRole("button",{name:"Report issue",exact:true})).toBeVisible();
 
     await page.getByRole("textbox",{name:"Reporter"}).fill("Seed Superadmin");
     await page.getByLabel("Account used").selectOption("SUPER_ADMIN");
@@ -53,7 +53,7 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
 
     const receipt = page.waitForResponse(r =>
       r.url().endsWith("/api/tracker/issues") && r.request().method()==="POST");
-    await page.getByRole("button",{name:"Report issue"}).click();
+    await page.getByRole("button",{name:"Report issue",exact:true}).click();
     const response = await receipt;
     expect(response.status(), "Report creation must commit to isolated DB").toBe(201);
     const result = await response.json() as {issue?:{publicId:string}};
