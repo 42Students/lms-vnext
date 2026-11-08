@@ -4,8 +4,8 @@
  "counts": {
   "IMPLEMENTED_UNVERIFIED": 169,
   "GAP_CONFIRMED": 93,
-  "PARTIAL_EVIDENCE": 200,
-  "UNASSESSED": 3
+  "PARTIAL_EVIDENCE": 202,
+  "UNASSESSED": 2
  },
  "controls": {
   "SEC-01-001": {
@@ -4560,6 +4560,22 @@
    ],
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
+  "SEC-14-005": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Quiz submission (src/modules/courses/quiz-attempt-service.ts submitCourseQuiz) scores on the server, locks the quiz row, refuses anything not PUBLISHED, refuses a missing or passed dueAt (QUIZ_DEADLINE_NOT_CONFIGURED, deadline checked against the server clock) and re-checks the persisted membership inside the transaction. No dedicated replay or impersonation test, and answer-visibility rules live in model files that were not reviewed.",
+   "source": "docs/security/assessments/SEC-05-07-14-last-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
   "SEC-14-006": {
    "currentTrackerState": "PARTIAL_EVIDENCE",
    "proposedState": "PARTIAL_EVIDENCE",
@@ -4681,6 +4697,22 @@
     "Independent review",
     "See the source assessment for control-specific missing proof"
    ]
+  },
+  "SEC-14-013": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Quiz submission (src/modules/courses/quiz-attempt-service.ts submitCourseQuiz) scores on the server, locks the quiz row, refuses anything not PUBLISHED, refuses a missing or passed dueAt (QUIZ_DEADLINE_NOT_CONFIGURED, deadline checked against the server clock) and re-checks the persisted membership inside the transaction. No dedicated replay or impersonation test, and answer-visibility rules live in model files that were not reviewed.",
+   "source": "docs/security/assessments/SEC-05-07-14-last-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-14-014": {
    "currentTrackerState": "PARTIAL_EVIDENCE",

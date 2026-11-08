@@ -1036,6 +1036,15 @@
         "SEC-17-003"
       ],
       "finding": "Egress NetworkPolicy lms-vnext-egress-restricted (deploy/k8s/dev/lms-vnext-egress-policy.yaml) applied on dev 2026-11-08: the web pod may reach DNS, the Cloud SQL address on 5432 and public HTTPS only. Checked live: /ready 200, sign-in works, https://example.com reachable from the pod, the metadata server and a private pod address time out. Dev only; production not touched."
+    },
+    {
+      "source": "SEC-05-07-14-last-batch-2026-11-08.md",
+      "state": "P",
+      "ids": [
+        "SEC-14-005",
+        "SEC-14-013"
+      ],
+      "finding": "Quiz submission (src/modules/courses/quiz-attempt-service.ts submitCourseQuiz) scores on the server, locks the quiz row, refuses anything not PUBLISHED, refuses a missing or passed dueAt (QUIZ_DEADLINE_NOT_CONFIGURED, deadline checked against the server clock) and re-checks the persisted membership inside the transaction. No dedicated replay or impersonation test, and answer-visibility rules live in model files that were not reviewed."
     }
   ]
 }
