@@ -1,0 +1,63 @@
+name: UX G159 TPO team interaction acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/components/tpo/tpo-team-away-form.tsx
+      - src/components/tpo/tpo-team-rename.tsx
+      - src/components/tpo/tpo-team-message-actions.tsx
+      - src/app/e2e/ux-g159-fixture/**
+      - tests/unit/ux-g159-team.test.ts
+      - tests/e2e/ux-g159.spec.ts
+      - .github/workflows/ux-g159-acceptance.yml
+
+permissions:
+  contents: read
+
+jobs:
+  scoped-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      UX_G159_FIXTURE: "1"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify triggering source SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Lint TPO team controls and tests
+        run: >-
+          npx eslint
+          src/components/tpo/tpo-team-away-form.tsx
+          src/components/tpo/tpo-team-rename.tsx
+          src/components/tpo/tpo-team-message-actions.tsx
+          src/app/e2e/ux-g159-fixture/page.tsx
+          tests/unit/ux-g159-team.test.ts
+          tests/e2e/ux-g159.spec.ts
+      - name: Validate source and negative recovery contracts
+        run: npx vitest run tests/unit/ux-g159-team.test.ts --reporter=dot
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop and mobile real-component acceptance
+        run: npx playwright test tests/e2e/ux-g159.spec.ts --project=chromium --reporter=line
+      - name: TypeScript integrity
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: Upload screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g159-browser-evidence
+          path: |
+            test-results/**
+            playwright-report/**
+          if-no-files-found: ignore
+          retention-days: 7
