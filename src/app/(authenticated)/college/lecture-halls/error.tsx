@@ -1,4 +1,5 @@
 "use client";
+import { ButtonLink } from "@/components/ui/button-link";
 
 import { ErrorState } from "@/components/ui/error-state";
 import { Button } from "@/components/ui/button";
@@ -11,9 +12,7 @@ export default function CollegeLectureHallsError({ reset }: {
     <ErrorState
       title="Lecture halls unavailable"
       description="The college lecture halls could not be loaded. No empty result is assumed."
-      action={
-        <Button type="button" variant="secondary" onClick={reset} className="w-full md:w-auto">Retry</Button>
-      }
+      action={<><Button type="button" variant="secondary" onClick={reset} className="w-full md:w-auto">Retry</Button><ButtonLink href="/college" variant="secondary">College home</ButtonLink></>}
     />
   );
 }
