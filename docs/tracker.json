@@ -20480,11 +20480,11 @@
         "type": "COMPONENT",
         "area": "auth",
         "title": "Auth · Interactive components (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-g160-g133-20261107",
         "pickedAt": "2026-11-07T16:59:35.296Z",
         "startedAt": "2026-11-07T16:59:35.296Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/components/auth/device-list.tsx",
           "src/components/auth/login-form.tsx"
@@ -20514,6 +20514,44 @@
             "browser": [],
             "regressionReview": "Production UI code committed; focused Vitest and 1280x800/390x844 real-component Playwright tests authored. Full runner results and screenshots not yet available.",
             "securityReview": "No backend authorization, tenant isolation, schema, provider or credential changes. Development-only synthetic fixture fails closed in production. Actual authentication/security E2E remains separate."
+          },
+          {
+            "commitSha": "9eb26c970d05266400235c6f56ce4fbe1d2d703a",
+            "parityDoc": "docs/parity/ux-g160-g133.md",
+            "tests": [
+              {
+                "command": "npx eslint src/components/tpo/tpo-timed-debar-control.tsx src/components/tpo/tpo-topbar-new-menu.tsx src/components/auth/device-list.tsx src/components/auth/login-form.tsx src/app/e2e/ux-g160-g133-fixture/page.tsx tests/unit/tpo-timed-debar-ux.test.ts tests/unit/auth-ux-group-g133.test.ts tests/e2e/ux-g160-g133.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42453780264 — scoped lint PASS"
+              },
+              {
+                "command": "npx vitest run tests/unit/tpo-timed-debar-ux.test.ts tests/unit/auth-ux-group-g133.test.ts tests/unit/chat12-timed-debar-round3.test.ts tests/unit/tpo-topbar-links.test.ts --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42453780264 — 15/15 tests passed in 4 files"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g160-g133.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42453780264 — 6/6 browser tests passed"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42453780264 — TypeScript integrity PASS"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42453780264/artifacts/13606941402 — desktop-auth.png: stale device alertdialog and 429 retry lock, no overflow"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42453780264/artifacts/13606941402 — mobile-auth.png: stale session recovery and rate-limit cooldown, no overflow"
+              }
+            ],
+            "regressionReview": "Exact SHA passed all workflow steps, 15/15 unit assertions, 6/6 real-component Chromium scenarios across desktop/mobile with screenshots and full project TypeScript. Negative 409/429 flows and no-overflow checked. Synthetic fixture has no live session/DB provider role integration.",
+            "securityReview": "409 stale session never claims successful revocation; 429 retry cooldown blocks requests, preserving server enforcement. Test uses real alertdialog role; production authentication and tenant/host resume checks unchanged, fixture disabled in production."
           }
         ]
       },
@@ -21716,11 +21754,11 @@
         "type": "COMPONENT",
         "area": "tpo",
         "title": "Tpo · Interactive components (part 5)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-g160-20261107",
         "pickedAt": "2026-11-07T16:39:25.338Z",
         "startedAt": "2026-11-07T16:39:25.338Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/components/tpo/tpo-timed-debar-control.tsx",
           "src/components/tpo/tpo-topbar-new-menu.tsx"
@@ -21750,6 +21788,44 @@
             "browser": [],
             "regressionReview": "Production UI code committed; focused Vitest and 1280x800/390x844 real-component Playwright tests authored. Full runner results and screenshots not yet available.",
             "securityReview": "No backend authorization, tenant isolation, schema, provider or credential changes. Development-only synthetic fixture fails closed in production. Actual authentication/security E2E remains separate."
+          },
+          {
+            "commitSha": "9eb26c970d05266400235c6f56ce4fbe1d2d703a",
+            "parityDoc": "docs/parity/ux-g160-g133.md",
+            "tests": [
+              {
+                "command": "npx eslint src/components/tpo/tpo-timed-debar-control.tsx src/components/tpo/tpo-topbar-new-menu.tsx src/components/auth/device-list.tsx src/components/auth/login-form.tsx src/app/e2e/ux-g160-g133-fixture/page.tsx tests/unit/tpo-timed-debar-ux.test.ts tests/unit/auth-ux-group-g133.test.ts tests/e2e/ux-g160-g133.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42453780264 — scoped lint PASS"
+              },
+              {
+                "command": "npx vitest run tests/unit/tpo-timed-debar-ux.test.ts tests/unit/auth-ux-group-g133.test.ts tests/unit/chat12-timed-debar-round3.test.ts tests/unit/tpo-topbar-links.test.ts --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42453780264 — 15/15 tests passed in 4 files"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g160-g133.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42453780264 — 6/6 browser tests passed"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42453780264 — TypeScript integrity PASS"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42453780264/artifacts/13606941402 — desktop-debar.png and desktop-topbar.png: independent create/lift, keyboard quick actions, no overflow"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42453780264/artifacts/13606941402 — mobile-debar.png and mobile-topbar.png: interaction and no overflow"
+              }
+            ],
+            "regressionReview": "Exact SHA passed all workflow steps, 15/15 unit assertions, 6/6 real-component Chromium scenarios across desktop/mobile with screenshots and full project TypeScript. Negative 409/429 flows and no-overflow checked. Synthetic fixture has no live session/DB provider role integration.",
+            "securityReview": "Server-side authorization/auditing for debarment writes is unchanged. Independent draft state, modal confirmation, date/drives validation and pending protection verified with mocked API; fixture gated to development and cannot alter production debarments."
           }
         ]
       },
