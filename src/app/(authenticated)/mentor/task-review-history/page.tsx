@@ -24,6 +24,8 @@ const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 export default async function MentorTaskReviewHistoryPage({
   searchParams,
 }:{searchParams:Promise<Params>}) {
+  const context=await getCurrentRequestContext();
+  if(!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
   const raw=await searchParams;
   const parsed=mentorTaskHistoryQuerySchema.safeParse(Object.values(raw).some(Array.isArray)?null:{
     decision:first(raw.decision)??undefined,
@@ -33,11 +35,10 @@ export default async function MentorTaskReviewHistoryPage({
     page:first(raw.page)??undefined,
   });
   if(!parsed.success) return <section role="alert" className="space-y-3">
-    <PageHeader title={"Invalid review history filters"} />
+    <PageHeader title="Reviewed task submissions" description="Invalid review history filters" />
+    <p className="text-sm text-body">The filters could not be applied. No task decisions were loaded.</p>
     <TextLink href="/mentor/task-review-history" className="inline-flex min-h-11 items-center">Clear filters</TextLink>
   </section>;
-  const context=await getCurrentRequestContext();
-  if(!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
   const data=await getMentorTaskReviewHistory(context,parsed.data);
   const hasFilters = Boolean(data.query.search || data.query.decision !== "ALL" || data.query.priority !== "ALL" || data.query.order !== "NEWEST");
   const hasAdvancedFilters = data.query.priority !== "ALL" || data.query.order !== "NEWEST";
