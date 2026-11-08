@@ -47,7 +47,7 @@ export function TpoNoticeUndoToast({id,version,createdAt,recipientCount=null}:{
     if(busy||Date.now()-createdMs>=30000)return;
     setBusy(true);setError("");
     try{
-      const response=await fetch(event.currentTarget.action,{method:"POST",credentials:"same-origin",
+      const response=await fetch("/api/placements/tpo/announcements/"+encodeURIComponent(id)+"/lifecycle",{method:"POST",credentials:"same-origin",
        headers:{"Accept":"application/json"},body:new FormData(event.currentTarget)});
       if(!response.ok)throw new Error(response.status===409?"Undo window ended or announcement changed.":response.status===403?
        "You no longer have permission to undo this announcement.":"Could not undo. Try again within 30 seconds.");
