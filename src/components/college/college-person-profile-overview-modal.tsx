@@ -5,6 +5,7 @@ import {Alert} from "@/components/ui/alert";
 import {Skeleton} from "@/components/ui/skeleton";
 import {useRef,useState} from "react";
 import { Heading } from "@/components/ui/heading";
+import {friendlyApiError} from "@/lib/friendly-error";
 type Overview={person:{name:string;kind:"FACULTY"|"LEARNER";gender:string;bio:string;
  academicTitle:string|null;employmentType:string|null;rollNumber:string|null};
  education:{title:string;detail:string;year:string;extra:string}[];
@@ -26,7 +27,9 @@ export function CollegePersonProfileOverviewModal({membershipId,name,kind}:{
    const response=await fetch("/api/college/people/"+encodeURIComponent(membershipId)+
     "/profile-overview?kind="+kind,{cache:"no-store"});
    const payload=await response.json().catch(()=>null);
-   if(!response.ok||!payload?.person)throw Error(payload?.error??"Profile unavailable");
+   if(!response.ok||!payload?.person)throw Error(friendlyApiError({
+    status:response.status,code:typeof payload?.error==="string"?payload.error:null,
+   }));
    if(request===requestId.current)setData(payload as Overview);
   }catch(e){if(request===requestId.current)setError(e instanceof Error?e.message:"Could not load profile");}
   finally{if(request===requestId.current)setLoading(false);}
