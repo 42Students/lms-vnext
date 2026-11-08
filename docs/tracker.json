@@ -17973,8 +17973,27 @@
           "PAGE-0133"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
+        "evidence": [
+          {
+            "type": "PARTIAL_ROUTE_RECOVERY_20261108",
+            "sourceCommits": [
+              "ad36fd1ae265a02af029f14af5fa0ab16dc27713",
+              "3d0415f82dc140957ea4efc12b234a9ed54d67c8",
+              "2a23544f3dfd268486391624e4e174d450793d4d",
+              "48803588375bad2f85800a90d8f5ff796145269d",
+              "32ce7fd6a015b393b6401781cd6a1f2861abc53f",
+              "09cc47e6c105ca4eca1178f9735681681e4f5f62"
+            ],
+            "evidenceDocument": "docs/parity/pages/college/UX-G030-G040-route-recovery.md",
+            "firstRun": "https://github.com/42Students/lms-vnext/actions/runs/42475795831",
+            "firstRunResult": "FAILED in browser: desktop-height assertion and redirect timing; lint, typecheck, unit and PostgreSQL setup passed",
+            "latestBrowserRun": "https://github.com/42Students/lms-vnext/actions/runs/42476982831",
+            "latestBrowserResult": "PENDING at recording",
+            "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
+            "done": false
+          }
+        ],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence."
       },
       {
         "id": "UX-G031",
@@ -18023,8 +18042,27 @@
         "newRouteOnly": [
           "/college/content-order"
         ],
-        "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
+        "evidence": [
+          {
+            "type": "PARTIAL_ROUTE_RECOVERY_20261108",
+            "sourceCommits": [
+              "ad36fd1ae265a02af029f14af5fa0ab16dc27713",
+              "3d0415f82dc140957ea4efc12b234a9ed54d67c8",
+              "2a23544f3dfd268486391624e4e174d450793d4d",
+              "48803588375bad2f85800a90d8f5ff796145269d",
+              "32ce7fd6a015b393b6401781cd6a1f2861abc53f",
+              "09cc47e6c105ca4eca1178f9735681681e4f5f62"
+            ],
+            "evidenceDocument": "docs/parity/pages/college/UX-G030-G040-route-recovery.md",
+            "firstRun": "https://github.com/42Students/lms-vnext/actions/runs/42475795831",
+            "firstRunResult": "FAILED in browser: desktop-height assertion and redirect timing; lint, typecheck, unit and PostgreSQL setup passed",
+            "latestBrowserRun": "https://github.com/42Students/lms-vnext/actions/runs/42476982831",
+            "latestBrowserResult": "PENDING at recording",
+            "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
+            "done": false
+          }
+        ],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence."
       },
       {
         "id": "UX-G032",
@@ -18075,8 +18113,27 @@
         "newRouteOnly": [
           "/college/electives/[slotId]"
         ],
-        "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
+        "evidence": [
+          {
+            "type": "PARTIAL_ROUTE_RECOVERY_20261108",
+            "sourceCommits": [
+              "ad36fd1ae265a02af029f14af5fa0ab16dc27713",
+              "3d0415f82dc140957ea4efc12b234a9ed54d67c8",
+              "2a23544f3dfd268486391624e4e174d450793d4d",
+              "48803588375bad2f85800a90d8f5ff796145269d",
+              "32ce7fd6a015b393b6401781cd6a1f2861abc53f",
+              "09cc47e6c105ca4eca1178f9735681681e4f5f62"
+            ],
+            "evidenceDocument": "docs/parity/pages/college/UX-G030-G040-route-recovery.md",
+            "firstRun": "https://github.com/42Students/lms-vnext/actions/runs/42475795831",
+            "firstRunResult": "FAILED in browser: desktop-height assertion and redirect timing; lint, typecheck, unit and PostgreSQL setup passed",
+            "latestBrowserRun": "https://github.com/42Students/lms-vnext/actions/runs/42476982831",
+            "latestBrowserResult": "PENDING at recording",
+            "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
+            "done": false
+          }
+        ],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence."
       },
       {
         "id": "UX-G033",
@@ -18129,8 +18186,27 @@
           "PAGE-0149"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
+        "evidence": [
+          {
+            "type": "PARTIAL_ROUTE_RECOVERY_20261108",
+            "sourceCommits": [
+              "ad36fd1ae265a02af029f14af5fa0ab16dc27713",
+              "3d0415f82dc140957ea4efc12b234a9ed54d67c8",
+              "2a23544f3dfd268486391624e4e174d450793d4d",
+              "48803588375bad2f85800a90d8f5ff796145269d",
+              "32ce7fd6a015b393b6401781cd6a1f2861abc53f",
+              "09cc47e6c105ca4eca1178f9735681681e4f5f62"
+            ],
+            "evidenceDocument": "docs/parity/pages/college/UX-G030-G040-route-recovery.md",
+            "firstRun": "https://github.com/42Students/lms-vnext/actions/runs/42475795831",
+            "firstRunResult": "FAILED in browser: desktop-height assertion and redirect timing; lint, typecheck, unit and PostgreSQL setup passed",
+            "latestBrowserRun": "https://github.com/42Students/lms-vnext/actions/runs/42476982831",
+            "latestBrowserResult": "PENDING at recording",
+            "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
+            "done": false
+          }
+        ],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence."
       },
       {
         "id": "UX-G034",
@@ -18183,8 +18259,27 @@
           "PAGE-0156"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
+        "evidence": [
+          {
+            "type": "PARTIAL_ROUTE_RECOVERY_20261108",
+            "sourceCommits": [
+              "ad36fd1ae265a02af029f14af5fa0ab16dc27713",
+              "3d0415f82dc140957ea4efc12b234a9ed54d67c8",
+              "2a23544f3dfd268486391624e4e174d450793d4d",
+              "48803588375bad2f85800a90d8f5ff796145269d",
+              "32ce7fd6a015b393b6401781cd6a1f2861abc53f",
+              "09cc47e6c105ca4eca1178f9735681681e4f5f62"
+            ],
+            "evidenceDocument": "docs/parity/pages/college/UX-G030-G040-route-recovery.md",
+            "firstRun": "https://github.com/42Students/lms-vnext/actions/runs/42475795831",
+            "firstRunResult": "FAILED in browser: desktop-height assertion and redirect timing; lint, typecheck, unit and PostgreSQL setup passed",
+            "latestBrowserRun": "https://github.com/42Students/lms-vnext/actions/runs/42476982831",
+            "latestBrowserResult": "PENDING at recording",
+            "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
+            "done": false
+          }
+        ],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence."
       },
       {
         "id": "UX-G035",
@@ -18234,8 +18329,27 @@
           "/college/module-access",
           "/college/otp-lockout"
         ],
-        "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
+        "evidence": [
+          {
+            "type": "PARTIAL_ROUTE_RECOVERY_20261108",
+            "sourceCommits": [
+              "ad36fd1ae265a02af029f14af5fa0ab16dc27713",
+              "3d0415f82dc140957ea4efc12b234a9ed54d67c8",
+              "2a23544f3dfd268486391624e4e174d450793d4d",
+              "48803588375bad2f85800a90d8f5ff796145269d",
+              "32ce7fd6a015b393b6401781cd6a1f2861abc53f",
+              "09cc47e6c105ca4eca1178f9735681681e4f5f62"
+            ],
+            "evidenceDocument": "docs/parity/pages/college/UX-G030-G040-route-recovery.md",
+            "firstRun": "https://github.com/42Students/lms-vnext/actions/runs/42475795831",
+            "firstRunResult": "FAILED in browser: desktop-height assertion and redirect timing; lint, typecheck, unit and PostgreSQL setup passed",
+            "latestBrowserRun": "https://github.com/42Students/lms-vnext/actions/runs/42476982831",
+            "latestBrowserResult": "PENDING at recording",
+            "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
+            "done": false
+          }
+        ],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence."
       },
       {
         "id": "UX-G036",
@@ -18387,8 +18501,27 @@
           "PAGE-0170"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
+        "evidence": [
+          {
+            "type": "PARTIAL_ROUTE_RECOVERY_20261108",
+            "sourceCommits": [
+              "ad36fd1ae265a02af029f14af5fa0ab16dc27713",
+              "3d0415f82dc140957ea4efc12b234a9ed54d67c8",
+              "2a23544f3dfd268486391624e4e174d450793d4d",
+              "48803588375bad2f85800a90d8f5ff796145269d",
+              "32ce7fd6a015b393b6401781cd6a1f2861abc53f",
+              "09cc47e6c105ca4eca1178f9735681681e4f5f62"
+            ],
+            "evidenceDocument": "docs/parity/pages/college/UX-G030-G040-route-recovery.md",
+            "firstRun": "https://github.com/42Students/lms-vnext/actions/runs/42475795831",
+            "firstRunResult": "FAILED in browser: desktop-height assertion and redirect timing; lint, typecheck, unit and PostgreSQL setup passed",
+            "latestBrowserRun": "https://github.com/42Students/lms-vnext/actions/runs/42476982831",
+            "latestBrowserResult": "PENDING at recording",
+            "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
+            "done": false
+          }
+        ],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence."
       },
       {
         "id": "UX-G038",
@@ -18438,8 +18571,27 @@
           "/college/placements/screenings",
           "/college/placements/team"
         ],
-        "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
+        "evidence": [
+          {
+            "type": "PARTIAL_ROUTE_RECOVERY_20261108",
+            "sourceCommits": [
+              "ad36fd1ae265a02af029f14af5fa0ab16dc27713",
+              "3d0415f82dc140957ea4efc12b234a9ed54d67c8",
+              "2a23544f3dfd268486391624e4e174d450793d4d",
+              "48803588375bad2f85800a90d8f5ff796145269d",
+              "32ce7fd6a015b393b6401781cd6a1f2861abc53f",
+              "09cc47e6c105ca4eca1178f9735681681e4f5f62"
+            ],
+            "evidenceDocument": "docs/parity/pages/college/UX-G030-G040-route-recovery.md",
+            "firstRun": "https://github.com/42Students/lms-vnext/actions/runs/42475795831",
+            "firstRunResult": "FAILED in browser: desktop-height assertion and redirect timing; lint, typecheck, unit and PostgreSQL setup passed",
+            "latestBrowserRun": "https://github.com/42Students/lms-vnext/actions/runs/42476982831",
+            "latestBrowserResult": "PENDING at recording",
+            "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
+            "done": false
+          }
+        ],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence."
       },
       {
         "id": "UX-G039",
@@ -18492,8 +18644,27 @@
           "PAGE-0184"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
+        "evidence": [
+          {
+            "type": "PARTIAL_ROUTE_RECOVERY_20261108",
+            "sourceCommits": [
+              "ad36fd1ae265a02af029f14af5fa0ab16dc27713",
+              "3d0415f82dc140957ea4efc12b234a9ed54d67c8",
+              "2a23544f3dfd268486391624e4e174d450793d4d",
+              "48803588375bad2f85800a90d8f5ff796145269d",
+              "32ce7fd6a015b393b6401781cd6a1f2861abc53f",
+              "09cc47e6c105ca4eca1178f9735681681e4f5f62"
+            ],
+            "evidenceDocument": "docs/parity/pages/college/UX-G030-G040-route-recovery.md",
+            "firstRun": "https://github.com/42Students/lms-vnext/actions/runs/42475795831",
+            "firstRunResult": "FAILED in browser: desktop-height assertion and redirect timing; lint, typecheck, unit and PostgreSQL setup passed",
+            "latestBrowserRun": "https://github.com/42Students/lms-vnext/actions/runs/42476982831",
+            "latestBrowserResult": "PENDING at recording",
+            "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
+            "done": false
+          }
+        ],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence."
       },
       {
         "id": "UX-G040",
@@ -18544,8 +18715,27 @@
         "newRouteOnly": [
           "/college/projects/deleted"
         ],
-        "evidence": [],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete."
+        "evidence": [
+          {
+            "type": "PARTIAL_ROUTE_RECOVERY_20261108",
+            "sourceCommits": [
+              "ad36fd1ae265a02af029f14af5fa0ab16dc27713",
+              "3d0415f82dc140957ea4efc12b234a9ed54d67c8",
+              "2a23544f3dfd268486391624e4e174d450793d4d",
+              "48803588375bad2f85800a90d8f5ff796145269d",
+              "32ce7fd6a015b393b6401781cd6a1f2861abc53f",
+              "09cc47e6c105ca4eca1178f9735681681e4f5f62"
+            ],
+            "evidenceDocument": "docs/parity/pages/college/UX-G030-G040-route-recovery.md",
+            "firstRun": "https://github.com/42Students/lms-vnext/actions/runs/42475795831",
+            "firstRunResult": "FAILED in browser: desktop-height assertion and redirect timing; lint, typecheck, unit and PostgreSQL setup passed",
+            "latestBrowserRun": "https://github.com/42Students/lms-vnext/actions/runs/42476982831",
+            "latestBrowserResult": "PENDING at recording",
+            "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
+            "done": false
+          }
+        ],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence."
       },
       {
         "id": "UX-G041",
