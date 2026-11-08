@@ -38,6 +38,19 @@ describe("UX-G161 finding editor recovery contract",()=>{
   expect(launcher).not.toContain('window.location.pathname+window.location.search');
   expect(launcher).toContain('setContext("Page: "+page');
  });
+ it("locks engineering saves and retests on stale-version conflict, not just status changes",()=>{
+  const panel=source("tracker-workflow-panel.tsx");
+  for(const section of [
+   panel.slice(panel.indexOf("function save()"),panel.indexOf("function retest(")),
+   panel.slice(panel.indexOf("function retest("),panel.indexOf("if (!canManage)")),
+  ]){
+   expect(section).toContain('reason instanceof FriendlyFetchError&&reason.status===409');
+   expect(section).toContain('setNeedsRefresh(true);');
+   expect(section).toContain('router.refresh();');
+  }
+  expect(panel).toContain('if (pending || needsRefresh || mutationLock.current) return false');
+  expect(panel).toContain('expectedVersion:issue.version');
+ });
  it("keeps server version checking and mutation confirmation intact",()=>{
   const actions=source("independent-finding-actions.tsx");
   expect(actions).toContain('expectedVersion:version');
