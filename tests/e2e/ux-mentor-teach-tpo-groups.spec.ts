@@ -23,7 +23,7 @@ for (const size of sizes) {
       await authenticateGracefulRole(context, "mentor");
       await page.setViewportSize(size);
       await page.goto("/mentor/task-reviews?search=UX_NO_MATCH_TEST");
-      await expect(page.getByRole("heading", { name: "Task reviews" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Task reviews", level: 1, exact: true })).toBeVisible();
       const taskFilter = page.getByRole("search", { name: "mentor task reviews filters" });
       await expect(taskFilter).toBeVisible();
       await expect(taskFilter.getByRole("button", { name: "Apply filters" })).toBeVisible();
@@ -51,7 +51,7 @@ for (const size of sizes) {
       await page.goto("/teach/courses");
       await expect(page.getByRole("heading", { name: "My Teaching Courses" })).toBeVisible();
       await expect(page.getByText("Find the courses and class sections you teach.")).toBeVisible();
-      const link = page.locator('a[href^="/teacher/courses/"]').first();
+      // Desktop and mobile render separate responsive link copies; assert the visible one.\n      const link = page.locator('a[href^="/teacher/courses/"]:visible').first();
       await expect(link).toBeVisible();
       const destination = await link.getAttribute("href");
       const deliveryId = destination?.match(/\/teacher\/courses\/([0-9a-f-]{36})(?:\/|$)/i)?.[1];
@@ -97,6 +97,6 @@ test("UX-G074 negative: learner cannot view mentor queue", async ({page,context}
   await authenticateGracefulRole(context, "learner");
   await page.goto("/mentor/task-reviews");
   await expect(page).not.toHaveURL(/\/mentor\/task-reviews(?:\?|$)/);
-  await expect(page.getByRole("heading", {name:"Task reviews"})).toHaveCount(0);
+  await expect(page.getByRole("heading", {name:"Task reviews", level:1, exact:true})).toHaveCount(0);
 });
 });
