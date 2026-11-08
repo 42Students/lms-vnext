@@ -140,8 +140,14 @@ test.describe("UX-G132 — persisted policy, review/cancel/reset and tenant deni
     }).getByRole("button",{name:"Confirm schedule"}).click();
     const response=await responsePromise;
     expect(response.status(),"A schedule must be persisted in the disposable DB").toBe(200);
-    const saved=await response.json() as {result?:{id:string}};
-    expect(saved.result?.id).toMatch(/^[a-f0-9-]{36}$/i);
+    // The editor refreshes its route when the POST succeeds, which can abort
+    // Playwright reading that response body after the 200 status. Verify the
+    // persisted session through a freshly rendered server-backed option instead.
+    await expect(schedule.getByText("Session scheduled.")).toBeVisible();
+    await schedule.getByLabel("Action").selectOption("RESCHEDULE");
+    const persistedOption=schedule.getByRole("option",{name:"UX-G132 one-time schedule acceptance"});
+    await expect(persistedOption).toHaveCount(1);
+    expect(await persistedOption.getAttribute("value")).toMatch(/^[a-f0-9-]{36}$/i);
     await page.screenshot({path:info.outputPath("g132-faculty-schedule-desktop.png"),fullPage:true});
 
     const replay=await page.evaluate(async({deliveryId,startsAt,endsAt})=>{
