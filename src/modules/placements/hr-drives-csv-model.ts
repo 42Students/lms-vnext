@@ -1,8 +1,8 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 import type {RecruiterDriveListItem} from "./recruiter-drive-list-model";
 export const HR_DRIVE_CSV_CAP=200;
 function cell(value:string){
- const safe=/^\s*[=+\-@]/u.test(value)||/^[\t\r\n]/u.test(value)?"'"+value:value;
- return '"'+safe.replaceAll('"','""')+'"';
+ return spreadsheetCsvCell(value);
 }
 export function buildHrDrivesCsv(rows:readonly RecruiterDriveListItem[],hasMore:boolean){
  const output=[["Drive ID","Job title","Lifecycle","Employment","Work mode","Deadline (IST)"].map(cell).join(",")];
