@@ -96,8 +96,9 @@ test.describe("UX-G132 — persisted policy, review/cancel/reset and tenant deni
     await authenticateGracefulRole(context, "faculty");
     await page.setViewportSize({width:1280,height:800});
     await page.goto("/teacher/courses");
-    await page.getByRole("link",{name:/E2E Browser Course/}).first().click();
-    const deliveryId=new URL(page.url()).pathname.split("/")[3]!;
+    const href=await page.getByRole("link",{name:/E2E Browser Course/}).first().getAttribute("href");
+    expect(href).toMatch(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i);
+    const deliveryId=href!.split("/")[3]!;
     await page.goto("/teacher/courses/"+deliveryId+"/attendanceDetail?schedule=1");
     const schedule=page.getByRole("region",{name:"Faculty attendance session scheduling"});
     await expect(schedule).toBeVisible();
