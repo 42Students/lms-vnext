@@ -13,7 +13,7 @@ import {studentCourseCompletion} from "@/modules/courses/super-admin-student-pro
 import {placementReportCsv} from "@/modules/placements/report-model";
 export const runtime="nodejs";
 export const GET = route(
-  { auth: "user", permission: "service-enforced" },
+  { auth: "user", permission: "admin-scope.select" },
   async ({ request, context: __actor }) => {
     const context = __actor!;
     requirePermission(context,"admin-scope.select");

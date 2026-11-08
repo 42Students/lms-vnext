@@ -172,8 +172,7 @@
    "service-enforced": 2
   },
   "src/app/api/admin/course-progress/students/export/route.ts": {
-   "direct-db-in-route": 1,
-   "service-enforced": 1
+   "direct-db-in-route": 1
   },
   "src/app/api/admin/courses/bulk-status/route.ts": {
    "service-enforced": 1
@@ -850,8 +849,7 @@
    "service-enforced": 2
   },
   "src/app/api/dev/e2e/manifest/route.ts": {
-   "direct-db-in-route": 1,
-   "service-enforced": 1
+   "direct-db-in-route": 1
   },
   "src/app/api/e2e/seed/route.ts": {
    "service-enforced": 1
@@ -2432,9 +2430,6 @@
    "direct-db-in-route": 1,
    "service-enforced": 2
   },
-  "src/app/api/tracker/live-logs/export/route.ts": {
-   "service-enforced": 1
-  },
   "src/app/api/tracker/live-logs/route.ts": {
    "service-enforced": 2
   },
@@ -2493,9 +2488,6 @@
    "service-enforced": 1
   },
   "src/app/api/v2/announcements/search/route.ts": {
-   "service-enforced": 1
-  },
-  "src/app/api/v2/announcements/stats/route.ts": {
    "service-enforced": 1
   },
   "src/app/api/v2/colleges/[[...path]]/route.ts": {

@@ -4,7 +4,7 @@ import {readFileSync} from "node:fs";
 const state=vi.hoisted(()=>({context:vi.fn(),reader:vi.fn(),permission:vi.fn(),db:vi.fn(),recent:vi.fn()}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:state.context}));
 vi.mock("@/auth/recent-device-auth",()=>({requireRecentDeviceAuthentication:state.recent}));
-vi.mock("@/modules/permissions/policy",()=>({requirePermission:state.permission}));
+vi.mock("@/modules/permissions/policy",async importOriginal=>({...(await importOriginal<typeof import("@/modules/permissions/policy")>()),requirePermission:state.permission,requireActorPermission:state.permission}));
 vi.mock("@/db/client",()=>({getDb:state.db}));
 vi.mock("@/modules/courses/super-admin-student-course-progress",()=>({
  getSuperAdminStudentCourseProgress:state.reader,
