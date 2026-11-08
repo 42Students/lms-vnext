@@ -44,3 +44,7 @@
 5. Record exact executed test and browser proof, regression/security review and commit SHA inside the account parity contract, then use the canonical group transition to mark each group DONE separately.
 
 Do not count this file, the source-readback assertions, the existing engineering task totals or a test-only commit as evidence that the ten groups are closed.
+
+## Pinned source-contract readback
+
+Pinned source readback at `c566aa77705bdb6838ed6627a5107b0e9f1bb78c`: **56/56** error boundaries across the ten groups passed connector-executed readback assertions (16 + 17 + 12 + 11). The assertions checked Retry presence, in-shell rendering or a return link, and absence of direct `error.message`, `error.stack` or `JSON.stringify(error)` exposure. This is source-only verification; the committed Node test, TypeScript, runtime/browser flows and authorization-negative cases still require execution and review.
