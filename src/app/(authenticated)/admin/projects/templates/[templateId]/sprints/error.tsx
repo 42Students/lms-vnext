@@ -8,5 +8,5 @@ export default function RouteError({ error, reset }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return <div className="min-w-0 space-y-4"><PageHeader title="Template sprints" /><GracefulErrorBoundary error={error} reset={reset} /></div>;
+  return <div className="min-w-0 space-y-4"><PageHeader title="Template sprints" /><GracefulErrorBoundary insideShell showHeader={false} homeHref="/admin/projects/templates" error={error} reset={reset} /></div>;
 }
