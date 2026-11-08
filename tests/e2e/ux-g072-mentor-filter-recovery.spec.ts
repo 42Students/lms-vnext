@@ -56,11 +56,14 @@ test.describe("UX-G072 Mentor project-local invalid filter recovery",()=>{
     await authenticateGracefulRole(context,"learner");
     for(const route of ["review-overview","risk-readiness","team-history",
       "team-meetings","timeline"]){
-      const response=await page.request.get(
-        "/mentor/projects/"+id+"/"+route+"?page=invalid",{maxRedirects:0});
-      expect([302,303,307,308,401,403,404],route)
-        .toContain(response.status());
-      expect(await response.text()).not.toContain("E2E Mentor Acceptance Project");
+      // The Next.js App Router can stream a 200 shell followed by a
+      // forbidden redirect. Test the actual navigation and rendered privacy
+      // boundary, never status-code presence alone.
+      await page.goto("/mentor/projects/"+id+"/"+route+"?page=invalid");
+      await expect(page,route+" must redirect an unauthorized Learner")
+        .not.toHaveURL(new RegExp("/mentor/projects/"+id+"/"));
+      await expect(page.getByText("E2E Mentor Acceptance Project")).toHaveCount(0);
+      await expect(page.getByRole("link",{name:"Clear invalid filters"})).toHaveCount(0);
     }
   });
 });
