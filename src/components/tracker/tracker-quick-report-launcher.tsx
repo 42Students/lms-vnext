@@ -8,7 +8,7 @@ export function TrackerQuickReportLauncher(){
  const [open,setOpen]=useState(false),[context,setContext]=useState("");
  const [formReady,setFormReady]=useState(false);
  function show(){
-  const page=window.location.pathname+window.location.search;
+  const page=window.location.pathname+(window.location.search?" [query parameters omitted for privacy]":"");
   setContext("Page: "+page+"\nBrowser: "+navigator.userAgent+
    "\nViewport: "+window.innerWidth+"×"+window.innerHeight);
   setFormReady(true);setOpen(true);
