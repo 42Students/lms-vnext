@@ -38,3 +38,9 @@ export function mentorReviewCompletenessHref(query:{projectId:string;page:number
   return "/mentor/projects/"+encodeURIComponent(query.projectId)+
     "/review-completeness"+(suffix?"?"+suffix:"");
 }
+
+/** Navigate from a persisted version row to its read-only, authorized details. */
+export function mentorReviewVersionHref(projectId:string,submissionId:string):string {
+  return "/mentor/projects/"+encodeURIComponent(projectId)+
+    "/deliveries/"+encodeURIComponent(submissionId)+"/review";
+}
