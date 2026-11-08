@@ -18978,11 +18978,11 @@
         "type": "JOURNEY",
         "area": "e2e",
         "title": "E2e · Chat17 Ui Kit → Superadmin Login (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-e2e-dashboard-tracker-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/app/e2e/superadmin-login/error.tsx",
           "src/app/e2e/superadmin-login/loading.tsx",
@@ -19009,12 +19009,40 @@
             "detail": "G049 2/2 Chromium; lint/TypeScript and 32/32 unit tests pass. Shared workflow RED only on G048/G122 browser test."
           },
           {
-            "type": "acceptance-gap",
-            "recordedAt": "2026-11-08",
-            "reason": "Existing scoped browser run 42392546252 failed anonymous tracker navigation with ERR_ABORTED; successful browser evidence is missing."
+            "commitSha": "ccddb5e191b389387da821503fd87f3c84a4f2ce",
+            "parityDoc": "docs/parity/pages/shared/UX-G049-retired-e2e-login.md",
+            "tests": [
+              {
+                "command": "Scoped ESLint and full TypeScript",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392546252"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g049-g048-g122-source.test.ts tests/unit/HR-BREAK-tracker-pages-01.test.ts tests/unit/HR-BREAK-chat15-tracker-mine-page-98.test.tsx tests/unit/chat15-hr-tracker-page-render-52.test.tsx tests/unit/UX-chat16-public-auth-legacy-bookmarks-03.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392546252 — 32/32 passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g049-g048-g122-public-guard.spec.ts --project=chromium (G049 cases only)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392546252 — G049 desktop and mobile passed; G048/G122 tests failed"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392546252 — UX-G049 desktop Chromium test passed"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392546252 — UX-G049 mobile Chromium test passed"
+              }
+            ],
+            "regressionReview": "G049-specific non-escalation regression 2/2 real Chromium cases and source unit checks pass at exact SHA. Parent workflow is RED due separate G048/G122 anonymous tracker-navigation abort, so no shared workflow green claim.",
+            "securityReview": "Query phone never echoed; no session minted. Noindex, referrer no-referrer, secure signin path. E2E dev-only gate retains authenticated superadmin context. No production authorization or tenant code modified."
           }
         ],
-        "notes": "G049 independently verified on exact code SHA ccddb5e191b389387da821503fd87f3c84a4f2ce in Actions 42392546252: ESLint and full TS pass, five Vitest files/32 tests pass, and BOTH G049 Chromium browser cases pass (1280x800 desktop and 390x844 mobile); no session creation/phone disclosure, noindex and safe signin navigation. IMPORTANT overall shared workflow conclusion was failure due unrelated G048/G122 browser navigation abort; those groups remain DOING and were not falsely marked green. This is only G049 scoped UX closure, not global CI/release/security signoff.",
+        "notes": "DONE scoped G049 (2026-11-08), pinned source SHA ccddb5e191b389387da821503fd87f3c84a4f2ce, run 42392546252. G049-only desktop/mobile Chromium 2/2 passed; scoped lint/TypeScript and 32/32 Vitest. Mixed shared workflow FAILURE belongs to G048/G122 tracker navigation abort; never treat as global CI success. Acceptance: docs/parity/pages/shared/UX-G049-retired-e2e-login.md.",
         "previousCompletedAt": "2026-11-07"
       },
       {
