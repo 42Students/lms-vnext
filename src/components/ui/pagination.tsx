@@ -68,8 +68,10 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
   const hasTotal = typeof totalItems === "number" && Number.isSafeInteger(totalItems) && totalItems >= 0;
   const safeTotal = hasTotal ? totalItems! : 0;
   const safeSize = pageSize && Number.isSafeInteger(pageSize) && pageSize > 0 ? pageSize : 1;
-  const firstItem = safeTotal === 0 ? 0 : Math.min(safeTotal, (current - 1) * safeSize + 1);
-  const lastItem = Math.min(safeTotal, current * safeSize);
+  // A stale filtered deep link can point beyond the last row.
+  const firstItem = safeTotal === 0 || (current - 1) * safeSize >= safeTotal
+    ? 0 : (current - 1) * safeSize + 1;
+  const lastItem = firstItem === 0 ? 0 : Math.min(safeTotal, current * safeSize);
   const choices = [...new Set((pageSizeOptions ?? []).filter(value => Number.isSafeInteger(value) && value > 0))];
   const sizeLinks = choices.map(size=>({size,href: hrefForPageSize ? safePageHref(hrefForPageSize,size) : null}));
   const buttonClass = "inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[14px] font-semibold leading-[44px] md:leading-5 text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-ring motion-reduce:transition-none";

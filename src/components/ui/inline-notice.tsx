@@ -30,7 +30,8 @@ export function InlineNotice({ tone, message, onDismiss, successDismissMs = 5_00
       document.removeEventListener("visibilitychange", scheduleWhenVisible);
     };
   }, [tone, message, onDismiss, successDismissMs]);
-  return <div data-slot="inline-notice" data-tone={tone} role={tone === "error" ? "alert" : "status"} {...(role ? { role } : {})} aria-live={tone === "error" ? "assertive" : "polite"}
+  const announcedRole = role ?? (tone === "error" ? "alert" : "status");
+  return <div data-slot="inline-notice" data-tone={tone} role={announcedRole} aria-live={announcedRole === "alert" ? "assertive" : "polite"}
     className={cx("flex min-w-0 items-start gap-3 rounded-[8px] border px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5", toneClasses[tone])}>
     <span className="min-w-0 flex-1 break-words">{message}</span>
     {onDismiss ? <Button type="button" variant="ghost" size="sm" onClick={onDismiss} aria-label="Dismiss notice"

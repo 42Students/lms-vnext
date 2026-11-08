@@ -7,6 +7,8 @@ export type SkeletonProps = {
   height?: number;
   width?: number;
   label?: string;
+  /** Hide nested placeholder announcements when a parent already owns loading status. */
+  decorative?: boolean;
   className?: string;
 };
 
@@ -18,11 +20,11 @@ const shape = {
   form: "h-16 w-full rounded-[var(--lms-radius-control)]",
 } as const;
 
-export function Skeleton({ variant = "line", count = 1, label = "Loading…", className, height, width }: SkeletonProps) {
+export function Skeleton({ variant = "line", count = 1, label = "Loading…", decorative = false, className, height, width }: SkeletonProps) {
   const safeCount = Number.isFinite(count) ? Math.max(1, Math.min(20, Math.trunc(count))) : 1;
   return (
-    <div role="status" aria-live="polite" data-slot="skeleton" className={cx("min-w-0 space-y-[var(--lms-space-3)]", className)}>
-      <span className="sr-only">{label}</span>
+    <div {...(decorative ? { "aria-hidden": true } : { role: "status" as const, "aria-live": "polite" as const })} data-slot="skeleton" className={cx("min-w-0 space-y-[var(--lms-space-3)]", className)}>
+      {decorative ? null : <span className="sr-only">{label}</span>}
       <div aria-hidden="true" className="space-y-[var(--lms-space-3)]">
         {Array.from({ length: safeCount }, (_, index) => (
           <div key={index} style={{ height, width, borderRadius: variant === "card" || variant === "kpi" ? "var(--lms-radius-card)" : undefined }} className={cx("lms-skeleton-shimmer rounded-[var(--lms-skeleton-radius)] bg-[var(--lms-neutral-100)] motion-reduce:animate-none", shape[variant])} />

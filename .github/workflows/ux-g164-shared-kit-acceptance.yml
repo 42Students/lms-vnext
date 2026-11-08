@@ -1,0 +1,58 @@
+name: UX-G164 shared UI primitives acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/components/ui/skeleton.tsx
+      - src/components/ui/graceful-page-loading.tsx
+      - src/components/ui/page-loading.tsx
+      - src/components/ui/inline-notice.tsx
+      - src/components/ui/pagination.tsx
+      - src/app/e2e/ux-shared-kit/**
+      - tests/unit/ux-g164-shared-kit.test.tsx
+      - tests/e2e/ux-g164-shared-kit.spec.ts
+      - .github/workflows/ux-g164-shared-kit-acceptance.yml
+permissions:
+  contents: read
+concurrency:
+  group: ux-g164-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      E2E_AUTH_ENABLED: "true"
+      APP_ENV: development
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Lint group sources
+        run: npx eslint src/components/ui/skeleton.tsx src/components/ui/graceful-page-loading.tsx src/components/ui/page-loading.tsx src/components/ui/inline-notice.tsx src/components/ui/pagination.tsx src/app/e2e/ux-shared-kit/page.tsx src/app/e2e/ux-shared-kit/ux-shared-kit-harness.tsx tests/unit/ux-g164-shared-kit.test.tsx tests/e2e/ux-g164-shared-kit.spec.ts
+      - name: Unit regression
+        run: npx vitest run tests/unit/ux-g164-shared-kit.test.tsx tests/ux-playbook-primitives.test.tsx --reporter=dot
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop and mobile UX browser acceptance
+        run: npx playwright test tests/e2e/ux-g164-shared-kit.spec.ts --project=chromium --reporter=line
+      - name: TypeScript
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: Preserve screenshots and trace
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g164-desktop-mobile
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
