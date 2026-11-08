@@ -17927,9 +17927,9 @@
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Batch Promotion → Classes / Recurring Preview (part 3)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
+        "status": "PICKED",
+        "pickedBy": "chat-ux-college-route-batch-nov08",
+        "pickedAt": "2026-11-08",
         "startedAt": null,
         "completedAt": null,
         "sourceFiles": [
@@ -17973,16 +17973,17 @@
           "PAGE-0133"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
       },
       {
         "id": "UX-G031",
         "type": "JOURNEY",
         "area": "college",
         "title": "College · College Profile → Course Progress (part 4)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
+        "status": "PICKED",
+        "pickedBy": "chat-ux-college-route-batch-nov08",
+        "pickedAt": "2026-11-08",
         "startedAt": null,
         "completedAt": null,
         "sourceFiles": [
@@ -18022,16 +18023,17 @@
         "newRouteOnly": [
           "/college/content-order"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
       },
       {
         "id": "UX-G032",
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Courses → Electives / SlotId (part 5)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
+        "status": "PICKED",
+        "pickedBy": "chat-ux-college-route-batch-nov08",
+        "pickedAt": "2026-11-08",
         "startedAt": null,
         "completedAt": null,
         "sourceFiles": [
@@ -18073,16 +18075,17 @@
         "newRouteOnly": [
           "/college/electives/[slotId]"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
       },
       {
         "id": "UX-G033",
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Electives / SlotId → Faculty / Import (part 6)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
+        "status": "PICKED",
+        "pickedBy": "chat-ux-college-route-batch-nov08",
+        "pickedAt": "2026-11-08",
         "startedAt": null,
         "completedAt": null,
         "sourceFiles": [
@@ -18126,16 +18129,17 @@
           "PAGE-0149"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
       },
       {
         "id": "UX-G034",
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Groups → Lecture Halls (part 7)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
+        "status": "PICKED",
+        "pickedBy": "chat-ux-college-route-batch-nov08",
+        "pickedAt": "2026-11-08",
         "startedAt": null,
         "completedAt": null,
         "sourceFiles": [
@@ -18179,16 +18183,17 @@
           "PAGE-0156"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
       },
       {
         "id": "UX-G035",
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Lecture Halls / HallId → People / Manage (part 8)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
+        "status": "PICKED",
+        "pickedBy": "chat-ux-college-route-batch-nov08",
+        "pickedAt": "2026-11-08",
         "startedAt": null,
         "completedAt": null,
         "sourceFiles": [
@@ -18229,7 +18234,8 @@
           "/college/module-access",
           "/college/otp-lockout"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
       },
       {
         "id": "UX-G036",
@@ -18335,9 +18341,9 @@
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Placements / Jobs → Placements / Jobs (part 10)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
+        "status": "PICKED",
+        "pickedBy": "chat-ux-college-route-batch-nov08",
+        "pickedAt": "2026-11-08",
         "startedAt": null,
         "completedAt": null,
         "sourceFiles": [
@@ -18381,16 +18387,17 @@
           "PAGE-0170"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
       },
       {
         "id": "UX-G038",
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Placements / New → Profile (part 11)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
+        "status": "PICKED",
+        "pickedBy": "chat-ux-college-route-batch-nov08",
+        "pickedAt": "2026-11-08",
         "startedAt": null,
         "completedAt": null,
         "sourceFiles": [
@@ -18431,16 +18438,17 @@
           "/college/placements/screenings",
           "/college/placements/team"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
       },
       {
         "id": "UX-G039",
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Programs → Projects / At Risk (part 12)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
+        "status": "PICKED",
+        "pickedBy": "chat-ux-college-route-batch-nov08",
+        "pickedAt": "2026-11-08",
         "startedAt": null,
         "completedAt": null,
         "sourceFiles": [
@@ -18484,16 +18492,17 @@
           "PAGE-0184"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
       },
       {
         "id": "UX-G040",
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Projects / Audit → Projects / Templates (part 13)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
+        "status": "PICKED",
+        "pickedBy": "chat-ux-college-route-batch-nov08",
+        "pickedAt": "2026-11-08",
         "startedAt": null,
         "completedAt": null,
         "sourceFiles": [
@@ -18535,7 +18544,8 @@
         "newRouteOnly": [
           "/college/projects/deleted"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence."
       },
       {
         "id": "UX-G041",
