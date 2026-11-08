@@ -52,8 +52,8 @@ test.describe("UX-G072 Mentor project-local invalid filter recovery",()=>{
       const taskFeedbackLink=page.getByRole("link",{name:/Review recorded task feedback/}).first();
       await expect(taskFeedbackLink).toBeVisible();
       const feedbackHref=await taskFeedbackLink.getAttribute("href");
-      expect(feedbackHref).toMatch(new RegExp(
-        "^"+base.replace(/[.*+?^$\{\}()|[\]\\]/g,"\\      await page.screenshot({path:info.outputPath("ux-g072-"+viewport.name+".png"),")+"/tasks/[0-9a-f-]{36}/feedback$","i"));
+      expect(feedbackHref?.startsWith(base+"/tasks/")).toBe(true);
+      expect(feedbackHref).toMatch(/\/tasks\/[0-9a-f-]{36}\/feedback$/i);
       await taskFeedbackLink.click();
       await expect(page.getByRole("heading",{level:1,name:"Recorded task review feedback"}))
         .toBeVisible();
