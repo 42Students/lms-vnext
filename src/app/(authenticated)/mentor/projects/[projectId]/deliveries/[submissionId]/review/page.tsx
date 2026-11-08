@@ -1,3 +1,6 @@
+import {redirect,notFound} from "next/navigation";
+import {hasMembershipRole} from "@/modules/identity/context";
+import {ProjectsServiceError} from "@/modules/projects/errors";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {Disclosure} from "@/components/ui/disclosure";
@@ -10,7 +13,17 @@ export default async function MentorDeliveryVersionPage({params}:{
   params:Promise<{projectId:string;submissionId:string}>;
 }){
   const raw=await params;
-  const data=await getMentorDeliveryVersion(await getCurrentRequestContext(),raw);
+  const context=await getCurrentRequestContext();
+  if(!hasMembershipRole(context,"MENTOR"))redirect("/dashboard");
+  let data:Awaited<ReturnType<typeof getMentorDeliveryVersion>>;
+  try{
+    data=await getMentorDeliveryVersion(context,raw);
+  }catch(error){
+    if(error instanceof ProjectsServiceError &&
+      (error.code==="PROJECT_SUBMISSION_NOT_FOUND"||error.code==="PROJECT_ACCESS_DENIED"||
+       error.code==="PROJECT_NOT_FOUND"))notFound();
+    throw error;
+  }
   const v=data.version;
   const attachments=v.attachments.filter((item):item is Record<string,unknown>=>
     Boolean(item)&&typeof item==="object"&&!Array.isArray(item));
