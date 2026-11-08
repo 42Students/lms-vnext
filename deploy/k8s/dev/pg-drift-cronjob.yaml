@@ -1,0 +1,41 @@
+# SEC-07-019 / SEC-26-015: weekly database privilege and row-level-security drift check on dev. Read-only.
+# It compares table owners, RLS flags, policy coverage, runtime grants and role attributes with the reviewed baseline
+# (docs/security/pg-security-baseline.json). A non-zero exit is a failed Job, visible in `kubectl get jobs`.
+# ConfigMaps (create from the repo files before applying):
+#   kubectl -n lms-dev-2026 create configmap pgsec-inv --from-file=inv.mjs=scripts/security/pg-security-inventory.mjs
+#   kubectl -n lms-dev-2026 create configmap pgsec-baseline --from-file=baseline.json=docs/security/pg-security-baseline.json
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vnext-pg-drift-check
+  namespace: lms-dev-2026
+spec:
+  schedule: "17 3 * * 1"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 4
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      ttlSecondsAfterFinished: 1209600
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: check
+              image: asia-south1-docker.pkg.dev/students-384817/lms-vnext/migrator:37ab5486
+              workingDir: /app
+              command: ["sh", "-c", "cp /cfg/inv.mjs scripts/security/pg-security-inventory-run.mjs && node scripts/security/pg-security-inventory-run.mjs --check /base/baseline.json"]
+              envFrom:
+                - secretRef:
+                    name: vnext-db-migrator
+              volumeMounts:
+                - { name: cfg, mountPath: /cfg }
+                - { name: base, mountPath: /base }
+              resources:
+                requests: { cpu: 50m, memory: 128Mi }
+          volumes:
+            - name: cfg
+              configMap: { name: pgsec-inv }
+            - name: base
+              configMap: { name: pgsec-baseline }
