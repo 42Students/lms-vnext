@@ -1,7 +1,8 @@
 "use client";
+import { ButtonLink } from "@/components/ui/button-link";
 import { ErrorState } from "@/components/ui/error-state";
 import { Button } from "@/components/ui/button";
 export default function RouteError({reset}:{error:Error&{digest?:string};reset:()=>void}) {
   return <ErrorState title="Batch students unavailable" description="The batch roster could not be loaded. No empty-roster conclusion is assumed."
-    action={<Button type="button" variant="secondary" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button>}/>;
+    action={<><Button type="button" variant="secondary" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button><ButtonLink href="/college/batches" variant="secondary">All batches</ButtonLink></>}/>;
 }

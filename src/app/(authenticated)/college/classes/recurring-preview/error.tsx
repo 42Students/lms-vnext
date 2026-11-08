@@ -1,4 +1,5 @@
 "use client";
+import { ButtonLink } from "@/components/ui/button-link";
 import { ErrorState } from "@/components/ui/error-state";
 import {Button} from "@/components/ui/button";
 export default function RecurringPreviewError({ reset }: {
@@ -6,5 +7,5 @@ export default function RecurringPreviewError({ reset }: {
 }) {
   return <ErrorState title="Recurring preview unavailable"
     description="The schedule source could not be checked. No zero-conflict result is assumed."
-    action={<Button variant="secondary" type="button" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button>} />;
+    action={<><Button variant="secondary" type="button" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button><ButtonLink href="/college/classes" variant="secondary">Back to classes</ButtonLink></>} />;
 }

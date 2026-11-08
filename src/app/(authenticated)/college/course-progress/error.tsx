@@ -1,4 +1,5 @@
 "use client";
+import { ButtonLink } from "@/components/ui/button-link";
 import {Button} from "@/components/ui/button";
 import {ErrorState} from "@/components/ui/error-state";
 import {useLastCollegeProgressReport} from "@/components/courses/college-progress-last-good";
@@ -22,7 +23,7 @@ export default function CollegeCourseProgressError({error,reset}:{
     </section>:
     <ErrorState title={metadataFailed?"Course-progress filters unavailable":"Course progress unavailable"}
       description={reportMessage}
-      action={<Button type="button" variant="secondary" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button>}/>}
+      action={<><Button type="button" variant="secondary" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button><ButtonLink href="/college" variant="secondary">College home</ButtonLink></>}/>}
    {prior?<section aria-label="Last successful course-progress report">{prior}</section>:null}
  </div>;
 }

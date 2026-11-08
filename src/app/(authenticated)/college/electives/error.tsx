@@ -1,4 +1,5 @@
 "use client";
+import { ButtonLink } from "@/components/ui/button-link";
 
 import { ErrorState } from "@/components/ui/error-state";
 import { Button } from "@/components/ui/button";
@@ -9,5 +10,5 @@ export default function CollegeElectivesError({ reset }: {
 }) {
   return <ErrorState title="Electives unavailable"
     description="Elective records could not be loaded. No empty-result conclusion is assumed."
-    action={<Button type="button" variant="secondary" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button>} />;
+    action={<><Button type="button" variant="secondary" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button><ButtonLink href="/college" variant="secondary">College home</ButtonLink></>} />;
 }
