@@ -18,3 +18,9 @@
 - No authorization, tenant scoping, row caps, grading, hidden records or endpoint privilege changes. Existing Super Admin download requirements remain mandatory; the URL validation is presentation-only, not authorization.
 
 **Closure boundary:** scoped CSV UX/behavior, not global security/release signoff. Completion receipt appended after successful execution.
+
+## Verified scoped closure — 2026-11-08
+
+- **DONE (registered outbound CSV scope).** [UI and export-regression run 42448745272](https://github.com/42Students/lms-vnext/actions/runs/42448745272): exact SHA `d952f236caa7df3a5e3702bbe3000d2d43e85941`, 6 unit suites / 86 tests, TypeScript and lint, 3/3 Chrome cases on a seeded Super Admin page at 1280px/390px and denied learner CSV, screenshots artifact `13604796811`.
+- [Authenticated CSV run 42450162869](https://github.com/42Students/lms-vnext/actions/runs/42450162869): exact SHA `5bfc9df253fd67c23f067b7c3dbb57922c61b7bd`; 9 unit suites / 50 cases, 7/7 Chrome HTTP acceptance. Fresh first-party two-factor Super Admin login, persisted selected college, successful private faculty directory CSV (250-row cap), malformed client paging refusal and role negative.
+- Actual CSV bytes retained as artifact `ux-four-report-export-evidence` ID `13605900252`. Existing permission and step-up protections have not been loosened, and this scoped UX acceptance does not certify overall production release.

@@ -21721,11 +21721,11 @@
         "type": "OUTBOUND",
         "area": "admin-ui",
         "title": "Admin Ui · Outbound copy and exports (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-shared-ui-admin-exports-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/modules/admin-ui/super-admin-batch-roster-export-model.ts",
           "src/modules/admin-ui/super-admin-faculty-assignments-csv-service.ts",
@@ -21741,8 +21741,31 @@
           "MESSAGE-0022"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Source improvements committed: Unicode-safe batch roster CSV, schema-width truncation notices, safe internal export hrefs, private JSON invalid-filter failures; row caps and permissions unchanged. Tests/unit/ux-g168-admin-export-ux.test.ts and existing service regressions, seeded 390/1280px browser checks tests/e2e/ux-shared-admin-exports.spec.ts. Workflow https://github.com/42Students/lms-vnext/actions/runs/42393532019 (SHA abcab15ea231068485b36efb0256e773783011c0) queued; exact-SHA unit/browser proof NOT YET available. Review docs/parity/pages/shared/UX-G168-admin-exports.md. Keep DOING."
+        "evidence": [
+          {
+            "type": "ci",
+            "runId": 42448745272,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42448745272",
+            "conclusion": "success",
+            "commitSha": "d952f236caa7df3a5e3702bbe3000d2d43e85941",
+            "results": "Scoped lint, full TS, six Vitest suites/86 tests including G168 export regressions, 3/3 seeded desktop/mobile Chromium Super Admin role UI and Learner-denied export checks."
+          },
+          {
+            "type": "ci",
+            "runId": 42450162869,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42450162869",
+            "conclusion": "success",
+            "commitSha": "5bfc9df253fd67c23f067b7c3dbb57922c61b7bd",
+            "results": "Scoped lint, full TypeScript, 9 Vitest suites/50 cases, 7/7 Chrome browser HTTP E2E including real OTP two-factor Super Admin auth, persisted college scope, 200 bounded 250-row faculty CSV, invalid paging denied, private headers and formula-safe CSV."
+          },
+          {
+            "type": "browser-http",
+            "runId": 42450162869,
+            "artifactId": 13605900252,
+            "description": "Actual UTF-8 faculty directory export bytes in retained artifact, first-party OTP-verified Super Admin college selected on server, Learner access denied. Shared UI page screenshots from run 42448745272 artifact 13604796811 (390/1280)."
+          }
+        ],
+        "notes": "DONE: G168 five registered Super Admin outbound CSV UX sources. Two exact-SHA success runs: 42448745272 (86 unit, 3 responsive browser role tests/screenshots) and 42450162869 (50 unit, 7 browser incl real OTP-backed scoped Super Admin 200 faculty CSV, invalid page and denied Learner); export artifact 13605900252. Backend step-up and tenant guards unmodified; production release signoff separate."
       },
       {
         "id": "UX-G169",
