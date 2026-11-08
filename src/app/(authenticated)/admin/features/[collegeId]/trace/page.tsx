@@ -7,6 +7,7 @@ import {CopyFindingForClaude} from "@/components/admin/copy-finding-for-claude";
 import {strictTraceRouteParams} from "@/modules/module-access/admin-trace-route-params";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { requirePermission } from "@/modules/permissions/policy";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -61,6 +62,8 @@ export default async function SuperAdminLearnerAccessTracePage({
   }>;
   searchParams: Promise<SearchParams>;
 }) {
+  const context = await getCurrentRequestContext();
+  requirePermission(context,"admin-scope.select");
   const { collegeId } = await params;
 
   if (
@@ -127,9 +130,6 @@ export default async function SuperAdminLearnerAccessTracePage({
       </div>
     );
   }
-
-  const context =
-    await getCurrentRequestContext();
 
   const result =
     await getSuperAdminLearnerAccessTrace(
