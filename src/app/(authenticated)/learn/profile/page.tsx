@@ -213,6 +213,10 @@ async function LearnerProfileContent({
         className="inline-flex min-h-11 items-center text-sm md:min-h-9">
         Who has my data →
       </TextLink>
+      <TextLink href="/learn/profile/gallery"
+        className="inline-flex min-h-11 items-center text-sm md:min-h-9">
+        View my photos →
+      </TextLink>
       </nav>
       <section aria-label="Verification status" className="min-w-0 border-b border-border pb-4">
         <Heading level={2} size="base" className="text-[var(--lms-heading)]">Education and identity verification</Heading>
