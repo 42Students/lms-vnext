@@ -90,6 +90,80 @@ test.describe("UX-G132 — persisted policy, review/cancel/reset and tenant deni
     await page.screenshot({path:info.outputPath("g132-superadmin-policy-mobile.png"),fullPage:true});
   });
 
+
+  test("Faculty can schedule a real class only once; conflicting replay fails", async ({page,context}, info) => {
+    test.setTimeout(120_000);
+    await authenticateGracefulRole(context, "faculty");
+    await page.setViewportSize({width:1280,height:800});
+    await page.goto("/teacher/courses");
+    await page.getByRole("link",{name:/E2E Browser Course/}).first().click();
+    const deliveryId=new URL(page.url()).pathname.split("/")[3]!;
+    await page.goto("/teacher/courses/"+deliveryId+"/attendanceDetail?schedule=1");
+    const schedule=page.getByRole("region",{name:"Faculty attendance session scheduling"});
+    await expect(schedule).toBeVisible();
+
+    // The seeded browser term is July 2026–June 2027. A fixed future day
+    // within that disposable term avoids depending on the runner timezone.
+    const startWall="2027-01-15T14:00";
+    const endWall="2027-01-15T15:00";
+    await schedule.getByRole("textbox",{name:"Session title"}).fill("UX-G132 one-time schedule acceptance");
+    await schedule.getByLabel("Start (IST)").fill(startWall);
+    await schedule.getByLabel("End (IST)").fill(endWall);
+    await schedule.getByRole("button",{name:"Confirm schedule",exact:true}).click();
+    const confirm=page.getByRole("alertdialog",{
+      name:"Confirm schedule this Faculty attendance session?",
+    });
+    await expect(confirm).toBeVisible();
+    // Cancelling must not write a session.
+    await confirm.getByRole("button",{name:"Cancel"}).click();
+    await expect(confirm).toHaveCount(0);
+    await schedule.getByRole("button",{name:"Confirm schedule",exact:true}).click();
+    const responsePromise=page.waitForResponse(r=>
+      r.url().endsWith("/api/courses/faculty/attendance/"+deliveryId+"/schedule")&&
+      r.request().method()==="POST");
+    await page.getByRole("alertdialog",{
+      name:"Confirm schedule this Faculty attendance session?",
+    }).getByRole("button",{name:"Confirm schedule"}).click();
+    const response=await responsePromise;
+    expect(response.status(),"A schedule must be persisted in the disposable DB").toBe(200);
+    const saved=await response.json() as {result?:{id:string}};
+    expect(saved.result?.id).toMatch(/^[a-f0-9-]{36}$/i);
+    await page.screenshot({path:info.outputPath("g132-faculty-schedule-desktop.png"),fullPage:true});
+
+    const replay=await page.evaluate(async({deliveryId,startsAt,endsAt})=>{
+      const response=await fetch("/api/courses/faculty/attendance/"+deliveryId+"/schedule",{
+        method:"POST",credentials:"same-origin",
+        headers:{"content-type":"application/json"},
+        body:JSON.stringify({action:"CREATE",title:"Conflicting duplicate schedule",
+          startsAt,endsAt,description:null,location:null,confirm:true}),
+      });
+      return response.status;
+    },{deliveryId,startsAt:"2027-01-15T08:30:00.000Z",
+      endsAt:"2027-01-15T09:30:00.000Z"});
+    expect(replay,"A second session cannot overlap an existing section booking").toBe(409);
+    await page.setViewportSize({width:390,height:844});
+    await page.goto("/teacher/courses/"+deliveryId+"/attendanceDetail?schedule=1");
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth))
+      .toBeLessThanOrEqual(2);
+    await page.screenshot({path:info.outputPath("g132-faculty-schedule-mobile.png"),fullPage:true});
+  });
+
+  test("Learner cannot create a faculty attendance session by direct API", async ({page,context}) => {
+    await authenticateGracefulRole(context,"learner");
+    await page.goto("/learn/attendance");
+    const status=await page.evaluate(async()=>{
+      const response=await fetch(
+        "/api/courses/faculty/attendance/00000000-0000-4000-8000-000000000001/schedule",{
+          method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
+          body:JSON.stringify({action:"CREATE",title:"Unauthorized",
+            startsAt:"2027-01-15T08:30:00.000Z",
+            endsAt:"2027-01-15T09:30:00.000Z",confirm:true}),
+        });
+      return response.status;
+    });
+    expect([401,403,404],"Learner identity must not create faculty sessions").toContain(status);
+  });
+
   test("College Admin direct API PUT cannot bypass the read-only policy page", async ({page,context}) => {
     await authenticateGracefulRole(context,"college");
     await page.goto("/college/attendance/settings");
