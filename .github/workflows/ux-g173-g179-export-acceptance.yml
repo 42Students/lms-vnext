@@ -85,7 +85,7 @@ jobs:
         run: |
           set -euo pipefail
           npx playwright test tests/e2e/ux-g173-g179-csv.spec.ts --project=chromium --reporter=line,json,html
-          node -e 'const s=require("./ux-g173-g179-browser-results.json").stats;if(s.expected!==2||s.unexpected!==0||s.skipped!==0||s.flaky!==0){console.error("UX-G173/G179 browser gate failed",s);process.exit(1)}'
+          node -e 'const s=require("./ux-g173-g179-browser-results.json").stats;if(s.expected!==6||s.unexpected!==0||s.skipped!==0||s.flaky!==0){console.error("UX-G173/G179 browser gate failed",s);process.exit(1)}'
       - name: Preserve CSV and browser evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
