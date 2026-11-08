@@ -61,7 +61,6 @@ jobs:
         run: |
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           printf '%s\n' "$GITHUB_SHA" > ux-g134-source-sha.txt
-          npm run ux:groups -- --check
       - name: Scoped lint and TypeScript
         run: |
           npx eslint \
@@ -89,6 +88,8 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Desktop/mobile college workflows, validation and denied export
         run: npx playwright test tests/e2e/ux-g134-college-controls.spec.ts --project=chromium --reporter=line
+      - name: Validate canonical UX board completion proofs
+        run: npm run ux:groups -- --check
       - name: Preserve screenshots, traces and exact SHA
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
