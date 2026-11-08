@@ -33,6 +33,12 @@ test.describe("UX-G016: scoped placement drive workspace journey",()=>{
       row.label+" horizontal overflow").toBeLessThanOrEqual(2);
     await page.screenshot({path:info.outputPath("g016-"+row.label.toLowerCase()+"-"+viewport.name+".png"),fullPage:true});
    }
+   // The additional route-only legacy shortlist entry is part of G016's
+   // official coverage denominator and must retain the selected-college gate.
+   await page.goto(base+"/shortlisted");
+   await expect(page).toHaveURL(/\/applications\?shortlisted=true&stage=ASSESSMENT$/);
+   await expect(page.getByRole("heading",{level:1}).first()).toBeVisible();
+
    await page.goto(base);
    const nav=page.getByRole("navigation",{name:"Drive workspace"});
    await expect(nav).toBeVisible();
@@ -49,7 +55,7 @@ test.describe("UX-G016: scoped placement drive workspace journey",()=>{
   test(`Learner cannot see private Admin drive tabs on ${viewport.name}`,async({page,context})=>{
    await authenticateGracefulRole(context,"learner");
    await page.setViewportSize(viewport);
-   for(const href of [base,base+"/applications",base+"/schedule",base+"/settings"]){
+   for(const href of [base,base+"/applications",base+"/schedule",base+"/settings",base+"/shortlisted"]){
     await page.goto(href,{waitUntil:"domcontentloaded"});
     await expect(page.getByRole("navigation",{name:"Drive workspace"})).toHaveCount(0);
     await expect(page.getByText("E2E Prototype Software Engineer")).toHaveCount(0);
