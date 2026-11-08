@@ -339,6 +339,9 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           <Label className={label}>Page
             <Select className={field} aria-label="Page" required value={page} onChange={event => {
+              // A changed report location is a new payload, not a retry of a
+              // prior ambiguous request with its original Idempotency-Key.
+              retryKeyRef.current=null;
               setDraft(current=>({...current,page:event.target.value,screen:"",section:""}));
             }}>
               <option value="" disabled>Search or select page → screen → section</option>
@@ -349,7 +352,10 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           <Label className={label}>Screen
             <Select className={field} aria-label="Screen" required={Boolean(selectedPage?.children?.length)}
               disabled={!selectedPage?.children?.length}
-              value={screen} onChange={event => setDraft(current=>({...current,screen:event.target.value,section:""}))}>
+              value={screen} onChange={event => {
+                retryKeyRef.current=null;
+                setDraft(current=>({...current,screen:event.target.value,section:""}));
+              }}>
               <option value="">Select screen</option>
               {selectedPage?.children?.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
             </Select>
