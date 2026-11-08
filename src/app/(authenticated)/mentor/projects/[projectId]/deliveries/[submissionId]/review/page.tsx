@@ -18,10 +18,16 @@ export default async function MentorDeliveryVersionPage({params}:{
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title={"Delivery version "+v.version}
       description={data.projectTitle+" · "+data.projectStatus}
-      actions={<TextLink data-unskin="" href={"/mentor/projects/"+encodeURIComponent(data.projectId)+"/review-overview"}
-        className="inline-flex min-h-11 items-center text-sm md:min-h-9 w-full md:w-auto justify-center">
-        Review overview
-      </TextLink>}/>
+      actions={<div className="flex min-w-0 flex-wrap items-center gap-3">
+        <TextLink data-unskin="" href={"/mentor/projects/"+encodeURIComponent(data.projectId)+"/review-completeness"}
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">
+          All delivery versions
+        </TextLink>
+        <TextLink data-unskin="" href={"/mentor/projects/"+encodeURIComponent(data.projectId)+"/review-overview"}
+          className="inline-flex min-h-11 items-center text-sm md:min-h-9">
+          Review overview
+        </TextLink>
+      </div>}/>
     <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
       <Heading level={2} size="base" className="m-0 leading-6 text-[var(--lms-heading)]">Registered review decision</Heading>
       <dl className="mt-4 grid min-w-0 gap-3 md:grid-cols-2">
