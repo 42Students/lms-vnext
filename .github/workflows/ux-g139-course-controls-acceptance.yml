@@ -51,6 +51,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Verify exact triggering source SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
       - name: Focused UI lint
         run: |
           npx eslint src/components/courses/quiz-attempt-control.tsx src/components/courses/resource-progress-control.tsx src/components/courses/super-admin-content-directory-page.tsx src/components/courses/super-admin-lesson-create.tsx tests/unit/ux-g139-course-controls.test.ts tests/e2e/ux-g139-course-controls.spec.ts

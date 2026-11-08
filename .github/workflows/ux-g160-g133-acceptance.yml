@@ -32,6 +32,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Verify exact triggering source SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
       - name: Scoped lint for authentic components and acceptance
         run: >-
           npx eslint

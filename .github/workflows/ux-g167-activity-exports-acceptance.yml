@@ -48,6 +48,10 @@ jobs:
       - run: npm ci
       - name: Verify exact checkout commit
         run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Verify legacy activity-export regression paths
+        run: |
+          test -f tests/unit/college-activity-export-model.test.ts
+          test -f tests/unit/super-admin-audit-export-model.test.ts
       - name: Focused static and CSV regressions
         env:
           NODE_OPTIONS: --max-old-space-size=6144
