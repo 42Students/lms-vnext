@@ -67,7 +67,7 @@ jobs:
       - name: OTP-authenticated college, platform and denial browser cases
         run: |
           npx playwright test tests/e2e/ux-g178-real-device-people-exports.spec.ts --project=chromium --workers=1 --reporter=line,json
-          node -e 'const s=require("./ux-g178-real-otp-results.json").stats;if(s.expected!==4||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
+          node -e 'const s=require("./ux-g178-real-otp-results.json").stats;if(s.expected!==5||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
       - name: Save real-download screenshots and traces
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
