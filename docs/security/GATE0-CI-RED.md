@@ -69,3 +69,9 @@ Local Windows checkouts use CRLF (`core.autocrlf=true`), which makes multi-line 
 - **source-contracts job:** `tests/prototype-parity-shell-contract.test.mjs` passes (35 of 35).
 - **lint job:** `npm run ux:guard`, `npm run ux:consistency` and `npm run security:central` pass. The consistency guard was failing on 20 files: 7 fixed with shared components, 11 exempted with a pinned reason (dev-only `/e2e` harness pages, `global-error`, the verbatim privacy policy). ESLint itself is checked separately.
 - **Ten failing tests in `tests/ux-public-*.test.mjs` also fail on the commit before these changes; no CI job runs them.** Left alone, listed here for the UI lane.
+
+### Findings from the GitHub runs on 2026-11-08 afternoon
+
+- **Typecheck was red on main for every workflow** because commit `aa66ae6176` (TPO home filter recovery) wrote literal backslash-n sequences into a comment in `src/app/(authenticated)/tpo/home/page.tsx`, which swallowed the following `if` and broke the syntax. Fixed in `95a1c5d1`. Every UX, Security and DB workflow that runs `tsc` failed on it. A parse-only sweep of all 13,524 TypeScript files now reports zero syntax errors (`scratch/parse-all.cjs`).
+- **`DB19-P28 tracker privacy, race and registered PostgreSQL acceptance` is a lane conflict, not a test bug:** `tests/db019-p28-tracker-field-review.test.mjs` requires package DB19-P28 and its parent DB-019 to be `done: false`, while `docs/tracker.json` marks both done. One of the two must be changed by whoever owns the DB-019 package; not touched here.
+- **Five DB001 verifier-preflight tests fail only on Windows** (`spawnSync npm ENOENT`); they pass on the Linux runner.
