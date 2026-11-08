@@ -57,3 +57,9 @@ Everything else on the security list that does not need you is done or running (
 27. **Secret rotation overlap is built:** set `AUTH_SECRET_PREVIOUS` (and `<NAME>_PREVIOUS` for any internal machine secret) while rotating, remove it afterwards. Off until you set it.
 28. **Outbound encryption key versioning is NOT code-only:** the recipient hashes and idempotency keys are derived from the same master key, so changing it would break dedupe and suppression lookups. Rotating it needs a re-hash migration first; I did not start that without your decision.
 29. **MFA or passkeys for Super Admin and College Admin** is the one large security feature left. It touches the sign-in pages the UX lane is editing, and needs your choice of method (passkeys, authenticator app, or both) before I build it.
+
+## Decisions recorded 2026-11-08 night (owner)
+
+30. **Migration 0342 approved for dev** (applied through the migrator Job, see the deployment notes).
+31. **MFA and passkeys are deferred.** Super Admin and College Admin keep the same one-time-code sign-in as everyone else for now. The ordinary protections stay in force and are the baseline until MFA is revisited: 15-minute fresh sign-in for role, permission, user, export, import and settings changes; 4-hour limit on a Super Admin college scope; new-device audit event; denial and enumeration tripwires; append-only, hash-chained audit trail. Items 22 (security contact) and 29 (MFA method) move to "later".
+32. **Audit retention:** 365 days (the script's minimum is 30). Nothing is old enough to purge yet; the first sensible run is after 2027-11-08.
