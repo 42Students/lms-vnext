@@ -1,4 +1,6 @@
 import {PageBackLink} from "@/components/ui/page-back-link";
+import {AuthorizationError} from "@/modules/permissions/policy";
+import {TextLink} from "@/components/ui/text-link";
 import {ErrorState} from "@/components/ui/error-state";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {notFound} from "next/navigation";
@@ -13,11 +15,11 @@ export default async function MembershipAuditPage({params}:{params:Promise<{memb
  const {membershipId}=await params;
  const read=await listSuperAdminPersonAudit(await getCurrentRequestContext(),membershipId)
    .then(data=>({ok:true as const,data}))
-   .catch(()=>({ok:false as const}));
+   .catch((error:unknown)=>{if(error instanceof AuthorizationError)throw error;return {ok:false as const};});
  if(!read.ok)return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Membership audit trail"
     actions={<PageBackLink href={"/admin/people/directory/"+encodeURIComponent(membershipId)} label="Membership profile" />}/>
-  <ErrorState title="Membership audit unavailable" description="Audit events could not be loaded. The selected membership has not changed."/>
+  <ErrorState title="Membership audit unavailable" description="The selected membership audit could not be verified. No audit records are shown while this request has failed." action={<TextLink href={"/admin/people/directory/"+encodeURIComponent(membershipId)+"/audit"} className="inline-flex min-h-11 items-center md:min-h-9">Retry membership audit</TextLink>}/>
  </div>;
  const data=read.data;
  if(!data)notFound();
