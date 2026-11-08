@@ -18,10 +18,12 @@ function routeSegments(root: string): string[] {
 /** Next App Router inherits loading/error boundaries from ancestor layouts.
  * A leaf need not duplicate one if its parent already catches failures. */
 function hasInheritedBoundary(dir:string,filename:"loading.tsx"|"error.tsx"){
- let current=dir;
- while(current==="src/app"||current.startsWith("src/app"+path.sep)){
+ // path.normalize keeps this correct on Windows, where path.join produces backslashes.
+ const root=path.normalize("src/app");
+ let current=path.normalize(dir);
+ while(current===root||current.startsWith(root+path.sep)){
   if(existsSync(path.join(current,filename)))return true;
-  if(current==="src/app")break;
+  if(current===root)break;
   current=path.dirname(current);
  }
  return false;
