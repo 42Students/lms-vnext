@@ -67,7 +67,7 @@ test.describe("UX unfinished groups — role, form and step-up acceptance", () =
       await expect(page.getByText("Title is required")).toBeVisible();
       await page.getByRole("textbox", {name: "Template title"}).fill("Unsaved example");
       await page.getByRole("button", {name: "Cancel", exact: true}).click();
-      await expect(page.getByRole("dialog", {name: "Discard unsaved changes?"})).toBeVisible();
+      await expect(page.getByRole("alertdialog", {name: "Discard unsaved changes?"})).toBeVisible();
       await page.screenshot({path: info.outputPath(`g154-template-discard-${size.name}.png`), fullPage: true});
       expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(2);
     });
@@ -93,7 +93,8 @@ test.describe("UX unfinished groups — role, form and step-up acceptance", () =
     await authenticateGracefulRole(context, "learner");
     await page.goto("/tracker");
     await expect(page.getByRole("heading", {level: 1, name: /What went wrong/i})).toBeVisible();
-    const response = await page.request.get("/api/tracker/logs/export", {maxRedirects: 0});
+    const response = await page.request.get("/api/tracker/live-logs", {maxRedirects: 0});
+    expect(response.status()).toBe(403);
     expect(response.headers()["content-type"] ?? "").not.toContain("text/csv");
     expect(response.headers()["content-disposition"] ?? "").not.toContain("attachment");
   });
