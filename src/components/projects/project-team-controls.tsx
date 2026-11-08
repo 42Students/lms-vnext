@@ -341,8 +341,11 @@ export function ProjectMemberActions({
   const { showToast } = useToast();
   const [removeOpen, setRemoveOpen] = useState(false);
   const [pending, setPending] = useState(false);
+  const memberActionLock = useRef(false);
 
   async function setPrimary(isPrimary: boolean) {
+    if(memberActionLock.current || pending)return;
+    memberActionLock.current = true;
     setPending(true);
     try {
       await projectMutation(
@@ -364,11 +367,14 @@ export function ProjectMemberActions({
         ...(caught instanceof Error ? { description: caught.message } : {}),
       });
     } finally {
+      memberActionLock.current = false;
       setPending(false);
     }
   }
 
   async function remove() {
+    if(memberActionLock.current || pending)return;
+    memberActionLock.current = true;
     setPending(true);
     try {
       await projectMutation(
@@ -390,6 +396,7 @@ export function ProjectMemberActions({
         ...(caught instanceof Error ? { description: caught.message } : {}),
       });
     } finally {
+      memberActionLock.current = false;
       setPending(false);
     }
   }
