@@ -18,7 +18,7 @@ async function login(context:BrowserContext){
  ]);
 }
 
-test("Faculty Attendance desktop/mobile marks, corrects and shows real Section summary",async({page,context})=>{
+test("Faculty Attendance desktop/mobile marks, corrects and shows real Section summary",async({page,context},testInfo)=>{
   test.setTimeout(120_000);
   await login(context);
   await page.setViewportSize({width:1280,height:800});
@@ -35,7 +35,7 @@ test("Faculty Attendance desktop/mobile marks, corrects and shows real Section s
   // delays while retaining an already-started session for real attendance.
   const start=new Date(Date.now()-15_000).toISOString();
   // Retry-safe short class window. Correction remains possible during the college correction period.
-  const end=new Date(Date.now()+30_000).toISOString();
+  const end=new Date(Date.now()+4*60_000).toISOString();
   const creation=await page.evaluate(async ({deliveryId,start,end})=>{
    const response=await fetch("/api/courses/faculty/attendance/"+deliveryId+"/schedule",{
     method:"POST",headers:{"Content-Type":"application/json"},
@@ -75,6 +75,7 @@ test("Faculty Attendance desktop/mobile marks, corrects and shows real Section s
   await advanced.getByText("Attendance report",{exact:true}).click();
   await expect(page.getByRole("heading",{name:"Monthly class health"})).toBeVisible();
   await expect(page.getByRole("region",{name:"Monthly class health"})).toContainText("0%");
+  await page.screenshot({path:testInfo.outputPath("g132-faculty-mark-correct-desktop.png"),fullPage:true});
   await expect(page.getByRole("region",{name:"Attendance threshold guidance"})).toContainText("below guidance");
   await advanced.getByRole("button",{name:/View attendance details for/}).first().click();
   await expect(page.getByRole("dialog")).toContainText("Attendance");
@@ -94,5 +95,6 @@ test("Faculty Attendance desktop/mobile marks, corrects and shows real Section s
   await expect(page.getByRole("region",{name:"Faculty prototype attendance"})).toBeVisible();
   const width=await page.evaluate(()=>document.documentElement.scrollWidth);
   expect(width).toBeLessThanOrEqual(391);
+  await page.screenshot({path:testInfo.outputPath("g132-faculty-mark-correct-mobile.png"),fullPage:true});
   expect(errors).toEqual([]);
  });
