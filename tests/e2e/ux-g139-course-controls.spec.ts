@@ -1,6 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
 import { authenticateGracefulRole } from "./support/roles";
-import { ADMIN_SCOPE_COOKIE_NAME } from "../../src/auth/admin-scope";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const noOverflow=(page:Page)=>page.evaluate(()=>
@@ -8,9 +7,16 @@ const noOverflow=(page:Page)=>page.evaluate(()=>
 
 async function selectSeedCollege(context:import("@playwright/test").BrowserContext){
   await authenticateGracefulRole(context,"superadmin");
-  await context.addCookies([{name:ADMIN_SCOPE_COOKIE_NAME,
-    value:`college:${SEED_IDS.organization}:${SEED_IDS.collegeA}`,
-    url:"http://localhost:3000",httpOnly:true,sameSite:"Lax"}]);
+  // Select through the server-enforced permission boundary, not manually
+  // injected scope cookies; this also creates the bounded expiry cookie.
+  const selected=await context.request.post("http://localhost:3000/api/auth/admin-scope",{
+    data:{kind:"college",collegeId:SEED_IDS.collegeA},
+    headers:{Origin:"http://localhost:3000"},
+  });
+  expect(selected.ok(),"seeded Super Admin can select its authorized college").toBe(true);
+  const response=await selected.json() as {scope?:{organizationId:string;collegeId:string}};
+  expect(response.scope?.organizationId).toBe(SEED_IDS.organization);
+  expect(response.scope?.collegeId).toBe(SEED_IDS.collegeA);
 }
 
 test.describe("UX-G139 course authoring and learner controls",()=>{
