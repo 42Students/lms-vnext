@@ -1,3 +1,6 @@
+import {redirect} from "next/navigation";
+import {hasMembershipRole} from "@/modules/identity/context";
+import {assertMentorProjectRecoveryAccess} from "@/modules/projects/mentor-project-recovery-guard";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
@@ -26,11 +29,16 @@ export default async function MentorReviewOverviewPage({
  const parsed=mentorReviewOverviewSchema.safeParse(
   filters?{projectId,...filters}:null,
  );
- if(!parsed.success)return <section role="alert">
+ if(!parsed.success){
+ const recoveryContext=await getCurrentRequestContext();
+ if(!hasMembershipRole(recoveryContext,"MENTOR"))redirect("/dashboard");
+ await assertMentorProjectRecoveryAccess(recoveryContext,projectId);
+ return  <section role="alert">
  <PageHeader title={"Invalid project review filters"} />
  <p className="text-sm text-body">The filter link is invalid or contains duplicate values. Clear it to return to this project’s delivery reviews.</p>
  <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"} className="inline-flex min-h-11 items-center">Clear invalid filters</TextLink>
  </section>;
+ }
  const data=await getMentorDeliveryReviewOverview(await getCurrentRequestContext(),parsed.data);
  const filtered=data.query.status!=="ALL"||data.query.feedback!=="ALL"||data.query.version!==undefined;
  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
