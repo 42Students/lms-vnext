@@ -37,6 +37,23 @@ for(const size of sizes){
   await noOverflow(page);
   await page.screenshot({path:info.outputPath("g065-data-access-"+size.name+".png"),fullPage:true});
  });
+ test("G065 "+size.name+": private learner gallery opens and remains recoverable",async({page,context},info)=>{
+  test.skip(process.env.UX_G028_G065_SEED!=="true");
+  await authenticateGracefulRole(context,"learner");
+  await page.setViewportSize(size);
+  await page.route("**/api/profile/learner-gallery",route=>route.fulfill({
+    status:503,contentType:"application/json",
+    body:JSON.stringify({error:"TEST_STORAGE_UNAVAILABLE_PRIVATE"}),
+  }));
+  await page.goto("/learn/profile/gallery");
+  await expect(page.getByRole("heading",{name:"My Photos"})).toBeVisible();
+  const photos=page.getByRole("region",{name:"Profile pictures"});
+  await expect(photos).toContainText("Private photos are available only to you and authorized college staff.");
+  await expect(photos).toContainText("This gallery is awaiting verified storage setup.");
+  await expect(photos).not.toContainText("TEST_STORAGE_UNAVAILABLE_PRIVATE");
+  await noOverflow(page);
+  await page.screenshot({path:info.outputPath("g065-gallery-"+size.name+".png"),fullPage:true});
+ });
  test("G028 "+size.name+": college activity invalid category recovers with reset",async({page,context},info)=>{
   test.skip(process.env.UX_G028_G065_SEED!=="true");
   await authenticateGracefulRole(context,"college");
@@ -56,6 +73,16 @@ for(const size of sizes){
   await noOverflow(page);
  });
 }
+test("G065 private gallery denies Faculty role before any gallery read",async({page,context})=>{
+ test.skip(process.env.UX_G028_G065_SEED!=="true");
+ await authenticateGracefulRole(context,"faculty");
+ let galleryReads=0;
+ await page.route("**/api/profile/learner-gallery**",route=>{galleryReads++;return route.continue();});
+ await navigateSafely(page,"/learn/profile/gallery");
+ await expect(page).toHaveURL(/\/dashboard(?:[?#]|$)/);
+ await expect(page.getByRole("heading",{name:"My Photos"})).toHaveCount(0);
+ expect(galleryReads).toBe(0);
+});
 test("negative Learner and Faculty cannot see other role's invalid links",async({page,context})=>{
  test.skip(process.env.UX_G028_G065_SEED!=="true");
  await authenticateGracefulRole(context,"faculty");
