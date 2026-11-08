@@ -56,6 +56,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Verify exact source SHA and committed browser cases
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -f tests/e2e/ux-g022-g103-route-recovery.spec.ts
       - name: Focused source and existing journey regression
         run: |
           npx eslint \

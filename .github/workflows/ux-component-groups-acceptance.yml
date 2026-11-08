@@ -36,6 +36,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Verify source is exactly triggering SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
       - name: Scoped UX source and test lint
         run: npx eslint src/components/admin/tenant-settings-other-keys.tsx src/components/electives/college-slot-manager.tsx src/components/activity/activity-center.tsx src/components/activity/learner-notifications-inbox.tsx src/app/e2e/ux-component-groups/page.tsx src/app/e2e/ux-component-groups/ux-component-groups-harness.tsx tests/e2e/ux-component-groups.spec.ts
       - name: Install Chromium
@@ -46,3 +48,12 @@ jobs:
         env:
           NODE_OPTIONS: --max-old-space-size=6144
         run: npm run typecheck
+      - name: Preserve responsive browser screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g126-g130-g140-viewport-evidence
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore

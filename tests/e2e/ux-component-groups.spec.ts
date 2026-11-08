@@ -6,7 +6,7 @@ const sizes = [
   { name: "mobile", width: 390, height: 844 },
 ] as const;
 for (const size of sizes) {
-  test(`UX-G130 ${size.name} stored settings filter, pagination and discard`, async ({ page }) => {
+  test(`UX-G130 ${size.name} stored settings filter, pagination and discard`, async ({ page }, testInfo) => {
     await page.setViewportSize(size);
     const errors: string[] = [];
     page.on("pageerror", e => errors.push(e.message));
@@ -40,9 +40,10 @@ for (const size of sizes) {
     await expect(group.getByText("demo.group.001")).toBeVisible();
     await expect(group.getByRole("region", { name: /Other stored settings table/ })).toHaveAttribute("tabindex", "0");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({path:testInfo.outputPath("ux-g130-"+size.name+".png"),fullPage:true});
     expect(errors).toEqual([]);
   });
-  test(`UX-G140 ${size.name} elective no-op prevention and discard recovery`, async ({ page }) => {
+  test(`UX-G140 ${size.name} elective no-op prevention and discard recovery`, async ({ page }, testInfo) => {
     await page.setViewportSize(size);
     const errors: string[] = [];
     page.on("pageerror", e => errors.push(e.message));
@@ -71,9 +72,10 @@ for (const size of sizes) {
       .toHaveValue("Synthetic elective slot");
     await expect(page.getByRole("dialog").getByRole("button", { name: "Save Changes" })).toBeDisabled();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({path:testInfo.outputPath("ux-g140-"+size.name+".png"),fullPage:true});
     expect(errors).toEqual([]);
   });
-  test(`UX-G126 ${size.name} activity table and learner inbox empty recovery`, async ({ page }) => {
+  test(`UX-G126 ${size.name} activity table and learner inbox empty recovery`, async ({ page }, testInfo) => {
     await page.setViewportSize(size);
     const errors: string[] = [];
     page.on("pageerror", e => errors.push(e.message));
@@ -98,6 +100,7 @@ for (const size of sizes) {
     await expect(search).toHaveValue("");
     await expect(inbox.getByText("Synthetic project update").first()).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({path:testInfo.outputPath("ux-g126-"+size.name+".png"),fullPage:true});
     expect(errors).toEqual([]);
   });
 }
