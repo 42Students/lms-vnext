@@ -809,3 +809,22 @@ jobs:
             tail -50 /tmp/lms-vnext-gate.log
             exit 1
           }
+      - name: Role-by-route matrix (every seeded role against every readable route; SEC-03, SEC-04, SEC-08)
+        shell: bash
+        env:
+          PGADMIN_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_smoke_test
+          DATABASE_URL: postgresql://lms_runtime:lms_runtime_smoke@127.0.0.1:5432/lms_vnext_smoke_test
+        run: |
+          set -euo pipefail
+          ALLOW_TEST_SEED=I_ACCEPT DATABASE_URL="$PGADMIN_URL" npx tsx scripts/seed-test-tenants.ts
+          export PLATFORM_HOSTS=127.0.0.1,localhost APP_ENV=development AUTH_SECRET=ci-role-matrix-secret-0123456789abcdef01234 AUTH_TEST_OTP=123456
+          export AUTH_TEST_PHONES="+919100061101,+919100061102,+919100061103,+919100061104,+919100061105,+919100061201,+919100061202,+919100061203,+919100061204,+919100061205,+919100061000,+919100061301,+919100061401,+919100061402"
+          export AUTH_TEST_EMAILS="learner.a@vnext.test,faculty.a@vnext.test,mentor.a@vnext.test,admin.a@vnext.test,tpo.a@vnext.test,learner.b@vnext.test,faculty.b@vnext.test,mentor.b@vnext.test,admin.b@vnext.test,tpo.b@vnext.test,superadmin@vnext.test,hr@vnext.test,multi@vnext.test,faculty.shared@vnext.test"
+          PORT=3002 HOSTNAME=127.0.0.1 node .next/standalone/server.js > /tmp/lms-vnext-matrix.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 40); do curl -fs http://127.0.0.1:3002/ready >/dev/null && break; sleep 1; done
+          SWEEP_BASE=http://127.0.0.1:3002 SWEEP_OTP=123456 MATRIX_BASELINE=docs/security/role-matrix-baseline-ci.json node scripts/verify/role-route-matrix.mjs || {
+            tail -50 /tmp/lms-vnext-matrix.log
+            exit 1
+          }

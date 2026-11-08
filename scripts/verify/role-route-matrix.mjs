@@ -10,11 +10,11 @@ import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 
 const base = process.env.SWEEP_BASE;
-if (!base || !/^https:\/\/[a-z0-9.-]*development\.42lms\.com$|^http:\/\/localhost:[0-9]+$/.test(base)) throw new Error("set SWEEP_BASE to a dev or local origin (never production)");
+if (!base || !/^https:\/\/[a-z0-9.-]*development\.42lms\.com$|^http:\/\/(localhost|127\.0\.0\.1):[0-9]+$/.test(base)) throw new Error("set SWEEP_BASE to a dev or local origin (never production)");
 const otp = process.env.SWEEP_OTP;
 if (!otp) throw new Error("set SWEEP_OTP to the dev test code");
 const write = process.argv.includes("--write");
-const BASELINE = "docs/security/role-matrix-baseline.json";
+const BASELINE = process.env.MATRIX_BASELINE ?? "docs/security/role-matrix-baseline.json";
 const college = process.env.SWEEP_COLLEGE ?? "TESTA";
 
 // Seeded accounts of scripts/seed-test-tenants.ts (college A).
@@ -58,7 +58,7 @@ async function call(jar, method, path, body) {
   const response = await fetch(base + path, {
     method,
     redirect: "manual",
-    headers: { cookie: jar.header(), origin: base, "content-type": "application/json" },
+    headers: { cookie: jar.header(), origin: base.replace(/^http:/, "https:"), "content-type": "application/json" },
     body: body ? JSON.stringify(body) : undefined,
     signal: AbortSignal.timeout(30000),
   });
