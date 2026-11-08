@@ -24465,11 +24465,11 @@
         "type": "COMPONENT",
         "area": "college",
         "title": "College · Interactive components (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-college-components-20261108",
         "pickedAt": "2026-11-08T08:18:00.000Z",
         "startedAt": "2026-11-08T08:18:00.000Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/components/college/college-admin-profile-editor.tsx",
           "src/components/college/college-department-insights.tsx",
@@ -24505,7 +24505,47 @@
           "OVERLAY-0054"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "e5b2fbcf2c10ee8a07d58f6aeab1a961d49b9eb7",
+            "parityDoc": "docs/parity/pages/college/UX-G134-college-controls.md",
+            "tests": [
+              {
+                "command": "Exact source SHA + scoped ESLint + full TypeScript gate",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464612271"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g134-college-controls.test.ts --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464612271 — 6/6 unit"
+              },
+              {
+                "command": "npm run db:e2e:prepare (PostgreSQL 17) and E2E_AUTH_ENABLED=true with ephemeral identities",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464612271"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g134-college-controls.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464612271 — 11/11; 8 authenticated desktop/mobile core journeys; required-field failure; learner denied profile and CSV"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464612271/artifacts/13610987242 — four real authenticated college journeys"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464612271/artifacts/13610987242 — four real authenticated college journeys"
+              }
+            ],
+            "regressionReview": "15 registered source files remained unchanged from exact successful SHA to main (checked via compare). Six focused unit regressions plus 11 real authenticated Playwright cases; negative registration, learner denied admin profile and college export; screenshot artifact 13610987242. Shared topbar hydration warning observed separately and not claimed fixed.",
+            "securityReview": "Disposable PostgreSQL and role-authenticated college and learner identities; learner profile editor denied and people export returned 403. No RLS, auth or tenant permission checks weakened."
+          }
+        ],
+        "notes": "DONE scoped UX-G134 on 2026-11-08. Exact SHA e5b2fbcf2c10ee8a07d58f6aeab1a961d49b9eb7, run 42464612271 SUCCESS: scoped lint, TypeScript, 6 unit, PostgreSQL seeded role-authenticated 11/11 Chromium (390 and 1280), denial of learner college-admin page and people CSV (403), artifact 13610987242. No tracked group file changes since source SHA. Shared topbar hydration warnings remain a separate known review; see docs/parity/pages/college/UX-G134-college-controls.md."
       },
       {
         "id": "UX-G135",
