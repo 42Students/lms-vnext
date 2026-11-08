@@ -69,3 +69,14 @@ The independent UX-G080 group may now move to DONE with the above evidence.
 - Scope/security: Recovery uses totals and course ID returned from the authorized learner overview, never raw URL course scope. Existing authorization exceptions are still propagated, quiz attempt grades remain publication-gated, and backend submission/file grants remain unchanged. Browser fixtures are synthetic; no genuine tenant/role workflow is certified by this acceptance.
 
 UX-G059 may be closed independently with these facts.
+
+
+## UX-G070 exact-SHA closure proof
+
+- Exact commit `af137b7d4db2eda063e157a00f899865ec2b7623`, CI <https://github.com/42Students/lms-vnext/actions/runs/42463187143>. Exact-SHA checkout, scoped ESLint, unit suite, responsive Chromium, full TypeScript and screenshot upload all **passed**.
+- Unit: `tests/unit/ux-g070-mentor-route-recovery.test.tsx` **6/6 passed**, covering scoped reset URLs and encoded identifiers, notification error privacy, retry/exit and single loading announcements.
+- Browser: `tests/e2e/ux-g070-mentor-route-recovery.spec.ts` **2/2 passed**, both 1280×800 desktop and 390×844 mobile, with actual route errors/loaders and shared route-filters component rendered.
+- Screenshot artifact: <https://github.com/42Students/lms-vnext/actions/runs/42463187143/artifacts/13610852237> — `ux-g070-desktop.png` and `ux-g070-mobile.png`.
+- Regression/security boundary: An invalid URL query no longer ejects the mentor out of the selected project. It still goes through the original server permission checks after reset; no account, tenant, project authorization, provider credentials or database access was changed. The fixture is synthetic and does not certify live authenticated mentor data.
+
+This is an independently passing UX-G070 acceptance gate.
