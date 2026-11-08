@@ -171,7 +171,7 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
     });
   }
 
-  return <section aria-label="Create New Batch" className="min-w-0 space-y-[var(--lms-space-3)] rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)]">
+  return <section id="college-batch-create" aria-label="Create New Batch" className="min-w-0 space-y-[var(--lms-space-3)] rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)]">
     <Heading level={2} size="lg" className="m-0 text-[var(--lms-heading)]">Create New Batch</Heading>
     {programs.length === 0 || periods.length === 0
       ? <p role="status" className="mt-2 text-sm text-muted-foreground leading-[22px]">
