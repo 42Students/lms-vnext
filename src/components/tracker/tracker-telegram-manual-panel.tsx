@@ -16,6 +16,7 @@ export function TrackerTelegramManualPanel({items,configured,deploy}:{
   const [open,setOpen]=useState(false);
   const [confirm,setConfirm]=useState<"TEST"|"DIGEST"|null>(null);
   const [pending,setPending]=useState(false);
+  const sendLock=useRef(false);
   const [notice,setNotice]=useState("");
   const [error,setError]=useState(false);
   const [delivery,setDelivery]=useState<"ACCEPTED"|"UNCONFIGURED"|"RATE_LIMITED"|"FAILED"|"DENIED"|null>(null);
@@ -30,7 +31,8 @@ export function TrackerTelegramManualPanel({items,configured,deploy}:{
     },200);
   }
   async function send(kind:"TEST"|"DIGEST"){
-    if(pending)return;
+    if(pending||sendLock.current)return;
+    sendLock.current=true;
     setPending(true);setNotice("");setError(false);setDelivery(null);
     try{
       const result=await apiFetch<{message:string;accepted?:boolean;delivered?:boolean|null}>("/api/tracker/logs/manual-alert",{
@@ -53,7 +55,7 @@ export function TrackerTelegramManualPanel({items,configured,deploy}:{
           caught.status===503?"Telegram could not confirm delivery. Try again later.":
           caught.message||"Could not send the alert. Try again later.");
       }else{setDelivery("FAILED");setNotice("Could not send the alert. Try again later.");}
-    }finally{setPending(false);}
+    }finally{sendLock.current=false;setPending(false);}
   }
   const regressions=items.filter(item=>item.regressedAt).length;
   const fixed=items.filter(item=>item.fixStatus==="FIXED").length;
