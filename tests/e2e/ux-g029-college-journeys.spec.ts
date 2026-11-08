@@ -40,6 +40,18 @@ test.describe("UX-G029 College Admin complete route-level navigation and recover
         });
       }
 
+      await page.goto("/college/announcements");
+      const create = page.getByRole("button", {name:"+ Create announcement"});
+      await expect(create).toBeVisible();
+      await create.click();
+      const creationDialog = page.getByRole("dialog", {name:"Create announcement"});
+      await expect(creationDialog).toBeVisible();
+      await expect(creationDialog.getByRole("textbox", {name:"Title"})).toBeVisible();
+      await expect(creationDialog.getByRole("button", {name:"Create announcement"})).toBeDisabled();
+      await page.keyboard.press("Escape");
+      await expect(creationDialog).toBeHidden();
+      await assertNoOverflow(page);
+
       await page.goto("/college/attendance/settings");
       // College-admin policy is intentionally read-only; a link must not
       // accidentally elevate privileges or expose privileged mutation CTAs.
