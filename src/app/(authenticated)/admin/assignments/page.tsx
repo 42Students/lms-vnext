@@ -1,5 +1,6 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -43,6 +44,9 @@ export default async function SuperAdminAssignmentsPage({
     listCollegeAssessmentAggregate(context,"ASSIGNMENT",query.data),
     getCollegeAssignmentAuthoringCatalog(context),
   ]);
+  // A permission denial is not a retryable directory outage or missing creation options.
+  if(dataResult.status==="rejected"&&dataResult.reason instanceof AuthorizationError)throw dataResult.reason;
+  if(lessonsResult.status==="rejected"&&lessonsResult.reason instanceof AuthorizationError)throw lessonsResult.reason;
   if(dataResult.status==="rejected")return <div className="min-w-0 space-y-4">
     <PageHeader title="Assignments" />
     <ErrorState title="Assignments could not be loaded"
