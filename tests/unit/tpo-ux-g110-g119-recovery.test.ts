@@ -162,6 +162,19 @@ describe("TPO UX G114–G119: recovery controls and empty reports", () => {
     }
   });
 
+  it("G114: follow-up and offer reports retain retry with a safe exit", () => {
+    for (const segment of [
+      "joining-followups", "joining-status", "leads",
+      "offers-acceptance", "offers-expiry", "placed-branch",
+    ]) {
+      const source = page(`reports/${segment}/error.tsx`);
+      expect(source).toContain("Retry");
+      expect(source).toContain('href="/tpo/reports"');
+      expect(source).toContain("All reports");
+      expect(source).toContain("min-h-11");
+    }
+  });
+
   it("G113: two report loading skeletons announce progress nonvisually", () => {
     for (const segment of ["by-branch", "by-company"]) {
       const source = page(`reports/${segment}/loading.tsx`);
