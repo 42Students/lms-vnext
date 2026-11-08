@@ -7,5 +7,5 @@ export default function RouteError({ error, reset }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return <GracefulErrorBoundary error={error} reset={reset} insideShell homeHref="/admin" />;
+  return <GracefulErrorBoundary error={error} reset={reset} insideShell homeHref="/admin/academics" />;
 }
