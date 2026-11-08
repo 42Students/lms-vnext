@@ -32,7 +32,7 @@ for (const [id, rec] of Object.entries(pending.controls)) {
     type: "EXECUTED_SCOPED_TEST",
     commitSha: sha,
     runUrl,
-    scope: "CI at this commit executed the unit, registered-database and source-contract suites that cover " + id + ". Assessment: " + rec.source + ". " + rec.finding.slice(0, 400),
+    scope: "Security-focused workflow run at this commit (critical authentication and authorization boundary; the same commit also passed explicit selected-role isolation, supply chain, governance files and headers, machine scheduler and scanner boundaries). Not the full CI run and not the RLS policy auditor workflow (red on its own fixture before this work). This run does not by itself prove " + id + "; the assessment and the reviewer decide that. Assessment: " + rec.source + ". " + rec.finding.slice(0, 400),
   });
   const next = { ...control, state: rec.proposedState, assessedAt: today, evidence };
   next.nextProof = "Independent review of the assessment " + rec.source + " and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.";
