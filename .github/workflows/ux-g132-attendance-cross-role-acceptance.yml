@@ -1,0 +1,78 @@
+name: UX-G132 Attendance cross-role browser acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tests/e2e/ux-g132-attendance-cross-role.spec.ts'
+      - '.github/workflows/ux-g132-attendance-cross-role-acceptance.yml'
+permissions:
+  contents: read
+concurrency:
+  group: ux-g132-attendance-cross-role-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  attendance-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: 'true'
+      APP_ENV: development
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_OPTIONS: --max-old-space-size=6144
+      PLAYWRIGHT_JSON_OUTPUT_NAME: ux-g132-attendance-results.json
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exact triggering SHA, scoped ESLint and TypeScript
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npx eslint tests/e2e/ux-g132-attendance-cross-role.spec.ts
+          npm run typecheck
+      - name: Existing attendance component and privacy regressions
+        run: npx vitest run tests/unit/ux-five-group-batch-20261107.test.ts tests/unit/faculty-attendance-write-recovery.test.ts tests/unit/learner-attendance-recovery-model.test.ts --reporter=dot
+      - name: Seed disposable E2E PostgreSQL
+        run: npm run db:e2e:prepare
+      - name: Ephemeral E2E secrets
+        shell: bash
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Admin, College, Faculty, Learner and access-denied desktop/mobile
+        run: |
+          npx playwright test tests/e2e/ux-g132-attendance-cross-role.spec.ts --project=chromium --reporter=line,json
+          node -e 'const s=require("./ux-g132-attendance-results.json").stats;if(s.expected!==10||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
+      - name: Preserve screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g132-attendance-role-browser-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+            ux-g132-attendance-results.json
+          if-no-files-found: ignore
+          retention-days: 14
