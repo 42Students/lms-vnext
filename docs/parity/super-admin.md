@@ -1230,3 +1230,22 @@ Each is a conditional nested section within established Super Admin/admin page f
 ## UX-G168 — Super Admin export readability and safety (2026-11-07)
 
 [UX-G168 export CSV alignment, Unicode formula safety and download-error review](pages/shared/UX-G168-admin-exports.md). Per-export access controls and selected tenant remain server-authoritative; see `docs/tracker.json#uxReview.groups` for closure status.
+
+## 2026-11-08 UX-G005–G014 Super Admin recovery batch — IMPLEMENTED / VERIFY (NOT CLOSED)
+
+Ten formerly `UNPICKED` canonical UX groups were claimed in [commit 78c8fd1](https://github.com/42Students/lms-vnext/commit/78c8fd145f0c97a92acf1d4077baf0db5cf07d37) by `ux-admin-10-nov08-chat`. This is a **scoped first code pass** on route recovery, not certification of all 150+ route/state entries owned by these groups. `docs/tracker.json#uxReview.groups` remains the only state source; all ten remain `DOING` until individual group-wide desktop/mobile, keyboard, permissions and journey checks are actually executed.
+
+| Group | First-pass code changes | Committed source |
+| --- | --- | --- |
+| UX-G005 | Academic-section failures offer the owning Academics workspace, not a broad admin landing | `ed07ac1` — `admin/academics/sections/[sectionId]/error.tsx` |
+| UX-G006 | Audit fallback clearly distinguishes a failed read from an empty event history; retry and Super Admin navigation stay visible | `e963dd2` — `admin/audit/error.tsx` |
+| UX-G007 | College-admin history pagination links announce the specific previous/next page, including their screen-reader labels | `636f6f0` — `admin/colleges/[collegeId]/admins/[userId]/history/page.tsx` |
+| UX-G008 | Pending college sign-in-policy setup explains why saves are disabled without guessing a policy | `cc39771` — `admin/colleges/[collegeId]/signin/page.tsx` |
+| UX-G009 | Malformed progress page, page-size, sort or repeated/unsupported filters render an actionable error rather than silently defaulting | `d113bd3` — `admin/course-progress/students/page.tsx` |
+| UX-G010 | Malformed module-access history cursor offers safe reset to latest selected-college history; genuinely unknown colleges still 404 | `367fc7e` — `admin/features/[collegeId]/history/page.tsx` |
+| UX-G011 | Unsupported/repeated learner-trace filters offer clear reset without loading learner records; invalid membership/foreign scope denial retained | `994a6d3` — `admin/features/[collegeId]/trace/page.tsx` |
+| UX-G012 | Invalid lecture-hall date ranges gain a clear-filter link that stays on the exact hall route | `d3b58d2` — `admin/lecture-halls/[hallId]/page.tsx` |
+| UX-G013 | Membership audit never masks `AuthorizationError` as transient failure; an unsuccessful ordinary read shows a retry and no fabricated history | `329daa9` — `admin/people/directory/[membershipId]/audit/page.tsx` |
+| UX-G014 | Unscoped interview calendar warning links to the college directory; selected-college permission enforcement remains required | `3a433c1` — `admin/placements/calendar/page.tsx` |
+
+**Regression specification authored:** `tests/unit/ux-g005-g014-admin-route-recovery.test.ts` in `e52a291`; it guards ten source-level recovery/tenant constraints and read-before-filter ordering. This source guard is **not** browser proof. At this checkpoint no corresponding exact-SHA ESLint/TypeScript/Vitest/Playwright success has been observed. The required follow-up is to execute the scoped tests, then verify each group's complete sourceFiles list, real authorized and denied role behavior, desktop 1280×800 + mobile 390×844, accessible keyboard/touch/focus, empty/error/retry, and preserve all other pages/modals before marking any group `DONE`. Security/release and legacy-capability parity gates are independently open.
