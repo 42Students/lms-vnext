@@ -67,10 +67,10 @@ jobs:
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Require all 22 authenticated desktop-mobile and learner denial cases
+      - name: Require all 34 authenticated desktop-mobile and learner denial cases
         run: |
           npx playwright test tests/e2e/ux-g110-g119-authenticated.spec.ts --project=chromium --workers=2 --reporter=line,json
-          node -e 'const s=require("./ux-g110-g119-authenticated-results.json").stats; console.log(s); if(s.expected!==22||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
+          node -e 'const s=require("./ux-g110-g119-authenticated-results.json").stats; console.log(s); if(s.expected!==34||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
       - name: Preserve screenshots, Playwright JSON and traces
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
