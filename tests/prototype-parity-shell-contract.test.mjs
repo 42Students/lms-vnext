@@ -36,7 +36,7 @@ test("prototype parity remains limited to the three opted-in single-workspace po
 
 test("prototype shell renders the real recruiter drive action",()=>{
   const shell=source("src/components/shell/app-shell.tsx");
-  assert.match(shell,/<Link href="\/hr\/drives\/new" className="lms-prototype-recruiter-action">/);
+  assert.match(shell,/<TextLink variant="bare" href="\/hr\/drives\/new" className="lms-prototype-recruiter-action">/);
   assert.match(shell,/\+ Request a drive/);
 });
 

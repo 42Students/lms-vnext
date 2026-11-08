@@ -438,7 +438,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     {sprintListGroups.map(group=><Disclosure title={<>
         <strong>{group.title}</strong>
         <span>{group.allCount} tasks · {group.status.replaceAll("_"," ")}</span>
-      </>} defaultOpen={group.status==="ACTIVE"||group.tasks.some(task=>task.id===focusedId)} key={group.id} detailsProps={{ onDragOver: event=>{
+      </>} defaultOpen={group.status==="ACTIVE"||group.tasks.some(task=>task.id===focusedId)} key={group.id} className="prototype-mentor-board-sprint-group" detailsProps={{ onDragOver: event=>{
         if(!readOnly&&!busy&&(group.id==="BACKLOG"||creationSprints.some(row=>row.id===group.id)))
           event.preventDefault();
       }, onDrop: event=>{
