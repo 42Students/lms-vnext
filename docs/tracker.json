@@ -23031,9 +23031,9 @@
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Projects / Templates → Projects / Workspaces (part 14)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
+        "status": "PICKED",
+        "pickedBy": "chat-ux-g041-workspace-20261108",
+        "pickedAt": "2026-11-08T14:56:11.249Z",
         "startedAt": null,
         "completedAt": null,
         "sourceFiles": [
