@@ -41,7 +41,7 @@ describe("Ten-group TPO recovery, 173 registered surfaces", () => {
     expect(h).not.toContain("database");
   });
   it("retains role checks before batch, company and placement workspaces", () => {
-    for (const p of ["batches/page.tsx","companies/page.tsx","placements/page.tsx"]) {
+    for (const p of ["batches/page.tsx","companies/page.tsx","placements/lifecycle/page.tsx"]) {
       const s=read(base+p);
       expect(s).toContain("getCurrentRequestContext");
       expect(s).toMatch(/hasMembershipRole|requireTpoBatchActor|requirePersistedTpoMembership/);
