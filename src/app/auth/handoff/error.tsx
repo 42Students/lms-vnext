@@ -10,7 +10,7 @@ export default function RouteError({ error, reset }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return <main className={`${authStyles["page"]} flex min-h-dvh min-w-0 items-center justify-center px-4 pb-8 pt-24 md:py-12`}>
+  return <main className={`${authStyles["page"]} flex min-w-0 items-center justify-center px-4 pb-8 pt-24 md:py-12`}>
     <Card as="section" className="w-full max-w-xl">
       <PageHeader title="This sign-in link may have expired" />
       <p className="mb-4 break-words text-sm leading-6 text-[var(--lms-body-text)]">

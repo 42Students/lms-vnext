@@ -120,7 +120,7 @@ export default async function ActivityDetailPage({
             This event has no structured context.
           </p>
         ) : (
-          <pre role="region" aria-label="Event context JSON, scrollable" tabIndex={0} className="max-h-96 max-w-full overflow-auto whitespace-pre-wrap break-words border-y border-border bg-[var(--lms-neutral-50)] p-4 text-xs leading-6 text-body outline-offset-2 focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)] md:p-6">
+          <pre role="region" aria-label="Event context JSON, scrollable" tabIndex={0} className="max-h-96 max-w-full overflow-auto whitespace-pre-wrap break-words border-y border-border bg-[var(--lms-neutral-50)] p-4 text-xs leading-6 text-body focus-ring md:p-6">
             {JSON.stringify(event.metadata, null, 2)}
           </pre>
         )}

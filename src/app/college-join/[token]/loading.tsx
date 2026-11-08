@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/ui/page-header";
 
 /** A stable card footprint prevents the invitation from jumping during preview. */
 export default function Loading() {
-  return <main className={`${authStyles["page"]} mx-auto flex min-h-dvh w-full min-w-0 items-center justify-center px-4 py-4`}>
+  return <main className={`${authStyles["page"]} mx-auto flex w-full min-w-0 items-center justify-center px-4 py-4`}>
     <section className="w-full max-w-[440px] min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:p-5"
       role="status" aria-label="Loading college invitation" aria-busy="true">
       <PageHeader title="Checking your college invitation..." />

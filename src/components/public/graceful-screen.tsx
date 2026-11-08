@@ -7,6 +7,7 @@ import { friendlyReference } from "@/lib/friendly-error";
 import styles from "./public-screen.module.css";
 import { Img } from "@/components/ui/img";
 import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 import { Heading } from "@/components/ui/heading";
 
 /** Shared error, forbidden, offline and maintenance screen; copy and recovery stay intact. */
@@ -78,7 +79,7 @@ export function GracefulScreen({ title, message, homeHref = "/dashboard", retry,
             <TextLink variant="bare" href={destination} className={styles["primary"]}>
               {statusCode===500?"Go to Home":homeLabel}
             </TextLink>
-            {alternateDestination && alternateLabel ? <TextLink variant="bare" href={alternateDestination} className={styles["secondary"]}>{alternateLabel}</TextLink> : null}
+            {alternateDestination && alternateLabel ? <ButtonLink variant="secondary" href={alternateDestination} className={styles["secondary"]}>{alternateLabel}</ButtonLink> : null}
             {retry ? <Button type="button" onClick={retry} className={styles["secondary"]}>Try again</Button> : null}
           </div>
           {legacyStatus && reference ? <p className={styles["reference"]}>Reference: {reference}</p> : null}

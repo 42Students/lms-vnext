@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentDeviceSession } from "@/auth/current-session";
 import { DeviceList } from "@/components/auth/device-list";
+import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { describeDevice, deviceTimestampIso } from "@/modules/auth/device-label";
@@ -21,10 +22,9 @@ export default async function AccountSecurityPage() {
   // already holds the current /account/security route in its client cache.
   const reload = (
     <form method="get" action="/account/security">
-      <button type="submit"
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-primary)] px-4 text-sm font-semibold text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] focus-ring sm:w-auto md:min-h-9">
+      <Button type="submit" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">
         Refresh device list
-      </button>
+      </Button>
     </form>
   );
 

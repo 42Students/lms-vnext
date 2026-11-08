@@ -16,7 +16,7 @@ export default async function CampaignUnsubscribe({
   // A GET is deliberately not a token-validity oracle. The signed token is
   // checked only when the user explicitly submits the suppression request.
   return (
-    <main className={`${authStyles["page"]} flex min-h-dvh w-full min-w-0 items-center justify-center px-4 pb-8 pt-24 md:py-12`}>
+    <main className={`${authStyles["page"]} flex w-full min-w-0 items-center justify-center px-4 pb-8 pt-24 md:py-12`}>
       <div className="w-full max-w-xl min-w-0">
         <Card as="section" aria-labelledby="unsubscribe-heading" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface shadow-none">
           <Heading level={1} size="xl" className="m-0 leading-[28px] text-[var(--lms-heading)]" id="unsubscribe-heading">

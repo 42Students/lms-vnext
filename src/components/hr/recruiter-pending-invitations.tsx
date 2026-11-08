@@ -1,6 +1,7 @@
 "use client";
 
 import {useRef,useState} from "react";
+import { TextLink } from "@/components/ui/text-link";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -33,7 +34,7 @@ export function RecruiterPendingInvitations({invitations,total,hasMore}:{
  if(!visible.length)return <div className="min-w-0 space-y-3">
   {success?<p role="status" className="text-sm text-success">{success}</p>:null}
   <p className="text-sm text-body">No invitations are awaiting your decision.</p>
-  <a href="/dashboard" className="inline-flex min-h-11 items-center text-sm text-link underline focus-ring">Back to dashboard</a>
+  <TextLink href="/dashboard" className="inline-flex min-h-11 items-center text-sm">Back to dashboard</TextLink>
  </div>;
  async function respond(){
   if(!decision||busyRef.current)return;

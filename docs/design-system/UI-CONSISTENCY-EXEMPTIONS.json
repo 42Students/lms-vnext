@@ -1,5 +1,50 @@
 {
  "schemaVersion": 1,
- "note": "No exemptions. The shell, top bar and sidebar are held to the same rules as every other file. Add an entry only with a reason and the tests that pin it, and remove it as soon as those pins are updated.",
- "files": {}
+ "note": "Add an entry only with a reason and the tests that pin it, and remove it as soon as those pins are updated. Entries are limited to files that never render inside the authenticated app shell.",
+ "files": {
+  "src/app/e2e/ux-five-route-recovery/page.tsx": {
+   "reason": "Development-only test harness page: the request proxy answers 404 for /e2e and /e2e/* in production builds (src/proxy.ts), so no user ever sees it. Fixture markup mirrors the five error routes under test.",
+   "pinnedBy": "tests/unit/sec12-e2e-harness-not-served.test.ts"
+  },
+  "src/app/e2e/ux-g135-contact-profile/page.tsx": {
+   "reason": "Development-only test harness page: the request proxy answers 404 for /e2e and /e2e/* in production builds (src/proxy.ts), so no user ever sees it. Fixture markup.",
+   "pinnedBy": "tests/unit/sec12-e2e-harness-not-served.test.ts"
+  },
+  "src/app/e2e/ux-g141-g155-study-shell/page.tsx": {
+   "reason": "Development-only test harness page: the request proxy answers 404 for /e2e and /e2e/* in production builds (src/proxy.ts), so no user ever sees it. Fixture markup.",
+   "pinnedBy": "tests/unit/sec12-e2e-harness-not-served.test.ts"
+  },
+  "src/app/e2e/ux-g160-g133-fixture/page.tsx": {
+   "reason": "Development-only test harness page: the request proxy answers 404 for /e2e and /e2e/* in production builds (src/proxy.ts), so no user ever sees it. Fixture markup.",
+   "pinnedBy": "tests/unit/sec12-e2e-harness-not-served.test.ts"
+  },
+  "src/app/e2e/ux-g166-academic-csv/page.tsx": {
+   "reason": "Development-only test harness page: the request proxy answers 404 for /e2e and /e2e/* in production builds (src/proxy.ts), so no user ever sees it. Fixture markup.",
+   "pinnedBy": "tests/unit/sec12-e2e-harness-not-served.test.ts"
+  },
+  "src/app/e2e/ux-g170-g172-csv/page.tsx": {
+   "reason": "Development-only test harness page: the request proxy answers 404 for /e2e and /e2e/* in production builds (src/proxy.ts), so no user ever sees it. Fixture markup.",
+   "pinnedBy": "tests/unit/sec12-e2e-harness-not-served.test.ts"
+  },
+  "src/app/e2e/ux-g180-placement-csv/page.tsx": {
+   "reason": "Development-only test harness page: the request proxy answers 404 for /e2e and /e2e/* in production builds (src/proxy.ts), so no user ever sees it. Fixture markup.",
+   "pinnedBy": "tests/unit/sec12-e2e-harness-not-served.test.ts"
+  },
+  "src/app/e2e/ux-g181-tpo-csv/page.tsx": {
+   "reason": "Development-only test harness page: the request proxy answers 404 for /e2e and /e2e/* in production builds (src/proxy.ts), so no user ever sees it. Fixture markup.",
+   "pinnedBy": "tests/unit/sec12-e2e-harness-not-served.test.ts"
+  },
+  "src/components/ux/ux-five-route-error-preview.tsx": {
+   "reason": "Development-only test harness page: the request proxy answers 404 for /e2e and /e2e/* in production builds (src/proxy.ts), so no user ever sees it. Only imported by the five-route recovery harness page.",
+   "pinnedBy": "tests/unit/sec12-e2e-harness-not-served.test.ts"
+  },
+  "src/app/global-error.tsx": {
+   "reason": "global-error replaces the root layout when it crashes, so no stylesheet or token is loaded; inline hex colors and sizes are the only way to render a readable fallback.",
+   "pinnedBy": "tests/unit/global-error-boundary.test.ts"
+  },
+  "src/app/privacy-policy/page.tsx": {
+   "reason": "Serves the historical privacy policy replica verbatim from /assets/static/privacy-policy-view.html (mobile app links to it); its embedded stylesheet and skip link follow that document, not the app design system.",
+   "pinnedBy": "tests/unit/public-auth-links-gap-closure.test.ts"
+  }
+ }
 }
