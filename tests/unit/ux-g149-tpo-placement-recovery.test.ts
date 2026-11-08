@@ -8,6 +8,7 @@ describe("UX-G149 TPO placement recovery source contracts", () => {
  it("ignores superseded selection CSV reads before showing a preview", () => {
   const src = read("tpo-selection-import.tsx");
   expect(src).toContain("const revision=++fileRevision.current");
+  expect(src).toContain("(reading&&!file)");
   expect(src).toContain("if(revision!==fileRevision.current)return");
   expect(src).toContain("if(revision===fileRevision.current)setReading(false)");
  });
