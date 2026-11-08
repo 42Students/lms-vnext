@@ -1,3 +1,4 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 export const HR_OFFER_EXPORT_CAP=200;
 export type HrOfferCsvRow={
  id:string;name:string|null;role:string;status:string;
@@ -5,8 +6,7 @@ export type HrOfferCsvRow={
  expiresAt:Date|null;joiningStatus:string|null;
 };
 function cell(value:string){
- const safe=/^\s*[=+\-@]/u.test(value)||/^[\t\r\n]/u.test(value)?"'"+value:value;
- return '"'+safe.replaceAll('"','""')+'"';
+ return spreadsheetCsvCell(value);
 }
 function ist(value:Date|null){
  return value && Number.isFinite(value.getTime())?new Intl.DateTimeFormat("en-GB",{
