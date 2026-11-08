@@ -37,6 +37,18 @@ describe("UX-G154 project write safety", () => {
   expect(src).toContain("mutationLock.current = true");
   expect(src).toContain("mutationLock.current = false");
  });
+ it("locks template publish/archive/duplicate and project member promote/remove before awaiting I/O", () => {
+  const template=source("src/components/projects/project-template-controls.tsx");
+  const actions=template.slice(template.indexOf("export function ProjectTemplateActions("));
+  expect(actions).toContain("if(operationLock.current || pending!==null)return");
+  expect(actions).toContain("operationLock.current = true");
+  expect(actions).toContain("operationLock.current = false");
+  const team=source("src/components/projects/project-team-controls.tsx");
+  const memberActions=team.slice(team.indexOf("export function ProjectMemberActions("),
+    team.indexOf("export function MentorLearnerTeamActions("));
+  expect(memberActions.match(/if\(memberActionLock\.current \|\| pending\)return/g)).toHaveLength(2);
+  expect(memberActions.match(/memberActionLock\.current = false/g)).toHaveLength(2);
+ });
  it("preserves cross-page selected college labels without trusting them for authorization", () => {
   const src=source("src/components/projects/super-admin-template-college-bulk.tsx");
   expect(src).toContain("savedSelection.find(row=>row.id===id)");
