@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/ui/page-header";
+import { ErrorState } from "@/components/ui/error-state";
 import {
   facultyCourseHealthHref, facultyCourseHealthParamsSchema,
 } from "@/modules/courses/faculty-course-health-model";
@@ -16,10 +17,6 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 
 type Params = { kind?: string | string[]; page?: string | string[] };
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
-
 export default async function FacultyCourseAssessmentHealthPage({
   params, searchParams,
 }: {
@@ -28,13 +25,24 @@ export default async function FacultyCourseAssessmentHealthPage({
 }) {
   const [{deliveryId},raw] = await Promise.all([params,searchParams]);
   const parsed = facultyCourseHealthParamsSchema.safeParse({
-    deliveryId,kind:first(raw.kind) ?? undefined,
-    page:first(raw.page) ?? undefined,
+    // Repeated query selectors are invalid, not silently reduced to the first value.
+    deliveryId,kind:raw.kind ?? undefined,
+    page:raw.page ?? undefined,
   });
-  if (!parsed.success) return <section role="alert" className="min-w-0 space-y-3">
-    <PageHeader title={"Invalid Section report filters"} />
-    <TextLink href="/teacher/courses" className="inline-flex min-h-11 items-center md:min-h-9">Back to courses</TextLink>
-  </section>;
+  if (!parsed.success) {
+    const validCourse = facultyCourseHealthParamsSchema.safeParse({deliveryId}).success;
+    const recoverHref=validCourse
+      ? facultyCourseHealthHref({deliveryId,kind:"ALL",page:1})
+      : "/teacher/courses";
+    return <section className="min-w-0 space-y-3">
+      <PageHeader title="Section assessment health" />
+      <ErrorState title="Invalid Section report filters"
+        description="The assessment type or page link is invalid. No Section results were loaded. Clear these filters to open the report again."
+        action={<TextLink href={recoverHref} className="inline-flex min-h-11 items-center text-sm md:min-h-9">
+          {validCourse?"Reset report filters":"Back to courses"}
+        </TextLink>} />
+    </section>;
+  }
   const context = await getCurrentRequestContext();
   const data = await getFacultyCourseAssessmentHealth(context,parsed.data);
   const back = "/teacher/courses/" + encodeURIComponent(data.delivery.deliveryId);
