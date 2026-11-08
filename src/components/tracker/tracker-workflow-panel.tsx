@@ -69,7 +69,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
   function startExclusiveMutation(task: () => Promise<void>) {
     if (pending || needsRefresh || mutationLock.current) return false;
     mutationLock.current = true;
-    startExclusiveMutation(async () => {
+    startTransition(async () => {
       try { await task(); } finally { mutationLock.current = false; }
     });
     return true;
@@ -77,7 +77,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
   function changeStatus(nextStatus: string) {
     if (pending || needsRefresh || mutationLock.current || !canManage || nextStatus === status) return;
     setStatus(nextStatus);
-    startTransition(async () => {
+    startExclusiveMutation(async () => {
       try {
         const response = await apiFetch<{issue:{status:string;resolution:string|null}}>(
           "/api/tracker/issues/" + encodeURIComponent(issue.publicId) + "/workflow", {
