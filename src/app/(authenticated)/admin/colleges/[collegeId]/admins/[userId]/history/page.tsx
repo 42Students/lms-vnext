@@ -48,9 +48,9 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
   </div>
   <nav aria-label="Administrator activity pages" className="flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-3)] text-sm">
     {data.page>1?<TextLink href={"?page="+(data.page-1)}
-     className="inline-flex min-h-11 items-center md:min-h-9">Previous 100</TextLink>:null}
+     className="inline-flex min-h-11 items-center md:min-h-9" aria-label={"Previous 100 events, page "+(data.page-1)}>Previous 100 · page {data.page-1}</TextLink>:null}
     {data.truncated?<TextLink href={"?page="+(data.page+1)}
-     className="inline-flex min-h-11 items-center md:min-h-9">Next 100</TextLink>:null}
+     className="inline-flex min-h-11 items-center md:min-h-9" aria-label={"Next 100 events, page "+(data.page+1)}>Next 100 · page {data.page+1}</TextLink>:null}
   </nav>
  </div>;
 }
