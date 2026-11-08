@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'tests/e2e/ux-g154-g161-functional.spec.ts'
+      - 'src/components/tracker/tracker-workflow-panel.tsx'
+      - 'tests/unit/ux-five-group-batch-20261107.test.ts'
       - '.github/workflows/ux-g154-g161-functional-acceptance.yml'
 permissions:
   contents: read
@@ -48,7 +50,7 @@ jobs:
       - name: Verify exact triggering SHA and source quality
         run: |
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
-          npx eslint tests/e2e/ux-g154-g161-functional.spec.ts
+          npx eslint tests/e2e/ux-g154-g161-functional.spec.ts tests/unit/ux-five-group-batch-20261107.test.ts src/components/tracker/tracker-workflow-panel.tsx
           npm run typecheck
       - name: Relevant project and tracker security regressions
         run: npx vitest run tests/unit/ux-five-group-batch-20261107.test.ts tests/unit/audit-finding-status-action.test.ts --reporter=dot
