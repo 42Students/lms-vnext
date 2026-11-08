@@ -19,7 +19,7 @@ test.describe("Scoped seeded role UX acceptance", () => {
 
 for (const size of sizes) {
   test(`UX-G074 ${size.name}: Mentor task queue and coverage show helpful filters and results`,
-    async ({page, context}) => {
+    async ({page, context}, testInfo) => {
       await authenticateGracefulRole(context, "mentor");
       await page.setViewportSize(size);
       await page.goto("/mentor/task-reviews?search=UX_NO_MATCH_TEST");
@@ -41,10 +41,11 @@ for (const size of sizes) {
       await page.goto("/mentor/team-coverage?status=INVALID");
       await expect(page.getByRole("alert").filter({hasText:"Invalid team coverage filters"})).toBeVisible();
       await expect(page.getByRole("link", { name: "Clear filters" })).toHaveAttribute("href", "/mentor/team-coverage");
+      await page.screenshot({path:testInfo.outputPath("ux-g074-"+size.name+".png"),fullPage:true});
     });
 
   test(`UX-G090 ${size.name}: Faculty course list and visible detail shortcuts`,
-    async ({page,context}) => {
+    async ({page,context}, testInfo) => {
       await authenticateGracefulRole(context, "faculty");
       await page.setViewportSize(size);
       await page.goto("/teach/courses");
@@ -63,10 +64,11 @@ for (const size of sizes) {
       await expect(navigation.getByRole("link", { name: "Discussions" })).toBeVisible();
       // These shortcuts must not be trapped behind a closed disclosure.
       await noOverflow(page);
+      await page.screenshot({path:testInfo.outputPath("ux-g090-"+size.name+".png"),fullPage:true});
     });
 
   test(`UX-G120 ${size.name}: TPO team and verification recoverable filters`,
-    async ({page,context}) => {
+    async ({page,context}, testInfo) => {
       await authenticateGracefulRole(context, "tpo");
       await page.setViewportSize(size);
       await page.goto("/tpo/team/everyone?page=invalid");
@@ -87,6 +89,7 @@ for (const size of sizes) {
       expect(href).toContain("tab=VERIFIED");
       expect(href).toContain("kind=ALL");
       await noOverflow(page);
+      await page.screenshot({path:testInfo.outputPath("ux-g120-"+size.name+".png"),fullPage:true});
     });
 }
 

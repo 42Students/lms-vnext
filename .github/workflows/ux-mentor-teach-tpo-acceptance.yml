@@ -55,6 +55,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Verify exact trigger SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
       - name: Check scoped source and browser lint
         run: npx eslint 'src/app/(authenticated)/mentor/task-reviews/page.tsx' 'src/app/(authenticated)/mentor/team-coverage/page.tsx' 'src/app/(authenticated)/teach/courses/page.tsx' 'src/app/(authenticated)/teach/courses/[deliveryId]/page.tsx' 'src/app/(authenticated)/tpo/team/everyone/page.tsx' 'src/app/(authenticated)/tpo/verification/page.tsx' tests/e2e/ux-mentor-teach-tpo-groups.spec.ts
       - name: Install Playwright Chromium
@@ -77,3 +79,12 @@ jobs:
         env:
           NODE_OPTIONS: --max-old-space-size=6144
         run: npm run typecheck
+      - name: Keep role-scoped desktop/mobile screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g074-g090-g120-role-browser
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
