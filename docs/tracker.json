@@ -16403,6 +16403,34 @@
               "390px device page",
               "1280px revoke another session"
             ]
+          },
+          {
+            "commitSha": "56cf4e35769f15787709fa7ae9925570e8810787",
+            "parityDoc": "docs/parity/pages/shared/UX-G003-devices.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392268954 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392268954 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392268954/artifacts/13582351787 — Chromium desktop evidence; 390px device page; 1280px revoke another session"
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392268954/artifacts/13582351787 — Chromium mobile evidence; 390px device page; 1280px revoke another session"
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42392268954 succeeded on 56cf4e35769f15787709fa7ae9925570e8810787. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "Scope 3/3 surfaces improved; exact-SHA CI success: lint, project TS, 8 Vitest and 5 real OTP Chromium tests; security/release gates separate."
@@ -17403,6 +17431,34 @@
           {
             "type": "document",
             "path": "docs/parity/pages/shared/UX-G022-G103.md"
+          },
+          {
+            "commitSha": "95a1c5d1025c0f840277cbd651f90fb7ecbb4f67",
+            "parityDoc": "docs/parity/pages/shared/UX-G022-G103.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42455634704 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42455634704 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42455634704/artifacts/13607119859 — Chromium desktop evidence; Exact checkout SHA; scoped source/existing journey regression; full TypeScript; real disposable PostgreSQL; seeded Super Admin/TPO/Learner auth; Chromium desktop 1280px and mobile 390px with unauthorized role denial, malformed TPO filter rejection, screenshots and traces."
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42455634704/artifacts/13607119859 — Chromium mobile evidence; Exact checkout SHA; scoped source/existing journey regression; full TypeScript; real disposable PostgreSQL; seeded Super Admin/TPO/Learner auth; Chromium desktop 1280px and mobile 390px with unauthorized role denial, malformed TPO filter rejection, screenshots and traces."
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42455634704 succeeded on 95a1c5d1025c0f840277cbd651f90fb7ecbb4f67. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "Source pass committed: four error fallbacks now expose safe template-directory navigation, create and version-comparison loading preserve page context. All 12 sources reviewed; role/UUID/version rules unchanged. Unit+browser tests: tests/unit/ux-g022-g103-route-recovery.test.ts and tests/e2e/ux-g022-g103-route-recovery.spec.ts. CI 42397732685 pending on source SHA fc8ebc33; no DONE until complete desktop/mobile and role-negative proof. See docs/parity/pages/shared/UX-G022-G103.md. Closed 2026-11-08 after exact-SHA success in run 42455634704 with browser desktop/mobile and role/tenant negative checks; engineering UX scope only, global security/release certification independent."
@@ -18922,11 +18978,11 @@
         "type": "JOURNEY",
         "area": "e2e",
         "title": "E2e · Chat17 Ui Kit → Superadmin Login (part 1)",
-        "status": "DONE",
+        "status": "DOING",
         "pickedBy": "chat-ux-e2e-dashboard-tracker-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": "2026-11-07",
+        "completedAt": null,
         "sourceFiles": [
           "src/app/e2e/superadmin-login/error.tsx",
           "src/app/e2e/superadmin-login/loading.tsx",
@@ -18951,9 +19007,15 @@
             "ref": "42392546252",
             "url": "https://github.com/42Students/lms-vnext/actions/runs/42392546252",
             "detail": "G049 2/2 Chromium; lint/TypeScript and 32/32 unit tests pass. Shared workflow RED only on G048/G122 browser test."
+          },
+          {
+            "type": "acceptance-gap",
+            "recordedAt": "2026-11-08",
+            "reason": "Existing scoped browser run 42392546252 failed anonymous tracker navigation with ERR_ABORTED; successful browser evidence is missing."
           }
         ],
-        "notes": "G049 independently verified on exact code SHA ccddb5e191b389387da821503fd87f3c84a4f2ce in Actions 42392546252: ESLint and full TS pass, five Vitest files/32 tests pass, and BOTH G049 Chromium browser cases pass (1280x800 desktop and 390x844 mobile); no session creation/phone disclosure, noindex and safe signin navigation. IMPORTANT overall shared workflow conclusion was failure due unrelated G048/G122 browser navigation abort; those groups remain DOING and were not falsely marked green. This is only G049 scoped UX closure, not global CI/release/security signoff."
+        "notes": "G049 independently verified on exact code SHA ccddb5e191b389387da821503fd87f3c84a4f2ce in Actions 42392546252: ESLint and full TS pass, five Vitest files/32 tests pass, and BOTH G049 Chromium browser cases pass (1280x800 desktop and 390x844 mobile); no session creation/phone disclosure, noindex and safe signin navigation. IMPORTANT overall shared workflow conclusion was failure due unrelated G048/G122 browser navigation abort; those groups remain DOING and were not falsely marked green. This is only G049 scoped UX closure, not global CI/release/security signoff.",
+        "previousCompletedAt": "2026-11-07"
       },
       {
         "id": "UX-G050",
@@ -19225,6 +19287,34 @@
           {
             "type": "document",
             "path": "docs/parity/pages/hr/UX-G053-G054-G055-G056-G142.md"
+          },
+          {
+            "commitSha": "b7bbb95d41356c1ee030304d2b328f39b2ca0131",
+            "parityDoc": "docs/parity/pages/hr/UX-G053-G054-G055-G056-G142.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366/artifacts/13606128819 — Chromium desktop evidence; Eight responsive anonymous boundary screenshots"
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366/artifacts/13606128819 — Chromium mobile evidence; Eight responsive anonymous boundary screenshots"
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42452340366 succeeded on b7bbb95d41356c1ee030304d2b328f39b2ca0131. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "Scoped route/component UX accepted at exact SHA b7bbb95d: both workflow jobs green, lint/full TS, Vitest, desktop/mobile anonymous and seeded recruiter role journeys, learner denied, G142 notification drawer, responsive screenshots. Production security/tenant release gates remain separate."
@@ -19317,6 +19407,34 @@
           {
             "type": "document",
             "path": "docs/parity/pages/hr/UX-G053-G054-G055-G056-G142.md"
+          },
+          {
+            "commitSha": "b7bbb95d41356c1ee030304d2b328f39b2ca0131",
+            "parityDoc": "docs/parity/pages/hr/UX-G053-G054-G055-G056-G142.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366/artifacts/13606128819 — Chromium desktop evidence; Eight responsive anonymous boundary screenshots"
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366/artifacts/13606128819 — Chromium mobile evidence; Eight responsive anonymous boundary screenshots"
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42452340366 succeeded on b7bbb95d41356c1ee030304d2b328f39b2ca0131. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "Scoped route/component UX accepted at exact SHA b7bbb95d: both workflow jobs green, lint/full TS, Vitest, desktop/mobile anonymous and seeded recruiter role journeys, learner denied, G142 notification drawer, responsive screenshots. Production security/tenant release gates remain separate."
@@ -19409,6 +19527,34 @@
           {
             "type": "document",
             "path": "docs/parity/pages/hr/UX-G053-G054-G055-G056-G142.md"
+          },
+          {
+            "commitSha": "b7bbb95d41356c1ee030304d2b328f39b2ca0131",
+            "parityDoc": "docs/parity/pages/hr/UX-G053-G054-G055-G056-G142.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366/artifacts/13606128819 — Chromium desktop evidence; Eight responsive anonymous boundary screenshots"
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366/artifacts/13606128819 — Chromium mobile evidence; Eight responsive anonymous boundary screenshots"
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42452340366 succeeded on b7bbb95d41356c1ee030304d2b328f39b2ca0131. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "Scoped route/component UX accepted at exact SHA b7bbb95d: both workflow jobs green, lint/full TS, Vitest, desktop/mobile anonymous and seeded recruiter role journeys, learner denied, G142 notification drawer, responsive screenshots. Production security/tenant release gates remain separate."
@@ -19491,6 +19637,34 @@
           {
             "type": "document",
             "path": "docs/parity/pages/hr/UX-G053-G054-G055-G056-G142.md"
+          },
+          {
+            "commitSha": "b7bbb95d41356c1ee030304d2b328f39b2ca0131",
+            "parityDoc": "docs/parity/pages/hr/UX-G053-G054-G055-G056-G142.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366/artifacts/13606128819 — Chromium desktop evidence; Eight responsive anonymous boundary screenshots"
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366/artifacts/13606128819 — Chromium mobile evidence; Eight responsive anonymous boundary screenshots"
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42452340366 succeeded on b7bbb95d41356c1ee030304d2b328f39b2ca0131. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "Scoped route/component UX accepted at exact SHA b7bbb95d: both workflow jobs green, lint/full TS, Vitest, desktop/mobile anonymous and seeded recruiter role journeys, learner denied, G142 notification drawer, responsive screenshots. Production security/tenant release gates remain separate."
@@ -19571,7 +19745,7 @@
         "evidence": [
           {
             "commitSha": "ccfeaf20405e74d8920e1cb8ef2131c701d084e9",
-            "parityDoc": "docs/audit/ux/ux-g058-g187-g188-public-journeys.md",
+            "parityDoc": "docs/parity/ux-g058-g187-g188-public-journeys.md",
             "tests": [
               {
                 "command": "npx eslint scoped sources and tests",
@@ -20100,6 +20274,34 @@
               "320px direct-login failure",
               "1280px direct-login form"
             ]
+          },
+          {
+            "commitSha": "56cf4e35769f15787709fa7ae9925570e8810787",
+            "parityDoc": "docs/parity/pages/shared/UX-G067-login.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392268954 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392268954 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392268954/artifacts/13582351787 — Chromium desktop evidence; 320px direct-login failure; 1280px direct-login form"
+              },
+              {
+                "viewport": "mobile 320px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42392268954/artifacts/13582351787 — Chromium mobile evidence; 320px direct-login failure; 1280px direct-login form"
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42392268954 succeeded on 56cf4e35769f15787709fa7ae9925570e8810787. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "Scope 3/3 surfaces improved; exact-SHA CI success: lint, project TS, 8 Vitest and 5 real OTP Chromium tests; security/release gates separate."
@@ -22393,6 +22595,34 @@
           {
             "type": "document",
             "path": "docs/parity/pages/shared/UX-G022-G103.md"
+          },
+          {
+            "commitSha": "95a1c5d1025c0f840277cbd651f90fb7ecbb4f67",
+            "parityDoc": "docs/parity/pages/shared/UX-G022-G103.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42455634704 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42455634704 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42455634704/artifacts/13607119859 — Chromium desktop evidence; Exact checkout SHA; scoped source/existing journey regression; full TypeScript; real disposable PostgreSQL; seeded Super Admin/TPO/Learner auth; Chromium desktop 1280px and mobile 390px with unauthorized role denial, malformed TPO filter rejection, screenshots and traces."
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42455634704/artifacts/13607119859 — Chromium mobile evidence; Exact checkout SHA; scoped source/existing journey regression; full TypeScript; real disposable PostgreSQL; seeded Super Admin/TPO/Learner auth; Chromium desktop 1280px and mobile 390px with unauthorized role denial, malformed TPO filter rejection, screenshots and traces."
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42455634704 succeeded on 95a1c5d1025c0f840277cbd651f90fb7ecbb4f67. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "Source pass committed: invalid finder reset, strict follow-up URL state recovery, repeated home-filter refusal, accessible home busy state. All 12 sources reviewed; no-show/attendance and authorized TPO reads unchanged. Unit+browser tests: tests/unit/ux-g022-g103-route-recovery.test.ts and tests/e2e/ux-g022-g103-route-recovery.spec.ts. CI 42397732685 pending on source SHA fc8ebc33; no DONE until complete desktop/mobile and role-negative proof. See docs/parity/pages/shared/UX-G022-G103.md. Closed 2026-11-08 after exact-SHA success in run 42455634704 with browser desktop/mobile and role/tenant negative checks; engineering UX scope only, global security/release certification independent."
@@ -24181,6 +24411,34 @@
           {
             "type": "document",
             "path": "docs/audit/ux/ux-g135-college-contact-profile.md"
+          },
+          {
+            "commitSha": "4d303ffae0f0acc753b05b049e4086d92e2cdb80",
+            "parityDoc": "docs/parity/ux-g135-college-contact-profile.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42458499414 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42458499414 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42458499414/artifacts/13609071161 — Chromium desktop evidence; 390px synthetic public contact-profile component; 1280px synthetic public contact-profile component"
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42458499414/artifacts/13609071161 — Chromium mobile evidence; 390px synthetic public contact-profile component; 1280px synthetic public contact-profile component"
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42458499414 succeeded on 4d303ffae0f0acc753b05b049e4086d92e2cdb80. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "College contact-profile form UX: safe dirty-state and discard/retry usability, validation focus, 375/1280 browser and unit proof; API and tenant contract unchanged. Closed 2026-11-08 from successful exact-SHA CI 42458499414, responsive 6/6 Chromium and 5/5 tests. Scoped component UX acceptance; full API tenant/role release certification independent."
@@ -24488,6 +24746,34 @@
             "runId": 42448731499,
             "artifactId": 13604673070,
             "description": "Actual component UI 390x844 and 1280x800 screenshots, browser proof: create error/retry, membership dialog failure, CSV preview invalidation, learner bell deadline failure, menu focus and horizontal overflow. Synthetic development-only fixture, not live tenant session."
+          },
+          {
+            "commitSha": "67849be1dc15c9fe40df2817af754af9070a9b21",
+            "parityDoc": "docs/parity/ux-g141-g155-g175-2026-11-07.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448731499 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448731499 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448731499/artifacts/13604673070 — Chromium desktop evidence; Actual component UI 390x844 and 1280x800 screenshots, browser proof: create error/retry, membership dialog failure, CSV preview invalidation, learner bell deadline failure, menu focus and horizontal overflow. Synthetic development-only fixture, not live tenant session."
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448731499/artifacts/13604673070 — Chromium mobile evidence; Actual component UI 390x844 and 1280x800 screenshots, browser proof: create error/retry, membership dialog failure, CSV preview invalidation, learner bell deadline failure, menu focus and horizontal overflow. Synthetic development-only fixture, not live tenant session."
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42448731499 succeeded on 67849be1dc15c9fe40df2817af754af9070a9b21. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "DONE scoped UX component/export surface acceptance: exact SHA 67849be1, run 42448731499 successful: lint, TypeScript, 21 unit, 2 real PostgreSQL college/role/scope integration, six desktop/mobile Chromium fixtures, screenshots in artifact 13604673070. Production permissions unchanged. Synthetic component browser alone is not production-login certification."
@@ -24564,6 +24850,34 @@
           {
             "type": "document",
             "path": "docs/parity/pages/hr/UX-G053-G054-G055-G056-G142.md"
+          },
+          {
+            "commitSha": "b7bbb95d41356c1ee030304d2b328f39b2ca0131",
+            "parityDoc": "docs/parity/pages/hr/UX-G053-G054-G055-G056-G142.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366/artifacts/13606128819 — Chromium desktop evidence; Eight responsive anonymous boundary screenshots"
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452340366/artifacts/13606128819 — Chromium mobile evidence; Eight responsive anonymous boundary screenshots"
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42452340366 succeeded on b7bbb95d41356c1ee030304d2b328f39b2ca0131. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "Scoped route/component UX accepted at exact SHA b7bbb95d: both workflow jobs green, lint/full TS, Vitest, desktop/mobile anonymous and seeded recruiter role journeys, learner denied, G142 notification drawer, responsive screenshots. Production security/tenant release gates remain separate."
@@ -25159,6 +25473,34 @@
             "runId": 42448731499,
             "artifactId": 13604673070,
             "description": "Actual component UI 390x844 and 1280x800 screenshots, browser proof: create error/retry, membership dialog failure, CSV preview invalidation, learner bell deadline failure, menu focus and horizontal overflow. Synthetic development-only fixture, not live tenant session."
+          },
+          {
+            "commitSha": "67849be1dc15c9fe40df2817af754af9070a9b21",
+            "parityDoc": "docs/parity/ux-g141-g155-g175-2026-11-07.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448731499 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448731499 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448731499/artifacts/13604673070 — Chromium desktop evidence; Actual component UI 390x844 and 1280x800 screenshots, browser proof: create error/retry, membership dialog failure, CSV preview invalidation, learner bell deadline failure, menu focus and horizontal overflow. Synthetic development-only fixture, not live tenant session."
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448731499/artifacts/13604673070 — Chromium mobile evidence; Actual component UI 390x844 and 1280x800 screenshots, browser proof: create error/retry, membership dialog failure, CSV preview invalidation, learner bell deadline failure, menu focus and horizontal overflow. Synthetic development-only fixture, not live tenant session."
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42448731499 succeeded on 67849be1dc15c9fe40df2817af754af9070a9b21. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "DONE scoped UX component/export surface acceptance: exact SHA 67849be1, run 42448731499 successful: lint, TypeScript, 21 unit, 2 real PostgreSQL college/role/scope integration, six desktop/mobile Chromium fixtures, screenshots in artifact 13604673070. Production permissions unchanged. Synthetic component browser alone is not production-login certification."
@@ -25815,6 +26157,34 @@
             "runId": 42448745272,
             "artifactId": 13604796811,
             "description": "Authenticated seeded Super Admin faculty page desktop/mobile navigation, keyboard export controls, no horizontal overflow and denied Learner CSV path; actual screenshots in Actions artifact."
+          },
+          {
+            "commitSha": "d952f236caa7df3a5e3702bbe3000d2d43e85941",
+            "parityDoc": "docs/parity/pages/shared/UX-G165-ui-kit.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448745272 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448745272 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448745272/artifacts/13604796811 — Chromium desktop evidence; Authenticated seeded Super Admin faculty page desktop/mobile navigation, keyboard export controls, no horizontal overflow and denied Learner CSV path; actual screenshots in Actions artifact."
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448745272/artifacts/13604796811 — Chromium mobile evidence; Authenticated seeded Super Admin faculty page desktop/mobile navigation, keyboard export controls, no horizontal overflow and denied Learner CSV path; actual screenshots in Actions artifact."
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42448745272 succeeded on d952f236caa7df3a5e3702bbe3000d2d43e85941. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "DONE scoped six UI-kit primitives: 42448745272 exact SHA d952f236c; scoped lint/TS, 86/86 Vitest (including UI-kit), 3/3 authenticated Chromium desktop/mobile page, focus, role negative, screenshot artifact 13604796811; no change to backend permissions; global a11y certification not claimed."
@@ -25880,6 +26250,34 @@
             "artifactId": 13591662042,
             "runId": 42415932747,
             "description": "Two synthetic development-only browser proof screenshots, downloads and JSON results from the production serializers; not a live authorization claim."
+          },
+          {
+            "commitSha": "551efef21f9fd943515ff8fc6204a1f7b84d22fe",
+            "parityDoc": "docs/parity/ux-g166-academic-exports-2026-11-07.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42415932747 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42415932747 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42415932747/artifacts/13591662042 — Chromium desktop evidence; Two synthetic development-only browser proof screenshots, downloads and JSON results from the production serializers; not a live authorization claim."
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42415932747/artifacts/13591662042 — Chromium mobile evidence; Two synthetic development-only browser proof screenshots, downloads and JSON results from the production serializers; not a live authorization claim."
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42415932747 succeeded on 551efef21f9fd943515ff8fc6204a1f7b84d22fe. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "DONE: 13-source academics outbound CSV UX pass, exact-SHA 551efef2, run 42415932747 green: lint, TS, 30/30 unit, 2/2 Chromium 1280x800 and 390x844 download cases, artifact 13591662042. Existing route step-up/permission code untouched; live tenant authorization independent release/security acceptance not claimed."
@@ -25933,6 +26331,34 @@
           {
             "type": "document",
             "path": "docs/parity/pages/shared/UX-G167-activity-exports.md"
+          },
+          {
+            "commitSha": "a8157be676da96a2ed93982fd6784599e1cdbd3c",
+            "parityDoc": "docs/parity/pages/shared/UX-G167-activity-exports.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452276830 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452276830 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452276830/artifacts/13605989065 — Chromium desktop evidence; 1280px Super Admin scoped export; 390px college admin authorized export; learner denied"
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452276830/artifacts/13605989065 — Chromium mobile evidence; 1280px Super Admin scoped export; 390px college admin authorized export; learner denied"
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42452276830 succeeded on a8157be676da96a2ed93982fd6784599e1cdbd3c. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "All 4 activity export files audited; formula guards, 1,000 row caps and role/privacy unchanged. Exact-SHA workflow 42452276830 green: lint, full TS, Vitest, seeded authorized Super Admin/college admin desktop/mobile Chromium, denied learner, download headers and responsive screenshot proof."
@@ -25984,6 +26410,34 @@
             "runId": 42450162869,
             "artifactId": 13605900252,
             "description": "Actual UTF-8 faculty directory export bytes in retained artifact, first-party OTP-verified Super Admin college selected on server, Learner access denied. Shared UI page screenshots from run 42448745272 artifact 13604796811 (390/1280)."
+          },
+          {
+            "commitSha": "d952f236caa7df3a5e3702bbe3000d2d43e85941",
+            "parityDoc": "docs/parity/pages/shared/UX-G168-admin-exports.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448745272 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448745272 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448745272/artifacts/13604796811 — Chromium desktop evidence; Actual UTF-8 faculty directory export bytes in retained artifact, first-party OTP-verified Super Admin college selected on server, Learner access denied. Shared UI page screenshots from run 42448745272 artifact 13604796811 (390/1280)."
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448745272/artifacts/13604796811 — Chromium mobile evidence; Actual UTF-8 faculty directory export bytes in retained artifact, first-party OTP-verified Super Admin college selected on server, Learner access denied. Shared UI page screenshots from run 42448745272 artifact 13604796811 (390/1280)."
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42448745272 succeeded on d952f236caa7df3a5e3702bbe3000d2d43e85941. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "DONE: G168 five registered Super Admin outbound CSV UX sources. Two exact-SHA success runs: 42448745272 (86 unit, 3 responsive browser role tests/screenshots) and 42450162869 (50 unit, 7 browser incl real OTP-backed scoped Super Admin 200 faculty CSV, invalid page and denied Learner); export artifact 13605900252. Backend step-up and tenant guards unmodified; production release signoff separate."
@@ -26028,6 +26482,34 @@
             "runId": 42414921156,
             "artifactId": 13590724676,
             "description": "Authenticated Chromium desktop 1280x800 and mobile 320/390 viewport API/CSV acceptance, retained CSV artifacts. This export-only scope has no separate rendered screenshot claim."
+          },
+          {
+            "commitSha": "6500a87b93029832eb15106fa7fd6da2514deb23",
+            "parityDoc": "docs/parity/pages/shared/UX-G169-export-ux.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42414921156 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42414921156 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42414921156/artifacts/13590724676 — Chromium desktop evidence; Authenticated Chromium desktop 1280x800 and mobile 320/390 viewport API/CSV acceptance, retained CSV artifacts. This export-only scope has no separate rendered screenshot claim."
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42414921156/artifacts/13590724676 — Chromium mobile evidence; Authenticated Chromium desktop 1280x800 and mobile 320/390 viewport API/CSV acceptance, retained CSV artifacts. This export-only scope has no separate rendered screenshot claim."
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42414921156 succeeded on 6500a87b93029832eb15106fa7fd6da2514deb23. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "DONE: export-specific CSV/role-scope UX accepted at exact SHA 6500a87b93029832eb15106fa7fd6da2514deb23. Run 42414921156: lint, typecheck, 50/50 Vitest and 4/4 Chromium seeded tests; privileged positive via real OTP-backed session, Learner negative, UTF-8/CSV evidence artifact 13590724676. This is browser-authenticated HTTP/CSV evidence at desktop/mobile viewports, not rendered screenshot or global release sign-off. See docs/parity/pages/shared/UX-G169-export-ux.md."
@@ -26075,6 +26557,34 @@
             "runId": 42416880809,
             "artifactId": 13591839350,
             "description": "Desktop 1280 and mobile 390 rendered serializer/download fixtures, real OTP College Admin and Super Admin positive export, Learner denial, cross-college spoof denial; screenshots and real CSV retained."
+          },
+          {
+            "commitSha": "8eb26b8dbfadbe25c888a2c04827fc350e0659b5",
+            "parityDoc": "docs/parity/ux-g170-attendance-csv-2026-11-07.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42416880809 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42416880809 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42416880809/artifacts/13591839350 — Chromium desktop evidence; Desktop 1280 and mobile 390 rendered serializer/download fixtures, real OTP College Admin and Super Admin positive export, Learner denial, cross-college spoof denial; screenshots and real CSV retained."
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42416880809/artifacts/13591839350 — Chromium mobile evidence; Desktop 1280 and mobile 390 rendered serializer/download fixtures, real OTP College Admin and Super Admin positive export, Learner denial, cross-college spoof denial; screenshots and real CSV retained."
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42416880809 succeeded on 8eb26b8dbfadbe25c888a2c04827fc350e0659b5. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "DONE scoped export UX: exact-SHA run 42416880809 green (8eb26b8): 31 unit, 2 PostgreSQL role/college integration, 5/5 Chromium synthetic desktop/mobile and OTP-backed live seeded export/denial journeys; screenshot/CSV artifact 13591839350. Tenant role/step-up guards unchanged. This is development seeded acceptance, not production deployment certification."
@@ -26119,6 +26629,34 @@
             "runId": 42414921156,
             "artifactId": 13590724676,
             "description": "Authenticated Chromium desktop 1280x800 and mobile 320/390 viewport API/CSV acceptance, retained CSV artifacts. This export-only scope has no separate rendered screenshot claim."
+          },
+          {
+            "commitSha": "6500a87b93029832eb15106fa7fd6da2514deb23",
+            "parityDoc": "docs/parity/pages/shared/UX-G171-export-ux.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42414921156 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42414921156 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42414921156/artifacts/13590724676 — Chromium desktop evidence; Authenticated Chromium desktop 1280x800 and mobile 320/390 viewport API/CSV acceptance, retained CSV artifacts. This export-only scope has no separate rendered screenshot claim."
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42414921156/artifacts/13590724676 — Chromium mobile evidence; Authenticated Chromium desktop 1280x800 and mobile 320/390 viewport API/CSV acceptance, retained CSV artifacts. This export-only scope has no separate rendered screenshot claim."
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42414921156 succeeded on 6500a87b93029832eb15106fa7fd6da2514deb23. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "DONE: export-specific CSV/role-scope UX accepted at exact SHA 6500a87b93029832eb15106fa7fd6da2514deb23. Run 42414921156: lint, typecheck, 50/50 Vitest and 4/4 Chromium seeded tests; privileged positive via real OTP-backed session, Learner negative, UTF-8/CSV evidence artifact 13590724676. This is browser-authenticated HTTP/CSV evidence at desktop/mobile viewports, not rendered screenshot or global release sign-off. See docs/parity/pages/shared/UX-G171-export-ux.md."
@@ -26166,6 +26704,34 @@
             "runId": 42416880809,
             "artifactId": 13591839350,
             "description": "Desktop 1280 and mobile 390 rendered serializer/download fixtures, real OTP College Admin and Super Admin positive export, Learner denial, cross-college spoof denial; screenshots and real CSV retained."
+          },
+          {
+            "commitSha": "8eb26b8dbfadbe25c888a2c04827fc350e0659b5",
+            "parityDoc": "docs/parity/ux-g172-college-csv-2026-11-07.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42416880809 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42416880809 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42416880809/artifacts/13591839350 — Chromium desktop evidence; Desktop 1280 and mobile 390 rendered serializer/download fixtures, real OTP College Admin and Super Admin positive export, Learner denial, cross-college spoof denial; screenshots and real CSV retained."
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42416880809/artifacts/13591839350 — Chromium mobile evidence; Desktop 1280 and mobile 390 rendered serializer/download fixtures, real OTP College Admin and Super Admin positive export, Learner denial, cross-college spoof denial; screenshots and real CSV retained."
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42416880809 succeeded on 8eb26b8dbfadbe25c888a2c04827fc350e0659b5. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "DONE scoped export UX: exact-SHA run 42416880809 green (8eb26b8): 31 unit, 2 PostgreSQL role/college integration, 5/5 Chromium synthetic desktop/mobile and OTP-backed live seeded export/denial journeys; screenshot/CSV artifact 13591839350. Tenant role/step-up guards unchanged. This is development seeded acceptance, not production deployment certification."
@@ -26265,6 +26831,34 @@
             "runId": 42415829658,
             "artifactId": 13591243239,
             "description": "Actual downloadable Faculty assignment and quiz CSV bytes, real OTP-verified Faculty membership, cross-Section mismatch, duplicate selector negative, Learner denial. Mobile 390x844 API viewport."
+          },
+          {
+            "commitSha": "446898f87dc7f7e13b55e0c03110c858cfdfdef5",
+            "parityDoc": "docs/parity/pages/shared/UX-G174-export-ux.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42415829658 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42415829658 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42415829658/artifacts/13591243239 — Chromium desktop evidence; Actual downloadable Faculty assignment and quiz CSV bytes, real OTP-verified Faculty membership, cross-Section mismatch, duplicate selector negative, Learner denial. Mobile 390x844 API viewport."
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42415829658/artifacts/13591243239 — Chromium mobile evidence; Actual downloadable Faculty assignment and quiz CSV bytes, real OTP-verified Faculty membership, cross-Section mismatch, duplicate selector negative, Learner denial. Mobile 390x844 API viewport."
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42415829658 succeeded on 446898f87dc7f7e13b55e0c03110c858cfdfdef5. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "DONE: course report CSV export UX scope. 42415829658 on exact SHA 446898f87dc7f7e13b55e0c03110c858cfdfdef5: lint, full TS, 50/50 unit, 6/6 Chromium. Genuine seed DB assessment/quiz and selected Faculty membership; positive CSV bytes and cross-section/learner negatives; artifact 13591243239. No production step-up/RLS changes; excludes rendered-screen screenshot and global release sign-off."
@@ -26310,6 +26904,34 @@
             "runId": 42448731499,
             "artifactId": 13604673070,
             "description": "Actual component UI 390x844 and 1280x800 screenshots, browser proof: create error/retry, membership dialog failure, CSV preview invalidation, learner bell deadline failure, menu focus and horizontal overflow. Synthetic development-only fixture, not live tenant session."
+          },
+          {
+            "commitSha": "67849be1dc15c9fe40df2817af754af9070a9b21",
+            "parityDoc": "docs/parity/ux-g141-g155-g175-2026-11-07.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448731499 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448731499 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448731499/artifacts/13604673070 — Chromium desktop evidence; Actual component UI 390x844 and 1280x800 screenshots, browser proof: create error/retry, membership dialog failure, CSV preview invalidation, learner bell deadline failure, menu focus and horizontal overflow. Synthetic development-only fixture, not live tenant session."
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42448731499/artifacts/13604673070 — Chromium mobile evidence; Actual component UI 390x844 and 1280x800 screenshots, browser proof: create error/retry, membership dialog failure, CSV preview invalidation, learner bell deadline failure, menu focus and horizontal overflow. Synthetic development-only fixture, not live tenant session."
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42448731499 succeeded on 67849be1dc15c9fe40df2817af754af9070a9b21. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "DONE scoped UX component/export surface acceptance: exact SHA 67849be1, run 42448731499 successful: lint, TypeScript, 21 unit, 2 real PostgreSQL college/role/scope integration, six desktop/mobile Chromium fixtures, screenshots in artifact 13604673070. Production permissions unchanged. Synthetic component browser alone is not production-login certification."
@@ -26319,11 +26941,11 @@
         "type": "OUTBOUND",
         "area": "log-alerts",
         "title": "Log Alerts · Outbound copy and exports (part 1)",
-        "status": "DONE",
+        "status": "DOING",
         "pickedBy": "chat-ux-activity-exports-20261107",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": "2026-11-08",
+        "completedAt": null,
         "sourceFiles": [
           "src/modules/log-alerts/telegram-notifier.ts",
           "src/modules/log-alerts/telegram-webhook.ts"
@@ -26347,9 +26969,15 @@
             "conclusion": "success",
             "commitSha": "f06a99eaa8694eb4a80d0c87eb665b6c8028e7cd",
             "results": "Exact checkout SHA, scoped ESLint, 3 Vitest files/16 cases, and full TypeScript passed."
+          },
+          {
+            "type": "acceptance-gap",
+            "recordedAt": "2026-11-08",
+            "reason": "Telegram acknowledgement scope has successful source/unit/TypeScript checks at run 42416611424 but no desktop/mobile browser evidence."
           }
         ],
-        "notes": "DONE: Telegram outbound acknowledgement-copy UX. Exact SHA f06a99eaa8, run 42416611424 green: 3 Vitest files/16 cases, scoped lint, TypeScript. Production payload rendered through injected fetch checks safe diagnostics, PII redaction, actionable acknowledgement, idempotent status, provider rejection, Unicode truncation. No actual provider send or production incident authorization certification claimed."
+        "notes": "DONE: Telegram outbound acknowledgement-copy UX. Exact SHA f06a99eaa8, run 42416611424 green: 3 Vitest files/16 cases, scoped lint, TypeScript. Production payload rendered through injected fetch checks safe diagnostics, PII redaction, actionable acknowledgement, idempotent status, provider rejection, Unicode truncation. No actual provider send or production incident authorization certification claimed.",
+        "previousCompletedAt": "2026-11-08"
       },
       {
         "id": "UX-G177",
@@ -26391,6 +27019,34 @@
             "runId": 42414921156,
             "artifactId": 13590724676,
             "description": "Authenticated Chromium desktop 1280x800 and mobile 320/390 viewport API/CSV acceptance, retained CSV artifacts. This export-only scope has no separate rendered screenshot claim."
+          },
+          {
+            "commitSha": "6500a87b93029832eb15106fa7fd6da2514deb23",
+            "parityDoc": "docs/parity/pages/shared/UX-G177-export-ux.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42414921156 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42414921156 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42414921156/artifacts/13590724676 — Chromium desktop evidence; Authenticated Chromium desktop 1280x800 and mobile 320/390 viewport API/CSV acceptance, retained CSV artifacts. This export-only scope has no separate rendered screenshot claim."
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42414921156/artifacts/13590724676 — Chromium mobile evidence; Authenticated Chromium desktop 1280x800 and mobile 320/390 viewport API/CSV acceptance, retained CSV artifacts. This export-only scope has no separate rendered screenshot claim."
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42414921156 succeeded on 6500a87b93029832eb15106fa7fd6da2514deb23. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "DONE: export-specific CSV/role-scope UX accepted at exact SHA 6500a87b93029832eb15106fa7fd6da2514deb23. Run 42414921156: lint, typecheck, 50/50 Vitest and 4/4 Chromium seeded tests; privileged positive via real OTP-backed session, Learner negative, UTF-8/CSV evidence artifact 13590724676. This is browser-authenticated HTTP/CSV evidence at desktop/mobile viewports, not rendered screenshot or global release sign-off. See docs/parity/pages/shared/UX-G177-export-ux.md."
@@ -26552,6 +27208,34 @@
           {
             "type": "document",
             "path": "docs/parity/pages/tpo/UX-G180-exports.md"
+          },
+          {
+            "commitSha": "e53ef924c632acf93f836e0f464509e28290d35e",
+            "parityDoc": "docs/parity/pages/tpo/UX-G180-exports.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42451651599 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42451651599 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42451651599/artifacts/13605184187 — Chromium desktop evidence; Real serializers on development-only synthetic route; production access and tenant scope unchanged"
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42451651599/artifacts/13605184187 — Chromium mobile evidence; Real serializers on development-only synthetic route; production access and tenant scope unchanged"
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42451651599 succeeded on e53ef924c632acf93f836e0f464509e28290d35e. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "Audited all 15 CSV modules, improved five. Exact SHA CI 42451651599 green (lint, full TypeScript, Vitest new and existing regressions, Chromium desktop/mobile synthetic exports). Role/tenant authorized production flows unchanged."
@@ -26625,6 +27309,34 @@
           {
             "type": "document",
             "path": "docs/parity/pages/tpo/UX-G181-exports.md"
+          },
+          {
+            "commitSha": "c22794c6c315c17aa7a60a61afb1375f9c6facbd",
+            "parityDoc": "docs/parity/pages/tpo/UX-G181-exports.md",
+            "tests": [
+              {
+                "command": "Full TypeScript check in scoped acceptance workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42451404640 — successful verified exact-SHA job including full TypeScript gate"
+              },
+              {
+                "command": "Scoped regression checks in accepted workflow",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42451404640 — successful focused positive/negative tests; job steps have original commands"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42451404640/artifacts/13605892613 — Chromium desktop evidence; Real serializer downloads, responsive screenshots, 44px action controls; fixture production-denied"
+              },
+              {
+                "viewport": "mobile 390px",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42451404640/artifacts/13605892613 — Chromium mobile evidence; Real serializer downloads, responsive screenshots, 44px action controls; fixture production-denied"
+              }
+            ],
+            "regressionReview": "Existing regression acceptance at https://github.com/42Students/lms-vnext/actions/runs/42451404640 succeeded on c22794c6c315c17aa7a60a61afb1375f9c6facbd. This update only brings the already executed checks into the canonical completion schema; no assertions have been bypassed.",
+            "securityReview": "No authorization or tenant behavior is modified by this evidence-only normalization. Negative tests and authenticated/synthetic scope are described in the original acceptance run and parity documentation. Independent SECURITY and deployment gates remain open."
           }
         ],
         "notes": "14 registered outbound files audited; seven source guards consolidated, recruiter export invalid dates and TSV fixed. Exact-SHA success at run 42451404640 (scoped ESLint, full TS, Vitest TPO regression, desktop/mobile Chromium). Synthetic browser does not prove live tenant auth; production API behavior and permissions unchanged."
@@ -26908,7 +27620,7 @@
         "evidence": [
           {
             "commitSha": "ccfeaf20405e74d8920e1cb8ef2131c701d084e9",
-            "parityDoc": "docs/audit/ux/ux-g058-g187-g188-public-journeys.md",
+            "parityDoc": "docs/parity/ux-g058-g187-g188-public-journeys.md",
             "tests": [
               {
                 "command": "npx eslint scoped sources and tests",
@@ -26967,7 +27679,7 @@
         "evidence": [
           {
             "commitSha": "ccfeaf20405e74d8920e1cb8ef2131c701d084e9",
-            "parityDoc": "docs/audit/ux/ux-g058-g187-g188-public-journeys.md",
+            "parityDoc": "docs/parity/ux-g058-g187-g188-public-journeys.md",
             "tests": [
               {
                 "command": "npx eslint scoped sources and tests",
