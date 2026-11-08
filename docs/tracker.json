@@ -25442,11 +25442,11 @@
         "type": "COMPONENT",
         "area": "placements",
         "title": "Placements · Interactive components (part 6)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-g160-g149-20261107",
         "pickedAt": "2026-11-07T16:44:02.222Z",
         "startedAt": "2026-11-07T16:44:02.222Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/components/placements/tpo-selection-import.tsx",
           "src/components/placements/tpo-waitlist-promotion-control.tsx",
@@ -25458,7 +25458,47 @@
           "OVERLAY-0129"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "1ee7b8c2a536ea257708c5d6f4315545a70dcac3",
+            "parityDoc": "docs/parity/pages/tpo/UX-G149-placement-controls.md",
+            "tests": [
+              {
+                "command": "Exact-SHA checkout and scoped ESLint / full TypeScript",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462557010"
+              },
+              {
+                "command": "node --test tests/ux-g149-placement-recovery.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462557010 — 4/4"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g149-tpo-placement-recovery.test.ts tests/unit/chat5-placements-ux-workflows.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462557010 — 16/16"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g149-tpo-placement-recovery.spec.ts --project=chromium",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462557010 — 7/7 including anonymous write denial"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462557010/artifacts/13610697317 — actual components, synthetic dev-only fixture"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462557010/artifacts/13610697317 — actual components, synthetic dev-only fixture"
+              }
+            ],
+            "regressionReview": "All three registered component files unchanged since the exact accepted source SHA. Six race/recovery desktop/mobile real-component tests and one anonymous API write denial passed; concurrent selection, waitlist and stale async errors cannot silently duplicate mutations in the covered component state.",
+            "securityReview": "No auth/RLS/tenant code changed. Real anonymous POSTs for selections and waitlist promotion denied; positive component fixture uses route-intercepted API responses and never exercises a privileged live write. Real TPO seeded positive flow remains independent."
+          }
+        ],
+        "notes": "DONE scoped UX-G149 (2026-11-08) at SHA 1ee7b8c2a536ea257708c5d6f4315545a70dcac3, run 42462557010 SUCCESS: ESLint, TS, Node 4/4, Vitest 16/16, real component synthetic Chromium 7/7 across 1280x800 and 390x844, anonymous POST denial and race/retry safety. Screenshot artifact 13610697317. Three tracked component files unchanged on main. Positive authenticated TPO write not implied; see docs/parity/pages/tpo/UX-G149-placement-controls.md."
       },
       {
         "id": "UX-G150",
