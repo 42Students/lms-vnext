@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { ErrorState } from "@/components/ui/error-state";
 import { resolveOwnLearnerCalendarFilters } from "@/modules/academics/learner-calendar-filter-model";
 import {learnerCalendarQuerySchema} from "@/modules/academics/learner-calendar-filter-model";
 import {learnerCalendarVisibleWindow, learnerCalendarMetricWindows} from "@/modules/academics/learner-calendar-window-model";
@@ -17,13 +18,16 @@ import { ButtonLink } from "@/components/ui/button-link";
 export default async function LearnerCalendarPage({searchParams}:{
   searchParams:Promise<{view?:string|string[];month?:string|string[];deliveryId?:string|string[]}>;
 }) {
-  const rawQuery=await searchParams;
+  const [rawQuery, context] = await Promise.all([searchParams, getCurrentRequestContext()]);
   const validated=learnerCalendarQuerySchema.safeParse(rawQuery);
-  if(!validated.success)notFound();
+  if(!validated.success) return <section className="min-w-0 space-y-4">
+    <PageHeader title="Class Schedule" />
+    <ErrorState title="Invalid calendar filters"
+      description="The calendar link includes an invalid or repeated month, view or course filter. Clear the filters to return to your schedule."
+      retryHref="/learn/calendar" retryLabel="Clear calendar filters" />
+  </section>;
   const now = new Date();
   const window=learnerCalendarVisibleWindow(validated.data.month,now);
-  const context =
-    await getCurrentRequestContext();
   let schedule: Awaited<ReturnType<typeof getLearnerClassSchedule>>;
   let scheduleWarning: string | null = null;
   try {
