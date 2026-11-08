@@ -54,6 +54,22 @@ for (const viewport of viewports) {
    expect(helpIds).toHaveLength(2);
    expect(helpIds.every(Boolean)).toBe(true);
    expect(new Set(helpIds).size).toBe(2);
+   // Verify creation in its own independent empty-history control first:
+   // a lift in the other fixture must not influence the new restriction draft.
+   const reviewCreate=create.getByRole("button",{name:"Review debarment"});
+   await expect(reviewCreate).toBeDisabled(); // no reason/date supplied
+   await create.getByRole("textbox",{name:"Reason for Debar"}).fill("Short temporary restriction");
+   await create.getByRole("combobox",{name:"How long"}).selectOption("MANUAL");
+   await expect(create.getByRole("combobox",{name:"How long"})).toHaveValue("MANUAL");
+   await expect(reviewCreate).toBeEnabled();
+   await reviewCreate.click();
+   const createDialog=page.getByRole("dialog",{name:"Confirm debarment"});
+   await expect(createDialog).toContainText("Short temporary restriction");
+   await createDialog.getByRole("button",{name:"Apply debarment"}).click();
+   await expect(create.getByText("Debarment saved.")).toBeVisible();
+   expect(posts[0]).toMatchObject({action:"DEBAR",reason:"Short temporary restriction",
+    untilDate:null,untilDrives:null});
+   // Verify one active restriction can be lifted without modifying the other.
    await existing.getByRole("button",{name:"Review lift"}).first().click();
    const modal=page.getByRole("dialog",{name:"Lift debarment"});
    await expect(modal).toBeVisible();
@@ -61,17 +77,8 @@ for (const viewport of viewports) {
    await expect(modal).not.toContainText("Second unrelated review");
    await modal.getByRole("button",{name:"Lift restriction"}).click();
    await expect(existing.getByText("Debarment lifted.")).toBeVisible();
-   expect(posts[0]).toMatchObject({action:"LIFT",debarmentId:"fixture-first",
+   expect(posts[1]).toMatchObject({action:"LIFT",debarmentId:"fixture-first",
     reason:"First verified review"});
-   await create.getByRole("textbox",{name:"Reason for Debar"}).fill("Short temporary restriction");
-   await create.getByRole("combobox",{name:"How long"}).selectOption("MANUAL");
-   await create.getByRole("button",{name:"Review debarment"}).click();
-   const createDialog=page.getByRole("dialog",{name:"Confirm debarment"});
-   await expect(createDialog).toContainText("Short temporary restriction");
-   await createDialog.getByRole("button",{name:"Apply debarment"}).click();
-   await expect(create.getByText("Debarment saved.")).toBeVisible();
-   expect(posts[1]).toMatchObject({action:"DEBAR",reason:"Short temporary restriction",
-    untilDate:null,untilDrives:null});
    await assertNoHorizontalOverflow(page);
    const shot=testInfo.outputPath(`${viewport.name}-debar.png`);
    await page.screenshot({path:shot,fullPage:true});
@@ -94,7 +101,7 @@ for (const viewport of viewports) {
    await page.goto(fixture);
    const devices=page.locator('[data-ux-fixture="devices"]');
    await devices.getByRole("button",{name:"Sign out device: Other test browser"}).click();
-   const confirm=page.getByRole("dialog",{name:"Sign out Other test browser"});
+   // ConfirmDialog intentionally uses alertdialog for destructive session revocation.\n   const confirm=page.getByRole("alertdialog",{name:"Sign out Other test browser"});
    await expect(confirm).toBeVisible();
    await confirm.getByRole("button",{name:"Sign out Other test browser"}).click();
    await expect(page.getByText("Your device list changed. Review the latest sessions.")).toBeVisible();
