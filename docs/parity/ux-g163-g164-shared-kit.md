@@ -36,3 +36,14 @@ Implementation `098d3d00b1fe62fea6ad939212477242483a3f59`:
 No API, database migration, authentication, tenant scoping, file access, provider credential or authorization rule was changed in either group. Existing safe internal href checks, per-row data visibility checks, modal dismissal guards, and server-side file validation boundaries are not loosened. Upload preview/accept/size checks are **only UX prechecks** and never grant upload authority. Both fixture routes return not-found in production.
 
 **Closure gate:** Groups remain `DOING` until exact-SHA CI succeeds at all steps and archived desktop/mobile screenshot artifact links are recorded under each group's canonical evidence object, with test outputs and regression/security review. A passing browser step alone is not sufficient.
+
+
+## UX-G164 exact-SHA verified results — CLOSED GATE
+
+- Head SHA: `a72d618455a3156119f732063e2b5a320718c25a`, workflow <https://github.com/42Students/lms-vnext/actions/runs/42461197085>; checkout SHA assertion, scoped ESLint, unit tests, browser tests and full TypeScript **all succeeded**.
+- Unit: `npx vitest run tests/unit/ux-g164-shared-kit.test.tsx tests/ux-playbook-primitives.test.tsx --reporter=dot`: **18/18 passed** (2 files).
+- Browser: `npx playwright test tests/e2e/ux-g164-shared-kit.spec.ts --project=chromium --reporter=line`: **2/2 passed**, desktop 1280×800 and mobile 390×844, including real input, polite notice, labels, grouped status, pagination transition, horizontal overflow and no JS errors.
+- Screenshot artifact: <https://github.com/42Students/lms-vnext/actions/runs/42461197085/artifacts/13609419570> — `ux-g164-desktop.png`, `ux-g164-mobile.png`. The exact-SHA CI stored both views; the browser suite asserts each view's interactive behavior. This fixture does not exercise a live tenant's backend.
+- Regression boundary: existing shared playbook tests passed; no production app-wide regression claim, security policy, API endpoint or DB schema was modified. No role permission or internal-link sanitization change was made.
+
+The independent UX-G164 tracker entry may be set to DONE with this run and artifact as evidence.
