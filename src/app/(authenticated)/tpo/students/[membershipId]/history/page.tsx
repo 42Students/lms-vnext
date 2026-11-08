@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
   getTpoStudentPlacementHistory,
@@ -35,6 +36,15 @@ export default async function TpoLearnerPlacementHistoryPage({
     redirect("/dashboard");
   }
   const [{ membershipId }, search] = await Promise.all([params, searchParams]);
+  // A malformed identity stays a 404. An invalid pagination link is a recoverable UX error.
+  if (!tpoStudentHistoryQuerySchema.safeParse({ membershipId }).success) notFound();
+  if (Array.isArray(search.page) || (search.page !== undefined && !/^[1-9][0-9]{0,4}$/.test(search.page))) {
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Placement history" />
+      <ErrorState title="Invalid history page" description="Choose one valid page number. No learner history was loaded from this link."
+        action={<ButtonLink variant="secondary" href={"/tpo/students/" + encodeURIComponent(membershipId) + "/history"}>Clear page filter</ButtonLink>} />
+    </div>;
+  }
   const parsed = tpoStudentHistoryQuerySchema.safeParse({
     membershipId,
     ...(first(search.page) ? { page: first(search.page) } : {}),
