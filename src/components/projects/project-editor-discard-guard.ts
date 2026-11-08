@@ -19,6 +19,7 @@ export function useProjectEditorDiscardGuard(
    event.preventDefault();event.returnValue="";
   };
   const onLinkClick=(event:MouseEvent)=>{
+   if(leaveConfirmed.current)return;
    if(event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||
       event.altKey||event.shiftKey)return;
    if(!(event.target instanceof Element))return;
@@ -64,6 +65,13 @@ export function useProjectEditorDiscardGuard(
   };
  },[open,dirty,pending]);
 
+ /** Call only after the mutation API has returned a committed, authorized
+  * success. This does not permit discarding unsaved edits on failed writes. */
+ function allowNavigationAfterSave(){
+  leaveConfirmed.current=true;
+  destination.current=null;
+  setDiscardOpen(false);
+ }
  function requestClose(){
   if(pending)return;
   destination.current=null;
@@ -88,5 +96,5 @@ export function useProjectEditorDiscardGuard(
   if(!next)destination.current=null;
   setDiscardOpen(next);
  }
- return {discardOpen,setDiscardOpen:changeDiscardOpen,requestClose,confirmDiscard};
+ return {discardOpen,setDiscardOpen:changeDiscardOpen,requestClose,confirmDiscard,allowNavigationAfterSave};
 }
