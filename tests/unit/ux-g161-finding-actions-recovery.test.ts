@@ -34,7 +34,7 @@ describe("UX-G161 finding editor recovery contract",()=>{
  });
  it("does not auto-attach sensitive query parameters to issue reports",()=>{
   const launcher=source("tracker-quick-report-launcher.tsx");
-  expect(launcher).toContain('window.location.search?" [query parameters omitted for privacy]":"");
+  expect(launcher).toContain('window.location.search?" [query parameters omitted for privacy]":""');
   expect(launcher).not.toContain('window.location.pathname+window.location.search');
   expect(launcher).toContain('setContext("Page: "+page');
  });
