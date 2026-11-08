@@ -7,7 +7,7 @@ const journeys=[
   {route:"/college/students/register",heading:"Register students",label:"register-student"},
   {route:"/college/faculty-assignment",heading:"Faculty Assignment",label:"faculty-assignments"},
   {route:"/college/profile",heading:"Profile",label:"college-profile"},
-  {route:"/college/people/manage",heading:"People",label:"people-directory"},
+  {route:"/college/people/manage",heading:"People Directory",label:"people-directory"},
 ] as const;
 
 test.describe("UX-G134 scoped college controls and responsive recovery",()=>{
