@@ -1,0 +1,64 @@
+name: UX-G176 Telegram outbound message preview acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/app/e2e/ux-g176-telegram-preview/**'
+      - 'src/modules/log-alerts/telegram-notifier.ts'
+      - 'src/modules/log-alerts/telegram-webhook.ts'
+      - 'tests/e2e/ux-g176-telegram-preview.spec.ts'
+      - '.github/workflows/ux-g176-telegram-preview-acceptance.yml'
+
+permissions:
+  contents: read
+concurrency:
+  group: ux-g176-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  telegram-ux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      APP_ENV: development
+      NEXT_TELEMETRY_DISABLED: '1'
+      UX_G176_TELEGRAM_FIXTURE: '1'
+      TELEGRAM_ALERT_BOT_TOKEN: 'synthetic-only-token'
+      TELEGRAM_ALERT_CHAT_ID: '12345678'
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify source SHA and UX registry
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run ux:groups -- --check
+      - name: Scoped ESLint and TypeScript
+        run: |
+          npx eslint src/app/e2e/ux-g176-telegram-preview/page.tsx src/modules/log-alerts/telegram-notifier.ts src/modules/log-alerts/telegram-webhook.ts tests/e2e/ux-g176-telegram-preview.spec.ts
+          npm run typecheck
+      - name: Outbound privacy and callback regression
+        run: npx vitest run tests/unit/graceful-telegram-webhook.test.ts tests/unit/security-telegram-acknowledgement-authorization.test.ts tests/unit/graceful-webhook-route.test.ts --reporter=dot
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Responsive provider payload and acknowledgement witness
+        run: |
+          npx playwright test tests/e2e/ux-g176-telegram-preview.spec.ts --project=chromium --reporter=line,json > ux-g176-playwright.log 2>&1 || { cat ux-g176-playwright.log; exit 1; }
+          cat ux-g176-playwright.log
+      - name: Preserve responsive screenshots and logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g176-telegram-desktop-mobile-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+            ux-g176-playwright.log
+          if-no-files-found: ignore
+          retention-days: 14
