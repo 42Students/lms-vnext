@@ -20,9 +20,9 @@ export async function generateMetadata({params}:{params:Promise<{publicId:string
 }
 export default async function IndependentFindingDetailPage({params}:{params:Promise<{publicId:string}>}){
  const {publicId}=await params;
- const finding=await getIndependentAuditFinding(await getCurrentRequestContext(),publicId);
- if(!finding)notFound();
  const context=await getCurrentRequestContext();
+ const finding=await getIndependentAuditFinding(context,publicId);
+ if(!finding)notFound();
  const [events,candidates]=await Promise.all([
   listIndependentAuditFindingEvents(context,finding.id),
   listSimilarIndependentFindings(context,{id:finding.id,area:finding.area,title:finding.title}),
@@ -94,11 +94,11 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
       </div>)}
      </dl>:null}
     </li>;
-   })}</ol>:<p role="status" className="mt-3 border-y border-border py-5 text-sm text-muted-foreground leading-[22px]">No history</p>}
+   })}</ol>:<p role="status" className="mt-3 border-y border-border py-5 text-sm text-muted-foreground leading-[22px]">No audit events have been recorded for this finding.</p>}
   </Disclosure>
   <Disclosure title="Fix commits" detailsProps={{ "aria-labelledby": "section-fix-commits" }} summaryProps={{ id: "section-fix-commits" }}>
    {finding.fixCommits.length?<ul className="mt-2 divide-y divide-border border-y border-border">{finding.fixCommits.map(commit=><li key={commit.repo+":"+commit.sha}
-    className="break-all py-3 text-sm text-body">{commit.repo} · {commit.sha}</li>)}</ul>:<p role="status" className="mt-2 border-y border-border py-5 text-sm text-muted-foreground leading-[22px]">None yet</p>}
+    className="break-all py-3 text-sm text-body">{commit.repo} · {commit.sha}</li>)}</ul>:<p role="status" className="mt-2 border-y border-border py-5 text-sm text-muted-foreground leading-[22px]">No fix commits are recorded yet.</p>}
   </Disclosure>
  </div>;
 }
