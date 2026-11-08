@@ -46,6 +46,25 @@ test.describe("UX-G072 Mentor project-local invalid filter recovery",()=>{
         await expect(page).toHaveURL("http://localhost:3000"+base+"/"+route);
         await expect(page.getByRole("heading",{level:1})).toBeVisible();
       }
+      // The sixth route reads actual persisted task feedback, not a comments
+      // thread or a synthetic browser component.
+      await page.goto(base+"?tab=board");
+      const taskFeedbackLink=page.getByRole("link",{name:/Review recorded task feedback/}).first();
+      await expect(taskFeedbackLink).toBeVisible();
+      const feedbackHref=await taskFeedbackLink.getAttribute("href");
+      expect(feedbackHref).toMatch(new RegExp(
+        "^"+base.replace(/[.*+?^$\{\}()|[\]\\]/g,"\\      await page.screenshot({path:info.outputPath("ux-g072-"+viewport.name+".png"),")+"/tasks/[0-9a-f-]{36}/feedback$","i"));
+      await taskFeedbackLink.click();
+      await expect(page.getByRole("heading",{level:1,name:"Recorded task review feedback"}))
+        .toBeVisible();
+      await expect(page.getByText("G072 persisted reviewer feedback: refine the delivery proof."))
+        .toBeVisible();
+      await expect(page.getByText("Conversation thread unavailable")).toBeVisible();
+      await expect(page.getByText("private-g072-task-source")).toHaveCount(0);
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth))
+        .toBeLessThanOrEqual(2);
+      await page.screenshot({path:info.outputPath("ux-g072-task-feedback-"+viewport.name+".png"),fullPage:true});
+
       await page.screenshot({path:info.outputPath("ux-g072-"+viewport.name+".png"),
         fullPage:true});
     });
@@ -53,7 +72,15 @@ test.describe("UX-G072 Mentor project-local invalid filter recovery",()=>{
 
   test("unauthorized Learner cannot recover into a Mentor project",async({page,context})=>{
     const id=await authorizedMentorProject(page,context);
+    await page.goto("/mentor/projects/"+id+"?tab=board");
+    const taskLink=page.getByRole("link",{name:/Review recorded task feedback/}).first();
+    await expect(taskLink).toBeVisible();
+    const feedbackHref=await taskLink.getAttribute("href");
+    expect(feedbackHref).toMatch(/\/tasks\/[0-9a-f-]{36}\/feedback$/i);
     await authenticateGracefulRole(context,"learner");
+    await page.goto(feedbackHref!);
+    await expect(page).not.toHaveURL(new RegExp("/mentor/projects/"+id+"/"));
+    await expect(page.getByText("G072 persisted reviewer feedback")).toHaveCount(0);
     for(const route of ["review-overview","risk-readiness","team-history",
       "team-meetings","timeline"]){
       // The Next.js App Router can stream a 200 shell followed by a
