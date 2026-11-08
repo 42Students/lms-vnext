@@ -16508,10 +16508,10 @@
         "type": "JOURNEY",
         "area": "admin",
         "title": "Admin · Academics → Attendance (part 1)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-admin-10-nov08-chat",
+        "pickedAt": "2026-11-08",
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/admin/academics/error.tsx",
@@ -16550,17 +16550,18 @@
         "newRouteOnly": [
           "/admin/announcements/delivery"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence."
       },
       {
         "id": "UX-G006",
         "type": "JOURNEY",
         "area": "admin",
         "title": "Admin · Audit → Colleges (part 2)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-admin-10-nov08-chat",
+        "pickedAt": "2026-11-08",
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/admin/audit/error.tsx",
@@ -16603,17 +16604,18 @@
           "PAGE-0023"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence."
       },
       {
         "id": "UX-G007",
         "type": "JOURNEY",
         "area": "admin",
         "title": "Admin · Colleges / CollegeId → Colleges / CollegeId (part 3)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-admin-10-nov08-chat",
+        "pickedAt": "2026-11-08",
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/error.tsx",
@@ -16656,17 +16658,18 @@
           "PAGE-0019"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence."
       },
       {
         "id": "UX-G008",
         "type": "JOURNEY",
         "area": "admin",
         "title": "Admin · Colleges / CollegeId → Content Order (part 4)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-admin-10-nov08-chat",
+        "pickedAt": "2026-11-08",
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/admin/colleges/[collegeId]/signin/error.tsx",
@@ -16705,17 +16708,18 @@
         "newRouteOnly": [
           "/admin/content-order"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence."
       },
       {
         "id": "UX-G009",
         "type": "JOURNEY",
         "area": "admin",
         "title": "Admin · Course Progress → Domains (part 5)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-admin-10-nov08-chat",
+        "pickedAt": "2026-11-08",
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/admin/course-progress/error.tsx",
@@ -16756,17 +16760,18 @@
         "newRouteOnly": [
           "/admin/departments/all"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence."
       },
       {
         "id": "UX-G010",
         "type": "JOURNEY",
         "area": "admin",
         "title": "Admin · Electives → Features / CollegeId (part 6)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-admin-10-nov08-chat",
+        "pickedAt": "2026-11-08",
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/admin/electives/error.tsx",
@@ -16809,17 +16814,18 @@
           "PAGE-0040"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence."
       },
       {
         "id": "UX-G011",
         "type": "JOURNEY",
         "area": "admin",
         "title": "Admin · Features / CollegeId → Lecture Halls (part 7)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-admin-10-nov08-chat",
+        "pickedAt": "2026-11-08",
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/error.tsx",
@@ -16862,17 +16868,18 @@
           "PAGE-0044"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence."
       },
       {
         "id": "UX-G012",
         "type": "JOURNEY",
         "area": "admin",
         "title": "Admin · Lecture Halls / HallId → Organizations (part 8)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-admin-10-nov08-chat",
+        "pickedAt": "2026-11-08",
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/admin/lecture-halls/[hallId]/error.tsx",
@@ -16913,17 +16920,18 @@
           "/admin/notification-delivery",
           "/admin/notification-templates"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence."
       },
       {
         "id": "UX-G013",
         "type": "JOURNEY",
         "area": "admin",
         "title": "Admin · Otp Lockout → People / Unassigned (part 9)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-admin-10-nov08-chat",
+        "pickedAt": "2026-11-08",
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/admin/people/directory/[membershipId]/audit/error.tsx",
@@ -16962,17 +16970,18 @@
         "newRouteOnly": [
           "/admin/otp-lockout"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence."
       },
       {
         "id": "UX-G014",
         "type": "JOURNEY",
         "area": "admin",
         "title": "Admin · Placements → Placements / Calendar (part 10)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "ux-admin-10-nov08-chat",
+        "pickedAt": "2026-11-08",
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/admin/placements/analytics/error.tsx",
@@ -17011,7 +17020,8 @@
         "newRouteOnly": [
           "/admin/placements/calendar/appointments"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence."
       },
       {
         "id": "UX-G015",
