@@ -1,30 +1,25 @@
 name: UX-G069 G091 Mentor Faculty recovery acceptance
+
 on:
   workflow_dispatch:
   push:
     branches: [main]
     paths:
-      - 'src/app/(authenticated)/mentor/allQuizzes/page.tsx'
-      - 'src/app/(authenticated)/mentor/fileExplorer/page.tsx'
-      - 'src/app/(authenticated)/mentor/courses/page.tsx'
-      - 'src/app/(authenticated)/mentor/contacts/[[...contactsTab]]/page.tsx'
-      - 'src/app/(authenticated)/mentor/courses/[courseId]/[[...courseTab]]/page.tsx'
-      - 'src/app/(authenticated)/mentor/calendar/page.tsx'
-      - 'src/app/(authenticated)/teacher/calendar/page.tsx'
-      - 'src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx'
-      - 'src/app/(authenticated)/teacher/allQuizzes/page.tsx'
       - 'tests/ux-g069-g091-contract.test.mjs'
       - 'tests/e2e/ux-g069-g091-role-recovery.spec.ts'
       - '.github/workflows/ux-g069-g091-acceptance.yml'
+
 permissions:
   contents: read
+
 concurrency:
   group: ux-g069-g091-${{ github.ref }}
   cancel-in-progress: true
+
 jobs:
-  browser:
+  role-ux:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 40
     services:
       postgres:
         image: postgres:17-alpine
@@ -32,10 +27,12 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: lms_vnext_e2e
-        ports:
-          - 5432:5432
+        ports: [5432:5432]
         options: >-
-          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e" --health-interval 5s --health-timeout 5s --health-retries 10
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     env:
       DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
       TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
@@ -52,33 +49,50 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Assert exact source commit
-        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA" && echo "$GITHUB_SHA" > ux-g069-g091-source-sha.txt
-      - run: node --test tests/ux-g069-g091-contract.test.mjs
-      - name: Scoped ESLint
+      - name: Verify tested source SHA
         run: |
-          npx eslint 'src/app/(authenticated)/mentor/allQuizzes/page.tsx' 'src/app/(authenticated)/mentor/fileExplorer/page.tsx' 'src/app/(authenticated)/mentor/courses/page.tsx' 'src/app/(authenticated)/mentor/contacts/[[...contactsTab]]/page.tsx' 'src/app/(authenticated)/mentor/courses/[courseId]/[[...courseTab]]/page.tsx' 'src/app/(authenticated)/mentor/calendar/page.tsx' 'src/app/(authenticated)/teacher/calendar/page.tsx' 'src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx' 'src/app/(authenticated)/teacher/allQuizzes/page.tsx' tests/e2e/ux-g069-g091-role-recovery.spec.ts
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          echo "$GITHUB_SHA" > ux-g069-g091-source-sha.txt
+      - name: Source authorization and UX recovery contracts
+        run: node --test tests/ux-g069-g091-contract.test.mjs
+      - name: Lint scoped Mentor Faculty pages and browser test
+        run: |
+          npx eslint \
+            'src/app/(authenticated)/mentor/allQuizzes/page.tsx' \
+            'src/app/(authenticated)/mentor/fileExplorer/page.tsx' \
+            'src/app/(authenticated)/mentor/courses/page.tsx' \
+            'src/app/(authenticated)/mentor/contacts/[[...contactsTab]]/page.tsx' \
+            'src/app/(authenticated)/mentor/courses/[courseId]/[[...courseTab]]/page.tsx' \
+            'src/app/(authenticated)/mentor/calendar/page.tsx' \
+            'src/app/(authenticated)/teacher/calendar/page.tsx' \
+            'src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx' \
+            'src/app/(authenticated)/teacher/allQuizzes/page.tsx' \
+            tests/e2e/ux-g069-g091-role-recovery.spec.ts
           npm run typecheck
-      - run: npm run db:e2e:prepare
-      - name: Seed synthetic Mentor role
+      - name: Prepare disposable PostgreSQL
+        run: npm run db:e2e:prepare
+      - name: Seed synthetic Mentor membership
         env:
           ALLOW_TEST_SEED: I_ACCEPT
           UX_ROLE_MEMBERSHIPS_ONLY: '1'
         run: npx tsx scripts/seed-test-tenants.ts
-      - name: Ephemeral test secrets
+      - name: Ephemeral authenticated browser identity
         run: |
           echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
           echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
-      - run: npx playwright install --with-deps chromium
-      - run: npx playwright test tests/e2e/ux-g069-g091-role-recovery.spec.ts --project=chromium --reporter=line
-      - name: Save screenshots/traces
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop/mobile Faculty and negative-role journeys
+        run: npx playwright test tests/e2e/ux-g069-g091-faculty-recovery.spec.ts --project=chromium --reporter=line
+      - name: Archive exact-SHA browser screenshots
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: ux-g069-g091-${{ github.sha }}
+          name: ux-g069-g091-role-browser-${{ github.sha }}
           path: |
             test-results/
             playwright-report/
             ux-g069-g091-source-sha.txt
           if-no-files-found: ignore
+          retention-days: 14
