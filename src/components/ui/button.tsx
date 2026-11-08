@@ -35,7 +35,12 @@ export function buttonClasses({ variant = "primary", size = "md", className }: {
 }
 
 export function Button({ className, variant = "primary", size = "md", loading = false, type = "button", disabled, children, ...props }: ButtonProps) {
-  if (variant === "bare") return <button data-slot="button" data-variant="bare" type={type} disabled={disabled} {...props} className={cx(bareClasses, className)}>{children}</button>;
+  // The chrome-free variant must keep the same async double-submit guard as
+  // styled buttons. Calling code can rely on loading across every variant.
+  if (variant === "bare") return <button data-slot="button" data-variant="bare"
+    data-loading={loading ? "true" : undefined} type={type} disabled={disabled || loading}
+    {...props} aria-busy={loading ? true : props["aria-busy"]}
+    className={cx(bareClasses, className)}>{children}</button>;
   const buttonClassName = buttonClasses({ variant, size, className });
   return <button data-slot="button" data-variant={variant} data-size={size} data-loading={loading ? "true" : undefined} type={type} disabled={disabled || loading} {...props}
     aria-busy={loading ? true : props["aria-busy"]}

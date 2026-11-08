@@ -45,9 +45,9 @@ export function FilterBar({
       </div> : null}
       {action ? <div className="min-w-0 max-md:w-full max-md:[&>*]:w-full md:ml-auto">{action}</div> : null}
     </div>
-    <ResponsiveFilterDrawer id={panelId} title={title} open={open}
+    {hasFilters ? <ResponsiveFilterDrawer id={panelId} title={title} open={open}
       onOpenChange={setOpen} launcher={launcher}>
       {filters ?? children}
-    </ResponsiveFilterDrawer>
+    </ResponsiveFilterDrawer> : null}
   </section>;
 }

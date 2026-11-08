@@ -6,6 +6,8 @@ export type BreadcrumbItem = { label: string; href?: string };
 export type BreadcrumbsProps = { items: readonly BreadcrumbItem[]; className?: string };
 
 export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
+  // An empty crumb collection must not register an unnamed, unusable landmark.
+  if (!items.length) return null;
   return (
     <nav aria-label="Breadcrumb" data-slot="breadcrumbs" className={cx("min-w-0", className)}>
       <ol className="flex min-w-0 flex-wrap items-center gap-x-[var(--lms-space-2)] gap-y-1 text-[length:var(--lms-font-sm)] leading-5 text-[var(--lms-body-text)]">
