@@ -35,6 +35,18 @@ jobs:
           docker build --target runner \
             -t lms-vnext/web:${{ env.SHA }} .
 
+      - name: Vulnerability scan of both images (report only; SEC-17-007, SEC-17-020)
+        # Trivy is pinned by digest. HIGH and CRITICAL findings that already have a fix are listed in the job log and
+        # in the trivy-reports artifact. Exit code stays 0 until the baseline is clean; then set --exit-code 1.
+        run: |
+          mkdir -p trivy-reports
+          for image in web migrator; do
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+              ghcr.io/aquasecurity/trivy@sha256:ab70a02200597efa04748f210f793936eb647cbcdb0ea69cc30b226d6f5a22c7 \
+              image --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 0 --format table \
+              lms-vnext/$image:${{ env.SHA }} | tee trivy-reports/$image.txt
+          done
+
       - name: Save images as tarballs
         run: |
           docker save lms-vnext/migrator:${{ env.SHA }} | gzip > migrator.tar.gz
@@ -49,4 +61,5 @@ jobs:
             migrator.tar.gz
             web.tar.gz
             sha.txt
+            trivy-reports
           retention-days: 7
