@@ -45,7 +45,17 @@ test.describe("UX-G071 five persisted Mentor review route families",()=>{
         await page.goto(base+"/resources-directory");
         await expect(page.getByRole("heading",{level:1,name:"Registered resource links"}))
           .toBeVisible();
-        await expect(page.getByRole("searchbox")).toBeVisible();
+        // FilterBar deliberately moves its search field into a responsive
+        // drawer on phones; the launcher must expose a usable search there.
+        if(viewport.width<768){
+          const openFilters=page.getByRole("button",{name:"Filters",exact:true}).first();
+          await expect(openFilters).toBeVisible();
+          await openFilters.click();
+          await expect(page.getByRole("searchbox")).toBeVisible();
+          await page.keyboard.press("Escape");
+        }else{
+          await expect(page.getByRole("searchbox")).toBeVisible();
+        }
         await expect(page.getByRole("link",{name:"Clear",exact:true})).toBeVisible();
         await page.screenshot({path:info.outputPath("g071-resources-"+viewport.name+".png"),
           fullPage:true});
