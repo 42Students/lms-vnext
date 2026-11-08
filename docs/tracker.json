@@ -18836,6 +18836,44 @@
           {
             "type": "document",
             "path": "docs/ux/UX-G049-G048-G122.md"
+          },
+          {
+            "commitSha": "df9da90ca987863cb708249e9370212b72bd8507",
+            "parityDoc": "docs/parity/pages/shared/UX-G048-G122.md",
+            "tests": [
+              {
+                "command": "npx vitest run tests/unit/ux-g049-g048-g122-source.test.ts tests/unit/HR-BREAK-tracker-pages-01.test.ts tests/unit/HR-BREAK-chat15-tracker-mine-page-98.test.tsx tests/unit/chat15-hr-tracker-page-render-52.test.tsx tests/unit/UX-chat16-public-auth-legacy-bookmarks-03.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42460006660"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42460006660"
+              },
+              {
+                "command": "npx eslint 'src/app/e2e/superadmin-login/**/*.tsx' 'src/app/(authenticated)/dashboard/**/*.tsx' 'src/app/(authenticated)/tracker/logs/**/*.tsx' 'src/app/(authenticated)/tracker/mine/**/*.tsx' tests/unit/ux-g049-g048-g122-source.test.ts tests/e2e/ux-g049-g048-g122-public-guard.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42460006660"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g049-g048-g122-public-guard.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42460006660"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42460006660/artifacts/13609407089"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42460006660/artifacts/13609407089"
+              }
+            ],
+            "regressionReview": "32/32 source/SSR/role isolation positive-negative Vitest cases, 8/8 responsive anonymous and seeded named-role Chromium scenarios; dashboard/loading/error and tracker route recovery checked.",
+            "securityReview": "Anonymous dashboard/log/tracker denial, named unscoped Super Admin positive log access, learner negative log access, own-reporter recovery validated; no privilege bypass or tenant/data scope changes, prod release independent."
           }
         ],
         "notes": "Scoped UX DONE on 2026-11-08. Exact source/workflow SHA df9da90ca987863cb708249e9370212b72bd8507 and green run 42460006660: scoped ESLint, full TypeScript, 32/32 Vitest, 8/8 Chromium 1280/390 responsive, anonymous privacy, named Super Admin positive and learner-negative reporter/log checks, artifact 13609407089. Other role dashboard journeys and production security/release acceptance remain independent."
@@ -20380,6 +20418,39 @@
               "TPO 1280px and 390px team inbox, verification filters"
             ],
             "scope": "Real seeded role sessions; project, Faculty delivery and TPO module access remain permission-protected; one learner negative Mentor denial. No production/provider certification."
+          },
+          {
+            "commitSha": "d2e4d680140036d365ec6d6b112c4da65949fd04",
+            "parityDoc": "docs/parity/pages/shared/UX-G074-G090-G120.md",
+            "tests": [
+              {
+                "command": "npx eslint 'src/app/(authenticated)/mentor/task-reviews/page.tsx' 'src/app/(authenticated)/mentor/team-coverage/page.tsx' 'src/app/(authenticated)/teach/courses/page.tsx' 'src/app/(authenticated)/teach/courses/[deliveryId]/page.tsx' 'src/app/(authenticated)/tpo/team/everyone/page.tsx' 'src/app/(authenticated)/tpo/verification/page.tsx' tests/e2e/ux-mentor-teach-tpo-groups.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42459722041"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42459722041"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-mentor-teach-tpo-groups.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42459722041"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42459722041/artifacts/13608349707"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42459722041/artifacts/13608349707"
+              }
+            ],
+            "regressionReview": "Seven real seeded-role Chromium journeys including Mentor filter/no-match and learner-denial, Faculty course navigation and TPO team/verification filters across both viewport sizes; existing role services and query models unchanged.",
+            "securityReview": "Disposable seeded PostgreSQL and ephemeral E2E identities; no permission/tenant/service guard changes. Learner negative Mentor access passed; no claim of global prod security acceptance."
           }
         ],
         "notes": "Scoped UX DONE 2026-11-08. Exact SHA d2e4d680140036d365ec6d6b112c4da65949fd04, successful Actions 42459722041, scoped lint/full TypeScript, 7/7 real role-authenticated Chromium responsive browser checks, screenshot artifact 13608349707; Mentor learner-denial checked. Existing authorization, tenant scope and service guards unchanged. Global security/release acceptance remains separate."
@@ -21215,9 +21286,7 @@
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
         "completedAt": "2026-11-08",
-        "sourceFiles": [
-          "src/app/(authenticated)/superadmin/[...legacy]/page.tsx"
-        ],
+        "sourceFiles": [],
         "surfaceIds": [],
         "newRouteOnly": [
           "/superadmin/projects/templates",
@@ -21252,6 +21321,44 @@
           {
             "type": "document",
             "path": "docs/parity/ux-g088-superadmin-template-bookmarks.md"
+          },
+          {
+            "commitSha": "1517df148dfd500d8721288ce08abde0826c7d6b",
+            "parityDoc": "docs/parity/ux-g088-superadmin-template-bookmarks.md",
+            "tests": [
+              {
+                "command": "node --test tests/ux-g088-template-contract.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42458903109"
+              },
+              {
+                "command": "npx vitest run tests/unit/chat13-legacy-superadmin-bookmarks.test.ts tests/unit/ux-g088-legacy-template-routing.test.tsx",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42458903109"
+              },
+              {
+                "command": "npx eslint 'src/app/(authenticated)/superadmin/[...legacy]/page.tsx' tests/unit/ux-g088-legacy-template-routing.test.tsx tests/e2e/ux-g088-superadmin-template-bookmarks.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42458903109"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g088-superadmin-template-bookmarks.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42458903109"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42458903109/artifacts/13608148980"
+              },
+              {
+                "viewport": "mobile 320x640",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42458903109/artifacts/13608148980"
+              }
+            ],
+            "regressionReview": "Legacy template index, new/create, detail, invalid tokens and protected permission unit regressions passed; canonical routing preserved. Other Super Admin legacy bookmarks unaffected.",
+            "securityReview": "Permission-aware route requires project-template.manage for /new; anonymous desktop/mobile does not reveal template management; unauthorized and invalid template cases tested server-side. No authorization or tenant gate removed."
           }
         ],
         "notes": "Scoped UX DONE 2026-11-08: exact SHA 1517df148dfd500d8721288ce08abde0826c7d6b green run 42458903109, all steps successful; 3 source-contract tests, 10 positive/negative SSR Vitest tests and 2 Chromium desktop/mobile anonymous denial/browser checks, artifact 13608148980. Protected canonical template creation now handles /new; signed-in production and global security/release gates remain separate."
@@ -21386,6 +21493,39 @@
               "TPO 1280px and 390px team inbox, verification filters"
             ],
             "scope": "Real seeded role sessions; project, Faculty delivery and TPO module access remain permission-protected; one learner negative Mentor denial. No production/provider certification."
+          },
+          {
+            "commitSha": "d2e4d680140036d365ec6d6b112c4da65949fd04",
+            "parityDoc": "docs/parity/pages/shared/UX-G074-G090-G120.md",
+            "tests": [
+              {
+                "command": "npx eslint 'src/app/(authenticated)/mentor/task-reviews/page.tsx' 'src/app/(authenticated)/mentor/team-coverage/page.tsx' 'src/app/(authenticated)/teach/courses/page.tsx' 'src/app/(authenticated)/teach/courses/[deliveryId]/page.tsx' 'src/app/(authenticated)/tpo/team/everyone/page.tsx' 'src/app/(authenticated)/tpo/verification/page.tsx' tests/e2e/ux-mentor-teach-tpo-groups.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42459722041"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42459722041"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-mentor-teach-tpo-groups.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42459722041"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42459722041/artifacts/13608349707"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42459722041/artifacts/13608349707"
+              }
+            ],
+            "regressionReview": "Seven real seeded-role Chromium journeys including Mentor filter/no-match and learner-denial, Faculty course navigation and TPO team/verification filters across both viewport sizes; existing role services and query models unchanged.",
+            "securityReview": "Disposable seeded PostgreSQL and ephemeral E2E identities; no permission/tenant/service guard changes. Learner negative Mentor access passed; no claim of global prod security acceptance."
           }
         ],
         "notes": "Scoped UX DONE 2026-11-08. Exact SHA d2e4d680140036d365ec6d6b112c4da65949fd04, successful Actions 42459722041, scoped lint/full TypeScript, 7/7 real role-authenticated Chromium responsive browser checks, screenshot artifact 13608349707; Mentor learner-denial checked. Existing authorization, tenant scope and service guards unchanged. Global security/release acceptance remains separate."
@@ -22994,6 +23134,39 @@
               "TPO 1280px and 390px team inbox, verification filters"
             ],
             "scope": "Real seeded role sessions; project, Faculty delivery and TPO module access remain permission-protected; one learner negative Mentor denial. No production/provider certification."
+          },
+          {
+            "commitSha": "d2e4d680140036d365ec6d6b112c4da65949fd04",
+            "parityDoc": "docs/parity/pages/shared/UX-G074-G090-G120.md",
+            "tests": [
+              {
+                "command": "npx eslint 'src/app/(authenticated)/mentor/task-reviews/page.tsx' 'src/app/(authenticated)/mentor/team-coverage/page.tsx' 'src/app/(authenticated)/teach/courses/page.tsx' 'src/app/(authenticated)/teach/courses/[deliveryId]/page.tsx' 'src/app/(authenticated)/tpo/team/everyone/page.tsx' 'src/app/(authenticated)/tpo/verification/page.tsx' tests/e2e/ux-mentor-teach-tpo-groups.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42459722041"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42459722041"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-mentor-teach-tpo-groups.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42459722041"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42459722041/artifacts/13608349707"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42459722041/artifacts/13608349707"
+              }
+            ],
+            "regressionReview": "Seven real seeded-role Chromium journeys including Mentor filter/no-match and learner-denial, Faculty course navigation and TPO team/verification filters across both viewport sizes; existing role services and query models unchanged.",
+            "securityReview": "Disposable seeded PostgreSQL and ephemeral E2E identities; no permission/tenant/service guard changes. Learner negative Mentor access passed; no claim of global prod security acceptance."
           }
         ],
         "notes": "Scoped UX DONE 2026-11-08. Exact SHA d2e4d680140036d365ec6d6b112c4da65949fd04, successful Actions 42459722041, scoped lint/full TypeScript, 7/7 real role-authenticated Chromium responsive browser checks, screenshot artifact 13608349707; Mentor learner-denial checked. Existing authorization, tenant scope and service guards unchanged. Global security/release acceptance remains separate."
@@ -23110,6 +23283,44 @@
           {
             "type": "document",
             "path": "docs/ux/UX-G049-G048-G122.md"
+          },
+          {
+            "commitSha": "df9da90ca987863cb708249e9370212b72bd8507",
+            "parityDoc": "docs/parity/pages/shared/UX-G048-G122.md",
+            "tests": [
+              {
+                "command": "npx vitest run tests/unit/ux-g049-g048-g122-source.test.ts tests/unit/HR-BREAK-tracker-pages-01.test.ts tests/unit/HR-BREAK-chat15-tracker-mine-page-98.test.tsx tests/unit/chat15-hr-tracker-page-render-52.test.tsx tests/unit/UX-chat16-public-auth-legacy-bookmarks-03.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42460006660"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42460006660"
+              },
+              {
+                "command": "npx eslint 'src/app/e2e/superadmin-login/**/*.tsx' 'src/app/(authenticated)/dashboard/**/*.tsx' 'src/app/(authenticated)/tracker/logs/**/*.tsx' 'src/app/(authenticated)/tracker/mine/**/*.tsx' tests/unit/ux-g049-g048-g122-source.test.ts tests/e2e/ux-g049-g048-g122-public-guard.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42460006660"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g049-g048-g122-public-guard.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42460006660"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42460006660/artifacts/13609407089"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42460006660/artifacts/13609407089"
+              }
+            ],
+            "regressionReview": "32/32 source/SSR/role isolation positive-negative Vitest cases, 8/8 responsive anonymous and seeded named-role Chromium scenarios; dashboard/loading/error and tracker route recovery checked.",
+            "securityReview": "Anonymous dashboard/log/tracker denial, named unscoped Super Admin positive log access, learner negative log access, own-reporter recovery validated; no privilege bypass or tenant/data scope changes, prod release independent."
           }
         ],
         "notes": "Scoped UX DONE on 2026-11-08. Exact source/workflow SHA df9da90ca987863cb708249e9370212b72bd8507 and green run 42460006660: scoped ESLint, full TypeScript, 32/32 Vitest, 8/8 Chromium 1280/390 responsive, anonymous privacy, named Super Admin positive and learner-negative reporter/log checks, artifact 13609407089. Other role dashboard journeys and production security/release acceptance remain independent."
