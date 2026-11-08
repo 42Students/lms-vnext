@@ -21,7 +21,7 @@ describe("UX-campaign-unsubscribe-token-01 preference confirmation",()=>{
   const form=read("src/components/placements/campaign-unsubscribe-confirm.tsx");
   expect(page).toContain('<Heading level={1} size="xl" className="m-0');
   expect(page).toContain('<Card as="section"');
-  expect(page).toContain('min-h-dvh');
+  expect(page).toContain('authStyles["page"]');
   expect(form).toContain("if(pendingRef.current||confirmed||!token.trim())return");
   expect(form).toContain('method:"POST"');
   expect(form).toContain('response.redirected');

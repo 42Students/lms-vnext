@@ -86,9 +86,9 @@ export default function HomeMarketingPage() {
     <nav aria-label="Explore 42 LMS by audience"
      className="flex min-w-0 flex-col gap-3 border-b border-[var(--lms-canvas-border)] py-6 sm:flex-row sm:flex-wrap sm:items-center">
      <p className="text-sm font-semibold text-[var(--lms-heading)] sm:mr-2">Find your path</p>
-     <ButtonLink variant="secondary" href="/universities" className="w-full sm:w-auto">For Universities</ButtonLink>
-     <ButtonLink variant="secondary" href="/enterprises" className="w-full sm:w-auto">For Enterprises</ButtonLink>
-     <ButtonLink variant="secondary" href="#home-journey" className="w-full sm:w-auto">See the learner journey</ButtonLink>
+     <ButtonLink variant="secondary" href="/universities" className="min-h-11 w-full sm:w-auto">For Universities</ButtonLink>
+     <ButtonLink variant="secondary" href="/enterprises" className="min-h-11 w-full sm:w-auto">For Enterprises</ButtonLink>
+     <ButtonLink variant="secondary" href="#home-journey" className="min-h-11 w-full sm:w-auto">See the learner journey</ButtonLink>
     </nav>
 
     {/* 2. Personalization: the legacy quote band, without retired AI promises. */}
