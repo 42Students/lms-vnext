@@ -43,6 +43,16 @@ export default async function LearnerCalendarPage({searchParams}:{
     schedule = { sections: [], courses: [], events: [], courseLookupWarning: null,
       lookupStatus: "LOOKUP_FAILED" };
   }
+  // A transient schedule failure cannot resolve the requested delivery against
+  // an empty fallback course list. That is a failed read, not a missing course.
+  // Do not convert it into a misleading 404 or infer that the learner has no
+  // enrolled courses; let them retry from their own calendar instead.
+  if (scheduleWarning && validated.data.deliveryId) return <section className="min-w-0 space-y-4">
+    <PageHeader title="Class Schedule" />
+    <ErrorState title="Class schedule temporarily unavailable"
+      description="We could not confirm the classes for this selected course. No attendance or course records were changed. Try the calendar again."
+      retryHref="/learn/calendar" retryLabel="Open class schedule" />
+  </section>;
   // Today and upcoming are independent of whichever calendar month is visible.
   // Each metric window is bounded and re-authorized for this learner.
   const metrics = await Promise.allSettled(
