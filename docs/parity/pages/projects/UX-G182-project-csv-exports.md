@@ -60,3 +60,10 @@ For DONE, require a successful exact-commit CI/test run, desktop and mobile brow
 
 - [Shared exact-SHA CI run 42469427421](https://github.com/42Students/lms-vnext/actions/runs/42469427421) **SUCCEEDED** at `9eedcf0e661d63ca383f03e66d47f9bda721d8b6`. The added `tests/e2e/ux-five-group-batch-20261107.spec.ts` uses an actually seeded Super Admin test identity to issue requests to all five Mentor export endpoints. It confirms seeded browser identity alone cannot satisfy the device step-up boundary; none returns a CSV attachment.
 - This is **negative authorization** only. Together with previously green 41/41 serializer units and 15/15 synthetic browser download cases, the missing proof remains real recent-OTP-enabled positive route download and data/role/tenant scoping on a trusted test device. No test or application bypass has been introduced; **G182 remains DOING.**
+
+## Grapheme-safe CSV truncation — 8 November 2026
+
+- `e1452ce8f1f0a1434f0ea068f6d1dcbf239d342e` changes only the learner project activity CSV cell formatter: the existing 240-Unicode-code-point bound now stops **before** a grapheme cluster (such as a Devanagari conjunct or an emoji joined with ZWJ) would be split. CSV headers, authorized row cap, formula sanitization and export permission checks are unchanged.
+- `6429344afd8af0548e4c40f7affe833916fd9179` adds regression cases for both multi-code-point script and emoji sequences at the truncation boundary.
+- [Exact-SHA acceptance run 42487701732](https://github.com/42Students/lms-vnext/actions/runs/42487701732) **SUCCEEDED** for that test commit: scope lint, full TypeScript, ten existing/focused unit suites, synthetic desktop/mobile browser downloads and anonymous endpoint denial.
+- **Group status remains DOING:** the 15 green Chromium scenarios still use intentionally synthetic development-only exports, not an OTP-authenticated positive export from a real tenant. Device step-up, role/tenant scoping, and positive user download remain mandatory; no test-mode auth bypass was added.
