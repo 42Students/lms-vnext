@@ -1,3 +1,6 @@
+import {redirect} from "next/navigation";
+import {hasMembershipRole} from "@/modules/identity/context";
+import {assertMentorProjectRecoveryAccess} from "@/modules/projects/mentor-project-recovery-guard";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { Disclosure } from "@/components/ui/disclosure";
 import { PageHeader } from "@/components/ui/page-header";
@@ -32,11 +35,16 @@ export default async function MentorTeamMeetingsPage({
   const parsed=mentorTeamMeetingsQuerySchema.safeParse(
     normalized ? {projectId,...normalized} : null,
   );
-  if(!parsed.success)return <section role="alert" className="space-y-3">
+  if(!parsed.success){
+ const recoveryContext=await getCurrentRequestContext();
+ if(!hasMembershipRole(recoveryContext,"MENTOR"))redirect("/dashboard");
+ await assertMentorProjectRecoveryAccess(recoveryContext,projectId);
+ return  <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid meeting history filters"} />
     <p className="text-sm text-body">The filter link is invalid or contains duplicate values. Clear it to return to this project’s meeting log.</p>
     <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-meetings"} className="inline-flex min-h-11 items-center">Clear invalid filters</TextLink>
   </section>;
+ }
   const context=await getCurrentRequestContext();
   const data=await getMentorTeamMeetings(context,parsed.data);
   const board="/mentor/projects/"+encodeURIComponent(projectId)+"?tab=team";
