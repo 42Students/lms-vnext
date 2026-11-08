@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { Label } from "@/components/ui/label";
 export function TpoTeamAwayForm({until}:{until:string|null}){
  const pending=useRef(false),router=useRouter();
@@ -20,7 +20,13 @@ export function TpoTeamAwayForm({until}:{until:string|null}){
    });
    setDate("");setNotice(next?"Away until saved":"Back now");
    router.refresh();
-  }catch(reason){setError(reason instanceof Error?reason.message:"Could not save away status. Try again.");}
+  }catch(reason){
+   setError(reason instanceof FriendlyFetchError&&reason.status===409
+    ?"Your away status changed elsewhere. Refresh the page before changing it."
+    :reason instanceof FriendlyFetchError&&reason.status===403
+     ?"You no longer have permission to update your away status."
+     :reason instanceof Error?reason.message:"Could not save away status. Try again.");
+  }
   finally{pending.current=false;setBusy(false);}
  }
  return <form className="mt-3 min-w-0 space-y-2 pt-3"
