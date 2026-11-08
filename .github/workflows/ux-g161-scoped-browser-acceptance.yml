@@ -7,6 +7,7 @@ on:
       - 'tests/e2e/ux-g161-scoped-browser.spec.ts'
       - 'src/components/tracker/audit-finding-status-action.tsx'
       - 'src/components/tracker/independent-finding-actions.tsx'
+      - 'src/components/tracker/tracker-workflow-panel.tsx'
       - 'src/components/tracker/tracker-quick-report-launcher.tsx'
       - 'tests/unit/ux-g161-finding-actions-recovery.test.ts'
       - 'tests/unit/ux-five-group-batch-20261107.test.ts'
@@ -61,6 +62,7 @@ jobs:
             tests/unit/ux-g161-finding-actions-recovery.test.ts \
             src/components/tracker/audit-finding-status-action.tsx \
             src/components/tracker/independent-finding-actions.tsx \
+            src/components/tracker/tracker-workflow-panel.tsx \
             src/components/tracker/tracker-quick-report-launcher.tsx
           npm run typecheck
           npx vitest run tests/unit/ux-g161-finding-actions-recovery.test.ts \
