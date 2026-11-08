@@ -8,6 +8,7 @@ on:
       - src/components/tpo/tpo-team-away-form.tsx
       - src/components/tpo/tpo-team-rename.tsx
       - src/components/tpo/tpo-team-message-actions.tsx
+      - src/components/tpo/tpo-student-nudge-panel.tsx
       - src/app/e2e/ux-g159-fixture/**
       - tests/unit/ux-g159-team.test.ts
       - tests/e2e/ux-g159.spec.ts
@@ -38,6 +39,7 @@ jobs:
           src/components/tpo/tpo-team-away-form.tsx
           src/components/tpo/tpo-team-rename.tsx
           src/components/tpo/tpo-team-message-actions.tsx
+          src/components/tpo/tpo-student-nudge-panel.tsx
           src/app/e2e/ux-g159-fixture/page.tsx
           tests/unit/ux-g159-team.test.ts
           tests/e2e/ux-g159.spec.ts
