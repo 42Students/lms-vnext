@@ -33,12 +33,14 @@ export default async function TpoScheduleConflictsPage({
     ...(first(params.days) ? { days: first(params.days) } : {}),
   });
 
-  if (!validated.success) {
+  if (Array.isArray(params.days) || !validated.success) {
     return (
       <div className="min-w-0 space-y-4">
         <PageHeader eyebrow="TPO · Drive scheduling"
           title="Invalid scheduling window"
-          description="Only a window of 1–90 days is supported." />
+          description={Array.isArray(params.days)
+            ? "Choose one scheduling window. Repeated days filters were ignored."
+            : "Only a window of 1–90 days is supported."} />
         <TextLink href="/tpo/placements/schedule-conflicts"
           className="inline-flex min-h-11 items-center text-sm md:min-h-9">Reset window</TextLink>
       </div>
