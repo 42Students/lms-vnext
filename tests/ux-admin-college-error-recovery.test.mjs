@@ -38,3 +38,15 @@ for (const groupId of groupIds) {
     }
   });
 }
+
+test("UX-G029: personal inbox outages do not masquerade as empty announcements", () => {
+  const page = fs.readFileSync(
+    path.join(root, "src/app/(authenticated)/college/announcements/page.tsx"), "utf8",
+  );
+  assert.match(page, /getCollegeNoticeInbox\(context,[\s\S]*?\.catch\(error\s*=>/);
+  assert.match(page, /error instanceof AuthorizationError\) throw error/);
+  assert.equal((page.match(/!ownInbox \? <Alert tone="warning" title="Personal notifications unavailable"/g) ?? []).length, 2);
+  assert.match(page, /listAnnouncementsForAdmin\(context,/);
+  assert.doesNotMatch(page, /ownInbox\s*\?\?\s*\{\s*items:\s*\[\]/,
+    "An unavailable inbox must not be fabricated as a successful empty read");
+});
