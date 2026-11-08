@@ -591,6 +591,24 @@ async function main() {
       await projectMemberService.addProjectMember(collegeAdmin,project.id,{
         membershipId:ids.learnerCollegeAMembership,role:"LEARNER",
       });
+      // Opt-in only for G071 five-route browser acceptance. The seeded person
+      // must pass the production learner/project permission checks, and this
+      // creates an actual persisted version 1 DRAFT, not a mocked detail.
+      if(process.env["UX_G071_SEED_REVIEW"]==="true"){
+        const learner: RequestContext={
+          user:{id:ids.learnerUser,identityUid:"seed-learner",
+            platformStatus:"ACTIVE",systemRoles:[]},
+          membership:{id:ids.learnerCollegeAMembership,collegeId:ids.collegeA,
+            organizationId:ids.organization,status:"ACTIVE",roles:["LEARNER"]},
+        };
+        const {createProjectSubmissionDraft}=await import("../src/modules/projects/submission-service");
+        const draft=await createProjectSubmissionDraft(learner,project.id,{
+          summary:"E2E Mentor review completeness browser draft",
+          notes:"A safe real persisted version for read-only Mentor review.",
+          sourceUrl:"https://example.org/mentor-review-demo",
+        });
+        process.stdout.write("Persisted G071 review version "+draft.id+"\\n");
+      }
       process.stdout.write("Persisted Mentor browser project "+project.id+"\\n");
     }
 
