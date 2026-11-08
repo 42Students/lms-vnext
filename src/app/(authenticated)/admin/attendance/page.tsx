@@ -1,4 +1,5 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import {ErrorState} from "@/components/ui/error-state";
 import {
   AdminAttendanceWorkspace,
@@ -66,9 +67,11 @@ export default async function SuperAdminAttendancePage({
   }
   const optionsResult=await getAdminAttendanceOptions(context,collegeId)
     .then(value=>({ok:true as const,value}))
-    .catch(error=>({ok:false as const,classLookupFailed:
-      error instanceof AdminAttendanceOptionsLookupError &&
-      error.kind==="class_courses"}));
+    .catch(error=>{
+      if(error instanceof AuthorizationError)throw error;
+      return {ok:false as const,classLookupFailed:
+        error instanceof AdminAttendanceOptionsLookupError && error.kind==="class_courses"};
+    });
   if(!optionsResult.ok){
    const retryParams=new URLSearchParams(Object.entries(query)
      .filter((entry):entry is [string,string]=>typeof entry[1]==="string"));
@@ -103,7 +106,7 @@ export default async function SuperAdminAttendancePage({
     ? await getAdminAttendanceGrid(context,{
         collegeId,deliveryId:delivery.deliveryId,month,
       }).then(value=>({ok:true as const,value}))
-       .catch(()=>({ok:false as const}))
+       .catch(error=>{if(error instanceof AuthorizationError)throw error;return {ok:false as const};})
     :null;
   const grid=gridResult?.ok?gridResult.value:null;
   const retryGridParams=new URLSearchParams(Object.entries(query)
