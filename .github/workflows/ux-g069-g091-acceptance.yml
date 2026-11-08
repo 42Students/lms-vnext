@@ -83,8 +83,8 @@ jobs:
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Desktop/mobile Faculty and negative-role journeys
-        run: npx playwright test tests/e2e/ux-g069-g091-faculty-recovery.spec.ts --project=chromium --reporter=line
+      - name: Authenticated desktop/mobile and negative-role journeys
+        run: npx playwright test tests/e2e/ux-g069-g091-role-recovery.spec.ts --project=chromium --reporter=line
       - name: Archive exact-SHA browser screenshots
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
