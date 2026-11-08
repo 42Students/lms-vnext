@@ -29177,7 +29177,29 @@
           "PAGE-0350"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "source-only-checkpoint",
+            "date": "2026-11-08",
+            "owner": "chat-vnext-faculty-ux-20261108",
+            "documentation": "docs/parity/faculty.md",
+            "implementationCommits": [
+              "6e38a7a6f5e9f07fb9163d89fb8f122b5f1cfeec",
+              "92c648993f5e6ee0ba96340e4350f4879c8d77d4",
+              "8a14eb5ac6ee99e40595de62fed05cc12b1b51c9",
+              "8ea3d58c9bf6e7dd84d6ec3d19c282ce38253afc",
+              "7a9ecbb9954eb6246b680c73393d59c33430d5d9",
+              "f60e7c36c06230043bd223e69a5a55dd19b05a58",
+              "e7ef34b56a0c76ac7b3311d916174eba27d715ca"
+            ],
+            "testAuthored": "tests/unit/ux-g092-faculty-route-recovery.test.ts",
+            "sourceAssertions": "23/23 current-main source anchors checked; not runtime execution",
+            "ci": "https://github.com/42Students/lms-vnext/actions/runs/42492677565 (CANCELLED)",
+            "browser": "https://github.com/42Students/lms-vnext/actions/runs/42492677526 (CANCELLED)",
+            "status": "IMPLEMENTED_PARTIALLY_VERIFY_OPEN",
+            "open": "Focused Vitest/TS/ESLint, authenticated desktop/mobile and role/tenant denial tests; complete remaining group-owned surfaces."
+          }
+        ]
       },
       {
         "id": "UX-G093",
