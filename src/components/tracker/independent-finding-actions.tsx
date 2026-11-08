@@ -2,7 +2,6 @@
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
-import {friendlyApiError} from "@/lib/friendly-error";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {Button} from "@/components/ui/button";
