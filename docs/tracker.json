@@ -31773,11 +31773,11 @@
         "type": "COMPONENT",
         "area": "attendance",
         "title": "Attendance · Interactive components (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-batch5-20261107",
         "pickedAt": "2026-11-07T16:59:58.715Z",
         "startedAt": "2026-11-07T16:59:58.715Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T15:46:49.977Z",
         "sourceFiles": [
           "src/components/attendance/admin-attendance-workspace.tsx",
           "src/components/attendance/college-attendance-policy-form.tsx",
@@ -31804,8 +31804,47 @@
             "results": "Actual exact-SHA scoped lint and TypeScript, 10/10 focused model/source unit tests, isolated seeded PostgreSQL; 9 authenticated responsive Chromium tests total across G132/G154/G161/G178 and People CSV learner denial, screenshots artifact. Each group has a 1280x800 and 390x844 authorized page smoke; group-wide mutation/export flows NOT tested.",
             "outstanding": "Full authenticated Super Admin edit/confirmation/cancel/reset and conflict/error response; Faculty scheduled-session mutation and mark/correct replay; Learner history; 320/390/1280 screen reader/focus and deny cases.",
             "closure": "DOING remains required: existing 9 browser cases are page smoke and one denial, insufficient for the listed interactive/full export transitions. Do not reclassify as DONE from this partial proof."
+          },
+          {
+            "commitSha": "c471d6ff2e9ac9882b4bc9dbf4f5e6c9d7efc77e",
+            "parityDoc": "docs/parity/ux-g132-attendance-components.md",
+            "tests": [
+              {
+                "command": "npx eslint tests/e2e/ux-g132-attendance-cross-role.spec.ts tests/e2e/ux-g132-attendance-policy-mutation.spec.ts tests/e2e/faculty-course-attendance.spec.ts tests/e2e/ux-g132-faculty-reschedule-conflict.spec.ts && npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42492174092"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-five-group-batch-20261107.test.ts tests/unit/faculty-attendance-write-recovery.test.ts tests/unit/learner-attendance-recovery-model.test.ts --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42492174092"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g132-attendance-cross-role.spec.ts tests/e2e/ux-g132-attendance-policy-mutation.spec.ts tests/e2e/faculty-course-attendance.spec.ts tests/e2e/ux-g132-faculty-reschedule-conflict.spec.ts --project=chromium --workers=1 --reporter=line,json",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42492174092"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g132-faculty-schedule.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42488283536"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42492174092/artifacts/13623497695"
+              },
+              {
+                "viewport": "mobile 390x844 and learner 320x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42492174092/artifacts/13623497695"
+              }
+            ],
+            "regressionReview": "All five registered attendance interaction sources reviewed. Full exact-SHA 23 focused Vitest validations and 17/17 seeded PG17 Chromium cases at desktop/mobile/320 widths, Faculty create/reschedule/mark/correct/report and duplicate/409 concurrency, Super Admin policy compare-and-set save/cancel/restore, read-only College Admin, learner filter and invalid-route recovery; separate rendered schedule confirmation workflow green. Entire domain beyond improved components (e.g., independent reset-default administrative flow) remains outside this UX-group signoff.",
+            "securityReview": "Isolated seed tenants and authorized Super Admin selected college A, protected admin policy PATCH/restore and denied foreign college, learner direct Faculty schedule denied, College Admin policy mutation forbidden, real Faculty session attendance CAS and marked correction, no bypass or permission weakening. Actual persisted response UI and scoped 409 concurrency rechecked rather than relying on aborted fetch bodies."
           }
-        ]
+        ],
+        "notes": " 2026-11-08: full 17/17 scoped cross-role desktop/mobile PG Chromium acceptance green, exact-SHA 42492174092 with artifact 13623497695, attended policy and faculty marked correction; UX five-component review DONE."
       },
       {
         "id": "UX-G133",
