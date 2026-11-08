@@ -11,6 +11,7 @@ on:
       - 'src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/loading.tsx'
       - 'src/modules/projects/mentor-review-completeness-model.ts'
       - 'tests/unit/ux-g071-mentor-review-drilldown.test.ts'
+      - 'tests/ux-groups.test.mjs'
       - '.github/workflows/ux-g071-mentor-review-source-acceptance.yml'
 
 permissions:
