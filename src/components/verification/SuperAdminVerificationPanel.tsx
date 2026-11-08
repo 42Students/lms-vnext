@@ -129,6 +129,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    </Label>
   </div>
   <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts}
+   hideHeader
    denseTable sort={sort} preserveServerOrder={false}
    selectedKeys={new Set(selectedKeys)}
    selectionDisabled={bulkBusy}
