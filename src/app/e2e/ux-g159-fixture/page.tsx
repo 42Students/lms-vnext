@@ -4,6 +4,7 @@ import {TpoTeamRename} from "@/components/tpo/tpo-team-rename";
 import {TpoTeamMessageActions} from "@/components/tpo/tpo-team-message-actions";
 import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
 import {Heading} from "@/components/ui/heading";
+import {UxG159FixtureReady} from "./ready";
 
 export const dynamic="force-dynamic";
 
@@ -11,6 +12,7 @@ export const dynamic="force-dynamic";
 export default function TeamInteractionFixture(){
  if(process.env.NODE_ENV!=="development"||process.env.UX_G159_FIXTURE!=="1")notFound();
  return <main id="lms-main-content" className="mx-auto w-full max-w-[70rem] min-w-0 space-y-7 px-4 py-6 md:px-8">
+  <UxG159FixtureReady/>
   <Heading level={1} className="text-2xl font-bold">TPO team interaction acceptance</Heading>
   <section data-ux-fixture="away" className="min-w-0 rounded-xl border border-border p-4">
    <Heading level={2}>Set away status</Heading>
