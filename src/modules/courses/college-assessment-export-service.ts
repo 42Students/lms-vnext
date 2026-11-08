@@ -16,18 +16,21 @@ export async function exportCollegeAssessments(context:RequestContext,kind:Colle
  // Share the same kind-aware validation as the paged directory before any read.
  const validatedQuery=parseCollegeAssessmentQuery(kind,{...query,page:1});
  const first=await reader(context,kind,{...validatedQuery,page:exportMode==="PAGE"?query.page:1});
+ // Validate the first response even in current-page export mode; a stale
+ // oversized page must not masquerade as the legacy 20-row page download.
+ const stale=()=>new Error("COLLEGE_ASSESSMENT_EXPORT_STALE");
+ const total=first.total, pages=first.totalPages;
+ if(!Number.isSafeInteger(total)||total<0||
+    !Number.isSafeInteger(pages)||pages<Math.ceil(total/COLLEGE_ASSESSMENT_PAGE_SIZE)||
+    first.items.length>COLLEGE_ASSESSMENT_PAGE_SIZE||
+    (exportMode==="PAGE"&&first.page!==undefined&&first.page!==query.page))throw stale();
  if(exportMode==="PAGE")return {
   rows:first.items,truncated:false,cap:COLLEGE_ASSESSMENT_PAGE_SIZE,
   csv:renderCollegeAssessmentPageCsv(kind,first.items),
   collegeId:first.collegeId,page:first.page,exportMode,
  };
- // Keep a CSV tied to one stable authorized snapshot. A concurrent
+ // Keep an all-pages CSV tied to one stable authorized snapshot. A concurrent
  // publish/archive can otherwise shift offset pages and repeat or omit rows.
- const stale=()=>new Error("COLLEGE_ASSESSMENT_EXPORT_STALE");
- const total=first.total, pages=first.totalPages;
- if(!Number.isSafeInteger(total)||total<0||
-    !Number.isSafeInteger(pages)||pages<Math.ceil(total/COLLEGE_ASSESSMENT_PAGE_SIZE)||
-    first.items.length>COLLEGE_ASSESSMENT_PAGE_SIZE)throw stale();
  const rows=[...first.items];
  const lastPage=Math.min(pages,Math.ceil(COLLEGE_ASSESSMENT_EXPORT_CAP/COLLEGE_ASSESSMENT_PAGE_SIZE));
  for(let page=2;page<=lastPage;page++){
