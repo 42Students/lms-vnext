@@ -132,6 +132,18 @@ describe("UX-G161 tracker recoverability and formula safety", () => {
   expect(form).toContain('retryKeyRef.current=null;\n              setDraft(current=>({...current,page:');
   expect(form).toContain('retryKeyRef.current=null;\n                setDraft(current=>({...current,screen:');
  });
+ it("serializes all three workflow mutations and requires a fresh issue version", () => {
+  const src=source("src/components/tracker/tracker-workflow-panel.tsx");
+  expect(src).toContain("const mutationLock = useRef(false)");
+  expect(src).toContain("const [needsRefresh, setNeedsRefresh] = useState(false)");
+  expect(src).toContain("if (pending || needsRefresh || mutationLock.current) return false");
+  expect((src.match(/startExclusiveMutation\\(async/g)??[]).length).toBe(3);
+  expect(src).toContain("mutationLock.current = true");
+  expect(src).toContain("finally { mutationLock.current = false; }");
+  expect((src.match(/setNeedsRefresh\\(true\\)/g)??[]).length).toBeGreaterThanOrEqual(3);
+  expect(src).toContain("Refresh the issue before making another change");
+  expect(src).toContain("expectedVersion:issue.version");
+ });
  it("locks status changes while waiting for the refreshed version", () => {
   const src=source("src/components/tracker/audit-finding-status-action.tsx");
   expect(src).toContain("setStale(true);router.refresh()");
