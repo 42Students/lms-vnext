@@ -1,0 +1,71 @@
+name: UX-G072 Mentor responsive recovery
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ux-g072-mentor-acceptance.yml'
+      - 'tests/e2e/ux-g072-mentor-filter-recovery.spec.ts'
+      - 'src/app/(authenticated)/mentor/projects/[projectId]/**'
+permissions:
+  contents: read
+concurrency:
+  group: ux-g072-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  mentor-recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: 'true'
+      MENTOR_E2E_SEED_PROJECT: 'true'
+      APP_ENV: development
+      PLATFORM_HOSTS: localhost,127.0.0.1
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exact-SHA source checks
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npx eslint tests/e2e/ux-g072-mentor-filter-recovery.spec.ts
+          npm run typecheck
+      - name: Prepare isolated database
+        run: npm run db:e2e:prepare
+      - name: Set ephemeral auth keys
+        run: |
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Check both viewports and Learner denial
+        run: npx playwright test tests/e2e/ux-g072-mentor-filter-recovery.spec.ts --project=chromium --workers=1 --reporter=line
+      - name: Retain responsive screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g072-mentor-recovery-${{ github.sha }}
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 14
