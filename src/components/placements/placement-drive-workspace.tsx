@@ -303,7 +303,9 @@ export async function PlacementDriveWorkspace({
       <PageHeader
         {...(eyebrow !== undefined ? {eyebrow} : {})}
         title={job.title}
-        description={job.companyName+" · "+headerFacts.status+(job.applicationDeadline?" · Deadline "+formatDriveIst(job.applicationDeadline):"")}
+        description={isSuperAdminDrive?undefined:
+          job.companyName+" · "+headerFacts.status+
+            (job.applicationDeadline?" · Deadline "+formatDriveIst(job.applicationDeadline):"")}
         actions={
           <div className="flex min-w-0 w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
           {isSuperAdminDrive?<ButtonLink variant="secondary" href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/settings"+(applicationsHref?.includes("?returnTo=")?"?"+applicationsHref.split("?")[1]:"")}
