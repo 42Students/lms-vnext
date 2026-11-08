@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - 'src/app/(authenticated)/admin/academics/sections/[sectionId]/error.tsx'
+      - 'src/app/(authenticated)/admin/attendance/page.tsx'
+      - 'src/app/(authenticated)/admin/assignments/page.tsx'
       - 'src/app/(authenticated)/admin/audit/error.tsx'
       - 'src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx'
       - 'src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx'
@@ -48,6 +50,8 @@ jobs:
         run: |
           npx eslint \
             'src/app/(authenticated)/admin/academics/sections/[sectionId]/error.tsx' \
+            'src/app/(authenticated)/admin/attendance/page.tsx' \
+            'src/app/(authenticated)/admin/assignments/page.tsx' \
             'src/app/(authenticated)/admin/audit/error.tsx' \
             'src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx' \
             'src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx' \
