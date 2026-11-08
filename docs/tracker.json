@@ -14431,11 +14431,11 @@
         "type": "JOURNEY",
         "area": "admin",
         "title": "Admin · Projects / Templates → Projects / Workspaces (part 18)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-announcements-verification-20261107",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/app/(authenticated)/admin/projects/templates/[templateId]/tasks/error.tsx",
           "src/app/(authenticated)/admin/projects/templates/[templateId]/tasks/loading.tsx",
@@ -14470,8 +14470,21 @@
           "/admin/projects/workspaces/[workspaceId]/summary",
           "/admin/projects/workspaces/deleted"
         ],
-        "evidence": [],
-        "notes": "Source pass committed: four error fallbacks now expose safe template-directory navigation, create and version-comparison loading preserve page context. All 12 sources reviewed; role/UUID/version rules unchanged. Unit+browser tests: tests/unit/ux-g022-g103-route-recovery.test.ts and tests/e2e/ux-g022-g103-route-recovery.spec.ts. CI 42397732685 pending on source SHA fc8ebc33; no DONE until complete desktop/mobile and role-negative proof. See docs/parity/pages/shared/UX-G022-G103.md."
+        "evidence": [
+          {
+            "type": "ci",
+            "runId": 42455634704,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42455634704",
+            "conclusion": "success",
+            "commitSha": "95a1c5d1025c0f840277cbd651f90fb7ecbb4f67",
+            "results": "Exact checkout SHA; scoped source/existing journey regression; full TypeScript; real disposable PostgreSQL; seeded Super Admin/TPO/Learner auth; Chromium desktop 1280px and mobile 390px with unauthorized role denial, malformed TPO filter rejection, screenshots and traces."
+          },
+          {
+            "type": "document",
+            "path": "docs/parity/pages/shared/UX-G022-G103.md"
+          }
+        ],
+        "notes": "Source pass committed: four error fallbacks now expose safe template-directory navigation, create and version-comparison loading preserve page context. All 12 sources reviewed; role/UUID/version rules unchanged. Unit+browser tests: tests/unit/ux-g022-g103-route-recovery.test.ts and tests/e2e/ux-g022-g103-route-recovery.spec.ts. CI 42397732685 pending on source SHA fc8ebc33; no DONE until complete desktop/mobile and role-negative proof. See docs/parity/pages/shared/UX-G022-G103.md. Closed 2026-11-08 after exact-SHA success in run 42455634704 with browser desktop/mobile and role/tenant negative checks; engineering UX scope only, global security/release certification independent."
       },
       {
         "id": "UX-G023",
@@ -18978,11 +18991,11 @@
         "type": "JOURNEY",
         "area": "tpo",
         "title": "Tpo · Drive Day / RoundId → Home (part 6)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-announcements-verification-20261107",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/error.tsx",
           "src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/loading.tsx",
@@ -19017,8 +19030,21 @@
           "/tpo/drives/[jobId]/edit",
           "/tpo/drives/new"
         ],
-        "evidence": [],
-        "notes": "Source pass committed: invalid finder reset, strict follow-up URL state recovery, repeated home-filter refusal, accessible home busy state. All 12 sources reviewed; no-show/attendance and authorized TPO reads unchanged. Unit+browser tests: tests/unit/ux-g022-g103-route-recovery.test.ts and tests/e2e/ux-g022-g103-route-recovery.spec.ts. CI 42397732685 pending on source SHA fc8ebc33; no DONE until complete desktop/mobile and role-negative proof. See docs/parity/pages/shared/UX-G022-G103.md."
+        "evidence": [
+          {
+            "type": "ci",
+            "runId": 42455634704,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42455634704",
+            "conclusion": "success",
+            "commitSha": "95a1c5d1025c0f840277cbd651f90fb7ecbb4f67",
+            "results": "Exact checkout SHA; scoped source/existing journey regression; full TypeScript; real disposable PostgreSQL; seeded Super Admin/TPO/Learner auth; Chromium desktop 1280px and mobile 390px with unauthorized role denial, malformed TPO filter rejection, screenshots and traces."
+          },
+          {
+            "type": "document",
+            "path": "docs/parity/pages/shared/UX-G022-G103.md"
+          }
+        ],
+        "notes": "Source pass committed: invalid finder reset, strict follow-up URL state recovery, repeated home-filter refusal, accessible home busy state. All 12 sources reviewed; no-show/attendance and authorized TPO reads unchanged. Unit+browser tests: tests/unit/ux-g022-g103-route-recovery.test.ts and tests/e2e/ux-g022-g103-route-recovery.spec.ts. CI 42397732685 pending on source SHA fc8ebc33; no DONE until complete desktop/mobile and role-negative proof. See docs/parity/pages/shared/UX-G022-G103.md. Closed 2026-11-08 after exact-SHA success in run 42455634704 with browser desktop/mobile and role/tenant negative checks; engineering UX scope only, global security/release certification independent."
       },
       {
         "id": "UX-G104",
