@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { TextLink } from "@/components/ui/text-link";
 import { ErrorState } from "@/components/ui/error-state";
 
 export default function ErrorPage({ reset }: {
@@ -11,7 +12,7 @@ export default function ErrorPage({ reset }: {
     <ErrorState
       title="Couldn't load Reports · Unplaced"
       description="The requested records could not be retrieved. A load failure does not mean there are no records or that a reported total is zero."
-      action={<Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={reset}>Retry</Button>}
+      action={<div className="flex min-w-0 flex-wrap items-center gap-3"><Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={reset}>Retry</Button><TextLink href="/tpo/reports" className="inline-flex min-h-11 items-center md:min-h-9">All reports</TextLink></div>}
     />
   );
 }
