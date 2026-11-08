@@ -1,7 +1,8 @@
-import {placementReportCsv} from "../report-model";
+import {spreadsheetCsvCell} from "@/security/csv-cell";
 export type TpoCompanyShareAuditView={sharePrefix:string;kind:string;at:string};
 export function tpoCompanyShareAuditCsv(rows:readonly TpoCompanyShareAuditView[],limited:boolean){
  const body:(string|null)[][]=rows.map(row=>[row.sharePrefix,row.kind,row.at]);
  if(limited)body.unshift(["NOTICE","Only the 500 most recent matching access events are exported",null]);
- return placementReportCsv(["Link prefix","Action","UTC timestamp"],body);
+ return [["Link prefix","Action","UTC timestamp"],...body]
+  .map(row=>row.map(spreadsheetCsvCell).join(",")).join("\r\n");
 }
