@@ -67,6 +67,9 @@ export default async function TpoScheduleConflictsPage({
           Upcoming window
           <Select name="days" defaultValue={String(data.days)}
             className="mt-[6px] block min-h-11 md:min-h-9 border border-border px-3 text-sm font-normal">
+            {![7, 14, 30, 60, 90].includes(data.days) ? (
+              <option value={data.days}>{data.days} days (from link)</option>
+            ) : null}
             {[7, 14, 30, 60, 90].map((days) => (
               <option key={days} value={days}>{days} days</option>
             ))}
