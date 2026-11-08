@@ -71,6 +71,27 @@ test.describe("UX-G169/G171/G174/G177 CSV export journeys", () => {
     }
   });
 
+  test("UX-G168 freshly signed-in Super Admin downloads bounded private faculty CSV",async({page,context})=>{
+    await signInWithSeededOtp(context,"superadmin.seed@example.com",{superAdmin:true});
+    await page.setViewportSize({width:1280,height:850});
+    const response=await page.request.get("/api/admin/faculty/export");
+    expect(response.status(),"authorized Super Admin faculty roster").toBe(200);
+    expect(response.headers()["content-type"]).toContain("text/csv");
+    expect(response.headers()["content-disposition"]).toContain("attachment;");
+    expect(response.headers()["cache-control"]).toContain("private");
+    expect(response.headers()["cache-control"]).toContain("no-store");
+    expect(response.headers()["x-content-type-options"]).toBe("nosniff");
+    expect(response.headers()["x-export-row-cap"]).toBe("250");
+    const csv=await response.text();
+    expect(csv.startsWith("\\uFEFF")).toBe(true);
+    expect(csv).toContain('"Record ID","Name","Context","Status","Additional persisted fields"');
+    expect(csv).not.toMatch(/password|otp|auth_secret|phoneE164/i);
+    writeFileSync("test-results/ux-g168-authorized-faculty.csv",csv,"utf8");
+    const invalid=await page.request.get("/api/admin/faculty/export?page=2");
+    expect(invalid.status(),"client page override rejected").toBeGreaterThanOrEqual(400);
+    expect(invalid.headers()["content-type"]??"").not.toContain("text/csv");
+  });
+
   test("learner cannot download privileged announcement, findings or TPO exports", async ({ page, context }) => {
     await authenticateGracefulRole(context, "learner");
     await page.setViewportSize({width:390,height:844});
