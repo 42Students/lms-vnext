@@ -1,7 +1,13 @@
 import {redirect} from "next/navigation";
-/** Retain team-creation bookmarks; the canonical create page now offers
- * single, team and cohort workspace modes side by side.
+import {legacyClassWorkspaceCreateHref} from "@/modules/projects/legacy-class-workspace-create-query";
+
+/** Keep legacy class-workspace bookmarks in team mode and retain a safe
+ * template selection. The destination rechecks college/template authorization.
  */
-export default function CollegeClassProjectWorkspacePage(){
-  redirect("/college/projects/create?mode=teams");
+export default async function CollegeClassProjectWorkspacePage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  redirect(legacyClassWorkspaceCreateHref(await searchParams));
 }
