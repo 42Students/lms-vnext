@@ -1,3 +1,4 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 import { z } from "zod";
 import { phoneE164Schema, personDisplayNameSchema, personEmailSchema } from "./validation";
 
@@ -187,9 +188,9 @@ export function parseStudentCsv(raw: string, defaults: {programId?: string;cohor
 
 /** Escape CSV fields and neutralize spreadsheet formulas, including leading whitespace. */
 export function neutralStudentCsvCell(value: unknown): string {
-  let string = String(value ?? "");
-  if (/^\s*[=+\-@\t\r]/.test(string)) string = "'" + string;
-  return '"' + string.replaceAll('"','""') + '"';
+  // Reuse the shared spreadsheet guard for invisible Unicode prefixes as well
+  // as ordinary whitespace before =, +, -, and @ formula operators.
+  return spreadsheetCsvCell(String(value ?? ""));
 }
 export function studentImportReportCsv(rows: readonly StudentCsvResult[]): string {
   return ["row,status,detail,membershipId,enrollmentId",
