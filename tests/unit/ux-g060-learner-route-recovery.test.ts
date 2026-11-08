@@ -67,6 +67,10 @@ describe("UX-G060: learner calendar and course bookmark recovery", () => {
     expect(source).toContain("getCurrentRequestContext()");
     expect(source).toContain("if (!filters) notFound()");
     expect(source).toContain("getLearnerClassSchedule(context, window)");
+    // A transient scoped read failure must not be displayed as a 404 after
+    // the fallback course list becomes empty.
+    expect(source).toContain("scheduleWarning && validated.data.deliveryId");
+    expect(source).toContain("Class schedule temporarily unavailable");
   });
 
   it("does not silently choose the first of conflicting course/lesson selectors", () => {
