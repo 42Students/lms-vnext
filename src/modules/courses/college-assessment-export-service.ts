@@ -21,14 +21,27 @@ export async function exportCollegeAssessments(context:RequestContext,kind:Colle
   csv:renderCollegeAssessmentPageCsv(kind,first.items),
   collegeId:first.collegeId,page:first.page,exportMode,
  };
+ // Keep a CSV tied to one stable authorized snapshot. A concurrent
+ // publish/archive can otherwise shift offset pages and repeat or omit rows.
+ const stale=()=>new Error("COLLEGE_ASSESSMENT_EXPORT_STALE");
+ const total=first.total, pages=first.totalPages;
+ if(!Number.isSafeInteger(total)||total<0||
+    !Number.isSafeInteger(pages)||pages<Math.ceil(total/COLLEGE_ASSESSMENT_PAGE_SIZE)||
+    first.items.length>COLLEGE_ASSESSMENT_PAGE_SIZE)throw stale();
  const rows=[...first.items];
- const lastPage=Math.min(first.totalPages,Math.ceil(COLLEGE_ASSESSMENT_EXPORT_CAP/COLLEGE_ASSESSMENT_PAGE_SIZE));
+ const lastPage=Math.min(pages,Math.ceil(COLLEGE_ASSESSMENT_EXPORT_CAP/COLLEGE_ASSESSMENT_PAGE_SIZE));
  for(let page=2;page<=lastPage;page++){
   const next=await reader(context,kind,{...validatedQuery,page});
+  if(next.total!==total||next.totalPages!==pages||
+     next.collegeId!==first.collegeId||
+     next.items.length>COLLEGE_ASSESSMENT_PAGE_SIZE)throw stale();
   rows.push(...next.items);
  }
- const data={rows:rows.slice(0,COLLEGE_ASSESSMENT_EXPORT_CAP),
-  truncated:first.total>COLLEGE_ASSESSMENT_EXPORT_CAP,cap:COLLEGE_ASSESSMENT_EXPORT_CAP};
+ const selected=rows.slice(0,COLLEGE_ASSESSMENT_EXPORT_CAP);
+ if(selected.length!==Math.min(total,COLLEGE_ASSESSMENT_EXPORT_CAP)||
+    new Set(selected.map(item=>item.id)).size!==selected.length)throw stale();
+ const data={rows:selected,
+  truncated:total>COLLEGE_ASSESSMENT_EXPORT_CAP,cap:COLLEGE_ASSESSMENT_EXPORT_CAP};
  return {...data,csv:renderCollegeAssessmentCsv(kind,data.rows,data.truncated),
   collegeId:first.collegeId,page:1,exportMode};
 }
