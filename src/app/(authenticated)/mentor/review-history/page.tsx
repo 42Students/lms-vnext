@@ -28,6 +28,8 @@ const first = (value: string | string[] | undefined) =>
 export default async function MentorReviewHistoryPage({
   searchParams,
 }: { searchParams: Promise<Search> }) {
+  const context=await getCurrentRequestContext();
+  if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
   const raw=await searchParams;
   const parsed=mentorReviewHistoryQuerySchema.safeParse(Object.values(raw).some(Array.isArray)?null:{
     decision:first(raw.decision) ?? undefined, search:first(raw.search) ?? undefined,
@@ -40,11 +42,11 @@ export default async function MentorReviewHistoryPage({
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title="Delivery review history" description="Invalid review history filters" />
+    <p className="text-sm text-body">The filters could not be applied. No review history was loaded.</p>
     <TextLink href="/mentor/review-history" className="inline-flex min-h-11 items-center">Clear filters</TextLink>
   </section>;
-  const context=await getCurrentRequestContext();
-  if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
   const data=await getMentorReviewHistory(context,parsed.data);
+  const hasFilters=Boolean(data.query.search||data.query.projectId||data.query.decision!=="ALL"||data.query.projectState!=="ALL"||data.query.version!==undefined||data.query.order!=="NEWEST"||data.query.window!=="ALL");
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Delivery review history"
       description="Recorded final-delivery review decisions for projects currently assigned to you."
@@ -108,7 +110,7 @@ export default async function MentorReviewHistoryPage({
       </p>
       {data.items.length===0
         ? <EmptyState title="No recorded delivery reviews"
-            description="No persisted final-delivery decisions match this filter for your currently assigned projects. Historical records before migration are not reconstructed." action={<TextLink href="/mentor/review-history" className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>} />
+            description={hasFilters?"No persisted final-delivery decisions match these filters for your currently assigned projects.":"No final-delivery review decisions are recorded for your currently assigned projects. Historical records before migration are not reconstructed."} action={<TextLink href={hasFilters?"/mentor/review-history":"/mentor/reviews"} className="inline-flex min-h-11 items-center md:min-h-9">{hasFilters?"Clear filters":"Pending reviews"}</TextLink>} />
         : <ol aria-label="mentor review history entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
           <li key={item.id} className="py-[var(--lms-space-3)]">
             <div className="flex flex-wrap items-center justify-between gap-3">
