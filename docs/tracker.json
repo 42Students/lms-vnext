@@ -23942,11 +23942,11 @@
         "type": "COMPONENT",
         "area": "academics",
         "title": "Academics · Interactive components (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-academics-20261108",
         "pickedAt": "2026-11-08T08:00:00.000Z",
         "startedAt": "2026-11-08T08:00:00.000Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T08:49:16.845Z",
         "sourceFiles": [
           "src/components/academics/academics-actions.tsx",
           "src/components/academics/academics-create-panel.tsx",
@@ -23982,7 +23982,41 @@
           "WIDGET-0007"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "3480f64db2837dd8420d6e92f9dd32b6a275d77a",
+            "parityDoc": "docs/parity/ux-g125-academic-actions.md",
+            "tests": [
+              {
+                "command": "npm run ux:groups -- --check; npx eslint [G125 scoped components and tests]; npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464009363 — exact checkout SHA, scoped ESLint, TypeScript and 188-group registry passed"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g125-academic-actions.test.ts --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464009363 — 11 of 11 academic recovery regression tests passed"
+              },
+              {
+                "command": "npm run db:e2e:prepare; npx playwright test tests/e2e/ux-g125-academic-actions.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464009363 — isolated PostgreSQL 17, ephemeral seeded role identities; 16/16 Chromium cases passed"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464009363/artifacts/13611046251 — real college-admin Batches, Semesters, Academics, Classes, Lecture Halls, Batch Promotion and learner calendar viewport screenshots; keyboard deep link acceptance and denied learner export in same 16-case run"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42464009363/artifacts/13611046251 — corresponding authenticated mobile page screenshots, responsive overflow assertions, keyboard deep link and auth-denial regressions"
+              }
+            ],
+            "regressionReview": "All 15 registered G125 components were source-reviewed in the parity note. Ten affected component paths were improved for validation, in-flight action safety, retry and deep-link recovery; five were retained. Existing server-owned overlap, promotion version, tenant and role authorization remained unchanged. The complete 16-case browser acceptance and 11-case focused unit acceptance executed successfully on the exact revision.",
+            "securityReview": "No server authorization, tenant filtering or permission rules were relaxed. Existing backend validation continues to recheck booking overlaps, academic-year semantics and affected record versions. Seeded Learner forbidden-college CSV export is asserted with 401/403 and absence of CSV body type. This scoped UX closure is not independent SECURITY or release certification."
+          }
+        ]
       },
       {
         "id": "UX-G126",
