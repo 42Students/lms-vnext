@@ -47,3 +47,14 @@ No API, database migration, authentication, tenant scoping, file access, provide
 - Regression boundary: existing shared playbook tests passed; no production app-wide regression claim, security policy, API endpoint or DB schema was modified. No role permission or internal-link sanitization change was made.
 
 The independent UX-G164 tracker entry may be set to DONE with this run and artifact as evidence.
+
+
+## UX-G163 exact-SHA verified results — CLOSED GATE
+
+- Head SHA: `098d3d00b1fe62fea6ad939212477242483a3f59`, workflow <https://github.com/42Students/lms-vnext/actions/runs/42461350528>. Exact-SHA checkout, scoped lint, Vitest, rendered desktop/mobile Chromium and full TypeScript **all succeeded**.
+- Unit: `npx vitest run tests/unit/ux-g163-shared-actions.test.tsx tests/ux-playbook-primitives.test.tsx --reporter=dot` — **20/20 passed** across 2 files.
+- Browser: `npx playwright test tests/e2e/ux-g163-shared-actions.spec.ts --project=chromium --reporter=line` — **2/2 passed**. Desktop 1280×800 and mobile 390×844 exercised native dialogs, cancel/confirm, pending action guard, avatar label, empty filter avoidance, actual responsive filter drawer, file type rejection and clearing, and no horizontal overflow.
+- Screenshot artifact: <https://github.com/42Students/lms-vnext/actions/runs/42461350528/artifacts/13610011945> — `ux-g163-desktop.png` and `ux-g163-mobile.png`.
+- Regression/security boundaries: existing playbook tests included; auth, tenant membership, server authorization, data fetching and upload safety unchanged. Live authenticated business flows and broad release gating remain independent.
+
+The UX-G163 canonical tracker entry may be set to DONE with this exact-SHA proof.
