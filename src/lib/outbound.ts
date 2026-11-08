@@ -8,6 +8,7 @@
  * Provider text is never exposed to callers through the thrown error.
  */
 import { friendlyApiError } from "@/lib/friendly-error";
+import { assertSafeOutboundUrl } from "@/lib/outbound-url-guard";
 import { createRequestId } from "@/lib/request-id";
 import { logError, logInfo } from "@/observability/logger";
 
@@ -37,6 +38,8 @@ export async function outboundFetch(url: string, options: OutboundOptions = {}):
     timeoutMs = 10_000, maxAttempts = 3, baseDelayMs = 250,
     idempotencyKey, fetchImpl = fetch, ...init
   } = options;
+  // SSRF guard (SEC-15-010/011): HTTPS to a public host only; refused before any network activity.
+  assertSafeOutboundUrl(url);
   const method = (init.method ?? "GET").toUpperCase();
   const repeatable = SAFE_METHODS.has(method) || Boolean(idempotencyKey);
   const attempts = repeatable ? Math.min(Math.max(1, maxAttempts), 5) : 1;

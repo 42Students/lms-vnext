@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lane dashboard</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1b1f24; --mute:#677280; --line:#e3e6ea; --good:#1a7f4b; --warn:#a15c00; --bad:#b3261e; --acc:#2757d6; --goodbg:#e4f5ec; --warnbg:#fdf0d8; --badbg:#fbe5e3; --unkbg:#eceff3; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#0f1318; --card:#171c23; --ink:#e7ebf0; --mute:#8c98a6; --line:#262d36; --good:#58c58b; --warn:#e3a23a; --bad:#f08178; --acc:#7a9cff; --goodbg:#143325; --warnbg:#3a2c12; --badbg:#3c1b19; --unkbg:#222932; } }
+  :root[data-theme="dark"] { --bg:#0f1318; --card:#171c23; --ink:#e7ebf0; --mute:#8c98a6; --line:#262d36; --good:#58c58b; --warn:#e3a23a; --bad:#f08178; --acc:#7a9cff; --goodbg:#143325; --warnbg:#3a2c12; --badbg:#3c1b19; --unkbg:#222932; }
+  * { box-sizing: border-box; }
+  :root { color-scheme: light dark; } :root[data-theme="dark"] { color-scheme: dark; } :root[data-theme="light"] { color-scheme: light; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif; }
+  header { display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--bg); z-index:2; flex-wrap:wrap; }
+  header h1 { font-size:17px; margin:0; font-weight:650; }
+  header .meta { color:var(--mute); font-size:12px; margin-left:auto; display:flex; gap:10px; align-items:center; }
+  .dot { width:8px; height:8px; border-radius:50%; background:var(--good); display:inline-block; }
+  .dot.off { background:var(--bad); }
+  button { font:inherit; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:8px; padding:4px 10px; cursor:pointer; }
+  main { padding:16px; display:grid; gap:14px; max-width:1400px; margin:0 auto; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; min-width:0; }
+  .card h2 { font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--mute); margin:0 0 10px; font-weight:600; }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
+  .stat { border:1px solid var(--line); border-radius:10px; padding:10px 12px; }
+  .stat .v { font-size:20px; font-weight:650; }
+  .stat .l { color:var(--mute); font-size:12px; }
+  .stat.good .v { color:var(--good); } .stat.warn .v { color:var(--warn); } .stat.bad .v { color:var(--bad); }
+  .note { color:var(--mute); font-size:12px; margin-top:10px; }
+  .bar { height:10px; background:var(--unkbg); border-radius:6px; overflow:hidden; }
+  .bar > i { display:block; height:100%; background:var(--acc); }
+  .prow { display:grid; grid-template-columns:minmax(120px,220px) 1fr 110px; gap:12px; align-items:center; margin:8px 0; }
+  .prow .n { color:var(--mute); font-size:12px; text-align:right; }
+  .tablewrap { overflow:auto; max-height:560px; }
+  table { border-collapse:collapse; width:100%; }
+  th, td { text-align:left; padding:7px 10px; border-bottom:1px solid var(--line); white-space:nowrap; }
+  td.wrap { white-space:normal; min-width:240px; color:var(--mute); }
+  th { position:sticky; top:0; background:var(--card); color:var(--mute); font-weight:600; font-size:12px; }
+  .badge { padding:2px 8px; border-radius:20px; font-size:12px; font-weight:600; }
+  .b-active { background:var(--goodbg); color:var(--good); } .b-slow { background:var(--warnbg); color:var(--warn); } .b-stalled { background:var(--badbg); color:var(--bad); } .b-unknown { background:var(--unkbg); color:var(--mute); }
+  a { color:var(--acc); text-decoration:none; } a:hover { text-decoration:underline; }
+  pre.log { margin:0; font:12px/1.5 ui-monospace,Consolas,monospace; white-space:pre-wrap; word-break:break-word; color:var(--mute); max-height:260px; overflow:auto; }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:14px; } @media (max-width:900px) { .two { grid-template-columns:1fr; } .prow { grid-template-columns:1fr; } .prow .n { text-align:left; } }
+  svg.spark { width:100%; height:70px; display:block; }
+</style>
+</head>
+<body>
+<header>
+  <span class="dot" id="dot"></span><h1 id="title">Lane dashboard</h1>
+  <div class="meta"><span id="upd">loading...</span><button id="theme" type="button">Theme</button></div>
+</header>
+<main id="main"></main>
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const age = (s) => s == null ? "-" : s < 90 ? s + " s" : s < 5400 ? Math.round(s / 60) + " min" : (s / 3600).toFixed(1) + " h";
+const R = {
+  stats: (p) => `<div class="stats">${p.items.map((i) => `<div class="stat ${i.tone || ""}"><div class="v">${esc(i.value)}</div><div class="l">${esc(i.label)}</div></div>`).join("")}</div>${p.note ? `<div class="note">${esc(p.note)}</div>` : ""}`,
+  spark: (p) => { const s = p.series || [], max = Math.max(1, ...s), w = 360, h = 70, b = w / Math.max(1, s.length);
+    return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">${s.map((v, i) => `<rect x="${(i * b + 1).toFixed(1)}" y="${(h - (v / max) * (h - 4)).toFixed(1)}" width="${(b - 2).toFixed(1)}" height="${((v / max) * (h - 4)).toFixed(1)}" rx="1.5" fill="var(--acc)"><title>${v}</title></rect>`).join("")}</svg><div class="note">peak ${max} per 5 min, latest ${s[s.length - 1] ?? 0}</div>`; },
+  progress: (p) => p.items.map((i) => { const pct = i.total ? Math.min(100, Math.round((100 * i.done) / i.total)) : 0; return `<div class="prow"><div>${esc(i.label)}</div><div class="bar"><i style="width:${pct}%"></i></div><div class="n">${i.done}/${i.total} (${pct}%)</div></div>`; }).join("") + (p.updated ? `<div class="note">updated ${esc(p.updated)}</div>` : ""),
+  table: (p) => `<div class="tablewrap"><table><thead><tr>${p.columns.map((c) => `<th>${esc(c.label)}</th>`).join("")}</tr></thead><tbody>${p.rows.map((r) => `<tr>${p.columns.map((c) => { const v = r[c.key];
+      if (c.badge) return `<td><span class="badge b-${esc(v)}">${esc(v)}</span></td>`;
+      if (c.fmt === "age") return `<td>${age(v)}</td>`;
+      if (c.link) return `<td>${v ? `<a href="${esc(v)}" target="_blank" rel="noopener">open</a>` : ""}</td>`;
+      return `<td class="${c.key === "lastCommit" ? "wrap" : ""}">${esc(v)}</td>`; }).join("")}</tr>`).join("")}</tbody></table></div>`,
+  log: (p) => `<pre class="log">${esc((p.lines || []).join("\n"))}</pre>`,
+};
+function render(state) {
+  $("#title").textContent = state.title || "Lane dashboard"; document.title = state.title || "Lane dashboard";
+  const by = Object.fromEntries(state.panels.map((p) => [p.id, p]));
+  const card = (p) => p ? `<section class="card"><h2>${esc(p.title)}</h2>${(R[p.type] || (() => ""))(p)}</section>` : "";
+  const known = new Set(["overview", "rate", "progress", "lanes", "merge", "events"]);
+  $("#main").innerHTML = card(by.overview) + `<div class="two">${card(by.rate)}${card(by.progress)}</div>` + card(by.lanes) + `<div class="two">${card(by.merge)}${card(by.events)}</div>` + state.panels.filter((p) => !known.has(p.id)).map(card).join("");
+}
+let last = 0;
+async function tick() {
+  try { const r = await fetch("/api/state", { cache: "no-store" }); const s = await r.json(); render(s); last = s.generated; $("#dot").className = "dot"; }
+  catch { $("#dot").className = "dot off"; }
+}
+setInterval(() => { $("#upd").textContent = last ? "updated " + Math.round((Date.now() - last) / 1000) + " s ago" : "loading..."; }, 1000);
+tick(); setInterval(tick, 10000);
+$("#theme").onclick = () => { const r = document.documentElement; r.dataset.theme = r.dataset.theme === "dark" ? "light" : "dark"; try { localStorage.setItem("theme", r.dataset.theme); } catch {} };
+try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# Lane prompts backup (copied from chatgpt.com localStorage on 2026-10-23)
+
+These lived only in the browser's localStorage for chatgpt.com. Clearing site data would delete them.
+`@N` = lane number (1-20); `N` in the follow-up messages is the lane number too.
+
+## promptFix (first message to a fresh lane chat)
+
+You are lane chat-@N of the lms-vnext build (repo 42Students/lms-vnext on GitHub, you have repo access). Push ONLY to branch chatgpt/chat-@N-b, tag every commit message with [chat-@N], dev only; you cannot run code so reason carefully and keep TypeScript strict-clean. HEAVY LIFTING: git fetch origin main. (1) If docs/orchestrator/queues/clone/lane-@N-unit13.md (unit tests failing in the LATEST CI run) has unticked items, finish them first (real code change, then tick). (2) MAIN TASK: no-mercy strictness part A, queue docs/orchestrator/queues/clone/lane-@N-strictA.md. Each packet (docs/audit/strictness/A/packets/A_xxx.md) lists files and the TypeScript errors they produce under the stricter flags in tsconfig.strict.json (noUnusedLocals/Parameters, noImplicitReturns, noUncheckedIndexedAccess, exactOptionalPropertyTypes, noPropertyAccessFromIndexSignature, ...). Fix each error at its cause, following the how-to at the top of the packet: bracket access for index signatures, real narrowing for possibly-undefined values, omit optional keys instead of passing undefined, delete unused code. NO behaviour change, code must still compile under today's tsconfig too. Never use @ts-ignore, @ts-expect-error, any, 'as unknown as', eslint-disable, or the ! assertion as a shortcut. Re-find lines if they moved. Partial progress is WANTED: commit and push to chatgpt/chat-@N-b after EVERY file, aim for a whole packet or more per turn, tick packets when done, then reply with what you pushed. Keep exports, close JSX fragments, no duplicate keys/attributes/declarations. Before each commit RE-READ the whole changed file: no literal \n sequences in code or comments, every bracket and JSX tag closed, and when you make a field nullable/optional update EVERY caller in the same commit (grep for it). Do NOT reply with a status check first: start working immediately. Rules: same old-LMS look and exact wording; never import packages not in package.json.
+
+## contMsg (continue message)
+
+NO DEFERRED ALLOWED (correction): git fetch origin main, read docs/audit/gap-fix/notices/lane-N.md. 1) finish lane-N-verify2c.md, 2) work lane-N-deep.md (10-row packets of rows that were deferred unchecked). EVERY row must end as OK with evidence (the vNext file:line AND the docs/legacy-source file it matches) or FIXED (commit + file). Write one result line per row under Results in the packet, push to chatgpt/chat-N-b, tick it, start the next packet immediately. No status reports. Keep tests passing and TypeScript valid; never silence errors.
+
+## ciMsg / contGo (save-as-you-go message)
+
+Good work, continue exactly where you stopped. SAVE AS YOU GO: as soon as a row is verified, write its result line under '## Results' in the packet file (OK + vNext file:line + legacy file, or FIXED + file); commit and push to chatgpt/chat-N-b after every 2-3 rows. NEVER end a turn with verified rows that are not pushed. Tick the packet in lane-N-deep.md when all its rows have result lines, then continue with the next packet. No DEFERRED. No status report: keep working.

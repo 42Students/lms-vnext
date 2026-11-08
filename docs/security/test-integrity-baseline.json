@@ -1,0 +1,6 @@
+{
+ "note": "Skipped or conditional tests may only go down. Conditional database suites (runIf/skipIf on isolation flags) are counted: they are skipped unless their disposable database is configured.",
+ "testFiles": 6917,
+ "focusedFiles": 0,
+ "skippedOrConditional": 527
+}

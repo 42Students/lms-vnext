@@ -1,0 +1,10 @@
+{
+  "title": "Lane dashboard - LMS vNext fix waves",
+  "port": 8787,
+  "lanes": 20,
+  "baseTag": "pre-fix-wave1",
+  "stalledMinutes": 60,
+  "laneIdsFile": "C:/Users/LENOVO/.claude/projects/C--Users-LENOVO-Desktop-lms-vnext/memory/lane-ids-current.md",
+  "cycleFile": "C:/Users/LENOVO/AppData/Local/Temp/cycle.out",
+  "lockFile": "C:/Users/LENOVO/AppData/Local/Temp/merge.lock"
+}

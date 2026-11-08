@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "vnext-local",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["C:/Users/LENOVO/AppData/Local/Temp/claude/C--Users-LENOVO-Desktop-lms-vnext/3e2bf73e-11fe-4127-ab56-b50b483f6824/scratchpad/vnext-local-dev.cjs"],
+      "port": 8080
+    }
+  ]
+}
