@@ -26,6 +26,7 @@ vi.mock("@/modules/operations/outbound-delivery-queue", () => ({
 }));
 vi.mock("@/modules/operations/outbound-delivery-envelope", () => ({
   openOutboundDelivery: mocks.open,
+  outboundKeyRingFromEnv: () => "ring",
   deriveGlobalEmailSuppressionHashForAddress: mocks.globalHash,
 }));
 vi.mock("@/modules/operations/outbound-dispatch-principal", () => ({
