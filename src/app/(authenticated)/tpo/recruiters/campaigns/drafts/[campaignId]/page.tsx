@@ -1,6 +1,7 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { Banner } from "@/components/ui/banner";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { StatTile } from "@/components/ui/stat-tile";
 import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
@@ -31,6 +32,15 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
 }){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ const raw=searchParams?await searchParams:{};
+ if(Array.isArray(raw.page) || (raw.page!==undefined && !/^[1-9][0-9]{0,5}$/.test(raw.page))) {
+  return <div className="min-w-0 space-y-4">
+   <PageHeader title="Campaign recipients" />
+   <ErrorState title="Invalid recipient page"
+    description="Choose one positive page number. No campaign recipient records were loaded from this link."
+    action={<TextLink href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 items-center md:min-h-9">Back to campaign history</TextLink>} />
+  </div>;
+ }
  const ready=await tpoCampaignDraftStorageReady();
  const {campaignId}=await params;
  const draft=ready?await getTpoCampaignDraft(context,campaignId):null;
@@ -39,8 +49,7 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
   draft?listTpoCampaignRecipientStatuses(context,campaignId):Promise.resolve(null),
   ready?listTpoCampaignDrafts(context).catch(()=>null):Promise.resolve(null),
  ]);
- const raw=searchParams?await searchParams:{};
- const rawPage=Array.isArray(raw.page)?raw.page[0]:raw.page;
+ const rawPage=raw.page;
  const totalPages=Math.max(1,Math.ceil((recipients?.rows.length??0)/25));
  const requestedPage=Number(rawPage??"1");
  const page=Number.isSafeInteger(requestedPage)?Math.max(1,Math.min(totalPages,requestedPage)):1;
