@@ -20,7 +20,9 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
  const [needsRefresh,setNeedsRefresh]=useState(false);
  const [confirmOpen,setConfirmOpen]=useState(false);
  async function read(file:File|null){
-  if(busy||needsRefresh)return;
+  // FileUpload clears its selected input when temporarily disabled during an active read.
+  // Ignore that synthetic null callback: it must not invalidate the accepted CSV preview.
+  if(busy||needsRefresh||(reading&&!file))return;
   const revision=++fileRevision.current;
   setEntries([]);setUnmatched([]);setError("");setDone("");
   if(!file){setReading(false);return;}
