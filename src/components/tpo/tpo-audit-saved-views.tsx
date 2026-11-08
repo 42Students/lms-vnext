@@ -174,9 +174,9 @@ export function TpoAuditSavedViews({filters}:{filters:{
    title="Delete saved audit view?" description="Delete this saved audit view?"
    confirmLabel="Delete view" confirmVariant="danger" pending={busy}
    onConfirm={()=>void remove()}>
-   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+   {error&&confirmDelete?<p role="alert" className="text-sm text-error">{error}</p>:null}
   </ConfirmDialog>
-  {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
+  {error&&!confirmDelete?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="mt-2 text-sm">{message}</p>:null}
  </Disclosure>;
 }
