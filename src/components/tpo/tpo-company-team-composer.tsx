@@ -9,6 +9,16 @@ import { Label } from "@/components/ui/label";
 export function TpoCompanyTeamComposer({companyId,actorUserId}:{
  companyId:string;actorUserId:string;
 }){
+ // Remount draft and request state when switching companies or staff members.
+ // A keyed boundary prevents the previous company's private draft being sent
+ // to a different company's discussion before session storage has restored.
+ return <TpoCompanyTeamComposerEditor key={actorUserId+":"+companyId}
+   companyId={companyId} actorUserId={actorUserId}/>;
+}
+
+function TpoCompanyTeamComposerEditor({companyId,actorUserId}:{
+ companyId:string;actorUserId:string;
+}){
  const router=useRouter(),pending=useRef(false),key=useRef<string|null>(null);
  const storageKey="tpo-company-team:"+actorUserId+":"+companyId;
  const [body,setBody]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState("");
