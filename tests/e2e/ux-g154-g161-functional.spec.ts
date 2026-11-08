@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { authenticateGracefulRole } from "./support/roles";
+import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const enabled = process.env.E2E_AUTH_ENABLED === "true" && Boolean(process.env.E2E_AUTH_SECRET);
 
@@ -56,6 +57,30 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
     await publishDialog.getByRole("button",{name:"Publish",exact:true}).click();
     expect((await published).status(),"Publish must persist").toBe(200);
     await expect(page.getByText("PUBLISHED",{exact:true}).first()).toBeVisible();
+
+    // Verify the same published template can be assigned only via an exact
+    // server-checked compare-and-set baseline; stale bulk edits must conflict.
+    const assignmentUrl="/api/projects/templates/"+result.template!.id+"/assignments";
+    const baseline=await page.request.get(assignmentUrl);
+    expect(baseline.status()).toBe(200);
+    const before=await baseline.json() as {collegeIds:string[]};
+    expect(before.collegeIds).toEqual([]);
+    const assignment=await page.request.put(assignmentUrl,{
+      data:{collegeIds:[SEED_IDS.collegeA],expectedCollegeIds:before.collegeIds},
+    });
+    expect(assignment.status(),"Authorized published template can be assigned").toBe(200);
+    const stale=await page.request.put(assignmentUrl,{
+      data:{collegeIds:[SEED_IDS.collegeB],expectedCollegeIds:before.collegeIds},
+    });
+    expect(stale.status(),"Outdated college selection cannot overwrite current assignments").toBe(409);
+    const after=await page.request.get(assignmentUrl);
+    expect((await after.json() as {collegeIds:string[]}).collegeIds)
+      .toEqual([SEED_IDS.collegeA]);
+    const restored=await page.request.put(assignmentUrl,{
+      data:{collegeIds:[],expectedCollegeIds:[SEED_IDS.collegeA]},
+    });
+    expect(restored.status(),"Restore disposable template assignment to unassigned").toBe(200);
+
     await page.setViewportSize({width:390,height:844});
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(2);
     await page.screenshot({path:info.outputPath("g154-draft-template-created-mobile.png"),fullPage:true});
