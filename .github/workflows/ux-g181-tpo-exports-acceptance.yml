@@ -1,0 +1,58 @@
+name: UX-G181 TPO placement CSV UX acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/modules/placements/tpo-eligibility-preview-csv-model.ts
+      - src/modules/placements/tpo-live-drive-day-csv-model.ts
+      - src/modules/placements/tpo-recruiter-export-model.ts
+      - src/modules/placements/tpo-requests-page-csv-model.ts
+      - src/modules/placements/tpo-round-apply-csv-model.ts
+      - src/modules/placements/tpo-round-failure-csv-model.ts
+      - src/modules/placements/tpo-unplaced-filtered-export-model.ts
+      - src/app/e2e/ux-g181-tpo-csv/**
+      - tests/unit/ux-g181-tpo-export-acceptance.test.ts
+      - tests/e2e/ux-g181-tpo-csv.spec.ts
+      - .github/workflows/ux-g181-tpo-exports-acceptance.yml
+permissions:
+  contents: read
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      UX_G181_FIXTURE: "1"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Verify triggering checkout SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Scoped ESLint
+        run: |
+          npx eslint src/modules/placements/tpo-eligibility-preview-csv-model.ts src/modules/placements/tpo-live-drive-day-csv-model.ts src/modules/placements/tpo-recruiter-export-model.ts src/modules/placements/tpo-requests-page-csv-model.ts src/modules/placements/tpo-round-apply-csv-model.ts src/modules/placements/tpo-round-failure-csv-model.ts src/modules/placements/tpo-unplaced-filtered-export-model.ts src/app/e2e/ux-g181-tpo-csv/page.tsx tests/unit/ux-g181-tpo-export-acceptance.test.ts tests/e2e/ux-g181-tpo-csv.spec.ts
+      - name: Full project TypeScript
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: Export models, safety and TPO regression
+        run: |
+          npx vitest run tests/unit/ux-g181-tpo-export-acceptance.test.ts tests/unit/tpo-students-csv.test.ts tests/unit/chat12-tpo-safe-export.test.ts tests/unit/chat2-tpo-round-contracts-break-11.test.ts
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop and mobile CSV downloads
+        run: npx playwright test tests/e2e/ux-g181-tpo-csv.spec.ts --project=chromium --reporter=line
+      - name: Preserve responsive browser proof
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g181-tpo-csv-browser
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore

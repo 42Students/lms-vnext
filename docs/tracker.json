@@ -22312,10 +22312,10 @@
         "type": "OUTBOUND",
         "area": "placements",
         "title": "Placements · Outbound copy and exports (part 3)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-tpo-exports-2026-11-08",
+        "pickedAt": "2026-11-08",
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/modules/placements/tpo-eligibility-preview-csv-model.ts",
@@ -22350,7 +22350,8 @@
           "MESSAGE-0106"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Shared spreadsheet formula neutralization and recruiter export date/TSV resilience committed with focused tests and browser acceptance; await exact SHA CI before DONE. docs/parity/pages/tpo/UX-G181-exports.md"
       },
       {
         "id": "UX-G182",

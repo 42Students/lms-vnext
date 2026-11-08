@@ -1,3 +1,4 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 import {ENGAGE_COLUMNS,type EngageColumn} from "./tpo-recruiter-table-view-model";
 /** Formula-neutralized CSV for TPO Engage exports. Never include invite tokens. */
 export type RecruiterExportRow={
@@ -10,9 +11,7 @@ export const RECRUITER_CSV_HEADERS=[
  "Invite","Last activity","Next follow-up","Added",
 ] as const;
 export function recruiterCsvCell(value:unknown){
- const raw=String(value??"").replace(/\u0000/g,"");
- const safe=/^[\s]*[=+\-@]/.test(raw)?"'"+raw:raw;
- return '"'+safe.replace(/"/g,'""')+'"';
+ return spreadsheetCsvCell(String(value??"").replace(/\u0000/g,""));
 }
 export function recruiterLeadsCsv(rows:readonly RecruiterExportRow[]){
  const lines=[RECRUITER_CSV_HEADERS.map(recruiterCsvCell).join(",")];
@@ -38,9 +37,11 @@ export type RecruiterTableExportRow=RecruiterExportRow&{
 };
 function exportDate(date:string|null){
  if(!date)return "";
+ const parsed=new Date(date);
+ if(Number.isNaN(parsed.getTime()))return "";
  return new Intl.DateTimeFormat("en-GB",{
   day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
- }).format(new Date(date));
+ }).format(parsed);
 }
 const stageLabels:Record<string,string>={
  NEW:"New",CONTACTED:"Contacted",INVITED:"Invited",JOINED:"Joined",
@@ -76,7 +77,8 @@ export function recruiterTableExportTsv(rows:readonly RecruiterTableExportRow[],
  const grid=recruiterTableExportGrid(rows,columns);
  // Literal text clipboard, not formulas: sanitize spreadsheet trigger characters.
  return [grid.headers,...grid.values].map(row=>row.map(value=>{
-  const safe=/^[\s]*[=+\-@]/.test(value)?"'"+value:value;
-  return safe.replace(/[\t\r\n]/g," ");
+  const visible=value.replace(/^[\s\p{Cc}\p{Cf}\p{Mn}\p{Mc}\p{Me}]*/u,"");
+  const safe=/^[=+@-]/u.test(visible)?"'"+value:value;
+  return safe.replace(/[\u0000-\u001F\u007F]/g," ");
  }).join("\t")).join("\r\n");
 }
