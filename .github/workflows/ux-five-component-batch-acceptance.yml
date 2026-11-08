@@ -1,0 +1,104 @@
+name: UX G132 G154 G161 G178 G184 component acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/components/attendance/college-attendance-policy-form.tsx'
+      - 'src/components/attendance/faculty-attendance-schedule-editor.tsx'
+      - 'src/components/projects/project-team-controls.tsx'
+      - 'src/components/projects/project-template-controls.tsx'
+      - 'src/components/projects/super-admin-template-college-bulk.tsx'
+      - 'src/components/tracker/tracker-live-logs-explorer.tsx'
+      - 'src/components/tracker/audit-finding-status-action.tsx'
+      - 'src/modules/people/college-people-export-service.ts'
+      - 'src/modules/people/admin-users-export-service.ts'
+      - 'src/app/(authenticated)/admin/error.tsx'
+      - 'src/app/(authenticated)/teacher/error.tsx'
+      - 'tests/unit/ux-five-group-batch-20261107.test.ts'
+      - 'tests/e2e/ux-five-group-batch-20261107.spec.ts'
+      - '.github/workflows/ux-five-component-batch-acceptance.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ux-five-component-batch-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  focused-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: 'true'
+      APP_ENV: development
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact trigger SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Scoped lint and full TypeScript
+        run: |
+          npx eslint \
+            src/components/attendance/college-attendance-policy-form.tsx \
+            src/components/attendance/faculty-attendance-schedule-editor.tsx \
+            src/components/projects/project-team-controls.tsx \
+            src/components/projects/project-template-controls.tsx \
+            src/components/projects/super-admin-template-college-bulk.tsx \
+            src/components/tracker/tracker-live-logs-explorer.tsx \
+            src/components/tracker/audit-finding-status-action.tsx \
+            src/modules/people/college-people-export-service.ts \
+            src/modules/people/admin-users-export-service.ts \
+            'src/app/(authenticated)/admin/error.tsx' \
+            'src/app/(authenticated)/teacher/error.tsx' \
+            tests/unit/ux-five-group-batch-20261107.test.ts \
+            tests/e2e/ux-five-group-batch-20261107.spec.ts
+          npm run typecheck
+      - name: Five-group security and functional unit regression
+        run: npx vitest run tests/unit/ux-five-group-batch-20261107.test.ts --reporter=dot
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Prepare disposable seeded E2E PostgreSQL
+        run: npm run db:e2e:prepare
+      - name: Create ephemeral browser credentials
+        shell: bash
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Role-authenticated desktop/mobile browser and learner denial
+        run: npx playwright test tests/e2e/ux-five-group-batch-20261107.spec.ts --project=chromium --reporter=line
+      - name: Save viewport screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g132-g154-g161-g178-g184-browser-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 14
