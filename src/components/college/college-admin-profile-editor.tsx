@@ -39,6 +39,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
   const router = useRouter();
   const [profile, setProfile] = useState<VersionedCollegeProfile>(initial);
   const [saving, setSaving] = useState(false);
+  const saveInFlight=useRef(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
   const savedSnapshot=useRef<VersionedCollegeProfile>(initial);
@@ -176,7 +177,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
   }
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if(saving||readOnly)return;
+    if(saving||saveInFlight.current||readOnly)return;
     const requestedSection=sectionSaveIntent.current;
     sectionSaveIntent.current=null;
     const baseline = savedSnapshot.current;
@@ -225,6 +226,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
       ...(savingSections.includes("address")?{address:profile.address}:{}),
       ...(savingSections.includes("contacts")?{contacts:profile.contacts}:{}),
     };
+    saveInFlight.current=true;
     setSaving(true); setError(""); setSaved(false);
     try {
       const result = await apiFetch<{profile:VersionedCollegeProfile}>("/api/college/profile", {
@@ -254,7 +256,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
       router.refresh();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : friendlyApiError({}));
-    } finally { setSaving(false); }
+    } finally { saveInFlight.current=false;setSaving(false); }
   }
   return (
     <>
