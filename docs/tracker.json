@@ -20891,11 +20891,11 @@
         "type": "JOURNEY",
         "area": "recruiter",
         "title": "Recruiter · Home → Drives (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-gpt6-ux-multirole-20261108",
         "pickedAt": "2026-11-08T08:16:37.275Z",
         "startedAt": "2026-11-08T08:16:37.275Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T08:37:53.899Z",
         "sourceFiles": [
           "src/app/(authenticated)/recruiter/calendar/error.tsx",
           "src/app/(authenticated)/recruiter/calendar/loading.tsx",
@@ -20933,7 +20933,46 @@
           "PAGE-0319"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "c6cab25c7662c05ce841a559077414bf68a7015d",
+            "parityDoc": "docs/parity/ux-g059-g070-g080-route-acceptance.md",
+            "tests": [
+              {
+                "command": "Scoped ESLint + exact Git SHA check",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462573312 — both passed"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g080-recruiter-recovery.test.tsx --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462573312 — 3/3 unit tests passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g080-recruiter-recovery.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462573312 — 2/2 responsive browser scenarios passed"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462573312 — full TypeScript passed"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462573312/artifacts/13610193258 — ux-g080-desktop.png; real recruiter alias states and recovery"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42462573312/artifacts/13610193258 — ux-g080-mobile.png; touch navigation, correct recruiter home, no overflow"
+              }
+            ],
+            "regressionReview": "At exact c6cab25c commit: scoped lint, 3 unit tests, 2 desktop/mobile rendered-component Chromium cases, no page JS errors, full TypeScript and archived screenshots passed. Existing recruiter/HR route exports remain unchanged; live authorized real-account checks are separate release gates.",
+            "securityReview": "Changes affect only recruiter route error/loading/not-found presentations plus dev/E2E guarded synthetic fixture. Existing authenticated HR service access, role resolution, tenant permissions and API calls are untouched. No exception content is exposed in the recovered page, no external origin navigation introduced."
+          }
+        ]
       },
       {
         "id": "UX-G081",
