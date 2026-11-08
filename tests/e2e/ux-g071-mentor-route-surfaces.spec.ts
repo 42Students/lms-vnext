@@ -91,7 +91,7 @@ test.describe("UX-G071 five persisted Mentor review route families",()=>{
         for(const suffix of ["/review-completeness?page=not-a-number",
           "/resources-directory?page=not-a-number"]){
           await page.goto(base+suffix);
-          await expect(page.getByRole("alert")).toBeVisible();
+          await expect(page.getByRole("alert").filter({hasText:/Invalid/}).first()).toBeVisible();
           const retry=page.getByRole("link",{name:/Clear invalid filters|Clear filters/});
           await expect(retry).toBeVisible();
           const target=await retry.getAttribute("href");
