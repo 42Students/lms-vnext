@@ -47,7 +47,7 @@ export function LearnerProjectMobileFilters({query}:{query:ProjectParticipantLis
   return (
     <section className="min-w-0 space-y-2 md:hidden" aria-label="Project search and filters">
       <form ref={form} method="get" action="/learn/projects"
-        onChange={submitFilters} aria-busy={searchPending}
+        onChange={submitFilters} onSubmit={cancelDebounce} aria-busy={searchPending}
         className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
         <div className={label+" w-full sm:w-[300px]"}>
           <Label htmlFor="learner-project-search">Search</Label>
@@ -74,13 +74,13 @@ export function LearnerProjectMobileFilters({query}:{query:ProjectParticipantLis
           </div>
         </div>
         <Label className={label+" w-full sm:w-[172px]"}>Status
-          <Select name="status" defaultValue={query.status??""} className="min-h-11 w-full">
+          <Select key={query.status??""} name="status" defaultValue={query.status??""} className="min-h-11 w-full">
             <option value="">All statuses</option>
             {statuses.map(([value,text])=><option value={value} key={value}>{text}</option>)}
           </Select>
         </Label>
         <Label className={label+" w-full sm:w-[212px]"}>Attention
-          <Select name="attention" defaultValue={query.attention??""} className="min-h-11 w-full"
+          <Select key={query.attention??""} name="attention" defaultValue={query.attention??""} className="min-h-11 w-full"
             aria-label="Project attention">
             <option value="">All attention states</option>
             <option value="LEARNER_ACTION">Needs my action</option>
@@ -88,21 +88,21 @@ export function LearnerProjectMobileFilters({query}:{query:ProjectParticipantLis
           </Select>
         </Label>
         <Label className={label+" w-full sm:w-[172px]"}>Work attention
-          <Select name="work" defaultValue={query.work??""} className="min-h-11 w-full">
+          <Select key={query.work??""} name="work" defaultValue={query.work??""} className="min-h-11 w-full">
             <option value="">All work</option>
             <option value="BLOCKED">Has blocked tasks</option>
             <option value="NO_TASKS">No tracked tasks yet</option>
           </Select>
         </Label>
         <Label className={label+" w-full sm:w-[172px]"}>Sort projects
-          <Select name="sort" defaultValue={query.sort??"RECENT"} className="min-h-11 w-full">
+          <Select key={query.sort??"RECENT"} name="sort" defaultValue={query.sort??"RECENT"} className="min-h-11 w-full">
             <option value="RECENT">Recently updated</option>
             <option value="TITLE">Title A–Z</option>
             <option value="PROGRESS">Least progress first</option>
           </Select>
         </Label>
         <Label className={label+" w-full sm:w-[172px]"}>Results per page
-          <Select name="pageSize" defaultValue={String(query.pageSize??25)} className="min-h-11 w-full">
+          <Select key={String(query.pageSize??25)} name="pageSize" defaultValue={String(query.pageSize??25)} className="min-h-11 w-full">
             {[10,25,50].map(size=><option value={size} key={size}>{size}</option>)}
           </Select>
         </Label>
