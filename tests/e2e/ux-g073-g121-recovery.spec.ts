@@ -16,7 +16,7 @@ test.describe("UX-G073 and UX-G121 authenticated role and recovery journeys", ()
       await page.setViewportSize(size);
       for(const route of ["reports","review-history","reviews","sprint-progress","task-review-history"]){
         await page.goto("/mentor/"+route+"?page=not-a-number");
-        const alert=page.getByRole("alert");
+        const alert=page.getByRole("alert").filter({hasText:"Invalid"}).first();
         await expect(alert).toBeVisible();
         await expect(alert.getByRole("link",{name:"Clear filters"})).toHaveAttribute("href","/mentor/"+route);
         if(route!=="reviews")await expect(alert).toContainText("No ");
