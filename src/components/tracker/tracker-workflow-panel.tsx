@@ -2,7 +2,7 @@
 import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useRouter } from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -41,6 +41,8 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
   const router = useRouter();
   const { showToast } = useToast();
   const [pending, startTransition] = useTransition();
+  const mutationLock = useRef(false);
+  const [needsRefresh, setNeedsRefresh] = useState(false);
   const [status, setStatus] = useState(issue.status);
   const [resolution, setResolution] = useState(issue.resolution ?? "");
   const [affectedLayer, setAffectedLayer] = useState(issue.affectedLayer ?? "");
@@ -58,11 +60,22 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
     setBackendCommitSha(issue.backendCommitSha ?? "");
     setRegressionTestStatus(issue.regressionTestStatus);
     setProductionVerified(issue.productionVerified); setRetestNote("");
+    // A successful mutation may invalidate the original optimistic version.
+    // Unlock only after fresh server props have arrived.
+    setNeedsRefresh(false);
   }, [issue.publicId, issue.version, issue.status, issue.resolution, issue.affectedLayer,
       issue.rootCause, issue.fixNotes, issue.frontendCommitSha, issue.backendCommitSha,
       issue.regressionTestStatus, issue.productionVerified]);
+  function startExclusiveMutation(task: () => Promise<void>) {
+    if (pending || needsRefresh || mutationLock.current) return false;
+    mutationLock.current = true;
+    startExclusiveMutation(async () => {
+      try { await task(); } finally { mutationLock.current = false; }
+    });
+    return true;
+  }
   function changeStatus(nextStatus: string) {
-    if (pending || !canManage || nextStatus === status) return;
+    if (pending || needsRefresh || mutationLock.current || !canManage || nextStatus === status) return;
     setStatus(nextStatus);
     startTransition(async () => {
       try {
@@ -74,20 +87,24 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
         setStatus(response.issue.status);
         setResolution(response.issue.resolution ?? "");
         showToast({tone:"success",title:issue.publicId+" moved to "+response.issue.status});
+        setNeedsRefresh(true);
         router.refresh();
       } catch (reason) {
         setStatus(issue.status);
         showToast({tone:"error",title:reason instanceof FriendlyFetchError && reason.status===409 ?
           "Issue changed elsewhere" : "Could not update issue status.",
           description:reason instanceof Error ? reason.message : friendlyApiError({})});
-        if (reason instanceof FriendlyFetchError && reason.status===409) router.refresh();
+        if (reason instanceof FriendlyFetchError && reason.status===409) {
+          setNeedsRefresh(true);
+          router.refresh();
+        }
       }
     });
   }
 
   function save() {
-    if(pending)return;
-    startTransition(async () => {
+    if(pending||needsRefresh||mutationLock.current)return;
+    startExclusiveMutation(async () => {
       try {
         await apiFetch(`/api/tracker/issues/${encodeURIComponent(issue.publicId)}/workflow`,{
           method:"PATCH",headers:{"content-type":"application/json"},
@@ -98,6 +115,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
           }),
         });
         showToast({tone:"success",title:"Engineering details saved"});
+        setNeedsRefresh(true);
         router.refresh();
       }catch(reason){
         showToast({tone:"error",title:reason instanceof FriendlyFetchError&&reason.status===409?"Issue changed elsewhere":"Engineering details could not be saved.",
@@ -107,14 +125,15 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
   }
 
   function retest(result:"PASS"|"FAIL"){
-    if(pending)return;
-    startTransition(async()=>{
+    if(pending||needsRefresh||mutationLock.current)return;
+    startExclusiveMutation(async()=>{
       try{
         await apiFetch(`/api/tracker/issues/${encodeURIComponent(issue.publicId)}/retest`,{
           method:"POST",headers:{"content-type":"application/json"},
           body:JSON.stringify({expectedVersion:issue.version,result,note:retestNote||null}),
         });
         showToast({tone:"success",title:result==="PASS"?"Retest passed — issue closed":"Retest failed — issue reopened"});
+        setNeedsRefresh(true);
         router.refresh();
       }catch(reason){
         showToast({tone:"error",title:reason instanceof FriendlyFetchError&&reason.status===409?"Issue changed elsewhere":"Retest result could not be saved.",
@@ -129,11 +148,12 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
       <div>
         <Heading level={2} size="lg" className="m-0 text-foreground">Issue status</Heading>
         <p className="mt-1 text-sm text-body">Super Admin only. Status changes save immediately; engineering details are saved separately. Version {issue.version}; stale writes are rejected.</p>
+        {needsRefresh?<p role="status" className="mt-2 text-sm text-body">Saved or updated elsewhere. Refresh the issue before making another change. <Button type="button" variant="secondary" onClick={()=>router.refresh()} className="ml-2 min-h-11 md:min-h-9">Refresh issue</Button></p>:null}
       </div>
       <div className="grid min-w-0 gap-4 sm:grid-cols-2">
         <Label stack className="min-w-0">
           Status
-          <Select className="w-full min-w-0" disabled={pending} value={status} onChange={(e) => changeStatus(e.target.value)}>
+          <Select className="w-full min-w-0" disabled={pending||needsRefresh} value={status} onChange={(e) => changeStatus(e.target.value)}>
             {BUG_STATUSES.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
           {pending ? <span role="status" className="text-xs text-muted-foreground">Updating status…</span> : null}
@@ -144,21 +164,21 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
         <div className="grid min-w-0 gap-4 sm:grid-cols-2">
         <Label stack className="min-w-0">
           Resolution
-          <Select className="w-full min-w-0" disabled={pending} value={resolution} onChange={(e) => setResolution(e.target.value)}>
+          <Select className="w-full min-w-0" disabled={pending||needsRefresh} value={resolution} onChange={(e) => setResolution(e.target.value)}>
             <option value="">No resolution</option>
             {BUG_RESOLUTIONS.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
         </Label>
         <Label stack className="min-w-0">
           Affected layer
-          <Select className="w-full min-w-0" disabled={pending} value={affectedLayer} onChange={(e) => setAffectedLayer(e.target.value)}>
+          <Select className="w-full min-w-0" disabled={pending||needsRefresh} value={affectedLayer} onChange={(e) => setAffectedLayer(e.target.value)}>
             <option value="">Not set</option>
             {BUG_AFFECTED_LAYERS.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
         </Label>
         <Label stack className="min-w-0">
           Regression test
-          <Select className="w-full min-w-0" disabled={pending} value={regressionTestStatus} onChange={(e) => setRegressionTestStatus(e.target.value)}>
+          <Select className="w-full min-w-0" disabled={pending||needsRefresh} value={regressionTestStatus} onChange={(e) => setRegressionTestStatus(e.target.value)}>
             {BUG_REGRESSION_TEST_STATUSES.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
         </Label>
@@ -195,7 +215,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
           Production verified
         </Label>
       </div>
-        <Button disabled={pending} loading={pending} onClick={save} className="mt-4 min-h-11 w-full sm:w-auto md:min-h-9">
+        <Button disabled={pending||needsRefresh} loading={pending} onClick={save} className="mt-4 min-h-11 w-full sm:w-auto md:min-h-9">
           {pending ? "Saving…" : "Save details"}
         </Button>
       </Disclosure>
@@ -206,11 +226,11 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
           <p className="text-sm font-semibold text-body">Does it work now?</p>
           <p className="text-sm text-body">Check the same flow once more. One click sends it back to engineering or closes it.</p>
           <Label stack className="min-w-0">Retest notes (optional)
-            <Textarea className="w-full min-w-0" value={retestNote} disabled={pending} maxLength={1000} placeholder="What did you observe?" onChange={(e) => setRetestNote(e.target.value)} />
+            <Textarea className="w-full min-w-0" value={retestNote} disabled={pending||needsRefresh} maxLength={1000} placeholder="What did you observe?" onChange={(e) => setRetestNote(e.target.value)} />
           </Label>
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
-            <Button variant="danger" disabled={pending} loading={pending} onClick={() => retest("FAIL")} className="min-h-11 w-full md:min-h-9 md:w-auto">Still broken</Button>
-            <Button disabled={pending} loading={pending} onClick={() => retest("PASS")} className="min-h-11 w-full md:min-h-9 md:w-auto">Works now</Button>
+            <Button variant="danger" disabled={pending||needsRefresh} loading={pending} onClick={() => retest("FAIL")} className="min-h-11 w-full md:min-h-9 md:w-auto">Still broken</Button>
+            <Button disabled={pending||needsRefresh} loading={pending} onClick={() => retest("PASS")} className="min-h-11 w-full md:min-h-9 md:w-auto">Works now</Button>
           </div>
         </div>
       ) : null}
