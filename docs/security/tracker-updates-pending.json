@@ -2,9 +2,9 @@
  "note": "DRAFT. Not read by any validator. Merge into docs/tracker.json only after a passing CI run: fill commitSha (40 hex) and runUrl, then run node scripts/tracker.mjs --check. Never VERIFIED from here.",
  "generatedFrom": "docs/security/assessments/*.md",
  "counts": {
-  "IMPLEMENTED_UNVERIFIED": 159,
-  "GAP_CONFIRMED": 54,
-  "PARTIAL_EVIDENCE": 178,
+  "IMPLEMENTED_UNVERIFIED": 167,
+  "GAP_CONFIRMED": 94,
+  "PARTIAL_EVIDENCE": 198,
   "UNASSESSED": 6
  },
  "controls": {
@@ -4380,6 +4380,22 @@
     "See the source assessment for control-specific missing proof"
    ]
   },
+  "SEC-13-015": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "vNext has no billing or payment workflow today, so there is nothing to validate; revisit if one is added.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
   "SEC-13-016": {
    "currentTrackerState": "PARTIAL_EVIDENCE",
    "proposedState": "PARTIAL_EVIDENCE",
@@ -6330,6 +6346,22 @@
    ],
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
+  "SEC-20-003": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "The incident runbook has no severity levels, no playbooks for unauthorized database access, compromised storage objects or malicious integrations, no legal notification analysis, no root-cause review process and no detection/containment/recovery timing (runbook section 7).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
   "SEC-20-004": {
    "currentTrackerState": "UNASSESSED",
    "proposedState": "GAP_CONFIRMED",
@@ -6378,12 +6410,60 @@
    ],
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
+  "SEC-20-007": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "The incident runbook has no severity levels, no playbooks for unauthorized database access, compromised storage objects or malicious integrations, no legal notification analysis, no root-cause review process and no detection/containment/recovery timing (runbook section 7).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
   "SEC-20-008": {
    "currentTrackerState": "PARTIAL_EVIDENCE",
    "proposedState": "PARTIAL_EVIDENCE",
    "assessedAt": "2026-11-08",
    "finding": "Incident response runbook (draft 2026-11-08): roles and the first 15 minutes, where evidence is, containment steps, credential compromise, cross-college exposure, recovery and notification. Written, not rehearsed; credential rotation has no per-secret tooling or key versioning.",
    "source": "docs/security/assessments/runbooks/incident-response.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-20-009": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "The incident runbook has no severity levels, no playbooks for unauthorized database access, compromised storage objects or malicious integrations, no legal notification analysis, no root-cause review process and no detection/containment/recovery timing (runbook section 7).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-20-010": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "The incident runbook has no severity levels, no playbooks for unauthorized database access, compromised storage objects or malicious integrations, no legal notification analysis, no root-cause review process and no detection/containment/recovery timing (runbook section 7).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
    "evidence": [
     {
      "type": "EXECUTED_SCOPED_TEST",
@@ -6426,6 +6506,22 @@
    ],
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
+  "SEC-20-013": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Emergency disabling exists as flags (MAINTENANCE_MODE, PRIVATE_STORAGE_SCANNER_READY, module access rules, user disable); the runbook lists where evidence lives and says not to delete anything, without a forensic procedure.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
   "SEC-20-014": {
    "currentTrackerState": "PARTIAL_EVIDENCE",
    "proposedState": "PARTIAL_EVIDENCE",
@@ -6442,12 +6538,76 @@
    ],
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
+  "SEC-20-015": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Emergency disabling exists as flags (MAINTENANCE_MODE, PRIVATE_STORAGE_SCANNER_READY, module access rules, user disable); the runbook lists where evidence lives and says not to delete anything, without a forensic procedure.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-20-016": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "The incident runbook has no severity levels, no playbooks for unauthorized database access, compromised storage objects or malicious integrations, no legal notification analysis, no root-cause review process and no detection/containment/recovery timing (runbook section 7).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
   "SEC-20-017": {
    "currentTrackerState": "UNASSESSED",
    "proposedState": "GAP_CONFIRMED",
    "assessedAt": "2026-11-08",
    "finding": "No on-call rota or emergency contact roster beyond the owner, and no tabletop exercise or rehearsal has been run (runbook section 7).",
    "source": "docs/security/assessments/runbooks/incident-response.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-20-018": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "The incident runbook has no severity levels, no playbooks for unauthorized database access, compromised storage objects or malicious integrations, no legal notification analysis, no root-cause review process and no detection/containment/recovery timing (runbook section 7).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-20-019": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "The incident runbook has no severity levels, no playbooks for unauthorized database access, compromised storage objects or malicious integrations, no legal notification analysis, no root-cause review process and no detection/containment/recovery timing (runbook section 7).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
    "evidence": [
     {
      "type": "EXECUTED_SCOPED_TEST",
@@ -6767,6 +6927,176 @@
    ],
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
+  "SEC-22-007": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Sharing between colleges and recruiters is recorded in grant and relationship tables; vendor data classes are only partly listed; whether the NSRIT data on dev is real students is unanswered (owner action 16); Cloud SQL runs in asia-south1 (India) but residency is not documented.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-22-008": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "Candidate discovery by recruiters depends on explicit relationship grants (ACTIVE, VERIFIED, unexpired, capability-scoped) and share defaults tested in the CI job 'DB017 relationship-scoped disclosure defaults'.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
+  "SEC-22-009": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Sharing between colleges and recruiters is recorded in grant and relationship tables; vendor data classes are only partly listed; whether the NSRIT data on dev is real students is unanswered (owner action 16); Cloud SQL runs in asia-south1 (India) but residency is not documented.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-22-010": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Minors' data handling, secure disposal, counsel review of Indian and international obligations and customer-specific obligations are not done (owner and legal).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-22-011": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Sharing between colleges and recruiters is recorded in grant and relationship tables; vendor data classes are only partly listed; whether the NSRIT data on dev is real students is unanswered (owner action 16); Cloud SQL runs in asia-south1 (India) but residency is not documented.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-22-012": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Minors' data handling, secure disposal, counsel review of Indian and international obligations and customer-specific obligations are not done (owner and legal).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-22-013": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Sharing between colleges and recruiters is recorded in grant and relationship tables; vendor data classes are only partly listed; whether the NSRIT data on dev is real students is unanswered (owner action 16); Cloud SQL runs in asia-south1 (India) but residency is not documented.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-22-014": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Minors' data handling, secure disposal, counsel review of Indian and international obligations and customer-specific obligations are not done (owner and legal).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-22-015": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Minors' data handling, secure disposal, counsel review of Indian and international obligations and customer-specific obligations are not done (owner and legal).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-23-001": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "Thousands of unit tests plus integration suites in CI cover sign-in, role selection (narrowToActiveRole, identity-system-roles), account disable and membership revocation (db01-session-atomic-authorization, workflow 'session idle and atomic role-change revocation'), same-origin checks on route() and concurrency races (revoke-versus-write serialization tests in the database job).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
   "SEC-23-002": {
    "currentTrackerState": "PARTIAL_EVIDENCE",
    "proposedState": "PARTIAL_EVIDENCE",
@@ -6783,12 +7113,70 @@
    ],
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
+  "SEC-23-003": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "Thousands of unit tests plus integration suites in CI cover sign-in, role selection (narrowToActiveRole, identity-system-roles), account disable and membership revocation (db01-session-atomic-authorization, workflow 'session idle and atomic role-change revocation'), same-origin checks on route() and concurrency races (revoke-versus-write serialization tests in the database job).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
+  "SEC-23-004": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "Thousands of unit tests plus integration suites in CI cover sign-in, role selection (narrowToActiveRole, identity-system-roles), account disable and membership revocation (db01-session-atomic-authorization, workflow 'session idle and atomic role-change revocation'), same-origin checks on route() and concurrency races (revoke-versus-write serialization tests in the database job).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
   "SEC-23-005": {
    "currentTrackerState": "PARTIAL_EVIDENCE",
    "proposedState": "PARTIAL_EVIDENCE",
    "assessedAt": "2026-11-08",
    "finding": "Role-by-route matrix, cross-college probe (120 routes) and same-college probe (144 requests) exist as committed scripts with evidence, but run against dev by hand rather than in CI; catalog and runtime-principal probes cover privilege drift; webhook signatures are tested, replay is not; skipped database suites and missing branch protection mean a failing critical test does not yet block a release.",
    "source": "docs/security/assessments/SEC-14-23-24-25-26-remaining.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-23-006": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Cross-organization and forbidden-field cases exist route by route; the course sanitizer and the sql-raw-dynamic ratchet cover injection; a one-time code is consumed once (db01-login-consume tests) but a dedicated OTP replay suite, cache and job isolation tests and provider-failure tests are not written.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
    "evidence": [
     {
      "type": "EXECUTED_SCOPED_TEST",
@@ -6830,6 +7218,96 @@
     }
    ],
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-23-009": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Cross-organization and forbidden-field cases exist route by route; the course sanitizer and the sql-raw-dynamic ratchet cover injection; a one-time code is consumed once (db01-login-consume tests) but a dedicated OTP replay suite, cache and job isolation tests and provider-failure tests are not written.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-23-010": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "Thousands of unit tests plus integration suites in CI cover sign-in, role selection (narrowToActiveRole, identity-system-roles), account disable and membership revocation (db01-session-atomic-authorization, workflow 'session idle and atomic role-change revocation'), same-origin checks on route() and concurrency races (revoke-versus-write serialization tests in the database job).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
+  "SEC-23-011": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Cross-organization and forbidden-field cases exist route by route; the course sanitizer and the sql-raw-dynamic ratchet cover injection; a one-time code is consumed once (db01-login-consume tests) but a dedicated OTP replay suite, cache and job isolation tests and provider-failure tests are not written.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-23-013": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Cross-organization and forbidden-field cases exist route by route; the course sanitizer and the sql-raw-dynamic ratchet cover injection; a one-time code is consumed once (db01-login-consume tests) but a dedicated OTP replay suite, cache and job isolation tests and provider-failure tests are not written.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-23-014": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "Thousands of unit tests plus integration suites in CI cover sign-in, role selection (narrowToActiveRole, identity-system-roles), account disable and membership revocation (db01-session-atomic-authorization, workflow 'session idle and atomic role-change revocation'), same-origin checks on route() and concurrency races (revoke-versus-write serialization tests in the database job).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
   },
   "SEC-23-015": {
    "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
@@ -6874,6 +7352,59 @@
    "assessedAt": "2026-11-08",
    "finding": "Role-by-route matrix, cross-college probe (120 routes) and same-college probe (144 requests) exist as committed scripts with evidence, but run against dev by hand rather than in CI; catalog and runtime-principal probes cover privilege drift; webhook signatures are tested, replay is not; skipped database suites and missing branch protection mean a failing critical test does not yet block a release.",
    "source": "docs/security/assessments/SEC-14-23-24-25-26-remaining.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-23-019": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Cross-organization and forbidden-field cases exist route by route; the course sanitizer and the sql-raw-dynamic ratchet cover injection; a one-time code is consumed once (db01-login-consume tests) but a dedicated OTP replay suite, cache and job isolation tests and provider-failure tests are not written.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-23-020": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "Thousands of unit tests plus integration suites in CI cover sign-in, role selection (narrowToActiveRole, identity-system-roles), account disable and membership revocation (db01-session-atomic-authorization, workflow 'session idle and atomic role-change revocation'), same-origin checks on route() and concurrency races (revoke-versus-write serialization tests in the database job).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
+  "SEC-23-021": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Cross-organization and forbidden-field cases exist route by route; the course sanitizer and the sql-raw-dynamic ratchet cover injection; a one-time code is consumed once (db01-login-consume tests) but a dedicated OTP replay suite, cache and job isolation tests and provider-failure tests are not written.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
    "evidence": [
     {
      "type": "EXECUTED_SCOPED_TEST",
@@ -6958,12 +7489,497 @@
    ],
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
+  "SEC-24-001": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No independent testing has been commissioned and no coordinated-disclosure contact (security.txt) is published; both need the owner (timing, budget and a monitored security address).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-24-002": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No independent testing has been commissioned and no coordinated-disclosure contact (security.txt) is published; both need the owner (timing, budget and a monitored security address).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-24-003": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No independent testing has been commissioned and no coordinated-disclosure contact (security.txt) is published; both need the owner (timing, budget and a monitored security address).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-24-004": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No independent testing has been commissioned and no coordinated-disclosure contact (security.txt) is published; both need the owner (timing, budget and a monitored security address).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-24-005": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No independent testing has been commissioned and no coordinated-disclosure contact (security.txt) is published; both need the owner (timing, budget and a monitored security address).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-24-006": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No independent testing has been commissioned and no coordinated-disclosure contact (security.txt) is published; both need the owner (timing, budget and a monitored security address).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-24-007": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No independent testing has been commissioned and no coordinated-disclosure contact (security.txt) is published; both need the owner (timing, budget and a monitored security address).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-24-008": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No independent testing has been commissioned and no coordinated-disclosure contact (security.txt) is published; both need the owner (timing, budget and a monitored security address).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-24-009": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No independent testing has been commissioned and no coordinated-disclosure contact (security.txt) is published; both need the owner (timing, budget and a monitored security address).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-24-010": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No independent testing has been commissioned and no coordinated-disclosure contact (security.txt) is published; both need the owner (timing, budget and a monitored security address).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-24-011": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No independent testing has been commissioned and no coordinated-disclosure contact (security.txt) is published; both need the owner (timing, budget and a monitored security address).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-24-012": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No independent testing has been commissioned and no coordinated-disclosure contact (security.txt) is published; both need the owner (timing, budget and a monitored security address).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-24-013": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No independent testing has been commissioned and no coordinated-disclosure contact (security.txt) is published; both need the owner (timing, budget and a monitored security address).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-24-014": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "No independent testing has been commissioned and no coordinated-disclosure contact (security.txt) is published; both need the owner (timing, budget and a monitored security address).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-25-001": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Organisational controls not established: security ownership beyond the owner, access reviews, separation of production and development access, MFA enforcement on source control and cloud, vendor reviews, policy review cadence and training (owner decisions).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-25-002": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Partial governance artefacts exist: accepted-risks.md and OWNER-ACTIONS.md act as the risk register, central-security-architecture.md and the ratchet guards act as the coding standard, CODEOWNERS and CI gate changes (branch protection is off), UX guard waivers carry expiry dates, and docs/security/evidence plus the tracker are the audit evidence trail.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-25-003": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
+   "assessedAt": "2026-11-08",
+   "finding": "Security findings are tracked in docs/tracker.json: a control only moves with exact commit and passing-run evidence, VERIFIED needs an independent reviewer, and negative invariant tests enforce this in CI.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
+  },
+  "SEC-25-004": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Partial governance artefacts exist: accepted-risks.md and OWNER-ACTIONS.md act as the risk register, central-security-architecture.md and the ratchet guards act as the coding standard, CODEOWNERS and CI gate changes (branch protection is off), UX guard waivers carry expiry dates, and docs/security/evidence plus the tracker are the audit evidence trail.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-25-005": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Partial governance artefacts exist: accepted-risks.md and OWNER-ACTIONS.md act as the risk register, central-security-architecture.md and the ratchet guards act as the coding standard, CODEOWNERS and CI gate changes (branch protection is off), UX guard waivers carry expiry dates, and docs/security/evidence plus the tracker are the audit evidence trail.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-25-006": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Organisational controls not established: security ownership beyond the owner, access reviews, separation of production and development access, MFA enforcement on source control and cloud, vendor reviews, policy review cadence and training (owner decisions).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-25-007": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Organisational controls not established: security ownership beyond the owner, access reviews, separation of production and development access, MFA enforcement on source control and cloud, vendor reviews, policy review cadence and training (owner decisions).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-25-008": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Organisational controls not established: security ownership beyond the owner, access reviews, separation of production and development access, MFA enforcement on source control and cloud, vendor reviews, policy review cadence and training (owner decisions).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-25-009": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Organisational controls not established: security ownership beyond the owner, access reviews, separation of production and development access, MFA enforcement on source control and cloud, vendor reviews, policy review cadence and training (owner decisions).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-25-010": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Organisational controls not established: security ownership beyond the owner, access reviews, separation of production and development access, MFA enforcement on source control and cloud, vendor reviews, policy review cadence and training (owner decisions).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-25-011": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Partial governance artefacts exist: accepted-risks.md and OWNER-ACTIONS.md act as the risk register, central-security-architecture.md and the ratchet guards act as the coding standard, CODEOWNERS and CI gate changes (branch protection is off), UX guard waivers carry expiry dates, and docs/security/evidence plus the tracker are the audit evidence trail.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-25-012": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Organisational controls not established: security ownership beyond the owner, access reviews, separation of production and development access, MFA enforcement on source control and cloud, vendor reviews, policy review cadence and training (owner decisions).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-25-014": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Organisational controls not established: security ownership beyond the owner, access reviews, separation of production and development access, MFA enforcement on source control and cloud, vendor reviews, policy review cadence and training (owner decisions).",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-25-015": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Partial governance artefacts exist: accepted-risks.md and OWNER-ACTIONS.md act as the risk register, central-security-architecture.md and the ratchet guards act as the coding standard, CODEOWNERS and CI gate changes (branch protection is off), UX guard waivers carry expiry dates, and docs/security/evidence plus the tracker are the audit evidence trail.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-25-016": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Partial governance artefacts exist: accepted-risks.md and OWNER-ACTIONS.md act as the risk register, central-security-architecture.md and the ratchet guards act as the coding standard, CODEOWNERS and CI gate changes (branch protection is off), UX guard waivers carry expiry dates, and docs/security/evidence plus the tracker are the audit evidence trail.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
   "SEC-26-001": {
    "currentTrackerState": "UNASSESSED",
    "proposedState": "GAP_CONFIRMED",
    "assessedAt": "2026-11-08",
    "finding": "Super Admin sign-in is two OTP codes (no hardware-backed or phishing-resistant factor), and there is no two-person or independent approval for Super Admin assignment or other high-impact platform operations (owner decision pending).",
    "source": "docs/security/assessments/SEC-14-23-24-25-26-remaining.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-26-002": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Not built or not done: just-in-time privileged access, a reviewed emergency-access procedure, contextual risk scoring, red-team exercises, continuous attack-surface monitoring, security chaos tests and independent verification of the critical controls.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
    "evidence": [
     {
      "type": "EXECUTED_SCOPED_TEST",
@@ -6996,6 +8012,22 @@
    "assessedAt": "2026-11-08",
    "finding": "Super Admin sign-in is two OTP codes (no hardware-backed or phishing-resistant factor), and there is no two-person or independent approval for Super Admin assignment or other high-impact platform operations (owner decision pending).",
    "source": "docs/security/assessments/SEC-14-23-24-25-26-remaining.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-26-006": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Not built or not done: just-in-time privileged access, a reviewed emergency-access procedure, contextual risk scoring, red-team exercises, continuous attack-surface monitoring, security chaos tests and independent verification of the critical controls.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
    "evidence": [
     {
      "type": "EXECUTED_SCOPED_TEST",
@@ -7043,12 +8075,108 @@
    ],
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
+  "SEC-26-009": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Not built or not done: just-in-time privileged access, a reviewed emergency-access procedure, contextual risk scoring, red-team exercises, continuous attack-surface monitoring, security chaos tests and independent verification of the critical controls.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-26-010": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "PARTIAL_EVIDENCE",
+   "assessedAt": "2026-11-08",
+   "finding": "Issued credentials are HMAC-signed (sessions, share proofs, reply tokens) with keys from the registry; the share-proof key is now separable from AUTH_SECRET. No asymmetric signing or key rotation scheme.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-26-011": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Not built or not done: just-in-time privileged access, a reviewed emergency-access procedure, contextual risk scoring, red-team exercises, continuous attack-surface monitoring, security chaos tests and independent verification of the critical controls.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-26-012": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Not built or not done: just-in-time privileged access, a reviewed emergency-access procedure, contextual risk scoring, red-team exercises, continuous attack-surface monitoring, security chaos tests and independent verification of the critical controls.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-26-013": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Not built or not done: just-in-time privileged access, a reviewed emergency-access procedure, contextual risk scoring, red-team exercises, continuous attack-surface monitoring, security chaos tests and independent verification of the critical controls.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
   "SEC-26-014": {
    "currentTrackerState": "PARTIAL_EVIDENCE",
    "proposedState": "PARTIAL_EVIDENCE",
    "assessedAt": "2026-11-08",
    "finding": "Anomaly tripwire flags repeated denials, login probing, id enumeration and bulk export bursts and reports them to the structured log and the alert module; regression suites exist for earlier incidents (cross-college, role fixtures) but are not grouped as an incident suite.",
    "source": "docs/security/assessments/SEC-14-23-24-25-26-remaining.md",
+   "evidence": [
+    {
+     "type": "EXECUTED_SCOPED_TEST",
+     "commitSha": "",
+     "runUrl": "",
+     "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
+    }
+   ],
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+  },
+  "SEC-26-016": {
+   "currentTrackerState": "UNASSESSED",
+   "proposedState": "GAP_CONFIRMED",
+   "assessedAt": "2026-11-08",
+   "finding": "Not built or not done: just-in-time privileged access, a reviewed emergency-access procedure, contextual risk scoring, red-team exercises, continuous attack-surface monitoring, security chaos tests and independent verification of the critical controls.",
+   "source": "docs/security/assessments/SEC-20-26-batch-2026-11-08.md",
    "evidence": [
     {
      "type": "EXECUTED_SCOPED_TEST",
