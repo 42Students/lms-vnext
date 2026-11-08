@@ -3,6 +3,9 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { can } from "@/modules/permissions/policy";
 import { RecruiterLeadsWorkspace } from "@/components/tpo/recruiter-leads-workspace";
 import CampaignHistory from "./campaigns/page";
+import { PageHeader } from "@/components/ui/page-header";
+import { ErrorState } from "@/components/ui/error-state";
+import { ButtonLink } from "@/components/ui/button-link";
 
 type PageProps = {
   searchParams: Promise<{
@@ -40,6 +43,15 @@ export default async function TpoRecruiterLeadsPage({ searchParams }: PageProps)
     redirect("/dashboard");
   }
   const query = await searchParams;
+  // An ambiguous roster URL must not silently select the first of two filters.
+  if (Object.values(query).some(Array.isArray)) {
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Recruiter directory" />
+      <ErrorState title="Conflicting recruiter filters"
+        description="The link contains multiple values for one filter. No recruiter results were loaded; clear the filters and choose a single value for each field."
+        action={<ButtonLink variant="secondary" href="/tpo/recruiters">Clear recruiter filters</ButtonLink>} />
+    </div>;
+  }
   // Legacy ?due=1 is a bookmarked two-bucket filter (today + overdue).
   // Canonicalize the URL while preserving every other allowlisted roster filter.
   if(first(query.due)==="1"){
