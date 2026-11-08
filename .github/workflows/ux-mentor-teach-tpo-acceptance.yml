@@ -67,6 +67,7 @@ jobs:
       - name: Seed synthetic Mentor and TPO role memberships
         env:
           ALLOW_TEST_SEED: I_ACCEPT
+          UX_ROLE_MEMBERSHIPS_ONLY: '1'
         run: npx tsx scripts/seed-test-tenants.ts
       - name: Generate ephemeral E2E auth secret
         shell: bash

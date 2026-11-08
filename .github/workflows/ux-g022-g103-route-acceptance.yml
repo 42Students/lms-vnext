@@ -86,6 +86,7 @@ jobs:
       - name: Seed real TPO, Mentor, and cross-college test memberships
         env:
           ALLOW_TEST_SEED: I_ACCEPT
+          UX_ROLE_MEMBERSHIPS_ONLY: '1'
         run: npx tsx scripts/seed-test-tenants.ts
       - name: Ephemeral role-auth secrets
         shell: bash

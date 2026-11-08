@@ -287,6 +287,10 @@ async function main() {
       }
     }
 
+    // db:e2e:prepare already creates a real recruiter with a company grant.
+    // Role-only UX seeding must not attempt to attach another company's grant
+    // to that identity, which would violate placement company isolation.
+    if (process.env.UX_ROLE_MEMBERSHIPS_ONLY !== "1") {
     // One recruiter with access to both colleges (HR is not a membership).
     const adminId = userIds["superadmin@vnext.test"];
     const recruiterId = userIds["hr@vnext.test"];
@@ -347,6 +351,7 @@ async function main() {
       }
     }
 
+    }
     await client.query("COMMIT");
     console.log(
       `Seeded ${TEST_ACCOUNTS.length} test accounts across ${TEST_COLLEGES.length} colleges.`,
