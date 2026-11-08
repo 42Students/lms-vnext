@@ -8,8 +8,8 @@ export default function FacultyCoursesError({ reset }: { error: Error & { digest
       <PageHeader title={"Failed to load courses. Please try again."} />
       <p role="alert" className="mt-2 text-sm text-body">We couldn&apos;t load the teaching courses. Your assignments may have changed. Try again.</p>
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
-        <Button onClick={reset} className="w-full sm:w-auto">Retry</Button>
-        <PageBackLink href="/teacher/courses" label="Back to Courses" />
+        <Button type="button" onClick={reset} className="min-h-11 w-full sm:w-auto md:min-h-9">Retry</Button>
+        <PageBackLink href="/teacher" label="Faculty home" />
       </div>
     </section>
   );
