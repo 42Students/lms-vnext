@@ -27,6 +27,7 @@ describe("learner placement notice unread summary", () => {
     expect(source).toContain("!collegeNoticesRead.available || !receiptsRead.available");
     expect(source).toContain("!personalAlerts.available || !unreadCount.available");
     expect(source).toContain("learnerNoticeUnreadCount(allNotices");
+    expect(source).toContain("<TextLink href={tabHref(activeView)}");
   });
 
   it("counts only explicitly unread receipts when both reads succeeded", () => {
