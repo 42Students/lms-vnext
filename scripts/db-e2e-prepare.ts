@@ -607,6 +607,22 @@ async function main() {
           notes:"A safe real persisted version for read-only Mentor review.",
           sourceUrl:"https://example.org/mentor-review-demo",
         });
+        // A deterministic completed project meeting exercises the actual
+        // read-only mentor notes page through its stored project scope.
+        // This is an isolated test record, not a simulated scheduling API.
+        await dbClient.getDb().insert(dbSchema.projectMeetings).values({
+          id:"77000000-0000-4000-8000-000000000071",projectId:project.id,
+          status:"COMPLETED",meetingType:"REVIEW",
+          title:"E2E Mentor review meeting",
+          agenda:"Location: Seeded meeting room",
+          startsAt:new Date("2026-10-06T09:00:00.000Z"),
+          endsAt:new Date("2026-10-06T10:00:00.000Z"),
+          timeZone:"Asia/Kolkata",
+          scheduledByUserId:ids.facultyUser,
+          scheduledByMembershipId:ids.facultyCollegeAMembership,
+          createdByUserId:ids.facultyUser,
+          outcome:"Seeded documented retrospective for G071 browser acceptance.",
+        });
         process.stdout.write("Persisted G071 review version "+draft.id+"\\n");
       }
       process.stdout.write("Persisted Mentor browser project "+project.id+"\\n");
