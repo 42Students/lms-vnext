@@ -2222,3 +2222,8 @@ Legacy source reference `9d56bb7a347b06f242ef615c19fdc298f83329e0`; see `docs/au
 - Previous checkpoint identified legacy seven request kinds versus vNext `src/modules/placements/tpo-global-requests-model.ts` and `tpo-students-service.ts` three-kind model filters. VNext also has general request and bulk-decision implementations, so classify precise semantic coverage first; do not file a missing capability based only on this one enum.
 
 **Closure:** The scoped literal/static UI-folder import frontier is exhausted at the pinned source SHA; action/state/API/runtime parity is NOT accepted. No TPO Implementation Green or tracker change.
+
+
+## 2026-11-08 TPO UX-G110–G119 scoped recovery improvements
+
+The ten TPO groups are reserved and DOING in the single canonical UX board. A bounded first pass fixed repeated-query ambiguity and clarified recovery/empty states; **not fully UX-closed**. See [the group-by-group TPO recovery verification record](pages/tpo/ux-g110-g119.md) for exact changed paths, commits, authored acceptance tests, security regression boundaries and remaining desktop/mobile and full-journey proof.
