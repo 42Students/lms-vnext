@@ -20259,11 +20259,11 @@
         "type": "JOURNEY",
         "area": "mentor",
         "title": "Mentor · Task Reviews → Team Coverage (part 6)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-mentor-teach-tpo-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/app/(authenticated)/mentor/task-reviews/error.tsx",
           "src/app/(authenticated)/mentor/task-reviews/loading.tsx",
@@ -20281,8 +20281,33 @@
           "PAGE-0302"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "UX enhancement, browser/seeded role regression, evidence required. No auth/RLS changes."
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "d2e4d680140036d365ec6d6b112c4da65949fd04",
+            "description": "Scoped E2E test changes completed and executed against this exact source SHA; no changes to route authorization/RLS."
+          },
+          {
+            "type": "ci",
+            "runId": 42459722041,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42459722041",
+            "conclusion": "success",
+            "commitSha": "d2e4d680140036d365ec6d6b112c4da65949fd04",
+            "results": "Exact checkout SHA, scoped ESLint, full TypeScript, seeded disposable PostgreSQL, 7/7 Chromium authenticated desktop/mobile Mentor/Faculty/TPO routes and learner-negative Mentor denial, no skipped or flaky cases."
+          },
+          {
+            "type": "browser",
+            "artifactId": 13608349707,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42459722041/artifacts/13608349707",
+            "views": [
+              "Mentor 1280px and 390px task queue, team coverage filter/recovery",
+              "Faculty 1280px and 390px course list/detail navigation",
+              "TPO 1280px and 390px team inbox, verification filters"
+            ],
+            "scope": "Real seeded role sessions; project, Faculty delivery and TPO module access remain permission-protected; one learner negative Mentor denial. No production/provider certification."
+          }
+        ],
+        "notes": "Scoped UX DONE 2026-11-08. Exact SHA d2e4d680140036d365ec6d6b112c4da65949fd04, successful Actions 42459722041, scoped lint/full TypeScript, 7/7 real role-authenticated Chromium responsive browser checks, screenshot artifact 13608349707; Mentor learner-denial checked. Existing authorization, tenant scope and service guards unchanged. Global security/release acceptance remains separate."
       },
       {
         "id": "UX-G075",
@@ -21226,11 +21251,11 @@
         "type": "JOURNEY",
         "area": "teach",
         "title": "Teach · Courses → Courses / DeliveryId (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-mentor-teach-tpo-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/app/(authenticated)/teach/courses/[deliveryId]/error.tsx",
           "src/app/(authenticated)/teach/courses/[deliveryId]/loading.tsx",
@@ -21248,8 +21273,33 @@
           "PAGE-0326"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "UX enhancement, browser/seeded role regression, evidence required. No auth/RLS changes."
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "d2e4d680140036d365ec6d6b112c4da65949fd04",
+            "description": "Scoped E2E test changes completed and executed against this exact source SHA; no changes to route authorization/RLS."
+          },
+          {
+            "type": "ci",
+            "runId": 42459722041,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42459722041",
+            "conclusion": "success",
+            "commitSha": "d2e4d680140036d365ec6d6b112c4da65949fd04",
+            "results": "Exact checkout SHA, scoped ESLint, full TypeScript, seeded disposable PostgreSQL, 7/7 Chromium authenticated desktop/mobile Mentor/Faculty/TPO routes and learner-negative Mentor denial, no skipped or flaky cases."
+          },
+          {
+            "type": "browser",
+            "artifactId": 13608349707,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42459722041/artifacts/13608349707",
+            "views": [
+              "Mentor 1280px and 390px task queue, team coverage filter/recovery",
+              "Faculty 1280px and 390px course list/detail navigation",
+              "TPO 1280px and 390px team inbox, verification filters"
+            ],
+            "scope": "Real seeded role sessions; project, Faculty delivery and TPO module access remain permission-protected; one learner negative Mentor denial. No production/provider certification."
+          }
+        ],
+        "notes": "Scoped UX DONE 2026-11-08. Exact SHA d2e4d680140036d365ec6d6b112c4da65949fd04, successful Actions 42459722041, scoped lint/full TypeScript, 7/7 real role-authenticated Chromium responsive browser checks, screenshot artifact 13608349707; Mentor learner-denial checked. Existing authorization, tenant scope and service guards unchanged. Global security/release acceptance remains separate."
       },
       {
         "id": "UX-G091",
@@ -22795,11 +22845,11 @@
         "type": "JOURNEY",
         "area": "tpo",
         "title": "Tpo · Team / Everyone → Verification (part 23)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-mentor-teach-tpo-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/app/(authenticated)/tpo/team/everyone/error.tsx",
           "src/app/(authenticated)/tpo/team/everyone/loading.tsx",
@@ -22817,8 +22867,33 @@
           "PAGE-0492"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "UX enhancement, browser/seeded role regression, evidence required. No auth/RLS changes."
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "d2e4d680140036d365ec6d6b112c4da65949fd04",
+            "description": "Scoped E2E test changes completed and executed against this exact source SHA; no changes to route authorization/RLS."
+          },
+          {
+            "type": "ci",
+            "runId": 42459722041,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42459722041",
+            "conclusion": "success",
+            "commitSha": "d2e4d680140036d365ec6d6b112c4da65949fd04",
+            "results": "Exact checkout SHA, scoped ESLint, full TypeScript, seeded disposable PostgreSQL, 7/7 Chromium authenticated desktop/mobile Mentor/Faculty/TPO routes and learner-negative Mentor denial, no skipped or flaky cases."
+          },
+          {
+            "type": "browser",
+            "artifactId": 13608349707,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42459722041/artifacts/13608349707",
+            "views": [
+              "Mentor 1280px and 390px task queue, team coverage filter/recovery",
+              "Faculty 1280px and 390px course list/detail navigation",
+              "TPO 1280px and 390px team inbox, verification filters"
+            ],
+            "scope": "Real seeded role sessions; project, Faculty delivery and TPO module access remain permission-protected; one learner negative Mentor denial. No production/provider certification."
+          }
+        ],
+        "notes": "Scoped UX DONE 2026-11-08. Exact SHA d2e4d680140036d365ec6d6b112c4da65949fd04, successful Actions 42459722041, scoped lint/full TypeScript, 7/7 real role-authenticated Chromium responsive browser checks, screenshot artifact 13608349707; Mentor learner-denial checked. Existing authorization, tenant scope and service guards unchanged. Global security/release acceptance remains separate."
       },
       {
         "id": "UX-G121",
