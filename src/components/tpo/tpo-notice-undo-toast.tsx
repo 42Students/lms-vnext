@@ -21,6 +21,7 @@ export function TpoNoticeUndoToast({id,version,createdAt,recipientCount=null}:{
  const [error,setError]=useState("");
  useEffect(()=>{
   const refresh=()=>setNow(Date.now());
+  refresh();
   const interval=window.setInterval(refresh,1000);
   return ()=>window.clearInterval(interval);
  },[]);
@@ -31,12 +32,15 @@ export function TpoNoticeUndoToast({id,version,createdAt,recipientCount=null}:{
  const sentLabel=recipients===null?"Announcement saved.":"Sent to "+recipients+
   " "+(recipients===1?"student.":"students.");
  const createdMs=Date.parse(createdAt);
- if(!Number.isFinite(createdMs)||undone)return null;
+ if(!Number.isFinite(createdMs))return null;
+ if(undone)return <p role="status" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-success bg-surface px-4 py-3 text-sm text-body">
+  Announcement send undone. Refresh announcements to review its updated status.
+ </p>;
  if(now===null)return <p role="status" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-l-2 border-info bg-surface px-4 py-3 text-[14px] leading-5 text-body shadow-(--lms-toast-shadow)">{sentLabel} Undo is available for 30 seconds.</p>;
  const remaining=Math.max(0,30000-(now-createdMs));
  if(!Number.isFinite(remaining)||remaining<=0)return null;
  return <ToastAction tone="info" title={sentLabel+" Undo send ("+Math.ceil(remaining/1000)+"s remaining)."}>
-  <form aria-label="Undo announcement sending" className="flex w-full min-w-0 sm:w-auto"
+  <form aria-label="Undo announcement sending" className="flex w-full min-w-0 flex-col gap-2 sm:w-auto"
    action={"/api/placements/tpo/announcements/"+encodeURIComponent(id)+"/lifecycle"} method="post"
    onSubmit={async event=>{
     event.preventDefault();
@@ -45,7 +49,8 @@ export function TpoNoticeUndoToast({id,version,createdAt,recipientCount=null}:{
     try{
       const response=await fetch(event.currentTarget.action,{method:"POST",credentials:"same-origin",
        headers:{"Accept":"application/json"},body:new FormData(event.currentTarget)});
-      if(!response.ok)throw new Error(response.status===409?"Undo window ended or announcement changed.":"Could not undo. Try again within 30 seconds.");
+      if(!response.ok)throw new Error(response.status===409?"Undo window ended or announcement changed.":response.status===403?
+       "You no longer have permission to undo this announcement.":"Could not undo. Try again within 30 seconds.");
       const result:unknown=await response.json().catch(()=>null);
       if(!result||typeof result!=="object"||!("saved" in result)||result.saved!==true)
        throw new Error("Undo could not be confirmed. Refresh announcements.");
