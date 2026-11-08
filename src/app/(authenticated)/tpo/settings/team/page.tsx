@@ -52,6 +52,15 @@ export default async function TpoPlacementTeamPage({searchParams}: {
   ) {
     redirect("/dashboard");
   }
+  if (Array.isArray(rawSort) || (rawSort !== undefined && !["WORK", "OVERDUE", "NAME"].includes(rawSort))) {
+    return <div className="min-w-0 space-y-5">
+      <PageHeader title="Placement team" />
+      <TpoSettingsNav active="team" compact />
+      <ErrorState title="Invalid team sorting"
+        description="The link contains an unknown or repeated team sort. No team records were loaded. Choose a single sort order to continue."
+        action={<ButtonLink variant="secondary" href="/tpo/settings/team">Clear sort</ButtonLink>} />
+    </div>;
+  }
 
   let data:Awaited<ReturnType<typeof getTpoPlacementTeam>>;
   try{
