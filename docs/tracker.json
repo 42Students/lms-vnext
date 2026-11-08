@@ -25474,11 +25474,11 @@
         "type": "KIT",
         "area": "ui",
         "title": "Ui · Shared UI kit (part 2)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chatgpt-ux-kit-20261108",
         "pickedAt": "2026-11-08T07:51:06.344Z",
         "startedAt": "2026-11-08T07:51:06.344Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T08:09:23.374Z",
         "sourceFiles": [
           "src/components/ui/form-field.tsx",
           "src/components/ui/graceful-page-loading.tsx",
@@ -25514,7 +25514,46 @@
           "KIT-0030"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "a72d618455a3156119f732063e2b5a320718c25a",
+            "parityDoc": "docs/parity/ux-g163-g164-shared-kit.md",
+            "tests": [
+              {
+                "command": "npx eslint src/components/ui/{skeleton,graceful-page-loading,page-loading,inline-notice,pagination}.tsx src/app/e2e/ux-shared-kit/{page,ux-shared-kit-harness}.tsx tests/{unit/ux-g164-shared-kit.test,e2e/ux-g164-shared-kit.spec}.tsx",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461197085 — scoped lint and exact-SHA checkout passed"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g164-shared-kit.test.tsx tests/ux-playbook-primitives.test.tsx --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461197085 — 18/18 tests across 2 files passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g164-shared-kit.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461197085 — 2/2 responsive real-component browser tests passed"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461197085 — TypeScript passed at exact a72d6184 commit"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461197085/artifacts/13609419570 — ux-g164-desktop.png; form validation, aria states, pagination navigation and no horizontal overflow"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461197085/artifacts/13609419570 — ux-g164-mobile.png; switch via visible track label, loading announcements and pagination"
+              }
+            ],
+            "regressionReview": "Exact-SHA scoped lint, 18/18 unit regressions, 2/2 Chromium desktop/mobile checks, full TypeScript and screenshots succeeded. Pre-existing playbook tests included; app-wide tenant login and release acceptance are independent gates. Initial browser selector issue in run 42460842220 was fixed in test at a72d6184.",
+            "securityReview": "Only shared client UI/loading/accessibility primitives and a development-only synthetic fixture were changed; form labels, permission-action's server-side policy gate, status semantics and safe pagination destinations remain. No auth, RBAC, tenant scope, file authorization, credential or API modification. Fixture requires NODE_ENV=development and E2E_AUTH_ENABLED=true."
+          }
+        ]
       },
       {
         "id": "UX-G165",
