@@ -78,7 +78,7 @@ test.describe("UX G025/G036/G044/G087/G097 scoped role and tenant route journeys
       await authenticateGracefulRole(context,"learner");
       await page.setViewportSize(size);
       await page.goto("/admin/tenants/setup");
-      await expect(page.getByText("Tenant setup access denied")).toBeVisible();
+      await expect(page.getByText("Access denied. You are not authorized to access Superadmin.")).toBeVisible();
       await expect(page.getByRole("button",{name:/create college|create organization/i})).toHaveCount(0);
       await overflow(page);
       await page.screenshot({path:info.outputPath(`G025-denied-${size.name}.png`),fullPage:true});
