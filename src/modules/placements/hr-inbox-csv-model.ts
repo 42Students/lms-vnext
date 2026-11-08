@@ -1,10 +1,10 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 export const HR_INBOX_CSV_CAP = 200;
 export type HrInboxExportRow = {
   id:string;jobId:string;title:string;label:string;createdAt:Date;unread:boolean;
 };
 function safeCsvCell(value:string){
- const safe=/^\s*[=+\-@]/u.test(value)||/^[\t\r\n]/u.test(value)?"'"+value:value;
- return '"'+safe.replaceAll('"','""')+'"';
+ return spreadsheetCsvCell(value);
 }
 export function buildHrInboxCsv(rows:readonly HrInboxExportRow[],total:number){
  const out=[["Drive","Lifecycle event","Received (IST)","Unread"].map(safeCsvCell).join(",")];
