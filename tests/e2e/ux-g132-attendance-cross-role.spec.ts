@@ -8,6 +8,31 @@ const checkViewport=async(page:import("@playwright/test").Page)=>
 
 test.describe("UX-G132 attendance controls: real role and responsive acceptance",()=>{
   test.skip(!enabled,"Requires disposable seeded PostgreSQL and ephemeral test-role credentials");
+  test("learner at 320px: history filters, keyboard focus and recovery keep a usable page", async ({page,context},info) => {
+    await authenticateGracefulRole(context,"learner");
+    await page.setViewportSize({width:320,height:720});
+    await page.goto("/learn/attendance");
+    const order=page.getByRole("combobox",{name:"Order"});
+    const status=page.getByRole("combobox",{name:"Show"});
+    await expect(order).toHaveValue("NEWEST");
+    await expect(status).toHaveValue("ALL");
+    await order.focus();
+    await expect(order).toBeFocused();
+    await order.selectOption("OLDEST");
+    await expect(order).toHaveValue("OLDEST");
+    await expect(page.getByRole("button",{name:"Reset history filters"})).toBeVisible();
+    await status.selectOption("ABSENT");
+    await expect(status).toHaveValue("ABSENT");
+    await checkViewport(page);
+    await page.screenshot({path:info.outputPath("learner-history-filters-320px.png"),fullPage:true});
+    await page.getByRole("button",{name:"Reset history filters"}).click();
+    await expect(order).toHaveValue("NEWEST");
+    await expect(status).toHaveValue("ALL");
+    await page.setViewportSize({width:1280,height:800});
+    await checkViewport(page);
+    await page.screenshot({path:info.outputPath("learner-history-reset-desktop.png"),fullPage:true});
+  });
+
   for(const size of sizes){
     test(`college ${size.name}: attendance overview and policy navigation`,async({page,context},info)=>{
       await authenticateGracefulRole(context,"college");
