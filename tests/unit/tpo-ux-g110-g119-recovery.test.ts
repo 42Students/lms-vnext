@@ -175,6 +175,20 @@ describe("TPO UX G114–G119: recovery controls and empty reports", () => {
     }
   });
 
+  it("G115: summary, pipeline and unplaced errors preserve safe report navigation", () => {
+    for (const segment of ["placement-summary", "season-pipeline", "unplaced"]) {
+      const source = page(`reports/${segment}/error.tsx`);
+      expect(source).toContain("Retry");
+      expect(source).toContain('href="/tpo/reports"');
+      expect(source).toContain("All reports");
+      expect(source).toContain("min-h-11");
+    }
+    const settings = page("settings/after-college/error.tsx");
+    expect(settings).toContain("Retry");
+    expect(settings).toContain('href="/tpo/settings"');
+    expect(settings).toContain("Back to settings");
+  });
+
   it("G113: two report loading skeletons announce progress nonvisually", () => {
     for (const segment of ["by-branch", "by-company"]) {
       const source = page(`reports/${segment}/loading.tsx`);
