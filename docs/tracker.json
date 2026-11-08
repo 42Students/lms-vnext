@@ -22265,10 +22265,10 @@
         "type": "OUTBOUND",
         "area": "placements",
         "title": "Placements · Outbound copy and exports (part 2)",
-        "status": "UNPICKED",
-        "pickedBy": null,
-        "pickedAt": null,
-        "startedAt": null,
+        "status": "DOING",
+        "pickedBy": "chat-ux-tpo-exports-2026-11-08",
+        "pickedAt": "2026-11-08",
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/modules/placements/learner-applications-csv-model.ts",
@@ -22305,7 +22305,8 @@
           "MESSAGE-0092"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "Five learner/TPO batch/company CSV serializers improved and acceptance tests added. Exact-SHA CI, role/privacy review and mobile/desktop browser evidence pending. docs/parity/pages/tpo/UX-G180-exports.md"
       },
       {
         "id": "UX-G181",
