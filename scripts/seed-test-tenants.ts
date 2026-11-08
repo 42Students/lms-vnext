@@ -290,22 +290,34 @@ async function main() {
     // One recruiter with access to both colleges (HR is not a membership).
     const adminId = userIds["superadmin@vnext.test"];
     const recruiterId = userIds["hr@vnext.test"];
-    const company =
-      (await one<{ id: string }>(
-        client,
-        `SELECT id FROM placement_companies WHERE lower(name) = 'acme hiring test co'`,
-      )) ??
-      (await one<{ id: string }>(
-        client,
-        `INSERT INTO placement_companies (name, primary_domain, created_by_user_id)
-         VALUES ('Acme Hiring Test Co', 'acme-hiring.test', $1) RETURNING id`,
-        [adminId],
-      ))!;
-    await client.query(
-      `INSERT INTO placement_recruiter_profiles (user_id, company_id, title, created_by_user_id)
-       VALUES ($1, $2, 'Talent Partner', $3) ON CONFLICT DO NOTHING`,
-      [recruiterId, company.id, adminId],
+    // The disposable E2E setup may have created this recruiter's profile
+    // already. Grants must match the *persisted* profile company: inserting a
+    // second profile ON CONFLICT DO NOTHING while granting another company's
+    // relationship violates the database's cross-company security trigger.
+    const existingRecruiter = await one<{ company_id: string }>(
+      client,
+      `SELECT company_id FROM placement_recruiter_profiles WHERE user_id = $1`,
+      [recruiterId],
     );
+    const company = existingRecruiter
+      ? { id: existingRecruiter.company_id }
+      : (await one<{ id: string }>(
+          client,
+          `SELECT id FROM placement_companies WHERE lower(name) = 'acme hiring test co'`,
+        )) ??
+        (await one<{ id: string }>(
+          client,
+          `INSERT INTO placement_companies (name, primary_domain, created_by_user_id)
+           VALUES ('Acme Hiring Test Co', 'acme-hiring.test', $1) RETURNING id`,
+          [adminId],
+        ))!;
+    if (!existingRecruiter) {
+      await client.query(
+        `INSERT INTO placement_recruiter_profiles (user_id, company_id, title, created_by_user_id)
+         VALUES ($1, $2, 'Talent Partner', $3) ON CONFLICT DO NOTHING`,
+        [recruiterId, company.id, adminId],
+      );
+    }
     for (const college of TEST_COLLEGES) {
       const relationship =
         (await one<{ id: string }>(
