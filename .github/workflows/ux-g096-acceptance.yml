@@ -1,0 +1,91 @@
+name: UX-G096 Faculty profile and report navigation acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/app/(authenticated)/teacher/profile/details/**'
+      - 'src/app/(authenticated)/teacher/profile/teaching/**'
+      - 'src/app/(authenticated)/teacher/report/assignment/**'
+      - 'src/app/(authenticated)/teacher/report/quiz/**'
+      - 'tests/ux-g096-contract.test.mjs'
+      - 'tests/e2e/ux-g096-faculty-recovery.spec.ts'
+      - '.github/workflows/ux-g096-acceptance.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ux-g096-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  faculty-ux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: 'true'
+      UX_G096_SEED: 'true'
+      APP_ENV: development
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify tested source SHA
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          echo "$GITHUB_SHA" > ux-g096-source-sha.txt
+      - name: Source authorization and UX recovery contracts
+        run: node --test tests/ux-g096-contract.test.mjs
+      - name: Lint scoped Faculty pages and browser test
+        run: |
+          npx eslint \
+            'src/app/(authenticated)/teacher/profile/details/page.tsx' \
+            'src/app/(authenticated)/teacher/profile/teaching/page.tsx' \
+            'src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx' \
+            tests/e2e/ux-g096-faculty-recovery.spec.ts
+          npm run typecheck
+      - name: Prepare disposable PostgreSQL
+        run: npm run db:e2e:prepare
+      - name: Ephemeral authenticated browser identity
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop/mobile Faculty and negative-role journeys
+        run: npx playwright test tests/e2e/ux-g096-faculty-recovery.spec.ts --project=chromium --reporter=line
+      - name: Archive exact-SHA browser screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g096-faculty-browser-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+            ux-g096-source-sha.txt
+          if-no-files-found: ignore
+          retention-days: 14
