@@ -16207,11 +16207,11 @@
         "type": "JOURNEY",
         "area": "shared",
         "title": "Shared notifications inbox, filters, feedback and detail",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "initial-notifications-ux-chat",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/app/(authenticated)/notifications/error.tsx",
           "src/app/(authenticated)/notifications/loading.tsx",
@@ -16227,8 +16227,47 @@
           "WIDGET-0010"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "First code pass on main (UX-NOTIF-01). Changes include filter context, empty states and bulk read confirmation; focused tests authored. Do not mark DONE until executed tests, shared call-site regression and desktop/mobile browser evidence are recorded in docs/parity/shared-public-ops.md."
+        "evidence": [
+          {
+            "commitSha": "7b7680f7219aa3f2b950f1d1622e0c3d5fddb040",
+            "parityDoc": "docs/parity/pages/shared/UX-G001-notifications.md",
+            "tests": [
+              {
+                "command": "npx eslint 'src/app/(authenticated)/notifications/page.tsx' 'src/app/(authenticated)/notifications/error.tsx' 'src/app/(authenticated)/notifications/loading.tsx' src/components/activity/notification-list.tsx src/components/activity/notification-toolbar.tsx src/modules/activity/notification-context-model.ts src/modules/activity/notification-filter-links.ts tests/e2e/ux-g001-shared-notifications.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42460830534"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42460830534"
+              },
+              {
+                "command": "npx vitest run tests/unit/notification-cursor.test.ts tests/unit/notification-filter-links.test.ts tests/unit/notification-action.test.ts tests/unit/security-own-notification-workspace-scope.test.ts tests/unit/HR-BREAK-chat19-notification-ownership.test.ts tests/unit/HR-BREAK-chat19-notifications-page.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42460830534"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g001-shared-notifications.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42460830534"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42460830534/artifacts/13609736937"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42460830534/artifacts/13609736937"
+              }
+            ],
+            "regressionReview": "35/35 unit tests across six cursor/filter/action/ownership/tenant-scope suites and 2/2 actual seeded multi-college desktop/mobile Chromium cases; valid, invalid, empty, detail, Cancel/Confirm read and post-commit selected-college state tested. Loading/error source reviewed and retained.",
+            "securityReview": "Disposable PostgreSQL and ephemeral E2E identity with same actor in two verified college memberships; cross-college notices hidden, foreign receipt POST denied, other-college unread state unchanged after bulk read. No auth/service/RLS/API permissions changed."
+          }
+        ],
+        "notes": "Scoped UX DONE 2026-11-08 at exact SHA 7b7680f7219aa3f2b950f1d1622e0c3d5fddb040; 35/35 Vitest, full TypeScript, scoped lint, 2/2 real desktop/mobile Chromium two-college notifications and cross-college negative API, screenshot artifact 13609736937 in green run 42460830534; canonical evidence docs/parity/pages/shared/UX-G001-notifications.md and shared-public-ops.md. Overall security/release gates separate."
       },
       {
         "id": "UX-G002",
