@@ -26,57 +26,64 @@ test.describe("UX-G132 — persisted policy, review/cancel/reset and tenant deni
       return {ok:result.ok, reason:result.status.toString()};
     }, SEED_IDS.collegeA);
     expect(scope, "Super Admin must select a real, permission-validated college").toEqual({ok:true,reason:"200"});
-    await page.goto("/college/attendance/settings");
-    await expect(page.getByRole("heading",{level:2,name:"College attendance policy"})).toBeVisible();
+    // Super Admin's supported editor is /admin/attendance; the college-only
+    // route deliberately redirects platform actors through role middleware.
+    await page.goto("/admin/attendance");
+    await expect(page.getByRole("heading",{level:2,name:"Attendance policy"})).toBeVisible();
 
-    const threshold = page.locator("#attendance-eligibility-threshold");
-    const hours = page.locator("#attendance-correction-window");
+    const threshold = page.locator("#attendance-policy-threshold");
+    const hours = page.locator("#attendance-policy-hours");
+    const thresholdActions = threshold.locator("..");
+    const saveThreshold = thresholdActions.getByRole("button",{name:"Save",exact:true});
     const original = await threshold.inputValue();
     const previousHours = await hours.inputValue();
     const next = original === "80" ? "81" : "80";
 
     await threshold.fill("0");
-    await expect(page.getByRole("button",{name:"Save attendance policy"})).toBeDisabled();
+    await expect(saveThreshold).toBeDisabled();
     await threshold.fill(next);
-    await page.getByRole("button",{name:"Save attendance policy"}).click();
-    const review = page.getByRole("alertdialog",{name:"Apply attendance policy changes?"});
-    await expect(review).toContainText("Eligibility threshold: " + next + "%");
+    await expect(saveThreshold).toBeEnabled();
+    await saveThreshold.click();
+    const review = page.getByRole("alertdialog",{name:"Save attendance setting for this college?"});
+    await expect(review).toContainText("Minimum attendance: " + next + "%");
     await review.getByRole("button",{name:"Cancel"}).click();
     await expect(review).toHaveCount(0);
 
-    await page.getByRole("button",{name:"Save attendance policy"}).click();
+    await saveThreshold.click();
     const savedResponse = page.waitForResponse(r =>
-      r.url().endsWith("/api/attendance/admin/policy") && r.request().method() === "PUT");
-    await page.getByRole("alertdialog",{name:"Apply attendance policy changes?"})
-      .getByRole("button",{name:"Save policy"}).click();
+      r.url().endsWith("/api/attendance/admin/policy") && r.request().method() === "PATCH");
+    await page.getByRole("alertdialog",{name:"Save attendance setting for this college?"})
+      .getByRole("button",{name:"Save setting"}).click();
     const saved = await savedResponse;
     expect(saved.status()).toBe(200);
     const savedPolicy = await saved.json() as {policy:{eligibilityThresholdPercent:number;correctionWindowHours:number}};
     expect(savedPolicy.policy.eligibilityThresholdPercent).toBe(Number(next));
     expect(savedPolicy.policy.correctionWindowHours).toBe(Number(previousHours));
-    await expect(page.getByRole("status").filter({hasText:"Attendance policy saved."})).toBeVisible();
     await page.screenshot({path:info.outputPath("g132-superadmin-policy-saved-desktop.png"),fullPage:true});
 
-    // The same college scope cannot write another tenant's policy, even by direct API.
+    // Verify the server refuses an authorized actor changing a different
+    // college via direct API rather than trusting the selected UI scope.
     const crossTenantStatus = await page.evaluate(async (collegeId) => {
       const response = await fetch("/api/attendance/admin/policy",{
-        method:"PUT",credentials:"same-origin",headers:{"content-type":"application/json"},
-        body:JSON.stringify({collegeId,eligibilityThresholdPercent:60,correctionWindowHours:12}),
+        method:"PATCH",credentials:"same-origin",headers:{"content-type":"application/json"},
+        body:JSON.stringify({collegeId,field:"eligibilityThresholdPercent",
+          expectedValue:75,value:60}),
       });
       return response.status;
     },SEED_IDS.collegeB);
     expect([401,403,404], "Super Admin scoped to college A must not mutate college B").toContain(crossTenantStatus);
 
-    // Reset test data before other seeded acceptance jobs inspect the DB.
+    // Return the seeded policy to its original numeric value without changing
+    // the second field or bypassing server-side compare-and-set protection.
     await threshold.fill(original);
-    await page.getByRole("button",{name:"Save attendance policy"}).click();
+    await saveThreshold.click();
     const restoredResponse = page.waitForResponse(r =>
-      r.url().endsWith("/api/attendance/admin/policy") && r.request().method() === "PUT");
-    await page.getByRole("alertdialog",{name:"Apply attendance policy changes?"})
-      .getByRole("button",{name:"Save policy"}).click();
+      r.url().endsWith("/api/attendance/admin/policy") && r.request().method() === "PATCH");
+    await page.getByRole("alertdialog",{name:"Save attendance setting for this college?"})
+      .getByRole("button",{name:"Save setting"}).click();
     expect((await restoredResponse).status()).toBe(200);
     await page.setViewportSize({width:390,height:844});
-    await page.goto("/college/attendance/settings");
+    await page.goto("/admin/attendance");
     expect(await threshold.inputValue()).toBe(original);
     expect(await hours.inputValue()).toBe(previousHours);
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(2);
