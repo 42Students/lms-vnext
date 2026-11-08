@@ -1,0 +1,73 @@
+name: UX-G149 TPO placement controls recovery acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/app/e2e/ux-g149-placement-recovery/**'
+      - 'tests/e2e/ux-g149-tpo-placement-recovery.spec.ts'
+      - 'tests/unit/ux-g149-tpo-placement-recovery.test.ts'
+      - 'tests/ux-g149-placement-recovery.test.mjs'
+      - 'src/components/placements/tpo-selection-import.tsx'
+      - 'src/components/placements/tpo-waitlist-promotion-control.tsx'
+      - 'src/components/placements/tpo-week-hour-calendar.tsx'
+      - '.github/workflows/ux-g149-placement-recovery-acceptance.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ux-g149-tpo-controls-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scoped:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_OPTIONS: '--max-old-space-size=6144'
+      UX_G149_PLACEMENT_FIXTURE: '1'
+      PLATFORM_HOSTS: 'localhost,127.0.0.1'
+      PLAYWRIGHT_JSON_OUTPUT_NAME: ux-g149-results.json
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exact triggering SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Scoped lint and full TypeScript
+        run: |
+          npx eslint \
+            src/app/e2e/ux-g149-placement-recovery/page.tsx \
+            src/components/placements/tpo-selection-import.tsx \
+            src/components/placements/tpo-waitlist-promotion-control.tsx \
+            src/components/placements/tpo-week-hour-calendar.tsx \
+            tests/e2e/ux-g149-tpo-placement-recovery.spec.ts \
+            tests/unit/ux-g149-tpo-placement-recovery.test.ts
+          npm run typecheck
+      - name: Source safety and existing placement regressions
+        run: |
+          node --test tests/ux-g149-placement-recovery.test.mjs
+          npx vitest run tests/unit/ux-g149-tpo-placement-recovery.test.ts tests/unit/chat5-placements-ux-workflows.test.ts --reporter=dot
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: TPO selection, waitlist and calendar responsive race browser verification
+        run: |
+          npx playwright test tests/e2e/ux-g149-tpo-placement-recovery.spec.ts --project=chromium --reporter=line,json
+          node -e 'const s=require("./ux-g149-results.json").stats;console.log("G149 browser:",s);if(s.expected!==7||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
+      - name: Preserve responsive screenshots and failure traces
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g149-tpo-recovery-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+            ux-g149-results.json
+          if-no-files-found: ignore
+          retention-days: 14
