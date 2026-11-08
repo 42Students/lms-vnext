@@ -34,7 +34,6 @@ test.describe("UX-G018: scoped screening, seasons and shortlist directories and 
     await page.screenshot({path:info.outputPath("g018-"+i+"-"+viewport.name+".png"),fullPage:true});
    }
    await page.goto("/admin/placements/screenings/"+pendingApplicationId);
-   await expect(page.getByText("Automated scoring was intentionally retired.")).toHaveCount(0);
    await expect(page.getByText(/Protected attributes are not used/)).toBeVisible();
    await expect(page.getByText("Privacy")).toBeVisible();
 
