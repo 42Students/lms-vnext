@@ -49,3 +49,11 @@ Everything else on the security list that does not need you is done or running (
 22. **Publish a security contact (SEC-24-013):** a `/.well-known/security.txt` needs an address you monitor. I did not invent one. Tell me the address and I add the file.
 23. **Egress policy for production:** `deploy/k8s/dev/lms-vnext-egress-policy.yaml` is applied and checked on dev (database, DNS and public HTTPS only; metadata server and private ranges blocked). Production needs the same file with its own database address and your own review.
 24. **Proof CI runs:** another lane pushes to main every few seconds, and each push cancels the pending CI run before it starts. To prove a commit, push it to a branch and run `gh workflow run ci.yml --ref <branch>`; that branch has its own concurrency group.
+
+## Code finished 2026-11-08 night (needs your go-ahead only to switch on or apply)
+
+25. **Migration 0342 (audit hash chain) is written and tested on a local database but not applied to dev.** Deploy rule: you approve migrations. After it is applied, every audit row is chained and `DATABASE_URL=<read login> node scripts/security/audit-chain-verify.mjs` proves nothing was changed, removed or reordered. Run that command on a schedule you choose.
+26. **Audit retention is a script, not a feature:** `scripts/security/audit-retention.mjs --days N` (dry run by default; `--apply` plus `AUDIT_RETENTION_CONFIRM=I_ACCEPT`, migrator login). Tell me the retention period you want (the minimum the script accepts is 30 days).
+27. **Secret rotation overlap is built:** set `AUTH_SECRET_PREVIOUS` (and `<NAME>_PREVIOUS` for any internal machine secret) while rotating, remove it afterwards. Off until you set it.
+28. **Outbound encryption key versioning is NOT code-only:** the recipient hashes and idempotency keys are derived from the same master key, so changing it would break dedupe and suppression lookups. Rotating it needs a re-hash migration first; I did not start that without your decision.
+29. **MFA or passkeys for Super Admin and College Admin** is the one large security feature left. It touches the sign-in pages the UX lane is editing, and needs your choice of method (passkeys, authenticator app, or both) before I build it.
