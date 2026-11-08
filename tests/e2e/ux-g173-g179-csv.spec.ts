@@ -38,8 +38,8 @@ for(const viewport of [
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport.width+1);
   for(const [title,filename,requiresBom] of exportsToCheck){
    const card=page.getByRole("heading",{name:title}).locator("..");
-   const action=card.getByRole("link",{name:"Download sample CSV"});
-   await expect(action).toHaveAttribute("download",filename);
+   const action=card.getByRole("button",{name:"Download sample CSV"});
+   await expect(action).toHaveAttribute("data-filename",filename);
    expect((await action.boundingBox())?.height??0,filename).toBeGreaterThanOrEqual(44);
    const [download]=await Promise.all([page.waitForEvent("download"),action.click()]);
    expect(download.suggestedFilename()).toBe(filename);
