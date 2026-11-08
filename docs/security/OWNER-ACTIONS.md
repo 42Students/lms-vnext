@@ -63,3 +63,12 @@ Everything else on the security list that does not need you is done or running (
 30. **Migration 0342 approved for dev** (applied through the migrator Job, see the deployment notes).
 31. **MFA and passkeys are deferred.** Super Admin and College Admin keep the same one-time-code sign-in as everyone else for now. The ordinary protections stay in force and are the baseline until MFA is revisited: 15-minute fresh sign-in for role, permission, user, export, import and settings changes; 4-hour limit on a Super Admin college scope; new-device audit event; denial and enumeration tripwires; append-only, hash-chained audit trail. Items 22 (security contact) and 29 (MFA method) move to "later".
 32. **Audit retention:** 365 days (the script's minimum is 30). Nothing is old enough to purge yet; the first sensible run is after 2027-11-08.
+
+## Closure pass 2026-11-08 (every control is now "needs review" or "needs owner")
+
+33. **HIGH: Cloud SQL accepts unencrypted connections and public IPv4.** `sslMode` is ALLOW_UNENCRYPTED_AND_ENCRYPTED (read-only query today). Decide when to set `ENCRYPTED_ONLY` and switch the clients to certificate-verifying connections; it is a change to the shared instance, so I did not touch it. Also consider removing the public IPv4 once private connectivity exists. (SEC-07-006, SEC-10-002.)
+34. **Approve or change the written policies:** `docs/security/policies/*` and `docs/security/runbooks/*`.
+35. **Approve recovery targets:** proposed RPO 5 minutes, RTO 4 hours (application) and 8 hours (database restore), in `runbooks/recovery-and-infrastructure-notes.md`. A real restore test needs a disposable instance, which costs money, so it needs your yes.
+36. **Approve patch deadlines** in `policies/vulnerability-and-patch-policy.md`, and name the incident roster (SEC-20-004).
+37. **Name the independent reviewer.** 364 controls are built and wait for review (`docs/security/AUDIT-HANDOFF.md`); nothing can become VERIFIED without that person.
+38. **Status:** 364 controls need review, 129 need the owner (organisation, legal, console, cost or deferred MFA). None is left partly done. The list is in `docs/security/MASTER-SECURITY-TODO.md` after regeneration.

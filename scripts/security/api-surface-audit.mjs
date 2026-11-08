@@ -19,7 +19,14 @@ const returnsRawMessage = /(?:error|e|err)\.message\b[^;\n]*(?:NextResponse\.jso
 const pagination = /\b(?:pageSize|limit|perPage|take)\b/;
 const bounded = /\.max\(\s*\d+|Math\.min\(|clamp|MAX_[A-Z_]*(?:PAGE|LIMIT|ROWS)|maximum/;
 
+// A route "has a test" when some test file names its path segment pattern or imports its module (SEC-08-024).
+const testSource = execSync("git ls-files tests", { encoding: "utf8" }).split("\n").filter((f) => /\.(test|spec)\.(tsx?|mjs)$/.test(f)).map((f) => readFileSync(f, "utf8")).join("\n");
+const hasTest = (f) => {
+  const dir = f.replace(/^src\//, "").replace(/\/route\.ts$/, "");
+  return testSource.includes(dir + "/route") || testSource.includes("@/" + dir) || testSource.includes("/" + dir.replace(/^app\//, "") + '"') || testSource.includes("'/" + dir.replace(/^app\//, "") + "'") || testSource.includes("/" + dir.replace(/^app\//, "") + "`") || testSource.includes(dir.replace(/^app\//, ""));
+};
 const counters = {
+  mutatingRoutesWithoutAnyTestReference: [],
   routeFiles: files.length,
   mutatingRoutes: 0,
   mutatingWithoutSchema: [],
@@ -32,6 +39,7 @@ for (const f of files) {
   const isMutating = mutating.test(src);
   if (isMutating) {
     counters.mutatingRoutes += 1;
+    if (!hasTest(f)) counters.mutatingRoutesWithoutAnyTestReference.push(f);
     const body = readsBody.test(src);
     if (body && !usesSchema.test(src)) counters.mutatingWithoutSchema.push(f);
     if (body && usesSchema.test(src) && !strict.test(src)) counters.mutatingBodyNotStrict.push(f);

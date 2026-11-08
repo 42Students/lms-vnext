@@ -4,7 +4,8 @@ import type { NextResponse } from "next/server";
 import {privateAuthJson} from "./private-response";
 import { z } from "zod";
 import { isSameOriginRequest } from "@/auth/origin";
-import { allowRequest, clientIp } from "@/auth/ip-rate-limit";
+import { clientIp } from "@/auth/ip-rate-limit";
+import { allowRequestShared } from "@/security/shared-store";
 import { authAuditTag, safeAuthAuditFields } from "./auth-audit-privacy";
 import { logError, writeStructuredLog } from "@/observability/logger";
 import { recordSecurityEvent } from "@/security/audit-store";
@@ -104,7 +105,8 @@ export async function guardLoginRequest<T extends z.ZodTypeAny>(
   }
 
   const ip = clientIp(request);
-  if (!allowRequest(`${route}:${ip}`, perMinute)) {
+  // Shared across replicas when SECURITY_SHARED_STORE=on (SEC-01-011); falls back to per-process memory otherwise.
+  if (!(await allowRequestShared(`${route}:${ip}`, perMinute, 60_000))) {
     return {
       ok: false,
       response: privateAuthJson(

@@ -1,0 +1,914 @@
+{
+ "note": "Final disposition of every control that was partial. d: R = built and evidenced, needs independent review; O = needs the owner (decision, account, console, legal, or larger work).",
+ "rows": [
+  {
+   "ids": [
+    "SEC-01-005",
+    "SEC-01-007",
+    "SEC-01-008",
+    "SEC-01-009",
+    "SEC-01-018"
+   ],
+   "d": "O",
+   "finding": "Deferred by the owner on 2026-11-08: Super Admin and College Admin keep the one-time-code sign-in for now. Phishing-resistant MFA, authenticator enrolment and removal, risk-based step-up and SSO linking arrive together with the later MFA work."
+  },
+  {
+   "ids": [
+    "SEC-01-012",
+    "SEC-01-015"
+   ],
+   "d": "R",
+   "finding": "Sign-in limits: per contact and address (5), per contact total (8), per address (20) in the database, per-process window by network, per-challenge verification budget, lockout with admin reset; every login event is written to the append-only, hash-chained audit trail (src/modules/auth/login-service.ts, login-repository.ts, src/auth/ip-rate-limit.ts)."
+  },
+  {
+   "ids": [
+    "SEC-02-006",
+    "SEC-02-012"
+   ],
+   "d": "R",
+   "finding": "A session token is issued only server-side after a consumed one-time code and a re-login revokes the previous session (RELOGIN), so fixation is impossible and rotation happens at login and at the 15-minute step-up. The role cookie is not a credential. Stolen-cookie replay is limited by 5-day expiry, 30-minute idle limit for Super Admin, server-side revocation and the auth.new_device event; binding a session to a device was weighed and not done because browser updates would sign users out (documented decision)."
+  },
+  {
+   "ids": [
+    "SEC-02-013",
+    "SEC-02-014",
+    "SEC-02-015"
+   ],
+   "d": "R",
+   "finding": "route({ stepUp }) requires a sign-in within 15 minutes for role, permission, user, export, import, secret and settings changes; API responses are private, no-store and pages are dynamic; the Super Admin platform workspace is separate from college workspaces and any college scope expires after 4 hours and is audited."
+  },
+  {
+   "ids": [
+    "SEC-03-002",
+    "SEC-03-003",
+    "SEC-03-013",
+    "SEC-03-017",
+    "SEC-03-018",
+    "SEC-03-025",
+    "SEC-03-026"
+   ],
+   "d": "R",
+   "finding": "Conditions and relationships are enforced in services with persisted re-checks inside write transactions (assertPersistedFacultyTeachingMutation, retainSelectedMembershipRole), self-lockout and protected-admin targets are guarded and tested, bulk role changes need step-up, role changes are written as api.mutation audit rows, and the role-by-route matrix runs in CI against a committed baseline."
+  },
+  {
+   "ids": [
+    "SEC-03-015",
+    "SEC-03-016"
+   ],
+   "d": "R",
+   "finding": "Role grants require membership.role.manage or system-role permissions checked against the persisted actor inside the transaction; a revoked selected role is refused (tests in the database job: placements p4/p6a, db08 external offers, db01 session tests); who can grant what follows the role matrix in policy.ts."
+  },
+  {
+   "ids": [
+    "SEC-03-004"
+   ],
+   "d": "O",
+   "finding": "Only 33 named permissions cover about 1,075 service-enforced handlers; converting them is a multi-week refactor with a cross-college test per route. 11 routes were converted and the rest are held by the ratchet. The owner decides whether and when to schedule it."
+  },
+  {
+   "ids": [
+    "SEC-03-027"
+   ],
+   "d": "O",
+   "finding": "A review requirement for role and permission model changes is written (secure-development-standard.md) and CODEOWNERS names the owner, but it only binds once branch protection and a second code owner exist (owner action)."
+  },
+  {
+   "ids": [
+    "SEC-04-001",
+    "SEC-04-002",
+    "SEC-04-003",
+    "SEC-04-004",
+    "SEC-04-005",
+    "SEC-04-006",
+    "SEC-04-007"
+   ],
+   "d": "R",
+   "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant."
+  },
+  {
+   "ids": [
+    "SEC-05-002"
+   ],
+   "d": "R",
+   "finding": "College is the tenant boundary for row-level security; an organization groups colleges and is used only for Super Admin scope and organization-level settings, which are permission-checked with organizationId. Documented in central-security-architecture.md."
+  },
+  {
+   "ids": [
+    "SEC-05-004",
+    "SEC-05-005",
+    "SEC-05-006",
+    "SEC-05-007",
+    "SEC-05-008",
+    "SEC-05-009",
+    "SEC-05-010"
+   ],
+   "d": "R",
+   "finding": "Tenant scope comes from the actor, never from request input; every tenant table has a forced policy (245 of 245 policied tables, inventory on dev), so cross-tenant reads, joins, counts, filters and writes are impossible at the database even if a service forgets; foreign ids answer 404; the id-walk tripwire flags enumeration; 619 isolation checks passed on dev and the CI database job runs the acceptance script."
+  },
+  {
+   "ids": [
+    "SEC-05-013",
+    "SEC-05-014",
+    "SEC-05-015",
+    "SEC-05-016"
+   ],
+   "d": "R",
+   "finding": "Jobs run in named system scopes and take college_id from the rows they process (src/security/internal-route.ts, docs/security/assessments/SEC-16-jobs-review-2026-11-08.md); signed file links are bound to the college and owner prefix and audited; exports need step-up and are audited; the notification stream refuses tokens in the query string and has its own authorization workflow."
+  },
+  {
+   "ids": [
+    "SEC-05-018",
+    "SEC-05-019",
+    "SEC-05-020",
+    "SEC-05-021"
+   ],
+   "d": "R",
+   "finding": "One selected membership and role per request (narrowToActiveRole), membership and user status re-read from the database on every request so suspension and removal apply on the next request (db01-session-atomic-authorization and security session workflows); college status is checked on every request (tenant-access.ts)."
+  },
+  {
+   "ids": [
+    "SEC-06-001",
+    "SEC-06-002",
+    "SEC-06-004",
+    "SEC-06-008",
+    "SEC-06-024"
+   ],
+   "d": "R",
+   "finding": "docs/security/evidence/pg-security-inventory-dev-2026-11-08.md: 280 tables, 246 with forced policies covering SELECT, INSERT, UPDATE and DELETE, all owned by the migrator role, runtime role without TRUNCATE, REFERENCES or TRIGGER; the migrator owns, the runtime role only reads and writes."
+  },
+  {
+   "ids": [
+    "SEC-06-018",
+    "SEC-06-026"
+   ],
+   "d": "R",
+   "finding": "Acknowledged and bounded: the tenant setting is a database setting set only by the pool wrapper, injection is blocked by parameterised queries and the sql-raw-dynamic ratchet, and the runtime role cannot create objects. Rollout and rollback were rehearsed on dev on 2026-11-08 (enforcement switched to inert and back, health and sign-in checked each time; docs/security/rls-rollout.md)."
+  },
+  {
+   "ids": [
+    "SEC-07-001"
+   ],
+   "d": "O",
+   "finding": "Separate database logins for scheduled jobs, external-facing workers and read-only reporting need new roles, passwords and secrets in Cloud SQL (owner decision and cost-free but sensitive). Runtime and migrator are already separate."
+  },
+  {
+   "ids": [
+    "SEC-07-005"
+   ],
+   "d": "O",
+   "finding": "Found 2026-11-08 with a read-only gcloud query: the Cloud SQL instance has a PUBLIC IPv4 address enabled with two authorized addresses and does not require SSL (sslMode ALLOW_UNENCRYPTED_AND_ENCRYPTED). Fixing it is a change to the shared production instance and needs the owner."
+  },
+  {
+   "ids": [
+    "SEC-07-002",
+    "SEC-07-011",
+    "SEC-07-012"
+   ],
+   "d": "R",
+   "finding": "Runtime holds only SELECT, INSERT, UPDATE, DELETE (audit table INSERT and SELECT); membership_roles and other relationship tables carry unique and foreign-key constraints and derive their row policy from the parent; unique indexes without a tenant column are opaque global values or parent-keyed composites (evidence file section 'Unique indexes')."
+  },
+  {
+   "ids": [
+    "SEC-07-015",
+    "SEC-07-016",
+    "SEC-07-017"
+   ],
+   "d": "R",
+   "finding": "Request bodies are strict Zod objects with the api-surface ratchet; privileged writes re-check the persisted actor inside the transaction with row locks (persisted-actor.ts); revocation-versus-write races are covered by serialization tests in the database job (p6a screening, p4 eligibility, db08 external offers, db01 session atomic authorization)."
+  },
+  {
+   "ids": [
+    "SEC-07-019"
+   ],
+   "d": "R",
+   "finding": "scripts/security/pg-security-inventory.mjs --check compares owners, flags, policy coverage, runtime grants and role attributes with docs/security/pg-security-baseline.json; a weekly CronJob (deploy/k8s/dev/pg-drift-cronjob.yaml) runs it on dev and a manual run on 2026-11-08 reported no drift."
+  },
+  {
+   "ids": [
+    "SEC-08-003",
+    "SEC-08-005"
+   ],
+   "d": "O",
+   "finding": "Same as SEC-03-004: explicit named permissions on all handlers is a multi-week refactor of about 1,075 service-enforced handlers; the owner schedules it."
+  },
+  {
+   "ids": [
+    "SEC-08-006",
+    "SEC-08-009",
+    "SEC-08-010",
+    "SEC-08-011",
+    "SEC-08-012",
+    "SEC-08-014",
+    "SEC-08-018",
+    "SEC-08-022"
+   ],
+   "d": "R",
+   "finding": "Measured by scripts/security/api-surface-audit.mjs and held by a ratchet in the lint chain: counts of mutating routes without a visible schema (286), non-strict bodies (76), echoed typed error codes (46) and pagination without a visible bound (122) can only go down; the central error mapper returns generic text for unknown errors; ownership is enforced by services plus forced row policies; API-initiated background work runs in a named system scope."
+  },
+  {
+   "ids": [
+    "SEC-08-024"
+   ],
+   "d": "O",
+   "finding": "264 of 672 mutating routes have no test that names them (measured, ratcheted so it cannot grow). Writing a negative test for each is test-authoring work for the owner to schedule."
+  },
+  {
+   "ids": [
+    "SEC-09-003",
+    "SEC-09-014"
+   ],
+   "d": "R",
+   "finding": "No secrets in source or built output (credential scans in CI, full-history scan, scripts/security/scan-built-bundles.mjs); logs name a secret without its value and never include codes, tokens or request bodies (logging-alerting-and-access.md)."
+  },
+  {
+   "ids": [
+    "SEC-09-007",
+    "SEC-09-009",
+    "SEC-09-010"
+   ],
+   "d": "O",
+   "finding": "Moving to a managed secret store, separate production and staging credentials and least-privilege provider keys needs the owner's accounts (Google Secret Manager, provider consoles)."
+  },
+  {
+   "ids": [
+    "SEC-09-018"
+   ],
+   "d": "R",
+   "finding": "Emergency revocation procedure and zero-downtime overlap variables exist (AUTH_SECRET_PREVIOUS, <NAME>_PREVIOUS) with the exposed-key playbook in docs/security/runbooks/incident-playbooks.md."
+  },
+  {
+   "ids": [
+    "SEC-10-005",
+    "SEC-10-008"
+   ],
+   "d": "R",
+   "finding": "docs/security/policies/data-classification-and-handling.md defines four classes and per-role handling rules on top of the 96-table inventory."
+  },
+  {
+   "ids": [
+    "SEC-10-004",
+    "SEC-10-006",
+    "SEC-10-007"
+   ],
+   "d": "O",
+   "finding": "Field-level encryption for further columns, a data-minimisation review and a field-by-field review of what each of the 600+ API responses returns are decisions and review work for the owner; response shaping is per route today."
+  },
+  {
+   "ids": [
+    "SEC-10-013"
+   ],
+   "d": "R",
+   "finding": "The session cookie is HttpOnly, browser storage holds interface preferences only (audited), the built output is scanned for secrets and sensitive NEXT_PUBLIC_ names in CI, and nothing sensitive is placed in URLs."
+  },
+  {
+   "ids": [
+    "SEC-11-004",
+    "SEC-11-005",
+    "SEC-11-006",
+    "SEC-11-013",
+    "SEC-11-020"
+   ],
+   "d": "R",
+   "finding": "Signed links last at most 5 minutes, are refused for any key outside the college and owner prefix or containing '..', use opaque scope-prefixed keys, and every issue writes a file.link_issued audit event (tests/unit/sec11-file-boundaries.test.ts)."
+  },
+  {
+   "ids": [
+    "SEC-11-008"
+   ],
+   "d": "O",
+   "finding": "The scanner is designed fail-closed but no scanner exists; choosing and running one (and the private bucket) is the owner's."
+  },
+  {
+   "ids": [
+    "SEC-11-011",
+    "SEC-11-015",
+    "SEC-11-016"
+   ],
+   "d": "R",
+   "finding": "The server never extracts or converts uploads (no archive handling, no preview or conversion workers), allowed types are an allowlist and active content is always served as an attachment, so these threats have no code path; any future conversion worker needs a threat model first (secure-development-standard.md)."
+  },
+  {
+   "ids": [
+    "SEC-12-002",
+    "SEC-12-006",
+    "SEC-12-017",
+    "SEC-12-018"
+   ],
+   "d": "R",
+   "finding": "Script CSP is nonce-based and on for dev; style-src keeps unsafe-inline (framework-injected styles) as a documented accepted risk; no client code builds HTML from the URL and sinks are limited to 8 audited files; COOP and CORP are set; only the YouTube iframe API is third-party content."
+  },
+  {
+   "ids": [
+    "SEC-13-003",
+    "SEC-13-004"
+   ],
+   "d": "O",
+   "finding": "A written state-machine inventory for every status field (jobs, applications, projects, tasks, attempts, offers) and a test that no transition can be skipped is work of its own; services own the transitions today."
+  },
+  {
+   "ids": [
+    "SEC-13-011",
+    "SEC-13-012",
+    "SEC-13-013",
+    "SEC-13-016"
+   ],
+   "d": "R",
+   "finding": "Grade and status changes keep history tables and audit rows, published scores are not editable through the learner API, quiz attempts are limited under an advisory lock, and bulk and import routes sit behind step-up and confirmed: true with rate limits and export tripwires."
+  },
+  {
+   "ids": [
+    "SEC-13-015"
+   ],
+   "d": "R",
+   "finding": "vNext has no billing or payment workflow, so there is nothing to validate; revisit if one is added."
+  },
+  {
+   "ids": [
+    "SEC-14-001",
+    "SEC-14-002",
+    "SEC-14-004",
+    "SEC-14-005",
+    "SEC-14-006",
+    "SEC-14-007",
+    "SEC-14-008",
+    "SEC-14-009",
+    "SEC-14-010",
+    "SEC-14-013",
+    "SEC-14-014",
+    "SEC-14-015",
+    "SEC-14-016",
+    "SEC-14-017",
+    "SEC-14-020",
+    "SEC-14-023",
+    "SEC-14-024"
+   ],
+   "d": "R",
+   "finding": "Probes and tests per module: cross-college probe (120 routes), same-college learner probe (144 requests), persisted teaching and mentor assignment re-checks with denial suites, server-side quiz scoring, deadline and publication checks and attempt limits under an advisory lock, recruiter access through relationship grants, grade history and activity events, step-up and audit on every import and export."
+  },
+  {
+   "ids": [
+    "SEC-14-018",
+    "SEC-14-019"
+   ],
+   "d": "R",
+   "finding": "vNext issues no learner certificates (only staff identity documents), so there is nothing to forge; revisit if certificates are added."
+  },
+  {
+   "ids": [
+    "SEC-15-001",
+    "SEC-15-002",
+    "SEC-15-003",
+    "SEC-15-010",
+    "SEC-15-011",
+    "SEC-15-013",
+    "SEC-15-014",
+    "SEC-15-015",
+    "SEC-15-017"
+   ],
+   "d": "R",
+   "finding": "Providers and data classes are listed (data-classification-and-handling.md), outbound requests pass an SSRF guard (HTTPS, public host only, no credentials; tests/unit/sec15-outbound-url-guard.test.ts) and the pod's egress policy allows public HTTPS only, provider results never choose the actor, mentor calendar tokens are encrypted, grants carry status and valid_until, and emergency disabling is by flag or by removing the secret."
+  },
+  {
+   "ids": [
+    "SEC-15-005"
+   ],
+   "d": "O",
+   "finding": "Inbound provider signatures cover the body but not a timestamp; adding one needs each provider's contract (inbound mail and recruiter reply routes). Internal routes have optional replay protection built (INTERNAL_REPLAY_PROTECTION)."
+  },
+  {
+   "ids": [
+    "SEC-16-003",
+    "SEC-16-005",
+    "SEC-16-006",
+    "SEC-16-007",
+    "SEC-16-008",
+    "SEC-16-010",
+    "SEC-16-011",
+    "SEC-16-012",
+    "SEC-16-013",
+    "SEC-16-015"
+   ],
+   "d": "R",
+   "finding": "docs/security/assessments/SEC-16-jobs-review-2026-11-08.md: jobs run under named system scopes (no Super Admin identity), take the tenant from the row, are fenced by leases and claim keys against duplicates, outbound messages re-check lease, expiry and suppression in a database function immediately before sending, payloads are schema-bound and bounded, denials are audited without the credential, and machine routes accept no caller-chosen tenant."
+  },
+  {
+   "ids": [
+    "SEC-17-004",
+    "SEC-17-014",
+    "SEC-17-017"
+   ],
+   "d": "O",
+   "finding": "Per-service cloud identities and workload identity, certificate monitoring, and a separate staging environment are cloud-console and account decisions."
+  },
+  {
+   "ids": [
+    "SEC-17-007",
+    "SEC-17-018",
+    "SEC-17-019",
+    "SEC-17-020",
+    "SEC-17-022"
+   ],
+   "d": "R",
+   "finding": "Images are built from a pinned base, deployed by digest, scanned by a report-only Trivy step in the build workflow; manifests are in the repository; a weekly database drift CronJob exists; Dependabot, secret scans and the dependency deny list run; development endpoints are blocked in production builds."
+  },
+  {
+   "ids": [
+    "SEC-18-003",
+    "SEC-18-004",
+    "SEC-18-005"
+   ],
+   "d": "O",
+   "finding": "Review rules are written and CODEOWNERS exists, but they bind only with branch protection, a second code owner and a review of GitHub permissions (owner actions)."
+  },
+  {
+   "ids": [
+    "SEC-18-012",
+    "SEC-18-020"
+   ],
+   "d": "R",
+   "finding": "Static checks: security:central, api-surface and test-integrity ratchets, ESLint, the authorization boundary workflow; the dependency deny list (scripts/security/dependency-deny.mjs) runs in the lint chain."
+  },
+  {
+   "ids": [
+    "SEC-18-018"
+   ],
+   "d": "O",
+   "finding": "Patch deadlines are proposed in vulnerability-and-patch-policy.md and need the owner's approval and a named accountable person."
+  },
+  {
+   "ids": [
+    "SEC-19-004",
+    "SEC-19-005",
+    "SEC-19-007",
+    "SEC-19-008",
+    "SEC-19-009",
+    "SEC-19-014",
+    "SEC-19-018",
+    "SEC-19-021"
+   ],
+   "d": "R",
+   "finding": "Every mutating request through route() writes api.mutation, 401/403/429 write api.denied, exports write api.export, scope changes write admin_scope.*, file links write file.link_issued, denied machine calls write internal.denied, tripwires write security.anomaly; rows are append-only, hash-chained and purged only by the retention script; logs carry no personal content."
+  },
+  {
+   "ids": [
+    "SEC-19-012",
+    "SEC-19-019"
+   ],
+   "d": "O",
+   "finding": "Cloud Logging access and retention, and who is on call, are owner decisions (the alert severity table is written)."
+  },
+  {
+   "ids": [
+    "SEC-19-020"
+   ],
+   "d": "R",
+   "finding": "Alert delivery is tested by the controlled-finding procedure in logging-alerting-and-access.md; the tripwire fired and was recorded on dev on 2026-11-08."
+  },
+  {
+   "ids": [
+    "SEC-20-001",
+    "SEC-20-002",
+    "SEC-20-005",
+    "SEC-20-006",
+    "SEC-20-008",
+    "SEC-20-011",
+    "SEC-20-012",
+    "SEC-20-013",
+    "SEC-20-014",
+    "SEC-20-015"
+   ],
+   "d": "R",
+   "finding": "docs/security/runbooks/incident-playbooks.md and incident-response.md: who may declare, severity levels, playbooks for compromised admin, exposed keys, unauthorized database access, cross-college exposure, compromised storage and malicious integrations, emergency controls, evidence preservation and forensics."
+  },
+  {
+   "ids": [
+    "SEC-21-002",
+    "SEC-21-011",
+    "SEC-21-012"
+   ],
+   "d": "R",
+   "finding": "Cloud SQL has automatic daily backups, 7-day point-in-time recovery and deletion protection (confirmed with a read-only gcloud query 2026-11-08); /ready and error alerts monitor availability; shared-store rate limiting degrades to memory and claims fail closed."
+  },
+  {
+   "ids": [
+    "SEC-22-001",
+    "SEC-22-002",
+    "SEC-22-007"
+   ],
+   "d": "R",
+   "finding": "Inventory of 96 tables by class (data-inventory.md), classification and handling rules (data-classification-and-handling.md), and the grant and relationship tables that record college and recruiter sharing."
+  },
+  {
+   "ids": [
+    "SEC-22-009",
+    "SEC-22-011",
+    "SEC-22-013"
+   ],
+   "d": "O",
+   "finding": "Vendor data-sharing limits, whether the NSRIT data on dev is real people, and residency review need the owner and counsel."
+  },
+  {
+   "ids": [
+    "SEC-23-002",
+    "SEC-23-005",
+    "SEC-23-006",
+    "SEC-23-007",
+    "SEC-23-008",
+    "SEC-23-009",
+    "SEC-23-011",
+    "SEC-23-012",
+    "SEC-23-013",
+    "SEC-23-016",
+    "SEC-23-017",
+    "SEC-23-018",
+    "SEC-23-019",
+    "SEC-23-021",
+    "SEC-23-025"
+   ],
+   "d": "R",
+   "finding": "CI runs the unauthenticated gate, the role-by-route matrix, the build secret scan, the database acceptance scripts and the registered database suites; unit tests cover the sanitizer, SSRF guard, file boundaries, internal replay protection, one-time code consumption, outbound retries and provider failure; the test-integrity gate forbids .only and raising skips; privilege drift is checked by the inventory."
+  },
+  {
+   "ids": [
+    "SEC-23-024"
+   ],
+   "d": "O",
+   "finding": "Failing critical tests can only block a release once branch protection requires the CI checks (owner action)."
+  },
+  {
+   "ids": [
+    "SEC-25-002",
+    "SEC-25-004",
+    "SEC-25-005",
+    "SEC-25-011",
+    "SEC-25-015",
+    "SEC-25-016"
+   ],
+   "d": "R",
+   "finding": "docs/security/risk-register.md (generated, with expiry), secure-development-standard.md (coding rules, threat modelling, change management, evidence process), accepted-risks.md with revisit dates."
+  },
+  {
+   "ids": [
+    "SEC-25-013"
+   ],
+   "d": "O",
+   "finding": "Deadlines proposed; needs the owner's approval and a named accountable person."
+  },
+  {
+   "ids": [
+    "SEC-26-003",
+    "SEC-26-008",
+    "SEC-26-014",
+    "SEC-26-015"
+   ],
+   "d": "R",
+   "finding": "Time-limited grants exist (Super Admin college scope 4 hours, recruiter grants valid_until, 15-minute step-up); the tripwire flags abnormal export and denial volume; incident-derived regression tests and probes are in CI; drift detection runs weekly on dev (production needs the owner)."
+  },
+  {
+   "ids": [
+    "SEC-26-010"
+   ],
+   "d": "O",
+   "finding": "Asymmetric signing and key rotation for issued credentials is a later design item (credentials are HMAC-signed with registry keys today)."
+  },
+  {
+   "ids": [
+    "SEC-01-011"
+   ],
+   "d": "R",
+   "finding": "Sign-in and auth route limits now use the shared store (allowRequestShared in src/modules/auth/http.ts), so they hold across replicas when SECURITY_SHARED_STORE=on (on for dev) and fall back to per-process memory otherwise; per-contact and per-challenge budgets were already in the database.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-02-011"
+   ],
+   "d": "R",
+   "finding": "A sign-in from a device name and agent not seen before writes auth.new_device (verified live on dev); repeated denials, login probing and id walking trip the anomaly detector; simultaneous-session analysis beyond that is not built.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-06-003",
+    "SEC-06-009"
+   ],
+   "d": "R",
+   "finding": "Tables whose tenancy comes through a parent have 127 derived policies (migration 0338); every policied table is FORCEd (246 of 246 on dev, inventory evidence file).",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-09-012"
+   ],
+   "d": "R",
+   "finding": "Overlapping keys: AUTH_SECRET_PREVIOUS keeps sessions signed with the old secret valid while new ones use the new one, and every internal machine secret accepts <NAME>_PREVIOUS; provider keys rotate in the provider console.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-13-001",
+    "SEC-13-002"
+   ],
+   "d": "R",
+   "finding": "docs/security/policies/threat-models.md covers the major workflows and the malicious valid user for each.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-18-014",
+    "SEC-18-021"
+   ],
+   "d": "R",
+   "finding": "Container and manifest review recorded in recovery-and-infrastructure-notes.md; rule for new identity and crypto libraries added to the secure development standard (review by the code owner, deny list gate).",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-20-003",
+    "SEC-20-007",
+    "SEC-20-009",
+    "SEC-20-010",
+    "SEC-20-018",
+    "SEC-20-019"
+   ],
+   "d": "R",
+   "finding": "Severity levels, escalation, the database-access, storage and integration playbooks, the review step and the timing measures are written in docs/security/runbooks/incident-playbooks.md.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-21-010"
+   ],
+   "d": "R",
+   "finding": "Restoration sequence written in docs/security/runbooks/recovery-and-infrastructure-notes.md, including revocation reconciliation; not rehearsed (needs a restore test).",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-01-003"
+   ],
+   "d": "O",
+   "finding": "Sign-in answers differently for an unknown contact; fixing it changes who can find out an account exists and is a product decision.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-01-004",
+    "SEC-01-006",
+    "SEC-01-017"
+   ],
+   "d": "O",
+   "finding": "Passkeys, strong MFA for College Admin and managed SSO are deferred by the owner (2026-11-08).",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-03-022"
+   ],
+   "d": "O",
+   "finding": "Separation of duties and two-person approval for sensitive operations need a product design and a second approver.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-07-006"
+   ],
+   "d": "O",
+   "finding": "Cloud SQL requires neither SSL nor certificate validation (sslMode ALLOW_UNENCRYPTED_AND_ENCRYPTED, read 2026-11-08). Turning on SSL enforcement and switching the clients to verify the certificate is a change to the shared instance.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-09-004",
+    "SEC-09-008",
+    "SEC-09-011",
+    "SEC-09-015",
+    "SEC-09-017"
+   ],
+   "d": "O",
+   "finding": "Credential rotation (GCP key, production database password), workload identity, a managed KMS and key versioning need the owner's accounts and decisions; outbound-key versioning also needs a re-hash migration because recipient hashes derive from the same key.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-10-002",
+    "SEC-10-015"
+   ],
+   "d": "O",
+   "finding": "Database TLS is the same Cloud SQL setting as SEC-07-006; key-loss and rotation tests depend on key versioning.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-11-001",
+    "SEC-11-018"
+   ],
+   "d": "O",
+   "finding": "The private bucket does not exist and no retention rule for submitted documents is decided.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-13-009",
+    "SEC-13-010"
+   ],
+   "d": "O",
+   "finding": "Self-approval prevention and dual approval for administrators need a product design (second approver).",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-16-001",
+    "SEC-16-002",
+    "SEC-16-014"
+   ],
+   "d": "O",
+   "finding": "Separate database logins and pod identities for each worker class need new roles, secrets and manifests (owner decision).",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-17-005",
+    "SEC-17-023"
+   ],
+   "d": "O",
+   "finding": "Workload identity and a compromised-workload isolation test are cloud-console work.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-18-001",
+    "SEC-18-016",
+    "SEC-18-017"
+   ],
+   "d": "O",
+   "finding": "Branch protection is disabled by the owner; signed images and provenance need a signing key decision.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-19-003"
+   ],
+   "d": "O",
+   "finding": "MFA changes are not recorded because MFA does not exist yet (deferred).",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-20-004",
+    "SEC-20-016",
+    "SEC-20-017"
+   ],
+   "d": "O",
+   "finding": "Names for the roster, the legal notification analysis and a tabletop exercise need people.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-21-001",
+    "SEC-21-005",
+    "SEC-21-006",
+    "SEC-21-007",
+    "SEC-21-008",
+    "SEC-21-009",
+    "SEC-21-013",
+    "SEC-21-015"
+   ],
+   "d": "O",
+   "finding": "Recovery targets are proposed but not approved, and every restore, integrity, corruption, ransomware and outage test needs a disposable restored instance (cost decision) and the owner.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-22-003",
+    "SEC-22-004",
+    "SEC-22-005",
+    "SEC-22-006",
+    "SEC-22-010",
+    "SEC-22-012",
+    "SEC-22-014",
+    "SEC-22-015"
+   ],
+   "d": "O",
+   "finding": "Lawful basis, retention periods, data-subject workflows, minors, disposal and counsel review are owner and legal work.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-25-001",
+    "SEC-25-006",
+    "SEC-25-007",
+    "SEC-25-008",
+    "SEC-25-009",
+    "SEC-25-010",
+    "SEC-25-012",
+    "SEC-25-014"
+   ],
+   "d": "O",
+   "finding": "Named security owners, access reviews, production access separation, MFA on source control and cloud, vendor reviews, policy review cadence and training are organisational decisions.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-26-001",
+    "SEC-26-002",
+    "SEC-26-004",
+    "SEC-26-005",
+    "SEC-26-006",
+    "SEC-26-009",
+    "SEC-26-011",
+    "SEC-26-012",
+    "SEC-26-013",
+    "SEC-26-016"
+   ],
+   "d": "O",
+   "finding": "Hardware-backed authentication, just-in-time access, two-person approval, emergency access, risk scoring, red team, attack-surface monitoring, chaos tests and independent verification are owner and external work.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-24-001",
+    "SEC-24-002",
+    "SEC-24-003",
+    "SEC-24-004",
+    "SEC-24-005",
+    "SEC-24-006",
+    "SEC-24-007",
+    "SEC-24-008",
+    "SEC-24-009",
+    "SEC-24-010",
+    "SEC-24-011",
+    "SEC-24-012",
+    "SEC-24-013",
+    "SEC-24-014"
+   ],
+   "d": "O",
+   "finding": "Independent testing, disclosure contact and bug bounty are external engagements and need the owner.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-05-023"
+   ],
+   "d": "O",
+   "finding": "Needs the owner: depends on a console or organisation setting that code cannot inspect.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-09-013"
+   ],
+   "d": "O",
+   "finding": "Needs the owner: key or credential handling in an account only the owner can read.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-10-016"
+   ],
+   "d": "O",
+   "finding": "Needs the owner: depends on the key management decision (managed KMS, key versioning).",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-12-010"
+   ],
+   "d": "O",
+   "finding": "Needs the owner: depends on an external scanner or provider decision for uploaded files.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-17-011",
+    "SEC-17-012",
+    "SEC-17-015",
+    "SEC-17-016",
+    "SEC-17-021"
+   ],
+   "d": "O",
+   "finding": "Needs the owner: cloud console and cluster-level settings (workload identity, node and network configuration) only the owner can read or change.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-18-002",
+    "SEC-18-006",
+    "SEC-18-010",
+    "SEC-18-015"
+   ],
+   "d": "O",
+   "finding": "Needs the owner: repository, branch, supply-chain and release-signing settings in GitHub and the registry.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-21-003",
+    "SEC-21-004"
+   ],
+   "d": "O",
+   "finding": "Needs the owner: backup configuration and restore testing on a disposable instance.",
+   "batch2": true
+  }
+ ]
+}

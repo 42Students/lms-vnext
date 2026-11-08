@@ -69,6 +69,20 @@ for (const row of overlay.rows) {
   }
 }
 
+// Final dispositions (R = built, needs independent review; O = needs the owner) override earlier partial answers.
+const disp = JSON.parse(fs.readFileSync(path.join(__dirname, "dispositions.json"), "utf8"));
+for (const row of disp.rows) {
+  for (const id of row.ids) {
+    if (!tracker[id]) throw new Error("unknown control in dispositions.json: " + id);
+    records[id] = {
+      state: row.d === "R" ? "IMPLEMENTED_UNVERIFIED" : "GAP_CONFIRMED",
+      finding: (row.d === "O" ? "NEEDS THE OWNER. " : "") + row.finding,
+      source: "dispositions.json",
+      ownerBlocked: row.d === "O",
+    };
+  }
+}
+
 const out = {};
 const counts = {};
 for (const id of Object.keys(records).sort()) {
@@ -80,8 +94,9 @@ for (const id of Object.keys(records).sort()) {
     currentTrackerState: current,
     proposedState: r.state,
     assessedAt: "2026-11-08",
+    ...(r.ownerBlocked ? { ownerBlocked: true } : {}),
     finding: r.finding,
-    source: "docs/security/assessments/" + r.source,
+    source: r.source === "dispositions.json" ? "scripts/security/dispositions.json" : "docs/security/assessments/" + r.source,
     evidence: [{ type: "EXECUTED_SCOPED_TEST", commitSha: "", runUrl: "", scope: "FILL AFTER THE CI RUN: the exact tests/checks that ran" }],
     nextProof: "FILL: independent review, plus any listed missing proof in the source assessment",
     ...(r.state === "IMPLEMENTED_UNVERIFIED" ? { remainingChecks: ["Passing CI run at the recorded commit", "Independent review", "See the source assessment for control-specific missing proof"] } : {}),

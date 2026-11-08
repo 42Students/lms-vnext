@@ -10,6 +10,7 @@ import { writeStructuredLog,logError } from "@/observability/logger";
 
 vi.mock("@/auth/origin",()=>({isSameOriginRequest:vi.fn()}));
 vi.mock("@/auth/ip-rate-limit",()=>({allowRequest:vi.fn(),clientIp:vi.fn()}));
+vi.mock("@/security/shared-store", async () => { const m = await import("@/auth/ip-rate-limit"); return { allowRequestShared: async (key: string, limit: number) => m.allowRequest(key, limit) }; });
 vi.mock("@/modules/auth/request-tenant",()=>({resolveRequestTenant:vi.fn()}));
 vi.mock("@/observability/logger",()=>({writeStructuredLog:vi.fn(),logError:vi.fn()}));
 const origin=vi.mocked(isSameOriginRequest);

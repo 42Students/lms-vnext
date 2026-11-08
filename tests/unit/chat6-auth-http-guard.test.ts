@@ -14,6 +14,7 @@ const fakes = vi.hoisted(() => ({
 vi.mock("server-only", () => ({}));
 vi.mock("@/auth/origin", () => ({ isSameOriginRequest: fakes.isSameOrigin }));
 vi.mock("@/auth/ip-rate-limit", () => ({ allowRequest: fakes.allow, clientIp: fakes.ip }));
+vi.mock("@/security/shared-store", () => ({ allowRequestShared: async (key: string, limit: number) => fakes.allow(key, limit) }));
 vi.mock("@/modules/auth/request-tenant", () => ({ resolveRequestTenant: fakes.resolve }));
 vi.mock("@/observability/logger", () => ({
   writeStructuredLog: fakes.structured,
