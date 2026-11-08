@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'tests/e2e/ux-g071-mentor-route-surfaces.spec.ts'
+      - 'tests/ux-groups.test.mjs'
       - '.github/workflows/ux-g071-mentor-route-browser-acceptance.yml'
 permissions:
   contents: read
