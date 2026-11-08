@@ -1,0 +1,89 @@
+name: UX-G015 Super Admin placement operations acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/app/(authenticated)/admin/placements/drives/**'
+      - 'src/app/(authenticated)/admin/placements/hiring/**'
+      - 'src/app/(authenticated)/admin/placements/interviews/**'
+      - 'src/app/(authenticated)/admin/placements/job-settings/**'
+      - 'tests/e2e/ux-g015-admin-placement-journeys.spec.ts'
+      - '.github/workflows/ux-g015-admin-placement-acceptance.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ux-g015-admin-placement-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  admin-placement:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
+      APP_ENV: development
+      NODE_OPTIONS: --max-old-space-size=6144
+      PLAYWRIGHT_JSON_OUTPUT_NAME: ux-g015-admin-results.json
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exact tested source and scoped ESLint
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npx eslint tests/e2e/ux-g015-admin-placement-journeys.spec.ts
+          npm run ux:groups -- --check
+      - name: TypeScript source integrity
+        run: npm run typecheck
+      - name: Existing placement read, query, privacy and detail tests
+        run: |
+          npx vitest run             tests/unit/super-admin-interview-detail.test.ts             tests/unit/super-admin-job-settings-detail.test.ts             tests/unit/super-admin-placement-hiring-query.test.ts             tests/unit/super-admin-placement-interviews-query.test.ts             tests/unit/super-admin-placement-job-settings-query.test.ts             tests/unit/super-admin-placement-detail-model.test.ts             tests/unit/chat13-admin-ui-placements-tenant-matrix.test.ts             --reporter=dot
+      - name: Seed isolated database with real company, job and round
+        run: npm run db:e2e:prepare
+      - name: Ephemeral actor authentication
+        shell: bash
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop/mobile six route browser and denied learner proof
+        run: |
+          npx playwright test tests/e2e/ux-g015-admin-placement-journeys.spec.ts --project=chromium --reporter=line,json
+          node -e 'const s=require("./ux-g015-admin-results.json").stats;if(s.expected!==4||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
+      - name: Save screenshots and trace
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g015-admin-placement-${{ github.run_id }}
+          path: |
+            test-results/**
+            playwright-report/**
+            ux-g015-admin-results.json
+          if-no-files-found: ignore
+          retention-days: 14
