@@ -18,6 +18,8 @@
 
 - `academics-create-panel.tsx`/`academics-overview.tsx`: empty-state links into collapsed creation disclosures now reveal the requested form and focus its summary on hash navigation. Source assertions cover all four links.
 
+- `college-academic-directory.tsx`, batch and semester create forms: zero-result list recovery now links directly to a real in-page create form instead of always sending users to Programs; both anchors are regression-checked.
+
 ## Evidence and remaining acceptance
 
 - Authenticated desktop/mobile Playwright scenarios have been authored in `tests/e2e/ux-g125-academic-actions.spec.ts` for Batches, Semesters and learner Class Schedule, plus learner-denied college directory export. They are **not executed**, and screenshot paths only become proof after a successful run.
