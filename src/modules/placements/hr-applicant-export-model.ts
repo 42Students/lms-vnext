@@ -1,3 +1,4 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 import type { SharedApplicant } from "./hr-job-applicants-model";
 
 export const HR_APPLICANT_EXPORT_CAP = 200;
@@ -7,8 +8,7 @@ const HEADER = [
 ] as const;
 
 function csvCell(raw: string) {
-  const text = (/^\s*[=+\-@]/u.test(raw) || /^[\t\r\n]/u.test(raw)) ? "'" + raw : raw;
-  return '"' + text.replaceAll('"', '""') + '"';
+ return spreadsheetCsvCell(raw);
 }
 
 export function buildHrApplicantCsv(rows: readonly SharedApplicant[], total: number) {
