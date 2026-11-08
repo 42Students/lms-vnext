@@ -79,7 +79,9 @@ export default async function TpoBranchSeasonPage({
       <div className="flex min-w-0 flex-wrap items-center"><TpoReportPresentation /></div>
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/branch-season" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       {!dashboard.season ? (
-        <EmptyState title="No placement seasons are recorded for this college." description="No branch rate can be calculated."/>
+        <EmptyState title="No placement seasons are recorded for this college."
+          description="No branch rate can be calculated. Review the placement-season setup before interpreting an empty report."
+          action={<ButtonLink variant="secondary" href="/tpo/settings/season">Review placement seasons</ButtonLink>}/>
       ) : (
         <>
           <section className="grid gap-3 md:grid-cols-2" aria-label="Season branch totals"><StatTile label="Distinct applicants (all application states)" value={dashboard.totalApplicants} className="min-h-[104px]" /><StatTile label="Distinct learners with currently accepted offers" value={dashboard.totalAcceptedLearners} className="min-h-[104px]" /></section>
