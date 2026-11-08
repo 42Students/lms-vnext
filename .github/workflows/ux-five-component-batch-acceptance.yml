@@ -10,6 +10,8 @@ on:
       - 'src/components/attendance/faculty-attendance-workspace.tsx'
       - 'src/components/projects/project-team-controls.tsx'
       - 'src/components/projects/project-template-controls.tsx'
+      - 'src/components/projects/super-admin-template-plan-editor.tsx'
+      - 'src/components/projects/template-metadata-edit-control.tsx'
       - 'src/components/projects/super-admin-template-college-bulk.tsx'
       - 'src/components/tracker/tracker-live-logs-explorer.tsx'
       - 'src/components/tracker/tracker-telegram-manual-panel.tsx'
@@ -71,6 +73,8 @@ jobs:
             src/components/attendance/faculty-attendance-workspace.tsx \
             src/components/projects/project-team-controls.tsx \
             src/components/projects/project-template-controls.tsx \
+            src/components/projects/super-admin-template-plan-editor.tsx \
+            src/components/projects/template-metadata-edit-control.tsx \
             src/components/projects/super-admin-template-college-bulk.tsx \
             src/components/tracker/tracker-live-logs-explorer.tsx \
             src/components/tracker/tracker-telegram-manual-panel.tsx \
