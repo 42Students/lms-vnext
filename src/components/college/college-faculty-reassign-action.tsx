@@ -9,6 +9,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {teachingReassignPrompt} from "@/modules/courses/college-teaching-reassign-model";
 import { Label } from "@/components/ui/label";
+import {friendlyApiError} from "@/lib/friendly-error";
 
 export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldMembershipId,
   expectedUpdatedAt,faculty,deliveryId,deliveries}:{
@@ -82,7 +83,7 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
       });
       if(!response.ok){
         const payload=await response.json().catch(()=>({})) as {error?:string;message?:string};
-        throw Error(payload.message??payload.error??"Could not update assignment.");
+        throw Error(friendlyApiError({status:response.status,code:payload.error}));
       }
       setEditOpen(false);router.refresh();
     }catch(cause){setError(cause instanceof Error?cause.message:"Could not update assignment.");}
@@ -101,7 +102,7 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
       });
       if(!response.ok){
         const payload=await response.json().catch(()=>({error:"REASSIGNMENT_FAILED"})) as {error?:string};
-        throw new Error(payload.error??"REASSIGNMENT_FAILED");
+        throw new Error(friendlyApiError({status:response.status,code:payload.error}));
       }
       setOpen(false);setReplacementMembershipId("");router.refresh();
     }catch(reason){setError(reason instanceof Error?reason.message:"Reassignment failed.");}
