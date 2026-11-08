@@ -70,7 +70,15 @@ test("invalid or unsupported role-state preview combinations fail closed",async(
     "role=college-admin&state=loading",
   ]) {
     const result=await request.get("/e2e/ux-g184-authenticated-states?"+query);
-    expect(result.status()).toBe(404);
-    expect(await result.text()).not.toContain("Authenticated route state acceptance");
+    const html=await result.text();
+    // App Router can stream a notFound() boundary with HTTP 200 once an outer
+    // layout has begun streaming. Require semantic 404 evidence regardless of
+    // transport status, and never let an invalid role reach our fixture UI.
+    if(result.status()!==404) {
+      expect(result.status()).toBe(200);
+      expect(html).toMatch(/NEXT_HTTP_ERROR_FALLBACK;404|This page could not be found\.|<title>404/);
+    }
+    expect(html).not.toContain("Authenticated route state acceptance");
+    expect(html).not.toContain("Development-only display of the real, role-specific route-state component");
   }
 });
