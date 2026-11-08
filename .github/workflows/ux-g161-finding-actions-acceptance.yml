@@ -1,0 +1,46 @@
+name: UX-G161 Tracker finding editor recovery acceptance
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/components/tracker/audit-finding-status-action.tsx'
+      - 'src/components/tracker/independent-finding-actions.tsx'
+      - 'tests/unit/ux-g161-finding-actions-recovery.test.ts'
+      - '.github/workflows/ux-g161-finding-actions-acceptance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ux-g161-finding-actions-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  scoped-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact source SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Scoped ESLint
+        run: |
+          npx eslint \
+            src/components/tracker/audit-finding-status-action.tsx \
+            src/components/tracker/independent-finding-actions.tsx \
+            tests/unit/ux-g161-finding-actions-recovery.test.ts
+      - name: TypeScript and regression contracts
+        run: |
+          npm run typecheck
+          npx vitest run tests/unit/ux-g161-finding-actions-recovery.test.ts tests/unit/chat6-independent-finding-actions-round10.test.ts tests/unit/chat15-independent-finding-validation.test.ts --reporter=dot
+          node --test tests/ux-groups.test.mjs
