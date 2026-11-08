@@ -60,6 +60,10 @@ test.describe("UX-G139 course authoring and learner controls",()=>{
   await page.goto("/admin/resources");
   await expect(page.getByRole("search",{name:"Find a course or lesson to add content"})).toHaveCount(0);
   await expect(page.getByRole("heading",{name:"Add Resource"})).toHaveCount(0);
-  expect(new URL(page.url()).pathname).not.toBe("/admin/resources");
+  // Server deliberately keeps the attempted URL while rendering its hard
+  // permission-denied boundary. Verify the denial, not a redirect assumption.
+  await expect(page.getByRole("heading",{name:"Access denied",level:1})).toBeVisible();
+  await expect(page.getByRole("heading",{name:/not authorized to access Superadmin/})).toBeVisible();
+  await expect(page.getByRole("link",{name:"Return to dashboard"})).toHaveAttribute("href","/dashboard");
  });
 });
