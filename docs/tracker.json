@@ -22963,10 +22963,10 @@
         "type": "JOURNEY",
         "area": "tpo",
         "title": "Tpo · Home → Batches (part 1)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-tpo-ten-2026-11-08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/tpo/announcements/error.tsx",
@@ -23005,17 +23005,18 @@
           "PAGE-0400"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08 TPO route recovery implementation committed on main at c641e73867555dd6239095f4120571003c93894c; scoped UX acceptance added at 6b8569e11a2ea78eec19c0716208364bf981be59 and corrected at ed7e55de86c88b72b8a8ca7fbba1d2a1b4d53875. Await exact-SHA successful lint/typecheck/Vitest, 22 browser scenarios (10 synthetic route errors on 2 viewports plus learner-denial cases) and broader group page functional coverage before DONE."
       },
       {
         "id": "UX-G099",
         "type": "JOURNEY",
         "area": "tpo",
         "title": "Tpo · Batches / BatchId → Batches / BatchId (part 2)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-tpo-ten-2026-11-08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/tpo/batches/[batchId]/classes/error.tsx",
@@ -23058,17 +23059,18 @@
           "PAGE-0372"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08 TPO route recovery implementation committed on main at f634af6bdba09665a80ad54c9752aedc52d104a7; scoped UX acceptance added at 6b8569e11a2ea78eec19c0716208364bf981be59 and corrected at ed7e55de86c88b72b8a8ca7fbba1d2a1b4d53875. Await exact-SHA successful lint/typecheck/Vitest, 22 browser scenarios (10 synthetic route errors on 2 viewports plus learner-denial cases) and broader group page functional coverage before DONE."
       },
       {
         "id": "UX-G100",
         "type": "JOURNEY",
         "area": "tpo",
         "title": "Tpo · Batches / BatchId → Calendar / Export (part 3)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-tpo-ten-2026-11-08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/error.tsx",
@@ -23111,17 +23113,18 @@
           "PAGE-0379"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08 TPO route recovery implementation committed on main at a0783d5f5baae96ae8baa7be6328603065583f99; scoped UX acceptance added at 6b8569e11a2ea78eec19c0716208364bf981be59 and corrected at ed7e55de86c88b72b8a8ca7fbba1d2a1b4d53875. Await exact-SHA successful lint/typecheck/Vitest, 22 browser scenarios (10 synthetic route errors on 2 viewports plus learner-denial cases) and broader group page functional coverage before DONE."
       },
       {
         "id": "UX-G101",
         "type": "JOURNEY",
         "area": "tpo",
         "title": "Tpo · Calendar / Interviews → Companies / CompanyId (part 4)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-tpo-ten-2026-11-08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/tpo/calendar/interviews/error.tsx",
@@ -23164,17 +23167,18 @@
           "PAGE-0388"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08 TPO route recovery implementation committed on main at eca54601a348429915b28e01f3f8331da175e3eb; scoped UX acceptance added at 6b8569e11a2ea78eec19c0716208364bf981be59 and corrected at ed7e55de86c88b72b8a8ca7fbba1d2a1b4d53875. Await exact-SHA successful lint/typecheck/Vitest, 22 browser scenarios (10 synthetic route errors on 2 viewports plus learner-denial cases) and broader group page functional coverage before DONE."
       },
       {
         "id": "UX-G102",
         "type": "JOURNEY",
         "area": "tpo",
         "title": "Tpo · Companies / CompanyId → Drive Day / RoundId (part 5)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-tpo-ten-2026-11-08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/tpo/companies/[companyId]/manage/error.tsx",
@@ -23216,7 +23220,8 @@
           "/tpo/companies/legacy-team",
           "/tpo/companies/today"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08 TPO route recovery implementation committed on main at 7246ca0b2524b4c009f8d37aedc867684e214fc0; scoped UX acceptance added at 6b8569e11a2ea78eec19c0716208364bf981be59 and corrected at ed7e55de86c88b72b8a8ca7fbba1d2a1b4d53875. Await exact-SHA successful lint/typecheck/Vitest, 22 browser scenarios (10 synthetic route errors on 2 viewports plus learner-denial cases) and broader group page functional coverage before DONE."
       },
       {
         "id": "UX-G103",
@@ -23311,10 +23316,10 @@
         "type": "JOURNEY",
         "area": "tpo",
         "title": "Tpo · Messages → Placements (part 7)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-tpo-ten-2026-11-08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/tpo/messages/[threadId]/error.tsx",
@@ -23357,17 +23362,18 @@
           "PAGE-0433"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08 TPO route recovery implementation committed on main at 50e4b316423ce26a95476021dddaeb45b61dbac7; scoped UX acceptance added at 6b8569e11a2ea78eec19c0716208364bf981be59 and corrected at ed7e55de86c88b72b8a8ca7fbba1d2a1b4d53875. Await exact-SHA successful lint/typecheck/Vitest, 22 browser scenarios (10 synthetic route errors on 2 viewports plus learner-denial cases) and broader group page functional coverage before DONE."
       },
       {
         "id": "UX-G105",
         "type": "JOURNEY",
         "area": "tpo",
         "title": "Tpo · Placements / Jobs → Placements / Jobs (part 8)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-tpo-ten-2026-11-08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/error.tsx",
@@ -23410,17 +23416,18 @@
           "PAGE-0420"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08 TPO route recovery implementation committed on main at 4535ba2b056dc5893b506cfd504985279ea9710a; scoped UX acceptance added at 6b8569e11a2ea78eec19c0716208364bf981be59 and corrected at ed7e55de86c88b72b8a8ca7fbba1d2a1b4d53875. Await exact-SHA successful lint/typecheck/Vitest, 22 browser scenarios (10 synthetic route errors on 2 viewports plus learner-denial cases) and broader group page functional coverage before DONE."
       },
       {
         "id": "UX-G106",
         "type": "JOURNEY",
         "area": "tpo",
         "title": "Tpo · Placements / Jobs → Placements / Jobs (part 9)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-tpo-ten-2026-11-08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/tpo/placements/jobs/[jobId]/cancel-preview/error.tsx",
@@ -23463,17 +23470,18 @@
           "PAGE-0411"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08 TPO route recovery implementation committed on main at c566aa77705bdb6838ed6627a5107b0e9f1bb78c; scoped UX acceptance added at 6b8569e11a2ea78eec19c0716208364bf981be59 and corrected at ed7e55de86c88b72b8a8ca7fbba1d2a1b4d53875. Await exact-SHA successful lint/typecheck/Vitest, 22 browser scenarios (10 synthetic route errors on 2 viewports plus learner-denial cases) and broader group page functional coverage before DONE."
       },
       {
         "id": "UX-G107",
         "type": "JOURNEY",
         "area": "tpo",
         "title": "Tpo · Placements / Jobs → Placements / Jobs (part 10)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-tpo-ten-2026-11-08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/tpo/placements/jobs/[jobId]/drive-day/error.tsx",
@@ -23516,17 +23524,18 @@
           "PAGE-0417"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08 TPO route recovery implementation committed on main at dfd7982e6390237642bb0afb925cde4598238114; scoped UX acceptance added at 6b8569e11a2ea78eec19c0716208364bf981be59 and corrected at ed7e55de86c88b72b8a8ca7fbba1d2a1b4d53875. Await exact-SHA successful lint/typecheck/Vitest, 22 browser scenarios (10 synthetic route errors on 2 viewports plus learner-denial cases) and broader group page functional coverage before DONE."
       },
       {
         "id": "UX-G108",
         "type": "JOURNEY",
         "area": "tpo",
         "title": "Tpo · Placements / Jobs → Placements / Jobs (part 11)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-tpo-ten-2026-11-08",
         "pickedAt": "2026-11-08",
-        "startedAt": null,
+        "startedAt": "2026-11-08",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/error.tsx",
@@ -23565,7 +23574,8 @@
         "newRouteOnly": [
           "/tpo/placements/jobs/[jobId]/not-applied"
         ],
-        "evidence": []
+        "evidence": [],
+        "notes": "2026-11-08 TPO route recovery implementation committed on main at 6080118005f37a6a2eff122ef5676803de8b7290; scoped UX acceptance added at 6b8569e11a2ea78eec19c0716208364bf981be59 and corrected at ed7e55de86c88b72b8a8ca7fbba1d2a1b4d53875. Await exact-SHA successful lint/typecheck/Vitest, 22 browser scenarios (10 synthetic route errors on 2 viewports plus learner-denial cases) and broader group page functional coverage before DONE."
       },
       {
         "id": "UX-G109",
