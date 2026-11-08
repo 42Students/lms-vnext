@@ -1,0 +1,94 @@
+name: UX-G173 G179 college and recruiter export acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/modules/courses/college-assessment-export-service.ts
+      - src/modules/courses/college-content-csv-model.ts
+      - src/modules/placements/company-share/audit-csv-model.ts
+      - src/modules/placements/hr-activity-csv-model.ts
+      - src/modules/placements/hr-applicant-export-model.ts
+      - src/modules/placements/hr-calendar-export-model.ts
+      - src/modules/placements/hr-company-report-export-model.ts
+      - src/modules/placements/hr-drive-proposal-export-model.ts
+      - src/modules/placements/hr-drives-csv-model.ts
+      - src/modules/placements/hr-inbox-csv-model.ts
+      - src/modules/placements/hr-offer-export-model.ts
+      - src/modules/placements/hr-team-csv-model.ts
+      - src/app/e2e/ux-g173-g179-csv/page.tsx
+      - tests/unit/ux-g173-g179-csv-unicode-regression.test.ts
+      - tests/unit/ux-g173-assessment-export-snapshot.test.ts
+      - tests/unit/ux-g179-audit-proposals-regression.test.ts
+      - tests/e2e/ux-g173-g179-csv.spec.ts
+      - .github/workflows/ux-g173-g179-export-acceptance.yml
+permissions:
+  contents: read
+  statuses: write
+jobs:
+  export-ux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      UX_G173_G179_FIXTURE: "1"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Exact source SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Scoped ESLint
+        run: |
+          npx eslint src/modules/courses/college-assessment-export-service.ts src/modules/courses/college-content-csv-model.ts src/modules/placements/company-share/audit-csv-model.ts src/modules/placements/hr-activity-csv-model.ts src/modules/placements/hr-applicant-export-model.ts src/modules/placements/hr-calendar-export-model.ts src/modules/placements/hr-company-report-export-model.ts src/modules/placements/hr-drive-proposal-export-model.ts src/modules/placements/hr-drives-csv-model.ts src/modules/placements/hr-inbox-csv-model.ts src/modules/placements/hr-offer-export-model.ts src/modules/placements/hr-team-csv-model.ts src/app/e2e/ux-g173-g179-csv/page.tsx tests/unit/ux-g173-g179-csv-unicode-regression.test.ts tests/unit/ux-g173-assessment-export-snapshot.test.ts tests/unit/ux-g179-audit-proposals-regression.test.ts tests/e2e/ux-g173-g179-csv.spec.ts
+      - name: Full TypeScript
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: Focused and existing export security regressions
+        run: |
+          npx vitest run tests/unit/ux-g173-g179-csv-unicode-regression.test.ts tests/unit/ux-g173-assessment-export-snapshot.test.ts tests/unit/ux-g179-audit-proposals-regression.test.ts tests/unit/chat7-college-assessment-export-service-weak.test.ts tests/unit/hr-applicant-export-model.test.ts tests/unit/hr-team-csv-model.test.ts tests/unit/tpo-company-share-audit-csv.test.ts tests/unit/hr-drive-proposal-export.test.ts tests/unit/HR-BREAK-reports-01.test.ts tests/unit/chat2-company-share-headers.test.ts
+      - name: Chromium dependencies
+        run: npx playwright install --with-deps chromium
+      - name: Browser desktop and mobile downloaded CSV proof
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: ux-g173-g179-browser-results.json
+        run: |
+          set -euo pipefail
+          npx playwright test tests/e2e/ux-g173-g179-csv.spec.ts --project=chromium --reporter=line,json,html
+          node -e 'const s=require("./ux-g173-g179-browser-results.json").stats;if(s.expected!==2||s.unexpected!==0||s.skipped!==0||s.flaky!==0){console.error("UX-G173/G179 browser gate failed",s);process.exit(1)}'
+      - name: Preserve CSV and browser evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g173-g179-export-evidence
+          path: |
+            test-results/
+            playwright-report/
+            ux-g173-g179-browser-results.json
+          if-no-files-found: ignore
+      - name: Publish exact-SHA acceptance status
+        if: always()
+        env:
+          RESULT: ${{ job.status }}
+          GH_RUN_TOKEN: ${{ github.token }}
+        run: |
+          node --input-type=module <<'NODE'
+          const success=process.env.RESULT==="success";
+          const body={
+            state:success?"success":"failure",
+            context:"ux-g173-g179/export-acceptance",
+            description:success?"Lint, types, focused tests, desktop and mobile browser passed":"Scoped export acceptance failed; inspect run",
+            target_url:"https://github.com/"+process.env.GITHUB_REPOSITORY+"/actions/runs/"+process.env.GITHUB_RUN_ID,
+          };
+          const url="https://api.github.com/repos/"+process.env.GITHUB_REPOSITORY+"/statuses/"+process.env.GITHUB_SHA;
+          const response=await fetch(url,{method:"POST",headers:{
+            "Authorization":"Bearer "+process.env.GH_RUN_TOKEN,
+            "Accept":"application/vnd.github+json",
+            "X-GitHub-Api-Version":"2022-11-28",
+          },body:JSON.stringify(body)});
+          if(!response.ok)throw new Error("Cannot post UX acceptance status: HTTP "+response.status);
+          NODE
