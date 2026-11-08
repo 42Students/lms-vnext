@@ -13,8 +13,9 @@ import { TextLink } from "@/components/ui/text-link";
 
 export default async function CollegeCreateProjectPage({
   searchParams,
-}:{searchParams:Promise<{mode?:string}>}) {
-  const selected=(await searchParams).mode;
+}:{searchParams:Promise<{mode?:string;templateId?:string}>}) {
+  const query=await searchParams;
+  const selected=query.mode;
   const mode=selected==="teams"||selected==="cohort"?selected:"single";
   const context=await getCurrentRequestContext();
   const collegeId=getProjectAdminCollegeId(context);
@@ -49,6 +50,9 @@ export default async function CollegeCreateProjectPage({
           className="inline-flex min-h-11 items-center md:min-h-9">Try again</TextLink>}/>
     </div>;
   }
+  // Only honor deep-linked templates assigned and published for this college.
+  const requested=query.templateId;
+  const selectedTemplateId=templates.some(template=>template.templateId===requested)?requested:undefined;
   const options=templates.map(template=>({
     templateId:template.templateId,title:template.title,version:template.version,summary:template.summary,
   }));
@@ -65,7 +69,7 @@ export default async function CollegeCreateProjectPage({
           {key:"cohort",label:"Whole class or cohort"},
         ] as const).map(item=><TextLink variant="bare" key={item.key}
           aria-current={mode===item.key?"page":undefined}
-          href={"/college/projects/create?mode="+item.key}
+          href={"/college/projects/create?mode="+item.key+(selectedTemplateId?"&templateId="+encodeURIComponent(selectedTemplateId):"")}
           className={mode===item.key
             ?"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-primary)] bg-primary-subtle px-3 text-sm font-semibold text-[var(--lms-primary-text)] md:min-h-9"
             :"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:bg-primary-subtle hover:text-[var(--lms-primary-text)] md:min-h-9"}>
@@ -78,7 +82,7 @@ export default async function CollegeCreateProjectPage({
         <CreateProjectControl standalone collegeId={collegeId} basePath="/college/projects" templates={options}/>:
         <ClassTeamWorkspaceCreator key={mode} collegeId={collegeId} userId={context.user.id}
           basePath="/college/projects" templates={options}
-          initialMode={mode==="cohort"?"INDIVIDUAL":"TEAMS"}/>
+          initialTemplateId={selectedTemplateId} initialMode={mode==="cohort"?"INDIVIDUAL":"TEAMS"}/>
       }
     </section>
   </div>;
