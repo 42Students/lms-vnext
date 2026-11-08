@@ -1,5 +1,6 @@
-export function learnerNoticeFilterHref(x:{pinned:boolean;unread:boolean;recent:boolean;q:string;sort?:"pinned"|"latest"|"oldest";alertQ?:string;source?:"all"|"placement-cell"}):string{
+export function learnerNoticeFilterHref(x:{pinned:boolean;unread:boolean;recent:boolean;q:string;sort?:"pinned"|"latest"|"oldest";alertQ?:string;source?:"all"|"placement-cell";show?:"updates"}):string{
  const query=new URLSearchParams();
+ if(x.show==="updates")query.set("show","updates");
  if(x.pinned)query.set("pinned","1");
  if(x.unread)query.set("unread","1");
  if(x.recent)query.set("recent","1");
