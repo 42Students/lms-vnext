@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { parseFacultyContactsQuery } from "@/modules/courses/faculty-contacts-filter-model";
 import { facultyContactDirectoryQuery } from "@/modules/courses/faculty-contact-detail-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { hasActiveMembership, hasMembershipRole } from "@/modules/identity/context";
 import {
   FacultyContactsPagination,
   FacultyContactsTable,
@@ -46,6 +47,8 @@ export default async function FacultyContactsPage({
     pageSize?: string;
   }>;
 }) {
+  const context=await getCurrentRequestContext();
+  if(!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY"))redirect("/dashboard");
   const { contactsTab } = await params;
   if (!(contactsTab in tabs)) {
     redirect("/teacher/contacts/allContacts");
@@ -58,6 +61,7 @@ export default async function FacultyContactsPage({
     return (
       <section role="alert" className="min-w-0 space-y-3">
         <PageHeader title="Invalid directory filters" />
+        <p className="text-sm text-body">These filters could not be applied. No contact records were loaded.</p>
         <TextLink
           href={`/teacher/contacts/${contactsTab}`}
           className="inline-flex min-h-11 items-center md:min-h-9"
@@ -68,7 +72,6 @@ export default async function FacultyContactsPage({
     );
   }
   const { page, pageSize, search } = filters;
-  const context = await getCurrentRequestContext();
   const loaded = await listFacultyContacts(context, {
     tab: selected.value,
     search,
