@@ -25306,10 +25306,10 @@
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Projects / Templates → Projects / Workspaces (part 14)",
-        "status": "PICKED",
+        "status": "DOING",
         "pickedBy": "chat-ux-g041-workspace-20261108",
         "pickedAt": "2026-11-08T14:56:11.249Z",
-        "startedAt": null,
+        "startedAt": "2026-11-08T15:09:13.844Z",
         "completedAt": null,
         "sourceFiles": [
           "src/app/(authenticated)/college/projects/templates/[templateId]/error.tsx",
