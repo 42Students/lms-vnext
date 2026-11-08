@@ -16,6 +16,7 @@ on:
       - src/app/e2e/ux-g141-g155-study-shell/**
       - tests/unit/college-group-csv-preview.test.ts
       - tests/unit/ux-g141-g155-study-shell.test.ts
+      - tests/integration/college-group-csv-preview.test.ts
       - tests/e2e/ux-g141-g155-study-shell.spec.ts
       - .github/workflows/ux-study-shell-acceptance.yml
 
@@ -29,10 +30,28 @@ permissions:
 jobs:
   acceptance:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     env:
       NEXT_TELEMETRY_DISABLED: "1"
       UX_STUDY_SHELL_FIXTURE: "1"
+      APP_ENV: development
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      DB03_ISOLATED_TEST_DATABASE: "1"
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
@@ -56,6 +75,10 @@ jobs:
       - name: Unit and affected shared-callsite regressions
         run: |
           npx vitest run tests/unit/college-group-csv-preview.test.ts tests/unit/ux-g141-g155-study-shell.test.ts tests/unit/UX-group-import-preview-table-chat17.test.ts tests/unit/chat9-shell-notifications-auth-graceful.test.ts tests/unit/chat13-legacy-topbar-accessibility-contract.test.ts
+      - name: Prepare isolated browser and group authorization database
+        run: npm run db:e2e:prepare
+      - name: Real college/role group CSV integration boundaries
+        run: npx vitest run --config vitest.db.config.ts tests/integration/college-group-csv-preview.test.ts
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Actual desktop and mobile component browser acceptance
