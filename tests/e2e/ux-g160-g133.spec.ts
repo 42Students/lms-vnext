@@ -107,8 +107,14 @@ for (const viewport of viewports) {
    await confirm.getByRole("button",{name:"Sign out Other test browser"}).click();
    await expect(page.getByText("Your device list changed. Review the latest sessions.")).toBeVisible();
    expect(deviceDeletes).toBe(1);
+   // Stale-session recovery intentionally calls router.refresh(). Finish that
+   // transition before testing the independent sign-in form: otherwise a late
+   // server refresh can replace the client draft while the user types.
+   await page.reload({waitUntil:"domcontentloaded"});
    const login=page.locator('[data-ux-fixture="login"]');
-   await login.getByRole("textbox",{name:"Email"}).fill("test@example.com");
+   const email=login.getByRole("textbox",{name:"Email"});
+   await email.fill("test@example.com");
+   await expect(email).toHaveValue("test@example.com");
    await login.getByRole("button",{name:"Send code"}).click();
    await expect(login.getByRole("alert")).toContainText("Verification is temporarily blocked.");
    const retry=login.getByRole("button",{name:/Try again in 0:/});
