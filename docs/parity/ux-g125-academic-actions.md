@@ -1,6 +1,6 @@
 # UX-G125 — Academic interactive component recovery
 
-**Canonical status:** DOING in `docs/tracker.json#uxReview.groups`.
+**Canonical status:** DONE, with exact-SHA executed acceptance recorded in `docs/tracker.json#uxReview.groups`.
 **Scope:** 15 registered components under `src/components/academics/`.
 **Owner:** `chat-ux-academics-20261108`; branch `main`.
 
@@ -28,14 +28,14 @@ These files were checked against their current UI contracts and retained rather 
 - `college-section-lifecycle-action.tsx`: archive/restore and delete have separate confirmation dialogs, a synchronous in-flight guard released in `finally`, and per-dependency denial copy. No new component patch.
 - `college-structure-directory.tsx`: responsive directory filtering, schedule link, CSV export, paging and horizontal table region are present. No new component patch.
 - `college-term-mapping-manager.tsx`: course mapping mutations have an in-flight guard, stale-mapping handling, inline validation and accessible move controls. No new component patch.
-- `learner-class-schedule.tsx`: calendar view selector, next/previous period, course/section filtering, mobile day agenda and keyboard labels are present in source. No browser verification yet.
+- `learner-class-schedule.tsx`: calendar view selector, next/previous period, course/section filtering, mobile day agenda and keyboard labels are present in source; the authenticated learner calendar was also rendered in desktop/mobile Chromium.
 
 **Scope:** all 15 registered G125 component source files have been inspected; 10 received scoped UX changes and five were retained. This is implementation/source-review coverage only, not an acceptance or release percentage.
 
-## Evidence and remaining acceptance
+## Executed acceptance and closure
 
-- Authenticated desktop/mobile Playwright scenarios have been authored in `tests/e2e/ux-g125-academic-actions.spec.ts` for Batches, Semesters and learner Class Schedule, plus learner-denied college directory export. They are **not executed**, and screenshot paths only become proof after a successful run.
-
-- Regression source specifications: `tests/unit/ux-g125-academic-actions.test.ts`, including academic-year input edge cases and booking server validation.
-- No browser, mobile, keyboard/AT, CI, or deployed tenant test has been executed through this connector. All source files have been reviewed, but neither unchanged files nor code changes are certified without executed evidence.
-- Keep **DOING**, not DONE, until all 15 components are reviewed and executed tests, desktop/mobile browser proofs, regression/security review and exact-SHA evidence are attached to the canonical group.
+- **Verified revision:** `3480f64db2837dd8420d6e92f9dd32b6a275d77a`; [completed exact-SHA acceptance run](https://github.com/42Students/lms-vnext/actions/runs/42464009363) is **success**, including final canonical UX registry check.
+- **Source and regression:** scoped ESLint, full TypeScript, `npm run ux:groups -- --check` and 11/11 Vitest tests passed. The canonical tracker records the commands and run proof.
+- **Authenticated Chromium:** 16/16 browser cases passed at the above revision: Batches, Semesters, Academics, Classes, Lecture Halls, Batch Promotion and learner calendar at desktop 1280px and mobile 390px, a keyboard-focused creation form deep link, and Learner-denied batch export.
+- **Artifacts:** [desktop/mobile screenshots and exact revision receipt](https://github.com/42Students/lms-vnext/actions/runs/42464009363/artifacts/13611046251). This is scoped UX verification, not a claim that every legacy operation or the separate SECURITY programme is certified.
+- **Recorded closure:** [canonical tracker commit](https://github.com/42Students/lms-vnext/commit/152338c68b8327f68b1c97ed9811d757a7ecd63b), with successful test commands, responsive proof, regression and security review.
