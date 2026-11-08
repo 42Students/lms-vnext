@@ -85,10 +85,10 @@ describe("Public invite, share, marketing, privacy legacy gaps",()=>{
  it("PUB-auth-public-66 demo request has mailto action without collecting form data",()=>{
   const page=src("src/app/request-demo/page.tsx");
   expect(page).toContain("See 42 LMS in action");
-  expect(page).toContain("Email us to book a demo");
+  expect(src("src/components/marketing/demo-contact-actions.tsx")).toContain("Email us to book a demo");
   expect(page).toContain('const DEMO_EMAIL = "hello@42lms.com"');
   expect(page).toContain('const DEMO_MAILTO = "mailto:" + DEMO_EMAIL');
-  expect(page).toContain('<ButtonLink variant="secondary" href={DEMO_MAILTO}');
+  expect(page).toContain('mailtoHref={DEMO_MAILTO}');
   expect(page).not.toContain("<form");
  });
  it("PUB-auth-public-67 mobile privacy URL serves the historical policy with contact and effective date",()=>{

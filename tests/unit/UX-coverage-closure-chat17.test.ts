@@ -231,7 +231,7 @@ describe("chat-17 UX-coverage-closure-01 owned route contracts",()=>{
       expect(page).toContain("safeCompanyShareColumns");
       expect(page).toContain("getPublicCompanyApplicantShare");
       expect(page).toContain("<DataTable");
-      expect(page).toContain("index:false");
+      expect(page).toContain("index: false");
     }else if(route==="/e2e/superadmin-login"){
       expect(page).toContain('process.env.NODE_ENV === "development"');
       expect(page).toContain('isSuperAdmin(await getCurrentRequestContext())');
@@ -248,8 +248,8 @@ describe("chat-17 UX-coverage-closure-01 owned route contracts",()=>{
       expect(page).toContain("MarketingLayout");
       expect(page).toContain('const DEMO_EMAIL = "hello@42lms.com"');
       expect(page).toContain('const DEMO_MAILTO = "mailto:" + DEMO_EMAIL');
-      expect(page).toContain("href={DEMO_MAILTO}");
-      expect(page).toContain("Email us to book a demo");
+      expect(page).toContain("mailtoHref={DEMO_MAILTO}");
+      expect(read("src/components/marketing/demo-contact-actions.tsx")).toContain("Email us to book a demo");
     }else{
       expect(page).toContain("MarketingLayout");
       expect(page).toContain("MarketingHero");

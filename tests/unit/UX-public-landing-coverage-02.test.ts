@@ -20,12 +20,12 @@ describe("chat-16 public route responsive and accessible state coverage",()=>{
   const page=read("src/app/request-demo/page.tsx");
   expect(page).toContain("<MarketingLayout>");
   expect(page).toContain('const DEMO_MAILTO = "mailto:"');
-  expect(page).toContain('href={DEMO_MAILTO}');
-  // The demo action is the shared ButtonLink: touch height and focus ring come from Button.
-  expect(page).toContain('<ButtonLink variant="secondary" href={DEMO_MAILTO}');
+  expect(page).toContain('mailtoHref={DEMO_MAILTO}');
+  // The demo action is the shared ButtonLink inside DemoContactActions: touch height and focus ring come from Button.
+  expect(read("src/components/marketing/demo-contact-actions.tsx")).toContain('<ButtonLink variant="secondary" href={mailtoHref}');
   expect(read("src/components/ui/button.tsx")).toContain("max-md:min-h-11");
   expect(read("src/components/ui/button.tsx")).toContain("focus-ring");
-  expect(page).toContain("Email us to book a demo");
+  expect(read("src/components/marketing/demo-contact-actions.tsx")).toContain("Email us to book a demo");
   expect(page).not.toContain("<form");
   expect(page).not.toContain('method="post"');
  });
@@ -33,7 +33,7 @@ describe("chat-16 public route responsive and accessible state coverage",()=>{
   const page=read("src/app/forbidden/page.tsx");
   expect(page).toContain("<GracefulScreen");
   expect(page).toContain('homeHref="/dashboard"');
-  expect(page).toContain("contact your administrator");
+  expect(page).toContain("ask your administrator for access");
   expect(page).not.toContain("redirect(");
  });
  it("UX-company-share-token-02 retains selected-column filtering and nonleaking failure state",()=>{

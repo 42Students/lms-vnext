@@ -158,7 +158,7 @@ const pages=[
     "route": "/mentor/team-coverage",
     "file": "src/app/(authenticated)/mentor/team-coverage/page.tsx",
     "service": "getMentorTeamCoverage",
-    "state": "No currently assigned active projects"
+    "state": "No current project assignments"
   }
 ] as const;
 

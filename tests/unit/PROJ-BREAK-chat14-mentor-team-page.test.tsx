@@ -73,7 +73,7 @@ describe("PROJ-BREAK-MENTOR-70..75 rendered team coverage boundary and permissio
  });
  it("PROJ-BREAK-MENTOR-74 authorized empty and populated rosters distinguish real evidence",async()=>{
   const empty=await renderPage({});
-  expect(empty).toContain("No currently assigned active projects");
+  expect(empty).toContain("No current project assignments");
   expect(empty).toContain("No historical team");
   state.items=[{projectId,title:"Atlas",status:"ACTIVE",learners:5,mentors:2,hasPrimaryMentor:false}];
   state.projectCount=1;
