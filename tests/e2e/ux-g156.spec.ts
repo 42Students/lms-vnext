@@ -83,6 +83,7 @@ for(const viewport of screens){
   await ready(page);
   const section=page.locator('[data-ux-fixture="audit"]');
   await section.getByText("Saved audit views (0/12)").click();
+  await expect(section.locator('p[role="alert"]')).toHaveCount(1);
   await expect(section.getByText(/Could not load saved audit views/)).toBeVisible();
   await expect(section.getByRole("button",{name:"Save current"})).toBeDisabled();
   await capture(page,info,viewport.name+"-audit");
