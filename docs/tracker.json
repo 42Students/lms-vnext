@@ -20522,11 +20522,11 @@
         "type": "COMPONENT",
         "area": "groups",
         "title": "Groups · Interactive components (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-shell-study-management-20261107",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/components/groups/college-group-actions.tsx",
           "src/components/groups/college-group-import-preview.tsx",
@@ -20546,9 +20546,23 @@
             "browser": [],
             "regressionReview": "Source and focused unit/browser specifications committed; exact-SHA CI results, shared call-site checks and desktop/mobile browser screenshots require independent verification before DONE.",
             "securityReview": "No auth/RLS/backend permission loosening; CSV service still scopes college-admin permission to current membership and college. The synthetic browser route returns 404 unless development and explicit UX_STUDY_SHELL_FIXTURE=1."
+          },
+          {
+            "type": "ci",
+            "runId": 42448731499,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42448731499",
+            "conclusion": "success",
+            "commitSha": "67849be1dc15c9fe40df2817af754af9070a9b21",
+            "results": "Exact-checkout-SHA; scoped lint, full TypeScript; five unit suites/21 tests; real PostgreSQL college-group cross-tenant and role-safety 2 tests; 6/6 390px+1280px Chromium component scenarios."
+          },
+          {
+            "type": "browser",
+            "runId": 42448731499,
+            "artifactId": 13604673070,
+            "description": "Actual component UI 390x844 and 1280x800 screenshots, browser proof: create error/retry, membership dialog failure, CSV preview invalidation, learner bell deadline failure, menu focus and horizontal overflow. Synthetic development-only fixture, not live tenant session."
           }
         ],
-        "notes": "Scoped UX code, tests and path-triggered browser CI committed on main. Pending exact-SHA executed results, desktop/mobile screenshots, and same-college/role regression. docs/parity/ux-g141-g155-g175-2026-11-07.md"
+        "notes": "DONE scoped UX component/export surface acceptance: exact SHA 67849be1, run 42448731499 successful: lint, TypeScript, 21 unit, 2 real PostgreSQL college/role/scope integration, six desktop/mobile Chromium fixtures, screenshots in artifact 13604673070. Production permissions unchanged. Synthetic component browser alone is not production-login certification."
       },
       {
         "id": "UX-G142",
@@ -21141,11 +21155,11 @@
         "type": "COMPONENT",
         "area": "shell",
         "title": "Shell · Interactive components (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-shell-study-management-20261107",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/components/shell/learner-notification-bell.tsx",
           "src/components/shell/mobile-navigation.tsx",
@@ -21165,9 +21179,23 @@
             "browser": [],
             "regressionReview": "Source and focused unit/browser specifications committed; exact-SHA CI results, shared call-site checks and desktop/mobile browser screenshots require independent verification before DONE.",
             "securityReview": "No auth/RLS/backend permission loosening; CSV service still scopes college-admin permission to current membership and college. The synthetic browser route returns 404 unless development and explicit UX_STUDY_SHELL_FIXTURE=1."
+          },
+          {
+            "type": "ci",
+            "runId": 42448731499,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42448731499",
+            "conclusion": "success",
+            "commitSha": "67849be1dc15c9fe40df2817af754af9070a9b21",
+            "results": "Exact-checkout-SHA; scoped lint, full TypeScript; five unit suites/21 tests; real PostgreSQL college-group cross-tenant and role-safety 2 tests; 6/6 390px+1280px Chromium component scenarios."
+          },
+          {
+            "type": "browser",
+            "runId": 42448731499,
+            "artifactId": 13604673070,
+            "description": "Actual component UI 390x844 and 1280x800 screenshots, browser proof: create error/retry, membership dialog failure, CSV preview invalidation, learner bell deadline failure, menu focus and horizontal overflow. Synthetic development-only fixture, not live tenant session."
           }
         ],
-        "notes": "Scoped UX code, tests and path-triggered browser CI committed on main. Pending exact-SHA executed results, desktop/mobile screenshots, and same-college/role regression. docs/parity/ux-g141-g155-g175-2026-11-07.md"
+        "notes": "DONE scoped UX component/export surface acceptance: exact SHA 67849be1, run 42448731499 successful: lint, TypeScript, 21 unit, 2 real PostgreSQL college/role/scope integration, six desktop/mobile Chromium fixtures, screenshots in artifact 13604673070. Production permissions unchanged. Synthetic component browser alone is not production-login certification."
       },
       {
         "id": "UX-G156",
@@ -21987,11 +22015,11 @@
         "type": "OUTBOUND",
         "area": "groups",
         "title": "Groups · Outbound copy and exports (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "ux-shell-study-management-20261107",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/modules/groups/college-group-csv-preview-model.ts",
           "src/modules/groups/college-group-csv-preview-service.ts"
@@ -22009,9 +22037,23 @@
             "browser": [],
             "regressionReview": "Source and focused unit/browser specifications committed; exact-SHA CI results, shared call-site checks and desktop/mobile browser screenshots require independent verification before DONE.",
             "securityReview": "No auth/RLS/backend permission loosening; CSV service still scopes college-admin permission to current membership and college. The synthetic browser route returns 404 unless development and explicit UX_STUDY_SHELL_FIXTURE=1."
+          },
+          {
+            "type": "ci",
+            "runId": 42448731499,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42448731499",
+            "conclusion": "success",
+            "commitSha": "67849be1dc15c9fe40df2817af754af9070a9b21",
+            "results": "Exact-checkout-SHA; scoped lint, full TypeScript; five unit suites/21 tests; real PostgreSQL college-group cross-tenant and role-safety 2 tests; 6/6 390px+1280px Chromium component scenarios."
+          },
+          {
+            "type": "browser",
+            "runId": 42448731499,
+            "artifactId": 13604673070,
+            "description": "Actual component UI 390x844 and 1280x800 screenshots, browser proof: create error/retry, membership dialog failure, CSV preview invalidation, learner bell deadline failure, menu focus and horizontal overflow. Synthetic development-only fixture, not live tenant session."
           }
         ],
-        "notes": "Scoped UX code, tests and path-triggered browser CI committed on main. Pending exact-SHA executed results, desktop/mobile screenshots, and same-college/role regression. docs/parity/ux-g141-g155-g175-2026-11-07.md"
+        "notes": "DONE scoped UX component/export surface acceptance: exact SHA 67849be1, run 42448731499 successful: lint, TypeScript, 21 unit, 2 real PostgreSQL college/role/scope integration, six desktop/mobile Chromium fixtures, screenshots in artifact 13604673070. Production permissions unchanged. Synthetic component browser alone is not production-login certification."
       },
       {
         "id": "UX-G176",
