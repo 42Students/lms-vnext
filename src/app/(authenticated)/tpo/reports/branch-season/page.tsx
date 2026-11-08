@@ -12,6 +12,9 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatTile } from "@/components/ui/stat-tile";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { PlacementsServiceError } from "@/modules/placements/errors";
+import { tpoBranchSeasonQuerySchema } from "@/modules/placements/tpo-branch-season-model";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoBranchSeasonDashboard } from "@/modules/placements/tpo-branch-season-service";
 import { ButtonLink } from "@/components/ui/button-link";
@@ -29,10 +32,22 @@ export default async function TpoBranchSeasonPage({
   }
   const search = await searchParams;
   if (tpoReportHasAmbiguousFilters(search)) return <TpoReportInvalidFilters path="/tpo/reports/branch-season" />;
-  const seasonId = Array.isArray(search.seasonId) ? search.seasonId[0] : search.seasonId;
-  const dashboard = await getTpoBranchSeasonDashboard(
-    context, { ...(seasonId ? { seasonId } : {}) },
-  );
+  const seasonId = search.seasonId;
+  const parsed = tpoBranchSeasonQuerySchema.safeParse({ ...(seasonId ? { seasonId } : {}) });
+  if (!parsed.success) return <div className="min-w-0 space-y-4">
+    <PageHeader title="Branch by placement season" />
+    <ErrorState title="Invalid season filter" description="The season link is not valid. No branch report was loaded."
+      action={<ButtonLink variant="secondary" href="/tpo/reports/branch-season">Clear season filter</ButtonLink>} />
+  </div>;
+  const dashboard = await getTpoBranchSeasonDashboard(context, parsed.data).catch((error: unknown) => {
+    if (error instanceof PlacementsServiceError && error.code === "PLACEMENT_SEASON_NOT_FOUND") return null;
+    throw error;
+  });
+  if (!dashboard) return <div className="min-w-0 space-y-4">
+    <PageHeader title="Branch by placement season" />
+    <ErrorState title="Season no longer available" description="The selected season is not available for your current college. No branch report was loaded."
+      action={<ButtonLink variant="secondary" href="/tpo/reports/branch-season">Choose a current season</ButtonLink>} />
+  </div>;
   return (
     <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader
