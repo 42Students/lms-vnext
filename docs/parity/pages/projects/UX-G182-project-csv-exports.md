@@ -67,3 +67,10 @@ For DONE, require a successful exact-commit CI/test run, desktop and mobile brow
 - `6429344afd8af0548e4c40f7affe833916fd9179` adds regression cases for both multi-code-point script and emoji sequences at the truncation boundary.
 - [Exact-SHA acceptance run 42487701732](https://github.com/42Students/lms-vnext/actions/runs/42487701732) **SUCCEEDED** for that test commit: scope lint, full TypeScript, ten existing/focused unit suites, synthetic desktop/mobile browser downloads and anonymous endpoint denial.
 - **Group status remains DOING:** the 15 green Chromium scenarios still use intentionally synthetic development-only exports, not an OTP-authenticated positive export from a real tenant. Device step-up, role/tenant scoping, and positive user download remain mandatory; no test-mode auth bypass was added.
+
+
+## Genuine OTP/device browser acceptance added — 8 November 2026
+
+- [Browser spec](https://github.com/42Students/lms-vnext/blob/main/tests/e2e/ux-g182-real-device-exports.spec.ts) at commit `dca5552db7e38688db025e722b14a5ed5bda965d` signs in via **real first-party OTP start/verify** for the seeded Faculty+Mentor, selects the persisted college-A Mentor membership, and exercises five protected Mentor project CSV endpoints (calendar, task-review history, portfolio activity, review queue, project activity) at desktop 1280×800 and mobile 390×844.
+- [Dedicated PG17/Chromium CI](https://github.com/42Students/lms-vnext/actions/runs/42489661370) at `80dc3ef76f612c9e1cde6748a999870a84b0303a` uses an isolated seeded Mentor project, randomized development-only allowlisted OTP, actual server-issued device cookie, real browser file download, CSV bytes and header checks, and a second college/role denial. It does not configure a production OTP override or an E2E impersonation to satisfy device authentication.
+- **This is an authored and triggered acceptance gate, not a pass claim.** Record its exact-SHA conclusion and screenshot artifact. Only then evaluate full DONE criteria alongside the existing successful seven-serializer synthetic and unit regression run; canonical status stays DOING meanwhile.
