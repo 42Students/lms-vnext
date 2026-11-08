@@ -26,3 +26,10 @@ These changes do not add privileged API access, weaken CSRF/origin checks, chang
 6. Confirm and link desktop/mobile capture paths plus regression/security reviews in the canonical `uxReview.groups[UX-G149].evidence` record; only then transition DOING to DONE.
 
 No browser or exact-SHA end-to-end pass is asserted by this document.
+
+## Additional interactive acceptance package — 8 November 2026
+
+- Development-only `/e2e/ux-g149-placement-recovery` mounts the **real** three TPO components with synthetic applicants/offer previews/future calendar dates. It returns not-found outside development or unless `UX_G149_PLACEMENT_FIXTURE=1`. No source code weakens any server-side guard, role or tenant membership.
+- `tests/e2e/ux-g149-tpo-placement-recovery.spec.ts` exercises seven browser scenarios: partial 101-row import (100 confirmed, second POST unknown, no duplicate retry), confirmation cancellation, stale waitlist release with preserved preview token and fail-closed UI, slow calendar lead response supersession after a new hour, mobile and desktop no-overflow, and anonymous POST denial at protected endpoints. All mutating calls from the fixture are intercepted and responses controlled; this does not send a real offer.
+- `.github/workflows/ux-g149-placement-recovery-acceptance.yml` adds exact-source SHA, scoped lint, whole-project TypeScript, both source-safety suites, existing placements regression and seven Chromium scenarios with saved responsive screenshots and failure traces.
+- Status stays **DOING** pending an actual green job, authenticated TPO + foreign-college/learner server-policy checks, an end-to-end accepted mutation in a disposable scoped DB, and keyboard/refresh visual review. A synthetic mocked browser proof alone cannot close these transaction-sensitive placement surfaces.
