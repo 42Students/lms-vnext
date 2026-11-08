@@ -21,9 +21,17 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
   const [date,setDate]=useState(""),[from,setFrom]=useState("09:00"),[to,setTo]=useState("10:00");
   const [title,setTitle]=useState("Class session"),[error,setError]=useState(""),[notice,setNotice]=useState("");
   const selected=classes.find(row=>row.id===sectionId);
+  const invalidWindow=Boolean(from && to && to<=from);
+  const invalidDate=Boolean(date && selected &&
+    (date<selected.periodStart || date>selected.periodEnd));
   async function submit(event:FormEvent<HTMLFormElement>){
     event.preventDefault();
     if(!selected||pendingRef.current||pending)return;
+    if(invalidWindow||invalidDate){
+      setError(invalidWindow ? "End time must be after start time." :
+        "Choose a date within the selected class academic period.");
+      return;
+    }
     if(!(await askConfirm("Book this class session? All hall, class and Faculty overlaps will be rechecked.")))return;
     if(pendingRef.current)return;
     pendingRef.current=true;
@@ -49,7 +57,9 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
     {classes.length===0?<p role="status">No active classes are available for booking.</p>:
       <form onSubmit={submit} className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
         <Label stack>Class
-          <Select className={field} required value={sectionId} onChange={e=>setSectionId(e.target.value)}>
+          <Select className={field} required value={sectionId} onChange={e=>{
+            setSectionId(e.target.value);setDate("");setError("");setNotice("");
+          }}>
             <option value="">Select class</option>
             {classes.map(c=><option key={c.id} value={c.id}>{c.name} · {c.cohortName}</option>)}
           </Select></Label>
@@ -66,8 +76,10 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
           <DateInput className={field} required mode="time" value={from} onChange={e=>setFrom(e.target.value)}/></Label>
         <Label stack>Ends (IST)
           <DateInput className={field} required mode="time" value={to} onChange={e=>setTo(e.target.value)}/></Label>
+        {invalidWindow?<p role="alert" className="text-sm text-error md:col-span-2 lg:col-span-3">End time must be after start time.</p>:null}
+        {invalidDate?<p role="alert" className="text-sm text-error md:col-span-2 lg:col-span-3">Choose a date within the selected class academic period.</p>:null}
         <div className="md:col-span-2 lg:col-span-3">
-          <Button variant="primary" type="submit" loading={pending} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||!sectionId||!title.trim()}>
+          <Button variant="primary" type="submit" loading={pending} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||!sectionId||!date||!title.trim()||invalidWindow||invalidDate}>
             {pending?"Booking…":"Confirm booking"}</Button>
         </div>
       </form>}

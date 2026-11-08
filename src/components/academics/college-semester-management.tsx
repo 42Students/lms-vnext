@@ -265,6 +265,8 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
         const message = academicSetupErrorMessage(error, SEMESTER_COPY.deleteFailed);
         setDeleteError(message);
         showToast({ tone: "error", title: message });
+      } finally {
+        deleteInFlight.current = false;
       }
     });
   }

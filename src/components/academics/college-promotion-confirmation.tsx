@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
 import { useToast } from "@/components/ui/toast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useRouter } from "next/navigation";
-import { formatPromotionAcademicYear, promotionAcademicYearError } from "@/modules/academics/college-batch-promotion-model";
+import { formatPromotionAcademicYear, parsePromotionAcademicYear, promotionAcademicYearError } from "@/modules/academics/college-batch-promotion-model";
 import { BATCH_PROMOTION_COPY, promotionImpactMessage } from "@/modules/academics/college-batch-promotion-copy";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import { Label } from "@/components/ui/label";
@@ -37,6 +37,7 @@ export function CollegePromotionConfirmation({
   const [yearError,setYearError]=useState("");
   const yearChanged=yearValue!==initialYear;
   const [pending, startTransition] = useTransition();
+  const submitInFlight = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -47,8 +48,7 @@ export function CollegePromotionConfirmation({
   }
   function updatePreview(){
     if(pending)return;
-    const matched=/^(\\d{4})-(\\d{2})$/.exec(yearValue.trim());
-    if(!matched||Number(matched[2])!==(Number(matched[1])+1)%100){
+    if(parsePromotionAcademicYear(yearValue.trim()) === null){
       setYearError(promotionAcademicYearError);return;
     }
     const params=new URLSearchParams(window.location.search);
@@ -58,7 +58,8 @@ export function CollegePromotionConfirmation({
     router.push(window.location.pathname+"?"+params.toString());
   }
   function submit() {
-    if (pending || yearChanged) return;
+    if (pending || yearChanged || submitInFlight.current) return;
+    submitInFlight.current = true;
     startTransition(async () => {
       setError(null);
       setSuccess(null);
@@ -105,6 +106,8 @@ export function CollegePromotionConfirmation({
             ? "The batch is not ready to promote. Refresh the preview to review blockers."
             : academicSetupErrorMessage(cause, "Refresh the promotion preview and try again.");
         setError(message);
+      } finally {
+        submitInFlight.current = false;
       }
     });
   }

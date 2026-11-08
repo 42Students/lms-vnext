@@ -6,7 +6,7 @@ import { Select } from "@/components/ui/select";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState, useTransition, type FormEvent } from "react";
+import { useEffect, useRef, useState, useTransition, type FormEvent } from "react";
 import {useRouter} from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -85,6 +85,8 @@ export function CollegeRecurringPreview({
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState("");
   const [pending, startTransition] = useTransition();
+  const previewInFlight=useRef(false);
+  const executeInFlight=useRef(false);
   const [confirming, setConfirming] = useState(false);
   const selected = classes.find((item) => item.id === sectionId);
   const previewChanged = Boolean(result && lastPreviewKey !== previewKey());
@@ -104,7 +106,8 @@ export function CollegeRecurringPreview({
   function preview(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setDirty(true);
-    if (pending || invalidRange) return;
+    if (pending || invalidRange || previewInFlight.current) return;
+    previewInFlight.current = true;
     setError("");
     setResult(null);
     setCreated(null);
@@ -123,6 +126,8 @@ export function CollegeRecurringPreview({
         setLastPreviewKey(previewKey());
       } catch (err) {
         setError(err instanceof Error ? err.message : "Schedule preview failed");
+      } finally {
+        previewInFlight.current = false;
       }
     });
   }
@@ -135,7 +140,7 @@ export function CollegeRecurringPreview({
     setConfirming(true);
   }
   function confirmExecute() {
-    if (pending) return;
+    if (pending || executeInFlight.current) return;
     setConfirming(false);
     const version = selected?.updatedAt;
     if (!version || !result || result.ready===0) return;
@@ -143,6 +148,7 @@ export function CollegeRecurringPreview({
       setError("Schedule fields changed since the preview. Preview this pattern again before saving.");
       return;
     }
+    executeInFlight.current = true;
     setError("");
     setCreated(null);
     setSkipped([]);
@@ -167,6 +173,8 @@ export function CollegeRecurringPreview({
         setLastPreviewKey("");
       } catch (reason) {
         setError(reason instanceof Error ? reason.message : "Scheduling failed");
+      } finally {
+        executeInFlight.current = false;
       }
     });
   }
