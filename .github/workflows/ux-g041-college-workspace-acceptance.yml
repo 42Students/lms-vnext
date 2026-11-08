@@ -7,6 +7,9 @@ on:
     paths:
       - 'src/app/(authenticated)/college/projects/create/page.tsx'
       - 'src/app/(authenticated)/college/projects/workspaces/new/page.tsx'
+      - 'src/app/(authenticated)/college/projects/workspaces/page.tsx'
+      - 'src/app/(authenticated)/college/projects/workspaces/new/error.tsx'
+      - 'src/modules/projects/legacy-college-workspaces-list-query.ts'
       - 'src/modules/projects/legacy-class-workspace-create-query.ts'
       - 'tests/unit/ux-g041-college-class-workspace-handoff.test.ts'
       - 'tests/e2e/ux-g041-college-workspace-handoff.spec.ts'
@@ -57,6 +60,9 @@ jobs:
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           npx eslint 'src/app/(authenticated)/college/projects/create/page.tsx' \
             'src/app/(authenticated)/college/projects/workspaces/new/page.tsx' \
+            'src/app/(authenticated)/college/projects/workspaces/page.tsx' \
+            'src/app/(authenticated)/college/projects/workspaces/new/error.tsx' \
+            src/modules/projects/legacy-college-workspaces-list-query.ts \
             src/modules/projects/legacy-class-workspace-create-query.ts \
             tests/unit/ux-g041-college-class-workspace-handoff.test.ts \
             tests/e2e/ux-g041-college-workspace-handoff.spec.ts
@@ -80,7 +86,7 @@ jobs:
       - name: Authenticated desktop and mobile browser acceptance
         run: |
           npx playwright test tests/e2e/ux-g041-college-workspace-handoff.spec.ts --project=chromium --reporter=line,json
-          node -e 'const s=require("./ux-g041-college-results.json").stats;if(s.expected!==6||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
+          node -e 'const s=require("./ux-g041-college-results.json").stats;if(s.expected!==8||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
       - name: Preserve browser screenshots and traces
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
