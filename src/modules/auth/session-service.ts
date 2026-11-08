@@ -4,6 +4,7 @@ import { sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { getAuthConfig } from "./config";
 import { generateToken, sessionDigest } from "./crypto";
+import { recordSecurityEvent } from "@/security/audit-store";
 
 /**
  * First-party device sessions. The browser keeps an opaque 256-bit token; the
@@ -76,16 +77,38 @@ export async function createSession(
   const token = generateToken();
   const digest = sessionDigest(config.secret, token);
 
-  await getDb().execute(sql`
-    INSERT INTO identity_device_sessions (
-      user_id, credential_digest, device_name, user_agent, ip_address,
-      created_at, last_seen_at, expires_at
-    ) VALUES (
-      ${userId}, ${digest}, ${clip(meta.deviceName, 255)},
-      ${clip(meta.userAgent, 512)}, ${clip(meta.ipAddress, 64)},
-      now(), now(), now() + make_interval(secs => ${config.sessionMaxAgeSeconds})
+  const deviceName = clip(meta.deviceName, 255);
+  const userAgent = clip(meta.userAgent, 512);
+  // One statement: the prior-session counts come from the snapshot before the insert, so the new row never
+  // counts as its own "known device". A user with earlier sessions and none from this device name + agent
+  // is signing in from a new device (SEC-02-011).
+  const result = await getDb().execute(sql`
+    WITH prior AS (
+      SELECT count(*)::int AS total,
+             count(*) FILTER (
+               WHERE device_name IS NOT DISTINCT FROM ${deviceName}
+                 AND user_agent IS NOT DISTINCT FROM ${userAgent}
+             )::int AS same_device
+        FROM identity_device_sessions
+       WHERE user_id = ${userId}
+    ), created AS (
+      INSERT INTO identity_device_sessions (
+        user_id, credential_digest, device_name, user_agent, ip_address,
+        created_at, last_seen_at, expires_at
+      ) VALUES (
+        ${userId}, ${digest}, ${deviceName},
+        ${userAgent}, ${clip(meta.ipAddress, 64)},
+        now(), now(), now() + make_interval(secs => ${config.sessionMaxAgeSeconds})
+      )
+      RETURNING 1
     )
+    SELECT prior.total, prior.same_device FROM prior, created
   `);
+  const prior = (result as { rows?: Array<{ total?: unknown; same_device?: unknown }> } | undefined)?.rows?.[0];
+  if (Number(prior?.total ?? 0) > 0 && Number(prior?.same_device ?? 0) === 0) {
+    // Never the raw address or agent string: a short device label only.
+    recordSecurityEvent({ event: "auth.new_device", outcome: "ok", userId, detail: { deviceName: deviceName ?? "unknown" } });
+  }
 
   return { token, maxAgeSeconds: config.sessionMaxAgeSeconds };
 }
