@@ -51,6 +51,14 @@ describe("UX-G161 finding editor recovery contract",()=>{
   expect(panel).toContain('if (pending || needsRefresh || mutationLock.current) return false');
   expect(panel).toContain('expectedVersion:issue.version');
  });
+ it("resyncs known-error issue links and clears successful action-only drafts",()=>{
+  const known=source("known-errors-workspace.tsx");
+  expect(known).toContain('useEffect(() => { setIssuePublicId(item.issuePublicId ?? ""); }, [item.id, item.issuePublicId]);');
+  expect(known).toContain('setNote("");');
+  expect(known).toContain('setMuteReason("");');
+  expect(known).toContain('setCommit("");');
+  expect(known).toContain('await apiFetch("/api/tracker/logs/known-errors/" + item.id');
+ });
  it("keeps server version checking and mutation confirmation intact",()=>{
   const actions=source("independent-finding-actions.tsx");
   expect(actions).toContain('expectedVersion:version');
