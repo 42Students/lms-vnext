@@ -33,9 +33,15 @@ for (const size of sizes) {
 
       await page.goto("/mentor/team-coverage?filter=NO_LEARNERS&search=UX_NO_MATCH_TEST");
       await expect(page.getByRole("heading", { name: "Team coverage" })).toBeVisible();
+      // Filters are intentionally in a modal drawer below 768px; exercise the real mobile affordance.
+      if (size.name === "mobile") {
+        await page.locator('[data-slot="filter-bar"]').getByRole("button", { name: /^Filters/ }).click();
+        await expect(page.getByRole("dialog", { name: "Filters" })).toBeVisible();
+      }
       const coverageFilter = page.getByRole("search", { name: "mentor team coverage filters" });
       await expect(coverageFilter.getByRole("button", { name: "Apply filters" })).toBeVisible();
       await expect(coverageFilter.getByRole("link", { name: "Clear filters" })).toHaveAttribute("href", "/mentor/team-coverage");
+      if (size.name === "mobile") await page.getByRole("button", { name: "Close drawer" }).click();
       await expect(page.getByRole("status").filter({hasText:/No projects match the current filters|No current assigned projects/}).first()).toBeVisible();
       await noOverflow(page);
       await page.goto("/mentor/team-coverage?status=INVALID");
