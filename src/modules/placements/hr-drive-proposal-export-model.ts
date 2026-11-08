@@ -10,5 +10,5 @@ export function hrDriveProposalHistoryCsv(rows:readonly HrProposalCsvRow[]){
   row.referenceId,row.title,Number.isFinite(row.createdAt.getTime())
    ?row.createdAt.toISOString():"","DISCUSSION_ONLY",
  ]);
- return [columns.map(csvCell).join(","),...body.map(row=>row.map(csvCell).join(","))].join("\r\n")+"\r\n";
+ return "\uFEFF"+[columns.map(csvCell).join(","),...body.map(row=>row.map(csvCell).join(","))].join("\r\n")+"\r\n";
 }
