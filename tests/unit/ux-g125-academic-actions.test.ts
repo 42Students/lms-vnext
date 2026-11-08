@@ -90,3 +90,19 @@ describe("UX-G125 cohort write and retry safety", () => {
     expect(component).toContain('if(pending||mutationInFlight.current||row.status!=="PLANNED")return;');
   });
 });
+
+
+describe("UX-G125 academic empty-state navigation", () => {
+  it("opens the linked creation disclosure and restores keyboard focus", () => {
+    const component=source("src/components/academics/academics-create-panel.tsx");
+    const overview=source("src/components/academics/academics-overview.tsx");
+    for(const id of ["period","program","cohort","section"]){
+      expect(overview).toContain(`#academic-create-${id}`);
+      expect(component).toContain(`id="academic-create-${id}"`);
+    }
+    expect(component).toContain('window.addEventListener("hashchange",revealLinkedForm)');
+    expect(component).toContain("panel.open=true");
+    expect(component).toContain('panel.querySelector("summary")?.focus()');
+    expect(component).toContain('window.removeEventListener("hashchange",revealLinkedForm)');
+  });
+});
