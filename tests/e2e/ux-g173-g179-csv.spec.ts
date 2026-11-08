@@ -26,8 +26,12 @@ const unsafe="\u093E=HYPERLINK(1,2)";
 for(const viewport of [
  {name:"desktop",width:1280,height:800},
  {name:"mobile",width:390,height:844},
+] as const) for(const batch of [
+ {name:"course-and-calendar",start:0,end:5},
+ {name:"recruiter-reports",start:5,end:10},
+ {name:"team-and-audit",start:10,end:14},
 ] as const) {
- test("UX-G173/G179 "+viewport.name+" downloads fourteen legible CSV fixtures",async({page},testInfo)=>{
+ test("UX-G173/G179 "+viewport.name+" "+batch.name+" downloads",async({page},testInfo)=>{
   test.setTimeout(120_000);
   await page.setViewportSize({width:viewport.width,height:viewport.height});
   const pageErrors:string[]=[];
@@ -40,7 +44,7 @@ for(const viewport of [
   await expect(page.getByText("No live college, learner or recruiter data.",
     {exact:false})).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport.width+1);
-  for(const [title,filename,requiresBom] of exportsToCheck){
+  for(const [title,filename,requiresBom] of exportsToCheck.slice(batch.start,batch.end)){
    const card=page.getByRole("heading",{name:title}).locator("..");
    const action=card.getByRole("button",{name:"Download sample CSV"});
    await expect(action).toHaveAttribute("data-filename",filename);
@@ -64,7 +68,7 @@ for(const viewport of [
    if(filename==="recruiter-applicants.csv")
     expect(csv).not.toContain("private@example.invalid");
   }
-  await page.screenshot({path:testInfo.outputPath("ux-g173-g179-"+viewport.name+".png"),fullPage:true});
+  await page.screenshot({path:testInfo.outputPath("ux-g173-g179-"+viewport.name+"-"+batch.name+".png"),fullPage:true});
   expect(pageErrors).toEqual([]);
  });
 }
