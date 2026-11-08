@@ -102,7 +102,7 @@ test.describe("UX-G071 five persisted Mentor review route families",()=>{
         "/deliveries/00000000-0000-4000-8000-000000000099/review",
         "/meetings/00000000-0000-4000-8000-000000000099/notes",
       ]){
-        const res=await page.request.get("/mentor/projects/"+id+suffix);
+        const res=await page.request.get("/mentor/projects/"+id+suffix,{maxRedirects:0});
         expect([302,303,307,308,401,403,404],suffix).toContain(res.status());
         expect(await res.text()).not.toContain("Persisted completion checklist");
       }
