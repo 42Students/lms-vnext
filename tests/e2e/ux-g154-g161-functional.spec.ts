@@ -46,8 +46,7 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
     await page.getByRole("textbox",{name:"Reporter"}).fill("Seed Superadmin");
     await page.getByLabel("Account used").selectOption("SUPER_ADMIN");
     await page.getByLabel("Environment").selectOption("DEVELOPMENT");
-    await page.getByLabel("Page",{exact:true}).selectOption("Dashboard");
-    await page.getByLabel("Screen").selectOption("Overview");
+    // The native selects live inside nested Label components whose accessible\n    // names include the option labels. Scope by the named fieldset instead of\n    // waiting for a non-existent exact \"Page\" accessible name.\n    const locationFields = page.getByRole("group",{name:"Where did this happen?"}).locator("select");\n    await locationFields.nth(0).selectOption("Dashboard");\n    await locationFields.nth(1).selectOption("Overview");
     await page.getByLabel("What kind of issue?").selectOption("UI / Alignment");
     await page.getByLabel("What went wrong?").fill("E2E UX acceptance: navigation label did not fit at mobile width.");
 
