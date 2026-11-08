@@ -59,6 +59,18 @@ describe("UX-G161 finding editor recovery contract",()=>{
   expect(known).toContain('setCommit("");');
   expect(known).toContain('await apiFetch("/api/tracker/logs/known-errors/" + item.id');
  });
+ it("quarantines ambiguous network and provider outcomes until fresh revisions",()=>{
+  const triage=source("audit-finding-status-action.tsx");
+  expect(triage).toContain("setStale(true);");
+  expect(triage).toContain("The outcome could not be confirmed. Refresh the finding before retrying.");
+  const actions=source("independent-finding-actions.tsx");
+  expect(actions).toContain("if(reason.status>=500)setStale(true);");
+  expect(actions).toContain("The result could not be confirmed. Refresh this finding before trying again.");
+  const panel=source("tracker-workflow-panel.tsx");
+  expect((panel.match(/reason.status>=500/g)??[]).toHaveLength(3);
+  expect(panel).toContain("setNeedsRefresh(true);");
+  expect(panel).toContain("router.refresh();");
+ });
  it("keeps server version checking and mutation confirmation intact",()=>{
   const actions=source("independent-finding-actions.tsx");
   expect(actions).toContain('expectedVersion:version');
