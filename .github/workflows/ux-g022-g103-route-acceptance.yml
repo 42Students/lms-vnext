@@ -14,6 +14,7 @@ on:
       - 'src/app/(authenticated)/tpo/home/**'
       - 'tests/unit/ux-g022-g103-route-recovery.test.ts'
       - 'tests/e2e/ux-g022-g103-route-recovery.spec.ts'
+      - 'scripts/seed-test-tenants.ts'
       - '.github/workflows/ux-g022-g103-route-acceptance.yml'
 
 concurrency:
@@ -82,6 +83,10 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Prepare disposable E2E PostgreSQL
         run: npm run db:e2e:prepare
+      - name: Seed real TPO, Mentor, and cross-college test memberships
+        env:
+          ALLOW_TEST_SEED: I_ACCEPT
+        run: npx tsx scripts/seed-test-tenants.ts
       - name: Ephemeral role-auth secrets
         shell: bash
         run: |

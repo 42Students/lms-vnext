@@ -10,6 +10,7 @@ on:
       - src/app/(authenticated)/teach/courses/**
       - src/app/(authenticated)/tpo/team/everyone/**
       - src/app/(authenticated)/tpo/verification/**
+      - scripts/seed-test-tenants.ts
       - tests/e2e/ux-mentor-teach-tpo-groups.spec.ts
       - .github/workflows/ux-mentor-teach-tpo-acceptance.yml
 

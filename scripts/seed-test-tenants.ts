@@ -107,7 +107,7 @@ export const TEST_ACCOUNTS: Account[] = [
   },
   {
     label: "Shared Faculty (both colleges)",
-    phone: "+919100061401",
+    phone: "+919100061402",
     email: "faculty.shared@vnext.test",
     name: "Test Shared Faculty",
     memberships: { a: ["FACULTY"], b: ["FACULTY"] },
@@ -139,6 +139,14 @@ async function main() {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL is required");
 
+  // Each fixture represents a separate person; duplicate phone identities cause
+  // incorrect cross-role sharing and violate users_identity_uid_unique.
+  const fixturePhones = TEST_ACCOUNTS.map(account => account.phone);
+  const fixtureEmails = TEST_ACCOUNTS.map(account => account.email.toLowerCase());
+  if (new Set(fixturePhones).size !== fixturePhones.length ||
+      new Set(fixtureEmails).size !== fixtureEmails.length) {
+    throw new Error("Test seed accounts must use unique phone and email identities");
+  }
   const client = new Client({ connectionString: url });
   await client.connect();
 
