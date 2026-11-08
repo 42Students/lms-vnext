@@ -20329,11 +20329,11 @@
         "type": "COMPONENT",
         "area": "announcements",
         "title": "Announcements · Interactive components (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-announcements-verification-20261107",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/components/announcements/announcement-admin-workspace.tsx",
           "src/components/announcements/super-admin-college-broadcast-form.tsx"
@@ -20343,7 +20343,41 @@
           "OVERLAY-0041"
         ],
         "newRouteOnly": [],
-        "evidence": [],
+        "evidence": [
+          {
+            "commitSha": "b68d6e007c3e989bf56ca071efa222eee1c33b4d",
+            "parityDoc": "docs/parity/pages/shared/UX-G131-G162-G183.md",
+            "tests": [
+              {
+                "command": "Scoped ESLint of G131/G162/G183 sources and acceptance tests; npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42450135038 — both green in focused-evidence job"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g131-g162-g183-acceptance.test.ts tests/unit/chat12-verification-round2.test.ts tests/unit/chat5-requests-sequential-notices.test.ts tests/unit/super-admin-broadcast-ui.test.ts tests/unit/chat4-college-verification-misc-gap-closure.test.ts --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42450135038 — 38/38 tests across 5 files"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g131-g162-verification-announcements.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42450135038 — 5/5 authenticated scenarios, seeded ephemeral PostgreSQL"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42450135038/artifacts/13605481524 — ux-g131-announcements-desktop.png keyboard form and cancel publication"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42450135038/artifacts/13605481524 — ux-g131-announcements-mobile.png broadcast search/selection"
+              }
+            ],
+            "regressionReview": "Executed exact-SHA scoped lint/typecheck, 38 regression unit tests and 5 authenticated PostgreSQL-backed Chromium checks including learner role denial; screenshots archived. General Next.js hydration attribute warning logged without test failure; whole-app release regression remains a separate gate.",
+            "securityReview": "Server still authorizes announcement publication, limits recipient IDs to verified offered colleges, protects version and audience consent; keyboard and mobile browser journeys confirmed without submitting a live broadcast."
+          }
+        ],
         "notes": "Source implementation and regression tests committed on main (native keyboard forms, audience and confirmation, capped selection). Scoped acceptance workflow ux-g131-g162-g183; run 42396989946 failed on unrelated global TypeScript HR loading shape errors, subsequently repaired. Current run 42397969147 pending. Remains DOING until exact-SHA unit+browser evidence. See docs/parity/pages/shared/UX-G131-G162-G183.md."
       },
       {
@@ -21655,11 +21689,11 @@
         "type": "COMPONENT",
         "area": "verification",
         "title": "Verification · Interactive components (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-announcements-verification-20261107",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/components/verification/SuperAdminVerificationPanel.tsx",
           "src/components/verification/TpoVerificationPanel.tsx",
@@ -21673,7 +21707,41 @@
           "OVERLAY-0207"
         ],
         "newRouteOnly": [],
-        "evidence": [],
+        "evidence": [
+          {
+            "commitSha": "b68d6e007c3e989bf56ca071efa222eee1c33b4d",
+            "parityDoc": "docs/parity/pages/shared/UX-G131-G162-G183.md",
+            "tests": [
+              {
+                "command": "Scoped ESLint of G131/G162/G183 sources and acceptance tests; npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42450135038 — both green in focused-evidence job"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g131-g162-g183-acceptance.test.ts tests/unit/chat12-verification-round2.test.ts tests/unit/chat5-requests-sequential-notices.test.ts tests/unit/super-admin-broadcast-ui.test.ts tests/unit/chat4-college-verification-misc-gap-closure.test.ts --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42450135038 — 38/38 tests across 5 files"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g131-g162-verification-announcements.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42450135038 — 5/5 authenticated scenarios, seeded ephemeral PostgreSQL"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42450135038/artifacts/13605481524 — ux-g162-admin-verification-desktop.png page-scoped queue"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42450135038/artifacts/13605481524 — ux-g162-admin-verification-mobile.png and ux-g162-tpo-verification-mobile.png"
+              }
+            ],
+            "regressionReview": "Executed exact-SHA scoped lint/typecheck, 38 regression unit tests and 5 authenticated PostgreSQL-backed Chromium checks including learner role denial; screenshots archived. General Next.js hydration attribute warning logged without test failure; whole-app release regression remains a separate gate.",
+            "securityReview": "Existing guarded verification actions/role checks remain; scoped Super Admin/TPO browser journeys verified against seeded PostgreSQL; learner forbidden-case passed. No private document authority broadened."
+          }
+        ],
         "notes": "Source implementation plus retryable verification drawer load-failure fix commit 2dcb0b69; strict unit regression commit b75c5ee9. Scoped acceptance 42397969147 queued. Prior run 42396989946 failed global TypeScript HR loading, now fixed. Remains DOING pending unit, browser, private-data negative checks. See docs/parity/pages/shared/UX-G131-G162-G183.md."
       },
       {
@@ -22661,11 +22729,11 @@
         "type": "OUTBOUND",
         "area": "verification",
         "title": "Verification · Outbound copy and exports (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-announcements-verification-20261107",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/modules/verification/notification-copy.ts",
           "src/modules/verification/staff-export-service.ts"
@@ -22675,7 +22743,41 @@
           "MESSAGE-0115"
         ],
         "newRouteOnly": [],
-        "evidence": [],
+        "evidence": [
+          {
+            "commitSha": "b68d6e007c3e989bf56ca071efa222eee1c33b4d",
+            "parityDoc": "docs/parity/pages/shared/UX-G131-G162-G183.md",
+            "tests": [
+              {
+                "command": "Scoped ESLint of G131/G162/G183 sources and acceptance tests; npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42450135038 — both green in focused-evidence job"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g131-g162-g183-acceptance.test.ts tests/unit/chat12-verification-round2.test.ts tests/unit/chat5-requests-sequential-notices.test.ts tests/unit/super-admin-broadcast-ui.test.ts tests/unit/chat4-college-verification-misc-gap-closure.test.ts --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42450135038 — 38/38 tests across 5 files"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g131-g162-verification-announcements.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42450135038 — 5/5 authenticated scenarios, seeded ephemeral PostgreSQL"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42450135038/artifacts/13605481524 — verified workflow screenshot of scoped verification queue; G183 CSV and notification content independently unit-tested, not browser-downloaded"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42450135038/artifacts/13605481524 — mobile verification workflow screenshot; no separate CSV browser download claimed"
+              }
+            ],
+            "regressionReview": "Executed exact-SHA scoped lint/typecheck, 38 regression unit tests and 5 authenticated PostgreSQL-backed Chromium checks including learner role denial; screenshots archived. General Next.js hydration attribute warning logged without test failure; whole-app release regression remains a separate gate.",
+            "securityReview": "Export is college-scoped by membership/authorization in unchanged service policy; reviewedBy uses decidedByName; CSV formula injection escaped; unit tests verified notification text. Browser screenshot is contextual, not proof of CSV download."
+          }
+        ],
         "notes": "Source notification punctuation and reviewer-name CSV export committed; formula safety regression test added e00aec2d4. Scoped acceptance 42397969147 queued. No new private fields; existing tenant-scoped query preserved. Remains DOING pending executed tests and browser evidence. See docs/parity/pages/shared/UX-G131-G162-G183.md."
       },
       {
