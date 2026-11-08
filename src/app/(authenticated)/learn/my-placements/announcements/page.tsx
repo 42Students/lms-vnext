@@ -119,7 +119,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         {ready && (!collegeNoticesRead.available || !receiptsRead.available ||
           !personalAlerts.available || !unreadCount.available) ? (
           <Banner tone="error" role="alert" className="mt-2" action={
-            <TextLink href="/learn/my-placements/announcements"
+            <TextLink href={tabHref(activeView)}
               className="inline-flex min-h-9 items-center">Retry</TextLink>
           }>Couldn&apos;t load everything. The available notices are shown below.</Banner>
         ) : null}
