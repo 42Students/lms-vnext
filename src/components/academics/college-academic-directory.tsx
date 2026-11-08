@@ -279,9 +279,9 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
            {hasFilters ? <TextLink href={path}
              className="inline-flex min-h-11 items-center">
              Clear filters and view all {title.toLowerCase()}</TextLink> :
-             <TextLink href="/college/programs"
+             <TextLink href={semesters ? "#college-semester-create" : "#college-batch-create"}
                className="inline-flex min-h-11 items-center">
-               Go to Programs</TextLink>}
+               {semesters ? "Create semester" : "Create batch"}</TextLink>}
           </div>
         ) : (
           <>{data.kind === "SEMESTERS" ? (
@@ -316,7 +316,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
               mobileMode="scroll"
               rows={data.items}
               getRowKey={item=>item.id}
-              empty={<p>{hasFilters ? "No batches match search/filters." : "No batches yet. Create a program first."}</p>}
+              empty={<p>{hasFilters ? "No batches match search/filters." : "No batches yet. Use Create New Batch to add your first batch."}</p>}
               columns={[
                 {key:"batch",header:"Batch Name",mobilePriority:"primary",className:"whitespace-nowrap",cell:item=>
                   <span className="font-semibold text-foreground">{item.name}</span>},
