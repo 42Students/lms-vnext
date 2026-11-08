@@ -1,0 +1,40 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+// Source-level guard for the 2026-11-08 admin/college UX error recovery pass.
+// This is NOT a substitute for rendered desktop/mobile and role/tenant acceptance.
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const tracker = JSON.parse(fs.readFileSync(path.join(root, "docs/tracker.json"), "utf8"));
+const groupIds = [
+  "UX-G015", "UX-G016", "UX-G017", "UX-G018", "UX-G019",
+  "UX-G020", "UX-G021", "UX-G023", "UX-G024", "UX-G029",
+];
+
+for (const groupId of groupIds) {
+  test(`${groupId}: every signed-in route error preserves recovery within the workspace`, () => {
+    const group = tracker.uxReview.groups.find(entry => entry.id === groupId);
+    assert.ok(group, `${groupId} must remain in the canonical UX tracker`);
+    const routes = group.sourceFiles.filter(file => file.endsWith("/error.tsx"));
+    assert.ok(routes.length >= 5, `${groupId} must include all scoped error boundaries`);
+
+    for (const relativePath of routes) {
+      assert.ok(relativePath.startsWith("src/app/(authenticated)/"),
+        `Unexpected boundary scope: ${relativePath}`);
+      const source = fs.readFileSync(path.join(root, relativePath), "utf8");
+      assert.match(source, /reset/, `Retry must be available: ${relativePath}`);
+      assert.doesNotMatch(source, /error\\.(?:message|stack)|JSON\\.stringify\\(error\\)/,
+        `Do not reveal raw errors: ${relativePath}`);
+
+      if (source.includes("<GracefulErrorBoundary")) {
+        assert.match(source, /<GracefulErrorBoundary[^>]*\\binsideShell\\b/s,
+          `Nested authenticated route must not render the public full-screen 500: ${relativePath}`);
+      } else {
+        assert.match(source, /<(?:ButtonLink|TextLink|PageBackLink)\\b[^>]*href=/s,
+          `A retry-only error traps users without safe navigation: ${relativePath}`);
+      }
+    }
+  });
+}
