@@ -18,3 +18,10 @@
 - Outstanding browser acceptance: 320/390 and 1280 viewports, keyboard focus, screen reader names, dialog cancel and saved states for all eight components, full route/parity review.
 
 **No DONE status until all eight component surfaces and corresponding states have real desktop/mobile proof and reviews.**
+
+## 8 November 2026 — verified stronger component guards and browser evidence
+
+- [Shared exact-SHA workflow 42476817032](https://github.com/42Students/lms-vnext/actions/runs/42476817032) **SUCCEEDED** at `c98ddc2bf339ba1f3d7a0f7ff8a1fba091e0497a`: scoped ESLint, full TypeScript, focused unit regressions and **17/17 authenticated responsive Chromium cases** across the shared component groups.
+- Added synchronous mutation locks for published-template lifecycle/duplicate actions and member primary/remove actions, with source-contract regression tests; a second click cannot race React's deferred pending-state update.
+- The separate real database template creation + metadata PATCH + publication browser path has run successfully as an individual test within earlier mixed workflows. The dedicated full suite including bulk assignment CAS, stale-version conflict and cleanup is newly authored and still requires a completely green exact-SHA run.
+- Remaining open: all eight component states, negative/positive team and college assignments, duplicate replay, stale-search rejection, responsive/keyboard modality and scope review. **Keep DOING until those are evidenced.**
