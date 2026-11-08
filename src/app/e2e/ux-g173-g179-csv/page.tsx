@@ -1,6 +1,6 @@
 import {notFound} from "next/navigation";
 import {Heading} from "@/components/ui/heading";
-import {ButtonLink} from "@/components/ui/button-link";
+import {CsvFixtureDownload} from "./download-client";
 import {collegeContentCsv,legacyLessonContentCsv} from "@/modules/courses/college-content-csv-model";
 import {buildHrApplicantCsv} from "@/modules/placements/hr-applicant-export-model";
 import {buildHrActivityCsv} from "@/modules/placements/hr-activity-csv-model";
@@ -77,11 +77,7 @@ export default function UxCourseRecruiterCsvFixture(){
    {examples.map(example=><section key={example.key} className="min-w-0 space-y-3 rounded-xl border border-border p-4">
     <Heading level={2} className="break-words text-base font-semibold">{example.title}</Heading>
     <p className="break-all text-xs text-muted-foreground">{example.file}</p>
-    <ButtonLink variant="secondary" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(example.csv)}
-     download={example.file}
-     className="focus-ring flex min-h-11 w-full items-center justify-center rounded-lg border border-border p-3 text-center text-sm font-semibold">
-     Download sample CSV
-    </ButtonLink>
+    <CsvFixtureDownload filename={example.file} csv={example.csv}/>
    </section>)}
   </div>
  </main>;
