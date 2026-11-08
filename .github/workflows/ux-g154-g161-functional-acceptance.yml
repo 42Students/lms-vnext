@@ -10,7 +10,7 @@ permissions:
   contents: read
 concurrency:
   group: ux-g154-g161-functional-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
   functional-browser:
     runs-on: ubuntu-latest
