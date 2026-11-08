@@ -27185,11 +27185,11 @@
         "type": "OUTBOUND",
         "area": "courses",
         "title": "Courses · Outbound copy and exports (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-easy-10-20261108",
         "pickedAt": "2026-11-08T07:44:34.909Z",
         "startedAt": "2026-11-08T07:44:34.909Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T09:20:00.000Z",
         "sourceFiles": [
           "src/modules/courses/college-assessment-export-model.ts",
           "src/modules/courses/college-assessment-export-service.ts",
@@ -27225,7 +27225,41 @@
           "MESSAGE-0045"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "b9d280b1fdf152831c23d3a04d0015692f80e5bd",
+            "parityDoc": "docs/parity/pages/shared/UX-G173-G179-export-unicode.md",
+            "tests": [
+              {
+                "command": "test \"$(git rev-parse HEAD)\" = \"$GITHUB_SHA\"; npx eslint scoped G173/G179 export implementations and acceptance tests; npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42465568202 — verified checkout, scoped lint and complete TypeScript passed"
+              },
+              {
+                "command": "npx vitest run [G173/G179 focused and existing export security/compatibility tests] --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42465568202 — 12 of 12 Vitest files passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g173-g179-csv.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42465568202 — all 6 browser cases passed (14 CSV serializers each at two viewports), 0 unexpected, 0 skipped, 0 flaky"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42465568202/artifacts/13611707091 — real CSV serializer downloads through development-only browser fixture, Unicode/quote guards, privacy, file names and responsive layout"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42465568202/artifacts/13611707091 — mobile download batches of 14 CSVs, safe Unicode formula handling, readable capped/empty exports, no page overflow"
+              }
+            ],
+            "regressionReview": "Executed run 42465568202 on exact SHA b9d280b, passing full typecheck, scoped lint, 12 Vitest export suites, six zero-flake responsive Chromium cases with archived download/browser evidence. All 15 source files in each of G173/G179 were reviewed per parity note; access and outgoing columns remain unchanged. Browser proof uses real models with synthetic inputs, not actual privileged tenant sessions. Scoped UX copy/encoding acceptance only, not app-wide release.",
+            "securityReview": "Shared spreadsheetCsvCell neutralizes Unicode-hidden formula starts; retained per-route allowed fields, customer/college selection gates, caps and masks, no new private data fields. Existing server authorization and tenant-scoping logic not changed by formatter UX. Actual authorized/foreign-tenant download flows require independent security/release verification; no claim they were covered by synthetic fixture."
+          }
+        ]
       },
       {
         "id": "UX-G174",
@@ -27539,11 +27573,11 @@
         "type": "OUTBOUND",
         "area": "placements",
         "title": "Placements · Outbound copy and exports (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-easy-10-20261108",
         "pickedAt": "2026-11-08T07:44:34.909Z",
         "startedAt": "2026-11-08T07:44:34.909Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T09:20:00.000Z",
         "sourceFiles": [
           "src/modules/placements/admin-company-directory-export-model.ts",
           "src/modules/placements/applicant-export-model.ts",
@@ -27579,7 +27613,41 @@
           "MESSAGE-0077"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "b9d280b1fdf152831c23d3a04d0015692f80e5bd",
+            "parityDoc": "docs/parity/pages/shared/UX-G173-G179-export-unicode.md",
+            "tests": [
+              {
+                "command": "test \"$(git rev-parse HEAD)\" = \"$GITHUB_SHA\"; npx eslint scoped G173/G179 export implementations and acceptance tests; npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42465568202 — verified checkout, scoped lint and complete TypeScript passed"
+              },
+              {
+                "command": "npx vitest run [G173/G179 focused and existing export security/compatibility tests] --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42465568202 — 12 of 12 Vitest files passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g173-g179-csv.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42465568202 — all 6 browser cases passed (14 CSV serializers each at two viewports), 0 unexpected, 0 skipped, 0 flaky"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42465568202/artifacts/13611707091 — real CSV serializer downloads through development-only browser fixture, Unicode/quote guards, privacy, file names and responsive layout"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42465568202/artifacts/13611707091 — mobile download batches of 14 CSVs, safe Unicode formula handling, readable capped/empty exports, no page overflow"
+              }
+            ],
+            "regressionReview": "Executed run 42465568202 on exact SHA b9d280b, passing full typecheck, scoped lint, 12 Vitest export suites, six zero-flake responsive Chromium cases with archived download/browser evidence. All 15 source files in each of G173/G179 were reviewed per parity note; access and outgoing columns remain unchanged. Browser proof uses real models with synthetic inputs, not actual privileged tenant sessions. Scoped UX copy/encoding acceptance only, not app-wide release.",
+            "securityReview": "Shared spreadsheetCsvCell neutralizes Unicode-hidden formula starts; retained per-route allowed fields, customer/college selection gates, caps and masks, no new private data fields. Existing server authorization and tenant-scoping logic not changed by formatter UX. Actual authorized/foreign-tenant download flows require independent security/release verification; no claim they were covered by synthetic fixture."
+          }
+        ]
       },
       {
         "id": "UX-G180",
