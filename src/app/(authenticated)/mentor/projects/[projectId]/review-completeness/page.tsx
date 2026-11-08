@@ -5,7 +5,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {getMentorProjectReviewCompleteness}
   from "@/modules/projects/mentor-review-completeness-service";
-import {mentorReviewCompletenessHref,mentorReviewCompletenessQuerySchema}
+import {mentorReviewCompletenessHref,mentorReviewCompletenessQuerySchema,mentorReviewVersionHref}
   from "@/modules/projects/mentor-review-completeness-model";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
@@ -21,8 +21,8 @@ export default async function MentorProjectReviewCompletenessPage({
   );
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title="Invalid review history selector" />
-    <TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center md:min-h-9">
-      Return to assigned projects
+    <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-completeness"} className="inline-flex min-h-11 items-center md:min-h-9">
+      Clear invalid filters
     </TextLink>
   </section>;
   const context=await getCurrentRequestContext();
@@ -68,6 +68,11 @@ export default async function MentorProjectReviewCompletenessPage({
           {item.reviewedAt?<p className="mt-1 text-xs text-muted-foreground leading-5">
             Reviewed {istDateTimeFormatter.format(item.reviewedAt)} IST
           </p>:null}
+          <TextLink href={mentorReviewVersionHref(projectId,item.id)}
+            aria-label={"View delivery version "+item.version+" details"}
+            className="mt-2 inline-flex min-h-11 max-w-full items-center break-words text-sm md:min-h-9">
+            View version details
+          </TextLink>
         </li>)}</ol>}
       {data.totalPages>1?<Pagination label="Review version pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorReviewCompletenessHref({projectId,page})}/>:null}
     </>}
