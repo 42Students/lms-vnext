@@ -19,3 +19,10 @@ Scope: `src/modules/colleges/admin-history-export-model.ts`, `src/modules/colleg
 - No permissions, organization/college scope, step-up checks, query schemas, cap, or sensitive export columns changed.
 - Retained `private, no-store`, `nosniff` and attachment responses on the real API routes.
 - Negative cases include hidden spreadsheet operators, capped rows, and filtering/scope protections.
+
+## Exact-SHA final scoped acceptance — 2026-11-08
+
+- **DONE**. [GitHub Actions run 42416880809](https://github.com/42Students/lms-vnext/actions/runs/42416880809) passed on commit `8eb26b8dbfadbe25c888a2c04827fc350e0659b5`: checkout SHA, scoped ESLint, full TypeScript, 8 Vitest files / 31 tests, and 2 real PostgreSQL tenant authorization integration tests.
+- Chromium: 5/5 passed. Desktop 1280×800 and mobile 390×844 downloadable CSV fixture with screenshots, plus real disposable-db OTP-based College Admin and Super Admin downloads, cross-college scope rejection, and denied Learner requests.
+- Artifact: `ux-g170-g172-export-browser-evidence` ID `13591839350` (screenshots, downloaded CSV bytes and browser reporter).
+- Production authorization implementation is untouched. This is scoped seeded test-environment UX/security-regression acceptance, not an assertion of release-wide certification or live production access.

@@ -21750,11 +21750,11 @@
         "type": "OUTBOUND",
         "area": "attendance",
         "title": "Attendance · Outbound copy and exports (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-attendance-college-csv-2026-11-07",
         "pickedAt": "2026-11-07T16:41:00.000Z",
         "startedAt": "2026-11-07T16:41:00.000Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/modules/attendance/college-department-csv-model.ts",
           "src/modules/attendance/college-department-csv-service.ts",
@@ -21776,14 +21776,21 @@
             "description": "Scoped lint and TypeScript green, 31/31 unit tests, 2/2 real serializer synthetic desktop/mobile downloads, screenshots and artifact 13592000859. No authenticated tenant HTTP claim."
           },
           {
-            "type": "ci-pending",
+            "type": "ci",
             "runId": 42416880809,
             "url": "https://github.com/42Students/lms-vnext/actions/runs/42416880809",
-            "conclusion": "queued",
-            "description": "New disposable PostgreSQL integration and real OTP-backed college admin, superadmin, learner HTTP acceptance required before DONE."
+            "conclusion": "success",
+            "commitSha": "8eb26b8dbfadbe25c888a2c04827fc350e0659b5",
+            "results": "Verified exact checkout, scoped lint, full TS, 8 unit files/31 tests, real PostgreSQL scope integration 2 tests, 5/5 Chromium viewport/real signed-in authenticated export tests."
+          },
+          {
+            "type": "browser",
+            "runId": 42416880809,
+            "artifactId": 13591839350,
+            "description": "Desktop 1280 and mobile 390 rendered serializer/download fixtures, real OTP College Admin and Super Admin positive export, Learner denial, cross-college spoof denial; screenshots and real CSV retained."
           }
         ],
-        "notes": "DOING: prior exact-SHA 35789d7 run 42415911091 PASSED 31 unit/2 browser synthetic; screenshot+CSV artifact 13592000859. To close, new guarded DB integration and first-party OTP role/tenant E2E run 42416880809 at SHA 8eb26b8db is QUEUED. Do not claim DONE until completed and green."
+        "notes": "DONE scoped export UX: exact-SHA run 42416880809 green (8eb26b8): 31 unit, 2 PostgreSQL role/college integration, 5/5 Chromium synthetic desktop/mobile and OTP-backed live seeded export/denial journeys; screenshot/CSV artifact 13591839350. Tenant role/step-up guards unchanged. This is development seeded acceptance, not production deployment certification."
       },
       {
         "id": "UX-G171",
@@ -21834,11 +21841,11 @@
         "type": "OUTBOUND",
         "area": "colleges",
         "title": "Colleges · Outbound copy and exports (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-attendance-college-csv-2026-11-07",
         "pickedAt": "2026-11-07T16:41:00.000Z",
         "startedAt": "2026-11-07T16:41:00.000Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/modules/colleges/admin-history-export-model.ts",
           "src/modules/colleges/admin-readiness-export-model.ts",
@@ -21860,14 +21867,21 @@
             "description": "Scoped lint and TypeScript green, 31/31 unit tests, 2/2 real serializer synthetic desktop/mobile downloads, screenshots and artifact 13592000859. No authenticated tenant HTTP claim."
           },
           {
-            "type": "ci-pending",
+            "type": "ci",
             "runId": 42416880809,
             "url": "https://github.com/42Students/lms-vnext/actions/runs/42416880809",
-            "conclusion": "queued",
-            "description": "New disposable PostgreSQL integration and real OTP-backed college admin, superadmin, learner HTTP acceptance required before DONE."
+            "conclusion": "success",
+            "commitSha": "8eb26b8dbfadbe25c888a2c04827fc350e0659b5",
+            "results": "Verified exact checkout, scoped lint, full TS, 8 unit files/31 tests, real PostgreSQL scope integration 2 tests, 5/5 Chromium viewport/real signed-in authenticated export tests."
+          },
+          {
+            "type": "browser",
+            "runId": 42416880809,
+            "artifactId": 13591839350,
+            "description": "Desktop 1280 and mobile 390 rendered serializer/download fixtures, real OTP College Admin and Super Admin positive export, Learner denial, cross-college spoof denial; screenshots and real CSV retained."
           }
         ],
-        "notes": "DOING: prior exact-SHA 35789d7 run 42415911091 PASSED 31 unit/2 browser synthetic; screenshot+CSV artifact 13592000859. To close, new guarded DB integration and first-party OTP role/tenant E2E run 42416880809 at SHA 8eb26b8db is QUEUED. Do not claim DONE until completed and green."
+        "notes": "DONE scoped export UX: exact-SHA run 42416880809 green (8eb26b8): 31 unit, 2 PostgreSQL role/college integration, 5/5 Chromium synthetic desktop/mobile and OTP-backed live seeded export/denial journeys; screenshot/CSV artifact 13591839350. Tenant role/step-up guards unchanged. This is development seeded acceptance, not production deployment certification."
       },
       {
         "id": "UX-G173",
