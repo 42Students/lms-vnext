@@ -21,6 +21,7 @@ describe("TPO UX G110–G119: filters must not produce ambiguous results", () =>
     expect(source).toContain("Array.isArray(params.days) || !validated.success");
     expect(source).toContain("Repeated days filters were ignored");
     expect(source).toContain("Reset window");
+    expect(source).toContain("days (from link)");
   });
 
   it("rejects ambiguous recruiter filters before rendering the scoped roster", () => {
@@ -106,6 +107,7 @@ describe("TPO UX G114–G119: recovery controls and empty reports", () => {
     expect(joining).toContain("View joining outcomes");
     expect(summary).toContain("Review placement seasons");
     expect(summary).toContain("do not represent zero historical placements");
+    expect(page("reports/branch-season/page.tsx")).toContain("Review placement seasons");
   });
 
   it("provides settings recovery without inventing blocked dates or assignments", () => {
@@ -117,5 +119,6 @@ describe("TPO UX G114–G119: recovery controls and empty reports", () => {
     expect(linkError).toContain('insideShell homeHref="/tpo/settings"');
     expect(prep).toContain("Review preparation settings");
     expect(prep).toContain("before treating any learner as assigned or complete");
+    expect(prep).toContain("Saved preparation settings could not be validated");
   });
 });
