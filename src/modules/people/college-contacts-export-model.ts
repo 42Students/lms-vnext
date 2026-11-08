@@ -1,3 +1,4 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 import {z} from "zod";
 import {collegeContactsQuerySchema,contactDateWindowValid,contactAcademicFiltersCompatible,contactRoleAudienceCompatible} from "./college-contacts-model";
 import type {CollegeContactRow} from "./college-contacts-service";
@@ -29,8 +30,7 @@ export function parseCollegeContactsExportParams(params:URLSearchParams){
  return parsed;
 }
 export function neutralizeContactCell(value:string){
- const safe=/^[=+@-]/u.test(value.replace(/^[\s\p{Cc}\p{Cf}\p{Mn}]*/u, ""))?"'"+value:value;
- return '"'+safe.replaceAll('"','""')+'"';
+ return spreadsheetCsvCell(value);
 }
 export function renderCollegeContactCsv(rows:readonly CollegeContactRow[],truncated:boolean){
  const header=["Name","Roles","Email (learner masked)","Phone (masked)","Status","Joined (IST)"];
