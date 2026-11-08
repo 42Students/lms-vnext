@@ -8,6 +8,10 @@ async function screenshot(page:Page,info:TestInfo,label:string){
  await page.screenshot({path,fullPage:true});
  await info.attach(label,{path,contentType:"image/png"});
 }
+async function openFixture(page:Page){
+ await page.goto(fixture);
+ await expect(page.locator('[data-ux-g159-ready="true"]')).toHaveCount(1);
+}
 for(const viewport of sizes){
  test("UX-G159 "+viewport.name+" validates future IST away period and saves",async({page},info)=>{
   await page.setViewportSize(viewport);
@@ -17,7 +21,7 @@ for(const viewport of sizes){
    await route.fulfill({status:200,contentType:"application/json",
     body:JSON.stringify({until:payloads.at(-1)?.until})});
   });
-  await page.goto(fixture);
+  await openFixture(page);
   const section=page.locator('[data-ux-fixture="away"]');
   const date=section.getByLabel("Away until (IST)");
   await date.fill("2020-01-01T10:30");
@@ -41,7 +45,7 @@ for(const viewport of sizes){
    await route.fulfill({status:409,contentType:"application/json",
     body:JSON.stringify({error:"STALE_MESSAGE"})});
   });
-  await page.goto(fixture);
+  await openFixture(page);
   const section=page.locator('[data-ux-fixture="rename"]');
   await section.getByRole("button",{name:"Rename conversation"}).click();
   const input=section.getByRole("textbox",{name:"Conversation name"});
@@ -56,7 +60,7 @@ for(const viewport of sizes){
  });
  test("UX-G159 "+viewport.name+" checks exactly which 25 recipients are selected",async({page},info)=>{
   await page.setViewportSize(viewport);
-  await page.goto(fixture);
+  await openFixture(page);
   const section=page.locator('[data-ux-fixture="nudge"]');
   const all=section.getByRole("checkbox",{name:"Select first 25 on this page"});
   await all.check();
@@ -79,7 +83,7 @@ for(const viewport of sizes){
    expect(payload.expectedBodyHash).toBe("fixture-message-hash");
    await route.fulfill({status:409,contentType:"application/json",body:JSON.stringify({error:"STALE_MESSAGE"})});
   });
-  await page.goto(fixture);
+  await openFixture(page);
   const section=page.locator('[data-ux-fixture="message"]');
   await section.getByRole("button",{name:"Edit",exact:true}).click();
   const edit=page.getByRole("dialog",{name:"Edit message"});
