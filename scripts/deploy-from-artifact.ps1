@@ -36,6 +36,22 @@ New-Item -ItemType Directory -Force -Path $TmpDir | Out-Null
 Write-Host "Downloading artifact to $TmpDir ..."
 gh run download $RunId --dir $TmpDir
 
+# --- 2b. Verify the downloaded images against the sums printed in the run log (SEC-18-016) ---
+$sumsFile = Get-ChildItem -Recurse -Filter SHA256SUMS $TmpDir | Select-Object -First 1
+if (-not $sumsFile) { Write-Warning "No SHA256SUMS in this run (built before checksums existed); skipping the integrity check." }
+else {
+  $log = gh run view $RunId --log 2>$null | Out-String
+  foreach ($line in (Get-Content $sumsFile.FullName)) {
+    $parts = $line -split 's+', 2
+    $expected = $parts[0]; $name = $parts[1].Trim().TrimStart('*')
+    $file = (Get-ChildItem -Recurse -Filter $name $TmpDir | Select-Object -First 1).FullName
+    $actual = (Get-FileHash -Algorithm SHA256 $file).Hash.ToLower()
+    if ($actual -ne $expected) { throw "Integrity check failed for ${name}: file ${actual}, artifact sums ${expected}." }
+    if ($log -and ($log -notmatch [regex]::Escape($expected))) { throw "Integrity check failed for ${name}: the run log does not list ${expected}." }
+  }
+  Write-Host "Image checksums match the run log."
+}
+
 # --- 3. Read SHA ---
 $SHA = Get-Content (Get-ChildItem -Recurse -Filter sha.txt $TmpDir | Select-Object -First 1).FullName
 Write-Host "SHA: $SHA"
