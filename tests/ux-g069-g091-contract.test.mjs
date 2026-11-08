@@ -36,7 +36,7 @@ test("UX-G091: Faculty calendar and contact directory deny before displaying mal
   const invalid=route.includes("calendar")?s.indexOf("facultyMonthQuerySchema.safeParse"):s.indexOf("parseFacultyContactsQuery(raw)");
   assert.ok(gate>=0&&invalid>gate,route+" guard ordering");
   assert.match(s,/hasMembershipRole\(context,"FACULTY"\)/);
-  assert.match(s,/No (class schedule data|contact records) was loaded/);
+  assert.match(s,/No (class schedule data|contact records) (was|were) loaded/);
   assert.equal((s.match(/const context\s*=\s*await getCurrentRequestContext\(\)/g)||[]).length,1);
  }
 });
