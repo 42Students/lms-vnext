@@ -38,3 +38,11 @@
 - Commits `495b0ac8ea192ce946f80b31014024f44081ad6d` and `1e7a4e3fec13cbdfbd5dbbfb289569cd3154405e`: `tests/unit/ux-five-group-batch-20261107.test.ts` validates formula-like Unicode inputs in actual student import report CSV output and contact-export cell serializers, while preserving ordinary text/quoted-field compatibility.
 - Dedicated CI workflows cover these tests in their existing UX component and People CSV regression jobs. **Workflow creation/triggering is not evidence of success**; record the passing exact-SHA run before promoting any individual acceptance claim.
 - **Still DOING:** none of the above bypasses recent-device authentication or proves the positive OTP-authenticated multi-tenant download and all eleven export/import journeys. Existing scope, row limits, PII restrictions, authorization and user-selected download permissions stay unchanged.
+
+
+## Genuine OTP/People CSV browser acceptance added — 8 November 2026
+
+- [Real-device People acceptance](https://github.com/42Students/lms-vnext/blob/main/tests/e2e/ux-g178-real-device-people-exports.spec.ts) at commits `c85f677e066617a28e4738eb58ea4a4c17e437fd` and `5a2a947b8ee9d0998dd5107bf5dd09f33ce5113a` uses the first-party OTP challenge and device-session verifier on disposable PG17, with persisted College Admin role selection or Super Admin dual factor.
+- Desktop 1280×800 and mobile 390×844 exercises cover actual college People/Contacts/Faculty/Learner CSV GETs, a Chrome download of Contacts CSV, Super Admin People CSV, anti-tenant/duplicate/invalid filters, student and Faculty CSV preflight with no mutation, explicit unconfirmed-import denial, and seeded-role-cookie refusal without fresh-device auth.
+- The dedicated [five-scenario exact-SHA workflow](https://github.com/42Students/lms-vnext/actions/runs/42490093718) sets randomly generated six-digit `AUTH_TEST_OTP` only in `APP_ENV=development`, with a fixed allowlist of disposable seed contacts and ephemeral session secrets. It never modifies production session guards.
+- **DOING remains the only valid canonical status** until actual CI success and all eleven source workflows have reviewed desktop/mobile, positive/negative, privacy, empty/capped, import recovery and regression evidence.
