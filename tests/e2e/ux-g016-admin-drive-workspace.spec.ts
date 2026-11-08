@@ -34,10 +34,10 @@ test.describe("UX-G016: scoped placement drive workspace journey",()=>{
     await page.screenshot({path:info.outputPath("g016-"+row.label.toLowerCase()+"-"+viewport.name+".png"),fullPage:true});
    }
    await page.goto(base);
-   const nav=page.getByRole("tablist",{name:"Drive workspace"});
+   const nav=page.getByRole("navigation",{name:"Drive workspace"});
    await expect(nav).toBeVisible();
    for(const tab of ["Overview","Applications","Schedule","Settings"])
-    await expect(nav.getByRole("tab",{name:tab})).toBeVisible();
+    await expect(nav.getByRole("link",{name:tab})).toBeVisible();
    await expect(page.getByText("E2E Prototype Software Engineer").first()).toBeVisible();
 
    // Local, validated return URLs remain in the admin placement family.
@@ -51,7 +51,7 @@ test.describe("UX-G016: scoped placement drive workspace journey",()=>{
    await page.setViewportSize(viewport);
    for(const href of [base,base+"/applications",base+"/schedule",base+"/settings"]){
     await page.goto(href,{waitUntil:"domcontentloaded"});
-    await expect(page.getByRole("tablist",{name:"Drive workspace"})).toHaveCount(0);
+    await expect(page.getByRole("navigation",{name:"Drive workspace"})).toHaveCount(0);
     await expect(page.getByText("E2E Prototype Software Engineer")).toHaveCount(0);
    }
   });
