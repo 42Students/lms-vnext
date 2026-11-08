@@ -3,7 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { getOwnLearnerAcademicSummary } from "@/modules/people/learner-academic-summary-service";
 import { getOwnLearnerProfileWithRuntime } from "@/modules/people/runtime";
-import { ownLearnerProfileReadiness } from "@/modules/people/learner-profile-readiness-model";
+import { ownLearnerProfileReadiness, learnerReadinessQuerySchema } from "@/modules/people/learner-profile-readiness-model";
 import {learnerProfileChecklist} from "@/modules/people/learner-profile-checklist";
 import {learnerProfileCareerCoverage,learnerCareerCompletionMessage} from "@/modules/people/learner-profile-career-coverage-model";
 import { Heading } from "@/components/ui/heading";
@@ -18,6 +18,12 @@ export default async function ProfileCompleteness({searchParams}:{
   // The academic read validates current college, actor, persisted learner role.
   // Verify persisted learner ownership before loading private profile data.
   const academic=await getOwnLearnerAcademicSummary(context);
+  if(!learnerReadinessQuerySchema.safeParse(query).success)
+    return <section role="alert" className="min-w-0 space-y-4">
+      <PageHeader title="Profile completion checklist" description="Invalid checklist filter" />
+      <p className="text-sm text-body">This checklist filter cannot be applied. No profile checklist details were loaded.</p>
+      <TextLink href="/learn/profile/completeness" className="inline-flex min-h-11 items-center">Show all sections</TextLink>
+    </section>;
   const data=await getOwnLearnerProfileWithRuntime(context);
   const readiness=ownLearnerProfileReadiness(data.profile.profileDocument,query);
   const career=learnerProfileCareerCoverage(learnerProfileChecklist(data.profile.profileDocument));
