@@ -20287,11 +20287,11 @@
         "type": "JOURNEY",
         "area": "learn",
         "title": "Learn · Notifications / History → Profile / Gallery (part 7)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-gpt6-ux-mentor-tracker-20261108",
         "pickedAt": "2026-11-08T09:00:00.000Z",
         "startedAt": "2026-11-08T09:00:00.000Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T09:40:00.000Z",
         "sourceFiles": [
           "src/app/(authenticated)/learn/notifications/history/error.tsx",
           "src/app/(authenticated)/learn/notifications/history/loading.tsx",
@@ -20340,6 +20340,39 @@
             "commitSha": "2270a32a517093062071d18df79c722fe752b50e",
             "artifactId": 13612360496,
             "results": "Exact SHA lint, TypeScript, five source contracts and nine seeded College/Learner browser cases with screenshots; G065 invalid notification/history and data-access pagination recovered. Still DOING: newly inventoried /learn/profile/gallery route has not been implemented or formally reconciled; do not claim full G065 group coverage or DONE."
+          },
+          {
+            "commitSha": "63137f14719d7a3e7e5aa4381999115e91685526",
+            "parityDoc": "docs/parity/pages/learn/UX-G065.md",
+            "tests": [
+              {
+                "command": "test \"$(git rev-parse HEAD)\" = \"$GITHUB_SHA\"; node --test tests/ux-g028-g065-contract.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42467145994 — exact checkout, 5/5 role-first/no-private-read source contracts passed"
+              },
+              {
+                "command": "npx eslint College/Learner owned routes and browser tests; npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42467145994 — scoped ESLint and full TypeScript passed"
+              },
+              {
+                "command": "npm run db:e2e:prepare; npx playwright test tests/e2e/ux-g028-g065-role-recovery.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42467145994 — 12/12 seeded authenticated Chromium scenarios passed: Learner history, data access, gallery responsive recovery, Faculty gallery/learner denial, College activity negative role; 0 skipped or failures"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42467145994/artifacts/13612830015 — rendered Learner notification data-access and private gallery with simulated storage refusal, safe operator copy and no private code; Faculty forbidden gallery, no API read"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42467145994/artifacts/13612830015 — Learner notification/data-access/gallery screenshots and no overflow, transient storage decline communicated clearly with no PII disclosure"
+              }
+            ],
+            "regressionReview": "All 16 registered Learner notification, profile and records source pages/route states inventoried. Stale registry note about gallery resolved: existing privacy-scoped gallery page was already present, now reachable by a touch-target link on the Learner profile. Exact SHA 63137f1 passed 5/5 contracts, scoped ESLint, TypeScript, 12/12 real-role viewport cases and source privacy denials; screenshots archived. No fake new page or weakened profile API mutation.",
+            "securityReview": "Own Learner membership guards remain authoritative; Faculty denied gallery before an API read and denied invalid learner-notification/profile selectors; private data-access pagination never retrieves records for invalid input. The unavailable-gallery storage state does not expose underlying provider errors. Consent/verification production workflows and independent tenant/RLS gate are separate release/security checks."
           }
         ]
       },
