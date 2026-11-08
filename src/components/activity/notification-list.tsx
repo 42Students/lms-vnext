@@ -183,7 +183,8 @@ export function NotificationList({
               <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div className="flex min-w-0 flex-1 items-start gap-3">
                   <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-[8px] bg-[var(--lms-neutral-100)] text-lg">🔔</span>
-                  <Button variant="ghost" type="button" className="min-w-0 flex-1"
+                  <Button variant="ghost" type="button"
+                    className="min-w-0 flex-1 flex-col items-start text-left whitespace-normal [&>*]:max-w-full"
                     aria-label={"View "+(item.title||"Notification")+", "+notificationCategory(item)+(item.contextLine?", "+item.contextLine:"")}
                     onClick={()=>{if(onSelect)onSelect(item);else setSelected(item);}}>
                   <div className="flex flex-wrap items-center gap-2">
@@ -194,11 +195,11 @@ export function NotificationList({
                     {!item.readAt && item.source !== "ANNOUNCEMENT" ? <StatusBadge tone="info">Unread</StatusBadge> : null}
                   </div>
                   <Heading level={3} size="sm" className="mt-2 break-words leading-6 text-[var(--lms-heading)] md:text-base">{item.title||"Notification"}</Heading>
-                  <p className="mt-1 text-xs font-semibold text-muted-foreground leading-5">{item.contextLine??item.module??"—"}</p>
+                  <p className="mt-1 break-words text-xs font-semibold text-muted-foreground leading-5">{item.contextLine??item.module??"—"}</p>
                   <p className={readEndpoint==="/api/learn/notifications"
                     ? "mt-2 text-[13px] md:text-[14px] leading-[1.5] text-[var(--lms-neutral-500)]"
                     : "mt-1 text-sm leading-[1.5] text-body"}>{previewBody(item.body)}</p>
-                  <p className="mt-2 text-xs leading-[1.4] text-muted-foreground">
+                  <p className="mt-2 break-words text-xs leading-[1.4] text-muted-foreground">
                     {formatWhen(item.createdAt)}
                   </p>
                   </Button>

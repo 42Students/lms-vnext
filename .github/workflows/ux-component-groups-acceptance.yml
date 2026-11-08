@@ -9,6 +9,7 @@ on:
       - src/components/electives/college-slot-manager.tsx
       - src/components/activity/activity-center.tsx
       - src/components/activity/learner-notifications-inbox.tsx
+      - src/components/activity/notification-list.tsx
       - src/app/e2e/ux-component-groups/**
       - tests/e2e/ux-component-groups.spec.ts
       - .github/workflows/ux-component-groups-acceptance.yml
@@ -39,7 +40,7 @@ jobs:
       - name: Verify source is exactly triggering SHA
         run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
       - name: Scoped UX source and test lint
-        run: npx eslint src/components/admin/tenant-settings-other-keys.tsx src/components/electives/college-slot-manager.tsx src/components/activity/activity-center.tsx src/components/activity/learner-notifications-inbox.tsx src/app/e2e/ux-component-groups/page.tsx src/app/e2e/ux-component-groups/ux-component-groups-harness.tsx tests/e2e/ux-component-groups.spec.ts
+        run: npx eslint src/components/admin/tenant-settings-other-keys.tsx src/components/electives/college-slot-manager.tsx src/components/activity/activity-center.tsx src/components/activity/learner-notifications-inbox.tsx src/components/activity/notification-list.tsx src/app/e2e/ux-component-groups/page.tsx src/app/e2e/ux-component-groups/ux-component-groups-harness.tsx tests/e2e/ux-component-groups.spec.ts
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Desktop and mobile UX component interaction acceptance
