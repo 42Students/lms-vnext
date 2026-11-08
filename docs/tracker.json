@@ -21695,11 +21695,11 @@
         "type": "OUTBOUND",
         "area": "activity",
         "title": "Activity · Outbound copy and exports (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-activity-exports-20261107",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/modules/activity/college-activity-export-model.ts",
           "src/modules/activity/college-activity-export-service.ts",
@@ -21713,8 +21713,35 @@
           "MESSAGE-0017"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "Code and unit/browser acceptance tests committed on main (b7708246, a826f87a, 733126d4, e4f54812, bcae8554). Focused workflow https://github.com/42Students/lms-vnext/actions/runs/42393523442 queued, not passing yet. Evidence doc docs/parity/pages/shared/UX-G167-activity-exports.md. No DONE without exact-SHA green Chromium screenshots, lint/TS/Vitest and regression review."
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "a8157be676da96a2ed93982fd6784599e1cdbd3c",
+            "description": "Exact-SHA acceptance checkout on main; prior code/test commits detailed in parity document"
+          },
+          {
+            "type": "ci",
+            "runId": 42452276830,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42452276830",
+            "conclusion": "success",
+            "results": "Exact SHA + scoped ESLint + full TypeScript + 2 CSV unit test suites + Chromium role/browser"
+          },
+          {
+            "type": "browser",
+            "artifactId": 13605989065,
+            "views": [
+              "1280px Super Admin scoped export",
+              "390px college admin authorized export",
+              "learner denied"
+            ],
+            "role": "real disposable seeded roles; downloads and no-store assertions"
+          },
+          {
+            "type": "document",
+            "path": "docs/parity/pages/shared/UX-G167-activity-exports.md"
+          }
+        ],
+        "notes": "All 4 activity export files audited; formula guards, 1,000 row caps and role/privacy unchanged. Exact-SHA workflow 42452276830 green: lint, full TS, Vitest, seeded authorized Super Admin/college admin desktop/mobile Chromium, denied learner, download headers and responsive screenshot proof."
       },
       {
         "id": "UX-G168",

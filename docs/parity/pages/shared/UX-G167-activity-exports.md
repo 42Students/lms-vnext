@@ -19,3 +19,9 @@
 - Browser acceptance: `tests/e2e/ux-g167-activity-exports.spec.ts`: Super Admin desktop 1280px, college-admin mobile 390px, denied learner, scoped downloads and response headers. The test must actually run; authored tests alone are not proof.
 - Focused workflow: `.github/workflows/ux-g167-activity-exports-acceptance.yml` (created at `3f07e9b50fe3914b53b074c0106fd5a728dcfe67`).
 - Required verification: scoped ESLint, TypeScript, focused Vitest, real seeded Chromium browser evidence and regression review. Preserve screenshot artifacts and record exact tested SHA and workflow conclusion here before changing the canonical tracker to DONE.
+
+## Verified closure — 2026-11-08
+- Tested commit: a8157be676da96a2ed93982fd6784599e1cdbd3c (main)
+- Passing run: https://github.com/42Students/lms-vnext/actions/runs/42452276830
+- Executed exact SHA check, scoped ESLint, full project TypeScript, college/Super Admin CSV Vitest and desktop/mobile seeded Chromium: authorized Super Admin/college-admin downloads plus denied learner, headers, preserved screenshot artifact 13605989065.
+- Production permissions and RLS unchanged. Other release/security gates are independent.
