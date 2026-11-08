@@ -14,6 +14,10 @@ on:
       - 'src/app/(authenticated)/tpo/reports/branch-season/page.tsx'
       - 'src/app/(authenticated)/tpo/reports/branch-season/error.tsx'
       - 'src/app/(authenticated)/tpo/reports/joining-followups/error.tsx'
+      - 'src/app/(authenticated)/tpo/reports/placement-summary/error.tsx'
+      - 'src/app/(authenticated)/tpo/reports/season-pipeline/error.tsx'
+      - 'src/app/(authenticated)/tpo/reports/unplaced/error.tsx'
+      - 'src/app/(authenticated)/tpo/settings/after-college/error.tsx'
       - 'src/app/(authenticated)/tpo/reports/joining-status/error.tsx'
       - 'src/app/(authenticated)/tpo/reports/leads/error.tsx'
       - 'src/app/(authenticated)/tpo/reports/offers-acceptance/error.tsx'
@@ -74,6 +78,10 @@ jobs:
             "src/app/(authenticated)/tpo/reports/branch-season/page.tsx" \
             "src/app/(authenticated)/tpo/reports/branch-season/error.tsx" \
             "src/app/(authenticated)/tpo/reports/joining-followups/error.tsx" \
+            "src/app/(authenticated)/tpo/reports/placement-summary/error.tsx" \
+            "src/app/(authenticated)/tpo/reports/season-pipeline/error.tsx" \
+            "src/app/(authenticated)/tpo/reports/unplaced/error.tsx" \
+            "src/app/(authenticated)/tpo/settings/after-college/error.tsx" \
             "src/app/(authenticated)/tpo/reports/joining-status/error.tsx" \
             "src/app/(authenticated)/tpo/reports/leads/error.tsx" \
             "src/app/(authenticated)/tpo/reports/offers-acceptance/error.tsx" \
