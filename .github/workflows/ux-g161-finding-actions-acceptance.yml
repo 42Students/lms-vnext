@@ -6,6 +6,7 @@ on:
     paths:
       - 'src/components/tracker/audit-finding-status-action.tsx'
       - 'src/components/tracker/independent-finding-actions.tsx'
+      - 'src/components/tracker/tracker-quick-report-launcher.tsx'
       - 'tests/unit/ux-g161-finding-actions-recovery.test.ts'
       - '.github/workflows/ux-g161-finding-actions-acceptance.yml'
   workflow_dispatch:
@@ -38,6 +39,7 @@ jobs:
           npx eslint \
             src/components/tracker/audit-finding-status-action.tsx \
             src/components/tracker/independent-finding-actions.tsx \
+            src/components/tracker/tracker-quick-report-launcher.tsx \
             tests/unit/ux-g161-finding-actions-recovery.test.ts
       - name: TypeScript and regression contracts
         run: |
