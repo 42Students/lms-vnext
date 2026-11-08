@@ -18,6 +18,9 @@ on:
       - 'src/app/(authenticated)/tpo/settings/public-link/error.tsx'
       - 'src/app/(authenticated)/tpo/settings/team/page.tsx'
       - 'src/app/(authenticated)/tpo/students/preparation-plan/page.tsx'
+      - 'src/app/(authenticated)/tpo/students/preparation-prep/page.tsx'
+      - 'src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx'
+      - 'src/app/(authenticated)/tpo/team/[threadId]/page.tsx'
       - 'src/app/e2e/ux-g110-g119-recovery/**'
       - 'tests/unit/tpo-ux-g110-g119-recovery.test.ts'
       - 'tests/e2e/ux-g110-g119-recovery.spec.ts'
@@ -58,6 +61,9 @@ jobs:
             "src/app/(authenticated)/tpo/settings/public-link/error.tsx" \
             "src/app/(authenticated)/tpo/settings/team/page.tsx" \
             "src/app/(authenticated)/tpo/students/preparation-plan/page.tsx" \
+            "src/app/(authenticated)/tpo/students/preparation-prep/page.tsx" \
+            "src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx" \
+            "src/app/(authenticated)/tpo/team/[threadId]/page.tsx" \
             "src/app/e2e/ux-g110-g119-recovery/page.tsx" \
             tests/unit/tpo-ux-g110-g119-recovery.test.ts \
             tests/e2e/ux-g110-g119-recovery.spec.ts
