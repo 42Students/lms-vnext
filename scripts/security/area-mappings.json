@@ -633,6 +633,76 @@
         "SEC-08-022"
       ],
       "finding": "Request bodies are strict Zod objects in most routes (unknown keys rejected); API-initiated background work runs in a named system scope and takes tenant ids from rows, not from the caller."
+    },
+    {
+      "source": "SEC-01-10-14-batch-2026-11-08.md",
+      "state": "IU",
+      "ids": [
+        "SEC-01-002"
+      ],
+      "finding": "Sign-in proves control of the contact: a one-time code is sent to the phone or email and consumed once (identity_auth_attempts, used_at, HMAC digests) before a session exists."
+    },
+    {
+      "source": "SEC-01-10-14-batch-2026-11-08.md",
+      "state": "G",
+      "ids": [
+        "SEC-01-003"
+      ],
+      "finding": "Sign-in start answers differently for an unknown contact (404) than for a known one, which allows account enumeration; fixing it is a product decision (owner action list)."
+    },
+    {
+      "source": "SEC-01-10-14-batch-2026-11-08.md",
+      "state": "P",
+      "ids": [
+        "SEC-01-007",
+        "SEC-01-008",
+        "SEC-01-018"
+      ],
+      "finding": "The only authenticator is a one-time code to a verified contact, so there is no enrolment, replacement or removal flow and no SSO linking to protect; recovery is the same code flow. This changes the moment passkeys or MFA are added."
+    },
+    {
+      "source": "SEC-01-10-14-batch-2026-11-08.md",
+      "state": "IU",
+      "ids": [
+        "SEC-14-003"
+      ],
+      "finding": "Faculty grade and submission access re-checks the persisted teaching assignment inside the write transaction (assertPersistedFacultyTeachingMutation), learners reach only their own submissions (same-college probe: 144 requests, no foreign data), and published grades are immutable in the database fixtures."
+    },
+    {
+      "source": "SEC-01-10-14-batch-2026-11-08.md",
+      "state": "P",
+      "ids": [
+        "SEC-14-002",
+        "SEC-14-017"
+      ],
+      "finding": "Lesson access follows enrolment rows; grading actions write activity events inside the transaction (recordActivityEventInTransaction). No entitlement-bypass test per lesson type and no grade-override report."
+    },
+    {
+      "source": "SEC-01-10-14-batch-2026-11-08.md",
+      "state": "IU",
+      "ids": [
+        "SEC-14-021",
+        "SEC-14-022"
+      ],
+      "finding": "Recruiter access to learner profiles runs through relationship-scoped grants that must be ACTIVE, VERIFIED and unexpired for an ACTIVE company-college relationship at sign-in and at use; the CI job 'DB017 relationship-scoped disclosure defaults' tests the negative and tenant cases."
+    },
+    {
+      "source": "SEC-01-10-14-batch-2026-11-08.md",
+      "state": "P",
+      "ids": [
+        "SEC-14-018",
+        "SEC-14-019"
+      ],
+      "finding": "vNext issues no learner certificates today (only staff identity documents), so there is nothing to forge; revisit if certificates are added."
+    },
+    {
+      "source": "SEC-01-10-14-batch-2026-11-08.md",
+      "state": "P",
+      "ids": [
+        "SEC-10-006",
+        "SEC-10-007"
+      ],
+      "finding": "data-inventory.md lists the 96 tables holding personal data; API responses are built per route and some return whole rows. Field-level response review is not done."
     }
   ]
 }
