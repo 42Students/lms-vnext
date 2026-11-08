@@ -1,3 +1,6 @@
+import {redirect,notFound} from "next/navigation";
+import {hasMembershipRole} from "@/modules/identity/context";
+import {ProjectsServiceError} from "@/modules/projects/errors";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {StatusBadge} from "@/components/ui/status-badge";
@@ -11,7 +14,17 @@ export default async function MentorMeetingNotesPage({params}:{
   params:Promise<{projectId:string;meetingId:string}>;
 }){
   const path=await params;
-  const data=await getMentorMeetingNotes(await getCurrentRequestContext(),path);
+  const context=await getCurrentRequestContext();
+  if(!hasMembershipRole(context,"MENTOR"))redirect("/dashboard");
+  let data:Awaited<ReturnType<typeof getMentorMeetingNotes>>;
+  try{
+    data=await getMentorMeetingNotes(context,path);
+  }catch(error){
+    if(error instanceof ProjectsServiceError &&
+      (error.code==="PROJECT_MEETING_NOT_FOUND"||error.code==="PROJECT_ACCESS_DENIED"||
+       error.code==="PROJECT_NOT_FOUND"))notFound();
+    throw error;
+  }
   const m=data.meeting;
   const editable=meetingNotesEditable(data.projectStatus,m.status);
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
