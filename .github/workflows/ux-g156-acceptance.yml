@@ -1,0 +1,64 @@
+name: UX G156 TPO batch and audit acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - src/components/tpo/tpo-batch-invitation-control.tsx
+      - src/components/tpo/tpo-batch-class-decision.tsx
+      - src/components/tpo/tpo-audit-saved-views.tsx
+      - src/app/e2e/ux-g156-fixture/**
+      - tests/unit/ux-g156-interactions.test.ts
+      - tests/e2e/ux-g156.spec.ts
+      - .github/workflows/ux-g156-acceptance.yml
+
+permissions:
+  contents: read
+
+jobs:
+  scoped-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      UX_G156_FIXTURE: "1"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact triggering source SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Scoped lint
+        run: >-
+          npx eslint
+          src/components/tpo/tpo-batch-invitation-control.tsx
+          src/components/tpo/tpo-batch-class-decision.tsx
+          src/components/tpo/tpo-audit-saved-views.tsx
+          src/app/e2e/ux-g156-fixture/page.tsx
+          src/app/e2e/ux-g156-fixture/client.tsx
+          tests/unit/ux-g156-interactions.test.ts
+          tests/e2e/ux-g156.spec.ts
+      - name: Unit acceptance
+        run: npx vitest run tests/unit/ux-g156-interactions.test.ts --reporter=dot
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Real-component desktop/mobile browser acceptance
+        run: npx playwright test tests/e2e/ux-g156.spec.ts --project=chromium --reporter=line
+      - name: TypeScript integrity
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: Capture screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g156-browser-evidence
+          path: |
+            test-results/**
+            playwright-report/**
+          if-no-files-found: ignore
+          retention-days: 7
