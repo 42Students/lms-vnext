@@ -26,7 +26,7 @@
 ## Regression and browser acceptance
 
 - `tests/unit/ux-g134-college-controls.test.ts` documents guards, versioning, safe errors and denied statuses; assertions remain independent of production data.
-- `tests/e2e/ux-g134-college-controls.spec.ts` exercises college-admin Batches / faculty assignment / own profile / people directory across desktop 1280 and mobile 390; invalid registration form, plus Learner-denied people export.
+- `tests/e2e/ux-g134-college-controls.spec.ts` exercises college-admin student registration / faculty assignment / own profile / people directory across desktop 1280 and mobile 390; invalid registration form, plus Learner-denied people export.
 - `.github/workflows/ux-g134-college-acceptance.yml` is an exact-SHA workflow with disposable PostgreSQL 17, generated auth keys, scoped lint, typecheck, Vitest, Chromium role cases and retained screenshots.
 - Group closure requires an **executed successful exact-SHA run**, desktop/mobile artifacts, relevant negative tests, regression/security review and a canonical completion evidence object. Do not infer a pass from these authored test files or this source-only audit.
 
