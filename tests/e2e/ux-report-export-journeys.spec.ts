@@ -50,6 +50,9 @@ async function signInWithSeededOtp(
 
 
 test.describe("UX-G169/G171/G174/G177 CSV export journeys", () => {
+  // Shared seeded Super Admin identity uses one live OTP challenge per login.
+  // Do not invalidate another browser case's OTP via concurrent sign-in.
+  test.describe.configure({mode:"serial"});
   test.skip(!process.env.E2E_AUTH_SECRET || process.env.E2E_AUTH_ENABLED !== "true",
     "Requires the disposable E2E database and seeded role sessions");
 
@@ -73,6 +76,13 @@ test.describe("UX-G169/G171/G174/G177 CSV export journeys", () => {
 
   test("UX-G168 freshly signed-in Super Admin downloads bounded private faculty CSV",async({page,context})=>{
     await signInWithSeededOtp(context,"superadmin.seed@example.com",{superAdmin:true});
+    // The faculty directory is college-scoped and does not widen a global
+    // Super Admin's audience by default. Choose an authorized persisted college.
+    const scoped=await context.request.post("http://localhost:3000/api/auth/admin-scope",{
+      headers:{origin:"http://localhost:3000"},
+      data:{kind:"college",collegeId:SEED_IDS.collegeA},
+    });
+    expect(scoped.status(),"authorized college selection").toBe(200);
     await page.setViewportSize({width:1280,height:850});
     const response=await page.request.get("/api/admin/faculty/export");
     expect(response.status(),"authorized Super Admin faculty roster").toBe(200);
