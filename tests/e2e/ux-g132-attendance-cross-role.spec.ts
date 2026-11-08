@@ -14,7 +14,7 @@ test.describe("UX-G132 attendance controls: real role and responsive acceptance"
       await page.setViewportSize(size);
       await page.goto("/college/attendance");
       await expect(page.getByRole("heading",{level:1,name:"Attendance"})).toBeVisible();
-      await expect(page.getByRole("tab",{name:"Attendance policy"})).toBeVisible();
+      await expect(page.getByRole("link",{name:"Attendance policy"})).toBeVisible();
       await checkViewport(page);
       await page.screenshot({path:info.outputPath(`college-attendance-${size.name}.png`),fullPage:true});
     });
@@ -37,7 +37,7 @@ test.describe("UX-G132 attendance controls: real role and responsive acceptance"
       await page.setViewportSize(size);
       await page.goto("/teacher/courses");
       await page.getByRole("link",{name:/E2E Browser Course/}).first().click();
-      await expect(page).toHaveURL(/\\/teacher\\/courses\\/[0-9a-f-]{36}\\/home$/i);
+      await expect(page).toHaveURL(new RegExp("/teacher/courses/[0-9a-f-]{36}/home$","i"));
       const deliveryId=new URL(page.url()).pathname.split("/")[3]!;
       await page.goto("/teacher/courses/"+deliveryId+"/attendanceDetail");
       await expect(page.getByRole("region",{name:"Faculty prototype attendance"})).toBeVisible();
