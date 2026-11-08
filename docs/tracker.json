@@ -20146,11 +20146,11 @@
         "type": "COMPONENT",
         "area": "activity",
         "title": "Activity · Interactive components (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-elective-settings-activity-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/components/activity/activity-center.tsx",
           "src/components/activity/learner-notifications-inbox.tsx"
@@ -20160,7 +20160,41 @@
           "OVERLAY-0009"
         ],
         "newRouteOnly": [],
-        "evidence": [],
+        "evidence": [
+          {
+            "commitSha": "46c7162814c6984512b5c01790d8fbd74aeaab07",
+            "parityDoc": "docs/parity/pages/shared/UX-G126-G130-G140.md",
+            "tests": [
+              {
+                "command": "npx eslint src/components/admin/tenant-settings-other-keys.tsx src/components/electives/college-slot-manager.tsx src/components/activity/activity-center.tsx src/components/activity/learner-notifications-inbox.tsx src/components/activity/notification-list.tsx src/app/e2e/ux-component-groups/page.tsx src/app/e2e/ux-component-groups/ux-component-groups-harness.tsx tests/e2e/ux-component-groups.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452614315 — scoped ESLint passed at exact commit"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-component-groups.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452614315 — 6/6 rendered-component Chrome tests passed"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452614315 — full TypeScript step passed"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452614315/artifacts/13607046018 — ux-g126-desktop.png: table/filter/learner inbox recovery"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452614315/artifacts/13607046018 — ux-g126-mobile.png: focusable horizontal scroll, no page overflow"
+              }
+            ],
+            "regressionReview": "Exact source SHA verified; scoped ESLint, six real-component responsive Chromium checks (all pass) and full project TypeScript pass. Existing component behavior and guarded destructive paths tested. Synthetic development fixture has no authenticated real database integration; separate app-wide release test pending.",
+            "securityReview": "Activity and learner inbox data access still enforce original server-side identity and course scope; only client filter copy/action and accessibility changed. Synthetic fixture cannot certify real role authorization."
+          }
+        ],
         "notes": "UX pass on shared component: state/accessibility/recovery, with executed tests required for DONE. Avoid API/RBAC changes."
       },
       {
@@ -20309,11 +20343,11 @@
         "type": "COMPONENT",
         "area": "admin",
         "title": "Admin · Interactive components (part 4)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-elective-settings-activity-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/components/admin/tenant-settings-other-keys.tsx"
         ],
@@ -20321,7 +20355,41 @@
           "OVERLAY-0039"
         ],
         "newRouteOnly": [],
-        "evidence": [],
+        "evidence": [
+          {
+            "commitSha": "46c7162814c6984512b5c01790d8fbd74aeaab07",
+            "parityDoc": "docs/parity/pages/shared/UX-G126-G130-G140.md",
+            "tests": [
+              {
+                "command": "npx eslint src/components/admin/tenant-settings-other-keys.tsx src/components/electives/college-slot-manager.tsx src/components/activity/activity-center.tsx src/components/activity/learner-notifications-inbox.tsx src/components/activity/notification-list.tsx src/app/e2e/ux-component-groups/page.tsx src/app/e2e/ux-component-groups/ux-component-groups-harness.tsx tests/e2e/ux-component-groups.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452614315 — scoped ESLint passed at exact commit"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-component-groups.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452614315 — 6/6 rendered-component Chrome tests passed"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452614315 — full TypeScript step passed"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452614315/artifacts/13607046018 — ux-g130-desktop.png: settings key-only search/pagination and discard guards"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452614315/artifacts/13607046018 — ux-g130-mobile.png: keyboard focus, horizontal region, destructive confirmation and no overflow"
+              }
+            ],
+            "regressionReview": "Exact source SHA verified; scoped ESLint, six real-component responsive Chromium checks (all pass) and full project TypeScript pass. Existing component behavior and guarded destructive paths tested. Synthetic development fixture has no authenticated real database integration; separate app-wide release test pending.",
+            "securityReview": "Filter matches key names only, never stored values; existing authorization/version and destructive confirmations remain. Synthetic fixture no proof of production tenant or secret handling."
+          }
+        ],
         "notes": "UX pass on shared component: state/accessibility/recovery, with executed tests required for DONE. Avoid API/RBAC changes."
       },
       {
@@ -20688,11 +20756,11 @@
         "type": "COMPONENT",
         "area": "electives",
         "title": "Electives · Interactive components (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-elective-settings-activity-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/components/electives/college-slot-manager.tsx"
         ],
@@ -20700,7 +20768,41 @@
           "WIDGET-0061"
         ],
         "newRouteOnly": [],
-        "evidence": [],
+        "evidence": [
+          {
+            "commitSha": "46c7162814c6984512b5c01790d8fbd74aeaab07",
+            "parityDoc": "docs/parity/pages/shared/UX-G126-G130-G140.md",
+            "tests": [
+              {
+                "command": "npx eslint src/components/admin/tenant-settings-other-keys.tsx src/components/electives/college-slot-manager.tsx src/components/activity/activity-center.tsx src/components/activity/learner-notifications-inbox.tsx src/components/activity/notification-list.tsx src/app/e2e/ux-component-groups/page.tsx src/app/e2e/ux-component-groups/ux-component-groups-harness.tsx tests/e2e/ux-component-groups.spec.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452614315 — scoped ESLint passed at exact commit"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-component-groups.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452614315 — 6/6 rendered-component Chrome tests passed"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452614315 — full TypeScript step passed"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452614315/artifacts/13607046018 — ux-g140-desktop.png: disabled no-op save, changed draft, reversible discard"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42452614315/artifacts/13607046018 — ux-g140-mobile.png: missing-program message, restoration after cancel, no page overflow"
+              }
+            ],
+            "regressionReview": "Exact source SHA verified; scoped ESLint, six real-component responsive Chromium checks (all pass) and full project TypeScript pass. Existing component behavior and guarded destructive paths tested. Synthetic development fixture has no authenticated real database integration; separate app-wide release test pending.",
+            "securityReview": "Existing college scope and version enforcement unchanged, new client guard only prevents no-op saves; synthetic component fixture cannot certify tenant authorization."
+          }
+        ],
         "notes": "UX pass on shared component: state/accessibility/recovery, with executed tests required for DONE. Avoid API/RBAC changes."
       },
       {
