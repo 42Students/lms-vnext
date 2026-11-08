@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 
-import { useEffect, useState, useTransition, type FormEvent } from "react";
+import { useEffect, useRef, useState, useTransition, type FormEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { Alert } from "@/components/ui/alert";
@@ -88,6 +88,7 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
   const programsHref = pathname?.startsWith("/admin/") ? "/admin/programs" : "/college/programs";
   const { showToast } = useToast();
   const [pending, startTransition] = useTransition();
+  const mutationInFlight=useRef(false);
   const [programQuery, setProgramQuery] = useState("");
   const [programId, setProgramId] = useState("");
   const [startPeriodId, setStartPeriodId] = useState("");
@@ -128,7 +129,7 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if(pending)return;
+    if(pending||mutationInFlight.current)return;
     setNotice(""); setNoticeIsError(false); setFieldErrors({});
     if (!programId) { setFieldErrors({ programId: "Select a program" }); return; }
     if (!startPeriodId) { setFieldErrors({ startPeriodId: "Select a starting academic period" }); return; }
@@ -151,6 +152,7 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
       setNoticeIsError(true);
       return;
     }
+    mutationInFlight.current=true;
     startTransition(async () => {
       try {
         await send("POST", "/api/college/batches", parsed.data);
@@ -165,7 +167,7 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
         setFieldErrors(cohortErrors(error));
         setNotice(academicSetupErrorMessage(error, "Batch was not created."));
         setNoticeIsError(true);
-      }
+      } finally { mutationInFlight.current=false; }
     });
   }
 
@@ -289,6 +291,7 @@ export function CollegeCohortRowActions({ row, periods }: {
     encodeURIComponent(row.id) + "/students";
   const { showToast } = useToast();
   const [pending, startTransition] = useTransition();
+  const mutationInFlight=useRef(false);
   const [editing, setEditing] = useState(false);
   const [discardConfirm,setDiscardConfirm]=useState(false);
   const [pendingLifecycleAction,setPendingLifecycleAction]=useState<"GRADUATE"|"RETIRE"|null>(null);
@@ -312,9 +315,10 @@ export function CollegeCohortRowActions({ row, periods }: {
   const endDateLocked = row.activeSections > 0 || row.activeEnrolledLearners > 0;
 
   function graduate() {
-    if(pending)return;
+    if(pending||mutationInFlight.current)return;
     if(pendingLifecycleAction!=="GRADUATE") {setPendingLifecycleAction("GRADUATE");return;}
     setPendingLifecycleAction(null);setNotice("");
+    mutationInFlight.current=true;
     startTransition(async () => {
       try {
         await apiFetch("/api/college/batches/" + encodeURIComponent(row.id) + "/graduate", {
@@ -327,13 +331,14 @@ export function CollegeCohortRowActions({ row, periods }: {
         router.refresh();
       } catch (error) {
         setNotice(academicSetupErrorMessage(error, "Unable to graduate batch."));
-      }
+      } finally { mutationInFlight.current=false; }
     });
   }
   function retire() {
-    if(pending||row.status!=="PLANNED")return;
+    if(pending||mutationInFlight.current||row.status!=="PLANNED")return;
     if(pendingLifecycleAction!=="RETIRE") {setPendingLifecycleAction("RETIRE");return;}
     setPendingLifecycleAction(null);setNotice("");
+    mutationInFlight.current=true;
     startTransition(async()=>{
       try {
         await apiFetch("/api/college/batches/"+encodeURIComponent(row.id),{
@@ -347,7 +352,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       }catch(error){
         setRemoveError(true);
         setNotice(academicSetupErrorMessage(error, "Batch was not archived."));
-      }
+      } finally { mutationInFlight.current=false; }
     });
   }
   function close() {
@@ -358,7 +363,7 @@ export function CollegeCohortRowActions({ row, periods }: {
 
   function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if(pending)return;
+    if(pending||mutationInFlight.current)return;
     setNotice(""); setEditErrors({});
     if (!name.trim()) { setEditErrors({ name: "Enter a batch name" }); return; }
     if (academicYear !== (row.academicYear ?? "") && !validAcademicYear(academicYear)) {
@@ -378,6 +383,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       return;
     }
 
+    mutationInFlight.current=true;
     startTransition(async () => {
       try {
         await send("PATCH", "/api/college/batches/" + encodeURIComponent(row.id), parsed.data);
@@ -388,7 +394,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       } catch (error) {
         setEditErrors(cohortErrors(error));
         setNotice(academicSetupErrorMessage(error, "Batch was not updated."));
-      }
+      } finally { mutationInFlight.current=false; }
     });
   }
 

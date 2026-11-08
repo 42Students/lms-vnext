@@ -79,3 +79,14 @@ describe("UX-G125 shared academic mutation recovery", () => {
     expect(component).toContain("disabled={scheduleLoading||pending||scheduleWindowInvalid}");
   });
 });
+
+
+describe("UX-G125 cohort write and retry safety", () => {
+  it("synchronously locks batch creation, edit, graduation and retirement", () => {
+    const component=source("src/components/academics/college-cohort-management.tsx");
+    expect(component.match(/const mutationInFlight=useRef\(false\)/g)).toHaveLength(2);
+    expect(component.match(/mutationInFlight.current=true/g)).toHaveLength(4);
+    expect(component.match(/finally \{ mutationInFlight.current=false; \}/g)).toHaveLength(4);
+    expect(component).toContain('if(pending||mutationInFlight.current||row.status!=="PLANNED")return;');
+  });
+});
