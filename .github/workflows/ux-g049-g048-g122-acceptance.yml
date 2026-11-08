@@ -23,8 +23,27 @@ permissions:
 jobs:
   scoped-ux:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: 'true'
+      APP_ENV: development
+      NODE_OPTIONS: --max-old-space-size=6144
       NEXT_TELEMETRY_DISABLED: "1"
       PLATFORM_HOSTS: "localhost,127.0.0.1"
     steps:
@@ -44,13 +63,19 @@ jobs:
         run: npx vitest run tests/unit/ux-g049-g048-g122-source.test.ts tests/unit/HR-BREAK-tracker-pages-01.test.ts tests/unit/HR-BREAK-chat15-tracker-mine-page-98.test.tsx tests/unit/chat15-hr-tracker-page-render-52.test.tsx tests/unit/UX-chat16-public-auth-legacy-bookmarks-03.test.ts
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Desktop and mobile public boundary
+      - name: Prepare disposable scoped E2E database
+        run: npm run db:e2e:prepare
+      - name: Generate ephemeral E2E identity secrets
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+      - name: Desktop and mobile public, authenticated and role-negative acceptance
         run: npx playwright test tests/e2e/ux-g049-g048-g122-public-guard.spec.ts --project=chromium --reporter=line
-      - name: Upload failing traces
-        if: failure()
+      - name: Upload browser proof and failure traces
+        if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: ux-g049-g048-g122-traces
+          name: ux-g048-g122-authenticated-browser-${{ github.sha }}
           path: |
             test-results/
             playwright-report/
