@@ -7,10 +7,12 @@ on:
     paths:
       - 'src/components/attendance/college-attendance-policy-form.tsx'
       - 'src/components/attendance/faculty-attendance-schedule-editor.tsx'
+      - 'src/components/attendance/faculty-attendance-workspace.tsx'
       - 'src/components/projects/project-team-controls.tsx'
       - 'src/components/projects/project-template-controls.tsx'
       - 'src/components/projects/super-admin-template-college-bulk.tsx'
       - 'src/components/tracker/tracker-live-logs-explorer.tsx'
+      - 'src/components/tracker/tracker-telegram-manual-panel.tsx'
       - 'src/components/tracker/audit-finding-status-action.tsx'
       - 'src/modules/people/college-people-export-service.ts'
       - 'src/modules/people/admin-users-export-service.ts'
@@ -66,10 +68,12 @@ jobs:
           npx eslint \
             src/components/attendance/college-attendance-policy-form.tsx \
             src/components/attendance/faculty-attendance-schedule-editor.tsx \
+            src/components/attendance/faculty-attendance-workspace.tsx \
             src/components/projects/project-team-controls.tsx \
             src/components/projects/project-template-controls.tsx \
             src/components/projects/super-admin-template-college-bulk.tsx \
             src/components/tracker/tracker-live-logs-explorer.tsx \
+            src/components/tracker/tracker-telegram-manual-panel.tsx \
             src/components/tracker/audit-finding-status-action.tsx \
             src/modules/people/college-people-export-service.ts \
             src/modules/people/admin-users-export-service.ts \
