@@ -109,6 +109,9 @@ export function SuperAdminTemplateCreateForm(){
    });
    const result=await projectMutation("/api/projects/templates","POST",payload) as {template:{id:string}};
    showToast({tone:"success",title:"Template created"});
+   // The server has committed a real template. Do not treat this expected
+   // transition as losing an unsaved draft; failed writes stay guarded.
+   guard.allowNavigationAfterSave();
    router.push("/admin/projects/templates/"+encodeURIComponent(result.template.id)+"/overview");
    router.refresh();
   }catch(caught){
