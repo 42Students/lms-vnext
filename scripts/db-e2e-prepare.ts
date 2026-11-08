@@ -594,14 +594,16 @@ async function main() {
       // Opt-in G072 real task-feedback browser fixture: exercise the exact
       // registered per-version feedback surface. Never seed in production.
       if(process.env["UX_G072_SEED_TASK_FEEDBACK"]==="true"){
-        const workspace=await projectInstanceService.getProjectInstanceWorkspace(
-          collegeAdmin,project.id,
-        );
-        const task=workspace.tasks[0];
-        if(!task)throw Error("G072 requires a seeded registered task");
+        const taskId="77000000-0000-4000-8000-000000000073";
+        await dbClient.getDb().insert(dbSchema.projectTasks).values({
+          id:taskId,projectId:project.id,
+          templateKey:"g072-feedback-browser",
+          title:"G072 task feedback browser evidence",
+          priority:"MEDIUM",sequence:99,status:"TODO",
+        });
         await dbClient.getDb().insert(dbSchema.projectTaskSubmissions).values({
           id:"77000000-0000-4000-8000-000000000072",
-          projectId:project.id,taskId:task.id,version:1,
+          projectId:project.id,taskId,version:1,
           submittedByMembershipId:ids.learnerCollegeAMembership,
           submissionUrl:"https://example.invalid/private-g072-task-source",
           status:"CHANGES_REQUESTED",
