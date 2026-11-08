@@ -1,4 +1,4 @@
-# Independent review pack (generated 2026-11-08 at d43c4cda13)
+# Independent review pack (generated 2026-11-08 at c32243032d)
 
 For the reviewer. You should not have seen the author's reasoning: read the control text, the evidence named below and the code, and form your own view. Report per control: ACCEPT, REJECT (with the failing case) or INSUFFICIENT EVIDENCE.
 
@@ -306,7 +306,7 @@ Tenant isolation was also probed on the dev deployment (cross-college: 120 route
 
 | Control | Requirement | Evidence and finding |
 |---|---|---|
-| SEC-26-007 | Tamper-evident security audit storage. | security_audit_events is append-only: a trigger refuses UPDATE, DELETE and TRUNCATE and the runtime role is refused them (verified on dev 2026-11-08). Not hash-chained, so tamper evidence stops at the database privileges. (docs/security/assessments/SEC-14-23-24-25-26-remaining.md) |
+| SEC-26-007 | Tamper-evident security audit storage. | security_audit_events is append-only (trigger refuses UPDATE, DELETE and TRUNCATE; runtime role cannot) and, from migration 0342, hash-chained: an insert trigger sets chain_seq, prev_hash and row_hash = sha256 over the previous hash and the row, and the single head row can only move from inside that trigger. scripts/security/aud (docs/security/assessments/SEC-14-23-24-25-26-remaining.md) |
 
 ## Out of scope for this pass
 
