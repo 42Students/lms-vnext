@@ -7,6 +7,7 @@ on:
     paths:
       - 'src/app/(authenticated)/admin/placements/jobs/**'
       - 'src/app/(authenticated)/admin/placements/joining/**'
+      - 'src/components/placements/placement-drive-workspace.tsx'
       - 'tests/e2e/ux-g016-admin-drive-workspace.spec.ts'
       - '.github/workflows/ux-g016-admin-workspace-acceptance.yml'
 
