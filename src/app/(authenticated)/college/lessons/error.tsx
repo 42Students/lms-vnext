@@ -28,8 +28,8 @@ export default function CollegeLessonsError({ error, reset }: {
     <ErrorState title="Couldn't refresh lessons"
       description={lastGood?"Showing the previous successful lesson list for these same filters. It may be outdated.":detail}
       action={<div className="flex flex-wrap items-center gap-3">
-        <Button type="button" variant="secondary" onClick={reset}>Retry</Button>
-        <TextLink href="/college/lessons" className="text-sm">
+        <Button type="button" variant="secondary" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button>
+        <TextLink href="/college/lessons" className="inline-flex min-h-11 items-center text-sm md:min-h-9">
           Return to lessons</TextLink>
       </div>} />
     {lastGood?<section aria-label="Last successfully loaded lessons" className="min-w-0">

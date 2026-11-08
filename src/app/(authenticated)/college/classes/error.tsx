@@ -16,8 +16,8 @@ export default function CollegeClassesError({ error, reset }: {
       <Heading level={2}>Unable to load classes</Heading>
       <p className="mt-2 text-sm">The class list could not be read. Retry without losing your selected college.</p>
       <div className="mt-3 flex flex-wrap gap-2">
-        <Button type="button" onClick={reset}>Retry</Button>
-        <TextLink href="/college/classes" className="inline-flex min-h-9 items-center">Clear filters</TextLink>
+        <Button type="button" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button>
+        <TextLink href="/college/classes" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>
       </div>
     </div>
   </section>;

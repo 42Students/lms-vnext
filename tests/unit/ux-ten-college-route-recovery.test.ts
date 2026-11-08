@@ -65,6 +65,12 @@ describe("UX-G030–G040 scoped College Admin recovery",()=>{
     }
     expect(route("profile/error.tsx")).toContain('homeHref="/college"');
   });
+  it("keeps at least 44px touch-sized error retry controls on mobile",()=>{
+    for(const file of ["classes/error.tsx","lessons/error.tsx","faculty/error.tsx","lecture-halls/error.tsx"]){
+      expect(route(file)).toContain("min-h-11");
+      expect(route(file)).toContain("md:min-h-9");
+    }
+  });
   it("does not remove College Admin role guard",()=>{
     const code=route("placements/new/page.tsx");
     expect(code).toContain("hasMembershipRole(");
