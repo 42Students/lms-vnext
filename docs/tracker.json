@@ -28209,9 +28209,42 @@
             ],
             "regressionReview": "13 registered route-state source files unchanged after pinned green run. All 13 states checked at desktop and mobile plus delayed loading, safe retry, correct role destinations, no exception/digest leak or horizontal overflow. Separate 28th invalid role-state negative test committed later and its workflow 42465803268 still queued; not counted as passed.",
             "securityReview": "Dev-only preview is gated by NODE_ENV and UX_G184_ROUTE_STATE_FIXTURE. No real tenants, auth, permission, or RLS changes. No production privileged role identity granted by the test fixture."
+          },
+          {
+            "commitSha": "e0b2021f6621f5372218087bbbf6d09a4ba4b7fd",
+            "parityDoc": "docs/parity/pages/shared/UX-G184-authenticated-route-states.md",
+            "tests": [
+              {
+                "command": "Exact checkout SHA, scoped ESLint, npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42467052260"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-root-global-errors.test.ts tests/unit/ux-five-group-batch-20261107.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42467052260 — 14/14"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g184-authenticated-route-states.spec.ts --project=chromium (incl negative streamed semantic 404)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42467052260 — 28/28, 0 skipped/flaky"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42467052260/artifacts/13612008598"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42467052260/artifacts/13612008598"
+              }
+            ],
+            "regressionReview": "Additional invalid/unsupported role-state negative test passed on streamed notFound() boundary. The test checks semantic 404 marker even when Next streaming has emitted HTTP 200 and disallows fixture content. Original 13 state desktop/mobile coverage retained.",
+            "securityReview": "The dev-only fixture remains gated; attempted invalid role/state combinations yield not-found content and cannot render a protected preview. No auth/RLS/client service changes."
           }
         ],
-        "notes": "DONE scoped 2026-11-08 on unchanged registered sources at exact SHA 8b59040638b6e7230336ba261adf3d93921e2b60: run 42462246710 GREEN (14 unit, 27 desktop/mobile Chromium at 1280x800 and 390x844, screenshot artifact 13610284011, ESLint, TypeScript). Separate additional negative fail-closed 28th test at SHA 8d721b... run 42465803268 was queued when recorded and is NOT claimed passed; reopen if regression. See docs/parity/pages/shared/UX-G184-authenticated-route-states.md."
+        "notes": "DONE scoped 2026-11-08 on unchanged registered sources at exact SHA 8b59040638b6e7230336ba261adf3d93921e2b60: run 42462246710 GREEN (14 unit, 27 desktop/mobile Chromium at 1280x800 and 390x844, screenshot artifact 13610284011, ESLint, TypeScript). Separate additional negative fail-closed 28th test at SHA 8d721b... run 42465803268 was queued when recorded and is NOT claimed passed; reopen if regression. See docs/parity/pages/shared/UX-G184-authenticated-route-states.md. Verified additional G184 invalid-role/state fail-closed source SHA e0b2021f6621f5372218087bbbf6d09a4ba4b7fd, run 42467052260 GREEN: 14/14 unit, 28/28 browser, zero skipped/flaky, artifact 13612008598. Prior pending-run caveat superseded; no security or production logic relaxation."
       },
       {
         "id": "UX-G185",
