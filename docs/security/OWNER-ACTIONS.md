@@ -36,3 +36,9 @@ Everything else on the security list that does not need you is done or running (
 
 16. **Is the NSRIT data on dev real?** The vNext dev database holds NSRIT (154 members) loaded from the legacy LMS dev database. If those are real students, dev needs production-grade protection and a data-processing basis, or the data should be replaced with synthetic data (SEC-10-016, SEC-22).
 17. **Key rotation rules** for the outbound encryption key (rotation strands sealed payloads until key versions exist): decide whether to schedule versioning work (SEC-10-015).
+
+## Added evening 2026-11-08
+
+18. **Package DB19-P28 conflict.** `docs/tracker.json` marks package DB19-P28 and its parent DB-019 as done, while `tests/db019-p28-tracker-field-review.test.mjs` insists both are not done (the field review is still `PENDING`). Whoever owns the DB-019 package must decide which is right and change the other; the workflow "DB19-P28 tracker privacy, race and registered PostgreSQL acceptance" stays red until then.
+19. **Optional new secret `COMPANY_SHARE_PROOF_SECRET`** (32+ characters, distinct from every other secret). Company share access proofs now use it when set and fall back to `AUTH_SECRET` otherwise, so nothing breaks if you skip it, but one leaked session secret would still also forge share proofs until you add it to the `vnext-keys` secret.
+20. **After CI is green on main:** run `node scripts/security/merge-tracker-pending.cjs --sha <commit> --run-url <actions run url>` (dry run first; add `--apply` to write) to move 219 assessed controls into the tracker. It can never produce VERIFIED. Verification still needs the independent review.
