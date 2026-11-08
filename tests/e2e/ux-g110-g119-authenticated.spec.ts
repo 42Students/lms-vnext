@@ -15,6 +15,16 @@ const cases = [
   { group: "UX-G119", name: "ambiguous private conversation references", path: "/tpo/team/00000000-0000-4000-8000-000000000001?page=1&page=2", heading: "Conflicting conversation filters", body: "No private messages were loaded", action: "Clear conversation filters", href: "/tpo/team/00000000-0000-4000-8000-000000000001" },
 ] as const;
 
+/** G117: all six settings destinations, with actual scoped reads and panels. */
+const settingsRoutes = [
+  { segment: "public-link", title: "Public recruiter link" },
+  { segment: "public-page", title: "Public placements" },
+  { segment: "recruiters", title: "Recruiter access" },
+  { segment: "rules", title: "Settings" },
+  { segment: "season", title: "Placement Season" },
+  { segment: "see", title: "What companies see" },
+] as const;
+
 const sizes = [
   { name: "desktop", width: 1280, height: 800 },
   { name: "mobile", width: 390, height: 844 },
@@ -47,6 +57,21 @@ test.describe("TPO UX G110–G119: authenticated route recovery and tenant-safe 
         expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(2);
         expect(runtimeErrors).toEqual([]);
         await page.screenshot({ path: info.outputPath(`${scenario.group}-${size.name}-${scenario.name.replaceAll(" ", "-")}.png`), fullPage: true });
+      });
+    }
+    for (const route of settingsRoutes) {
+      test(`UX-G117 ${size.name}: genuine TPO settings/${route.segment} view`, async ({ page, context }, info) => {
+        test.setTimeout(120_000);
+        await authenticateGracefulRole(context, "tpo");
+        await page.setViewportSize(size);
+        const destination = "/tpo/settings/" + route.segment;
+        const response = await page.goto(destination, { waitUntil: "domcontentloaded" });
+        expect(response?.status()).toBe(200);
+        expect(new URL(page.url()).pathname).toBe(destination);
+        await expect(page.getByRole("heading", { name: route.title, level: 1 })).toBeVisible();
+        await expect(page.getByRole("navigation", { name: "Settings sections" })).toBeVisible();
+        expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(2);
+        await page.screenshot({ path: info.outputPath(`g117-${route.segment}-${size.name}.png`), fullPage: true });
       });
     }
     test(`${size.name}: learner cannot access TPO private recovery pages`, async ({ page, context }, info) => {
