@@ -58,7 +58,7 @@ export default function UxCourseRecruiterCsvFixture(){
    csv:buildHrTeamCsv([{displayName:unsafe,title:"Recruiter",
     email:"recruiter@example.invalid",isYou:true}]).csv},
   {key:"share-audit",title:"Company-share audit",file:"company-share-audit.csv",
-   csv:tpoCompanyShareAuditCsv([{sharePrefix:unsafe,kind:"Page view",
+   csv:"\uFEFF"+tpoCompanyShareAuditCsv([{sharePrefix:unsafe,kind:"Page view",
     at:date.toISOString()}],true)},
   {key:"empty-proposals",title:"No proposal history",file:"empty-proposals.csv",
    csv:hrDriveProposalHistoryCsv([])},
