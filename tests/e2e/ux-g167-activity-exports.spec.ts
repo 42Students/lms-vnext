@@ -5,7 +5,7 @@ import { authenticateGracefulRole } from "./support/roles";
 async function signInForActivityExport(context:BrowserContext,email:"superadmin.seed@example.com"|"collegeadmin.seed@example.com",role?:"COLLEGE_ADMIN"){
   const origin="http://localhost:3000";
   const code=process.env.AUTH_TEST_OTP;
-  expect(code,"disposable database OTP fixture").toMatch(/^\\d{6}$/);
+  expect(code,"disposable database OTP fixture").toMatch(/^\d{6}$/);
   await context.clearCookies();
   const start=await context.request.post(origin+"/api/auth/login/start",{
     headers:{origin},data:{channel:"EMAIL",contact:email},
