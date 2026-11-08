@@ -12,6 +12,11 @@ if (enabled) assertDb018DisposableTarget(process.env, { serviceBound:true });
 const pool = enabled ? new Pool({ connectionString:process.env.TEST_DATABASE_URL }) : null;
 const ids = { user:randomUUID(), member:randomUUID(), role:randomUUID() };
 const marker = "people-csv-" + ids.user.slice(0,8);
+const pageMarker = "paged-export-" + ids.user.slice(0,8);
+const pageRows = Array.from({length:105},()=>({
+  user:randomUUID(), member:randomUUID(), role:randomUUID(),
+}));
+
 const admin: RequestContext = {
   user:{ id:SEED_IDS.collegeAdminUser, identityUid:"csv-actor", platformStatus:"ACTIVE", systemRoles:[] },
   membership:{ id:SEED_IDS.collegeAdminMembership, collegeId:SEED_IDS.collegeA,
@@ -27,9 +32,35 @@ describe.skipIf(!enabled)("College people CSV PostgreSQL scope", () => {
       [ids.member,ids.user,SEED_IDS.collegeA]);
     await pool!.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,'MENTOR')",
       [ids.role,ids.member]);
+    // Real PostgreSQL multi-page directory export fixture: 105 distinct
+    // memberships span the 100-row pagination boundary.
+    const userIds=pageRows.map(row=>row.user);
+    const memberIds=pageRows.map(row=>row.member);
+    const roleIds=pageRows.map(row=>row.role);
+    await pool!.query(`
+      INSERT INTO users(id,identity_uid,display_name,email)
+      SELECT u.id,'ux-csv-'||u.id,$2||'-row-'||u.n::text,
+        'ux-csv-'||u.id||'@example.test'
+      FROM unnest($1::uuid[]) WITH ORDINALITY AS u(id,n)
+    `,[userIds,pageMarker]);
+    await pool!.query(`
+      INSERT INTO college_memberships(id,user_id,college_id)
+      SELECT m.id,m.user_id,$3 FROM unnest($1::uuid[],$2::uuid[]) AS m(id,user_id)
+    `,[memberIds,userIds,SEED_IDS.collegeA]);
+    await pool!.query(`
+      INSERT INTO membership_roles(id,membership_id,role)
+      SELECT r.id,r.membership_id,'MENTOR'
+      FROM unnest($1::uuid[],$2::uuid[]) AS r(id,membership_id)
+    `,[roleIds,memberIds]);
   });
   afterAll(async () => {
     try {
+      await pool?.query("DELETE FROM membership_roles WHERE id = ANY($1::uuid[])",
+        [pageRows.map(row=>row.role)]);
+      await pool?.query("DELETE FROM college_memberships WHERE id = ANY($1::uuid[])",
+        [pageRows.map(row=>row.member)]);
+      await pool?.query("DELETE FROM users WHERE id = ANY($1::uuid[])",
+        [pageRows.map(row=>row.user)]);
       await pool?.query("DELETE FROM membership_roles WHERE id=$1",[ids.role]);
       await pool?.query("DELETE FROM college_memberships WHERE id=$1",[ids.member]);
       await pool?.query("DELETE FROM users WHERE id=$1",[ids.user]);
@@ -47,6 +78,20 @@ describe.skipIf(!enabled)("College people CSV PostgreSQL scope", () => {
     const faculty = await exportCollegePeopleCsv(admin,{q:marker,role:"FACULTY"});
     expect(faculty.exported).toBe(0);
   });
+  it("paginates 105 real memberships exactly once, without claiming truncated data", async () => {
+    const result=await exportCollegePeopleCsv(admin,{q:pageMarker,role:"MENTOR"});
+    expect(result.total).toBe(105);
+    expect(result.exported).toBe(105);
+    expect(result.truncated).toBe(false);
+    const rows=result.csv.replace(/^\uFEFF/,"").trim().split("\r\n");
+    expect(rows).toHaveLength(106);
+    expect(rows[0]).toContain("Membership ID");
+    for(const item of pageRows)
+      expect(result.csv.split(item.member).length-1).toBe(1);
+    const otherCollege=await exportCollegePeopleCsv(foreign,{q:pageMarker,role:"MENTOR"});
+    expect(otherCollege.exported).toBe(0);
+  });
+
   it("rejects role forgery and never exports a foreign college row", async () => {
     expect((await exportCollegePeopleCsv(foreign,{q:marker})).exported).toBe(0);
     await expect(exportCollegePeopleCsv(learner,{q:marker}))
