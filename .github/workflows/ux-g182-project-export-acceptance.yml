@@ -1,0 +1,89 @@
+name: UX-G182 project CSV export acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/app/e2e/ux-g182-export-downloads/**'
+      - 'tests/e2e/ux-g182-project-downloads.spec.ts'
+      - 'tests/unit/ux-g182-project-export-ux.test.ts'
+      - 'src/modules/projects/class-team-csv-export.ts'
+      - 'src/modules/projects/learner-project-activity-csv-model.ts'
+      - 'src/modules/projects/mentor-project-activity-export-model.ts'
+      - 'src/modules/projects/mentor-calendar-export-model.ts'
+      - 'src/modules/projects/mentor-portfolio-activity-export-model.ts'
+      - 'src/modules/projects/mentor-review-export-model.ts'
+      - 'src/modules/projects/mentor-task-review-export-model.ts'
+      - '.github/workflows/ux-g182-project-export-acceptance.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ux-g182-project-exports-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  project-csv:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_OPTIONS: '--max-old-space-size=6144'
+      UX_G182_EXPORT_FIXTURE: '1'
+      PLATFORM_HOSTS: 'localhost,127.0.0.1'
+      PLAYWRIGHT_JSON_OUTPUT_NAME: 'ux-g182-results.json'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact source SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Scoped lint and full TypeScript
+        run: |
+          npx eslint \
+            src/app/e2e/ux-g182-export-downloads/page.tsx \
+            tests/e2e/ux-g182-project-downloads.spec.ts \
+            tests/unit/ux-g182-project-export-ux.test.ts \
+            src/modules/projects/class-team-csv-export.ts \
+            src/modules/projects/learner-project-activity-csv-model.ts \
+            src/modules/projects/mentor-project-activity-export-model.ts \
+            src/modules/projects/mentor-calendar-export-model.ts \
+            src/modules/projects/mentor-portfolio-activity-export-model.ts \
+            src/modules/projects/mentor-review-export-model.ts \
+            src/modules/projects/mentor-task-review-export-model.ts
+          npm run typecheck
+      - name: Project export formatter and existing compatibility regression
+        run: |
+          npx vitest run \
+            tests/unit/ux-g182-project-export-ux.test.ts \
+            tests/unit/project-class-team-csv-export.test.ts \
+            tests/unit/learner-project-activity-csv-model.test.ts \
+            tests/unit/mentor-project-activity-export.test.ts \
+            tests/unit/mentor-calendar-export-model.test.ts \
+            tests/unit/mentor-activity-portfolio-csv.test.ts \
+            tests/unit/mentor-task-review-export.test.ts \
+            tests/unit/PROJ-BREAK-chat6-export-integrity.test.ts \
+            tests/unit/PROJ-BREAK-LEARNER-02.test.ts \
+            tests/unit/PROJ-BREAK-SA-42-learner-activity-export-unicode.test.ts --reporter=dot
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Responsive browser downloads and anonymous API denial
+        run: |
+          npx playwright test tests/e2e/ux-g182-project-downloads.spec.ts --project=chromium --reporter=line,json
+          node -e 'const s=require("./ux-g182-results.json").stats;console.log("G182 browser cases:",s);if(s.expected!==15||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
+      - name: Preserve evidence screenshots and download traces
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g182-project-export-browser-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+            ux-g182-results.json
+          if-no-files-found: ignore
+          retention-days: 14
