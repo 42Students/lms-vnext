@@ -54,6 +54,22 @@ for(const viewport of sizes){
   await expect(section.getByRole("button",{name:"Rename conversation"})).toHaveAttribute("aria-expanded","false");
   await screenshot(page,info,viewport.name+"-rename");
  });
+ test("UX-G159 "+viewport.name+" checks exactly which 25 recipients are selected",async({page},info)=>{
+  await page.setViewportSize(viewport);
+  await page.goto(fixture);
+  const section=page.locator('[data-ux-fixture="nudge"]');
+  const all=section.getByRole("checkbox",{name:"Select first 25 on this page"});
+  await all.check();
+  await expect(all).toBeChecked();
+  await section.getByRole("checkbox",{name:"Learner 25",exact:true}).uncheck();
+  await section.getByRole("checkbox",{name:"Learner 26",exact:true}).check();
+  await expect(section.getByRole("status")).toContainText("25 selected");
+  await expect(all).not.toBeChecked();
+  await all.check();
+  await expect(section.getByRole("checkbox",{name:"Learner 25",exact:true})).toBeChecked();
+  await expect(section.getByRole("checkbox",{name:"Learner 26",exact:true})).not.toBeChecked();
+  await screenshot(page,info,viewport.name+"-nudge");
+ });
  test("UX-G159 "+viewport.name+" shows stale message edit and delete errors in dialogs",async({page},info)=>{
   await page.setViewportSize(viewport);
   const actions:string[]=[];
