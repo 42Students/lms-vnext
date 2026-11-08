@@ -1,4 +1,6 @@
 import { FilterBar } from "@/components/ui/filter-bar";
+import { redirect } from "next/navigation";
+import { hasMembershipRole } from "@/modules/identity/context";
 import { Disclosure } from "@/components/ui/disclosure";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
@@ -21,8 +23,10 @@ const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:val
 export default async function MentorReportsPage({searchParams}:{
   searchParams:Promise<Search>;
 }){
+  const context=await getCurrentRequestContext();
+  if(!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
   const params=await searchParams;
-  const duplicated=Object.values(params).some(value=>Array.isArray(value)&&value.length!==1);
+  const duplicated=Object.values(params).some(Array.isArray);
   const parsed=mentorReportsQuerySchema.safeParse({
     taskCoverage:first(params.taskCoverage)??undefined,
     status:first(params.status)??undefined,attention:first(params.attention)??undefined,
@@ -32,9 +36,10 @@ export default async function MentorReportsPage({searchParams}:{
   });
   if(duplicated||!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title="Assigned project reports" description="Invalid mentor report filters" />
+    <p className="text-sm text-body">These filters could not be applied. No project report data was loaded.</p>
     <TextLink href="/mentor/reports" className="inline-flex min-h-11 items-center">Clear filters</TextLink>
   </section>;
-  const data=await getMentorReports(await getCurrentRequestContext(),parsed.data);
+  const data=await getMentorReports(context,parsed.data);
   const statusMetrics=[
     ["Planned",data.statusCounts.PLANNED],["Active",data.statusCounts.ACTIVE],
     ["Completed",data.statusCounts.COMPLETED],["Archived",data.statusCounts.ARCHIVED],
