@@ -60,6 +60,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Verify exact tested revision
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
       - name: Scoped lint
         run: |
           npx eslint src/components/ui/tabs.tsx src/components/ui/textarea.tsx src/components/ui/third-party-link.tsx src/components/ui/toast.tsx src/components/ui/tooltip.tsx src/components/ui/use-confirm-flow.tsx src/modules/admin-ui/super-admin-batch-roster-export-model.ts src/modules/admin-ui/super-admin-faculty-assignments-csv-service.ts src/modules/admin-ui/super-admin-learning-csv-service.ts src/modules/admin-ui/super-admin-scoped-csv-model.ts src/modules/admin-ui/super-admin-scoped-csv-service.ts tests/unit/ux-g165-shared-controls.test.tsx tests/unit/ux-g168-admin-export-ux.test.ts tests/e2e/ux-shared-admin-exports.spec.ts
