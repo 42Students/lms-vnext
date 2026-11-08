@@ -26,3 +26,9 @@
 - `tests/e2e/ux-g132-attendance-policy-mutation.spec.ts` exercises a server-authorized Super Admin selection of seeded college A, invalid threshold, confirmation cancellation, real compare-and-set PATCH/save with receipt, cross-college PATCH denial, restore to initial value, and mobile verification. A seeded College Admin's direct policy mutation is forbidden by the service despite the read-only UI.
 - The tested Super Admin editor lives at `/admin/attendance`; the separate College Admin settings route must not be mistaken for a platform role entrypoint. No routing or privilege constraints were weakened to make the test pass.
 - **Remaining DOING gaps:** faculty schedule conflict/double-submit and mark/correction positive/negative flows, reset-college-override confirmation, error recovery, full five-component focus and responsive review. Successful focused acceptance does not certify all G132 workflows or release security.
+
+## Faculty scheduling confirmation improvement — 8 November 2026
+
+- [Source commit `b9fe4619`](https://github.com/42Students/lms-vnext/commit/b9fe461939c54176655ee90ad9593b250fc50ad0) makes the editor's heading change between Schedule and Reschedule and adds a confirmation summary with the exact session title, typed start/end in IST, optional location, and whether it creates a new session or updates the selected unmarked session.
+- [Unit source contract `f9eea9c3`](https://github.com/42Students/lms-vnext/commit/f9eea9c3cca1cb00e346119fb2a3b8bac22dfc17) checks those confirmation details are present in the existing focused UX batch. No authorization, stored schedule timestamps, optimistic version checks or request payloads were changed.
+- These edits are **committed, not independently CI-verified** in this update. Keep UX-G132 **DOING** until successful exact-SHA checks and the previously listed real Faculty mutation/conflict/replay/marking and responsive role-authorization evidence are complete.
