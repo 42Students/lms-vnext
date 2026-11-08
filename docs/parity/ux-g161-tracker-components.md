@@ -16,3 +16,10 @@
 - Server-side audit authorization, immutable records and redaction remain authoritative. No new export endpoint or permission was created.
 
 **Do not mark DONE** until tests and authenticated browser matrix pass on an exact SHA and evidence is recorded in canonical tracker.
+
+## 8 November 2026 — field accessibility, safe retry and shared CI
+
+- [Shared exact-SHA workflow 42476817032](https://github.com/42Students/lms-vnext/actions/runs/42476817032) **SUCCEEDED** at `c98ddc2bf339ba1f3d7a0f7ff8a1fba091e0497a`: scoped ESLint, full TypeScript, focused unit regressions and **17/17 authenticated responsive Chromium scenarios** across the shared component groups.
+- The tracker issue report now exposes Page, Screen, Section and Issue Type as stable accessible select names; when Page/Screen change, the previous uncertain-submission idempotency retry key is cleared. The report validation and retry contracts have new unit regressions.
+- Browser acceptance uncovered that a test fixture accidentally contained literal backslash-n sequences inside a comment, preventing the Page and Screen commands from executing; this was corrected in `9756bc514113f3cb4f1131e053474bb997f20465`. An exact-SHA end-to-end create-and-open receipt is required before claiming this report workflow green.
+- Full admin workflow transitions, attachments, log export, Telegram, stale concurrency and complete eight-component focus/permission matrix remain unverified. **Keep DOING.**
