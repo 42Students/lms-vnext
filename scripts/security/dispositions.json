@@ -909,6 +909,55 @@
    "d": "O",
    "finding": "Needs the owner: backup configuration and restore testing on a disposable instance.",
    "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-01-003"
+   ],
+   "d": "R",
+   "finding": "Built, switched off: AUTH_UNIFORM_UNKNOWN_CONTACT=1 makes sign-in start answer unknown, disabled and out-of-college contacts like real ones (decoy attempt id that never verifies, response time padded). Off by default because it changes the 'not registered' wording; turning it on is a wording decision.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-13-009"
+   ],
+   "d": "R",
+   "finding": "Nobody, Super Admin included, can add or remove a role on their own membership (MEMBERSHIP_SELF_ROLE_CHANGE), enforced in the service and again in the repository.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-09-011"
+   ],
+   "d": "R",
+   "finding": "Rotation overlap for AUTH_SECRET and internal machine secrets, and a key ring for outbound encryption: the cipher key rotates (new rows v2, old v1 rows still open) while recipient, idempotency and request digests stay on the frozen digest key.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-10-015"
+   ],
+   "d": "R",
+   "finding": "Unit tests rotate the outbound cipher key, open old and new rows, and show a row whose key left the ring fails closed; no rehearsal against a managed key service because none exists.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-18-016"
+   ],
+   "d": "R",
+   "finding": "Image tarball checksums are written into the build artifact and printed in the run log; the deploy script compares the downloaded files with both before pushing. Signing and provenance (SEC-18-017) stay with the owner.",
+   "batch2": true
+  },
+  {
+   "ids": [
+    "SEC-21-005",
+    "SEC-21-006"
+   ],
+   "d": "R",
+   "finding": "Local rehearsal on a disposable PostgreSQL (dump, restore into a new database, counts compared, audit chain verified, 2 s and 7 s); evidence file restore-rehearsal-local-2026-11-08.md. Not a managed Cloud SQL restore.",
+   "batch2": true
   }
  ]
 }

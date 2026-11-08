@@ -2,8 +2,8 @@
  "note": "DRAFT. Not read by any validator. Merge into docs/tracker.json only after a passing CI run: fill commitSha (40 hex) and runUrl, then run node scripts/tracker.mjs --check. Never VERIFIED from here.",
  "generatedFrom": "docs/security/assessments/*.md",
  "counts": {
-  "IMPLEMENTED_UNVERIFIED": 364,
-  "GAP_CONFIRMED": 129
+  "IMPLEMENTED_UNVERIFIED": 371,
+  "GAP_CONFIRMED": 122
  },
  "controls": {
   "SEC-01-001": {
@@ -28,7 +28,7 @@
    ]
   },
   "SEC-01-002": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Sign-in proves control of the contact: a one-time code is sent to the phone or email and consumed once (identity_auth_attempts, used_at, HMAC digests) before a session exists.",
@@ -50,10 +50,9 @@
   },
   "SEC-01-003": {
    "currentTrackerState": "UNASSESSED",
-   "proposedState": "GAP_CONFIRMED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
-   "ownerBlocked": true,
-   "finding": "NEEDS THE OWNER. Sign-in answers differently for an unknown contact; fixing it changes who can find out an account exists and is a product decision.",
+   "finding": "Built, switched off: AUTH_UNIFORM_UNKNOWN_CONTACT=1 makes sign-in start answer unknown, disabled and out-of-college contacts like real ones (decoy attempt id that never verifies, response time padded). Off by default because it changes the 'not registered' wording; turning it on is a wording decision.",
    "source": "scripts/security/dispositions.json",
    "evidence": [
     {
@@ -63,7 +62,12 @@
      "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
     }
    ],
-   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
   },
   "SEC-01-004": {
    "currentTrackerState": "UNASSESSED",
@@ -189,7 +193,7 @@
    ]
   },
   "SEC-01-011": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Sign-in and auth route limits now use the shared store (allowRequestShared in src/modules/auth/http.ts), so they hold across replicas when SECURITY_SHARED_STORE=on (on for dev) and fall back to per-process memory otherwise; per-contact and per-challenge budgets were already in the database.",
@@ -210,7 +214,7 @@
    ]
   },
   "SEC-01-012": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Sign-in limits: per contact and address (5), per contact total (8), per address (20) in the database, per-process window by network, per-challenge verification budget, lockout with admin reset; every login event is written to the append-only, hash-chained audit trail (src/modules/auth/login-service.ts, login-repository.ts, src/auth/ip-rate-limit.ts).",
@@ -273,7 +277,7 @@
    ]
   },
   "SEC-01-015": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Sign-in limits: per contact and address (5), per contact total (8), per address (20) in the database, per-process window by network, per-challenge verification budget, lockout with admin reset; every login event is written to the append-only, hash-chained audit trail (src/modules/auth/login-service.ts, login-repository.ts, src/auth/ip-rate-limit.ts).",
@@ -454,7 +458,7 @@
    ]
   },
   "SEC-02-006": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "A session token is issued only server-side after a consumed one-time code and a re-login revokes the previous session (RELOGIN), so fixation is impossible and rotation happens at login and at the 15-minute step-up. The role cookie is not a credential. Stolen-cookie replay is limited by 5-day expiry, 30-minute idle limit for Super Admin, server-side revocation and the auth.new_device event; binding a session to a device was weighed and not done because browser updates would sign users out (documented decision).",
@@ -559,7 +563,7 @@
    ]
   },
   "SEC-02-011": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "A sign-in from a device name and agent not seen before writes auth.new_device (verified live on dev); repeated denials, login probing and id walking trip the anomaly detector; simultaneous-session analysis beyond that is not built.",
@@ -580,7 +584,7 @@
    ]
   },
   "SEC-02-012": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "A session token is issued only server-side after a consumed one-time code and a re-login revokes the previous session (RELOGIN), so fixation is impossible and rotation happens at login and at the 15-minute step-up. The role cookie is not a credential. Stolen-cookie replay is limited by 5-day expiry, 30-minute idle limit for Super Admin, server-side revocation and the auth.new_device event; binding a session to a device was weighed and not done because browser updates would sign users out (documented decision).",
@@ -601,7 +605,7 @@
    ]
   },
   "SEC-02-013": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "route({ stepUp }) requires a sign-in within 15 minutes for role, permission, user, export, import, secret and settings changes; API responses are private, no-store and pages are dynamic; the Super Admin platform workspace is separate from college workspaces and any college scope expires after 4 hours and is audited.",
@@ -622,7 +626,7 @@
    ]
   },
   "SEC-02-014": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "route({ stepUp }) requires a sign-in within 15 minutes for role, permission, user, export, import, secret and settings changes; API responses are private, no-store and pages are dynamic; the Super Admin platform workspace is separate from college workspaces and any college scope expires after 4 hours and is audited.",
@@ -643,7 +647,7 @@
    ]
   },
   "SEC-02-015": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "route({ stepUp }) requires a sign-in within 15 minutes for role, permission, user, export, import, secret and settings changes; API responses are private, no-store and pages are dynamic; the Super Admin platform workspace is separate from college workspaces and any college scope expires after 4 hours and is audited.",
@@ -706,7 +710,7 @@
    ]
   },
   "SEC-03-002": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Conditions and relationships are enforced in services with persisted re-checks inside write transactions (assertPersistedFacultyTeachingMutation, retainSelectedMembershipRole), self-lockout and protected-admin targets are guarded and tested, bulk role changes need step-up, role changes are written as api.mutation audit rows, and the role-by-route matrix runs in CI against a committed baseline.",
@@ -727,7 +731,7 @@
    ]
   },
   "SEC-03-003": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Conditions and relationships are enforced in services with persisted re-checks inside write transactions (assertPersistedFacultyTeachingMutation, retainSelectedMembershipRole), self-lockout and protected-admin targets are guarded and tested, bulk role changes need step-up, role changes are written as api.mutation audit rows, and the role-by-route matrix runs in CI against a committed baseline.",
@@ -912,7 +916,7 @@
    ]
   },
   "SEC-03-012": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "One policy interface (src/modules/permissions/policy.ts: can and requirePermission with college, organization and resource arguments) is used by route(); roles are the fixed MEMBERSHIP_ROLES constant, so there is no editable role catalogue to bypass.",
@@ -933,7 +937,7 @@
    ]
   },
   "SEC-03-013": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Conditions and relationships are enforced in services with persisted re-checks inside write transactions (assertPersistedFacultyTeachingMutation, retainSelectedMembershipRole), self-lockout and protected-admin targets are guarded and tested, bulk role changes need step-up, role changes are written as api.mutation audit rows, and the role-by-route matrix runs in CI against a committed baseline.",
@@ -954,7 +958,7 @@
    ]
   },
   "SEC-03-014": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "One policy interface (src/modules/permissions/policy.ts: can and requirePermission with college, organization and resource arguments) is used by route(); roles are the fixed MEMBERSHIP_ROLES constant, so there is no editable role catalogue to bypass.",
@@ -975,7 +979,7 @@
    ]
   },
   "SEC-03-015": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Role grants require membership.role.manage or system-role permissions checked against the persisted actor inside the transaction; a revoked selected role is refused (tests in the database job: placements p4/p6a, db08 external offers, db01 session tests); who can grant what follows the role matrix in policy.ts.",
@@ -996,7 +1000,7 @@
    ]
   },
   "SEC-03-016": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Role grants require membership.role.manage or system-role permissions checked against the persisted actor inside the transaction; a revoked selected role is refused (tests in the database job: placements p4/p6a, db08 external offers, db01 session tests); who can grant what follows the role matrix in policy.ts.",
@@ -1017,7 +1021,7 @@
    ]
   },
   "SEC-03-017": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Conditions and relationships are enforced in services with persisted re-checks inside write transactions (assertPersistedFacultyTeachingMutation, retainSelectedMembershipRole), self-lockout and protected-admin targets are guarded and tested, bulk role changes need step-up, role changes are written as api.mutation audit rows, and the role-by-route matrix runs in CI against a committed baseline.",
@@ -1038,7 +1042,7 @@
    ]
   },
   "SEC-03-018": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Conditions and relationships are enforced in services with persisted re-checks inside write transactions (assertPersistedFacultyTeachingMutation, retainSelectedMembershipRole), self-lockout and protected-admin targets are guarded and tested, bulk role changes need step-up, role changes are written as api.mutation audit rows, and the role-by-route matrix runs in CI against a committed baseline.",
@@ -1101,7 +1105,7 @@
    ]
   },
   "SEC-03-021": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "One policy interface (src/modules/permissions/policy.ts: can and requirePermission with college, organization and resource arguments) is used by route(); roles are the fixed MEMBERSHIP_ROLES constant, so there is no editable role catalogue to bypass.",
@@ -1181,7 +1185,7 @@
    ]
   },
   "SEC-03-025": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Conditions and relationships are enforced in services with persisted re-checks inside write transactions (assertPersistedFacultyTeachingMutation, retainSelectedMembershipRole), self-lockout and protected-admin targets are guarded and tested, bulk role changes need step-up, role changes are written as api.mutation audit rows, and the role-by-route matrix runs in CI against a committed baseline.",
@@ -1202,7 +1206,7 @@
    ]
   },
   "SEC-03-026": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Conditions and relationships are enforced in services with persisted re-checks inside write transactions (assertPersistedFacultyTeachingMutation, retainSelectedMembershipRole), self-lockout and protected-admin targets are guarded and tested, bulk role changes need step-up, role changes are written as api.mutation audit rows, and the role-by-route matrix runs in CI against a committed baseline.",
@@ -1240,7 +1244,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-04-001": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
@@ -1261,7 +1265,7 @@
    ]
   },
   "SEC-04-002": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
@@ -1282,7 +1286,7 @@
    ]
   },
   "SEC-04-003": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
@@ -1303,7 +1307,7 @@
    ]
   },
   "SEC-04-004": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
@@ -1324,7 +1328,7 @@
    ]
   },
   "SEC-04-005": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
@@ -1345,7 +1349,7 @@
    ]
   },
   "SEC-04-006": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
@@ -1366,7 +1370,7 @@
    ]
   },
   "SEC-04-007": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
@@ -1429,7 +1433,7 @@
    ]
   },
   "SEC-05-002": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "College is the tenant boundary for row-level security; an organization groups colleges and is used only for Super Admin scope and organization-level settings, which are permission-checked with organizationId. Documented in central-security-architecture.md.",
@@ -1471,7 +1475,7 @@
    ]
   },
   "SEC-05-004": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Tenant scope comes from the actor, never from request input; every tenant table has a forced policy (245 of 245 policied tables, inventory on dev), so cross-tenant reads, joins, counts, filters and writes are impossible at the database even if a service forgets; foreign ids answer 404; the id-walk tripwire flags enumeration; 619 isolation checks passed on dev and the CI database job runs the acceptance script.",
@@ -1492,7 +1496,7 @@
    ]
   },
   "SEC-05-005": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Tenant scope comes from the actor, never from request input; every tenant table has a forced policy (245 of 245 policied tables, inventory on dev), so cross-tenant reads, joins, counts, filters and writes are impossible at the database even if a service forgets; foreign ids answer 404; the id-walk tripwire flags enumeration; 619 isolation checks passed on dev and the CI database job runs the acceptance script.",
@@ -1513,7 +1517,7 @@
    ]
   },
   "SEC-05-006": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Tenant scope comes from the actor, never from request input; every tenant table has a forced policy (245 of 245 policied tables, inventory on dev), so cross-tenant reads, joins, counts, filters and writes are impossible at the database even if a service forgets; foreign ids answer 404; the id-walk tripwire flags enumeration; 619 isolation checks passed on dev and the CI database job runs the acceptance script.",
@@ -1534,7 +1538,7 @@
    ]
   },
   "SEC-05-007": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Tenant scope comes from the actor, never from request input; every tenant table has a forced policy (245 of 245 policied tables, inventory on dev), so cross-tenant reads, joins, counts, filters and writes are impossible at the database even if a service forgets; foreign ids answer 404; the id-walk tripwire flags enumeration; 619 isolation checks passed on dev and the CI database job runs the acceptance script.",
@@ -1555,7 +1559,7 @@
    ]
   },
   "SEC-05-008": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Tenant scope comes from the actor, never from request input; every tenant table has a forced policy (245 of 245 policied tables, inventory on dev), so cross-tenant reads, joins, counts, filters and writes are impossible at the database even if a service forgets; foreign ids answer 404; the id-walk tripwire flags enumeration; 619 isolation checks passed on dev and the CI database job runs the acceptance script.",
@@ -1576,7 +1580,7 @@
    ]
   },
   "SEC-05-009": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Tenant scope comes from the actor, never from request input; every tenant table has a forced policy (245 of 245 policied tables, inventory on dev), so cross-tenant reads, joins, counts, filters and writes are impossible at the database even if a service forgets; foreign ids answer 404; the id-walk tripwire flags enumeration; 619 isolation checks passed on dev and the CI database job runs the acceptance script.",
@@ -1597,7 +1601,7 @@
    ]
   },
   "SEC-05-010": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Tenant scope comes from the actor, never from request input; every tenant table has a forced policy (245 of 245 policied tables, inventory on dev), so cross-tenant reads, joins, counts, filters and writes are impossible at the database even if a service forgets; foreign ids answer 404; the id-walk tripwire flags enumeration; 619 isolation checks passed on dev and the CI database job runs the acceptance script.",
@@ -1618,7 +1622,7 @@
    ]
   },
   "SEC-05-011": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "No external search index exists; search runs as SQL under row-level security.",
@@ -1639,7 +1643,7 @@
    ]
   },
   "SEC-05-012": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "The only cross-request, process-level cache in src is the skill catalog search cache (src/modules/skills/catalog-service.ts: 256 entries, 20 second TTL, keyed by query mode, text, category and limit); the skill catalog is platform-wide reference data and authorization happens in the route before it is read. All other Maps are per-request locals and no Next data cache (unstable_cache, force-cache, revalidate) is used.",
@@ -1660,7 +1664,7 @@
    ]
   },
   "SEC-05-013": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Jobs run in named system scopes and take college_id from the rows they process (src/security/internal-route.ts, docs/security/assessments/SEC-16-jobs-review-2026-11-08.md); signed file links are bound to the college and owner prefix and audited; exports need step-up and are audited; the notification stream refuses tokens in the query string and has its own authorization workflow.",
@@ -1681,7 +1685,7 @@
    ]
   },
   "SEC-05-014": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Jobs run in named system scopes and take college_id from the rows they process (src/security/internal-route.ts, docs/security/assessments/SEC-16-jobs-review-2026-11-08.md); signed file links are bound to the college and owner prefix and audited; exports need step-up and are audited; the notification stream refuses tokens in the query string and has its own authorization workflow.",
@@ -1702,7 +1706,7 @@
    ]
   },
   "SEC-05-015": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Jobs run in named system scopes and take college_id from the rows they process (src/security/internal-route.ts, docs/security/assessments/SEC-16-jobs-review-2026-11-08.md); signed file links are bound to the college and owner prefix and audited; exports need step-up and are audited; the notification stream refuses tokens in the query string and has its own authorization workflow.",
@@ -1723,7 +1727,7 @@
    ]
   },
   "SEC-05-016": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Jobs run in named system scopes and take college_id from the rows they process (src/security/internal-route.ts, docs/security/assessments/SEC-16-jobs-review-2026-11-08.md); signed file links are bound to the college and owner prefix and audited; exports need step-up and are audited; the notification stream refuses tokens in the query string and has its own authorization workflow.",
@@ -1765,7 +1769,7 @@
    ]
   },
   "SEC-05-018": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "One selected membership and role per request (narrowToActiveRole), membership and user status re-read from the database on every request so suspension and removal apply on the next request (db01-session-atomic-authorization and security session workflows); college status is checked on every request (tenant-access.ts).",
@@ -1786,7 +1790,7 @@
    ]
   },
   "SEC-05-019": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "One selected membership and role per request (narrowToActiveRole), membership and user status re-read from the database on every request so suspension and removal apply on the next request (db01-session-atomic-authorization and security session workflows); college status is checked on every request (tenant-access.ts).",
@@ -1807,7 +1811,7 @@
    ]
   },
   "SEC-05-020": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "One selected membership and role per request (narrowToActiveRole), membership and user status re-read from the database on every request so suspension and removal apply on the next request (db01-session-atomic-authorization and security session workflows); college status is checked on every request (tenant-access.ts).",
@@ -1828,7 +1832,7 @@
    ]
   },
   "SEC-05-021": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "One selected membership and role per request (narrowToActiveRole), membership and user status re-read from the database on every request so suspension and removal apply on the next request (db01-session-atomic-authorization and security session workflows); college status is checked on every request (tenant-access.ts).",
@@ -1849,7 +1853,7 @@
    ]
   },
   "SEC-05-022": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Cross-college authority exists only as the Super Admin admin-scope, which is selected explicitly, expires after 4 hours and writes an audit event.",
@@ -1887,7 +1891,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-06-001": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/evidence/pg-security-inventory-dev-2026-11-08.md: 280 tables, 246 with forced policies covering SELECT, INSERT, UPDATE and DELETE, all owned by the migrator role, runtime role without TRUNCATE, REFERENCES or TRIGGER; the migrator owns, the runtime role only reads and writes.",
@@ -1908,7 +1912,7 @@
    ]
   },
   "SEC-06-002": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/evidence/pg-security-inventory-dev-2026-11-08.md: 280 tables, 246 with forced policies covering SELECT, INSERT, UPDATE and DELETE, all owned by the migrator role, runtime role without TRUNCATE, REFERENCES or TRIGGER; the migrator owns, the runtime role only reads and writes.",
@@ -1929,7 +1933,7 @@
    ]
   },
   "SEC-06-003": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Tables whose tenancy comes through a parent have 127 derived policies (migration 0338); every policied table is FORCEd (246 of 246 on dev, inventory evidence file).",
@@ -1950,7 +1954,7 @@
    ]
   },
   "SEC-06-004": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/evidence/pg-security-inventory-dev-2026-11-08.md: 280 tables, 246 with forced policies covering SELECT, INSERT, UPDATE and DELETE, all owned by the migrator role, runtime role without TRUNCATE, REFERENCES or TRIGGER; the migrator owns, the runtime role only reads and writes.",
@@ -2013,7 +2017,7 @@
    ]
   },
   "SEC-06-007": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "scripts/rls-tenant-acceptance.mjs (34 checks, run in the CI database job as a non-superuser role) covers read, insert, update, delete, moving a row to another college, derived child rows with a foreign parent and the no-scope case in enforce mode (no rows visible); scripts/rls-isolation-sweep.mjs ran 619 checks on dev.",
@@ -2034,7 +2038,7 @@
    ]
   },
   "SEC-06-008": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/evidence/pg-security-inventory-dev-2026-11-08.md: 280 tables, 246 with forced policies covering SELECT, INSERT, UPDATE and DELETE, all owned by the migrator role, runtime role without TRUNCATE, REFERENCES or TRIGGER; the migrator owns, the runtime role only reads and writes.",
@@ -2055,7 +2059,7 @@
    ]
   },
   "SEC-06-009": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Tables whose tenancy comes through a parent have 127 derived policies (migration 0338); every policied table is FORCEd (246 of 246 on dev, inventory evidence file).",
@@ -2097,7 +2101,7 @@
    ]
   },
   "SEC-06-011": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Runtime principal probe on dev: not superuser, no BYPASSRLS, no CREATEROLE or CREATEDB, no role memberships, owns 0 of 278 tables, cannot TRUNCATE or CREATE; 0 SECURITY DEFINER functions exist (asserted by the acceptance script), so there is no search_path hazard in privileged functions.",
@@ -2160,7 +2164,7 @@
    ]
   },
   "SEC-06-014": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Runtime principal probe on dev: not superuser, no BYPASSRLS, no CREATEROLE or CREATEDB, no role memberships, owns 0 of 278 tables, cannot TRUNCATE or CREATE; 0 SECURITY DEFINER functions exist (asserted by the acceptance script), so there is no search_path hazard in privileged functions.",
@@ -2244,7 +2248,7 @@
    ]
   },
   "SEC-06-018": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Acknowledged and bounded: the tenant setting is a database setting set only by the pool wrapper, injection is blocked by parameterised queries and the sql-raw-dynamic ratchet, and the runtime role cannot create objects. Rollout and rollback were rehearsed on dev on 2026-11-08 (enforcement switched to inert and back, health and sign-in checked each time; docs/security/rls-rollout.md).",
@@ -2265,7 +2269,7 @@
    ]
   },
   "SEC-06-019": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "scripts/rls-tenant-acceptance.mjs (34 checks, run in the CI database job as a non-superuser role) covers read, insert, update, delete, moving a row to another college, derived child rows with a foreign parent and the no-scope case in enforce mode (no rows visible); scripts/rls-isolation-sweep.mjs ran 619 checks on dev.",
@@ -2286,7 +2290,7 @@
    ]
   },
   "SEC-06-020": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "scripts/rls-tenant-acceptance.mjs (34 checks, run in the CI database job as a non-superuser role) covers read, insert, update, delete, moving a row to another college, derived child rows with a foreign parent and the no-scope case in enforce mode (no rows visible); scripts/rls-isolation-sweep.mjs ran 619 checks on dev.",
@@ -2307,7 +2311,7 @@
    ]
   },
   "SEC-06-021": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "scripts/rls-tenant-acceptance.mjs (34 checks, run in the CI database job as a non-superuser role) covers read, insert, update, delete, moving a row to another college, derived child rows with a foreign parent and the no-scope case in enforce mode (no rows visible); scripts/rls-isolation-sweep.mjs ran 619 checks on dev.",
@@ -2328,7 +2332,7 @@
    ]
   },
   "SEC-06-022": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "scripts/rls-tenant-acceptance.mjs (34 checks, run in the CI database job as a non-superuser role) covers read, insert, update, delete, moving a row to another college, derived child rows with a foreign parent and the no-scope case in enforce mode (no rows visible); scripts/rls-isolation-sweep.mjs ran 619 checks on dev.",
@@ -2349,7 +2353,7 @@
    ]
   },
   "SEC-06-023": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "scripts/rls-tenant-acceptance.mjs (34 checks, run in the CI database job as a non-superuser role) covers read, insert, update, delete, moving a row to another college, derived child rows with a foreign parent and the no-scope case in enforce mode (no rows visible); scripts/rls-isolation-sweep.mjs ran 619 checks on dev.",
@@ -2370,7 +2374,7 @@
    ]
   },
   "SEC-06-024": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/evidence/pg-security-inventory-dev-2026-11-08.md: 280 tables, 246 with forced policies covering SELECT, INSERT, UPDATE and DELETE, all owned by the migrator role, runtime role without TRUNCATE, REFERENCES or TRIGGER; the migrator owns, the runtime role only reads and writes.",
@@ -2391,7 +2395,7 @@
    ]
   },
   "SEC-06-025": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "scripts/rls-perf-probe.mjs measured the policies on dev within the agreed budget before enforcement was switched on (docs/security/rls-rollout.md).",
@@ -2412,7 +2416,7 @@
    ]
   },
   "SEC-06-026": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Acknowledged and bounded: the tenant setting is a database setting set only by the pool wrapper, injection is blocked by parameterised queries and the sql-raw-dynamic ratchet, and the runtime role cannot create objects. Rollout and rollback were rehearsed on dev on 2026-11-08 (enforcement switched to inert and back, health and sign-in checked each time; docs/security/rls-rollout.md).",
@@ -2450,7 +2454,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-07-002": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Runtime holds only SELECT, INSERT, UPDATE, DELETE (audit table INSERT and SELECT); membership_roles and other relationship tables carry unique and foreign-key constraints and derive their row policy from the parent; unique indexes without a tenant column are opaque global values or parent-keyed composites (evidence file section 'Unique indexes').",
@@ -2631,7 +2635,7 @@
    ]
   },
   "SEC-07-011": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Runtime holds only SELECT, INSERT, UPDATE, DELETE (audit table INSERT and SELECT); membership_roles and other relationship tables carry unique and foreign-key constraints and derive their row policy from the parent; unique indexes without a tenant column are opaque global values or parent-keyed composites (evidence file section 'Unique indexes').",
@@ -2652,7 +2656,7 @@
    ]
   },
   "SEC-07-012": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Runtime holds only SELECT, INSERT, UPDATE, DELETE (audit table INSERT and SELECT); membership_roles and other relationship tables carry unique and foreign-key constraints and derive their row policy from the parent; unique indexes without a tenant column are opaque global values or parent-keyed composites (evidence file section 'Unique indexes').",
@@ -2715,7 +2719,7 @@
    ]
   },
   "SEC-07-015": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Request bodies are strict Zod objects with the api-surface ratchet; privileged writes re-check the persisted actor inside the transaction with row locks (persisted-actor.ts); revocation-versus-write races are covered by serialization tests in the database job (p6a screening, p4 eligibility, db08 external offers, db01 session atomic authorization).",
@@ -2736,7 +2740,7 @@
    ]
   },
   "SEC-07-016": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Request bodies are strict Zod objects with the api-surface ratchet; privileged writes re-check the persisted actor inside the transaction with row locks (persisted-actor.ts); revocation-versus-write races are covered by serialization tests in the database job (p6a screening, p4 eligibility, db08 external offers, db01 session atomic authorization).",
@@ -2757,7 +2761,7 @@
    ]
   },
   "SEC-07-017": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Request bodies are strict Zod objects with the api-surface ratchet; privileged writes re-check the persisted actor inside the transaction with row locks (persisted-actor.ts); revocation-versus-write races are covered by serialization tests in the database job (p6a screening, p4 eligibility, db08 external offers, db01 session atomic authorization).",
@@ -2799,7 +2803,7 @@
    ]
   },
   "SEC-07-019": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "scripts/security/pg-security-inventory.mjs --check compares owners, flags, policy coverage, runtime grants and role attributes with docs/security/pg-security-baseline.json; a weekly CronJob (deploy/k8s/dev/pg-drift-cronjob.yaml) runs it on dev and a manual run on 2026-11-08 reported no drift.",
@@ -2917,7 +2921,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-08-006": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Measured by scripts/security/api-surface-audit.mjs and held by a ratchet in the lint chain: counts of mutating routes without a visible schema (286), non-strict bodies (76), echoed typed error codes (46) and pagination without a visible bound (122) can only go down; the central error mapper returns generic text for unknown errors; ownership is enforced by services plus forced row policies; API-initiated background work runs in a named system scope.",
@@ -2980,7 +2984,7 @@
    ]
   },
   "SEC-08-009": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Measured by scripts/security/api-surface-audit.mjs and held by a ratchet in the lint chain: counts of mutating routes without a visible schema (286), non-strict bodies (76), echoed typed error codes (46) and pagination without a visible bound (122) can only go down; the central error mapper returns generic text for unknown errors; ownership is enforced by services plus forced row policies; API-initiated background work runs in a named system scope.",
@@ -3001,7 +3005,7 @@
    ]
   },
   "SEC-08-010": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Measured by scripts/security/api-surface-audit.mjs and held by a ratchet in the lint chain: counts of mutating routes without a visible schema (286), non-strict bodies (76), echoed typed error codes (46) and pagination without a visible bound (122) can only go down; the central error mapper returns generic text for unknown errors; ownership is enforced by services plus forced row policies; API-initiated background work runs in a named system scope.",
@@ -3022,7 +3026,7 @@
    ]
   },
   "SEC-08-011": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Measured by scripts/security/api-surface-audit.mjs and held by a ratchet in the lint chain: counts of mutating routes without a visible schema (286), non-strict bodies (76), echoed typed error codes (46) and pagination without a visible bound (122) can only go down; the central error mapper returns generic text for unknown errors; ownership is enforced by services plus forced row policies; API-initiated background work runs in a named system scope.",
@@ -3043,7 +3047,7 @@
    ]
   },
   "SEC-08-012": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Measured by scripts/security/api-surface-audit.mjs and held by a ratchet in the lint chain: counts of mutating routes without a visible schema (286), non-strict bodies (76), echoed typed error codes (46) and pagination without a visible bound (122) can only go down; the central error mapper returns generic text for unknown errors; ownership is enforced by services plus forced row policies; API-initiated background work runs in a named system scope.",
@@ -3085,7 +3089,7 @@
    ]
   },
   "SEC-08-014": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Measured by scripts/security/api-surface-audit.mjs and held by a ratchet in the lint chain: counts of mutating routes without a visible schema (286), non-strict bodies (76), echoed typed error codes (46) and pagination without a visible bound (122) can only go down; the central error mapper returns generic text for unknown errors; ownership is enforced by services plus forced row policies; API-initiated background work runs in a named system scope.",
@@ -3169,7 +3173,7 @@
    ]
   },
   "SEC-08-018": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Measured by scripts/security/api-surface-audit.mjs and held by a ratchet in the lint chain: counts of mutating routes without a visible schema (286), non-strict bodies (76), echoed typed error codes (46) and pagination without a visible bound (122) can only go down; the central error mapper returns generic text for unknown errors; ownership is enforced by services plus forced row policies; API-initiated background work runs in a named system scope.",
@@ -3253,7 +3257,7 @@
    ]
   },
   "SEC-08-022": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Measured by scripts/security/api-surface-audit.mjs and held by a ratchet in the lint chain: counts of mutating routes without a visible schema (286), non-strict bodies (76), echoed typed error codes (46) and pagination without a visible bound (122) can only go down; the central error mapper returns generic text for unknown errors; ownership is enforced by services plus forced row policies; API-initiated background work runs in a named system scope.",
@@ -3333,7 +3337,7 @@
    ]
   },
   "SEC-09-002": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "The secret registry records a purpose for every entry; the workflow 'Security - full-history secret scan' scans all history; cryptography is node:crypto (AES-256-GCM, HMAC-SHA256, randomBytes, timingSafeEqual), no home-made primitives.",
@@ -3354,7 +3358,7 @@
    ]
   },
   "SEC-09-003": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "No secrets in source or built output (credential scans in CI, full-history scan, scripts/security/scan-built-bundles.mjs); logs name a secret without its value and never include codes, tokens or request bodies (logging-alerting-and-access.md).",
@@ -3413,7 +3417,7 @@
    ]
   },
   "SEC-09-006": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "The secret registry records a purpose for every entry; the workflow 'Security - full-history secret scan' scans all history; cryptography is node:crypto (AES-256-GCM, HMAC-SHA256, randomBytes, timingSafeEqual), no home-made primitives.",
@@ -3503,10 +3507,9 @@
   },
   "SEC-09-011": {
    "currentTrackerState": "UNASSESSED",
-   "proposedState": "GAP_CONFIRMED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
-   "ownerBlocked": true,
-   "finding": "NEEDS THE OWNER. Credential rotation (GCP key, production database password), workload identity, a managed KMS and key versioning need the owner's accounts and decisions; outbound-key versioning also needs a re-hash migration because recipient hashes derive from the same key.",
+   "finding": "Rotation overlap for AUTH_SECRET and internal machine secrets, and a key ring for outbound encryption: the cipher key rotates (new rows v2, old v1 rows still open) while recipient, idempotency and request digests stay on the frozen digest key.",
    "source": "scripts/security/dispositions.json",
    "evidence": [
     {
@@ -3516,10 +3519,15 @@
      "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
     }
    ],
-   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
   },
   "SEC-09-012": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Overlapping keys: AUTH_SECRET_PREVIOUS keeps sessions signed with the old secret valid while new ones use the new one, and every internal machine secret accepts <NAME>_PREVIOUS; provider keys rotate in the provider console.",
@@ -3557,7 +3565,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-09-014": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "No secrets in source or built output (credential scans in CI, full-history scan, scripts/security/scan-built-bundles.mjs); logs name a secret without its value and never include codes, tokens or request bodies (logging-alerting-and-access.md).",
@@ -3595,7 +3603,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-09-016": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "The secret registry records a purpose for every entry; the workflow 'Security - full-history secret scan' scans all history; cryptography is node:crypto (AES-256-GCM, HMAC-SHA256, randomBytes, timingSafeEqual), no home-made primitives.",
@@ -3633,7 +3641,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-09-018": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Emergency revocation procedure and zero-downtime overlap variables exist (AUTH_SECRET_PREVIOUS, <NAME>_PREVIOUS) with the exposed-key playbook in docs/security/runbooks/incident-playbooks.md.",
@@ -3730,7 +3738,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-10-005": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/policies/data-classification-and-handling.md defines four classes and per-role handling rules on top of the 96-table inventory.",
@@ -3785,7 +3793,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-10-008": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/policies/data-classification-and-handling.md defines four classes and per-role handling rules on top of the 96-table inventory.",
@@ -3890,7 +3898,7 @@
    ]
   },
   "SEC-10-013": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "The session cookie is HttpOnly, browser storage holds interface preferences only (audited), the built output is scanned for secrets and sensitive NEXT_PUBLIC_ names in CI, and nothing sensitive is placed in URLs.",
@@ -3933,10 +3941,9 @@
   },
   "SEC-10-015": {
    "currentTrackerState": "UNASSESSED",
-   "proposedState": "GAP_CONFIRMED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
-   "ownerBlocked": true,
-   "finding": "NEEDS THE OWNER. Database TLS is the same Cloud SQL setting as SEC-07-006; key-loss and rotation tests depend on key versioning.",
+   "finding": "Unit tests rotate the outbound cipher key, open old and new rows, and show a row whose key left the ring fails closed; no rehearsal against a managed key service because none exists.",
    "source": "scripts/security/dispositions.json",
    "evidence": [
     {
@@ -3946,7 +3953,12 @@
      "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
     }
    ],
-   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
   },
   "SEC-10-016": {
    "currentTrackerState": "UNASSESSED",
@@ -4025,7 +4037,7 @@
    ]
   },
   "SEC-11-004": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Signed links last at most 5 minutes, are refused for any key outside the college and owner prefix or containing '..', use opaque scope-prefixed keys, and every issue writes a file.link_issued audit event (tests/unit/sec11-file-boundaries.test.ts).",
@@ -4046,7 +4058,7 @@
    ]
   },
   "SEC-11-005": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Signed links last at most 5 minutes, are refused for any key outside the college and owner prefix or containing '..', use opaque scope-prefixed keys, and every issue writes a file.link_issued audit event (tests/unit/sec11-file-boundaries.test.ts).",
@@ -4067,7 +4079,7 @@
    ]
   },
   "SEC-11-006": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Signed links last at most 5 minutes, are refused for any key outside the college and owner prefix or containing '..', use opaque scope-prefixed keys, and every issue writes a file.link_issued audit event (tests/unit/sec11-file-boundaries.test.ts).",
@@ -4126,7 +4138,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-11-009": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Upload types are an allowlist (src/modules/storage/file-policy.ts: documents, three image types, zip for some flows; no HTML, SVG or executables). Signed links force attachment unless the type is a PDF or png/jpeg/gif/webp, filenames are ASCII-cleaned and percent-encoded in Content-Disposition, and responses carry private, no-store.",
@@ -4168,7 +4180,7 @@
    ]
   },
   "SEC-11-011": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "The server never extracts or converts uploads (no archive handling, no preview or conversion workers), allowed types are an allowlist and active content is always served as an attachment, so these threats have no code path; any future conversion worker needs a threat model first (secure-development-standard.md).",
@@ -4189,7 +4201,7 @@
    ]
   },
   "SEC-11-012": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Upload types are an allowlist (src/modules/storage/file-policy.ts: documents, three image types, zip for some flows; no HTML, SVG or executables). Signed links force attachment unless the type is a PDF or png/jpeg/gif/webp, filenames are ASCII-cleaned and percent-encoded in Content-Disposition, and responses carry private, no-store.",
@@ -4210,7 +4222,7 @@
    ]
   },
   "SEC-11-013": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Signed links last at most 5 minutes, are refused for any key outside the college and owner prefix or containing '..', use opaque scope-prefixed keys, and every issue writes a file.link_issued audit event (tests/unit/sec11-file-boundaries.test.ts).",
@@ -4231,7 +4243,7 @@
    ]
   },
   "SEC-11-014": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "File access is decided from database rows (owner, college, resource) at every signed-URL request, with a 5-minute ceiling, so ended memberships stop working on the next request; same-college learner probe found no foreign data.",
@@ -4252,7 +4264,7 @@
    ]
   },
   "SEC-11-015": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "The server never extracts or converts uploads (no archive handling, no preview or conversion workers), allowed types are an allowlist and active content is always served as an attachment, so these threats have no code path; any future conversion worker needs a threat model first (secure-development-standard.md).",
@@ -4273,7 +4285,7 @@
    ]
   },
   "SEC-11-016": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "The server never extracts or converts uploads (no archive handling, no preview or conversion workers), allowed types are an allowlist and active content is always served as an attachment, so these threats have no code path; any future conversion worker needs a threat model first (secure-development-standard.md).",
@@ -4294,7 +4306,7 @@
    ]
   },
   "SEC-11-017": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Upload types are an allowlist (src/modules/storage/file-policy.ts: documents, three image types, zip for some flows; no HTML, SVG or executables). Signed links force attachment unless the type is a PDF or png/jpeg/gif/webp, filenames are ASCII-cleaned and percent-encoded in Content-Disposition, and responses carry private, no-store.",
@@ -4332,7 +4344,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-11-019": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "File access is decided from database rows (owner, college, resource) at every signed-URL request, with a 5-minute ceiling, so ended memberships stop working on the next request; same-college learner probe found no foreign data.",
@@ -4353,7 +4365,7 @@
    ]
   },
   "SEC-11-020": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Signed links last at most 5 minutes, are refused for any key outside the college and owner prefix or containing '..', use opaque scope-prefixed keys, and every issue writes a file.link_issued audit event (tests/unit/sec11-file-boundaries.test.ts).",
@@ -4395,7 +4407,7 @@
    ]
   },
   "SEC-12-002": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Script CSP is nonce-based and on for dev; style-src keeps unsafe-inline (framework-injected styles) as a documented accepted risk; no client code builds HTML from the URL and sinks are limited to 8 audited files; COOP and CORP are set; only the YouTube iframe API is third-party content.",
@@ -4416,7 +4428,7 @@
    ]
   },
   "SEC-12-003": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Rich text goes through a strict rebuild (sanitizeCourseDisplayHtml in src/modules/courses/course-display-validation.ts): all text is escaped, only a short tag allowlist is reconstructed and every attribute is dropped. Only 8 files use dangerouslySetInnerHTML: 3 course components fed by that sanitizer and 5 static marketing/policy pages. Unit tests: course-display-content.test.ts and chat7-superadmin-course-authoring-break.test.ts.",
@@ -4437,7 +4449,7 @@
    ]
   },
   "SEC-12-004": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Rich text goes through a strict rebuild (sanitizeCourseDisplayHtml in src/modules/courses/course-display-validation.ts): all text is escaped, only a short tag allowlist is reconstructed and every attribute is dropped. Only 8 files use dangerouslySetInnerHTML: 3 course components fed by that sanitizer and 5 static marketing/policy pages. Unit tests: course-display-content.test.ts and chat7-superadmin-course-authoring-break.test.ts.",
@@ -4458,7 +4470,7 @@
    ]
   },
   "SEC-12-005": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Rich text goes through a strict rebuild (sanitizeCourseDisplayHtml in src/modules/courses/course-display-validation.ts): all text is escaped, only a short tag allowlist is reconstructed and every attribute is dropped. Only 8 files use dangerouslySetInnerHTML: 3 course components fed by that sanitizer and 5 static marketing/policy pages. Unit tests: course-display-content.test.ts and chat7-superadmin-course-authoring-break.test.ts.",
@@ -4479,7 +4491,7 @@
    ]
   },
   "SEC-12-006": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Script CSP is nonce-based and on for dev; style-src keeps unsafe-inline (framework-injected styles) as a documented accepted risk; no client code builds HTML from the URL and sinks are limited to 8 audited files; COOP and CORP are set; only the YouTube iframe API is third-party content.",
@@ -4500,7 +4512,7 @@
    ]
   },
   "SEC-12-007": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Rich text goes through a strict rebuild (sanitizeCourseDisplayHtml in src/modules/courses/course-display-validation.ts): all text is escaped, only a short tag allowlist is reconstructed and every attribute is dropped. Only 8 files use dangerouslySetInnerHTML: 3 course components fed by that sanitizer and 5 static marketing/policy pages. Unit tests: course-display-content.test.ts and chat7-superadmin-course-authoring-break.test.ts.",
@@ -4601,7 +4613,7 @@
    ]
   },
   "SEC-12-012": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "No Access-Control-Allow-* header is set anywhere in src, so browsers enforce same-origin; credentialed cross-origin access and wildcard CORS do not exist.",
@@ -4622,7 +4634,7 @@
    ]
   },
   "SEC-12-013": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "No Access-Control-Allow-* header is set anywhere in src, so browsers enforce same-origin; credentialed cross-origin access and wildcard CORS do not exist.",
@@ -4643,7 +4655,7 @@
    ]
   },
   "SEC-12-014": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Search of src for secrets in query strings (token, otp, password, secret, code) finds none; share and invite tokens travel in the path and are stored hashed, sign-in codes only in POST bodies.",
@@ -4664,7 +4676,7 @@
    ]
   },
   "SEC-12-015": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Browser storage holds interface preferences only (table columns and sort, recent searches, last selected college or membership key, a sign-out broadcast key); no token, code or personal data. Sign-out writes lms:signout so other tabs leave, the session cookie is HttpOnly and server-revoked.",
@@ -4685,7 +4697,7 @@
    ]
   },
   "SEC-12-016": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Browser storage holds interface preferences only (table columns and sort, recent searches, last selected college or membership key, a sign-out broadcast key); no token, code or personal data. Sign-out writes lms:signout so other tabs leave, the session cookie is HttpOnly and server-revoked.",
@@ -4706,7 +4718,7 @@
    ]
   },
   "SEC-12-017": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Script CSP is nonce-based and on for dev; style-src keeps unsafe-inline (framework-injected styles) as a documented accepted risk; no client code builds HTML from the URL and sinks are limited to 8 audited files; COOP and CORP are set; only the YouTube iframe API is third-party content.",
@@ -4727,7 +4739,7 @@
    ]
   },
   "SEC-12-018": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Script CSP is nonce-based and on for dev; style-src keeps unsafe-inline (framework-injected styles) as a documented accepted risk; no client code builds HTML from the URL and sinks are limited to 8 audited files; COOP and CORP are set; only the YouTube iframe API is third-party content.",
@@ -4748,7 +4760,7 @@
    ]
   },
   "SEC-12-019": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Authorization is enforced in route() and the services; the role-by-route matrix and unauthenticated gate test the server regardless of what the UI hides.",
@@ -4769,7 +4781,7 @@
    ]
   },
   "SEC-13-001": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/policies/threat-models.md covers the major workflows and the malicious valid user for each.",
@@ -4790,7 +4802,7 @@
    ]
   },
   "SEC-13-002": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/policies/threat-models.md covers the major workflows and the malicious valid user for each.",
@@ -4930,10 +4942,9 @@
   },
   "SEC-13-009": {
    "currentTrackerState": "UNASSESSED",
-   "proposedState": "GAP_CONFIRMED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
-   "ownerBlocked": true,
-   "finding": "NEEDS THE OWNER. Self-approval prevention and dual approval for administrators need a product design (second approver).",
+   "finding": "Nobody, Super Admin included, can add or remove a role on their own membership (MEMBERSHIP_SELF_ROLE_CHANGE), enforced in the service and again in the repository.",
    "source": "scripts/security/dispositions.json",
    "evidence": [
     {
@@ -4943,7 +4954,12 @@
      "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
     }
    ],
-   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
   },
   "SEC-13-010": {
    "currentTrackerState": "UNASSESSED",
@@ -4963,7 +4979,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-13-011": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Grade and status changes keep history tables and audit rows, published scores are not editable through the learner API, quiz attempts are limited under an advisory lock, and bulk and import routes sit behind step-up and confirmed: true with rate limits and export tripwires.",
@@ -4984,7 +5000,7 @@
    ]
   },
   "SEC-13-012": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Grade and status changes keep history tables and audit rows, published scores are not editable through the learner API, quiz attempts are limited under an advisory lock, and bulk and import routes sit behind step-up and confirmed: true with rate limits and export tripwires.",
@@ -5005,7 +5021,7 @@
    ]
   },
   "SEC-13-013": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Grade and status changes keep history tables and audit rows, published scores are not editable through the learner API, quiz attempts are limited under an advisory lock, and bulk and import routes sit behind step-up and confirmed: true with rate limits and export tripwires.",
@@ -5047,7 +5063,7 @@
    ]
   },
   "SEC-13-015": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "vNext has no billing or payment workflow, so there is nothing to validate; revisit if one is added.",
@@ -5068,7 +5084,7 @@
    ]
   },
   "SEC-13-016": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Grade and status changes keep history tables and audit rows, published scores are not editable through the learner API, quiz attempts are limited under an advisory lock, and bulk and import routes sit behind step-up and confirmed: true with rate limits and export tripwires.",
@@ -5131,7 +5147,7 @@
    ]
   },
   "SEC-14-001": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Probes and tests per module: cross-college probe (120 routes), same-college learner probe (144 requests), persisted teaching and mentor assignment re-checks with denial suites, server-side quiz scoring, deadline and publication checks and attempt limits under an advisory lock, recruiter access through relationship grants, grade history and activity events, step-up and audit on every import and export.",
@@ -5152,7 +5168,7 @@
    ]
   },
   "SEC-14-002": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Probes and tests per module: cross-college probe (120 routes), same-college learner probe (144 requests), persisted teaching and mentor assignment re-checks with denial suites, server-side quiz scoring, deadline and publication checks and attempt limits under an advisory lock, recruiter access through relationship grants, grade history and activity events, step-up and audit on every import and export.",
@@ -5173,7 +5189,7 @@
    ]
   },
   "SEC-14-003": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Faculty grade and submission access re-checks the persisted teaching assignment inside the write transaction (assertPersistedFacultyTeachingMutation), learners reach only their own submissions (same-college probe: 144 requests, no foreign data), and published grades are immutable in the database fixtures.",
@@ -5194,7 +5210,7 @@
    ]
   },
   "SEC-14-004": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Probes and tests per module: cross-college probe (120 routes), same-college learner probe (144 requests), persisted teaching and mentor assignment re-checks with denial suites, server-side quiz scoring, deadline and publication checks and attempt limits under an advisory lock, recruiter access through relationship grants, grade history and activity events, step-up and audit on every import and export.",
@@ -5215,7 +5231,7 @@
    ]
   },
   "SEC-14-005": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Probes and tests per module: cross-college probe (120 routes), same-college learner probe (144 requests), persisted teaching and mentor assignment re-checks with denial suites, server-side quiz scoring, deadline and publication checks and attempt limits under an advisory lock, recruiter access through relationship grants, grade history and activity events, step-up and audit on every import and export.",
@@ -5236,7 +5252,7 @@
    ]
   },
   "SEC-14-006": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Probes and tests per module: cross-college probe (120 routes), same-college learner probe (144 requests), persisted teaching and mentor assignment re-checks with denial suites, server-side quiz scoring, deadline and publication checks and attempt limits under an advisory lock, recruiter access through relationship grants, grade history and activity events, step-up and audit on every import and export.",
@@ -5257,7 +5273,7 @@
    ]
   },
   "SEC-14-007": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Probes and tests per module: cross-college probe (120 routes), same-college learner probe (144 requests), persisted teaching and mentor assignment re-checks with denial suites, server-side quiz scoring, deadline and publication checks and attempt limits under an advisory lock, recruiter access through relationship grants, grade history and activity events, step-up and audit on every import and export.",
@@ -5278,7 +5294,7 @@
    ]
   },
   "SEC-14-008": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Probes and tests per module: cross-college probe (120 routes), same-college learner probe (144 requests), persisted teaching and mentor assignment re-checks with denial suites, server-side quiz scoring, deadline and publication checks and attempt limits under an advisory lock, recruiter access through relationship grants, grade history and activity events, step-up and audit on every import and export.",
@@ -5299,7 +5315,7 @@
    ]
   },
   "SEC-14-009": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Probes and tests per module: cross-college probe (120 routes), same-college learner probe (144 requests), persisted teaching and mentor assignment re-checks with denial suites, server-side quiz scoring, deadline and publication checks and attempt limits under an advisory lock, recruiter access through relationship grants, grade history and activity events, step-up and audit on every import and export.",
@@ -5320,7 +5336,7 @@
    ]
   },
   "SEC-14-010": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Probes and tests per module: cross-college probe (120 routes), same-college learner probe (144 requests), persisted teaching and mentor assignment re-checks with denial suites, server-side quiz scoring, deadline and publication checks and attempt limits under an advisory lock, recruiter access through relationship grants, grade history and activity events, step-up and audit on every import and export.",
@@ -5383,7 +5399,7 @@
    ]
   },
   "SEC-14-013": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Probes and tests per module: cross-college probe (120 routes), same-college learner probe (144 requests), persisted teaching and mentor assignment re-checks with denial suites, server-side quiz scoring, deadline and publication checks and attempt limits under an advisory lock, recruiter access through relationship grants, grade history and activity events, step-up and audit on every import and export.",
@@ -5404,7 +5420,7 @@
    ]
   },
   "SEC-14-014": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Probes and tests per module: cross-college probe (120 routes), same-college learner probe (144 requests), persisted teaching and mentor assignment re-checks with denial suites, server-side quiz scoring, deadline and publication checks and attempt limits under an advisory lock, recruiter access through relationship grants, grade history and activity events, step-up and audit on every import and export.",
@@ -5425,7 +5441,7 @@
    ]
   },
   "SEC-14-015": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Probes and tests per module: cross-college probe (120 routes), same-college learner probe (144 requests), persisted teaching and mentor assignment re-checks with denial suites, server-side quiz scoring, deadline and publication checks and attempt limits under an advisory lock, recruiter access through relationship grants, grade history and activity events, step-up and audit on every import and export.",
@@ -5446,7 +5462,7 @@
    ]
   },
   "SEC-14-016": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Probes and tests per module: cross-college probe (120 routes), same-college learner probe (144 requests), persisted teaching and mentor assignment re-checks with denial suites, server-side quiz scoring, deadline and publication checks and attempt limits under an advisory lock, recruiter access through relationship grants, grade history and activity events, step-up and audit on every import and export.",
@@ -5467,7 +5483,7 @@
    ]
   },
   "SEC-14-017": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Probes and tests per module: cross-college probe (120 routes), same-college learner probe (144 requests), persisted teaching and mentor assignment re-checks with denial suites, server-side quiz scoring, deadline and publication checks and attempt limits under an advisory lock, recruiter access through relationship grants, grade history and activity events, step-up and audit on every import and export.",
@@ -5488,7 +5504,7 @@
    ]
   },
   "SEC-14-018": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "vNext issues no learner certificates (only staff identity documents), so there is nothing to forge; revisit if certificates are added.",
@@ -5509,7 +5525,7 @@
    ]
   },
   "SEC-14-019": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "vNext issues no learner certificates (only staff identity documents), so there is nothing to forge; revisit if certificates are added.",
@@ -5530,7 +5546,7 @@
    ]
   },
   "SEC-14-020": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Probes and tests per module: cross-college probe (120 routes), same-college learner probe (144 requests), persisted teaching and mentor assignment re-checks with denial suites, server-side quiz scoring, deadline and publication checks and attempt limits under an advisory lock, recruiter access through relationship grants, grade history and activity events, step-up and audit on every import and export.",
@@ -5551,7 +5567,7 @@
    ]
   },
   "SEC-14-021": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Recruiter access to learner profiles runs through relationship-scoped grants that must be ACTIVE, VERIFIED and unexpired for an ACTIVE company-college relationship at sign-in and at use; the CI job 'DB017 relationship-scoped disclosure defaults' tests the negative and tenant cases.",
@@ -5572,7 +5588,7 @@
    ]
   },
   "SEC-14-022": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Recruiter access to learner profiles runs through relationship-scoped grants that must be ACTIVE, VERIFIED and unexpired for an ACTIVE company-college relationship at sign-in and at use; the CI job 'DB017 relationship-scoped disclosure defaults' tests the negative and tenant cases.",
@@ -5593,7 +5609,7 @@
    ]
   },
   "SEC-14-023": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Probes and tests per module: cross-college probe (120 routes), same-college learner probe (144 requests), persisted teaching and mentor assignment re-checks with denial suites, server-side quiz scoring, deadline and publication checks and attempt limits under an advisory lock, recruiter access through relationship grants, grade history and activity events, step-up and audit on every import and export.",
@@ -5614,7 +5630,7 @@
    ]
   },
   "SEC-14-024": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Probes and tests per module: cross-college probe (120 routes), same-college learner probe (144 requests), persisted teaching and mentor assignment re-checks with denial suites, server-side quiz scoring, deadline and publication checks and attempt limits under an advisory lock, recruiter access through relationship grants, grade history and activity events, step-up and audit on every import and export.",
@@ -5635,7 +5651,7 @@
    ]
   },
   "SEC-15-001": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Providers and data classes are listed (data-classification-and-handling.md), outbound requests pass an SSRF guard (HTTPS, public host only, no credentials; tests/unit/sec15-outbound-url-guard.test.ts) and the pod's egress policy allows public HTTPS only, provider results never choose the actor, mentor calendar tokens are encrypted, grants carry status and valid_until, and emergency disabling is by flag or by removing the secret.",
@@ -5656,7 +5672,7 @@
    ]
   },
   "SEC-15-002": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Providers and data classes are listed (data-classification-and-handling.md), outbound requests pass an SSRF guard (HTTPS, public host only, no credentials; tests/unit/sec15-outbound-url-guard.test.ts) and the pod's egress policy allows public HTTPS only, provider results never choose the actor, mentor calendar tokens are encrypted, grants carry status and valid_until, and emergency disabling is by flag or by removing the secret.",
@@ -5677,7 +5693,7 @@
    ]
   },
   "SEC-15-003": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Providers and data classes are listed (data-classification-and-handling.md), outbound requests pass an SSRF guard (HTTPS, public host only, no credentials; tests/unit/sec15-outbound-url-guard.test.ts) and the pod's egress policy allows public HTTPS only, provider results never choose the actor, mentor calendar tokens are encrypted, grants carry status and valid_until, and emergency disabling is by flag or by removing the secret.",
@@ -5736,7 +5752,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-15-006": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Scan verdicts must match file id, college id and generation; inbound mail is idempotent by providerMessageId and deliveries claim a key in the shared store (fails closed); structured logs name secrets and routes without values.",
@@ -5799,7 +5815,7 @@
    ]
   },
   "SEC-15-009": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Scan verdicts must match file id, college id and generation; inbound mail is idempotent by providerMessageId and deliveries claim a key in the shared store (fails closed); structured logs name secrets and routes without values.",
@@ -5820,7 +5836,7 @@
    ]
   },
   "SEC-15-010": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Providers and data classes are listed (data-classification-and-handling.md), outbound requests pass an SSRF guard (HTTPS, public host only, no credentials; tests/unit/sec15-outbound-url-guard.test.ts) and the pod's egress policy allows public HTTPS only, provider results never choose the actor, mentor calendar tokens are encrypted, grants carry status and valid_until, and emergency disabling is by flag or by removing the secret.",
@@ -5841,7 +5857,7 @@
    ]
   },
   "SEC-15-011": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Providers and data classes are listed (data-classification-and-handling.md), outbound requests pass an SSRF guard (HTTPS, public host only, no credentials; tests/unit/sec15-outbound-url-guard.test.ts) and the pod's egress policy allows public HTTPS only, provider results never choose the actor, mentor calendar tokens are encrypted, grants carry status and valid_until, and emergency disabling is by flag or by removing the secret.",
@@ -5862,7 +5878,7 @@
    ]
   },
   "SEC-15-012": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Scan verdicts must match file id, college id and generation; inbound mail is idempotent by providerMessageId and deliveries claim a key in the shared store (fails closed); structured logs name secrets and routes without values.",
@@ -5883,7 +5899,7 @@
    ]
   },
   "SEC-15-013": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Providers and data classes are listed (data-classification-and-handling.md), outbound requests pass an SSRF guard (HTTPS, public host only, no credentials; tests/unit/sec15-outbound-url-guard.test.ts) and the pod's egress policy allows public HTTPS only, provider results never choose the actor, mentor calendar tokens are encrypted, grants carry status and valid_until, and emergency disabling is by flag or by removing the secret.",
@@ -5904,7 +5920,7 @@
    ]
   },
   "SEC-15-014": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Providers and data classes are listed (data-classification-and-handling.md), outbound requests pass an SSRF guard (HTTPS, public host only, no credentials; tests/unit/sec15-outbound-url-guard.test.ts) and the pod's egress policy allows public HTTPS only, provider results never choose the actor, mentor calendar tokens are encrypted, grants carry status and valid_until, and emergency disabling is by flag or by removing the secret.",
@@ -5925,7 +5941,7 @@
    ]
   },
   "SEC-15-015": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Providers and data classes are listed (data-classification-and-handling.md), outbound requests pass an SSRF guard (HTTPS, public host only, no credentials; tests/unit/sec15-outbound-url-guard.test.ts) and the pod's egress policy allows public HTTPS only, provider results never choose the actor, mentor calendar tokens are encrypted, grants carry status and valid_until, and emergency disabling is by flag or by removing the secret.",
@@ -5946,7 +5962,7 @@
    ]
   },
   "SEC-15-016": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Scan verdicts must match file id, college id and generation; inbound mail is idempotent by providerMessageId and deliveries claim a key in the shared store (fails closed); structured logs name secrets and routes without values.",
@@ -5967,7 +5983,7 @@
    ]
   },
   "SEC-15-017": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Providers and data classes are listed (data-classification-and-handling.md), outbound requests pass an SSRF guard (HTTPS, public host only, no credentials; tests/unit/sec15-outbound-url-guard.test.ts) and the pod's egress policy allows public HTTPS only, provider results never choose the actor, mentor calendar tokens are encrypted, grants carry status and valid_until, and emergency disabling is by flag or by removing the secret.",
@@ -6022,7 +6038,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-16-003": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/assessments/SEC-16-jobs-review-2026-11-08.md: jobs run under named system scopes (no Super Admin identity), take the tenant from the row, are fenced by leases and claim keys against duplicates, outbound messages re-check lease, expiry and suppression in a database function immediately before sending, payloads are schema-bound and bounded, denials are audited without the credential, and machine routes accept no caller-chosen tenant.",
@@ -6064,7 +6080,7 @@
    ]
   },
   "SEC-16-005": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/assessments/SEC-16-jobs-review-2026-11-08.md: jobs run under named system scopes (no Super Admin identity), take the tenant from the row, are fenced by leases and claim keys against duplicates, outbound messages re-check lease, expiry and suppression in a database function immediately before sending, payloads are schema-bound and bounded, denials are audited without the credential, and machine routes accept no caller-chosen tenant.",
@@ -6085,7 +6101,7 @@
    ]
   },
   "SEC-16-006": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/assessments/SEC-16-jobs-review-2026-11-08.md: jobs run under named system scopes (no Super Admin identity), take the tenant from the row, are fenced by leases and claim keys against duplicates, outbound messages re-check lease, expiry and suppression in a database function immediately before sending, payloads are schema-bound and bounded, denials are audited without the credential, and machine routes accept no caller-chosen tenant.",
@@ -6106,7 +6122,7 @@
    ]
   },
   "SEC-16-007": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/assessments/SEC-16-jobs-review-2026-11-08.md: jobs run under named system scopes (no Super Admin identity), take the tenant from the row, are fenced by leases and claim keys against duplicates, outbound messages re-check lease, expiry and suppression in a database function immediately before sending, payloads are schema-bound and bounded, denials are audited without the credential, and machine routes accept no caller-chosen tenant.",
@@ -6127,7 +6143,7 @@
    ]
   },
   "SEC-16-008": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/assessments/SEC-16-jobs-review-2026-11-08.md: jobs run under named system scopes (no Super Admin identity), take the tenant from the row, are fenced by leases and claim keys against duplicates, outbound messages re-check lease, expiry and suppression in a database function immediately before sending, payloads are schema-bound and bounded, denials are audited without the credential, and machine routes accept no caller-chosen tenant.",
@@ -6148,7 +6164,7 @@
    ]
   },
   "SEC-16-009": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Internal routes accept only schema-bound, size-bounded bodies (or none) and refuse query strings.",
@@ -6169,7 +6185,7 @@
    ]
   },
   "SEC-16-010": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/assessments/SEC-16-jobs-review-2026-11-08.md: jobs run under named system scopes (no Super Admin identity), take the tenant from the row, are fenced by leases and claim keys against duplicates, outbound messages re-check lease, expiry and suppression in a database function immediately before sending, payloads are schema-bound and bounded, denials are audited without the credential, and machine routes accept no caller-chosen tenant.",
@@ -6190,7 +6206,7 @@
    ]
   },
   "SEC-16-011": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/assessments/SEC-16-jobs-review-2026-11-08.md: jobs run under named system scopes (no Super Admin identity), take the tenant from the row, are fenced by leases and claim keys against duplicates, outbound messages re-check lease, expiry and suppression in a database function immediately before sending, payloads are schema-bound and bounded, denials are audited without the credential, and machine routes accept no caller-chosen tenant.",
@@ -6211,7 +6227,7 @@
    ]
   },
   "SEC-16-012": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/assessments/SEC-16-jobs-review-2026-11-08.md: jobs run under named system scopes (no Super Admin identity), take the tenant from the row, are fenced by leases and claim keys against duplicates, outbound messages re-check lease, expiry and suppression in a database function immediately before sending, payloads are schema-bound and bounded, denials are audited without the credential, and machine routes accept no caller-chosen tenant.",
@@ -6232,7 +6248,7 @@
    ]
   },
   "SEC-16-013": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/assessments/SEC-16-jobs-review-2026-11-08.md: jobs run under named system scopes (no Super Admin identity), take the tenant from the row, are fenced by leases and claim keys against duplicates, outbound messages re-check lease, expiry and suppression in a database function immediately before sending, payloads are schema-bound and bounded, denials are audited without the credential, and machine routes accept no caller-chosen tenant.",
@@ -6270,7 +6286,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-16-015": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/assessments/SEC-16-jobs-review-2026-11-08.md: jobs run under named system scopes (no Super Admin identity), take the tenant from the row, are fenced by leases and claim keys against duplicates, outbound messages re-check lease, expiry and suppression in a database function immediately before sending, payloads are schema-bound and bounded, denials are audited without the credential, and machine routes accept no caller-chosen tenant.",
@@ -6333,7 +6349,7 @@
    ]
   },
   "SEC-17-003": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Egress NetworkPolicy lms-vnext-egress-restricted (deploy/k8s/dev/lms-vnext-egress-policy.yaml) applied on dev 2026-11-08: the web pod may reach DNS, the Cloud SQL address on 5432 and public HTTPS only. Checked live: /ready 200, sign-in works, https://example.com reachable from the pod, the metadata server and a private pod address time out. Dev only; production not touched.",
@@ -6388,7 +6404,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-17-006": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "The vNext pod runs non-root with a read-only root filesystem, dropped capabilities and RuntimeDefault seccomp; the same-origin check uses the actual Host header, never X-Forwarded-Host, and forwarded client addresses are hardened for rate limits.",
@@ -6409,7 +6425,7 @@
    ]
   },
   "SEC-17-007": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Images are built from a pinned base, deployed by digest, scanned by a report-only Trivy step in the build workflow; manifests are in the repository; a weekly database drift CronJob exists; Dependabot, secret scans and the dependency deny list run; development endpoints are blocked in production builds.",
@@ -6527,7 +6543,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-17-013": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "The vNext pod runs non-root with a read-only root filesystem, dropped capabilities and RuntimeDefault seccomp; the same-origin check uses the actual Host header, never X-Forwarded-Host, and forwarded client addresses are hardened for rate limits.",
@@ -6616,7 +6632,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-17-018": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Images are built from a pinned base, deployed by digest, scanned by a report-only Trivy step in the build workflow; manifests are in the repository; a weekly database drift CronJob exists; Dependabot, secret scans and the dependency deny list run; development endpoints are blocked in production builds.",
@@ -6637,7 +6653,7 @@
    ]
   },
   "SEC-17-019": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Images are built from a pinned base, deployed by digest, scanned by a report-only Trivy step in the build workflow; manifests are in the repository; a weekly database drift CronJob exists; Dependabot, secret scans and the dependency deny list run; development endpoints are blocked in production builds.",
@@ -6658,7 +6674,7 @@
    ]
   },
   "SEC-17-020": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Images are built from a pinned base, deployed by digest, scanned by a report-only Trivy step in the build workflow; manifests are in the repository; a weekly database drift CronJob exists; Dependabot, secret scans and the dependency deny list run; development endpoints are blocked in production builds.",
@@ -6696,7 +6712,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-17-022": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Images are built from a pinned base, deployed by digest, scanned by a report-only Trivy step in the build workflow; manifests are in the repository; a weekly database drift CronJob exists; Dependabot, secret scans and the dependency deny list run; development endpoints are blocked in production builds.",
@@ -6937,7 +6953,7 @@
    ]
   },
   "SEC-18-012": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Static checks: security:central, api-surface and test-integrity ratchets, ESLint, the authorization boundary workflow; the dependency deny list (scripts/security/dependency-deny.mjs) runs in the lint chain.",
@@ -6979,7 +6995,7 @@
    ]
   },
   "SEC-18-014": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Container and manifest review recorded in recovery-and-infrastructure-notes.md; rule for new identity and crypto libraries added to the secure development standard (review by the code owner, deny list gate).",
@@ -7018,10 +7034,9 @@
   },
   "SEC-18-016": {
    "currentTrackerState": "UNASSESSED",
-   "proposedState": "GAP_CONFIRMED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
-   "ownerBlocked": true,
-   "finding": "NEEDS THE OWNER. Branch protection is disabled by the owner; signed images and provenance need a signing key decision.",
+   "finding": "Image tarball checksums are written into the build artifact and printed in the run log; the deploy script compares the downloaded files with both before pushing. Signing and provenance (SEC-18-017) stay with the owner.",
    "source": "scripts/security/dispositions.json",
    "evidence": [
     {
@@ -7031,7 +7046,12 @@
      "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
     }
    ],
-   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
   },
   "SEC-18-017": {
    "currentTrackerState": "UNASSESSED",
@@ -7089,7 +7109,7 @@
    ]
   },
   "SEC-18-020": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Static checks: security:central, api-surface and test-integrity ratchets, ESLint, the authorization boundary workflow; the dependency deny list (scripts/security/dependency-deny.mjs) runs in the lint chain.",
@@ -7110,7 +7130,7 @@
    ]
   },
   "SEC-18-021": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Container and manifest review recorded in recovery-and-infrastructure-notes.md; rule for new identity and crypto libraries added to the secure development standard (review by the code owner, deny list gate).",
@@ -7190,7 +7210,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-19-004": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Every mutating request through route() writes api.mutation, 401/403/429 write api.denied, exports write api.export, scope changes write admin_scope.*, file links write file.link_issued, denied machine calls write internal.denied, tripwires write security.anomaly; rows are append-only, hash-chained and purged only by the retention script; logs carry no personal content.",
@@ -7211,7 +7231,7 @@
    ]
   },
   "SEC-19-005": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Every mutating request through route() writes api.mutation, 401/403/429 write api.denied, exports write api.export, scope changes write admin_scope.*, file links write file.link_issued, denied machine calls write internal.denied, tripwires write security.anomaly; rows are append-only, hash-chained and purged only by the retention script; logs carry no personal content.",
@@ -7253,7 +7273,7 @@
    ]
   },
   "SEC-19-007": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Every mutating request through route() writes api.mutation, 401/403/429 write api.denied, exports write api.export, scope changes write admin_scope.*, file links write file.link_issued, denied machine calls write internal.denied, tripwires write security.anomaly; rows are append-only, hash-chained and purged only by the retention script; logs carry no personal content.",
@@ -7274,7 +7294,7 @@
    ]
   },
   "SEC-19-008": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Every mutating request through route() writes api.mutation, 401/403/429 write api.denied, exports write api.export, scope changes write admin_scope.*, file links write file.link_issued, denied machine calls write internal.denied, tripwires write security.anomaly; rows are append-only, hash-chained and purged only by the retention script; logs carry no personal content.",
@@ -7295,7 +7315,7 @@
    ]
   },
   "SEC-19-009": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Every mutating request through route() writes api.mutation, 401/403/429 write api.denied, exports write api.export, scope changes write admin_scope.*, file links write file.link_issued, denied machine calls write internal.denied, tripwires write security.anomaly; rows are append-only, hash-chained and purged only by the retention script; logs carry no personal content.",
@@ -7396,7 +7416,7 @@
    ]
   },
   "SEC-19-014": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Every mutating request through route() writes api.mutation, 401/403/429 write api.denied, exports write api.export, scope changes write admin_scope.*, file links write file.link_issued, denied machine calls write internal.denied, tripwires write security.anomaly; rows are append-only, hash-chained and purged only by the retention script; logs carry no personal content.",
@@ -7480,7 +7500,7 @@
    ]
   },
   "SEC-19-018": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Every mutating request through route() writes api.mutation, 401/403/429 write api.denied, exports write api.export, scope changes write admin_scope.*, file links write file.link_issued, denied machine calls write internal.denied, tripwires write security.anomaly; rows are append-only, hash-chained and purged only by the retention script; logs carry no personal content.",
@@ -7518,7 +7538,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-19-020": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Alert delivery is tested by the controlled-finding procedure in logging-alerting-and-access.md; the tripwire fired and was recorded on dev on 2026-11-08.",
@@ -7539,7 +7559,7 @@
    ]
   },
   "SEC-19-021": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Every mutating request through route() writes api.mutation, 401/403/429 write api.denied, exports write api.export, scope changes write admin_scope.*, file links write file.link_issued, denied machine calls write internal.denied, tripwires write security.anomaly; rows are append-only, hash-chained and purged only by the retention script; logs carry no personal content.",
@@ -7560,7 +7580,7 @@
    ]
   },
   "SEC-20-001": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/runbooks/incident-playbooks.md and incident-response.md: who may declare, severity levels, playbooks for compromised admin, exposed keys, unauthorized database access, cross-college exposure, compromised storage and malicious integrations, emergency controls, evidence preservation and forensics.",
@@ -7581,7 +7601,7 @@
    ]
   },
   "SEC-20-002": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/runbooks/incident-playbooks.md and incident-response.md: who may declare, severity levels, playbooks for compromised admin, exposed keys, unauthorized database access, cross-college exposure, compromised storage and malicious integrations, emergency controls, evidence preservation and forensics.",
@@ -7602,7 +7622,7 @@
    ]
   },
   "SEC-20-003": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Severity levels, escalation, the database-access, storage and integration playbooks, the review step and the timing measures are written in docs/security/runbooks/incident-playbooks.md.",
@@ -7640,7 +7660,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-20-005": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/runbooks/incident-playbooks.md and incident-response.md: who may declare, severity levels, playbooks for compromised admin, exposed keys, unauthorized database access, cross-college exposure, compromised storage and malicious integrations, emergency controls, evidence preservation and forensics.",
@@ -7661,7 +7681,7 @@
    ]
   },
   "SEC-20-006": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/runbooks/incident-playbooks.md and incident-response.md: who may declare, severity levels, playbooks for compromised admin, exposed keys, unauthorized database access, cross-college exposure, compromised storage and malicious integrations, emergency controls, evidence preservation and forensics.",
@@ -7682,7 +7702,7 @@
    ]
   },
   "SEC-20-007": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Severity levels, escalation, the database-access, storage and integration playbooks, the review step and the timing measures are written in docs/security/runbooks/incident-playbooks.md.",
@@ -7703,7 +7723,7 @@
    ]
   },
   "SEC-20-008": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/runbooks/incident-playbooks.md and incident-response.md: who may declare, severity levels, playbooks for compromised admin, exposed keys, unauthorized database access, cross-college exposure, compromised storage and malicious integrations, emergency controls, evidence preservation and forensics.",
@@ -7724,7 +7744,7 @@
    ]
   },
   "SEC-20-009": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Severity levels, escalation, the database-access, storage and integration playbooks, the review step and the timing measures are written in docs/security/runbooks/incident-playbooks.md.",
@@ -7745,7 +7765,7 @@
    ]
   },
   "SEC-20-010": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Severity levels, escalation, the database-access, storage and integration playbooks, the review step and the timing measures are written in docs/security/runbooks/incident-playbooks.md.",
@@ -7766,7 +7786,7 @@
    ]
   },
   "SEC-20-011": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/runbooks/incident-playbooks.md and incident-response.md: who may declare, severity levels, playbooks for compromised admin, exposed keys, unauthorized database access, cross-college exposure, compromised storage and malicious integrations, emergency controls, evidence preservation and forensics.",
@@ -7787,7 +7807,7 @@
    ]
   },
   "SEC-20-012": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/runbooks/incident-playbooks.md and incident-response.md: who may declare, severity levels, playbooks for compromised admin, exposed keys, unauthorized database access, cross-college exposure, compromised storage and malicious integrations, emergency controls, evidence preservation and forensics.",
@@ -7808,7 +7828,7 @@
    ]
   },
   "SEC-20-013": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/runbooks/incident-playbooks.md and incident-response.md: who may declare, severity levels, playbooks for compromised admin, exposed keys, unauthorized database access, cross-college exposure, compromised storage and malicious integrations, emergency controls, evidence preservation and forensics.",
@@ -7829,7 +7849,7 @@
    ]
   },
   "SEC-20-014": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/runbooks/incident-playbooks.md and incident-response.md: who may declare, severity levels, playbooks for compromised admin, exposed keys, unauthorized database access, cross-college exposure, compromised storage and malicious integrations, emergency controls, evidence preservation and forensics.",
@@ -7850,7 +7870,7 @@
    ]
   },
   "SEC-20-015": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/runbooks/incident-playbooks.md and incident-response.md: who may declare, severity levels, playbooks for compromised admin, exposed keys, unauthorized database access, cross-college exposure, compromised storage and malicious integrations, emergency controls, evidence preservation and forensics.",
@@ -7905,7 +7925,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-20-018": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Severity levels, escalation, the database-access, storage and integration playbooks, the review step and the timing measures are written in docs/security/runbooks/incident-playbooks.md.",
@@ -7926,7 +7946,7 @@
    ]
   },
   "SEC-20-019": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Severity levels, escalation, the database-access, storage and integration playbooks, the review step and the timing measures are written in docs/security/runbooks/incident-playbooks.md.",
@@ -7964,7 +7984,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-21-002": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Cloud SQL has automatic daily backups, 7-day point-in-time recovery and deletion protection (confirmed with a read-only gcloud query 2026-11-08); /ready and error alerts monitor availability; shared-store rate limiting degrades to memory and claims fail closed.",
@@ -8020,10 +8040,9 @@
   },
   "SEC-21-005": {
    "currentTrackerState": "UNASSESSED",
-   "proposedState": "GAP_CONFIRMED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
-   "ownerBlocked": true,
-   "finding": "NEEDS THE OWNER. Recovery targets are proposed but not approved, and every restore, integrity, corruption, ransomware and outage test needs a disposable restored instance (cost decision) and the owner.",
+   "finding": "Local rehearsal on a disposable PostgreSQL (dump, restore into a new database, counts compared, audit chain verified, 2 s and 7 s); evidence file restore-rehearsal-local-2026-11-08.md. Not a managed Cloud SQL restore.",
    "source": "scripts/security/dispositions.json",
    "evidence": [
     {
@@ -8033,14 +8052,18 @@
      "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
     }
    ],
-   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
   },
   "SEC-21-006": {
    "currentTrackerState": "UNASSESSED",
-   "proposedState": "GAP_CONFIRMED",
+   "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
-   "ownerBlocked": true,
-   "finding": "NEEDS THE OWNER. Recovery targets are proposed but not approved, and every restore, integrity, corruption, ransomware and outage test needs a disposable restored instance (cost decision) and the owner.",
+   "finding": "Local rehearsal on a disposable PostgreSQL (dump, restore into a new database, counts compared, audit chain verified, 2 s and 7 s); evidence file restore-rehearsal-local-2026-11-08.md. Not a managed Cloud SQL restore.",
    "source": "scripts/security/dispositions.json",
    "evidence": [
     {
@@ -8050,7 +8073,12 @@
      "scope": "FILL AFTER THE CI RUN: the exact tests/checks that ran"
     }
    ],
-   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
+   "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment",
+   "remainingChecks": [
+    "Passing CI run at the recorded commit",
+    "Independent review",
+    "See the source assessment for control-specific missing proof"
+   ]
   },
   "SEC-21-007": {
    "currentTrackerState": "UNASSESSED",
@@ -8104,7 +8132,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-21-010": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Restoration sequence written in docs/security/runbooks/recovery-and-infrastructure-notes.md, including revocation reconciliation; not rehearsed (needs a restore test).",
@@ -8125,7 +8153,7 @@
    ]
   },
   "SEC-21-011": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Cloud SQL has automatic daily backups, 7-day point-in-time recovery and deletion protection (confirmed with a read-only gcloud query 2026-11-08); /ready and error alerts monitor availability; shared-store rate limiting degrades to memory and claims fail closed.",
@@ -8146,7 +8174,7 @@
    ]
   },
   "SEC-21-012": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Cloud SQL has automatic daily backups, 7-day point-in-time recovery and deletion protection (confirmed with a read-only gcloud query 2026-11-08); /ready and error alerts monitor availability; shared-store rate limiting degrades to memory and claims fail closed.",
@@ -8184,7 +8212,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-21-014": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "A failed dependency never opens an authorization fallback: database errors deny, the shared store claim fails closed, and only rate limiting degrades (availability, not access).",
@@ -8222,7 +8250,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-22-001": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Inventory of 96 tables by class (data-inventory.md), classification and handling rules (data-classification-and-handling.md), and the grant and relationship tables that record college and recruiter sharing.",
@@ -8243,7 +8271,7 @@
    ]
   },
   "SEC-22-002": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Inventory of 96 tables by class (data-inventory.md), classification and handling rules (data-classification-and-handling.md), and the grant and relationship tables that record college and recruiter sharing.",
@@ -8332,7 +8360,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-22-007": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Inventory of 96 tables by class (data-inventory.md), classification and handling rules (data-classification-and-handling.md), and the grant and relationship tables that record college and recruiter sharing.",
@@ -8353,7 +8381,7 @@
    ]
   },
   "SEC-22-008": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Candidate discovery by recruiters depends on explicit relationship grants (ACTIVE, VERIFIED, unexpired, capability-scoped) and share defaults tested in the CI job 'DB017 relationship-scoped disclosure defaults'.",
@@ -8493,7 +8521,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-23-001": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Thousands of unit tests plus integration suites in CI cover sign-in, role selection (narrowToActiveRole, identity-system-roles), account disable and membership revocation (db01-session-atomic-authorization, workflow 'session idle and atomic role-change revocation'), same-origin checks on route() and concurrency races (revoke-versus-write serialization tests in the database job).",
@@ -8514,7 +8542,7 @@
    ]
   },
   "SEC-23-002": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "CI runs the unauthenticated gate, the role-by-route matrix, the build secret scan, the database acceptance scripts and the registered database suites; unit tests cover the sanitizer, SSRF guard, file boundaries, internal replay protection, one-time code consumption, outbound retries and provider failure; the test-integrity gate forbids .only and raising skips; privilege drift is checked by the inventory.",
@@ -8535,7 +8563,7 @@
    ]
   },
   "SEC-23-003": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Thousands of unit tests plus integration suites in CI cover sign-in, role selection (narrowToActiveRole, identity-system-roles), account disable and membership revocation (db01-session-atomic-authorization, workflow 'session idle and atomic role-change revocation'), same-origin checks on route() and concurrency races (revoke-versus-write serialization tests in the database job).",
@@ -8556,7 +8584,7 @@
    ]
   },
   "SEC-23-004": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Thousands of unit tests plus integration suites in CI cover sign-in, role selection (narrowToActiveRole, identity-system-roles), account disable and membership revocation (db01-session-atomic-authorization, workflow 'session idle and atomic role-change revocation'), same-origin checks on route() and concurrency races (revoke-versus-write serialization tests in the database job).",
@@ -8577,7 +8605,7 @@
    ]
   },
   "SEC-23-005": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "CI runs the unauthenticated gate, the role-by-route matrix, the build secret scan, the database acceptance scripts and the registered database suites; unit tests cover the sanitizer, SSRF guard, file boundaries, internal replay protection, one-time code consumption, outbound retries and provider failure; the test-integrity gate forbids .only and raising skips; privilege drift is checked by the inventory.",
@@ -8598,7 +8626,7 @@
    ]
   },
   "SEC-23-006": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "CI runs the unauthenticated gate, the role-by-route matrix, the build secret scan, the database acceptance scripts and the registered database suites; unit tests cover the sanitizer, SSRF guard, file boundaries, internal replay protection, one-time code consumption, outbound retries and provider failure; the test-integrity gate forbids .only and raising skips; privilege drift is checked by the inventory.",
@@ -8619,7 +8647,7 @@
    ]
   },
   "SEC-23-007": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "CI runs the unauthenticated gate, the role-by-route matrix, the build secret scan, the database acceptance scripts and the registered database suites; unit tests cover the sanitizer, SSRF guard, file boundaries, internal replay protection, one-time code consumption, outbound retries and provider failure; the test-integrity gate forbids .only and raising skips; privilege drift is checked by the inventory.",
@@ -8640,7 +8668,7 @@
    ]
   },
   "SEC-23-008": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "CI runs the unauthenticated gate, the role-by-route matrix, the build secret scan, the database acceptance scripts and the registered database suites; unit tests cover the sanitizer, SSRF guard, file boundaries, internal replay protection, one-time code consumption, outbound retries and provider failure; the test-integrity gate forbids .only and raising skips; privilege drift is checked by the inventory.",
@@ -8661,7 +8689,7 @@
    ]
   },
   "SEC-23-009": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "CI runs the unauthenticated gate, the role-by-route matrix, the build secret scan, the database acceptance scripts and the registered database suites; unit tests cover the sanitizer, SSRF guard, file boundaries, internal replay protection, one-time code consumption, outbound retries and provider failure; the test-integrity gate forbids .only and raising skips; privilege drift is checked by the inventory.",
@@ -8682,7 +8710,7 @@
    ]
   },
   "SEC-23-010": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Thousands of unit tests plus integration suites in CI cover sign-in, role selection (narrowToActiveRole, identity-system-roles), account disable and membership revocation (db01-session-atomic-authorization, workflow 'session idle and atomic role-change revocation'), same-origin checks on route() and concurrency races (revoke-versus-write serialization tests in the database job).",
@@ -8703,7 +8731,7 @@
    ]
   },
   "SEC-23-011": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "CI runs the unauthenticated gate, the role-by-route matrix, the build secret scan, the database acceptance scripts and the registered database suites; unit tests cover the sanitizer, SSRF guard, file boundaries, internal replay protection, one-time code consumption, outbound retries and provider failure; the test-integrity gate forbids .only and raising skips; privilege drift is checked by the inventory.",
@@ -8724,7 +8752,7 @@
    ]
   },
   "SEC-23-012": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "CI runs the unauthenticated gate, the role-by-route matrix, the build secret scan, the database acceptance scripts and the registered database suites; unit tests cover the sanitizer, SSRF guard, file boundaries, internal replay protection, one-time code consumption, outbound retries and provider failure; the test-integrity gate forbids .only and raising skips; privilege drift is checked by the inventory.",
@@ -8745,7 +8773,7 @@
    ]
   },
   "SEC-23-013": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "CI runs the unauthenticated gate, the role-by-route matrix, the build secret scan, the database acceptance scripts and the registered database suites; unit tests cover the sanitizer, SSRF guard, file boundaries, internal replay protection, one-time code consumption, outbound retries and provider failure; the test-integrity gate forbids .only and raising skips; privilege drift is checked by the inventory.",
@@ -8766,7 +8794,7 @@
    ]
   },
   "SEC-23-014": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Thousands of unit tests plus integration suites in CI cover sign-in, role selection (narrowToActiveRole, identity-system-roles), account disable and membership revocation (db01-session-atomic-authorization, workflow 'session idle and atomic role-change revocation'), same-origin checks on route() and concurrency races (revoke-versus-write serialization tests in the database job).",
@@ -8808,7 +8836,7 @@
    ]
   },
   "SEC-23-016": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "CI runs the unauthenticated gate, the role-by-route matrix, the build secret scan, the database acceptance scripts and the registered database suites; unit tests cover the sanitizer, SSRF guard, file boundaries, internal replay protection, one-time code consumption, outbound retries and provider failure; the test-integrity gate forbids .only and raising skips; privilege drift is checked by the inventory.",
@@ -8829,7 +8857,7 @@
    ]
   },
   "SEC-23-017": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "CI runs the unauthenticated gate, the role-by-route matrix, the build secret scan, the database acceptance scripts and the registered database suites; unit tests cover the sanitizer, SSRF guard, file boundaries, internal replay protection, one-time code consumption, outbound retries and provider failure; the test-integrity gate forbids .only and raising skips; privilege drift is checked by the inventory.",
@@ -8850,7 +8878,7 @@
    ]
   },
   "SEC-23-018": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "CI runs the unauthenticated gate, the role-by-route matrix, the build secret scan, the database acceptance scripts and the registered database suites; unit tests cover the sanitizer, SSRF guard, file boundaries, internal replay protection, one-time code consumption, outbound retries and provider failure; the test-integrity gate forbids .only and raising skips; privilege drift is checked by the inventory.",
@@ -8871,7 +8899,7 @@
    ]
   },
   "SEC-23-019": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "CI runs the unauthenticated gate, the role-by-route matrix, the build secret scan, the database acceptance scripts and the registered database suites; unit tests cover the sanitizer, SSRF guard, file boundaries, internal replay protection, one-time code consumption, outbound retries and provider failure; the test-integrity gate forbids .only and raising skips; privilege drift is checked by the inventory.",
@@ -8892,7 +8920,7 @@
    ]
   },
   "SEC-23-020": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Thousands of unit tests plus integration suites in CI cover sign-in, role selection (narrowToActiveRole, identity-system-roles), account disable and membership revocation (db01-session-atomic-authorization, workflow 'session idle and atomic role-change revocation'), same-origin checks on route() and concurrency races (revoke-versus-write serialization tests in the database job).",
@@ -8913,7 +8941,7 @@
    ]
   },
   "SEC-23-021": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "CI runs the unauthenticated gate, the role-by-route matrix, the build secret scan, the database acceptance scripts and the registered database suites; unit tests cover the sanitizer, SSRF guard, file boundaries, internal replay protection, one-time code consumption, outbound retries and provider failure; the test-integrity gate forbids .only and raising skips; privilege drift is checked by the inventory.",
@@ -8993,7 +9021,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-23-025": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "CI runs the unauthenticated gate, the role-by-route matrix, the build secret scan, the database acceptance scripts and the registered database suites; unit tests cover the sanitizer, SSRF guard, file boundaries, internal replay protection, one-time code consumption, outbound retries and provider failure; the test-integrity gate forbids .only and raising skips; privilege drift is checked by the inventory.",
@@ -9269,7 +9297,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-25-002": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/risk-register.md (generated, with expiry), secure-development-standard.md (coding rules, threat modelling, change management, evidence process), accepted-risks.md with revisit dates.",
@@ -9290,7 +9318,7 @@
    ]
   },
   "SEC-25-003": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Security findings are tracked in docs/tracker.json: a control only moves with exact commit and passing-run evidence, VERIFIED needs an independent reviewer, and negative invariant tests enforce this in CI.",
@@ -9311,7 +9339,7 @@
    ]
   },
   "SEC-25-004": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/risk-register.md (generated, with expiry), secure-development-standard.md (coding rules, threat modelling, change management, evidence process), accepted-risks.md with revisit dates.",
@@ -9332,7 +9360,7 @@
    ]
   },
   "SEC-25-005": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/risk-register.md (generated, with expiry), secure-development-standard.md (coding rules, threat modelling, change management, evidence process), accepted-risks.md with revisit dates.",
@@ -9438,7 +9466,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-25-011": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/risk-register.md (generated, with expiry), secure-development-standard.md (coding rules, threat modelling, change management, evidence process), accepted-risks.md with revisit dates.",
@@ -9510,7 +9538,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-25-015": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/risk-register.md (generated, with expiry), secure-development-standard.md (coding rules, threat modelling, change management, evidence process), accepted-risks.md with revisit dates.",
@@ -9531,7 +9559,7 @@
    ]
   },
   "SEC-25-016": {
-   "currentTrackerState": "UNASSESSED",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "docs/security/risk-register.md (generated, with expiry), secure-development-standard.md (coding rules, threat modelling, change management, evidence process), accepted-risks.md with revisit dates.",
@@ -9586,7 +9614,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-26-003": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Time-limited grants exist (Super Admin college scope 4 hours, recruiter grants valid_until, 15-minute step-up); the tripwire flags abnormal export and denial volume; incident-derived regression tests and probes are in CI; drift detection runs weekly on dev (production needs the owner).",
@@ -9679,7 +9707,7 @@
    ]
   },
   "SEC-26-008": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Time-limited grants exist (Super Admin college scope 4 hours, recruiter grants valid_until, 15-minute step-up); the tripwire flags abnormal export and denial volume; incident-derived regression tests and probes are in CI; drift detection runs weekly on dev (production needs the owner).",
@@ -9785,7 +9813,7 @@
    "nextProof": "FILL: independent review, plus any listed missing proof in the source assessment"
   },
   "SEC-26-014": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Time-limited grants exist (Super Admin college scope 4 hours, recruiter grants valid_until, 15-minute step-up); the tripwire flags abnormal export and denial volume; incident-derived regression tests and probes are in CI; drift detection runs weekly on dev (production needs the owner).",
@@ -9806,7 +9834,7 @@
    ]
   },
   "SEC-26-015": {
-   "currentTrackerState": "PARTIAL_EVIDENCE",
+   "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
    "finding": "Time-limited grants exist (Super Admin college scope 4 hours, recruiter grants valid_until, 15-minute step-up); the tripwire flags abnormal export and denial volume; incident-derived regression tests and probes are in CI; drift detection runs weekly on dev (production needs the owner).",
