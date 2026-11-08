@@ -86,6 +86,11 @@ describe("UX-G161 tracker recoverability and formula safety", () => {
   expect(csv).toContain("'\u0301+CMD second line");
   expect(csv.split("\n")).toHaveLength(2);
  });
+ it("resets idempotency retries when the reporter changes page or screen", () => {
+  const form=source("src/components/tracker/tracker-report-form.tsx");
+  expect(form).toContain('retryKeyRef.current=null;\\n              setDraft(current=>({...current,page:');
+  expect(form).toContain('retryKeyRef.current=null;\\n                setDraft(current=>({...current,screen:');
+ });
  it("locks status changes while waiting for the refreshed version", () => {
   const src=source("src/components/tracker/audit-finding-status-action.tsx");
   expect(src).toContain("setStale(true);router.refresh()");
