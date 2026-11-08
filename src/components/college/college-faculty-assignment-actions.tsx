@@ -13,7 +13,7 @@ import { FACULTY_ASSIGNMENT_COPY, FACULTY_ASSIGNMENT_ROLE_LABELS } from "@/modul
 import { apiFetch } from "@/lib/api-fetch";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 
@@ -50,6 +50,7 @@ export function CollegeFacultyAssignmentCreate({
   const [batchDetails,setBatchDetails]=useState<string[]>([]);
   const [role, setRole] = useState<CourseTeachingRole>("PRIMARY");
   const [saving, setSaving] = useState(false);
+  const savingRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [messageWarning, setMessageWarning] = useState(false);
@@ -82,7 +83,9 @@ export function CollegeFacultyAssignmentCreate({
     setSemesterNumber(""); setAcademicYear(""); setSelected([]); setError(null);
   }
   async function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault(); setError(null); setMessage(null);setMessageWarning(false);
+    event.preventDefault();
+    if(saving||savingRef.current)return;
+    setError(null); setMessage(null);setMessageWarning(false);
     if (!programId) { setError("Select program");return; }
     if (!cohortId) { setError("Select batch");return; }
     if (!sectionId) { setError("Select class");return; }
@@ -105,9 +108,13 @@ export function CollegeFacultyAssignmentCreate({
       setError("Selected courses changed with the semester/year. Choose them again.");return;
     }
     const facultyLabels=facultyIds.map(id=>faculty.find(item=>item.id===id)?.label??"Faculty");
+    savingRef.current=true;
     if (!(await ask(`Create teaching assignments for ${facultyLabels.join(", ")}
       in ${selected.length} selected course(s)? Existing and duplicate primary grants will be refused.
-      Each college faculty request is recorded separately, so partial creation may require review.`)))return;
+      Each college faculty request is recorded separately, so partial creation may require review.`))){
+      savingRef.current=false;
+      return;
+    }
     setSaving(true);setBatchDetails([]);
     try{
       let successes=0,failures=0;
@@ -152,7 +159,7 @@ export function CollegeFacultyAssignmentCreate({
       router.refresh();
     }catch(cause){
       setError(academicSetupErrorMessage(cause,FACULTY_ASSIGNMENT_COPY.createFailed));
-    }finally{setSaving(false);} 
+    }finally{savingRef.current=false;setSaving(false);} 
   }
   const fieldClass = "min-w-0";
   return <>{confirmation}<section aria-label="Create teaching assignment"
