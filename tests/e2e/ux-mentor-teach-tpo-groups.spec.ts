@@ -51,7 +51,8 @@ for (const size of sizes) {
       await page.goto("/teach/courses");
       await expect(page.getByRole("heading", { name: "My Teaching Courses" })).toBeVisible();
       await expect(page.getByText("Find the courses and class sections you teach.")).toBeVisible();
-      // Desktop and mobile render separate responsive link copies; assert the visible one.\n      const link = page.locator('a[href^="/teacher/courses/"]:visible').first();
+      // Desktop and mobile render separate responsive link copies; assert the visible one.
+      const link = page.locator('a[href^="/teacher/courses/"]:visible').first();
       await expect(link).toBeVisible();
       const destination = await link.getAttribute("href");
       const deliveryId = destination?.match(/\/teacher\/courses\/([0-9a-f-]{36})(?:\/|$)/i)?.[1];
