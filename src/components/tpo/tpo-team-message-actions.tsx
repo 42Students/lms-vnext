@@ -26,7 +26,9 @@ export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,
    setMode(null);router.refresh();
   }catch(reason){
    setError(reason instanceof FriendlyFetchError&&reason.status===409
-    ?"This message changed or the edit window ended. Your draft remains available; refresh the conversation."
+    ?action==="EDIT"
+     ?"This message changed or the edit window ended. Your draft remains available; refresh the conversation."
+     :"This message changed or was removed. Refresh the conversation before deleting."
     :reason instanceof FriendlyFetchError&&reason.status===403
      ?"You no longer have permission to change this message."
      :reason instanceof Error?reason.message:"Could not save the message. Try again.");
