@@ -15,8 +15,8 @@ const querySchema=z.object({page:z.coerce.number().int().min(1).max(100000).defa
 export default async function TpoPreparationNudgePage({searchParams}:{searchParams:Promise<{page?:string|string[]}>}){
  const ctx=await getCurrentRequestContext();const collegeId=await requireTpoBatchActor(ctx);
  const raw=await searchParams;
- const parsed=querySchema.safeParse({page:Array.isArray(raw.page)?raw.page[0]:raw.page});
- if(!parsed.success)return <div className="min-w-0 space-y-4"><PageHeader title="Learners needing preparation support"/><Alert tone="error">Invalid page. <TextLink href="/tpo/students/preparation-prep" className="inline-flex min-h-11 items-center">Reset</TextLink></Alert></div>;
+ const parsed=querySchema.safeParse({page:Array.isArray(raw.page)?undefined:raw.page});
+ if(Array.isArray(raw.page)||!parsed.success)return <div className="min-w-0 space-y-4"><PageHeader title="Learners needing preparation support"/><Alert tone="error">Invalid or repeated page filter. No learner roster was loaded. <TextLink href="/tpo/students/preparation-prep" className="inline-flex min-h-11 items-center">Reset page</TextLink></Alert></div>;
  const view=await getTpoStudentsIntelligence(ctx,{collegeId,journeyState:"NEEDS_READINESS_SUPPORT",page:parsed.data.page,pageSize:25});
  const rows=tpoPreparationFocusRows(view.roster.items);
  const href=(page:number)=>"/tpo/students/preparation-prep?page="+page;
