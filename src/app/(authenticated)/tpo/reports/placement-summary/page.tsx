@@ -156,7 +156,8 @@ export default async function TpoPlacementSummaryPage({
       {workspace.noSeason ? (
         <EmptyState
           title="No placement season available"
-          description="Placement summary data requires a placement season. These empty results do not represent zero historical placements."
+          description="Placement summary data requires a recorded placement season. These empty results do not represent zero historical placements."
+          action={<ButtonLink variant="secondary" href="/tpo/settings/season">Review placement seasons</ButtonLink>}
         />
       ) : (
         <>
