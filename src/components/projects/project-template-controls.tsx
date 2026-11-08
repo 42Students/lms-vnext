@@ -332,6 +332,8 @@ export function ProjectTemplateActions({
   const { showToast } = useToast();
   const [pending, setPending] =
     useState<string | null>(null);
+  // State updates cannot synchronously prevent a second click in one event turn.
+  const operationLock = useRef(false);
   const [confirmArchive, setConfirmArchive] =
     useState(false);
   const [confirmLifecycle,setConfirmLifecycle]=useState<"PUBLISH"|"UNPUBLISH"|null>(null);
@@ -347,6 +349,7 @@ export function ProjectTemplateActions({
     method: "POST" | "DELETE",
     body?: unknown,
   ) {
+    if(operationLock.current || pending!==null)return;
     if(overviewDirty&&["Publish template","Unpublish template","Archive template"].includes(label)){
       showToast({tone:"error",title:"Save your overview changes before changing template status"});
       return;
@@ -357,6 +360,7 @@ export function ProjectTemplateActions({
        description:missing.length?"Missing "+missing.join(", "):"Save or discard your overview changes first."});
       return;
     }
+    operationLock.current = true;
     setPending(label);
     try {
       await projectMutation(
@@ -388,11 +392,14 @@ export function ProjectTemplateActions({
               "The request could not be completed.",
       });
     } finally {
+      operationLock.current = false;
       setPending(null);
     }
   }
 
   async function duplicate() {
+    if(operationLock.current || pending!==null)return;
+    operationLock.current = true;
     setPending("Duplicate template");
     try {
       const result = (await projectMutation(
@@ -426,6 +433,7 @@ export function ProjectTemplateActions({
             : "The request could not be completed.",
       });
     } finally {
+      operationLock.current = false;
       setPending(null);
     }
   }
