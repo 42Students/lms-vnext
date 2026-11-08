@@ -17,3 +17,10 @@
 - Need exact-SHA lint, typecheck, unit and browser executions, captured desktop/mobile artifacts, regression and security review.
 
 **No DONE until required rendered transitions are exercised.**
+
+## Expanded rendered route-state checks — 8 November 2026
+
+- `src/components/ux/ux-g184-authenticated-states-preview.tsx` mounts the **actual** thirteen grouped route-state components, with a bounded synthetic reset callback; `/e2e/ux-g184-authenticated-states` is strictly gated behind `NODE_ENV=development` and `UX_G184_ROUTE_STATE_FIXTURE=1`. The synthetic exception includes sentinel private data to test redaction; no tenant/member data is fetched or mutated.
+- `tests/e2e/ux-g184-authenticated-route-states.spec.ts` defines **27 Chromium cases**: thirteen error/loading/not-found states at each of 1280px and 390px, plus a real 12-second delayed loading recovery. Checks include correct role-specific internal navigation destinations, retry callback/focusable controls, no sensitive error/digest in rendered text or error telemetry, visible busy statuses, recovery links, screenshots, and no horizontal document overflow.
+- `.github/workflows/ux-g184-authenticated-route-states-acceptance.yml` gates these checks on exact checkout SHA, scoped lint, full TypeScript, shared error and five-group regression tests, zero skipped/flaky/unexpected browser results, and captured screenshots/traces.
+- This **adds real-component rendered evidence**, but it is not yet proof of an error thrown by each authenticated route while navigating with the relevant session, nor of cross-role/tenant release acceptance. Keep G184 DOING until its workflow succeeds and remaining live role/session scenarios are independently verified.
