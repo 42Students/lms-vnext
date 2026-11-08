@@ -11339,10 +11339,14 @@
         ]
       },
       "SEC-01-003": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Sign-in answers differently for an unknown contact; fixing it changes who can find out an account exists and is a product decision."
       },
       "SEC-01-004": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Passkeys, strong MFA for College Admin and managed SSO are deferred by the owner (2026-11-08)."
       },
       "SEC-01-005": {
         "state": "PARTIAL_EVIDENCE",
@@ -11355,16 +11359,24 @@
             "scope": "CI at this commit executed the unit, registered-database and source-contract suites that cover SEC-01-005. Assessment: docs/security/assessments/SEC-01-authentication.md. Super Admin needs two codes (SMS and email), both one-time codes, so phishable. Not phishing-resistant"
           }
         ],
-        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-01-authentication.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/."
+        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-01-authentication.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Deferred by the owner on 2026-11-08: Super Admin and College Admin keep the one-time-code sign-in for now. Phishing-resistant MFA, authenticator enrolment and removal, risk-based step-up and SSO linking arrive together with the later MFA work."
       },
       "SEC-01-006": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Passkeys, strong MFA for College Admin and managed SSO are deferred by the owner (2026-11-08)."
       },
       "SEC-01-007": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Deferred by the owner on 2026-11-08: Super Admin and College Admin keep the one-time-code sign-in for now. Phishing-resistant MFA, authenticator enrolment and removal, risk-based step-up and SSO linking arrive together with the later MFA work."
       },
       "SEC-01-008": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Deferred by the owner on 2026-11-08: Super Admin and College Admin keep the one-time-code sign-in for now. Phishing-resistant MFA, authenticator enrolment and removal, risk-based step-up and SSO linking arrive together with the later MFA work."
       },
       "SEC-01-009": {
         "state": "PARTIAL_EVIDENCE",
@@ -11377,7 +11389,9 @@
             "scope": "CI at this commit executed the unit, registered-database and source-contract suites that cover SEC-01-009. Assessment: docs/security/assessments/SEC-01-authentication.md. A sign-in from a device name and agent not seen before records auth.new_device; per-IP and per-account limits exist for sign-in; login events are written to the append-only audit table. No risk score or step-up on a suspicious sign-in yet."
           }
         ],
-        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-01-authentication.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/."
+        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-01-authentication.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Deferred by the owner on 2026-11-08: Super Admin and College Admin keep the one-time-code sign-in for now. Phishing-resistant MFA, authenticator enrolment and removal, risk-based step-up and SSO linking arrive together with the later MFA work."
       },
       "SEC-01-010": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -11542,10 +11556,14 @@
         ]
       },
       "SEC-01-017": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Passkeys, strong MFA for College Admin and managed SSO are deferred by the owner (2026-11-08)."
       },
       "SEC-01-018": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Deferred by the owner on 2026-11-08: Super Admin and College Admin keep the one-time-code sign-in for now. Phishing-resistant MFA, authenticator enrolment and removal, risk-based step-up and SSO linking arrive together with the later MFA work."
       },
       "SEC-02-001": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -12008,7 +12026,9 @@
             "scope": "CI at this commit executed the unit, registered-database and source-contract suites that cover SEC-03-004. Assessment: docs/security/assessments/SEC-03-04-08-access-control.md. 33 named permissions for about 1,200 handlers (coarse; 118 handlers name one); role changes audited; role-by-route matrix baseline committed (fails when a role gains a route) but not every unauthorized role/action pair is tested."
           }
         ],
-        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-03-04-08-access-control.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/."
+        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-03-04-08-access-control.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Only 33 named permissions cover about 1,075 service-enforced handlers; converting them is a multi-week refactor with a cross-college test per route. 11 routes were converted and the rest are held by the ratchet. The owner decides whether and when to schedule it."
       },
       "SEC-03-005": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -12407,7 +12427,9 @@
         ]
       },
       "SEC-03-022": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Separation of duties and two-person approval for sensitive operations need a product design and a second approver."
       },
       "SEC-03-023": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -12518,7 +12540,9 @@
         ]
       },
       "SEC-03-027": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. A review requirement for role and permission model changes is written (secure-development-standard.md) and CODEOWNERS names the owner, but it only binds once branch protection and a second code owner exist (owner action)."
       },
       "SEC-04-001": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -13223,7 +13247,9 @@
         ]
       },
       "SEC-05-023": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Needs the owner: depends on a console or organisation setting that code cannot inspect."
       },
       "SEC-06-001": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -13818,7 +13844,9 @@
             "scope": "CI at this commit executed the unit, registered-database and source-contract suites that cover SEC-07-001. Assessment: docs/security/assessments/SEC-07-database-privilege-and-integrity.md. Two now exist on dev: `lms_vnext_migrator` (owns all 278 tables, used by the migrate Job through secret `vnext-db-migrator`) and `lms_vnext_app` (web, CronJobs). No separate roles yet for scheduled jobs, external workers or emergency admin (jobs use the runtime role; no external DB workers exist; no break-glass role)"
           }
         ],
-        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-07-database-privilege-and-integrity.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/."
+        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-07-database-privilege-and-integrity.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Separate database logins for scheduled jobs, external-facing workers and read-only reporting need new roles, passwords and secrets in Cloud SQL (owner decision and cost-free but sensitive). Runtime and migrator are already separate."
       },
       "SEC-07-002": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -13903,10 +13931,14 @@
             "scope": "CI at this commit executed the unit, registered-database and source-contract suites that cover SEC-07-005. Assessment: docs/security/assessments/SEC-07-database-privilege-and-integrity.md. Cloud SQL private IP `10.180.16.3`; only GKE workloads reach it. Authorized networks and firewall not read from here"
           }
         ],
-        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-07-database-privilege-and-integrity.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/."
+        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-07-database-privilege-and-integrity.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Found 2026-11-08 with a read-only gcloud query: the Cloud SQL instance has a PUBLIC IPv4 address enabled with two authorized addresses and does not require SSL (sslMode ALLOW_UNENCRYPTED_AND_ENCRYPTED). Fixing it is a change to the shared production instance and needs the owner."
       },
       "SEC-07-006": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Cloud SQL requires neither SSL nor certificate validation (sslMode ALLOW_UNENCRYPTED_AND_ENCRYPTED, read 2026-11-08). Turning on SSL enforcement and switching the clients to verify the certificate is a change to the shared instance."
       },
       "SEC-07-007": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -14279,7 +14311,9 @@
             "scope": "CI at this commit executed the unit, registered-database and source-contract suites that cover SEC-08-003. Assessment: docs/security/assessments/SEC-03-04-08-access-control.md. Partial: about 1,086 service-enforced handlers check roles and ownership in services (43 easy to convert to named permissions); Zod strictObject bodies are the pattern but not measured; mutating methods not probed with foreign ids (database policies refuse cross-college writes)."
           }
         ],
-        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-03-04-08-access-control.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/."
+        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-03-04-08-access-control.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Same as SEC-03-004: explicit named permissions on all handlers is a multi-week refactor of about 1,075 service-enforced handlers; the owner schedules it."
       },
       "SEC-08-004": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -14316,7 +14350,9 @@
             "scope": "CI at this commit executed the unit, registered-database and source-contract suites that cover SEC-08-005. Assessment: docs/security/assessments/SEC-03-04-08-access-control.md. Partial: about 1,086 service-enforced handlers check roles and ownership in services (43 easy to convert to named permissions); Zod strictObject bodies are the pattern but not measured; mutating methods not probed with foreign ids (database policies refuse cross-college writes)."
           }
         ],
-        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-03-04-08-access-control.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/."
+        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-03-04-08-access-control.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Same as SEC-03-004: explicit named permissions on all handlers is a multi-week refactor of about 1,075 service-enforced handlers; the owner schedules it."
       },
       "SEC-08-006": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -14761,7 +14797,9 @@
             "scope": "CI at this commit executed the unit, registered-database and source-contract suites that cover SEC-08-024. Assessment: docs/security/assessments/SEC-03-04-08-access-control.md. Partial: about 1,086 service-enforced handlers check roles and ownership in services (43 easy to convert to named permissions); Zod strictObject bodies are the pattern but not measured; mutating methods not probed with foreign ids (database policies refuse cross-college writes)."
           }
         ],
-        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-03-04-08-access-control.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/."
+        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-03-04-08-access-control.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. 264 of 672 mutating routes have no test that names them (measured, ratcheted so it cannot grow). Writing a negative test for each is test-authoring work for the owner to schedule."
       },
       "SEC-09-001": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -14830,7 +14868,9 @@
         ]
       },
       "SEC-09-004": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Credential rotation (GCP key, production database password), workload identity, a managed KMS and key versioning need the owner's accounts and decisions; outbound-key versioning also needs a re-hash migration because recipient hashes derive from the same key."
       },
       "SEC-09-005": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -14885,19 +14925,29 @@
             "scope": "CI at this commit executed the unit, registered-database and source-contract suites that cover SEC-09-007. Assessment: docs/security/assessments/SEC-09-12-21-secrets-browser-backup.md. Secrets live in Kubernetes Secrets, never in git; startup and readiness logs name a secret without its value; production readiness fails closed on an invalid configuration; incident runbook exists. Not a managed secret store; history scan not done."
           }
         ],
-        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-09-12-21-secrets-browser-backup.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/."
+        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-09-12-21-secrets-browser-backup.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Moving to a managed secret store, separate production and staging credentials and least-privilege provider keys needs the owner's accounts (Google Secret Manager, provider consoles)."
       },
       "SEC-09-008": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Credential rotation (GCP key, production database password), workload identity, a managed KMS and key versioning need the owner's accounts and decisions; outbound-key versioning also needs a re-hash migration because recipient hashes derive from the same key."
       },
       "SEC-09-009": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Moving to a managed secret store, separate production and staging credentials and least-privilege provider keys needs the owner's accounts (Google Secret Manager, provider consoles)."
       },
       "SEC-09-010": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Moving to a managed secret store, separate production and staging credentials and least-privilege provider keys needs the owner's accounts (Google Secret Manager, provider consoles)."
       },
       "SEC-09-011": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Credential rotation (GCP key, production database password), workload identity, a managed KMS and key versioning need the owner's accounts and decisions; outbound-key versioning also needs a re-hash migration because recipient hashes derive from the same key."
       },
       "SEC-09-012": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -14918,7 +14968,9 @@
         ]
       },
       "SEC-09-013": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Needs the owner: key or credential handling in an account only the owner can read."
       },
       "SEC-09-014": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -14945,7 +14997,9 @@
         ]
       },
       "SEC-09-015": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Credential rotation (GCP key, production database password), workload identity, a managed KMS and key versioning need the owner's accounts and decisions; outbound-key versioning also needs a re-hash migration because recipient hashes derive from the same key."
       },
       "SEC-09-016": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -14966,7 +15020,9 @@
         ]
       },
       "SEC-09-017": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Credential rotation (GCP key, production database password), workload identity, a managed KMS and key versioning need the owner's accounts and decisions; outbound-key versioning also needs a re-hash migration because recipient hashes derive from the same key."
       },
       "SEC-09-018": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -15017,7 +15073,9 @@
         ]
       },
       "SEC-10-002": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Database TLS is the same Cloud SQL setting as SEC-07-006; key-loss and rotation tests depend on key versioning."
       },
       "SEC-10-003": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -15054,7 +15112,9 @@
             "scope": "CI at this commit executed the unit, registered-database and source-contract suites that cover SEC-10-004. Assessment: docs/security/assessments/SEC-10-encryption-and-sensitive-data.md. Outbound email and SMS payloads are sealed with AES-256-GCM (`DB10_OUTBOUND_ENCRYPTION_KEY_BASE64`, `outbound-delivery-envelope.ts`); mentor Google Calendar connection tokens are encrypted before storage. Contact details, marks and resumes are stored as plain columns; login codes and session credentials are stored only as HMAC digests"
           }
         ],
-        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-10-encryption-and-sensitive-data.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/."
+        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-10-encryption-and-sensitive-data.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Field-level encryption for further columns, a data-minimisation review and a field-by-field review of what each of the 600+ API responses returns are decisions and review work for the owner; response shaping is per route today."
       },
       "SEC-10-005": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -15081,10 +15141,14 @@
         ]
       },
       "SEC-10-006": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Field-level encryption for further columns, a data-minimisation review and a field-by-field review of what each of the 600+ API responses returns are decisions and review work for the owner; response shaping is per route today."
       },
       "SEC-10-007": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Field-level encryption for further columns, a data-minimisation review and a field-by-field review of what each of the 600+ API responses returns are decisions and review work for the owner; response shaping is per route today."
       },
       "SEC-10-008": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -15261,13 +15325,19 @@
         ]
       },
       "SEC-10-015": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Database TLS is the same Cloud SQL setting as SEC-07-006; key-loss and rotation tests depend on key versioning."
       },
       "SEC-10-016": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Needs the owner: depends on the key management decision (managed KMS, key versioning)."
       },
       "SEC-11-001": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. The private bucket does not exist and no retention rule for submitted documents is decided."
       },
       "SEC-11-002": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -15430,7 +15500,9 @@
             "scope": "CI at this commit executed the unit, registered-database and source-contract suites that cover SEC-11-008. Assessment: docs/security/assessments/SEC-11-file-uploads-and-storage.md. Signed URLs bind scope and object keys include the owner scope; malware scanning is designed fail-closed (upload stays VERIFYING until a scanner posts a CLEAN verdict) but no scanner is chosen or deployed."
           }
         ],
-        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-11-file-uploads-and-storage.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/."
+        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-11-file-uploads-and-storage.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. The scanner is designed fail-closed but no scanner exists; choosing and running one (and the private bucket) is the owner's."
       },
       "SEC-11-009": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -15601,7 +15673,9 @@
         ]
       },
       "SEC-11-018": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. The private bucket does not exist and no retention rule for submitted documents is decided."
       },
       "SEC-11-019": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -15842,7 +15916,9 @@
           "HSTS includeSubDomains and preload need an owner decision (shared parent domain)",
           "CSP still allows unsafe-inline for scripts (SEC-12-002)",
           "Independent review"
-        ]
+        ],
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Needs the owner: depends on an external scanner or provider decision for uploaded files."
       },
       "SEC-12-011": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -16071,7 +16147,9 @@
             "scope": "CI at this commit executed the unit, registered-database and source-contract suites that cover SEC-13-003. Assessment: docs/security/assessments/SEC-13-business-logic.md. Services own the transitions (placements job and application statuses, project and task states, quiz attempts, offers); the browser never sets a state directly. Transition tables are not inventoried in one place"
           }
         ],
-        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-13-business-logic.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/."
+        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-13-business-logic.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. A written state-machine inventory for every status field (jobs, applications, projects, tasks, attempts, offers) and a test that no transition can be skipped is work of its own; services own the transitions today."
       },
       "SEC-13-004": {
         "state": "PARTIAL_EVIDENCE",
@@ -16084,7 +16162,9 @@
             "scope": "CI at this commit executed the unit, registered-database and source-contract suites that cover SEC-13-004. Assessment: docs/security/assessments/SEC-13-business-logic.md. Services own the transitions (placements job and application statuses, project and task states, quiz attempts, offers); the browser never sets a state directly. Transition tables are not inventoried in one place"
           }
         ],
-        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-13-business-logic.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/."
+        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-13-business-logic.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. A written state-machine inventory for every status field (jobs, applications, projects, tasks, attempts, offers) and a test that no transition can be skipped is work of its own; services own the transitions today."
       },
       "SEC-13-005": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -16183,10 +16263,14 @@
         ]
       },
       "SEC-13-009": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Self-approval prevention and dual approval for administrators need a product design (second approver)."
       },
       "SEC-13-010": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Self-approval prevention and dual approval for administrators need a product design (second approver)."
       },
       "SEC-13-011": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -17015,7 +17099,9 @@
             "scope": "CI at this commit executed the unit, registered-database and source-contract suites that cover SEC-15-005. Assessment: docs/security/assessments/SEC-15-integrations-webhooks.md. Provider list known; separate credentials per provider on dev; signatures cover the body but not a timestamp (inbound mail is idempotent by providerMessageId; scan verdicts are bound to file, college and generation); calendar tokens are encrypted before storage."
           }
         ],
-        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-15-integrations-webhooks.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/."
+        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-15-integrations-webhooks.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Inbound provider signatures cover the body but not a timestamp; adding one needs each provider's contract (inbound mail and recruiter reply routes). Internal routes have optional replay protection built (INTERNAL_REPLAY_PROTECTION)."
       },
       "SEC-15-006": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -17258,10 +17344,14 @@
         ]
       },
       "SEC-16-001": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Separate database logins and pod identities for each worker class need new roles, secrets and manifests (owner decision)."
       },
       "SEC-16-002": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Separate database logins and pod identities for each worker class need new roles, secrets and manifests (owner decision)."
       },
       "SEC-16-003": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -17492,7 +17582,9 @@
         ]
       },
       "SEC-16-014": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Separate database logins and pod identities for each worker class need new roles, secrets and manifests (owner decision)."
       },
       "SEC-16-015": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -17579,10 +17671,14 @@
         ]
       },
       "SEC-17-004": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Per-service cloud identities and workload identity, certificate monitoring, and a separate staging environment are cloud-console and account decisions."
       },
       "SEC-17-005": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Workload identity and a compromised-workload isolation test are cloud-console work."
       },
       "SEC-17-006": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -17693,10 +17789,14 @@
         ]
       },
       "SEC-17-011": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Needs the owner: cloud console and cluster-level settings (workload identity, node and network configuration) only the owner can read or change."
       },
       "SEC-17-012": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Needs the owner: cloud console and cluster-level settings (workload identity, node and network configuration) only the owner can read or change."
       },
       "SEC-17-013": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -17727,16 +17827,24 @@
             "scope": "CI at this commit executed the unit, registered-database and source-contract suites that cover SEC-17-014. Assessment: docs/security/assessments/SEC-17-cloud-network-infrastructure.md. Google load balancer with pre-shared certificates and HSTS; deployment manifests are version controlled; /e2e/* now 404 on production builds while /api/internal/* stays reachable behind secrets (owner decision)."
           }
         ],
-        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-17-cloud-network-infrastructure.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/."
+        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-17-cloud-network-infrastructure.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Per-service cloud identities and workload identity, certificate monitoring, and a separate staging environment are cloud-console and account decisions."
       },
       "SEC-17-015": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Needs the owner: cloud console and cluster-level settings (workload identity, node and network configuration) only the owner can read or change."
       },
       "SEC-17-016": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Needs the owner: cloud console and cluster-level settings (workload identity, node and network configuration) only the owner can read or change."
       },
       "SEC-17-017": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Per-service cloud identities and workload identity, certificate monitoring, and a separate staging environment are cloud-console and account decisions."
       },
       "SEC-17-018": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -17799,7 +17907,9 @@
         ]
       },
       "SEC-17-021": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Needs the owner: cloud console and cluster-level settings (workload identity, node and network configuration) only the owner can read or change."
       },
       "SEC-17-022": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -17826,10 +17936,14 @@
         ]
       },
       "SEC-17-023": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Workload identity and a compromised-workload isolation test are cloud-console work."
       },
       "SEC-18-001": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Branch protection is disabled by the owner; signed images and provenance need a signing key decision."
       },
       "SEC-18-002": {
         "state": "GAP_CONFIRMED",
@@ -17842,7 +17956,9 @@
             "scope": "GitHub branch API reports main protected:false; required CI and PR approval are not enforceable by branch protection."
           }
         ],
-        "nextProof": "Repository administrator must enforce protected main with required exact-SHA checks and review; re-query branch protection."
+        "nextProof": "Repository administrator must enforce protected main with required exact-SHA checks and review; re-query branch protection.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Needs the owner: repository, branch, supply-chain and release-signing settings in GitHub and the registry."
       },
       "SEC-18-003": {
         "state": "PARTIAL_EVIDENCE",
@@ -17855,7 +17971,9 @@
             "scope": "CI at this commit executed the unit, registered-database and source-contract suites that cover SEC-18-003. Assessment: docs/security/assessments/SEC-18-supply-chain-and-ci.md. `CODEOWNERS` names the owner for `/src/security/` and `/src/db/`; it binds only with branch protection and a second person"
           }
         ],
-        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-18-supply-chain-and-ci.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/."
+        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-18-supply-chain-and-ci.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Review rules are written and CODEOWNERS exists, but they bind only with branch protection, a second code owner and a review of GitHub permissions (owner actions)."
       },
       "SEC-18-004": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -17873,7 +17991,9 @@
           "Branch protection must require code-owner review (SEC-18-002 is still open)",
           "Add a second owner so review is independent of the author",
           "Independent review of the ownership map"
-        ]
+        ],
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Review rules are written and CODEOWNERS exists, but they bind only with branch protection, a second code owner and a review of GitHub permissions (owner actions)."
       },
       "SEC-18-005": {
         "state": "PARTIAL_EVIDENCE",
@@ -17886,10 +18006,14 @@
             "scope": "Every workflow declares top-level least-privilege token permissions; no write-all and no top-level contents: write (schema-drift-capture write access narrowed to its one job)"
           }
         ],
-        "nextProof": "Review repository default workflow permissions, collaborator roles, deploy keys and the schema-drift workflow that pushes to main"
+        "nextProof": "Review repository default workflow permissions, collaborator roles, deploy keys and the schema-drift workflow that pushes to main",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Review rules are written and CODEOWNERS exists, but they bind only with branch protection, a second code owner and a review of GitHub permissions (owner actions)."
       },
       "SEC-18-006": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Needs the owner: repository, branch, supply-chain and release-signing settings in GitHub and the registry."
       },
       "SEC-18-007": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -17979,7 +18103,9 @@
           "SBOM covers npm production dependencies only, not the container image or OS packages",
           "Release process must publish the SBOM with the release artifact",
           "Independent review"
-        ]
+        ],
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Needs the owner: repository, branch, supply-chain and release-signing settings in GitHub and the registry."
       },
       "SEC-18-011": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -18092,13 +18218,19 @@
         "remainingChecks": [
           "Confirm the Dockerfile installs with npm ci from the lockfile",
           "Independent review"
-        ]
+        ],
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Needs the owner: repository, branch, supply-chain and release-signing settings in GitHub and the registry."
       },
       "SEC-18-016": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Branch protection is disabled by the owner; signed images and provenance need a signing key decision."
       },
       "SEC-18-017": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Branch protection is disabled by the owner; signed images and provenance need a signing key decision."
       },
       "SEC-18-018": {
         "state": "PARTIAL_EVIDENCE",
@@ -18111,7 +18243,9 @@
             "scope": "SECURITY.md defines fix deadlines (critical 7, high 14, moderate 30, low 90 days) checked by tests/security-governance-files.test.mjs"
           }
         ],
-        "nextProof": "Owner confirms the proposed deadlines and exception process; track a first critical advisory (next RCE fixed 2026-11-06) against them"
+        "nextProof": "Owner confirms the proposed deadlines and exception process; track a first critical advisory (next RCE fixed 2026-11-06) against them",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Patch deadlines are proposed in vulnerability-and-patch-policy.md and need the owner's approval and a named accountable person."
       },
       "SEC-18-019": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -18234,7 +18368,9 @@
         ]
       },
       "SEC-19-003": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. MFA changes are not recorded because MFA does not exist yet (deferred)."
       },
       "SEC-19-004": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -18439,7 +18575,9 @@
             "scope": "CI at this commit executed the unit, registered-database and source-contract suites that cover SEC-19-012. Assessment: docs/security/assessments/SEC-19-logging-audit-detection.md. Container stdout goes to Cloud Logging (retention by project settings, not read here); the table is central per environment"
           }
         ],
-        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-19-logging-audit-detection.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/."
+        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-19-logging-audit-detection.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Cloud Logging access and retention, and who is on call, are owner decisions (the alert severity table is written)."
       },
       "SEC-19-013": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -18596,7 +18734,9 @@
             "scope": "CI at this commit executed the unit, registered-database and source-contract suites that cover SEC-19-019. Assessment: docs/security/assessments/SEC-19-logging-audit-detection.md. Telegram alerting exists for application errors (`log-alerts`); `security.anomaly` findings are now ERROR logs and so also reach the Telegram alert module (deduplicated there); no on-call rota, no alert delivery test"
           }
         ],
-        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-19-logging-audit-detection.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/."
+        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-19-logging-audit-detection.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Cloud Logging access and retention, and who is on call, are owner decisions (the alert severity table is written)."
       },
       "SEC-19-020": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -18713,7 +18853,9 @@
         ]
       },
       "SEC-20-004": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Names for the roster, the legal notification analysis and a tabletop exercise need people."
       },
       "SEC-20-005": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -18950,10 +19092,14 @@
         ]
       },
       "SEC-20-016": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Names for the roster, the legal notification analysis and a tabletop exercise need people."
       },
       "SEC-20-017": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Names for the roster, the legal notification analysis and a tabletop exercise need people."
       },
       "SEC-20-018": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -18992,7 +19138,9 @@
         ]
       },
       "SEC-21-001": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Recovery targets are proposed but not approved, and every restore, integrity, corruption, ransomware and outage test needs a disposable restored instance (cost decision) and the owner."
       },
       "SEC-21-002": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -19019,25 +19167,39 @@
         ]
       },
       "SEC-21-003": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Needs the owner: backup configuration and restore testing on a disposable instance."
       },
       "SEC-21-004": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Needs the owner: backup configuration and restore testing on a disposable instance."
       },
       "SEC-21-005": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Recovery targets are proposed but not approved, and every restore, integrity, corruption, ransomware and outage test needs a disposable restored instance (cost decision) and the owner."
       },
       "SEC-21-006": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Recovery targets are proposed but not approved, and every restore, integrity, corruption, ransomware and outage test needs a disposable restored instance (cost decision) and the owner."
       },
       "SEC-21-007": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Recovery targets are proposed but not approved, and every restore, integrity, corruption, ransomware and outage test needs a disposable restored instance (cost decision) and the owner."
       },
       "SEC-21-008": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Recovery targets are proposed but not approved, and every restore, integrity, corruption, ransomware and outage test needs a disposable restored instance (cost decision) and the owner."
       },
       "SEC-21-009": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Recovery targets are proposed but not approved, and every restore, integrity, corruption, ransomware and outage test needs a disposable restored instance (cost decision) and the owner."
       },
       "SEC-21-010": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -19094,7 +19256,9 @@
         ]
       },
       "SEC-21-013": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Recovery targets are proposed but not approved, and every restore, integrity, corruption, ransomware and outage test needs a disposable restored instance (cost decision) and the owner."
       },
       "SEC-21-014": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -19115,7 +19279,9 @@
         ]
       },
       "SEC-21-015": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Recovery targets are proposed but not approved, and every restore, integrity, corruption, ransomware and outage test needs a disposable restored instance (cost decision) and the owner."
       },
       "SEC-22-001": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -19166,16 +19332,24 @@
         ]
       },
       "SEC-22-003": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Lawful basis, retention periods, data-subject workflows, minors, disposal and counsel review are owner and legal work."
       },
       "SEC-22-004": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Lawful basis, retention periods, data-subject workflows, minors, disposal and counsel review are owner and legal work."
       },
       "SEC-22-005": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Lawful basis, retention periods, data-subject workflows, minors, disposal and counsel review are owner and legal work."
       },
       "SEC-22-006": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Lawful basis, retention periods, data-subject workflows, minors, disposal and counsel review are owner and legal work."
       },
       "SEC-22-007": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -19214,25 +19388,39 @@
         ]
       },
       "SEC-22-009": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Vendor data-sharing limits, whether the NSRIT data on dev is real people, and residency review need the owner and counsel."
       },
       "SEC-22-010": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Lawful basis, retention periods, data-subject workflows, minors, disposal and counsel review are owner and legal work."
       },
       "SEC-22-011": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Vendor data-sharing limits, whether the NSRIT data on dev is real people, and residency review need the owner and counsel."
       },
       "SEC-22-012": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Lawful basis, retention periods, data-subject workflows, minors, disposal and counsel review are owner and legal work."
       },
       "SEC-22-013": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Vendor data-sharing limits, whether the NSRIT data on dev is real people, and residency review need the owner and counsel."
       },
       "SEC-22-014": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Lawful basis, retention periods, data-subject workflows, minors, disposal and counsel review are owner and legal work."
       },
       "SEC-22-015": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Lawful basis, retention periods, data-subject workflows, minors, disposal and counsel review are owner and legal work."
       },
       "SEC-23-001": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -19737,7 +19925,9 @@
             "scope": "CI at this commit executed the unit, registered-database and source-contract suites that cover SEC-23-024. Assessment: docs/security/assessments/SEC-14-23-24-25-26-remaining.md. Role-by-route matrix, cross-college probe (120 routes) and same-college probe (144 requests) exist as committed scripts with evidence, but run against dev by hand rather than in CI; catalog and runtime-principal probes cover privilege drift; webhook signatures are tested, replay is not; skipped database suites and missing branch protection mean a failing critical test does not yet block a release."
           }
         ],
-        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-14-23-24-25-26-remaining.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/."
+        "nextProof": "Independent review of the assessment docs/security/assessments/SEC-14-23-24-25-26-remaining.md and the control-specific checks it lists; dev probes are recorded in docs/security/evidence/.",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Failing critical tests can only block a release once branch protection requires the CI checks (owner action)."
       },
       "SEC-23-025": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -19764,49 +19954,79 @@
         ]
       },
       "SEC-24-001": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Independent testing, disclosure contact and bug bounty are external engagements and need the owner."
       },
       "SEC-24-002": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Independent testing, disclosure contact and bug bounty are external engagements and need the owner."
       },
       "SEC-24-003": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Independent testing, disclosure contact and bug bounty are external engagements and need the owner."
       },
       "SEC-24-004": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Independent testing, disclosure contact and bug bounty are external engagements and need the owner."
       },
       "SEC-24-005": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Independent testing, disclosure contact and bug bounty are external engagements and need the owner."
       },
       "SEC-24-006": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Independent testing, disclosure contact and bug bounty are external engagements and need the owner."
       },
       "SEC-24-007": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Independent testing, disclosure contact and bug bounty are external engagements and need the owner."
       },
       "SEC-24-008": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Independent testing, disclosure contact and bug bounty are external engagements and need the owner."
       },
       "SEC-24-009": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Independent testing, disclosure contact and bug bounty are external engagements and need the owner."
       },
       "SEC-24-010": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Independent testing, disclosure contact and bug bounty are external engagements and need the owner."
       },
       "SEC-24-011": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Independent testing, disclosure contact and bug bounty are external engagements and need the owner."
       },
       "SEC-24-012": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Independent testing, disclosure contact and bug bounty are external engagements and need the owner."
       },
       "SEC-24-013": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Independent testing, disclosure contact and bug bounty are external engagements and need the owner."
       },
       "SEC-24-014": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Independent testing, disclosure contact and bug bounty are external engagements and need the owner."
       },
       "SEC-25-001": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Named security owners, access reviews, production access separation, MFA on source control and cloud, vendor reviews, policy review cadence and training are organisational decisions."
       },
       "SEC-25-002": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -19881,19 +20101,29 @@
         ]
       },
       "SEC-25-006": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Named security owners, access reviews, production access separation, MFA on source control and cloud, vendor reviews, policy review cadence and training are organisational decisions."
       },
       "SEC-25-007": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Named security owners, access reviews, production access separation, MFA on source control and cloud, vendor reviews, policy review cadence and training are organisational decisions."
       },
       "SEC-25-008": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Named security owners, access reviews, production access separation, MFA on source control and cloud, vendor reviews, policy review cadence and training are organisational decisions."
       },
       "SEC-25-009": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Named security owners, access reviews, production access separation, MFA on source control and cloud, vendor reviews, policy review cadence and training are organisational decisions."
       },
       "SEC-25-010": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Named security owners, access reviews, production access separation, MFA on source control and cloud, vendor reviews, policy review cadence and training are organisational decisions."
       },
       "SEC-25-011": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -19914,7 +20144,9 @@
         ]
       },
       "SEC-25-012": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Named security owners, access reviews, production access separation, MFA on source control and cloud, vendor reviews, policy review cadence and training are organisational decisions."
       },
       "SEC-25-013": {
         "state": "PARTIAL_EVIDENCE",
@@ -19927,10 +20159,14 @@
             "scope": "Written vulnerability response deadlines by severity in SECURITY.md, verified present by test"
           }
         ],
-        "nextProof": "Owner approval of the deadlines and a named person accountable for meeting them"
+        "nextProof": "Owner approval of the deadlines and a named person accountable for meeting them",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Deadlines proposed; needs the owner's approval and a named accountable person."
       },
       "SEC-25-014": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Named security owners, access reviews, production access separation, MFA on source control and cloud, vendor reviews, policy review cadence and training are organisational decisions."
       },
       "SEC-25-015": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -19969,10 +20205,14 @@
         ]
       },
       "SEC-26-001": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Hardware-backed authentication, just-in-time access, two-person approval, emergency access, risk scoring, red team, attack-surface monitoring, chaos tests and independent verification are owner and external work."
       },
       "SEC-26-002": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Hardware-backed authentication, just-in-time access, two-person approval, emergency access, risk scoring, red team, attack-surface monitoring, chaos tests and independent verification are owner and external work."
       },
       "SEC-26-003": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -19999,13 +20239,19 @@
         ]
       },
       "SEC-26-004": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Hardware-backed authentication, just-in-time access, two-person approval, emergency access, risk scoring, red team, attack-surface monitoring, chaos tests and independent verification are owner and external work."
       },
       "SEC-26-005": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Hardware-backed authentication, just-in-time access, two-person approval, emergency access, risk scoring, red team, attack-surface monitoring, chaos tests and independent verification are owner and external work."
       },
       "SEC-26-006": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Hardware-backed authentication, just-in-time access, two-person approval, emergency access, risk scoring, red team, attack-surface monitoring, chaos tests and independent verification are owner and external work."
       },
       "SEC-26-007": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -20056,19 +20302,29 @@
         ]
       },
       "SEC-26-009": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Hardware-backed authentication, just-in-time access, two-person approval, emergency access, risk scoring, red team, attack-surface monitoring, chaos tests and independent verification are owner and external work."
       },
       "SEC-26-010": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Asymmetric signing and key rotation for issued credentials is a later design item (credentials are HMAC-signed with registry keys today)."
       },
       "SEC-26-011": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Hardware-backed authentication, just-in-time access, two-person approval, emergency access, risk scoring, red team, attack-surface monitoring, chaos tests and independent verification are owner and external work."
       },
       "SEC-26-012": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Hardware-backed authentication, just-in-time access, two-person approval, emergency access, risk scoring, red team, attack-surface monitoring, chaos tests and independent verification are owner and external work."
       },
       "SEC-26-013": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Hardware-backed authentication, just-in-time access, two-person approval, emergency access, risk scoring, red team, attack-surface monitoring, chaos tests and independent verification are owner and external work."
       },
       "SEC-26-014": {
         "state": "IMPLEMENTED_UNVERIFIED",
@@ -20119,7 +20375,9 @@
         ]
       },
       "SEC-26-016": {
-        "state": "UNASSESSED"
+        "state": "UNASSESSED",
+        "ownerBlocked": true,
+        "ownerBlockedReason": "NEEDS THE OWNER. Hardware-backed authentication, just-in-time access, two-person approval, emergency access, risk scoring, red team, attack-surface monitoring, chaos tests and independent verification are owner and external work."
       }
     }
   },
