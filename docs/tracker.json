@@ -24741,7 +24741,19 @@
           "WIDGET-0027"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "ci-partial",
+            "runId": 42465803279,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42465803279",
+            "commitSha": "8d721b144ab359684f643a19e517175e24f9ed02",
+            "conclusion": "success",
+            "artifactId": 13611559348,
+            "results": "Actual exact-SHA scoped lint and TypeScript, 10/10 focused model/source unit tests, isolated seeded PostgreSQL; 9 authenticated responsive Chromium tests total across G132/G154/G161/G178 and People CSV learner denial, screenshots artifact. Each group has a 1280x800 and 390x844 authorized page smoke; group-wide mutation/export flows NOT tested.",
+            "outstanding": "Full authenticated Super Admin edit/confirmation/cancel/reset and conflict/error response; Faculty scheduled-session mutation and mark/correct replay; Learner history; 320/390/1280 screen reader/focus and deny cases.",
+            "closure": "DOING remains required: existing 9 browser cases are page smoke and one denial, insufficient for the listed interactive/full export transitions. Do not reclassify as DONE from this partial proof."
+          }
+        ]
       },
       {
         "id": "UX-G133",
@@ -26011,7 +26023,19 @@
           "OVERLAY-0161"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "ci-partial",
+            "runId": 42465803279,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42465803279",
+            "commitSha": "8d721b144ab359684f643a19e517175e24f9ed02",
+            "conclusion": "success",
+            "artifactId": 13611559348,
+            "results": "Actual exact-SHA scoped lint and TypeScript, 10/10 focused model/source unit tests, isolated seeded PostgreSQL; 9 authenticated responsive Chromium tests total across G132/G154/G161/G178 and People CSV learner denial, screenshots artifact. Each group has a 1280x800 and 390x844 authorized page smoke; group-wide mutation/export flows NOT tested.",
+            "outstanding": "Actual template/team create/edit/publish/assignment mutations with double-submit, stale search, CAS and cross-college denial across all eight source components, responsive dialogs and downloads.",
+            "closure": "DOING remains required: existing 9 browser cases are page smoke and one denial, insufficient for the listed interactive/full export transitions. Do not reclassify as DONE from this partial proof."
+          }
+        ]
       },
       {
         "id": "UX-G155",
@@ -26543,7 +26567,19 @@
           "WIDGET-0157"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "ci-partial",
+            "runId": 42465803279,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42465803279",
+            "commitSha": "8d721b144ab359684f643a19e517175e24f9ed02",
+            "conclusion": "success",
+            "artifactId": 13611559348,
+            "results": "Actual exact-SHA scoped lint and TypeScript, 10/10 focused model/source unit tests, isolated seeded PostgreSQL; 9 authenticated responsive Chromium tests total across G132/G154/G161/G178 and People CSV learner denial, screenshots artifact. Each group has a 1280x800 and 390x844 authorized page smoke; group-wide mutation/export flows NOT tested.",
+            "outstanding": "Report creation and error recovery, known error transitions, Telegram test/digest, attachment/upload/export, stale-version conflicts, permission negatives, keyboard focus across all eight Tracker components.",
+            "closure": "DOING remains required: existing 9 browser cases are page smoke and one denial, insufficient for the listed interactive/full export transitions. Do not reclassify as DONE from this partial proof."
+          }
+        ]
       },
       {
         "id": "UX-G162",
@@ -27816,7 +27852,19 @@
           "MESSAGE-0062"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "type": "ci-partial",
+            "runId": 42465803279,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42465803279",
+            "commitSha": "8d721b144ab359684f643a19e517175e24f9ed02",
+            "conclusion": "success",
+            "artifactId": 13611559348,
+            "results": "Actual exact-SHA scoped lint and TypeScript, 10/10 focused model/source unit tests, isolated seeded PostgreSQL; 9 authenticated responsive Chromium tests total across G132/G154/G161/G178 and People CSV learner denial, screenshots artifact. Each group has a 1280x800 and 390x844 authorized page smoke; group-wide mutation/export flows NOT tested.",
+            "outstanding": "Positive authenticated/downloaded People CSV flows across eleven serializers, DB pagination overlaps and truncation, malformed/capped imports, PII masking, foreign-college denial, downloaded headers/bytes/filenames.",
+            "closure": "DOING remains required: existing 9 browser cases are page smoke and one denial, insufficient for the listed interactive/full export transitions. Do not reclassify as DONE from this partial proof."
+          }
+        ]
       },
       {
         "id": "UX-G179",
