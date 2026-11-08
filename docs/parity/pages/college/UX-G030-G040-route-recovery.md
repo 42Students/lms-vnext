@@ -17,3 +17,9 @@ First exact-SHA run: [42475795831](https://github.com/42Students/lms-vnext/actio
 ## Still required for DONE
 
 Review all 15–18 registered surfaces **per group**, not just errors: primary happy-path workflows, empty/loading/filtered/pagination states, dialogs/actions, mobile navigation, create/update/delete effect, producer→consumer and cross-college privacy checks. Obtain a clean exact-SHA successful browser and regression run. Keep all ten groups **DOING** until full scoped evidence is recorded on their individual tracker entries. This document is evidence, never a second status board.
+
+## Additional course-progress error recovery witness — 8 November 2026
+
+- The development-only rendered recovery fixture now includes the existing College course-progress error boundary in two states: an unknown exception with an intentionally sensitive synthetic message/digest, and a recognized metadata-filter failure. This expands coverage of the existing College route without creating a new user-facing page.
+- Source commits: [fixture `35a24d88`](https://github.com/42Students/lms-vnext/commit/35a24d88d1801459ce0b8aef69f3965a60a36bd1) and [responsive Playwright checks `58448577`](https://github.com/42Students/lms-vnext/commit/58448577dc3160947a2a2c8ade92d7282ca8a878). Both 1280px and 390px browser variants now assert safe fallback labels, accessible Retry interactions, the recognized friendly filter message and absence of private exception text, digest or raw internal code in rendered UI.
+- These commits are **authored evidence**, not proof of an executed green CI run. The affected G030–G040 groups remain **DOING** until a clean exact-SHA run plus the full group workflows, tenant/role negatives and responsive acceptance are independently recorded.
