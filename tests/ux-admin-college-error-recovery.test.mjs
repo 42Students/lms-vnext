@@ -25,14 +25,14 @@ for (const groupId of groupIds) {
         `Unexpected boundary scope: ${relativePath}`);
       const source = fs.readFileSync(path.join(root, relativePath), "utf8");
       assert.match(source, /reset/, `Retry must be available: ${relativePath}`);
-      assert.doesNotMatch(source, /error\\.(?:message|stack)|JSON\\.stringify\\(error\\)/,
+      assert.doesNotMatch(source, /error\.(?:message|stack)|JSON\.stringify\(error\)/,
         `Do not reveal raw errors: ${relativePath}`);
 
       if (source.includes("<GracefulErrorBoundary")) {
-        assert.match(source, /<GracefulErrorBoundary[^>]*\\binsideShell\\b/s,
+        assert.match(source, /<GracefulErrorBoundary[^>]*\binsideShell\b/s,
           `Nested authenticated route must not render the public full-screen 500: ${relativePath}`);
       } else {
-        assert.match(source, /<(?:ButtonLink|TextLink|PageBackLink)\\b[^>]*href=/s,
+        assert.match(source, /<(?:ButtonLink|TextLink|PageBackLink)\b[^>]*href=/s,
           `A retry-only error traps users without safe navigation: ${relativePath}`);
       }
     }
