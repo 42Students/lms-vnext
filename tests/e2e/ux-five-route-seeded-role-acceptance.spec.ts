@@ -17,8 +17,8 @@ test.describe("UX G025/G036/G044/G087/G097 scoped role and tenant route journeys
         ["/college-admin/departments","/college/departments"],
         ["/college-admin/programs","/college/programs"],
       ] as const){
-        await page.goto(oldPath);
-        expect(new URL(page.url()).pathname).toBe(canonical);
+        await page.goto(oldPath,{waitUntil:"commit"});
+        await expect(page).toHaveURL(`http://localhost:3000${canonical}`);
         await expect(page.locator("main").first()).toBeVisible();
         await overflow(page);
       }
@@ -29,8 +29,10 @@ test.describe("UX G025/G036/G044/G087/G097 scoped role and tenant route journeys
       await authenticateGracefulRole(context,"learner");
       await page.setViewportSize(size);
       for(const legacy of ["/college-admin/departments","/college-admin/programs"]){
-        await page.goto(legacy);
-        expect(new URL(page.url()).pathname).not.toMatch(/^\/college\/(departments|programs)$/);
+        await page.goto(legacy,{waitUntil:"commit"});
+        // Both legacy aliases must converge on the explicitly denied dashboard,
+        // rather than merely not reaching an expected editor URL.
+        await expect(page).toHaveURL(/\/dashboard(?:[?#]|$)/);
         await expect(page.getByRole("heading",{name:/College departments|Manage programs/i})).toHaveCount(0);
         await overflow(page);
       }
@@ -40,7 +42,8 @@ test.describe("UX G025/G036/G044/G087/G097 scoped role and tenant route journeys
     test(`G087 ${size.name}: global Super Admin bookmark preserves only allowlisted query`,async({page,context},info)=>{
       await authenticateGracefulRole(context,"superadmin");
       await page.setViewportSize(size);
-      await page.goto("/superadmin/programs?employeeId=other&q=Science&page=2&pageSize=10&collegeId=foreign&return=https%3A%2F%2Fevil.invalid");
+      await page.goto("/superadmin/programs?employeeId=other&q=Science&page=2&pageSize=10&collegeId=foreign&return=https%3A%2F%2Fevil.invalid",{waitUntil:"commit"});
+      await expect(page).toHaveURL(/\/admin\/programs(?:[?#]|$)/);
       const destination=new URL(page.url());
       expect(destination.pathname).toBe("/admin/programs");
       expect(destination.searchParams.get("q")).toBe("Science");
@@ -56,8 +59,8 @@ test.describe("UX G025/G036/G044/G087/G097 scoped role and tenant route journeys
     test(`G087 ${size.name}: non-Super Admin cannot enter elevated legacy directory`,async({page,context},info)=>{
       await authenticateGracefulRole(context,"learner");
       await page.setViewportSize(size);
-      await page.goto("/superadmin/programs?q=foreign&collegeId=other");
-      expect(new URL(page.url()).pathname).not.toBe("/admin/programs");
+      await page.goto("/superadmin/programs?q=foreign&collegeId=other",{waitUntil:"commit"});
+      await expect(page).toHaveURL(/\/dashboard(?:[?#]|$)/);
       await expect(page.getByRole("button",{name:/create program/i})).toHaveCount(0);
       await overflow(page);
       await page.screenshot({path:info.outputPath(`G087-role-negative-${size.name}.png`),fullPage:true});
@@ -98,8 +101,8 @@ test.describe("UX G025/G036/G044/G087/G097 scoped role and tenant route journeys
     test(`G036 ${size.name}: Learner cannot see college placement management`,async({page,context},info)=>{
       await authenticateGracefulRole(context,"learner");
       await page.setViewportSize(size);
-      await page.goto("/college/placements/drives");
-      expect(new URL(page.url()).pathname).not.toBe("/college/placements/drives");
+      await page.goto("/college/placements/drives",{waitUntil:"commit"});
+      await expect(page).toHaveURL(/\/dashboard(?:[?#]|$)/);
       await expect(page.getByRole("button",{name:/Create Job/i})).toHaveCount(0);
       await overflow(page);
       await page.screenshot({path:info.outputPath(`G036-denied-${size.name}.png`),fullPage:true});
