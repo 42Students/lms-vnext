@@ -1,0 +1,85 @@
+name: UX-G005 to G014 Super Admin route recovery acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/app/(authenticated)/admin/academics/sections/[sectionId]/error.tsx'
+      - 'src/app/(authenticated)/admin/audit/error.tsx'
+      - 'src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx'
+      - 'src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx'
+      - 'src/app/(authenticated)/admin/course-progress/students/page.tsx'
+      - 'src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx'
+      - 'src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx'
+      - 'src/app/(authenticated)/admin/lecture-halls/[hallId]/page.tsx'
+      - 'src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx'
+      - 'src/app/(authenticated)/admin/placements/calendar/page.tsx'
+      - 'src/components/ux/ux-admin-ten-recovery-fixture.tsx'
+      - 'src/app/e2e/ux-g005-g014-admin-recovery/**'
+      - 'tests/unit/ux-g005-g014-admin-route-recovery.test.ts'
+      - 'tests/e2e/ux-g005-g014-admin-recovery.spec.ts'
+      - '.github/workflows/ux-g005-g014-admin-recovery-acceptance.yml'
+
+concurrency:
+  group: ux-admin-ten-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  admin-ten-recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      UX_G005_G014_FIXTURE: "1"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Assert exact source SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Scoped ESLint
+        run: |
+          npx eslint \
+            'src/app/(authenticated)/admin/academics/sections/[sectionId]/error.tsx' \
+            'src/app/(authenticated)/admin/audit/error.tsx' \
+            'src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx' \
+            'src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx' \
+            'src/app/(authenticated)/admin/course-progress/students/page.tsx' \
+            'src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx' \
+            'src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx' \
+            'src/app/(authenticated)/admin/lecture-halls/[hallId]/page.tsx' \
+            'src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx' \
+            'src/app/(authenticated)/admin/placements/calendar/page.tsx' \
+            src/components/ux/ux-admin-ten-recovery-fixture.tsx \
+            src/app/e2e/ux-g005-g014-admin-recovery/page.tsx \
+            tests/unit/ux-g005-g014-admin-route-recovery.test.ts \
+            tests/e2e/ux-g005-g014-admin-recovery.spec.ts
+      - name: Scoped source and security regression assertions
+        run: npx vitest run tests/unit/ux-g005-g014-admin-route-recovery.test.ts --reporter=dot
+      - name: Canonical tracker validation
+        run: npm run ux:groups -- --check
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Actual recovery components at desktop/mobile
+        run: npx playwright test tests/e2e/ux-g005-g014-admin-recovery.spec.ts --project=chromium --reporter=line
+      - name: TypeScript integrity
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: Preserve screenshot and trace proof
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-admin-ten-recovery-${{ github.run_id }}
+          path: |
+            test-results/**
+            playwright-report/**
+          if-no-files-found: ignore
+          retention-days: 7
