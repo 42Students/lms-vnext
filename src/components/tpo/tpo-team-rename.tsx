@@ -4,7 +4,7 @@ import { InlineNotice } from "@/components/ui/inline-notice";
 import { Input } from "@/components/ui/input";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { Label } from "@/components/ui/label";
 export function TpoTeamRename({threadId,currentTopic}:{threadId:string;currentTopic:string}){
  const router=useRouter();
@@ -23,12 +23,16 @@ export function TpoTeamRename({threadId,currentTopic}:{threadId:string;currentTo
    });
    setOpen(false);router.refresh();
   }catch(reason){
-   setError(reason instanceof Error?reason.message:"Could not rename the conversation. Try again.");
+   setError(reason instanceof FriendlyFetchError&&reason.status===409
+    ?"This conversation was renamed elsewhere. Your draft is kept; refresh before trying again."
+    :reason instanceof FriendlyFetchError&&reason.status===403
+     ?"You no longer have permission to rename this conversation."
+     :reason instanceof Error?reason.message:"Could not rename the conversation. Try again.");
   }finally{busyRef.current=false;setBusy(false);}
  }
  return <div className="space-y-2">
   <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
-   onClick={()=>setOpen(value=>!value)} aria-expanded={open}>Rename conversation</Button>
+   disabled={busy} onClick={()=>setOpen(value=>!value)} aria-expanded={open}>Rename conversation</Button>
   {open?<form onSubmit={event=>void save(event)} className="space-y-3 border-t border-border pt-3">
    <Label stack>Conversation name
     <Input required maxLength={200} value={topic} onChange={event=>setTopic(event.target.value)}
