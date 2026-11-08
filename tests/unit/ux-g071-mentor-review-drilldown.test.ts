@@ -24,4 +24,15 @@ describe("UX-G071 Mentor delivery review drilldown",()=>{
     expect(page).toContain('href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-completeness"}');
     expect(page).toContain("Clear invalid filters");
   });
+  it("announces all five G071 loading states to assistive technology",()=>{
+    for(const segment of [
+      "closeout","deliveries/[submissionId]/review",
+      "meetings/[meetingId]/notes","resources-directory","review-completeness",
+    ]){
+      const source=readFileSync(join(process.cwd(),
+        "src/app/(authenticated)/mentor/projects/[projectId]",segment,"loading.tsx"),"utf8");
+      expect(source,segment).toContain('aria-busy="true"');
+      expect(source,segment).toContain("GracefulPageLoading");
+    }
+  });
 });
