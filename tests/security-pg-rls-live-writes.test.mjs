@@ -79,7 +79,7 @@ test("restricted app SQL proves unsafe INSERT, UPDATE old/new and DELETE policy 
       await admin.query("CREATE POLICY read_all ON "+t(table)+
         " FOR SELECT TO PUBLIC USING (true)");
     await admin.query("CREATE POLICY read_own ON "+t("update_move")+
-      " FOR SELECT TO "+role+" USING "+scoped);
+      " FOR SELECT TO "+role+" USING (true)");
     await admin.query("CREATE POLICY update_others ON "+t("update_old")+
       " FOR UPDATE TO "+role+" USING (true) WITH CHECK "+scoped);
     await admin.query("CREATE POLICY update_move ON "+t("update_move")+
@@ -140,7 +140,7 @@ test("restricted app SQL proves unsafe INSERT, UPDATE old/new and DELETE policy 
       // WITH CHECK scopes the NEW row but unscoped USING lets an actor
       // overwrite a different college's ORIGINAL row.
       const otherUpdated=await app.query("UPDATE "+t("update_old")+
-        " SET note='illicit other-college edit' WHERE id=2");
+        " SET note='illicit other-college edit', college_id=$1 WHERE id=2",[collegeA]);
       assert.equal(otherUpdated.rowCount,1);
       // USING scopes the OLD row but an unrestricted WITH CHECK lets it
       // be reassigned to another college.
