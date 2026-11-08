@@ -49,3 +49,13 @@ Focused SSR route tests check same-project URLs, punctuation encoding, private e
 All code is pushed on `main`, each group independently claimed by `chat-gpt6-ux-multirole-20261108`. We have made **no intended change** to database schema, tenant membership filters, authentication, RBAC, server authorization, file access or credentials. Recovery links only navigate to same-origin known routes; server services must still authorize every request. The three fixture pages are development+explicit-E2E gated, do not simulate signed-in or production users, and only exercise rendered UI/URL semantics.
 
 **Do not mark `DONE` on source changes or passing unit tests alone.** Require the run's exact SHA check, scoped lint, unit, desktop/mobile Chromium, full project TypeScript and screenshot artifacts; record the exact run, test counts, artifacts and a regression/security boundary review as separate evidence for each canonical group. Real tenant-authenticated integration, full parity and release checks remain separate gates.
+
+
+## UX-G080 exact-SHA closure proof
+
+- Exact commit: `c6cab25c7662c05ce841a559077414bf68a7015d`; CI: <https://github.com/42Students/lms-vnext/actions/runs/42462573312>. All required steps PASS: npm ci, exact checkout SHA, scoped ESLint, unit tests, headless Chromium desktop/mobile, full TypeScript and screenshot upload.
+- Focused Vitest: **3/3 passed**; Playwright: **2/2 passed** (1280×800, 390×844), with no page JS errors and no horizontal overflow.
+- Screenshots: <https://github.com/42Students/lms-vnext/actions/runs/42462573312/artifacts/13610193258> — `ux-g080-desktop.png` and `ux-g080-mobile.png`.
+- Review: Actual route loader and error components were rendered; recruiter Today links and sanitized exception display were asserted. Existing HR-exported protected pages, server role checks, API payloads, membership-scoped queries and file permissions were not changed. Authenticated real-account integrations remain a separate gate.
+
+The independent UX-G080 group may now move to DONE with the above evidence.
