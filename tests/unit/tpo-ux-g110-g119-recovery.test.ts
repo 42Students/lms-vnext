@@ -91,6 +91,9 @@ describe("TPO UX G110–G119: filters must not produce ambiguous results", () =>
     expect(history.indexOf("Array.isArray(search.page) || !parsed.success")).toBeLessThan(
       history.indexOf("getTpoStudentPlacementHistory(context"),
     );
+    expect(history).toContain("history.total>0");
+    expect(history).toContain("Return to first page");
+    expect(page("students/preparation-prep/page.tsx")).toContain("Return to first page");
   });
 
   it("does not silently default invalid or repeated team sort values", () => {
