@@ -78,7 +78,8 @@ export default async function TrackerIssueDetailPage({
         <PageHeader title={publicId} description="The tracker is temporarily unavailable." />
         {isSuperAdmin(context)?<TrackerAdminNav/>:null}
         <ErrorState title="Issue details unavailable"
-          description="We could not load tracker details right now. Please try again later." />
+          description="We could not load tracker details right now. No issue changes were made."
+          action={<TextLink className="inline-flex min-h-11 items-center" href={isSuperAdmin(context)?"/tracker/issues":"/tracker/mine"}>Back to reports</TextLink>} />
       </div>
     );
   }
