@@ -1,6 +1,6 @@
 "use client";
 import { Textarea } from "@/components/ui/textarea";
-import {useId,useState} from "react";
+import {useId,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -16,6 +16,7 @@ export function MentorMeetingNotesEditor(props:{
   projectId:string;meetingId:string;updatedAt:string;initialNotes:string|null;
 }){
   const router=useRouter();
+  const inFlightRef=useRef(false);
   const helpId=useId();
   const {showToast}=useToast();
   const [notes,setNotes]=useState(props.initialNotes??"");
@@ -28,7 +29,8 @@ export function MentorMeetingNotesEditor(props:{
   const valid=notes.trim().length>0&&notes.trim().length<=4000&&
     notes.trim()!==(props.initialNotes??"").trim();
   async function submit(){
-    if(!valid||pending)return;
+    if(!valid||pending||inFlightRef.current)return;
+    inFlightRef.current=true;
     setPending(true);setError(null);
     try{
       await projectMutation("/api/projects/"+encodeURIComponent(props.projectId)+
@@ -42,7 +44,7 @@ export function MentorMeetingNotesEditor(props:{
       const message=caught instanceof FriendlyFetchError?caught.message:friendlyApiError({});
       setError(message);
       showToast({tone:"error",title:"Meeting notes not saved",description:message});
-    }finally{setPending(false);}
+    }finally{inFlightRef.current=false;setPending(false);}
   }
   return <div className={styles["legacy"]+" "+styles["contents"]}>
     <Button variant="secondary" aria-haspopup="dialog" aria-expanded={open||confirm}
