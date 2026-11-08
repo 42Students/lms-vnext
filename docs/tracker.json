@@ -26895,7 +26895,41 @@
           "/learn/groups",
           "/learn/groups/[groupId]"
         ],
-        "evidence": []
+        "evidence": [
+          {
+            "kind": "PARTIAL_SOURCE_CHECKPOINT_20261108",
+            "recordedAt": "2026-11-08T15:07:44.865Z",
+            "status": "IMPLEMENTED_PENDING_ACCEPTANCE",
+            "commitSha": "1be132d00845b6d709be4802016a80ba15ccba96",
+            "scope": "Learner placement announcements: unknown unread on source/receipt outage; updates tab filters and retry links preserve state; partial unread/receipt load failures announce warning.",
+            "files": [
+              "src/app/(authenticated)/learn/my-placements/announcements/page.tsx",
+              "src/modules/placements/learner-placement-notice-view-model.ts",
+              "src/modules/placements/learner-notices-navigation-model.ts",
+              "tests/unit/learner-notice-unread-count-model.test.ts",
+              "tests/unit/learner-notice-updates-tab-navigation.test.ts"
+            ],
+            "checks": [
+              {
+                "kind": "exact-blob-isolated-node",
+                "result": "PASS",
+                "cases": 6,
+                "modelBlobSha": "021bb2ba63b81c354f1914afae29b8409d6ba915"
+              },
+              {
+                "kind": "exact-blob-isolated-node",
+                "result": "PASS",
+                "cases": 4,
+                "modelBlobSha": "2a4669882ba8dc3915ac3004a4ca51f6157915fd"
+              }
+            ],
+            "pending": [
+              "Repository Vitest/typecheck/lint at exact commit (not executed here)",
+              "Desktop and mobile authenticated browser capture",
+              "Other UX-G061 course, error/loading and placement surfaces, regression/security review"
+            ]
+          }
+        ]
       },
       {
         "id": "UX-G062",
