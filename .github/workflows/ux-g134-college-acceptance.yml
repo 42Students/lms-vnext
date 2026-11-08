@@ -1,0 +1,102 @@
+name: UX-G134 College administrative controls acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/components/college/college-admin-profile-editor.tsx'
+      - 'src/components/college/college-faculty-assignment-actions.tsx'
+      - 'src/components/college/college-faculty-reassign-action.tsx'
+      - 'src/components/college/college-faculty-schedule-reassign.tsx'
+      - 'src/components/college/college-offering-metadata-action.tsx'
+      - 'src/components/college/college-person-audit-modal.tsx'
+      - 'src/components/college/college-person-profile-overview-modal.tsx'
+      - 'src/components/college/college-student-register-form.tsx'
+      - 'tests/unit/ux-g134-college-controls.test.ts'
+      - 'tests/e2e/ux-g134-college-controls.spec.ts'
+      - '.github/workflows/ux-g134-college-acceptance.yml'
+
+permissions:
+  contents: read
+
+# Other workers push to main continuously: preserve one verification for
+# the exact source SHA rather than cancelling it on every unrelated push.
+concurrency:
+  group: ux-g134-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  college:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: 'true'
+      APP_ENV: development
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify source revision and UX registry
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          printf '%s\n' "$GITHUB_SHA" > ux-g134-source-sha.txt
+          npm run ux:groups -- --check
+      - name: Scoped lint and TypeScript
+        run: |
+          npx eslint \
+            src/components/college/college-admin-profile-editor.tsx \
+            src/components/college/college-faculty-assignment-actions.tsx \
+            src/components/college/college-faculty-reassign-action.tsx \
+            src/components/college/college-faculty-schedule-reassign.tsx \
+            src/components/college/college-offering-metadata-action.tsx \
+            src/components/college/college-person-audit-modal.tsx \
+            src/components/college/college-person-profile-overview-modal.tsx \
+            src/components/college/college-student-register-form.tsx \
+            tests/unit/ux-g134-college-controls.test.ts \
+            tests/e2e/ux-g134-college-controls.spec.ts
+          npm run typecheck
+      - name: UX and privacy-safe error regressions
+        run: npx vitest run tests/unit/ux-g134-college-controls.test.ts --reporter=dot
+      - name: Prepare isolated browser-test database
+        run: npm run db:e2e:prepare
+      - name: Generate ephemeral authenticated test identities
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Desktop/mobile college workflows, validation and denied export
+        run: npx playwright test tests/e2e/ux-g134-college-controls.spec.ts --project=chromium --reporter=line
+      - name: Preserve screenshots, traces and exact SHA
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g134-college-${{ github.sha }}
+          path: |
+            ux-g134-source-sha.txt
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 14
