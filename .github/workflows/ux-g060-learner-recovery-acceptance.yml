@@ -1,0 +1,105 @@
+name: UX-G060 learner recovery acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/app/(authenticated)/learn/assignments/page.tsx'
+      - 'src/app/(authenticated)/learn/attendance/calendar/page.tsx'
+      - 'src/app/(authenticated)/learn/calendar/page.tsx'
+      - 'src/app/(authenticated)/learn/courses/[deliveryId]/page.tsx'
+      - 'src/modules/courses/learner-assignment-page-model.ts'
+      - 'tests/unit/ux-g060-learner-route-recovery.test.ts'
+      - 'tests/e2e/ux-g060-learner-recovery.spec.ts'
+      - '.github/workflows/ux-g060-learner-recovery-acceptance.yml'
+
+permissions:
+  contents: read
+
+# Main is shared by many independent chats. Never cancel an exact-SHA
+# acceptance run just because a different UX/security group commits.
+concurrency:
+  group: ux-g060-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_g060_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_g060_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      E2E_AUTH_ENABLED: "true"
+      APP_ENV: development
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_g060_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_g060_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_g060_e2e
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact tested commit
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Lint changed learner routes and tests
+        run: >-
+          npx eslint
+          'src/app/(authenticated)/learn/assignments/page.tsx'
+          'src/app/(authenticated)/learn/attendance/calendar/page.tsx'
+          'src/app/(authenticated)/learn/calendar/page.tsx'
+          'src/app/(authenticated)/learn/courses/[deliveryId]/page.tsx'
+          src/modules/courses/learner-assignment-page-model.ts
+          tests/unit/ux-g060-learner-route-recovery.test.ts
+          tests/e2e/ux-g060-learner-recovery.spec.ts
+      - name: Unit regressions
+        run: >-
+          npx vitest run
+          tests/unit/ux-g060-learner-route-recovery.test.ts
+          tests/unit/learner-attendance-calendar-model.test.ts
+          tests/unit/learner-calendar-filter-model.test.ts
+          --reporter=dot
+      - name: TypeScript
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Seed disposable authenticated E2E database
+        run: npm run db:e2e:prepare
+      - name: Generate ephemeral test-only auth keys
+        shell: bash
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Learner desktop/mobile browser and role-negative acceptance
+        run: >-
+          npx playwright test
+          tests/e2e/ux-g060-learner-recovery.spec.ts
+          --project=chromium
+          --reporter=line
+      - name: Archive browser evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g060-learner-desktop-mobile-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
