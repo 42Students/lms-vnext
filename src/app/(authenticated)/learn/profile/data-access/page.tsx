@@ -15,11 +15,19 @@ import { istDateTimeFormatter } from "@/lib/format-date";
 /** LEARNER-profile-misc-18: self-only, read-only data-access explanation. */
 export default async function LearnerProfileDataAccessPage({
  searchParams,
-}: {searchParams?:Promise<{tpoPage?:string}>}){
- const rawPage=(await searchParams)?.tpoPage;
- const tpoPage=rawPage&&/^[1-9][0-9]{0,3}$/.test(rawPage)?Number(rawPage):1;
+}: {searchParams?:Promise<Record<string,string|string[]|undefined>>}){
  const context=await getCurrentRequestContext();
  const member=await requireOwnLearnerProfileAccess(context);
+ const raw=(await searchParams)??{};
+ const rawPage=raw["tpoPage"];
+ const valid=Object.keys(raw).every(key=>key==="tpoPage") &&
+   (rawPage===undefined || (typeof rawPage==="string" && /^[1-9][0-9]{0,3}$/.test(rawPage)));
+ if(!valid)return <section role="alert" className="min-w-0 space-y-4">
+   <PageHeader title="Who has my data" description="Invalid data-access page" />
+   <p className="text-sm text-body">The requested data-sharing history page is invalid. No private sharing records were loaded.</p>
+   <TextLink href="/learn/profile/data-access" className="inline-flex min-h-11 items-center">View first history page</TextLink>
+ </section>;
+ const tpoPage=rawPage===undefined?1:Number(rawPage);
  const [history,academic,shares,tpoShares]=await Promise.all([
   getOwnLearnerProfileDataActions(context),
   getOwnLearnerAcademicSummary(context),
