@@ -68,7 +68,7 @@ export default async function SuperAdminLectureHallAvailability({
 
     {!parsed.success
       ? raw["from"] !== undefined || raw["to"] !== undefined
-        ? <ErrorState title="Invalid date range" description="Select valid IST dates (up to 31 consecutive days)." />
+        ? <ErrorState title="Invalid date range" description="Select valid IST dates (up to 31 consecutive days)." action={<TextLink href={"/admin/lecture-halls/"+encodeURIComponent(hallId)} className="inline-flex min-h-11 items-center md:min-h-9">Clear date range</TextLink>} />
         : <p role="status" className="text-sm text-[var(--lms-muted-text)]">Choose an IST date range to view scheduled classes.</p>
       : <section aria-label="Hall scheduled sessions" className="min-w-0 space-y-[var(--lms-space-4)]">
         <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] md:flex-row md:items-baseline md:justify-between md:gap-[var(--lms-space-4)]">
