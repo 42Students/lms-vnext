@@ -1,3 +1,6 @@
+import {redirect} from "next/navigation";
+import {hasMembershipRole} from "@/modules/identity/context";
+import {assertMentorProjectRecoveryAccess} from "@/modules/projects/mentor-project-recovery-guard";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
@@ -25,11 +28,16 @@ export default async function MentorProjectTimelinePage({
   const parsed=mentorTimelineQuerySchema.safeParse(
     normalized?{projectId:p.projectId,...normalized}:null,
   );
-  if(!parsed.success)return <div className="min-w-0 space-y-4">
+  if(!parsed.success){
+ const recoveryContext=await getCurrentRequestContext();
+ if(!hasMembershipRole(recoveryContext,"MENTOR"))redirect("/dashboard");
+ await assertMentorProjectRecoveryAccess(recoveryContext,p.projectId);
+ return  <div className="min-w-0 space-y-4">
     <PageHeader title="Release & Sprint timeline"/>
     <ErrorState title="Invalid timeline selector" description="Choose valid release, sprint and page filters."
       action={<TextLink href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"/timeline"} className="inline-flex min-h-11 items-center md:min-h-9">Clear invalid filters</TextLink>}/>
   </div>;
+ }
   const data=await getMentorProjectTimeline(
     await getCurrentRequestContext(),parsed.data,
   );
