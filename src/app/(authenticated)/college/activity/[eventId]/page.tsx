@@ -1,5 +1,7 @@
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { notFound, redirect } from "next/navigation";
+import { hasActiveMembership, hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Disclosure } from "@/components/ui/disclosure";
@@ -25,7 +27,10 @@ export default async function CollegeActivityDetailPage({
   params,
 }: { params: Promise<{ eventId: string }> }) {
   const context = await getCurrentRequestContext();
+  if(!isSuperAdmin(context)&&(!hasActiveMembership(context)||!hasMembershipRole(context,"COLLEGE_ADMIN")))redirect("/dashboard");
   const { eventId } = await params;
+  // Malformed legacy event links are missing pages, never server exceptions.
+  if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(eventId))notFound();
   const { event, actor } = await getCollegeActivityDetail(context, eventId);
   const date = createDateFormatter("en-IN", {
     dateStyle: "full", timeStyle: "medium", timeZone: "Asia/Kolkata",
