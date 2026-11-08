@@ -120,6 +120,10 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
       }catch(reason){
         showToast({tone:"error",title:reason instanceof FriendlyFetchError&&reason.status===409?"Issue changed elsewhere":"Engineering details could not be saved.",
           description:reason instanceof Error?reason.message:friendlyApiError({})});
+        if(reason instanceof FriendlyFetchError&&reason.status===409){
+          setNeedsRefresh(true);
+          router.refresh();
+        }
       }
     });
   }
@@ -138,6 +142,10 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
       }catch(reason){
         showToast({tone:"error",title:reason instanceof FriendlyFetchError&&reason.status===409?"Issue changed elsewhere":"Retest result could not be saved.",
           description:reason instanceof Error?reason.message:friendlyApiError({})});
+        if(reason instanceof FriendlyFetchError&&reason.status===409){
+          setNeedsRefresh(true);
+          router.refresh();
+        }
       }
     });
   }
