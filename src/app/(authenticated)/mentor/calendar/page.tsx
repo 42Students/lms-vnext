@@ -3,6 +3,8 @@ import {Button} from "@/components/ui/button";
 import {MentorProjectsUnavailable} from "@/components/projects/mentor-projects-unavailable";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import { hasActiveMembership, hasMembershipRole } from "@/modules/identity/context";
+import { redirect } from "next/navigation";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {FilterBar} from "@/components/ui/filter-bar";
@@ -27,6 +29,8 @@ type Search={sprint?:string|string[];join?:string|string[];projectId?:string|str
 export default async function MentorCalendarPage({searchParams}:{
   searchParams:Promise<Search>;
 }){
+  const context=await getCurrentRequestContext();
+  if(!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR"))redirect("/dashboard");
   const raw=await searchParams;
   const parsed=mentorCalendarFiltersSchema.safeParse(singleValueMentorCalendarFilters({
     sprint:raw.sprint,join:raw.join,projectId:raw.projectId,
@@ -34,10 +38,10 @@ export default async function MentorCalendarPage({searchParams}:{
     projectState:raw.projectState,search:raw.search,period:raw.period,
   }));
   if(!parsed.success)return <section role="alert" className="space-y-3">
-    <PageHeader title={"Invalid meeting filters"} />
+    <PageHeader title="Mentor calendar" description="Invalid meeting filters" />
+    <p className="text-sm text-body">These filters could not be applied. No meeting information was loaded.</p>
     <TextLink href="/mentor/calendar" className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)]">Clear filters</TextLink>
   </section>;
-  const context=await getCurrentRequestContext();
   const access=await resolveOptionalModuleAccess(context).catch(()=>null);
   if(access?.projects.enabled!==true)return <MentorProjectsUnavailable loadFailed={access===null}/>;
   const calendarRead=await listMyMentorCalendarMeetings(context)
