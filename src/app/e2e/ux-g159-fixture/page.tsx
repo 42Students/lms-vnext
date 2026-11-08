@@ -2,6 +2,7 @@ import {notFound} from "next/navigation";
 import {TpoTeamAwayForm} from "@/components/tpo/tpo-team-away-form";
 import {TpoTeamRename} from "@/components/tpo/tpo-team-rename";
 import {TpoTeamMessageActions} from "@/components/tpo/tpo-team-message-actions";
+import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
 import {Heading} from "@/components/ui/heading";
 
 export const dynamic="force-dynamic";
@@ -18,6 +19,11 @@ export default function TeamInteractionFixture(){
   <section data-ux-fixture="rename" className="min-w-0 rounded-xl border border-border p-4">
    <Heading level={2}>Conversation rename</Heading>
    <TpoTeamRename threadId="00000000-0000-4000-8000-000000000159" currentTopic="Recruiter follow-ups"/>
+  </section>
+  <section data-ux-fixture="nudge" className="min-w-0 rounded-xl border border-border p-4">
+   <TpoStudentNudgePanel rows={Array.from({length:26},(_,index)=>({
+    id:"learner-"+(index+1),label:"Learner "+(index+1),registered:true,
+   }))}/>
   </section>
   <section data-ux-fixture="message" className="min-w-0 rounded-xl border border-border p-4">
    <Heading level={2}>Message actions</Heading>
