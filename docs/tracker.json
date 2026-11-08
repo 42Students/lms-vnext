@@ -20362,11 +20362,11 @@
         "type": "JOURNEY",
         "area": "mentor",
         "title": "Mentor · Reports → Task Review History (part 5)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-gpt6-ux-mentor-tracker-20261108",
         "pickedAt": "2026-11-08T07:55:00.000Z",
         "startedAt": "2026-11-08T07:55:00.000Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T08:07:00.000Z",
         "sourceFiles": [
           "src/app/(authenticated)/mentor/reports/error.tsx",
           "src/app/(authenticated)/mentor/reports/loading.tsx",
@@ -20404,7 +20404,41 @@
         "newRouteOnly": [
           "/mentor/search"
         ],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "ae57a3b96685e21d55faca2d7a556ac4ec0c93c5",
+            "parityDoc": "docs/parity/pages/mentor/UX-G073.md",
+            "tests": [
+              {
+                "command": "node --test tests/ux-g073-g121-contract.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461060878 — all 3 source/authorization/empty-state assertions passed"
+              },
+              {
+                "command": "npx eslint (10 scoped route pages and browser spec); npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461060878 — lint and full TypeScript check passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g073-g121-recovery.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461060878 — 7/7 authenticated scenarios in isolated PostgreSQL with real Mentor, Super Admin and negative Learner identities"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461060878/artifacts/13610021222 — downloaded and inspected screenshots for Mentor invalid report filters and empty review queue"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461060878/artifacts/13610021222 — downloaded and inspected screenshots for Mentor filters, queue empty/recovery and no horizontal overflow"
+              }
+            ],
+            "regressionReview": "Actual exact-SHA run executed 3 source contracts, scoped lint/typecheck, 7 seeded browser checks, desktop/mobile screenshot inspection and negative Learner denial. Other release scenarios (populated history, deep workflow writes, keyboard and full tenant matrix) remain separate. Dev Next/report-issue overlay appears in screenshot outside Mentor scope.",
+            "securityReview": "Invalid query validation is behind active Mentor role checks; project summaries/review reads and exports remain in existing assignment-authorized services. No new API writes, raw learner identities or broadened membership scopes; negative Learner browser check green."
+          }
+        ]
       },
       {
         "id": "UX-G074",
@@ -23215,11 +23249,11 @@
         "type": "JOURNEY",
         "area": "tracker",
         "title": "Tracker · Home → Issues / Public (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-gpt6-ux-mentor-tracker-20261108",
         "pickedAt": "2026-11-08T07:55:00.000Z",
         "startedAt": "2026-11-08T07:55:00.000Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T08:07:00.000Z",
         "sourceFiles": [
           "src/app/(authenticated)/tracker/audit-findings/[publicId]/error.tsx",
           "src/app/(authenticated)/tracker/audit-findings/[publicId]/loading.tsx",
@@ -23257,7 +23291,41 @@
         "newRouteOnly": [
           "/tracker/issues/public"
         ],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "ae57a3b96685e21d55faca2d7a556ac4ec0c93c5",
+            "parityDoc": "docs/parity/pages/shared/UX-G121.md",
+            "tests": [
+              {
+                "command": "node --test tests/ux-g073-g121-contract.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461060878 — all 3 source/authorization/empty-state assertions passed"
+              },
+              {
+                "command": "npx eslint (10 scoped route pages and browser spec); npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461060878 — lint and full TypeScript check passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g073-g121-recovery.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461060878 — 7/7 authenticated scenarios in isolated PostgreSQL with real Mentor, Super Admin and negative Learner identities"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461060878/artifacts/13610021222 — downloaded and inspected screenshots for Tracker audit invalid filters and safe reset"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461060878/artifacts/13610021222 — downloaded and inspected screenshots for Tracker audit invalid filters with safe reset and no horizontal overflow"
+              }
+            ],
+            "regressionReview": "Exact-SHA contract/lint/typecheck and 7 browser scenarios include authorized Super Admin invalid issue and audit queries, responsive reset and Learner denied Tracker; screenshots inspected. Does not certify production DB10 readiness, populated audit import, or write-heavy triage. Dev-only global report overlay was visible and is separate UX scope.",
+            "securityReview": "Tracker Super Admin list gate, scoped admin/safe reporter destination, and existing authorized services unchanged; public and private report boundaries not merged. No importer POST, issue mutation, raw credentials or runtime flag exposed by the new availability text; negative Learner browser denial green."
+          }
+        ]
       },
       {
         "id": "UX-G122",
