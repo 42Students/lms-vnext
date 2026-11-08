@@ -69,6 +69,18 @@ describe("UX-G154 project write safety", () => {
   expect(memberActions.match(/if\(memberActionLock\.current \|\| pending\)return/g)).toHaveLength(2);
   expect(memberActions.match(/memberActionLock\.current = false/g)).toHaveLength(2);
  });
+ it("locks metadata and plan template writes before an awaited confirmation or PATCH", () => {
+  const overview=source("src/components/projects/template-metadata-edit-control.tsx");
+  expect(overview).toContain("if(pending||submitLock.current||!confirmed)return");
+  expect(overview).toContain("submitLock.current=true");
+  expect(overview).toContain("finally{submitLock.current=false;setPending(false)");
+  const plan=source("src/components/projects/super-admin-template-plan-editor.tsx");
+  expect(plan).toContain("if (pending || saveLock.current) return");
+  expect(plan).toContain("saveLock.current = true");
+  expect(plan.indexOf("saveLock.current = true")).toBeLessThan(
+    plan.indexOf('await askConfirm("Save changes as a new template version?")'));
+  expect(plan).toContain("saveLock.current = false");
+ });
  it("preserves cross-page selected college labels without trusting them for authorization", () => {
   const src=source("src/components/projects/super-admin-template-college-bulk.tsx");
   expect(src).toContain("savedSelection.find(row=>row.id===id)");
