@@ -2,6 +2,8 @@ import { DateInput } from "@/components/ui/date-input";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { redirect } from "next/navigation";
+import { hasActiveMembership, hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
@@ -54,6 +56,8 @@ export default async function CollegeActivityPage({
   searchParams,
 }: { searchParams: Promise<RawSearch> }) {
   const context = await getCurrentRequestContext();
+  if(context.membership&&!isSuperAdmin(context)&&
+     (!hasActiveMembership(context)||!hasMembershipRole(context,"COLLEGE_ADMIN")))redirect("/dashboard");
   if (!context.membership) return <div className="min-w-0 space-y-3"><PageHeader title="Activity Log"/><Alert tone="warning" title="College not assigned">Ask your administrator to assign a college before you can view the activity log.</Alert></div>;
   const raw = await searchParams;
   const parsed = collegeActivityQuerySchema.safeParse({...(activitySearchParams(raw) as Record<string,unknown>),pageSize:raw["pageSize"] || "50"});
@@ -72,8 +76,9 @@ export default async function CollegeActivityPage({
     <Alert tone="error" title="Couldn't load activity">The college activity feed could not be refreshed. No audit history was modified.</Alert>
     <ErrorState title="Activity temporarily unavailable"
       description="Retry the same filters to load the latest recorded events."
-      action={<TextLink href={collegeActivityHref(parsed.data)}>Retry activity</TextLink>} />
+      action={<TextLink className="inline-flex min-h-11 items-center" href={collegeActivityHref(parsed.data)}>Retry activity</TextLink>} />
   </div>;
+  const hasUserFilters=Object.keys(raw).some(key=>!["loaded","pageSize"].includes(key));
   const now = new Date();
   const groupedByDay=new Map<string,typeof data.groups>();
   for(const group of data.groups){
@@ -222,10 +227,10 @@ export default async function CollegeActivityPage({
       </form>
     </section>
     <section id="activity-feed" className="min-w-0 overflow-x-clip scroll-mt-5 space-y-5" aria-label="College activity events">
-      {data.groups.length===0?<EmptyState title={(data.query.view??"IMPORTANT")==="IMPORTANT"&&!data.query.category
-        ? "Nothing important happened in this period." : "No activity in this period."}
-        description="Try another category or date range to see recorded changes."
-        action={<TextLink href="/college/activity" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink>} />:null}
+      {data.groups.length===0?<EmptyState title={hasUserFilters?"No events match these filters":"No important activity in the last 30 days"}
+        description={hasUserFilters?"Try a wider date range, another category, or clear filters.":"Nothing meets the Important view in this period. Try Everything to review other recorded activity."}
+        action={<TextLink href={hasUserFilters?"/college/activity":"/college/activity?view=EVERYTHING&range=ALL"}
+          className="inline-flex min-h-11 items-center md:min-h-9">{hasUserFilters?"Clear filters":"View all activity"}</TextLink>} />:null}
       {[...groupedByDay.entries()].map(([day,groups])=>
         <section key={day} className="space-y-3" aria-label={"Activity on "+day}>
           <Heading level={3} className="border-b border-[var(--lms-canvas-border)] pb-2 text-[length:var(--lms-font-base)] text-[var(--lms-heading)]">{day}</Heading>
