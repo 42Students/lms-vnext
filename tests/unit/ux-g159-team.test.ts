@@ -29,6 +29,13 @@ describe("UX-G159 team interaction recovery contracts",()=>{
   expect(ui).toContain('reason instanceof FriendlyFetchError&&reason.status===403');
   expect(ui).toContain('Your draft remains available');
  });
+ it("uses exact first-page membership for the nudge select-all state",()=>{
+  const ui=source("src/components/tpo/tpo-student-nudge-panel.tsx");
+  expect(ui).toContain("const firstPageIds=rows.slice(0,25).map(row=>row.id)");
+  expect(ui).toContain("firstPageIds.every(id=>validSelected.includes(id))");
+  expect(ui).toContain("checked={firstPageSelected}");
+  expect(ui).toContain("disabled={pending||guardedPending}");
+ });
  it("cannot render the synthetic fixture in production",()=>{
   const ui=source("src/app/e2e/ux-g159-fixture/page.tsx");
   expect(ui).toContain('process.env.NODE_ENV!=="development"');
