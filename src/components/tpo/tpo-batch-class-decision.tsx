@@ -20,7 +20,7 @@ export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,f
  function review(){
   if(busy||!changed||finished)return;
   if(choice==="INELIGIBLE"&&reason.trim().length<3){setError("Provide a reason for ineligible decisions.");return;}
-  setConfirmOpen(true);
+  setError("");setConfirmOpen(true);
  }
  async function submit(){
   if(inFlightRef.current||busy||!changed||finished)return;
@@ -28,7 +28,7 @@ export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,f
   setBusy(true);setError("");
   try{
    const response=await fetch("/api/placements/tpo/batches/"+encodeURIComponent(batchId)+"/classes/"+encodeURIComponent(classId)+"/decision",{
-    method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({
+    method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify({
      decision:choice,expectedVersion,...(choice==="INELIGIBLE"?{reason:reason.trim()}:{}),
     }),
    });
@@ -61,6 +61,8 @@ export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,f
    title={"Set this class to "+choice.replaceAll("_"," ").toLowerCase()+"?"}
    description="Student overrides are not changed."
    confirmLabel="Save" confirmVariant="primary" pending={busy}
-   onConfirm={()=>void submit()}/>
+   onConfirm={()=>void submit()}>
+   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  </ConfirmDialog>
  </div>;
 }
