@@ -60,6 +60,26 @@ test.describe("UX-G041 college workspace template handoff", () => {
           .toHaveAttribute("href", "/college/projects/create?mode=cohort");
       });
 
+    test(`saved blocked-workspace directory filter survives on ${viewport.name}`,
+      async ({ page, context }, info) => {
+        await authenticateGracefulRole(context, "college");
+        await page.setViewportSize(viewport);
+        await page.goto("/college/projects/workspaces?status=BLOCKED&view=cards&page=1&pageSize=50" +
+          "&legacy=discard");
+        await expect(page.getByRole("heading", { level: 1, name: "Project workspaces" }))
+          .toBeVisible();
+        const url = new URL(page.url());
+        expect(url.pathname).toBe("/college/projects");
+        expect(url.searchParams.get("status")).toBe("BLOCKED");
+        expect(url.searchParams.get("view")).toBe("cards");
+        expect(url.searchParams.get("pageSize")).toBe("50");
+        expect(url.searchParams.has("legacy")).toBe(false);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth))
+          .toBeLessThanOrEqual(2);
+        await page.screenshot({path: info.outputPath("g041-workspace-list-" + viewport.name + ".png"),
+          fullPage:true});
+      });
+
     test(`learner is denied college workspace creation on ${viewport.name}`, async ({ page, context }) => {
       await authenticateGracefulRole(context, "learner");
       await page.setViewportSize(viewport);
