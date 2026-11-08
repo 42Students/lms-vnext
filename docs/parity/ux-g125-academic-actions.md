@@ -16,6 +16,8 @@
 
 - `college-cohort-management.tsx`: guarantee one in-flight batch create/edit/graduation/retirement operation per action surface; release request locks after errors for retry.
 
+- `academics-create-panel.tsx`/`academics-overview.tsx`: empty-state links into collapsed creation disclosures now reveal the requested form and focus its summary on hash navigation. Source assertions cover all four links.
+
 ## Evidence and remaining acceptance
 
 - Authenticated desktop/mobile Playwright scenarios have been authored in `tests/e2e/ux-g125-academic-actions.spec.ts` for Batches, Semesters and learner Class Schedule, plus learner-denied college directory export. They are **not executed**, and screenshot paths only become proof after a successful run.
