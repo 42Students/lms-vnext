@@ -331,6 +331,58 @@
         "SEC-22-006"
       ],
       "finding": "Open (owner and legal): lawful basis and purpose, retention by category, and a data-subject request flow for correction, deletion and export do not exist yet."
+    },
+    {
+      "source": "SEC-14-23-24-25-26-remaining.md",
+      "state": "IU",
+      "ids": [
+        "SEC-23-015",
+        "SEC-23-022",
+        "SEC-23-023"
+      ],
+      "finding": "CI database job runs scripts/rls-tenant-acceptance.mjs as a non-superuser role in inert and enforce modes against a disposable PostgreSQL service; security workflows are path-triggered; adversarial fixtures use dedicated disposable databases."
+    },
+    {
+      "source": "SEC-14-23-24-25-26-remaining.md",
+      "state": "P",
+      "ids": [
+        "SEC-23-002",
+        "SEC-23-005",
+        "SEC-23-007",
+        "SEC-23-008",
+        "SEC-23-016",
+        "SEC-23-018",
+        "SEC-23-024",
+        "SEC-23-025"
+      ],
+      "finding": "Role-by-route matrix, cross-college probe (120 routes) and same-college probe (144 requests) exist as committed scripts with evidence, but run against dev by hand rather than in CI; catalog and runtime-principal probes cover privilege drift; webhook signatures are tested, replay is not; skipped database suites and missing branch protection mean a failing critical test does not yet block a release."
+    },
+    {
+      "source": "SEC-14-23-24-25-26-remaining.md",
+      "state": "IU",
+      "ids": [
+        "SEC-26-007"
+      ],
+      "finding": "security_audit_events is append-only: a trigger refuses UPDATE, DELETE and TRUNCATE and the runtime role is refused them (verified on dev 2026-11-08). Not hash-chained, so tamper evidence stops at the database privileges."
+    },
+    {
+      "source": "SEC-14-23-24-25-26-remaining.md",
+      "state": "P",
+      "ids": [
+        "SEC-26-008",
+        "SEC-26-014"
+      ],
+      "finding": "Anomaly tripwire flags repeated denials, login probing, id enumeration and bulk export bursts and reports them to the structured log and the alert module; regression suites exist for earlier incidents (cross-college, role fixtures) but are not grouped as an incident suite."
+    },
+    {
+      "source": "SEC-14-23-24-25-26-remaining.md",
+      "state": "G",
+      "ids": [
+        "SEC-26-001",
+        "SEC-26-004",
+        "SEC-26-005"
+      ],
+      "finding": "Super Admin sign-in is two OTP codes (no hardware-backed or phishing-resistant factor), and there is no two-person or independent approval for Super Admin assignment or other high-impact platform operations (owner decision pending)."
     }
   ]
 }
