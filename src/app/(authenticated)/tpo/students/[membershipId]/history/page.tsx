@@ -100,7 +100,9 @@ export default async function TpoLearnerPlacementHistoryPage({
         when an accepted offer has a recorded JOINED outcome.
       </p>
       {history.items.length === 0 ? (
-        <EmptyState title="No persisted placement applications were found for this learner on this page." description="External placement records and unmigrated placement registration sources are not included."/>
+        <EmptyState title={history.total>0?"No placement applications on this page":"No persisted placement applications were found"}
+          description={history.total>0?"The selected page has no visible applications. Review the first page of this learner’s recorded history.":"External placement records and unmigrated placement registration sources are not included."}
+          action={history.total>0?<ButtonLink variant="secondary" href={href(1)}>Return to first page</ButtonLink>:null}/>
       ) : (
         <div className="space-y-4">
           {history.items.map((item) => (
