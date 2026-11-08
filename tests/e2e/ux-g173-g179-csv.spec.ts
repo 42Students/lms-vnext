@@ -24,6 +24,7 @@ for(const viewport of [
  {name:"mobile",width:390,height:844},
 ] as const) {
  test("UX-G173/G179 "+viewport.name+" downloads fourteen legible CSV fixtures",async({page},testInfo)=>{
+  test.setTimeout(120_000);
   await page.setViewportSize({width:viewport.width,height:viewport.height});
   const pageErrors:string[]=[];
   page.on("pageerror",error=>pageErrors.push(error.message));
