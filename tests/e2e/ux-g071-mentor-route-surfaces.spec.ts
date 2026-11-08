@@ -53,12 +53,25 @@ test.describe("UX-G071 five persisted Mentor review route families",()=>{
         await page.goto(base+"/review-completeness");
         await expect(page.getByRole("heading",{level:1,name:"Delivery review completeness"}))
           .toBeVisible();
-        await expect(page.getByRole("heading",{name:"No registered delivery versions"}))
-          .toBeVisible();
-        await expect(page.getByRole("link",{name:"Delivery workspace"}))
-          .toBeVisible();
+        // An opt-in, real learner DRAFT exists in disposable PG17.
+        await expect(page.getByRole("heading",{name:"Delivery version 1"})).toBeVisible();
+        const detail=page.getByRole("link",{name:"View delivery version 1 details"});
+        await expect(detail).toBeVisible();
+        const detailHref=await detail.getAttribute("href");
+        expect(detailHref).toMatch(/\/deliveries\/[0-9a-f-]{36}\/review$/i);
         await page.screenshot({path:info.outputPath("g071-reviews-"+viewport.name+".png"),
           fullPage:true});
+        await detail.click();
+        await expect(page.getByRole("heading",{level:1,name:"Delivery version 1"}))
+          .toBeVisible();
+        await expect(page.getByText("E2E Mentor review completeness browser draft"))
+          .toBeVisible();
+        const back=page.getByRole("link",{name:"All delivery versions"});
+        await expect(back).toBeVisible();
+        await back.click();
+        await expect(page).toHaveURL(new RegExp(
+          "^http://localhost:3000"+base+"/review-completeness$","i"));
+        await expect(page.getByRole("heading",{name:"Delivery version 1"})).toBeVisible();
 
         for(const suffix of ["/review-completeness?page=not-a-number",
           "/resources-directory?page=not-a-number"]){
