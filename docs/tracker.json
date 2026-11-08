@@ -21901,11 +21901,11 @@
         "type": "JOURNEY",
         "area": "teacher",
         "title": "Teacher · Profile / Details → Report / Quiz (part 6)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-gpt6-ux-mentor-tracker-20261108",
         "pickedAt": "2026-11-08T08:05:00.000Z",
         "startedAt": "2026-11-08T08:05:00.000Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T08:17:00.000Z",
         "sourceFiles": [
           "src/app/(authenticated)/teacher/profile/details/error.tsx",
           "src/app/(authenticated)/teacher/profile/details/loading.tsx",
@@ -21943,7 +21943,41 @@
         "newRouteOnly": [
           "/teacher/report/assignment/[contentId]/grade"
         ],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "a8064f24a4e1bbe107f1f798e8d6f5c2ced3aa6e",
+            "parityDoc": "docs/parity/pages/teacher/UX-G096.md",
+            "tests": [
+              {
+                "command": "node --test tests/ux-g096-contract.test.mjs",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461655945 — 3/3 source guard and recovery contracts"
+              },
+              {
+                "command": "npx eslint (3 Faculty page files and browser spec) && npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461655945 — scoped lint and entire TypeScript check green"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g096-faculty-recovery.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461655945 — 7/7 isolated seeded authentic browser tests, no retries"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461655945/artifacts/13609598177 — downloaded/inspected Faculty teaching profile and assignment-submission invalid selector recovery"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461655945/artifacts/13609598177 — downloaded/inspected responsive clear/assignment-report link and no horizontal overflow"
+              }
+            ],
+            "regressionReview": "Source role-first verification, strict duplicate selectors, contextual empty state and two report parent links tested. Previous expected Next navigation abort eliminated from test without hiding negative-role denial; final 7/7 clean exact-SHA green. This is scoped UX, not full Faculty grading/export or release acceptance.",
+            "securityReview": "All invalid links are gated by current ACTIVE Faculty membership before showing details; service-level teaching delivery and assignment Section membership checks unchanged. No write behavior, roster expansion, draft grade exposure or tenant access change; negative Learner browser verification passed."
+          }
+        ]
       },
       {
         "id": "UX-G097",
