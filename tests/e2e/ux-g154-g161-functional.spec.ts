@@ -65,9 +65,13 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
     expect(invalid,"Required report fields must be valid before submit").toEqual([]);
 
     const receipt = page.waitForResponse(r =>
-      r.url().endsWith("/api/tracker/issues") && r.request().method()==="POST");
+      r.url().endsWith("/api/tracker/issues") && r.request().method()==="POST",
+      {timeout:20_000});
     await page.getByRole("button",{name:"Report issue",exact:true}).click();
-    const response = await receipt;
+    const response = await receipt.catch(async()=>{
+      const messages=await reportForm.locator('[role="alert"]').allTextContents();
+      throw new Error("Report POST never started; field validation: "+messages.join(" | ").slice(0,400));
+    });
     expect(response.status(), "Report creation must commit to isolated DB").toBe(201);
     const result = await response.json() as {issue?:{publicId:string}};
     expect(result.issue?.publicId).toMatch(/^LMS-[0-9]+$/);
