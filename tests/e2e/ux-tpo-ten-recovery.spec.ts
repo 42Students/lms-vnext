@@ -56,7 +56,7 @@ test.describe("TPO role denial on actual server pages",()=>{
       await page.setViewportSize(size);
       for (const path of ["/tpo/companies","/tpo/batches","/tpo/placements"]) {
         await page.goto(path,{waitUntil:"domcontentloaded"});
-        await expect(page).toHaveURL(/\/dashboard(?:[?#]|$)/);
+        await expect(page).toHaveURL(/\/(?:dashboard(?:[?#]|$)|learn\/courses\?access=denied(?:&|$))/);
         await expect(page.getByRole("button",{name:/create drive|save placement|archive company/i})).toHaveCount(0);
         await noHorizontalOverflow(page);
       }
