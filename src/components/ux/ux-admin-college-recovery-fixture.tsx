@@ -1,26 +1,26 @@
 "use client";
 
 import { useMemo, useState, type ComponentType } from "react";
-import Case0 from "@/src/app/(authenticated)/admin/placements/drives/error";
-import Case1 from "@/src/app/(authenticated)/admin/placements/hiring/error";
-import Case2 from "@/src/app/(authenticated)/admin/placements/jobs/[jobId]/error";
-import Case3 from "@/src/app/(authenticated)/admin/placements/joining/error";
-import Case4 from "@/src/app/(authenticated)/admin/placements/new/error";
-import Case5 from "@/src/app/(authenticated)/admin/placements/offers/error";
-import Case6 from "@/src/app/(authenticated)/admin/placements/screenings/error";
-import Case7 from "@/src/app/(authenticated)/admin/placements/shortlisted/error";
-import Case8 from "@/src/app/(authenticated)/admin/placements/student-lookup/error";
-import Case9 from "@/src/app/(authenticated)/admin/programs/error";
-import Case10 from "@/src/app/(authenticated)/admin/projects/at-risk/error";
-import Case11 from "@/src/app/(authenticated)/admin/projects/readiness/error";
-import Case12 from "@/src/app/(authenticated)/admin/projects/templates/[templateId]/overview/error";
-import Case13 from "@/src/app/(authenticated)/admin/projects/templates/[templateId]/resources/error";
-import Case14 from "@/src/app/(authenticated)/admin/quizzes/error";
-import Case15 from "@/src/app/(authenticated)/admin/recruiters/error";
-import Case16 from "@/src/app/(authenticated)/admin/settings/auth/error";
-import Case17 from "@/src/app/(authenticated)/admin/students/error";
-import Case18 from "@/src/app/(authenticated)/college/announcements/error";
-import Case19 from "@/src/app/(authenticated)/college/attendance/error";
+import Case0 from "@/app/(authenticated)/admin/placements/drives/error";
+import Case1 from "@/app/(authenticated)/admin/placements/hiring/error";
+import Case2 from "@/app/(authenticated)/admin/placements/jobs/[jobId]/error";
+import Case3 from "@/app/(authenticated)/admin/placements/joining/error";
+import Case4 from "@/app/(authenticated)/admin/placements/new/error";
+import Case5 from "@/app/(authenticated)/admin/placements/offers/error";
+import Case6 from "@/app/(authenticated)/admin/placements/screenings/error";
+import Case7 from "@/app/(authenticated)/admin/placements/shortlisted/error";
+import Case8 from "@/app/(authenticated)/admin/placements/student-lookup/error";
+import Case9 from "@/app/(authenticated)/admin/programs/error";
+import Case10 from "@/app/(authenticated)/admin/projects/at-risk/error";
+import Case11 from "@/app/(authenticated)/admin/projects/readiness/error";
+import Case12 from "@/app/(authenticated)/admin/projects/templates/[templateId]/overview/error";
+import Case13 from "@/app/(authenticated)/admin/projects/templates/[templateId]/resources/error";
+import Case14 from "@/app/(authenticated)/admin/quizzes/error";
+import Case15 from "@/app/(authenticated)/admin/recruiters/error";
+import Case16 from "@/app/(authenticated)/admin/settings/auth/error";
+import Case17 from "@/app/(authenticated)/admin/students/error";
+import Case18 from "@/app/(authenticated)/college/announcements/error";
+import Case19 from "@/app/(authenticated)/college/attendance/error";
 
 type RecoveryRoute = {
   id: string;
