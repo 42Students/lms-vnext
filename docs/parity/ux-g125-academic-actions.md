@@ -18,6 +18,8 @@
 
 ## Evidence and remaining acceptance
 
+- Authenticated desktop/mobile Playwright scenarios have been authored in `tests/e2e/ux-g125-academic-actions.spec.ts` for Batches, Semesters and learner Class Schedule, plus learner-denied college directory export. They are **not executed**, and screenshot paths only become proof after a successful run.
+
 - Regression source specifications: `tests/unit/ux-g125-academic-actions.test.ts`, including academic-year input edge cases and booking server validation.
 - No browser, mobile, keyboard/AT, CI, full-group file review or deployed tenant test has been executed through this connector. The remaining 6 registered components are not certified by these nine fixes.
 - Keep **DOING**, not DONE, until all 15 components are reviewed and executed tests, desktop/mobile browser proofs, regression/security review and exact-SHA evidence are attached to the canonical group.
