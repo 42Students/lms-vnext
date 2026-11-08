@@ -21852,11 +21852,11 @@
         "type": "JOURNEY",
         "area": "college",
         "title": "College · Announcements → Attendance / Settings (part 2)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-admin-college-ten-20261108",
         "pickedAt": "2026-11-08T11:23:00.000Z",
         "startedAt": "2026-11-08T11:23:00.000Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T12:34:00.000Z",
         "sourceFiles": [
           "src/app/(authenticated)/college/announcements/error.tsx",
           "src/app/(authenticated)/college/announcements/loading.tsx",
@@ -21898,7 +21898,36 @@
           "PAGE-0127"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "a5482a8475faeec11b55aa34b8979ef5162702f4",
+            "parityDoc": "docs/parity/college-admin.md",
+            "tests": [
+              {
+                "command": "npx vitest run tests/unit/UX-college-college-announcements-01.test.ts tests/unit/UX-college-college-assignments-01.test.ts tests/unit/UX-college-college-attendance-01.test.ts tests/unit/UX-college-college-attendance-corrections-01.test.ts tests/unit/UX-college-college-attendance-departments-01.test.ts tests/unit/UX-college-college-attendance-settings-01.test.ts tests/unit/college-notice-inbox-model.test.ts; node --test tests/ux-admin-college-error-recovery.test.mjs; npm run typecheck; scoped eslint",
+                "passed": true,
+                "proof": "GitHub Actions run 42480424661 pinned a5482a8475faeec11b55aa34b8979ef5162702f4: 7/7 unit source files, 9/9 assertions; node error/privacy contracts; full typecheck/lint; success"
+              },
+              {
+                "command": "npm run db:e2e:prepare; npx vitest run --config vitest.db.config.ts tests/integration/college-notice-inbox.test.ts",
+                "passed": true,
+                "proof": "Run 42480424661 disposable PostgreSQL 17 seeded, real college notification recipient and cross-tenant negative 2/2 passed, isolated E2E database preflight"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "Run 42480424661 Playwright Chromium six authenticated college routes, announcements create dialog cancel, read-only attendance policy, malformed assignments filters, learner denied redirect, screenshots artifact 13617312054"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "Run 42480424661 Chromium six-route navigation/overflow, form dialog, learner denied; artifact 13617312054; 4/4 browser tests passed across two viewports. Error route proof 42478299021 artifact 13616926179"
+              }
+            ],
+            "regressionReview": "All six G029 page, loading/error routes reviewed; real browser verifies no overflow and interactive announcement create/cancel, invalid assignment filters, correct empty/degraded notification state; previously accepted college UX contracts 9/9 green and source error 56/56 verified.",
+            "securityReview": "Explicit learner tests on announcements and attendance policies deny privileged content by a safe scoped-dashboard redirect or not-found, all college policy writes remain Super Admin-only, PostgreSQL recipient isolation and cross-tenant negative tests 2/2 passed. Unexpected database error distinct from empty. No weakening of auth/tenant controls or global security release claim."
+          }
+        ]
       },
       {
         "id": "UX-G030",
