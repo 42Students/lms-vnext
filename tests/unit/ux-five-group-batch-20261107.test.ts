@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { appendUniquePeopleCsvRows, PEOPLE_CSV_CAP } from "@/modules/people/college-people-export-model";
 import { trackerLogCsv } from "@/components/tracker/tracker-live-logs-explorer";
+import { trackerReportSchema } from "@/modules/bug-tracker/report-input-model";
 
 const source = (path: string) => readFileSync(path, "utf8");
 
@@ -58,6 +59,20 @@ describe("UX-G154 project write safety", () => {
 });
 
 describe("UX-G161 tracker recoverability and formula safety", () => {
+ it("accepts the complete signed-in report form contract and rejects missing screen", () => {
+  const payload={
+    reporterName:"Seed Superadmin",accountRole:"SUPER_ADMIN",
+    environment:"DEVELOPMENT",page:"Dashboard",screen:"Overview",
+    section:null,issueType:"UI / Alignment",severity:"NOT_SURE",
+    description:"E2E UX acceptance: navigation label did not fit at mobile width.",
+    evidenceLink:null,sourceUrl:"http://localhost:3000/tracker",
+    sourcePath:"/tracker",browser:"Playwright",viewport:"1280x800",
+  };
+  const valid=trackerReportSchema.safeParse(payload);
+  expect(valid.success,valid.success?"":JSON.stringify(valid.error.issues)).toBe(true);
+  expect(trackerReportSchema.safeParse({...payload,screen:null}).success).toBe(false);
+ });
+
  it("neutralizes Unicode-obscured formula prefixes without changing CSV row count", () => {
   const csv = trackerLogCsv([{
    id: "log", time: "2026-11-07T12:00:00Z",
