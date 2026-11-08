@@ -31,6 +31,15 @@ describe("UX-G132 attendance write safety", () => {
   expect(src).toContain("writeLock.current=false");
   expect(src).toContain("expectedUpdatedAt:selected?.updatedAt");
  });
+ it("makes Faculty confirm the exact IST window and reschedule intent", () => {
+  const src = source("src/components/attendance/faculty-attendance-schedule-editor.tsx");
+  expect(src).toContain('?"Schedule an attendance session":"Reschedule an attendance session"');
+  expect(src).toContain('description={`Session:');
+  expect(src).toContain('${startsAt.replace("T"," ")} IST');
+  expect(src).toContain('${endsAt.replace("T"," ")} IST');
+  expect(src).toContain('location.trim()');
+  expect(src).toContain('This updates the selected unmarked session.');
+ });
 });
 
 describe("UX-G154 project write safety", () => {
