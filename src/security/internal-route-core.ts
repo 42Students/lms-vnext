@@ -23,8 +23,22 @@ export type InternalDeps = {
   /** Runs the handler inside a named system tenant scope (jobs have no actor). */
   runInSystemScope?: <T>(reason: string, fn: () => T) => T;
   /** Called on every denial with a reason code. Never receives the credential. */
-  onDenied?: (event: { route: string; reason: "ORIGIN" | "QUERY" | "CREDENTIAL" | "BODY"; requestId: string }) => void;
+  onDenied?: (event: { route: string; reason: DenyReason; requestId: string }) => void;
+  /**
+   * Replay protection (SEC-16-010). When this returns true every call must carry a fresh `x-lms-timestamp`
+   * (epoch seconds, within 5 minutes) and a one-time `x-lms-nonce`; a nonce is accepted once per route.
+   * Checked only AFTER the credential matched, so an unauthenticated caller cannot burn nonces.
+   */
+  replayRequired?: () => boolean;
+  /** True the first time this key is seen (fails closed by throwing when the shared store is unreachable). */
+  claimNonce?: (key: string, ttlSeconds: number) => Promise<boolean>;
+  now?: () => number;
 };
+
+export type DenyReason = "ORIGIN" | "QUERY" | "CREDENTIAL" | "BODY" | "TIMESTAMP" | "REPLAY";
+
+export const REPLAY_WINDOW_SECONDS = 300;
+const NONCE_PATTERN = /^[A-Za-z0-9_-]{16,64}$/;
 
 export type InternalCredential =
   | { kind: "header"; header: string; secretEnv: string }
@@ -76,7 +90,7 @@ export function createInternalRoute(deps: InternalDeps) {
 
     return async function handle(request: Request): Promise<Response> {
       const requestId = deps.newRequestId();
-      const deny = (reason: "ORIGIN" | "QUERY" | "CREDENTIAL" | "BODY", status = denied.status, body: unknown = denied.body) => {
+      const deny = (reason: DenyReason, status = denied.status, body: unknown = denied.body) => {
         deps.onDenied?.({ route: config.name, reason, requestId });
         return withHeaders(Response.json(body, { status }), requestId);
       };
@@ -92,6 +106,18 @@ export function createInternalRoute(deps: InternalDeps) {
                 return auth?.startsWith("Bearer ") ? auth.slice("Bearer ".length) : null;
               })();
         if (!credentialMatches(provided, deps.readSecret(cred.secretEnv))) return deny("CREDENTIAL");
+        if (deps.replayRequired?.()) {
+          const stamp = request.headers.get("x-lms-timestamp");
+          const nonce = request.headers.get("x-lms-nonce");
+          const seconds = stamp && /^[0-9]{9,11}$/.test(stamp) ? Number(stamp) : NaN;
+          const nowSeconds = Math.floor((deps.now ? deps.now() : Date.now()) / 1000);
+          if (!Number.isFinite(seconds) || Math.abs(nowSeconds - seconds) > REPLAY_WINDOW_SECONDS || !nonce || !NONCE_PATTERN.test(nonce)) {
+            return deny("TIMESTAMP");
+          }
+          if (!deps.claimNonce) throw new Error("replayRequired needs deps.claimNonce.");
+          // Twice the window, so a nonce outlives the timestamps that could still be accepted with it.
+          if (!(await deps.claimNonce("internal:" + config.name + ":" + nonce, REPLAY_WINDOW_SECONDS * 2))) return deny("REPLAY");
+        }
         // Validation errors are only revealed to an authenticated machine caller.
         if (!config.allowQuery && new URL(request.url).search) return deny("QUERY", 400, invalid);
         if (config.emptyBody) {
