@@ -14,6 +14,18 @@ export function learnerAssignmentListHref(page:number,selectedCourseId:string|nu
  return "/learn/allAssignments"+(query.size?"?"+query.toString():"");
 }
 
+/** Preserve only the canonical course/page selectors when an old learner bookmark
+ * uses /learn/assignments. Repeated, forged or malformed inputs must lead to a
+ * recoverable invalid-link state, never silently change the requested course. */
+export function learnerAssignmentsLegacyAliasHref(query: {course?:unknown;page?:unknown}): string | null {
+ const page=learnerAssignmentListPage(query.page);
+ if(page===null)return null;
+ const course=query.course;
+ if(course!==undefined && (typeof course!=="string" ||
+   !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(course)))return null;
+ return learnerAssignmentListHref(page,typeof course==="string"?course:null);
+}
+
 /** A deleted/filtered result can leave a learner on a page that no longer
  * exists. Recover only after the authorized overview supplies a count; never
  * derive course or membership scope from raw URL input. */
