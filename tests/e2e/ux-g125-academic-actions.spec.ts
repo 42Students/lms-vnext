@@ -6,6 +6,10 @@ const enabled = process.env.E2E_AUTH_ENABLED === "true" && Boolean(process.env.E
 const journeys: readonly {role: GracefulRole; route: string; title: string; label: string}[] = [
   {role:"college",route:"/college/batches",title:"Batches",label:"batches"},
   {role:"college",route:"/college/semesters",title:"Semesters",label:"semesters"},
+  {role:"college",route:"/college/academics",title:"Academics",label:"academic-workspace"},
+  {role:"college",route:"/college/classes",title:"Classes & Sections",label:"class-directory"},
+  {role:"college",route:"/college/lecture-halls",title:"Lecture Halls",label:"lecture-halls"},
+  {role:"college",route:"/college/batch-promotion",title:"Batch Promotion",label:"batch-promotion"},
   {role:"learner",route:"/learn/calendar",title:"Class Schedule",label:"learner-calendar"},
 ];
 
@@ -26,6 +30,15 @@ test.describe("UX-G125 academic create, directory and schedule viewport acceptan
       });
     }
   }
+  test("an academic empty-state deep link reveals its collapsed creation form and focuses the summary",async({page,context})=>{
+    await authenticateGracefulRole(context,"college");
+    await page.goto("/college/academics");
+    await page.locator("#academic-create-program").waitFor();
+    await page.evaluate(()=>{document.getElementById("academic-create-program")?.removeAttribute("open");});
+    await page.evaluate(()=>{window.location.hash="#academic-create-program";});
+    await expect(page.locator("#academic-create-program")).toHaveAttribute("open",/^(|open)$/);
+    await expect(page.locator("#academic-create-program summary")).toBeFocused();
+  });
   test("learner cannot export the college's private batch directory",async({page,context})=>{
     await authenticateGracefulRole(context,"learner");
     const response=await page.request.get("/api/academics/college-academic-export/batches");
