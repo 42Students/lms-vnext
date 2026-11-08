@@ -17,7 +17,7 @@ export const TPO_SETTINGS_NAV_GROUPS=[
 export function TpoSettingsNav({active,compact=false,unsaved=false}:{
   active:SettingsKey;compact?:boolean;unsaved?:boolean;
 }) {
- return <nav aria-label="Settings sections"
+ return <nav aria-label="Placement settings sections"
    className={"min-w-0 space-y-4 " + (compact?"w-full":"md:sticky md:top-4 md:mr-6 md:w-56 md:shrink-0")}>
   {unsaved?<span role="status" className="inline-flex rounded border border-border px-2 py-1 text-xs font-semibold text-warning-text">Unsaved changes</span>:null}
   {TPO_SETTINGS_NAV_GROUPS.map(group=><section key={group.title}
