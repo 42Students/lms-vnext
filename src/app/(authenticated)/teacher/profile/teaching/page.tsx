@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -16,22 +17,24 @@ import { formatNumberIN } from "@/lib/safe-format";
 
 export const dynamic="force-dynamic";
 type Params={search?:string|string[];page?:string|string[]};
-const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
 
 export default async function FacultyTeachingProfilePage({
   searchParams,
 }:{searchParams:Promise<Params>}) {
+  const context=await getCurrentRequestContext();
+  if(context.user.platformStatus!=="ACTIVE" ||
+    context.membership?.status!=="ACTIVE" ||
+    !context.membership.roles.includes("FACULTY"))notFound();
   const raw=await searchParams;
-  const parsed=facultyProfileTeachingQuerySchema.safeParse({
-    search:first(raw.search)??undefined,page:first(raw.page)??undefined,
-  });
+  // Strict query validation rejects duplicated selectors and unknown parameters.
+  const parsed=facultyProfileTeachingQuerySchema.safeParse(raw);
   if(!parsed.success)return <section role="alert" className="min-w-0 space-y-4">
-    <PageHeader title={"Invalid teaching profile filters"} />
+    <PageHeader title="Current teaching assignments" description="Invalid teaching profile filters" />
+    <p className="text-sm text-body">These filters could not be applied. No teaching assignment records were loaded.</p>
     <TextLink href="/teacher/profile/teaching" className="inline-flex min-h-11 items-center">
       Clear filters
     </TextLink>
   </section>;
-  const context=await getCurrentRequestContext();
   const data=await getOwnFacultyTeachingSection(context,parsed.data);
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Current teaching assignments"
@@ -67,8 +70,14 @@ export default async function FacultyTeachingProfilePage({
       </TextLink>
     </form>
     <p className="text-sm text-body leading-[1.6]" role="status" aria-live="polite">{formatNumberIN(data.total)} matching active teaching assignment{data.total===1?"":"s"}</p>
-    {data.items.length===0 ? <EmptyState title="No current teaching assignments"
-      description="No persisted active teaching deliveries match this search. Expired, revoked or unassigned teaching roles are not reconstructed." />
+    {data.items.length===0 ? <EmptyState
+      title={data.query.search?"No teaching assignments match this search":"No current teaching assignments"}
+      description={data.query.search
+        ?"Try another course, Section or academic period, or clear the search to see your assignments."
+        :"No active teaching deliveries are registered for this Faculty membership. Expired, revoked or unassigned roles are not reconstructed."}
+      action={data.query.search?<TextLink href="/teacher/profile/teaching"
+        className="inline-flex min-h-11 items-center">Clear search</TextLink>:<TextLink
+        href="/teacher/courses" className="inline-flex min-h-11 items-center">Teaching courses</TextLink>} />
       : <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=>
         <article key={row.deliveryId} className="min-w-0 space-y-2 py-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
