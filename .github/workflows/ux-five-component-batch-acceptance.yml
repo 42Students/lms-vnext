@@ -27,7 +27,7 @@ permissions:
 
 concurrency:
   group: ux-five-component-batch-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   focused-evidence:
