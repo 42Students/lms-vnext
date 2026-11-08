@@ -18,21 +18,28 @@ export function TpoTeamAwayForm({until}:{until:string|null}){
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({until:next,expectedUntil:until}),
    });
-   setNotice(next?"Away until saved":"Back now");
+   setDate("");setNotice(next?"Away until saved":"Back now");
    router.refresh();
   }catch(reason){setError(reason instanceof Error?reason.message:"Could not save away status. Try again.");}
   finally{pending.current=false;setBusy(false);}
  }
  return <form className="mt-3 min-w-0 space-y-2 pt-3"
   onSubmit={event=>{event.preventDefault();
-   if(!date)return;const parsed=new Date(date+"+05:30");
-   if(!Number.isFinite(parsed.getTime())){setError("Choose when you will be back.");return;}
+   if(!date)return;
+   const parsed=new Date(date+"+05:30");
+   if(!Number.isFinite(parsed.getTime())){setError("Choose a valid date and time in IST.");return;}
+   if(parsed.getTime()<=Date.now()){
+    setError("Choose a future date and time in IST. Past away periods cannot be saved.");
+    return;
+   }
    void submit(parsed.toISOString());}}>
   <Label stack>Away until (IST)
-   <Input type="datetime-local" value={date} disabled={busy} onChange={event=>setDate(event.target.value)}
+   <Input type="datetime-local" value={date} required disabled={busy}
+    onChange={event=>{setDate(event.target.value);setError("");setNotice("");}}
     className="min-h-11 md:min-h-9" />
   </Label>
-  {error?<InlineNotice tone="error" message={error}/>:null}
+  <p className="text-xs text-muted-foreground">Choose when you will be back, using India Standard Time (UTC+05:30).</p>
+  {error?<InlineNotice tone="error" role="alert" message={error}/>:null}
   {notice?<InlineNotice tone="success" message={notice}/>:null}
   <div className="flex flex-wrap gap-2">
    <Button type="submit" variant="secondary" disabled={busy||!date} className="min-h-11 md:min-h-9 text-xs">{busy?"Saving…":"Set away"}</Button>
