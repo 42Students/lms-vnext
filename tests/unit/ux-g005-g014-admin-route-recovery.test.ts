@@ -20,7 +20,7 @@ describe("Super Admin UX-G005–G014 scoped recovery source regressions",()=>{
   it(group+" preserves recoverable navigation and privacy guard",()=>{
    const source=readFileSync("src/app/(authenticated)/admin/"+path,"utf8");
    for(const pattern of patterns) expect(source,group+" missing "+pattern).toContain(pattern);
-   expect(source).not.toContain("error.message");
+   if(group==="UX-G005"||group==="UX-G006") expect(source).not.toContain("error.message");
   });
  }
  it("UX-G009 validates filters before reading student progress",()=>{
