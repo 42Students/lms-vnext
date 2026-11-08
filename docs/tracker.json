@@ -16095,11 +16095,11 @@
         "type": "JOURNEY",
         "area": "hr",
         "title": "Hr · Activity → Conversations (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-hr-five-groups-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/app/(authenticated)/hr/activity/error.tsx",
           "src/app/(authenticated)/hr/activity/loading.tsx",
@@ -16141,19 +16141,57 @@
           "PAGE-0211"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "HR recruiting UX five-group cohort; role-grant/privacy behavior retained; verify route states, mobile/desktop journey, component interactions, tests, and exact SHA acceptance evidence before DONE."
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "b7bbb95d41356c1ee030304d2b328f39b2ca0131",
+            "description": "Main exact-SHA acceptance workflow"
+          },
+          {
+            "type": "ci",
+            "runId": 42452340366,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42452340366",
+            "conclusion": "success",
+            "results": "Both anonymous/authorized jobs green: scoped lint, full TS, five-group Vitest, 1280/390 Chromium and recruiter/learner negative"
+          },
+          {
+            "type": "browser",
+            "artifactId": 13606128819,
+            "role": "anonymous",
+            "views": [
+              "1280px HR routes denied",
+              "390px HR routes denied"
+            ],
+            "description": "Eight responsive anonymous boundary screenshots"
+          },
+          {
+            "type": "browser",
+            "artifactId": 13605679862,
+            "role": "seeded recruiter plus learner denial",
+            "views": [
+              "1280px recruiter real routes",
+              "390px recruiter real routes and G142 notification drawer",
+              "learner direct HR URL denied"
+            ],
+            "description": "Real isolated PG17 seeded accounts"
+          },
+          {
+            "type": "document",
+            "path": "docs/parity/pages/hr/UX-G053-G054-G055-G056-G142.md"
+          }
+        ],
+        "notes": "Scoped route/component UX accepted at exact SHA b7bbb95d: both workflow jobs green, lint/full TS, Vitest, desktop/mobile anonymous and seeded recruiter role journeys, learner denied, G142 notification drawer, responsive screenshots. Production security/tenant release gates remain separate."
       },
       {
         "id": "UX-G054",
         "type": "JOURNEY",
         "area": "hr",
         "title": "Hr · Conversations / ThreadId → Drives / JobId (part 2)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-hr-five-groups-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/app/(authenticated)/hr/conversations/[threadId]/error.tsx",
           "src/app/(authenticated)/hr/conversations/[threadId]/loading.tsx",
@@ -16195,19 +16233,57 @@
           "PAGE-0217"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "HR recruiting UX five-group cohort; role-grant/privacy behavior retained; verify route states, mobile/desktop journey, component interactions, tests, and exact SHA acceptance evidence before DONE."
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "b7bbb95d41356c1ee030304d2b328f39b2ca0131",
+            "description": "Main exact-SHA acceptance workflow"
+          },
+          {
+            "type": "ci",
+            "runId": 42452340366,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42452340366",
+            "conclusion": "success",
+            "results": "Both anonymous/authorized jobs green: scoped lint, full TS, five-group Vitest, 1280/390 Chromium and recruiter/learner negative"
+          },
+          {
+            "type": "browser",
+            "artifactId": 13606128819,
+            "role": "anonymous",
+            "views": [
+              "1280px HR routes denied",
+              "390px HR routes denied"
+            ],
+            "description": "Eight responsive anonymous boundary screenshots"
+          },
+          {
+            "type": "browser",
+            "artifactId": 13605679862,
+            "role": "seeded recruiter plus learner denial",
+            "views": [
+              "1280px recruiter real routes",
+              "390px recruiter real routes and G142 notification drawer",
+              "learner direct HR URL denied"
+            ],
+            "description": "Real isolated PG17 seeded accounts"
+          },
+          {
+            "type": "document",
+            "path": "docs/parity/pages/hr/UX-G053-G054-G055-G056-G142.md"
+          }
+        ],
+        "notes": "Scoped route/component UX accepted at exact SHA b7bbb95d: both workflow jobs green, lint/full TS, Vitest, desktop/mobile anonymous and seeded recruiter role journeys, learner denied, G142 notification drawer, responsive screenshots. Production security/tenant release gates remain separate."
       },
       {
         "id": "UX-G055",
         "type": "JOURNEY",
         "area": "hr",
         "title": "Hr · Drives / New → Notifications (part 3)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-hr-five-groups-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/app/(authenticated)/hr/drives/new/error.tsx",
           "src/app/(authenticated)/hr/drives/new/loading.tsx",
@@ -16249,19 +16325,57 @@
           "PAGE-0222"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "HR recruiting UX five-group cohort; role-grant/privacy behavior retained; verify route states, mobile/desktop journey, component interactions, tests, and exact SHA acceptance evidence before DONE."
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "b7bbb95d41356c1ee030304d2b328f39b2ca0131",
+            "description": "Main exact-SHA acceptance workflow"
+          },
+          {
+            "type": "ci",
+            "runId": 42452340366,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42452340366",
+            "conclusion": "success",
+            "results": "Both anonymous/authorized jobs green: scoped lint, full TS, five-group Vitest, 1280/390 Chromium and recruiter/learner negative"
+          },
+          {
+            "type": "browser",
+            "artifactId": 13606128819,
+            "role": "anonymous",
+            "views": [
+              "1280px HR routes denied",
+              "390px HR routes denied"
+            ],
+            "description": "Eight responsive anonymous boundary screenshots"
+          },
+          {
+            "type": "browser",
+            "artifactId": 13605679862,
+            "role": "seeded recruiter plus learner denial",
+            "views": [
+              "1280px recruiter real routes",
+              "390px recruiter real routes and G142 notification drawer",
+              "learner direct HR URL denied"
+            ],
+            "description": "Real isolated PG17 seeded accounts"
+          },
+          {
+            "type": "document",
+            "path": "docs/parity/pages/hr/UX-G053-G054-G055-G056-G142.md"
+          }
+        ],
+        "notes": "Scoped route/component UX accepted at exact SHA b7bbb95d: both workflow jobs green, lint/full TS, Vitest, desktop/mobile anonymous and seeded recruiter role journeys, learner denied, G142 notification drawer, responsive screenshots. Production security/tenant release gates remain separate."
       },
       {
         "id": "UX-G056",
         "type": "JOURNEY",
         "area": "hr",
         "title": "Hr · Placements → Round Results (part 4)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-hr-five-groups-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/app/(authenticated)/hr/placements/error.tsx",
           "src/app/(authenticated)/hr/placements/jobs/[jobId]/error.tsx",
@@ -16293,8 +16407,46 @@
           "PAGE-0226"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "HR recruiting UX five-group cohort; role-grant/privacy behavior retained; verify route states, mobile/desktop journey, component interactions, tests, and exact SHA acceptance evidence before DONE."
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "b7bbb95d41356c1ee030304d2b328f39b2ca0131",
+            "description": "Main exact-SHA acceptance workflow"
+          },
+          {
+            "type": "ci",
+            "runId": 42452340366,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42452340366",
+            "conclusion": "success",
+            "results": "Both anonymous/authorized jobs green: scoped lint, full TS, five-group Vitest, 1280/390 Chromium and recruiter/learner negative"
+          },
+          {
+            "type": "browser",
+            "artifactId": 13606128819,
+            "role": "anonymous",
+            "views": [
+              "1280px HR routes denied",
+              "390px HR routes denied"
+            ],
+            "description": "Eight responsive anonymous boundary screenshots"
+          },
+          {
+            "type": "browser",
+            "artifactId": 13605679862,
+            "role": "seeded recruiter plus learner denial",
+            "views": [
+              "1280px recruiter real routes",
+              "390px recruiter real routes and G142 notification drawer",
+              "learner direct HR URL denied"
+            ],
+            "description": "Real isolated PG17 seeded accounts"
+          },
+          {
+            "type": "document",
+            "path": "docs/parity/pages/hr/UX-G053-G054-G055-G056-G142.md"
+          }
+        ],
+        "notes": "Scoped route/component UX accepted at exact SHA b7bbb95d: both workflow jobs green, lint/full TS, Vitest, desktop/mobile anonymous and seeded recruiter role journeys, learner denied, G142 notification drawer, responsive screenshots. Production security/tenant release gates remain separate."
       },
       {
         "id": "UX-G057",
@@ -20569,11 +20721,11 @@
         "type": "COMPONENT",
         "area": "hr",
         "title": "Hr · Interactive components (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-hr-five-groups-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/components/hr/hr-drive-draft-form.tsx",
           "src/components/hr/recruiter-applicant-review-drawer.tsx",
@@ -20599,8 +20751,46 @@
           "OVERLAY-0086"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "HR recruiting UX five-group cohort; role-grant/privacy behavior retained; verify route states, mobile/desktop journey, component interactions, tests, and exact SHA acceptance evidence before DONE."
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "b7bbb95d41356c1ee030304d2b328f39b2ca0131",
+            "description": "Main exact-SHA acceptance workflow"
+          },
+          {
+            "type": "ci",
+            "runId": 42452340366,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42452340366",
+            "conclusion": "success",
+            "results": "Both anonymous/authorized jobs green: scoped lint, full TS, five-group Vitest, 1280/390 Chromium and recruiter/learner negative"
+          },
+          {
+            "type": "browser",
+            "artifactId": 13606128819,
+            "role": "anonymous",
+            "views": [
+              "1280px HR routes denied",
+              "390px HR routes denied"
+            ],
+            "description": "Eight responsive anonymous boundary screenshots"
+          },
+          {
+            "type": "browser",
+            "artifactId": 13605679862,
+            "role": "seeded recruiter plus learner denial",
+            "views": [
+              "1280px recruiter real routes",
+              "390px recruiter real routes and G142 notification drawer",
+              "learner direct HR URL denied"
+            ],
+            "description": "Real isolated PG17 seeded accounts"
+          },
+          {
+            "type": "document",
+            "path": "docs/parity/pages/hr/UX-G053-G054-G055-G056-G142.md"
+          }
+        ],
+        "notes": "Scoped route/component UX accepted at exact SHA b7bbb95d: both workflow jobs green, lint/full TS, Vitest, desktop/mobile anonymous and seeded recruiter role journeys, learner denied, G142 notification drawer, responsive screenshots. Production security/tenant release gates remain separate."
       },
       {
         "id": "UX-G143",
