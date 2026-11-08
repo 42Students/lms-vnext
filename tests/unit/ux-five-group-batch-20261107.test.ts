@@ -95,6 +95,15 @@ describe("UX-G161 tracker recoverability and formula safety", () => {
   expect(csv).toContain("'\u0301+CMD second line");
   expect(csv.split("\n")).toHaveLength(2);
  });
+ it("synchronously guards manual Telegram sends before the first API await", () => {
+  const src=source("src/components/tracker/tracker-telegram-manual-panel.tsx");
+  expect(src).toContain("const sendLock=useRef(false)");
+  expect(src).toContain("if(pending||sendLock.current)return");
+  expect(src).toContain("sendLock.current=true");
+  expect(src).toContain("finally{sendLock.current=false;setPending(false)");
+  expect(src).toContain('title={confirm==="TEST"?"Send a Telegram test alert?":"Send the daily digest to Telegram now?"}');
+  expect(src).toContain("Manual sends are rate-limited.");
+ });
  it("resets idempotency retries when the reporter changes page or screen", () => {
   const form=source("src/components/tracker/tracker-report-form.tsx");
   expect(form).toContain('retryKeyRef.current=null;\n              setDraft(current=>({...current,page:');
