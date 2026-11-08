@@ -34,6 +34,13 @@ test.describe("UX-G134 scoped college controls and responsive recovery",()=>{
     await expect(page.getByText("Check the highlighted fields before registering.")).toBeVisible();
     await expect(page.getByText("Enter the first name")).toBeVisible();
   });
+  test("learner cannot open the college-admin profile editor",async({page,context})=>{
+    await authenticateGracefulRole(context,"learner");
+    await page.goto("/college/profile");
+    await expect(page).toHaveURL(/\\/learn\\/profile(?:[?#]|$)/);
+    await expect(page.getByRole("heading",{level:1,name:"Profile"})).toBeVisible();
+    await expect(page.getByRole("button",{name:/Save.*contacts/i})).toHaveCount(0);
+  });
   test("learner cannot export a college-wide people directory",async({page,context})=>{
     await authenticateGracefulRole(context,"learner");
     const response=await page.request.get("/api/college/people/export");
