@@ -89,8 +89,23 @@ export default async function LearnerPlacementJobsPage() {
   const {rows,snapshotNowIso}=browseRead.value;
   // An empty feed caused by a missing or ambiguous academic enrollment is not
   // the same as "no open jobs"; say so with an actionable explanation.
+  // An enrollment lookup outage is not evidence that the learner has no
+  // placement drives. Keep an unknown read distinct from a genuine empty list.
   const enrollmentState=rows.length===0
-    ?await getOwnLearnerJobEnrollmentState(context).catch(()=>"OK" as const):"OK" as const;
+    ?await getOwnLearnerJobEnrollmentState(context).catch((error:unknown)=>{
+      if(error instanceof AuthorizationError || error instanceof PlacementsServiceError)
+        throw error;
+      return "LOOKUP_FAILED" as const;
+    }):"OK" as const;
+  if(enrollmentState==="LOOKUP_FAILED")return <div className="min-w-0 space-y-5">
+    <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Drives</Heading>
+    <ErrorState title="Could not verify your placement enrollment"
+      description="No drives were returned, but your enrollment could not be checked. This does not confirm that there are no opportunities. Retry when the connection is available."
+      action={<TextLink href="/learn/my-placements/jobs"
+        className="inline-flex min-h-11 items-center">
+        Retry checking drives
+      </TextLink>}/>
+  </div>;
   if(enrollmentState!=="OK")return <div className="min-w-0 space-y-5">
     <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Drives</Heading>
     <ErrorState title="No placement drives can be shown yet"
