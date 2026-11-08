@@ -27,7 +27,7 @@ test.describe("UX-G041 college workspace template handoff", () => {
         await page.goto("/college/projects/workspaces/new?templateId=" + templateId +
           "&mode=cohort&returnTo=https%3A%2F%2Fevil.example");
         await expect(page.getByRole("heading", { level: 1, name: "Create project workspace" })).toBeVisible();
-        let current = new URL(page.url());
+        const current = new URL(page.url());
         expect(current.pathname).toBe("/college/projects/create");
         expect(current.searchParams.get("mode")).toBe("teams");
         expect(current.searchParams.get("templateId")).toBe(templateId);
