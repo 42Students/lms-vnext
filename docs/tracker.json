@@ -30505,11 +30505,11 @@
         "type": "JOURNEY",
         "area": "tpo",
         "title": "Tpo · Reports / Branch Season → Reports / Intelligence (part 16)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-2026-11-08-tpo-ux-10",
         "pickedAt": "2026-11-08T11:17:08.957Z",
         "startedAt": "2026-11-08T11:24:14.547Z",
-        "completedAt": null,
+        "completedAt": "2026-11-09",
         "sourceFiles": [
           "src/app/(authenticated)/tpo/reports/branch-season/error.tsx",
           "src/app/(authenticated)/tpo/reports/branch-season/loading.tsx",
@@ -30572,8 +30572,42 @@
             "results": "22/22 real TPO or Learner role Chromium desktop/mobile recovery+denial tests; isolated PG17 seeded role identities; zero skipped/flaky/unexpected. Scoped lint, full TS, tracker check, 13/13 Vitest passed.",
             "scope": "URL guard/reset, private scope/role denial, responsive layouts and keyboard focus only, not complete G110-G119 group flows.",
             "closure": "PARTIAL: all listed route actions/states, exports, real UI mutations, and full group regression remain required for DONE."
+          },
+          {
+            "commitSha": "670cbc02023fd4cecf75cca1968394294c4f38c4",
+            "parityDoc": "docs/parity/pages/tpo/UX-G113.md",
+            "tests": [
+              {
+                "command": "Exact-SHA scoped ESLint, npm run typecheck and npm run ux:groups -- --check",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42521918830"
+              },
+              {
+                "command": "npx vitest run tests/unit/tpo-ux-g110-g119-recovery.test.ts",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42521918830"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g113-tpo-reports.spec.ts --project=chromium --workers=2 --reporter=line,json (26/26, 0 skipped)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42521918830"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42521918830/artifacts/13634275833"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42521918830/artifacts/13634275833"
+              }
+            ],
+            "regressionReview": "Six protected report page/error/loading source families, real filtered/default reads and invalid duplicated-filter recovery, keyboard focus and mobile overflow, plus UX-G181 existing export serializer acceptance; no business mutations changed.",
+            "securityReview": "Actual seeded TPO role and Learner negative role checks on all six URLs in disposable PG17; TPO role is checked before report read. No auth/tenancy/permissions modified; global security/release gate separately open."
           }
-        ]
+        ],
+        "notes": "Scoped UX-G113 read-only reports DONE 2026-11-09: 6 page+error+loading families source reviewed; 26/26 real seeded PG17 TPO/Learner desktop/mobile Chromium and no skips; exact SHA lint, TS, UX tracker check and Vitest green in run 42521918830, screenshots 13634275833. Shared export UI is already scoped-accepted in UX-G181; production API security/release gates remain independent."
       },
       {
         "id": "UX-G114",
