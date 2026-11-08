@@ -29,7 +29,7 @@ test.describe("UX-G132 — persisted policy, review/cancel/reset and tenant deni
     // Super Admin's supported editor is /admin/attendance; the college-only
     // route deliberately redirects platform actors through role middleware.
     await page.goto("/admin/attendance");
-    await expect(page.getByRole("heading",{level:2,name:"Attendance policy"})).toBeVisible();
+    await expect(page.getByRole("heading",{level:2,name:"Attendance policy"}).first()).toBeVisible();
 
     const threshold = page.locator("#attendance-policy-threshold");
     const hours = page.locator("#attendance-policy-hours");
