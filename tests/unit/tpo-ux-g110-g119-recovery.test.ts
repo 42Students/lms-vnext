@@ -144,6 +144,21 @@ describe("TPO UX G114–G119: recovery controls and empty reports", () => {
     expect(branch).toContain("Choose a current season");
   });
 
+  it("G117: all six public and policy settings error routes provide a safe way home", () => {
+    for (const segment of ["recruiters", "rules", "season", "see"]) {
+      const source = page(`settings/${segment}/error.tsx`);
+      expect(source).toContain("Retry");
+      expect(source).toContain('href="/tpo/settings"');
+      expect(source).toContain("Back to settings");
+      expect(source).toContain('className="flex min-w-0 flex-wrap items-center gap-3"');
+    }
+    for (const segment of ["public-link", "public-page"]) {
+      const source = page(`settings/${segment}/error.tsx`);
+      expect(source).toContain('insideShell homeHref="/tpo/settings"');
+      expect(source).toContain("reset");
+    }
+  });
+
   it("provides settings recovery without inventing blocked dates or assignments", () => {
     const blocked = page("settings/blocked-dates/page.tsx");
     const linkError = page("settings/public-link/error.tsx");
