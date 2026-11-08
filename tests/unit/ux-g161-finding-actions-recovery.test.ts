@@ -32,6 +32,12 @@ describe("UX-G161 finding editor recovery contract",()=>{
   expect(actions).toContain('>Refresh finding</Button>');
   expect(actions).toContain('onClick={()=>router.refresh()}');
  });
+ it("does not auto-attach sensitive query parameters to issue reports",()=>{
+  const launcher=source("tracker-quick-report-launcher.tsx");
+  expect(launcher).toContain('window.location.search?" [query parameters omitted for privacy]":"");
+  expect(launcher).not.toContain('window.location.pathname+window.location.search');
+  expect(launcher).toContain('setContext("Page: "+page');
+ });
  it("keeps server version checking and mutation confirmation intact",()=>{
   const actions=source("independent-finding-actions.tsx");
   expect(actions).toContain('expectedVersion:version');
