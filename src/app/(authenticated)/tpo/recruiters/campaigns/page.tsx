@@ -29,6 +29,12 @@ export default async function CampaignHistory({searchParams}:PageProps){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const params=await searchParams;
+ if(Object.values(params).some(Array.isArray))return <div className="min-w-0 space-y-4">
+   <PageHeader title="Emails" />
+   <Alert tone="error">The campaign history link repeats a filter. No campaign history was loaded.{" "}
+    <TextLink href="/tpo/recruiters/campaigns">Clear filters</TextLink>
+   </Alert>
+  </div>;
  const query=messagingHistoryQuerySchema.safeParse({page:first(params.page),purpose:first(params.purpose)});
  if(!query.success)return <div className="min-w-0 space-y-4"><PageHeader title="Emails"/><Alert tone="error">Invalid history filters. <Link href="/tpo/recruiters/campaigns">Reset filters</Link></Alert></div>;
  const result=await listTpoMessagingHistory(context,query.data).catch(()=>null);
