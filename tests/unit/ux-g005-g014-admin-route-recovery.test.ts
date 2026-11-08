@@ -23,6 +23,16 @@ describe("Super Admin UX-G005–G014 scoped recovery source regressions",()=>{
    if(group==="UX-G005"||group==="UX-G006") expect(source).not.toContain("error.message");
   });
  }
+ it("UX-G005 academic reads never disguise authorization denials as temporary outages",()=>{
+  const attendance=readFileSync("src/app/(authenticated)/admin/attendance/page.tsx","utf8");
+  expect(attendance).toContain("import { AuthorizationError }");
+  expect(attendance).toContain("if(error instanceof AuthorizationError)throw error;");
+  expect(attendance).toContain("getAdminAttendanceOptions");
+  expect(attendance).toContain("getAdminAttendanceGrid");
+  const assignments=readFileSync("src/app/(authenticated)/admin/assignments/page.tsx","utf8");
+  expect(assignments).toContain('if(dataResult.status==="rejected"&&dataResult.reason instanceof AuthorizationError)throw dataResult.reason;');
+  expect(assignments).toContain('if(lessonsResult.status==="rejected"&&lessonsResult.reason instanceof AuthorizationError)throw lessonsResult.reason;');
+ });
  it("UX-G009 validates filters before reading student progress",()=>{
   const s=readFileSync("src/app/(authenticated)/admin/course-progress/students/page.tsx","utf8");
   expect(s.indexOf('title="Invalid progress filters"'))
