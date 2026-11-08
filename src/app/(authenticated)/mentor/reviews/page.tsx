@@ -36,6 +36,7 @@ export default async function MentorReviewsPage({
     <TextLink href="/mentor/reviews" className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)]">Clear filters</TextLink>
   </section>;
   const data = await getMentorReviewQueue(context, parsed.data);
+  const hasFilters=Boolean(data.query.search||data.query.projectId||data.query.assignment!=="ALL"||data.query.projectStatus!=="ALL"||data.query.order!=="NEWEST"||data.query.age!=="ALL"||data.pageSize!==20);
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Delivery review queue"
       description="Submitted deliveries awaiting review across your currently assigned mentor projects."
@@ -109,7 +110,7 @@ export default async function MentorReviewsPage({
       </div>
       <p className="text-sm text-body leading-[22px]">{formatNumberIN(data.total)} matching review item{data.total === 1 ? "" : "s"}</p>
       {data.items.length === 0 ? <EmptyState title="No deliveries awaiting review"
-        description="No submitted delivery needs review in the matching projects. Reopened or already-reviewed work is not treated as a new submission." action={<TextLink href="/mentor/projects" className="inline-flex min-h-11 items-center md:min-h-9">Projects</TextLink>} />
+        description={hasFilters?"No submitted deliveries match these review filters. Clear them to see your full queue.":"No submitted delivery needs review in your assigned projects. Reopened or already-reviewed work is not treated as a new submission."} action={<TextLink href={hasFilters?"/mentor/reviews":"/mentor/projects"} className="inline-flex min-h-11 items-center md:min-h-9">{hasFilters?"Clear filters":"Projects"}</TextLink>} />
         : <div className="grid">{data.items.map(item =>
           <TextLink variant="bare" key={item.key} href={item.href} className="min-h-11 block border-b border-border py-4 hover:border-primary focus-ring md:min-h-[var(--lms-control-height)]">
             <p className="min-w-0 break-words font-semibold text-link">{item.description}</p>
