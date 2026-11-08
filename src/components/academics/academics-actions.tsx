@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { Dropdown } from "@/components/ui/dropdown";
 import { Menu, MenuItem } from "@/components/ui/menu";
 import {
+  useRef,
   useState,
   useTransition,
 } from "react";
@@ -65,6 +66,7 @@ function useAcademicMutation() {
   const { showToast } = useToast();
   const [pending, startTransition] =
     useTransition();
+  const mutationInFlight=useRef(false);
 
   function run(
     task: () => Promise<unknown>,
@@ -72,6 +74,8 @@ function useAcademicMutation() {
     onSuccess?: () => void,
     onError?: (error: unknown) => void,
   ) {
+    if (pending || mutationInFlight.current) return;
+    mutationInFlight.current = true;
     startTransition(async () => {
       try {
         await task();
@@ -91,6 +95,8 @@ function useAcademicMutation() {
             description: academicSetupErrorMessage(error),
           });
         }
+      } finally {
+        mutationInFlight.current = false;
       }
     });
   }

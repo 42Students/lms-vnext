@@ -55,3 +55,27 @@ describe("UX-G125 async action retry protection", () => {
     expect(component).toContain("executeInFlight.current = false");
   });
 });
+
+
+describe("UX-G125 shared academic mutation recovery", () => {
+  it("locks create, program action and enrollment operations before the first await", () => {
+    for (const file of [
+      "src/components/academics/academics-create-panel.tsx",
+      "src/components/academics/academics-actions.tsx",
+      "src/components/academics/section-operations.tsx",
+    ]) {
+      const component = source(file);
+      expect(component).toContain("if (pending || mutationInFlight.current) return");
+      expect(component).toContain("mutationInFlight.current = true");
+      expect(component).toContain("mutationInFlight.current = false");
+      expect(component).toContain("academicSetupErrorMessage(error)");
+    }
+  });
+  it("blocks invalid or repeated class-session writes while preserving retry", () => {
+    const component=source("src/components/academics/college-section-management.tsx");
+    expect(component).toContain("const scheduleWindowInvalid=Boolean(scheduleStart && scheduleEnd && scheduleEnd<=scheduleStart)");
+    expect(component).toContain("scheduleInFlight.current=true");
+    expect(component).toContain("scheduleInFlight.current=false");
+    expect(component).toContain("disabled={scheduleLoading||pending||scheduleWindowInvalid}");
+  });
+});

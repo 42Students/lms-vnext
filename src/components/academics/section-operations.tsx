@@ -2,6 +2,7 @@
 
 import { formatDateIst, formatDateTimeIst } from "@/lib/format-date";
 import {
+  useRef,
   useState,
   useTransition,
 } from "react";
@@ -16,6 +17,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { Dialog } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
+import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
@@ -184,6 +186,7 @@ export function SectionOperations({
   const { showToast } = useToast();
   const [pending, startTransition] =
     useTransition();
+  const mutationInFlight=useRef(false);
 
   const [learnerMembershipId, setLearnerMembershipId] =
     useState("");
@@ -229,6 +232,8 @@ export function SectionOperations({
     title: string,
     reset?: () => void,
   ) {
+    if (pending || mutationInFlight.current) return;
+    mutationInFlight.current = true;
     startTransition(async () => {
       try {
         await task();
@@ -242,11 +247,10 @@ export function SectionOperations({
         showToast({
           tone: "error",
           title: "Academic operation failed",
-          description:
-            error instanceof Error
-              ? error.message
-              : "The request could not be completed.",
+          description: academicSetupErrorMessage(error),
         });
+      } finally {
+        mutationInFlight.current = false;
       }
     });
   }

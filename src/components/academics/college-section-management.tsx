@@ -244,6 +244,7 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
   const [scheduleOpen,setScheduleOpen]=useState(false);
   const [scheduleDiscardConfirm,setScheduleDiscardConfirm]=useState(false);
   const [scheduleLoading,setScheduleLoading]=useState(false);
+  const scheduleInFlight=useRef(false);
   const [scheduleError,setScheduleError]=useState("");
   const [scheduleItems,setScheduleItems]=useState<Array<{
     id:string;title:string;startsAt:string|Date;endsAt:string|Date;status:string
@@ -252,6 +253,7 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
   const [scheduleStart,setScheduleStart]=useState("");
   const [scheduleEnd,setScheduleEnd]=useState("");
   const [scheduleLocation,setScheduleLocation]=useState("");
+  const scheduleWindowInvalid=Boolean(scheduleStart && scheduleEnd && scheduleEnd<=scheduleStart);
   const [name, setName] = useState(row.name);
   const [code, setCode] = useState(row.code);
   const [capacity, setCapacity] = useState(row.capacity === null ? "" : String(row.capacity));
@@ -291,10 +293,12 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
   }
   async function createSchedule(event:FormEvent<HTMLFormElement>){
     event.preventDefault();
-    if(pending||scheduleLoading)return;
+    if(pending||scheduleLoading||scheduleInFlight.current)return;
     if(!scheduleTitle.trim()||!scheduleStart||!scheduleEnd){
       setScheduleError("Enter a title, start time and end time.");return;
     }
+    if(scheduleWindowInvalid){setScheduleError("End time must be after start time.");return;}
+    scheduleInFlight.current=true;
     setScheduleLoading(true);setScheduleError("");
     try{
       // Class timetable uses IST across the LMS regardless of browser timezone.
@@ -312,7 +316,7 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
       await loadSchedule();router.refresh();
     }catch(error){
       setScheduleError(academicSetupErrorMessage(error,"Could not schedule class."));
-    }finally{setScheduleLoading(false);}
+    }finally{scheduleInFlight.current=false;setScheduleLoading(false);}
   }
   async function deleteClass(){
     if(pending||!row.canDelete||!row.updatedAt)return;
@@ -510,9 +514,10 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
             <Input maxLength={500} value={scheduleLocation}
               onChange={event=>setScheduleLocation(event.target.value)} className="mt-1"/>
           </Label>
+          {scheduleWindowInvalid?<p role="alert" className="text-sm text-error sm:col-span-2">End time must be after start time.</p>:null}
           <div className="flex flex-wrap justify-end gap-2 sm:col-span-2">
             <Button variant="secondary" type="button" disabled={scheduleLoading} onClick={closeSchedule}>Close</Button>
-            <Button type="submit" disabled={scheduleLoading||pending}>Add session</Button>
+            <Button type="submit" disabled={scheduleLoading||pending||scheduleWindowInvalid}>Add session</Button>
           </div>
         </form>
       </div>

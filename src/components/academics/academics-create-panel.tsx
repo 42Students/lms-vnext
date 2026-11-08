@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useRef,
   useState,
   useTransition,
   type FormEvent,
@@ -12,6 +13,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
+import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 
@@ -83,6 +85,7 @@ export function AcademicsCreatePanel({
   const { showToast } = useToast();
   const [pending, startTransition] =
     useTransition();
+  const mutationInFlight=useRef(false);
 
   const [programDepartmentId, setProgramDepartmentId] =
     useState("");
@@ -131,7 +134,8 @@ export function AcademicsCreatePanel({
     successTitle: string,
     reset: () => void,
   ) {
-    if (pending) return;
+    if (pending || mutationInFlight.current) return;
+    mutationInFlight.current = true;
     startTransition(async () => {
       try {
         await task();
@@ -145,11 +149,10 @@ export function AcademicsCreatePanel({
         showToast({
           tone: "error",
           title: "Academic update failed",
-          description:
-            error instanceof Error
-              ? error.message
-              : "The request could not be completed.",
+          description: academicSetupErrorMessage(error),
         });
+      } finally {
+        mutationInFlight.current = false;
       }
     });
   }
