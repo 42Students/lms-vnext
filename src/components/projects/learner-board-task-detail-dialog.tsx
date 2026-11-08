@@ -85,13 +85,11 @@ export function LearnerBoardTaskDetailDialog({
         <Heading level={3}>Acceptance criteria</Heading>
         <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">{task.acceptanceCriteria??"No acceptance criteria recorded."}</p>
       </section>
-      <section className="mt-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
-        <Heading level={3} size="sm">Done when</Heading>
-        <p className="mt-2 whitespace-pre-wrap text-sm text-body">{task.acceptanceCriteria || "No criteria recorded."}</p>
-        {task.status === "BLOCKED" ? <p role="alert" className="mt-2 rounded-md border border-warning-border bg-warning-subtle p-2 text-sm">
+      {task.status === "BLOCKED" ? (
+        <p role="alert" className="mt-4 rounded-md border border-warning-border bg-warning-subtle p-2 text-sm">
           Blocked: {task.blockerReason || "No blocker note recorded."}
-        </p> : null}
-      </section>
+        </p>
+      ) : null}
       <Heading level={3} size="sm" className="mt-5">Comments</Heading>
       <ProjectTaskComments projectId={projectId} taskId={task.id}
         updatedAt={task.updatedAt.toISOString()}
