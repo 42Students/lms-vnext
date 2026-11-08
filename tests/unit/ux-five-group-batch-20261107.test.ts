@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { appendUniquePeopleCsvRows, PEOPLE_CSV_CAP } from "@/modules/people/college-people-export-model";
+import {neutralStudentCsvCell,studentImportReportCsv} from "@/modules/people/college-student-csv-model";
 import { trackerLogCsv } from "@/components/tracker/tracker-live-logs-explorer";
 import { trackerReportSchema } from "@/modules/bug-tracker/report-input-model";
 
@@ -127,6 +128,17 @@ describe("UX-G161 tracker recoverability and formula safety", () => {
 });
 
 describe("UX-G178 people CSV completeness and deduplication", () => {
+ it("defuses invisible Unicode formulas in student import report cells", () => {
+  for(const dangerous of ["\u2060=HYPERLINK(1)","\u200B@SUM(1,2)","\u034F+CMD","\uFEFF-1+2","\u2028=1"]) {
+   expect(neutralStudentCsvCell(dangerous)).toBe('"' + "'" + dangerous + '"');
+   expect(studentImportReportCsv([{row:2,status:"INVALID",detail:dangerous}]))
+    .toContain('"' + "'" + dangerous + '"');
+  }
+  expect(neutralStudentCsvCell("A normal name")).toBe('"A normal name"');
+  expect(neutralStudentCsvCell('"A quoted name"')).toBe('"""A quoted name"""');
+  expect(neutralStudentCsvCell(" =1+2")).toBe('"\' =1+2"');
+ });
+
  it("deduplicates overlapping membership pages and respects configured cap", () => {
   type Member = Parameters<typeof appendUniquePeopleCsvRows>[0][number];
   const member=(id:string)=>({membership:{id}}) as unknown as Member;
