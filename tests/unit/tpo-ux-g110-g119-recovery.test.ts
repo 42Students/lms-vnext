@@ -41,6 +41,32 @@ describe("TPO UX G110–G119: filters must not produce ambiguous results", () =>
     }
   });
 
+  it("rejects ambiguous campaign history and audience previews", () => {
+    const history = page("recruiters/campaigns/page.tsx");
+    const preview = page("recruiters/campaigns/preview/page.tsx");
+    expect(history).toContain("Object.values(params).some(Array.isArray)");
+    expect(history.indexOf("Object.values(params).some(Array.isArray)")).toBeLessThan(
+      history.indexOf("listTpoMessagingHistory(context"),
+    );
+    expect(history).toContain("No campaign history was loaded");
+    expect(preview).toContain("Array.isArray(raw.segment)||!query.success");
+    expect(preview).toContain("No recipients were queried");
+    expect(preview.indexOf("Array.isArray(raw.segment)||!query.success")).toBeLessThan(
+      preview.indexOf("previewEngageCampaignAudience(context"),
+    );
+  });
+
+  it("rejects invalid or repeated draft recipient pages before service queries", () => {
+    const draft = page("recruiters/campaigns/drafts/[campaignId]/page.tsx");
+    expect(draft).toContain("Array.isArray(raw.page)");
+    expect(draft).toContain('!/[1-9]'); // explicit page validation, not coercion
+    expect(draft).toContain("Invalid recipient page");
+    expect(draft).toContain("No campaign recipient records were loaded");
+    expect(draft.indexOf("Array.isArray(raw.page)")).toBeLessThan(
+      draft.indexOf("tpoCampaignDraftStorageReady()"),
+    );
+  });
+
   it("does not silently default invalid or repeated team sort values", () => {
     const source = page("settings/team/page.tsx");
     expect(source).toContain("Array.isArray(rawSort)");
