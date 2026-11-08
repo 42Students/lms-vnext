@@ -25495,11 +25495,11 @@
         "type": "KIT",
         "area": "ui",
         "title": "Ui · Shared UI kit (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chatgpt-ux-kit-20261108",
         "pickedAt": "2026-11-08T07:59:54.169Z",
         "startedAt": "2026-11-08T07:59:54.169Z",
-        "completedAt": null,
+        "completedAt": "2026-11-08T08:10:26.432Z",
         "sourceFiles": [
           "src/components/ui/avatar.tsx",
           "src/components/ui/bottom-sheet.tsx",
@@ -25535,7 +25535,46 @@
           "KIT-0015"
         ],
         "newRouteOnly": [],
-        "evidence": []
+        "evidence": [
+          {
+            "commitSha": "098d3d00b1fe62fea6ad939212477242483a3f59",
+            "parityDoc": "docs/parity/ux-g163-g164-shared-kit.md",
+            "tests": [
+              {
+                "command": "npx eslint src/components/ui/{avatar,button,filter-bar,breadcrumbs,error-state}.tsx src/app/e2e/ux-kit-actions/{page,ux-kit-actions-harness}.tsx tests/{unit/ux-g163-shared-actions.test,e2e/ux-g163-shared-actions.spec}.tsx",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461350528 — scoped ESLint and exact SHA succeeded"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g163-shared-actions.test.tsx tests/ux-playbook-primitives.test.tsx --reporter=dot",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461350528 — 20/20 tests across two files passed"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g163-shared-actions.spec.ts --project=chromium --reporter=line",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461350528 — 2/2 rendered desktop/mobile browser tests passed"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461350528 — full TypeScript pass"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461350528/artifacts/13610011945 — ux-g163-desktop.png: file validation/clear, modal confirm/cancel, no-overflow, button busy"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42461350528/artifacts/13610011945 — ux-g163-mobile.png: responsive filter drawer open/close, avatar accessible, file/confirmation actions, no-overflow"
+              }
+            ],
+            "regressionReview": "Exact 098d3d00 commit verified in CI; scoped ESLint, 20/20 existing and new unit cases, 2/2 Chromium desktop/mobile scenarios, no browser console errors and full TypeScript all pass. Existing shared playbook suite included. Broader authenticated integration/release regression remains separate.",
+            "securityReview": "Only client presentation/control behavior and dev+E2E-only synthetic page fixture changed; all file prechecks remain subordinate to backend authorization, confirm actions in fixture are local state only, and no auth, tenant scope, data visibility checks, credentials, API or endpoint security policy was altered."
+          }
+        ]
       },
       {
         "id": "UX-G164",
