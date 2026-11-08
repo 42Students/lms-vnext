@@ -23515,11 +23515,11 @@
         "type": "COMPONENT",
         "area": "colleges",
         "title": "Colleges · Interactive components (part 1)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-external-jobs-global-states-2026-11-07",
         "pickedAt": "2026-11-07",
         "startedAt": "2026-11-07",
-        "completedAt": null,
+        "completedAt": "2026-11-08",
         "sourceFiles": [
           "src/components/colleges/college-contact-profile-form.tsx"
         ],
@@ -23527,8 +23527,36 @@
           "WIDGET-0036"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "College contact-profile form UX: safe dirty-state and discard/retry usability, validation focus, 375/1280 browser and unit proof; API and tenant contract unchanged."
+        "evidence": [
+          {
+            "type": "commit",
+            "commitSha": "4d303ffae0f0acc753b05b049e4086d92e2cdb80",
+            "description": "G135 stale-conflict browser assertion matched the real error rather than Next route announcer; original semantics preserved"
+          },
+          {
+            "type": "ci",
+            "runId": 42458499414,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42458499414",
+            "conclusion": "success",
+            "commitSha": "4d303ffae0f0acc753b05b049e4086d92e2cdb80",
+            "results": "Exact-SHA scoped lint and full TypeScript; 5/5 unit+college regression; 6/6 Chromium responsive tests 1280px/390px with no skips/flaky/unexpected. Validates destructive reset cancel/confirm, client validation, stale conflict text, versioned save and no overflow."
+          },
+          {
+            "type": "browser",
+            "artifactId": 13609071161,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42458499414/artifacts/13609071161",
+            "views": [
+              "390px synthetic public contact-profile component",
+              "1280px synthetic public contact-profile component"
+            ],
+            "scope": "Development-only fixture with intercepted PATCH; no production API authorization claim."
+          },
+          {
+            "type": "document",
+            "path": "docs/audit/ux/ux-g135-college-contact-profile.md"
+          }
+        ],
+        "notes": "College contact-profile form UX: safe dirty-state and discard/retry usability, validation focus, 375/1280 browser and unit proof; API and tenant contract unchanged. Closed 2026-11-08 from successful exact-SHA CI 42458499414, responsive 6/6 Chromium and 5/5 tests. Scoped component UX acceptance; full API tenant/role release certification independent."
       },
       {
         "id": "UX-G136",
