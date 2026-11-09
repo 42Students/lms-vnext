@@ -33981,13 +33981,20 @@
             "browserRun": {
               "id": 42670944647,
               "url": "https://github.com/42Students/lms-vnext/actions/runs/42670944647",
-              "statusAtRecording": "pending",
-              "conclusion": null
+              "statusAtRecording": "COMPLETED FAILURE — zero jobs created; no tests executed or artifacts available",
+              "conclusion": "failure",
+              "jobCount": 0
             },
             "doc": "docs/parity/ux-g161-tracker-components.md",
             "regressionReview": "Only client-side provider readback, filter/export state, and known-error mute uncertainty guards modified; existing redaction and role-authorization services untouched.",
             "securityReview": "No secrets or raw provider payloads added. Unconfirmed writes locked until fresh persisted state; unconfigured provider never presented as live data.",
-            "outstanding": "Green 6/6 desktop/mobile browser evidence and artifact inspection plus complete persisted audit-finding and known-error mutation matrix, configured provider log redaction/pagination/OTP exports and authorized/denied outcomes; role/focus/320px; closure evidence."
+            "outstanding": "Latest six-test Actions run 42670944647 produced zero jobs; rerun exact-SHA six-case real Chromium and review artifacts once Actions executes, then complete full five-component persisted CAS, provider/OTP/redaction and authorization, keyboard and mobile matrix; formal DONE evidence.",
+            "additionalRun": {
+              "id": 42670852685,
+              "conclusion": "failure",
+              "executedBrowserTests": "4/4 passed but workflow required 6; test count gate failed",
+              "url": "https://github.com/42Students/lms-vnext/actions/runs/42670852685"
+            }
           }
         ],
         "splitMeta": {
@@ -34002,7 +34009,7 @@
             "UX-G339"
           ]
         },
-        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G339.\n2026-11-09: Selected as final Doing group; source fix 4f92654a and focused tests 317dab25 and eba18018 implement truthful unconfigured-provider results, dirty-filter export warnings and uncertain-mute replay prevention. CI 42670853200 green focused source, responsive CI 42670944647 pending when recorded. Full five-component functional and provider acceptance still needed; DOING."
+        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G339.\n2026-11-09: Selected as final Doing group; source fix 4f92654a and focused tests 317dab25 and eba18018 implement truthful unconfigured-provider results, dirty-filter export warnings and uncertain-mute replay prevention. CI 42670853200 green focused source, responsive CI 42670944647 pending when recorded. Full five-component functional and provider acceptance still needed; DOING.\n2026-11-09: Verification update: 42670853200 focused checks passed, 42670852685 4/4 browser passed but 6-case gate failed, 42670944647 failed without any jobs (no source verdict). UX-G161 remains DOING with unsatisfied browser and external-provider acceptance. Details docs/parity/ux-g161-tracker-components.md."
       },
       {
         "id": "UX-G162",
