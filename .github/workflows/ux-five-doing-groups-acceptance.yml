@@ -1,0 +1,123 @@
+name: UX-G037 G040 G061 G099 G104 seeded acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - tests/e2e/placements.spec.ts
+      - tests/e2e/projects.spec.ts
+      - tests/e2e/ux-g061-course-route-acceptance.spec.ts
+      - tests/e2e/ux-g099-tpo-batch-classes-acceptance.spec.ts
+      - tests/e2e/ux-g104-tpo-messages-acceptance.spec.ts
+      - tests/unit/ux-five-doing-groups-context-recovery.test.ts
+      - .github/workflows/ux-five-doing-groups-acceptance.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ux-five-doing-groups-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  seeded-role-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: 'true'
+      APP_ENV: development
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_OPTIONS: --max-old-space-size=6144
+      PLAYWRIGHT_JSON_OUTPUT_NAME: ux-five-doing-groups-results.json
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact source SHA and lint scoped files
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npx eslint \
+            'src/app/(authenticated)/college/placements/jobs/[jobId]/applications/error.tsx' \
+            'src/app/(authenticated)/college/placements/jobs/[jobId]/applications/loading.tsx' \
+            'src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx' \
+            'src/app/(authenticated)/college/placements/jobs/[jobId]/error.tsx' \
+            'src/app/(authenticated)/college/projects/audit/error.tsx' \
+            'src/app/(authenticated)/college/projects/audit/loading.tsx' \
+            'src/app/(authenticated)/college/projects/audit/page.tsx' \
+            'src/app/(authenticated)/college/projects/create/page.tsx' \
+            'src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/error.tsx' \
+            'src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/loading.tsx' \
+            'src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/not-found.tsx' \
+            'src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx' \
+            'src/app/(authenticated)/tpo/batches/[batchId]/classes/error.tsx' \
+            'src/app/(authenticated)/tpo/batches/[batchId]/classes/loading.tsx' \
+            'src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx' \
+            'src/app/(authenticated)/tpo/batches/[batchId]/error.tsx' \
+            'src/app/(authenticated)/tpo/messages/[threadId]/error.tsx' \
+            'src/app/(authenticated)/tpo/messages/[threadId]/loading.tsx' \
+            'src/app/(authenticated)/tpo/messages/[threadId]/page.tsx' \
+            'src/app/(authenticated)/tpo/messages/error.tsx' \
+            'src/app/(authenticated)/tpo/messages/loading.tsx' \
+            tests/e2e/placements.spec.ts \
+            tests/e2e/projects.spec.ts \
+            tests/e2e/ux-g061-course-route-acceptance.spec.ts \
+            tests/e2e/ux-g099-tpo-batch-classes-acceptance.spec.ts \
+            tests/e2e/ux-g104-tpo-messages-acceptance.spec.ts \
+            tests/unit/ux-five-doing-groups-context-recovery.test.ts
+      - name: Full TypeScript check
+        run: npm run typecheck
+      - name: Focused recovery regression tests
+        run: npx vitest run tests/unit/ux-five-doing-groups-context-recovery.test.ts
+      - name: Prepare disposable PostgreSQL and seed real role workflows
+        run: npm run db:e2e:prepare
+      - name: Generate temporary authentication keys
+        shell: bash
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run only the five groups' authenticated browser journeys
+        run: |
+          npx playwright test \
+            tests/e2e/placements.spec.ts \
+            tests/e2e/projects.spec.ts \
+            tests/e2e/ux-g061-course-route-acceptance.spec.ts \
+            tests/e2e/ux-g099-tpo-batch-classes-acceptance.spec.ts \
+            tests/e2e/ux-g104-tpo-messages-acceptance.spec.ts \
+            --project=chromium --reporter=line,json \
+            --grep 'TPO, learner and College Admin complete a placement and applicant-pipeline flow through the UI|college workspace creation persists Mentor and learner grants and permits Mentor team changes|UX-G061 learner course route acceptance|UX-G099 TPO reviews and persists a class decision on desktop and mobile|UX-G104 TPO starts a recruiter conversation and verifies it on desktop and mobile'
+          node -e 'const s=require("./ux-five-doing-groups-results.json").stats;console.log(s);if(s.expected!==7||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
+      - name: Save exact-SHA browser evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-five-doing-groups-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+            ux-five-doing-groups-results.json
+          if-no-files-found: ignore
+          retention-days: 14
