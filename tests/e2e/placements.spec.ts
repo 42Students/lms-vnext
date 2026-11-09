@@ -53,6 +53,20 @@ async function authenticate(
     });
   }
 
+  const selectedRole = identityUid === "seed-shared-faculty" ? "TPO" :
+    identityUid === "seed-learner" ? "LEARNER" :
+    identityUid === "seed-college-admin" ? "COLLEGE_ADMIN" :
+    identityUid === "seed-placement-recruiter-e2e" ? "RECRUITER" : null;
+  if (selectedRole) {
+    cookies.push({
+      name: "lms_role",
+      value: selectedRole,
+      url: baseUrl,
+      httpOnly: true,
+      sameSite: "Lax" as const,
+    });
+  }
+
   await context.addCookies(cookies);
 }
 
