@@ -40,6 +40,7 @@ test.describe("UX-G005–G009 seeded Super Admin page journeys",()=>{
     {id:"g008-signin",path:adminBase+"/signin",heading:/./},
     {id:"g008-subdomain",path:adminBase+"/subdomain",heading:/./},
     {id:"g009-progress",path:"/admin/course-progress",heading:/Course Progress/i},
+    {id:"g009-courses",path:"/admin/courses",heading:/Courses/i},
    ];
    for(const route of visited){
     await visiblePage(page,route.path,route.heading);
