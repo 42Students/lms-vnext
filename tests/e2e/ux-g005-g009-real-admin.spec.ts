@@ -94,7 +94,9 @@ test.describe("UX-G005–G009 seeded Super Admin page journeys",()=>{
    const studentReport=page.getByRole("link",{name:/View student progress/}).first();
    await expect(studentReport).toBeVisible();
    await studentReport.click();
+   await expect(page).toHaveURL(/\/admin\/course-progress\/students\?/);
    await expect(page.getByRole("heading",{level:1,name:"Course Progress"})).toBeVisible();
+   await expect(page.getByRole("search",{name:"Select a class for course progress"})).toBeVisible();
    await page.screenshot({path:info.outputPath("g009-student-report-"+size.name+".png"),fullPage:true});
 
    await page.goto(targetAdmin+"/history");
