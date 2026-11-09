@@ -78,6 +78,10 @@ test.describe("Projects browser regression", () => {
     const unique=Date.now().toString();
     const title="Mentor Browser Project "+unique;
     const form=page.getByRole("region",{name:"Create workspace"});
+    await page.setViewportSize({width:390,height:844});
+    await expect(form.getByLabel("Workspace title")).toBeVisible();
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+    await info.attach("g040-project-create-mobile",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
     await form.getByLabel("Workspace title").fill(title);
     await form.getByLabel("Template",{exact:true}).selectOption({index:1});
     await expect(form.getByLabel("Slug (automatically suggested)"))
@@ -102,6 +106,7 @@ test.describe("Projects browser regression", () => {
 
     // The College Admin audit page must show the persisted workspace-create
     // event with filters scoped to this college and workspace.
+    await page.setViewportSize({width:1280,height:800});
     await page.goto(`/college/projects/audit?subjectType=project&subjectId=${encodeURIComponent(id!)}`);
     await expect(page.getByRole("heading",{level:1,name:"Project audit"})).toBeVisible();
     await expect(page.getByRole("row").filter({hasText:title}).first()).toBeVisible();
