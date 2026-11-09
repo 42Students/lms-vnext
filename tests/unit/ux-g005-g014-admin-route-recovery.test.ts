@@ -47,3 +47,37 @@ describe("Super Admin UX-G005–G014 scoped recovery source regressions",()=>{
    .toBeLessThan(s.indexOf("getSuperAdminStudentCourseProgress(context"));
  });
 });
+
+describe("G005–G009 atomic slice navigation and recovery regression",()=>{
+ const read=(path:string)=>readFileSync("src/app/(authenticated)/admin/"+path,"utf8");
+ it("G005 announces which academic surface is loading",()=>{
+  expect(read("academics/loading.tsx")).toContain('label="Loading academic setup"');
+  expect(read("academics/sections/[sectionId]/loading.tsx")).toContain('label="Loading academic section"');
+ });
+ it("G006 keeps both retry and academic escape after promotion failure",()=>{
+  const source=read("batch-promotion/error.tsx");
+  expect(source).toContain('onClick={reset}');
+  expect(source).toContain('href="/admin/academics"');
+  expect(source).toContain("No academic records were modified");
+ });
+ it("G007 history returns to the exact previously authorized administrator",()=>{
+  const source=read("colleges/[collegeId]/admins/[userId]/history/page.tsx");
+  expect(source).toContain('href={base+"/"+encodeURIComponent(userId)}');
+  expect(source).toContain("Active sessions");
+  expect(source).toContain("listCollegeAdminHistory(context,collegeId,userId,page)");
+ });
+ it("G008 keeps related college setup navigation within the same college",()=>{
+  const signin=read("colleges/[collegeId]/signin/page.tsx");
+  const subdomain=read("colleges/[collegeId]/subdomain/page.tsx");
+  expect(signin).toContain('encodeURIComponent(college.id)+"/subdomain"');
+  expect(subdomain).toContain('encodeURIComponent(college.id)+"/signin"');
+  expect(signin).toContain('requirePermission(context,"admin-scope.select")');
+  expect(subdomain).toContain('requirePermission(context,"college.manage"');
+ });
+ it("G009 keeps failed course-progress reads recoverable without losing the course directory",()=>{
+  const source=read("course-progress/error.tsx");
+  expect(source).toContain('onClick={reset}');
+  expect(source).toContain('href="/admin/courses"');
+  expect(source).toContain('The scoped progress records are temporarily unavailable');
+ });
+});
