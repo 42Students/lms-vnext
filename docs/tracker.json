@@ -23140,11 +23140,9 @@
           "ROUTE-STATE-0042",
           "PAGE-0021"
         ],
-        "newRouteOnly": [
-          "/admin/content-order"
-        ],
+        "newRouteOnly": [],
         "evidence": [],
-        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G195, UX-G196.",
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G195, UX-G196.\n2026-11-09 scope correction: /admin/content-order is an unrelated course-content page; transferred to UX-G197 to preserve atomic ownership.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G008",
@@ -35884,7 +35882,7 @@
         "startedAt": null,
         "completedAt": null,
         "evidence": [],
-        "notes": "2026-11-09 atomic subtask from UX-G009: Admin · Course Progress → Domains (part 5). Independent, initially UNPICKED. No inherited acceptance. Existing changes/evidence may be found under the origin ID; review and retest exact assigned files, browser desktop/mobile, shared/role/tenant negative paths before DONE.",
+        "notes": "2026-11-09 atomic subtask from UX-G009: Admin · Course Progress → Domains (part 5). Independent, initially UNPICKED. No inherited acceptance. Existing changes/evidence may be found under the origin ID; review and retest exact assigned files, browser desktop/mobile, shared/role/tenant negative paths before DONE.\n2026-11-09: /admin/content-order transferred from unrelated UX-G008 scope; this course-content route remains UNPICKED here until separately accepted.",
         "sourceFiles": [
           "src/app/(authenticated)/admin/courses/offerings/[offeringId]/error.tsx",
           "src/app/(authenticated)/admin/courses/offerings/[offeringId]/loading.tsx",
@@ -35897,7 +35895,9 @@
           "PAGE-0028",
           "PAGE-0029"
         ],
-        "newRouteOnly": [],
+        "newRouteOnly": [
+          "/admin/content-order"
+        ],
         "title": "admin · /admin/courses/offerings/[offeringId] + /admin/courses (part 2/3; UX-G009)",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
