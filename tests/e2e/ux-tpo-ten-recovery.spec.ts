@@ -139,7 +139,7 @@ test.describe("UX-G098 and G102 real route recovery on operational pages",()=>{
   ] as const;
   for(const size of dimensions){
     for(const [group,path,notice,linkLabel,href] of cases){
-      test(group+" "+size.name+" avoids ambiguous reads and exposes safe return",async({page,context},info)=>{
+      test(group+" "+size.name+" "+path+" avoids ambiguous reads and exposes safe return",async({page,context},info)=>{
         test.setTimeout(120_000);
         await authenticateGracefulRole(context,"tpo");
         await page.setViewportSize(size);
