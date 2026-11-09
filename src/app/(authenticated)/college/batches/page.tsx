@@ -66,7 +66,7 @@ export default async function CollegeBatchesPage({
       ]}/>
     {periodRead.status==="rejected"?<Banner tone="warning">
       Academic periods could not be loaded. Batch creation requiring a period is unavailable.
-      <TextLink href="/college/batches" className="ml-2">Retry periods</TextLink>
+      <TextLink href="/college/batches" className="ml-2 inline-flex min-h-11 items-center md:min-h-9">Retry periods</TextLink>
     </Banner>:null}
     <CollegeAcademicDirectory data={directory} batchPeriods={periodChoices}
     actions={<ButtonLink variant="secondary" prefetch={false} download href={academicExportHref("BATCHES",directory.query)}
