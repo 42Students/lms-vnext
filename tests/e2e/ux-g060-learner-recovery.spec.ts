@@ -63,3 +63,26 @@ test("UX-G060: faculty cannot see private learner recovery states", async ({ pag
   await page.goto("/learn/attendance/calendar?status=PRESENT&status=ABSENT");
   await expect(page.getByText("Invalid attendance calendar filters")).toHaveCount(0);
 });
+
+for (const size of viewports) {
+  test("UX-G060 "+size.name+": ordinary learner assignment and attendance journeys remain usable", async ({ page, context }, info) => {
+    await authenticateGracefulRole(context, "learner");
+    await page.setViewportSize(size);
+
+    // The backward-compatible bookmark forwards to the real, authorized list.
+    await page.goto("/learn/assignments");
+    await expect(page).toHaveURL(/\/learn\/allAssignments(?:\?|$)/);
+    await expect(page.getByRole("heading", { level: 1, name: "All Assignments" })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({ path: info.outputPath("g060-normal-assignments-"+size.name+".png"), fullPage: true });
+
+    // Do not certify invalid-query recovery alone: the usable calendar must
+    // still render from a learner's actual seeded, tenant-scoped request.
+    await page.goto("/learn/attendance/calendar");
+    await expect(page.getByRole("heading", { level: 1, name: "Attendance calendar" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Apply filters" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Attendance detail" })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({ path: info.outputPath("g060-normal-attendance-"+size.name+".png"), fullPage: true });
+  });
+}

@@ -81,3 +81,26 @@ describe("UX-G060: learner calendar and course bookmark recovery", () => {
     expect(source).toContain('redirect("/learn/courses/"+encodeURIComponent(deliveryId)');
   });
 });
+
+describe("UX-G060: learner route-state recovery boundaries", () => {
+  it("keeps an assignment read failure inside the learner shell with retry and canonical exit", () => {
+    const error = route("assignments/error.tsx");
+    const loading = route("assignments/loading.tsx");
+    expect(error).toContain("Assignments could not be loaded");
+    expect(error).toContain("This does not mean you have no assignments");
+    expect(error).toContain("onClick={reset}");
+    expect(error).toContain('href="/learn/allAssignments"');
+    expect(error).not.toContain("GracefulErrorBoundary");
+    expect(loading).toContain('label="Loading assignments"');
+    expect(loading).toContain('shape="directory"');
+  });
+
+  it("keeps attendance failure distinguishable from absence and provides a safe exit", () => {
+    const error = route("attendance/calendar/error.tsx");
+    const loading = route("attendance/calendar/loading.tsx");
+    expect(error).toContain("missing or unmarked sessions cannot be inferred");
+    expect(error).toContain("onClick={reset}");
+    expect(error).toContain('href="/learn/attendance"');
+    expect(loading).toContain('label="Loading attendance calendar"');
+  });
+});

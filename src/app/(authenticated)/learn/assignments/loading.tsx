@@ -1,6 +1,6 @@
 import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 
-/** GR-19: loading is bounded by a visible recovery action. */
+/** Keep learner assignment progress named for screen readers and retries. */
 export default function Loading() {
-  return <GracefulPageLoading />;
+  return <GracefulPageLoading label="Loading assignments" shape="directory" />;
 }
