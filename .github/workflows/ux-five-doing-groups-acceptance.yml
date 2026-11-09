@@ -123,3 +123,5 @@ jobs:
             ux-five-doing-groups-results.json
           if-no-files-found: ignore
           retention-days: 14
+
+# Acceptance confirmation: latest seeded route and field label fixes.
