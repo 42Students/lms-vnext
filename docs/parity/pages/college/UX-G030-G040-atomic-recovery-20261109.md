@@ -30,3 +30,14 @@ The ten pre-existing DOING groups below were independently reduced by the 2026-1
 - **Exact-SHA route acceptance:** [GitHub workflow](https://github.com/42Students/lms-vnext/actions/workflows/ux-ten-college-route-acceptance.yml). This runs lint, full TypeScript, focused Vitest, disposable PostgreSQL role seed and authenticated/fixture Chromium tests. Do not infer its result from queued or running status.
 - **Functional closure:** each six-/four-/five-file atomic group requires checks for its real `page.tsx`, `loading.tsx`, `error.tsx` and `not-found.tsx` where assigned, including persisted success, forbidden/foreign-college and malformed inputs, keyboard/focus, mobile/desktop screenshots, cross-role regressions, and review of actual source ownership after the split.
 - **Do not weaken guards or claim UI fixture data is a live tenant workflow.** All ten were already owned by an existing chat; owners were left unchanged, and this document is a shared continuation aid.
+
+## Executed acceptance receipt — 2026-11-09
+
+The exact-SHA [College route recovery workflow 42645807389](https://github.com/42Students/lms-vnext/actions/runs/42645807389) **PASSED** at `7ed09d1d05ef93d35820a870041d0e61a494f699`.
+
+- `npm ci`, explicit `git rev-parse HEAD == GITHUB_SHA`, all scoped ESLint and full TypeScript: **PASS**.
+- `npx vitest run tests/unit/ux-ten-college-route-recovery.test.ts tests/unit/ux-ten-college-atomic-recovery.test.ts`: **34/34 tests in 2 files passed**.
+- Isolated PostgreSQL 17 service setup, schema/seed preparation and College Admin + Learner membership seeding: **PASS**.
+- `npx playwright test tests/e2e/ux-ten-college-route-recovery.spec.ts tests/e2e/ux-ten-college-atomic-recovery.spec.ts --project=chromium`: **9/9 browser tests passed; 0 skipped, 0 flaky, 0 failures**. The three newly added tests iterate all ten *current first-slice atomic boundaries* at 320x640, 390x844 and 1280x800. Existing six scenarios retain pre-split recovery checks and seeded denied-role behavior. Screenshots/traces were requested for upload by the workflow.
+
+This evidence demonstrates that the *recovery improvements* are verified, not that the full business journeys in all 56 tracked source files are verified. **All ten canonical records remain DOING**, and each now carries this passing partial evidence with explicit outstanding acceptance. No source evidence was reused to claim a DONE group or an adjacent new sibling.
