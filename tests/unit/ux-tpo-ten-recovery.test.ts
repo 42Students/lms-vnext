@@ -57,4 +57,19 @@ describe("Ten-group TPO recovery, 173 registered surfaces", () => {
     expect(read(base+"companies/page.tsx")).toContain("!tpoCompanyFiltersShapeValid(raw)");
   });
 
+  it("protects G099 history and G100-G101 scheduling filters before data access",()=>{
+    const history=read(base+"batches/[batchId]/history/page.tsx");
+    expect(history).toContain('hasMembershipRole(context,"TPO")');
+    expect(history).toContain("duplicateOrUnknown=Object.values(raw).some(Array.isArray)");
+    expect(history).toContain("listTpoBatchHistory(context,batchId)");
+    const rounds=read(base+"calendar/rounds/page.tsx");
+    expect(rounds).toContain("Object.values(raw).some(Array.isArray)");
+    expect(rounds).toContain("No rounds were queried");
+    expect(rounds).toContain("listTpoCalendarRoundChoices(context,parsed.data)");
+    const interviews=read(base+"calendar/interviews/page.tsx");
+    expect(interviews).toContain("tpoInterviewWindowSchema.extend");
+    expect(interviews).toContain("!parsed.success||Object.values(query).some(Array.isArray)");
+    expect(interviews).toContain("getTpoInterviewReadiness(context,parsed.data)");
+  });
+
 });

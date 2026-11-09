@@ -99,3 +99,31 @@ test.describe("UX-G098–G102 real TPO routes: ambiguous filters and accessible 
     }
   }
 });
+
+
+test.describe("UX-G099–G101 real protected depth and error-free filter reset",()=>{
+  test.skip(process.env.E2E_AUTH_ENABLED!=="true"||!process.env.E2E_AUTH_SECRET,
+    "Requires seeded PostgreSQL TPO authentication");
+  const cases=[
+    ["UX-G099","/tpo/batches/00000000-0000-4000-8000-000000000000/history?kind=DECIDE&kind=UNDO","Invalid or repeated history filter.","Reset","/tpo/batches/00000000-0000-4000-8000-000000000000/history"],
+    ["UX-G100","/tpo/calendar/rounds?page=1&page=2","Invalid round filters","Clear round filters","/tpo/calendar/rounds"],
+    ["UX-G101","/tpo/calendar/interviews?days=not-a-number","Invalid interview filters","Clear interview filters","/tpo/calendar/interviews"],
+  ] as const;
+  for(const size of dimensions){
+    for(const [group,path,text,label,href] of cases){
+      test(group+" "+size.name+" never silently accepts malformed deep links",async({page,context},info)=>{
+        test.setTimeout(120_000);
+        await authenticateGracefulRole(context,"tpo");
+        await page.setViewportSize(size);
+        await page.goto(path,{waitUntil:"domcontentloaded"});
+        await expect(page.getByText(text,{exact:false}).first()).toBeVisible();
+        const reset=page.getByRole("link",{name:label});
+        await expect(reset).toHaveAttribute("href",href);
+        await reset.focus();
+        await expect(reset).toBeFocused();
+        await noHorizontalOverflow(page);
+        await page.screenshot({path:info.outputPath(group+"-"+size.name+"-deep-link-recovery.png"),fullPage:true});
+      });
+    }
+  }
+});

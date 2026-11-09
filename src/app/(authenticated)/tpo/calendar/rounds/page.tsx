@@ -11,16 +11,23 @@ import {getTpoBlockedDates} from "@/modules/placements/tpo-configuration-read-se
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import {z} from "zod";
 export default async function TpoRoundCalendarPage({searchParams}:{
  searchParams:Promise<{page?:string|string[];q?:string|string[]}>;
 }) {
   const context = await getCurrentRequestContext();
   if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
   const raw=await searchParams;
-  const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
-  const [result,blockedDates] = await Promise.all([listTpoCalendarRoundChoices(context,{
-   page:first(raw.page)||1,q:first(raw.q)||"",
-  }),getTpoBlockedDates(context)]);
+  const parsed=z.strictObject({
+    page:z.coerce.number().int().min(1).max(10000).default(1),
+    q:z.string().trim().max(100).default(""),
+  }).safeParse(raw);
+  if(!parsed.success||Object.values(raw).some(Array.isArray))return <div className="min-w-0 space-y-4">
+    <PageHeader title="Invalid round filters"/>
+    <p role="alert" className="text-sm text-body">Provide one valid page and search value. No rounds were queried.</p>
+    <TextLink href="/tpo/calendar/rounds" className="inline-flex min-h-11 items-center">Clear round filters</TextLink>
+  </div>;
+  const [result,blockedDates] = await Promise.all([listTpoCalendarRoundChoices(context,parsed.data),getTpoBlockedDates(context)]);
   const link=(page:number)=>"/tpo/calendar/rounds?"+new URLSearchParams({
    ...(result.q?{q:result.q}:{}),page:String(page),
   }).toString();

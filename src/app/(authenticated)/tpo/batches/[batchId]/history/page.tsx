@@ -13,16 +13,21 @@ import { listTpoBatchHistory } from "@/modules/placements/tpo-batch-workspace-re
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import {hasMembershipRole} from "@/modules/identity/context";
+import {redirect} from "next/navigation";
 export const dynamic="force-dynamic";
 export default async function BatchHistory({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<{kind?:string|string[];after?:string|string[];show?:string|string[]}>}){
+ const context=await getCurrentRequestContext();
+ if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const {batchId}=await params;
  const raw=await searchParams;
+ const duplicateOrUnknown=Object.values(raw).some(Array.isArray)||Object.keys(raw).some(key=>!["kind","after","show"].includes(key));
  const filters=batchHistoryViewSchema.safeParse({kind:Array.isArray(raw.kind)?raw.kind[0]:raw.kind,after:Array.isArray(raw.after)?raw.after[0]:raw.after});
  const showAll=raw.show==="100";
- if(raw.show!==undefined&&!showAll)return <div role="alert" className="min-w-0 space-y-3"><PageHeader title="Decision history"/><p>Invalid history depth.</p>
+ if(duplicateOrUnknown||raw.show!==undefined&&!showAll)return <div role="alert" className="min-w-0 space-y-3"><PageHeader title="Decision history"/><p>Invalid or repeated history filter. No decision history was queried.</p>
   <TextLink href={"/tpo/batches/"+batchId+"/history"}>Reset</TextLink></div>;
  if(!filters.success)return <div role="alert" className="min-w-0 space-y-3"><PageHeader title="Decision history"/><p>Invalid history filter.</p> <TextLink className="inline-flex min-h-11 items-center md:min-h-9" href={"/tpo/batches/"+batchId+"/history"}>Reset</TextLink></div>;
- const {batch,events,ready}=await listTpoBatchHistory(await getCurrentRequestContext(),batchId);
+ const {batch,events,ready}=await listTpoBatchHistory(context,batchId);
  const recentEvents=showAll?events:events.slice(0,50);
  const annotated=batchHistoryDecisionTimeline(recentEvents,filters.data.kind);
  const visible=filterTpoBatchHistoryOutcome(annotated,filters.data.after);
