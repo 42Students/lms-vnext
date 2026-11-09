@@ -122,7 +122,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
     description="See measured completion for a class and course, then focus on the students furthest behind."
     actions={back}
   />
-  <form method="get" action="/admin/course-progress/students"
+  <form method="get" action="/admin/course-progress/students" role="search"
     aria-label="Select a class for course progress"
     className="grid min-w-0 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto]">
     <input type="hidden" name="offeringId" value={offeringId}/>
