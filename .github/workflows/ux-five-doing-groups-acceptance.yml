@@ -1,4 +1,5 @@
 name: UX-G037 G040 G061 G099 G104 seeded acceptance
+# Re-run latest focused acceptance after selector corrections.
 
 on:
   workflow_dispatch:
