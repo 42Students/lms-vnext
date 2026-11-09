@@ -3,6 +3,8 @@ import { CollegeCourseVisibilityRefresh } from "@/components/college/college-cou
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {CollegeCoursesLastGood} from "@/components/college/college-courses-last-good";
 import { PageHeader } from "@/components/ui/page-header";
+import { Banner } from "@/components/ui/banner";
+import { TextLink } from "@/components/ui/text-link";
 import { getAdminCourseWorkspace } from "@/modules/courses/admin-course-workspace";
 import { collegeCourseCatalogueQuerySchema } from "@/modules/courses/college-course-catalogue-model";
 import { listCollegeCourseCatalogue } from "@/modules/courses/college-course-catalogue-service";
@@ -32,6 +34,7 @@ export default async function CollegeCoursesPage({searchParams}:{searchParams:Pr
   return (
     <div data-module="college-courses" className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
       <PageHeader title="Courses" actions={<CollegeCourseVisibilityRefresh/>}/>
+      {!parsedCatalogue.success?<Banner tone="warning">Invalid course filters were ignored. Showing the default course directory. <TextLink href="/college/courses" className="inline-flex min-h-11 items-center md:min-h-9">Clear filters</TextLink></Banner>:null}
       <p className="text-xs text-muted-foreground" role="note">
         Course directory · Name A–Z is the default sort. Use the course table
         headers and filters to change the order.
