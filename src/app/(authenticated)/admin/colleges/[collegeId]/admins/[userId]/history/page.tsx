@@ -43,7 +43,8 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
       {key:"event",header:"Event",mobilePriority:"primary",cell:row=><span className="break-all font-mono text-xs">{row.eventType}</span>},
       {key:"summary",header:"Summary",mobilePriority:"secondary",cell:row=><span className="break-words">{row.summary}</span>},
     ]}/>
-  <div className="flex min-w-0 justify-start print:hidden">
+  <div className="flex min-w-0 flex-wrap items-center gap-3 print:hidden">
+    <ButtonLink variant="secondary" href={base+"/"+encodeURIComponent(userId)} className="min-h-11 md:min-h-9">Active sessions</ButtonLink>
     <TextLink href={"/api/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history?page="+data.page}
      className="inline-flex min-h-11 items-center md:min-h-9">Export shown history (CSV)</TextLink>
   </div>
