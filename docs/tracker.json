@@ -26863,7 +26863,25 @@
           "PAGE-0232"
         ],
         "newRouteOnly": [],
-        "evidence": [],
+        "evidence": [
+          {
+            "type": "ATOMIC_LEARNER_RECOVERY_20261109",
+            "scope": "Six registered assignments and attendance/calendar route-state files, excluding separately assigned UX-G250 and UX-G251",
+            "sourceCommits": [
+              "a42e3dd5fbf6208fdc40b3112f9db981cf5c74c8",
+              "7f9410520ce10cac8cf93b8a33eb81d3d3e3fc67",
+              "d2ae3b0f45dc0f9c5dd229c21c59be35ff2c7071"
+            ],
+            "evidenceDocument": "docs/parity/pages/learn/UX-G060.md",
+            "previousSuccessfulRun": "https://github.com/42Students/lms-vnext/actions/runs/42493785215",
+            "partialFailedRun": "https://github.com/42Students/lms-vnext/actions/runs/42641509067",
+            "partialResults": "Scoped ESLint, unit, TypeScript and isolated DB steps passed; Chromium 10/11 passed, one mobile normal attendance drawer interaction test failed and was corrected in d2ae3b0f.",
+            "finalExactShaRun": "https://github.com/42Students/lms-vnext/actions/runs/42642564009",
+            "finalStatus": "QUEUED at evidence recording, not an accepted green run",
+            "outstanding": "Exact-SHA green 11/11 responsive Chromium with no skipped/flaky tests, archived desktop/mobile screenshots, regression/security acceptance, then formal DONE evidence",
+            "closure": "DOING — implementation and test corrections pushed; not certified"
+          }
+        ],
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G060",
@@ -26877,7 +26895,7 @@
             "UX-G251"
           ]
         },
-        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G250, UX-G251."
+        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G250, UX-G251.\n2026-11-09: Atomic learner assignments/attendance recoverability improved on main in a42e3dd, 7f94105 and d2ae3b0; retained sanitized client error reporting, safe recovery exits and mobile filter drawer coverage. Initial expanded browser run 42641509067 was 10/11 (mobile test expectation fixed). Final exact-SHA run 42642564009 queued; DOING until passed, reviewed and recorded. Docs: docs/parity/pages/learn/UX-G060.md."
       },
       {
         "id": "UX-G061",
