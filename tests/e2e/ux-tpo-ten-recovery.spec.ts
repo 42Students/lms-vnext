@@ -186,3 +186,45 @@ test.describe("UX-G098–G102 actual authorized TPO page shells and empty/error 
     }
   }
 });
+
+
+test.describe("UX-G098 authenticated audit filter boundaries and privileged CSV denial",()=>{
+  test.skip(process.env.E2E_AUTH_ENABLED!=="true"||!process.env.E2E_AUTH_SECRET,
+    "Needs seeded TPO and Learner identities in isolated PostgreSQL");
+
+  const malformedAuditCases=[
+    ["/tpo/audit?kind=ALL&kind=ROUND","/tpo/audit"],
+    ["/tpo/audit?collegeId=00000000-0000-4000-8000-000000000000","/tpo/audit"],
+    ["/tpo/audit/actors?sort=NEWEST&sort=OLDEST","/tpo/audit/actors"],
+    ["/tpo/audit/actors?collegeId=00000000-0000-4000-8000-000000000000","/tpo/audit/actors"],
+  ] as const;
+  for(const size of dimensions){
+    for(const [path,resetHref] of malformedAuditCases){
+      test("UX-G098 "+size.name+" "+path+" rejects ambiguous and foreign audit filters",async({page,context},info)=>{
+        test.setTimeout(120_000);
+        await authenticateGracefulRole(context,"tpo");
+        await page.setViewportSize(size);
+        await page.goto(path,{waitUntil:"domcontentloaded"});
+        await expect(page.getByText("Invalid audit filters",{exact:false}).first()).toBeVisible();
+        const clear=page.getByRole("link",{name:"Clear filters"});
+        await expect(clear).toHaveAttribute("href",resetHref);
+        await clear.focus();
+        await expect(clear).toBeFocused();
+        await noHorizontalOverflow(page);
+        await page.screenshot({path:info.outputPath("G098-"+size.name+"-"+path.replace(/[^a-z0-9]/gi,"-")+".png"),fullPage:true});
+      });
+    }
+    for(const role of ["tpo","learner"] as const){
+      for(const path of ["/api/placements/tpo/audit/export","/api/placements/tpo/audit/actors/export"]){
+        test("UX-G098 "+size.name+" "+role+" E2E session cannot bypass step-up CSV "+path,async({context})=>{
+          test.setTimeout(120_000);
+          await authenticateGracefulRole(context,role);
+          const response=await context.request.get("http://localhost:3000"+path);
+          expect([401,403],"A test-only identity must not satisfy recent device authentication").toContain(response.status());
+          expect(response.headers()["content-type"]??"").not.toContain("text/csv");
+          expect(response.headers()["cache-control"]??"").toContain("no-store");
+        });
+      }
+    }
+  }
+});

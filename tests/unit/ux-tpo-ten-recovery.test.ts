@@ -81,4 +81,14 @@ describe("Ten-group TPO recovery, 173 registered surfaces", () => {
     expect(today.indexOf("if(invalidShape||")).toBeLessThan(today.indexOf("const ready=await tpoCrmTablesReady"));
   });
 
+  it("G098 audit and actor pages reject repeated or unknown selectors before scoped reads",()=> {
+    for(const path of ["audit/page.tsx","audit/actors/page.tsx"]){
+      const source=read(base+path);
+      expect(source).toContain("Object.keys(");
+      expect(source).toContain("Object.values(");
+      expect(source).toContain(".some(Array.isArray)");
+      expect(source).toContain("if (invalidFilterKeys || !parsed.success)");
+    }
+  });
+
 });

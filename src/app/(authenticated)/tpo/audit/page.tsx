@@ -81,6 +81,13 @@ export default async function TpoAuditPage({
 
   await requireTpoBatchActor(context);
   const params = await searchParams;
+  // Next searchParams preserves repeated query values as arrays. Never pick
+  // the first value or silently ignore a foreign filter before reading audit data.
+  const allowedKeys = new Set([
+    "kind", "f_about", "from", "to", "q", "who", "page", "pageSize",
+  ]);
+  const invalidFilterKeys = Object.keys(params).some(key => !allowedKeys.has(key)) ||
+    Object.values(params).some(Array.isArray);
 
   const parsed =
     tpoAuditQuerySchema.safeParse({
@@ -95,7 +102,7 @@ export default async function TpoAuditPage({
         first(params.pageSize) || undefined,
     });
 
-  if (!parsed.success) {
+  if (invalidFilterKeys || !parsed.success) {
     return (
       <div className="min-w-0 max-w-full space-y-4">
         <PageHeader

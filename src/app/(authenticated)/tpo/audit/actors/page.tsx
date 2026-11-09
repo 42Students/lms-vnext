@@ -41,6 +41,13 @@ export default async function TpoActorAuditPage({
   if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
   await requireTpoBatchActor(context);
   const raw = await searchParams;
+  // An ambiguous filter must not be reduced to its first value before the
+  // persisted, college-scoped actor and entity history query is executed.
+  const allowedKeys = new Set([
+    "actorId", "entityType", "entityId", "from", "to", "sort", "page", "pageSize",
+  ]);
+  const invalidFilterKeys = Object.keys(raw).some(key => !allowedKeys.has(key)) ||
+    Object.values(raw).some(Array.isArray);
   const filters = {
     ...(first(raw.actorId) ? { actorId: first(raw.actorId) } : {}),
     ...(first(raw.entityType) ? { entityType: first(raw.entityType) } : {}),
@@ -52,7 +59,7 @@ export default async function TpoActorAuditPage({
     ...(first(raw.pageSize) ? { pageSize: first(raw.pageSize) } : {}),
   };
   const parsed = tpoActorAuditQuerySchema.safeParse(filters);
-  if (!parsed.success) {
+  if (invalidFilterKeys || !parsed.success) {
     return <section role="alert" className="min-w-0 space-y-3">
       <PageHeader title="Invalid audit filters" />
       <TextLink className="inline-flex min-h-11 items-center text-sm md:min-h-9" href="/tpo/audit/actors">
