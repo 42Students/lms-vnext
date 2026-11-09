@@ -10,6 +10,7 @@ import {listAssignedProjectTemplates} from "@/modules/projects/template-service"
 import {getProjectAdminCollegeId} from "@/modules/projects/admin-college-scope";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import { TextLink } from "@/components/ui/text-link";
+import { z } from "zod";
 
 export default async function CollegeCreateProjectPage({
   searchParams,
@@ -39,6 +40,9 @@ export default async function CollegeCreateProjectPage({
     templates=await listAssignedProjectTemplates(context,collegeId);
   } catch(error) {
     if(error instanceof AuthorizationError)throw error;
+    const retryTemplateId = typeof query.templateId === "string" && z.uuid().safeParse(query.templateId).success
+      ? "&templateId="+encodeURIComponent(query.templateId)
+      : "";
     return <div className="min-w-0 space-y-5">
       <ProjectAdminNav basePath="/college/projects" active="workspaces"/>
       <PageHeader title="Create project workspace"
@@ -46,7 +50,7 @@ export default async function CollegeCreateProjectPage({
         actions={back}/>
       <ErrorState title="Templates could not be loaded"
         description="Assigned published templates are unavailable. Retry before creating a workspace."
-        action={<TextLink href={"/college/projects/create?mode="+mode+"&retry=1"}
+        action={<TextLink href={"/college/projects/create?mode="+mode+"&retry=1"+retryTemplateId}
           className="inline-flex min-h-11 items-center md:min-h-9">Try again</TextLink>}/>
     </div>;
   }
