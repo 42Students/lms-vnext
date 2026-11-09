@@ -51,6 +51,8 @@ export default async function CollegeSignInMethods({params}:{params:Promise<{col
    <Heading level={2} size="base" className="text-[var(--lms-heading)]">Sign-in</Heading>
    <TextLink href={"/admin/colleges/"+encodeURIComponent(college.id)+"/signin"}
     className="inline-flex min-h-11 items-center md:min-h-9">Reload</TextLink>
+   <TextLink href={"/admin/colleges/"+encodeURIComponent(college.id)+"/subdomain"}
+    className="inline-flex min-h-11 items-center md:min-h-9">Web address</TextLink>
   </div>
   {policy.kind==="INVALID_POLICY"?<Alert tone="error">Stored sign-in method is invalid. Please contact an administrator.</Alert>:null}
   {policy.kind==="MIGRATION_PENDING"?<Alert tone="warning">Sign-in policy setup is still pending for this college. The saved setting cannot be verified yet, so saving is disabled. Reload this page after setup is completed.</Alert>:null}
