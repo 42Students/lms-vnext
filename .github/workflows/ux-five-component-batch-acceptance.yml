@@ -13,6 +13,7 @@ on:
       - 'src/components/projects/super-admin-template-plan-editor.tsx'
       - 'src/components/projects/template-metadata-edit-control.tsx'
       - 'src/components/projects/super-admin-template-college-bulk.tsx'
+      - 'src/modules/projects/template-college-bulk-notice.ts'
       - 'src/components/tracker/tracker-live-logs-explorer.tsx'
       - 'src/components/tracker/tracker-telegram-manual-panel.tsx'
       - 'src/components/tracker/audit-finding-status-action.tsx'
@@ -21,6 +22,7 @@ on:
       - 'src/app/(authenticated)/admin/error.tsx'
       - 'src/app/(authenticated)/teacher/error.tsx'
       - 'tests/unit/ux-five-group-batch-20261107.test.ts'
+      - 'tests/unit/ux-g154-bulk-save-outcome.test.ts'
       - 'tests/e2e/ux-five-group-batch-20261107.spec.ts'
       - '.github/workflows/ux-five-component-batch-acceptance.yml'
 
@@ -76,6 +78,7 @@ jobs:
             src/components/projects/super-admin-template-plan-editor.tsx \
             src/components/projects/template-metadata-edit-control.tsx \
             src/components/projects/super-admin-template-college-bulk.tsx \
+            src/modules/projects/template-college-bulk-notice.ts \
             src/components/tracker/tracker-live-logs-explorer.tsx \
             src/components/tracker/tracker-telegram-manual-panel.tsx \
             src/components/tracker/audit-finding-status-action.tsx \
@@ -84,10 +87,11 @@ jobs:
             'src/app/(authenticated)/admin/error.tsx' \
             'src/app/(authenticated)/teacher/error.tsx' \
             tests/unit/ux-five-group-batch-20261107.test.ts \
+            tests/unit/ux-g154-bulk-save-outcome.test.ts \
             tests/e2e/ux-five-group-batch-20261107.spec.ts
           npm run typecheck
       - name: Five-group security and functional unit regression
-        run: npx vitest run tests/unit/ux-five-group-batch-20261107.test.ts --reporter=dot
+        run: npx vitest run tests/unit/ux-five-group-batch-20261107.test.ts tests/unit/ux-g154-bulk-save-outcome.test.ts --reporter=dot
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Prepare disposable seeded E2E PostgreSQL
