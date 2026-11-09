@@ -64,3 +64,38 @@ test.describe("TPO role denial on actual server pages",()=>{
     });
   }
 });
+
+
+/** These exercise the authenticated production routes, not the recovery fixture. */
+test.describe("UX-G098–G102 real TPO routes: ambiguous filters and accessible recovery",()=>{
+  test.skip(process.env.E2E_AUTH_ENABLED!=="true"||!process.env.E2E_AUTH_SECRET,
+    "Needs disposable PostgreSQL and seeded TPO membership");
+  const productionCases=[
+    ["UX-G098","/tpo/home?seasonId=first&seasonId=second","Invalid placement home filters","Clear home filters","/tpo/home"],
+    ["UX-G099","/tpo/batches?page=1&page=2","Invalid batch filters","Clear filters","/tpo/batches"],
+    ["UX-G100","/tpo/calendar?view=week&view=day","Invalid calendar filters","Reset calendar filters","/tpo/calendar"],
+    ["UX-G101","/tpo/calendar/interviews?days=7&days=30","Invalid interview filters","Clear interview filters","/tpo/calendar/interviews"],
+    ["UX-G102","/tpo/companies?sort=NAME&sort=DRIVES","Invalid companies filters","Clear filters","/tpo/companies?directory=1"],
+  ] as const;
+  for(const size of dimensions){
+    for(const [group,path,message,label,href] of productionCases){
+      test(group+" "+size.name+" rejects repeated filters before data lookup",async({page,context},info)=>{
+        test.setTimeout(120_000);
+        await authenticateGracefulRole(context,"tpo");
+        await page.setViewportSize(size);
+        const runtimeErrors:string[]=[];
+        page.on("pageerror",e=>runtimeErrors.push(e.message));
+        await page.goto(path,{waitUntil:"domcontentloaded"});
+        await expect(page.getByText(message,{exact:false}).first()).toBeVisible();
+        const reset=page.getByRole("link",{name:label});
+        await expect(reset).toHaveAttribute("href",href);
+        await reset.focus();
+        await expect(reset).toBeFocused();
+        await expect(page.locator("body")).not.toContainText("fixture-private-tenant-token");
+        await noHorizontalOverflow(page);
+        await page.screenshot({path:info.outputPath(group+"-"+size.name+"-production-invalid-filter.png"),fullPage:true});
+        expect(runtimeErrors).toEqual([]);
+      });
+    }
+  }
+});

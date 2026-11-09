@@ -47,4 +47,14 @@ describe("Ten-group TPO recovery, 173 registered surfaces", () => {
       expect(s.includes("hasMembershipRole") || s.includes("requireTpoBatchActor") || s.includes("requirePersistedTpoMembership") || s.includes('can(context,"placements.manage"')).toBe(true);
     }
   });
+  it("rejects duplicate URL keys on all five authenticated production page families",()=>{
+    expect(read(base+"home/page.tsx")).toContain("Array.isArray(routeQuery.seasonId)");
+    expect(read(base+"batches/page.tsx")).toContain("scalarKeys.some(key=>Array.isArray(raw[key]))");
+    expect(read(base+"calendar/page.tsx")).toContain("repeatedFilter=Object.values(raw).some(Array.isArray)");
+    expect(read(base+"calendar/page.tsx")).toContain("repeatedFilter||!parsed.success");
+    expect(read(base+"calendar/interviews/page.tsx")).toContain("Object.values(query).some(Array.isArray)");
+    expect(read(base+"calendar/interviews/page.tsx")).toContain("No interview data was queried");
+    expect(read(base+"companies/page.tsx")).toContain("!tpoCompanyFiltersShapeValid(raw)");
+  });
+
 });

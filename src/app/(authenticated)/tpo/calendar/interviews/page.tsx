@@ -19,7 +19,13 @@ type Props={searchParams:Promise<{days?:string|string[];page?:string|string[];q?
 export default async function TpoInterviewReadinessPage({searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
- const query=await searchParams;const days=Array.isArray(query.days)?query.days[0]:query.days;
+ const query=await searchParams;
+ if(Object.values(query).some(Array.isArray))return <div className="min-w-0 space-y-4">
+  <PageHeader eyebrow="TPO · Interview rounds" title="Invalid interview filters"/>
+  <p role="alert" className="text-sm text-body">The link repeats an interview filter. No interview data was queried.</p>
+  <TextLink href="/tpo/calendar/interviews" className="inline-flex min-h-11 items-center">Clear interview filters</TextLink>
+ </div>;
+ const days=Array.isArray(query.days)?query.days[0]:query.days;
  const first=(x:string|string[]|undefined)=>Array.isArray(x)?x[0]:x;
  const data=await getTpoInterviewReadiness(context,{days:days||14,page:first(query.page)||1,q:first(query.q)||""});
  const href=(page:number)=>"/tpo/calendar/interviews?"+new URLSearchParams({days:String(data.days),page:String(page),...(data.q?{q:data.q}:{})}).toString();

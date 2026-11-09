@@ -36,6 +36,9 @@ export default async function TpoCalendarPage({
 
   await requirePersistedTpoMembership(context,context.membership.collegeId);
   const raw=await searchParams;
+  // A repeated query parameter is ambiguous: never silently select the first
+  // value and then fetch private calendar events for an unintended filter.
+  const repeatedFilter=Object.values(raw).some(Array.isArray);
   const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
   const agent=(await headers()).get("user-agent")??"";
   const parsed=parseTpoCalendarUrl({
@@ -49,10 +52,10 @@ export default async function TpoCalendarPage({
     if(value!==undefined)clientParams.set(key,value);
   }
   const clientHref="/tpo/calendar"+(clientParams.size?"?"+clientParams.toString():"");
-  if(!parsed.success)return <div className="space-y-4">
+  if(repeatedFilter||!parsed.success)return <div className="space-y-4">
     <PageHeader title="Invalid calendar filters" />
     <Alert tone="error">
-      Enter a valid day, calendar view, event kind and company filter. No events were queried.
+      Enter one valid value for each day, view, event kind and company filter. Repeated filters are not accepted. No events were queried.
     </Alert>
     <TextLink href="/tpo/calendar" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center">Reset calendar filters</TextLink>
   </div>;
