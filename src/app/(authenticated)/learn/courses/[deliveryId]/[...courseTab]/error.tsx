@@ -20,7 +20,7 @@ export default function CourseError({ reset }: {
       <p>{attendance ? "Failed to load attendance." : syllabus ? "Lesson content could not be loaded" : "Could not load course"}</p>
       {syllabus?<p className="mt-1 text-sm text-body">Could not load lesson content. Your progress has not been changed. Retry to get the latest content and completion state.</p>:null}
       <div className="flex flex-wrap items-center gap-3">
-        <Button type="button" variant="secondary" onClick={reset}>
+        <Button type="button" variant="secondary" onClick={reset} className="min-h-11 md:min-h-9">
           {attendance || syllabus ? "Retry" : "Try again"}
         </Button>
         <TextLink href="/learn/courses" className="inline-flex min-h-9 items-center text-sm">
