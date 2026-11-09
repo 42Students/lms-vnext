@@ -67,10 +67,10 @@ jobs:
             'src/app/(authenticated)/admin/people/directory/[membershipId]/audit/error.tsx' \
             'src/app/(authenticated)/admin/placements/analytics/error.tsx'
           npm run ux:groups -- --check
-      - name: TypeScript and ten-group source regressions
-        run: |
-          npm run typecheck
-          npx vitest run tests/unit/ux-g010-g021-admin-atomic-recovery.test.ts tests/unit/ux-g005-g014-admin-route-recovery.test.ts --reporter=dot
+      - name: Ten-group focused source regressions
+        run: npx vitest run tests/unit/ux-g010-g021-admin-atomic-recovery.test.ts tests/unit/ux-g005-g014-admin-route-recovery.test.ts --reporter=dot
+      - name: Full TypeScript integrity
+        run: npm run typecheck
       - name: Seed actual scoped PostgreSQL and Super Admin role
         run: npm run db:e2e:prepare
       - name: Ephemeral test-only auth keys
