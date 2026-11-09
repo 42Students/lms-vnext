@@ -33074,6 +33074,16 @@
             "results": "Actual exact-SHA scoped lint and TypeScript, 10/10 focused model/source unit tests, isolated seeded PostgreSQL; 9 authenticated responsive Chromium tests total across G132/G154/G161/G178 and People CSV learner denial, screenshots artifact. Each group has a 1280x800 and 390x844 authorized page smoke; group-wide mutation/export flows NOT tested.",
             "outstanding": "Actual template/team create/edit/publish/assignment mutations with double-submit, stale search, CAS and cross-college denial across all eight source components, responsive dialogs and downloads.",
             "closure": "DOING remains required: existing 9 browser cases are page smoke and one denial, insufficient for the listed interactive/full export transitions. Do not reclassify as DONE from this partial proof."
+          },
+          {
+            "type": "CI_PARTIAL_G154_BULK_RECOVERY_20261109",
+            "commitSha": "e08fe1759a0b4f98bffb6f50db60d9fb5c2f8f81",
+            "runId": 42641655870,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42641655870",
+            "conclusion": "success",
+            "results": "At exact SHA: lint, TypeScript, 23/23 focused Vitest, isolated PostgreSQL 17, 3/3 authenticated Chromium functional tests (0 skipped/flaky), including real template create/overview-edit/publish, authorized college assignment and stale CAS denial, bulk dialog aborted-PUT uncertainty notice and refresh, and tracker report/Learner denial. Separately, component run 42641561318 at c1c09577c7fee4f759cd49fcb242a7a78eeabc8b: lint, full TypeScript, 24/24 unit including new failure-phase notice regression, isolated PG17, 17/17 desktop/mobile Chromium smoke/role negatives.",
+            "outstanding": "Full five-source atomic group acceptance remains: project workspace workflows, template/team create/edit/publish lifecycle, responsive dialog/keyboard/focus and error/empty/loading states, cross-college permission negatives for all interactions, and authorized persisted team/assignment bulk undo scenarios.",
+            "closure": "DOING; targeted save-recovery behavior and tests are verified, but this does not close UX-G154."
           }
         ],
         "splitMeta": {
@@ -33088,7 +33098,7 @@
             "UX-G338"
           ]
         },
-        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G338."
+        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G338.\n2026-11-09: Verified ambiguous bulk-save UX recovery and singular-college confirmation: 42641561318 (24/24 Vitest; 17/17 browser) and 42641655870 (23/23 Vitest; 3/3 persisted functional browser), exact SHAs, full typecheck/lint. Details docs/parity/ux-g154-project-components.md. Still DOING pending remaining five-file coverage."
       },
       {
         "id": "UX-G155",
