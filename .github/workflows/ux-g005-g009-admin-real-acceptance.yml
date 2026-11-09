@@ -86,6 +86,10 @@ jobs:
             tests/unit/chat11-super-admin-course-progress-tenant-guard.test.ts --reporter=dot
       - name: Prepare isolated PostgreSQL, Super Admin and college data
         run: npm run db:e2e:prepare
+      - name: G006 persisted batch preview and cross-college negative
+        env:
+          DB03_ISOLATED_TEST_DATABASE: '1'
+        run: npx vitest run --config vitest.db.config.ts tests/integration/admin-batch-promotion-preview.test.ts --reporter=dot
       - name: Create ephemeral development-only identity secrets
         run: |
           echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
