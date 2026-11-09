@@ -15,7 +15,13 @@ test("UX-G104 TPO starts a recruiter conversation and verifies it on desktop and
   await page.setViewportSize({width:1280,height:800});
   await page.getByRole("button",{name:"New message"}).click();
   const dialog=page.getByRole("dialog",{name:"New message to a recruiter"});
-  await dialog.getByRole("combobox",{name:"Recruiter"}).selectOption({label:/E2E Prototype Recruiter/});
+  const recruiter=dialog.getByRole("combobox",{name:"Recruiter"});
+  const recruiterValue=await recruiter.locator("option").evaluateAll(options=>{
+    const match=options.find(option=>option.textContent?.includes("E2E Prototype Recruiter"));
+    return match instanceof HTMLOptionElement?match.value:"";
+  });
+  expect(recruiterValue).not.toBe("");
+  await recruiter.selectOption(recruiterValue);
   const message=`UX-G104 end-to-end message ${Date.now()}`;
   await dialog.getByRole("textbox",{name:"New message"}).fill(message);
   const sent=page.waitForResponse(response=>
