@@ -97,7 +97,7 @@ export default async function CollegeElectiveAllocatePage({
       <PageHeader title="Allocate elective students" />
       <ErrorState title="Admin not assigned to an active college"
         description="College Admin access is required to allocate learners. Contact your administrator to restore or select an active college membership."
-        action={<TextLink href="/college/electives">Back to electives</TextLink>} />
+        action={<TextLink href="/college/electives" className="inline-flex min-h-11 items-center md:min-h-9">Back to electives</TextLink>} />
     </div>;
   }
   const { slot } = await scopedSlot(slotId);
