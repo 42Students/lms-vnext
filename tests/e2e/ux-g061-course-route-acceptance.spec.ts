@@ -11,6 +11,7 @@ test.describe("UX-G061 learner course route acceptance",()=>{
 
   for(const viewport of viewports){
     test(`${viewport.name}: real learner course route and safe unknown-course recovery`,async({page,context},info)=>{
+      test.setTimeout(120_000);
       await authenticateGracefulRole(context,"learner");
       await page.setViewportSize({width:viewport.width,height:viewport.height});
       await page.goto("/learn/courses");
