@@ -21,8 +21,9 @@ test.describe("UX-G061 learner course route acceptance",()=>{
       expect(href).toMatch(/^\/learn\/courses\/[0-9a-f-]{36}\/home$/i);
       await page.goto(href!);
       await expect(page.getByRole("heading",{level:1,name:"E2E Browser Course"})).toBeVisible();
+      const courseTabs=page.getByRole("navigation",{name:"Course sections"});
       for(const tab of ["Overview","Learning Path","Attendance","Discussions"])
-        await expect(page.getByRole("link",{name:tab,exact:true})).toBeVisible();
+        await expect(courseTabs.getByRole("link",{name:tab,exact:true})).toBeVisible();
       await expect(page.getByText("E2E Section B Secret",{exact:true})).toHaveCount(0);
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
       const pageCapture=await page.screenshot({fullPage:true});
