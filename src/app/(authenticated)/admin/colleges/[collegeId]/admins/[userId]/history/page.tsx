@@ -8,6 +8,7 @@ import {ErrorState} from "@/components/ui/error-state";
 import {parseAdminSessionHistoryPage} from "@/modules/colleges/admin-session-query-model";
 import {listCollegeAdminHistory} from "@/modules/colleges/admin-session-service";
 import { TextLink } from "@/components/ui/text-link";
+import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { formatNumberIN } from "@/lib/safe-format";
 export const dynamic="force-dynamic";
