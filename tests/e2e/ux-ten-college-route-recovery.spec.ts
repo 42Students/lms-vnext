@@ -12,7 +12,7 @@ const cases=[
   {id:"G039",name:"College projects",link:"Go to home",href:"/college/projects"},
   {id:"G040",name:"Project audit",link:"Go to home",href:"/college/projects"},
 ] as const;
-for(const size of [{label:"mobile",width:390,height:844},{label:"desktop",width:1280,height:800}] as const){
+for(const size of [{label:"narrow-mobile",width:320,height:640},{label:"mobile",width:390,height:844},{label:"desktop",width:1280,height:800}] as const){
   test("ten College Admin fallback controls at "+size.label,async({page},info)=>{
     await page.setViewportSize(size);
     const failures:string[]=[];
@@ -26,7 +26,7 @@ for(const size of [{label:"mobile",width:390,height:844},{label:"desktop",width:
       const button=region.getByRole("button",{name:/^(Retry|Try again)$/});
       await button.click();
       await expect(region.getByRole("status")).toContainText(item.id+" retry count: 1");
-      expect((await button.boundingBox())?.height??0).toBeGreaterThanOrEqual(size.label==="mobile"?44:36);
+      expect((await button.boundingBox())?.height??0).toBeGreaterThanOrEqual(size.width<768?44:36);
     }
     const unexpectedCourse=page.getByRole("region",{name:"Course progress unknown failure"});
     await expect(unexpectedCourse.getByText("Course progress unavailable",{exact:true})).toBeVisible();
