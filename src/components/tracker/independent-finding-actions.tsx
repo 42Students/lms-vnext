@@ -90,6 +90,9 @@ export function IndependentFindingActions({externalId,version,status,severity,cu
     // A provider failure after a committed transaction has an unknown result.
     // Require a fresh revision before any subsequent mutation.
     if(reason.status>=500)setStale(true);
+    // Network loss and request timeout are equally ambiguous: the server
+    // may already have committed a revision before its receipt was lost.
+    if(reason.status===0||reason.status===408)setStale(true);
     const messages:Record<string,string>={
      STALE_VERSION:"The finding changed. Refresh and retry.",
      INVALID_STATUS_TRANSITION:"This status change is not allowed. Check the finding history and choose a valid next step.",
@@ -101,8 +104,10 @@ export function IndependentFindingActions({externalId,version,status,severity,cu
      NOT_FOUND:"Finding not found",
      NOT_READY:"Audit findings storage is not verified.",
     };
-    setError(messages[reason.code??""]??reason.fieldErrors["reason"]??reason.fieldErrors["note"]??
-      reason.fieldErrors["duplicateOf"]??reason.fieldErrors["assignee"]??reason.fieldErrors["sha"]??reason.fieldErrors["repo"]??reason.message);
+    setError(reason.status===0||reason.status===408||reason.status>=500
+      ?"The update may have been saved. Refresh this finding before trying again."
+      :messages[reason.code??""]??reason.fieldErrors["reason"]??reason.fieldErrors["note"]??
+       reason.fieldErrors["duplicateOf"]??reason.fieldErrors["assignee"]??reason.fieldErrors["sha"]??reason.fieldErrors["repo"]??reason.message);
    }else{
     setStale(true);
     setError("The result could not be confirmed. Refresh this finding before trying again.");

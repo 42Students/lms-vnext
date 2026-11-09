@@ -27,7 +27,14 @@ export function AuditFindingStatusAction({publicId,current,version}:{publicId:st
    });
    if(!response.ok){
     if(response.status===409)setStale(true);
-    setFeedback(response.status===409?"The finding changed elsewhere. Reload before changing its status.":"Status change was not saved.");
+    // A 408/5xx response can arrive after the write was committed.
+    // Never enable another save with the previous optimistic version.
+    if(response.status===408||response.status>=500)setStale(true);
+    setFeedback(response.status===409
+      ?"The finding changed elsewhere. Reload before changing its status."
+      :response.status===408||response.status>=500
+        ?"The status change may have been saved. Refresh the finding before trying again."
+        :"Status change was not saved.");
     return;
    }
    // HTTP success can commit a write even when the response receipt is lost.

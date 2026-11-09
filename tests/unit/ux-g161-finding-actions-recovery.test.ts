@@ -71,6 +71,17 @@ describe("UX-G161 finding editor recovery contract",()=>{
   expect(panel).toContain("setNeedsRefresh(true);");
   expect(panel).toContain("router.refresh();");
  });
+ it("does not allow a second mutation after ambiguous HTTP or network outcomes",()=>{
+  const triage=source("audit-finding-status-action.tsx");
+  expect(triage).toContain("if(response.status===408||response.status>=500)setStale(true);");
+  expect(triage).toContain("The status change may have been saved. Refresh the finding before trying again.");
+  const finding=source("independent-finding-actions.tsx");
+  expect(finding).toContain("if(reason.status===0||reason.status===408)setStale(true);");
+  expect(finding).toContain("if(reason.status>=500)setStale(true);");
+  expect(finding).toContain("The update may have been saved. Refresh this finding before trying again.");
+  expect(finding).toContain("if(lock.current||stale)return;");
+  expect(finding).toContain(">Refresh finding</Button>");
+ });
  it("keeps server version checking and mutation confirmation intact",()=>{
   const actions=source("independent-finding-actions.tsx");
   expect(actions).toContain('expectedVersion:version');
