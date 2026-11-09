@@ -1,0 +1,97 @@
+name: UX-G010-G021 ten atomic Super Admin journeys
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/app/(authenticated)/admin/electives/**'
+      - 'src/app/(authenticated)/admin/faculty-assignment/**'
+      - 'src/app/(authenticated)/admin/features/**'
+      - 'src/app/(authenticated)/admin/lecture-halls/**'
+      - 'src/app/(authenticated)/admin/lessons/**'
+      - 'src/app/(authenticated)/admin/people/**'
+      - 'src/app/(authenticated)/admin/placements/**'
+      - 'src/app/(authenticated)/admin/programs/**'
+      - 'src/app/(authenticated)/admin/projects/**'
+      - 'tests/unit/ux-g010-g021-admin-atomic-recovery.test.ts'
+      - 'tests/e2e/ux-g010-g021-superadmin-atomic.spec.ts'
+      - '.github/workflows/ux-g010-g021-superadmin-atomic-acceptance.yml'
+permissions:
+  contents: read
+concurrency:
+  group: ux-g010-g021-ten-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  ten-atomic-groups:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: 'true'
+      APP_ENV: development
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_OPTIONS: --max-old-space-size=6144
+      PLAYWRIGHT_JSON_OUTPUT_NAME: ux-g010-g021-browser.json
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exact SHA, scoped lint and tracker integrity
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npx eslint tests/unit/ux-g010-g021-admin-atomic-recovery.test.ts tests/e2e/ux-g010-g021-superadmin-atomic.spec.ts \
+            'src/app/(authenticated)/admin/electives/error.tsx' \
+            'src/app/(authenticated)/admin/faculty-assignment/page.tsx' \
+            'src/app/(authenticated)/admin/faculty-assignment/error.tsx' \
+            'src/app/(authenticated)/admin/lecture-halls/[hallId]/error.tsx' \
+            'src/app/(authenticated)/admin/lessons/error.tsx' \
+            'src/app/(authenticated)/admin/people/directory/[membershipId]/error.tsx' \
+            'src/app/(authenticated)/admin/people/directory/[membershipId]/audit/error.tsx' \
+            'src/app/(authenticated)/admin/placements/analytics/error.tsx'
+          npm run ux:groups -- --check
+      - name: TypeScript and ten-group source regressions
+        run: |
+          npm run typecheck
+          npx vitest run tests/unit/ux-g010-g021-admin-atomic-recovery.test.ts tests/unit/ux-g005-g014-admin-route-recovery.test.ts --reporter=dot
+      - name: Seed actual scoped PostgreSQL and Super Admin role
+        run: npm run db:e2e:prepare
+      - name: Ephemeral test-only auth keys
+        run: |
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Real desktop, mobile and Learner negative checks
+        run: |
+          npx playwright test tests/e2e/ux-g010-g021-superadmin-atomic.spec.ts --project=chromium --workers=2 --reporter=line,json
+          node -e 'const s=require("./ux-g010-g021-browser.json").stats;if(s.expected!==33||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
+      - name: Retain responsive screenshots and failure traces
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ux-g010-g021-atomic-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+            ux-g010-g021-browser.json
+          if-no-files-found: ignore
+          retention-days: 14
