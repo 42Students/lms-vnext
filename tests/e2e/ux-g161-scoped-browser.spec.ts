@@ -141,4 +141,66 @@ test.describe("UX-G161 Tracker — isolated persisted and responsive acceptance"
   await page.keyboard.press("Escape");
   await expect(drawer).not.toBeVisible();
  });
+
+ test("Authorized live logs clear old evidence when the provider becomes unconfigured",async({page,context},info)=>{
+  test.setTimeout(100_000);
+  await authenticateGracefulRole(context,"superadmin");
+  await page.setViewportSize({width:1280,height:800});
+  let configured=true;
+  const row={id:"g161:cloud:1",time:"2026-11-09T14:00:00.000Z",event:"ERROR_TRACE",
+    message:"G161_PROVIDER_REFRESH_CANARY",path:"/tracker",requestId:null,
+    component:"test-source",knownErrorId:null,muted:false};
+  // Stub only a bounded provider response. The protected /tracker/logs page
+  // still authenticates through the actual seeded Super Admin role.
+  await page.route("**/api/tracker/live-logs?**",route=>route.fulfill({
+    status:200,contentType:"application/json",
+    body:JSON.stringify({configured,items:configured?[row]:[],nextPageToken:null}),
+  }));
+  await page.goto("/tracker/logs");
+  await expect(page.getByText("G161_PROVIDER_REFRESH_CANARY")).toHaveCount(1);
+  await page.getByRole("searchbox",{name:"Search logs"}).fill("other-filter");
+  await expect(page.getByText("Filters have changed.",{exact:false})).toBeVisible();
+  await page.locator('details').filter({has:page.locator('summary', {hasText:"More — Export and report tools"})}).locator("summary").click();
+  await expect(page.getByRole("button",{name:"Download NDJSON (bounded)"})).toBeDisabled();
+  await page.getByRole("searchbox",{name:"Search logs"}).fill("");
+  configured=false;
+  await page.getByRole("button",{name:"Refresh newer"}).click();
+  await expect(page.getByText("G161_PROVIDER_REFRESH_CANARY")).toHaveCount(0);
+  await expect(page.getByText("Cloud Logging is not configured",{exact:true})).toBeVisible();
+  await expect(page.getByText("0 events shown")).toBeVisible();
+  await page.screenshot({path:info.outputPath("g161-unconfigured-refresh-desktop.png"),fullPage:true});
+  await page.setViewportSize({width:390,height:844});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth)).toBeLessThanOrEqual(2);
+  await page.screenshot({path:info.outputPath("g161-unconfigured-refresh-mobile.png"),fullPage:true});
+ });
+
+ test("Uncertain known-error mute blocks stale retry until an explicit reload",async({page,context},info)=>{
+  test.setTimeout(100_000);
+  await authenticateGracefulRole(context,"superadmin");
+  const row={id:"g161:cloud:2",time:"2026-11-09T14:00:00.000Z",event:"ERROR_MUTE",
+    message:"G161_UNCERTAIN_MUTE_CANARY",path:"/tracker",requestId:null,
+    component:"test-source",knownErrorId:"10000000-0000-4000-8000-000000000033",muted:false};
+  await page.route("**/api/tracker/live-logs?**",route=>route.fulfill({
+    status:200,contentType:"application/json",
+    body:JSON.stringify({configured:true,items:[row],nextPageToken:null}),
+  }));
+  let sends=0;
+  await page.route("**/api/tracker/logs/known-errors/**",route=>{
+    sends++;
+    return route.abort("failed");
+  });
+  await page.goto("/tracker/logs");
+  await expect(page.locator('section[aria-label="Live logs"] ol li')).toHaveCount(1);
+  await page.locator('section[aria-label="Live logs"] ol li details summary').first().click();
+  await page.getByRole("button",{name:"Mute this error"}).click();
+  await page.getByRole("alertdialog",{name:"Mute this known error?"})
+    .getByRole("button",{name:"Mute error"}).click();
+  await expect(page.getByText("The mute change may have been saved.",{exact:false})).toBeVisible();
+  await expect(page.getByRole("button",{name:"Reload logs"})).toBeVisible();
+  await expect(page.getByRole("button",{name:"Mute this error"})).toBeDisabled();
+  expect(sends,"An unknown result must never trigger a duplicate send").toBe(1);
+  await page.setViewportSize({width:390,height:844});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth)).toBeLessThanOrEqual(2);
+  await page.screenshot({path:info.outputPath("g161-uncertain-mute-mobile.png"),fullPage:true});
+ });
 });
