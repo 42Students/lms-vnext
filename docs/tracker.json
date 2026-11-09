@@ -29751,8 +29751,19 @@
           "PAGE-0400"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "2026-11-08 TPO route recovery implementation committed on main at c641e73867555dd6239095f4120571003c93894c; scoped UX acceptance added at 6b8569e11a2ea78eec19c0716208364bf981be59 and corrected at ed7e55de86c88b72b8a8ca7fbba1d2a1b4d53875. Await exact-SHA successful lint/typecheck/Vitest, 22 browser scenarios (10 synthetic route errors on 2 viewports plus learner-denial cases) and broader group page functional coverage before DONE."
+        "evidence": [
+          {
+            "type": "CI_PARTIAL_RECOVERY_20261109",
+            "commitSha": "1a4ecb443dd004b34db92d536495b20ee22e7a55",
+            "runId": 42580993668,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42580993668",
+            "conclusion": "success",
+            "results": "32/32 desktop and mobile Chromium, 0 skipped/flaky, scoped lint, TypeScript and focused Vitest, seeded isolated PostgreSQL TPO and learner roles. All registered group source files checked for basic recovery/loading affordances.",
+            "outstanding": "Announcements, audit, batch directory and root TPO recovery were inspected. Actual TPO Home, Batches and announcement duplicate-filter paths are exercised; compose/send, audit exports and bulk cohort actions still require persisted end-to-end checks.",
+            "closure": "DOING — scoped fallback, invalid-filter and access-denial tests are partial proof, not complete CRUD, exports, UI transitions and tenant-negative browser coverage."
+          }
+        ],
+        "notes": "2026-11-09: 32/32 exact-SHA Chromium partial acceptance green at 1a4ecb4 / run 42580993668; 16 source files inspected. Expanded acceptance authored at 381aec9, pending successful run. Announcements, audit, batch directory and root TPO recovery were inspected. Actual TPO Home, Batches and announcement duplicate-filter paths are exercised; compose/send, audit exports and bulk cohort actions still require persisted end-to-end checks. DOING until full scoped job/permission coverage."
       },
       {
         "id": "UX-G099",
@@ -29805,8 +29816,19 @@
           "PAGE-0372"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "2026-11-08 TPO route recovery implementation committed on main at f634af6bdba09665a80ad54c9752aedc52d104a7; scoped UX acceptance added at 6b8569e11a2ea78eec19c0716208364bf981be59 and corrected at ed7e55de86c88b72b8a8ca7fbba1d2a1b4d53875. Await exact-SHA successful lint/typecheck/Vitest, 22 browser scenarios (10 synthetic route errors on 2 viewports plus learner-denial cases) and broader group page functional coverage before DONE."
+        "evidence": [
+          {
+            "type": "CI_PARTIAL_RECOVERY_20261109",
+            "commitSha": "1a4ecb443dd004b34db92d536495b20ee22e7a55",
+            "runId": 42580993668,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42580993668",
+            "conclusion": "success",
+            "results": "32/32 desktop and mobile Chromium, 0 skipped/flaky, scoped lint, TypeScript and focused Vitest, seeded isolated PostgreSQL TPO and learner roles. All registered group source files checked for basic recovery/loading affordances.",
+            "outstanding": "Batch detail, classes, history, invitation, nudge and registrations recovery were inspected; decision-history repeated-query guard is implemented. Invite, undo, history CSV, and registration bulk/tenant-negative mutations require persisted end-to-end checks.",
+            "closure": "DOING — scoped fallback, invalid-filter and access-denial tests are partial proof, not complete CRUD, exports, UI transitions and tenant-negative browser coverage."
+          }
+        ],
+        "notes": "2026-11-09: 32/32 exact-SHA Chromium partial acceptance green at 1a4ecb4 / run 42580993668; 18 source files inspected. Expanded acceptance authored at 381aec9, pending successful run. Batch detail, classes, history, invitation, nudge and registrations recovery were inspected; decision-history repeated-query guard is implemented. Invite, undo, history CSV, and registration bulk/tenant-negative mutations require persisted end-to-end checks. DOING until full scoped job/permission coverage."
       },
       {
         "id": "UX-G100",
@@ -29859,8 +29881,19 @@
           "PAGE-0379"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "2026-11-08 TPO route recovery implementation committed on main at a0783d5f5baae96ae8baa7be6328603065583f99; scoped UX acceptance added at 6b8569e11a2ea78eec19c0716208364bf981be59 and corrected at ed7e55de86c88b72b8a8ca7fbba1d2a1b4d53875. Await exact-SHA successful lint/typecheck/Vitest, 22 browser scenarios (10 synthetic route errors on 2 viewports plus learner-denial cases) and broader group page functional coverage before DONE."
+        "evidence": [
+          {
+            "type": "CI_PARTIAL_RECOVERY_20261109",
+            "commitSha": "1a4ecb443dd004b34db92d536495b20ee22e7a55",
+            "runId": 42580993668,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42580993668",
+            "conclusion": "success",
+            "results": "32/32 desktop and mobile Chromium, 0 skipped/flaky, scoped lint, TypeScript and focused Vitest, seeded isolated PostgreSQL TPO and learner roles. All registered group source files checked for basic recovery/loading affordances.",
+            "outstanding": "Batch students/rules/reminders, calendar and calendar export recovery were inspected. Calendar repeated-filter guard is implemented. Export payload, rules updates, and reminder sends require persisted end-to-end checks.",
+            "closure": "DOING — scoped fallback, invalid-filter and access-denial tests are partial proof, not complete CRUD, exports, UI transitions and tenant-negative browser coverage."
+          }
+        ],
+        "notes": "2026-11-09: 32/32 exact-SHA Chromium partial acceptance green at 1a4ecb4 / run 42580993668; 18 source files inspected. Expanded acceptance authored at 381aec9, pending successful run. Batch students/rules/reminders, calendar and calendar export recovery were inspected. Calendar repeated-filter guard is implemented. Export payload, rules updates, and reminder sends require persisted end-to-end checks. DOING until full scoped job/permission coverage."
       },
       {
         "id": "UX-G101",
@@ -29913,8 +29946,19 @@
           "PAGE-0388"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "2026-11-08 TPO route recovery implementation committed on main at eca54601a348429915b28e01f3f8331da175e3eb; scoped UX acceptance added at 6b8569e11a2ea78eec19c0716208364bf981be59 and corrected at ed7e55de86c88b72b8a8ca7fbba1d2a1b4d53875. Await exact-SHA successful lint/typecheck/Vitest, 22 browser scenarios (10 synthetic route errors on 2 viewports plus learner-denial cases) and broader group page functional coverage before DONE."
+        "evidence": [
+          {
+            "type": "CI_PARTIAL_RECOVERY_20261109",
+            "commitSha": "1a4ecb443dd004b34db92d536495b20ee22e7a55",
+            "runId": 42580993668,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42580993668",
+            "conclusion": "success",
+            "results": "32/32 desktop and mobile Chromium, 0 skipped/flaky, scoped lint, TypeScript and focused Vitest, seeded isolated PostgreSQL TPO and learner roles. All registered group source files checked for basic recovery/loading affordances.",
+            "outstanding": "Interview scheduling, round calendar, company directory, detail, contact log and feedback recovery were inspected. Interview/round query validation is implemented. Scheduling, contacts and feedback persisted mutation/tenant-negative paths still require independent checks.",
+            "closure": "DOING — scoped fallback, invalid-filter and access-denial tests are partial proof, not complete CRUD, exports, UI transitions and tenant-negative browser coverage."
+          }
+        ],
+        "notes": "2026-11-09: 32/32 exact-SHA Chromium partial acceptance green at 1a4ecb4 / run 42580993668; 18 source files inspected. Expanded acceptance authored at 381aec9, pending successful run. Interview scheduling, round calendar, company directory, detail, contact log and feedback recovery were inspected. Interview/round query validation is implemented. Scheduling, contacts and feedback persisted mutation/tenant-negative paths still require independent checks. DOING until full scoped job/permission coverage."
       },
       {
         "id": "UX-G102",
@@ -29966,8 +30010,19 @@
           "/tpo/companies/legacy-team",
           "/tpo/companies/today"
         ],
-        "evidence": [],
-        "notes": "2026-11-08 TPO route recovery implementation committed on main at 7246ca0b2524b4c009f8d37aedc867684e214fc0; scoped UX acceptance added at 6b8569e11a2ea78eec19c0716208364bf981be59 and corrected at ed7e55de86c88b72b8a8ca7fbba1d2a1b4d53875. Await exact-SHA successful lint/typecheck/Vitest, 22 browser scenarios (10 synthetic route errors on 2 viewports plus learner-denial cases) and broader group page functional coverage before DONE."
+        "evidence": [
+          {
+            "type": "CI_PARTIAL_RECOVERY_20261109",
+            "commitSha": "1a4ecb443dd004b34db92d536495b20ee22e7a55",
+            "runId": 42580993668,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42580993668",
+            "conclusion": "success",
+            "results": "32/32 desktop and mobile Chromium, 0 skipped/flaky, scoped lint, TypeScript and focused Vitest, seeded isolated PostgreSQL TPO and learner roles. All registered group source files checked for basic recovery/loading affordances.",
+            "outstanding": "Company management, people, team, archived and drive-day recovery plus two newer routes were inspected. Companies Today validation now precedes CRM reads; drive-day duplicate filters checked. Archived restore, team messaging, people management and live drive-day interactions still require persisted end-to-end checks.",
+            "closure": "DOING — scoped fallback, invalid-filter and access-denial tests are partial proof, not complete CRUD, exports, UI transitions and tenant-negative browser coverage."
+          }
+        ],
+        "notes": "2026-11-09: 32/32 exact-SHA Chromium partial acceptance green at 1a4ecb4 / run 42580993668; 16 source files inspected. Expanded acceptance authored at 381aec9, pending successful run. Company management, people, team, archived and drive-day recovery plus two newer routes were inspected. Companies Today validation now precedes CRM reads; drive-day duplicate filters checked. Archived restore, team messaging, people management and live drive-day interactions still require persisted end-to-end checks. DOING until full scoped job/permission coverage."
       },
       {
         "id": "UX-G103",
