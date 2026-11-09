@@ -76,7 +76,14 @@ jobs:
           npm run typecheck
           node --test tests/ux-groups.test.mjs
       - name: Existing and new scoped unit assertions
-        run: npx vitest run tests/unit/ux-g005-g014-admin-route-recovery.test.ts --reporter=dot
+        run: |
+          npx vitest run \
+            tests/unit/ux-g005-g014-admin-route-recovery.test.ts \
+            tests/unit/chat4-superadmin-college-admin-sessions-page.test.tsx \
+            tests/unit/chat4-superadmin-college-signin-page-states.test.tsx \
+            tests/unit/chat3-sa-section-workspace-permission-matrix.test.ts \
+            tests/unit/sa-batch-promotion-execute.test.ts \
+            tests/unit/chat11-super-admin-course-progress-tenant-guard.test.ts --reporter=dot
       - name: Prepare isolated PostgreSQL, Super Admin and college data
         run: npm run db:e2e:prepare
       - name: Create ephemeral development-only identity secrets
