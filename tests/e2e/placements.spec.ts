@@ -86,7 +86,7 @@ async function createPublishedOpportunity(
 
   const newOpportunityLink =
     page.getByRole("link", {
-      name: "New opportunity",
+      name: "Create drive",
     });
   await expect(
     newOpportunityLink,
