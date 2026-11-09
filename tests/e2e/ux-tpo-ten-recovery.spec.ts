@@ -127,3 +127,31 @@ test.describe("UX-G099–G101 real protected depth and error-free filter reset",
     }
   }
 });
+
+
+test.describe("UX-G098 and G102 real route recovery on operational pages",()=>{
+  test.skip(process.env.E2E_AUTH_ENABLED!=="true"||!process.env.E2E_AUTH_SECRET,
+    "Requires disposable PostgreSQL and TPO role");
+  const cases=[
+    ["UX-G098","/tpo/announcements?tab=yours&tab=team","Invalid announcement filters","Return to announcements","/tpo/announcements"],
+    ["UX-G102","/tpo/drive-day?q=one&q=two","Invalid drive day filter","Clear filters","/tpo/drive-day"],
+    ["UX-G102","/tpo/companies/today?view=focus&view=agenda","Invalid view parameters","Open My Work","/tpo/companies/today"],
+  ] as const;
+  for(const size of dimensions){
+    for(const [group,path,notice,linkLabel,href] of cases){
+      test(group+" "+size.name+" avoids ambiguous reads and exposes safe return",async({page,context},info)=>{
+        test.setTimeout(120_000);
+        await authenticateGracefulRole(context,"tpo");
+        await page.setViewportSize(size);
+        await page.goto(path,{waitUntil:"domcontentloaded"});
+        await expect(page.getByText(notice,{exact:false}).first()).toBeVisible();
+        const back=page.getByRole("link",{name:linkLabel});
+        await expect(back).toHaveAttribute("href",href);
+        await back.focus();
+        await expect(back).toBeFocused();
+        await noHorizontalOverflow(page);
+        await page.screenshot({path:info.outputPath(group+"-"+size.name+"-operations-safe-return.png"),fullPage:true});
+      });
+    }
+  }
+});

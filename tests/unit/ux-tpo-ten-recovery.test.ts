@@ -72,4 +72,13 @@ describe("Ten-group TPO recovery, 173 registered surfaces", () => {
     expect(interviews).toContain("getTpoInterviewReadiness(context,parsed.data)");
   });
 
+  it("rejects G098 announcement and G102 Today/drive-day ambiguous filters",()=>{
+    expect(read(base+"announcements/page.tsx")).toContain("scalarKeys");
+    expect(read(base+"drive-day/page.tsx")).toContain("Object.values(raw).some(Array.isArray)");
+    const today=read(base+"companies/today/page.tsx");
+    expect(today).toContain("invalidShape=Object.keys(params).some");
+    expect(today).toContain("Object.values(params).some(Array.isArray)");
+    expect(today.indexOf("if(invalidShape||")).toBeLessThan(today.indexOf("const ready=await tpoCrmTablesReady"));
+  });
+
 });
