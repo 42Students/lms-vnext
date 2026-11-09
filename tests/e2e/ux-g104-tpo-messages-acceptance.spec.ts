@@ -8,6 +8,10 @@ test("UX-G104 TPO starts a recruiter conversation and verifies it on desktop and
   await page.setViewportSize({width:1280,height:800});
   await page.goto("/tpo/messages");
   await expect(page.getByRole("heading",{level:1,name:"Messages"})).toBeVisible();
+  await page.setViewportSize({width:390,height:844});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+  await info.attach("g104-tpo-inbox-mobile",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
+  await page.setViewportSize({width:1280,height:800});
   await page.getByRole("button",{name:"New message"}).click();
   const dialog=page.getByRole("dialog",{name:"New message to a recruiter"});
   await dialog.getByRole("combobox",{name:"Recruiter"}).selectOption({label:/E2E Prototype Recruiter/});
