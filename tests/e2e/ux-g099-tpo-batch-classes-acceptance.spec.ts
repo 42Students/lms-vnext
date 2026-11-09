@@ -16,7 +16,7 @@ test("UX-G099 TPO reviews and persists a class decision on desktop and mobile",a
   await page.getByRole("link",{name:"Classes",exact:true}).click();
   await expect(page.getByRole("heading",{level:1,name:"Classes · E2E 2026 Intake"})).toBeVisible();
 
-  const classCard=page.getByRole("heading",{level:2,name:"E2E Section A"}).locator("xpath=../..");
+  const classCard=page.getByRole("heading",{level:2,name:"E2E Section A"}).locator("xpath=ancestor::section[1]");
   await expect(classCard).toContainText("1 student");
   await classCard.getByRole("combobox",{name:"Who is in"}).selectOption("INELIGIBLE");
   await classCard.getByRole("textbox",{name:"Reason"}).fill("E2E placement eligibility review");
