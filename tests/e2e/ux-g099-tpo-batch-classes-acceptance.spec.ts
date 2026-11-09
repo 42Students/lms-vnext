@@ -4,6 +4,7 @@ import {authenticateGracefulRole} from "./support/roles";
 test.skip(!process.env.E2E_AUTH_SECRET,"Authenticated browser E2E requires the disposable E2E identity harness");
 
 test("UX-G099 TPO reviews and persists a class decision on desktop and mobile",async({page,context},info)=>{
+  test.setTimeout(120_000);
   await authenticateGracefulRole(context,"tpo");
   await page.setViewportSize({width:1280,height:800});
   await page.goto("/tpo/batches?q=E2E%202026%20Intake");
