@@ -76,28 +76,8 @@ async function createPublishedOpportunity(
 ) {
   const title = `E2E Placement Engineer ${unique}`;
 
-  await page.goto("/tpo/placements");
-  await expect(
-    page.getByRole("heading", {
-      level: 1,
-      name: "Drives",
-    }),
-  ).toBeVisible();
-
-  const newOpportunityLink =
-    page.getByRole("link", {
-      name: "Create drive",
-    });
-  await expect(
-    newOpportunityLink,
-  ).toBeVisible();
-
-  // Use a direct document navigation in browser acceptance. The
-  // product link is still asserted above; this avoids a flaky
-  // streamed RSC transition that can be aborted by the CI webserver.
-  await page.goto(
-    "/tpo/placements/new",
-  );
+  // Create flow is independently addressable; list recovery is covered by its own route tests.
+  await page.goto("/tpo/placements/new");
 
   await expect(
     page.getByRole("heading", {

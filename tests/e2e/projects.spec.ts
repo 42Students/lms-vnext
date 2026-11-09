@@ -127,7 +127,7 @@ test.describe("Projects browser regression", () => {
     await authenticate(context,"seed-learner",SEED_IDS.learnerCollegeAMembership);
     await page.goto(`/college/projects/audit?subjectType=project&subjectId=${encodeURIComponent(id!)}`);
     await expect(page.getByRole("row").filter({hasText:title})).toHaveCount(0);
-    await page.goto("/learn/projects");
+    await page.goto("/learn/projects",{waitUntil:"domcontentloaded"});
     await expect(page.getByRole("link",{name:new RegExp(title)}).first())
       .toBeVisible();
     await page.goto("/learn/projects/"+id+"?tab=overview");

@@ -45,6 +45,6 @@ test("UX-G099 TPO reviews and persists a class decision on desktop and mobile",a
   const classesHref=page.url();
   await authenticateGracefulRole(context,"learner");
   await page.goto(classesHref);
-  await expect(page).toHaveURL(/\/dashboard(?:[/?#]|$)/);
+  await expect(page).toHaveURL(/\/learn\/courses\?access=denied/);
   await expect(page.getByText("E2E placement eligibility review")).toHaveCount(0);
 });

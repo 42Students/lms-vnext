@@ -45,6 +45,6 @@ test("UX-G104 TPO starts a recruiter conversation and verifies it on desktop and
   const threadUrl=page.url();
   await authenticateGracefulRole(context,"learner");
   await page.goto(threadUrl);
-  await expect(page).toHaveURL(/\/dashboard(?:[/?#]|$)/);
+  await expect(page).toHaveURL(/\/learn\/courses\?access=denied/);
   await expect(page.getByText(message,{exact:true})).toHaveCount(0);
 });
