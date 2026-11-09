@@ -68,7 +68,7 @@ test.describe("Projects browser regression", () => {
 
   test("college workspace creation persists Mentor and learner grants and permits Mentor team changes",async({
     page,context,
-  })=>{
+  },info)=>{
     await authenticate(context,"seed-college-admin",SEED_IDS.collegeAdminMembership);
     await page.goto("/college/projects");
     await expect(page.getByRole("heading",{level:1,name:"Project workspaces"})).toBeVisible();
@@ -100,7 +100,27 @@ test.describe("Projects browser regression", () => {
     const id=payload.project?.id;
     expect(id).toMatch(/^[0-9a-f-]{36}$/i);
 
+    // The College Admin audit page must show the persisted workspace-create
+    // event with filters scoped to this college and workspace.
+    await page.goto(`/college/projects/audit?subjectType=project&subjectId=${encodeURIComponent(id!)}`);
+    await expect(page.getByRole("heading",{level:1,name:"Project audit"})).toBeVisible();
+    await expect(page.getByText(`Project ${title} created`,{exact:true})).toBeVisible();
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+    await info.attach("g040-project-audit-desktop",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
+    const auditDownload=page.waitForEvent("download");
+    await page.getByRole("button",{name:"Export CSV"}).click();
+    expect((await auditDownload).suggestedFilename()).toBe("project-audit-log.csv");
+    await page.setViewportSize({width:390,height:844});
+    await page.goto(`/college/projects/audit?subjectType=project&subjectId=${encodeURIComponent(id!)}`);
+    await expect(page.getByText(`Project ${title} created`,{exact:true})).toBeVisible();
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+    await info.attach("g040-project-audit-mobile",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
+    await page.goto("/college/projects/audit?importance=INVALID&subjectId=not-a-uuid");
+    await expect(page.getByRole("alert").filter({hasText:"Some audit filters were invalid and have been ignored"})).toBeVisible();
+
     await authenticate(context,"seed-learner",SEED_IDS.learnerCollegeAMembership);
+    await page.goto(`/college/projects/audit?subjectType=project&subjectId=${encodeURIComponent(id!)}`);
+    await expect(page.getByText(`Project ${title} created`,{exact:true})).toHaveCount(0);
     await page.goto("/learn/projects");
     await expect(page.getByRole("link",{name:new RegExp(title)}).first())
       .toBeVisible();
