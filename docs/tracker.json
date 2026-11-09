@@ -24766,9 +24766,25 @@
             "scope": "Partial recovery and source-contract acceptance for the listed group; not full verification of all assigned route surfaces, CRUD, uploads, exports, responsive states and cross-tenant business workflows.",
             "outstanding": "Full group happy/negative route actions, exhaustive 15-18 assigned surfaces, mutation/API persistence, role/tenant denials and keyboard/mobile verification outside the recovery fixture. UX-G034 standalone groups remain feature-gated.",
             "closure": "DOING; source improvements verified but group-wide DONE gate not met"
+          },
+          {
+            "type": "CI_PARTIAL_ATOMIC_ERROR_RECOVERY_20261109",
+            "runId": 42645807389,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42645807389",
+            "commitSha": "7ed09d1d05ef93d35820a870041d0e61a494f699",
+            "conclusion": "success",
+            "results": "Exact triggering SHA checkout; scoped ESLint, full TypeScript, 34/34 focused Vitest, disposable PostgreSQL 17 seeded College and Learner roles, 9/9 Chromium browser tests at 320px/390px/1280px with zero skip/failure/flaky. New three cases render ten actual atomic first-slice error boundaries and check page identity, safe alternate path, keyboard retry, 44px mobile target, overflow and private synthetic error redaction. Existing 6 cases exercise pre-split fallback and live Learner denial.",
+            "sourceCommits": [
+              "62b2ad3b186fdac0d268d7117c4f92da970f155a",
+              "de9cba5645982b3bdc15f45d9526848bb23dec68",
+              "7ed09d1d05ef93d35820a870041d0e61a494f699"
+            ],
+            "proofDoc": "docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md",
+            "outstanding": "Full atomic group's source/action/state acceptance: production role-authenticated happy paths with persisted business mutations, CRUD/import/export/bulk where applicable; genuine role/tenant negatives and all modal/error/empty/loading states, complete mobile/desktop/keyboard/focus matrix and cross-role regression beyond synthetic fallback.",
+            "closure": "DOING: targeted context/retry UX and genuine role denial are verified, but no comprehensive ten-group functional closure was claimed."
           }
         ],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G225, UX-G226.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.",
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G225, UX-G226.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.\n2026-11-09: exact-SHA run 42645807389 PASS: 34/34 Vitest, 9/9 Chromium, lint/typecheck and isolated PG17; ten current atomic recovery paths keyboard/mobile/desktop validated. Still DOING pending true business workflow/tenant acceptance.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G030",
@@ -24842,9 +24858,25 @@
             "scope": "Partial recovery and source-contract acceptance for the listed group; not full verification of all assigned route surfaces, CRUD, uploads, exports, responsive states and cross-tenant business workflows.",
             "outstanding": "Full group happy/negative route actions, exhaustive 15-18 assigned surfaces, mutation/API persistence, role/tenant denials and keyboard/mobile verification outside the recovery fixture. UX-G034 standalone groups remain feature-gated.",
             "closure": "DOING; source improvements verified but group-wide DONE gate not met"
+          },
+          {
+            "type": "CI_PARTIAL_ATOMIC_ERROR_RECOVERY_20261109",
+            "runId": 42645807389,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42645807389",
+            "commitSha": "7ed09d1d05ef93d35820a870041d0e61a494f699",
+            "conclusion": "success",
+            "results": "Exact triggering SHA checkout; scoped ESLint, full TypeScript, 34/34 focused Vitest, disposable PostgreSQL 17 seeded College and Learner roles, 9/9 Chromium browser tests at 320px/390px/1280px with zero skip/failure/flaky. New three cases render ten actual atomic first-slice error boundaries and check page identity, safe alternate path, keyboard retry, 44px mobile target, overflow and private synthetic error redaction. Existing 6 cases exercise pre-split fallback and live Learner denial.",
+            "sourceCommits": [
+              "62b2ad3b186fdac0d268d7117c4f92da970f155a",
+              "de9cba5645982b3bdc15f45d9526848bb23dec68",
+              "7ed09d1d05ef93d35820a870041d0e61a494f699"
+            ],
+            "proofDoc": "docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md",
+            "outstanding": "Full atomic group's source/action/state acceptance: production role-authenticated happy paths with persisted business mutations, CRUD/import/export/bulk where applicable; genuine role/tenant negatives and all modal/error/empty/loading states, complete mobile/desktop/keyboard/focus matrix and cross-role regression beyond synthetic fallback.",
+            "closure": "DOING: targeted context/retry UX and genuine role denial are verified, but no comprehensive ten-group functional closure was claimed."
           }
         ],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G227, UX-G228.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.",
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G227, UX-G228.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.\n2026-11-09: exact-SHA run 42645807389 PASS: 34/34 Vitest, 9/9 Chromium, lint/typecheck and isolated PG17; ten current atomic recovery paths keyboard/mobile/desktop validated. Still DOING pending true business workflow/tenant acceptance.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G031",
@@ -24916,9 +24948,25 @@
             "scope": "Partial recovery and source-contract acceptance for the listed group; not full verification of all assigned route surfaces, CRUD, uploads, exports, responsive states and cross-tenant business workflows.",
             "outstanding": "Full group happy/negative route actions, exhaustive 15-18 assigned surfaces, mutation/API persistence, role/tenant denials and keyboard/mobile verification outside the recovery fixture. UX-G034 standalone groups remain feature-gated.",
             "closure": "DOING; source improvements verified but group-wide DONE gate not met"
+          },
+          {
+            "type": "CI_PARTIAL_ATOMIC_ERROR_RECOVERY_20261109",
+            "runId": 42645807389,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42645807389",
+            "commitSha": "7ed09d1d05ef93d35820a870041d0e61a494f699",
+            "conclusion": "success",
+            "results": "Exact triggering SHA checkout; scoped ESLint, full TypeScript, 34/34 focused Vitest, disposable PostgreSQL 17 seeded College and Learner roles, 9/9 Chromium browser tests at 320px/390px/1280px with zero skip/failure/flaky. New three cases render ten actual atomic first-slice error boundaries and check page identity, safe alternate path, keyboard retry, 44px mobile target, overflow and private synthetic error redaction. Existing 6 cases exercise pre-split fallback and live Learner denial.",
+            "sourceCommits": [
+              "62b2ad3b186fdac0d268d7117c4f92da970f155a",
+              "de9cba5645982b3bdc15f45d9526848bb23dec68",
+              "7ed09d1d05ef93d35820a870041d0e61a494f699"
+            ],
+            "proofDoc": "docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md",
+            "outstanding": "Full atomic group's source/action/state acceptance: production role-authenticated happy paths with persisted business mutations, CRUD/import/export/bulk where applicable; genuine role/tenant negatives and all modal/error/empty/loading states, complete mobile/desktop/keyboard/focus matrix and cross-role regression beyond synthetic fallback.",
+            "closure": "DOING: targeted context/retry UX and genuine role denial are verified, but no comprehensive ten-group functional closure was claimed."
           }
         ],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G229, UX-G230.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.",
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G229, UX-G230.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.\n2026-11-09: exact-SHA run 42645807389 PASS: 34/34 Vitest, 9/9 Chromium, lint/typecheck and isolated PG17; ten current atomic recovery paths keyboard/mobile/desktop validated. Still DOING pending true business workflow/tenant acceptance.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G032",
@@ -24990,9 +25038,25 @@
             "scope": "Partial recovery and source-contract acceptance for the listed group; not full verification of all assigned route surfaces, CRUD, uploads, exports, responsive states and cross-tenant business workflows.",
             "outstanding": "Full group happy/negative route actions, exhaustive 15-18 assigned surfaces, mutation/API persistence, role/tenant denials and keyboard/mobile verification outside the recovery fixture. UX-G034 standalone groups remain feature-gated.",
             "closure": "DOING; source improvements verified but group-wide DONE gate not met"
+          },
+          {
+            "type": "CI_PARTIAL_ATOMIC_ERROR_RECOVERY_20261109",
+            "runId": 42645807389,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42645807389",
+            "commitSha": "7ed09d1d05ef93d35820a870041d0e61a494f699",
+            "conclusion": "success",
+            "results": "Exact triggering SHA checkout; scoped ESLint, full TypeScript, 34/34 focused Vitest, disposable PostgreSQL 17 seeded College and Learner roles, 9/9 Chromium browser tests at 320px/390px/1280px with zero skip/failure/flaky. New three cases render ten actual atomic first-slice error boundaries and check page identity, safe alternate path, keyboard retry, 44px mobile target, overflow and private synthetic error redaction. Existing 6 cases exercise pre-split fallback and live Learner denial.",
+            "sourceCommits": [
+              "62b2ad3b186fdac0d268d7117c4f92da970f155a",
+              "de9cba5645982b3bdc15f45d9526848bb23dec68",
+              "7ed09d1d05ef93d35820a870041d0e61a494f699"
+            ],
+            "proofDoc": "docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md",
+            "outstanding": "Full atomic group's source/action/state acceptance: production role-authenticated happy paths with persisted business mutations, CRUD/import/export/bulk where applicable; genuine role/tenant negatives and all modal/error/empty/loading states, complete mobile/desktop/keyboard/focus matrix and cross-role regression beyond synthetic fallback.",
+            "closure": "DOING: targeted context/retry UX and genuine role denial are verified, but no comprehensive ten-group functional closure was claimed."
           }
         ],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G231, UX-G232.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.",
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G231, UX-G232.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.\n2026-11-09: exact-SHA run 42645807389 PASS: 34/34 Vitest, 9/9 Chromium, lint/typecheck and isolated PG17; ten current atomic recovery paths keyboard/mobile/desktop validated. Still DOING pending true business workflow/tenant acceptance.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G033",
@@ -25064,9 +25128,25 @@
             "scope": "Partial recovery and source-contract acceptance for the listed group; not full verification of all assigned route surfaces, CRUD, uploads, exports, responsive states and cross-tenant business workflows.",
             "outstanding": "Full group happy/negative route actions, exhaustive 15-18 assigned surfaces, mutation/API persistence, role/tenant denials and keyboard/mobile verification outside the recovery fixture. UX-G034 standalone groups remain feature-gated.",
             "closure": "DOING; source improvements verified but group-wide DONE gate not met"
+          },
+          {
+            "type": "CI_PARTIAL_ATOMIC_ERROR_RECOVERY_20261109",
+            "runId": 42645807389,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42645807389",
+            "commitSha": "7ed09d1d05ef93d35820a870041d0e61a494f699",
+            "conclusion": "success",
+            "results": "Exact triggering SHA checkout; scoped ESLint, full TypeScript, 34/34 focused Vitest, disposable PostgreSQL 17 seeded College and Learner roles, 9/9 Chromium browser tests at 320px/390px/1280px with zero skip/failure/flaky. New three cases render ten actual atomic first-slice error boundaries and check page identity, safe alternate path, keyboard retry, 44px mobile target, overflow and private synthetic error redaction. Existing 6 cases exercise pre-split fallback and live Learner denial.",
+            "sourceCommits": [
+              "62b2ad3b186fdac0d268d7117c4f92da970f155a",
+              "de9cba5645982b3bdc15f45d9526848bb23dec68",
+              "7ed09d1d05ef93d35820a870041d0e61a494f699"
+            ],
+            "proofDoc": "docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md",
+            "outstanding": "Full atomic group's source/action/state acceptance: production role-authenticated happy paths with persisted business mutations, CRUD/import/export/bulk where applicable; genuine role/tenant negatives and all modal/error/empty/loading states, complete mobile/desktop/keyboard/focus matrix and cross-role regression beyond synthetic fallback.",
+            "closure": "DOING: targeted context/retry UX and genuine role denial are verified, but no comprehensive ten-group functional closure was claimed."
           }
         ],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G233, UX-G234.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.",
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G233, UX-G234.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.\n2026-11-09: exact-SHA run 42645807389 PASS: 34/34 Vitest, 9/9 Chromium, lint/typecheck and isolated PG17; ten current atomic recovery paths keyboard/mobile/desktop validated. Still DOING pending true business workflow/tenant acceptance.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G034",
@@ -25129,9 +25209,25 @@
             "latestBrowserResult": "PENDING at recording",
             "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
             "done": false
+          },
+          {
+            "type": "CI_PARTIAL_ATOMIC_ERROR_RECOVERY_20261109",
+            "runId": 42645807389,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42645807389",
+            "commitSha": "7ed09d1d05ef93d35820a870041d0e61a494f699",
+            "conclusion": "success",
+            "results": "Exact triggering SHA checkout; scoped ESLint, full TypeScript, 34/34 focused Vitest, disposable PostgreSQL 17 seeded College and Learner roles, 9/9 Chromium browser tests at 320px/390px/1280px with zero skip/failure/flaky. New three cases render ten actual atomic first-slice error boundaries and check page identity, safe alternate path, keyboard retry, 44px mobile target, overflow and private synthetic error redaction. Existing 6 cases exercise pre-split fallback and live Learner denial.",
+            "sourceCommits": [
+              "62b2ad3b186fdac0d268d7117c4f92da970f155a",
+              "de9cba5645982b3bdc15f45d9526848bb23dec68",
+              "7ed09d1d05ef93d35820a870041d0e61a494f699"
+            ],
+            "proofDoc": "docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md",
+            "outstanding": "Full atomic group's source/action/state acceptance: production role-authenticated happy paths with persisted business mutations, CRUD/import/export/bulk where applicable; genuine role/tenant negatives and all modal/error/empty/loading states, complete mobile/desktop/keyboard/focus matrix and cross-role regression beyond synthetic fallback.",
+            "closure": "DOING: targeted context/retry UX and genuine role denial are verified, but no comprehensive ten-group functional closure was claimed."
           }
         ],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G235, UX-G236.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.",
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G235, UX-G236.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.\n2026-11-09: exact-SHA run 42645807389 PASS: 34/34 Vitest, 9/9 Chromium, lint/typecheck and isolated PG17; ten current atomic recovery paths keyboard/mobile/desktop validated. Still DOING pending true business workflow/tenant acceptance.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G035",
@@ -25286,9 +25382,25 @@
             "latestBrowserResult": "PENDING at recording",
             "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
             "done": false
+          },
+          {
+            "type": "CI_PARTIAL_ATOMIC_ERROR_RECOVERY_20261109",
+            "runId": 42645807389,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42645807389",
+            "commitSha": "7ed09d1d05ef93d35820a870041d0e61a494f699",
+            "conclusion": "success",
+            "results": "Exact triggering SHA checkout; scoped ESLint, full TypeScript, 34/34 focused Vitest, disposable PostgreSQL 17 seeded College and Learner roles, 9/9 Chromium browser tests at 320px/390px/1280px with zero skip/failure/flaky. New three cases render ten actual atomic first-slice error boundaries and check page identity, safe alternate path, keyboard retry, 44px mobile target, overflow and private synthetic error redaction. Existing 6 cases exercise pre-split fallback and live Learner denial.",
+            "sourceCommits": [
+              "62b2ad3b186fdac0d268d7117c4f92da970f155a",
+              "de9cba5645982b3bdc15f45d9526848bb23dec68",
+              "7ed09d1d05ef93d35820a870041d0e61a494f699"
+            ],
+            "proofDoc": "docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md",
+            "outstanding": "Full atomic group's source/action/state acceptance: production role-authenticated happy paths with persisted business mutations, CRUD/import/export/bulk where applicable; genuine role/tenant negatives and all modal/error/empty/loading states, complete mobile/desktop/keyboard/focus matrix and cross-role regression beyond synthetic fallback.",
+            "closure": "DOING: targeted context/retry UX and genuine role denial are verified, but no comprehensive ten-group functional closure was claimed."
           }
         ],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G237, UX-G238, UX-G239.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.",
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G237, UX-G238, UX-G239.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.\n2026-11-09: exact-SHA run 42645807389 PASS: 34/34 Vitest, 9/9 Chromium, lint/typecheck and isolated PG17; ten current atomic recovery paths keyboard/mobile/desktop validated. Still DOING pending true business workflow/tenant acceptance.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G037",
@@ -25352,9 +25464,25 @@
             "latestBrowserResult": "PENDING at recording",
             "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
             "done": false
+          },
+          {
+            "type": "CI_PARTIAL_ATOMIC_ERROR_RECOVERY_20261109",
+            "runId": 42645807389,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42645807389",
+            "commitSha": "7ed09d1d05ef93d35820a870041d0e61a494f699",
+            "conclusion": "success",
+            "results": "Exact triggering SHA checkout; scoped ESLint, full TypeScript, 34/34 focused Vitest, disposable PostgreSQL 17 seeded College and Learner roles, 9/9 Chromium browser tests at 320px/390px/1280px with zero skip/failure/flaky. New three cases render ten actual atomic first-slice error boundaries and check page identity, safe alternate path, keyboard retry, 44px mobile target, overflow and private synthetic error redaction. Existing 6 cases exercise pre-split fallback and live Learner denial.",
+            "sourceCommits": [
+              "62b2ad3b186fdac0d268d7117c4f92da970f155a",
+              "de9cba5645982b3bdc15f45d9526848bb23dec68",
+              "7ed09d1d05ef93d35820a870041d0e61a494f699"
+            ],
+            "proofDoc": "docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md",
+            "outstanding": "Full atomic group's source/action/state acceptance: production role-authenticated happy paths with persisted business mutations, CRUD/import/export/bulk where applicable; genuine role/tenant negatives and all modal/error/empty/loading states, complete mobile/desktop/keyboard/focus matrix and cross-role regression beyond synthetic fallback.",
+            "closure": "DOING: targeted context/retry UX and genuine role denial are verified, but no comprehensive ten-group functional closure was claimed."
           }
         ],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G240, UX-G241.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.",
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G240, UX-G241.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.\n2026-11-09: exact-SHA run 42645807389 PASS: 34/34 Vitest, 9/9 Chromium, lint/typecheck and isolated PG17; ten current atomic recovery paths keyboard/mobile/desktop validated. Still DOING pending true business workflow/tenant acceptance.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G038",
@@ -25414,9 +25542,25 @@
             "latestBrowserResult": "PENDING at recording",
             "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
             "done": false
+          },
+          {
+            "type": "CI_PARTIAL_ATOMIC_ERROR_RECOVERY_20261109",
+            "runId": 42645807389,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42645807389",
+            "commitSha": "7ed09d1d05ef93d35820a870041d0e61a494f699",
+            "conclusion": "success",
+            "results": "Exact triggering SHA checkout; scoped ESLint, full TypeScript, 34/34 focused Vitest, disposable PostgreSQL 17 seeded College and Learner roles, 9/9 Chromium browser tests at 320px/390px/1280px with zero skip/failure/flaky. New three cases render ten actual atomic first-slice error boundaries and check page identity, safe alternate path, keyboard retry, 44px mobile target, overflow and private synthetic error redaction. Existing 6 cases exercise pre-split fallback and live Learner denial.",
+            "sourceCommits": [
+              "62b2ad3b186fdac0d268d7117c4f92da970f155a",
+              "de9cba5645982b3bdc15f45d9526848bb23dec68",
+              "7ed09d1d05ef93d35820a870041d0e61a494f699"
+            ],
+            "proofDoc": "docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md",
+            "outstanding": "Full atomic group's source/action/state acceptance: production role-authenticated happy paths with persisted business mutations, CRUD/import/export/bulk where applicable; genuine role/tenant negatives and all modal/error/empty/loading states, complete mobile/desktop/keyboard/focus matrix and cross-role regression beyond synthetic fallback.",
+            "closure": "DOING: targeted context/retry UX and genuine role denial are verified, but no comprehensive ten-group functional closure was claimed."
           }
         ],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G242, UX-G243.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.",
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G242, UX-G243.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.\n2026-11-09: exact-SHA run 42645807389 PASS: 34/34 Vitest, 9/9 Chromium, lint/typecheck and isolated PG17; ten current atomic recovery paths keyboard/mobile/desktop validated. Still DOING pending true business workflow/tenant acceptance.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G039",
@@ -25474,9 +25618,25 @@
             "latestBrowserResult": "PENDING at recording",
             "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
             "done": false
+          },
+          {
+            "type": "CI_PARTIAL_ATOMIC_ERROR_RECOVERY_20261109",
+            "runId": 42645807389,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42645807389",
+            "commitSha": "7ed09d1d05ef93d35820a870041d0e61a494f699",
+            "conclusion": "success",
+            "results": "Exact triggering SHA checkout; scoped ESLint, full TypeScript, 34/34 focused Vitest, disposable PostgreSQL 17 seeded College and Learner roles, 9/9 Chromium browser tests at 320px/390px/1280px with zero skip/failure/flaky. New three cases render ten actual atomic first-slice error boundaries and check page identity, safe alternate path, keyboard retry, 44px mobile target, overflow and private synthetic error redaction. Existing 6 cases exercise pre-split fallback and live Learner denial.",
+            "sourceCommits": [
+              "62b2ad3b186fdac0d268d7117c4f92da970f155a",
+              "de9cba5645982b3bdc15f45d9526848bb23dec68",
+              "7ed09d1d05ef93d35820a870041d0e61a494f699"
+            ],
+            "proofDoc": "docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md",
+            "outstanding": "Full atomic group's source/action/state acceptance: production role-authenticated happy paths with persisted business mutations, CRUD/import/export/bulk where applicable; genuine role/tenant negatives and all modal/error/empty/loading states, complete mobile/desktop/keyboard/focus matrix and cross-role regression beyond synthetic fallback.",
+            "closure": "DOING: targeted context/retry UX and genuine role denial are verified, but no comprehensive ten-group functional closure was claimed."
           }
         ],
-        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G244, UX-G245.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.",
+        "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G244, UX-G245.\n2026-11-09 atomic-slice recovery pass: route identity/retry-safe-exit and mobile focus/touch improvements committed at 62b2ad3; real atomic-boundary keyboard/redaction/responsive tests at de9cba5; operational controls + strict typecheck unblock at 7ed09d1. Exact-SHA workflow 42645807389 has passed lint, TypeScript, focused unit and isolated PostgreSQL setup; Chromium acceptance in progress at time of this note. Group remains DOING; no production CRUD, export, bulk or cross-tenant workflows accepted by fixture proof. Evidence register docs/parity/pages/college/UX-G030-G040-atomic-recovery-20261109.md.\n2026-11-09: exact-SHA run 42645807389 PASS: 34/34 Vitest, 9/9 Chromium, lint/typecheck and isolated PG17; ten current atomic recovery paths keyboard/mobile/desktop validated. Still DOING pending true business workflow/tenant acceptance.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G040",
