@@ -7,6 +7,7 @@ on:
       - 'src/app/e2e/ux-tpo-ten-recovery/**'
       - 'tests/unit/ux-tpo-ten-recovery.test.ts'
       - 'tests/e2e/ux-tpo-ten-recovery.spec.ts'
+      - 'tests/integration/ux-g098-audit-persisted-scope.test.ts'
       - '.github/workflows/ux-tpo-ten-recovery-acceptance.yml'
 permissions:
   contents: read
@@ -63,6 +64,10 @@ jobs:
           ALLOW_TEST_SEED: I_ACCEPT
           UX_ROLE_MEMBERSHIPS_ONLY: '1'
         run: npx tsx scripts/seed-test-tenants.ts
+      - name: G098 persisted two-college actor audit and CSV evidence
+        env:
+          DB10_ISOLATED_TEST_DATABASE: '1'
+        run: npx vitest run tests/integration/ux-g098-audit-persisted-scope.test.ts --maxWorkers=1
       - name: Ephemeral auth keys
         shell: bash
         run: |
@@ -74,7 +79,7 @@ jobs:
       - name: Browser desktop/mobile and learner denial, no skips/flakes
         run: |
           npx playwright test tests/e2e/ux-tpo-ten-recovery.spec.ts --project=chromium --workers=2 --reporter=line,json
-          node -e 'const s=require("./ux-tpo-ten-results.json").stats; console.log(s); if(s.expected!==76||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
+          node -e 'const s=require("./ux-tpo-ten-results.json").stats; console.log(s); if(s.expected!==84||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
       - name: Keep screenshots, logs and traces
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

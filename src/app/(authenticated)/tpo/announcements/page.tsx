@@ -61,15 +61,19 @@ export default async function TpoAnnouncements({searchParams}:Props){
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  await requirePersistedTpoMembership(context,context.membership.collegeId);
  const raw=await searchParams;
- const scalarKeys=["tab","page","mine","audience","targetId","notice","compose"] as const;
- if(scalarKeys.some(key=>Array.isArray(raw[key])))
+ const scalarKeys=["tab","page","mine","audience","targetId","notice","compose","noticeError","sentNotice","noticeSuccess"] as const;
+ const allowedKeys=new Set<string>([...scalarKeys,"targetIds"]);
+ if(Object.keys(raw).some(key=>!allowedKeys.has(key))||scalarKeys.some(key=>Array.isArray(raw[key])))
   return <div className="min-w-0 space-y-4"><PageHeader title="Announcements"/><Alert tone="error">Invalid announcement filters. <Link href="/tpo/announcements">Return to announcements</Link></Alert></div>;
  const t=Array.isArray(raw.tab)?raw.tab[0]:raw.tab;
  const legacyTab=t==="from42"?"from-42":t==="students"?"yours":t;
  const tab=tpoAnnouncementTabSchema.safeParse(legacyTab??"yours");
  if(!tab.success)return <div className="min-w-0 space-y-4"><PageHeader title="Announcements"/><Alert tone="error">Invalid tab. <Link href="/tpo/announcements">Return to announcements</Link></Alert></div>;
  const pageValue=Array.isArray(raw.page)?raw.page[0]:raw.page;
- const page=pageValue&&/^[1-9][0-9]{0,3}$/.test(pageValue)?Math.min(1000,Number(pageValue)):1;
+ if((pageValue!==undefined&&!/^[1-9][0-9]{0,3}$/.test(pageValue))||
+   (raw.mine!==undefined&&raw.mine!=="0"&&raw.mine!=="1"))
+  return <div className="min-w-0 space-y-4"><PageHeader title="Announcements"/><Alert tone="error">Invalid announcement filters. <Link href="/tpo/announcements">Return to announcements</Link></Alert></div>;
+ const page=pageValue?Math.min(1000,Number(pageValue)):1;
  const showTeam=raw.mine==="0";
  if(raw.compose!==undefined&&raw.compose!=="1")return <div className="min-w-0 space-y-4"><PageHeader title="Announcements"/><Alert tone="error">Invalid compose selection. <Link href="/tpo/announcements">Reset</Link></Alert></div>;
  if(raw.notice!==undefined&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(raw.notice)))

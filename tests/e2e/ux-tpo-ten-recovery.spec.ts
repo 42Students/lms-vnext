@@ -228,3 +228,38 @@ test.describe("UX-G098 authenticated audit filter boundaries and privileged CSV 
     }
   }
 });
+
+
+test.describe("UX-G098 persisted actor audit and announcement search boundary",()=>{
+  test.skip(process.env.E2E_AUTH_ENABLED!=="true"||!process.env.E2E_AUTH_SECRET,
+    "Requires the disposable two-college audit fixture, seeded before Playwright");
+  const subject="ux-g098-ci-alpha-event";
+  for(const size of dimensions){
+    test("UX-G098 "+size.name+" reads a persisted audit event and retains its scoped export filters",async({page,context},info)=>{
+      test.setTimeout(120_000);
+      await authenticateGracefulRole(context,"tpo");
+      await page.setViewportSize(size);
+      await page.goto("/tpo/audit/actors?entityType=ux_g098_evidence&entityId="+subject,
+        {waitUntil:"domcontentloaded"});
+      await expect(page.getByText("1 matching canonical record(s)")).toBeVisible();
+      await expect(page.getByText(subject,{exact:true})).toBeVisible();
+      await expect(page.locator("body")).not.toContainText("ux-g098-ci-beta-event");
+      const exportLink=page.getByRole("link",{name:/Export matching CSV/});
+      await expect(exportLink).toHaveAttribute("href",/entityId=ux-g098-ci-alpha-event/);
+      await expect(exportLink).toHaveAttribute("href",/entityType=ux_g098_evidence/);
+      await noHorizontalOverflow(page);
+      await page.screenshot({path:info.outputPath("G098-"+size.name+"-persisted-actor-audit.png"),fullPage:true});
+    });
+    for(const search of ["page=bad","mine=other","collegeId=00000000-0000-4000-8000-000000000000"]){
+      test("UX-G098 "+size.name+" announcement query "+search+" never silently changes the requested view",async({page,context})=>{
+        test.setTimeout(120_000);
+        await authenticateGracefulRole(context,"tpo");
+        await page.setViewportSize(size);
+        await page.goto("/tpo/announcements?"+search,{waitUntil:"domcontentloaded"});
+        await expect(page.getByText("Invalid announcement filters",{exact:false}).first()).toBeVisible();
+        await expect(page.getByRole("link",{name:"Return to announcements"})).toHaveAttribute("href","/tpo/announcements");
+        await noHorizontalOverflow(page);
+      });
+    }
+  }
+});

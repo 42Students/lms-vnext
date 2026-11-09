@@ -91,4 +91,11 @@ describe("Ten-group TPO recovery, 173 registered surfaces", () => {
     }
   });
 
+  it("G098 announcements does not silently reset a malformed page or forged team selector",()=>{
+    const source=read(base+"announcements/page.tsx");
+    expect(source).toContain('raw.mine!=="0"&&raw.mine!=="1"');
+    expect(source).toContain("pageValue!==undefined");
+    expect(source).toContain("Object.keys(raw).some(key=>!allowedKeys.has(key))");
+  });
+
 });
