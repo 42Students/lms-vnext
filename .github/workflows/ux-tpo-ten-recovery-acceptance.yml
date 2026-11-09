@@ -51,7 +51,7 @@ jobs:
       - name: Confirm exact commit, lint and full TypeScript
         run: |
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
-          npx eslint src/app/e2e/ux-tpo-ten-recovery tests/unit/ux-tpo-ten-recovery.test.ts tests/e2e/ux-tpo-ten-recovery.spec.ts
+          npx eslint src/app/e2e/ux-tpo-ten-recovery tests/unit/ux-tpo-ten-recovery.test.ts tests/e2e/ux-tpo-ten-recovery.spec.ts tests/integration/ux-g098-audit-persisted-scope.test.ts
           npm run typecheck
       - name: TPO security and recovery unit contracts
         run: |
