@@ -9,6 +9,7 @@ on:
       - 'src/components/tracker/independent-finding-actions.tsx'
       - 'src/components/tracker/tracker-workflow-panel.tsx'
       - 'src/components/tracker/known-errors-workspace.tsx'
+      - 'src/components/tracker/tracker-live-logs-explorer.tsx'
       - 'src/components/tracker/tracker-quick-report-launcher.tsx'
       - 'tests/unit/ux-g161-finding-actions-recovery.test.ts'
       - 'tests/unit/ux-five-group-batch-20261107.test.ts'
@@ -65,6 +66,7 @@ jobs:
             src/components/tracker/independent-finding-actions.tsx \
             src/components/tracker/tracker-workflow-panel.tsx \
             src/components/tracker/known-errors-workspace.tsx \
+            src/components/tracker/tracker-live-logs-explorer.tsx \
             src/components/tracker/tracker-quick-report-launcher.tsx
           npm run typecheck
           npx vitest run tests/unit/ux-g161-finding-actions-recovery.test.ts \
@@ -85,7 +87,7 @@ jobs:
       - name: Run actual G161 seeded workflows and role negatives
         run: |
           npx playwright test tests/e2e/ux-g161-scoped-browser.spec.ts --project=chromium --reporter=line,json
-          node -e 'const s=require("./ux-g161-scoped-results.json").stats;if(s.expected!==4||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
+          node -e 'const s=require("./ux-g161-scoped-results.json").stats;if(s.expected!==6||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
       - name: Preserve desktop/mobile screenshots and errors
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

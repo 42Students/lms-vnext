@@ -93,6 +93,22 @@ describe("UX-G161 finding editor recovery contract",()=>{
   expect(finding).toContain("if(lock.current||stale)return;");
   expect(finding).toContain(">Refresh finding</Button>");
  });
+ it("does not imply old provider logs are current after an unconfigured response",()=>{
+  const logs=source("tracker-live-logs-explorer.tsx");
+  expect(logs).toContain("setItems(previous=>!result.configured?[]");
+  expect(logs).toContain("setNextPage(result.configured?result.nextPageToken:null)");
+  expect(logs).toContain("Filters have changed. The displayed entries are from the last applied query");
+  expect(logs).toContain("if(filtersDirty){setNotice");
+  expect(logs).toContain("disabled={pending||exporting||filtersDirty||configured!==true}");
+ });
+ it("quarantines potentially committed mute writes instead of retrying stale state",()=>{
+  const logs=source("tracker-live-logs-explorer.tsx");
+  expect(logs).toContain("if(!muteTarget||mutating||muteNeedsReload)return;");
+  expect(logs).toContain("error.status===0||error.status===408||error.status>=500");
+  expect(logs).toContain("setMuteNeedsReload(true)");
+  expect(logs).toContain("confirmDisabled={muteNeedsReload}");
+  expect(logs).toContain("Reload logs before trying another mute action.");
+ });
  it("keeps server version checking and mutation confirmation intact",()=>{
   const actions=source("independent-finding-actions.tsx");
   expect(actions).toContain('expectedVersion:version');
