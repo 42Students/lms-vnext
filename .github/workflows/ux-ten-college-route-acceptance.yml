@@ -22,6 +22,9 @@ on:
       - 'src/app/(authenticated)/college/projects/audit/error.tsx'
       - 'src/app/e2e/ux-ten-college-recovery/page.tsx'
       - 'src/components/ux/ux-ten-college-atomic-recovery-preview.tsx'
+      - 'src/app/(authenticated)/college/batch-promotion/page.tsx'
+      - 'src/app/(authenticated)/college/companies/page.tsx'
+      - 'src/components/tracker/known-errors-workspace.tsx'
       - 'tests/unit/ux-ten-college-atomic-recovery.test.ts'
       - 'tests/e2e/ux-ten-college-atomic-recovery.spec.ts'
       - 'tests/unit/ux-ten-college-route-recovery.test.ts'
@@ -31,7 +34,7 @@ permissions:
   contents: read
 concurrency:
   group: ux-ten-college-route-main
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
   college-recovery:
     runs-on: ubuntu-latest
@@ -71,6 +74,7 @@ jobs:
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           npx eslint 'src/app/(authenticated)/college/batch-promotion/error.tsx' 'src/app/(authenticated)/college/college-profile/error.tsx' 'src/app/(authenticated)/college/courses/error.tsx' 'src/app/(authenticated)/college/electives/[slotId]/allocate/error.tsx' 'src/app/(authenticated)/college/groups/error.tsx' 'src/app/(authenticated)/college/lecture-halls/[hallId]/loading.tsx' 'src/app/(authenticated)/college/placements/jobs/[jobId]/error.tsx' 'src/app/(authenticated)/college/placements/new/error.tsx' 'src/app/(authenticated)/college/projects/error.tsx' 'src/app/(authenticated)/college/projects/audit/error.tsx' src/components/ux/ux-ten-college-recovery-preview.tsx src/app/e2e/ux-ten-college-recovery/page.tsx tests/unit/ux-ten-college-route-recovery.test.ts tests/e2e/ux-ten-college-route-recovery.spec.ts
           npx eslint src/components/ux/ux-ten-college-atomic-recovery-preview.tsx tests/unit/ux-ten-college-atomic-recovery.test.ts tests/e2e/ux-ten-college-atomic-recovery.spec.ts
+          npx eslint 'src/app/(authenticated)/college/batch-promotion/page.tsx' 'src/app/(authenticated)/college/companies/page.tsx' 'src/app/(authenticated)/college/companies/error.tsx' 'src/app/(authenticated)/college/courses/offerings/[offeringId]/error.tsx' 'src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/error.tsx' 'src/app/(authenticated)/college/groups/[groupId]/import-preview/error.tsx' 'src/app/(authenticated)/college/lecture-halls/[hallId]/error.tsx' 'src/app/(authenticated)/college/placements/jobs/[jobId]/applications/error.tsx' 'src/app/(authenticated)/college/placements/readiness-by-department/error.tsx' 'src/app/(authenticated)/college/projects/[projectId]/[section]/error.tsx' src/components/tracker/known-errors-workspace.tsx
           npm run typecheck
       - name: Focused route recovery unit and guard tests
         run: npx vitest run tests/unit/ux-ten-college-route-recovery.test.ts tests/unit/ux-ten-college-atomic-recovery.test.ts

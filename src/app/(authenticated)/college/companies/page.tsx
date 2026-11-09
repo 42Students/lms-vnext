@@ -95,7 +95,7 @@ export default async function CollegeCompaniesPage({
         <Input name="q" type="search" form="college-company-filters" maxLength={100}
           placeholder="Search by name or industry" defaultValue={query.q} className="min-h-11 w-full min-w-0 md:min-h-9 md:w-[260px]" />
         {query.q?<TextLink href={collegeCompaniesHref({...query,q:"",page:1})}
-          className="text-xs">Clear search</TextLink>:null}
+          className="inline-flex min-h-11 items-center md:min-h-9 text-xs">Clear search</TextLink>:null}
       </Label>}
       action={<Button variant="primary" type="submit" form="college-company-filters" className="min-h-11 md:min-h-9">Filter</Button>}>
       <form id="college-company-filters" method="get" className="grid min-w-0 gap-[8px] md:grid-cols-2 xl:grid-cols-4" aria-label="Filter companies">

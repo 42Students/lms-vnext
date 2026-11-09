@@ -69,14 +69,13 @@ function KnownErrorCard({ item }: { item: KnownError }) {
         setNeedsReload(true);
         setConfirmMute(false);
       }
+      const safeFailureMessage = error instanceof FriendlyFetchError
+        ? error.message : friendlyApiError({});
       showToast({
         tone: "error", title: uncertain?"Known error outcome uncertain":"Known error update failed",
         description: uncertain
           ?"The update may have been saved. Reload known errors before trying again."
-          :error instanceof FriendlyFetchError
-            ?error.message
-            :error instanceof Error && error.message === FRIENDLY_MESSAGES.timeout
-              ?FRIENDLY_MESSAGES.timeout:friendlyApiError({}),
+          :safeFailureMessage,
       });
     }
   }

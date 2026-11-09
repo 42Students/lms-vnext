@@ -35,6 +35,14 @@ describe("Ten atomic DOING College Admin UX recovery groups",()=>{
   expect(project).toContain('type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"');
   expect(project).toContain('href="/college/projects" className="w-full sm:w-auto"');
  });
+ it("touch-size operational recovery, search and pagination links for active College Admin work",()=>{
+  const promotion=readFileSync(root+"batch-promotion/page.tsx","utf8");
+  expect(promotion).toContain('className="ml-2 inline-flex min-h-11 items-center md:min-h-9">Retry');
+  expect(promotion).toContain('className="inline-flex min-h-11 items-center md:min-h-9">Previous');
+  expect(promotion).toContain('className="inline-flex min-h-11 items-center md:min-h-9">Next');
+  const companies=readFileSync(root+"companies/page.tsx","utf8");
+  expect(companies).toContain('className="inline-flex min-h-11 items-center md:min-h-9 text-xs">Clear search');
+ });
  it("atomic browser preview is included in the development-only fixture",()=>{
   const page=readFileSync("src/app/e2e/ux-ten-college-recovery/page.tsx","utf8");
   expect(page).toContain("UXTenCollegeAtomicRecoveryPreview");

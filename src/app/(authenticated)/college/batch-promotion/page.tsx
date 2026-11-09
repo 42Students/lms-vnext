@@ -130,7 +130,7 @@ export default async function CollegeBatchPromotionPage({
     <Alert tone="info">Promotion moves the entire batch to the next semester. Check mapped courses and faculty assignments before promoting.</Alert>
     {previewError?<Alert tone="warning">
       Could not verify this promotion. Please retry. Existing batch records remain available below.
-      <TextLink href="/college/batch-promotion" className="ml-2">Retry</TextLink>
+      <TextLink href="/college/batch-promotion" className="ml-2 inline-flex min-h-11 items-center md:min-h-9">Retry</TextLink>
     </Alert>:null}
     <section aria-label="College batch directory" className="min-w-0 space-y-3">
       <Heading level={2} size="lg" className="text-[var(--lms-heading)]">Batch Promotion</Heading>
@@ -186,8 +186,8 @@ export default async function CollegeBatchPromotionPage({
             </Label>
             <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Apply</Button>
           </form>
-          {currentBatchPage>1?<TextLink href={currentUrl(currentBatchPage-1)}>Previous</TextLink>:null}
-          {currentBatchPage<totalBatchPages?<TextLink href={currentUrl(currentBatchPage+1)}>Next</TextLink>:null}
+          {currentBatchPage>1?<TextLink href={currentUrl(currentBatchPage-1)} className="inline-flex min-h-11 items-center md:min-h-9">Previous</TextLink>:null}
+          {currentBatchPage<totalBatchPages?<TextLink href={currentUrl(currentBatchPage+1)} className="inline-flex min-h-11 items-center md:min-h-9">Next</TextLink>:null}
         </div>
       </div>
     </section>
