@@ -125,7 +125,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
       <span className="sr-only">Search contacts</span>
       <CollegeContactsLiveSearch value={filter.q}/>
      </Label>
-     {filter.q?<TextLink href={collegeContactsHref({...filter,q:"",page:1})} className="inline-flex min-h-9 items-center">Clear search</TextLink>:null}
+     {filter.q?<TextLink href={collegeContactsHref({...filter,q:"",page:1})} className="inline-flex min-h-11 items-center md:min-h-9">Clear search</TextLink>:null}
     </div>}>
   <form id="college-contacts-filters" action="/college/contacts" method="get" aria-label="Filter college contacts" className="flex min-w-0 flex-wrap items-end gap-[8px]">
    <Input type="hidden" name="tab" value={filter.tab}/>
