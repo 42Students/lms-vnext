@@ -246,7 +246,7 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
         onDismiss={()=>{if(!pending)setOperation(null);}}
         className="absolute bottom-full right-0 z-(--lms-z-shell) mb-2 w-[320px] max-w-[calc(100vw_-_2rem)] space-y-3">
         <p className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
-         Remove this template from {selected.length} selected colleges?
+         Remove this template from {selected.length} selected {selected.length===1?"college":"colleges"}?
         </p>
         <p className="m-0 text-xs text-muted-foreground">
          Existing workspaces remain unchanged.
@@ -278,8 +278,8 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
     open={operation==="assign"}
     onOpenChange={open=>{if(!open&&!pending)setOperation(null);}}
     title={operation==="remove"
-     ?"Remove this template from "+selected.length+" selected colleges?"
-     :"Assign template to "+selected.length+" selected colleges?"}
+     ?"Remove this template from "+selected.length+" selected "+(selected.length===1?"college":"colleges")+"?"
+     :"Assign template to "+selected.length+" selected "+(selected.length===1?"college":"colleges")+"?"}
     description="Existing workspaces remain unchanged."
     confirmLabel={operation==="remove"?"Remove selected":"Assign selected"}
     confirmVariant={operation==="remove"?"danger":"primary"}
