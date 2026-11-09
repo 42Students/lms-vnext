@@ -82,7 +82,7 @@ async function createPublishedOpportunity(
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: "New placement opportunity",
+      name: "Create drive",
     }),
   ).toBeVisible();
 
