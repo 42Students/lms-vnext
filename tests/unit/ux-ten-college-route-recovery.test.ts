@@ -83,6 +83,27 @@ describe("UX-G030–G040 scoped College Admin recovery",()=>{
     expect(code).toContain("min-h-11");
     expect(code).toContain("collegeCourseCatalogueQuerySchema.safeParse");
   });
+  it("UX-G030 recovery for failed period reads is touch accessible",()=>{
+    const code=route("batches/page.tsx");
+    expect(code).toContain('className="ml-2 inline-flex min-h-11 items-center md:min-h-9">Retry periods');
+    expect(code).toContain('periodRead.status==="rejected"');
+  });
+  it("UX-G031 contact clear-search action meets mobile touch target",()=>{
+    const code=route("contacts/page.tsx");
+    expect(code).toContain('min-h-11 items-center md:min-h-9">Clear search');
+    expect(code).toContain("Student contact details are masked");
+  });
+  it("UX-G033 elective allocation denied-state provides a touch-sized safe exit",()=>{
+    const code=route("electives/[slotId]/allocate/page.tsx");
+    expect(code).toContain('href="/college/electives" className="inline-flex min-h-11 items-center md:min-h-9"');
+    expect(code).toContain('hasMembershipRole(actor,"COLLEGE_ADMIN")');
+  });
+  it("UX-G034 empty-state copy does not conflate study groups and other types",()=>{
+    const code=route("groups/page.tsx");
+    expect(code).toContain("No study groups have been created in this college yet.");
+    expect(code).toContain("Choose All types");
+    expect(code).toContain('process.env["COLLEGE_STUDY_GROUPS_RELEASED"] !== "true"');
+  });
   it("does not remove College Admin role guard",()=>{
     const code=route("placements/new/page.tsx");
     expect(code).toContain("hasMembershipRole(");
