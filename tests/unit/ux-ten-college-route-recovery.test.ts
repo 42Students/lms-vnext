@@ -75,6 +75,14 @@ describe("UX-G030–G040 scoped College Admin recovery",()=>{
       expect(route(file)).toContain("md:min-h-9");
     }
   });
+  it("UX-G032 shows an accessible recovery path when course URL filters are invalid",()=>{
+    const code=route("courses/page.tsx");
+    expect(code).toContain("!parsedCatalogue.success");
+    expect(code).toContain("Invalid course filters were ignored.");
+    expect(code).toContain('href="/college/courses"');
+    expect(code).toContain("min-h-11");
+    expect(code).toContain("collegeCourseCatalogueQuerySchema.safeParse");
+  });
   it("does not remove College Admin role guard",()=>{
     const code=route("placements/new/page.tsx");
     expect(code).toContain("hasMembershipRole(");
