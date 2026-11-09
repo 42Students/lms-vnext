@@ -155,3 +155,34 @@ test.describe("UX-G098 and G102 real route recovery on operational pages",()=>{
     }
   }
 });
+
+
+test.describe("UX-G098–G102 actual authorized TPO page shells and empty/error recovery",()=>{
+  test.skip(process.env.E2E_AUTH_ENABLED!=="true"||!process.env.E2E_AUTH_SECRET,
+    "Requires seeded TPO identity and disposable PostgreSQL");
+  const routes=[
+    ["UX-G098","/tpo/announcements"],
+    ["UX-G098","/tpo/audit"],
+    ["UX-G098","/tpo/batches"],
+    ["UX-G100","/tpo/calendar"],
+    ["UX-G101","/tpo/calendar/interviews"],
+    ["UX-G101","/tpo/companies?directory=1"],
+    ["UX-G102","/tpo/companies/archived"],
+    ["UX-G102","/tpo/drive-day"],
+  ] as const;
+  for(const size of dimensions){
+    for(const [group,path] of routes){
+      test(group+" "+size.name+" normal page "+path+" remains navigable for TPO",async({page,context},info)=>{
+        test.setTimeout(120_000);
+        await authenticateGracefulRole(context,"tpo");
+        await page.setViewportSize(size);
+        await page.goto(path,{waitUntil:"domcontentloaded"});
+        await expect(page).toHaveURL(/\/tpo\//);
+        await expect(page.locator("h1").first()).toBeVisible();
+        await expect(page.locator("body")).not.toContainText("Application error: a server-side exception");
+        await noHorizontalOverflow(page);
+        await page.screenshot({path:info.outputPath(group+"-"+size.name+"-"+path.replace(/[^a-z0-9]/gi,"-")+".png"),fullPage:true});
+      });
+    }
+  }
+});
