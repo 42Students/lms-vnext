@@ -127,7 +127,15 @@ test.describe("Projects browser regression", () => {
     await authenticate(context,"seed-learner",SEED_IDS.learnerCollegeAMembership);
     await page.goto(`/college/projects/audit?subjectType=project&subjectId=${encodeURIComponent(id!)}`);
     await expect(page.getByRole("row").filter({hasText:title})).toHaveCount(0);
-    await page.goto("/learn/projects/"+id+"?tab=overview",{waitUntil:"commit"});
+    const learnerProjectUrl="/learn/projects/"+id+"?tab=overview";
+    try {
+      await page.goto(learnerProjectUrl,{waitUntil:"domcontentloaded"});
+    } catch(error) {
+      // Next dev can abort an RSC stream during the cookie-scoped role handoff.
+      // Retry the document navigation; the route and its page assertions remain required.
+      if (!(error instanceof Error) || !error.message.includes("ERR_ABORTED")) throw error;
+      await page.goto(learnerProjectUrl,{waitUntil:"domcontentloaded"});
+    }
     await expect(page.getByRole("heading",{level:1,name:title})).toBeVisible();
     await expect(page.getByRole("button",{name:"Add teammate"})).toHaveCount(0);
 

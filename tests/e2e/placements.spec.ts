@@ -111,7 +111,7 @@ async function createPublishedOpportunity(
       "End-to-end placement browser acceptance role.",
     );
   await page
-    .getByLabel("Locations")
+    .getByLabel("Location")
     .fill("Hyderabad");
   await page
     .getByLabel("Minimum CGPA")
