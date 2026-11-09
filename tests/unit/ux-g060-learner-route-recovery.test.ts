@@ -90,7 +90,9 @@ describe("UX-G060: learner route-state recovery boundaries", () => {
     expect(error).toContain("This does not mean you have no assignments");
     expect(error).toContain("onClick={reset}");
     expect(error).toContain('href="/learn/allAssignments"');
-    expect(error).not.toContain("GracefulErrorBoundary");
+    expect(error).toContain("GracefulErrorBoundary");
+    expect(error).toContain("error={error} reset={reset} insideShell");
+    expect(error).toContain('homeHref="/learn"');
     expect(loading).toContain('label="Loading assignments"');
     expect(loading).toContain('shape="directory"');
   });
