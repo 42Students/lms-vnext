@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
     paths:
+      - 'src/app/(authenticated)/college/batches/page.tsx'
+      - 'src/app/(authenticated)/college/contacts/page.tsx'
+      - 'src/app/(authenticated)/college/courses/page.tsx'
+      - 'src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx'
+      - 'src/app/(authenticated)/college/groups/page.tsx'
       - 'src/components/ux/ux-ten-college-recovery-preview.tsx'
       - 'src/app/e2e/ux-ten-college-recovery/page.tsx'
       - 'tests/unit/ux-ten-college-route-recovery.test.ts'
