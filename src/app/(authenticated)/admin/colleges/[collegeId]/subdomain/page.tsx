@@ -72,6 +72,9 @@ export async function CollegeWebAddressContent({ params }: {
          </svg>
          Reload
        </ButtonLink>
+       <ButtonLink variant="secondary" href={"/admin/colleges/"+encodeURIComponent(college.id)+"/signin"}>
+         Sign-in methods
+       </ButtonLink>
      </div>
      <p className="my-3 max-w-3xl text-sm text-body">
        The address students and staff open to sign in.
