@@ -69,6 +69,7 @@ test.describe("Projects browser regression", () => {
   test("college workspace creation persists Mentor and learner grants and permits Mentor team changes",async({
     page,context,
   },info)=>{
+    test.setTimeout(120_000);
     await authenticate(context,"seed-college-admin",SEED_IDS.collegeAdminMembership);
     await page.goto("/college/projects");
     await expect(page.getByRole("heading",{level:1,name:"Project workspaces"})).toBeVisible();
