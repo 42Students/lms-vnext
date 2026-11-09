@@ -80,7 +80,21 @@ for (const size of viewports) {
     // still render from a learner's actual seeded, tenant-scoped request.
     await page.goto("/learn/attendance/calendar");
     await expect(page.getByRole("heading", { level: 1, name: "Attendance calendar" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Apply filters" })).toBeVisible();
+    if (size.name === "mobile") {
+      // Shared FilterBar deliberately moves its form into an accessible
+      // responsive drawer below 768px; open the drawer before checking fields.
+      const launcher = page.getByRole("button", { name: "Filters", exact: true });
+      await expect(launcher).toBeVisible();
+      await launcher.click();
+      const drawer = page.getByRole("dialog", { name: "Filters" });
+      await expect(drawer).toBeVisible();
+      await expect(drawer.getByRole("button", { name: "Apply filters" })).toBeVisible();
+      await page.screenshot({ path: info.outputPath("g060-attendance-filters-mobile.png"), fullPage: true });
+      await drawer.getByRole("button", { name: "Close drawer" }).click();
+      await expect(drawer).not.toBeVisible();
+    } else {
+      await expect(page.getByRole("button", { name: "Apply filters" })).toBeVisible();
+    }
     await expect(page.getByRole("link", { name: "Attendance detail" })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.screenshot({ path: info.outputPath("g060-normal-attendance-"+size.name+".png"), fullPage: true });
