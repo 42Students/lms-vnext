@@ -103,6 +103,7 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
   const [query,setQuery]=useState(initialQuery);
   const [appliedFilters,setAppliedFilters]=useState("60|WARNING|"+initialQuery.trim());
   const currentFilters=windowMinutes+"|"+minimumSeverity+"|"+query.trim();
+  const filtersDirty=currentFilters!==appliedFilters;
   const [items,setItems]=useState<Entry[]>([]);
   const [nextPage,setNextPage]=useState<string|null>(null);
   const [configured,setConfigured]=useState<boolean|null>(null);
@@ -120,6 +121,8 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
   const [muteTarget,setMuteTarget]=useState<{id:string;muted:boolean}|null>(null);
   const [muteReason,setMuteReason]=useState("");
   const [mutating,setMutating]=useState(false);
+  // A lost PATCH receipt can conceal a committed mute. Require a reload.
+  const [muteNeedsReload,setMuteNeedsReload]=useState(false);
   const locked=useRef(false);
   const currentFiltersRef=useRef(currentFilters);
   currentFiltersRef.current=currentFilters;
@@ -154,9 +157,10 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
       setConfigured(result.configured);
       setRateLimited(false);setStale(false);setLastSuccessfulAt(new Date());
       setAppliedFilters(loadingFilters);
-      setItems(previous=>older?mergeEntries(previous,result.items):
+      // Old data must not be displayed as current if the log source goes away.
+      setItems(previous=>!result.configured?[]:older?mergeEntries(previous,result.items):
         loadingFilters===appliedFilters?mergeEntries(result.items,previous):result.items);
-      setNextPage(result.nextPageToken);
+      setNextPage(result.configured?result.nextPageToken:null);
       if(!result.configured)setNotice("Live Cloud Logging is not configured. Known Errors remain available below.");
       else if(!older&&!result.items.length)setNotice("No matching errors in the selected page and time window.");
     }catch(error){
@@ -294,6 +298,7 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
   }
   async function downloadRange(format:"csv"|"markdown"|"ndjson"){
     if(exporting||pending)return;
+    if(filtersDirty){setNotice("Run query to apply changed filters before exporting logs.");return;}
     setExporting(true);setNotice("Preparing export…");
     try{
       let rows:Entry[]=[];let cursor:string|null=null;
@@ -312,7 +317,7 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
     finally{setExporting(false);}
   }
   async function toggleKnownErrorMute(){
-    if(!muteTarget||mutating)return;
+    if(!muteTarget||mutating||muteNeedsReload)return;
     setMutating(true);setNotice("");
     try{
       const nextMuted=!muteTarget.muted;
@@ -327,8 +332,16 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
       setMuteTarget(null);setMuteReason("");
       setNotice(nextMuted?"Muted — this error type won’t be surfaced as noise going forward.":"Unmuted — this error type will be surfaced again.");
     }catch(error){
-      setNotice(error instanceof FriendlyFetchError?error.message:
-        "Could not update this known error. Try again.");
+      const outcomeUnknown=!(error instanceof FriendlyFetchError)||
+        error.status===0||error.status===408||error.status>=500;
+      if(outcomeUnknown){
+        // A failed receipt does not prove the server rolled back the write.
+        setMuteNeedsReload(true);
+        setMuteTarget(null);setMuteReason("");
+        setNotice("The mute change may have been saved. Reload logs before trying another mute action.");
+      }else{
+        setNotice(error.message);
+      }
     }finally{setMutating(false);}
   }
   return <section className="min-w-0 space-y-4 border-b border-border pb-5" aria-label="Live logs">
@@ -394,13 +407,13 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
     <p className="text-xs text-muted-foreground">A release marker is required for deployment separators. Cloud Logging pages are limited to twelve redacted records; downloads disclose truncation.</p>
     <Disclosure title="More — Export and report tools" className="border-t border-border" contentClassName="px-2 pb-3">
      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
-      <Button variant="secondary" type="button" onClick={()=>void downloadRange("csv")} loading={exporting} disabled={pending||exporting||configured!==true} className="min-h-11 w-full sm:w-auto md:min-h-9">
+      <Button variant="secondary" type="button" onClick={()=>void downloadRange("csv")} loading={exporting} disabled={pending||exporting||filtersDirty||configured!==true} className="min-h-11 w-full sm:w-auto md:min-h-9">
         {exporting?"Exporting…":"Download logs"}
       </Button>
-      <Button variant="secondary" type="button" onClick={()=>void downloadRange("ndjson")} loading={exporting} disabled={pending||exporting||configured!==true} className="min-h-11 w-full sm:w-auto md:min-h-9">
+      <Button variant="secondary" type="button" onClick={()=>void downloadRange("ndjson")} loading={exporting} disabled={pending||exporting||filtersDirty||configured!==true} className="min-h-11 w-full sm:w-auto md:min-h-9">
         Download NDJSON (bounded)
       </Button>
-      <Button variant="secondary" type="button" onClick={()=>setReportOpen(true)} disabled={!items.length} className="min-h-11 w-full sm:w-auto md:min-h-9">
+      <Button variant="secondary" type="button" onClick={()=>setReportOpen(true)} disabled={!items.length||filtersDirty} className="min-h-11 w-full sm:w-auto md:min-h-9">
         Report for Claude
       </Button>
      </div>
@@ -427,7 +440,10 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
        </p>
      </div>
     </Disclosure>
-    {stale?<Alert tone="warning">Showing previously loaded results. Refresh or retry for the latest logs.</Alert>:null}
+    {filtersDirty?<Alert tone="warning">Filters have changed. The displayed entries are from the last applied query; run the new query before exporting.</Alert>:null}
+     {muteNeedsReload?<Alert tone="warning">A known-error mute may have been saved. Reload logs to verify persisted state before changing it again.</Alert>:null}
+     {muteNeedsReload?<Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>window.location.reload()}>Reload logs</Button>:null}
+     {stale?<Alert tone="warning">Showing previously loaded results. Refresh or retry for the latest logs.</Alert>:null}
     {rateLimited?<Alert tone="warning">Rate limit reached. Automatic refresh is paused.</Alert>:null}
     {notice?<InlineNotice tone={/could not|unavailable|failed|expired|permission|too many/i.test(notice)?"error":"info"} message={notice}/>:null}
     {stale?<Button type="button" variant="secondary" onClick={()=>void load()} disabled={pending}>
@@ -463,7 +479,7 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
             {item.knownErrorId?<>
               <TextLink href={"/tracker/logs#known-error-"+item.knownErrorId}
                 className="inline-flex min-h-11 w-full items-center sm:w-auto md:min-h-9">Known error details</TextLink>
-              <Button variant="ghost" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={mutating}
+              <Button variant="ghost" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={mutating||muteNeedsReload}
                 onClick={()=>{setMuteReason("");setMuteTarget({id:item.knownErrorId!,muted:item.muted===true});}}
                >
                 {item.muted?"Unmute this error":"Mute this error"}
@@ -522,6 +538,7 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
       title={muteTarget?.muted?"Unmute this known error?":"Mute this known error?"}
       description="This updates the stored error signature for every matching log. It does not erase log records."
       confirmLabel={muteTarget?.muted?"Unmute":"Mute error"} pending={mutating}
+       confirmDisabled={muteNeedsReload}
       onConfirm={()=>void toggleKnownErrorMute()}>
       {!muteTarget?.muted?<Label stack className="text-[length:var(--lms-font-sm)]">
         Reason (optional)
