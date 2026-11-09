@@ -21,6 +21,6 @@ export default function RouteError({ error, reset }: {
         <Button type="button" variant="ghost" size="sm" onClick={()=>setWarningDismissed(true)}>Dismiss</Button>
       </div>
     </Banner>:null}
-    <GracefulErrorBoundary error={error} reset={reset}/>
+    <GracefulErrorBoundary error={error} reset={reset} insideShell showHeader={false} homeHref="/admin/placements"/>
   </div>;
 }

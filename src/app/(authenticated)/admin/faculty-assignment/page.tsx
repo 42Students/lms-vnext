@@ -14,7 +14,7 @@ import {getAdminCourseWorkspace} from "@/modules/courses/admin-course-workspace"
 import {listAdminFacultyAssignments,getSuperAdminFacultyAssignmentClasses} from "@/modules/admin-ui/super-admin-faculty-assignments-service";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
-import { formatDateWith } from "@/lib/format-date";
+import { formatNumberIN } from "@/lib/safe-format";
 const statuses=["ALL","ACTIVE","ENDED"] as const;
 export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -69,7 +69,7 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
      {label:"Classes covered",value:covered},
     ].map(stat=><div key={stat.label} className="min-w-0 px-3 py-4">
       <p className="text-xs text-muted-foreground">{stat.label}</p>
-      <p className="mt-1 text-xl font-semibold tabular-nums">{typeof stat.value==="number"?formatDateWith(stat.value, "en-IN", { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" }):"—"}</p>
+      <p className="mt-1 text-xl font-semibold tabular-nums">{typeof stat.value==="number"?formatNumberIN(stat.value):"—"}</p>
     </div>)}
    </section>:<p role="status" className="text-sm text-muted-foreground">Faculty assignment totals are temporarily unavailable.</p>}
    <section aria-label="Create Faculty Assignment" className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
