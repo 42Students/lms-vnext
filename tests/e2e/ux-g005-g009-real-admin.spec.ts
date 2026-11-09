@@ -28,7 +28,7 @@ test.describe("UX-G005–G009 seeded Super Admin page journeys",()=>{
  test.describe.configure({mode:"serial"});
  for(const size of viewports){
   test("selected-college authorized pages and navigation at "+size.name,async({page,context},info)=>{
-   test.setTimeout(210000);
+   test.setTimeout(270000);
    await page.setViewportSize(size);
    await selectRealCollege(context);
    const visited=[
@@ -47,6 +47,50 @@ test.describe("UX-G005–G009 seeded Super Admin page journeys",()=>{
     expect(overflow,route.id+" overflow at "+size.name).toBeLessThanOrEqual(2);
     await page.screenshot({path:info.outputPath(route.id+"-"+size.name+".png"),fullPage:true});
    }
+   // G005: the selected college has a persisted, teachable academic Section.
+   await page.goto("/admin/academics");
+   const sectionLink=page.locator('a[href^="/admin/academics/sections/"]').first();
+   await expect(sectionLink).toBeVisible();
+   await sectionLink.click();
+   await expect(page.getByRole("heading",{level:1,name:/E2E Section/})).toBeVisible();
+   await expect(page.getByRole("link",{name:"Back to Academics"}))
+    .toHaveAttribute("href","/admin/academics");
+   await page.screenshot({path:info.outputPath("g005-section-operations-"+size.name+".png"),fullPage:true});
+
+   // G006: invalid audit and promotion inputs must recover without mutating data.
+   await page.goto("/admin/audit?category=not-a-real-category");
+   await expect(page.getByText("Invalid audit filters")).toBeVisible();
+   await expect(page.getByRole("link",{name:"Clear filters"})).toHaveAttribute("href","/admin/audit");
+   await page.goto("/admin/batch-promotion?yearStart=bad");
+   await expect(page.getByText("Invalid batch promotion filters")).toBeVisible();
+   await page.goto("/admin/batch-promotion");
+   await expect(page.getByRole("search",{name:"Batch promotion preview filters"})).toBeVisible();
+   await expect(page.getByRole("button",{name:"Preview"})).toBeVisible();
+
+   // G007: session details must remain refreshable without calling the revoke endpoint.
+   await page.goto(targetAdmin);
+   await page.getByRole("button",{name:"View active sessions"}).click();
+   await expect(page.getByRole("region",{name:"Administrator active device sessions"})).toBeVisible();
+
+   // G008: saved policy and domain UI show their actual protected controls.
+   await page.goto(adminBase+"/signin");
+   await expect(page.getByRole("radiogroup",{name:"Sign-in methods"})).toBeVisible();
+   await page.goto(adminBase+"/subdomain");
+   await expect(page.getByRole("region",{name:"Managed college web address"})).toBeVisible();
+
+   // G009: follow a real, persisted seeded batch/course offering into its learner report.
+   await page.goto("/admin/course-progress");
+   const progressFilters=page.getByRole("search",{name:"Select class and course progress"});
+   await progressFilters.locator('select[name="cohortCode"]').selectOption("E2E-COHORT");
+   await progressFilters.locator('select[name="courseCode"]').selectOption("E2E-COURSE");
+   await progressFilters.getByRole("button",{name:/Refresh/}).click();
+   await expect(page).toHaveURL(/cohortCode=E2E-COHORT/);
+   const studentReport=page.getByRole("link",{name:/View student progress/}).first();
+   await expect(studentReport).toBeVisible();
+   await studentReport.click();
+   await expect(page.getByRole("heading",{level:1,name:"Course Progress"})).toBeVisible();
+   await page.screenshot({path:info.outputPath("g009-student-report-"+size.name+".png"),fullPage:true});
+
    await page.goto(targetAdmin+"/history");
    await expect(page.getByRole("link",{name:"Active sessions"}))
      .toHaveAttribute("href",targetAdmin);
