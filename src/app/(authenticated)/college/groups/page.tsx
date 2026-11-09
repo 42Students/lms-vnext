@@ -151,7 +151,7 @@ export default async function CollegeGroupsPage({
           description={
             kind || status
               ? "No groups match these filters."
-              : "This college has no student groups yet."
+              : "No study groups have been created in this college yet. Choose All types to view elective and project team groups."
           }
         />
       ) : (
