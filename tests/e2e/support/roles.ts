@@ -12,7 +12,8 @@ const identities: Record<GracefulRole, {
   faculty: { uid: "seed-shared-faculty", membershipId: SEED_IDS.facultyCollegeAMembership, membershipRole: "FACULTY" },
   mentor: { uid: "lms_test_919100061103", membershipRole: "MENTOR" },
   college: { uid: "seed-college-admin", membershipId: SEED_IDS.collegeAdminMembership },
-  tpo: { uid: "lms_test_919100061105", membershipRole: "TPO" },
+  // db:e2e:prepare grants TPO to this real seeded multi-role faculty membership.
+  tpo: { uid: "seed-shared-faculty", membershipId: SEED_IDS.facultyCollegeAMembership, membershipRole: "TPO" },
   recruiter: { uid: "lms_test_919100061301" },
   superadmin: { uid: "seed-superadmin" },
 };
