@@ -29781,9 +29781,19 @@
             "results": "60/60 chromium desktop/mobile, 0 skipped/flaky/failed, 16/16 Vitest, full TypeScript and scoped lint, seeded isolated PG17. Eight normal authenticated production TPO routes added across groups, with accessibility/page readiness and overflow checks.",
             "outstanding": "Role/tenant-safe seeded business mutations, import/export, bulk/undo, all detail pages/modal states and full group-specific operational transitions remain untested. See docs/parity/pages/tpo/UX-G098-route-recovery.md",
             "closure": "Partial authenticated shell and recovery acceptance; DOING, not full functional UX closure."
+          },
+          {
+            "type": "CI_PARTIAL_PERSISTED_ACTOR_SCOPE_20261109",
+            "runId": 42609610562,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42609610562",
+            "commitSha": "7ab0357d82b2ad55956b7a0c9078ba1b0b3a6475",
+            "conclusion": "success",
+            "results": "84/84 Chromium desktop/mobile; 18/18 focused unit; 2/2 PostgreSQL integration; isolated PG17 two-college seed; no skipped/flaky browser tests; full TypeScript/lint. Actual persisted per-college activity_events checked for tenant isolation and CSV content.",
+            "outstanding": "Announcements create/edit/delete/send and recipient delivery; successful audited export under a fresh-device session; bulk cohort decisions/undo and all other page/modal states remain to be verified. Operator-verified scheduler required for notice send.",
+            "closure": "Partial persisted audit and recovery acceptance only; DOING."
           }
         ],
-        "notes": "2026-11-09: 32/32 exact-SHA Chromium partial acceptance green at 1a4ecb4 / run 42580993668; 16 source files inspected. Expanded 44/44 Chromium and 16/16 Vitest acceptance PASS at 381aec9, run 42595568572. Announcements, audit, batch directory and root TPO recovery were inspected. Actual TPO Home, Batches and announcement duplicate-filter paths are exercised; compose/send, audit exports and bulk cohort actions still require persisted end-to-end checks. DOING until full scoped job/permission coverage. 2026-11-09: Additional normal-page 60/60 exact-SHA Chromium acceptance green at 32e29a8 / run 42596318660; scoped functional mutations remain before DONE."
+        "notes": "2026-11-09: 32/32 exact-SHA Chromium partial acceptance green at 1a4ecb4 / run 42580993668; 16 source files inspected. Expanded 44/44 Chromium and 16/16 Vitest acceptance PASS at 381aec9, run 42595568572. Announcements, audit, batch directory and root TPO recovery were inspected. Actual TPO Home, Batches and announcement duplicate-filter paths are exercised; compose/send, audit exports and bulk cohort actions still require persisted end-to-end checks. DOING until full scoped job/permission coverage. 2026-11-09: Additional normal-page 60/60 exact-SHA Chromium acceptance green at 32e29a8 / run 42596318660; scoped functional mutations remain before DONE. 2026-11-09: G098 audit/actor query ambiguity and malformed notice selectors fixed at f7694a1/1190ebf; CI run 42609610562 exact SHA 7ab0357 green 84 browser,18 unit,2 real two-college PostgreSQL integration; delivered notices, positive CSV export and bulk mutation still unverified. DOING."
       },
       {
         "id": "UX-G099",
