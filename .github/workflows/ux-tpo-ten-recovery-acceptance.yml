@@ -67,6 +67,7 @@ jobs:
       - name: G098 persisted two-college actor audit and CSV evidence
         env:
           DB10_ISOLATED_TEST_DATABASE: '1'
+          DB03_ISOLATED_TEST_DATABASE: '1'
         run: npx vitest run --config vitest.db.config.ts tests/integration/ux-g098-audit-persisted-scope.test.ts --maxWorkers=1
       - name: Ephemeral auth keys
         shell: bash
