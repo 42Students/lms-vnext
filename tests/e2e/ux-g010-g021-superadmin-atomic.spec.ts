@@ -51,8 +51,12 @@ test.describe("UX-G010–G021 atomic Super Admin journeys, selected college",()=
         page.on("pageerror",error=>runtimeErrors.push(error.message));
         const response=await page.goto(route.href,{waitUntil:"domcontentloaded"});
         expect(response?.status(),route.href).toBeLessThan(400);
+        // A middleware redirect to /dashboard is not evidence that the
+        // protected Super Admin page works. Require the actual target route.
+        expect(new URL(page.url()).pathname,route.name+" authorized destination")
+          .toBe(route.href);
         await expect(page.getByRole("heading",{level:1}).first()).toBeVisible({timeout:30000});
-        await expect(page.getByRole("heading",{level:1}).first()).not.toHaveText("500");
+        await expect(page.getByRole("heading",{level:1}).first()).not.toHaveText(/^(?:500|Access denied|Forbidden|Not found|Not authorized)$/i);
         const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
         expect(overflow,route.name+" horizontal overflow").toBeLessThanOrEqual(2);
         expect(runtimeErrors,route.name+" browser errors").toEqual([]);
