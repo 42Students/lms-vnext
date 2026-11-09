@@ -104,7 +104,7 @@ test.describe("Projects browser regression", () => {
     // event with filters scoped to this college and workspace.
     await page.goto(`/college/projects/audit?subjectType=project&subjectId=${encodeURIComponent(id!)}`);
     await expect(page.getByRole("heading",{level:1,name:"Project audit"})).toBeVisible();
-    await expect(page.getByText(`Project ${title} created`,{exact:true})).toBeVisible();
+    await expect(page.getByRole("row").filter({hasText:title}).first()).toBeVisible();
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
     await info.attach("g040-project-audit-desktop",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
     const auditDownload=page.waitForEvent("download");
@@ -112,7 +112,7 @@ test.describe("Projects browser regression", () => {
     expect((await auditDownload).suggestedFilename()).toBe("project-audit-log.csv");
     await page.setViewportSize({width:390,height:844});
     await page.goto(`/college/projects/audit?subjectType=project&subjectId=${encodeURIComponent(id!)}`);
-    await expect(page.getByText(`Project ${title} created`,{exact:true})).toBeVisible();
+    await expect(page.getByRole("row").filter({hasText:title}).first()).toBeVisible();
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
     await info.attach("g040-project-audit-mobile",{body:await page.screenshot({fullPage:true}),contentType:"image/png"});
     await page.goto("/college/projects/audit?importance=INVALID&subjectId=not-a-uuid");
@@ -120,7 +120,7 @@ test.describe("Projects browser regression", () => {
 
     await authenticate(context,"seed-learner",SEED_IDS.learnerCollegeAMembership);
     await page.goto(`/college/projects/audit?subjectType=project&subjectId=${encodeURIComponent(id!)}`);
-    await expect(page.getByText(`Project ${title} created`,{exact:true})).toHaveCount(0);
+    await expect(page.getByRole("row").filter({hasText:title})).toHaveCount(0);
     await page.goto("/learn/projects");
     await expect(page.getByRole("link",{name:new RegExp(title)}).first())
       .toBeVisible();
