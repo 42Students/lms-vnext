@@ -20,7 +20,7 @@ permissions:
   contents: read
 concurrency:
   group: ux-g005-g009-real-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   admin-five-ux:
     runs-on: ubuntu-latest
