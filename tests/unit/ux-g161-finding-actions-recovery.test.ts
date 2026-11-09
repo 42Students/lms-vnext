@@ -32,6 +32,17 @@ describe("UX-G161 finding editor recovery contract",()=>{
   expect(actions).toContain('>Refresh finding</Button>');
   expect(actions).toContain('onClick={()=>router.refresh()}');
  });
+ it("locks known-error triage after a timeout, 5xx or network loss until reload",()=>{
+  const known=source("known-errors-workspace.tsx");
+  expect(known).toContain("if(needsReload)return;");
+  expect(known).toContain("error.status===0||error.status===408||error.status>=500");
+  expect(known).toContain("setNeedsReload(true);");
+  expect(known).toContain("The update may have been saved. Reload known errors before trying again.");
+  expect(known).toContain("Reload known errors");
+  expect(known).toContain("onClick={()=>window.location.reload()}");
+  expect(known).toContain("disabled={pending || needsReload || Boolean(item.acknowledgedAt)}");
+  expect(known).toContain("disabled={pending || needsReload || (commit.trim()");
+ });
  it("does not auto-attach sensitive query parameters to issue reports",()=>{
   const launcher=source("tracker-quick-report-launcher.tsx");
   expect(launcher).toContain('window.location.search?" [query parameters omitted for privacy]":""');

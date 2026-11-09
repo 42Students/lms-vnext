@@ -64,3 +64,9 @@ Earlier shared [run 42495926875](https://github.com/42Students/lms-vnext/actions
 - The independent audit-finding editor now also quarantines transport failures (status 0) and HTTP 408 responses, not only 409 and 5xx. Unknown outcomes show neutral guidance to refresh before resubmitting; existing optimistic-version checks, authorization and audit events are unchanged.
 - Regression contracts added to `tests/unit/ux-g161-finding-actions-recovery.test.ts`; the two existing G161 exact-SHA CI workflows are triggered by these source paths. Authored tests and pending CI do **not** certify the full group.
 - The November 9 atomic repartition assigns five component files to UX-G161 and the other historical components to sibling UX-G339. Older eight-component scope references above remain historical. This patch is **IMPLEMENTED / VERIFY**, and the canonical UX-G161 status remains **DOING** pending full authenticated desktop/mobile workflow, permission and provider evidence.
+
+## 9 November 2026 — Known Errors uncertain-write retry guard
+
+- The Known Errors card now distinguishes a confirmed validation rejection from a timeout, interrupted response or 5xx of uncertain write outcome. These can outlive the client-side `useGuardedAction` timeout, so repeated ACKNOWLEDGE, MUTE, STATUS and LINK_ISSUE actions are disabled until a full page reload retrieves persisted state.
+- A visible, accessible Reload known errors action explains the condition. Pure read/copy diagnostics remain available; ordinary authorized success and definite validation failures retain their existing behavior.
+- A focused G161 regression contract was added. Full functionality, seeded database state, negative role/tenant behavior and mobile/desktop screenshot acceptance remain **unverified** until the exact-SHA checks complete. **DOING**, not DONE.

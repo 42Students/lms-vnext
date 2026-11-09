@@ -35,11 +35,15 @@ function KnownErrorCard({ item }: { item: KnownError }) {
   const [confirmMute, setConfirmMute] = useState(false);
   const [commit, setCommit] = useState("");
   const [issuePublicId, setIssuePublicId] = useState(item.issuePublicId ?? "");
+  // Timed-out writes may still finish on the server after the client guard
+  // releases. Require a real page reload before another triage mutation.
+  const [needsReload,setNeedsReload] = useState(false);
   // Keep the link editor aligned with the latest server-verified signature.
   // Do not replace an unsaved typed value on unrelated parent re-renders.
   useEffect(() => { setIssuePublicId(item.issuePublicId ?? ""); }, [item.id, item.issuePublicId]);
 
   async function update(body: Record<string, unknown>) {
+    if(needsReload)return;
     try {
       await run(async () => {
         await apiFetch("/api/tracker/logs/known-errors/" + item.id, {
@@ -56,12 +60,23 @@ function KnownErrorCard({ item }: { item: KnownError }) {
         router.refresh();
       });
     } catch (error) {
+      // A transport loss, server timeout or unknown exception cannot prove
+      // that the write failed. Disable actions until the persisted state is
+      // fetched afresh; never implicitly retry this non-idempotent request.
+      const uncertain=!(error instanceof FriendlyFetchError)||
+        error.status===0||error.status===408||error.status>=500;
+      if(uncertain){
+        setNeedsReload(true);
+        setConfirmMute(false);
+      }
       showToast({
-        tone: "error", title: "Known error update failed",
-        description: error instanceof FriendlyFetchError
-          ? error.message
-          : error instanceof Error && error.message === FRIENDLY_MESSAGES.timeout
-            ? FRIENDLY_MESSAGES.timeout : friendlyApiError({}),
+        tone: "error", title: uncertain?"Known error outcome uncertain":"Known error update failed",
+        description: uncertain
+          ?"The update may have been saved. Reload known errors before trying again."
+          :error instanceof FriendlyFetchError
+            ?error.message
+            :error instanceof Error && error.message === FRIENDLY_MESSAGES.timeout
+              ?FRIENDLY_MESSAGES.timeout:friendlyApiError({}),
       });
     }
   }
@@ -104,6 +119,12 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           Create tracker issue
         </ButtonLink>
       </div>
+      {needsReload?<div role="alert" className="flex flex-wrap items-center gap-2 rounded-lg border border-border p-3">
+        <p className="min-w-0 flex-1 text-sm text-body">This update may have been saved. Reload before changing this known error again.</p>
+        <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto" onClick={()=>window.location.reload()}>
+          Reload known errors
+        </Button>
+      </div>:null}
       <Disclosure title="Triage and diagnostic actions" className="border-t border-border" contentClassName="space-y-3 px-2 pb-3">
       <div className="grid min-w-0 gap-3 md:grid-cols-3">
         <Label className="block min-w-0">
@@ -154,11 +175,11 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           Copy SQL to check the data
         </Button>
 
-        <Button size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" variant="secondary" disabled={pending || Boolean(item.acknowledgedAt)}
+        <Button size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" variant="secondary" disabled={pending || needsReload || Boolean(item.acknowledgedAt)}
           onClick={() => update({ action: "ACKNOWLEDGE" })}>
           {item.acknowledgedAt ? "Acknowledged" : "Acknowledge"}
         </Button>
-        <Button size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" variant="secondary" disabled={pending}
+        <Button size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" variant="secondary" disabled={pending || needsReload}
           aria-haspopup="dialog" aria-expanded={item.muted ? undefined : confirmMute}
           onClick={() => {
             if (item.muted) void update({ action: "MUTE", muted: false });
@@ -166,7 +187,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           }}>
           {item.muted ? "Unmute" : "Mute"}
         </Button>
-        <Button size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" variant="secondary" disabled={pending}
+        <Button size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" variant="secondary" disabled={pending || needsReload}
           onClick={() => update({
             action: "STATUS", status: "EXPECTED",
             ...(note.trim() ? { note } : {}),
@@ -174,7 +195,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           Mark expected
         </Button>
         <Button size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" variant="secondary"
-          disabled={pending || (commit.trim() !== "" && !/^[0-9a-f]{7,64}$/i.test(commit.trim()))}
+          disabled={pending || needsReload || (commit.trim() !== "" && !/^[0-9a-f]{7,64}$/i.test(commit.trim()))}
           onClick={() => update({
             action: "STATUS", status: "FIXED",
             ...(commit.trim() ? { commit: commit.trim() } : {}),
@@ -182,11 +203,11 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           })}>
           Mark fixed
         </Button>
-        <Button size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" variant="secondary" disabled={pending}
+        <Button size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" variant="secondary" disabled={pending || needsReload}
           onClick={() => update({ action: "STATUS", status: "OPEN" })}>
           Reopen
         </Button>
-        <Button size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" variant="secondary" disabled={pending}
+        <Button size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" variant="secondary" disabled={pending || needsReload}
           onClick={() => update({
             action: "LINK_ISSUE", issuePublicId: issuePublicId.trim() || null,
           })}>
@@ -205,7 +226,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
               onClick={() => setConfirmMute(false)}>
               Cancel
             </Button>
-            <Button size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={pending}
+            <Button size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={pending || needsReload}
               onClick={() => void update({
                 action: "MUTE", muted: true,
                 ...(muteReason.trim() ? { reason: muteReason.trim() } : {}),
