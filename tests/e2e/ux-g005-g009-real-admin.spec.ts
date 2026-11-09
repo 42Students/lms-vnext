@@ -43,6 +43,12 @@ test.describe("UX-G005–G009 seeded Super Admin page journeys",()=>{
    ];
    for(const route of visited){
     await visiblePage(page,route.path,route.heading);
+    if(route.id==="g008-signin") {
+     await expect(page.getByRole("radiogroup",{name:"Sign-in methods"})).toBeVisible();
+    }
+    if(route.id==="g008-subdomain") {
+     await expect(page.getByRole("region",{name:"Managed college web address"})).toBeVisible();
+    }
     const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
     expect(overflow,route.id+" overflow at "+size.name).toBeLessThanOrEqual(2);
     await page.screenshot({path:info.outputPath(route.id+"-"+size.name+".png"),fullPage:true});
