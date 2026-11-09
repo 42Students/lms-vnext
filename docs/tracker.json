@@ -24555,6 +24555,18 @@
             "latestBrowserResult": "PENDING at recording",
             "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
             "done": false
+          },
+          {
+            "type": "SCOPED_CI_GREEN_20261109",
+            "commitSha": "d215c2a45c9c2ba1ecb358a1b9b70e63753b5b7b",
+            "sourceFixCommit": "018a5c44b97679142f96b1572a6f425c827aad31",
+            "runId": 42580106539,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42580106539",
+            "conclusion": "success",
+            "results": "Exact-SHA scoped lint, full TypeScript, focused College route recovery Vitest including five production-path UX contracts, isolated PostgreSQL 17 seed, and 6/6 Chromium tests at 320px, 390px and 1280px for rendered fallback retry/navigation, private exception redaction, safe mobile touch targets and denied-role placement creation.",
+            "scope": "Partial recovery and source-contract acceptance for the listed group; not full verification of all assigned route surfaces, CRUD, uploads, exports, responsive states and cross-tenant business workflows.",
+            "outstanding": "Full group happy/negative route actions, exhaustive 15-18 assigned surfaces, mutation/API persistence, role/tenant denials and keyboard/mobile verification outside the recovery fixture. UX-G034 standalone groups remain feature-gated.",
+            "closure": "DOING; source improvements verified but group-wide DONE gate not met"
           }
         ],
         "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence."
@@ -24624,6 +24636,18 @@
             "latestBrowserResult": "PENDING at recording",
             "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
             "done": false
+          },
+          {
+            "type": "SCOPED_CI_GREEN_20261109",
+            "commitSha": "d215c2a45c9c2ba1ecb358a1b9b70e63753b5b7b",
+            "sourceFixCommit": "1866892cb34379e3b4e8a8a570f37235a6773c7a",
+            "runId": 42580106539,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42580106539",
+            "conclusion": "success",
+            "results": "Exact-SHA scoped lint, full TypeScript, focused College route recovery Vitest including five production-path UX contracts, isolated PostgreSQL 17 seed, and 6/6 Chromium tests at 320px, 390px and 1280px for rendered fallback retry/navigation, private exception redaction, safe mobile touch targets and denied-role placement creation.",
+            "scope": "Partial recovery and source-contract acceptance for the listed group; not full verification of all assigned route surfaces, CRUD, uploads, exports, responsive states and cross-tenant business workflows.",
+            "outstanding": "Full group happy/negative route actions, exhaustive 15-18 assigned surfaces, mutation/API persistence, role/tenant denials and keyboard/mobile verification outside the recovery fixture. UX-G034 standalone groups remain feature-gated.",
+            "closure": "DOING; source improvements verified but group-wide DONE gate not met"
           }
         ],
         "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence."
@@ -24695,6 +24719,18 @@
             "latestBrowserResult": "PENDING at recording",
             "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
             "done": false
+          },
+          {
+            "type": "SCOPED_CI_GREEN_20261109",
+            "commitSha": "d215c2a45c9c2ba1ecb358a1b9b70e63753b5b7b",
+            "sourceFixCommit": "a14789e6c348aab99350c963b360257ded0e6f84",
+            "runId": 42580106539,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42580106539",
+            "conclusion": "success",
+            "results": "Exact-SHA scoped lint, full TypeScript, focused College route recovery Vitest including five production-path UX contracts, isolated PostgreSQL 17 seed, and 6/6 Chromium tests at 320px, 390px and 1280px for rendered fallback retry/navigation, private exception redaction, safe mobile touch targets and denied-role placement creation.",
+            "scope": "Partial recovery and source-contract acceptance for the listed group; not full verification of all assigned route surfaces, CRUD, uploads, exports, responsive states and cross-tenant business workflows.",
+            "outstanding": "Full group happy/negative route actions, exhaustive 15-18 assigned surfaces, mutation/API persistence, role/tenant denials and keyboard/mobile verification outside the recovery fixture. UX-G034 standalone groups remain feature-gated.",
+            "closure": "DOING; source improvements verified but group-wide DONE gate not met"
           }
         ],
         "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence."
@@ -24768,6 +24804,18 @@
             "latestBrowserResult": "PENDING at recording",
             "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
             "done": false
+          },
+          {
+            "type": "SCOPED_CI_GREEN_20261109",
+            "commitSha": "d215c2a45c9c2ba1ecb358a1b9b70e63753b5b7b",
+            "sourceFixCommit": "748fbd2fff6df750fbe6fdad5fd4b2ebdd398fbe",
+            "runId": 42580106539,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42580106539",
+            "conclusion": "success",
+            "results": "Exact-SHA scoped lint, full TypeScript, focused College route recovery Vitest including five production-path UX contracts, isolated PostgreSQL 17 seed, and 6/6 Chromium tests at 320px, 390px and 1280px for rendered fallback retry/navigation, private exception redaction, safe mobile touch targets and denied-role placement creation.",
+            "scope": "Partial recovery and source-contract acceptance for the listed group; not full verification of all assigned route surfaces, CRUD, uploads, exports, responsive states and cross-tenant business workflows.",
+            "outstanding": "Full group happy/negative route actions, exhaustive 15-18 assigned surfaces, mutation/API persistence, role/tenant denials and keyboard/mobile verification outside the recovery fixture. UX-G034 standalone groups remain feature-gated.",
+            "closure": "DOING; source improvements verified but group-wide DONE gate not met"
           }
         ],
         "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence."
@@ -24841,6 +24889,18 @@
             "latestBrowserResult": "PENDING at recording",
             "scope": "Nested route-level error/loading resilience, safe parent navigation, 44px mobile retry, and source tests; primary workflows and rest of surface inventory not yet verified",
             "done": false
+          },
+          {
+            "type": "SCOPED_CI_GREEN_20261109",
+            "commitSha": "d215c2a45c9c2ba1ecb358a1b9b70e63753b5b7b",
+            "sourceFixCommit": "d276da6169e94bb41d4e5318e595e8022e855a39",
+            "runId": 42580106539,
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/42580106539",
+            "conclusion": "success",
+            "results": "Exact-SHA scoped lint, full TypeScript, focused College route recovery Vitest including five production-path UX contracts, isolated PostgreSQL 17 seed, and 6/6 Chromium tests at 320px, 390px and 1280px for rendered fallback retry/navigation, private exception redaction, safe mobile touch targets and denied-role placement creation.",
+            "scope": "Partial recovery and source-contract acceptance for the listed group; not full verification of all assigned route surfaces, CRUD, uploads, exports, responsive states and cross-tenant business workflows.",
+            "outstanding": "Full group happy/negative route actions, exhaustive 15-18 assigned surfaces, mutation/API persistence, role/tenant denials and keyboard/mobile verification outside the recovery fixture. UX-G034 standalone groups remain feature-gated.",
+            "closure": "DOING; source improvements verified but group-wide DONE gate not met"
           }
         ],
         "notes": "Claimed for UX implementation with browser acceptance pending; do not mark DONE without evidence. Initial scoped error/loading recovery navigation patch; full group UX verification not yet complete.\nPartial scoped route recoverability implemented; independent full-group coverage and browser/release gates remain OPEN. Source and CI receipts in evidence."
