@@ -79,5 +79,6 @@ describe("G005–G009 atomic slice navigation and recovery regression",()=>{
   expect(source).toContain('onClick={reset}');
   expect(source).toContain('href="/admin/courses"');
   expect(source).toContain('The scoped progress records are temporarily unavailable');
+  expect(read("course-progress/students/page.tsx")).toContain('role="search"');
  });
 });
