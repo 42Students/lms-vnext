@@ -1,11 +1,12 @@
 "use client";
+import { PageHeader } from "@/components/ui/page-header";
 import { ButtonLink } from "@/components/ui/button-link";
 import { ErrorState } from "@/components/ui/error-state";
 import { Button } from "@/components/ui/button";
 export default function GroupCsvPreviewError({ reset }: {
   error: Error & { digest?: string }; reset: () => void;
 }) {
-  return <ErrorState title="Group import preview unavailable"
+  return <div className="min-w-0 space-y-4"><PageHeader title="Group import preview"/><ErrorState title="Group import preview unavailable"
     description="The validation source could not be checked. No rows were changed."
-    action={<><Button type="button" variant="secondary" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button><ButtonLink href="/college/groups" variant="secondary">Student groups</ButtonLink></>} />;
+    action={<><Button type="button" variant="secondary" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button><ButtonLink href="/college/groups" variant="secondary">Student groups</ButtonLink></>} /></div>;
 }
