@@ -13,6 +13,7 @@ import {PopoverPanel} from "@/components/ui/popover";
 import {Input} from "@/components/ui/input";
 import { Table } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
+import { templateCollegeBulkFailureNotice } from "@/modules/projects/template-college-bulk-notice";
 
 type College={
  id:string;name:string;code?:string;location?:string|null;
@@ -76,6 +77,7 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
   const currentOperation=operation;
   inFlight.current=true;setPending(true);setNotice("");
   setProgress({done:0,total:selected.length});
+  let saveAttempted=false;
   try{
    const path="/api/projects/templates/"+encodeURIComponent(templateId)+"/assignments";
    // Fresh read + single CAS transaction: never loop through partial writes.
@@ -94,6 +96,8 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
     setNotice("No college assignments needed changes.");
     setOperation(null);return;
    }
+   // A lost response after PUT is ambiguous: never claim the write rolled back.
+   saveAttempted=true;
    const result=await apiFetch<{addedCount:number;removedCount:number}>(path,{
     method:"PUT",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({
@@ -110,8 +114,7 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
    void result;
   }catch(caught){
    setNoticeTone("warning");
-   setNotice((caught instanceof Error?caught.message:"College assignments could not be updated.")+
-     " No partial changes were saved by this request. Refresh assignments and retry.");
+   setNotice(templateCollegeBulkFailureNotice(caught,saveAttempted));
    setOperation(null);
   }finally{
    inFlight.current=false;setPending(false);setProgress(null);
@@ -265,6 +268,12 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
     </p>
    ) : null}
    {notice ? <Banner tone={noticeTone}>{notice}</Banner> : null}
+   {notice && noticeTone==="warning" ? (
+    <Button type="button" variant="secondary" disabled={pending}
+     className="w-full sm:w-auto" onClick={()=>router.refresh()}>
+     Refresh assignments
+    </Button>
+   ) : null}
    <ConfirmDialog
     open={operation==="assign"}
     onOpenChange={open=>{if(!open&&!pending)setOperation(null);}}
