@@ -26,8 +26,8 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: ux-g010-g021-ten-${{ github.sha }}
-  cancel-in-progress: false
+  group: ux-g010-g021-ten-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   ten-atomic-groups:
     runs-on: ubuntu-latest
