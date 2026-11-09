@@ -187,10 +187,10 @@ test.describe("Placements browser regression", () => {
   );
   test.describe.configure({ mode: "serial" });
 
-  test("TPO and learner complete a placement flow through the UI", async ({
+  test("TPO, learner and College Admin complete a placement and applicant-pipeline flow through the UI", async ({
     page,
     context,
-  }) => {
+  }, info) => {
     test.setTimeout(120_000);
     const unique = Date.now().toString();
 
@@ -205,6 +205,8 @@ test.describe("Placements browser regression", () => {
         page,
         unique,
       );
+    const jobId = new URL(page.url()).pathname.split("/").at(-1);
+    expect(jobId).toMatch(/^[0-9a-f-]{36}$/i);
 
     await page
       .getByRole("button", {
@@ -290,6 +292,57 @@ test.describe("Placements browser regression", () => {
         /Applied · Internal/,
       ),
     ).toBeVisible();
+
+    // Exercise the real College Admin route fed by the application just
+    // submitted above. Verify both responsive layouts, one audited stage
+    // change with its safe undo, and the filtered export before moving on.
+    await authenticate(
+      context,
+      "seed-college-admin",
+      SEED_IDS.collegeAdminMembership,
+    );
+    for (const viewport of [
+      { name: "desktop", width: 1280, height: 800 },
+      { name: "mobile", width: 390, height: 844 },
+    ]) {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      await page.goto(`/college/placements/jobs/${jobId}/applications`);
+      await expect(page.getByRole("heading", { level: 1, name: /Applications/ })).toBeVisible();
+      await expect(page.getByText("Seed Learner", { exact: true }).first()).toBeVisible();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+      const screenshot = await page.screenshot({ fullPage: true });
+      await info.attach(`ux-g037-applications-${viewport.name}`, { body: screenshot, contentType: "image/png" });
+      if (viewport.name === "mobile") {
+        await expect(page.getByRole("button", { name: /Export CSV/ })).toBeVisible();
+        const exportDownload = page.waitForEvent("download");
+        await page.getByRole("button", { name: /Export CSV/ }).click();
+        expect((await exportDownload).suggestedFilename()).toMatch(/applications.*\.csv/i);
+      }
+    }
+
+    const moveTo = page.getByRole("combobox", { name: "Move Seed Learner to" });
+    await moveTo.selectOption("SHORTLISTED");
+    const pipelineDialog = page.getByRole("dialog", { name: "Move applications to Shortlisted" });
+    const pipelineWrite = page.waitForResponse(response =>
+      response.url().endsWith(`/api/placements/college/jobs/${jobId}/pipeline`) &&
+      response.request().method() === "POST",
+    );
+    await pipelineDialog.getByRole("button", { name: "Confirm 1 application(s)" }).click();
+    expect((await pipelineWrite).ok()).toBe(true);
+    await expect(pipelineDialog.getByText("1 updated, 0 skipped.")).toBeVisible();
+    const undoWrite = page.waitForResponse(response =>
+      response.url().endsWith(`/api/placements/college/jobs/${jobId}/pipeline/undo`) &&
+      response.request().method() === "POST",
+    );
+    await pipelineDialog.getByRole("button", { name: "Undo stage change" }).click();
+    expect((await undoWrite).ok()).toBe(true);
+    await page.reload();
+    await expect(page.getByText("Applied", { exact: true }).first()).toBeVisible();
+
+    await authenticate(context, "seed-learner", SEED_IDS.learnerCollegeAMembership);
+    await page.goto(`/college/placements/jobs/${jobId}/applications`);
+    await expect(page).toHaveURL(/\/dashboard(?:[/?#]|$)/);
+    await expect(page.getByText("Seed Learner", { exact: true })).toHaveCount(0);
 
     await authenticate(
       context,
