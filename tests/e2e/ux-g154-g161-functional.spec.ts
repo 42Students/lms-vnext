@@ -8,7 +8,7 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
   test.skip(!enabled, "Disposable seeded database and test-only role credentials required");
 
   test("G154: a permitted global Super Admin creates a real draft project template", async ({page,context}, info) => {
-    test.setTimeout(120_000);
+    test.setTimeout(180_000);
     await authenticateGracefulRole(context, "superadmin");
     await page.setViewportSize({width:1280,height:800});
     await page.goto("/admin/projects/templates/new");
@@ -87,6 +87,35 @@ test.describe("UX-G154 and UX-G161 — persisted functional UX acceptance", () =
       data:{collegeIds:[],expectedCollegeIds:[SEED_IDS.collegeA]},
     });
     expect(restored.status(),"Restore disposable template assignment to unassigned").toBe(200);
+
+    // Exercise the actual bulk-assignment dialog, not only its API contract.
+    // Abort the outgoing PUT to simulate an ambiguous transport outcome: the UI
+    // must not tell an administrator that the server rolled back a sent write.
+    await page.goto("/admin/projects/templates/"+templateId!+"/colleges");
+    const eligibleCollege=page.getByRole("checkbox",{name:/^Select (?!all on page)/}).first();
+    await expect(eligibleCollege).toBeVisible();
+    await eligibleCollege.check();
+    const assignmentRoute="**/api/projects/templates/"+templateId!+"/assignments";
+    await page.route(assignmentRoute,async route=>{
+      if(route.request().method()==="PUT")await route.abort("failed");
+      else await route.continue();
+    });
+    await page.getByRole("button",{name:"Assign selected (1)"}).click();
+    const assignmentDialog=page.getByRole("alertdialog",{
+      name:"Assign template to 1 selected college?",
+    });
+    await expect(assignmentDialog).toBeVisible();
+    await assignmentDialog.getByRole("button",{name:"Assign selected"}).click();
+    await expect(page.getByText(
+      "The save request was sent, but its result could not be confirmed.",
+      {exact:false},
+    )).toBeVisible();
+    await expect(page.getByRole("button",{name:"Refresh assignments"})).toBeVisible();
+    await page.unroute(assignmentRoute);
+    const unchanged=await page.request.get(assignmentUrl);
+    expect((await unchanged.json() as {collegeIds:string[]}).collegeIds).toEqual([]);
+    await page.getByRole("button",{name:"Refresh assignments"}).click();
+    await page.goto("/admin/projects/templates/"+templateId!+"/overview");
 
     await page.setViewportSize({width:390,height:844});
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(2);
