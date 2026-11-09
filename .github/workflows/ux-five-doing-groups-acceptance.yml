@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - tests/e2e/placements.spec.ts
+      - tests/e2e/support/roles.ts
       - tests/e2e/projects.spec.ts
       - tests/e2e/ux-g061-course-route-acceptance.spec.ts
       - tests/e2e/ux-g099-tpo-batch-classes-acceptance.spec.ts
@@ -107,7 +108,7 @@ jobs:
             tests/e2e/ux-g061-course-route-acceptance.spec.ts \
             tests/e2e/ux-g099-tpo-batch-classes-acceptance.spec.ts \
             tests/e2e/ux-g104-tpo-messages-acceptance.spec.ts \
-            --project=chromium --reporter=line,json \
+            --project=chromium --reporter=line,json --workers=1 \
             --grep 'TPO, learner and College Admin complete a placement and applicant-pipeline flow through the UI|college workspace creation persists Mentor and learner grants and permits Mentor team changes|UX-G061 learner course route acceptance|UX-G099 TPO reviews and persists a class decision on desktop and mobile|UX-G104 TPO starts a recruiter conversation and verifies it on desktop and mobile'
           node -e 'const s=require("./ux-five-doing-groups-results.json").stats;console.log(s);if(s.expected!==7||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
       - name: Save exact-SHA browser evidence
