@@ -64,6 +64,34 @@ test.describe("UX-G010–G021 atomic Super Admin journeys, selected college",()=
       });
     }
   }
+  for(const viewport of viewports){
+    test(`UX-G011 ${viewport.name} invalid student history filters recover within same membership`,async({page,context},info)=>{
+      await page.setViewportSize(viewport);
+      await useCollege(context);
+      const scoped=`/admin/features/${college}/students/${learner}/history`;
+      await page.goto(scoped+"?module=INVALID&actorName=Private");
+      await expect(page.getByRole("heading",{name:"Invalid history filters"})).toBeVisible();
+      const reset=page.getByRole("link",{name:"Clear history filters"});
+      await expect(reset).toHaveAttribute("href",scoped);
+      await page.screenshot({path:info.outputPath(`g011-${viewport.name}-invalid-history.png`),fullPage:true});
+      await reset.click();
+      await expect(page).toHaveURL(new RegExp("/history$"));
+      await expect(page.getByRole("heading",{name:"Student module-rule history"})).toBeVisible();
+    });
+    test(`UX-G012 ${viewport.name} rejects unsupported lecture hall query fields`,async({page,context},info)=>{
+      await page.setViewportSize(viewport);
+      await useCollege(context);
+      const hall="/admin/lecture-halls/69000000-0000-4000-8000-000000000001";
+      await page.goto(hall+"?from=2026-11-01&to=2026-11-02&private=ignored");
+      await expect(page.getByRole("heading",{name:"Invalid date range"})).toBeVisible();
+      const reset=page.getByRole("link",{name:"Clear date range"});
+      await expect(reset).toHaveAttribute("href",hall);
+      await page.screenshot({path:info.outputPath(`g012-${viewport.name}-invalid-hall-filter.png`),fullPage:true});
+      await reset.click();
+      await expect(page).toHaveURL(new RegExp("/lecture-halls/69000000-0000-4000-8000-000000000001$"));
+      await expect(page.getByText("Choose an IST date range to view scheduled classes.")).toBeVisible();
+    });
+  }
   test("Learner cannot read private Super Admin academic, people or placement records",async({page,context})=>{
     test.setTimeout(120000);
     await authenticateGracefulRole(context,"learner");
