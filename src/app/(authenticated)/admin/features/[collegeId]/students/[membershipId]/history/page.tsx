@@ -2,6 +2,7 @@ import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import {notFound} from "next/navigation";
+import {ErrorState} from "@/components/ui/error-state";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {PageBackLink} from "@/components/ui/page-back-link";
@@ -17,7 +18,14 @@ export const dynamic="force-dynamic";
 export default async function StudentModuleRuleHistory({params,searchParams}:{params:Promise<{collegeId:string;membershipId:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const {collegeId,membershipId}=await params;
  const cursor=studentRuleHistoryCursorSchema.safeParse(await searchParams);
- if(!cursor.success)notFound();
+ if(!cursor.success)return <div className="min-w-0 space-y-4">
+  <PageHeader eyebrow="Super Admin · Module Access" title="Student module-rule history"
+    actions={<PageBackLink href={"/admin/features/"+encodeURIComponent(collegeId)+"/students/"+encodeURIComponent(membershipId)} label="Student module access"/>}/>
+  <ErrorState title="Invalid history filters"
+    description="Choose a valid module, actor, date range and pagination cursor. The membership history has not been loaded."
+    action={<TextLink href={studentRuleHistoryHref(collegeId,membershipId,null)}
+      className="inline-flex min-h-11 items-center md:min-h-9">Clear history filters</TextLink>}/>
+ </div>;
  const result=await listSuperAdminStudentRuleHistory(await getCurrentRequestContext(),collegeId,membershipId,cursor.data);
  if(!result)notFound();
  return <div className="min-w-0 space-y-6">

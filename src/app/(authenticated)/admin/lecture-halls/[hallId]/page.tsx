@@ -38,6 +38,10 @@ export default async function SuperAdminLectureHallAvailability({
   requireSuperAdminSelectedCollege(context, "academics.manage");
   const { hallId } = await params;
   const raw = await searchParams;
+  // Unknown or repeated query fields must not be silently ignored while
+  // presenting the room schedule as the requested range.
+  const supportedFilters=Object.entries(raw).every(([key,value])=>
+    (key==="from"||key==="to")&&!Array.isArray(value));
   const parsed = collegeHallAvailabilitySchema.safeParse({
     hallId, from: raw["from"], to: raw["to"],
   });
@@ -66,8 +70,8 @@ export default async function SuperAdminLectureHallAvailability({
       <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">View schedule</Button>
     </form>
 
-    {!parsed.success
-      ? raw["from"] !== undefined || raw["to"] !== undefined
+    {!supportedFilters||!parsed.success
+      ? !supportedFilters||raw["from"] !== undefined || raw["to"] !== undefined
         ? <ErrorState title="Invalid date range" description="Select valid IST dates (up to 31 consecutive days)." action={<TextLink href={"/admin/lecture-halls/"+encodeURIComponent(hallId)} className="inline-flex min-h-11 items-center md:min-h-9">Clear date range</TextLink>} />
         : <p role="status" className="text-sm text-[var(--lms-muted-text)]">Choose an IST date range to view scheduled classes.</p>
       : <section aria-label="Hall scheduled sessions" className="min-w-0 space-y-[var(--lms-space-4)]">

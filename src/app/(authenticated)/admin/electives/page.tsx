@@ -73,7 +73,7 @@ export default async function SuperAdminElectivesPage({
  if(!dataResult.ok)return <div className="min-w-0 space-y-4">
   <PageHeader title="Electives"/>
   {academicTabs}
-  <Alert tone="error">Could not load elective slots; use Retry above.</Alert>
+  <Alert tone="error">Could not load elective slots. Choose Retry slots below to try again without clearing your filters.</Alert>
   <TextLink href="/admin/electives" className="inline-flex min-h-11 items-center md:min-h-9">Retry slots</TextLink>
  </div>;
  const data=dataResult.value;
