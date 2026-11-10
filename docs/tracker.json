@@ -23464,9 +23464,24 @@
             "regressionCoverage": "New group source contracts, scoped lint+TypeScript, responsive seeded Super Admin and Learner-role denial acceptance authored; execution must be independently checked.",
             "changedGroupCode": true,
             "outstanding": "A complete green exact-SHA test run, desktop/mobile artifact review, all registered page and route-only actions (CRUD/exports/bulk where applicable), security/tenant negative evidence and final DONE evidence. Source-only or route smoke alone insufficient."
+          },
+          {
+            "type": "UX_ADMIN_TEN_RECOVERY_FOLLOWUP_20261111",
+            "state": "IMPLEMENTED_VERIFY_OPEN",
+            "codeCommits": [
+              "cbf3b895d2b81a16e64c43cf6fca82e50585870e",
+              "f74987afe0c05cc0289a6180326c83b564631bb0"
+            ],
+            "testAndDocCommit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+            "regressionFile": "tests/unit/ux-g010-g021-admin-atomic-recovery.test.ts",
+            "parityDoc": "docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md",
+            "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
+            "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
+            "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
           }
         ],
-        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G199, UX-G200, UX-G201.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.",
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G199, UX-G200, UX-G201.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G010",
@@ -23521,9 +23536,24 @@
             "regressionCoverage": "New group source contracts, scoped lint+TypeScript, responsive seeded Super Admin and Learner-role denial acceptance authored; execution must be independently checked.",
             "changedGroupCode": false,
             "outstanding": "A complete green exact-SHA test run, desktop/mobile artifact review, all registered page and route-only actions (CRUD/exports/bulk where applicable), security/tenant negative evidence and final DONE evidence. Source-only or route smoke alone insufficient."
+          },
+          {
+            "type": "UX_ADMIN_TEN_RECOVERY_FOLLOWUP_20261111",
+            "state": "IMPLEMENTED_VERIFY_OPEN",
+            "codeCommits": [
+              "cbf3b895d2b81a16e64c43cf6fca82e50585870e",
+              "f74987afe0c05cc0289a6180326c83b564631bb0"
+            ],
+            "testAndDocCommit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+            "regressionFile": "tests/unit/ux-g010-g021-admin-atomic-recovery.test.ts",
+            "parityDoc": "docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md",
+            "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
+            "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
+            "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
           }
         ],
-        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G202, UX-G203.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.",
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G202, UX-G203.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G011",
@@ -23581,9 +23611,24 @@
             "regressionCoverage": "New group source contracts, scoped lint+TypeScript, responsive seeded Super Admin and Learner-role denial acceptance authored; execution must be independently checked.",
             "changedGroupCode": true,
             "outstanding": "A complete green exact-SHA test run, desktop/mobile artifact review, all registered page and route-only actions (CRUD/exports/bulk where applicable), security/tenant negative evidence and final DONE evidence. Source-only or route smoke alone insufficient."
+          },
+          {
+            "type": "UX_ADMIN_TEN_RECOVERY_FOLLOWUP_20261111",
+            "state": "IMPLEMENTED_VERIFY_OPEN",
+            "codeCommits": [
+              "cbf3b895d2b81a16e64c43cf6fca82e50585870e",
+              "f74987afe0c05cc0289a6180326c83b564631bb0"
+            ],
+            "testAndDocCommit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+            "regressionFile": "tests/unit/ux-g010-g021-admin-atomic-recovery.test.ts",
+            "parityDoc": "docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md",
+            "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
+            "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
+            "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
           }
         ],
-        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G204, UX-G205.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.",
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G204, UX-G205.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G012",
@@ -23639,9 +23684,24 @@
             "regressionCoverage": "New group source contracts, scoped lint+TypeScript, responsive seeded Super Admin and Learner-role denial acceptance authored; execution must be independently checked.",
             "changedGroupCode": true,
             "outstanding": "A complete green exact-SHA test run, desktop/mobile artifact review, all registered page and route-only actions (CRUD/exports/bulk where applicable), security/tenant negative evidence and final DONE evidence. Source-only or route smoke alone insufficient."
+          },
+          {
+            "type": "UX_ADMIN_TEN_RECOVERY_FOLLOWUP_20261111",
+            "state": "IMPLEMENTED_VERIFY_OPEN",
+            "codeCommits": [
+              "cbf3b895d2b81a16e64c43cf6fca82e50585870e",
+              "f74987afe0c05cc0289a6180326c83b564631bb0"
+            ],
+            "testAndDocCommit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+            "regressionFile": "tests/unit/ux-g010-g021-admin-atomic-recovery.test.ts",
+            "parityDoc": "docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md",
+            "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
+            "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
+            "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
           }
         ],
-        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G206, UX-G207.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.",
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G206, UX-G207.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G013",
@@ -23695,9 +23755,24 @@
             "regressionCoverage": "New group source contracts, scoped lint+TypeScript, responsive seeded Super Admin and Learner-role denial acceptance authored; execution must be independently checked.",
             "changedGroupCode": true,
             "outstanding": "A complete green exact-SHA test run, desktop/mobile artifact review, all registered page and route-only actions (CRUD/exports/bulk where applicable), security/tenant negative evidence and final DONE evidence. Source-only or route smoke alone insufficient."
+          },
+          {
+            "type": "UX_ADMIN_TEN_RECOVERY_FOLLOWUP_20261111",
+            "state": "IMPLEMENTED_VERIFY_OPEN",
+            "codeCommits": [
+              "cbf3b895d2b81a16e64c43cf6fca82e50585870e",
+              "f74987afe0c05cc0289a6180326c83b564631bb0"
+            ],
+            "testAndDocCommit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+            "regressionFile": "tests/unit/ux-g010-g021-admin-atomic-recovery.test.ts",
+            "parityDoc": "docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md",
+            "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
+            "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
+            "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
           }
         ],
-        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G208, UX-G209.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.",
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G208, UX-G209.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G014",
@@ -23835,6 +23910,21 @@
             "regressionCoverage": "New group source contracts, scoped lint+TypeScript, responsive seeded Super Admin and Learner-role denial acceptance authored; execution must be independently checked.",
             "changedGroupCode": false,
             "outstanding": "A complete green exact-SHA test run, desktop/mobile artifact review, all registered page and route-only actions (CRUD/exports/bulk where applicable), security/tenant negative evidence and final DONE evidence. Source-only or route smoke alone insufficient."
+          },
+          {
+            "type": "UX_ADMIN_TEN_RECOVERY_FOLLOWUP_20261111",
+            "state": "IMPLEMENTED_VERIFY_OPEN",
+            "codeCommits": [
+              "cbf3b895d2b81a16e64c43cf6fca82e50585870e",
+              "f74987afe0c05cc0289a6180326c83b564631bb0"
+            ],
+            "testAndDocCommit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+            "regressionFile": "tests/unit/ux-g010-g021-admin-atomic-recovery.test.ts",
+            "parityDoc": "docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md",
+            "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
+            "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
+            "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
           }
         ],
         "splitMeta": {
@@ -23850,7 +23940,7 @@
             "UX-G211"
           ]
         },
-        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G210, UX-G211.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified."
+        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G210, UX-G211.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance."
       },
       {
         "id": "UX-G017",
@@ -23895,6 +23985,21 @@
             "regressionCoverage": "New group source contracts, scoped lint+TypeScript, responsive seeded Super Admin and Learner-role denial acceptance authored; execution must be independently checked.",
             "changedGroupCode": false,
             "outstanding": "A complete green exact-SHA test run, desktop/mobile artifact review, all registered page and route-only actions (CRUD/exports/bulk where applicable), security/tenant negative evidence and final DONE evidence. Source-only or route smoke alone insufficient."
+          },
+          {
+            "type": "UX_ADMIN_TEN_RECOVERY_FOLLOWUP_20261111",
+            "state": "IMPLEMENTED_VERIFY_OPEN",
+            "codeCommits": [
+              "cbf3b895d2b81a16e64c43cf6fca82e50585870e",
+              "f74987afe0c05cc0289a6180326c83b564631bb0"
+            ],
+            "testAndDocCommit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+            "regressionFile": "tests/unit/ux-g010-g021-admin-atomic-recovery.test.ts",
+            "parityDoc": "docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md",
+            "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
+            "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
+            "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
           }
         ],
         "splitMeta": {
@@ -23910,7 +24015,7 @@
             "UX-G213"
           ]
         },
-        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G212, UX-G213.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified."
+        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G212, UX-G213.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance."
       },
       {
         "id": "UX-G018",
@@ -24028,6 +24133,21 @@
             "regressionCoverage": "New group source contracts, scoped lint+TypeScript, responsive seeded Super Admin and Learner-role denial acceptance authored; execution must be independently checked.",
             "changedGroupCode": false,
             "outstanding": "A complete green exact-SHA test run, desktop/mobile artifact review, all registered page and route-only actions (CRUD/exports/bulk where applicable), security/tenant negative evidence and final DONE evidence. Source-only or route smoke alone insufficient."
+          },
+          {
+            "type": "UX_ADMIN_TEN_RECOVERY_FOLLOWUP_20261111",
+            "state": "IMPLEMENTED_VERIFY_OPEN",
+            "codeCommits": [
+              "cbf3b895d2b81a16e64c43cf6fca82e50585870e",
+              "f74987afe0c05cc0289a6180326c83b564631bb0"
+            ],
+            "testAndDocCommit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+            "regressionFile": "tests/unit/ux-g010-g021-admin-atomic-recovery.test.ts",
+            "parityDoc": "docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md",
+            "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
+            "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
+            "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
           }
         ],
         "splitMeta": {
@@ -24043,7 +24163,7 @@
             "UX-G215"
           ]
         },
-        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G214, UX-G215.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified."
+        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G214, UX-G215.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance."
       },
       {
         "id": "UX-G020",
@@ -24087,6 +24207,21 @@
             "regressionCoverage": "New group source contracts, scoped lint+TypeScript, responsive seeded Super Admin and Learner-role denial acceptance authored; execution must be independently checked.",
             "changedGroupCode": false,
             "outstanding": "A complete green exact-SHA test run, desktop/mobile artifact review, all registered page and route-only actions (CRUD/exports/bulk where applicable), security/tenant negative evidence and final DONE evidence. Source-only or route smoke alone insufficient."
+          },
+          {
+            "type": "UX_ADMIN_TEN_RECOVERY_FOLLOWUP_20261111",
+            "state": "IMPLEMENTED_VERIFY_OPEN",
+            "codeCommits": [
+              "cbf3b895d2b81a16e64c43cf6fca82e50585870e",
+              "f74987afe0c05cc0289a6180326c83b564631bb0"
+            ],
+            "testAndDocCommit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+            "regressionFile": "tests/unit/ux-g010-g021-admin-atomic-recovery.test.ts",
+            "parityDoc": "docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md",
+            "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
+            "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
+            "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
           }
         ],
         "splitMeta": {
@@ -24102,7 +24237,7 @@
             "UX-G217"
           ]
         },
-        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G216, UX-G217.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified."
+        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G216, UX-G217.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance."
       },
       {
         "id": "UX-G021",
@@ -24141,6 +24276,21 @@
             "regressionCoverage": "New group source contracts, scoped lint+TypeScript, responsive seeded Super Admin and Learner-role denial acceptance authored; execution must be independently checked.",
             "changedGroupCode": false,
             "outstanding": "A complete green exact-SHA test run, desktop/mobile artifact review, all registered page and route-only actions (CRUD/exports/bulk where applicable), security/tenant negative evidence and final DONE evidence. Source-only or route smoke alone insufficient."
+          },
+          {
+            "type": "UX_ADMIN_TEN_RECOVERY_FOLLOWUP_20261111",
+            "state": "IMPLEMENTED_VERIFY_OPEN",
+            "codeCommits": [
+              "cbf3b895d2b81a16e64c43cf6fca82e50585870e",
+              "f74987afe0c05cc0289a6180326c83b564631bb0"
+            ],
+            "testAndDocCommit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+            "regressionFile": "tests/unit/ux-g010-g021-admin-atomic-recovery.test.ts",
+            "parityDoc": "docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md",
+            "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
+            "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
+            "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
           }
         ],
         "splitMeta": {
@@ -24157,7 +24307,7 @@
             "UX-G220"
           ]
         },
-        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G218, UX-G219, UX-G220.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified."
+        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G218, UX-G219, UX-G220.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance."
       },
       {
         "id": "UX-G022",
