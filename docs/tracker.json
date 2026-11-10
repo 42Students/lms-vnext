@@ -23478,10 +23478,38 @@
             "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
             "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
             "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
-            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE.",
+            "verification": {
+              "browserBaseline": {
+                "runId": 42897487972,
+                "commit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+                "conclusion": "success",
+                "expected": 33,
+                "unexpected": 0,
+                "skipped": 0,
+                "flaky": 0,
+                "artifactId": 13801636522,
+                "scope": "Real selected-college Super Admin/ Learner denial route-responsive smoke only"
+              },
+              "recoveryMatrix": {
+                "runId": 42898145625,
+                "commit": "c5df6a150e8eb423638c1af68557074db501b55a",
+                "conclusion": "success",
+                "artifactId": 13801931423,
+                "scope": "Per-page error/loading boundaries and rendered responsive recovery, not functional operations"
+              },
+              "expandedBrowser": {
+                "runId": 42898648113,
+                "commit": "e225ece72567891aa9a764366fd86b9f38b51b64",
+                "statusAtRecording": "IN_PROGRESS",
+                "expected": 37,
+                "focus": "G011 invalid history and G012 unknown query desktop/mobile with data-read guard"
+              },
+              "closure": "DOING; production CRUD/bulk/export, tenant negatives and full interaction/state matrices unverified"
+            }
           }
         ],
-        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G199, UX-G200, UX-G201.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.",
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G199, UX-G200, UX-G201.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.\n2026-11-11: Exact-SHA 33-case route/browser baseline PASS run 42897487972; recovery boundary suite PASS run 42898145625. Expanded 37-case rerun 42898648113 pending at recording; full group DONE not earned.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G010",
@@ -23550,10 +23578,38 @@
             "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
             "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
             "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
-            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE.",
+            "verification": {
+              "browserBaseline": {
+                "runId": 42897487972,
+                "commit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+                "conclusion": "success",
+                "expected": 33,
+                "unexpected": 0,
+                "skipped": 0,
+                "flaky": 0,
+                "artifactId": 13801636522,
+                "scope": "Real selected-college Super Admin/ Learner denial route-responsive smoke only"
+              },
+              "recoveryMatrix": {
+                "runId": 42898145625,
+                "commit": "c5df6a150e8eb423638c1af68557074db501b55a",
+                "conclusion": "success",
+                "artifactId": 13801931423,
+                "scope": "Per-page error/loading boundaries and rendered responsive recovery, not functional operations"
+              },
+              "expandedBrowser": {
+                "runId": 42898648113,
+                "commit": "e225ece72567891aa9a764366fd86b9f38b51b64",
+                "statusAtRecording": "IN_PROGRESS",
+                "expected": 37,
+                "focus": "G011 invalid history and G012 unknown query desktop/mobile with data-read guard"
+              },
+              "closure": "DOING; production CRUD/bulk/export, tenant negatives and full interaction/state matrices unverified"
+            }
           }
         ],
-        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G202, UX-G203.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.",
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G202, UX-G203.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.\n2026-11-11: Exact-SHA 33-case route/browser baseline PASS run 42897487972; recovery boundary suite PASS run 42898145625. Expanded 37-case rerun 42898648113 pending at recording; full group DONE not earned.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G011",
@@ -23625,10 +23681,38 @@
             "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
             "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
             "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
-            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE.",
+            "verification": {
+              "browserBaseline": {
+                "runId": 42897487972,
+                "commit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+                "conclusion": "success",
+                "expected": 33,
+                "unexpected": 0,
+                "skipped": 0,
+                "flaky": 0,
+                "artifactId": 13801636522,
+                "scope": "Real selected-college Super Admin/ Learner denial route-responsive smoke only"
+              },
+              "recoveryMatrix": {
+                "runId": 42898145625,
+                "commit": "c5df6a150e8eb423638c1af68557074db501b55a",
+                "conclusion": "success",
+                "artifactId": 13801931423,
+                "scope": "Per-page error/loading boundaries and rendered responsive recovery, not functional operations"
+              },
+              "expandedBrowser": {
+                "runId": 42898648113,
+                "commit": "e225ece72567891aa9a764366fd86b9f38b51b64",
+                "statusAtRecording": "IN_PROGRESS",
+                "expected": 37,
+                "focus": "G011 invalid history and G012 unknown query desktop/mobile with data-read guard"
+              },
+              "closure": "DOING; production CRUD/bulk/export, tenant negatives and full interaction/state matrices unverified"
+            }
           }
         ],
-        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G204, UX-G205.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.",
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G204, UX-G205.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.\n2026-11-11: Exact-SHA 33-case route/browser baseline PASS run 42897487972; recovery boundary suite PASS run 42898145625. Expanded 37-case rerun 42898648113 pending at recording; full group DONE not earned.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G012",
@@ -23698,10 +23782,38 @@
             "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
             "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
             "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
-            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE.",
+            "verification": {
+              "browserBaseline": {
+                "runId": 42897487972,
+                "commit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+                "conclusion": "success",
+                "expected": 33,
+                "unexpected": 0,
+                "skipped": 0,
+                "flaky": 0,
+                "artifactId": 13801636522,
+                "scope": "Real selected-college Super Admin/ Learner denial route-responsive smoke only"
+              },
+              "recoveryMatrix": {
+                "runId": 42898145625,
+                "commit": "c5df6a150e8eb423638c1af68557074db501b55a",
+                "conclusion": "success",
+                "artifactId": 13801931423,
+                "scope": "Per-page error/loading boundaries and rendered responsive recovery, not functional operations"
+              },
+              "expandedBrowser": {
+                "runId": 42898648113,
+                "commit": "e225ece72567891aa9a764366fd86b9f38b51b64",
+                "statusAtRecording": "IN_PROGRESS",
+                "expected": 37,
+                "focus": "G011 invalid history and G012 unknown query desktop/mobile with data-read guard"
+              },
+              "closure": "DOING; production CRUD/bulk/export, tenant negatives and full interaction/state matrices unverified"
+            }
           }
         ],
-        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G206, UX-G207.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.",
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G206, UX-G207.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.\n2026-11-11: Exact-SHA 33-case route/browser baseline PASS run 42897487972; recovery boundary suite PASS run 42898145625. Expanded 37-case rerun 42898648113 pending at recording; full group DONE not earned.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G013",
@@ -23769,10 +23881,38 @@
             "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
             "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
             "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
-            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE.",
+            "verification": {
+              "browserBaseline": {
+                "runId": 42897487972,
+                "commit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+                "conclusion": "success",
+                "expected": 33,
+                "unexpected": 0,
+                "skipped": 0,
+                "flaky": 0,
+                "artifactId": 13801636522,
+                "scope": "Real selected-college Super Admin/ Learner denial route-responsive smoke only"
+              },
+              "recoveryMatrix": {
+                "runId": 42898145625,
+                "commit": "c5df6a150e8eb423638c1af68557074db501b55a",
+                "conclusion": "success",
+                "artifactId": 13801931423,
+                "scope": "Per-page error/loading boundaries and rendered responsive recovery, not functional operations"
+              },
+              "expandedBrowser": {
+                "runId": 42898648113,
+                "commit": "e225ece72567891aa9a764366fd86b9f38b51b64",
+                "statusAtRecording": "IN_PROGRESS",
+                "expected": 37,
+                "focus": "G011 invalid history and G012 unknown query desktop/mobile with data-read guard"
+              },
+              "closure": "DOING; production CRUD/bulk/export, tenant negatives and full interaction/state matrices unverified"
+            }
           }
         ],
-        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G208, UX-G209.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.",
+        "notes": "2026-11-08: claimed for non-overlapping admin page-family UX pass; source audit and implementation underway. NOT CLOSED until scoped checks and desktop/mobile browser evidence.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G208, UX-G209.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.\n2026-11-11: Exact-SHA 33-case route/browser baseline PASS run 42897487972; recovery boundary suite PASS run 42898145625. Expanded 37-case rerun 42898648113 pending at recording; full group DONE not earned.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G014",
@@ -23924,7 +24064,35 @@
             "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
             "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
             "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
-            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE.",
+            "verification": {
+              "browserBaseline": {
+                "runId": 42897487972,
+                "commit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+                "conclusion": "success",
+                "expected": 33,
+                "unexpected": 0,
+                "skipped": 0,
+                "flaky": 0,
+                "artifactId": 13801636522,
+                "scope": "Real selected-college Super Admin/ Learner denial route-responsive smoke only"
+              },
+              "recoveryMatrix": {
+                "runId": 42898145625,
+                "commit": "c5df6a150e8eb423638c1af68557074db501b55a",
+                "conclusion": "success",
+                "artifactId": 13801931423,
+                "scope": "Per-page error/loading boundaries and rendered responsive recovery, not functional operations"
+              },
+              "expandedBrowser": {
+                "runId": 42898648113,
+                "commit": "e225ece72567891aa9a764366fd86b9f38b51b64",
+                "statusAtRecording": "IN_PROGRESS",
+                "expected": 37,
+                "focus": "G011 invalid history and G012 unknown query desktop/mobile with data-read guard"
+              },
+              "closure": "DOING; production CRUD/bulk/export, tenant negatives and full interaction/state matrices unverified"
+            }
           }
         ],
         "splitMeta": {
@@ -23940,7 +24108,7 @@
             "UX-G211"
           ]
         },
-        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G210, UX-G211.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance."
+        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G210, UX-G211.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.\n2026-11-11: Exact-SHA 33-case route/browser baseline PASS run 42897487972; recovery boundary suite PASS run 42898145625. Expanded 37-case rerun 42898648113 pending at recording; full group DONE not earned."
       },
       {
         "id": "UX-G017",
@@ -23999,7 +24167,35 @@
             "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
             "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
             "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
-            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE.",
+            "verification": {
+              "browserBaseline": {
+                "runId": 42897487972,
+                "commit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+                "conclusion": "success",
+                "expected": 33,
+                "unexpected": 0,
+                "skipped": 0,
+                "flaky": 0,
+                "artifactId": 13801636522,
+                "scope": "Real selected-college Super Admin/ Learner denial route-responsive smoke only"
+              },
+              "recoveryMatrix": {
+                "runId": 42898145625,
+                "commit": "c5df6a150e8eb423638c1af68557074db501b55a",
+                "conclusion": "success",
+                "artifactId": 13801931423,
+                "scope": "Per-page error/loading boundaries and rendered responsive recovery, not functional operations"
+              },
+              "expandedBrowser": {
+                "runId": 42898648113,
+                "commit": "e225ece72567891aa9a764366fd86b9f38b51b64",
+                "statusAtRecording": "IN_PROGRESS",
+                "expected": 37,
+                "focus": "G011 invalid history and G012 unknown query desktop/mobile with data-read guard"
+              },
+              "closure": "DOING; production CRUD/bulk/export, tenant negatives and full interaction/state matrices unverified"
+            }
           }
         ],
         "splitMeta": {
@@ -24015,7 +24211,7 @@
             "UX-G213"
           ]
         },
-        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G212, UX-G213.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance."
+        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G212, UX-G213.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.\n2026-11-11: Exact-SHA 33-case route/browser baseline PASS run 42897487972; recovery boundary suite PASS run 42898145625. Expanded 37-case rerun 42898648113 pending at recording; full group DONE not earned."
       },
       {
         "id": "UX-G018",
@@ -24147,7 +24343,35 @@
             "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
             "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
             "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
-            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE.",
+            "verification": {
+              "browserBaseline": {
+                "runId": 42897487972,
+                "commit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+                "conclusion": "success",
+                "expected": 33,
+                "unexpected": 0,
+                "skipped": 0,
+                "flaky": 0,
+                "artifactId": 13801636522,
+                "scope": "Real selected-college Super Admin/ Learner denial route-responsive smoke only"
+              },
+              "recoveryMatrix": {
+                "runId": 42898145625,
+                "commit": "c5df6a150e8eb423638c1af68557074db501b55a",
+                "conclusion": "success",
+                "artifactId": 13801931423,
+                "scope": "Per-page error/loading boundaries and rendered responsive recovery, not functional operations"
+              },
+              "expandedBrowser": {
+                "runId": 42898648113,
+                "commit": "e225ece72567891aa9a764366fd86b9f38b51b64",
+                "statusAtRecording": "IN_PROGRESS",
+                "expected": 37,
+                "focus": "G011 invalid history and G012 unknown query desktop/mobile with data-read guard"
+              },
+              "closure": "DOING; production CRUD/bulk/export, tenant negatives and full interaction/state matrices unverified"
+            }
           }
         ],
         "splitMeta": {
@@ -24163,7 +24387,7 @@
             "UX-G215"
           ]
         },
-        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G214, UX-G215.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance."
+        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G214, UX-G215.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.\n2026-11-11: Exact-SHA 33-case route/browser baseline PASS run 42897487972; recovery boundary suite PASS run 42898145625. Expanded 37-case rerun 42898648113 pending at recording; full group DONE not earned."
       },
       {
         "id": "UX-G020",
@@ -24221,7 +24445,35 @@
             "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
             "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
             "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
-            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE.",
+            "verification": {
+              "browserBaseline": {
+                "runId": 42897487972,
+                "commit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+                "conclusion": "success",
+                "expected": 33,
+                "unexpected": 0,
+                "skipped": 0,
+                "flaky": 0,
+                "artifactId": 13801636522,
+                "scope": "Real selected-college Super Admin/ Learner denial route-responsive smoke only"
+              },
+              "recoveryMatrix": {
+                "runId": 42898145625,
+                "commit": "c5df6a150e8eb423638c1af68557074db501b55a",
+                "conclusion": "success",
+                "artifactId": 13801931423,
+                "scope": "Per-page error/loading boundaries and rendered responsive recovery, not functional operations"
+              },
+              "expandedBrowser": {
+                "runId": 42898648113,
+                "commit": "e225ece72567891aa9a764366fd86b9f38b51b64",
+                "statusAtRecording": "IN_PROGRESS",
+                "expected": 37,
+                "focus": "G011 invalid history and G012 unknown query desktop/mobile with data-read guard"
+              },
+              "closure": "DOING; production CRUD/bulk/export, tenant negatives and full interaction/state matrices unverified"
+            }
           }
         ],
         "splitMeta": {
@@ -24237,7 +24489,7 @@
             "UX-G217"
           ]
         },
-        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G216, UX-G217.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance."
+        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G216, UX-G217.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.\n2026-11-11: Exact-SHA 33-case route/browser baseline PASS run 42897487972; recovery boundary suite PASS run 42898145625. Expanded 37-case rerun 42898648113 pending at recording; full group DONE not earned."
       },
       {
         "id": "UX-G021",
@@ -24290,7 +24542,35 @@
             "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/42897487972",
             "verifiedAtRecording": "Scoped lint, UX tracker integrity and source regression steps succeeded; full TypeScript and authenticated desktop/mobile browser pending.",
             "scope": "Navigation, filter validation, missing-college and read-failure UX; G013 existing membership audit source reviewed and regression-protected.",
-            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE."
+            "outstanding": "Full authenticated route/action/state acceptance including applicable persisted CRUD/bulk/export, privacy/tenant negative checks and mobile/keyboard evidence. This does not certify DONE.",
+            "verification": {
+              "browserBaseline": {
+                "runId": 42897487972,
+                "commit": "6a755acd8014bbe8405290b52f5218c4aa910029",
+                "conclusion": "success",
+                "expected": 33,
+                "unexpected": 0,
+                "skipped": 0,
+                "flaky": 0,
+                "artifactId": 13801636522,
+                "scope": "Real selected-college Super Admin/ Learner denial route-responsive smoke only"
+              },
+              "recoveryMatrix": {
+                "runId": 42898145625,
+                "commit": "c5df6a150e8eb423638c1af68557074db501b55a",
+                "conclusion": "success",
+                "artifactId": 13801931423,
+                "scope": "Per-page error/loading boundaries and rendered responsive recovery, not functional operations"
+              },
+              "expandedBrowser": {
+                "runId": 42898648113,
+                "commit": "e225ece72567891aa9a764366fd86b9f38b51b64",
+                "statusAtRecording": "IN_PROGRESS",
+                "expected": 37,
+                "focus": "G011 invalid history and G012 unknown query desktop/mobile with data-read guard"
+              },
+              "closure": "DOING; production CRUD/bulk/export, tenant negatives and full interaction/state matrices unverified"
+            }
           }
         ],
         "splitMeta": {
@@ -24307,7 +24587,7 @@
             "UX-G220"
           ]
         },
-        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G218, UX-G219, UX-G220.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance."
+        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G218, UX-G219, UX-G220.\n2026-11-09: Ten-group atomic UX recovery batch applied on main at 8be7799 and 63fa5f7; details docs/parity/pages/admin/UX-G010-G021-ten-atomic-2026-11-09.md. CI 42645728024 in progress when recorded. DOING; not completed or release/security certified.\n2026-11-11: Ten-group filter/recovery follow-up implemented at cbf3b89/f74987a with source tests at 6a755ac. CI 42897487972 in progress at recording; DOING until full verified operational acceptance.\n2026-11-11: Exact-SHA 33-case route/browser baseline PASS run 42897487972; recovery boundary suite PASS run 42898145625. Expanded 37-case rerun 42898648113 pending at recording; full group DONE not earned."
       },
       {
         "id": "UX-G022",
