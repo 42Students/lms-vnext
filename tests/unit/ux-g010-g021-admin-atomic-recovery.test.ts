@@ -96,6 +96,7 @@ describe("UX-G010 to G021: Super Admin atomic route recovery",()=>{
     expect(src).toContain("supportedFilters=Object.entries(raw).every");
     expect(src).toContain('(key==="from"||key==="to")&&!Array.isArray(value)');
     expect(src).toContain("!supportedFilters||!parsed.success");
+    expect(src).toContain("if (supportedFilters && parsed.success)");
   });
   it("G013 membership audit retains a safe failure state and authorized read",()=>{
     const src=route("people/directory/[membershipId]/audit/page.tsx");
