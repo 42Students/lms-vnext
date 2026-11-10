@@ -46,7 +46,9 @@ export default async function SuperAdminLectureHallAvailability({
     hallId, from: raw["from"], to: raw["to"],
   });
   let result: Awaited<ReturnType<typeof getCollegeHallAvailability>> | null = null;
-  if (parsed.success) {
+  // A malformed URL must never start a private schedule read, even if its
+  // known date fields happen to form a valid range.
+  if (supportedFilters && parsed.success) {
     try {
       result = await getCollegeHallAvailability(context, parsed.data);
     } catch (error) {
