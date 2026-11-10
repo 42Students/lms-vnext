@@ -44,6 +44,15 @@ on:
       - 'src/app/(authenticated)/tpo/team/[threadId]/page.tsx'
       - 'src/app/e2e/ux-g110-g119-recovery/**'
       - 'tests/unit/tpo-ux-g110-g119-recovery.test.ts'
+      - 'tests/unit/ux-ten-tpo-doing-recovery-20261111.test.ts'
+      - 'src/app/(authenticated)/tpo/placements/new/draft/error.tsx'
+      - 'src/app/(authenticated)/tpo/recruiters/[leadId]/error.tsx'
+      - 'src/app/(authenticated)/tpo/recruiters/campaigns/preview/error.tsx'
+      - 'src/app/(authenticated)/tpo/settings/branding/error.tsx'
+      - 'src/app/(authenticated)/tpo/settings/templates/error.tsx'
+      - 'src/app/(authenticated)/tpo/students/preparation-prep/error.tsx'
+      - 'src/app/(authenticated)/tpo/batches/[batchId]/error.tsx'
+      - 'src/app/(authenticated)/tpo/messages/[threadId]/error.tsx'
       - 'tests/e2e/ux-g110-g119-recovery.spec.ts'
       - '.github/workflows/ux-g110-g119-recovery-acceptance.yml'
 
@@ -108,9 +117,10 @@ jobs:
             "src/app/(authenticated)/tpo/team/[threadId]/page.tsx" \
             "src/app/e2e/ux-g110-g119-recovery/page.tsx" \
             tests/unit/tpo-ux-g110-g119-recovery.test.ts \
+            tests/unit/ux-ten-tpo-doing-recovery-20261111.test.ts \
             tests/e2e/ux-g110-g119-recovery.spec.ts
       - name: Positive and negative unit/source contracts
-        run: npx vitest run tests/unit/tpo-ux-g110-g119-recovery.test.ts --reporter=dot
+        run: npx vitest run tests/unit/tpo-ux-g110-g119-recovery.test.ts tests/unit/ux-ten-tpo-doing-recovery-20261111.test.ts --reporter=dot
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Desktop and mobile rendered recovery acceptance
