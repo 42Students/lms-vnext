@@ -51,8 +51,10 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
   }
 
   const raw = await searchParams;
+  const supportedFilters=Object.entries(raw).every(([key,value])=>
+    (key==="q"||key==="status"||key==="page")&&!Array.isArray(value));
   const parsed = templateCollegeAvailabilityQuerySchema.safeParse({ q: raw["q"], status: raw["status"], page: raw["page"] });
-  if (!parsed.success) return <div className="min-w-0 space-y-4">
+  if (!supportedFilters||!parsed.success) return <div className="min-w-0 space-y-4">
     <PageHeader title="College availability" />
     <ErrorState title="Invalid college filters" description="Review the search, status and page."
       action={<TextLink href={templateCollegeAvailabilityHref(id,{})}

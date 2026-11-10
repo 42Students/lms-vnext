@@ -80,6 +80,63 @@ describe("UX-G010 to G021: Super Admin atomic route recovery",()=>{
       expect(src).toContain('homeHref="/admin/projects"');
     }
   });
+  it("G010 elective read-failure notice gives a truthful recovery instruction",()=>{
+    const src=route("electives/page.tsx");
+    expect(src).toContain("Choose Retry slots below");
+    expect(src).not.toContain("use Retry above");
+  });
+  it("G011 malformed membership history filters offer an explicit reset without a 404",()=>{
+    const src=route("features/[collegeId]/students/[membershipId]/history/page.tsx");
+    expect(src).toContain('title="Invalid history filters"');
+    expect(src).toContain("studentRuleHistoryHref(collegeId,membershipId,null)");
+    expect(src).toContain("The membership history has not been loaded.");
+  });
+  it("G012 hall schedule explicitly rejects unsupported and repeated filters",()=>{
+    const src=route("lecture-halls/[hallId]/page.tsx");
+    expect(src).toContain("supportedFilters=Object.entries(raw).every");
+    expect(src).toContain('(key==="from"||key==="to")&&!Array.isArray(value)');
+    expect(src).toContain("!supportedFilters||!parsed.success");
+  });
+  it("G013 membership audit retains a safe failure state and authorized read",()=>{
+    const src=route("people/directory/[membershipId]/audit/page.tsx");
+    expect(src).toContain("listSuperAdminPersonAudit(await getCurrentRequestContext(),membershipId)");
+    expect(src).toContain("if(error instanceof AuthorizationError)throw error;");
+    expect(src).toContain("Membership audit unavailable");
+    expect(src).toContain("No audit records are shown while this request has failed.");
+  });
+  it("G014 application read failure keeps retry and a safe return to drives",()=>{
+    const src=route("placements/applications/[applicationId]/error.tsx");
+    expect(src).toContain("Retry application");
+    expect(src).toContain('href="/admin/placements/drives"');
+    expect(src).toContain("min-h-11");
+  });
+  it("G016 drive backlink requires the exact placement path boundary",()=>{
+    const src=route("placements/jobs/[jobId]/page.tsx");
+    expect(src).toContain("const backHref=");
+    expect(src).toContain("admin\\/placements(?:\\/|\\?|$)");
+    expect(src).toContain('requested:"/admin/placements/drives"');
+  });
+  it("G017 joining read failure cannot be mistaken for an offer decision",()=>{
+    const src=route("placements/joining/[offerId]/error.tsx");
+    expect(src).toContain("This is not a missing or rejected offer");
+    expect(src).toContain("Retry joining outcome");
+    expect(src).toContain("min-h-11");
+  });
+  it("G019 global programs do not pretend unsupported college filters were applied",()=>{
+    const src=route("programs/page.tsx");
+    expect(src).toContain('key!=="page"');
+    expect(src).toContain("Invalid global program filters");
+  });
+  it("G020 missing college is a selection-needed state, not endless loading",()=>{
+    const src=route("projects/at-risk/page.tsx");
+    expect(src).toContain('title="No college selected"');
+    expect(src).not.toContain('label="Awaiting college scope"');
+  });
+  it("G021 template college filters reject unknown URL keys",()=>{
+    const src=route("projects/templates/[templateId]/colleges/page.tsx");
+    expect(src).toContain("supportedFilters=Object.entries(raw).every");
+    expect(src).toContain("!supportedFilters||!parsed.success");
+  });
   it("G021 template availability and detail errors return to the template catalogue",()=>{
     expect(route("projects/templates/[templateId]/colleges/error.tsx")).toContain('homeHref="/admin/projects/templates"');
     expect(route("projects/templates/[templateId]/error.tsx")).toContain('href="/admin/projects/templates"');
