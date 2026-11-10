@@ -18,7 +18,22 @@ for (const groupId of groupIds) {
     const group = tracker.uxReview.groups.find(entry => entry.id === groupId);
     assert.ok(group, `${groupId} must remain in the canonical UX tracker`);
     const routes = group.sourceFiles.filter(file => file.endsWith("/error.tsx"));
-    assert.ok(routes.length >= 5, `${groupId} must include all scoped error boundaries`);
+    const pages = group.sourceFiles.filter(file => file.endsWith("/page.tsx"));
+    assert.ok(pages.length > 0, `${groupId} must register at least one real page`);
+    assert.ok(routes.length >= pages.length,
+      `${groupId} must register an error boundary for every scoped page`);
+    // Atomic repartition reduced some groups from 15-18 files to just a few
+    // page families. A fixed five-error minimum now rejects legitimate groups
+    // without checking whether their actual routes are protected. Match every
+    // registered page to both recovery and loading boundaries instead.
+    for (const page of pages) {
+      const errorPath = page.replace(/page\.tsx$/, "error.tsx");
+      const loadingPath = page.replace(/page\.tsx$/, "loading.tsx");
+      assert.ok(group.sourceFiles.includes(errorPath),
+        `${groupId} has a page without a registered error boundary: ${page}`);
+      assert.ok(group.sourceFiles.includes(loadingPath),
+        `${groupId} has a page without a registered loading boundary: ${page}`);
+    }
 
     for (const relativePath of routes) {
       assert.ok(relativePath.startsWith("src/app/(authenticated)/"),
