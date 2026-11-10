@@ -32,11 +32,15 @@ export default async function SuperAdminProgramsPage({
     // The legacy Super Admin /fetchAll is a catalogue read, not authority to
     // edit a program outside the selected college x role workspace.
     {
-      const rawPage=(await searchParams)?.page;
-      if(rawPage && !/^[1-9][0-9]{0,3}$/.test(rawPage))
+      const globalFilters=await searchParams??{};
+      const rawPage=globalFilters.page;
+      // The global catalogue supports paging only. Never imply that ignored
+      // college-specific search and page-size values were applied.
+      const unsupported=Object.keys(globalFilters).some(key=>key!=="page");
+      if(unsupported||typeof rawPage!=="undefined"&&!/^[1-9][0-9]{0,3}$/.test(rawPage))
         return <div className="min-w-0 space-y-4">
           <PageHeader title="Programs" />
-          <ErrorState title="Invalid page number" description="Choose a valid page of the global program directory."
+          <ErrorState title="Invalid global program filters" description="The global catalogue supports page numbers only. Select a college to search or change program page size."
             action={<TextLink href="/admin/programs">Return to first page</TextLink>} />
         </div>;
       const page=rawPage?Number(rawPage):1;

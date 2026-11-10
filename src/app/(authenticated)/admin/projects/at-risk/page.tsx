@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 import { ProjectAdminAtRiskPage } from "@/components/projects/project-admin-at-risk-page";
@@ -45,9 +46,8 @@ export default async function SuperAdminProjectAtRiskRoute({
         <Alert tone="warning" role="status">
           Select a college to continue. Choose a college in the header before viewing at-risk projects.
         </Alert>
-        <div aria-hidden="true" className="pointer-events-none opacity-60">
-          <Skeleton variant="row" count={4} label="Awaiting college scope"/>
-        </div>
+        <EmptyState title="No college selected"
+          description="Select a college in the header to see its at-risk project workspaces. Nothing is loading until a college is selected." />
       </div>
     );
   }

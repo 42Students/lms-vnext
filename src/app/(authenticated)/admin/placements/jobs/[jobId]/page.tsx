@@ -31,7 +31,7 @@ export default async function AdminPlacementDrivePage({
   const { jobId } = await params;
   const requestedReturn=(await searchParams)?.returnTo;
   const requested=typeof requestedReturn==="string"?requestedReturn:"";
-  const backHref=requested.startsWith("/admin/placements") &&
+  const backHref=/^\/admin\/placements(?:\/|\?|$)/.test(requested) &&
     !requested.startsWith("//") && !requested.includes("\\") &&
     requested.length<512?requested:"/admin/placements/drives";
   const preserved=backHref==="/admin/placements/drives"?"":"?returnTo="+encodeURIComponent(backHref);
@@ -41,7 +41,7 @@ export default async function AdminPlacementDrivePage({
     <PageHeader title="Placement Drives" actions={<PageBackLink href={backHref} label="Drives"/>}/>
     <ErrorState title="Could not load this drive."
       description="The drive ID is invalid. Return to the placement list and select a drive."
-      action={<TextLink href={backHref}>Back to Drives</TextLink>}/>
+      action={<TextLink href={backHref} className="inline-flex min-h-11 items-center md:min-h-9">Back to Drives</TextLink>}/>
   </div>;
   // Attention is informational: its failure never hides the drive, actions
   // or pipeline, and no counts are invented when that read is unavailable.
