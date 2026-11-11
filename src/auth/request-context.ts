@@ -13,6 +13,7 @@ import {
   E2E_SECRET_COOKIE_NAME,
   resolveE2eIdentityUid,
 } from "./e2e-identity";
+import { writeStructuredLog } from "@/observability/logger";
 import { resolveRequestContext } from "@/modules/identity/context-service";
 import { MEMBERSHIP_ROLES, type MembershipRole } from "@/modules/identity/constants";
 import { bindTenantScope, ensureTenantHolder, runAsSystem, scopeFromActor, takeRequestValue } from "@/db/tenant-context";
@@ -85,6 +86,8 @@ async function resolveCurrentRequestContext() {
   // boundary rather than relying on every older handler to notice roles=[].
   // The session remains valid so /api/auth/memberships can recover the choice.
   if(context.membership && context.membership.roles.length!==1){
+    // Durable-enough trail without a row per request: a stale or revoked role claim shows in the structured log, never the cookie value.
+    writeStructuredLog("WARNING","auth.role_claim_rejected",{component:"auth",userId:context.user.id,hadRoleCookie:Boolean(roleCookie),grantedRoles:context.membership.roles.length});
     throw new SessionAuthenticationError("SESSION_INVALID");
   }
 

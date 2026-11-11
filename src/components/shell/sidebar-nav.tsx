@@ -6,7 +6,7 @@ import {safeTpoShellCounters,shellUnreadBadge,type TpoShellCounters} from "./she
 import Image from "next/image";
 import {usePathname,useSearchParams} from "next/navigation";
 import {cx} from "@/lib/class-names";
-import {canonicalShellPath,scopedShellNavigation,shellNavIconKey,
+import {canonicalShellPath,isPlacementCellShortcut,scopedShellNavigation,shellNavIconKey,
  TPO_SECTION_LABELS,type ShellNavItem} from "./shell-model";
 import {ShellNavGlyph} from "./shell-nav-icons";
 import {legacySidebarItemActive} from "./legacy-sidebar-active-model";
@@ -23,7 +23,7 @@ function sectionLabel(item:ShellNavItem,portal:string):string|null{
  // A College Admin's one "Placement cell" shortcut points at /tpo/home;
  // its college sidebar must not suddenly acquire a TPO section heading.
  if(portal!=="tpo"||!item.group||!item.href.startsWith("/tpo/")||
-    (item.href==="/tpo/home"&&item.label==="Placement cell"))return null;
+    isPlacementCellShortcut(item))return null;
  return item.group in TPO_SECTION_LABELS
   ?TPO_SECTION_LABELS[item.group as keyof typeof TPO_SECTION_LABELS]
   :null;

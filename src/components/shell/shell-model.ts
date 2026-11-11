@@ -59,6 +59,8 @@ export type ShellNavItem = {
   shortLabel: string;
   icon?: string;
   activeIcon?: string;
+  /** Stable identity for special rows, so behaviour never depends on the visible label. */
+  key?: "placement-cell";
   group?: "learning" | "tracking" | "career" | "account" | "operate" | "coordinate" | "insights" | "administration";
 };
 
@@ -137,6 +139,12 @@ export function canonicalShellPath(pathname:string):string{
  return prefix?SHELL_LEGACY_PATH_ALIASES[prefix]+route.slice(prefix.length):route;
 }
 
+/** The College Admin shortcut into the Placement cell. Identified by key; the label match is kept for rows built before the key existed. */
+export function isPlacementCellShortcut(item: ShellNavItem): boolean {
+ return item.key === "placement-cell" ||
+  (item.href === "/tpo/home" && item.label.replace(/ · Placements$/, "") === "Placement cell");
+}
+
 /** Map a navigation destination to its owning legacy account portal. */
 function navPortal(href: string): string | null {
  if (href === "/dashboard") return null;
@@ -166,16 +174,14 @@ export function scopedShellNavigation(items: readonly ShellNavItem[], pathname: 
  // a one-item fake TPO menu. A genuine TPO account has its full TPO rows.
  const collegePlacementShortcut = pathPortal === "tpo" &&
   portals.includes("college") && tpoRows.length === 1 &&
-  tpoRows[0]?.href === "/tpo/home" &&
-  tpoRows[0]?.label.replace(/ · Placements$/, "") === "Placement cell";
+  tpoRows[0] !== undefined && isPlacementCellShortcut(tpoRows[0]);
  const selected = collegePlacementShortcut ? "college" :
   pathPortal && portals.includes(pathPortal) ? pathPortal :
   portals.includes("college") ? "college" : portals[0]!;
  return items.filter(item => {
   const portal = navPortal(item.href);
   return portal === selected ||
-   (selected === "college" && item.href === "/tpo/home" &&
-    item.label.replace(/ · Placements$/, "") === "Placement cell");
+   (selected === "college" && isPlacementCellShortcut(item));
  }).map(item => {
   const label = item.label.replace(/ · (?:Learning|Teaching|Mentoring|College|Admin|Placements|Recruiting)$/, "");
   return label === item.label ? item : {...item, label};
@@ -378,7 +384,7 @@ export const collegeAdminItems: ShellNavItem[] = [
   { label: "People", href: "/college/faculty", shortLabel: "P", group: "coordinate" },
   { label: "Profile verification", href: "/college/verification", shortLabel: "V", group: "insights" },
   { label: "Placements", href: "/college/placements", shortLabel: "P", group: "insights" },
-  { label: "Placement cell", href: "/tpo/home", shortLabel: "P", group: "insights" },
+  { label: "Placement cell", href: "/tpo/home", shortLabel: "P", group: "insights", key: "placement-cell" },
   { label: "Projects", href: "/college/projects", shortLabel: "P", group: "insights" },
   { label: "Profile", href: "/college/profile", shortLabel: "P", group: "administration" },
 ];
@@ -418,6 +424,7 @@ function getLearnerItems(
   return items;
 }
 
+/** Only reached by the additive fallback in getShellNavigation. A request carries exactly one selected role (hasMembershipRole needs roles.length === 1), so for a membership this is exercised only alongside a recruiter profile; kept because those combined menus still ship. */
 function getMembershipWorkspaces(
   context: RequestContext,
   learnerAccess?: LearnerNavigationAccess | null,
@@ -563,6 +570,7 @@ function portalQualifier(href: string) {
 }
 
 /**
+ * Same scope note as getMembershipWorkspaces: collisions only arise in the recruiter-plus-membership menu.
  * A person with several roles gets every role's sidebar entries, so labels
  * like "Courses" or "Notifications" can appear twice with different
  * destinations. Only labels that actually collide are qualified by the area
