@@ -57,6 +57,8 @@ export function TopbarOrganizationSwitcher({
       document.removeEventListener("keydown",onKey);
     };
   },[open]);
+  // The visible label stays the college; assistive tech and the tooltip also name the active role.
+  const roleSuffix=!choices&&activeRole?" · "+activeRole.toLowerCase().split("_").map(part=>part.charAt(0).toUpperCase()+part.slice(1)).join(" "):"";
   if(!canSwitch)return <p className={style["orgName"]+" min-w-0"} title={currentName}>{currentName}</p>;
   return <div ref={root} className={style["orgSwitcher"]+" min-w-0"}
     onBlur={event=>{
@@ -64,7 +66,7 @@ export function TopbarOrganizationSwitcher({
       if(open && next instanceof Node && !event.currentTarget.contains(next))setOpen(false);
     }}>
     <Button variant="secondary" size="sm" ref={trigger} type="button" className={style["orgTrigger"]+" min-w-0"}
-      title={currentName} aria-label={"Switch workspace, current "+currentName}
+      title={currentName+roleSuffix} aria-label={"Switch workspace, current "+currentName+roleSuffix}
       aria-haspopup="dialog" aria-expanded={open} aria-keyshortcuts="ArrowDown"
       aria-controls={open?"lms-topbar-org-switcher":undefined}
       onClick={()=>setOpen(value=>!value)}
