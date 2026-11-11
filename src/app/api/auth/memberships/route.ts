@@ -21,6 +21,7 @@ import {
   resolveRequestContext,
 } from "@/modules/identity/context-service";
 import { route } from "@/security/route";
+import { recordSecurityEvent } from "@/security/audit-store";
 
 export const runtime = "nodejs";
 
@@ -232,6 +233,7 @@ async function handlePOST(request: Request) {
       throw new ContextResolutionError("MEMBERSHIP_NOT_FOUND");
     }
 
+    recordSecurityEvent({ event: "auth.workspace_switched", outcome: "ok", userId: context.user?.id, collegeId: membership.collegeId, path: "/api/auth/memberships", detail: { role: parsed.data.role ?? membership.roles[0] ?? null } });
     const response = privateAuthJson({
       ok: true,
       membership,
@@ -246,7 +248,7 @@ async function handlePOST(request: Request) {
       membership.id,
       {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: process.env.NODE_ENV === "production" || process.env["COOKIE_SECURE"] === "1",
         sameSite: "lax",
         path: "/",
         maxAge: SESSION_MAX_AGE_SECONDS,
@@ -256,7 +258,7 @@ async function handlePOST(request: Request) {
     // Only a multi-role person needs a remembered workspace; otherwise the default role applies.
     response.cookies.set(ROLE_COOKIE_NAME, parsed.data.role ?? "", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production" || process.env["COOKIE_SECURE"] === "1",
       sameSite: "lax",
       path: "/",
       maxAge: parsed.data.role ? SESSION_MAX_AGE_SECONDS : 0,
@@ -264,11 +266,12 @@ async function handlePOST(request: Request) {
 
     return response;
   } catch (error) {
+    recordSecurityEvent({ event: "auth.workspace_switch_denied", outcome: "denied", path: "/api/auth/memberships", detail: { code: error instanceof ContextResolutionError ? error.code : error instanceof SessionAuthenticationError ? error.code : error instanceof MembershipHostChangeRequired ? "HOST_CHANGE_REQUIRED" : "ERROR" } });
     return authErrorResponse(error);
   }
 }
 export const POST = route(
-  { auth: "public", publicReason: "Sign-in, recovery and session endpoints run before or independently of a session; each handler enforces its own challenge, device or session-state checks.", csrf: false, csrfExemptReason: "The handler applies its own origin and challenge checks, unchanged by this wrapper.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  { auth: "public", publicReason: "Sign-in, recovery and session endpoints run before or independently of a session; each handler enforces its own challenge, device or session-state checks.", csrf: false, csrfExemptReason: "The handler applies its own origin and challenge checks, unchanged by this wrapper.", rateLimit: { limit: 60, windowMs: 60_000 } },
   ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
 );
 
@@ -283,14 +286,14 @@ async function handleDELETE(request: Request) {
   const response = privateAuthJson({ ok: true });
   response.cookies.set(MEMBERSHIP_COOKIE_NAME, "", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: process.env.NODE_ENV === "production" || process.env["COOKIE_SECURE"] === "1",
     sameSite: "lax",
     path: "/",
     maxAge: 0,
   });
   response.cookies.set(ROLE_COOKIE_NAME, "", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: process.env.NODE_ENV === "production" || process.env["COOKIE_SECURE"] === "1",
     sameSite: "lax",
     path: "/",
     maxAge: 0,
