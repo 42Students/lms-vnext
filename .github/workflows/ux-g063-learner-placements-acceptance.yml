@@ -12,20 +12,38 @@ on:
       - 'src/app/e2e/ux-g063-learner-placements/**'
       - 'tests/unit/ux-g063-learner-placements-journey.test.tsx'
       - 'tests/e2e/ux-g063-learner-placements.spec.ts'
+      - 'tests/e2e/ux-g063-atomic-aliases.spec.ts'
       - '.github/workflows/ux-g063-learner-placements-acceptance.yml'
 permissions:
   contents: read
 concurrency:
-  group: ux-g063-${{ github.ref }}
-  cancel-in-progress: true
+  group: ux-g063-${{ github.sha }}
+  cancel-in-progress: false
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_g063_e2e
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_g063_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     env:
       NEXT_TELEMETRY_DISABLED: "1"
       E2E_AUTH_ENABLED: "true"
       APP_ENV: development
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_g063_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_g063_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_g063_e2e
+      PLATFORM_HOSTS: localhost,127.0.0.1
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
@@ -36,13 +54,20 @@ jobs:
       - run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
       - name: Lint scoped route and acceptance
         run: |
-          npx eslint 'src/app/(authenticated)/learn/my-placements/jobs/page.tsx' 'src/app/(authenticated)/learn/my-placements/jobs/[jobId]/error.tsx' 'src/app/(authenticated)/learn/my-placements/notification-preferences/error.tsx' src/app/e2e/ux-g063-learner-placements tests/unit/ux-g063-learner-placements-journey.test.tsx tests/e2e/ux-g063-learner-placements.spec.ts
+          npx eslint 'src/app/(authenticated)/learn/my-placements/jobs/page.tsx' 'src/app/(authenticated)/learn/my-placements/jobs/[jobId]/error.tsx' 'src/app/(authenticated)/learn/my-placements/notification-preferences/error.tsx' src/app/e2e/ux-g063-learner-placements tests/unit/ux-g063-learner-placements-journey.test.tsx tests/e2e/ux-g063-learner-placements.spec.ts tests/e2e/ux-g063-atomic-aliases.spec.ts
       - name: Learner placement recovery unit tests
         run: npx vitest run tests/unit/ux-g063-learner-placements-journey.test.tsx --reporter=dot
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
+      - name: Prepare isolated learner database
+        run: npm run db:e2e:prepare
+      - name: Generate ephemeral auth keys
+        shell: bash
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
       - name: Desktop and mobile learner placement browser acceptance
-        run: npx playwright test tests/e2e/ux-g063-learner-placements.spec.ts --project=chromium --reporter=line
+        run: npx playwright test tests/e2e/ux-g063-learner-placements.spec.ts tests/e2e/ux-g063-atomic-aliases.spec.ts --project=chromium --reporter=line
       - name: TypeScript
         env:
           NODE_OPTIONS: --max-old-space-size=6144
