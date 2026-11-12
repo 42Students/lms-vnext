@@ -13,6 +13,7 @@ on:
       - 'tests/unit/ux-g063-learner-placements-journey.test.tsx'
       - 'tests/e2e/ux-g063-learner-placements.spec.ts'
       - 'tests/e2e/ux-g063-atomic-aliases.spec.ts'
+      - 'scripts/seed-ux-g063-placement-alias.ts'
       - '.github/workflows/ux-g063-learner-placements-acceptance.yml'
 permissions:
   contents: read
@@ -39,6 +40,7 @@ jobs:
     env:
       NEXT_TELEMETRY_DISABLED: "1"
       E2E_AUTH_ENABLED: "true"
+      UX_G063_ENABLE_FIXTURE: "true"
       APP_ENV: development
       DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_g063_e2e
       TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_g063_e2e
@@ -61,6 +63,8 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Prepare isolated learner database
         run: npm run db:e2e:prepare
+      - name: Seed authorized real placement module/eligibility in disposable E2E DB
+        run: node --conditions=react-server --import tsx scripts/seed-ux-g063-placement-alias.ts
       - name: Generate ephemeral auth keys
         shell: bash
         run: |
