@@ -55,7 +55,7 @@ test.describe("UX-G072 Mentor project-local invalid filter recovery",()=>{
       await page.locator('input[name="version"]').fill("1000000");
       await page.getByRole("search",{name:"Delivery review filters"})
         .getByRole("button",{name:"Filter"}).click();
-      await expect(page).toHaveURL(/review-overview\\?[^#]*version=1000000/);
+      await expect(page).toHaveURL(/review-overview\?[^#]*version=1000000/);
       await expect(page.getByText("No delivery versions match these filters"))
         .toBeVisible();
       await expect(page.getByRole("status").filter({hasText:"registered delivery version"}))
@@ -74,7 +74,7 @@ test.describe("UX-G072 Mentor project-local invalid filter recovery",()=>{
       await page.locator('select[name="taskPriority"]').selectOption("CRITICAL");
       await page.getByRole("search",{name:"Risk readiness filters"})
         .getByRole("button",{name:"Filter"}).click();
-      await expect(page).toHaveURL(/risk-readiness\\?[^#]*focus=RISK/);
+      await expect(page).toHaveURL(/risk-readiness\?[^#]*focus=RISK/);
       await expect(page.locator('select[name="taskPriority"]')).toHaveValue("CRITICAL");
       await expect(page.getByRole("status").filter({hasText:"recorded evidence item"}))
         .toContainText("match the selected filters");
