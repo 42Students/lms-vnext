@@ -92,9 +92,15 @@ export default async function MentorReviewOverviewPage({
  Counts apply to the current page of registered delivery versions. Feedback is optional for approval
  and required when changes are requested. Missing records are not assumed complete.
  </p></section>
- <p className="text-sm text-body leading-[22px]">{formatNumberIN(data.total)} registered delivery version{data.total===1?"":"s"}</p>
- {data.items.length===0?<EmptyState title="No registered final delivery"
- description="There is no persisted final-delivery version for this authorized project. Nothing was submitted or reviewed here in the registered history." action={filtered?<TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"} className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>:<TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"} className="inline-flex min-h-11 items-center md:min-h-9">Delivery workspace</TextLink>}/>
+ <p role="status" aria-live="polite" className="text-sm text-body leading-[22px]">
+  {formatNumberIN(data.total)} registered delivery version{data.total===1?"":"s"}
+  {filtered?" match the selected filters":""}
+  {data.total>0?" · Page "+data.page+" of "+data.totalPages:""}
+ </p>
+ {data.items.length===0?<EmptyState title={filtered?"No delivery versions match these filters":"No registered final delivery"}
+ description={filtered
+  ?"No registered delivery versions match the selected status, feedback, or version. Clear filters to view the existing history."
+  :"There is no persisted final-delivery version for this authorized project. Nothing was submitted or reviewed here in the registered history."} action={filtered?<TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"} className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>:<TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"} className="inline-flex min-h-11 items-center md:min-h-9">Delivery workspace</TextLink>}/>
  :<ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
  <li key={item.id} className="py-[var(--lms-space-3)]">
  <div className="flex flex-wrap items-center justify-between gap-3">
