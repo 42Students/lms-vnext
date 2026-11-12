@@ -62,7 +62,7 @@ test.describe("UX-G072 Mentor project-local invalid filter recovery",()=>{
       await expect(page).toHaveURL(/review-overview\?[^#]*version=1000000/);
       await expect(page.getByText("No delivery versions match these filters"))
         .toBeVisible();
-      await expect(page.getByRole("status").filter({hasText:"registered delivery version"}))
+      await expect(page.locator('p[role="status"][aria-live="polite"]').filter({hasText:"registered delivery version"}))
         .toContainText("match the selected filters");
       await expect(page.getByRole("link",{name:/Export filtered delivery review CSV/}))
         .toHaveAttribute("href",new RegExp("version=1000000"));
@@ -85,7 +85,7 @@ test.describe("UX-G072 Mentor project-local invalid filter recovery",()=>{
       await riskFilters.getByRole("button",{name:"Filter"}).click();
       await expect(page).toHaveURL(/risk-readiness\?[^#]*focus=RISK/);
       await expect(page.locator('select[name="taskPriority"]')).toHaveValue("CRITICAL");
-      await expect(page.getByRole("status").filter({hasText:"recorded evidence item"}))
+      await expect(page.locator('p[role="status"][aria-live="polite"]').filter({hasText:"recorded evidence item"}))
         .toContainText("match the selected filters");
       await page.screenshot({path:info.outputPath("ux-g072-risk-filter-"+viewport.name+".png"),
         fullPage:true});
