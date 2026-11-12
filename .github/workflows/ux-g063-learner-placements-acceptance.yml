@@ -42,6 +42,7 @@ jobs:
       E2E_AUTH_ENABLED: "true"
       UX_G063_ENABLE_FIXTURE: "true"
       APP_ENV: development
+      PLAYWRIGHT_JSON_OUTPUT_NAME: ux-g063-playwright.json
       DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_g063_e2e
       TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_g063_e2e
       E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_g063_e2e
@@ -71,7 +72,9 @@ jobs:
           echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
           echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
       - name: Desktop and mobile learner placement browser acceptance
-        run: npx playwright test tests/e2e/ux-g063-learner-placements.spec.ts tests/e2e/ux-g063-atomic-aliases.spec.ts --project=chromium --reporter=line
+        run: |
+          npx playwright test tests/e2e/ux-g063-learner-placements.spec.ts tests/e2e/ux-g063-atomic-aliases.spec.ts --project=chromium --workers=1 --reporter=line,json
+          node -e 'const s=require("./ux-g063-playwright.json").stats;if(s.expected!==5||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
       - name: TypeScript
         env:
           NODE_OPTIONS: --max-old-space-size=6144
@@ -84,4 +87,5 @@ jobs:
           path: |
             test-results/
             playwright-report/
+            ux-g063-playwright.json
           if-no-files-found: ignore
