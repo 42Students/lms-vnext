@@ -23,7 +23,8 @@ import {
   restoreCourseLesson,
   updateCourseLesson,
 } from "@/modules/courses/lesson-service";
-import { createLessonContent, transitionLessonContent, updateLessonContent } from "@/modules/courses/lesson-content-service";
+import { createLessonContent, listLessonContents, transitionLessonContent, updateLessonContent } from "@/modules/courses/lesson-content-service";
+import { getCoordinatorOfferingWorkspace } from "@/modules/courses/coordinator-workspace";
 import { createCourseAssignment, transitionCourseAssignment, updateCourseAssignment } from "@/modules/courses/assignment-service";
 import { createCourseQuiz, transitionCourseQuiz, updateCourseQuiz } from "@/modules/courses/quiz-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -362,6 +363,35 @@ describe.skipIf(!enabled)("Course offering coordinator — PostgreSQL", () => {
       .rejects.toMatchObject({ code: "FACULTY_TEACHING_SCOPE_REQUIRED" });
     await expect(transitionCourseQuiz(faculty(a), bQuiz.id, { action: "ARCHIVE", expectedUpdatedAt: bQuiz.updatedAt.toISOString() }))
       .rejects.toMatchObject({ code: "FACULTY_TEACHING_SCOPE_REQUIRED" });
+  });
+
+  it("shows the coordinator the shared items others created, and plain teachers only their own", async () => {
+    const lessonId = lessonIds[0]!;
+    const byAdmin = await createLessonContent(admin, { lessonId, contentType: "RESOURCE", title: label + " admin shared", notes: "from the admin", sequence: 30 });
+    contentIds.push(byAdmin.id);
+    const seenByCoordinator = (await listLessonContents(faculty(a), lessonId, ids.deliveryA)).map((row) => row.id);
+    expect(seenByCoordinator).toContain(byAdmin.id);
+    const seenByTeacherB = (await listLessonContents(faculty(b), lessonId, ids.deliveryB)).map((row) => row.id);
+    expect(seenByTeacherB).not.toContain(byAdmin.id);
+    // A coordinator can then maintain that shared item.
+    const updated = await updateLessonContent(faculty(a), byAdmin.id, { title: label + " admin shared (edited)", expectedUpdatedAt: byAdmin.updatedAt.toISOString() });
+    expect(updated.title).toContain("edited");
+  });
+
+  it("opens the shared workspace for the coordinator and an admin, not for other teachers", async () => {
+    const workspace = await getCoordinatorOfferingWorkspace(faculty(a), ids.offering);
+    expect(workspace.learningPath?.id).toBe(ids.path);
+    expect(workspace.offering.courseName).toContain("W-COORD");
+    const lessonCount = workspace.lessons.length;
+    expect(lessonCount).toBeGreaterThan(0);
+    // Only shared items appear: nothing created for teacher B's section.
+    const everyContent = workspace.lessons.flatMap((lesson) => lesson.contents.map((item) => item.deliveryId));
+    expect(everyContent.every((value) => value === null)).toBe(true);
+    const adminView = await getCoordinatorOfferingWorkspace(admin, ids.offering);
+    expect(adminView.lessons.length).toBe(lessonCount);
+    await expect(getCoordinatorOfferingWorkspace(faculty(b), ids.offering)).rejects.toMatchObject({ code: "FACULTY_TEACHING_SCOPE_REQUIRED" });
+    await expect(getCoordinatorOfferingWorkspace(faculty(outsider), ids.offering)).rejects.toMatchObject({ code: "FACULTY_TEACHING_SCOPE_REQUIRED" });
+    await expect(getCoordinatorOfferingWorkspace(otherCollegeAdmin, ids.offering)).rejects.toBeDefined();
   });
 
   it("a lapsed coordinator loses the shared structure at once and regains it on return", async () => {

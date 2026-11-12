@@ -9,6 +9,10 @@ import { Disclosure } from "@/components/ui/disclosure";
 import {AdminOfferingSectionTabs} from "./admin-offering-section-tabs";
 import { AdminCourseDisplayEditor } from "./admin-course-display-editor";
 import {AdminOfferingTeachersPanel} from "./admin-offering-teachers-panel";
+import {AdminOfferingCoordinatorPanel} from "./admin-offering-coordinator-panel";
+import {
+ getOfferingCoordinator,listEligibleOfferingCoordinators,listOfferingCoordinatorHistory,
+} from "@/modules/courses/coordinator-service";
 import {AdminOfferingSectionPreview} from "./admin-offering-section-preview";
 import {listOfferingSectionPreview} from "@/modules/courses/college-offering-section-preview-service";
 import {listOfferingTeachingOverview} from "@/modules/courses/college-course-teachers-service";
@@ -60,11 +64,17 @@ export async function AdminOfferingLearningPage({
    <TextLink href={retryHref}
     className="ml-3">Retry</TextLink>
   </div>;
-  const [rosterResult,sectionPreviewResult]=await Promise.allSettled([
+  const [rosterResult,sectionPreviewResult,coordinatorResult]=await Promise.allSettled([
    listOfferingTeachingOverview(context,offeringId),
    listOfferingSectionPreview(context,offeringId,deliveryId,workspace.lessons,
     workspace.learningPath?.status==="PUBLISHED"),
+   Promise.all([
+    getOfferingCoordinator(context,offeringId),
+    listEligibleOfferingCoordinators(context,offeringId),
+    listOfferingCoordinatorHistory(context,offeringId),
+   ]).then(([coordinator,eligible,history])=>({coordinator,eligible,history})),
   ]);
+  const coordinatorData=coordinatorResult.status==="fulfilled"?coordinatorResult.value:null;
   const roster=rosterResult.status==="fulfilled"?rosterResult.value:null;
   const sectionPreview=sectionPreviewResult.status==="fulfilled"?sectionPreviewResult.value:null;
   const displayEnabled=courseDisplayRuntimeEnabled();
@@ -121,6 +131,10 @@ export async function AdminOfferingLearningPage({
         academicPeriodName={workspace.offering.academicPeriodName}/>:
         <Alert tone="warning" role="alert">Faculty assignments couldn&apos;t be loaded.
          <TextLink className="ml-2" href={retryHref+"#course-syllabus"}>Retry</TextLink>
+        </Alert>}
+       {coordinatorData?<AdminOfferingCoordinatorPanel offeringId={offeringId} data={coordinatorData}/>:
+        <Alert tone="warning" role="alert">The course coordinator couldn&apos;t be loaded.
+         <TextLink className="ml-2" href={retryHref+"#course-coordinator"}>Retry</TextLink>
         </Alert>}
        {sectionPreview?<AdminOfferingSectionPreview data={sectionPreview}/>:
         <Alert tone="warning" role="alert" title="Server Notification">

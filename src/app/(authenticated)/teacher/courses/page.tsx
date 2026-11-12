@@ -6,6 +6,7 @@ import {facultyCourseMonthAttendanceEvidence} from "@/modules/courses/faculty-co
 import { parseFacultyCourseListLocation } from "@/modules/courses/faculty-course-list-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyCourseList } from "@/components/courses/faculty-course-list";
+import { FacultyCoordinatedCourses } from "@/components/courses/faculty-coordinated-courses";
 import { FacultyPrototypeCourseDirectory } from "@/components/courses/faculty-prototype-course-directory";
 import { getFacultyCourseList } from "@/modules/courses/faculty-course-list-service";
 import {loadAuthorizedCourseDisplayContentsIfReady} from "@/modules/courses/course-display-service";
@@ -87,6 +88,7 @@ export default async function TeacherCoursesPage({searchParams}: {
   }));
   return (
     <div className="min-w-0 max-w-full space-y-6">
+      <FacultyCoordinatedCourses context={context} />
       <FacultyPrototypeCourseDirectory rows={rows} totalAssignments={list.scopeCount} pendingByDelivery={pendingByDelivery} attendanceByDelivery={attendanceByDelivery}/>
       <Disclosure title="Advanced teaching filters, class assignments and detailed course cards" className="min-w-0">
         <div className="mt-4">

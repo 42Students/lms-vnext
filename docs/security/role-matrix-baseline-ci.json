@@ -1,6 +1,6 @@
 {
  "generatedFor": "http://127.0.0.1:3010",
- "routes": 296,
+ "routes": 297,
  "roles": {
   "LEARNER": [
    "/api/client-settings",
@@ -31,6 +31,7 @@
    "/api/college/departments/legacy-search",
    "/api/college/departments/search",
    "/api/colleges",
+   "/api/courses/faculty/coordinated",
    "/api/courses/faculty/response-followups/csv",
    "/api/courses/faculty/results/csv",
    "/api/courses/faculty/shell-counts",

@@ -226,8 +226,10 @@ function AssignmentCard({
 
 function QuizCard({
   item,
+  coordinatorView = false,
 }: {
   item: Workspace["lessons"][number]["quizzes"][number];
+  coordinatorView?: boolean;
 }) {
   const actions = [
     ...(item.status === "DRAFT"
@@ -300,13 +302,15 @@ function QuizCard({
           }
           actions={actions}
         />
-        <AdminQuizResultsActions
-          quizId={item.id}
-          status={item.status}
-          resultsPublished={
-            item.resultsPublished
-          }
-        />
+        {coordinatorView ? null : (
+          <AdminQuizResultsActions
+            quizId={item.id}
+            status={item.status}
+            resultsPublished={
+              item.resultsPublished
+            }
+          />
+        )}
       </div>
     </article>
   );
@@ -314,8 +318,11 @@ function QuizCard({
 
 export function AdminOfferingLearningOverview({
   workspace,
+  coordinatorView = false,
 }: {
   workspace: Workspace;
+  /** A course coordinator edits the shared lessons but leaves learning-path setup and quiz results to the admin. */
+  coordinatorView?: boolean;
 }) {
   const { offering, learningPath } = workspace;
   const router=useRouter();
@@ -358,13 +365,15 @@ export function AdminOfferingLearningOverview({
             items.
           </p>
         </section>
-        <CreateLearningPathPanel
-          offeringId={offering.id}
-          defaultTitle={
-            offering.courseName +
-            " Learning Path"
-          }
-        />
+        {coordinatorView ? null : (
+          <CreateLearningPathPanel
+            offeringId={offering.id}
+            defaultTitle={
+              offering.courseName +
+              " Learning Path"
+            }
+          />
+        )}
       </div>
     );
   }
@@ -415,9 +424,11 @@ export function AdminOfferingLearningOverview({
             >
               {learningPath.status}
             </StatusBadge>
-            <LearningPathActions
-              learningPath={learningPath}
-            />
+            {coordinatorView ? null : (
+              <LearningPathActions
+                learningPath={learningPath}
+              />
+            )}
           </div>
         </div>
         <div className="mt-4 rounded-[var(--lms-control-radius)] bg-surface-subtle px-3 py-2 text-xs leading-5 text-muted-foreground">
@@ -584,6 +595,7 @@ export function AdminOfferingLearningOverview({
                           <QuizCard
                             key={item.id}
                             item={item}
+                            coordinatorView={coordinatorView}
                           />
                         ),
                       )}

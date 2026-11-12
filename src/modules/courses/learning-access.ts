@@ -1,3 +1,4 @@
+import { resolveOfferingContentAuthority } from "./coordinator-service";
 import {
   and,
   eq,
@@ -218,6 +219,20 @@ export async function requireLearningReadAccess(
 
   if (can(context, "courses.manage", resource)) {
     return "ADMIN";
+  }
+
+  // The offering's coordinator may open the shared (all-sections) view with no section selected.
+  if (
+    !deliveryId &&
+    activeSameCollegeMembership(context, offering.collegeId) &&
+    context.membership?.roles.includes("FACULTY") &&
+    (await resolveOfferingContentAuthority(context, {
+      id: offering.id,
+      collegeId: offering.collegeId,
+      organizationId: offering.organizationId,
+    })) === "COORDINATOR"
+  ) {
+    return "FACULTY";
   }
 
   if (

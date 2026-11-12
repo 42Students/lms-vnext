@@ -1,7 +1,7 @@
 # Course coordinator: plan for vNext
 
 Date: 2026-11-12
-Status: PLAN ONLY. Nothing built. Repo-only work: no deploy, no migration applied to dev, no GCP.
+Status: BUILT IN THE REPO (code only). Nothing deployed, migration 0343 not applied to dev or anywhere but a local disposable database, no GCP. See "Build status" at the end.
 Source in the old LMS: branch `coordinator-as-teacher` in `42LMS-BACKEND/_cc-audit-be`, commits `9cd15258`
 (design) and `c0de5aee` (dev-found fixes), ledger `docs/course-coordinator/IMPLEMENTATION_LEDGER.md` pass 28.
 
@@ -106,3 +106,35 @@ No deploy, no applied migration, no GCP. Dev rollout is a separate, owner-approv
 ## 6. Needs a yes before starting
 
 Decisions 1 to 4 and 7 above (recommended answers given).
+
+## 7. Build status (2026-11-13)
+
+Decisions used (the recommended answers): grant per offering; one active coordinator per offering; lapses while the
+teacher has no active teaching assignment on the offering and returns with it; scope is shared content plus own
+sections; no access to other teachers' results or grading.
+
+Built and tested against a local disposable PostgreSQL:
+- Migration 0343 (grant table, append-only events, same-college guard, no-delete and no-rewrite guards, tenant RLS).
+- coordinator-policy.ts (pure rules, unit tested), coordinator-service.ts (grant, revoke, eligible list, history,
+  authority checks, in-transaction recheck), coordinator-workspace.ts (shared workspace for the coordinator page).
+- Shared-content writes now accept the counted coordinator, admin behaviour unchanged: lessons (create, edit, hide/show,
+  archive, restore, move, reorder), shared lesson items (create, edit, publish/archive, list), shared assignments and
+  shared quizzes (create, edit, transition). A coordinator cannot move a lesson to another offering, and cannot touch
+  another teacher's section-only items (tested by direct id).
+- Admin API: GET/PUT/DELETE /api/courses/offerings/[offeringId]/coordinator. Faculty API: GET /api/courses/faculty/coordinated (403 for other roles).
+- UI: "Course coordinator" panel on the admin course Syllabus tab; "Courses you coordinate" on the teacher course list;
+  /teacher/coordinate/[offeringId] reuses the admin lesson screen minus learning-path setup and quiz-results publishing.
+- Tests: tests/unit/course-coordinator-policy.test.ts (7), tests/integration/course-coordinator.test.ts (20, needs
+  TEST_DATABASE_URL and DB03_ISOLATED_TEST_DATABASE=1).
+
+Findings while building:
+- vNext already hides a hidden lesson's items from learners on every direct read path (the old LMS needed a fix on 9 Nov).
+- Removing the FACULTY role ends the person's teaching assignments by a database trigger, so a coordinator who loses and
+  regains the role stays paused until their teaching is restored. That is intended.
+- Three source-text tests (db05-authoring-parent-locks 7, 8, 11) fail on this Windows checkout both before and after
+  this work (line endings); they pass in the LF CI tree.
+
+Not done / for the owner:
+- Apply migration 0343 to dev (a deploy step, separate approval).
+- Set results publishing for shared quizzes (kept admin-only on purpose).
+- A browser walk-through of the new screens on a deployed dev site.

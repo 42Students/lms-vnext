@@ -1,4 +1,4 @@
-import {assertCoordinatorStillCounts,requireSharedContentAuthority} from "./coordinator-service";
+import {assertCoordinatorStillCounts,requireSharedContentAuthority,resolveOfferingContentAuthority} from "./coordinator-service";
 import {
   and,
   asc,
@@ -386,9 +386,17 @@ export async function listLessonContents(
   ];
   // Legacy faculty author lists do not enumerate colleagues' content.
   // College managers retain the full authorized directory.
+  // The offering's coordinator also sees the shared items others created, since those are theirs to maintain.
   if(access==="FACULTY"&&!can(context,"courses.manage",{
     organizationId:lesson.organizationId,collegeId:lesson.collegeId,
-  }))conditions.push(eq(lessonContents.createdByUserId,context.user.id));
+  })){
+    const coordinator=(await resolveOfferingContentAuthority(context,{
+      id:lesson.offeringId,collegeId:lesson.collegeId,organizationId:lesson.organizationId,
+    }))==="COORDINATOR";
+    conditions.push(coordinator
+      ?or(eq(lessonContents.createdByUserId,context.user.id),isNull(lessonContents.deliveryId))!
+      :eq(lessonContents.createdByUserId,context.user.id));
+  }
 
   if (access === "LEARNER") {
     // Keep direct lesson-content reads aligned with the learner workspace:
