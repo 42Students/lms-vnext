@@ -1,4 +1,4 @@
-name: UX-G060 learner recovery acceptance
+name: UX-G060 and UX-G061 learner route acceptance
 
 on:
   workflow_dispatch:
@@ -16,6 +16,8 @@ on:
       - 'src/modules/courses/learner-assignment-page-model.ts'
       - 'tests/unit/ux-g060-learner-route-recovery.test.ts'
       - 'tests/e2e/ux-g060-learner-recovery.spec.ts'
+      - 'tests/e2e/ux-g061-course-route-acceptance.spec.ts'
+      - 'src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/**'
       - '.github/workflows/ux-g060-learner-recovery-acceptance.yml'
 
 permissions:
@@ -72,6 +74,8 @@ jobs:
           src/modules/courses/learner-assignment-page-model.ts
           tests/unit/ux-g060-learner-route-recovery.test.ts
           tests/e2e/ux-g060-learner-recovery.spec.ts
+          tests/e2e/ux-g061-course-route-acceptance.spec.ts
+          'src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]'
       - name: Unit regressions
         run: >-
           npx vitest run
@@ -95,8 +99,8 @@ jobs:
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Learner desktop/mobile browser, normal journeys and role-negative acceptance
         run: |
-          npx playwright test tests/e2e/ux-g060-learner-recovery.spec.ts --project=chromium --reporter=line,json
-          node -e 'const s=require("./ux-g060-playwright.json").stats;if(s.expected!==11||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
+          npx playwright test tests/e2e/ux-g060-learner-recovery.spec.ts tests/e2e/ux-g061-course-route-acceptance.spec.ts --project=chromium --workers=1 --reporter=line,json
+          node -e 'const s=require("./ux-g060-playwright.json").stats;if(s.expected!==14||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
       - name: Archive browser evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
