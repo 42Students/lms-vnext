@@ -88,7 +88,13 @@ describe("UX-G060: learner route-state recovery boundaries", () => {
     const loading = route("assignments/loading.tsx");
     expect(error).toContain("Assignments could not be loaded");
     expect(error).toContain("This does not mean you have no assignments");
-    expect(error).toContain("onClick={reset}");
+    // Retry is delegated to the shared shell error boundary. Verify both
+    // the page wiring below and the actual shared retry button; requiring
+    // an inline onClick on this page incorrectly rejects the safer component.
+    const sharedBoundary = readFileSync(
+      new URL("../../src/components/public/graceful-error-boundary.tsx", import.meta.url), "utf8",
+    );
+    expect(sharedBoundary).toContain("onClick={reset}>Try again</Button>");
     expect(error).toContain('href="/learn/allAssignments"');
     expect(error).toContain("GracefulErrorBoundary");
     expect(error).toContain("error={error} reset={reset} insideShell");
