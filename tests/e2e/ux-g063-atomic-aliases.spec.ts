@@ -8,19 +8,29 @@ test.describe("UX-G063 — learner placement legacy aliases", () => {
   test.skip(!enabled, "Requires disposable PostgreSQL and seeded authenticated Learner");
 
   test("non-Learner cannot open either placement bookmark or inspect query context",
-    async ({ page, context }) => {
+    async ({ context }) => {
       await authenticateGracefulRole(context, "faculty");
       for (const route of [
         "/learn/my-placements/calendar?jobId=81818181-8181-4818-8818-818181818181",
         "/learn/my-placements/interviews?roundId=83838383-8383-4838-8838-838383838383",
       ]) {
-        await page.goto(route);
-        // The outer Learner-only layout may redirect to /dashboard before
-        // the placements layout renders a forbidden/404 state. Either
-        // outcome must protect the private placement context.
-        await expect(page).not.toHaveURL(/\/learn\/my-placements\/schedule/);
-        await expect(page.getByText("My Placements", { exact: true })).toHaveCount(0);
-        await expect(page.getByText("E2E Prototype Software Engineer")).toHaveCount(0);
+        // Each protected legacy alias redirects to the Faculty dashboard.
+        // Use an independent tab to avoid a second navigation racing the
+        // first React Server Components redirect (net::ERR_ABORTED).
+        const denied = await context.newPage();
+        try {
+          await denied.goto(route, { waitUntil: "commit" }).catch(error => {
+            // A Next.js redirect can abort the source request; this is only
+            // acceptable when the subsequently observed destination is safe.
+            if (!String(error).includes("net::ERR_ABORTED")) throw error;
+          });
+          await expect(denied).toHaveURL(/\/dashboard(?:[/?#]|$)/, {timeout:30000});
+          await expect(denied.getByRole("heading", {name:"Dashboard"})).toBeVisible();
+          await expect(denied.getByText("My Placements", { exact: true })).toHaveCount(0);
+          await expect(denied.getByText("E2E Prototype Software Engineer")).toHaveCount(0);
+        } finally {
+          await denied.close();
+        }
       }
     });
 
@@ -45,6 +55,10 @@ test.describe("UX-G063 — learner placement legacy aliases", () => {
         calendar.searchParams.set("collegeId", "forbidden-override");
         await page.goto(calendar.href);
         await expect(page).toHaveURL(/\/learn\/my-placements\/schedule\?view=calendar/);
+        // The redirect URL can be correct while the app is still showing
+        // a global skeleton. Demand the actual authorized Schedule content.
+        await expect(page.getByRole("navigation",{name:"Schedule view"})).toBeVisible({timeout:30000});
+        await expect(page.getByRole("region",{name:"Calendar",exact:true})).toBeVisible();
         const c = new URL(page.url());
         expect(c.searchParams.get("view")).toBe("calendar");
         expect(c.searchParams.get("date")).toBe("2026-11-12");
@@ -66,6 +80,8 @@ test.describe("UX-G063 — learner placement legacy aliases", () => {
         interviews.searchParams.set("membershipId", "foreign");
         await page.goto(interviews.href);
         await expect(page).toHaveURL(/\/learn\/my-placements\/schedule\?view=upcoming/);
+        await expect(page.getByRole("navigation",{name:"Schedule view"})).toBeVisible({timeout:30000});
+        await expect(page.getByRole("region",{name:"Coming up",exact:true})).toBeVisible();
         const i = new URL(page.url());
         expect(i.searchParams.get("view")).toBe("upcoming");
         expect(i.searchParams.get("q")).toBe("candidate discussion");
