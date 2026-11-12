@@ -1,3 +1,4 @@
+import { assertSharedWriteStillAllowed, requireSharedContentAuthority } from "./coordinator-service";
 import { shuffleQuizForLearner } from "./learner-quiz-shuffle-model";
 import {learnerQuizResultsReleased} from "./learner-quiz-result-release-policy";
 import { commandFacultyQuiz } from "./faculty-quiz-authoring-service";
@@ -23,10 +24,7 @@ import {
   quizQuestions,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
-import {
-  can,
-  requirePermission,
-} from "@/modules/permissions/policy";
+import { can } from "@/modules/permissions/policy";
 import {
   requireDeliveryContentMutation,
   requireLearningReadAccess,
@@ -93,7 +91,9 @@ async function authorizeQuizMutation(
     );
   }
 
-  requirePermission(context, "courses.manage", {
+  // Shared (all-sections) quizzes: a college admin, or the offering's coordinator.
+  await requireSharedContentAuthority(context, {
+    offeringId: quiz.offeringId,
     organizationId: quiz.organizationId,
     collegeId: quiz.collegeId,
   });
@@ -459,6 +459,7 @@ export async function createCourseQuiz(
   const lesson = await loadCourseLessonScope(
     input.lessonId,
   );
+  let sharedScope: { offeringId: string; organizationId: string; collegeId: string } | null = null;
 
   if (input.deliveryId) {
     const delivery =
@@ -479,15 +480,18 @@ export async function createCourseQuiz(
       input.deliveryId,
     );
   } else {
-    requirePermission(context, "courses.manage", {
+    sharedScope = {
+      offeringId: lesson.offeringId,
       organizationId: lesson.organizationId,
       collegeId: lesson.collegeId,
-    });
+    };
+    await requireSharedContentAuthority(context, sharedScope);
   }
 
   try {
     return await getDb().transaction(
       async (tx) => {
+        if (sharedScope) await assertSharedWriteStillAllowed(tx, context, sharedScope);
         const [quiz] = await tx
           .insert(courseQuizzes)
           .values({
@@ -604,6 +608,7 @@ export async function updateCourseQuiz(
   try {
     return await getDb().transaction(
       async (tx) => {
+        if (!current.deliveryId) await assertSharedWriteStillAllowed(tx, context, current);
         // Serialize deadline checks with quiz attempt inserts and lifecycle writes.
         const [lockedQuiz]=await tx.select().from(courseQuizzes).where(eq(courseQuizzes.id,quizId))
           .for("update").limit(1);
@@ -798,6 +803,7 @@ export async function transitionCourseQuiz(
   // Serialize with learner attempt insertion and preserve a reversible
   // PUBLISHED -> DRAFT transition only before submissions and the deadline.
   const updated = await getDb().transaction(async tx => {
+    if (!current.deliveryId) await assertSharedWriteStillAllowed(tx, context, current);
     const [locked] = await tx.select().from(courseQuizzes)
       .where(eq(courseQuizzes.id,quizId)).for("update").limit(1);
     if (!locked || locked.status !== current.status)

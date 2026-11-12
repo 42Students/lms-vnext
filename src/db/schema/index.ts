@@ -145,3 +145,4 @@ export {learnerProfileIdentitySummaries,learnerProfilePrivateDocumentBindings,le
 export { lessonContentSettingsStaged as lessonContentSettings } from "./db05-lesson-settings.staged";
 export * from "./security-shared-store";
 export * from "./security-audit-events";
+export * from "./course-offering-coordinators";

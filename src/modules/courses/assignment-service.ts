@@ -1,3 +1,4 @@
+import { assertSharedWriteStillAllowed, requireSharedContentAuthority } from "./coordinator-service";
 import { commandFacultyAssignment } from "./faculty-assignment-authoring-service";
 import { facultyAssignmentLegacyEdit } from "./faculty-assignment-authoring-model";
 import {
@@ -17,10 +18,7 @@ import {
   courseAssignments,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
-import {
-  can,
-  requirePermission,
-} from "@/modules/permissions/policy";
+import { can } from "@/modules/permissions/policy";
 import {
   requireDeliveryContentMutation,
   requireLearningReadAccess,
@@ -126,7 +124,9 @@ async function authorizeAssignmentMutation(
     );
   }
 
-  requirePermission(context, "courses.manage", {
+  // Shared (all-sections) assignments: a college admin, or the offering's coordinator.
+  await requireSharedContentAuthority(context, {
+    offeringId: assignment.offeringId,
     organizationId: assignment.organizationId,
     collegeId: assignment.collegeId,
   });
@@ -267,6 +267,7 @@ export async function createCourseAssignment(
   const lesson = await loadCourseLessonScope(
     input.lessonId,
   );
+  let sharedScope: { offeringId: string; organizationId: string; collegeId: string } | null = null;
 
   if (input.deliveryId) {
     const delivery =
@@ -288,35 +289,36 @@ export async function createCourseAssignment(
       input.deliveryId,
     );
   } else {
-    requirePermission(
-      context,
-      "courses.manage",
-      {
-        organizationId: lesson.organizationId,
-        collegeId: lesson.collegeId,
-      },
-    );
+    sharedScope = {
+      offeringId: lesson.offeringId,
+      organizationId: lesson.organizationId,
+      collegeId: lesson.collegeId,
+    };
+    await requireSharedContentAuthority(context, sharedScope);
   }
 
   try {
-    const [created] = await getDb()
-      .insert(courseAssignments)
-      .values({
-        lessonId: input.lessonId,
-        deliveryId:
-          input.deliveryId ?? null,
-        title: input.title,
-        description:
-          input.description ?? null,
-        dueAt: input.dueAt
-          ? new Date(input.dueAt)
-          : null,
-        maxPoints: input.maxPoints,
-        ...(input.allowedMethods?{allowedSubmissionMethods:input.allowedMethods}:{}),
-        sequence: input.sequence,
-        createdByUserId: context.user.id,
-      })
-      .returning();
+    const [created] = await getDb().transaction(async (tx) => {
+      if (sharedScope) await assertSharedWriteStillAllowed(tx, context, sharedScope);
+      return tx
+        .insert(courseAssignments)
+        .values({
+          lessonId: input.lessonId,
+          deliveryId:
+            input.deliveryId ?? null,
+          title: input.title,
+          description:
+            input.description ?? null,
+          dueAt: input.dueAt
+            ? new Date(input.dueAt)
+            : null,
+          maxPoints: input.maxPoints,
+          ...(input.allowedMethods?{allowedSubmissionMethods:input.allowedMethods}:{}),
+          sequence: input.sequence,
+          createdByUserId: context.user.id,
+        })
+        .returning();
+    });
 
     return created;
   } catch (error) {
@@ -354,6 +356,7 @@ export async function updateCourseAssignment(
 
   try {
     const [updated] = await getDb().transaction(async tx => {
+      if (!current.deliveryId) await assertSharedWriteStillAllowed(tx, context, current);
       const [locked] = await tx.select().from(courseAssignments)
         .where(eq(courseAssignments.id,assignmentId)).for("update").limit(1);
       if(!locked||locked.status==="ARCHIVED")throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
@@ -481,6 +484,7 @@ export async function transitionCourseAssignment(
 
   const db = getDb();
   return db.transaction(async (tx) => {
+    if (!current.deliveryId) await assertSharedWriteStillAllowed(tx, context, current);
     const [locked] = await tx.select({
       id: courseAssignments.id, updatedAt: courseAssignments.updatedAt,
     }).from(courseAssignments)

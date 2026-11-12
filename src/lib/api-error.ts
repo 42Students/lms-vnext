@@ -219,6 +219,7 @@ export function apiErrorResponse(error: unknown) {
       "QUIZ_NOT_FOUND",
       "QUIZ_ATTEMPT_NOT_FOUND",
       "DISCUSSION_MESSAGE_NOT_FOUND",
+      "COORDINATOR_NOT_FOUND",
     ]);
 
     const forbidden = new Set([
@@ -244,6 +245,7 @@ export function apiErrorResponse(error: unknown) {
       "QUIZ_DEADLINE_NOT_CONFIGURED",
       "QUIZ_OPTION_INVALID",
       "QUIZ_ANSWER_INVALID",
+      "COORDINATOR_NOT_ELIGIBLE",
     ]);
 
     const status = notFound.has(error.code)

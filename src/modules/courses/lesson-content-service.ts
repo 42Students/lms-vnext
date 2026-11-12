@@ -1,3 +1,4 @@
+import {assertCoordinatorStillCounts,requireSharedContentAuthority} from "./coordinator-service";
 import {
   and,
   asc,
@@ -17,10 +18,7 @@ import { learnerVisibleContentExternalUrl } from "./learner-live-link-availabili
 // Learner-only visibility helper is dynamically loaded below; browser seed uses this service without it.
 import { courseLessons, courseSectionDeliveries, lessonContents } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
-import {
-  can,
-  requirePermission,
-} from "@/modules/permissions/policy";
+import { can } from "@/modules/permissions/policy";
 import { CoursesServiceError } from "./errors";
 import {
   requireDeliveryContentMutation,
@@ -304,10 +302,12 @@ async function authorizeContentMutation(
       context,
       content.deliveryId,
     );
-    return;
+    return null;
   }
 
-  requirePermission(context, "courses.manage", {
+  // Shared (all-sections) content: a college admin, or the offering's coordinator.
+  return requireSharedContentAuthority(context, {
+    offeringId: content.offeringId,
     organizationId: content.organizationId,
     collegeId: content.collegeId,
   });
@@ -521,6 +521,7 @@ export async function createLessonContent(
     await loadCourseLessonScope(
       input.lessonId,
     );
+  let sharedAuthority: Awaited<ReturnType<typeof requireSharedContentAuthority>> | null = null;
 
   if (input.deliveryId) {
     const delivery =
@@ -542,18 +543,22 @@ export async function createLessonContent(
       input.deliveryId,
     );
   } else {
-    requirePermission(
-      context,
-      "courses.manage",
-      {
-        organizationId: lesson.organizationId,
-        collegeId: lesson.collegeId,
-      },
-    );
+    sharedAuthority = await requireSharedContentAuthority(context, {
+      offeringId: lesson.offeringId,
+      organizationId: lesson.organizationId,
+      collegeId: lesson.collegeId,
+    });
   }
 
   const path = await loadLearningPathScope(lesson.learningPathId);
   return getDb().transaction(async (tx) => {
+    if (sharedAuthority) {
+      await assertCoordinatorStillCounts(tx, context, sharedAuthority, {
+        offeringId: lesson.offeringId,
+        organizationId: lesson.organizationId,
+        collegeId: lesson.collegeId,
+      });
+    }
     await lockLiveContentWriteParents(tx, path, {
       lessonId: input.lessonId,
       learningPathId: lesson.learningPathId,
@@ -601,7 +606,7 @@ export async function updateLessonContent(
   const current =
     await loadLessonContentScope(contentId);
 
-  await authorizeContentMutation(
+  const sharedAuthority = await authorizeContentMutation(
     context,
     current,
   );
@@ -618,6 +623,7 @@ export async function updateLessonContent(
 
   const path = await loadLearningPathScope(current.learningPathId);
   return getDb().transaction(async (tx) => {
+    if (sharedAuthority) await assertCoordinatorStillCounts(tx, context, sharedAuthority, current);
     await lockLiveContentWriteParents(tx, path, current);
     const [updated] = await tx
     .update(lessonContents)
@@ -680,7 +686,7 @@ export async function transitionLessonContent(
   const current =
     await loadLessonContentScope(contentId);
 
-  await authorizeContentMutation(
+  const sharedAuthority = await authorizeContentMutation(
     context,
     current,
   );
@@ -701,6 +707,7 @@ export async function transitionLessonContent(
 
   const path = await loadLearningPathScope(current.learningPathId);
   return getDb().transaction(async (tx) => {
+    if (sharedAuthority) await assertCoordinatorStillCounts(tx, context, sharedAuthority, current);
     await lockLiveContentWriteParents(tx, path, current);
     const [updated] = await tx
     .update(lessonContents)

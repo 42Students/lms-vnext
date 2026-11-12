@@ -2402,6 +2402,13 @@
       "when": 1794128920009,
       "tag": "0342_audit_hash_chain",
       "breakpoints": true
+    },
+    {
+      "idx": 343,
+      "version": "7",
+      "when": 1794513214211,
+      "tag": "0343_course_offering_coordinators",
+      "breakpoints": true
     }
   ]
 }

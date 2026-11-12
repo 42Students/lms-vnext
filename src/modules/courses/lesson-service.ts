@@ -19,7 +19,8 @@ import {
  courseLearningPaths,courseOfferings,courses,departments,
  learnerContentProgress,courseDiscussionMessages,lessonVideoAssets,
 } from "@/db/schema";
-import {hasMembershipRole,isSuperAdmin,type RequestContext} from "@/modules/identity/context";
+import type {RequestContext} from "@/modules/identity/context";
+import {assertCoordinatorStillCounts,requireSharedContentAuthority} from "./coordinator-service";
 import {
   AuthorizationError,
   can,
@@ -192,17 +193,13 @@ export async function createCourseLesson(
     input.learningPathId,
   );
 
-  // Shared syllabus structure is a college-admin operation. Faculty
-  // may author their assigned Section's content, not add shared lessons.
-  if(!isSuperAdmin(context)&&!hasMembershipRole(context,"COLLEGE_ADMIN"))
-    throw new AuthorizationError("courses.manage");
-  requirePermission(context, "courses.manage", {
-    organizationId: path.organizationId,
-    collegeId: path.collegeId,
-  });
+  // Shared syllabus structure is a college-admin operation, or the offering's
+  // coordinator. Other faculty author their assigned Section's content only.
+  const authority=await requireSharedContentAuthority(context,path);
 
   try {
     return await getDb().transaction(async (tx) => {
+      await assertCoordinatorStillCounts(tx,context,authority,path);
       // Path can be archived after loadLearningPathScope. Lock and recheck
       // in this transaction; path transition UPDATE conflicts with SHARE.
       await lockLiveLessonWriteAncestry(tx, path);
@@ -288,27 +285,29 @@ export async function updateCourseLesson(
       path.organizationId !== current.organizationId) {
     throw new CoursesServiceError("LESSON_NOT_FOUND");
   }
-  // Shared syllabus structure is a college-admin operation. Faculty
-  // may author their assigned Section's content, not add shared lessons.
-  if(!isSuperAdmin(context)&&!hasMembershipRole(context,"COLLEGE_ADMIN"))
-    throw new AuthorizationError("courses.manage");
-  requirePermission(context, "courses.manage", {
-    organizationId: path.organizationId,
-    collegeId: path.collegeId,
-  });
+  // Shared syllabus structure is a college-admin operation, or the offering's
+  // coordinator. Other faculty author their assigned Section's content only.
+  const authority=await requireSharedContentAuthority(context,path);
   const targetPath=input.targetLearningPathId&&input.targetLearningPathId!==path.id
     ? await loadLearningPathScope(input.targetLearningPathId):null;
   if(targetPath){
     if(targetPath.collegeId!==path.collegeId||
        targetPath.organizationId!==path.organizationId)
       throw new CoursesServiceError("LESSON_NOT_FOUND");
-    requirePermission(context,"courses.manage",{
-      organizationId:targetPath.organizationId,collegeId:targetPath.collegeId,
-    });
+    // A coordinator owns one offering: lessons never move out of it.
+    if(authority==="COORDINATOR"){
+      if(targetPath.offeringId!==path.offeringId)
+        throw new AuthorizationError("courses.manage");
+    }else{
+      requirePermission(context,"courses.manage",{
+        organizationId:targetPath.organizationId,collegeId:targetPath.collegeId,
+      });
+    }
   }
 
   try {
     return await getDb().transaction(async (tx) => {
+      await assertCoordinatorStillCounts(tx,context,authority,path);
       // Lock both ancestral chains in UUID order, preventing reverse move
       // deadlocks and concurrent archival of the destination Course.
       const parents=targetPath?[path,targetPath].sort((a,b)=>a.id.localeCompare(b.id)):[path];
@@ -436,12 +435,10 @@ export async function archiveCourseLesson(
       path.organizationId !== current.organizationId) {
     throw new CoursesServiceError("LESSON_NOT_FOUND");
   }
-  requirePermission(context, "courses.manage", {
-    organizationId: path.organizationId,
-    collegeId: path.collegeId,
-  });
+  const authority=await requireSharedContentAuthority(context,path);
 
   return getDb().transaction(async (tx) => {
+    await assertCoordinatorStillCounts(tx,context,authority,path);
     await lockLiveLessonWriteAncestry(tx, path);
     // Lock the lesson before changing visibility; new content creation
     // takes a matching SHARE lock on this row before its INSERT.
@@ -510,11 +507,10 @@ export async function restoreCourseLesson(context: RequestContext, lessonIdInput
       path.organizationId !== current.organizationId) {
     throw new CoursesServiceError("LESSON_NOT_FOUND");
   }
-  requirePermission(context, "courses.manage", {
-    collegeId: path.collegeId, organizationId: path.organizationId,
-  });
+  const authority=await requireSharedContentAuthority(context,path);
   try {
     return await getDb().transaction(async tx => {
+      await assertCoordinatorStillCounts(tx,context,authority,path);
       await lockLiveLessonWriteAncestry(tx, path);
       const [restored] = await tx.update(courseLessons)
         .set({ status: "ACTIVE",version:sql`${courseLessons.version}+1`,
@@ -552,10 +548,9 @@ export async function restoreCourseLesson(context: RequestContext, lessonIdInput
 export async function moveCollegeCourseLesson(context: RequestContext, raw: unknown) {
   const input = lessonMoveSchema.parse(raw);
   const path = await loadLearningPathScope(input.learningPathId);
-  requirePermission(context, "courses.manage", {
-    collegeId: path.collegeId, organizationId: path.organizationId,
-  });
+  const authority=await requireSharedContentAuthority(context,path);
   return getDb().transaction(async tx => {
+    await assertCoordinatorStillCounts(tx,context,authority,path);
     await lockLiveLessonWriteAncestry(tx, path);
     const live = await tx.select({
       id: courseLessons.id, sequence: courseLessons.sequence,
@@ -592,10 +587,9 @@ export async function moveCollegeCourseLesson(context: RequestContext, raw: unkn
 export async function reorderCollegeCourseLessons(context:RequestContext,raw:unknown){
  const input=collegeLessonBulkOrderSchema.parse(raw);
  const path=await loadLearningPathScope(input.learningPathId);
- requirePermission(context,"courses.manage",{
-  collegeId:path.collegeId,organizationId:path.organizationId,
- });
+ const authority=await requireSharedContentAuthority(context,path);
  return getDb().transaction(async tx=>{
+  await assertCoordinatorStillCounts(tx,context,authority,path);
   await lockLiveLessonWriteAncestry(tx,path);
   const live=await tx.select({id:courseLessons.id,sequence:courseLessons.sequence})
    .from(courseLessons).where(and(eq(courseLessons.learningPathId,path.id),
