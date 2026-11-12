@@ -52,9 +52,13 @@ test.describe("UX-G072 Mentor project-local invalid filter recovery",()=>{
       await page.goto(base+"/review-overview");
       await expect(page.getByRole("heading",{name:"Delivery review overview"}))
         .toBeVisible();
-      await page.locator('input[name="version"]').fill("1000000");
-      await page.getByRole("search",{name:"Delivery review filters"})
-        .getByRole("button",{name:"Filter"}).click();
+      if(viewport.name==="mobile") {
+        await page.getByRole("button",{name:"Filters",exact:true}).click();
+        await expect(page.getByRole("dialog",{name:"Filters"})).toBeVisible();
+      }
+      const reviewFilters=page.getByRole("search",{name:"Delivery review filters"});
+      await reviewFilters.locator('input[name="version"]').fill("1000000");
+      await reviewFilters.getByRole("button",{name:"Filter"}).click();
       await expect(page).toHaveURL(/review-overview\?[^#]*version=1000000/);
       await expect(page.getByText("No delivery versions match these filters"))
         .toBeVisible();
@@ -64,16 +68,21 @@ test.describe("UX-G072 Mentor project-local invalid filter recovery",()=>{
         .toHaveAttribute("href",new RegExp("version=1000000"));
       await page.screenshot({path:info.outputPath("ux-g072-filtered-empty-"+viewport.name+".png"),
         fullPage:true});
-      await page.getByRole("link",{name:"Clear",exact:true}).click();
+      if(viewport.name==="mobile")
+        await page.getByRole("button",{name:"Filters",exact:true}).click();
+      await page.getByRole("search",{name:"Delivery review filters"})
+        .getByRole("link",{name:"Clear",exact:true}).click();
       await expect(page).toHaveURL("http://localhost:3000"+base+"/review-overview");
 
       await page.goto(base+"/risk-readiness");
       await expect(page.getByRole("heading",{name:"At-risk & readiness drill-in"}))
         .toBeVisible();
-      await page.locator('select[name="focus"]').selectOption("RISK");
-      await page.locator('select[name="taskPriority"]').selectOption("CRITICAL");
-      await page.getByRole("search",{name:"Risk readiness filters"})
-        .getByRole("button",{name:"Filter"}).click();
+      if(viewport.name==="mobile")
+        await page.getByRole("button",{name:"Filters",exact:true}).click();
+      const riskFilters=page.getByRole("search",{name:"Risk readiness filters"});
+      await riskFilters.locator('select[name="focus"]').selectOption("RISK");
+      await riskFilters.locator('select[name="taskPriority"]').selectOption("CRITICAL");
+      await riskFilters.getByRole("button",{name:"Filter"}).click();
       await expect(page).toHaveURL(/risk-readiness\?[^#]*focus=RISK/);
       await expect(page.locator('select[name="taskPriority"]')).toHaveValue("CRITICAL");
       await expect(page.getByRole("status").filter({hasText:"recorded evidence item"}))
@@ -82,7 +91,10 @@ test.describe("UX-G072 Mentor project-local invalid filter recovery",()=>{
         fullPage:true});
       expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth))
         .toBeLessThanOrEqual(2);
-      await page.getByRole("link",{name:"Clear",exact:true}).click();
+      if(viewport.name==="mobile")
+        await page.getByRole("button",{name:"Filters",exact:true}).click();
+      await page.getByRole("search",{name:"Risk readiness filters"})
+        .getByRole("link",{name:"Clear",exact:true}).click();
       await expect(page).toHaveURL("http://localhost:3000"+base+"/risk-readiness");
 
       // The sixth route reads actual persisted task feedback, not a comments
