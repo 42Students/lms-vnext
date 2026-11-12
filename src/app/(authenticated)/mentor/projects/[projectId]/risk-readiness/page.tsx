@@ -96,8 +96,14 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
         {filtered?<TextLink href={base+"/risk-readiness"}
           className="inline-flex min-h-11 items-center text-sm">Clear</TextLink>:null}
       </form></FilterBar>
-      {data.items.length===0?<EmptyState title="No recorded items for this filter"
-        description="No matching stored signals were found. This is not a certificate of project safety or completeness." action={filtered?<TextLink href={base+"/risk-readiness"} className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>:<TextLink href={base} className="inline-flex min-h-11 items-center md:min-h-9">Full project workspace</TextLink>}/>:
+      <p role="status" aria-live="polite" className="text-sm text-body leading-[22px]">
+        {data.total} recorded evidence item{data.total===1?"":"s"}{filtered?" match the selected filters":""}
+        {data.total>0?" · Page "+data.page+" of "+data.totalPages:""}
+      </p>
+      {data.items.length===0?<EmptyState title={filtered?"No items match the selected filters":"No recorded attention or readiness items"}
+        description={filtered
+          ?"No recorded evidence matches these filters. Clear them to inspect the full persisted project evidence."
+          :"No recorded evidence was found. This is not a certificate of project safety or completeness."} action={filtered?<TextLink href={base+"/risk-readiness"} className="inline-flex min-h-11 items-center md:min-h-9">Clear</TextLink>:<TextLink href={base} className="inline-flex min-h-11 items-center md:min-h-9">Full project workspace</TextLink>}/>:
       <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=>
         <li key={row.key} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-start justify-between gap-2">
