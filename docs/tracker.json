@@ -27660,11 +27660,11 @@
         "type": "JOURNEY",
         "area": "learn",
         "title": "learn · /learn/courses/[deliveryId]/[...courseTab] (part 1/3; UX-G061)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-learner-placements-20261108",
         "pickedAt": "2026-11-08T14:57:32.829Z",
         "startedAt": "2026-11-08T14:57:32.829Z",
-        "completedAt": null,
+        "completedAt": "2026-11-12T11:00:22.189Z",
         "sourceFiles": [
           "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/error.tsx",
           "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/loading.tsx",
@@ -27714,6 +27714,44 @@
               "Desktop and mobile authenticated browser capture",
               "Other UX-G061 course, error/loading and placement surfaces, regression/security review"
             ]
+          },
+          {
+            "commitSha": "63b76ebdf79a427d923926659b9e93d97a5e3c64",
+            "parityDoc": "docs/parity/pages/learn/UX-G061.md",
+            "tests": [
+              {
+                "command": "test \"$(git rev-parse HEAD)\" = \"$GITHUB_SHA\"; scoped eslint of four G061 route-state files and browser spec (passed within five-group workflow)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42684198264"
+              },
+              {
+                "command": "npm run typecheck (full repository TypeScript step passed at tested SHA)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42684198264"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-five-doing-groups-context-recovery.test.ts (focused G061 route touch-target regression included; suite passed)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42684198264"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g061-course-route-acceptance.spec.ts --project=chromium (3/3 group cases passed, no G061 skips/flaky; exact SHA, shared workflow later failed on separate placements.spec.ts case)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42684198264/artifacts/13705060595"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42684198264/artifacts/13705060595"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/42684198264/artifacts/13705060595"
+              }
+            ],
+            "regressionReview": "Independently decoded and inspected four Playwright PNG attachment bodies embedded in the stored JSON artifact: real authorized 1280x800 and 390x844 Learner course home, plus real unknown course recovery at both widths; no loading placeholders or sideways overflow. Three G061 browser cases passed including Faculty denial, no group skips/flaky. All four current source blobs and G061 browser spec match exact SHA 63b76eb. Shared workflow overall RED from unrelated placements.spec.ts case; not claimed green. Group scope is route shell and route-state files; external course-tab component mutations not claimed.",
+            "securityReview": "Seeded Learner sees own College A course but not foreign Section B secret; Faculty with switched role cannot inspect Section A/B private course content; unknown/unregistered delivery renders safe unavailable state. Existing tenant/membership/current-delivery guards unchanged. Error/loading/not-found source audited, touch-sized retry/back retained. No security checks or assertions weakened."
           }
         ],
         "splitMeta": {
@@ -27729,7 +27767,7 @@
             "UX-G253"
           ]
         },
-        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G252, UX-G253."
+        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G252, UX-G253.\n2026-11-12: four-file UX-G061 route shell closure from scoped executed 3/3 authenticated Learner desktop/mobile/Faculty denial at exact SHA 63b76eb, four independently inspected screenshot attachments in artifact 13705060595, source/acceptance spec blobs unchanged. Lint/typecheck/units passed. The shared workflow overall failed on unrelated placements.spec.ts; global CI NOT claimed green. Details docs/parity/pages/learn/UX-G061.md. Siblings G252/G253 excluded."
       },
       {
         "id": "UX-G062",
