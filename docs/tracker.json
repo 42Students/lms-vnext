@@ -27561,11 +27561,11 @@
         "type": "JOURNEY",
         "area": "learn",
         "title": "learn · /learn/assignments + /learn/attendance/calendar (part 1/3; UX-G060)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-vnext-ux-close-20261108",
         "pickedAt": "2026-11-08T14:54:45.182Z",
         "startedAt": "2026-11-08T14:54:45.182Z",
-        "completedAt": null,
+        "completedAt": "2026-11-12T09:51:37.289Z",
         "sourceFiles": [
           "src/app/(authenticated)/learn/assignments/error.tsx",
           "src/app/(authenticated)/learn/assignments/loading.tsx",
@@ -27600,6 +27600,44 @@
             "finalStatus": "QUEUED at evidence recording, not an accepted green run",
             "outstanding": "Exact-SHA green 11/11 responsive Chromium with no skipped/flaky tests, archived desktop/mobile screenshots, regression/security acceptance, then formal DONE evidence",
             "closure": "DOING — implementation and test corrections pushed; not certified"
+          },
+          {
+            "commitSha": "6f23254d82ce9dfac29a6392e8e55578fa870163",
+            "parityDoc": "docs/parity/pages/learn/UX-G060.md",
+            "tests": [
+              {
+                "command": "test \"$(git rev-parse HEAD)\" = \"$GITHUB_SHA\"; npx eslint [scoped learner routes and tests]",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/43193990607"
+              },
+              {
+                "command": "npx vitest run tests/unit/ux-g060-learner-route-recovery.test.ts tests/unit/learner-attendance-calendar-model.test.ts tests/unit/learner-calendar-filter-model.test.ts --reporter=dot (16/16)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/43193990607"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/43193990607"
+              },
+              {
+                "command": "npx playwright test tests/e2e/ux-g060-learner-recovery.spec.ts --project=chromium --reporter=line,json; verify 11 expected 0 unexpected/flaky/skipped; seeded PostgreSQL",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/43193990607"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/43193990607/artifacts/13932536307"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/43193990607/artifacts/13932536307"
+              }
+            ],
+            "regressionReview": "Reviewed 13 actual desktop/mobile Playwright screenshots and JSON stats, exact-SHA 11/11 tests; scoped unit 16/16. Tested assignment alias, valid learner assignment list, attendance calendar, mobile Filters drawer, malformed/duplicate filters, course recovery, no horizontal overflow. All six main source blob SHAs match their tested commit 6f23254d; historical larger group was split and siblings UX-G250/UX-G251 excluded. Prior stale source assertion corrected to verify shared GracefulErrorBoundary retry implementation, not removed.",
+            "securityReview": "Seeded Faculty cannot access Learner recovery states; current learner membership scopes all own-attendance reads; reject duplicate course/status/month selectors without silently selecting a tenant. Shared shell error boundary preserves sanitized telemetry and functional reset, does not leak raw error. No code/API authorization/RLS changes or weakened security assertions."
           }
         ],
         "splitMeta": {
@@ -27615,7 +27653,7 @@
             "UX-G251"
           ]
         },
-        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G250, UX-G251.\n2026-11-09: Atomic learner assignments/attendance recoverability improved on main in a42e3dd, 7f94105 and d2ae3b0; retained sanitized client error reporting, safe recovery exits and mobile filter drawer coverage. Initial expanded browser run 42641509067 was 10/11 (mobile test expectation fixed). Final exact-SHA run 42642564009 queued; DOING until passed, reviewed and recorded. Docs: docs/parity/pages/learn/UX-G060.md."
+        "notes": "\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G250, UX-G251.\n2026-11-09: Atomic learner assignments/attendance recoverability improved on main in a42e3dd, 7f94105 and d2ae3b0; retained sanitized client error reporting, safe recovery exits and mobile filter drawer coverage. Initial expanded browser run 42641509067 was 10/11 (mobile test expectation fixed). Final exact-SHA run 42642564009 queued; DOING until passed, reviewed and recorded. Docs: docs/parity/pages/learn/UX-G060.md.\n2026-11-12: Current six-file atomic slice DONE after exact-SHA workflow 43193990607 PASS (16/16 focused unit, 11/11 seeded desktop/mobile Chromium, no skipped/flaky), artifact 13932536307 independently inspected; all six source blob SHAs equal tested commit. See docs/parity/pages/learn/UX-G060.md. Siblings G250/G251 remain separate."
       },
       {
         "id": "UX-G061",
