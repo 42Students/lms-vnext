@@ -46,6 +46,45 @@ test.describe("UX-G072 Mentor project-local invalid filter recovery",()=>{
         await expect(page).toHaveURL("http://localhost:3000"+base+"/"+route);
         await expect(page.getByRole("heading",{level:1})).toBeVisible();
       }
+      // Exercise real authorized form submissions, not just synthetic
+      // invalid-link fallbacks. A valid filter with zero matches must never
+      // imply that every delivery record for this project is absent.
+      await page.goto(base+"/review-overview");
+      await expect(page.getByRole("heading",{name:"Delivery review overview"}))
+        .toBeVisible();
+      await page.locator('input[name="version"]').fill("1000000");
+      await page.getByRole("search",{name:"Delivery review filters"})
+        .getByRole("button",{name:"Filter"}).click();
+      await expect(page).toHaveURL(/review-overview\\?[^#]*version=1000000/);
+      await expect(page.getByText("No delivery versions match these filters"))
+        .toBeVisible();
+      await expect(page.getByRole("status").filter({hasText:"registered delivery version"}))
+        .toContainText("match the selected filters");
+      await expect(page.getByRole("link",{name:/Export filtered delivery review CSV/}))
+        .toHaveAttribute("href",new RegExp("version=1000000"));
+      await page.screenshot({path:info.outputPath("ux-g072-filtered-empty-"+viewport.name+".png"),
+        fullPage:true});
+      await page.getByRole("link",{name:"Clear",exact:true}).click();
+      await expect(page).toHaveURL("http://localhost:3000"+base+"/review-overview");
+
+      await page.goto(base+"/risk-readiness");
+      await expect(page.getByRole("heading",{name:"At-risk & readiness drill-in"}))
+        .toBeVisible();
+      await page.locator('select[name="focus"]').selectOption("RISK");
+      await page.locator('select[name="taskPriority"]').selectOption("CRITICAL");
+      await page.getByRole("search",{name:"Risk readiness filters"})
+        .getByRole("button",{name:"Filter"}).click();
+      await expect(page).toHaveURL(/risk-readiness\\?[^#]*focus=RISK/);
+      await expect(page.locator('select[name="taskPriority"]')).toHaveValue("CRITICAL");
+      await expect(page.getByRole("status").filter({hasText:"recorded evidence item"}))
+        .toContainText("match the selected filters");
+      await page.screenshot({path:info.outputPath("ux-g072-risk-filter-"+viewport.name+".png"),
+        fullPage:true});
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth))
+        .toBeLessThanOrEqual(2);
+      await page.getByRole("link",{name:"Clear",exact:true}).click();
+      await expect(page).toHaveURL("http://localhost:3000"+base+"/risk-readiness");
+
       // The sixth route reads actual persisted task feedback, not a comments
       // thread or a synthetic browser component.
       // The isolated fixture registers this task under the authorized project.
