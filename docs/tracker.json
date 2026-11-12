@@ -28451,11 +28451,11 @@
         "type": "JOURNEY",
         "area": "mentor",
         "title": "mentor · /mentor/projects/[projectId]/review-overview + /mentor/projects/[projectId]/risk-readiness (part 1/3; UX-G072)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-ux-g072-mentor-project-recovery-20261108",
         "pickedAt": "2026-11-08",
         "startedAt": "2026-11-08",
-        "completedAt": null,
+        "completedAt": "2026-11-12T10:03:02.144Z",
         "sourceFiles": [
           "src/app/(authenticated)/mentor/projects/[projectId]/review-overview/error.tsx",
           "src/app/(authenticated)/mentor/projects/[projectId]/review-overview/loading.tsx",
@@ -28473,8 +28473,37 @@
           "PAGE-0290"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "2026-11-08: Started scoped Mentor project-local recovery UX pass. Invalid review-overview, risk-readiness, team-history, team-meetings and timeline query selectors now offer a clear-filter route within the same project; seeded desktop/mobile and forbidden-learner Playwright regression committed. OPEN: execute exact-SHA tests, inspect all six page/error/loading families, capture real desktop/mobile screenshots, verify role/tenant denials before marking DONE.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G261, UX-G262.",
+        "evidence": [
+          {
+            "commitSha": "e611d64aa352af4f64c3fcdd721b5539400b5b14",
+            "parityDoc": "docs/parity/pages/mentor/UX-G072-atomic-review.md",
+            "tests": [
+              {
+                "command": "test \"$(git rev-parse HEAD)\" = \"$GITHUB_SHA\"; npx eslint tests/e2e/ux-g072-mentor-filter-recovery.spec.ts; npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/43195308945"
+              },
+              {
+                "command": "npm run db:e2e:prepare on disposable seeded PostgreSQL 17; npx playwright test tests/e2e/ux-g072-mentor-filter-recovery.spec.ts --project=chromium --workers=1 --reporter=line (3/3 authenticated viewport and Learner denial)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/43195308945"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/43195308945/artifacts/13931973882"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/43195308945/artifacts/13931973882"
+              }
+            ],
+            "regressionReview": "Independently inspected eight saved Chromium screenshots for normal Mentor delivery feedback, filtered empty-state review and risk/readiness journeys at 1280x800 and 390x844. 3/3 authentic seeded browser scenarios passed; tested valid filter form submission, clear, invalid query recovery, export link parameters, responsive FilterBar and no overflow. Checked all six source blob SHAs at main equal tested e611d64 commit. Two read-only pages and their error/loading siblings only; G261/G262 not included.",
+            "securityReview": "Real seeded Learner denied from Mentor's project and private feedback, including error-link recovery. Project membership/tenant and enabled-module guards retained; no raw feedback author or private source leaked. Existing step-up-protected CSV export service unchanged and outside six-file slice. No RLS, role or authorization control weakened."
+          }
+        ],
+        "notes": "2026-11-08: Started scoped Mentor project-local recovery UX pass. Invalid review-overview, risk-readiness, team-history, team-meetings and timeline query selectors now offer a clear-filter route within the same project; seeded desktop/mobile and forbidden-learner Playwright regression committed. OPEN: execute exact-SHA tests, inspect all six page/error/loading families, capture real desktop/mobile screenshots, verify role/tenant denials before marking DONE.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G261, UX-G262.\n2026-11-12: six-file current atomic slice PASS at exact-SHA e611d64 workflow 43195308945: scoped ESLint/typecheck, disposable PG17 seeded Mentor/Learner, 3/3 authenticated desktop/mobile/role-denial browser scenarios, 8 independently inspected screenshots artifact 13931973882; all scoped source SHAs match. docs/parity/pages/mentor/UX-G072-atomic-review.md. Siblings UX-G261/262 separate.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G072",
