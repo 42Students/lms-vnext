@@ -7,6 +7,20 @@ const enabled = process.env.E2E_AUTH_ENABLED === "true" &&
 test.describe("UX-G063 — learner placement legacy aliases", () => {
   test.skip(!enabled, "Requires disposable PostgreSQL and seeded authenticated Learner");
 
+  test("non-Learner cannot open either placement bookmark or inspect query context",
+    async ({ page, context }) => {
+      await authenticateGracefulRole(context, "faculty");
+      for (const route of [
+        "/learn/my-placements/calendar?jobId=81818181-8181-4818-8818-818181818181",
+        "/learn/my-placements/interviews?roundId=83838383-8383-4838-8838-838383838383",
+      ]) {
+        await page.goto(route);
+        await expect(page).not.toHaveURL(/\/learn\/my-placements\/schedule/);
+        await expect(page.getByText("My Placements", { exact: true })).toHaveCount(0);
+        await expect(page.getByRole("heading", { name: "Page not found" })).toBeVisible();
+      }
+    });
+
   for (const viewport of [
     { name: "desktop", width: 1280, height: 800 },
     { name: "mobile", width: 390, height: 844 },
