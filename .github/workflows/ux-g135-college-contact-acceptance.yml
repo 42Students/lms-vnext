@@ -51,7 +51,7 @@ jobs:
           node -e 'const s=require("./ux-g135-results.json").stats;console.log("Browser proof:",s);if(s.expected!==6||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
       - name: Upload screenshots and HTML report
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ux-g135-contact-proof
           path: |

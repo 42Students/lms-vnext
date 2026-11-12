@@ -88,7 +88,7 @@ jobs:
           node -e 'const s=require("./ux-g170-g172-browser-results.json").stats; if(s.expected!==5||s.unexpected!==0||s.flaky!==0||s.skipped!==0){console.error("CSV UX browser proof failed:",s);process.exit(1)};console.log("Browser proof:",s)'
       - name: Preserve real screenshot and download evidence
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ux-g170-g172-export-browser-evidence
           path: |
