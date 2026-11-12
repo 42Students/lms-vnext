@@ -20,7 +20,9 @@ describe("chat-11 delegated College Admin decisions",()=>{
   expect(svc).toContain("export async function restoreCourseLesson");
   expect(svc).toContain("loadCourseLessonScope(lessonId, true)");
   expect(svc).toContain('eq(courseLessons.status, "ARCHIVED")');
-  expect(svc).toContain('requirePermission(context, "courses.manage"');
+  // The permission check lives in one shared gate: admins keep courses.manage, the offering's coordinator is the only addition.
+  expect(svc).toContain("requireSharedContentAuthority(context,path)");
+  expect(src("src/modules/courses/coordinator-service.ts")).toContain('requirePermission(context, "courses.manage"');
   expect(svc).toContain("lockLiveLessonWriteAncestry(tx, path)");
   expect(route).toMatch(/isSameOriginRequest\(request\)|from "@\/security\/route"/);
   expect(route).toMatch(/export (?:async function|const) POST/);
