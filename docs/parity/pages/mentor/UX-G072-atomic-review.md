@@ -40,7 +40,35 @@ authorized project workspace. Existing role and exact-project access gates in
 unchanged; invalid-link recovery asserts the same access before exposing
 project context. No raw review feedback or private authorship was exposed.
 
-**Closure gate:** exact current-source browser PASS on desktop/mobile and Learner
-negative, inspected screenshots, scoped lint/TypeScript and relevant export,
-filter-model and access-regression checks. Record the exact artifact and group
-evidence before setting canonical DONE. Do not infer acceptance for UX-G261/262.
+## 12 November 2026 — acceptance completed
+
+- Exact-SHA [workflow 43195308945](https://github.com/42Students/lms-vnext/actions/runs/43195308945)
+  **succeeded** on `e611d64aa352af4f64c3fcdd721b5539400b5b14`.
+  Source checks, scoped ESLint, full TypeScript, isolated PostgreSQL seed,
+  browser dependency installation, and **3/3 authenticated Chromium**
+  scenarios all passed, with no skipped or flaky cases.
+- [Artifact 13931973882](https://github.com/42Students/lms-vnext/actions/runs/43195308945/artifacts/13931973882)
+  contains **eight actual screenshots** inspected independently at desktop
+  1280×800 and mobile 390×844. They show working project review filters,
+  filtered empty-state recovery, risk/readiness filter results, and persisted
+  reviewer feedback with redacted conversation content.
+- Positive filter submission and clearing, invalid-URL recovery, learner
+  denial, mobile filter modal behavior, working export URL parameters,
+  no horizontal page overflow and scoped project-only navigation all pass.
+  Existing CSV response service and step-up policy are unchanged and outside
+  this read-only page/error/loading slice.
+- All **six current scoped source blob SHAs** under `main` matched the six
+  source blob SHAs at the exact successful tested commit. No unrelated branch
+  changes were used as proof.
+
+**Security and regression:** The Learner denial checks confirm unauthorized
+actors cannot browse the current project's routes, feedback or reset links.
+Project-read and tenant scopes were unchanged in
+`getMentorDeliveryReviewOverview` and `getMentorRiskReadiness`.
+Both pages are intentionally read-only. Error/loading boundaries preserve
+truthful retry and no private exception content; user-visible empty states
+no longer infer that an entire project's records are absent when a valid
+filter matches zero. Existing service/export authorization was not relaxed.
+
+**Closure:** UX-G072 **DONE** for the six-file atomic read-only slice.
+Previously assigned UX-G261/G262 are **not** included in this acceptance.
