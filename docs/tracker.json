@@ -27776,11 +27776,11 @@
         "type": "JOURNEY",
         "area": "learn",
         "title": "learn · /learn/my-placements/calendar + /learn/my-placements/interviews (part 1/3; UX-G063)",
-        "status": "DOING",
+        "status": "DONE",
         "pickedBy": "chat-gpt6-ux-g063-20261108",
         "pickedAt": "2026-11-08T14:56:24.090Z",
         "startedAt": "2026-11-08T14:56:24.090Z",
-        "completedAt": null,
+        "completedAt": "2026-11-12T10:46:26.858Z",
         "sourceFiles": [
           "src/app/(authenticated)/learn/my-placements/calendar/error.tsx",
           "src/app/(authenticated)/learn/my-placements/calendar/loading.tsx",
@@ -27798,8 +27798,42 @@
           "PAGE-0248"
         ],
         "newRouteOnly": [],
-        "evidence": [],
-        "notes": "2026-11-08: Learner placements calendar/interviews/jobs/notification preferences/offers journey. Active UX correction and evidence work; remain DOING pending executed exact-SHA unit and desktop/mobile browser proof.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G257, UX-G258.",
+        "evidence": [
+          {
+            "commitSha": "2a26a573ed9bee3069917ca2adcdff3abcf341ce",
+            "parityDoc": "docs/parity/pages/learn/UX-G063.md",
+            "tests": [
+              {
+                "command": "test \"$(git rev-parse HEAD)\" = \"$GITHUB_SHA\"; scoped npx eslint; npx vitest run tests/unit/ux-g063-learner-placements-journey.test.tsx --reporter=dot (5/5)",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/43202011499"
+              },
+              {
+                "command": "npm run typecheck",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/43202011499"
+              },
+              {
+                "command": "npm run db:e2e:prepare; seed isolated real Placements college entitlement + Learner eligibility; npx playwright test tests/e2e/ux-g063-learner-placements.spec.ts tests/e2e/ux-g063-atomic-aliases.spec.ts --project=chromium --workers=1 --reporter=line,json; assert 5 expected, zero unexpected/skipped/flaky",
+                "passed": true,
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/43202011499"
+              }
+            ],
+            "browser": [
+              {
+                "viewport": "desktop 1280x800",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/43202011499/artifacts/13936046878"
+              },
+              {
+                "viewport": "mobile 390x844",
+                "proof": "https://github.com/42Students/lms-vnext/actions/runs/43202011499/artifacts/13936046878"
+              }
+            ],
+            "regressionReview": "Independently inspected all four actual authorized alias destination screenshots at 1280x800 and 390x844 and two synthetic error journey screenshots. Browser now awaits visible Schedule navigation and Calendar/Coming up region, so no loading-placeholder proof. All 5/5 browser tests passed, zero skipped/flaky; all 5 focused unit tests and TypeScript passed; verified all six route blob SHAs at main equal exact tested SHA. Explicit six-file split only; siblings UX-G257/G258 excluded.",
+            "securityReview": "Real auth with isolated persisted College A Placements entitlement and distinct active Learner eligibility, no test-only authorization bypass. Faculty denied both alias routes and redirected to dashboard, cannot read private placement content. Unknown college/membership query overrides stripped; bounded canonical selectors only. Original module-disabled denial confirmed before the opt-in test fixture. No tenant/role/RLS/mutation policies relaxed."
+          }
+        ],
+        "notes": "2026-11-08: Learner placements calendar/interviews/jobs/notification preferences/offers journey. Active UX correction and evidence work; remain DOING pending executed exact-SHA unit and desktop/mobile browser proof.\n2026-11-09: Repartitioned to atomic scope. Current owner and earlier evidence preserved as history only; confirm exact slice before DONE. Siblings: UX-G257, UX-G258.\n2026-11-12: six-route-state UX-G063 atomic slice DONE after exact-SHA green 43202011499 (5/5 unit, 5/5 authenticated browser, zero skipped/flaky; full TypeScript/ESLint), screenshots artifact 13936046878 inspected as rendered not skeleton; source blobs unchanged. See docs/parity/pages/learn/UX-G063.md. G257/G258 remain independent.",
         "splitMeta": {
           "migration": "atomic-v1-2026-11-09",
           "originId": "UX-G063",
