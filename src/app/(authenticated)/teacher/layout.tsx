@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { canAccessFacultyRoute } from "@/modules/courses/faculty-route-access-model";
+import { canAccessRolePortal } from "@/modules/identity/role-portal-policy";
 import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function TeacherLayout({
@@ -9,7 +9,7 @@ export default async function TeacherLayout({
   const context = await getCurrentRequestContext();
   // Session absence/expiry is handled by the authenticated parent layout:
   // only signed-in members without a faculty grant reach this branch.
-  if (!canAccessFacultyRoute(context)) {
+  if (!canAccessRolePortal(context, "teacher")) {
     redirect("/dashboard");
   }
   // UX-teacher-shared-01: every faculty route, including reports and deep links,
