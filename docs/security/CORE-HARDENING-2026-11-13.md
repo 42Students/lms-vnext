@@ -45,3 +45,24 @@ How strong the contracts are: they prove a check is *reachable* from a route, fo
 shared helpers and auth plumbing are excluded, because they mention these words themselves). A deliberately bad canary route fails
 all three. They do not prove the check is *correct* for every object; that is what per-family tests like the same-college file are for,
 and each new family should add one.
+
+---
+
+# Pass 3: cross-user tests on the most sensitive per-person data
+
+Real-database suites, all run in the CI `database` job. Each puts a second person in the same college (and a stranger from another
+college) so the only variable is ownership or role, then proves refusals are the specific access error and that refused attempts
+change nothing. Each guard was mutation-checked: the guard was broken on purpose and the suite had to fail.
+
+| Suite | Covers | Guards mutation-checked |
+|---|---|---|
+| `sec-same-college-isolation` | device sessions, notices addressed to one learner | session ownership, notice management |
+| `sec-cross-user-applications` | placement applications: read, withdraw, résumé, notes, drive applicant list | application ownership |
+| `sec-cross-user-submissions` | assignment submissions: own view, staff list, grade, publish; section scoping | own-submission filter, staff list scope |
+| `sec-cross-user-files` | uploaded assignment files: staged files are private to their learner, submitted files only to learner, section teacher and admin; submitting someone else's staged file; audit trail holds only allowed grants | owner check, staged-file privacy, teacher scope |
+| `sec-cross-user-profiles` | admin learner-profile read and write, profile image gallery, staff verification documents (real case and clean receipt, storage layer spied: no signed link is ever requested for a refused caller) | people permission, gallery access, staff gate, college scope |
+
+Honest limits: positive grading and uploads of résumés are not exercised (they write permanent history); the gallery is tested
+at the access layer with no stored images; the verification path uses a spied storage layer instead of a real object store.
+A first draft of the verification block passed even with the staff gate removed, because "not found" and "forbidden" were both
+accepted; it was rebuilt around a real record so that removing either layer now fails the suite.
