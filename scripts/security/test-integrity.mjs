@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 // Test integrity (SEC-23-025): a green run must not be achievable by skipping or focusing tests.
-//   node scripts/security/test-integrity.mjs            check against docs/security/test-integrity-baseline.json
+//   node scripts/security/test-integrity.mjs            check against docs/security/baselines/test-integrity-baseline.json
 //   node scripts/security/test-integrity.mjs --write    lower the baseline on purpose
 // Fails on any committed `.only(` (a focused test silently skips all others) and when the number of skipped tests
 // (`.skip(`, `it.todo`, `xit`, `xdescribe`, conditional `skipIf`) rises above the baseline.
 import { execSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 
-const BASELINE = "docs/security/test-integrity-baseline.json";
+import { baselinePath } from "../lib/baselines.mjs";
+const BASELINE = baselinePath("test-integrity-baseline");
 const files = execSync("git ls-files tests", { encoding: "utf8" }).split("\n").filter((f) => /\.(test|spec)\.(tsx?|mjs|cjs|js)$/.test(f));
 const only = [];
 let skipped = 0;

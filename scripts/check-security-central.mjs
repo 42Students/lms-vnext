@@ -5,7 +5,8 @@ import { execFileSync } from "node:child_process";
 import { RULES, scanRoute, scanServerAction, scanSqlRaw } from "./security-central-rules.mjs";
 import { analyse } from "./rls-tenant-tables.mjs";
 
-const BASELINE_PATH = "docs/security/central-security-baseline.json";
+import { baselinePath } from "./lib/baselines.mjs";
+const BASELINE_PATH = baselinePath("central-security-baseline");
 const args = new Set(process.argv.slice(2));
 const files = execFileSync("git", ["ls-files", "-z", "--", "src/app/api"], { encoding: "utf8", maxBuffer: 1 << 26 }).split("\0").filter(Boolean);
 const counts = {};

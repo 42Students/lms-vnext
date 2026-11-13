@@ -12,7 +12,7 @@ Status: written 2026-11-08, needs the owner's approval. It records rules that th
 | Every table is classified; every tenant table has a policy | `table-without-tenant-classification`, `tenant-table-without-rls` |
 | New routes do not add unvalidated bodies, unbounded pagination or echoed error text | `npm run security:api-surface` ratchet |
 | No secrets in source or in the built output | secret scans in CI, `scripts/security/scan-built-bundles.mjs` |
-| Unauthenticated callers reach only the public routes | `scripts/verify/unauth-gate.mjs` against `docs/security/unauth-baseline.json` |
+| Unauthenticated callers reach only the public routes | `scripts/verify/unauth-gate.mjs` against `docs/security/baselines/unauth-baseline.json` |
 | A role never gains a route silently | `scripts/verify/role-route-matrix.mjs` against the committed baseline |
 | UI uses the shared components and tokens | `ux:guard`, `ux:consistency` |
 

@@ -27,7 +27,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [x] 1.3 export safety: central cell function proven against 17 hidden-prefix formula inputs; FOUND AND FIXED import-issues CSV with no formula protection (src/lib/import-preview.ts); ratchet test blocks any new hand-written CSV quoting (43 existing copies listed, migrate in 5.4). Per-export scope (caller college/role) is covered by route contract A and the per-domain suites; one scope test per export arrives with the pipeline in 5.4
 - [x] 1.4 production-wired route abuse suite (tests/unit/sec-route-abuse.test.ts, 11 tests: 10 cross-site spellings, body bounds, no value echo, no internals leaked, 429 and X-Forwarded-For spoofing; origin check and forwarded-address parsing mutation-checked)
 - [x] 1.5 admin scope and workspace switching: FOUND AND FIXED the admin-scope cookie choosing the database college for a non-platform user with no workspace selected (scopeFromActor) and being carried in the context for everyone (resolveRequestContext); tests: tests/unit/sec-admin-scope.test.ts (8) + tests/integration/sec-scope-and-switching.test.ts (8), all three parts of the fix mutation-checked
-- [x] 1.6 role-by-route matrix oracle already runs in CI on a built app (scripts/verify/role-route-matrix.mjs vs docs/security/role-matrix-baseline-ci.json; five seeded roles, fails when a role gains a route). Phase 4 must keep it green after every route-family batch; 4.1 will also generate expectations from the policy registry
+- [x] 1.6 role-by-route matrix oracle already runs in CI on a built app (scripts/verify/role-route-matrix.mjs vs docs/security/baselines/role-matrix-baseline-ci.json; five seeded roles, fails when a role gains a route). Phase 4 must keep it green after every route-family batch; 4.1 will also generate expectations from the policy registry
 
 ## Phase 2: foundations
 - [x] 2.1 typed config module: src/config/env.ts, generated registry; process.env reads outside config 401 -> 81 (ratchet enforced)
@@ -35,7 +35,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [x] 2.3 role constants: ROLE in src/modules/identity/roles.ts; role literals in value positions 2826 -> 1199 (remaining are type positions, keys, tables; ratchet enforced)
 - [x] 2.4 clock (src/lib/clock.ts: nowMs, installClock, timeZoneForCollege) and src/config/locale.ts; Asia/Kolkata literals 526 -> 69 (prose only, ratchet enforced). A stored per-college zone is NOT built: it needs a column migration the owner approves; timeZoneForCollege is the single seam. 233 inline Intl formatters remain for Phase 7
 - [x] 2.5 shared utilities in src/lib/shared.ts (first, clamp, humanize, isUniqueViolation) and currentTimeMs in src/lib/clock.ts; 89 local copies removed. NOT unified (meanings differ between copies): when, initials, 5 humanize variants, 1 isUniqueViolation variant, 2 first variants
-- [ ] 2.6 one baselines folder and reader
+- [x] 2.6 one baselines folder (docs/security/baselines/, 7 files) and one reader (scripts/lib/baselines.mjs) used by every ratchet script; pg-security-baseline.json stays put because the dev k8s cronjob references it (cloud, out of scope)
 
 ## Phase 3: request, response, error plumbing
 - [ ] 3.1 one error model and mapper

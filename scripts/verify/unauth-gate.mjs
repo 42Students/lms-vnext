@@ -9,12 +9,13 @@
 import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 
+import { baselinePath } from "../lib/baselines.mjs";
 const base = process.env.SWEEP_BASE;
 if (!base || !/^https:\/\/[a-z0-9.-]*development\.42lms\.com$|^http:\/\/(localhost|127\.0\.0\.1):[0-9]+$/.test(base)) {
   throw new Error("set SWEEP_BASE to a dev, CI or local origin (never production)");
 }
 const write = process.argv.includes("--write");
-const BASELINE = "docs/security/unauth-baseline.json";
+const BASELINE = baselinePath("unauth-baseline");
 const DENIED = new Set([401, 403, 404, 405, 307, 308]);
 const ZERO = "00000000-0000-4000-8000-000000000000";
 const METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"];

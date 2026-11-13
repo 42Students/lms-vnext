@@ -13,7 +13,8 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-export const BASELINE = "docs/security/baselines/centralisation.json";
+import { baselinePath } from "./lib/baselines.mjs";
+export const BASELINE = baselinePath("centralisation");
 
 const inApi = (p) => p.startsWith("src/app/api/");
 const inServer = (p) => p.startsWith("src/modules/") || p.startsWith("src/app/api/");

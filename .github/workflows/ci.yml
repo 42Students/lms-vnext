@@ -826,7 +826,7 @@ jobs:
           SERVER_PID=$!
           trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
           for i in $(seq 1 40); do curl -fs http://127.0.0.1:3002/ready >/dev/null && break; sleep 1; done
-          SWEEP_BASE=http://127.0.0.1:3002 SWEEP_OTP=123456 MATRIX_BASELINE=docs/security/role-matrix-baseline-ci.json node scripts/verify/role-route-matrix.mjs || {
+          SWEEP_BASE=http://127.0.0.1:3002 SWEEP_OTP=123456 MATRIX_BASELINE=docs/security/baselines/role-matrix-baseline-ci.json node scripts/verify/role-route-matrix.mjs || {
             tail -50 /tmp/lms-vnext-matrix.log
             exit 1
           }

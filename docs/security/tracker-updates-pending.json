@@ -1247,7 +1247,7 @@
    "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
-   "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
+   "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/baselines/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
    "source": "scripts/security/dispositions.json",
    "evidence": [
     {
@@ -1268,7 +1268,7 @@
    "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
-   "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
+   "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/baselines/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
    "source": "scripts/security/dispositions.json",
    "evidence": [
     {
@@ -1289,7 +1289,7 @@
    "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
-   "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
+   "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/baselines/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
    "source": "scripts/security/dispositions.json",
    "evidence": [
     {
@@ -1310,7 +1310,7 @@
    "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
-   "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
+   "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/baselines/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
    "source": "scripts/security/dispositions.json",
    "evidence": [
     {
@@ -1331,7 +1331,7 @@
    "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
-   "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
+   "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/baselines/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
    "source": "scripts/security/dispositions.json",
    "evidence": [
     {
@@ -1352,7 +1352,7 @@
    "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
-   "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
+   "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/baselines/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
    "source": "scripts/security/dispositions.json",
    "evidence": [
     {
@@ -1373,7 +1373,7 @@
    "currentTrackerState": "IMPLEMENTED_UNVERIFIED",
    "proposedState": "IMPLEMENTED_UNVERIFIED",
    "assessedAt": "2026-11-08",
-   "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
+   "finding": "Each role reaches a distinct role-shaped set of routes (learner 23, faculty 15, mentor 18, college admin 73, TPO 52 readable routes) pinned by docs/security/baselines/role-matrix-baseline.json and by a CI baseline built from seeded data; faculty and mentor scope to assigned sections and projects is enforced in services with denial tests (faculty-mentor-*-denial integration suites); the recruiter needs an ACTIVE, VERIFIED, unexpired grant.",
    "source": "scripts/security/dispositions.json",
    "evidence": [
     {

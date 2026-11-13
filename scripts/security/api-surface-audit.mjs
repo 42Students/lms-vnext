@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 // API surface audit (SEC-08-003/005/009/010/011/012/014/018): measures what the route layer actually does instead of
 // assuming it. Static, read-only, fast.
-//   node scripts/security/api-surface-audit.mjs            summary + ratchet check against docs/security/api-surface-baseline.json
+//   node scripts/security/api-surface-audit.mjs            summary + ratchet check against docs/security/baselines/api-surface-baseline.json
 //   node scripts/security/api-surface-audit.mjs --write    update the baseline (counts may only go down unless forced)
 //   node scripts/security/api-surface-audit.mjs --list     list the routes behind each counter
 import { execSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 
+import { baselinePath } from "../lib/baselines.mjs";
 const files = execSync("git ls-files src/app/api", { encoding: "utf8" }).split("\n").filter((f) => f.endsWith("/route.ts"));
-const BASELINE = "docs/security/api-surface-baseline.json";
+const BASELINE = baselinePath("api-surface-baseline");
 const args = process.argv.slice(2);
 
 const mutating = /export\s+(?:const|async function|function)\s+(?:POST|PUT|PATCH|DELETE)\b|export\s*\{[^}]*\b(?:POST|PUT|PATCH|DELETE)\b/;

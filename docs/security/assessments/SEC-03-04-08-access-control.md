@@ -1,6 +1,6 @@
 # SEC-03 RBAC, SEC-04 role scope model, SEC-08 API authorization: assessment (2026-11-08)
 
-Method: code read of `policy.ts`, `context.ts`, `route.ts`; the dev probes in `evidence/` (unauthenticated sweep, cross-college probe, role-by-route matrix, same-college horizontal probe); the committed baseline `docs/security/role-matrix-baseline.json`. Nothing VERIFIED.
+Method: code read of `policy.ts`, `context.ts`, `route.ts`; the dev probes in `evidence/` (unauthenticated sweep, cross-college probe, role-by-route matrix, same-college horizontal probe); the committed baseline `docs/security/baselines/role-matrix-baseline.json`. Nothing VERIFIED.
 
 ## Model as built
 

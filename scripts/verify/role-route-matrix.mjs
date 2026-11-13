@@ -9,12 +9,13 @@
 import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 
+import { baselinePath } from "../lib/baselines.mjs";
 const base = process.env.SWEEP_BASE;
 if (!base || !/^https:\/\/[a-z0-9.-]*development\.42lms\.com$|^http:\/\/(localhost|127\.0\.0\.1):[0-9]+$/.test(base)) throw new Error("set SWEEP_BASE to a dev or local origin (never production)");
 const otp = process.env.SWEEP_OTP;
 if (!otp) throw new Error("set SWEEP_OTP to the dev test code");
 const write = process.argv.includes("--write");
-const BASELINE = process.env.MATRIX_BASELINE ?? "docs/security/role-matrix-baseline.json";
+const BASELINE = process.env.MATRIX_BASELINE ?? baselinePath("role-matrix-baseline");
 const college = process.env.SWEEP_COLLEGE ?? "TESTA";
 
 // Seeded accounts of scripts/seed-test-tenants.ts (college A).

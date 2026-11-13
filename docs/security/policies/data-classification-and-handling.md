@@ -1,6 +1,6 @@
 # Data classification and handling rules (SEC-10-005, SEC-10-008, SEC-22-001, SEC-22-002)
 
-Status: written 2026-11-08, needs the owner's approval. It applies the table-level inventory in `docs/security/data-inventory.md` (96 of 280 tables hold personal or sensitive columns) and the role scopes enforced by the code (`docs/security/role-matrix-baseline.json`).
+Status: written 2026-11-08, needs the owner's approval. It applies the table-level inventory in `docs/security/data-inventory.md` (96 of 280 tables hold personal or sensitive columns) and the role scopes enforced by the code (`docs/security/baselines/role-matrix-baseline.json`).
 
 ## Classes
 
@@ -9,7 +9,7 @@ Status: written 2026-11-08, needs the owner's approval. It applies the table-lev
 | **Restricted** | Identity documents and marksheets (private storage objects), government and roll numbers, contact details (phone, email, parent contacts), one-time-code digests, session digests, integration tokens, encrypted outbound payloads | `profile_private_document_receipts`, `identity_*`, `attendance_parent_contacts`, `outbound_messages`, `inbound_mail_messages`, `users` contact columns | Never in logs, URLs, browser storage, bug reports or exports without step-up. Private bucket only, signed links of at most 5 minutes, every link issue audited (`file.link_issued`). Contact values appear only to the person, their college's authorised staff, and a recruiter with an active grant. |
 | **Confidential** | Grades, attendance, project and quiz attempts, placement applications, offers, eligibility decisions, recruiter notes | course, attendance, project and placement tables | College-scoped by row-level security. Readable only by the owner learner and by staff roles the role matrix gives that route. Exports need a fresh sign-in (15 minutes) and are audited (`api.export`). |
 | **Internal** | Course content, schedules, announcements, college configuration, module access rules | course, academic and announcement tables | College-scoped. Readable by members of the college according to role. |
-| **Public** | Published placement outcomes, marketing pages, the privacy policy, tenant branding | public routes in `docs/security/unauth-baseline.json` | Only the routes in the unauthenticated baseline answer without a session. |
+| **Public** | Published placement outcomes, marketing pages, the privacy policy, tenant branding | public routes in `docs/security/baselines/unauth-baseline.json` | Only the routes in the unauthenticated baseline answer without a session. |
 
 ## Handling rules by role
 

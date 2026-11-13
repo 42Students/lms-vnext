@@ -9,7 +9,7 @@ Give this file to the reviewer with read access to the repository at commit `495
 - `src/security/internal-route-core.ts`: machine credential check (min 32, max 256 bytes, no whitespace, constant time).
 - `src/lib/bounded-request-json.ts`: replaces every raw `request.json()` (381 call sites).
 - `scripts/codemod-shim-wrap.cjs`, `scripts/codemod-route-wrapper.cjs`: how ~1,000 routes were converted. Handler bodies were NOT rewritten by the first script.
-- `scripts/security-central-rules.mjs`, `scripts/security/api-method-inventory.mjs`, `docs/security/central-security-baseline.json`: the ratchet and the method census (note `REVIEWED_EVIDENCE_MOVES` and `STEP_UP_EXEMPT`).
+- `scripts/security-central-rules.mjs`, `scripts/security/api-method-inventory.mjs`, `docs/security/baselines/central-security-baseline.json`: the ratchet and the method census (note `REVIEWED_EVIDENCE_MOVES` and `STEP_UP_EXEMPT`).
 
 ## Questions to answer, with file:line evidence
 
