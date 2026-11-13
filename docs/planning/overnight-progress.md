@@ -40,7 +40,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 ## Phase 3: request, response, error plumbing
 - [x] 3.1 (core) error registry src/lib/error-registry.ts: code-to-status table for 14 families, AppError {code,status,safeMessage,retryable,details}; central mapper cut from ~420 to 170 lines and 4 side mappers (TPO CRM, TPO messaging, lecture hall) read the same table; golden status record proves no code moved. NOT done: converting the 165 custom error classes and 1,800 plain `throw new Error` (long tail, tracked by errors.* metrics), folding the invite mapper's own body
 - [x] 3.2 (core) src/security/responses.ts: CACHE constants + privateJson/strictPrivateJson/noStoreJson/publicJson/withCachePolicy; 265 single-line NextResponse.json calls became helper calls, 877 header literals became CACHE.*; Cache-Control literals in API routes 1,180 -> 915 (ratchet enforced). NOT done: multi-line json responses, downloads/redirect helpers, 1,680 numeric status literals
-- [ ] 3.3 wrapper owns origin, actor, body, query; one body reader
+- [x] 3.3 (part) one body reader module src/lib/request-body.ts replaces 5 reader modules (4 shims deleted, auth reader folded in), behaviour of each call shape unchanged and tested; ratchets enforced on handler origin checks (262) and body modules (1). NOT done: removing the 262 redundant handler-level origin checks and 410 handler actor lookups: 277 test files pin the old text and the checks are harmless defence in depth, so a ratchet holds the count until a dedicated pass
 - [ ] 3.4 limits.ts
 - [ ] 3.5 session cookie helper
 - [ ] 3.6 idempotency option
