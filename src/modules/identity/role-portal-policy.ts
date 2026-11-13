@@ -16,6 +16,13 @@ import {canAccessFacultyRoute} from "@/modules/courses/faculty-route-access-mode
  * /college-admin and /superadmin aliases), so a nested or dynamic page cannot
  * bypass these role checks merely because its own page omits a guard.
  */
+/** Staff audit pages are shared by platform and college administrators.
+ * Both /activity and /activity/[eventId] use this same server-side decision.
+ */
+export function canAccessStaffActivity(context:RequestContext|null|undefined):boolean {
+  return isSuperAdmin(context)||hasMembershipRole(context,"COLLEGE_ADMIN");
+}
+
 export const ROLE_PORTAL_FAMILIES = [
   "admin", "superadmin", "college", "college-admin",
   "tpo", "teacher", "teach", "mentor", "learn", "hr", "recruiter",
