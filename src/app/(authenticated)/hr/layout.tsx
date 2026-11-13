@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { hasActiveRecruiter } from "@/modules/identity/context";
+import { canAccessRolePortal } from "@/modules/identity/role-portal-policy";
 import { ButtonLink } from "@/components/ui/button-link";
 
 export default async function HrLayout({
@@ -11,7 +11,7 @@ export default async function HrLayout({
   const context =
     await getCurrentRequestContext();
 
-  if (!hasActiveRecruiter(context)) {
+  if (!canAccessRolePortal(context, "hr")) {
     redirect("/dashboard");
   }
 
