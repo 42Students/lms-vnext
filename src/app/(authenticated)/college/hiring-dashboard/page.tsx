@@ -15,6 +15,7 @@ import {CollegeHiringDateFilters} from "@/components/placements/college-hiring-d
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { ROLE } from "@/modules/identity/roles";
 const LEGACY_ANALYTICS_DESCRIPTION="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below.";
 
 /** Dedicated legacy Analytics surface: tenant-owned observed placement metrics. */
@@ -22,7 +23,7 @@ export default async function CollegeHiringDashboardPage({
   searchParams,
 }: { searchParams: Promise<Record<string,string | string[] | undefined>> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "COLLEGE_ADMIN")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN)) {
     return <div className="min-w-0 overflow-x-clip space-y-4">
       <PageHeader title="Placement Analytics" description={LEGACY_ANALYTICS_DESCRIPTION}/>
       <ErrorState title="Admin not assigned to a college"

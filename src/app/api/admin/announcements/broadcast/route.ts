@@ -17,6 +17,7 @@ import {listAnnouncementsForAdmin} from "@/modules/announcements/service";
 import {parseAnnouncementAdminApiQuery} from "@/modules/announcements/admin-api-query";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import { route } from "@/security/route";
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 
 /** Source broadcast IDs are distinct from individual recipient copies.
@@ -40,7 +41,7 @@ async function scopedBroadcastCopies(context:RequestContext,groupId:string){
   .where(eq(db10Announcements.broadcastGroupId,groupId))
   .orderBy(db10Announcements.collegeId).limit(501);
  if(!copies.length||copies.length>500||
-    copies.some(copy=>copy.receiverType!=="COLLEGE"||copy.senderType!=="SUPER_ADMIN"))
+    copies.some(copy=>copy.receiverType!=="COLLEGE"||copy.senderType!==ROLE.SUPER_ADMIN))
   throw new AnnouncementError("ANNOUNCEMENT_NOT_FOUND");
  for(const copy of copies)
   requirePermission(context,"college.manage",{

@@ -53,6 +53,7 @@ import {
   type PlacementRequestActionInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 type PlacementRequestTransaction = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 
 type PlacementRequestWriter = Pick<
@@ -100,7 +101,7 @@ export function legacyRescheduleRequestDisplay(
 function requireLearner(context: RequestContext) {
   if (
     !context.membership ||
-    !hasMembershipRole(context, "LEARNER")
+    !hasMembershipRole(context, ROLE.LEARNER)
   ) {
     throw new AuthorizationError("placements.read");
   }

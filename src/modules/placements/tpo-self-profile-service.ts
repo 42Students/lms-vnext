@@ -17,6 +17,7 @@ import {
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * TPO self profile, strictly bound to the authenticated
  * user and their already-selected membership.
@@ -47,7 +48,7 @@ export async function getOwnTpoProfile(
 
   if (
     !membership ||
-    !hasMembershipRole(context, "TPO")
+    !hasMembershipRole(context, ROLE.TPO)
   ) {
     throw new AuthorizationError(
       "placements.manage",
@@ -153,7 +154,7 @@ export async function getOwnTpoProfile(
   // constructed before a role change.
   if (
     rows.length === 0 ||
-    !rows.some((row) => row.role === "TPO")
+    !rows.some((row) => row.role === ROLE.TPO)
   ) {
     throw new AuthorizationError(
       "placements.manage",

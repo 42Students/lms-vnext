@@ -1,5 +1,6 @@
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * A platform Super Admin may manage projects in an explicitly selected college,
  * but that does not make an unrelated College Admin membership a valid actor
@@ -12,7 +13,7 @@ export function mayRecordCollegeAdminDeliveryLock(
 ): boolean {
   return (
     context.user.platformStatus === "ACTIVE" &&
-    hasMembershipRole(context, "COLLEGE_ADMIN") &&
+    hasMembershipRole(context, ROLE.COLLEGE_ADMIN) &&
     context.membership?.collegeId === collegeId &&
     context.membership?.organizationId === organizationId
   );

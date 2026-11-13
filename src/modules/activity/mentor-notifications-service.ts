@@ -11,6 +11,7 @@ import { listOwnNotificationPage } from "./notification-service";
 import { resolveMentorInboxQuery } from "./mentor-notifications-model";
 import {mentorVisibleNotificationEventCondition} from "./mentor-personal-project-scope";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Personal Mentor inbox: verify live role grants in migrated tables, not only
  * a caller-provided context role. Reuse the existing owner-only cursor reader.
@@ -18,7 +19,7 @@ import {mentorVisibleNotificationEventCondition} from "./mentor-personal-project
 export async function requirePersistedMentorInboxMembership(context:RequestContext) {
   const membership = context.membership;
   if (!membership || !hasActiveMembership(context) ||
-      !hasMembershipRole(context, "MENTOR")) {
+      !hasMembershipRole(context, ROLE.MENTOR)) {
     throw new AuthorizationError("academics.read");
   }
   requirePermission(context, "academics.read", {
@@ -54,7 +55,7 @@ export function projectLegacyMentorNotification(input:{
  verifiedRecipientUserId?:string|null;legacyRecipientId?:string|number|null;
  readAt?:string|null;
 },ownUserId:string){
- if(input.receiverType.toUpperCase()!=="MENTOR"||!ownUserId||
+ if(input.receiverType.toUpperCase()!==ROLE.MENTOR||!ownUserId||
     !input.verifiedRecipientUserId||input.verifiedRecipientUserId!==ownUserId||
     input.legacyRecipientId==null)return null;
  const rawDate=input.created_at??input.createdAt;

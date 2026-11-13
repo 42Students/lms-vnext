@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { ROLE } from "@/modules/identity/roles";
 export const TPO_RECRUITER_ACCESS_FILTERS = [
   "ALL",
   "ACTIVE",
@@ -181,7 +182,7 @@ export function toTpoRecruiterGrantView(
     grantSourceLabel:row.grantedByType==="PUBLIC_LINK"?"Public link":
       row.grantedByType==="COMPANY_LINK"?"Company link":
       row.grantedByType==="INVITE"?"Invitation":
-      row.grantedByType==="TPO"?"Placement cell": "Source not recorded",
+      row.grantedByType===ROLE.TPO?"Placement cell": "Source not recorded",
   };
 }
 

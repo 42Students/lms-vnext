@@ -14,11 +14,12 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 const querySchema=z.string().trim().min(2).max(100);
 export default async function TpoRecordFinder({searchParams}:{searchParams:Promise<{q?:string|string[]}>}){
  const ctx=await getCurrentRequestContext();
- if(!ctx.membership || !hasMembershipRole(ctx,"TPO")) redirect("/dashboard");
+ if(!ctx.membership || !hasMembershipRole(ctx,ROLE.TPO)) redirect("/dashboard");
  await requireTpoBatchActor(ctx);
  const raw=await searchParams;
  // Do not arbitrarily accept the first of several independent search inputs.

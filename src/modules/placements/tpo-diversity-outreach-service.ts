@@ -11,6 +11,7 @@ import { requireTpoJobCollege } from "./tpo-job-write-base";
 import { PlacementsServiceError } from "./errors";
 
 import { featureReady } from "@/config/features";
+import { ROLE } from "@/modules/identity/roles";
 const uuid = z.string().uuid();
 const draft = z.strictObject({
   action: z.literal("SAVE"),
@@ -124,7 +125,7 @@ export async function reviewPrivateTpoDiversityOutreach(
 ) {
   requireReady();
   const input = review.parse(raw);
-  if (!hasMembershipRole(context, "COLLEGE_ADMIN"))
+  if (!hasMembershipRole(context, ROLE.COLLEGE_ADMIN))
     throw new PrivateDiversityPolicyError("DIVERSITY_ACCESS_DENIED");
   const jobId = uuid.parse(rawId);
   const collegeId = await requireTpoJobCollege(context);

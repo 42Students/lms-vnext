@@ -15,6 +15,7 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { hasElectiveAcademicEligibility } from "./elective-eligibility";
 import { assertPersistedGroupActor } from "./actor-access";
 
+import { ROLE } from "@/modules/identity/roles";
 const uuid = z.string().uuid();
 const groupCreate = z.object({
   collegeId: uuid.nullable(),
@@ -43,15 +44,15 @@ type GroupRow = typeof lmsGroups.$inferSelect;
 
 function actorType(context: RequestContext) {
   if (isSuperAdmin(context)) return "SUPER_ADMIN" as const;
-  if (context.membership?.roles.includes("COLLEGE_ADMIN")) return "COLLEGE_ADMIN" as const;
-  if (context.membership?.roles.includes("FACULTY")) return "FACULTY" as const;
+  if (context.membership?.roles.includes(ROLE.COLLEGE_ADMIN)) return "COLLEGE_ADMIN" as const;
+  if (context.membership?.roles.includes(ROLE.FACULTY)) return "FACULTY" as const;
   return "LEARNER" as const;
 }
 function assertScope(context: RequestContext, group: GroupRow, mode: "SELF" | "MANUAL", memberId: string) {
   if (mode === "SELF") {
     if (
       !hasActiveMembership(context) ||
-      !context.membership?.roles.includes("LEARNER") ||
+      !context.membership?.roles.includes(ROLE.LEARNER) ||
       context.membership.id !== memberId ||
       (group.ownerScope === "COLLEGE" &&
         (group.collegeId === null || context.membership.collegeId !== group.collegeId))
@@ -86,7 +87,7 @@ async function assertGroupMemberActor(
  }
  const member=context.membership;
  if(!member || member.id!==memberId ||
-    !member.roles.includes("LEARNER") || context.user.platformStatus!=="ACTIVE")
+    !member.roles.includes(ROLE.LEARNER) || context.user.platformStatus!=="ACTIVE")
   throw new GroupServiceError("GROUP_SELF_ACCESS_DENIED");
  const [current]=await tx.select({id:collegeMemberships.id})
   .from(collegeMemberships)
@@ -264,7 +265,7 @@ async function mirrorProjectTeamMember(
     .limit(1);
   if (active) {
     if (existing) {
-      if (existing.role !== "LEARNER")
+      if (existing.role !== ROLE.LEARNER)
         throw new GroupServiceError("PROJECT_TEAM_MEMBER_ROLE_CONFLICT");
       return;
     }
@@ -273,7 +274,7 @@ async function mirrorProjectTeamMember(
       role: "LEARNER", roleKind: "LEARNER", canMutate: true, isPrimary: false, createdByUserId: userId,
     });
   } else {
-    if (!existing || existing.role !== "LEARNER")
+    if (!existing || existing.role !== ROLE.LEARNER)
       throw new GroupServiceError("PROJECT_TEAM_MIRROR_INCONSISTENT");
     await tx.update(projectMembers).set({
       endedAt: new Date(), isPrimary: false, updatedAt: new Date(),

@@ -21,6 +21,7 @@ import { ProjectsServiceError } from "./errors";
 import { loadProjectCollegeScope } from "./scope";
 import { projectInstanceIdSchema } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function loadProjectScope(
   projectIdInput: string,
 ) {
@@ -55,7 +56,7 @@ export async function requireProjectManageAccess(
 ) {
   // Projects IDs and their existence are private: an unprivileged TPO,
   // recruiter or learner must not distinguish a real foreign ID from a guess.
-  if(!isSuperAdmin(context)&&!hasMembershipRole(context,"COLLEGE_ADMIN"))
+  if(!isSuperAdmin(context)&&!hasMembershipRole(context,ROLE.COLLEGE_ADMIN))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   // A selected Super Admin college must match the workspace tenant, even
   // if another active organization context previously granted access.
@@ -89,13 +90,13 @@ export async function requireProjectReadAccess(
   // never needs to load the object first, which avoids a cross-tenant ID
   // existence oracle (PROJECT_NOT_FOUND versus PROJECT_ACCESS_DENIED).
   if(!isSuperAdmin(context)&&
-    !hasMembershipRole(context,"COLLEGE_ADMIN")&&
-    !hasMembershipRole(context,"MENTOR")&&
-    !hasMembershipRole(context,"LEARNER"))
+    !hasMembershipRole(context,ROLE.COLLEGE_ADMIN)&&
+    !hasMembershipRole(context,ROLE.MENTOR)&&
+    !hasMembershipRole(context,ROLE.LEARNER))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   // A revoked Mentor/Learner must not learn whether a private project ID
   // exists. Preflight principal status before performing the object lookup.
-  if (!isSuperAdmin(context) && !hasMembershipRole(context,"COLLEGE_ADMIN") &&
+  if (!isSuperAdmin(context) && !hasMembershipRole(context,ROLE.COLLEGE_ADMIN) &&
       (context.user.platformStatus !== "ACTIVE" ||
        context.membership?.status !== "ACTIVE"))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
@@ -174,7 +175,7 @@ export async function requireProjectReadAccess(
 
   // LEARNER-projects-24/25: hiding the sidebar is not an authorization gate.
   // Check the effective learner Projects flag on direct URL/API reads as well.
-  if (member.role === "LEARNER" &&
+  if (member.role === ROLE.LEARNER &&
       !(await resolveOptionalModuleAccess(context)).projects.enabled) {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
@@ -182,9 +183,9 @@ export async function requireProjectReadAccess(
   return {
     ...scope,
     member,
-    access: member.role === "LEARNER" && member.roleKind === "LEARNER" && member.canMutate
+    access: member.role === ROLE.LEARNER && member.roleKind === ROLE.LEARNER && member.canMutate
       ? "LEARNER" as const
-      : mayMutateProjectWithRole(member.roleKind as ProjectMemberRoleKind,member.canMutate) && member.role === "MENTOR"
+      : mayMutateProjectWithRole(member.roleKind as ProjectMemberRoleKind,member.canMutate) && member.role === ROLE.MENTOR
         ? "MENTOR" as const
         : "OBSERVER" as const,
   };
@@ -202,7 +203,7 @@ export async function requireProjectLifecycleAccess(
 
   if (
     scope.access !== "ADMIN" &&
-    scope.access !== "MENTOR"
+    scope.access !== ROLE.MENTOR
   ) {
     throw new ProjectsServiceError(
       "PROJECT_LIFECYCLE_ACCESS_DENIED",
@@ -218,8 +219,8 @@ export async function requireProjectLifecycleMutationAccess(context: RequestCont
   // project lifecycle writes. Reject them before looking up module settings
   // or a project ID, avoiding an unnecessary tenant/configuration read.
   if (!isSuperAdmin(context) &&
-      !hasMembershipRole(context,"COLLEGE_ADMIN") &&
-      !hasMembershipRole(context,"MENTOR")) {
+      !hasMembershipRole(context,ROLE.COLLEGE_ADMIN) &&
+      !hasMembershipRole(context,ROLE.MENTOR)) {
     throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
   }
   // Deny disabled modules before any project ID existence/tenant lookup.

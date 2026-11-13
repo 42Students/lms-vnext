@@ -33,6 +33,7 @@ import {
   type UpdatePlacementCompanyRelationshipInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 async function loadRelationship(
   relationshipId: string,
 ) {
@@ -97,7 +98,7 @@ async function requireValidOwner(
   if (
     !rows.some(
       ({ role }) =>
-        role === "TPO" || role === "COLLEGE_ADMIN",
+        role === ROLE.TPO || role === ROLE.COLLEGE_ADMIN,
     )
   ) {
     throw new PlacementsServiceError(

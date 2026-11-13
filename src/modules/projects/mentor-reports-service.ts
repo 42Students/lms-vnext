@@ -9,11 +9,12 @@ import {listMyMentorProjectAttention} from "./mentor-attention-service";
 import {getMentorProjectWorkCounts} from "./mentor-project-work-service";
 import {mentorReportsQuerySchema,mentorReportsOverview} from "./mentor-reports-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** The report is a projection over persisted currently assigned Mentor projects. */
 export async function getMentorReports(context:RequestContext,raw:unknown){
   const query=mentorReportsQuerySchema.parse(raw);
   const member=context.membership;
-  if(!member||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR")||
+  if(!member||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR)||
     !can(context,"projects.read",{
       collegeId:member.collegeId,organizationId:member.organizationId,
     }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
@@ -25,7 +26,7 @@ export async function getMentorReports(context:RequestContext,raw:unknown){
     (query.taskCoverage!=="ALL"||query.order==="TASK_PROGRESS")
       ?getMentorProjectWorkCounts(context):Promise.resolve(new Map()),
   ]);
-  const projects=assigned.filter(row=>row.memberRole==="MENTOR")
+  const projects=assigned.filter(row=>row.memberRole===ROLE.MENTOR)
     .map(row=>({id:row.project.id,title:row.project.title,
       status:row.project.status,isPrimaryMentor:row.isPrimaryMentor,
       updatedAt:row.project.updatedAt}));

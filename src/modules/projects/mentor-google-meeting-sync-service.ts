@@ -16,6 +16,7 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {scopedMentorInviteeEmails} from "./mentor-google-invitee-selection-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Every Google read/write is scoped to a live assigned Mentor, saved meeting
  * and its live same-college project roster. A client cannot supply invitees.
  */
@@ -23,7 +24,7 @@ async function verifiedGoogleMeeting(context:RequestContext,projectId:string,mee
  if(!z.uuid().safeParse(meetingId).success)
   throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
  const scope=await requireProjectReadAccess(context,projectId);
- if(scope.access!=="MENTOR")throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ if(scope.access!==ROLE.MENTOR)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  return getDb().transaction(async tx=>{
   const [project]=await tx.select({
    status:projectInstances.status,deletedAt:projectInstances.deletedAt,

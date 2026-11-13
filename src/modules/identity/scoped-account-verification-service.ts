@@ -5,6 +5,7 @@ import {getDb} from "@/db/client";
 import {codeMac,contactFingerprint,generateCode,safeEqualHex} from "@/modules/auth/crypto";
 
 import { env } from "@/config/env";
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Historical faculty_acct_verification / learner_acct_verification replacement:
  * a separate, scoped, one-time account proof, NEVER a LOGIN/device credential.
@@ -39,7 +40,7 @@ function valid(input:ScopedAccountProofRequest){
   throw new Error("ROLE_PROOF_SCOPE_INVALID");
  if(!["LEARNER","FACULTY"].includes(input.role)||!["EMAIL","PHONE"].includes(input.channel))
   throw new Error("ROLE_PROOF_SCOPE_INVALID");
- if(input.role!=="LEARNER"&&input.expectedRollNumber!=null)
+ if(input.role!==ROLE.LEARNER&&input.expectedRollNumber!=null)
   throw new Error("ROLE_PROOF_SCOPE_INVALID");
  if(input.expectedRollNumber!=null&&
    (!input.expectedRollNumber.trim()||input.expectedRollNumber.length>128))
@@ -68,7 +69,7 @@ async function loadOwner(tx:{execute:(query:ReturnType<typeof sql>)=>Promise<unk
  const owner=result[0];
  if(!owner)return null;
  if(request.expectedRollNumber!=null &&
-   (request.role!=="LEARNER"||
+   (request.role!==ROLE.LEARNER||
     owner["roll_number"]!==request.expectedRollNumber.trim()))return null;
  const selected=request.channel==="EMAIL"?owner["email"]:owner["phone_e164"];
  if(typeof selected!=="string"||!selected.trim())return null;

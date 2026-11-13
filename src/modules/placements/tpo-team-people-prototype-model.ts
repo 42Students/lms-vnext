@@ -1,3 +1,4 @@
+import { ROLE } from "@/modules/identity/roles";
 export type TpoPrototypeTeamPerson={
  membershipId:string;displayName:string;roles:readonly string[];
  status:string;openAsks:number;overdueAsks:number;
@@ -6,7 +7,7 @@ export type TpoPrototypeTeamPerson={
 export function summarizeTpoPrototypePerson(row:TpoPrototypeTeamPerson,workloadReady:boolean){
  const role=row.roles.includes("TPO_ADMIN")?"TPO admin":
   row.roles.includes("FACULTY_COORDINATOR")?"Faculty coordinator":
-  row.roles.includes("TPO")?"Placement cell":
+  row.roles.includes(ROLE.TPO)?"Placement cell":
   row.roles.includes("STUDENT_COORDINATOR")?"Student coordinator":
   row.roles.map(role=>role.replaceAll("_"," ").toLowerCase()).join(", ")||"Member";
  return {

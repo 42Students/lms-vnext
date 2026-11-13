@@ -7,6 +7,7 @@ import {BoundedFormDataError,readBoundedFormData} from "@/lib/bounded-form-data"
 import {recordOutsideDrive} from "@/modules/placements/recorded-outside-service";
 import {parseIstLocalSlot} from "@/modules/placements/hr-interview-slot-model";
 import {PlacementsServiceError} from "@/modules/placements/errors";
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -29,7 +30,7 @@ const payload={
    notes:form.get("notes")||undefined,
   };
 const saved=await recordOutsideDrive(context,payload);
-return NextResponse.redirect(new URL(saved.role==="TPO"
+return NextResponse.redirect(new URL(saved.role===ROLE.TPO
    ? "/tpo/placements/recorded-outside?saved="+saved.id
    : "/hr/drives/recorded-outside?collegeId="+saved.collegeId+"&saved="+saved.id,request.url),303);
 } catch(error){

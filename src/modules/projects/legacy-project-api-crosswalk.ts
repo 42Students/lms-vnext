@@ -1,3 +1,4 @@
+import { ROLE } from "@/modules/identity/roles";
 /** Authorized, explicitly scoped crosswalk for the original monolithic
  * ProjectWorkspaceController. Feature writes stay in independent vNext APIs.
  * Never interpret this object as a permission grant or as a promise that
@@ -47,9 +48,9 @@ export function projectLegacyCompatibilityRoutes(
  return legacyProjectApiCrosswalk.filter(row=>{
   if(row.method==="GET")return true;
   if(!allowMutations)return false;
-  if(role==="LEARNER")return row.legacy==="createDeliveryDraft"||
+  if(role===ROLE.LEARNER)return row.legacy==="createDeliveryDraft"||
     row.legacy==="updateSubmission";
-  if(role==="MENTOR")return !["updateSubmission","reviewSubmission","createDeliveryDraft",
+  if(role===ROLE.MENTOR)return !["updateSubmission","reviewSubmission","createDeliveryDraft",
     "updateWorkspace"].includes(row.legacy);
   return true;
  }).map(row=>({

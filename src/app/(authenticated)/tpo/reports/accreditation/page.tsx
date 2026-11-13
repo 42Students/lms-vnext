@@ -23,6 +23,7 @@ import {accreditationPackageLpa,accreditationOfferStatusLabel,accreditationJoini
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 
+import { ROLE } from "@/modules/identity/roles";
 type SearchParams = {
   seasonId?: string | string[];
   jobId?: string | string[];
@@ -39,7 +40,7 @@ export default async function TpoAccreditationReportPage({
   searchParams: Promise<SearchParams>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     redirect("/dashboard");
   }
   const params = await searchParams;

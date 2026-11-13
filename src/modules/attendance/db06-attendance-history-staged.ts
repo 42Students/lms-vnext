@@ -1,3 +1,4 @@
+import { ROLE } from "@/modules/identity/roles";
 /**
  * DB-035/045 SOURCE-ONLY producer contract. Do not call from live writers until
  * L01 atomically registers attendance_record_events and attendance_records.version,
@@ -53,7 +54,7 @@ export function buildAttendanceHistoryEvent(input: AttendanceHistoryInput) {
   if (after.markedByUserId !== input.actorUserId) {
     throw new Error("ATTENDANCE_HISTORY_MARKER_ACTOR_MISMATCH");
   }
-  if ((input.actorRole === "SUPER_ADMIN") !== (input.actorMembershipId === null)) {
+  if ((input.actorRole === ROLE.SUPER_ADMIN) !== (input.actorMembershipId === null)) {
     throw new Error("ATTENDANCE_HISTORY_ACTOR_MEMBERSHIP_MISMATCH");
   }
   if (!Number.isSafeInteger(after.version) || after.version < 0) {

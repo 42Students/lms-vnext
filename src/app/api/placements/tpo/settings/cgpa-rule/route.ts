@@ -7,6 +7,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-service";
 import {setCollegeCgpaConversionRule} from "@/modules/profile-verification/settings-service";
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 const body=z.strictObject({
  rule:z.enum(["X9_5","MINUS_0_5_X10","MINUS_0_75_X10","X10"]),
@@ -22,7 +23,7 @@ export const POST = route(
    return NextResponse.json({error:"FORBIDDEN"},{status:403});
     const team=await getTpoPlacementTeam(context,context.membership.collegeId);
     const member=team.members.find(row=>row.membershipId===context.membership?.id);
-    if(!member?.roles.includes("TPO_ADMIN")&&!member?.roles.includes("COLLEGE_ADMIN"))
+    if(!member?.roles.includes("TPO_ADMIN")&&!member?.roles.includes(ROLE.COLLEGE_ADMIN))
    return NextResponse.json({error:"FORBIDDEN"},{status:403});
     const rule=body.parse(JSON.parse(decoded.body)).rule;
     const result=await setCollegeCgpaConversionRule(context,context.membership.collegeId,rule);

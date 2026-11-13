@@ -18,6 +18,7 @@ import {
 import type { MembershipRole } from "@/modules/identity/constants";
 import { AcademicsServiceError } from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function loadAcademicsMembership(
   membershipId: string,
 ) {
@@ -94,7 +95,7 @@ export function requireAcademicRole(
 
   if (!membership.roles.includes(role)) {
     throw new AcademicsServiceError(
-      role === "LEARNER"
+      role === ROLE.LEARNER
         ? "LEARNER_ROLE_REQUIRED"
         : "FACULTY_ROLE_REQUIRED",
     );

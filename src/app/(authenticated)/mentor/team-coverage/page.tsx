@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { formatNumberIN } from "@/lib/safe-format";
 
+import { ROLE } from "@/modules/identity/roles";
 type Params = {
   filter?: string | string[];
   status?: string | string[];
@@ -51,7 +52,7 @@ export default async function MentorTeamCoveragePage({
   </section>;
 
   const context = await getCurrentRequestContext();
-  if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
+  if (!hasMembershipRole(context,ROLE.MENTOR)) redirect("/dashboard");
   const data = await getMentorTeamCoverage(context,parsed.data);
   const hasFilters = Boolean(data.query.search || data.query.filter !== "ALL" || data.query.status !== "ALL" || data.query.assignment !== "ALL" || data.query.order !== "TITLE");
   const hasAdvancedFilters = data.query.status !== "ALL" || data.query.assignment !== "ALL" || data.query.order !== "TITLE";

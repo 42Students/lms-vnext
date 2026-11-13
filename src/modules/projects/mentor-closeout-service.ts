@@ -18,14 +18,15 @@ import {
   closeoutChecklist,mentorCloseoutParamsSchema,mentorCloseoutSchema,
 } from "./mentor-closeout-model";
 
+import { ROLE } from "@/modules/identity/roles";
 async function scopeMentor(context:RequestContext,projectId:string){
   const membership=context.membership;
-  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR"))
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const scope=await requireProjectLifecycleAccess(context,projectId);
-  if(scope.access!=="MENTOR"||!can(context,"projects.read",{
+  if(scope.access!==ROLE.MENTOR||!can(context,"projects.read",{
     collegeId:scope.collegeId,organizationId:scope.organizationId,
   })) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   return scope;

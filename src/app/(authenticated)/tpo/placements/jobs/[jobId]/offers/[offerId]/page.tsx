@@ -10,9 +10,10 @@ import {tpoOfferEvidenceQuery} from "@/modules/placements/tpo-offer-evidence-mod
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { istDateFormatter, istDateTimeFormatter } from "@/lib/format-date";
+import { ROLE } from "@/modules/identity/roles";
 export default async function TpoOfferEvidencePage({params}:{params:Promise<{jobId:string;offerId:string}>}){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");
  const parsed=tpoOfferEvidenceQuery.safeParse(await params);
  if(!parsed.success)notFound();
  let data:Awaited<ReturnType<typeof getTpoOfferEvidence>>;

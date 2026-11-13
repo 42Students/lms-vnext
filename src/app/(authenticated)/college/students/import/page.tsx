@@ -8,10 +8,11 @@ import { PageHeader } from "@/components/ui/page-header";
 import { CollegeStudentCsvImport } from "@/components/college/college-student-csv-import";
 import { listCollegeStudentImportOptions } from "@/modules/people/college-student-import-options";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function CollegeStudentsImportPage() {
   const context = await getCurrentRequestContext();
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+  if (!membership || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
     !can(context, "people.manage", { collegeId: membership.collegeId,
       organizationId: membership.organizationId })) redirect("/dashboard");
   const choices = await listCollegeStudentImportOptions(context);

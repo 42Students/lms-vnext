@@ -17,6 +17,7 @@ import {listPlacementJobTypeChoices} from "@/modules/placements/tpo-configuratio
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function PlacementJobCreateWorkspace({
   context,
   collegeId,
@@ -56,7 +57,7 @@ export async function PlacementJobCreateWorkspace({
   // Legacy also showed published and draft jobs in its copy list; they remain
   // visible in the full directory, but cannot be used as a clone source because
   // that would duplicate a currently recruiting cohort without a review.
-  const canClone=hasMembershipRole(context,"TPO")||hasMembershipRole(context,"COLLEGE_ADMIN");
+  const canClone=hasMembershipRole(context,ROLE.TPO)||hasMembershipRole(context,ROLE.COLLEGE_ADMIN);
   const pastDrives=canClone
     ?await getDb().select({
       id:placementJobs.id,title:placementJobs.title,status:placementJobs.status,
@@ -128,7 +129,7 @@ export async function PlacementJobCreateWorkspace({
         {pastDrives.length>0?<TpoDriveClonePicker drives={pastDrives.map(job=>({
           id:job.id,title:job.title,status:job.status,
           createdAt:job.createdAt.toISOString(),
-        }))} collegeAdmin={!hasMembershipRole(context,"TPO")}/>:<p className="text-sm text-muted-foreground">
+        }))} collegeAdmin={!hasMembershipRole(context,ROLE.TPO)}/>:<p className="text-sm text-muted-foreground">
           No completed or cancelled drives are available to clone yet.
           Create a new drive below.
         </p>}

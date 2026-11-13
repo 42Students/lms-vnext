@@ -21,6 +21,7 @@ import {
   type TpoPublicJoinLinkStatus,
 } from "./tpo-public-join-link-model";
 
+import { ROLE } from "@/modules/identity/roles";
 type Scope = "COMPANY" | "COLLEGE";
 type LinkState="STORAGE_UNAVAILABLE"|"NOT_CREATED"|"ACTIVE"|"EXPIRED"|"REVOKED";
 /** Legacy CompanyJoin engagement names are presentation aliases, not
@@ -52,7 +53,7 @@ export class TpoPublicJoinLinkError extends Error {
 async function requireTpoLinkScope(context: RequestContext) {
   const membership = context.membership;
   if (!membership || membership.status !== "ACTIVE" ||
-      !(hasMembershipRole(context, "TPO")||hasMembershipRole(context, "COLLEGE_ADMIN")) || context.user.platformStatus !== "ACTIVE") {
+      !(hasMembershipRole(context, ROLE.TPO)||hasMembershipRole(context, ROLE.COLLEGE_ADMIN)) || context.user.platformStatus !== "ACTIVE") {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = membership.collegeId;

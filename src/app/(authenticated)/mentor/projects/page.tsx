@@ -39,6 +39,7 @@ import {MENTOR_PORTFOLIO_SEGMENTS,matchesMentorPortfolioSegment,mentorPortfolioS
   from "@/modules/projects/mentor-portfolio-segment-model";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 function MentorProjectsLoading() {
   return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Checking Projects access">
     <PageHeader title="Projects" description="Checking Projects access…"/>
@@ -140,7 +141,7 @@ export async function MentorProjectsContent({
   // plan must have actual sprints signed off AND actual releases shipped.
   // No unpersisted phase labels or guessed readiness state count as evidence.
   const finalFacts=await (async()=>{
-    const ids=allRows.filter(row=>row.memberRole==="MENTOR")
+    const ids=allRows.filter(row=>row.memberRole===ROLE.MENTOR)
       .map(row=>row.project.id);
     if(query.segment!=="FINAL_SUBMISSION"||ids.length===0)
       return {submitted:new Set<string>(),fullyDelivered:new Set<string>()};
@@ -222,7 +223,7 @@ export async function MentorProjectsContent({
   const filtered = allRows
     .filter(
       (row) =>
-        row.memberRole === "MENTOR",
+        row.memberRole === ROLE.MENTOR,
     )
     .filter(row => matchesMentorPortfolioSegment(query.segment,{
       status:row.project.status,blocker:row.project.blocker??null,

@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { Label } from "@/components/ui/label";
 
+import { ROLE } from "@/modules/identity/roles";
 function roleLabel(role: MembershipRole) {
   return role
     .toLowerCase()
@@ -138,10 +139,10 @@ export function PersonOnboardDialog({
     if(!forcedRole && !displayName.trim()){fail("displayName","Enter a name");return;}
     if(forcedRole && !firstName.trim()){fail("firstName","Enter the first name");return;}
     if(forcedRole && !lastName.trim()){fail("lastName","Enter the last name");return;}
-    if(!phoneE164.trim()){fail("phone",forcedRole==="FACULTY"?"Enter the mobile number":"Mobile required");return;}
-    if((forcedRole||roles.includes("COLLEGE_ADMIN")||roles.includes("TPO"))&&!indianMobileToE164(phoneE164)){fail("phone","Mobile number must be 10 digits");return;}
-    if(forcedRole==="FACULTY"&&!departmentId){fail("department","Choose a department");return;}
-    if(forcedRole==="FACULTY"&&!facultyType){fail("facultyType","Choose a faculty type");return;}
+    if(!phoneE164.trim()){fail("phone",forcedRole===ROLE.FACULTY?"Enter the mobile number":"Mobile required");return;}
+    if((forcedRole||roles.includes(ROLE.COLLEGE_ADMIN)||roles.includes(ROLE.TPO))&&!indianMobileToE164(phoneE164)){fail("phone","Mobile number must be 10 digits");return;}
+    if(forcedRole===ROLE.FACULTY&&!departmentId){fail("department","Choose a department");return;}
+    if(forcedRole===ROLE.FACULTY&&!facultyType){fail("facultyType","Choose a faculty type");return;}
     if(email.trim()&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())){
       fail("email","Enter a valid email");return;
     }
@@ -155,10 +156,10 @@ export function PersonOnboardDialog({
         body: JSON.stringify({
           collegeId,
           displayName:forcedRole?legacyPersonName(firstName,lastName):displayName,
-          phoneE164:forcedRole||roles.includes("COLLEGE_ADMIN")||roles.includes("TPO")?indianMobileToE164(phoneE164):phoneE164,
+          phoneE164:forcedRole||roles.includes(ROLE.COLLEGE_ADMIN)||roles.includes(ROLE.TPO)?indianMobileToE164(phoneE164):phoneE164,
           ...(email.trim() ? { email } : {}),
-          roles:forcedRole==="FACULTY"&&registerAsMentor?["FACULTY","MENTOR"]:onboardingRoleSelection(forcedRole,roles),
-          ...(forcedRole==="FACULTY"?{facultyProfile:{kind:"FACULTY",primaryDepartmentId:departmentId,
+          roles:forcedRole===ROLE.FACULTY&&registerAsMentor?["FACULTY","MENTOR"]:onboardingRoleSelection(forcedRole,roles),
+          ...(forcedRole===ROLE.FACULTY?{facultyProfile:{kind:"FACULTY",primaryDepartmentId:departmentId,
             employmentType:facultyType,academicTitle:"",gender,dateOfBirth,address,bio,
             contactPhone:"",contactEmail:""}}:{}),
         }),
@@ -181,7 +182,7 @@ export function PersonOnboardDialog({
         return;
       }
 
-      if (forcedRole==="FACULTY" && payload?.profileIncomplete) {
+      if (forcedRole===ROLE.FACULTY && payload?.profileIncomplete) {
         setProfileIncomplete(true);
         showToast({tone:"error",title:"Faculty created, profile needs completion",
           description:"Open Edit Faculty in the roster to finish the department and faculty type. Do not register a duplicate."});
@@ -192,7 +193,7 @@ export function PersonOnboardDialog({
       reset();
       showToast({
         tone: "success",
-        title: forcedRole === "FACULTY" ? "Faculty registered successfully! They can now login with their mobile number."
+        title: forcedRole === ROLE.FACULTY ? "Faculty registered successfully! They can now login with their mobile number."
           : forcedRole ? roleLabel(forcedRole)+" created"
           : roles.length===1 && roles[0] ? roleLabel(roles[0])+" created" : "Person onboarded",
         description:
@@ -210,16 +211,16 @@ export function PersonOnboardDialog({
   return (
     <>
       <Button className="min-h-11 w-full gap-2 md:min-h-9 md:w-auto"
-       aria-label={forcedRole === "COLLEGE_ADMIN" ? "Onboard College Admin" : forcedRole === "TPO" ? "Onboard TPO" : undefined}
+       aria-label={forcedRole === ROLE.COLLEGE_ADMIN ? "Onboard College Admin" : forcedRole === ROLE.TPO ? "Onboard TPO" : undefined}
        disabled={pending} onClick={() => {reset();setOpen(true);}}>
         <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
-        {forcedRole === "FACULTY" ? "Register faculty" : forcedRole === "COLLEGE_ADMIN" ? "Create College Admin" : forcedRole === "TPO" ? "Create TPO" : "Onboard person"}
+        {forcedRole === ROLE.FACULTY ? "Register faculty" : forcedRole === ROLE.COLLEGE_ADMIN ? "Create College Admin" : forcedRole === ROLE.TPO ? "Create TPO" : "Onboard person"}
       </Button>
       <Dialog
         open={open}
         onOpenChange={next=>{if(!next)requestClose();}}
         dismissible={!pending}
-        title={forcedRole === "FACULTY" ? "Register New Faculty" : forcedRole==="COLLEGE_ADMIN"?"Create College Admin":forcedRole==="TPO"?"Create TPO":"Onboard person"}
+        title={forcedRole === ROLE.FACULTY ? "Register New Faculty" : forcedRole===ROLE.COLLEGE_ADMIN?"Create College Admin":forcedRole===ROLE.TPO?"Create TPO":"Onboard person"}
         description="Create or reuse a canonical identity and an active college membership. No external invitation is sent."
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
@@ -236,20 +237,20 @@ export function PersonOnboardDialog({
                 pending ||
                 roles.length === 0 ||
                 profileIncomplete ||
-                (forcedRole==="FACULTY" && departments.length===0)
+                (forcedRole===ROLE.FACULTY && departments.length===0)
               }
               onClick={submit}
             >
-              {pending ? "Onboarding…" : forcedRole === "FACULTY" ? "Register Faculty" : forcedRole==="COLLEGE_ADMIN"||forcedRole==="TPO"?"Create":"Onboard person"}
+              {pending ? "Onboarding…" : forcedRole === ROLE.FACULTY ? "Register Faculty" : forcedRole===ROLE.COLLEGE_ADMIN||forcedRole===ROLE.TPO?"Create":"Onboard person"}
             </Button>
           </div>
         }
       >
-        <div className={"grid min-w-0 gap-[var(--lms-space-4)] "+(forcedRole==="FACULTY"?"md:grid-cols-2":"md:grid-cols-3")}>
-          {onboardError?<Alert tone="error" className={forcedRole==="FACULTY"?"md:col-span-2":"md:col-span-3"}>
-            {forcedRole==="FACULTY"?"Faculty was not registered.":"Admin user was not created"} {onboardError}
+        <div className={"grid min-w-0 gap-[var(--lms-space-4)] "+(forcedRole===ROLE.FACULTY?"md:grid-cols-2":"md:grid-cols-3")}>
+          {onboardError?<Alert tone="error" className={forcedRole===ROLE.FACULTY?"md:col-span-2":"md:col-span-3"}>
+            {forcedRole===ROLE.FACULTY?"Faculty was not registered.":"Admin user was not created"} {onboardError}
           </Alert>:null}
-          {forcedRole?<div className={"grid min-w-0 gap-[var(--lms-space-4)] "+(forcedRole==="FACULTY"?"md:col-span-2":"md:col-span-3")+" md:grid-cols-2"}>
+          {forcedRole?<div className={"grid min-w-0 gap-[var(--lms-space-4)] "+(forcedRole===ROLE.FACULTY?"md:col-span-2":"md:col-span-3")+" md:grid-cols-2"}>
             <Label stack>First Name
               <Input ref={firstNameRef} className="min-h-11 md:min-h-9" value={firstName} maxLength={120} required autoComplete="given-name"
                 aria-describedby={fieldError?.field==="firstName"?"onboard-first-error":undefined}
@@ -317,7 +318,7 @@ export function PersonOnboardDialog({
             />
             {fieldError?.field==="email"?<p id="onboard-email-error" role="alert" className="mt-1 text-xs text-error">{fieldError.message}</p>:null}
           </div>
-          {forcedRole==="FACULTY" ? <fieldset className="grid min-w-0 gap-[var(--lms-space-3)] border-y border-border py-[var(--lms-space-4)] md:col-span-2">
+          {forcedRole===ROLE.FACULTY ? <fieldset className="grid min-w-0 gap-[var(--lms-space-3)] border-y border-border py-[var(--lms-space-4)] md:col-span-2">
             <legend className="text-[length:var(--lms-font-sm)] font-semibold text-body">Faculty details</legend>
             <Label stack>Department
               <Select required disabled={pending || departments.length===0} value={departmentId}
@@ -368,7 +369,7 @@ export function PersonOnboardDialog({
           {profileIncomplete?<p role="alert" className="md:col-span-2 text-sm text-error">
             Faculty identity created, but the profile still needs completion. Open Edit Faculty in the roster to finish. Do not register the person twice.
           </p>:null}
-          {forcedRole && forcedRole!=="FACULTY" ? <p className="md:col-span-2 text-sm text-body">
+          {forcedRole && forcedRole!==ROLE.FACULTY ? <p className="md:col-span-2 text-sm text-body">
             Membership role: <strong>{roleLabel(forcedRole)}</strong>.
           </p> : !forcedRole ? <fieldset className="md:col-span-3">
             <legend className="mb-2 text-xs font-semibold text-body">
@@ -379,7 +380,7 @@ export function PersonOnboardDialog({
              {(["COLLEGE_ADMIN","TPO"] as const).map(role=><Button key={role} type="button"
               variant={roles.length===1&&roles[0]===role?"primary":"secondary"} size="sm"
               className="min-h-11 md:min-h-9" disabled={pending}
-              onClick={()=>setRoles([role])}>{role==="COLLEGE_ADMIN"?"College Admin":"TPO"}</Button>)}
+              onClick={()=>setRoles([role])}>{role===ROLE.COLLEGE_ADMIN?"College Admin":"TPO"}</Button>)}
             </div>
             <div className="divide-y divide-border border-y border-border">
               {MEMBERSHIP_ROLES.map((role) => (

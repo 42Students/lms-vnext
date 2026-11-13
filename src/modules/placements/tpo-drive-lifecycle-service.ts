@@ -32,6 +32,7 @@ import {
   previewEligiblePublishedDrive,
 } from "./tpo-drive-publish-effects";
 
+import { ROLE } from "@/modules/identity/roles";
 type Db = ReturnType<typeof getDb>;
 type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0];
 
@@ -56,7 +57,7 @@ function requiredLifecycleSource(action:"PUBLISH"|"CLOSE"|"REOPEN"){
 }
 
 function requireTpo(context: RequestContext): string {
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = context.membership.collegeId;

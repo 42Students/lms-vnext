@@ -17,6 +17,7 @@ import { PlacementsServiceError } from "./errors";
 import { hasActivePlacementDebarment } from "./placement-debarment-gate";
 import { deliverRecordedLearnerPlacementEvent } from "./learner-placement-event-delivery";
 
+import { ROLE } from "@/modules/identity/roles";
 export class TpoAttendanceStaleError extends Error {
   constructor() { super("TPO_DRIVE_DAY_ATTENDANCE_STALE"); this.name = "TpoAttendanceStaleError"; }
 }
@@ -29,7 +30,7 @@ export async function confirmTpoDriveDayCheckIn(
   context: RequestContext, rawRoundId: unknown, raw: unknown,
 ) {
   const member = context.membership;
-  if (!member || !hasMembershipRole(context, "TPO") ||
+  if (!member || !hasMembershipRole(context, ROLE.TPO) ||
     context.user.platformStatus !== "ACTIVE") throw new AuthorizationError("placements.manage");
   const collegeId = member.collegeId;
   if (!can(context, "placements.manage", { collegeId })) throw new AuthorizationError("placements.manage");
@@ -66,7 +67,7 @@ export async function confirmTpoDriveDayCheckIn(
     // A College Admin grant does not replace the TPO-specific check-in role.
     // This endpoint requires the actual persisted TPO role, not only general
     // placements.manage permission inherited from another admin capability.
-    if (!hasMembershipRole(persistedActor, "TPO"))
+    if (!hasMembershipRole(persistedActor, ROLE.TPO))
       throw new AuthorizationError("placements.manage");
     const [candidate] = await tx.select({
       id: placementApplications.id,

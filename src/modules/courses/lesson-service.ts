@@ -46,6 +46,7 @@ import {
   type UpdateCourseLessonInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 function mapLessonConstraint(error: unknown) {
   switch (postgresConstraintName(error)) {
     case "course_lessons_active_name_uq":
@@ -113,7 +114,7 @@ export async function listCourseLessons(
       { includeHistorical: includeArchived },
     );
 
-  if (access === "LEARNER") {
+  if (access === ROLE.LEARNER) {
     if (path.status !== "PUBLISHED") {
       throw new CoursesServiceError(
         "LEARNING_PATH_NOT_PUBLISHED",
@@ -143,7 +144,7 @@ export async function listCourseLessons(
       eq(courseLessons.status, "ACTIVE"),
     );
   }
-  if (access === "LEARNER") {
+  if (access === ROLE.LEARNER) {
     conditions.push(eq(courseLessons.visibleToStudents, true));
   }
 

@@ -3,6 +3,7 @@ import "server-only";
 import { sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * DB045: immutable, per-record attendance mutation. The caller owns a
  * transaction containing the locked current-row write and this event.
@@ -55,7 +56,7 @@ export async function appendAttendanceHistoryEvent(
     throw new Error("ATTENDANCE_HISTORY_NO_CHANGE");
   if (after.markedByUserId !== args.actorUserId)
     throw new Error("ATTENDANCE_HISTORY_ACTOR_MISMATCH");
-  if ((args.actorRole === "SUPER_ADMIN") !== (args.actorMembershipId === null))
+  if ((args.actorRole === ROLE.SUPER_ADMIN) !== (args.actorMembershipId === null))
     throw new Error("ATTENDANCE_HISTORY_ACTOR_ROLE_MISMATCH");
 
   await tx.execute(sql`

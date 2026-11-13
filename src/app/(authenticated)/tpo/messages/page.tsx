@@ -33,6 +33,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type SearchParams = {
   tab?: string | string[];
   thread?: string | string[];
@@ -68,7 +69,7 @@ export default async function TpoMessagesPage({
   const selectedTab=first(raw.tab)?.toLowerCase()??"recruiters";
   if (!context.membership ||
       (selectedTab==="team" ? !hasPlacementTeamMembership(context) :
-       !hasMembershipRole(context,"TPO"))) {
+       !hasMembershipRole(context,ROLE.TPO))) {
     redirect("/dashboard");
   }
 
@@ -313,7 +314,7 @@ export default async function TpoMessagesPage({
               <div role="log" aria-live="polite" aria-label="Conversation messages" className="max-h-[480px] space-y-3 overflow-y-auto py-4">
                 {detail.messages.length===0?<EmptyState title="No messages yet."/>:
                   detail.messages.map(item=><article key={item.id}
-                    className={bubbleStyles["bubble"]+" "+(item.senderType==="TPO"?bubbleStyles["mine"]:"")}>
+                    className={bubbleStyles["bubble"]+" "+(item.senderType===ROLE.TPO?bubbleStyles["mine"]:"")}>
                     <p className="text-xs font-semibold text-muted-foreground">
                       {item.senderType==="RECRUITER"?"Recruiter":"You"} · {istDateTimeFormatter.format(item.createdAt)} IST
                     </p>

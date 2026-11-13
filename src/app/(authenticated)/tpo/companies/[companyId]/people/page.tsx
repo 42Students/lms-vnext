@@ -11,11 +11,12 @@ import { listTpoCompanyPeople } from "@/modules/placements/tpo-company-person-se
 import { TextLink } from "@/components/ui/text-link";
 
 import { featureReady } from "@/config/features";
+import { ROLE } from "@/modules/identity/roles";
 export default async function TpoCompanyPeoplePage({
   params,
 }: { params: Promise<{ companyId: string }> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) redirect("/dashboard");
   await requireTpoBatchActor(context);
   const { companyId } = await params;
   const company = await listTpoCompanyPeople(context, companyId);

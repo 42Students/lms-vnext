@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { MEMBERSHIP_ROLES, MEMBERSHIP_STATUSES, USER_PLATFORM_STATUSES } from "@/modules/identity/constants";
+import { ROLE } from "@/modules/identity/roles";
 export const adminUsersQuerySchema = z.object({
   tab: z.enum(["ALL","FACULTY","STUDENT"]).default("ALL"),
   q: z.string().trim().max(100).default(""),
@@ -55,7 +56,7 @@ export function adminUsersPageCount(total:number,pageSize=ADMIN_USERS_PAGE_SIZE)
 }
 
 export function roleForPeopleTab(input:{tab:"ALL"|"FACULTY"|"STUDENT";role:string}) {
- return input.tab==="FACULTY"?"FACULTY":input.tab==="STUDENT"?"LEARNER":input.role;
+ return input.tab===ROLE.FACULTY?"FACULTY":input.tab==="STUDENT"?"LEARNER":input.role;
 }
 
 /** Render form intent independently from server validation; switching tabs resets conflicting role filters. */

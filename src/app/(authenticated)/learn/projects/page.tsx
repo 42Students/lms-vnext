@@ -21,6 +21,7 @@ import { learnerProjectArchiveState } from "@/modules/projects/learner-project-a
 import { learnerProjectHasBlockedTasks } from "@/modules/projects/learner-project-work-model";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 function one(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
@@ -49,7 +50,7 @@ export default async function LearnerProjectsPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!hasMembershipRole(context, "LEARNER")) {
+  if (!hasMembershipRole(context, ROLE.LEARNER)) {
     redirect("/dashboard");
   }
 

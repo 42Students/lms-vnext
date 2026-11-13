@@ -1,5 +1,6 @@
 import {z} from "zod";
 import {groupRuleCriteriaSchema} from "./rule-evaluator";
+import { ROLE } from "@/modules/identity/roles";
 const uuid=z.string().uuid();
 export const collegeGroupDetailWriteSchema=z.discriminatedUnion("action",[
   z.strictObject({
@@ -29,7 +30,7 @@ export function collegeWaitlistPromotionBlocker(input: {
   activeCount: number;
 }): "MEMBER_NOT_FOUND" | "MEMBER_STALE" | "WAITLIST_OUT_OF_ORDER" | "GROUP_CAPACITY_FULL" | null {
   if (input.accountStatus !== "ACTIVE" || input.membershipStatus !== "ACTIVE" ||
-    input.state !== "WAITLISTED" || input.memberType !== "LEARNER" || input.locked)
+    input.state !== "WAITLISTED" || input.memberType !== ROLE.LEARNER || input.locked)
     return "MEMBER_NOT_FOUND";
   if (input.memberVersion !== input.expectedMemberVersion) return "MEMBER_STALE";
   if (!input.firstInQueue) return "WAITLIST_OUT_OF_ORDER";

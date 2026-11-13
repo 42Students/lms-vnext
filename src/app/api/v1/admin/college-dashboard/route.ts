@@ -11,6 +11,7 @@ import { getCollegeDashboardUnstaffedCourses, getCollegeDashboardUnstaffedDelive
 import { getCollegeDashboardSetupGaps } from "@/modules/admin-ui/college-dashboard-setup-gaps-service";
 import { getCollegeClosingQuizzes } from "@/modules/admin-ui/college-dashboard-quizzes-service";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime = "nodejs";
 function value<T>(result: PromiseSettledResult<T>): T | null {
   return result.status === "fulfilled" ? result.value : null;
@@ -27,7 +28,7 @@ export const GET = route(
       return NextResponse.json({error:"COLLEGE_MEMBERSHIP_REQUIRED"},{status:403});
     }
     // Operational dashboard for staff: academics.read alone also admits learners (found by the role matrix, 2026-11-08).
-    if (!hasMembershipRole(context, "COLLEGE_ADMIN") && !hasMembershipRole(context, "FACULTY")) {
+    if (!hasMembershipRole(context, ROLE.COLLEGE_ADMIN) && !hasMembershipRole(context, ROLE.FACULTY)) {
       return NextResponse.json({error:"FORBIDDEN"},{status:403});
     }
     requirePermission(context, "academics.read", {

@@ -1,5 +1,6 @@
 import {z} from "zod";
 
+import { ROLE } from "@/modules/identity/roles";
 /** TPO-settings-audit-55: validate the exact selected college before any service read. */
 export const tpoSettingsCollegeIdSchema=z.string().uuid();
 
@@ -142,7 +143,7 @@ export function summarizeTpoTeam(
   return {
     total: members.length,
     tpoMemberships: members.filter((member) =>
-      member.roles.includes("TPO"),
+      member.roles.includes(ROLE.TPO),
     ).length,
     tpoAdmins: members.filter((member) =>
       member.roles.includes("TPO_ADMIN"),

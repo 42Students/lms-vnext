@@ -8,6 +8,7 @@ import {requireProjectReadAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 import {mentorMeetingInAppNoticeFacts} from "./mentor-meeting-in-app-notice-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Authorized Mentor-only projection. Notifications are counted, never
  * returned with user IDs, and may include people since removed from roster.
  */
@@ -15,7 +16,7 @@ export async function getMentorMeetingNoticeFacts(
  context:RequestContext,projectId:string,meetingIds:readonly string[],
 ){
  const scope=await requireProjectReadAccess(context,projectId);
- if(scope.access!=="MENTOR")throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ if(scope.access!==ROLE.MENTOR)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  if(!meetingIds.length)return [];
  const events=await getDb().select({
    id:activityEvents.id,subjectId:activityEvents.subjectId,

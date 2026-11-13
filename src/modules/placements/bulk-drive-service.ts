@@ -26,11 +26,12 @@ import { requirePlacementManageScope } from "./scope";
 import { PlacementsServiceError } from "./errors";
 import { hasActivePlacementDebarment } from "./placement-debarment-gate";
 
+import { ROLE } from "@/modules/identity/roles";
 type Db = ReturnType<typeof getDb>;
 type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0];
 
 function requireTpo(context: RequestContext) {
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   requirePermission(context, "placements.manage", {

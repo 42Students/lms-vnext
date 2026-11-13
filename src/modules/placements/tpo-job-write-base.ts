@@ -5,11 +5,12 @@ import {activityEvents,collegeMemberships,membershipRoles,users} from "@/db/sche
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "./scope";
+import { ROLE } from "@/modules/identity/roles";
 type Db=ReturnType<typeof getDb>;
 export type TpoJobTx=Parameters<Parameters<Db["transaction"]>[0]>[0];
 export async function requireTpoJobCollege(context:RequestContext){
  const member=context.membership;
- if(!member||!(hasMembershipRole(context,"TPO")||hasMembershipRole(context,"COLLEGE_ADMIN"))||member.status!=="ACTIVE"||
+ if(!member||!(hasMembershipRole(context,ROLE.TPO)||hasMembershipRole(context,ROLE.COLLEGE_ADMIN))||member.status!=="ACTIVE"||
    context.user.platformStatus!=="ACTIVE")throw new AuthorizationError("placements.manage");
  const collegeId=member.collegeId;
  if(!can(context,"placements.manage",{collegeId}))throw new AuthorizationError("placements.manage");

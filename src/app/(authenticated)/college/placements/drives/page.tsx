@@ -30,6 +30,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { formatNumberIN } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function CollegeDrivesPage({ searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
@@ -43,7 +44,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
   </div>;
   // An active college membership is not itself a College Admin grant.
   // Reject wrong-role callers before resolving college module settings.
-  if (!hasMembershipRole(context, "COLLEGE_ADMIN")) redirect("/dashboard");
+  if (!hasMembershipRole(context, ROLE.COLLEGE_ADMIN)) redirect("/dashboard");
   const moduleAccess = await resolveOptionalModuleAccess(context);
   if (!moduleAccess.placements.enabled) return <div className="min-w-0 space-y-4">
     <PageHeader title="Jobs"/>
@@ -138,7 +139,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
         <ButtonLink variant="secondary" href="/college/placements/student-lookup">
           Look up a student&apos;s placement status →
         </ButtonLink>
-        {hasMembershipRole(context,"COLLEGE_ADMIN")?<CollegeDriveCreateDialog>
+        {hasMembershipRole(context,ROLE.COLLEGE_ADMIN)?<CollegeDriveCreateDialog>
           <PlacementJobCreateWorkspace context={context}
             collegeId={context.membership.collegeId} basePath="/college/placements"/>
         </CollegeDriveCreateDialog>:null}

@@ -10,6 +10,7 @@ import { onboardPersonWithRuntime, upsertFacultyProfileWithRuntime } from "./run
 import { tokenizeStudentCsv } from "./college-student-csv-model";
 import {LEGACY_FACULTY_TYPES} from "./college-faculty-type-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export const FACULTY_CSV_COLUMNS =
   ["First Name","Last Name","Mobile Number","Email","Faculty Type","Department ID"] as const;
 const requestSchema = z.object({
@@ -45,7 +46,7 @@ function facultyJsonToCsv(input:z.infer<typeof legacyBulkFacultyRequest>){
  const line=(values:readonly string[])=>values.map(escaped).join(",");
  return [line(FACULTY_CSV_COLUMNS),...input.faculty.map(item=>{
   const requestedType=item.facultyType??item.faculty_type??"LECTURER";
-  const type=requestedType.toUpperCase()==="MENTOR"?"Mentor":
+  const type=requestedType.toUpperCase()===ROLE.MENTOR?"Mentor":
    requestedType.toUpperCase()==="LECTURER"?"Lecturer":requestedType;
   return line([
    item.firstName??item.first_name??"",

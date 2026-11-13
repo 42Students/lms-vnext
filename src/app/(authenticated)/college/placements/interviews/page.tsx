@@ -22,6 +22,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { formatNumberIN } from "@/lib/safe-format";
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 type Params=Record<string,string|string[]|undefined>;
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
@@ -30,7 +31,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
  if(!context.membership)return <div className="min-w-0 space-y-4">
   <PageHeader title="Interviews"/><Banner tone="warning">Admin not assigned to a college. You must be assigned to a college to view interviews. Contact your administrator.</Banner>
  </div>;
- if(!hasMembershipRole(context,"COLLEGE_ADMIN"))redirect("/dashboard");
+ if(!hasMembershipRole(context,ROLE.COLLEGE_ADMIN))redirect("/dashboard");
  const raw=await searchParams;
  const input={q:first(raw.q)??"",status:first(raw.status)??"ALL",
   mode:first(raw.mode)??"ALL",type:first(raw.type)??"ALL",

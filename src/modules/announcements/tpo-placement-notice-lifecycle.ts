@@ -12,6 +12,7 @@ import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import {canUndoTpoAnnouncementSend} from "./tpo-notice-undo-model";
 
+import { ROLE } from "@/modules/identity/roles";
 function deletingAction(action:"DELETE"|"RESTORE"|"UNDO_SEND"){return action!=="RESTORE";}
 
 export const tpoNoticeLifecycleSchema=z.object({
@@ -23,7 +24,7 @@ export const tpoNoticeLifecycleSchema=z.object({
 export async function mutateTpoNotice(context:RequestContext,raw:unknown){
  const input=tpoNoticeLifecycleSchema.parse(raw);
  const membership=context.membership;
- if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ if(!membership||!hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
  if(!await placementTableExists("announcements"))throw new Error("ANNOUNCEMENTS_NOT_REGISTERED");
  return getDb().transaction(async tx=>{

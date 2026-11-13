@@ -5,6 +5,7 @@ import { Alert } from "@/components/ui/alert";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function TpoNewPlacementPage({searchParams}:{
  searchParams:Promise<{company?:string|string[]}>
 }) {
@@ -14,7 +15,7 @@ export default async function TpoNewPlacementPage({searchParams}:{
   const context = await getCurrentRequestContext();
   if (
     !context.membership ||
-    !hasMembershipRole(context, "TPO")
+    !hasMembershipRole(context, ROLE.TPO)
   ) {
     redirect("/dashboard");
   }

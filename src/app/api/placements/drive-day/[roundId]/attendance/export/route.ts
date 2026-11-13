@@ -7,6 +7,7 @@ import { getTpoRoundDriveDay } from "@/modules/placements/tpo-round-drive-day-se
 import { placementRoundIdSchema } from "@/modules/placements/validation";
 import { route } from "@/security/route";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,7 @@ type RouteContext = { params: Promise<{ roundId: string }> };
 async function handleGET(_request: Request, { params }: RouteContext) {
   try {
     const context = await getCurrentRequestContext();
-    if (!context.membership || !hasMembershipRole(context, "TPO")) {
+    if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
       throw new AuthorizationError("placements.manage");
     }
     const collegeId = context.membership.collegeId;

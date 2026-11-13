@@ -10,6 +10,7 @@ import {MENTOR_CALENDAR_SCOPE,mentorGoogleConfig,mentorGoogleRefreshToken}
  from "./mentor-google-calendar-provider";
 
 import { rawEnv } from "@/config/env";
+import { ROLE } from "@/modules/identity/roles";
 const ENV_KEY="MENTOR_GOOGLE_TOKEN_ENCRYPTION_KEY";
 function keyFromEnv(env:Record<string,string|undefined>=rawEnv()):Buffer{
  const raw=(env[ENV_KEY]??"").trim();
@@ -53,7 +54,7 @@ export function decryptMentorGoogleRefreshToken(
 async function scopedMentor(context:RequestContext){
  const membership=context.membership;
  const collegeId=membership?.collegeId;
- if(context.user.platformStatus!=="ACTIVE"||!hasMembershipRole(context,"MENTOR")||
+ if(context.user.platformStatus!=="ACTIVE"||!hasMembershipRole(context,ROLE.MENTOR)||
     !membership||membership.status!=="ACTIVE"||!collegeId||
     !(await resolveOptionalModuleAccess(context)).projects.enabled)
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");

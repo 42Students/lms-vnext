@@ -8,6 +8,7 @@ import { collegeActivityQuerySchema } from "./college-activity-model";
 import { getActivityEventDetail, listActivityEvents, groupActivityEvents } from "./service";
 import { z } from "zod";
 
+import { ROLE } from "@/modules/identity/roles";
 async function requireCollegeActivity(context: RequestContext): Promise<string> {
   if(isSuperAdmin(context)){
     // A Super Admin must explicitly select one active college before viewing
@@ -19,7 +20,7 @@ async function requireCollegeActivity(context: RequestContext): Promise<string> 
     return acting.collegeId;
   }
   const member=context.membership;
-  if(!member||!hasMembershipRole(context,"COLLEGE_ADMIN")||
+  if(!member||!hasMembershipRole(context,ROLE.COLLEGE_ADMIN)||
     !can(context,"activity.read",{collegeId:member.collegeId,organizationId:member.organizationId}))
     throw new AuthorizationError("activity.read");
   requirePermission(context,"activity.read",{collegeId:member.collegeId,organizationId:member.organizationId});

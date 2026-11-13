@@ -28,6 +28,7 @@ import { Label } from "@/components/ui/label";
 import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type SearchParams = {
   view?: string | string[];
   page?: string | string[];
@@ -47,7 +48,7 @@ export default async function TpoMyNotificationsPage({
 
   if (
     !context.membership ||
-    !hasMembershipRole(context, "TPO")
+    !hasMembershipRole(context, ROLE.TPO)
   ) {
     redirect("/dashboard");
   }

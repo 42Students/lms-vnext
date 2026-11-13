@@ -7,6 +7,7 @@ import {activityEvents} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
+import { ROLE } from "@/modules/identity/roles";
 /** Legacy imported-row counters are trustworthy only when nonnegative integers. */
 function safeCount(value:unknown):number{
  return typeof value==="number"&&Number.isSafeInteger(value)&&value>=0?value:0;
@@ -17,7 +18,7 @@ export async function listCollegeStudentImportHistory(ctx:RequestContext,raw:unk
   z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int().min(1).max(500)),
  ]).parse(raw??1);
  const member=ctx.membership;
- if(!member||member.status!=="ACTIVE"||!hasMembershipRole(ctx,"COLLEGE_ADMIN"))
+ if(!member||member.status!=="ACTIVE"||!hasMembershipRole(ctx,ROLE.COLLEGE_ADMIN))
   throw new AuthorizationError("people.manage");
  requirePermission(ctx,"people.manage",{collegeId:member.collegeId,organizationId:member.organizationId});
  // History contains person import results; a stale session cannot read it

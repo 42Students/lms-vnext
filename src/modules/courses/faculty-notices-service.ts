@@ -6,12 +6,13 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { getFacultyCourseWorkspace } from "./faculty-course-service";
 import { facultyNoticeParamsSchema, FACULTY_SECTION_NOTICES_BLOCKER } from "./faculty-notices-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Authoritative Faculty delivery access. No fictional notices are returned. */
 export async function getFacultySectionNotices(context:RequestContext, rawParams:unknown) {
   const {deliveryId}=facultyNoticeParamsSchema.parse(rawParams);
   const membership=context.membership;
   if (!membership || !hasActiveMembership(context) ||
-      !hasMembershipRole(context,"FACULTY") ||
+      !hasMembershipRole(context,ROLE.FACULTY) ||
       !can(context,"courses.read",{
         collegeId:membership.collegeId,organizationId:membership.organizationId,
       })) throw new AuthorizationError("courses.read");

@@ -7,6 +7,7 @@ import {activityEvents,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectReadAccess} from "./access";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Creator provenance is sourced from append-only resource creation events.
  * A legacy resource without such an event is UNKNOWN, never attributed to
  * the current Mentor or team lead. Author IDs are only used for filtering.
@@ -15,7 +16,7 @@ export async function getMentorResourceSharers(
  context:RequestContext,projectId:string,resourceIds:readonly string[],
 ):Promise<Array<{resourceId:string;userId:string|null;displayName:string|null;sharedAt:string|null}>>{
  const scope=await requireProjectReadAccess(context,projectId);
- if(scope.access!=="MENTOR"||!resourceIds.length)return [];
+ if(scope.access!==ROLE.MENTOR||!resourceIds.length)return [];
  const events=await getDb().select({
    resourceId:activityEvents.subjectId,
    eventType:activityEvents.eventType,

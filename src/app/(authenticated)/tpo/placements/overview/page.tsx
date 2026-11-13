@@ -7,11 +7,12 @@ import { Dropdown } from "@/components/ui/dropdown";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function TpoPlacementsOverviewPage() {
   const context = await getCurrentRequestContext();
   if (
     !context.membership ||
-    !hasMembershipRole(context, "TPO")
+    !hasMembershipRole(context, ROLE.TPO)
   ) {
     redirect("/dashboard");
   }

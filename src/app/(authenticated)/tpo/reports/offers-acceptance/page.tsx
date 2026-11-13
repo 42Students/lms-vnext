@@ -17,6 +17,7 @@ import {
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementReportDetails } from "@/modules/placements/report-service";
 
+import { ROLE } from "@/modules/identity/roles";
 type SearchParams = {
   seasonId?: string | string[];
   jobId?: string | string[];
@@ -33,7 +34,7 @@ export default async function TpoOffersAcceptanceReportPage({
 }) {
   const context = await getCurrentRequestContext();
 
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     redirect("/dashboard");
   }
 

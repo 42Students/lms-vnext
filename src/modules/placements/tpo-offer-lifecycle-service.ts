@@ -31,6 +31,7 @@ import {requireTpoJobActor} from "./tpo-job-write-base";
 import {cascadeTpoRecordedAcceptance} from "./tpo-offer-acceptance-cascade";
 import {deliverRecordedLearnerPlacementEvent} from "./learner-placement-event-delivery";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * All-or-nothing and locked in offer UUID order to avoid duplicate updates
  * and overlapping-batch deadlocks. No external or unregistered tables.
@@ -42,7 +43,7 @@ export async function recordTpoOfferLifecycle(
   rawJobId: unknown,
   raw: unknown,
 ) {
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = context.membership.collegeId;
@@ -482,7 +483,7 @@ const offerLetterAttachmentInputSchema=z.strictObject({
 export async function getTpoOfferLetterAttachment(
  context:RequestContext,rawJobId:unknown,rawOfferId:unknown,
 ){
- if(!context.membership||!hasMembershipRole(context,"TPO"))
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))
   throw new AuthorizationError("placements.manage");
  const collegeId=context.membership.collegeId;
  requirePermission(context,"placements.manage",{collegeId});
@@ -505,7 +506,7 @@ export async function getTpoOfferLetterAttachment(
 export async function attachTpoOfferLetter(
  context:RequestContext,rawJobId:unknown,rawOfferId:unknown,raw:unknown,
 ){
- if(!context.membership||!hasMembershipRole(context,"TPO"))
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))
   throw new AuthorizationError("placements.manage");
  const collegeId=context.membership.collegeId;
  requirePermission(context,"placements.manage",{collegeId});

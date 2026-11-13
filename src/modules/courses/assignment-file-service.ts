@@ -32,6 +32,7 @@ import {
 } from "./learning-access";
 import { CoursesServiceError } from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Retain the legacy machine error code while making each scoped upload
  * failure distinguishable for the API presentation layer. No storage keys,
  * foreign receipt IDs or owner details appear in these explanations. */
@@ -105,7 +106,7 @@ async function requireLearnerFileScope(
       deliveryId,
     );
   if (
-    access !== "LEARNER" ||
+    access !== ROLE.LEARNER ||
     !context.membership ||
     context.membership.status !== "ACTIVE" ||
     !context.membership.roles.includes(
@@ -386,7 +387,7 @@ export async function createAssignmentFileReadGrant(
         assignment.offeringId,
         submission.deliveryId,
       );
-    if (access !== "LEARNER") {
+    if (access !== ROLE.LEARNER) {
       throw new CoursesServiceError(
         "LEARNING_ACCESS_DENIED",
       );

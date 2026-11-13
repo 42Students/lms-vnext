@@ -47,6 +47,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { istDateFormatter } from "@/lib/format-date";
 import { formatNumberIN } from "@/lib/safe-format";
 
+import { ROLE } from "@/modules/identity/roles";
 type RawSearch = Record<string, string | string[] | undefined>;
 
 function joinedLabel(value: Date) {
@@ -60,8 +61,8 @@ export async function CollegeRoleDirectoryWorkspace({
   kind: CollegeDirectoryKind;
   searchParams: Promise<RawSearch>;
 }) {
-  const title = kind === "FACULTY" ? "Faculty" : "Students";
-  const path = kind === "FACULTY" ? "/college/faculty" : "/college/students";
+  const title = kind === ROLE.FACULTY ? "Faculty" : "Students";
+  const path = kind === ROLE.FACULTY ? "/college/faculty" : "/college/students";
   const context = await getCurrentRequestContext();
   if (!context.membership) return <div className="min-w-0 space-y-4">
     <PageHeader title={title} />
@@ -74,7 +75,7 @@ export async function CollegeRoleDirectoryWorkspace({
   try {
     const rawFilters=await searchParams;
     filter = parseCollegeRoleDirectorySearchParams(
-      kind==="LEARNER"&&!Object.hasOwn(rawFilters,"pageSize")
+      kind===ROLE.LEARNER&&!Object.hasOwn(rawFilters,"pageSize")
         ? {...rawFilters,pageSize:"10"} : rawFilters,
     );
     assertCompatibleCollegeRoleDirectoryFilters(kind,filter);
@@ -116,14 +117,14 @@ export async function CollegeRoleDirectoryWorkspace({
     <CollegePersonAuditModal membershipId={item.membershipId} name={item.name} kind={kind}/>
     <CollegePersonProfileOverviewModal membershipId={item.membershipId} name={item.name} kind={kind}/>
     <CollegePersonEditAction membershipId={item.membershipId} kind={kind}
-      departments={kind==="FACULTY"?result.departmentOptions:[]}/>
-    {kind==="FACULTY" ? <CollegeFacultyLifecycleAction
+      departments={kind===ROLE.FACULTY?result.departmentOptions:[]}/>
+    {kind===ROLE.FACULTY ? <CollegeFacultyLifecycleAction
       membershipId={item.membershipId} name={item.name} status={item.membershipStatus}/>
     : <CollegeStudentLifecycleAction membershipId={item.membershipId}
       name={item.name} status={item.membershipStatus}/>}
-    {kind==="FACULTY" && item.membershipStatus==="ACTIVE" && item.userStatus==="ACTIVE"
+    {kind===ROLE.FACULTY && item.membershipStatus==="ACTIVE" && item.userStatus==="ACTIVE"
       ? <CollegeFacultyScheduleReassign membershipId={item.membershipId} name={item.name}/> : null}
-    {kind==="LEARNER" && item.membershipStatus==="ACTIVE"&&
+    {kind===ROLE.LEARNER && item.membershipStatus==="ACTIVE"&&
       item.userStatus==="ACTIVE"&&item.cohort!==null
       ? <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/> : null}
     <TextLink href="/college/otp-lockout"
@@ -131,9 +132,9 @@ export async function CollegeRoleDirectoryWorkspace({
       aria-label={"Open authorized OTP recovery for "+item.name}>
       Clear OTP lockout
     </TextLink>
-    <TextLink href={(kind==="LEARNER"?"/college/students/":"/college/faculty/")+item.membershipId}
+    <TextLink href={(kind===ROLE.LEARNER?"/college/students/":"/college/faculty/")+item.membershipId}
       className="inline-flex min-h-11 items-center text-xs md:min-h-9"
-      aria-label={"Open full "+(kind==="LEARNER"?"student":"faculty")+" profile for "+item.name}>
+      aria-label={"Open full "+(kind===ROLE.LEARNER?"student":"faculty")+" profile for "+item.name}>
       Full profile
     </TextLink>
   </div>;
@@ -186,11 +187,11 @@ export async function CollegeRoleDirectoryWorkspace({
       <PageHeader
         title={title}
         description={
-          kind === "FACULTY"
+          kind === ROLE.FACULTY
             ? "Register faculty and manage their profiles. Allocate teaching through Faculty Assignment."
             : "Registered students, batch and class membership, and student lifecycle actions."
         }
-        actions={kind === "FACULTY" ? (
+        actions={kind === ROLE.FACULTY ? (
           <div className="flex flex-wrap items-center gap-2">
             <span aria-hidden="true" className="font-bold text-[var(--lms-primary-text)]">+</span>
             <PersonOnboardDialog collegeId={context.membership.collegeId} forcedRole="FACULTY" />
@@ -202,7 +203,7 @@ export async function CollegeRoleDirectoryWorkspace({
         )}
       />
 
-      {kind === "LEARNER" ? <div className="min-w-0 space-y-2">
+      {kind === ROLE.LEARNER ? <div className="min-w-0 space-y-2">
         <Heading level={2} size="base" className="text-[var(--lms-heading)]">Registered Students</Heading>
         <Disclosure title="Register students" className="min-w-0">
           <div className="flex flex-wrap items-center gap-4 py-2 text-sm">
@@ -216,12 +217,12 @@ export async function CollegeRoleDirectoryWorkspace({
           </div>
         </Disclosure>
       </div> : null}
-      {kind === "LEARNER" ? <CollegeStudentBulkModuleAccess
+      {kind === ROLE.LEARNER ? <CollegeStudentBulkModuleAccess
         students={result.items.map(item=>({
           membershipId:item.membershipId,name:item.name,
           active:item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE",
         }))} /> : null}
-      {kind === "LEARNER" ? <nav aria-label="Student directory tools"
+      {kind === ROLE.LEARNER ? <nav aria-label="Student directory tools"
         className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-3 text-sm">
         <TextLink href="/college/students/import"
           className="inline-flex min-h-11 items-center md:min-h-9">Bulk Register Students</TextLink>
@@ -238,7 +239,7 @@ export async function CollegeRoleDirectoryWorkspace({
         <TextLink href="/college/people"
           className="inline-flex min-h-11 items-center md:min-h-9">People Directory</TextLink>
       </nav> : null}
-      {kind === "FACULTY" ? <div className="space-y-2">
+      {kind === ROLE.FACULTY ? <div className="space-y-2">
         <Heading level={2} className="text-[length:var(--lms-font-lg)] text-[var(--lms-heading)]">Registered Faculty</Heading>
         <TextLink href="/college/faculty-assignment"
           className="inline-flex min-h-11 items-center md:min-h-9">Faculty Assignment →</TextLink>
@@ -251,7 +252,7 @@ export async function CollegeRoleDirectoryWorkspace({
         bypass anti-abuse restrictions. Active faculty can reassign class schedules
         before suspension.
       </p>
-      {kind === "FACULTY" ? <nav aria-label="Faculty directory tools" className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-3 text-sm">
+      {kind === ROLE.FACULTY ? <nav aria-label="Faculty directory tools" className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-3 text-sm">
         <TextLink href="/college/faculty/import" className="inline-flex min-h-11 items-center md:min-h-9">Import faculty CSV</TextLink>
         <TextLink href={collegeRoleDirectoryHref(kind,result.filter)}
           className="inline-flex min-h-11 items-center md:min-h-9">Refresh</TextLink>
@@ -304,7 +305,7 @@ export async function CollegeRoleDirectoryWorkspace({
             </Select>
             <span className="text-xs font-normal text-muted-foreground">All, Active and Suspended match the legacy roster. Ended shows closed college memberships separately; statuses are scoped to this college, not the user account.</span>
           </Label>
-          {kind === "LEARNER" ? <Label stack className="min-w-0">
+          {kind === ROLE.LEARNER ? <Label stack className="min-w-0">
             Active class / section
             <Select className="min-h-11 w-full min-w-0 md:min-h-9" name="sectionId" defaultValue={result.filter.sectionId??""} >
               <option value="">All classes</option>
@@ -314,7 +315,7 @@ export async function CollegeRoleDirectoryWorkspace({
             </Select>
             {result.sectionOptionsTruncated ? <span className="text-xs text-muted-foreground">First 200 classes shown.</span> : null}
           </Label> : null}
-          {kind === "LEARNER" ? <Label stack className="min-w-0">
+          {kind === ROLE.LEARNER ? <Label stack className="min-w-0">
             Active program
             <Select className="min-h-11 w-full min-w-0 md:min-h-9" name="programId" defaultValue={result.filter.programId??""} >
               <option value="">All programs</option>
@@ -324,7 +325,7 @@ export async function CollegeRoleDirectoryWorkspace({
             </Select>
             {result.programOptionsTruncated ? <span className="text-xs text-muted-foreground">First 200 programs shown.</span> : null}
           </Label> : null}
-          {kind === "LEARNER" ? <Label stack className="min-w-0">
+          {kind === ROLE.LEARNER ? <Label stack className="min-w-0">
             Active batch
             <Select className="min-h-11 w-full min-w-0 md:min-h-9" name="cohortId" defaultValue={result.filter.cohortId ?? ""}
               >
@@ -339,7 +340,7 @@ export async function CollegeRoleDirectoryWorkspace({
               First 200 batches shown; search by name for others.
             </span> : null}
           </Label> : null}
-          {kind === "FACULTY" ? <Label stack className="min-w-0">
+          {kind === ROLE.FACULTY ? <Label stack className="min-w-0">
             Department
             <Select className="min-h-11 w-full min-w-0 md:min-h-9" name="facultyDepartmentId" defaultValue={result.filter.facultyDepartmentId ?? ""}
               >
@@ -352,7 +353,7 @@ export async function CollegeRoleDirectoryWorkspace({
               Only first 200 departments shown; use name search for others.
             </span> : null}
           </Label> : null}
-          {kind === "FACULTY" ? <Label stack className="min-w-0">
+          {kind === ROLE.FACULTY ? <Label stack className="min-w-0">
             Employment type
             <Select className="min-h-11 w-full min-w-0 md:min-h-9" name="employmentType" defaultValue={result.filter.employmentType ?? ""}
               >
@@ -376,7 +377,7 @@ export async function CollegeRoleDirectoryWorkspace({
               <option value="DISABLED">Disabled accounts</option>
             </Select>
           </Label>
-          {kind === "LEARNER" ? <Label stack className="min-w-0">
+          {kind === ROLE.LEARNER ? <Label stack className="min-w-0">
             Active enrollment
             <Select className="min-h-11 w-full min-w-0 md:min-h-9" name="enrollment" defaultValue={result.filter.enrollment}
               >
@@ -388,7 +389,7 @@ export async function CollegeRoleDirectoryWorkspace({
 
 
 
-          {kind === "LEARNER" ? <Label stack className="min-w-0">
+          {kind === ROLE.LEARNER ? <Label stack className="min-w-0">
             Roll number coverage
             <Select className="min-h-11 w-full min-w-0 md:min-h-9" name="rollPresence" defaultValue={result.filter.rollPresence}
               >
@@ -397,7 +398,7 @@ export async function CollegeRoleDirectoryWorkspace({
               <option value="MISSING">Roll missing</option>
             </Select>
           </Label> : null}
-          {kind === "LEARNER" ? <Label stack className="min-w-0">
+          {kind === ROLE.LEARNER ? <Label stack className="min-w-0">
             Registration number coverage
             <Select className="min-h-11 w-full min-w-0 md:min-h-9" name="registrationPresence" defaultValue={result.filter.registrationPresence}
               >
@@ -406,7 +407,7 @@ export async function CollegeRoleDirectoryWorkspace({
               <option value="MISSING">Registration missing</option>
             </Select>
           </Label> : null}
-          {kind === "LEARNER" ? <Label stack className="min-w-0">
+          {kind === ROLE.LEARNER ? <Label stack className="min-w-0">
             Active class placement
             <Select className="min-h-11 w-full min-w-0 md:min-h-9" name="classPresence" defaultValue={result.filter.classPresence}
               >
@@ -417,7 +418,7 @@ export async function CollegeRoleDirectoryWorkspace({
           </Label> : null}
 
 
-          {kind === "FACULTY" ? <Label stack className="min-w-0">
+          {kind === ROLE.FACULTY ? <Label stack className="min-w-0">
             Academic title coverage
             <Select className="min-h-11 w-full min-w-0 md:min-h-9" name="titlePresence" defaultValue={result.filter.titlePresence}
               >
@@ -426,7 +427,7 @@ export async function CollegeRoleDirectoryWorkspace({
               <option value="MISSING">Title missing</option>
             </Select>
           </Label> : null}
-          {kind === "FACULTY" ? <Label stack className="min-w-0">
+          {kind === ROLE.FACULTY ? <Label stack className="min-w-0">
             Primary department coverage
             <Select className="min-h-11 w-full min-w-0 md:min-h-9" name="departmentPresence" defaultValue={result.filter.departmentPresence}
               >
@@ -435,7 +436,7 @@ export async function CollegeRoleDirectoryWorkspace({
               <option value="MISSING">Department missing</option>
             </Select>
           </Label> : null}
-          {kind === "FACULTY" ? <Label stack className="min-w-0">
+          {kind === ROLE.FACULTY ? <Label stack className="min-w-0">
             Course teaching
             <Select className="min-h-11 w-full min-w-0 md:min-h-9" name="teaching" defaultValue={result.filter.teaching}
               >
@@ -444,7 +445,7 @@ export async function CollegeRoleDirectoryWorkspace({
               <option value="NONE">No active teaching</option>
             </Select>
           </Label> : null}
-          {kind === "FACULTY" ? <Label stack className="min-w-0">
+          {kind === ROLE.FACULTY ? <Label stack className="min-w-0">
             Active course teaching role
             <Select className="min-h-11 w-full min-w-0 md:min-h-9" name="teachingRole" defaultValue={result.filter.teachingRole}
               >
@@ -468,8 +469,8 @@ export async function CollegeRoleDirectoryWorkspace({
               >
               <option value="NAME">Name A–Z</option>
               <option value="NAME_DESC">Name Z–A</option>
-              {kind==="LEARNER"?<option value="ROLL">Roll number ↑</option>:null}
-              {kind==="LEARNER"?<option value="ROLL_DESC">Roll number ↓</option>:null}
+              {kind===ROLE.LEARNER?<option value="ROLL">Roll number ↑</option>:null}
+              {kind===ROLE.LEARNER?<option value="ROLL_DESC">Roll number ↓</option>:null}
               <option value="NEWEST">Newest membership</option>
               <option value="OLDEST">Oldest membership</option>
             </Select>
@@ -494,17 +495,17 @@ export async function CollegeRoleDirectoryWorkspace({
 
       <section aria-label={title + " results"} className="min-w-0">
         <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground leading-[22px]">
-          {result.total} matching {kind === "FACULTY" ? "faculty" : "learner"} membership{result.total === 1 ? "" : "s"}
+          {result.total} matching {kind === ROLE.FACULTY ? "faculty" : "learner"} membership{result.total === 1 ? "" : "s"}
         </p>
         {result.items.length === 0 ? (
-          <EmptyState title={kind==="FACULTY"?"No faculty found":"No students found"}
+          <EmptyState title={kind===ROLE.FACULTY?"No faculty found":"No students found"}
             description={result.total===0
               ? collegeRoleDirectoryHasActiveFilters(kind,result.filter)?"No matching records. Clear the filters to try again.":
-                kind==="FACULTY"?"No faculty found. Register faculty members to get started.":"No students found. Register students to get started."
+                kind===ROLE.FACULTY?"No faculty found. Register faculty members to get started.":"No students found. Register students to get started."
               : "There are no records on this page. Select an earlier page."}
             action={collegeRoleDirectoryHasActiveFilters(kind,result.filter)?
               <TextLink href={path} className="inline-flex min-h-11 items-center md:min-h-9">Clear roster filters</TextLink>:
-              kind==="LEARNER"?<TextLink href="/college/students/register"
+              kind===ROLE.LEARNER?<TextLink href="/college/students/register"
                 className="inline-flex min-h-11 items-center md:min-h-9">
                 Register students
               </TextLink>:<PersonOnboardDialog collegeId={context.membership.collegeId} forcedRole="FACULTY" />}/>
@@ -514,12 +515,12 @@ export async function CollegeRoleDirectoryWorkspace({
             {result.items.map(item=>(
               <li key={item.membershipId} className="min-w-0 space-y-2 border-b border-border py-3">
                 <div className="min-w-0">
-                  <TextLink href={kind==="LEARNER"?"/college/students/"+item.membershipId:"/college/faculty/"+item.membershipId}
+                  <TextLink href={kind===ROLE.LEARNER?"/college/students/"+item.membershipId:"/college/faculty/"+item.membershipId}
                     className="break-words">{item.name}</TextLink>
                   <p className="mt-1 break-all text-xs text-muted-foreground leading-[20px]">
                     {item.email??"—"}
                   </p>
-                  {kind==="LEARNER"?<p className="mt-1 text-xs text-muted-foreground">
+                  {kind===ROLE.LEARNER?<p className="mt-1 text-xs text-muted-foreground">
                     Roll No.: {item.rollNumber||"—"} · Class: {item.sections.join(", ")||"—"}
                   </p>:<p className="mt-1 text-xs text-muted-foreground">
                     Department: {item.department||"—"} · Type: {item.employmentType||"—"}
@@ -536,19 +537,19 @@ export async function CollegeRoleDirectoryWorkspace({
                 <div className="flex flex-wrap gap-3 text-sm">
                   <TextLink href={collegeRoleContactHref(item.membershipId)}
                     className="inline-flex min-h-11 items-center">View contact card</TextLink>
-                  {kind==="LEARNER"?<TextLink href={collegeLearnerVerificationHref(item.membershipId)}
+                  {kind===ROLE.LEARNER?<TextLink href={collegeLearnerVerificationHref(item.membershipId)}
                     className="inline-flex min-h-11 items-center">Profile verification</TextLink>:null}
                 </div>
-                {kind==="LEARNER"&&item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE"&&item.cohort!==null?
+                {kind===ROLE.LEARNER&&item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE"&&item.cohort!==null?
                   <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/>:null}
                 <Disclosure title={<>More actions for {item.name}</>} className="min-w-0"><div className="flex min-w-0 flex-col items-start gap-2 pb-2">
                 <CollegePersonAuditModal membershipId={item.membershipId} name={item.name} kind={kind}/>
                 <CollegePersonProfileOverviewModal membershipId={item.membershipId} name={item.name} kind={kind}/>
                 <CollegePersonEditAction membershipId={item.membershipId} kind={kind}
-                  departments={kind==="FACULTY"?result.departmentOptions:[]}/>
-                {kind==="FACULTY"?<CollegeFacultyLifecycleAction membershipId={item.membershipId}
+                  departments={kind===ROLE.FACULTY?result.departmentOptions:[]}/>
+                {kind===ROLE.FACULTY?<CollegeFacultyLifecycleAction membershipId={item.membershipId}
                   name={item.name} status={item.membershipStatus}/>:null}
-                {kind==="LEARNER"?<CollegeStudentLifecycleAction membershipId={item.membershipId}
+                {kind===ROLE.LEARNER?<CollegeStudentLifecycleAction membershipId={item.membershipId}
                   name={item.name} status={item.membershipStatus}/>:null}
                 </div></Disclosure>
               </li>
@@ -560,7 +561,7 @@ export async function CollegeRoleDirectoryWorkspace({
               rows={result.items}
               getRowKey={item=>item.membershipId}
               empty={<EmptyState title="No role memberships" description="No role memberships match the selected filters."/>}
-              columns={kind === "LEARNER" ? studentColumns : facultyColumns}
+              columns={kind === ROLE.LEARNER ? studentColumns : facultyColumns}
             />
           </div>
           </>
@@ -597,8 +598,8 @@ export async function CollegeRoleDirectoryWorkspace({
       </p>
       <p className="text-xs text-muted-foreground leading-[20px]">
         Directory records are scoped to this college.
-        {kind === "LEARNER" ? " Roll numbers are college-scoped roster fields. Sensitive contact and gender require the authorized detail or contact card. Account-wide suspension and membership suspension are distinct. Hard deletion and OTP unlock are not available here." : ""}
-        {kind === "FACULTY"
+        {kind === ROLE.LEARNER ? " Roll numbers are college-scoped roster fields. Sensitive contact and gender require the authorized detail or contact card. Account-wide suspension and membership suspension are distinct. Hard deletion and OTP unlock are not available here." : ""}
+        {kind === ROLE.FACULTY
           ? " Counts are active teaching assignments, not a complete workload or schedule."
           : " Only active academic enrollments and classes are shown; absent associations are not inferred."}
         Creation, import, editing, profile details and lifecycle actions remain in their existing workspaces.

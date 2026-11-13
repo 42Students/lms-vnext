@@ -4,18 +4,19 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {collegeRoleDirectoryQuerySchema} from "@/modules/people/college-role-directory-model";
 import {exportVisibleCollegePeople} from "@/modules/people/college-visible-directory-export";
 import { route } from "@/security/route";
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 async function handleGET(req:Request){
  try{
   const params=new URL(req.url).searchParams;
   const kind=params.get("kind");
-  if(kind!=="FACULTY"&&kind!=="LEARNER")
+  if(kind!==ROLE.FACULTY&&kind!==ROLE.LEARNER)
    return NextResponse.json({error:"INVALID_DIRECTORY_KIND"},{status:400});
   const raw=Object.fromEntries([...params].filter(([key])=>key!=="kind"));
   const parsed=collegeRoleDirectoryQuerySchema.safeParse(raw);
   if(!parsed.success)return NextResponse.json({error:"INVALID_DIRECTORY_FILTERS"},{status:400});
   const data=await exportVisibleCollegePeople(await getCurrentRequestContext(),kind,parsed.data);
-  const name=kind==="FACULTY"?"faculty.csv":"students.csv";
+  const name=kind===ROLE.FACULTY?"faculty.csv":"students.csv";
   return new Response(data.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="'+name+'"',

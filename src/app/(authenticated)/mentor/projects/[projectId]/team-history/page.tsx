@@ -23,6 +23,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { istDateFormatter } from "@/lib/format-date";
 import { formatNumberIN } from "@/lib/safe-format";
 
+import { ROLE } from "@/modules/identity/roles";
 type Raw = { view?: string | string[]; role?: string | string[]; primary?:string|string[]; order?:string|string[]; page?: string | string[] };
 const formatDate = (value: Date) => istDateFormatter.format(value);
 
@@ -42,7 +43,7 @@ export default async function MentorTeamHistoryPage({
   );
   if (!parsed.success){
  const recoveryContext=await getCurrentRequestContext();
- if(!hasMembershipRole(recoveryContext,"MENTOR"))redirect("/dashboard");
+ if(!hasMembershipRole(recoveryContext,ROLE.MENTOR))redirect("/dashboard");
  await assertMentorProjectRecoveryAccess(recoveryContext,projectId);
  return  <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid team history filters"} />

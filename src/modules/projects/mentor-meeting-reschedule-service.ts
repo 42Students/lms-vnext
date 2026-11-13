@@ -15,18 +15,19 @@ import {notifyActiveProjectMembers} from "./project-notification-service";
 import {mentorMeetingRescheduleParamsSchema,mentorMeetingRescheduleSchema,
   mentorMeetingCanReschedule} from "./mentor-meeting-reschedule-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Scheduled meeting time changes only; does not send or modify meeting links. */
 export async function rescheduleMentorMeeting(context:RequestContext,rawParams:unknown,raw:unknown){
   const params=mentorMeetingRescheduleParamsSchema.parse(rawParams);
   const input=mentorMeetingRescheduleSchema.parse(raw);
   const membership=context.membership;
-  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR"))
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR))
     throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
   // A tenant without Projects entitlement cannot probe project IDs via rescheduling.
   if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
     throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
   const scope=await requireProjectReadAccess(context,params.projectId);
-  if(scope.access!=="MENTOR"||!can(context,"projects.read",{
+  if(scope.access!==ROLE.MENTOR||!can(context,"projects.read",{
     organizationId:scope.organizationId,collegeId:scope.collegeId,
   }))throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
   const start=new Date(input.startsAt),end=new Date(input.endsAt),

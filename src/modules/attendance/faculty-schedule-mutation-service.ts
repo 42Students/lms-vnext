@@ -18,6 +18,7 @@ import {facultyAttendanceScheduleParamsSchema,facultyAttendanceScheduleSchema,fa
   from "./faculty-schedule-mutation-model";
 
 import { env } from "@/config/env";
+import { ROLE } from "@/modules/identity/roles";
 /** Configurable near-now booking grace (legacy default: five minutes). */
 function bookingGraceMs() {
   const minutes=Number(env.FACULTY_SCHEDULE_BOOKING_GRACE_MINUTES ?? "5");
@@ -45,7 +46,7 @@ export async function commandFacultyAttendanceSchedule(
   const {deliveryId}=facultyAttendanceScheduleParamsSchema.parse(rawParams);
   const input=facultyAttendanceScheduleSchema.parse(rawInput);
   const membership=context.membership;
-  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY")||
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.FACULTY)||
     !can(context,"courses.read",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     }))throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");

@@ -11,6 +11,7 @@ import {mayMutateProjectWithRole,type ProjectMemberRoleKind}
   from "./member-role-kind-model";
 import {ProjectsServiceError} from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Project page access happens before transactions and can become stale when a
  * membership, user or project Mentor grant is revoked in another session.
@@ -27,7 +28,7 @@ export async function assertPersistedProjectMutationActor(
     access:"ADMIN"|"MENTOR"|"LEARNER"|"OBSERVER";
   },
 ):Promise<void> {
-  if(scope.access!=="ADMIN" && scope.access!=="MENTOR")
+  if(scope.access!=="ADMIN" && scope.access!==ROLE.MENTOR)
     throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
   const permission=scope.access==="ADMIN"?"projects.manage":"projects.read";
   let persisted:RequestContext;
@@ -42,7 +43,7 @@ export async function assertPersistedProjectMutationActor(
   const membership=persisted.membership;
   if(!membership||!context.membership||
     membership.id!==context.membership.id ||
-    !membership.roles.includes("MENTOR"))
+    !membership.roles.includes(ROLE.MENTOR))
     throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
   const [member]=await tx.select({
     role:projectMembers.role,roleKind:projectMembers.roleKind,
@@ -53,7 +54,7 @@ export async function assertPersistedProjectMutationActor(
     eq(projectMembers.role,"MENTOR"),
     isNull(projectMembers.endedAt),
   )).for("share").limit(1);
-  if(!member||member.role!=="MENTOR"||!mayMutateProjectWithRole(
+  if(!member||member.role!==ROLE.MENTOR||!mayMutateProjectWithRole(
     member.roleKind as ProjectMemberRoleKind,member.canMutate,
   ))throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
 }

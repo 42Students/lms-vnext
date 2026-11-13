@@ -19,6 +19,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { istIsoDateFormatter, istTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 const FILTERS = [
  ["following","Following"],["all","All"],["me","@ Me"],["asks","Asks"],
  ["decisions","Decisions"],["drives","Drives"],["companies","Companies"],
@@ -107,7 +108,7 @@ export async function TpoTeamMessagesDirectory({
         (view===key?"border-primary bg-primary-subtle text-primary-text":"border-border text-body hover:bg-primary-subtle")}>
        {label}
       </TextLink>)}
-      {hasMembershipRole(context,"TPO")?<ButtonLink variant="secondary" href="/tpo/requests">
+      {hasMembershipRole(context,ROLE.TPO)?<ButtonLink variant="secondary" href="/tpo/requests">
         Students
       </ButtonLink>:null}
      </nav>

@@ -19,6 +19,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 export type AnnouncementTarget = {
   type: "COLLEGE" | "PROGRAM" | "DEPARTMENT" | "LEARNER" | "FACULTY" | "CLASS";
   id: string;
@@ -69,7 +70,7 @@ function splitTarget(value: string) {
  * The server groups copies transactionally and rejects stale/cross-college writes.
  * Keep retargeting disabled for these notices: membership is immutable here. */
 function isBroadcastCopy(item: AnnouncementAdminItem) {
-  return item.senderType === "SUPER_ADMIN" && item.receiverType === "COLLEGE";
+  return item.senderType === ROLE.SUPER_ADMIN && item.receiverType === "COLLEGE";
 }
 
 /** Legacy announcement timestamp: 12 Oct, 2:05 PM (add year for historical rows). */
@@ -295,7 +296,7 @@ export function AnnouncementAdminWorkspace({
       }
       setEditing(null);
       setEditConsent(false);
-      showToast({ tone: "success", title: editing.senderType === "SUPER_ADMIN" ? "Saved" : "Announcement updated" });
+      showToast({ tone: "success", title: editing.senderType === ROLE.SUPER_ADMIN ? "Saved" : "Announcement updated" });
       router.refresh();
       } catch {showToast({tone:"error",title:"Announcement edit failed",description:"Check the fields and schedule."});}
       finally {flight.current=false;}
@@ -521,11 +522,11 @@ export function AnnouncementAdminWorkspace({
             </Label>
             <Label stack className="min-w-0">
               Title
-              <Input name="title" required defaultValue={editing.title} maxLength={editing.senderType === "SUPER_ADMIN" ? 200 : 255} className="w-full" />
+              <Input name="title" required defaultValue={editing.title} maxLength={editing.senderType === ROLE.SUPER_ADMIN ? 200 : 255} className="w-full" />
             </Label>
             <Label stack className="min-w-0">
               Message
-              <Textarea rows={6} name="message" required defaultValue={editing.message} maxLength={editing.senderType === "SUPER_ADMIN" ? 8000 : 10000} className="w-full" />
+              <Textarea rows={6} name="message" required defaultValue={editing.message} maxLength={editing.senderType === ROLE.SUPER_ADMIN ? 8000 : 10000} className="w-full" />
             </Label>
             <Label stack className="min-w-0">
               Schedule · local time

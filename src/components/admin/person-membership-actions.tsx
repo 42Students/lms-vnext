@@ -26,6 +26,7 @@ import {
 } from "@/modules/people/membership-action-receipt";
 import { Label } from "@/components/ui/label";
 
+import { ROLE } from "@/modules/identity/roles";
 function roleLabel(role: MembershipRole) {
   return role
     .toLowerCase()
@@ -103,7 +104,7 @@ export function PersonMembershipActions({
                 ? "Another administrator has to change your own roles."
                 : payload?.error==="MEMBERSHIP_SELF_LOCKOUT"
                   ? "You cannot remove your own protected access."
-                : role==="COLLEGE_ADMIN"&&response.status===403
+                : role===ROLE.COLLEGE_ADMIN&&response.status===403
                   ? "Only a Super Admin can change the College Admin role."
                   : payload?.error==="LAST_COLLEGE_ADMIN"
                     ? "Assign another active College Admin to this college before removing this role."
@@ -200,8 +201,8 @@ export function PersonMembershipActions({
         setEndOpen(false);
         setSuspensionReason("");
         const roleName=currentRoles.length===1
-          ? currentRoles[0]==="FACULTY"?"Faculty":
-            currentRoles[0]==="LEARNER"?"Student":null
+          ? currentRoles[0]===ROLE.FACULTY?"Faculty":
+            currentRoles[0]===ROLE.LEARNER?"Student":null
           :null;
         const verb=nextStatus==="SUSPENDED"?"suspended":
           nextStatus==="ACTIVE"?"reactivated":"ended";

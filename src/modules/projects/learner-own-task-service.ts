@@ -14,12 +14,13 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 
+import { ROLE } from "@/modules/identity/roles";
 const params=z.strictObject({projectId:z.string().uuid()});
 function keyFor(membershipId:string){return "learner-"+membershipId.replaceAll("-","")+"-"+randomUUID().slice(0,8);}
 export async function createLearnerOwnTask(context:RequestContext,rawParams:unknown,raw:unknown){
  const {projectId}=params.parse(rawParams),input=learnerOwnTaskCreateInputSchema.parse(raw);
  const scope=await requireProjectReadAccess(context,projectId),membership=context.membership;
- if(scope.access!=="LEARNER"||!membership)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ if(scope.access!==ROLE.LEARNER||!membership)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  return getDb().transaction(async tx=>{
   const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt}).from(projectInstances)
    .where(and(eq(projectInstances.id,projectId),eq(projectInstances.collegeId,scope.collegeId)))
@@ -76,7 +77,7 @@ export async function createLearnerOwnTask(context:RequestContext,rawParams:unkn
 export async function deleteLearnerOwnTask(context:RequestContext,rawParams:unknown,taskIdInput:unknown){
  const {projectId}=params.parse(rawParams),taskId=z.string().uuid().parse(taskIdInput);
  const scope=await requireProjectReadAccess(context,projectId),membership=context.membership;
- if(scope.access!=="LEARNER"||!membership)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ if(scope.access!==ROLE.LEARNER||!membership)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  return getDb().transaction(async tx=>{
   const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt}).from(projectInstances)
     .where(and(eq(projectInstances.id,projectId),eq(projectInstances.collegeId,scope.collegeId)))
@@ -142,5 +143,5 @@ export function isLegacyLearnerTaskAssignee(
   legacyType:string|null|undefined,
   assignedMembershipRoles:readonly string[],
 ):boolean{
- return legacyType==="LEARNER"&&assignedMembershipRoles.includes("LEARNER");
+ return legacyType===ROLE.LEARNER&&assignedMembershipRoles.includes(ROLE.LEARNER);
 }

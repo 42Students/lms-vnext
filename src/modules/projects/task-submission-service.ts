@@ -44,6 +44,7 @@ import {
   type SubmitProjectTaskInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 function mapSubmissionConstraint(error: unknown) {
   const constraint =
     postgresConstraintName(error);
@@ -75,7 +76,7 @@ export async function submitProjectTask(
     );
 
   if (
-    scope.access !== "LEARNER" ||
+    scope.access !== ROLE.LEARNER ||
     !context.membership
   ) {
     throw new ProjectsServiceError(
@@ -320,7 +321,7 @@ export async function reviewProjectTaskSubmission(
         "PROJECT_TASK_SUBMISSION_INVALID_STATE",
       );
     }
-    if(scope.access==="MENTOR"&&(!input.confirmed||!input.expectedUpdatedAt))
+    if(scope.access===ROLE.MENTOR&&(!input.confirmed||!input.expectedUpdatedAt))
       throw new ProjectsServiceError("PROJECT_TASK_SUBMISSION_STALE_VERSION");
     if(input.expectedUpdatedAt&&!mentorTaskReviewTokenMatches(submission.updatedAt,input.expectedUpdatedAt))
       throw new ProjectsServiceError("PROJECT_TASK_SUBMISSION_STALE_VERSION");

@@ -45,6 +45,7 @@ import {adminUnsubmittedLiteralSearchPattern} from "./admin-unsubmitted-query-mo
 import {latestReviewedProjectSubmissionSql} from "./admin-submission-kpi-model";
 import {isCurrentProjectSubmissionSql} from "./admin-submission-current-version-model";
 
+import { ROLE } from "@/modules/identity/roles";
 // Service inputs also arrive from internal callers, not only from the URL
 // parser. Never admit JS numeric coercions (hex, exponent, blanks, NaN)
 // or extra, caller-injected filters into the selected-college query.
@@ -355,11 +356,11 @@ export async function listProjectAdminSnapshots(
     const primaryMentor =
       projectMembersRows.find(
         (row) =>
-          row.role === "MENTOR" &&
+          row.role === ROLE.MENTOR &&
           row.isPrimary,
       ) ??
       projectMembersRows.find(
-        (row) => row.role === "MENTOR",
+        (row) => row.role === ROLE.MENTOR,
       ) ??
       null;
 

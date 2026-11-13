@@ -13,10 +13,11 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");
  const {jobId}=await params;
  let data:Awaited<ReturnType<typeof getTpoSelectionWorkspace>>;
  try{data=await getTpoSelectionWorkspace(context,jobId);}

@@ -20,6 +20,7 @@ import {
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 
+import { ROLE } from "@/modules/identity/roles";
 const programDepartment = alias(departments, "college_assign_program_department");
 const MAX_CHOICES = 200;
 const CLASS_FILTER_CHOICES = 1000;
@@ -27,7 +28,7 @@ const CLASS_FILTER_CHOICES = 1000;
 /** Selector data is fenced by the same college on EVERY relevant parent. */
 export async function listCollegeTeachingOptions(context: RequestContext) {
   const member = context.membership;
-  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+  if (!member || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
     !can(context, "courses.manage", {
       collegeId: member.collegeId,
       organizationId: member.organizationId,

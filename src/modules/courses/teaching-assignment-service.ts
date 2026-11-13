@@ -43,6 +43,7 @@ import {
   changeCourseTeachingAssignmentRoleInputSchema,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 function mapTeachingConstraint(error: unknown) {
   switch (postgresConstraintName(error)) {
     case "course_teaching_assignments_active_uq":
@@ -255,7 +256,7 @@ export async function createCourseTeachingAssignment(
     );
   }
 
-  if (!membership.roles.includes("FACULTY")) {
+  if (!membership.roles.includes(ROLE.FACULTY)) {
     throw new CoursesServiceError(
       "FACULTY_ROLE_REQUIRED",
     );

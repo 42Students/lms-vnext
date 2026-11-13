@@ -17,9 +17,10 @@ import {
   type StudentCsvResult, type StudentCsvRow,
 } from "./college-student-csv-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export function requireCollegeStudentImporter(context: RequestContext) {
   const member = context.membership;
-  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+  if (!member || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
     !can(context, "people.manage", {
       collegeId: member.collegeId, organizationId: member.organizationId,
     }) ||

@@ -11,12 +11,13 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { formatNumberIN } from "@/lib/safe-format";
 import { istDateTimeFormatter } from "@/lib/format-date";
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 const format=(value:number|null)=>value===null?"Not recorded":"₹"+formatNumberIN((value/100000))+" LPA";
 const when=(value:string|null)=>value?istDateTimeFormatter.format(new Date(value))+" IST":"Not recorded";
 export default async function AboutDrivePage({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");
  const {jobId}=await params;
  let data:Awaited<ReturnType<typeof getTpoDriveAbout>>;
  try{data=await getTpoDriveAbout(context,jobId);}

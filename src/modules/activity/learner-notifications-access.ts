@@ -5,6 +5,7 @@ import {
 } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Learner notifications are not a substitute for the Faculty, Mentor or
  * College Administrator inbox. Authorize the active Learner membership
@@ -14,7 +15,7 @@ export function requireLearnerNotificationsAccess(context: RequestContext) {
   const membership = context.membership;
   if (
     !hasActiveMembership(context) ||
-    !hasMembershipRole(context, "LEARNER") ||
+    !hasMembershipRole(context, ROLE.LEARNER) ||
     !membership
   ) {
     throw new AuthorizationError("academics.read");

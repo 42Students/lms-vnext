@@ -33,6 +33,7 @@ import {
   type CollegeAssessmentKind,
 } from "./college-assessment-aggregate-model";
 
+import { ROLE } from "@/modules/identity/roles";
 const cohortDepartment = alias(departments,"assessment_cohort_department");
 
 function textPattern(value: string) {
@@ -77,7 +78,7 @@ export async function listCollegeAssessmentAggregate(
   } else {
     if (
       !context.membership ||
-      !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+      !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
       context.membership.status !== "ACTIVE" ||
       context.user.platformStatus !== "ACTIVE"
     ) {

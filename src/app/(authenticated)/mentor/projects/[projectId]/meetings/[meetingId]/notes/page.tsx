@@ -10,12 +10,13 @@ import {meetingNotesEditable} from "@/modules/projects/mentor-meeting-notes-mode
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
+import { ROLE } from "@/modules/identity/roles";
 export default async function MentorMeetingNotesPage({params}:{
   params:Promise<{projectId:string;meetingId:string}>;
 }){
   const path=await params;
   const context=await getCurrentRequestContext();
-  if(!hasMembershipRole(context,"MENTOR"))redirect("/dashboard");
+  if(!hasMembershipRole(context,ROLE.MENTOR))redirect("/dashboard");
   let data:Awaited<ReturnType<typeof getMentorMeetingNotes>>;
   try{
     data=await getMentorMeetingNotes(context,path);

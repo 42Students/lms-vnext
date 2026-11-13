@@ -18,11 +18,12 @@ import { TextLink } from "@/components/ui/text-link";
 import { formatNumberIN } from "@/lib/safe-format";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type Params = { search?:string|string[];assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; order?: string | string[]; window?: string | string[]; importance?: string | string[]; view?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 
 export default async function MentorActivityPage({ searchParams }: { searchParams: Promise<Params> }) {
   const context = await getCurrentRequestContext();
-  if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
+  if (!hasMembershipRole(context,ROLE.MENTOR)) redirect("/dashboard");
   const raw = await searchParams;
   const parsed = mentorActivityQuerySchema.safeParse(singleValueMentorFilters({
     search:raw.search,importance:raw.importance,window:raw.window,

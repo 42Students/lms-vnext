@@ -1,3 +1,4 @@
+import { ROLE } from "@/modules/identity/roles";
 /**
  * TPO secondary navigation.
  *
@@ -33,7 +34,7 @@ export const TPO_MORE_GROUPS = [
 export function formatTpoProfileRole(
   role: string,
 ): string {
-  if (role === "TPO") return "Placement officer";
-  if (role === "ADMIN" || role === "COLLEGE_ADMIN") return "College admin (acts as placement officer)";
+  if (role === ROLE.TPO) return "Placement officer";
+  if (role === "ADMIN" || role === ROLE.COLLEGE_ADMIN) return "College admin (acts as placement officer)";
   return "Placement team";
 }

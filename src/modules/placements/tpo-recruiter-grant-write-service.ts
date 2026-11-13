@@ -15,6 +15,7 @@ import { requirePlacementManageScope } from "./scope";
 import { tpoRecruiterGrantChangeSchema, isRecruiterGrantStale } from "./tpo-recruiter-grant-write-model";
 import { recruiterGrantValidUntil } from "./recruiter-grant-expiry-policy";
 
+import { ROLE } from "@/modules/identity/roles";
 export class TpoRecruiterGrantConflict extends Error {
   constructor(readonly detail:"STALE_OR_INVALID"|"REVOKED"="STALE_OR_INVALID") {
     super(detail==="REVOKED"?"This recruiter's access was revoked; invite them again instead":
@@ -25,7 +26,7 @@ export class TpoRecruiterGrantConflict extends Error {
 
 export async function changeTpoRecruiterGrant(context: RequestContext, raw: unknown) {
   const member = context.membership;
-  if (!member || !hasMembershipRole(context, "TPO") || context.user.platformStatus !== "ACTIVE") {
+  if (!member || !hasMembershipRole(context, ROLE.TPO) || context.user.platformStatus !== "ACTIVE") {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = member.collegeId;
@@ -45,7 +46,7 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
         collegeId, organizationId: college.organizationId,
       },
     );
-    if (!hasMembershipRole(persisted, "TPO")) {
+    if (!hasMembershipRole(persisted, ROLE.TPO)) {
       throw new AuthorizationError("placements.manage");
     }
     if (input.action === "GRANT") {

@@ -49,6 +49,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function LearnerPlacementsPage({
   searchParams,
 }: {
@@ -60,7 +61,7 @@ export default async function LearnerPlacementsPage({
     : null;
   const context =
     await getCurrentRequestContext();
-  if (!hasMembershipRole(context,"LEARNER")) {
+  if (!hasMembershipRole(context,ROLE.LEARNER)) {
     redirect(context.membership?"/dashboard":"/");
   }
 

@@ -17,6 +17,7 @@ import {
 } from "./validation";
 import { PeopleServiceError } from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 export type PeopleTargetCollege = {
   id: string;
   organizationId: string;
@@ -136,7 +137,7 @@ export async function onboardPerson(
   // Creating a college administrator or TPO membership is a privileged role
   // grant, even when it happens during first-time onboarding. Apply the same
   // gate used by addMembershipRole before provisioning any identity or account.
-  if (input.roles.some((role) => role === "COLLEGE_ADMIN" || role === "TPO")) {
+  if (input.roles.some((role) => role === ROLE.COLLEGE_ADMIN || role === ROLE.TPO)) {
     requirePermission(context, "admin-scope.select");
   }
 

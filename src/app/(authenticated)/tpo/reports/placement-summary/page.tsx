@@ -28,6 +28,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { ROLE } from "@/modules/identity/roles";
 type SearchParams = {
   seasonId?: string | string[];
   jobId?: string | string[];
@@ -47,7 +48,7 @@ export default async function TpoPlacementSummaryPage({
 }) {
   const context = await getCurrentRequestContext();
 
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     redirect("/dashboard");
   }
 

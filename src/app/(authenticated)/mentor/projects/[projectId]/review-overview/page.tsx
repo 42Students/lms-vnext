@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { formatNumberIN } from "@/lib/safe-format";
 import { istDateFormatter, istDateTimeFormatter } from "@/lib/format-date";
+import { ROLE } from "@/modules/identity/roles";
 type Search={status?:string|string[];feedback?:string|string[];version?:string|string[];page?:string|string[]};
 export default async function MentorReviewOverviewPage({
  params,searchParams,
@@ -31,7 +32,7 @@ export default async function MentorReviewOverviewPage({
  );
  if(!parsed.success){
  const recoveryContext=await getCurrentRequestContext();
- if(!hasMembershipRole(recoveryContext,"MENTOR"))redirect("/dashboard");
+ if(!hasMembershipRole(recoveryContext,ROLE.MENTOR))redirect("/dashboard");
  await assertMentorProjectRecoveryAccess(recoveryContext,projectId);
  return  <section role="alert">
  <PageHeader title={"Invalid project review filters"} />

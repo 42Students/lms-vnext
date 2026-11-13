@@ -5,13 +5,14 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getLearnerPlacementJourney } from "@/modules/placements/learner-journey-service";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime = "nodejs";
 
 export const GET = route(
   { auth: "user", permission: "actor-owned" },
   async ({ context: actor }) => {
     const context = actor!;
-    if (!context.membership || !hasMembershipRole(context, "LEARNER")) {
+    if (!context.membership || !hasMembershipRole(context, ROLE.LEARNER)) {
       return NextResponse.json(
         { error: "FORBIDDEN", message: "Only students have placements" },
         { status: 403 },

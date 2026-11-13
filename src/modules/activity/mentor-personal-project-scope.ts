@@ -5,6 +5,7 @@ import {activityEvents,collegeMemberships,membershipRoles,projectInstances,
  projectMembers,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 
+import { ROLE } from "@/modules/identity/roles";
 /** SQL-correlated live role/tenant/project grant for the Mentor inbox.
  * A project removed during pagination is denied at the query boundary.
  * PROJECTS events without an authorized projectId fail closed.
@@ -12,7 +13,7 @@ import type {RequestContext} from "@/modules/identity/context";
  */
 export function mentorVisibleNotificationEventCondition(context:RequestContext){
  const membership=context.membership;
- if(!membership||membership.status!=="ACTIVE"||!membership.roles.includes("MENTOR"))
+ if(!membership||membership.status!=="ACTIVE"||!membership.roles.includes(ROLE.MENTOR))
    return sql<boolean>`false`;
  return or(
    ne(activityEvents.module,"PROJECTS"),

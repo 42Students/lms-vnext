@@ -5,6 +5,7 @@ import { collegeMemberships, systemRoles, users } from "@/db/schema";
 import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { ADMIN_UNASSIGNED_USERS_PAGE_SIZE, adminUnassignedUsersQuerySchema, unassignedIdentityPage, unassignedIdentityScopeAllowed } from "./admin-unassigned-user-model";
+import { ROLE } from "@/modules/identity/roles";
 export async function listSuperAdminUnassignedUsers(context: RequestContext, rawQuery: unknown) {
   // An identity with no membership has no tenant ownership to authorize in a selected safety scope.
   if (!isSuperAdmin(context) || !unassignedIdentityScopeAllowed(context.adminScope)) throw new AuthorizationError("people.manage");
@@ -16,7 +17,7 @@ export async function listSuperAdminUnassignedUsers(context: RequestContext, raw
   const assignedRoles = db.select({ id: systemRoles.id }).from(systemRoles).where(eq(systemRoles.userId, users.id));
   const conditions: SQL[] = [notExists(memberships)];
   if (query.platformStatus !== "ALL") conditions.push(eq(users.platformStatus, query.platformStatus));
-  if (query.role === "SUPER_ADMIN") conditions.push(exists(assignedRoles));
+  if (query.role === ROLE.SUPER_ADMIN) conditions.push(exists(assignedRoles));
   if (query.role === "NONE") conditions.push(notExists(assignedRoles));
   if (query.q) conditions.push(ilike(users.displayName, "%" + query.q.replace(/[\\%_]/g, "\\$&") + "%"));
   const where = and(...conditions);

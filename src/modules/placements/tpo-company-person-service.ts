@@ -15,13 +15,14 @@ import { TpoCrmError } from "./tpo-crm-service";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {requireTpoJobActor} from "./tpo-job-write-base";
 
+import { ROLE } from "@/modules/identity/roles";
 export class TpoCompanyPersonStale extends Error {
   constructor() { super("TPO_COMPANY_PERSON_STALE"); this.name = "TpoCompanyPersonStale"; }
 }
 
 async function authorize(context: RequestContext) {
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "TPO")) {
+  if (!membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = membership.collegeId;

@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasPlacementTeamMembership } from "@/modules/placements/placement-team-access-model";
 import { hasMembershipRole } from "@/modules/identity/context";
 
+import { ROLE } from "@/modules/identity/roles";
 type LegacyTeamSearch = Record<string, string | string[] | undefined>;
 
 function first(value: string | string[] | undefined): string | undefined {
@@ -36,7 +37,7 @@ export default async function TpoTeamLegacyRedirect({
   // not an invented student-private team conversation kind.
   const filter = first(params["filter"])?.toLowerCase();
   if (tab === "students" || filter === "students") {
-    if (hasMembershipRole(context,"TPO")) redirect("/tpo/requests");
+    if (hasMembershipRole(context,ROLE.TPO)) redirect("/tpo/requests");
     redirect("/tpo/messages?tab=team");
   }
   // Keep the old conversation/person/recruiter tabs addressable from bookmarks.

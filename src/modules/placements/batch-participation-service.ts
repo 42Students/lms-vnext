@@ -44,6 +44,7 @@ import {
   type PlacementScopeDecision,
 } from "./batch-eligibility-policy";
 
+import { ROLE } from "@/modules/identity/roles";
 const uuid = z.string().uuid();
 const scopeType = z.enum(["MEMBERSHIP", "SECTION", "COHORT"]);
 const status = z.enum(["ELIGIBLE", "INELIGIBLE", "NOT_DECIDED"]);
@@ -749,7 +750,7 @@ export async function markPlacementBatchFinished(
  * This internal policy check does NOT yet wire every legacy application route.
  */
 export async function getOwnPlacementParticipationAccess(context: RequestContext) {
-  if (!hasMembershipRole(context, "LEARNER") || !context.membership ||
+  if (!hasMembershipRole(context, ROLE.LEARNER) || !context.membership ||
       context.user.platformStatus !== "ACTIVE") {
     throw new PlacementBatchError("DB08_ACCESS_DENIED");
   }

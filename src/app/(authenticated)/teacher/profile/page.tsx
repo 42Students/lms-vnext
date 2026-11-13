@@ -14,15 +14,16 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic = "force-dynamic";
 
 export default async function FacultyProfilePage({searchParams}:{searchParams:Promise<{section?:string|string[]}>}) {
   const context = await getCurrentRequestContext();
   // A different active workspace (including Mentor) is not a faculty profile.
   if (context.membership?.status !== "ACTIVE") notFound();
-  if (!context.membership.roles.includes("FACULTY")) {
-    if(context.membership.roles.includes("LEARNER"))redirect("/learn/profile");
-    if(context.membership.roles.includes("COLLEGE_ADMIN"))redirect("/college/profile");
+  if (!context.membership.roles.includes(ROLE.FACULTY)) {
+    if(context.membership.roles.includes(ROLE.LEARNER))redirect("/learn/profile");
+    if(context.membership.roles.includes(ROLE.COLLEGE_ADMIN))redirect("/college/profile");
     notFound();
   }
   const params=await searchParams;

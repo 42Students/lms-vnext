@@ -6,6 +6,7 @@ import {Skeleton} from "@/components/ui/skeleton";
 import {useRef,useState} from "react";
 import { Heading } from "@/components/ui/heading";
 import {friendlyApiError} from "@/lib/friendly-error";
+import { ROLE } from "@/modules/identity/roles";
 type Overview={person:{name:string;kind:"FACULTY"|"LEARNER";gender:string;bio:string;
  academicTitle:string|null;employmentType:string|null;rollNumber:string|null};
  education:{title:string;detail:string;year:string;extra:string}[];
@@ -48,7 +49,7 @@ export function CollegePersonProfileOverviewModal({membershipId,name,kind}:{
       <div><dt className="text-muted-foreground">Role</dt><dd>{data.person.academicTitle||data.person.employmentType||data.person.kind}</dd></div>
       <div className="md:col-span-2"><dt className="text-muted-foreground">Bio</dt><dd className="mt-1 whitespace-pre-wrap break-words">{data.person.bio||"Not recorded"}</dd></div>
      </dl>
-     {kind==="LEARNER" && data.learnerSections ?
+     {kind===ROLE.LEARNER && data.learnerSections ?
       <section aria-label="Learner profile sections" className="min-w-0 space-y-[var(--lms-space-4)]">
        <p className="text-sm text-muted-foreground">Read-only profile sections. Private identity values and files are not displayed here.</p>
        <div className="grid min-w-0 gap-4 md:grid-cols-2">

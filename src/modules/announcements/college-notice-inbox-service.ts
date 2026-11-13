@@ -7,12 +7,13 @@ import { countOwnUnreadNotifications, listOwnNotifications } from "@/modules/act
 import { collegeNoticeInboxProjection, collegeNoticeInboxQuerySchema }
   from "./college-notice-inbox-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Registered in_app_notifications, owned by the signed-in user and
  * scoped by the source activity event college. NOT a college-wide broadcast. */
 export async function getCollegeNoticeInbox(context: RequestContext, raw: unknown = {}) {
   const filter = collegeNoticeInboxQuerySchema.parse(raw);
   const own = context.membership;
-  if (!own || own.status !== "ACTIVE" || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+  if (!own || own.status !== "ACTIVE" || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
     !can(context, "college.read", { collegeId: own.collegeId, organizationId: own.organizationId }))
     throw new AuthorizationError("college.read");
   requirePermission(context, "college.read", {

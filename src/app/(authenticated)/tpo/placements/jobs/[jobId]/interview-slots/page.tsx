@@ -13,11 +13,12 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function TpoRecruiterSlotReviewPage({params}:{
  params:Promise<{jobId:string}>;
 }){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");
  const {jobId}=await params;
  let data:Awaited<ReturnType<typeof listTpoRecruiterProposedSlots>>;
  try{data=await listTpoRecruiterProposedSlots(context,jobId);}

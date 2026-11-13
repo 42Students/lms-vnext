@@ -13,9 +13,10 @@ import { AuthorizationError, can, requirePermission } from "@/modules/permission
 import { collegeChecklistProjection, collegeSetupChecklistQuerySchema }
   from "./college-setup-checklist-model";
 
+import { ROLE } from "@/modules/identity/roles";
 function requireOwnAdmin(context: RequestContext) {
   const m = context.membership;
-  if (!m || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+  if (!m || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
     !can(context, "college.read", {
       collegeId: m.collegeId, organizationId: m.organizationId,
     })) throw new AuthorizationError("college.read");

@@ -16,6 +16,7 @@ import {
 import {independentAuditFindingsReady} from "./independent-audit-findings-service";
 
 import { featureReady } from "@/config/features";
+import { ROLE } from "@/modules/identity/roles";
 /**
  * The automated scheduler and a human Super Admin have different authority.
  * Mandatory explicit provenance prevents callers from silently dropping a
@@ -83,7 +84,7 @@ export async function syncIndependentAuditInbox(
   // importer writes. Lock the live human principal and system grant for the
   // lifetime of this same transaction, blocking concurrent revocation races.
   // The dedicated scheduler is authorized by its separately guarded route.
-  if(authority.kind==="SUPER_ADMIN"){
+  if(authority.kind===ROLE.SUPER_ADMIN){
    const actor=authority.actor;
    if(!isSuperAdmin(actor)||actor.adminScope?.organizationId||
       actor.adminScope?.collegeId)

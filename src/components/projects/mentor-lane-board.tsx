@@ -34,6 +34,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { formatDateWith } from "@/lib/format-date";
+import { ROLE } from "@/modules/identity/roles";
 type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;carriedFromSprintId?:string|null;createdAt:Date;updatedAt:Date;
  description:string|null;approach:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
  assigneeMembershipId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null};
@@ -221,7 +222,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     setError(reason instanceof Error?reason.message:"Sprint move failed. Reload the latest board.");
   }finally{actionLock.current=false;setBusy(false);}
  }
- const learnerChoices=members.filter(member=>member.role==="LEARNER");
+ const learnerChoices=members.filter(member=>member.role===ROLE.LEARNER);
  const creationSprints=sprints.filter(item=>item.status!=="COMPLETED"&&
    releases.some(release=>release.id===item.releaseId&&release.status!=="SHIPPED"));
  const creationDefault=creationSprints.find(item=>item.status==="ACTIVE")??
@@ -238,7 +239,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
        sprints={creationSprints.map(item=>({
            id:item.id,title:item.title,status:item.status,updatedAt:new Date(item.updatedAt).toISOString(),
          }))}
-       learners={members.filter(member=>member.role==="LEARNER").map(member=>({
+       learners={members.filter(member=>member.role===ROLE.LEARNER).map(member=>({
          membershipId:member.membershipId,displayName:member.displayName,
        }))}/>:null}
      <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
@@ -293,7 +294,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     <Select data-slot="select" value={assignee} onChange={e=>{setAssignee(e.target.value);remember("assignee",e.target.value);}}
      className="ml-2 min-h-11 md:min-h-9 rounded border border-border bg-surface p-2">
      <option value="">Everyone</option><option value="UNASSIGNED">Unassigned</option>
-     {members.filter(m=>m.role==="LEARNER").map(m=>
+     {members.filter(m=>m.role===ROLE.LEARNER).map(m=>
       <option key={m.membershipId} value={m.membershipId}>{m.displayName??"Learner"}</option>)}
     </Select>
    </Label>
@@ -506,7 +507,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
             taskId={focused.id} taskTitle={focused.title}
             assigneeMembershipId={focused.assigneeMembershipId}
             updatedAt={new Date(focused.updatedAt).toISOString()}
-            learners={members.filter(person=>person.role==="LEARNER")}/>:null}
+            learners={members.filter(person=>person.role===ROLE.LEARNER)}/>:null}
       </div>
       <p>Recorded sprint: {sprints.find(item=>item.id===focused.sprintId)?.title??"Product backlog"}
         {focused.dueDate?" · due "+focused.dueDate:" · no due date"}

@@ -13,6 +13,7 @@ import {recordedOutsideDriveSchema} from "./recorded-outside-model";
 import {PlacementsServiceError} from "./errors";
 import {z} from "zod";
 
+import { ROLE } from "@/modules/identity/roles";
 async function outsideActor(context:RequestContext,collegeId:string,relationshipId:string){
  const [relationship]=await getDb().select({
   id:placementCompanyRelationships.id,collegeId:placementCompanyRelationships.collegeId,
@@ -26,7 +27,7 @@ async function outsideActor(context:RequestContext,collegeId:string,relationship
   eq(placementCompanyRelationships.collegeId,collegeId),eq(placementCompanyRelationships.status,"ACTIVE")))
  .limit(1);
  if(!relationship)throw new PlacementsServiceError("PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND");
- const tpo=Boolean(context.membership&&hasMembershipRole(context,"TPO")&&
+ const tpo=Boolean(context.membership&&hasMembershipRole(context,ROLE.TPO)&&
   context.membership.collegeId===collegeId);
  if(tpo){
   const [actor]=await getDb().select({id:collegeMemberships.id})
@@ -65,7 +66,7 @@ export async function recordOutsideDrive(context:RequestContext,raw:unknown){
   placementCompanyRelationshipId:actor.relationship.id,
  }))throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  return getDb().transaction(async tx=>{
-  if(actor.role==="TPO"){
+  if(actor.role===ROLE.TPO){
    await assertPersistedPlatformPermission(tx,context,"placements.manage",{
     collegeId:input.collegeId,organizationId:actor.relationship.organizationId,
    });
@@ -101,7 +102,7 @@ export async function recordOutsideDrive(context:RequestContext,raw:unknown){
 export async function listTpoRecordedOutsideDrives(context:RequestContext,rawCollegeId:unknown){
  const collegeId=z.string().uuid().parse(rawCollegeId);
  if(!context.membership||context.membership.collegeId!==collegeId||
-   !hasMembershipRole(context,"TPO")||context.membership.status!=="ACTIVE"||
+   !hasMembershipRole(context,ROLE.TPO)||context.membership.status!=="ACTIVE"||
    context.user.platformStatus!=="ACTIVE")
    throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  // Read permission is persisted and college-scoped, not inferred from the URL.

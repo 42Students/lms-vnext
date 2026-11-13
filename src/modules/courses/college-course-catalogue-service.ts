@@ -13,10 +13,11 @@ import {collegeCourseCatalogueQuerySchema,COLLEGE_COURSE_CATALOGUE_PAGE_SIZE,
 import {collegeCourseCatalogueExportQuerySchema,COLLEGE_COURSE_EXPORT_CAP} from "./college-course-catalogue-export-model";
 import {learnerCourseSearchScore,LEGACY_COURSE_SEARCH_SYNONYMS} from "./learner-course-card-search-model";
 
+import { ROLE } from "@/modules/identity/roles";
 async function authorizedCollege(context:RequestContext){
  const membership=context.membership;
  if(!membership||membership.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
-    !hasMembershipRole(context,"COLLEGE_ADMIN"))
+    !hasMembershipRole(context,ROLE.COLLEGE_ADMIN))
   throw new AuthorizationError("courses.read");
  const college=await loadAcademicCollegeScope(membership.collegeId);
  if(membership.organizationId!==college.organizationId)throw new AuthorizationError("courses.read");
@@ -125,10 +126,10 @@ export async function searchAuthorizedCourseSuggestions(
   ...(collegeId?{collegeId}:{}),...(orgId?{organizationId:orgId}:{}),
  });
  let authorizedIds:string[]|null=null;
- if(!admin&&hasMembershipRole(context,"FACULTY")&&!hasMembershipRole(context,"COLLEGE_ADMIN")){
+ if(!admin&&hasMembershipRole(context,ROLE.FACULTY)&&!hasMembershipRole(context,ROLE.COLLEGE_ADMIN)){
   const grants=await listFacultyCourseDeliveries(context);
   authorizedIds=[...new Set(grants.map(row=>row.courseId))];
- }else if(!admin&&hasMembershipRole(context,"LEARNER")&&!hasMembershipRole(context,"COLLEGE_ADMIN")){
+ }else if(!admin&&hasMembershipRole(context,ROLE.LEARNER)&&!hasMembershipRole(context,ROLE.COLLEGE_ADMIN)){
   const grants=await listLearnerCourseDeliveries(context);
   authorizedIds=[...new Set(grants.map(row=>row.courseId))];
  }else if(!admin){

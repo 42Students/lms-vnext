@@ -15,10 +15,11 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {redirect} from "next/navigation";
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 export default async function BatchHistory({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<{kind?:string|string[];after?:string|string[];show?:string|string[]}>}){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");
  const {batchId}=await params;
  const raw=await searchParams;
  const duplicateOrUnknown=Object.values(raw).some(Array.isArray)||Object.keys(raw).some(key=>!["kind","after","show"].includes(key));

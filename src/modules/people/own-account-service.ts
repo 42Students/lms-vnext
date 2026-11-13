@@ -9,6 +9,7 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * The signed-in person's own account summary (name, contacts, roles, college).
  * Everything is keyed by the authenticated user and the membership already
@@ -82,6 +83,6 @@ export async function getOwnAccountSummary(
     ...user,
     college,
     roles,
-    isSuperAdmin: context.user.systemRoles.includes("SUPER_ADMIN"),
+    isSuperAdmin: context.user.systemRoles.includes(ROLE.SUPER_ADMIN),
   };
 }

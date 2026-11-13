@@ -15,6 +15,7 @@ import {
   reviewCompletenessPage,
 } from "./mentor-review-completeness-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** One assigned Mentor project, one registered version per review, no private feedback text. */
 export async function getMentorProjectReviewCompleteness(
   context:RequestContext,raw:unknown,
@@ -22,7 +23,7 @@ export async function getMentorProjectReviewCompleteness(
   const query=mentorReviewCompletenessQuerySchema.parse(raw);
   const membership=context.membership;
   if(!membership||!hasActiveMembership(context)||
-    !hasMembershipRole(context,"MENTOR")||
+    !hasMembershipRole(context,ROLE.MENTOR)||
     !can(context,"projects.read",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
@@ -32,7 +33,7 @@ export async function getMentorProjectReviewCompleteness(
     projectStatus:null,...reviewCompletenessPage(0,1),items:[],
   };
   const scope=await requireProjectReadAccess(context,query.projectId);
-  if(scope.access!=="MENTOR"||scope.collegeId!==membership.collegeId)
+  if(scope.access!==ROLE.MENTOR||scope.collegeId!==membership.collegeId)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const db=getDb();
   const [summary]=await db.select({total:count()}).from(projectSubmissions)

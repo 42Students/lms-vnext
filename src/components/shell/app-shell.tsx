@@ -32,6 +32,7 @@ import {
 } from "./shell-model";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function AppShell({
   context,
   memberships,
@@ -44,7 +45,7 @@ export async function AppShell({
   children: ReactNode;
 }) {
   const superAdmin = isSuperAdmin(context);
-  const learner = hasMembershipRole(context, "LEARNER");
+  const learner = hasMembershipRole(context, ROLE.LEARNER);
   const accountVariant = accountMenuVariant({
     superAdmin,
     roles: context.membership?.roles ?? [],
@@ -53,7 +54,7 @@ export async function AppShell({
   const learnerAccess = learner
     ? await getLearnerShellAccess(context)
     : null;
-  const tpoVerificationEnabled=hasMembershipRole(context,"TPO")
+  const tpoVerificationEnabled=hasMembershipRole(context,ROLE.TPO)
     ?await getTpoShellVerificationAccess(context):false;
   const resolvedNavigation=getShellNavigation(context,learnerAccess,tpoVerificationEnabled);
   // The prototype shell applies only to these single-workspace portals.
@@ -88,9 +89,9 @@ export async function AppShell({
       <PageTitle superAdmin={superAdmin} />
       <PrototypePortalFrame
         className="lms-shell-frame min-h-dvh bg-background text-foreground"
-        facultyEnabled={hasMembershipRole(context,"FACULTY")}
-        mentorEnabled={hasMembershipRole(context,"MENTOR")}
-        tpoEnabled={hasMembershipRole(context,"TPO")}
+        facultyEnabled={hasMembershipRole(context,ROLE.FACULTY)}
+        mentorEnabled={hasMembershipRole(context,ROLE.MENTOR)}
+        tpoEnabled={hasMembershipRole(context,ROLE.TPO)}
         recruiterEnabled={Boolean(context.recruiter)||prototypePortal==="recruiter"}>
         <TextLink href="#lms-main-content" className="sr-only">Skip to content</TextLink>
       <aside data-slot="legacy-sidebar" className="lms-desktop-sidebar relative z-(--lms-z-sticky-inline) hidden h-screen shrink-0 flex-col md:flex">
@@ -138,7 +139,7 @@ export async function AppShell({
           activeRole={context.membership?.roles[0] ?? null}
           adminScopeChoices={superAdmin ? adminScopeChoices : null}
           adminScope={context.adminScope}
-          tpoCollegeId={hasMembershipRole(context, "TPO") ? context.membership?.collegeId ?? null : null}
+          tpoCollegeId={hasMembershipRole(context, ROLE.TPO) ? context.membership?.collegeId ?? null : null}
         />
 
         <RouteProgress />

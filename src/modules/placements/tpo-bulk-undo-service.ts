@@ -8,6 +8,7 @@ import {hasMembershipRole,type RequestContext} from "@/modules/identity/context"
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "./scope";
 
+import { ROLE } from "@/modules/identity/roles";
 const requestSchema=z.strictObject({
  confirmed:z.literal(true),
  runAuditId:z.string().uuid(),
@@ -40,7 +41,7 @@ export async function undoTpoRecruiterBulkRun(context:RequestContext,raw:unknown
  const input=requestSchema.parse(raw);
  const membership=context.membership;
  if(!membership||membership.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
-   !hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+   !hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
  const collegeId=membership.collegeId;
  if(!can(context,"placements.manage",{collegeId}))throw new AuthorizationError("placements.manage");
  requirePermission(context,"placements.manage",{collegeId});

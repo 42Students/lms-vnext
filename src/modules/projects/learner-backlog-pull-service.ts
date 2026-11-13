@@ -11,6 +11,7 @@ import {assertPersistedLearnerProjectMutation} from "./learner-mutation-guard";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {notifyActiveProjectMembers} from "./project-notification-service";
+import { ROLE } from "@/modules/identity/roles";
 export const learnerBacklogPullInputSchema=z.strictObject({
  taskId:z.string().uuid(),sprintId:z.string().uuid(),
  expectedUpdatedAt:z.iso.datetime({offset:true}),
@@ -18,7 +19,7 @@ export const learnerBacklogPullInputSchema=z.strictObject({
 /** LEARNER-projects-29: learners may pull only their own queued task into an active sprint. */
 export async function pullOwnBacklogTask(context:RequestContext,projectIdInput:string,raw:unknown){
  const input=learnerBacklogPullInputSchema.parse(raw),scope=await requireProjectReadAccess(context,projectIdInput);
- if(scope.access!=="LEARNER"||!context.membership)
+ if(scope.access!==ROLE.LEARNER||!context.membership)
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const membership=context.membership;
  return getDb().transaction(async tx=>{

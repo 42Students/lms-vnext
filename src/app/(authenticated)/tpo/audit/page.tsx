@@ -39,6 +39,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
 
+import { ROLE } from "@/modules/identity/roles";
 type SearchParams = {
   kind?: string | string[];
   f_about?:string|string[];
@@ -74,7 +75,7 @@ export default async function TpoAuditPage({
 
   if (
     !context.membership ||
-    !hasMembershipRole(context, "TPO")
+    !hasMembershipRole(context, ROLE.TPO)
   ) {
     redirect("/dashboard");
   }

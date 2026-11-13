@@ -16,6 +16,7 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 
 import { featureReady } from "@/config/features";
+import { ROLE } from "@/modules/identity/roles";
 const identity = z.string().uuid();
 const pageInput = z.strictObject({
   deliveryId: identity,
@@ -50,7 +51,7 @@ async function requireContentDiscussionScope(
     throw new CoursesServiceError("CONTENT_DELIVERY_MISMATCH");
   const mode = await requireLearningReadAccess(context, scope.offeringId,
     deliveryId, { includeHistorical });
-  if (mode === "LEARNER") {
+  if (mode === ROLE.LEARNER) {
     await requireOwnCourseLearnerRead(context);
     if (!scope.lessonVisibleToStudents || scope.status !== "PUBLISHED")
       throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
@@ -126,8 +127,8 @@ export async function createLessonContentDiscussion(
       ))
       .innerJoin(membershipRoles,and(
         eq(membershipRoles.membershipId,collegeMemberships.id),
-        eq(membershipRoles.role,mode === "LEARNER" ? "LEARNER" :
-          mode === "FACULTY" ? "FACULTY" : "COLLEGE_ADMIN"),
+        eq(membershipRoles.role,mode === ROLE.LEARNER ? "LEARNER" :
+          mode === ROLE.FACULTY ? "FACULTY" : "COLLEGE_ADMIN"),
       ))
       .where(and(
         eq(collegeMemberships.id,member.id),

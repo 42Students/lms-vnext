@@ -1,3 +1,4 @@
+import { ROLE } from "@/modules/identity/roles";
 /**
  * DB10 bug-tracker workflow contract, modeled from:
  * lms@21bad59d / BugTrackerWorkflowService.java and BugReport.java.
@@ -107,7 +108,7 @@ export class BugWorkflowError extends Error {
 }
 
 function requireSuperAdmin(actor: BugTrackerActor) {
-  if (!actor.active || actor.role !== "SUPER_ADMIN" || !actor.id.trim()) {
+  if (!actor.active || actor.role !== ROLE.SUPER_ADMIN || !actor.id.trim()) {
     throw new BugWorkflowError("FORBIDDEN");
   }
 }

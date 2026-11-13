@@ -5,6 +5,7 @@ import type {
   UserPlatformStatus,
 } from "./constants";
 
+import { ROLE } from "@/modules/identity/roles";
 export type AuthenticatedUser = {
   id: string;
   identityUid: string;
@@ -57,7 +58,7 @@ export function isSuperAdmin(context: RequestContext | null | undefined) {
       // platform Super Admin must not override its selected role permissions.
       // Admin scope (with membership null) remains the platform admin path.
       context.membership === null &&
-      context.user.systemRoles.includes("SUPER_ADMIN"),
+      context.user.systemRoles.includes(ROLE.SUPER_ADMIN),
   );
 }
 

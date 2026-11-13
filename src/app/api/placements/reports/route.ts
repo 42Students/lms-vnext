@@ -24,6 +24,7 @@ import {
   getPlacementReportWorkspace,
 } from "@/modules/placements/report-service";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -522,7 +523,7 @@ export const GET = route(
     try {
 const collegeId = isSuperAdmin(context)
       ? context.adminScope?.collegeId ?? null
-      : hasMembershipRole(context, "TPO")
+      : hasMembershipRole(context, ROLE.TPO)
         ? context.membership?.collegeId ?? null
         : null;
 if (!collegeId) {
@@ -534,7 +535,7 @@ const query = exportQuerySchema.parse(
       ),
     );
 if(query.kind==="accreditation-students"){
-      if(!hasMembershipRole(context,"TPO")||!query.batchId)
+      if(!hasMembershipRole(context,ROLE.TPO)||!query.batchId)
         throw new AuthorizationError("placements.manage");
       const studentReport=await getTpoAccreditationStudentExport(context,{
        collegeId,seasonId:query.seasonId,jobId:query.jobId,batchId:query.batchId,

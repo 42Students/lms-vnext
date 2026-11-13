@@ -7,6 +7,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function FacultyCourseDefaultPage({
   params, searchParams,
 }: {
@@ -22,7 +23,7 @@ export default async function FacultyCourseDefaultPage({
   // Keep redirect (temporary/replace semantics); a permanently cached 308
   // would outlive faculty assignment changes.
   const context=await getCurrentRequestContext();
-  if(!hasMembershipRole(context,"FACULTY"))return <div className="min-w-0 space-y-4">
+  if(!hasMembershipRole(context,ROLE.FACULTY))return <div className="min-w-0 space-y-4">
     <PageHeader title="Course workspace"/>
     <ErrorState title="Faculty access required"
       description="This course workspace is available to assigned faculty members."

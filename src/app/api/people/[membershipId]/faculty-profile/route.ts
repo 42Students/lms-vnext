@@ -17,6 +17,7 @@ import {
 } from "@/modules/people/runtime";
 import { route } from "@/security/route";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -37,9 +38,9 @@ async function handleGET(
     if(new URL(request.url).searchParams.get("full")==="1"){
       const person=await getPersonMembershipDetailWithRuntime(context,membershipId);
       const roles=person.membership.roles;
-      const protectedRole=roles.includes("COLLEGE_ADMIN")||
-        roles.includes("TPO");
-      if(!roles.includes("FACULTY")&&!protectedRole)
+      const protectedRole=roles.includes(ROLE.COLLEGE_ADMIN)||
+        roles.includes(ROLE.TPO);
+      if(!roles.includes(ROLE.FACULTY)&&!protectedRole)
         return NextResponse.json({error:"MEMBERSHIP_NOT_FOUND"},{status:404});
       // A detail read alone cannot authorize another person's full profile.
       // Revalidate persisted actor permission and target ownership in the
@@ -55,7 +56,7 @@ async function handleGET(
       return NextResponse.json({
         profile:{membershipId:person.membership.id,
           profileDocument:safeDocument,profileDocumentVersion:found.version},
-        canEdit:roles.includes("FACULTY")&&(!protectedRole||isSuperAdmin(context)),
+        canEdit:roles.includes(ROLE.FACULTY)&&(!protectedRole||isSuperAdmin(context)),
         readOnlyReason:protectedRole&&!isSuperAdmin(context)
           ?"Protected staff profiles are read-only for College Admins":null,
         roleScope:"COLLEGE_STAFF",

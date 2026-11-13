@@ -14,13 +14,14 @@ import {parseCompanyShareAuditQuery} from "@/modules/placements/company-share/au
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 export default async function TpoCompanyShareAuditPage({params,searchParams}:{
  params:Promise<{jobId:string}>;
  searchParams:Promise<{kind?:string|string[];page?:string|string[]}>;
 }){
  const context=await getCurrentRequestContext();
- if(!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");
  const {jobId}=await params;
  const search=await searchParams;
  if(Object.values(search).some(Array.isArray))return <div className="min-w-0 space-y-3">

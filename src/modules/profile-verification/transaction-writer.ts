@@ -12,6 +12,7 @@ import {
 import type { VerificationTransactionRepository } from "./service";
 import { publishVerifiedEducation } from "./academic-publication";
 
+import { ROLE } from "@/modules/identity/roles";
 type LockedTransition = VerificationTransactionRepository["withLockedTransition"];
 
 /**
@@ -93,7 +94,7 @@ export const postgresLockedVerificationTransition: LockedTransition =
       const previous = current?.version ?? 0;
       // Verify actor identity and current role at COMMIT time, under locks.
       // Authenticated request context alone may be stale after role revocation.
-      if (event.actorKind === "LEARNER") {
+      if (event.actorKind === ROLE.LEARNER) {
         if (event.actorUserId !== member.userId ||
             (event.action !== "SUBMITTED" && event.action !== "UPDATE_SUBMITTED" &&
               event.action !== "WITHDRAWN")) {
@@ -109,7 +110,7 @@ export const postgresLockedVerificationTransition: LockedTransition =
         if (reviewerUser?.status !== "ACTIVE") {
           throw new VerificationStateError("NOT_ALLOWED");
         }
-        if (event.actorKind === "SUPER_ADMIN") {
+        if (event.actorKind === ROLE.SUPER_ADMIN) {
           const [superRole] = await tx.select({role:systemRoles.role})
             .from(systemRoles).where(and(eq(systemRoles.userId,event.actorUserId),
               eq(systemRoles.role,"SUPER_ADMIN"))).for("share");
@@ -125,13 +126,13 @@ export const postgresLockedVerificationTransition: LockedTransition =
           if (!reviewer || reviewer.status !== "ACTIVE") {
             throw new VerificationStateError("NOT_ALLOWED");
           }
-          const expectedRole = event.actorKind === "TPO" ? "TPO" : "COLLEGE_ADMIN";
+          const expectedRole = event.actorKind === ROLE.TPO ? "TPO" : "COLLEGE_ADMIN";
           const [reviewRole] = await tx.select({role:membershipRoles.role})
             .from(membershipRoles)
             .where(and(eq(membershipRoles.membershipId,reviewer.id),
               eq(membershipRoles.role,expectedRole))).for("share");
           if (!reviewRole) throw new VerificationStateError("NOT_ALLOWED");
-          if (event.actorKind === "TPO") {
+          if (event.actorKind === ROLE.TPO) {
             const [grant] = await tx.select({id:profileVerificationTpoGrants.membershipId})
               .from(profileVerificationTpoGrants)
               .where(and(eq(profileVerificationTpoGrants.membershipId,reviewer.id),

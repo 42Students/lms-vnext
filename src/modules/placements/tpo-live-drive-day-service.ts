@@ -8,6 +8,7 @@ import { requirePlacementManageScope } from "./scope";
 import { getTpoRoundDriveDay } from "./tpo-round-drive-day-service";
 import { isTpoRoundOnDriveDay, summarizeTpoLiveAttendance, tpoIstDayWindow } from "./tpo-live-drive-day-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Legacy drive-day/mine equivalent: the ENTIRE college's ON_CAMPUS
  * schedule on the current India date. Includes completed rounds, excludes
  * cancelled rounds, and never assumes an active duration is required.
@@ -16,7 +17,7 @@ export async function getTpoDriveDayQueue(
   context: RequestContext, now: Date = new Date(),
 ) {
   const member = context.membership;
-  if (!member || !hasMembershipRole(context,"TPO") ||
+  if (!member || !hasMembershipRole(context,ROLE.TPO) ||
       member.status !== "ACTIVE" || context.user.platformStatus !== "ACTIVE") {
     throw new AuthorizationError("placements.manage");
   }

@@ -6,6 +6,7 @@ import {
   type RequestContext,
 } from "@/modules/identity/context";
 
+import { ROLE } from "@/modules/identity/roles";
 export type PlatformPermission =
   | "identity.self.manage"
   | "admin-scope.select"
@@ -165,8 +166,8 @@ export function can(
   if (permission === "profile.self.manage") {
     return (
       hasActiveMembership(context) &&
-      (hasMembershipRole(context, "LEARNER") ||
-        hasMembershipRole(context, "FACULTY")) &&
+      (hasMembershipRole(context, ROLE.LEARNER) ||
+        hasMembershipRole(context, ROLE.FACULTY)) &&
       isSameMembershipCollege(context, resource)
     );
   }
@@ -198,7 +199,7 @@ export function can(
 
   // A LEARNER may never use a broad college read capability to inspect
   // a different learner. A service must pass the actual target membership.
-  if (hasMembershipRole(context, "LEARNER") &&
+  if (hasMembershipRole(context, ROLE.LEARNER) &&
       resource.learnerMembershipId &&
       resource.learnerMembershipId !== context.membership?.id) {
     return false;
@@ -207,7 +208,7 @@ export function can(
   // A delivery-specific course read must include an enrollment/targeting
   // decision from the authorized service, not just a matching college.
   if (permission === "courses.read" &&
-      hasMembershipRole(context, "LEARNER") &&
+      hasMembershipRole(context, ROLE.LEARNER) &&
       resource.courseDeliveryId &&
       resource.courseDeliveryAudienceAuthorized !== true) {
     return false;
@@ -216,7 +217,7 @@ export function can(
   switch (permission) {
     case "organization.read":
       return (
-        hasMembershipRole(context, "COLLEGE_ADMIN") &&
+        hasMembershipRole(context, ROLE.COLLEGE_ADMIN) &&
         isSameMembershipOrganization(context, resource)
       );
 
@@ -232,9 +233,9 @@ export function can(
 
     case "placements.read":
       return (
-        (hasMembershipRole(context, "LEARNER") ||
-          hasMembershipRole(context, "TPO") ||
-          hasMembershipRole(context, "COLLEGE_ADMIN")) &&
+        (hasMembershipRole(context, ROLE.LEARNER) ||
+          hasMembershipRole(context, ROLE.TPO) ||
+          hasMembershipRole(context, ROLE.COLLEGE_ADMIN)) &&
         isSameMembershipCollege(context, resource)
       );
 
@@ -255,25 +256,25 @@ export function can(
 
     case "profile-verification.review":
       return isSameMembershipCollege(context, resource) && (
-        hasMembershipRole(context, "COLLEGE_ADMIN") ||
-        (hasMembershipRole(context, "TPO") &&
+        hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
+        (hasMembershipRole(context, ROLE.TPO) &&
           resource.tpoVerificationAdministrator === true &&
           resource.tpoVerificationEnabled === true)
       );
 
     case "placements.tpo.team.manage":
       return (
-        (hasMembershipRole(context, "TPO") ||
-          hasMembershipRole(context, "COLLEGE_ADMIN") ||
-          (hasMembershipRole(context, "FACULTY") &&
+        (hasMembershipRole(context, ROLE.TPO) ||
+          hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
+          (hasMembershipRole(context, ROLE.FACULTY) &&
             resource.tpoTeamAdministrator === true)) &&
         isSameMembershipCollege(context, resource)
       );
 
     case "placements.manage":
       return (
-        (hasMembershipRole(context, "TPO") ||
-          hasMembershipRole(context, "COLLEGE_ADMIN")) &&
+        (hasMembershipRole(context, ROLE.TPO) ||
+          hasMembershipRole(context, ROLE.COLLEGE_ADMIN)) &&
         isSameMembershipCollege(context, resource)
       );
 
@@ -286,7 +287,7 @@ export function can(
     case "membership.role.manage":
     case "membership.lifecycle.manage":
       return (
-        hasMembershipRole(context, "COLLEGE_ADMIN") &&
+        hasMembershipRole(context, ROLE.COLLEGE_ADMIN) &&
         isSameMembershipCollege(context, resource)
       );
   }

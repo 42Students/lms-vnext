@@ -14,20 +14,21 @@ import {CoursesServiceError,postgresConstraintName} from "./errors";
 import {facultyQuizCommandSchema,facultyQuizParamsSchema,sumQuizPoints,
  facultyQuizVersionMatches,facultyQuizMetadataUnchanged,facultyQuizAttemptLimitLocked} from "./faculty-quiz-authoring-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Choice-question authoring with transaction, locked token, audit and no edits
  * after the quiz publishes or any registered attempt exists. */
 export async function commandFacultyQuiz(context:RequestContext,rawParams:unknown,rawInput:unknown){
  const {deliveryId}=facultyQuizParamsSchema.parse(rawParams);
  const input=facultyQuizCommandSchema.parse(rawInput);
  const membership=context.membership;
- if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY"))
+ if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.FACULTY))
   throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
  const delivery=await loadCourseSectionDeliveryScope(deliveryId);
  if(membership.collegeId!==delivery.collegeId||
   !can(context,"courses.read",{collegeId:delivery.collegeId,organizationId:delivery.organizationId}))
   throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
  const role=await requireDeliveryContentMutation(context,deliveryId);
- if(role!=="FACULTY")throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+ if(role!==ROLE.FACULTY)throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
  if(input.action==="CREATE"){
   const lesson=await loadCourseLessonScope(input.lessonId);
   if(lesson.offeringId!==delivery.offeringId)

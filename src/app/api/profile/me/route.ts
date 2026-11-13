@@ -12,6 +12,7 @@ import {
 import {updateOwnLearnerProfileDocument} from "@/modules/people/learner-profile-document-edit-service";
 import { route } from "@/security/route";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime = "nodejs";
 const MAX_PROFILE_DOCUMENT_BYTES = 2 * 1024 * 1024;
 const privateHeaders = { "Cache-Control": "private, no-store" };
@@ -28,7 +29,7 @@ async function handleGET(request: Request) {
         {status:400,headers:privateHeaders});
     const legacySection = query.get("legacySection");
     if (legacySection !== null) {
-      if (!hasMembershipRole(context, "LEARNER")) {
+      if (!hasMembershipRole(context, ROLE.LEARNER)) {
         return NextResponse.json({error:"FORBIDDEN"},{status:403,headers:privateHeaders});
       }
       const validSections = new Set(["about","education","skills","projects","certifications","experiences","jobPreferences"]);

@@ -12,11 +12,12 @@ import {requireProjectReadAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 import {escapeMentorMeetingSearch,mentorTeamMeetingsPage,mentorTeamMeetingsQuerySchema} from "./mentor-team-meetings-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Exact-project current team counts and historical registered meeting log. */
 export async function getMentorTeamMeetings(context:RequestContext,raw:unknown){
   const query=mentorTeamMeetingsQuerySchema.parse(raw);
   const membership=context.membership;
-  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR")||
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR)||
      !can(context,"projects.read",{
        collegeId:membership.collegeId,organizationId:membership.organizationId,
      }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
@@ -33,7 +34,7 @@ export async function getMentorTeamMeetings(context:RequestContext,raw:unknown){
     }[],
   };
   const scope=await requireProjectReadAccess(context,query.projectId);
-  if(scope.access!=="MENTOR"||scope.collegeId!==membership.collegeId||
+  if(scope.access!==ROLE.MENTOR||scope.collegeId!==membership.collegeId||
      !can(context,"projects.read",{
        collegeId:scope.collegeId,organizationId:scope.organizationId,
      }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");

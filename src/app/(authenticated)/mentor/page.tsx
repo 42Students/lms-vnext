@@ -5,6 +5,7 @@ import { hasActiveMembership, hasMembershipRole } from "@/modules/identity/conte
 import { ButtonLink } from "@/components/ui/button-link";
 import { Heading } from "@/components/ui/heading";
 
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic = "force-dynamic";
 
 /** Legacy /mentor landing: feature enabled -> Projects; disabled -> no 404
@@ -12,7 +13,7 @@ export const dynamic = "force-dynamic";
  */
 export default async function MentorLandingPage() {
   const context = await getCurrentRequestContext();
-  if (!hasActiveMembership(context) || !hasMembershipRole(context,"MENTOR")) {
+  if (!hasActiveMembership(context) || !hasMembershipRole(context,ROLE.MENTOR)) {
     redirect("/dashboard");
   }
   const access = await resolveOptionalModuleAccess(context).catch(()=>null);

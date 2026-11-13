@@ -5,6 +5,7 @@ import {
   type RequestContext,
 } from "@/modules/identity/context";
 
+import { ROLE } from "@/modules/identity/roles";
 export type LearnerNavigationAccess = {
   projectsEnabled: boolean;
   placementsEnabled: boolean;
@@ -432,26 +433,26 @@ function getMembershipWorkspaces(
 ) {
   const items: ShellNavItem[] = [];
 
-  if (hasMembershipRole(context, "LEARNER")) {
+  if (hasMembershipRole(context, ROLE.LEARNER)) {
     pushUnique(items, getLearnerItems(learnerAccess));
   }
 
-  if (hasMembershipRole(context, "FACULTY")) {
+  if (hasMembershipRole(context, ROLE.FACULTY)) {
     // Legacy Mentor/Admin profiles are distinct routes; do not render a
     // Faculty-only profile link for those multi-role memberships.
     pushUnique(
       items,
-      hasMembershipRole(context, "MENTOR") || hasMembershipRole(context, "COLLEGE_ADMIN")
+      hasMembershipRole(context, ROLE.MENTOR) || hasMembershipRole(context, ROLE.COLLEGE_ADMIN)
         ? facultyItems.filter((item) => item.href !== "/teacher/profile")
         : facultyItems,
     );
   }
 
-  if (hasMembershipRole(context, "MENTOR")) {
+  if (hasMembershipRole(context, ROLE.MENTOR)) {
     pushUnique(items, mentorItems);
   }
 
-  if (hasMembershipRole(context, "TPO")) {
+  if (hasMembershipRole(context, ROLE.TPO)) {
     pushUnique(items, filterTpoVerificationNav(tpoItems,tpoVerificationEnabled));
   }
 
@@ -477,7 +478,7 @@ export function getShellNavigation(
   if (
     context.membership &&
     context.membership.roles.length === 1 &&
-    hasMembershipRole(context, "LEARNER") &&
+    hasMembershipRole(context, ROLE.LEARNER) &&
     !hasActiveRecruiter(context)
   ) {
     return visible(getLearnerItems(learnerAccess));
@@ -488,7 +489,7 @@ export function getShellNavigation(
   if (
     context.membership &&
     context.membership.roles.length === 1 &&
-    hasMembershipRole(context, "FACULTY") &&
+    hasMembershipRole(context, ROLE.FACULTY) &&
     !hasActiveRecruiter(context)
   ) {
     return visible(facultyItems);
@@ -498,7 +499,7 @@ export function getShellNavigation(
   if (
     context.membership &&
     context.membership.roles.length === 1 &&
-    hasMembershipRole(context, "MENTOR") &&
+    hasMembershipRole(context, ROLE.MENTOR) &&
     !hasActiveRecruiter(context)
   ) {
     return visible(mentorItems);
@@ -509,7 +510,7 @@ export function getShellNavigation(
   if (
     context.membership &&
     context.membership.roles.length === 1 &&
-    hasMembershipRole(context, "COLLEGE_ADMIN") &&
+    hasMembershipRole(context, ROLE.COLLEGE_ADMIN) &&
     !hasActiveRecruiter(context)
   ) {
     return visible(collegeAdminItems);
@@ -518,14 +519,14 @@ export function getShellNavigation(
   // A TPO-only or recruiter-only account must see exactly the legacy
   // sidebar, rather than a generic Dashboard plus role-specific links.
   if (context.membership && context.membership.roles.length === 1 &&
-      hasMembershipRole(context, "TPO") && !hasActiveRecruiter(context)) {
+      hasMembershipRole(context, ROLE.TPO) && !hasActiveRecruiter(context)) {
     return visible(filterTpoVerificationNav(tpoItems,tpoVerificationEnabled));
   }
   if (!context.membership && hasActiveRecruiter(context)) {
     return visible(recruiterItems);
   }
 
-  const items: ShellNavItem[] = hasMembershipRole(context, "COLLEGE_ADMIN")
+  const items: ShellNavItem[] = hasMembershipRole(context, ROLE.COLLEGE_ADMIN)
     ? []
     : [dashboard];
 
@@ -541,7 +542,7 @@ export function getShellNavigation(
     getMembershipWorkspaces(context, learnerAccess, tpoVerificationEnabled),
   );
 
-  if (hasMembershipRole(context, "COLLEGE_ADMIN")) {
+  if (hasMembershipRole(context, ROLE.COLLEGE_ADMIN)) {
     pushUnique(items, collegeAdminItems);
   }
 
@@ -607,7 +608,7 @@ export function getShellRoleLabel(context: RequestContext) {
 
   const labels = context.membership.roles.map(
     (role) =>
-      role === "TPO"
+      role === ROLE.TPO
         ? "TPO"
         : role
             .toLowerCase()

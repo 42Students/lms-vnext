@@ -28,6 +28,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 
 import { env } from "@/config/env";
+import { ROLE } from "@/modules/identity/roles";
 type Search = Record<string, string | string[] | undefined>;
 function collegePeopleManageHref(filter: CollegePeopleDirectoryFilter) {
   return collegePeopleDirectoryHref(filter).replace("/college/people", "/college/people/manage");
@@ -67,7 +68,7 @@ const columns: DataTableColumn<PersonMembershipView>[] = [
 export default async function CollegePeoplePage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN")) redirect("/dashboard");
+  if (!membership || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN)) redirect("/dashboard");
   const raw = await searchParams;
   let filter:CollegePeopleDirectoryFilter|null=null;
   try{filter=parseCollegePeopleDirectorySearchParams(raw);}catch{filter=null;}
@@ -88,7 +89,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
   const pagination = peoplePageState(filter.page, people.pagination.total);
   // The legacy learner picker returned 15 suggestions for a blank query.
   // Keep this separate from the 50-row administrative membership directory.
-  const showLearnerSearch=filter.role==="LEARNER";
+  const showLearnerSearch=filter.role===ROLE.LEARNER;
   const suggestionsResult=showLearnerSearch?await Promise.allSettled([
    listCollegePeopleWithRuntime(context,{
     collegeId:membership.collegeId,limit:15,offset:0,q:filter.q,
@@ -196,7 +197,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
      </div>
     </section>:null}
     <section className="space-y-2" aria-label="Filtered people">
-      {filter.role==="LEARNER"?<p role="status" className="text-sm text-[var(--lms-muted-text)]">Learners retrieved</p>:null}
+      {filter.role===ROLE.LEARNER?<p role="status" className="text-sm text-[var(--lms-muted-text)]">Learners retrieved</p>:null}
       <p className="text-sm text-muted-foreground">{pagination.total} matching membership{pagination.total === 1 ? "" : "s"}</p>
       <DataTable caption="College memberships" columns={columns} rows={people.items}
         getRowKey={person => person.membership.id}

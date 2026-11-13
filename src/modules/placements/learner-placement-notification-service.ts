@@ -11,6 +11,7 @@ import { PlacementsServiceError } from "./errors";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { learnerPlacementNotificationInputSchema, placementNotificationChanges, placementNotificationIsStale } from "./learner-placement-notification-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * An independent, narrow write: never overwrite role, location, CTC or other
  * candidate choices with defaults from a stale browser form.
@@ -22,7 +23,7 @@ export async function updateOwnPlacementNotificationPreferences(
   const input = learnerPlacementNotificationInputSchema.parse(rawInput);
   const membership = context.membership;
   if (!membership || !hasActiveMembership(context) ||
-      !hasMembershipRole(context,"LEARNER") ||
+      !hasMembershipRole(context,ROLE.LEARNER) ||
       !can(context,"placements.read",{collegeId:membership.collegeId,
         organizationId:membership.organizationId})) {
     throw new AuthorizationError("placements.read");

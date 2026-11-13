@@ -21,6 +21,7 @@ import { requirePlacementManageScope } from "./scope";
 import { placementJobIdSchema } from "./validation";
 import { PlacementsServiceError } from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Administrative bulk action: only WITHDRAW is supported. ACCEPT/DECLINE
  * remains the learner's own decision in actOnPlacementOffer.
@@ -31,7 +32,7 @@ export async function bulkWithdrawPlacementOffers(
   rawJobId: unknown,
   rawInput: unknown,
 ) {
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = context.membership.collegeId;

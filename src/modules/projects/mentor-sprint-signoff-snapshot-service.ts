@@ -8,6 +8,7 @@ import {requireProjectReadAccess} from "./access";
 import {latestValidMentorSprintSnapshots,type MentorSprintSignOffSnapshot}
   from "./mentor-sprint-signoff-snapshot-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Read only persisted snapshot facts for the currently authorized project.
  * Raw activity metadata is never sent to the UI.
  */
@@ -17,7 +18,7 @@ async function listScopedMentorSnapshots(
   valueKey:"sprintSnapshot"|"sprintStartSnapshot",
 ):Promise<MentorSprintSignOffSnapshot[]> {
   const scope=await requireProjectReadAccess(context,projectId);
-  if(scope.access!=="MENTOR"||sprintIds.length===0)return [];
+  if(scope.access!==ROLE.MENTOR||sprintIds.length===0)return [];
   const rows=await getDb().select({
     subjectId:activityEvents.subjectId,
     metadata:activityEvents.metadata,

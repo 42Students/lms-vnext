@@ -11,11 +11,12 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { RecruiterLeadDetailWorkspace } from "@/components/tpo/recruiter-lead-detail-workspace";
 
+import { ROLE } from "@/modules/identity/roles";
 type RouteProps = { params: Promise<{ leadId: string }> };
 
 export default async function TpoRecruiterDetailPage({ params }: RouteProps) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     redirect("/dashboard");
   }
   const { leadId } = await params;

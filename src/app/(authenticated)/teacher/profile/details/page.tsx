@@ -11,6 +11,7 @@ import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 export default async function FacultyProfileDetailsPage({searchParams}:{
  searchParams:Promise<{section?:string|string[]}>
@@ -20,7 +21,7 @@ export default async function FacultyProfileDetailsPage({searchParams}:{
  // self-service document. Staff review/edit uses the separate admin route.
  if(context.user.platformStatus!=="ACTIVE" ||
     context.membership?.status!=="ACTIVE" ||
-    !context.membership.roles.includes("FACULTY"))notFound();
+    !context.membership.roles.includes(ROLE.FACULTY))notFound();
  const raw=await searchParams;
  // Multiple or ambiguous section selectors must never choose an arbitrary entry.
  if(Array.isArray(raw.section))redirect("/teacher/profile");

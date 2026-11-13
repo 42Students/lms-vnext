@@ -8,6 +8,7 @@ import {requirePlacementManageScope} from "./scope";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {ENGAGE_COLUMNS,ENGAGE_DEFAULT_COLUMNS} from "./tpo-recruiter-table-view-model";
 
+import { ROLE } from "@/modules/identity/roles";
 const SAVED_FILTER_KEYS=["q","stage","owner","status","invite","source","company","reach",
  "designation","nextFollowup","lastActivity","added","need","attention","drives"] as const;
 const viewBody=z.strictObject({
@@ -28,7 +29,7 @@ export class TpoSavedViewError extends Error{
 }
 async function scope(context:RequestContext){
  if(!context.membership||context.membership.status!=="ACTIVE"||
-  !hasMembershipRole(context,"TPO")||context.user.platformStatus!=="ACTIVE")
+  !hasMembershipRole(context,ROLE.TPO)||context.user.platformStatus!=="ACTIVE")
   throw new AuthorizationError("placements.manage");
  return requirePlacementManageScope(context,context.membership.collegeId);
 }

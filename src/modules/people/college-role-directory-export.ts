@@ -2,6 +2,7 @@ import { spreadsheetCsvCell } from "@/security/csv-cell";
 import {z} from "zod";
 import {collegeRoleDirectoryHref,collegeRoleDirectoryQuerySchema,assertCompatibleCollegeRoleDirectoryFilters,roleDirectoryDateWindowValid,type CollegeDirectoryKind,type CollegeRoleDirectoryQuery,type CollegeRoleDirectoryRow} from "./college-role-directory-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export const ROLE_DIRECTORY_EXPORT_LIMIT=1000;
 const exportFilterSchema=collegeRoleDirectoryQuerySchema.omit({page:true,pageSize:true});
 const exportSchema=exportFilterSchema.extend({kind:z.enum(["FACULTY","LEARNER"])});
@@ -28,8 +29,8 @@ export function parseCollegeRoleDirectoryExportQuery(params:URLSearchParams){
  if(!roleDirectoryDateWindowValid(dates))throw new Error("INVALID_ROLE_DIRECTORY_EXPORT");
  try{
   assertCompatibleCollegeRoleDirectoryFilters(kind,filter);
-  if(kind==="FACULTY"&&(filter.enrollment!=="ALL"||filter.cohortId||filter.programId||filter.sectionId||filter.classPresence!=="ALL"||filter.registrationPresence!=="ALL"||filter.rollPresence!=="ALL"))throw new Error("INCOMPATIBLE_FACULTY_FILTER");
-  if(kind==="LEARNER"&&(filter.teaching!=="ALL"||filter.teachingRole!=="ALL"||filter.facultyDepartmentId||filter.employmentType||filter.titlePresence!=="ALL"||filter.departmentPresence!=="ALL"))throw new Error("INCOMPATIBLE_LEARNER_FILTER");
+  if(kind===ROLE.FACULTY&&(filter.enrollment!=="ALL"||filter.cohortId||filter.programId||filter.sectionId||filter.classPresence!=="ALL"||filter.registrationPresence!=="ALL"||filter.rollPresence!=="ALL"))throw new Error("INCOMPATIBLE_FACULTY_FILTER");
+  if(kind===ROLE.LEARNER&&(filter.teaching!=="ALL"||filter.teachingRole!=="ALL"||filter.facultyDepartmentId||filter.employmentType||filter.titlePresence!=="ALL"||filter.departmentPresence!=="ALL"))throw new Error("INCOMPATIBLE_LEARNER_FILTER");
  }
  catch{throw new Error("INVALID_ROLE_DIRECTORY_EXPORT");}
  return {kind,filter};
@@ -44,10 +45,10 @@ export function renderCollegeRoleDirectoryCsv(kind:CollegeDirectoryKind,rows:rea
  for(const row of rows.slice(0,ROLE_DIRECTORY_EXPORT_LIMIT)){
   lines.push([
     row.name,row.email??"",row.membershipStatus,row.userStatus,fmt.format(row.joinedAt),
-    kind==="LEARNER"?row.program??"": "",
-    kind==="LEARNER"?row.cohort??"": "",
-    kind==="LEARNER"?row.sections.join("; "):"",
-    kind==="FACULTY"?String(row.activeTeachingAssignments):"",
+    kind===ROLE.LEARNER?row.program??"": "",
+    kind===ROLE.LEARNER?row.cohort??"": "",
+    kind===ROLE.LEARNER?row.sections.join("; "):"",
+    kind===ROLE.FACULTY?String(row.activeTeachingAssignments):"",
   ].map(escapeRoleDirectoryCsvCell).join(","));
  }
  if(truncated||rows.length>ROLE_DIRECTORY_EXPORT_LIMIT){

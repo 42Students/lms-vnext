@@ -1,3 +1,4 @@
+import { ROLE } from "@/modules/identity/roles";
 /**
  * DB04 pure state transition planner.
  * A persistence adapter MUST lock the row, write the new record and append its
@@ -155,7 +156,7 @@ export function planVerificationSubmission(input: {
   now: Date;
 }): Transition {
   const { learnerMembershipId, section, existing, expectedVersion, documentsReady, actor, now } = input;
-  if (actor.kind !== "LEARNER" ||
+  if (actor.kind !== ROLE.LEARNER ||
       (existing && (existing.learnerMembershipId !== learnerMembershipId || existing.section !== section))) {
     throw new VerificationStateError("NOT_ALLOWED");
   }
@@ -193,7 +194,7 @@ export function planVerificationReview(input: {
   now: Date;
 }): Transition {
   const { existing, expectedVersion, action, actor, now } = input;
-  if (actor.kind === "LEARNER") throw new VerificationStateError("NOT_ALLOWED");
+  if (actor.kind === ROLE.LEARNER) throw new VerificationStateError("NOT_ALLOWED");
   assertVersion(existing, expectedVersion);
   if (existing.status !== "SUBMITTED" && existing.status !== "UPDATE_PENDING") {
     throw new VerificationStateError("INVALID_TRANSITION");
@@ -229,7 +230,7 @@ export function planWithdrawPendingVerification(input: {
   now: Date;
 }): Transition {
   const { existing, expectedVersion, actor, now } = input;
-  if (actor.kind !== "LEARNER") throw new VerificationStateError("NOT_ALLOWED");
+  if (actor.kind !== ROLE.LEARNER) throw new VerificationStateError("NOT_ALLOWED");
   assertVersion(existing, expectedVersion);
   if (existing.status !== "UPDATE_PENDING" || !existing.verifiedSnapshot || !existing.verifiedAt) {
     throw new VerificationStateError("INVALID_TRANSITION");

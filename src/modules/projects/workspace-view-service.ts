@@ -43,6 +43,7 @@ import {
   listProjectActivity,
 } from "./activity-service";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Only an explicitly absent staged relation/column may downgrade a
  * non-critical workspace section to a visible load-error state. Permission,
  * validation, and unexpected database failures must propagate; otherwise a
@@ -93,7 +94,7 @@ export async function getProjectWorkspaceView(
       context,
       projectId,
     ),
-    access.access==="LEARNER"
+    access.access===ROLE.LEARNER
       ? Promise.resolve({evaluations:[],items:[]})
       : listProjectEvaluations(context,projectId),
     listProjectActivity(context,projectId)
@@ -105,7 +106,7 @@ export async function getProjectWorkspaceView(
       }),
   ]);
   const activity=activityRead.items;
-  const [mentorSprintSnapshots,mentorSprintCommitments]=access.access==="MENTOR"
+  const [mentorSprintSnapshots,mentorSprintCommitments]=access.access===ROLE.MENTOR
     ?await Promise.all([
         listMentorSprintSignOffSnapshots(context,projectId,
           workspace.sprints.map(sprint=>sprint.id)),
@@ -115,43 +116,43 @@ export async function getProjectWorkspaceView(
     :[[],[]];
 
 
-  const mentorResourceSharers=access.access==="MENTOR"
+  const mentorResourceSharers=access.access===ROLE.MENTOR
     ?await getMentorResourceSharers(context,projectId,
        workspace.resources.map(resource=>resource.id))
     :[];
-  const mentorBlockedTaskAges=access.access==="MENTOR"
+  const mentorBlockedTaskAges=access.access===ROLE.MENTOR
     ?await listMentorBlockedTaskAges(context,projectId,
        workspace.tasks.filter(task=>!task.deletedAt&&task.status==="BLOCKED")
          .map(task=>task.id))
     :{};
-  const mentorWeekContributors=access.access==="MENTOR"?
+  const mentorWeekContributors=access.access===ROLE.MENTOR?
     await listMentorWeekContributors(context,projectId):[];
-  const mentorTeamRecentActorActivity=access.access==="MENTOR"&&!activityRead.failed
+  const mentorTeamRecentActorActivity=access.access===ROLE.MENTOR&&!activityRead.failed
     ?await getMentorTeamRecentActorActivity(context,projectId,members):{};
-  const mentorWeekActivityTotals=access.access==="MENTOR"&&!activityRead.failed
+  const mentorWeekActivityTotals=access.access===ROLE.MENTOR&&!activityRead.failed
     ?await getMentorWeekActivityTotals(context,projectId).catch((error:unknown)=>{
       if(!isUnavailableProjectSectionStorage(error))throw error;
       return null;
     }):null;
   // Unlike workspace.activity (the most recent 100 records), these totals
   // are aggregated before paging across all authorized project events.
-  const mentorProjectActivityCounts=access.access==="MENTOR"&&!activityRead.failed
+  const mentorProjectActivityCounts=access.access===ROLE.MENTOR&&!activityRead.failed
     ?await getMentorProjectActivityCounts(context,projectId).catch((error:unknown)=>{
       if(!isUnavailableProjectSectionStorage(error))throw error;
       return null;
     }):null;
-  const mentorLearnerAcademicFacts=access.access==="MENTOR"?
+  const mentorLearnerAcademicFacts=access.access===ROLE.MENTOR?
     await getMentorLearnerAcademicFacts(context,projectId):[];
   const meetings=meetingsRead.items;
   const projectMeetingRsvpFacts=!meetingsRead.failed&&access.access!=="OBSERVER"
     ?await listProjectMeetingRsvpFacts(context,projectId,meetings.map(row=>row.id))
     :[];
-  const mentorMeetingNoticeFacts=access.access==="MENTOR" && !meetingsRead.failed
+  const mentorMeetingNoticeFacts=access.access===ROLE.MENTOR && !meetingsRead.failed
     ?await getMentorMeetingNoticeFacts(context,projectId,meetings.map(row=>row.id))
     :[];
   // MEN-projects-meetings-25: historical roster is mentor-only. Learners
   // retain the active roster and never receive former members' profile data.
-  const mentorRoster = access.access === "MENTOR"
+  const mentorRoster = access.access === ROLE.MENTOR
     ? await getDb().select({
         id:projectMembers.id,
         membershipId:projectMembers.membershipId,
@@ -364,7 +365,7 @@ export async function getProjectResourceAuditPage(
   cursor?:{beforeTime:string;beforeId:string},
 ){
   const access=await requireProjectReadAccess(context,projectId);
-  if(access.access!=="ADMIN"&&access.access!=="MENTOR")
+  if(access.access!=="ADMIN"&&access.access!==ROLE.MENTOR)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const page=await getProjectActivityPage(context,projectId,{
     category:"RESOURCE",...(cursor??{}),
@@ -393,14 +394,14 @@ export async function getProjectWorkspaceSectionView(
  if(section==="DELIVERY"){
   const [finalDelivery,evaluation]=await Promise.all([
    listProjectSubmissions(context,projectId),
-   access.access==="LEARNER"
+   access.access===ROLE.LEARNER
     ? Promise.resolve({evaluations:[],items:[]})
     : listProjectEvaluations(context,projectId),
   ]);
   return {section,finalDelivery,evaluation};
  }
  if(section==="RESOURCES"){
-  if(access.access!=="ADMIN"&&access.access!=="MENTOR")
+  if(access.access!=="ADMIN"&&access.access!==ROLE.MENTOR)
    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   return {section,resourceAudit:await getProjectResourceAuditPage(context,projectId)};
  }

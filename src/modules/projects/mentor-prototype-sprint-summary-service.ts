@@ -10,6 +10,7 @@ import {ProjectsServiceError} from "./errors";
 import {listMyProjectInstances} from "./member-service";
 import {summarizeMentorProjectSprints,type MentorPrototypeSprintSummary}
  from "./mentor-project-sprint-position-model";
+import { ROLE } from "@/modules/identity/roles";
 export type {MentorPrototypeSprintSummary} from "./mentor-project-sprint-position-model";
 
 /** Counts only real, non-deleted project sprints in the mentor's authorized
@@ -20,14 +21,14 @@ export async function getMentorPrototypeSprintSummaries(
  verifiedRows?:readonly Awaited<ReturnType<typeof listMyProjectInstances>>[number][],
 ):Promise<Map<string,MentorPrototypeSprintSummary>>{
  const membership=context.membership;
- if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR")||
+ if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR)||
     context.user.platformStatus!=="ACTIVE"||!can(context,"projects.read",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const projects=(verifiedRows??await listMyProjectInstances(context))
-   .filter(row=>row.memberRole==="MENTOR"&&row.project.collegeId===membership.collegeId);
+   .filter(row=>row.memberRole===ROLE.MENTOR&&row.project.collegeId===membership.collegeId);
  const ids=projects.map(row=>row.project.id);
  if(!ids.length)return new Map<string,MentorPrototypeSprintSummary>();
  const rows=await getDb().select({

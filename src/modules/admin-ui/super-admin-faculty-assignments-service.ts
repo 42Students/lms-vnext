@@ -10,6 +10,7 @@ import {hasMembershipRole,isSuperAdmin} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
 import {scopedSearchLike,superAdminReadPages,superAdminReadQuerySchema,type SuperAdminReadResult} from "./super-admin-read-directory-model";
+import { ROLE } from "@/modules/identity/roles";
 const sectionDepartment=alias(departments,"admin_faculty_section_department");
 
 /** Legacy faculty-teaching DTO projection:
@@ -36,7 +37,7 @@ function legacyAcademicYear(values:(string|null)[]){
 function requireAssignmentCollege(context:RequestContext){
  if(isSuperAdmin(context))return requireSuperAdminSelectedCollege(context,"courses.read");
  const membership=context.membership;
- if(!membership||!hasMembershipRole(context,"COLLEGE_ADMIN"))
+ if(!membership||!hasMembershipRole(context,ROLE.COLLEGE_ADMIN))
   throw new AuthorizationError("courses.read");
  requirePermission(context,"courses.read",{collegeId:membership.collegeId,organizationId:membership.organizationId});
  return {collegeId:membership.collegeId,organizationId:membership.organizationId};

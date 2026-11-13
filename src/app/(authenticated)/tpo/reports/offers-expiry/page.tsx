@@ -18,11 +18,12 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { featureReady } from "@/config/features";
+import { ROLE } from "@/modules/identity/roles";
 type Query = { days?: string | string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoOffersExpiryPage({ searchParams }: { searchParams: Promise<Query> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) redirect("/dashboard");
   const query = await searchParams;
   if(tpoReportHasAmbiguousFilters(query))return <TpoReportInvalidFilters path="/tpo/reports/offers-expiry"/>;
   const data = await getTpoOfferExpiryWatchlist(context,

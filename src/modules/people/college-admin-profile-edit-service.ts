@@ -7,6 +7,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 
+import { ROLE } from "@/modules/identity/roles";
 export class CollegeProfileVersionConflict extends Error {
   constructor(){super("PROFILE_VERSION_CHANGED");this.name="CollegeProfileVersionConflict";}
 }
@@ -113,7 +114,7 @@ export function readCollegeProfileSections(raw:unknown){
 function ownMembership(context: RequestContext) {
   const membership = context.membership;
   if (!membership || membership.status !== "ACTIVE" ||
-      !hasMembershipRole(context, "COLLEGE_ADMIN"))
+      !hasMembershipRole(context, ROLE.COLLEGE_ADMIN))
     throw new AuthorizationError("academics.manage");
   requirePermission(context, "academics.manage", {
     collegeId: membership.collegeId, organizationId: membership.organizationId,

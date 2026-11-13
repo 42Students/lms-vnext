@@ -11,6 +11,7 @@ import {
   selectAttendanceCalendarRecords,
 } from "./learner-attendance-calendar-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Read-only timeline: verify the actual active Learner role and tenant before
  * using the canonical delivery/attendance reader. No caller supplies an owner.
@@ -21,7 +22,7 @@ export async function getOwnLearnerAttendanceCalendar(
   const query = parseAttendanceCalendarQuery(rawQuery, now);
   const membership = context.membership;
   if (!membership || !hasActiveMembership(context) ||
-      !hasMembershipRole(context, "LEARNER") ||
+      !hasMembershipRole(context, ROLE.LEARNER) ||
       !can(context, "academics.read", {
         organizationId: membership.organizationId, collegeId: membership.collegeId,
       })) throw new AuthorizationError("academics.read");

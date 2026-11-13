@@ -8,6 +8,7 @@ import {listCollegeRoleDirectory} from "./college-role-directory-service";
 import {escapeRoleDirectoryCsvCell} from "./college-role-directory-export";
 import {collegeRoleDirectoryQuerySchema,type CollegeDirectoryKind} from "./college-role-directory-model";
 
+import { ROLE } from "@/modules/identity/roles";
 function gender(document:Record<string,unknown>|null){
  const detail=document?.["personalDetails"];
  return detail && typeof detail==="object" && "gender" in detail &&
@@ -39,12 +40,12 @@ export async function exportVisibleCollegePeople(
    inArray(collegeMemberships.id,ids)));
  }):[];
  const details=new Map(persons.map(p=>[p.id,p]));
- const columns=kind==="FACULTY"
+ const columns=kind===ROLE.FACULTY
   ?["Name","Mobile","Email","Type","Gender","Status"]
   :["Name","Roll Number","Mobile","Email","Program","Batch","Class","Status"];
  const rows=data.items.map(item=>{
   const person=details.get(item.membershipId);
-  return kind==="FACULTY"
+  return kind===ROLE.FACULTY
    ?[item.name,person?.phone??"",item.email??"",person?.facultyType??"",
       gender(person?.facultyDocument??null),item.membershipStatus]
    :[item.name,person?.learnerRoll??"","",item.email??"",item.program??"",

@@ -16,6 +16,7 @@ import {ProjectsServiceError,postgresConstraintName} from "./errors";
 import {mentorTaskCreateParamsSchema,mentorTaskCreateSchema} from "./mentor-task-create-model";
 import {notifyProjectMemberships} from "./project-notification-service";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Legacy ProjectWorkspaceController accepted a complete tasks/resources array with
  * one workspace update. The vNext contract is intentionally per-item and may
  * update other authors' rows between requests.
@@ -35,13 +36,13 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
   const {projectId}=mentorTaskCreateParamsSchema.parse(rawParams);
   const input=mentorTaskCreateSchema.parse(rawInput);
   const membership=context.membership;
-  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR"))
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   // A disabled tenant must not reveal whether the project ID exists.
   if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const scope=await requireProjectLifecycleAccess(context,projectId);
-  if(scope.access!=="MENTOR"||!can(context,"projects.read",{
+  if(scope.access!==ROLE.MENTOR||!can(context,"projects.read",{
     collegeId:scope.collegeId,organizationId:scope.organizationId,
   }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   try{

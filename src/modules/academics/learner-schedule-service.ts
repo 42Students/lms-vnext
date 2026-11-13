@@ -35,6 +35,7 @@ import { AuthorizationError, requirePermission } from "@/modules/permissions/pol
 import { listLearnerCourseDeliveries } from "@/modules/courses/learner-course-service";
 import { CoursesServiceError } from "@/modules/courses/errors";
 
+import { ROLE } from "@/modules/identity/roles";
 function requireLearnerMembership(
   context: RequestContext,
 ) {
@@ -42,7 +43,7 @@ function requireLearnerMembership(
     context.user.platformStatus !== "ACTIVE" ||
     !context.membership ||
     context.membership.status !== "ACTIVE" ||
-    !context.membership.roles.includes("LEARNER")
+    !context.membership.roles.includes(ROLE.LEARNER)
   ) {
     throw new AcademicsServiceError(
       "LEARNER_SCHEDULE_ACCESS_DENIED",

@@ -8,6 +8,7 @@ import {
 import type { ModuleAccessScope } from "@/modules/module-access/service";
 import { AuthorizationError } from "@/modules/permissions/policy";
 
+import { ROLE } from "@/modules/identity/roles";
 export type PlacementParticipationStatus =
   | "ELIGIBLE"
   | "INELIGIBLE"
@@ -77,7 +78,7 @@ export async function resolveLearnerPlacementParticipation(
 ) {
   if (
     !context.membership ||
-    !hasMembershipRole(context, "LEARNER")
+    !hasMembershipRole(context, ROLE.LEARNER)
   ) {
     throw new AuthorizationError("placements.read");
   }

@@ -12,12 +12,13 @@ import {
   type GroupImportRow,
 } from "./college-group-csv-preview-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export class GroupCsvPreviewNotFoundError extends Error {
   constructor() { super("GROUP_NOT_FOUND"); this.name = "GroupCsvPreviewNotFoundError"; }
 }
 function ownCollege(context: RequestContext) {
   const member = context.membership;
-  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+  if (!member || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
     !can(context, "academics.manage", {
       collegeId: member.collegeId, organizationId: member.organizationId,
     })) throw new AuthorizationError("academics.manage");

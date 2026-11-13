@@ -10,6 +10,7 @@ import { istIsoDateFormatter, istDateTimeFormatter, istTimeFormatter } from "@/l
 import { formatNumberIN } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 /** The raw forensic view is a different presentation from the readable
  * Activity feed. Historical IP/user-agent fields are not collected by this
  * tenant-safe event store; keep their columns and state "Not retained". */
@@ -144,8 +145,8 @@ function activityActorName(item:ActivityCenterGroup["latest"]){
  if(item.actor?.displayName?.trim())return item.actor.displayName.trim();
  const id=item.actor?.id;if(!id)return "System";
  const role=String(item.event.metadata["actorUserType"]??item.event.metadata["actorRole"]??"").toUpperCase();
- const kind=role.includes("STUDENT")||role.includes("LEARNER")?"Student":
-  role.includes("FACULTY")||role.includes("STAFF")?"Staff":"User";
+ const kind=role.includes("STUDENT")||role.includes(ROLE.LEARNER)?"Student":
+  role.includes(ROLE.FACULTY)||role.includes("STAFF")?"Staff":"User";
  return kind+" #"+id.slice(0,16);
 }
 function activitySubjectName(event:ActivityCenterGroup["latest"]["event"]){

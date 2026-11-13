@@ -36,6 +36,7 @@ import {
   type CreateProjectEvaluationInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 /** A rubric is permanent academic evidence. The initial request context may
  * become stale while a reviewer is completing a score sheet: reauthorize with
  * persisted rows and SHARE locks inside the write transaction. */
@@ -108,7 +109,7 @@ export async function createProjectEvaluation(
   // value so the transactional persisted-actor check cannot accidentally be
   // called with a learner if a future read-access union expands.
   const evaluatorAccess=scope.access;
-  if(evaluatorAccess!=="ADMIN"&&evaluatorAccess!=="MENTOR")
+  if(evaluatorAccess!=="ADMIN"&&evaluatorAccess!==ROLE.MENTOR)
     throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
   const input =
     createProjectEvaluationInputSchema.parse(
@@ -264,7 +265,7 @@ export async function getProjectEvaluation(
     );
   // Rubric scores are internal until a dedicated, audited release decision exists.
   // Approval of a delivery is not publication of its evaluation.
-  if (scope.access !== "ADMIN" && scope.access !== "MENTOR") {
+  if (scope.access !== "ADMIN" && scope.access !== ROLE.MENTOR) {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
 
@@ -385,7 +386,7 @@ export async function listProjectEvaluations(
     );
   // Rubric scores are internal until a dedicated, audited release decision exists.
   // Approval of a delivery is not publication of its evaluation.
-  if (scope.access !== "ADMIN" && scope.access !== "MENTOR") {
+  if (scope.access !== "ADMIN" && scope.access !== ROLE.MENTOR) {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
 

@@ -18,6 +18,7 @@ import {
 } from "./learner-image-gallery-parity-model";
 
 import { featureReady } from "@/config/features";
+import { ROLE } from "@/modules/identity/roles";
 const uuid = z.string().uuid();
 export type GalleryAccess = { membershipId: string; collegeId: string; canEdit: boolean; canUpload: boolean };
 export class LearnerGalleryError extends Error {
@@ -55,9 +56,9 @@ async function galleryAccess(context: RequestContext, rawMembershipId: unknown):
     ))
     .where(eq(collegeMemberships.id, targetId)).limit(1);
   if (!target) throw new LearnerGalleryError("GALLERY_NOT_FOUND");
-  const self = hasMembershipRole(context, "LEARNER") &&
+  const self = hasMembershipRole(context, ROLE.LEARNER) &&
     context.membership?.id === target.id && context.user.id === target.userId;
-  const staff = hasMembershipRole(context, "COLLEGE_ADMIN") &&
+  const staff = hasMembershipRole(context, ROLE.COLLEGE_ADMIN) &&
     context.membership?.collegeId === target.collegeId;
   const superAdmin = isSuperAdmin(context) &&
     context.adminScope?.collegeId === target.collegeId;
@@ -91,7 +92,7 @@ const galleryKeySchema = z.string().regex(
  * Staff may review and deactivate but cannot place identity evidence in a
  * learner's public-facing photo set without the learner's own choice. */
 async function requireOwnGalleryUpload(context: RequestContext) {
-  if (!context.membership || !hasMembershipRole(context, "LEARNER") ||
+  if (!context.membership || !hasMembershipRole(context, ROLE.LEARNER) ||
       context.user.platformStatus !== "ACTIVE" ||
       context.membership.status !== "ACTIVE")
     throw new LearnerGalleryError("GALLERY_FORBIDDEN");
@@ -215,9 +216,9 @@ async function recheckGalleryWriteActor(
   }
   const actor = context.membership;
   const ownLearner = actor?.id === access.membershipId &&
-    hasMembershipRole(context, "LEARNER");
+    hasMembershipRole(context, ROLE.LEARNER);
   const collegeStaff = actor?.collegeId === access.collegeId &&
-    hasMembershipRole(context, "COLLEGE_ADMIN");
+    hasMembershipRole(context, ROLE.COLLEGE_ADMIN);
   if (!actor || (!ownLearner && !collegeStaff))
     throw new LearnerGalleryError("GALLERY_FORBIDDEN");
   const [active] = await tx.select({ id: collegeMemberships.id })

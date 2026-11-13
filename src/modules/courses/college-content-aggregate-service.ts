@@ -31,6 +31,7 @@ import {
 } from "./college-content-aggregate-model";
 
 import {collegeLiveClassQuerySchema,istDayBoundary} from "./college-live-classes-model";
+import { ROLE } from "@/modules/identity/roles";
 const programDepartment = alias(departments, "content_program_department");
 
 /**
@@ -50,7 +51,7 @@ export async function listCollegeContentAggregate(
   } : rawQuery);
   const pageSize=query.pageSize??defaultPageSize;
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+  if (!membership || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
       !can(context, "courses.read", {
         collegeId: membership.collegeId,
         organizationId: membership.organizationId,

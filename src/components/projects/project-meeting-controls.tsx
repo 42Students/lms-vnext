@@ -17,6 +17,7 @@ import {projectMeetingTransitionPayload} from "@/modules/projects/project-meetin
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 
+import { ROLE } from "@/modules/identity/roles";
 type Meeting = {
   id: string;
   status: string;
@@ -827,9 +828,9 @@ export function ProjectMeetingTransitionActions({
   function discardNote(){setOpen(null);setNote("");}
   const guard=useProjectEditorDiscardGuard(open!==null,Boolean(note.trim()),pending,discardNote);
   const manager =
-    mode === "MENTOR" || mode === "ADMIN";
+    mode === ROLE.MENTOR || mode === "ADMIN";
   const learnerOwnRequest =
-    mode === "LEARNER" &&
+    mode === ROLE.LEARNER &&
     meeting.status === "REQUESTED" &&
     meeting.requestedByMembershipId ===
       currentMembershipId;
@@ -862,7 +863,7 @@ export function ProjectMeetingTransitionActions({
     setPending(true);
     try {
       await projectMutation(
-        mode === "MENTOR" ? `/api/projects/${projectId}/meetings/${meeting.id}/mentor-decision` : `/api/projects/${projectId}/meetings/${meeting.id}/transition`,
+        mode === ROLE.MENTOR ? `/api/projects/${projectId}/meetings/${meeting.id}/mentor-decision` : `/api/projects/${projectId}/meetings/${meeting.id}/transition`,
         "POST",
         projectMeetingTransitionPayload(action,mode,meeting.updatedAt,note),
       );

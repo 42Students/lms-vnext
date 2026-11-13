@@ -8,6 +8,7 @@ import {
   collegeActivityExportQuerySchema,
 } from "./college-activity-export-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function exportCollegeActivity(context: RequestContext, raw: unknown) {
   const query = collegeActivityExportQuerySchema.parse(raw);
   const { view, category, ...filters } = query;
@@ -16,7 +17,7 @@ export async function exportCollegeActivity(context: RequestContext, raw: unknow
     TEACHING: "COURSES", PROJECTS: "PROJECTS",
   } as const;
   const member = context.membership;
-  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+  if (!member || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
     !can(context, "activity.read", {
       collegeId: member.collegeId, organizationId: member.organizationId,
     })) throw new AuthorizationError("activity.read");

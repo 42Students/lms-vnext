@@ -11,6 +11,7 @@ import { ProjectsServiceError } from "./errors";
 import { safeMentorProjectEventLabel } from "./mentor-portfolio-model";
 import { mentorProjectActivityEventTypes, mentorProjectActivityPage, mentorProjectActivityQuerySchema, mentorProjectActivitySince } from "./mentor-project-activity-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Exact project history read; raw actor names, summaries and metadata stay private. */
 export async function getMentorProjectActivityHistory(
   context: RequestContext, rawQuery: unknown,
@@ -18,7 +19,7 @@ export async function getMentorProjectActivityHistory(
   const query=mentorProjectActivityQuerySchema.parse(rawQuery);
   const membership=context.membership;
   if(!membership || !hasActiveMembership(context) ||
-      !hasMembershipRole(context,"MENTOR") ||
+      !hasMembershipRole(context,ROLE.MENTOR) ||
       !can(context,"projects.read",{
         collegeId:membership.collegeId,organizationId:membership.organizationId,
       })) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
@@ -31,7 +32,7 @@ export async function getMentorProjectActivityHistory(
       sourceTab:string;importance:string;occurredAt:Date}[],
   };
   const scope=await requireProjectReadAccess(context,query.projectId);
-  if(scope.access!=="MENTOR" || scope.collegeId!==membership.collegeId ||
+  if(scope.access!==ROLE.MENTOR || scope.collegeId!==membership.collegeId ||
     !can(context,"projects.read",{
       collegeId:scope.collegeId,organizationId:scope.organizationId,
     })) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");

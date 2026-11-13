@@ -16,6 +16,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type ThreadHeaderRow={recruiter_name:string|null;job_title:string|null;company_name:string|null;access_ended:boolean};
 
 /** Header fields for an already-authorized thread, projected the same way as
@@ -50,7 +51,7 @@ export default async function TpoRecruiterConversationPage({params}:{
  params:Promise<{threadId:string}>,
 }){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");
  const [threadsReady,messagesReady]=await Promise.all([
   placementTableExists("placement_tpo_message_threads"),
   placementTableExists("placement_tpo_messages"),
@@ -99,7 +100,7 @@ export default async function TpoRecruiterConversationPage({params}:{
       <p className="py-2 text-center text-xs font-semibold text-muted-foreground leading-5">
        {createDateFormatter("en-IN", {dateStyle:"full",timeZone:"Asia/Kolkata"}).format(item.createdAt)}
       </p>:null}
-    <article className={bubbleStyles["bubble"]+" "+(item.senderType==="TPO"?bubbleStyles["mine"]:"")}>
+    <article className={bubbleStyles["bubble"]+" "+(item.senderType===ROLE.TPO?bubbleStyles["mine"]:"")}>
      <p className="text-xs font-semibold text-muted-foreground leading-5">
       {item.senderType==="RECRUITER"?(item.senderName??data.thread.participantName):
        item.senderId===context.user.id?"You":(item.senderName??"Placement team")} ·
@@ -112,7 +113,7 @@ export default async function TpoRecruiterConversationPage({params}:{
       </div>:null}
      {item.event?<span className="mb-1 block text-xs font-semibold text-muted-foreground">{item.event.replaceAll("_"," ")}</span>:null}
      <p className="mt-2 whitespace-pre-wrap break-words text-sm text-foreground leading-[22px]">{item.body}</p>
-     {item.senderType==="TPO"&&item.readAt?<p className="mt-2 text-right text-xs text-muted-foreground leading-5">Seen</p>:null}
+     {item.senderType===ROLE.TPO&&item.readAt?<p className="mt-2 text-right text-xs text-muted-foreground leading-5">Seen</p>:null}
     </article></div>)}
   </section>
   <TpoRecruiterMessageReply threadId={threadId} actorUserId={context.user.id}

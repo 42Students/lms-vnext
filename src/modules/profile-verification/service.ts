@@ -12,6 +12,7 @@ import {
   type VerificationSection,
 } from "./domain";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Every method in this repository is server-authoritative. No target identity,
  * TPO role, document readiness, or snapshot may be taken from request JSON.
@@ -69,7 +70,7 @@ function ownLearner(context: RequestContext, membershipId: string) {
   if (context.user.platformStatus !== "ACTIVE" ||
       context.membership?.id !== membershipId ||
       context.membership.status !== "ACTIVE" ||
-      !hasMembershipRole(context, "LEARNER")) {
+      !hasMembershipRole(context, ROLE.LEARNER)) {
     throw new AuthorizationError("profile-verification.review");
   }
 }
@@ -77,8 +78,8 @@ function ownLearner(context: RequestContext, membershipId: string) {
 function actor(context: RequestContext): Actor {
   let kind: Actor["kind"];
   if (isSuperAdmin(context)) kind = "SUPER_ADMIN";
-  else if (hasMembershipRole(context, "COLLEGE_ADMIN")) kind = "COLLEGE_ADMIN";
-  else if (hasMembershipRole(context, "TPO")) kind = "TPO";
+  else if (hasMembershipRole(context, ROLE.COLLEGE_ADMIN)) kind = "COLLEGE_ADMIN";
+  else if (hasMembershipRole(context, ROLE.TPO)) kind = "TPO";
   else kind = "LEARNER";
   return { userId: context.user.id, kind, displayName: null };
 }
@@ -125,7 +126,7 @@ export async function reviewProfileVerification(
 ): Promise<VerificationRecord> {
   const target = await repository.resolveLearner(input.learnerMembershipId);
   assertLearnerTarget(target);
-  const tpo = hasMembershipRole(context, "TPO");
+  const tpo = hasMembershipRole(context, ROLE.TPO);
   // Always look up the team's role and college settings server-side, at action time.
   const [tpoAdministrator, tpoVerificationEnabled] = tpo
     ? await Promise.all([
@@ -140,7 +141,7 @@ export async function reviewProfileVerification(
   });
   const reviewer: Actor = {...actor(context), displayName:
     await repository.reviewerDisplayName(context.user.id)};
-  if (reviewer.kind === "LEARNER") throw new VerificationStateError("NOT_ALLOWED");
+  if (reviewer.kind === ROLE.LEARNER) throw new VerificationStateError("NOT_ALLOWED");
   return repository.withLockedTransition(input.learnerMembershipId, input.section, async (existing) => {
     // Recheck after the writer has acquired the college lock. The earlier
     // fast-fail check cannot protect against a grant/settings revocation race.

@@ -19,6 +19,7 @@ import {
 import type { PersonMembershipView } from "./service";
 import { personMembershipIdSchema } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 export type LearnerProfileView = {
   membershipId: string;
   rollNumber: string | null;
@@ -91,7 +92,7 @@ function requireProfileRole(
 ) {
   if (!person.membership.roles.includes(role)) {
     throw new PeopleServiceError(
-      role === "LEARNER"
+      role === ROLE.LEARNER
         ? "LEARNER_ROLE_REQUIRED"
         : "FACULTY_ROLE_REQUIRED",
     );
@@ -195,9 +196,9 @@ function requireOwnFacultyMembership(context: RequestContext) {
   const membership = context.membership;
   if (
     !membership ||
-    !hasMembershipRole(context, "FACULTY") ||
-    hasMembershipRole(context, "MENTOR") ||
-    hasMembershipRole(context, "COLLEGE_ADMIN")
+    !hasMembershipRole(context, ROLE.FACULTY) ||
+    hasMembershipRole(context, ROLE.MENTOR) ||
+    hasMembershipRole(context, ROLE.COLLEGE_ADMIN)
   ) {
     throw new AuthorizationError("profile.self.manage");
   }
@@ -225,7 +226,7 @@ export async function getOwnFacultyProfile(
     // role by resolveRequestContext. Persisted membership can legitimately
     // include an additional Mentor/Admin grant: those *inactive* roles must
     // not prevent the user reading their own selected Faculty profile.
-    !person.membership.roles.includes("FACULTY")
+    !person.membership.roles.includes(ROLE.FACULTY)
   ) {
     throw new AuthorizationError("profile.self.manage");
   }
@@ -242,7 +243,7 @@ function requireOwnLearnerMembership(
   if (
     !context.membership ||
     context.membership.status !== "ACTIVE" ||
-    !hasMembershipRole(context, "LEARNER")
+    !hasMembershipRole(context, ROLE.LEARNER)
   ) {
     throw new AuthorizationError("academics.read");
   }

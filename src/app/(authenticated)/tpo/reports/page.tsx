@@ -26,6 +26,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { formatNumberIN } from "@/lib/safe-format";
 
+import { ROLE } from "@/modules/identity/roles";
 type SearchParams = {
   seasonId?: string | string[];
   jobId?: string | string[];
@@ -44,7 +45,7 @@ export default async function TpoReportsPage({
 }) {
   const context = await getCurrentRequestContext();
 
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     redirect("/dashboard");
   }
 

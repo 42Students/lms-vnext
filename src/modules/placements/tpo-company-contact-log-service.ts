@@ -18,6 +18,7 @@ import {
 } from "./tpo-operations-export-model";
 
 import { featureReady } from "@/config/features";
+import { ROLE } from "@/modules/identity/roles";
 export { tpoCompanyContactLogQuerySchema } from "./tpo-operations-export-model";
 
 /**
@@ -29,7 +30,7 @@ export async function getTpoCompanyContactLog(
   context: RequestContext,
   rawQuery: unknown,
 ) {
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = context.membership.collegeId;

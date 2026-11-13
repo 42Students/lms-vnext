@@ -9,6 +9,7 @@ import {
   PROJECT_TASK_REVIEW_DECISIONS,
 } from "./constants";
 
+import { ROLE } from "@/modules/identity/roles";
 const projectKeySchema = z
   .string()
   .trim()
@@ -408,8 +409,8 @@ export const addProjectMemberInputSchema = z
   .strict()
   .refine(
     (input) =>
-      (!input.isPrimary || (input.role === "MENTOR" && (input.roleKind === undefined || input.roleKind === "MENTOR") && input.canMutate !== false)) &&
-      (input.roleKind === undefined || input.roleKind === "OBSERVER" || input.roleKind === "REVIEWER" || input.roleKind === "QA" || (input.role === "MENTOR" ? ["MENTOR","CO_MENTOR"].includes(input.roleKind) : input.roleKind === "LEARNER")) &&
+      (!input.isPrimary || (input.role === ROLE.MENTOR && (input.roleKind === undefined || input.roleKind === ROLE.MENTOR) && input.canMutate !== false)) &&
+      (input.roleKind === undefined || input.roleKind === "OBSERVER" || input.roleKind === "REVIEWER" || input.roleKind === "QA" || (input.role === ROLE.MENTOR ? ["MENTOR","CO_MENTOR"].includes(input.roleKind) : input.roleKind === ROLE.LEARNER)) &&
       (!["OBSERVER","REVIEWER","QA"].includes(input.roleKind ?? "") || input.canMutate !== true),
     {
       message:

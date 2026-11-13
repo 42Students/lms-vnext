@@ -11,6 +11,7 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {notifyProjectMemberships} from "./project-notification-service";
 import type {RequestContext} from "@/modules/identity/context";
 
+import { ROLE } from "@/modules/identity/roles";
 /** COL-projects-15: one all-or-nothing learner-roster replacement. Class teams stay managed by their own workflow. */
 export async function replaceCollegeProjectLearners(context:RequestContext,projectId:string,raw:unknown){
  const input=replaceCollegeProjectRosterSchema.parse(raw);
@@ -32,7 +33,7 @@ export async function replaceCollegeProjectLearners(context:RequestContext,proje
   const existing=await tx.select().from(projectMembers)
    .where(and(eq(projectMembers.projectId,scope.project.id),isNull(projectMembers.endedAt)))
    .for("update");
-  const existingLearners=existing.filter(x=>x.role==="LEARNER");
+  const existingLearners=existing.filter(x=>x.role===ROLE.LEARNER);
   const selected=new Set(input.learnerMembershipIds);
   const toRemove=input.mode==="REPLACE"
    ?existingLearners.filter(x=>!selected.has(x.membershipId)):[];

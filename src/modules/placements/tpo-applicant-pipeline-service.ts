@@ -11,6 +11,7 @@ import { PlacementsServiceError } from "./errors";
 import { requireTpoJobActor } from "./tpo-job-write-base";
 import { tpoApplicantPipelinePage, tpoApplicantPipelineParams,tpoApplicantSubmittedSince } from "./tpo-applicant-pipeline-model";
 import {tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
+import { ROLE } from "@/modules/identity/roles";
 /** Job/college scoped compatibility facets. Org-wide indexing uses another service. */
 const oldFacetsSchema=z.strictObject({
  submittedAfter:z.iso.date().optional(),submittedBefore:z.iso.date().optional(),
@@ -32,7 +33,7 @@ export const legacyTpoApplicantRouteMap={
 } as const;
 export async function getTpoApplicantPipeline(context: RequestContext, raw: unknown) {
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context,"TPO") ||
+  if (!membership || !hasMembershipRole(context,ROLE.TPO) ||
       membership.status!=="ACTIVE" || context.user.platformStatus!=="ACTIVE") {
     throw new AuthorizationError("placements.manage");
   }
@@ -111,7 +112,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     from?gte(placementApplications.submittedAt,from):undefined,
     before?lte(placementApplications.submittedAt,before):undefined,
     oldFacets.source==="COLLEGE"?sql<boolean>`${placementApplications.submittedByUserId}<>${collegeMemberships.userId}`:
-     oldFacets.source==="LEARNER"?eq(placementApplications.submittedByUserId,collegeMemberships.userId):undefined,
+     oldFacets.source===ROLE.LEARNER?eq(placementApplications.submittedByUserId,collegeMemberships.userId):undefined,
     oldFacets.minScore!==undefined?gte(screeningScore,oldFacets.minScore):undefined,
     oldFacets.maxScore!==undefined?lte(screeningScore,oldFacets.maxScore):undefined,
     rosterScope,

@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type SearchParams = { days?: string | string[] };
 const dateTime = istDateTimeFormatter;
 function first(value: string | string[] | undefined) {
@@ -27,7 +28,7 @@ export default async function TpoScheduleConflictsPage({
   searchParams: Promise<SearchParams>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) redirect("/dashboard");
   const params = await searchParams;
   const validated = tpoScheduleConflictsQuerySchema.safeParse({
     ...(first(params.days) ? { days: first(params.days) } : {}),

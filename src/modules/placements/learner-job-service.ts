@@ -60,10 +60,11 @@ import {
   type PlacementEligibilityResult,
 } from "./eligibility-service";
 
+import { ROLE } from "@/modules/identity/roles";
 function requireLearner(context: RequestContext) {
   if (
     !context.membership ||
-    !hasMembershipRole(context, "LEARNER")
+    !hasMembershipRole(context, ROLE.LEARNER)
   ) {
     throw new AuthorizationError("placements.read");
   }

@@ -14,6 +14,7 @@ import {Alert} from "@/components/ui/alert";
 import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
 import { TextLink } from "@/components/ui/text-link";
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 
 /** Real, per-college Companies/Today focus. Email replies and CRM follow-ups
@@ -22,7 +23,7 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
  searchParams:Promise<{scope?:string|string[];view?:string|string[];lead?:string|string[];day?:string|string[]}>
 }){
  const context=await getCurrentRequestContext();
- if(!hasMembershipRole(context,"TPO")||!context.membership)redirect("/dashboard");
+ if(!hasMembershipRole(context,ROLE.TPO)||!context.membership)redirect("/dashboard");
 
  const params=await searchParams;
  const invalidShape=Object.keys(params).some(key=>!["scope","view","lead","day"].includes(key))||

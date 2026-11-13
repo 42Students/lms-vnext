@@ -21,6 +21,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { formatNumberIN } from "@/lib/safe-format";
 
+import { ROLE } from "@/modules/identity/roles";
 type SearchParams = {
   actorId?: string | string[];
   entityType?: string | string[];
@@ -38,7 +39,7 @@ export default async function TpoActorAuditPage({
   searchParams,
 }: { searchParams: Promise<SearchParams> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) redirect("/dashboard");
   await requireTpoBatchActor(context);
   const raw = await searchParams;
   // An ambiguous filter must not be reduced to its first value before the

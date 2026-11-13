@@ -14,9 +14,10 @@ import { projectTpoScheduleConflicts } from "./tpo-schedule-conflicts-model";
 import {canScheduleOnCollegeBlockedDay} from "./tpo-blocked-day-decision";
 import { parseIstRoundLocalTime, tpoRoundCalendarMutationSchema } from "./tpo-round-calendar-model";
 
+import { ROLE } from "@/modules/identity/roles";
 async function requireTpo(context: RequestContext) {
   const member = context.membership;
-  if (!member || !hasMembershipRole(context, "TPO"))
+  if (!member || !hasMembershipRole(context, ROLE.TPO))
     throw new AuthorizationError("placements.manage");
   const collegeId = member.collegeId;
   if (!can(context, "placements.manage", { collegeId }))

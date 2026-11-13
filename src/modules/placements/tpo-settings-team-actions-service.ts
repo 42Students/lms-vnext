@@ -12,10 +12,11 @@ import {placementTableExists} from "@/modules/placements/staged-tables";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {hasDriveOwnerColumn} from "@/modules/placements/tpo-team-unowned-service";
 
+import { ROLE } from "@/modules/identity/roles";
 const memberSchema=z.string().uuid();
 async function requireScope(context:RequestContext){
  const membership=context.membership;
- if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ if(!membership||!hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
  await requirePlacementManageScope(context,membership.collegeId);
  if(!await placementTableExists("placement_tpo_team_members"))
   throw new Error("PLACEMENT_TEAM_ASSIGNMENTS_UNAVAILABLE");
@@ -36,9 +37,9 @@ export async function listTpoTeamAssignableStaff(context:RequestContext){
  const dedup=new Map<string,{membershipId:string;displayName:string;hasTpoRole:boolean}>();
  for(const row of rows){
   const existing=dedup.get(row.membershipId);
-  if(existing){if(row.role==="TPO")existing.hasTpoRole=true;continue;}
+  if(existing){if(row.role===ROLE.TPO)existing.hasTpoRole=true;continue;}
   dedup.set(row.membershipId,{membershipId:row.membershipId,
-   displayName:row.displayName?.trim()||"Unnamed faculty member",hasTpoRole:row.role==="TPO"});
+   displayName:row.displayName?.trim()||"Unnamed faculty member",hasTpoRole:row.role===ROLE.TPO});
  }
  return [...dedup.values()];
 }

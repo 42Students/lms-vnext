@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Only scoped administrators can alter the student-visible state of shared lesson content. */
 export const lessonVisibilityCommandSchema = z.object({
   lessonContentId: z.string().uuid(),
@@ -17,7 +18,7 @@ export function lessonVisibleToReader(input: {
 }): boolean {
   if (input.role === "ADMIN") return true;
   if (!input.belongsToAssignedDelivery) return false;
-  if (input.role === "FACULTY") return true;
+  if (input.role === ROLE.FACULTY) return true;
   return input.lessonPublished && input.contentPublished && input.visibleToStudents;
 }
 

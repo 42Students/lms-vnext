@@ -12,6 +12,7 @@ import {
 import {hasMembershipRole} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 const inputSchema=z.object({
   learnerMembershipId:z.string().uuid(),
@@ -26,7 +27,7 @@ export const POST = route(
     const context = actor!;
     const membership=context.membership;
     if(!membership||membership.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
-       !hasMembershipRole(context,"COLLEGE_ADMIN"))
+       !hasMembershipRole(context,ROLE.COLLEGE_ADMIN))
       return NextResponse.json({error:"FORBIDDEN"},{status:403});
     requirePermission(context,"courses.manage",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,

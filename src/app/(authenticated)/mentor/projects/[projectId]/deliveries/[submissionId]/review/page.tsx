@@ -9,12 +9,13 @@ import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evide
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
+import { ROLE } from "@/modules/identity/roles";
 export default async function MentorDeliveryVersionPage({params}:{
   params:Promise<{projectId:string;submissionId:string}>;
 }){
   const raw=await params;
   const context=await getCurrentRequestContext();
-  if(!hasMembershipRole(context,"MENTOR"))redirect("/dashboard");
+  if(!hasMembershipRole(context,ROLE.MENTOR))redirect("/dashboard");
   let data:Awaited<ReturnType<typeof getMentorDeliveryVersion>>;
   try{
     data=await getMentorDeliveryVersion(context,raw);

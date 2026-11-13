@@ -16,6 +16,7 @@ import {
 } from "./project-api";
 import { Label } from "@/components/ui/label";
 
+import { ROLE } from "@/modules/identity/roles";
 type ProjectMemberRole = "LEARNER" | "MENTOR";
 
 type Candidate = {
@@ -68,7 +69,7 @@ export function AddProjectMemberControl({
   const mutationLock = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const dirty=Boolean(query.trim()||roleLabel.trim()||isPrimary||
-    role!=="LEARNER"||membershipId);
+    role!==ROLE.LEARNER||membershipId);
   const guard=useProjectEditorDiscardGuard(open,dirty,pending,()=>{
     setOpen(false);setError(null);
   });
@@ -138,7 +139,7 @@ export function AddProjectMemberControl({
           membershipId,
           role,
           isPrimary:
-            role === "MENTOR" ? isPrimary : false,
+            role === ROLE.MENTOR ? isPrimary : false,
           roleLabel: roleLabel.trim() || undefined,
         },
       );
@@ -146,7 +147,7 @@ export function AddProjectMemberControl({
       showToast({
         tone: "success",
         title:
-          role === "MENTOR"
+          role === ROLE.MENTOR
             ? "Mentor added"
             : "Learner added",
       });
@@ -272,13 +273,13 @@ export function AddProjectMemberControl({
                 setRoleLabel(event.target.value)
               }
               placeholder={
-                role === "MENTOR"
+                role === ROLE.MENTOR
                   ? "e.g. Technical mentor"
                   : "e.g. Team lead"
               }
             />
           </Label>
-          {role === "MENTOR" ? (
+          {role === ROLE.MENTOR ? (
             <Label className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-3)]">
               <Checkbox
                 checked={isPrimary}
@@ -404,7 +405,7 @@ export function ProjectMemberActions({
   return (
     <>
       <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
-        {member.role === "MENTOR" ? (
+        {member.role === ROLE.MENTOR ? (
           <Button
             size="sm"
             variant="secondary"

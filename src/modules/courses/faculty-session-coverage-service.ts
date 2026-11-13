@@ -5,11 +5,12 @@ import {can,AuthorizationError} from "@/modules/permissions/policy";
 import {facultySessionCoverage,facultySessionCoverageSchema}
   from "./faculty-session-coverage-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** No record is treated as absent/present until persisted marks actually exist. */
 export async function getFacultySessionCoverage(context:RequestContext,raw:unknown){
   const {deliveryId}=facultySessionCoverageSchema.parse(raw);
   const membership=context.membership;
-  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY")||
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.FACULTY)||
     !can(context,"courses.read",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     }))throw new AuthorizationError("courses.read");

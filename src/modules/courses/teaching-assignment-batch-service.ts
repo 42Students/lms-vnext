@@ -19,6 +19,7 @@ import {CoursesServiceError,postgresConstraintName} from "./errors";
 import {createCourseTeachingAssignmentsBatchInputSchema} from "./validation";
 import {COURSE_TEACHING_ROLES} from "./constants";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Legacy ADMIN and administrative Faculty grants map to the explicit
  * courses.manage permission in their active college membership. A global
  * Super Admin must still choose a college before mutating its assignments. */
@@ -103,7 +104,7 @@ export async function createCourseTeachingAssignmentsBatch(
  ))throw new CoursesServiceError("OFFERING_COHORT_PERIOD_MISMATCH");
  if(member.status!=="ACTIVE")throw new CoursesServiceError("MEMBERSHIP_NOT_ACTIVE");
  if(member.collegeId!==first.collegeId)throw new CoursesServiceError("MEMBERSHIP_COLLEGE_MISMATCH");
- if(!member.roles.includes("FACULTY"))throw new CoursesServiceError("FACULTY_ROLE_REQUIRED");
+ if(!member.roles.includes(ROLE.FACULTY))throw new CoursesServiceError("FACULTY_ROLE_REQUIRED");
  try{
   return await getDb().transaction(async tx=>{
    // Explicit row locks serialize overlapping writers, including same-member

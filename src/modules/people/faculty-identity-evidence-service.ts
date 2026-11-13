@@ -10,6 +10,7 @@ import {createPrivateReadGrant,createPrivateUploadGrant,readPrivateObjectAttesta
 import {facultyProfileDocumentSchema} from "./faculty-profile-document";
 import {facultyProfileDocumentStorageReady} from "./faculty-profile-readiness";
 
+import { ROLE } from "@/modules/identity/roles";
 const kind=z.enum(["AADHAAR","PAN"]);
 const mimes=["application/pdf","image/jpeg","image/png","image/webp"] as const;
 const issueSchema=z.strictObject({kind,contentType:z.enum(mimes),
@@ -20,7 +21,7 @@ const readSchema=z.strictObject({kind,receiptId:z.uuid()});
 const removeSchema=z.strictObject({kind,expectedVersion:z.number().int().nonnegative()});
 function memberFor(context:RequestContext){
  const member=context.membership;
- if(!member||member.status!=="ACTIVE"||!member.roles.includes("FACULTY")||
+ if(!member||member.status!=="ACTIVE"||!member.roles.includes(ROLE.FACULTY)||
     context.user.platformStatus!=="ACTIVE")throw new Error("FACULTY_ROLE_REQUIRED");
  return member;
 }

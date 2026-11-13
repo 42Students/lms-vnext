@@ -33,6 +33,7 @@ import {
 } from "./tpo-job-write-base";
 import { placementApplicationIdSchema, placementJobIdSchema } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 type Db = ReturnType<typeof getDb>;
 type Reader = Db | TpoJobTx;
 
@@ -269,7 +270,7 @@ async function appendNote(
   return getDb().transaction(async (tx) => {
     let scope: NoteScope;
     let actorMembershipId: string | null = null;
-    if (side === "TPO") {
+    if (side === ROLE.TPO) {
       await requireTpoJobActor(tx, context);
       actorMembershipId = context.membership?.id ?? null;
       scope = await resolveTpoScope(tx, tpoCollegeId ?? "", jobId, applicationId);
@@ -326,7 +327,7 @@ async function appendNote(
       eventType: "PLACEMENTS_APPLICANT_NOTE_ADDED",
       subjectType: "placement_application",
       subjectId: applicationId,
-      summary: (side === "TPO" ? "TPO" : "Recruiter") + " added a private note on an applicant of " + scope.jobTitle,
+      summary: (side === ROLE.TPO ? "TPO" : "Recruiter") + " added a private note on an applicant of " + scope.jobTitle,
       metadata: { noteId: saved.id, side, jobId, length: input.body.length },
       occurredAt: new Date(),
     });

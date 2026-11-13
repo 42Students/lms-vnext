@@ -57,6 +57,7 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { ROLE } from "@/modules/identity/roles";
 type SearchParams = {
   journeyState?: string | string[];
   everyone?: string | string[];
@@ -215,7 +216,7 @@ export default async function TpoStudentsPage({
 }) {
   const context = await getCurrentRequestContext();
 
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     redirect("/dashboard");
   }
   // Session claims alone cannot retain student PII after TPO role removal.

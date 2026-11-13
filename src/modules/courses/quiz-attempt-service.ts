@@ -47,6 +47,7 @@ import {
   loadCourseSectionDeliveryScope,
 } from "./scope";
 
+import { ROLE } from "@/modules/identity/roles";
 type QuizQuestionRow = {
   id: string;
   questionType:
@@ -162,7 +163,7 @@ async function requireLearnerQuizAccess(
   );
 
   if (
-    access !== "LEARNER" ||
+    access !== ROLE.LEARNER ||
     !context.membership
   ) {
     throw new CoursesServiceError(
@@ -506,7 +507,7 @@ export async function getMyQuizAttempts(
   );
 
   if (
-    access !== "LEARNER" ||
+    access !== ROLE.LEARNER ||
     !context.membership
   ) {
     throw new CoursesServiceError(

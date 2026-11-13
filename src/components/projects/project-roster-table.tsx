@@ -11,6 +11,7 @@ import { Table } from "@/components/ui/table";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 
+import { ROLE } from "@/modules/identity/roles";
 export type ProjectRosterRow = {
   id: string;
   membershipId: string;
@@ -39,7 +40,7 @@ export function ProjectRosterTable({ projectId, rows }: {
   const query = search.trim().toLowerCase();
   const filtered = rows.filter(member =>
     (role === "ALL" ||
-      (role === "FACULTY" ? member.role === "MENTOR" : member.role === role)) &&
+      (role === ROLE.FACULTY ? member.role === ROLE.MENTOR : member.role === role)) &&
     (!query || (member.displayName ?? "").toLowerCase().includes(query) ||
       member.membershipId.toLowerCase().includes(query)),
   );
@@ -81,16 +82,16 @@ export function ProjectRosterTable({ projectId, rows }: {
         <tbody>{visible.map(member=><tr key={member.id} className="hover:bg-[var(--lms-neutral-50)]">
           <th scope="row" className="border-b border-[var(--lms-canvas-border)] px-3 py-3 font-semibold text-foreground">{member.displayName?.trim()||"—"}</th>
           <td className="border-b border-[var(--lms-canvas-border)] px-3 py-3">
-            <StatusBadge tone={member.role==="MENTOR"?"info":"neutral"}>
-              {member.role==="MENTOR"&&member.isPrimary?"Primary mentor":
-                member.roleLabel?.trim()||(member.role==="MENTOR"?"Faculty":"Learner")}
+            <StatusBadge tone={member.role===ROLE.MENTOR?"info":"neutral"}>
+              {member.role===ROLE.MENTOR&&member.isPrimary?"Primary mentor":
+                member.roleLabel?.trim()||(member.role===ROLE.MENTOR?"Faculty":"Learner")}
             </StatusBadge>
           </td>
           <td className="border-b border-[var(--lms-canvas-border)] px-3 py-3">
-            {member.role!=="LEARNER"?"—":member.tasksAssigned||<StatusBadge tone="warning">None</StatusBadge>}
+            {member.role!==ROLE.LEARNER?"—":member.tasksAssigned||<StatusBadge tone="warning">None</StatusBadge>}
           </td>
           <td className="whitespace-nowrap border-b border-[var(--lms-canvas-border)] px-3 py-3">
-            {member.role!=="LEARNER"&&!member.tasksAssigned?"—":
+            {member.role!==ROLE.LEARNER&&!member.tasksAssigned?"—":
               member.tasksAssigned?member.tasksDone+" · "+member.tasksInReview+" · "+member.tasksInProgress:"—"}
           </td>
           <td className="whitespace-nowrap border-b border-[var(--lms-canvas-border)] px-3 py-3">{member.lastTaskUpdate||"—"}</td>

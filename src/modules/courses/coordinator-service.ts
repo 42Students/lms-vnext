@@ -29,6 +29,7 @@ import {
   type CoordinatorFacts,
 } from "./coordinator-policy";
 
+import { ROLE } from "@/modules/identity/roles";
 type Reader = Pick<PermissionTransaction, "select">;
 
 const idSchema = z.string().uuid();
@@ -124,7 +125,7 @@ function activeFacultyMembership(context: RequestContext, collegeId: string) {
     !membership ||
     membership.status !== "ACTIVE" ||
     membership.collegeId !== collegeId ||
-    !membership.roles.includes("FACULTY")
+    !membership.roles.includes(ROLE.FACULTY)
   ) {
     return null;
   }
@@ -203,7 +204,7 @@ export async function requireSharedContentAuthority(
   context: RequestContext,
   scope: { offeringId: string; collegeId: string; organizationId: string },
 ): Promise<OfferingContentAuthority> {
-  if (isSuperAdmin(context) || hasMembershipRole(context, "COLLEGE_ADMIN")) {
+  if (isSuperAdmin(context) || hasMembershipRole(context, ROLE.COLLEGE_ADMIN)) {
     requirePermission(context, "courses.manage", {
       organizationId: scope.organizationId,
       collegeId: scope.collegeId,
@@ -243,7 +244,7 @@ export async function assertSharedWriteStillAllowed(
   context: RequestContext,
   scope: { offeringId: string; collegeId: string; organizationId: string },
 ): Promise<void> {
-  if (isSuperAdmin(context) || hasMembershipRole(context, "COLLEGE_ADMIN")) return;
+  if (isSuperAdmin(context) || hasMembershipRole(context, ROLE.COLLEGE_ADMIN)) return;
   await assertPersistedOfferingContentAuthority(tx, context, {
     id: scope.offeringId,
     collegeId: scope.collegeId,
@@ -596,7 +597,7 @@ export async function listMyCoordinatedOfferings(
   context: RequestContext,
 ): Promise<CoordinatedOffering[]> {
   const membership = context.membership;
-  if (!membership || membership.status !== "ACTIVE" || !membership.roles.includes("FACULTY")) return [];
+  if (!membership || membership.status !== "ACTIVE" || !membership.roles.includes(ROLE.FACULTY)) return [];
   const rows = await getDb()
     .select({
       offeringId: courseOfferings.id,

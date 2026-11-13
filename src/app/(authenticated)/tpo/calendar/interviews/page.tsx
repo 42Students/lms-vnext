@@ -17,10 +17,11 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import {tpoInterviewWindowSchema} from "@/modules/placements/tpo-interview-readiness-model";
 import {z} from "zod";
+import { ROLE } from "@/modules/identity/roles";
 type Props={searchParams:Promise<{days?:string|string[];page?:string|string[];q?:string|string[]}>};
 export default async function TpoInterviewReadinessPage({searchParams}:Props){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");
  const query=await searchParams;
  const parsed=tpoInterviewWindowSchema.extend({
   page:z.coerce.number().int().min(1).max(10000).default(1),

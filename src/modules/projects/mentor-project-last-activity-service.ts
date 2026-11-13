@@ -9,6 +9,7 @@ import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {ProjectsServiceError} from "./errors";
 import {listMyProjectInstances} from "./member-service";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Reads a real last activity event, not project_instances.updated_at.
  * Uses only verified currently assigned Mentor projects and their project
  * and meeting group keys, with college isolation at the database boundary. */
@@ -16,7 +17,7 @@ export async function getMentorProjectLastActivity(
   context:RequestContext,
 ):Promise<Map<string,Date>>{
   const member=context.membership;
-  if(!member||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR")||
+  if(!member||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR)||
     context.user.platformStatus!=="ACTIVE"||
     !can(context,"projects.read",{
       collegeId:member.collegeId,organizationId:member.organizationId,
@@ -24,7 +25,7 @@ export async function getMentorProjectLastActivity(
   if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const assigned=(await listMyProjectInstances(context)).filter(row=>
-    row.memberRole==="MENTOR"&&row.project.collegeId===member.collegeId);
+    row.memberRole===ROLE.MENTOR&&row.project.collegeId===member.collegeId);
   const ids=assigned.map(row=>row.project.id);
   const result=new Map<string,Date>();
   if(!ids.length)return result;

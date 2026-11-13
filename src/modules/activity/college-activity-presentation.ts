@@ -1,3 +1,4 @@
+import { ROLE } from "@/modules/identity/roles";
 /** Readable audit labels, adapted from the legacy ActivityCenter's action grammar. */
 type ActivityActor={id?:string|null;displayName?:string|null;email?:string|null;actorUserType?:string|null;role?:string|null;type?:string|null};
 type ActivitySubject={subjectLabel?:string|null;subjectType:string;subjectId:string;metadata?:unknown;payloadJson?:unknown;targetNames?:Record<string,string>};
@@ -39,7 +40,7 @@ export function collegeActivityActor(actor:ActivityActor|null){
  if(actor.displayName?.trim())return actor.displayName.trim();
  if(actor.email?.trim())return actor.email.trim();
  const kind=(actor.actorUserType??actor.role??actor.type??"").toUpperCase();
- return (kind==="LEARNER"||kind==="STUDENT"?"Student #":"Staff #")+actor.id.slice(-6);
+ return (kind===ROLE.LEARNER||kind==="STUDENT"?"Student #":"Staff #")+actor.id.slice(-6);
 }
 export function collegeActivityItem(record:ActivitySubject,targetNames:Record<string,string>={}){
  if(record.subjectLabel?.trim())return record.subjectLabel.trim();

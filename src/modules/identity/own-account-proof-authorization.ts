@@ -1,5 +1,6 @@
 import type {RequestContext} from "@/modules/identity/context";
 
+import { ROLE } from "@/modules/identity/roles";
 type ProofRole="LEARNER"|"FACULTY";
 type Channel="EMAIL"|"PHONE";
 
@@ -18,11 +19,11 @@ export function ownAccountProofScope(
  if(context.user.platformStatus!=="ACTIVE"||
   !member||member.status!=="ACTIVE"||device.userId!==context.user.id||
   member.roles.length!==1||
-  (member.roles[0]!=="LEARNER"&&member.roles[0]!=="FACULTY"))
+  (member.roles[0]!==ROLE.LEARNER&&member.roles[0]!==ROLE.FACULTY))
   throw new Error("ROLE_PROOF_CONTEXT_DENIED");
  if(channel!=="EMAIL"&&channel!=="PHONE")
   throw new Error("ROLE_PROOF_CONTEXT_DENIED");
- if(expectedRollNumber!==undefined&&member.roles[0]!=="LEARNER")
+ if(expectedRollNumber!==undefined&&member.roles[0]!==ROLE.LEARNER)
   throw new Error("ROLE_PROOF_CONTEXT_DENIED");
  return {
   userId:context.user.id,membershipId:member.id,role:member.roles[0],

@@ -54,6 +54,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { istTimeFormatter, istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type CalendarAudience = "TPO" | "COLLEGE_ADMIN" | "SUPER_ADMIN";
 
 /** Bounded same-principal, same-college, same-window last verified appointments.
@@ -232,7 +233,7 @@ function normalizedState(
   );
 
   const roundKind =
-    audience !== "TPO"
+    audience !== ROLE.TPO
       ? requestedRoundKind === ""
         ? undefined
         : placementRoundKinds.find(
@@ -252,23 +253,23 @@ function normalizedState(
         ?.trim()
         .slice(0, 150) ?? "",
     kind:
-      audience === "TPO"
+      audience === ROLE.TPO
         ? kind
         : "ROUND",
-    kinds: audience === "TPO" ? parseTpoCalendarChips(first(searchParams.kinds)) : [],
+    kinds: audience === ROLE.TPO ? parseTpoCalendarChips(first(searchParams.kinds)) : [],
     roundKind,
     job:
-      audience !== "TPO"
+      audience !== ROLE.TPO
         ? first(searchParams.job)
             ?.trim()
             .slice(0, 150) ?? ""
         : "",
     // Only canonical UUIDs are eligible for the current vNext job scope;
     // legacy numeric aliases require a separately authorized alias resolver.
-    jobId: audience !== "TPO" &&
+    jobId: audience !== ROLE.TPO &&
       /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(first(searchParams.jobId) ?? "")
       ? first(searchParams.jobId)! : "",
-    focus: audience === "TPO" && ["OVERDUE","BLOCKED","BUSY"].includes(first(searchParams.focus) ?? "")
+    focus: audience === ROLE.TPO && ["OVERDUE","BLOCKED","BUSY"].includes(first(searchParams.focus) ?? "")
       ? first(searchParams.focus) as "OVERDUE" | "BLOCKED" | "BUSY"
       : null,
   };
@@ -297,7 +298,7 @@ function calendarHref(
   const company="company" in overrides?overrides.company:state.company;
   if(company)params.set("company",company);
 
-  if (audience === "TPO") {
+  if (audience === ROLE.TPO) {
     const focus = "focus" in overrides ? overrides.focus : state.focus;
     if (focus) params.set("focus", focus);
     const requestedKind="kind" in overrides?overrides.kind:state.kind;
@@ -326,15 +327,15 @@ function eventHref(
 ): string | null {
   if (event.jobId) {
     const base =
-      audience === "TPO"
+      audience === ROLE.TPO
         ? "/tpo/placements/jobs/"
-        : audience === "SUPER_ADMIN"
+        : audience === ROLE.SUPER_ADMIN
           ? "/admin/placements/jobs/"
           : "/college/placements/jobs/";
 
     const jobHref =
       base + encodeURIComponent(event.jobId);
-    if ((audience === "COLLEGE_ADMIN" || audience === "SUPER_ADMIN") &&
+    if ((audience === ROLE.COLLEGE_ADMIN || audience === ROLE.SUPER_ADMIN) &&
         event.kind === "INTERVIEW_SLOT" && event.applicationId) {
       return jobHref + "/applications?applicationId=" + encodeURIComponent(event.applicationId);
     }
@@ -343,14 +344,14 @@ function eventHref(
     // Carry the round key through the compatibility redirect so the row
     // receives keyboard focus rather than opening the result-entry form.
     return event.roundId
-      ? audience === "TPO"
+      ? audience === ROLE.TPO
         ? `${jobHref}?tab=rounds&roundId=${encodeURIComponent(event.roundId)}`
         : `${jobHref}#round-${encodeURIComponent(event.roundId)}`
       : jobHref;
   }
 
   if (
-    audience === "TPO" &&
+    audience === ROLE.TPO &&
     event.leadId
   ) {
     return (
@@ -450,7 +451,7 @@ function CalendarEventCard({
 }) {
   const href = eventHref(event, audience);
   const minutes=event.endsAt?Math.round((event.endsAt.getTime()-event.startsAt.getTime())/60_000):null;
-  const downloadable=audience!=="TPO"&&event.kind==="INTERVIEW_SLOT"&&
+  const downloadable=audience!==ROLE.TPO&&event.kind==="INTERVIEW_SLOT"&&
     minutes!==null&&minutes>=1&&minutes<=1440;
   const ics=downloadable?collegeInterviewIcs({
     id:event.id,title:[event.title,event.jobTitle,event.companyName].filter(Boolean).join(" · "),
@@ -523,7 +524,7 @@ function CalendarEventCard({
         className="mt-2">
         Download .ics
       </ButtonLink>:null}
-      {audience === "TPO" && allowFollowupEditing &&
+      {audience === ROLE.TPO && allowFollowupEditing &&
        event.kind === "FOLLOW_UP" && event.status === "OPEN" &&
        event.followupId ? (
         <TpoCalendarMoveFollowup
@@ -555,9 +556,9 @@ export async function PlacementCalendarWorkspace({
   );
 
   const basePath =
-    audience === "TPO"
+    audience === ROLE.TPO
       ? "/tpo/calendar"
-      : audience === "SUPER_ADMIN"
+      : audience === ROLE.SUPER_ADMIN
         ? "/admin/placements/calendar"
         : "/college/placements/calendar";
 
@@ -577,9 +578,9 @@ export async function PlacementCalendarWorkspace({
         from: window.from,
         to: window.to,
         company: state.company || undefined,
-        kind: audience === "TPO" && state.kinds.length ? undefined : state.kind,
+        kind: audience === ROLE.TPO && state.kinds.length ? undefined : state.kind,
         roundKind: state.roundKind,
-        tpoLegacyScope:audience==="TPO",
+        tpoLegacyScope:audience===ROLE.TPO,
       },
     ).catch((error: unknown) => {
       // Permission failures must remain permission failures; only an
@@ -587,7 +588,7 @@ export async function PlacementCalendarWorkspace({
       if (error instanceof AuthorizationError) throw error;
       return null;
     });
-  const mainSnapshot=audience==="TPO"?preserveTpoCalendarEvents(
+  const mainSnapshot=audience===ROLE.TPO?preserveTpoCalendarEvents(
     JSON.stringify([context.user.id,collegeId,window.from,window.to,
       state.company,state.kind,state.roundKind,state.kinds]),
     loadedResponse,now):{value:loadedResponse,stale:false};
@@ -596,12 +597,12 @@ export async function PlacementCalendarWorkspace({
     events: [], days: [], summary: summarizePlacementCalendar([], now),
   };
 
-  const bookingResult=audience==="SUPER_ADMIN"?
+  const bookingResult=audience===ROLE.SUPER_ADMIN?
     await listSuperAdminBookedInterviews(context,window.from,window.to).catch(()=>null):null;
-  const bookings=audience==="SUPER_ADMIN"?recentAdminBooked(
+  const bookings=audience===ROLE.SUPER_ADMIN?recentAdminBooked(
     context.user.id+":"+collegeId+":"+window.from+":"+window.to,
     bookingResult,now.getTime()):null;
-  const eventTypeCountsSource=audience==="TPO"&&(state.kind||state.company||state.kinds.length)
+  const eventTypeCountsSource=audience===ROLE.TPO&&(state.kind||state.company||state.kinds.length)
    ?await listPlacementCalendarEvents(context,{
     collegeId,from:window.from,to:window.to,tpoLegacyScope:true,
    }).catch(()=>null)
@@ -616,7 +617,7 @@ export async function PlacementCalendarWorkspace({
   // job-name filter is a view-level refinement of
   // already authorized rows.
   const events =
-    audience !== "TPO" && (state.job || state.jobId)
+    audience !== ROLE.TPO && (state.job || state.jobId)
       ? response.events.filter((event) =>
           (!state.jobId || event.jobId === state.jobId) &&
           (!state.job || Boolean(event.jobTitle
@@ -625,21 +626,21 @@ export async function PlacementCalendarWorkspace({
         )
       : response.events;
 
-  const audienceEvents=audience==="TPO"?events.map(event=>({...event,title:tpoLegacyCalendarEventTitle(event)})):events;
-  const needsWindow=audience==="TPO"?await listPlacementCalendarEvents(context,{
+  const audienceEvents=audience===ROLE.TPO?events.map(event=>({...event,title:tpoLegacyCalendarEventTitle(event)})):events;
+  const needsWindow=audience===ROLE.TPO?await listPlacementCalendarEvents(context,{
     collegeId,
     from:placementCalendarDayKey(new Date(now.getTime()-90*86400000)),
     to:placementCalendarDayKey(new Date(now.getTime()+7*86400000)),
     tpoLegacyScope:true,
   }).catch(()=>null):null;
-  const blockedDays=audience==="TPO"?await getTpoBlockedDates(context).catch(()=>null):null;
+  const blockedDays=audience===ROLE.TPO?await getTpoBlockedDates(context).catch(()=>null):null;
   const partialCalendar=!loadedResponse ||
-    (audience==="TPO"&&(!needsWindow||!eventTypeCountsSource||!blockedDays?.ready));
-  const blockedEvents=audience==="TPO"&&blockedDays?.ready&&(state.kinds.length ? state.kinds.includes("BLOCKED") : (!state.kind||state.kind==="BLOCKED"))?
+    (audience===ROLE.TPO&&(!needsWindow||!eventTypeCountsSource||!blockedDays?.ready));
+  const blockedEvents=audience===ROLE.TPO&&blockedDays?.ready&&(state.kinds.length ? state.kinds.includes("BLOCKED") : (!state.kind||state.kind==="BLOCKED"))?
     toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to):[];
   const selectedEvents=state.kind==="BLOCKED" && !state.kinds.length ? blockedEvents : [...audienceEvents,...blockedEvents];
-  const visibleEvents=audience==="TPO" && state.kinds.length ? filterTpoCalendarChipEvents(selectedEvents,state.kinds) : selectedEvents;
-  if(audience==="TPO"&&blockedDays?.ready)
+  const visibleEvents=audience===ROLE.TPO && state.kinds.length ? filterTpoCalendarChipEvents(selectedEvents,state.kinds) : selectedEvents;
+  if(audience===ROLE.TPO&&blockedDays?.ready)
    eventTypeCounts.set("BLOCKED",toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to).length);
   const needsSnapshot = keepTpoNeedsSummary(
     context.user.id, collegeId, needsWindow?.events ?? null, now,
@@ -665,7 +666,7 @@ export async function PlacementCalendarWorkspace({
     );
 
   const bookedInterviews=bookings?.events??[];
-  const bookedTimes=audience==="SUPER_ADMIN"?bookedInterviews.map(event=>({
+  const bookedTimes=audience===ROLE.SUPER_ADMIN?bookedInterviews.map(event=>({
    event,start:Date.parse(event.startsAt),
     end:event.endsAt?Date.parse(event.endsAt):Number.NaN,
    room:(event.venue??event.meetingUrl??"").trim().toLowerCase(),
@@ -705,7 +706,7 @@ export async function PlacementCalendarWorkspace({
   const sevenDayEnd=placementCalendarDayKey(new Date(now.getTime()+7*24*60*60*1000));
   const nextSeven=needsEvents.filter(event=>event.startsAt>=now &&
    placementCalendarDayKey(event.startsAt)<=sevenDayEnd).sort((a,b)=>a.startsAt.getTime()-b.startsAt.getTime());
-  const isTpo = audience === "TPO";
+  const isTpo = audience === ROLE.TPO;
   // The follow-up POST/PATCH APIs use this exact persisted-table readiness
   // check, not a deployment string. Never show editing against absent DB09.
   const calendarFollowupsWritable =
@@ -728,12 +729,12 @@ export async function PlacementCalendarWorkspace({
         title={
           isTpo
             ? TPO_OWNER_PAGE_COPY.calendar
-            : audience === "SUPER_ADMIN" ? "Interviews" : "Placement Interview Calendar"
+            : audience === ROLE.SUPER_ADMIN ? "Interviews" : "Placement Interview Calendar"
         }
         description={
           isTpo
             ? TPO_CALENDAR_SUBTITLE
-            : audience === "SUPER_ADMIN"
+            : audience === ROLE.SUPER_ADMIN
               ? "Review the interview schedule, conflicts and candidate context without leaving the placements workspace."
               : "Interview rounds and other employer events across your college, with company and job filters. Dates and times are shown in Indian Standard Time."
         }
@@ -769,7 +770,7 @@ export async function PlacementCalendarWorkspace({
             ))}
           </div>
 
-            {audience === "COLLEGE_ADMIN" ? (
+            {audience === ROLE.COLLEGE_ADMIN ? (
               <ButtonLink variant="secondary" href="/college/placements/interviews">
                 View interviews
               </ButtonLink>
@@ -778,7 +779,7 @@ export async function PlacementCalendarWorkspace({
               href={
                 isTpo
                   ? "/tpo/placements"
-                  : audience === "SUPER_ADMIN"
+                  : audience === ROLE.SUPER_ADMIN
                     ? "/admin/placements"
                     : "/college/placements"
               }
@@ -883,7 +884,7 @@ export async function PlacementCalendarWorkspace({
                 ["Follow-ups", summary.followups],
                 ["All events", summary.total],
               ]
-            : audience==="SUPER_ADMIN"?adminMetrics:[
+            : audience===ROLE.SUPER_ADMIN?adminMetrics:[
                 ["College rounds", summary.rounds],
                 ["Matching events", summary.total],
               ]
@@ -896,7 +897,7 @@ export async function PlacementCalendarWorkspace({
               {label}
             </p>
             <p className="mt-1 text-2xl font-bold tabular-nums text-foreground">
-              {audience==="SUPER_ADMIN"?(adminMetricKnown?count:"Unavailable"):
+              {audience===ROLE.SUPER_ADMIN?(adminMetricKnown?count:"Unavailable"):
                 loadedResponse?count:"Unavailable"}
             </p>
           </div>
@@ -905,7 +906,7 @@ export async function PlacementCalendarWorkspace({
 
       {/* Preserve the legacy interviews-first entry point. The graphical
           calendar remains an optional companion below the appointment list. */}
-      {audience==="SUPER_ADMIN" ? <PlacementPanelErrorBoundary>
+      {audience===ROLE.SUPER_ADMIN ? <PlacementPanelErrorBoundary>
         {bookings?.failed ? <Banner tone="error" action={<ButtonLink variant="secondary" href={calendarHref(basePath,audience,state,{})}>Retry interviews</ButtonLink>}>
           {bookings.stale?"Could not refresh interviews. Displaying the last verified appointments for this account and college; refresh to check current changes.":"Could not load candidate interviews right now. The calendar is still available."}
         </Banner>:null}

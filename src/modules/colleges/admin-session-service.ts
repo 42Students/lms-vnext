@@ -11,6 +11,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {adminSessionHistoryPageSchema} from "./admin-session-query-model";
 
+import { ROLE } from "@/modules/identity/roles";
 async function authorizedTarget(ctx:RequestContext,collegeIdInput:unknown,userIdInput:unknown){
  if(!isSuperAdmin(ctx))throw new AuthorizationError("college.manage");
  const collegeId=z.uuid().parse(collegeIdInput),userId=z.uuid().parse(userIdInput);
@@ -35,7 +36,7 @@ type AdminSessionTarget={userId:string;membershipId:string;status:string;name:st
 /** Historical Faculty.adminType names were scoped roles, not distinct
  * canonical users. Never resolve legacy numeric faculty IDs as UUIDs. */
 export function legacyFacultyAdminRole(role:string):"COLLEGE_ADMIN"|"TPO"|null{
- return role==="ADMIN"||role==="COLLEGE_ADMIN"?"COLLEGE_ADMIN":role==="TPO"?"TPO":null;
+ return role==="ADMIN"||role===ROLE.COLLEGE_ADMIN?"COLLEGE_ADMIN":role===ROLE.TPO?"TPO":null;
 }
 export function collegeAdminSessionDisplay(row:{
  device_name:string|null;user_agent:string|null;ip_address:string|null;last_seen_at:Date|string;

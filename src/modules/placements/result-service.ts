@@ -56,6 +56,7 @@ import {
   type StagePlacementRoundResultInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 async function loadRoundContext(roundId: string) {
   const [row] = await getDb()
     .select({
@@ -1029,7 +1030,7 @@ export async function listOwnAppliedPlacementResults(
 ) {
   if (
     !context.membership ||
-    !hasMembershipRole(context, "LEARNER")
+    !hasMembershipRole(context, ROLE.LEARNER)
   ) {
     throw new AuthorizationError("placements.read");
   }

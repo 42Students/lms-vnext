@@ -12,11 +12,12 @@ import { requirePlacementManageScope } from "./scope";
 import { projectTpoDriveCloseout, tpoCloseoutJobSchema } from "./tpo-drive-closeout-model";
 import { PlacementsServiceError } from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function getTpoDriveCloseout(
   context: RequestContext, rawJobId: unknown,
 ) {
   const member = context.membership;
-  if (!member || !hasMembershipRole(context, "TPO")) {
+  if (!member || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = member.collegeId;

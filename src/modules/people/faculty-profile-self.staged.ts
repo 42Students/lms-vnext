@@ -15,6 +15,7 @@ import {
   type FacultyProfileDocument,
 } from "./faculty-profile-document";
 
+import { ROLE } from "@/modules/identity/roles";
 export const FACULTY_SELF_DOCUMENT_SECTIONS=[
  "about","personalDetails","contact","address","socialProfiles",
  "languages","education","certifications","experiences","skills",
@@ -68,7 +69,7 @@ function assertPersistedFaculty(
 ) {
   if (
     !context.membership ||
-    !context.membership.roles.includes("FACULTY")
+    !context.membership.roles.includes(ROLE.FACULTY)
   ) {
     throw new PeopleServiceError("FACULTY_ROLE_REQUIRED");
   }

@@ -11,6 +11,7 @@ import {tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-m
 import { PlacementsServiceError } from "./errors";
 import { requireTpoJobActor } from "./tpo-job-write-base";
 
+import { ROLE } from "@/modules/identity/roles";
 // A short-lived, bounded, per-college fallback for the three independently
 // loaded badge totals. Never share a count across colleges or filtered seasons.
 // The dashboard always prefers freshly queried DB totals when they are ready.
@@ -27,7 +28,7 @@ const MAX_VERIFIED_COUNT_SCOPES = 100;
 /** Tenant comes only from the authenticated TPO membership. Requests need their own persisted workflow. */
 export async function getTpoDriveLifecycleList(context: RequestContext, raw: unknown, now = new Date()) {
   const member = context.membership;
-  if (!member || !(hasMembershipRole(context, "TPO")||hasMembershipRole(context,"COLLEGE_ADMIN")) ||
+  if (!member || !(hasMembershipRole(context, ROLE.TPO)||hasMembershipRole(context,ROLE.COLLEGE_ADMIN)) ||
       member.status !== "ACTIVE" || context.user.platformStatus !== "ACTIVE") {
     throw new AuthorizationError("placements.manage");
   }

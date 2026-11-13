@@ -2,14 +2,15 @@ import { z } from "zod";
 import {parseFacultyContactsQuery} from "./faculty-contacts-filter-model";
 import {CoursesServiceError} from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 export const facultyContactDetailParamsSchema = z.object({
   contactsTab: z.enum(["allContacts", "teachers", "students"]),
   membershipId: z.string().uuid(),
 }).strict();
 
 export function facultyContactRoleLabel(role: string) {
-  if (role === "LEARNER") return "Student";
-  if (role === "COLLEGE_ADMIN") return "College Admin";
+  if (role === ROLE.LEARNER) return "Student";
+  if (role === ROLE.COLLEGE_ADMIN) return "College Admin";
   return role.toLowerCase().split("_")
     .map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
 }
@@ -18,8 +19,8 @@ export function facultyContactTabMatches(
   tab: z.infer<typeof facultyContactDetailParamsSchema>["contactsTab"],
   roles: readonly string[],
 ) {
-  if (tab === "teachers") return roles.includes("FACULTY");
-  if (tab === "students") return roles.includes("LEARNER");
+  if (tab === "teachers") return roles.includes(ROLE.FACULTY);
+  if (tab === "students") return roles.includes(ROLE.LEARNER);
   return true;
 }
 

@@ -5,6 +5,7 @@ import {collegeMemberships,membershipRoles,projectMembers,users} from "@/db/sche
 import type {RequestContext} from "@/modules/identity/context";
 import {ProjectsServiceError} from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * PROJ-BREAK-LEARNER-ACTOR-02: re-read the persisted actor/role/project grant
  * under the same transaction as the write. The request's membership and the
@@ -17,7 +18,7 @@ export async function assertPersistedLearnerProjectMutation(
 ):Promise<void>{
  const member=context.membership;
  if(!member || member.status!=="ACTIVE" || member.collegeId!==collegeId ||
-    context.user.platformStatus!=="ACTIVE" || !member.roles.includes("LEARNER"))
+    context.user.platformStatus!=="ACTIVE" || !member.roles.includes(ROLE.LEARNER))
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const [persisted]=await tx.select({id:projectMembers.id})
   .from(projectMembers)

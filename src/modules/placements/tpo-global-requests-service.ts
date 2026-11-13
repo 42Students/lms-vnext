@@ -14,9 +14,10 @@ import {decideTpoRequest} from "./tpo-request-decision-service";
 
 
 
+import { ROLE } from "@/modules/identity/roles";
 export async function getTpoGlobalRequestsInbox(context: RequestContext, rawQuery: unknown) {
   const member = context.membership;
-  if (!member || !hasMembershipRole(context, "TPO") ||
+  if (!member || !hasMembershipRole(context, ROLE.TPO) ||
       member.status !== "ACTIVE" || context.user.platformStatus !== "ACTIVE") {
     throw new AuthorizationError("placements.manage");
   }
@@ -68,7 +69,7 @@ export async function decideLegacyTpoRequest(
   approve:z.boolean(),reason:z.string().trim().max(2000).default(""),
  }).parse(raw);
  const member=context.membership;
- if(!member||!hasMembershipRole(context,"TPO")||
+ if(!member||!hasMembershipRole(context,ROLE.TPO)||
    member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE")
   throw new AuthorizationError("placements.manage");
  await requirePersistedTpoMembership(context,member.collegeId);

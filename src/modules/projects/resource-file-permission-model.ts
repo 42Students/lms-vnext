@@ -1,3 +1,4 @@
+import { ROLE } from "@/modules/identity/roles";
 export type ResourceFileViewer="ADMIN"|"MENTOR"|"LEARNER"|"NONE";
 export type ResourceFileAction="LIST"|"DOWNLOAD"|"UPLOAD"|"DELETE";
 /** Presentation-only policy. projectAccessGranted comes from the server's persisted Project access check, not a client role claim. */
@@ -12,5 +13,5 @@ export function resourceFileUiAllowed(s:ResourceFileUiScope,action:ResourceFileA
  if(action==="LIST")return true;
  if(action==="DOWNLOAD")return s.storageReady&&s.fileVerified;
  if(!s.storageReady||s.projectStatus==="ARCHIVED"||s.projectStatus==="COMPLETED")return false;
- return s.viewer==="ADMIN"||s.viewer==="MENTOR";
+ return s.viewer==="ADMIN"||s.viewer===ROLE.MENTOR;
 }

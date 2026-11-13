@@ -7,6 +7,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listTpoCompanies} from "./tpo-company-memory-service";
+import { ROLE } from "@/modules/identity/roles";
 const companySchema=z.strictObject({
  key:z.string().trim().min(1).max(180),
  status:z.enum(["NOT_CONTACTED","EMAILED","REPLIED","MEETING_SET","NOT_INTERESTED"]),
@@ -14,7 +15,7 @@ const companySchema=z.strictObject({
 export class CompanyCommunicationUnavailable extends Error{}
 async function scope(ctx:RequestContext){
  if(!ctx.membership||ctx.membership.status!=="ACTIVE"||
-  !hasMembershipRole(ctx,"TPO"))throw new AuthorizationError("placements.manage");
+  !hasMembershipRole(ctx,ROLE.TPO))throw new AuthorizationError("placements.manage");
  return requirePlacementManageScope(ctx,ctx.membership.collegeId);
 }
 export async function listCompanyCommunication(ctx:RequestContext){

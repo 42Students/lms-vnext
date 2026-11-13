@@ -11,6 +11,7 @@ import {learnerProfileDocumentSchema,learnerProfileEducationWriteSchema} from ".
 import { PeopleServiceError } from "./errors";
 import { syncLearnerEducationProjection } from "./learner-education-projection-service";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Sort most recent qualifications for read parity without changing JSONB order. */
 export function sortLearnerEducationForView<T extends {id:string;
  startYear?:string;endYear?:string;isCurrentlyPursuing?:boolean;isRecentEducation?:boolean;
@@ -26,7 +27,7 @@ export function sortLearnerEducationForView<T extends {id:string;
 export async function updateOwnLearnerProfileSection(context:RequestContext,rawInput:unknown) {
   const input=validateLearnerProfileSectionEdit(rawInput);
   const membership=context.membership;
-  if(!membership || !membership.roles.includes("LEARNER") ||
+  if(!membership || !membership.roles.includes(ROLE.LEARNER) ||
       !can(context,"profile.self.manage",{collegeId:membership.collegeId,organizationId:membership.organizationId})) {
     throw new AuthorizationError("profile.self.manage");
   }

@@ -6,6 +6,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectReadAccess} from "./access";
 import type {MentorWeekContributor} from "./mentor-week-contributor-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Query the whole authenticated project's activity for the current IST week,
  * not just the first 100 feed events. Count zero-event students as zero.
  * A task updated by somebody else does not count toward a student's actions.
@@ -14,7 +15,7 @@ export async function listMentorWeekContributors(
  context:RequestContext,projectId:string,now:Date=new Date(),
 ):Promise<MentorWeekContributor[]>{
  const scope=await requireProjectReadAccess(context,projectId);
- if(scope.access!=="MENTOR")return [];
+ if(scope.access!==ROLE.MENTOR)return [];
  const ist=new Date(now.getTime()+330*60000);
  const weekday=(ist.getUTCDay()+6)%7;
  const from=new Date(Date.UTC(ist.getUTCFullYear(),ist.getUTCMonth(),

@@ -15,6 +15,7 @@ import {courseQuizzes} from "@/db/schema";
 import { TextLink } from "@/components/ui/text-link";
 import {learnerAssignmentListHref} from "@/modules/courses/learner-assignment-page-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function LearnerQuizzesPage({searchParams}:{searchParams:Promise<{course?:string|string[];content?:string|string[]}>}) {
   const [context,query] = await Promise.all([getCurrentRequestContext(),searchParams]);
   let overview:Awaited<ReturnType<typeof getLearnerAssessmentOverview>>;
@@ -24,7 +25,7 @@ export default async function LearnerQuizzesPage({searchParams}:{searchParams:Pr
     if(error instanceof AuthorizationError){
       // Old QuizzesContent was shared by faculty and learners. Keep the
       // learner-only route secure while recovering faculty-only bookmarks.
-      if(hasMembershipRole(context,"FACULTY")&&!hasMembershipRole(context,"LEARNER"))
+      if(hasMembershipRole(context,ROLE.FACULTY)&&!hasMembershipRole(context,ROLE.LEARNER))
         redirect("/teacher/allQuizzes");
       throw error;
     }

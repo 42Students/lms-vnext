@@ -43,6 +43,7 @@ import {
   type UpdateProjectResourceInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 function mapResourceConstraint(error: unknown) {
   if (["project_resources_project_sequence_uq",
        "project_resources_project_key_uq"].includes(postgresConstraintName(error)??"")) {
@@ -86,8 +87,8 @@ export async function listProjectResources(
           projectResources.projectId,
           scope.project.id,
         ),
-        scope.access === "ADMIN" || scope.access === "MENTOR" ? undefined : eq(projectResources.status, "ACTIVE"),
-        scope.access === "ADMIN" || scope.access === "MENTOR" ? undefined : eq(projectResources.visibility, "TEAM"),
+        scope.access === "ADMIN" || scope.access === ROLE.MENTOR ? undefined : eq(projectResources.status, "ACTIVE"),
+        scope.access === "ADMIN" || scope.access === ROLE.MENTOR ? undefined : eq(projectResources.visibility, "TEAM"),
       ),
     )
     .orderBy(asc(projectResources.sequence));
@@ -112,11 +113,11 @@ export async function createProjectResource(
     );
   if (!["ADMIN","MENTOR","LEARNER"].includes(scope.access))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  if(scope.access === "LEARNER" && (input.required || input.visibility === "MENTOR_ONLY" || input.pinned || input.accessNotes || input.sprintId || input.taskId || (input.status && input.status !== "ACTIVE")))
+  if(scope.access === ROLE.LEARNER && (input.required || input.visibility === "MENTOR_ONLY" || input.pinned || input.accessNotes || input.sprintId || input.taskId || (input.status && input.status !== "ACTIVE")))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   // The internal file-placeholder schema is for Mentor/administrator drafts.
   // A learner cannot publish a phantom "active file" without any content.
-  if(scope.access==="LEARNER"&&!input.url?.trim()&&!input.description?.trim())
+  if(scope.access===ROLE.LEARNER&&!input.url?.trim()&&!input.description?.trim())
     throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
   const db = getDb();
 
@@ -135,9 +136,9 @@ export async function createProjectResource(
         throw new ProjectsServiceError("PROJECT_NOT_FOUND");
       }
       ensureMutableProject(project.status);
-      if(scope.access==="ADMIN"||scope.access==="MENTOR")
+      if(scope.access==="ADMIN"||scope.access===ROLE.MENTOR)
         await assertPersistedProjectMutationActor(tx,context,scope);
-      if(scope.access==="LEARNER"){
+      if(scope.access===ROLE.LEARNER){
         // A learner may have been removed between the route's read check
         // and this transaction. Verify persisted account, role and project
         // grant under SHARE locks before writing a private resource.
@@ -158,7 +159,7 @@ export async function createProjectResource(
           )).for("share").limit(1);
         if(!activeMember)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
       }
-      if(scope.access==="LEARNER" && project.status!=="ACTIVE")
+      if(scope.access===ROLE.LEARNER && project.status!=="ACTIVE")
         throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
 
       if(input.sprintId){
@@ -209,18 +210,18 @@ export async function createProjectResource(
           required: input.required ?? false,
           visibility: input.visibility ?? "TEAM",
           resourceType: input.resourceType ?? (input.url ? "LINK" : "NOTE"),
-          legacyResourceKind:scope.access==="LEARNER"?null:input.legacyResourceKind??null,
+          legacyResourceKind:scope.access===ROLE.LEARNER?null:input.legacyResourceKind??null,
           // An empty FILE/DOCUMENT metadata entry is a draft, never a
           // shared file. Upload verification and explicit publish come later.
-          status: scope.access==="LEARNER"?"ACTIVE":
+          status: scope.access===ROLE.LEARNER?"ACTIVE":
             mentorResourceNeedsVerifiedFile({
               status:input.status??"ACTIVE",resourceType:input.resourceType??null,
               description:input.description??null,url:input.url??null,
             })?"DRAFT":input.status??"ACTIVE",
-          pinned: scope.access==="LEARNER"?false:input.pinned??false,
-          accessNotes: scope.access==="LEARNER"?null:input.accessNotes??null,
-          sprintId: scope.access==="LEARNER"?null:input.sprintId??null,
-          taskId: scope.access==="LEARNER"?null:input.taskId??null,
+          pinned: scope.access===ROLE.LEARNER?false:input.pinned??false,
+          accessNotes: scope.access===ROLE.LEARNER?null:input.accessNotes??null,
+          sprintId: scope.access===ROLE.LEARNER?null:input.sprintId??null,
+          taskId: scope.access===ROLE.LEARNER?null:input.taskId??null,
           sequence: latestSequence + 1,
         })
         .returning();
@@ -230,8 +231,8 @@ export async function createProjectResource(
       // in the same transaction as this resource, never in a deferred job.
       const event=await recordActivityEventInTransaction(tx,context,projectResourceAuditInput("CREATED",{
         projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
-      },resource,undefined,scope.access==="LEARNER"?"LEARNER":
-         scope.access==="MENTOR"?"MENTOR":"ADMIN",{before:null,after:resource}));
+      },resource,undefined,scope.access===ROLE.LEARNER?"LEARNER":
+         scope.access===ROLE.MENTOR?"MENTOR":"ADMIN",{before:null,after:resource}));
       await notifyActiveProjectMembers(tx,event.id,{
         projectId:scope.project.id,collegeId:scope.collegeId,
         roles:["MENTOR"],exceptUserId:context.user.id,
@@ -318,7 +319,7 @@ export async function updateProjectResource(
     }
     // MEN-projects-meetings-R07: a stale editor must not overwrite a
     // resource changed while its form was open.
-    if ((scope.access==="MENTOR" && !input.expectedUpdatedAt) ||
+    if ((scope.access===ROLE.MENTOR && !input.expectedUpdatedAt) ||
       (input.expectedUpdatedAt &&
        resource.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime()))
       throw new ProjectsServiceError("PROJECT_RESOURCE_STALE_VERSION");
@@ -448,7 +449,7 @@ export async function archiveProjectResource(
       projectIdInput,
     );
   const input=archiveProjectResourceInputSchema.parse(rawInput);
-  if (scope.access==="MENTOR" && !input.expectedUpdatedAt)
+  if (scope.access===ROLE.MENTOR && !input.expectedUpdatedAt)
     throw new ProjectsServiceError("PROJECT_RESOURCE_STALE_VERSION");
   const resourceId =
     projectResourceIdSchema.parse(resourceIdInput);

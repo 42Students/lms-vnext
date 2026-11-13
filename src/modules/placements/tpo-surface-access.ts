@@ -2,9 +2,10 @@ import { hasMembershipRole, type RequestContext } from "@/modules/identity/conte
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Require an active TPO membership before any tenant-owned rows are read. */
 export async function requireTpoReadCollege(context: RequestContext) {
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = context.membership.collegeId;

@@ -69,6 +69,7 @@ import {
   prepareAssignmentFileReceipt,
 } from "./assignment-file-service";
 
+import { ROLE } from "@/modules/identity/roles";
 type SubmissionLink = { kind: "REPOSITORY_LINK" | "EXTERNAL_LINK"; url: string; caption: string };
 
 function assignmentAudienceMatches(
@@ -159,7 +160,7 @@ async function requireAssignmentLearnerAccess(
     );
 
   if (
-    access !== "LEARNER" ||
+    access !== ROLE.LEARNER ||
     !context.membership
   ) {
     throw new CoursesServiceError(
@@ -610,7 +611,7 @@ export async function getMyAssignmentSubmission(
     );
 
   if (
-    access !== "LEARNER" ||
+    access !== ROLE.LEARNER ||
     !context.membership
   ) {
     throw new CoursesServiceError(
@@ -648,7 +649,7 @@ export async function listMyAssignmentSubmissionHistory(
 ) {
   await requireOwnCourseLearnerRead(context);
   if (!context.membership || context.membership.status !== "ACTIVE" ||
-      !context.membership.roles.includes("LEARNER")) {
+      !context.membership.roles.includes(ROLE.LEARNER)) {
     throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
   }
   const limit = Math.max(1, Math.min(100, Math.trunc(paging.limit ?? 50)));
@@ -993,7 +994,7 @@ async function appendAssignmentGradeEvent(
 ){
   const superAdmin=isSuperAdmin(context);
   const role=superAdmin?"SUPER_ADMIN":
-    hasMembershipRole(context,"COLLEGE_ADMIN")?"COLLEGE_ADMIN":"FACULTY";
+    hasMembershipRole(context,ROLE.COLLEGE_ADMIN)?"COLLEGE_ADMIN":"FACULTY";
   const actorMembershipId=superAdmin?null:context.membership?.id??null;
   if(!superAdmin&&!actorMembershipId)
     throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");

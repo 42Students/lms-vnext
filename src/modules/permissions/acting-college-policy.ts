@@ -1,6 +1,7 @@
 import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission, type PlatformPermission } from "@/modules/permissions/policy";
 
+import { ROLE } from "@/modules/identity/roles";
 export type ActingCollegeScope = {
   collegeId: string;
   organizationId: string;
@@ -30,7 +31,7 @@ export function requireActingCollege(
   }
 
   const member = context.membership;
-  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN")) {
+  if (!member || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN)) {
     throw new AuthorizationError(permission);
   }
   const scope = { collegeId: member.collegeId, organizationId: member.organizationId };

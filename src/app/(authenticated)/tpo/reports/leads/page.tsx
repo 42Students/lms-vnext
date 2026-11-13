@@ -32,6 +32,7 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { formatDateTimeIst } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type SearchParams = {
   seasonId?: string | string[];
   jobId?: string | string[];
@@ -53,7 +54,7 @@ export default async function TpoLeadsReportPage({
 
   if (
     !context.membership ||
-    !hasMembershipRole(context, "TPO")
+    !hasMembershipRole(context, ROLE.TPO)
   ) {
     redirect("/dashboard");
   }

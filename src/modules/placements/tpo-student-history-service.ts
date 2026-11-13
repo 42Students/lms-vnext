@@ -33,6 +33,7 @@ import {
   tpoStudentHistoryQuerySchema,
 } from "./tpo-student-history-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Legacy bulk status transitions: bounded, sorted, and college-scoped. */
 const transitionQuery=z.object({
  applicationIds:z.array(z.string().uuid()).min(1).max(200)
@@ -41,7 +42,7 @@ const transitionQuery=z.object({
   "ASSESSMENT","INTERVIEW","OFFERED","HIRED","REJECTED","WAITLISTED"]).optional(),
 }).strict();
 export async function listTpoApplicationStatusTransitions(context:RequestContext,raw:unknown){
- if(!context.membership||!hasMembershipRole(context,"TPO"))
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))
   throw new AuthorizationError("placements.manage");
  const collegeId=await requireTpoBatchActor(context);
  await requirePlacementManageScope(context,collegeId);
@@ -74,7 +75,7 @@ export async function getTpoStudentPlacementHistory(
   context: RequestContext,
   rawQuery: unknown,
 ) {
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = context.membership.collegeId;

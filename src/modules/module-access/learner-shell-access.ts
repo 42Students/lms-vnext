@@ -11,6 +11,7 @@ import {
 import { resolveLearnerPlacementParticipation } from "@/modules/placements/access-service";
 import { hasStudentCoordinatorAssignmentToday } from "@/modules/placements/drive-day-coordinator-service";
 
+import { ROLE } from "@/modules/identity/roles";
 export type LearnerShellAccess = {
   projectsEnabled: boolean;
   placementsEnabled: boolean;
@@ -24,7 +25,7 @@ export type LearnerShellAccess = {
 export async function getLearnerShellAccess(
   context: RequestContext,
 ): Promise<LearnerShellAccess | null> {
-  if (!hasMembershipRole(context, "LEARNER")) return null;
+  if (!hasMembershipRole(context, ROLE.LEARNER)) return null;
 
   try {
     const chain = await buildModuleAccessChain(context);
@@ -100,7 +101,7 @@ export async function getPrincipalModuleFlags(
   try{
     const chain=await buildModuleAccessChain(context);
     const resolved=await resolveOptionalModuleAccessForChain(chain);
-    const learner=hasMembershipRole(context,"LEARNER");
+    const learner=hasMembershipRole(context,ROLE.LEARNER);
     const [participation,coordinator]=await Promise.all([
       learner&&resolved.placements.enabled
         ?resolveLearnerPlacementParticipation(context,chain)

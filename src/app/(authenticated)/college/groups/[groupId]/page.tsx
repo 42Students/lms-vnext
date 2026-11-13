@@ -18,6 +18,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
 import { env } from "@/config/env";
+import { ROLE } from "@/modules/identity/roles";
 type Detail = Awaited<ReturnType<typeof getCollegeGroupDetail>>;
 
 const STATE_TONE = {
@@ -88,7 +89,7 @@ export default async function CollegeGroupDetailPage({
       collegeId: context.membership.collegeId, limit: 100, offset: 0,
     }) : null;
   const available = candidatePage?.items.filter((person) =>
-    person.membership.status === "ACTIVE" && person.membership.roles.includes("LEARNER"),
+    person.membership.status === "ACTIVE" && person.membership.roles.includes(ROLE.LEARNER),
   ).map((person) => ({
     id: person.membership.id,
     label: person.user.displayName || person.user.email || person.membership.id,

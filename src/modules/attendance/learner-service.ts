@@ -36,6 +36,7 @@ import {
   type LearnerAttendanceRow,
 } from "./model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** A historical attendanceThresholdPercent import must be validated before
  * updating attendancePolicies; the absence of an override uses 75, not zero. */
 export function legacyAttendanceThresholdPercent(raw:unknown):number|null {
@@ -55,7 +56,7 @@ function requireLearner(
 ) {
   if (
     !context.membership ||
-    !hasMembershipRole(context, "LEARNER")
+    !hasMembershipRole(context, ROLE.LEARNER)
   ) {
     throw new AuthorizationError(
       "academics.read",

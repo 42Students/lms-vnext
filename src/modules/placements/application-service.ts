@@ -81,6 +81,7 @@ import {
   type CreatePlacementApplicationInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 async function loadJob(jobId: string) {
   const [job] = await getDb()
     .select()
@@ -102,7 +103,7 @@ function requireLearnerMembership(
 ) {
   if (
     !context.membership ||
-    !hasMembershipRole(context, "LEARNER") ||
+    !hasMembershipRole(context, ROLE.LEARNER) ||
     (collegeId &&
       context.membership.collegeId !== collegeId)
   ) {
@@ -1367,7 +1368,7 @@ export async function getPlacementApplication(
   if (
     context.membership?.id ===
       row.application.membershipId &&
-    hasMembershipRole(context, "LEARNER")
+    hasMembershipRole(context, ROLE.LEARNER)
   ) {
     await requireLearnerPlacementAccess(context);
     return row;

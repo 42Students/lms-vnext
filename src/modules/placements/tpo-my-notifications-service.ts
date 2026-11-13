@@ -41,6 +41,7 @@ import {
 import { requirePlacementManageScope } from "./scope";
 import { placementTableExists } from "./staged-tables";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Read-only, own-recipient notification view.
  *
@@ -66,7 +67,7 @@ export async function getTpoMyNotifications(
 ) {
   if (
     !context.membership ||
-    !hasMembershipRole(context, "TPO") ||
+    !hasMembershipRole(context, ROLE.TPO) ||
     context.user.platformStatus !== "ACTIVE"
   ) {
     throw new AuthorizationError("placements.manage");
@@ -222,7 +223,7 @@ export async function getTpoMyNotifications(
     const persisted=await assertPersistedPlatformPermission(tx,context,"placements.manage",{
       collegeId,organizationId:college.organizationId,
     });
-    if(!hasMembershipRole(persisted,"TPO"))
+    if(!hasMembershipRole(persisted,ROLE.TPO))
       throw new AuthorizationError("placements.manage");
   });
 

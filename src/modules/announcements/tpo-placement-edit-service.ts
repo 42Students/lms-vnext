@@ -17,6 +17,7 @@ import {placementTableExists} from "@/modules/placements/staged-tables";
 import {parseTpoNoticeSchedule,parseTpoIstMinute} from "./tpo-notice-schedule-model";
 import {tpoNoticeDeliveryVerified} from "./tpo-notice-delivery-readiness";
 
+import { ROLE } from "@/modules/identity/roles";
 export const editTpoNoticeSchema=z.object({
  noticeId:z.string().uuid(),expectedVersion:z.number().int().nonnegative(),
  title:z.string().trim().min(1,{error:"Give it a title"}).max(200,{error:"Title must be 200 characters or fewer"}),
@@ -36,7 +37,7 @@ export const editTpoNoticeSchema=z.object({
 export async function editTpoNotice(context:RequestContext,raw:unknown){
  const input=editTpoNoticeSchema.parse(raw);
  const membership=context.membership;
- if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ if(!membership||!hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
  if(!await placementTableExists("announcements"))throw new Error("ANNOUNCEMENTS_NOT_REGISTERED");
  if(input.audienceChange&&(!await placementTableExists("placement_tpo_notice_audiences")||

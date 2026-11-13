@@ -12,16 +12,17 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {facultyQuizResultsCommandSchema,facultyQuizResultsTransition} from "./faculty-quiz-results-command-model";
 import {assertPersistedFacultyTeachingMutation} from "./faculty-persisted-teaching-guard";
 import {z} from "zod";
+import { ROLE } from "@/modules/identity/roles";
 export async function commandFacultyQuizResults(context:RequestContext,rawQuizId:unknown,raw:unknown){
  const quizId=z.string().uuid().parse(rawQuizId),input=facultyQuizResultsCommandSchema.parse(raw);
  const member=context.membership;
- if(!member||!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY"))
+ if(!member||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.FACULTY))
    throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
  const delivery=await loadCourseSectionDeliveryScope(input.deliveryId);
  if(delivery.collegeId!==member.collegeId||
     !can(context,"courses.read",{collegeId:delivery.collegeId,organizationId:delivery.organizationId}))
    throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
- if(await requireDeliveryContentMutation(context,input.deliveryId)!=="FACULTY")
+ if(await requireDeliveryContentMutation(context,input.deliveryId)!==ROLE.FACULTY)
    throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
  return getDb().transaction(async tx=>{
   const [quiz]=await tx.select().from(courseQuizzes)

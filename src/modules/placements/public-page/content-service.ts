@@ -11,6 +11,7 @@ import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import {DEFAULT_PUBLIC_METRICS,publicPlacementContentInput,
  type PublicPlacementMetricKey,normalizePublicPlacementMetricKeys} from "./content-model";
+import { ROLE } from "@/modules/identity/roles";
 const ready=()=>placementTableExists("placement_public_page_content");
 export async function getPublicPlacementPageContent(collegeId:string){
  if(!await ready())return {ready:false as const,about:"",
@@ -39,7 +40,7 @@ export async function saveLegacyPublicPlacementsContentPatch(
  if(input.enabled!==null&&input.enabled!==undefined)
   throw new Error("PUBLIC_CONTENT_PUBLICATION_SEPARATE");
  const member=context.membership;
- if(!member||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ if(!member||!hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
  await requirePlacementManageScope(context,member.collegeId);
  const previous=await getPublicPlacementPageContent(member.collegeId);
  if(!previous.ready)throw new Error("PUBLIC_CONTENT_NOT_READY");
@@ -53,7 +54,7 @@ export async function saveLegacyPublicPlacementsContentPatch(
 export async function saveTpoPublicPlacementContent(context:RequestContext,raw:unknown){
  const input=publicPlacementContentInput.parse(raw);
  const member=context.membership;
- if(!member||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ if(!member||!hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,member.collegeId);
  if(!await ready())throw new Error("PUBLIC_CONTENT_NOT_READY");
  return getDb().transaction(async tx=>{

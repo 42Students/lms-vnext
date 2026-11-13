@@ -22,12 +22,13 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { formatNumberIN } from "@/lib/safe-format";
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 type Raw=Record<string,string|string[]|undefined>;
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 export default async function AfterCollegeReportPage({searchParams}:{searchParams:Promise<Raw>}){
  const ctx=await getCurrentRequestContext();
- if(!ctx.membership||!hasMembershipRole(ctx,"TPO"))redirect("/dashboard");
+ if(!ctx.membership||!hasMembershipRole(ctx,ROLE.TPO))redirect("/dashboard");
  const raw=await searchParams;
  if(tpoReportHasAmbiguousFilters(raw))return <TpoReportInvalidFilters path="/tpo/reports/after-college"/>;
  const batches=await listTpoBatches(ctx);

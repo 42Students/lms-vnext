@@ -11,13 +11,14 @@ import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
 import {TPO_NOTIFICATION_PREFERENCE_DEFAULTS} from "./tpo-my-notifications-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export class TpoPreferenceSaveError extends Error{
  constructor(readonly code:"NOT_READY"|"STALE"){super(code);}
 }
 export async function saveMyTpoNotificationPreferences(context:RequestContext,raw:unknown){
  const input=tpoNotificationPreferenceSaveSchema.parse(raw);
  if(!context.membership||context.membership.status!=="ACTIVE"||
-    context.user.platformStatus!=="ACTIVE"||!hasMembershipRole(context,"TPO"))
+    context.user.platformStatus!=="ACTIVE"||!hasMembershipRole(context,ROLE.TPO))
   throw new AuthorizationError("placements.manage");
  const collegeId=context.membership.collegeId,userId=context.user.id;
  const college=await requirePlacementManageScope(context,collegeId);
@@ -33,7 +34,7 @@ export async function saveMyTpoNotificationPreferences(context:RequestContext,ra
   const persisted=await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    collegeId,organizationId:college.organizationId,
   });
-  if(!hasMembershipRole(persisted,"TPO"))throw new AuthorizationError("placements.manage");
+  if(!hasMembershipRole(persisted,ROLE.TPO))throw new AuthorizationError("placements.manage");
   const [current]=await tx.select().from(placementTpoUserPreferences)
    .where(and(eq(placementTpoUserPreferences.collegeId,collegeId),
     eq(placementTpoUserPreferences.userId,userId))).limit(1);

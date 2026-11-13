@@ -14,6 +14,7 @@ import {
   readPrivateObjectAttestation,
 } from "@/modules/storage/private-object-storage";
 
+import { ROLE } from "@/modules/identity/roles";
 const receiptIdSchema = z.string().uuid();
 const uploadInput = z.strictObject({
   contentType: z.literal("application/pdf"),
@@ -23,7 +24,7 @@ const completeInput = z.strictObject({ objectKey: z.string().min(20).max(700) })
 
 function requireOwnLearner(context: RequestContext) {
   if (context.user.platformStatus !== "ACTIVE" || !context.membership ||
-      context.membership.status !== "ACTIVE" || !hasMembershipRole(context, "LEARNER")) {
+      context.membership.status !== "ACTIVE" || !hasMembershipRole(context, ROLE.LEARNER)) {
     throw new Error("DEFAULT_RESUME_ACCESS_DENIED");
   }
   return context.membership;
@@ -197,7 +198,7 @@ export async function viewOwnLearnerResume(context:RequestContext,rawReceiptId:u
    collegeId:member.collegeId,organizationId:member.organizationId,
   });
   if(!persisted.membership||persisted.membership.id!==member.id||
-     !persisted.membership.roles.includes("LEARNER"))
+     !persisted.membership.roles.includes(ROLE.LEARNER))
    throw new Error("DEFAULT_RESUME_ACCESS_DENIED");
   const [row]=await tx.select().from(profilePrivateDocumentReceipts).where(and(
    eq(profilePrivateDocumentReceipts.id,id),
@@ -240,7 +241,7 @@ export async function clearOwnLearnerDefaultResume(context:RequestContext) {
    collegeId:member.collegeId,organizationId:member.organizationId,
   });
   if(!persisted.membership||persisted.membership.id!==member.id||
-     !persisted.membership.roles.includes("LEARNER"))
+     !persisted.membership.roles.includes(ROLE.LEARNER))
    throw new Error("DEFAULT_RESUME_ACCESS_DENIED");
   const [profile]=await tx.select({path:learnerProfiles.resumeObjectPath})
    .from(learnerProfiles).where(eq(learnerProfiles.membershipId,member.id))

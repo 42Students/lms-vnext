@@ -13,12 +13,13 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { lessonVisibilityCommandSchema } from "./faculty-lesson-visibility-model";
 import { CoursesServiceError } from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 const programDepartment=alias(departments,"visibility_program_department");
 
 export async function updateCollegeContentStudentVisibility(context:RequestContext,raw:unknown){
   const input=lessonVisibilityCommandSchema.parse(raw);
   const acting=await resolveActingCollege(context,"courses.manage");
-  if(!isSuperAdmin(context)&&!hasMembershipRole(context,"COLLEGE_ADMIN"))throw new AuthorizationError("courses.manage");
+  if(!isSuperAdmin(context)&&!hasMembershipRole(context,ROLE.COLLEGE_ADMIN))throw new AuthorizationError("courses.manage");
   const scope={collegeId:acting.collegeId,organizationId:acting.organizationId};
   requirePermission(context,"courses.manage",scope);
   return getDb().transaction(async tx=>{
@@ -40,7 +41,7 @@ export async function updateCollegeContentStudentVisibility(context:RequestConte
       .for("update",{of:lessonContents}).limit(1);
     if(!content||content.status==="ARCHIVED")throw new CoursesServiceError("LESSON_CONTENT_NOT_FOUND");
     const persisted=await assertPersistedPlatformPermission(tx,context,"courses.manage",scope);
-    if(!isSuperAdmin(persisted)&&!hasMembershipRole(persisted,"COLLEGE_ADMIN"))
+    if(!isSuperAdmin(persisted)&&!hasMembershipRole(persisted,ROLE.COLLEGE_ADMIN))
       throw new AuthorizationError("courses.manage");
     const [updated]=await tx.update(lessonContents).set({
       visibleToStudents:input.visibleToStudents,

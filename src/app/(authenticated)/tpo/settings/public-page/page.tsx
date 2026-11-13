@@ -17,13 +17,14 @@ import {publicPlacementSettingState} from "@/modules/placements/public-page/publ
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { istDateFormatter } from "@/lib/format-date";
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 
 export default async function PublicPlacementSettingsPage({
  searchParams,
 }: {searchParams:Promise<{updated?:string|string[]}>}){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");
  const value=await getTpoPublicPlacementPublication(context);
  const view=publicPlacementSettingState(value);
  const preview=view.enabled?await readOptionalPublicPlacementData(()=>getPublicPlacementStatistics(context.membership!.collegeId)):null;

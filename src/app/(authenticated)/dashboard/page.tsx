@@ -45,6 +45,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Four platform-level destinations from the old LMS; never show tenant counts without a selected college. */
 const PLATFORM_GLOBAL_LINKS = [
   {label:"Tenant setup",href:"/admin/tenants",description:"Create and manage colleges, domains and tenant settings."},
@@ -341,14 +342,14 @@ async function MembershipDashboard({
     hasWorkspace("MENTOR")
       ? projectRows?.filter(
           (row) =>
-            row.memberRole === "MENTOR",
+            row.memberRole === ROLE.MENTOR,
         ) ?? []
       : null;
   const learnerProjects =
     hasWorkspace("LEARNER")
       ? projectRows?.filter(
           (row) =>
-            row.memberRole === "LEARNER",
+            row.memberRole === ROLE.LEARNER,
         ) ?? []
       : null;
   const primaryMentorships =

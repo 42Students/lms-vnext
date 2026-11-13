@@ -12,6 +12,7 @@ import {requirePermission} from "@/modules/permissions/policy";
 import {requireStaffNotificationMutation} from "@/modules/activity/notification-service";
 import { route } from "@/security/route";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{id:string}>};
 async function handlePOST(request:Request,{params}:RouteContext){
@@ -26,7 +27,7 @@ async function handlePOST(request:Request,{params}:RouteContext){
     return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
   try{
     const context=await getCurrentRequestContext();
-    if(!isSuperAdmin(context)&&!hasMembershipRole(context,"COLLEGE_ADMIN"))
+    if(!isSuperAdmin(context)&&!hasMembershipRole(context,ROLE.COLLEGE_ADMIN))
       return NextResponse.json({error:"FORBIDDEN"},{status:403});
     // No deceptive acknowledgement when the outbound queue has not been
     // registered or a release worker has not been deployed.

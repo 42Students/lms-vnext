@@ -15,6 +15,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { formatNumberIN } from "@/lib/safe-format";
 
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 type Params={search?:string|string[];page?:string|string[]};
 
@@ -24,7 +25,7 @@ export default async function FacultyTeachingProfilePage({
   const context=await getCurrentRequestContext();
   if(context.user.platformStatus!=="ACTIVE" ||
     context.membership?.status!=="ACTIVE" ||
-    !context.membership.roles.includes("FACULTY"))notFound();
+    !context.membership.roles.includes(ROLE.FACULTY))notFound();
   const raw=await searchParams;
   // Strict query validation rejects duplicated selectors and unknown parameters.
   const parsed=facultyProfileTeachingQuerySchema.safeParse(raw);

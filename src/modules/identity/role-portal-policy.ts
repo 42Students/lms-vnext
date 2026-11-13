@@ -7,6 +7,7 @@ import {
 import {canOpenTpoWorkspace} from "@/modules/placements/tpo-workspace-access-model";
 import {canAccessFacultyRoute} from "@/modules/courses/faculty-route-access-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * #61/#101: canonical SERVER-side role portal boundary for both standard and
  * legacy alias page families. Not an API authorization shortcut: concrete
@@ -20,7 +21,7 @@ import {canAccessFacultyRoute} from "@/modules/courses/faculty-route-access-mode
  * Both /activity and /activity/[eventId] use this same server-side decision.
  */
 export function canAccessStaffActivity(context:RequestContext|null|undefined):boolean {
-  return isSuperAdmin(context)||hasMembershipRole(context,"COLLEGE_ADMIN");
+  return isSuperAdmin(context)||hasMembershipRole(context,ROLE.COLLEGE_ADMIN);
 }
 
 export const ROLE_PORTAL_FAMILIES = [
@@ -39,7 +40,7 @@ export function canAccessRolePortal(
       return isSuperAdmin(context);
     case "college":
     case "college-admin":
-      return hasMembershipRole(context, "COLLEGE_ADMIN");
+      return hasMembershipRole(context, ROLE.COLLEGE_ADMIN);
     case "tpo":
       // The College Admin has a deliberately narrow Placement-cell shortcut.
       // Concrete TPO-only services must separately require the TPO role.
@@ -48,9 +49,9 @@ export function canAccessRolePortal(
     case "teach":
       return canAccessFacultyRoute(context);
     case "mentor":
-      return hasMembershipRole(context, "MENTOR");
+      return hasMembershipRole(context, ROLE.MENTOR);
     case "learn":
-      return hasMembershipRole(context, "LEARNER");
+      return hasMembershipRole(context, ROLE.LEARNER);
     case "hr":
     case "recruiter":
       return hasActiveRecruiter(context);

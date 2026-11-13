@@ -6,6 +6,7 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
 import {getTpoRoundDriveDay} from "@/modules/placements/tpo-round-drive-day-service";
 import {placementRoundIdSchema} from "@/modules/placements/validation";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -19,7 +20,7 @@ export const GET = route(
   async ({ context: __actor, params }) => {
     const context = __actor!;
     try {
-if(!context.membership||!hasMembershipRole(context,"TPO"))
+if(!context.membership||!hasMembershipRole(context,ROLE.TPO))
    throw new AuthorizationError("placements.manage");
 requirePermission(context,"placements.manage",{
    collegeId:context.membership.collegeId,

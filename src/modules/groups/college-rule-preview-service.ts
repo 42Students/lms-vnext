@@ -16,6 +16,7 @@ import {
   projectCollegeGroupRulePreview,
 } from "./college-rule-preview-model";
 
+import { ROLE } from "@/modules/identity/roles";
 type Reader = Pick<ReturnType<typeof getDb>, "select">;
 
 /** Old GET without a configured rule returned no content (204).
@@ -42,7 +43,7 @@ export async function previewCollegeGroupRule(
 ) {
   const { groupId } = collegeRulePreviewInputSchema.parse(raw);
   const member = context.membership;
-  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+  if (!member || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
       !can(context, "academics.manage", {
         organizationId: member.organizationId,
         collegeId: member.collegeId,

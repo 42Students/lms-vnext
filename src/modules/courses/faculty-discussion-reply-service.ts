@@ -7,17 +7,18 @@ import {CoursesServiceError} from "./errors";
 import {facultyDiscussionReplySchema} from "./faculty-discussion-reply-model";
 import {createCourseDiscussionMessage} from "./discussion-service";
 import {z} from "zod";
+import { ROLE } from "@/modules/identity/roles";
 export async function postFacultyDiscussionReply(context:RequestContext,rawDeliveryId:unknown,raw:unknown){
  const deliveryId=z.string().uuid().parse(rawDeliveryId);
  const input=facultyDiscussionReplySchema.parse(raw);
  const member=context.membership;
- if(!member||!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY"))
+ if(!member||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.FACULTY))
   throw new CoursesServiceError("DISCUSSION_POST_ACCESS_DENIED");
  const delivery=await loadCourseSectionDeliveryScope(deliveryId);
  if(delivery.collegeId!==member.collegeId||
   !can(context,"courses.read",{collegeId:delivery.collegeId,organizationId:delivery.organizationId}))
   throw new CoursesServiceError("DISCUSSION_POST_ACCESS_DENIED");
- if(await requireDeliveryContentMutation(context,deliveryId)!=="FACULTY")
+ if(await requireDeliveryContentMutation(context,deliveryId)!==ROLE.FACULTY)
   throw new CoursesServiceError("DISCUSSION_POST_ACCESS_DENIED");
  return createCourseDiscussionMessage(context,deliveryId,input);
 }

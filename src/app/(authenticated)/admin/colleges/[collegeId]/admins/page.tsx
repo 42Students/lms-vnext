@@ -15,6 +15,7 @@ import {listCollegeAdminSessionTargetsPage} from "@/modules/colleges/admin-sessi
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 export default async function CollegeAdministratorsPage({params,searchParams}:{
  params:Promise<{collegeId:string}>;
@@ -26,8 +27,8 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
  const rawPage=raw['page'];
  const validPage=Object.keys(raw).every(key=>key==="page"||key==="role")&&
    (rawPage===undefined||(typeof rawPage==="string"&&/^[1-9][0-9]{0,4}$/.test(rawPage)&&Number(rawPage)<=10000));
- const role=(raw['role']==="COLLEGE_ADMIN"||raw['role']==="TPO")?raw['role']:"ALL";
- if(raw['role']!==undefined&&raw['role']!=="COLLEGE_ADMIN"&&raw['role']!=="TPO"&&raw['role']!=="ALL")
+ const role=(raw['role']===ROLE.COLLEGE_ADMIN||raw['role']===ROLE.TPO)?raw['role']:"ALL";
+ if(raw['role']!==undefined&&raw['role']!==ROLE.COLLEGE_ADMIN&&raw['role']!==ROLE.TPO&&raw['role']!=="ALL")
   return <div className="min-w-0 space-y-4"><PageHeader title="College administrators"/>
    <ErrorState title="Invalid administrator role" description="Choose Admin or TPO."
     action={<TextLink href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"}>Clear filters</TextLink>}/>
@@ -88,7 +89,7 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
     columns={[
       {key:"name",header:"Name",mobilePriority:"primary",cell:item=><strong>{item.name}</strong>},
       {key:"roles",header:"Role",mobilePriority:"secondary",cell:item=>
-       item.roles.map(role=>role==="COLLEGE_ADMIN"?"College Admin":role==="TPO"?"TPO":role).join(", ")},
+       item.roles.map(role=>role===ROLE.COLLEGE_ADMIN?"College Admin":role===ROLE.TPO?"TPO":role).join(", ")},
       {key:"mobile",header:"Mobile",mobilePriority:"secondary",cell:item=>
         item.mobile?<span className="break-all">{item.mobile}</span>:
         <span className="text-xs text-muted-foreground">Not recorded</span>},
@@ -96,7 +97,7 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
       {key:"org",header:"Org",cell:()=>data.college.organizationId},
       {key:"college",header:"College",cell:()=>data.college.name},
       {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="ACTIVE"?"success":"warning"}>{item.status==="ACTIVE"?"Enabled":"Suspended"}</StatusBadge>},
-      {key:"access",header:"Access",mobilePriority:"action",cell:item=><Disclosure title="Access" className="min-w-0" contentClassName="pt-[var(--lms-space-2)]"><CollegeAdminLifecycleAction membershipId={item.membershipId} status={item.status} hasMentorRole={item.roles.includes("MENTOR")} {...(item.name==null?{}:{displayName:item.name})}/></Disclosure>},
+      {key:"access",header:"Access",mobilePriority:"action",cell:item=><Disclosure title="Access" className="min-w-0" contentClassName="pt-[var(--lms-space-2)]"><CollegeAdminLifecycleAction membershipId={item.membershipId} status={item.status} hasMentorRole={item.roles.includes(ROLE.MENTOR)} {...(item.name==null?{}:{displayName:item.name})}/></Disclosure>},
       {key:"sessions",header:"Sessions",mobilePriority:"action",cell:item=><TextLink title="View active devices"
         href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)}
         className="inline-flex min-h-11 items-center md:min-h-9">
@@ -120,7 +121,7 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
     hrefForPage={next=>baseHref+(next===1&&role==="ALL"?"":"?"+new URLSearchParams({
      ...(next>1?{page:String(next)}:{}),...(role!=="ALL"?{role}:{})
    }).toString())} label="College administrator pages"/>
-  {data.total===0?<Alert tone="info">No {role==="ALL"?"College Admin or TPO":role==="TPO"?"TPO":"Admin"} accounts recorded for this college.</Alert>:null}
+  {data.total===0?<Alert tone="info">No {role==="ALL"?"College Admin or TPO":role===ROLE.TPO?"TPO":"Admin"} accounts recorded for this college.</Alert>:null}
   {page>pageCount?<p role="alert" className="text-sm text-warning">
     Page outside the available results. Return to the first page; no other administrator data was loaded.
     <TextLink href={baseHref} className="ml-2">First page</TextLink>

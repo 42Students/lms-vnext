@@ -18,6 +18,7 @@ import {
   studentSectionMoveSchema,
 } from "./college-student-section-move-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export class CollegeStudentSectionMoveError extends Error {
   constructor(public readonly code:
     "STUDENT_NOT_FOUND" | "STUDENT_NOT_ACTIVE" | "STUDENT_NOT_ENROLLED" | "CURRENT_CLASS_REQUIRED" |
@@ -30,7 +31,7 @@ export class CollegeStudentSectionMoveError extends Error {
 async function ownAdmin(context: RequestContext) {
   if(isSuperAdmin(context))return resolveActingCollege(context,"academics.manage");
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+  if (!membership || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
     !can(context, "academics.manage", {
       organizationId: membership.organizationId, collegeId: membership.collegeId,
     })) throw new AuthorizationError("academics.manage");

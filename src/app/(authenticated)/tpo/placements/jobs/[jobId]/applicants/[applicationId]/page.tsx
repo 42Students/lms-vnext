@@ -15,10 +15,11 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { formatDateTimeIst } from "@/lib/format-date";
 import { formatNumberIN } from "@/lib/safe-format";
+import { ROLE } from "@/modules/identity/roles";
 type Params={params:Promise<{jobId:string;applicationId:string}>};
 export default async function TpoApplicantDetailPage({params}:Params){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");
  const {jobId,applicationId}=await params;
  let data:Awaited<ReturnType<typeof getTpoApplicantDetail>>;
  try{data=await getTpoApplicantDetail(context,{jobId,applicationId});}catch(error){

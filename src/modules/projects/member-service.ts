@@ -54,6 +54,7 @@ import {
   type UpdateProjectMemberInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 function mapMemberConstraint(error: unknown) {
   switch (postgresConstraintName(error)) {
     case "project_members_active_membership_uq":
@@ -154,7 +155,7 @@ export async function listProjectMemberCandidates(
 ) {
   const query=projectMemberCandidateQuerySchema.parse(rawQuery);
   const scope=await requireProjectReadAccess(context,projectIdInput);
-  const mentorAction=scope.access==="MENTOR";
+  const mentorAction=scope.access===ROLE.MENTOR;
   if(!mentorAction&&scope.access!=="ADMIN")
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
 
@@ -168,7 +169,7 @@ export async function listProjectMemberCandidates(
   return getDb().transaction(async tx=>{
     if(mentorAction){
       await assertPersistedProjectMutationActor(tx,context,scope);
-      if(query.role==="MENTOR"){
+      if(query.role===ROLE.MENTOR){
       const [primaryMentor]=await tx.select({id:projectMembers.id})
         .from(projectMembers).where(and(
           eq(projectMembers.projectId,scope.project.id),
@@ -415,7 +416,7 @@ export async function reassignProjectPrimaryMentor(
       const currentPrimary =
         activeMembers.find(
           (member) =>
-            member.role === "MENTOR" &&
+            member.role === ROLE.MENTOR &&
             member.isPrimary,
         ) ?? null;
       const targetMember =
@@ -427,7 +428,7 @@ export async function reassignProjectPrimaryMentor(
 
       if (
         targetMember &&
-        targetMember.role !== "MENTOR"
+        targetMember.role !== ROLE.MENTOR
       ) {
         throw new ProjectsServiceError(
           "PROJECT_MEMBER_ROLE_REQUIRED",
@@ -718,14 +719,14 @@ export async function addProjectMember(
   rawInput: AddProjectMemberInput,
 ) {
   const scope=await requireProjectReadAccess(context,projectIdInput);
-  const mentorAction=scope.access==="MENTOR";
+  const mentorAction=scope.access===ROLE.MENTOR;
   if(!mentorAction&&scope.access!=="ADMIN")
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const input =
     addProjectMemberInputSchema.parse(rawInput);
   if(mentorAction&&(input.isPrimary||
      (input.roleKind!==undefined&&
-       !(input.role==="LEARNER"?input.roleKind==="LEARNER":
+       !(input.role===ROLE.LEARNER?input.roleKind===ROLE.LEARNER:
          ["MENTOR","CO_MENTOR"].includes(input.roleKind)))||
      input.canMutate===false))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
@@ -738,7 +739,7 @@ export async function addProjectMember(
       if(!project||project.deletedAt||["ARCHIVED","COMPLETED"].includes(project.status))throw new ProjectsServiceError("PROJECT_INVALID_STATE");
       if(mentorAction){
         await assertPersistedProjectMutationActor(tx,context,scope);
-        if(input.role==="MENTOR"){
+        if(input.role===ROLE.MENTOR){
       const [primaryMentor]=await tx.select({id:projectMembers.id})
         .from(projectMembers).where(and(
           eq(projectMembers.projectId,scope.project.id),
@@ -752,7 +753,7 @@ export async function addProjectMember(
       }else await assertPersistedPlatformPermission(tx,context,"projects.manage",{
         collegeId:scope.collegeId,organizationId:scope.organizationId,
       });
-      if (input.role === "LEARNER" && project.teamGroupId)
+      if (input.role === ROLE.LEARNER && project.teamGroupId)
         throw new ProjectsServiceError("PROJECT_TEAM_GROUP_MANAGED");
       // Lock the actual target membership, its platform user and role
       // together with this project write. A pre-transaction eligibility
@@ -764,7 +765,7 @@ export async function addProjectMember(
         isNull(projectMembers.endedAt),
       )).for("update").limit(1);
       if(already){
-        const kind=input.roleKind??(input.role==="MENTOR"?"MENTOR":"LEARNER");
+        const kind=input.roleKind??(input.role===ROLE.MENTOR?"MENTOR":"LEARNER");
         const canMutate=input.canMutate??!["OBSERVER","REVIEWER","QA"].includes(kind);
         if(already.role===input.role&&already.roleKind===kind&&
            already.canMutate===canMutate&&already.isPrimary===input.isPrimary&&
@@ -775,7 +776,7 @@ export async function addProjectMember(
         projectId: scope.project.id,
         membershipId: input.membershipId,
         role: input.role,
-        roleKind: input.roleKind ?? (input.role === "MENTOR" ? "MENTOR" : "LEARNER"),
+        roleKind: input.roleKind ?? (input.role === ROLE.MENTOR ? "MENTOR" : "LEARNER"),
         canMutate: input.canMutate ?? !["OBSERVER","REVIEWER","QA"].includes(input.roleKind ?? ""),
         isPrimary: input.isPrimary,
         roleLabel: input.roleLabel ?? null,
@@ -788,9 +789,9 @@ export async function addProjectMember(
       await notifyProjectMemberships(tx,event.id,{
         projectId:scope.project.id,collegeId:scope.collegeId,
         membershipIds:[created.membershipId],
-        title:created.role==="MENTOR"?"New project assigned":"Added to project",
+        title:created.role===ROLE.MENTOR?"New project assigned":"Added to project",
         body:"You have been added to "+scope.project.title+".",
-        actionHref:(created.role==="MENTOR"?"/mentor/projects/":"/learn/projects/")+scope.project.id,
+        actionHref:(created.role===ROLE.MENTOR?"/mentor/projects/":"/learn/projects/")+scope.project.id,
       });
       return [created];
     });
@@ -807,7 +808,7 @@ export async function updateProjectMember(
   rawInput: UpdateProjectMemberInput,
 ) {
   const scope=await requireProjectReadAccess(context,projectIdInput);
-  const mentorAction=scope.access==="MENTOR";
+  const mentorAction=scope.access===ROLE.MENTOR;
   if(!mentorAction && scope.access!=="ADMIN")
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const memberId =
@@ -821,12 +822,12 @@ export async function updateProjectMember(
 
   // Assigned Mentors can maintain learner responsibility labels only.
   // They cannot appoint other Mentors, grant access or alter system roles.
-  if(mentorAction&&(member.role!=="LEARNER"||input.roleLabel===undefined||
+  if(mentorAction&&(member.role!==ROLE.LEARNER||input.roleLabel===undefined||
      input.isPrimary!==undefined||input.roleKind!==undefined||input.canMutate!==undefined))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   if (
     input.isPrimary === true &&
-    member.role !== "MENTOR"
+    member.role !== ROLE.MENTOR
   ) {
     throw new ProjectsServiceError(
       "PROJECT_MEMBER_ROLE_REQUIRED",
@@ -853,7 +854,7 @@ export async function updateProjectMember(
           isNull(projectMembers.endedAt),
         )).for("update").limit(1);
       if(!fresh)throw new ProjectsServiceError("PROJECT_MEMBER_NOT_FOUND");
-      if(mentorAction&&fresh.role!=="LEARNER")
+      if(mentorAction&&fresh.role!==ROLE.LEARNER)
         throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
       // A saved project lead is a responsibility label, not a privilege grant.
       // Serialize promotions under the project lock to keep one current lead.
@@ -879,15 +880,15 @@ export async function updateProjectMember(
         throw new ProjectsServiceError("PROJECT_MEMBER_CONFLICT");
       if(input.isPrimary===false && !mayRemovePrimaryProjectMentor(project.status,fresh.role,fresh.isPrimary))
         throw new ProjectsServiceError("PROJECT_INVALID_STATE");
-      if(input.isPrimary===true&&fresh.role!=="MENTOR")
+      if(input.isPrimary===true&&fresh.role!==ROLE.MENTOR)
         throw new ProjectsServiceError("PROJECT_MEMBER_ROLE_REQUIRED");
       const roleKind=input.roleKind??fresh.roleKind;
       const canMutate=input.canMutate??fresh.canMutate;
-      if((fresh.role==="LEARNER" && !["LEARNER","OBSERVER","REVIEWER","QA"].includes(roleKind))||
-         (fresh.role==="MENTOR" && roleKind==="LEARNER")||
+      if((fresh.role===ROLE.LEARNER && !["LEARNER","OBSERVER","REVIEWER","QA"].includes(roleKind))||
+         (fresh.role===ROLE.MENTOR && roleKind===ROLE.LEARNER)||
          (["OBSERVER","REVIEWER","QA"].includes(roleKind)&&canMutate)||
-         (fresh.isPrimary && project.status==="ACTIVE" && (roleKind!=="MENTOR" || !canMutate))||
-         (input.isPrimary===true && (roleKind!=="MENTOR" || !canMutate)))
+         (fresh.isPrimary && project.status==="ACTIVE" && (roleKind!==ROLE.MENTOR || !canMutate))||
+         (input.isPrimary===true && (roleKind!==ROLE.MENTOR || !canMutate)))
         throw new ProjectsServiceError("PROJECT_MEMBER_ROLE_REQUIRED");
       const [changed]=await tx.update(projectMembers).set({
         ...(input.isPrimary!==undefined?{isPrimary:input.isPrimary}:{}),
@@ -906,7 +907,7 @@ export async function updateProjectMember(
         projectId:scope.project.id,collegeId:scope.collegeId,
         membershipIds:[changed.membershipId],exceptUserId:context.user.id,
         title:"Project role updated",body:"Your project role or permissions have changed.",
-        actionHref:(changed.role==="MENTOR"?"/mentor/projects/":"/learn/projects/")+scope.project.id+"?tab=team",
+        actionHref:(changed.role===ROLE.MENTOR?"/mentor/projects/":"/learn/projects/")+scope.project.id+"?tab=team",
       });
       return [changed];
     });
@@ -922,7 +923,7 @@ export async function endProjectMember(
   memberIdInput: string,
 ) {
   const scope=await requireProjectReadAccess(context,projectIdInput);
-  const mentorAction=scope.access==="MENTOR";
+  const mentorAction=scope.access===ROLE.MENTOR;
   if(!mentorAction&&scope.access!=="ADMIN")
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const memberId =
@@ -942,14 +943,14 @@ export async function endProjectMember(
       await assertPersistedPlatformPermission(tx,context,"projects.manage",{
         collegeId:scope.collegeId,organizationId:scope.organizationId,
       });
-    if (member.role === "LEARNER" && project.teamGroupId)
+    if (member.role === ROLE.LEARNER && project.teamGroupId)
       throw new ProjectsServiceError("PROJECT_TEAM_GROUP_MANAGED");
     const [fresh] = await tx.select().from(projectMembers)
       .where(and(eq(projectMembers.id,member.id),eq(projectMembers.projectId,scope.project.id),
         isNull(projectMembers.endedAt)))
       .for("update");
     if (!fresh) throw new ProjectsServiceError("PROJECT_MEMBER_NOT_FOUND");
-    if(mentorAction&&fresh.role!=="LEARNER")
+    if(mentorAction&&fresh.role!==ROLE.LEARNER)
       throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
     if (!project || !mayRemovePrimaryProjectMentor(project.status,fresh.role,fresh.isPrimary))
       throw new ProjectsServiceError("PROJECT_INVALID_STATE");
@@ -965,7 +966,7 @@ export async function endProjectMember(
     // must not remain assigned to a learner whose project membership ended.
     // This update and its audit events share the project/member row locks and
     // the same transaction as the membership change.
-    const unassigned=fresh.role==="LEARNER"?await tx.update(projectTasks).set({
+    const unassigned=fresh.role===ROLE.LEARNER?await tx.update(projectTasks).set({
       assigneeMembershipId:null,
       updatedAt:sql`greatest(${projectTasks.updatedAt} + interval '1 millisecond', now())`,
     }).where(and(
@@ -1002,7 +1003,7 @@ export async function endProjectMember(
       projectId:scope.project.id,collegeId:scope.collegeId,
       membershipIds:[ended.membershipId],title:"Removed from project",
       body:"Your membership in "+scope.project.title+" has ended.",
-      actionHref:(ended.role==="MENTOR"?"/mentor/projects/":"/learn/projects/")+scope.project.id,
+      actionHref:(ended.role===ROLE.MENTOR?"/mentor/projects/":"/learn/projects/")+scope.project.id,
     });
     return ended;
   });

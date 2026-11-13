@@ -1,3 +1,4 @@
+import { ROLE } from "@/modules/identity/roles";
 type ProjectMeetingTransitionAction="COMPLETE"|"CANCEL";
 type ProjectMeetingActorMode="LEARNER"|"MENTOR"|"ADMIN";
 
@@ -13,7 +14,7 @@ export function projectMeetingTransitionPayload(
  note:string,
 ){
  const expectedUpdatedAt=new Date(updatedAt).toISOString();
- const confirmed=mode==="MENTOR"?{confirmed:true as const}:{};
+ const confirmed=mode===ROLE.MENTOR?{confirmed:true as const}:{};
  if(action==="COMPLETE")return {
   action,expectedUpdatedAt,...confirmed,outcome:note.trim()||undefined,
  };

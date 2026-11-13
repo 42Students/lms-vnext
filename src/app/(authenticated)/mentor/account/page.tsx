@@ -11,12 +11,13 @@ import {MentorEmailPreferenceControls} from "@/components/projects/mentor-email-
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 export default async function MentorAccountPage(){
  const context=await getCurrentRequestContext();
  if(context.user.platformStatus!=="ACTIVE"||
     context.membership?.status!=="ACTIVE"||
-    !context.membership.roles.includes("MENTOR"))
+    !context.membership.roles.includes(ROLE.MENTOR))
    redirect("/dashboard");
  const account=await getMentorAccountOverview(context);
  const googleConnection=account.projectsEnabled

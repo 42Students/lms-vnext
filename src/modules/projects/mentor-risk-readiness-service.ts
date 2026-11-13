@@ -11,11 +11,12 @@ import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {mentorRiskReadinessQuerySchema,mentorRiskReadiness}
   from "./mentor-risk-readiness-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Evidence-only drill-down for a current, exact-project Mentor assignment. */
 export async function getMentorRiskReadiness(context:RequestContext,raw:unknown){
   const query=mentorRiskReadinessQuerySchema.parse(raw);
   const membership=context.membership;
-  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR")||
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR)||
     !can(context,"projects.read",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
@@ -32,7 +33,7 @@ export async function getMentorRiskReadiness(context:RequestContext,raw:unknown)
     items:[] as ReturnType<typeof mentorRiskReadiness>["items"],
   };
   const scope=await requireProjectReadAccess(context,query.projectId);
-  if(scope.access!=="MENTOR"||scope.collegeId!==membership.collegeId||
+  if(scope.access!==ROLE.MENTOR||scope.collegeId!==membership.collegeId||
      !can(context,"projects.read",{
        collegeId:scope.collegeId,organizationId:scope.organizationId,
      }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");

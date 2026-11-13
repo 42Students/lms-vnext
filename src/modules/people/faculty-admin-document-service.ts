@@ -14,6 +14,7 @@ import {emptyFacultyProfileDocument,facultyProfileDocumentSchema} from "./facult
 import {facultySelfSectionPatchSchema,updateFacultyProfileSection} from "./faculty-self-section-model";
 import {PeopleServiceError} from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 const targetSchema=z.string().uuid();
 type DocumentRow={profile_document:unknown;profile_document_version:number};
 
@@ -33,7 +34,7 @@ async function requireFacultyTarget(
  const persisted=await assertPersistedPlatformPermission(tx,context,"people.manage",scope);
  const roles=await tx.select({role:membershipRoles.role}).from(membershipRoles)
   .where(eq(membershipRoles.membershipId,membershipId)).for("share");
- if(!roles.some(item=>item.role==="FACULTY"))throw new PeopleServiceError("FACULTY_ROLE_REQUIRED");
+ if(!roles.some(item=>item.role===ROLE.FACULTY))throw new PeopleServiceError("FACULTY_ROLE_REQUIRED");
  if(!isSuperAdmin(persisted)&&persisted.membership?.collegeId!==target.collegeId)
   throw new AuthorizationError("people.manage");
  return {target,roles:roles.map(item=>item.role),persisted};
@@ -64,7 +65,7 @@ export async function patchFacultyDocumentForAdmin(
  const patch=facultySelfSectionPatchSchema.parse(rawPatch);
  return getDb().transaction(async tx=>{
   const {roles,persisted}=await requireFacultyTarget(tx,context,id);
-  if(!isSuperAdmin(persisted)&&(roles.includes("COLLEGE_ADMIN")||roles.includes("TPO")))
+  if(!isSuperAdmin(persisted)&&(roles.includes(ROLE.COLLEGE_ADMIN)||roles.includes(ROLE.TPO)))
    throw new AuthorizationError("people.manage");
   if(!await facultyProfileDocumentStorageReady(tx))
    throw new PeopleServiceError("PRIVATE_IDENTITY_STORAGE_NOT_READY");
@@ -257,7 +258,7 @@ async function scopedAdminReceiptTarget(context:RequestContext,id:string){
  return getDb().transaction(async tx=>{
   const scope=await requireFacultyTarget(tx,context,id);
   if(!isSuperAdmin(scope.persisted)&&
-     (scope.roles.includes("COLLEGE_ADMIN")||scope.roles.includes("TPO")))
+     (scope.roles.includes(ROLE.COLLEGE_ADMIN)||scope.roles.includes(ROLE.TPO)))
    throw new AuthorizationError("people.manage");
   if(!await facultyProfileDocumentStorageReady(tx))
    throw new PeopleServiceError("PRIVATE_IDENTITY_STORAGE_NOT_READY");
@@ -305,7 +306,7 @@ export async function completeFacultyAdminDocumentUpload(
  return getDb().transaction(async tx=>{
   const scope=await requireFacultyTarget(tx,context,membershipId);
   if(!isSuperAdmin(scope.persisted)&&
-     (scope.roles.includes("COLLEGE_ADMIN")||scope.roles.includes("TPO")))
+     (scope.roles.includes(ROLE.COLLEGE_ADMIN)||scope.roles.includes(ROLE.TPO)))
    throw new AuthorizationError("people.manage");
   if(!await facultyProfileDocumentStorageReady(tx))
    throw new PeopleServiceError("PRIVATE_IDENTITY_STORAGE_NOT_READY");
@@ -374,7 +375,7 @@ export async function revokeFacultyAdminDocumentAttachment(
  return getDb().transaction(async tx=>{
   const scope=await requireFacultyTarget(tx,context,membershipId);
   if(!isSuperAdmin(scope.persisted)&&
-     (scope.roles.includes("COLLEGE_ADMIN")||scope.roles.includes("TPO")))
+     (scope.roles.includes(ROLE.COLLEGE_ADMIN)||scope.roles.includes(ROLE.TPO)))
    throw new AuthorizationError("people.manage");
   if(!await facultyProfileDocumentStorageReady(tx))
    throw new PeopleServiceError("PRIVATE_IDENTITY_STORAGE_NOT_READY");

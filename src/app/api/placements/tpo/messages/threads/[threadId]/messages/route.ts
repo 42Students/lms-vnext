@@ -6,6 +6,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {sendThreadMessage,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 import { route } from "@/security/route";
+import { ROLE } from "@/modules/identity/roles";
 const schema=z.strictObject({body:z.string().trim().min(1).max(4000)});
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{threadId:string}>}){
@@ -14,7 +15,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{threadId:str
  const id=z.string().uuid().safeParse((await params).threadId);
  if(!input.success||!id.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))
   return NextResponse.json({error:"FORBIDDEN"},{status:403});
  try{
   const message=await sendThreadMessage(context,id.data,input.data.body);

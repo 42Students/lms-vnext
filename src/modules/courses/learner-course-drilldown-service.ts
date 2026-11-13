@@ -18,6 +18,7 @@ import {
   buildLearnerLessonProgress,
 } from "./learner-course-drilldown-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * A signed request context is not enough: recheck the currently active user,
  * membership and LEARNER role in persisted tables before any read. Both
@@ -25,7 +26,7 @@ import {
  */
 async function requireCurrentLearner(context: RequestContext, permission: "courses.read" | "academics.read") {
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "LEARNER") ||
+  if (!membership || !hasMembershipRole(context, ROLE.LEARNER) ||
       membership.status !== "ACTIVE" || context.user.platformStatus !== "ACTIVE") {
     throw new AuthorizationError(permission);
   }

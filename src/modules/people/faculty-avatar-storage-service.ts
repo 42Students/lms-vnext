@@ -8,6 +8,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {createPrivateUploadGrant,readPrivateObjectAttestation,createPrivateReadGrant} from "@/modules/storage/private-object-storage";
 
+import { ROLE } from "@/modules/identity/roles";
 const allowed=["image/png","image/jpeg","image/webp"] as const;
 const input=z.strictObject({
  contentType:z.enum(allowed),
@@ -19,7 +20,7 @@ const confirm=z.strictObject({
 });
 function scope(context:RequestContext){
  const member=context.membership;
- if(!member||member.status!=="ACTIVE"||!member.roles.includes("FACULTY")||
+ if(!member||member.status!=="ACTIVE"||!member.roles.includes(ROLE.FACULTY)||
     context.user.platformStatus!=="ACTIVE")
   throw new Error("FACULTY_ROLE_REQUIRED");
  return member;

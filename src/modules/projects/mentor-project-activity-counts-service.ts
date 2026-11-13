@@ -7,6 +7,7 @@ import {requireProjectReadAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 import {summarizeMentorProjectActivityCounts} from "./mentor-project-activity-counts-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Count before paging, with the same persisted tenant/project predicate used
  * by getProjectActivityPage. Imported Sprint events can lack projectId metadata,
  * so their subject must resolve to a Sprint owned by this authorized project.
@@ -15,7 +16,7 @@ export async function getMentorProjectActivityCounts(
   context:RequestContext,projectId:string,now:Date=new Date(),
 ){
   const scope=await requireProjectReadAccess(context,projectId);
-  if(scope.access!=="MENTOR"||!Number.isFinite(now.getTime()))
+  if(scope.access!==ROLE.MENTOR||!Number.isFinite(now.getTime()))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const from=new Date(now.getTime()-7*86_400_000);
   const rows=await getDb().select({

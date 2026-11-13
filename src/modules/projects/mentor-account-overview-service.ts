@@ -9,13 +9,14 @@ import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {listMyProjectInstances} from "./member-service";
 import {mentorAccountAssignments} from "./mentor-account-summary-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** All profile fields are resolved from the signed-in identity, never a
  * client-supplied person, college, phone number, or project identifier.
  */
 export async function getMentorAccountOverview(context:RequestContext){
  const membership=context.membership;
  if(!membership||!hasActiveMembership(context)||
-    !hasMembershipRole(context,"MENTOR")||
+    !hasMembershipRole(context,ROLE.MENTOR)||
     context.user.platformStatus!=="ACTIVE")
    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const [identity]=await getDb().select({
@@ -43,5 +44,5 @@ export async function getMentorAccountOverview(context:RequestContext){
   phone:identity.phone,collegeName:identity.collegeName,
   collegeCode:identity.collegeCode,
   teamCount:summary.teamCount,courses:summary.courses,projectsEnabled:enabled,
-  hasFacultyProfile:membership.roles.includes("FACULTY")};
+  hasFacultyProfile:membership.roles.includes(ROLE.FACULTY)};
 }

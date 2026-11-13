@@ -8,6 +8,7 @@ import { contactFingerprint } from "./crypto";
 import { adminOtpLockoutResetSchema, normalizePhone } from "./login-service";
 import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Staff-assisted sign-in recovery. Unlike the legacy phone-wide destructive
  * lockout reset, this clears only 10-minute LOGIN challenges for one resolved
@@ -22,7 +23,7 @@ export async function resetLoginOtpLockout(
   rawInput: unknown,
 ): Promise<{ ok: true }> {
   const administrator = isSuperAdmin(context);
-  const collegeAdmin = hasMembershipRole(context, "COLLEGE_ADMIN");
+  const collegeAdmin = hasMembershipRole(context, ROLE.COLLEGE_ADMIN);
   if (!administrator && !collegeAdmin) throw new Error("FORBIDDEN");
   const input = adminOtpLockoutResetSchema.parse(rawInput);
   const phone = normalizePhone(input.phone);

@@ -10,6 +10,7 @@ import {visibleContactDetails} from "./college-contacts-privacy";
 import {collegeContactAcademicScope} from "./college-contacts-academic-scope";
 import {collegeContactsQuerySchema,contactDateWindowValid,contactAcademicFiltersCompatible,contactRoleAudienceCompatible,contactsIstDayStart,contactsNextIstDayStart,collegeContactLiteralPattern} from "./college-contacts-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export type CollegeContactRow={
  membershipId:string;name:string;email:string;phone:string;roles:("FACULTY"|"LEARNER")[];
  avatarInitial:string;avatarTint:number;
@@ -32,14 +33,14 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
  if(!contactAcademicFiltersCompatible(academicFilter))throw new Error("INVALID_CONTACT_ACADEMIC_COMBINATION");
  if(!contactRoleAudienceCompatible(filter))throw new Error("INVALID_CONTACT_ROLE_AUDIENCE");
  const claim=context.membership;
- if(!claim||claim.status!=="ACTIVE"||!claim.roles.includes("COLLEGE_ADMIN"))
+ if(!claim||claim.status!=="ACTIVE"||!claim.roles.includes(ROLE.COLLEGE_ADMIN))
   throw new AuthorizationError("people.manage");
  return getDb().transaction(async tx=>{
   const checked=await assertPersistedPlatformPermission(tx,context,"people.manage",{
    organizationId:claim.organizationId,collegeId:claim.collegeId,
   });
   if(!checked.membership||checked.membership.id!==claim.id||
-     !checked.membership.roles.includes("COLLEGE_ADMIN")||
+     !checked.membership.roles.includes(ROLE.COLLEGE_ADMIN)||
      checked.membership.collegeId!==claim.collegeId)
    throw new AuthorizationError("people.manage");
   const hasRole=(role:"FACULTY"|"LEARNER")=>exists(
@@ -49,7 +50,7 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
   const academic=collegeContactAcademicScope(claim.collegeId);
   const search=filter.q?"%"+filter.q.replace(/[\\%_]/g,"\\$&")+"%":null;
   const matches=and(eq(collegeMemberships.collegeId,claim.collegeId),
-   filter.tab==="FACULTY"?faculty:filter.tab==="STUDENT"?learner:or(faculty,learner),
+   filter.tab===ROLE.FACULTY?faculty:filter.tab==="STUDENT"?learner:or(faculty,learner),
    filter.status==="ALL"?undefined:eq(collegeMemberships.status,filter.status),
    filter.initial?ilike(users.displayName,filter.initial+"%"):undefined,
    filter.joinedFrom?gte(collegeMemberships.createdAt,contactsIstDayStart(filter.joinedFrom)):undefined,
@@ -104,7 +105,7 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
   }
   const items:CollegeContactRow[]=rows.map(row=>{
    const memberRoles=roleMap.get(row.membershipId)??[];
-   const contact=visibleContactDetails({email:row.email,phone:row.phone,isLearner:memberRoles.includes("LEARNER")});
+   const contact=visibleContactDetails({email:row.email,phone:row.phone,isLearner:memberRoles.includes(ROLE.LEARNER)});
    const name=row.name?.trim()||"—";
    const avatar=collegeContactAvatar(name);
    return {membershipId:row.membershipId,name,avatarInitial:avatar.initial,avatarTint:avatar.tint,
@@ -141,8 +142,8 @@ export async function listCollegeStaffContacts(context:RequestContext,raw:unknow
  const filter=staffContactsFilter.parse(raw);
  const claim=context.membership;
  if(!claim||claim.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
-    claim.roles.includes("LEARNER")||
-    !claim.roles.some(role=>role==="FACULTY"||role==="TPO"||role==="COLLEGE_ADMIN"))
+    claim.roles.includes(ROLE.LEARNER)||
+    !claim.roles.some(role=>role===ROLE.FACULTY||role===ROLE.TPO||role===ROLE.COLLEGE_ADMIN))
   throw new AuthorizationError("college.read");
  return getDb().transaction(async tx=>{
   // The common permission helper alone allows learner college.read; always
@@ -152,12 +153,12 @@ export async function listCollegeStaffContacts(context:RequestContext,raw:unknow
   });
   const actor=checked.membership;
   if(!actor||actor.id!==claim.id||actor.collegeId!==claim.collegeId||
-     actor.roles.includes("LEARNER")||
-     !actor.roles.some(role=>role==="FACULTY"||role==="TPO"||role==="COLLEGE_ADMIN"))
+     actor.roles.includes(ROLE.LEARNER)||
+     !actor.roles.some(role=>role===ROLE.FACULTY||role===ROLE.TPO||role===ROLE.COLLEGE_ADMIN))
    throw new AuthorizationError("college.read");
 
-  const facultyOnly=actor.roles.includes("FACULTY")&&
-    !actor.roles.includes("COLLEGE_ADMIN")&&!actor.roles.includes("TPO");
+  const facultyOnly=actor.roles.includes(ROLE.FACULTY)&&
+    !actor.roles.includes(ROLE.COLLEGE_ADMIN)&&!actor.roles.includes(ROLE.TPO);
   let departmentId=filter.departmentId;
   if(facultyOnly){
    const [profile]=await tx.select({departmentId:facultyProfiles.primaryDepartmentId})
@@ -247,7 +248,7 @@ export function toLegacyCollegeContactDto(row:CollegeContactRow){
  return {
   id:row.membershipId, membershipId:row.membershipId,
   firstName:words[0]??"—", lastName:words.slice(1).join(" "),
-  userType:row.roles.includes("FACULTY")?"FACULTY":"STUDENT",
+  userType:row.roles.includes(ROLE.FACULTY)?"FACULTY":"STUDENT",
   email:row.email==="Not provided"?"—":row.email,
   contactMobile:row.phone==="Not provided"?"—":row.phone,
   // The canonical account has one phone field, not a verified alternate.

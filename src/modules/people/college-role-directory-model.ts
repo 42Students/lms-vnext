@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { MembershipStatus } from "@/modules/identity/constants";
 import { COURSE_TEACHING_ROLES } from "@/modules/courses/constants";
 
+import { ROLE } from "@/modules/identity/roles";
 export const COLLEGE_ROLE_DIRECTORY_PAGE_SIZE = 25;
 /** Legacy /api/v2/learners/search autocomplete uses 15, whereas program,
  * class and college lookups traditionally start at 50. The visible roster
@@ -77,7 +78,7 @@ export const collegeRoleDirectoryQuerySchema = z.object({
 export type CollegeRoleDirectoryQuery = z.infer<typeof collegeRoleDirectoryQuerySchema>;
 
 export function collegeDirectorySearchHint(kind: CollegeDirectoryKind) {
-  return kind === "LEARNER" ? "Name, email, roll, registration, program or batch" : "Name, email, title, employment type or department";
+  return kind === ROLE.LEARNER ? "Name, email, roll, registration, program or batch" : "Name, email, title, employment type or department";
 }
 
 export type CollegeRoleDirectoryRow = {
@@ -104,7 +105,7 @@ export function describeCollegeDirectoryContext(
   row: Pick<CollegeRoleDirectoryRow,
     "program" | "cohort" | "sections" | "activeTeachingAssignments">,
 ): string {
-  if (kind === "FACULTY") {
+  if (kind === ROLE.FACULTY) {
     return row.activeTeachingAssignments === 1
       ? "1 active course teaching assignment"
       : `${row.activeTeachingAssignments} active course teaching assignments`;
@@ -128,23 +129,23 @@ export function collegeRoleDirectoryHref(
   if (filter.accountStatus !== "ALL") params.set("accountStatus", filter.accountStatus);
   if (filter.joinedFrom) params.set("joinedFrom",filter.joinedFrom);
   if (filter.joinedThrough) params.set("joinedThrough",filter.joinedThrough);
-  if (kind === "LEARNER" && filter.enrollment !== "ALL") params.set("enrollment", filter.enrollment);
-  if (kind === "LEARNER" && filter.rollPresence !== "ALL") params.set("rollPresence", filter.rollPresence);
-  if (kind === "LEARNER" && filter.registrationPresence !== "ALL") params.set("registrationPresence", filter.registrationPresence);
-  if (kind === "LEARNER" && filter.cohortId) params.set("cohortId",filter.cohortId);
-  if (kind === "LEARNER" && filter.programId) params.set("programId",filter.programId);
-  if (kind === "LEARNER" && filter.sectionId) params.set("sectionId",filter.sectionId);
-  if (kind === "LEARNER" && filter.classPresence !== "ALL") params.set("classPresence", filter.classPresence);
-  if (kind === "FACULTY" && filter.teaching !== "ALL") params.set("teaching", filter.teaching);
-  if (kind === "FACULTY" && filter.teachingRole !== "ALL") params.set("teachingRole", filter.teachingRole);
-  if (kind === "FACULTY" && filter.facultyDepartmentId) params.set("facultyDepartmentId", filter.facultyDepartmentId);
-  if (kind === "FACULTY" && filter.titlePresence !== "ALL") params.set("titlePresence", filter.titlePresence);
-  if (kind === "FACULTY" && filter.departmentPresence !== "ALL") params.set("departmentPresence", filter.departmentPresence);
-  if (kind === "FACULTY" && filter.employmentType) params.set("employmentType",filter.employmentType);
+  if (kind === ROLE.LEARNER && filter.enrollment !== "ALL") params.set("enrollment", filter.enrollment);
+  if (kind === ROLE.LEARNER && filter.rollPresence !== "ALL") params.set("rollPresence", filter.rollPresence);
+  if (kind === ROLE.LEARNER && filter.registrationPresence !== "ALL") params.set("registrationPresence", filter.registrationPresence);
+  if (kind === ROLE.LEARNER && filter.cohortId) params.set("cohortId",filter.cohortId);
+  if (kind === ROLE.LEARNER && filter.programId) params.set("programId",filter.programId);
+  if (kind === ROLE.LEARNER && filter.sectionId) params.set("sectionId",filter.sectionId);
+  if (kind === ROLE.LEARNER && filter.classPresence !== "ALL") params.set("classPresence", filter.classPresence);
+  if (kind === ROLE.FACULTY && filter.teaching !== "ALL") params.set("teaching", filter.teaching);
+  if (kind === ROLE.FACULTY && filter.teachingRole !== "ALL") params.set("teachingRole", filter.teachingRole);
+  if (kind === ROLE.FACULTY && filter.facultyDepartmentId) params.set("facultyDepartmentId", filter.facultyDepartmentId);
+  if (kind === ROLE.FACULTY && filter.titlePresence !== "ALL") params.set("titlePresence", filter.titlePresence);
+  if (kind === ROLE.FACULTY && filter.departmentPresence !== "ALL") params.set("departmentPresence", filter.departmentPresence);
+  if (kind === ROLE.FACULTY && filter.employmentType) params.set("employmentType",filter.employmentType);
   if (filter.sort !== "NAME") params.set("sort", filter.sort);
   if (filter.page > 1) params.set("page", String(filter.page));
   if (filter.pageSize !== COLLEGE_ROLE_DIRECTORY_PAGE_SIZE) params.set("pageSize", String(filter.pageSize));
-  const base = kind === "FACULTY" ? "/college/faculty" : "/college/students";
+  const base = kind === ROLE.FACULTY ? "/college/faculty" : "/college/students";
   return params.size ? base + "?" + params.toString() : base;
 }
 
@@ -188,7 +189,7 @@ export function roleDirectoryNextIstDayStart(day: string): Date {return new Date
 /** Impossible combinations should be rejected, not rendered as a misleading empty college roster. */
 export function assertCompatibleCollegeRoleDirectoryFilters(kind: CollegeDirectoryKind, filter: CollegeRoleDirectoryQuery): void {
   // Apply the same role-specific restrictions to the page and CSV as the persisted service.
-  if(kind==="FACULTY"){
+  if(kind===ROLE.FACULTY){
    if(filter.sectionId)throw new RangeError("FACULTY_SECTION_FILTER_UNSUPPORTED");
    if(filter.programId)throw new RangeError("FACULTY_PROGRAM_FILTER_UNSUPPORTED");
    if(filter.cohortId)throw new RangeError("FACULTY_COHORT_FILTER_UNSUPPORTED");
@@ -204,13 +205,13 @@ export function assertCompatibleCollegeRoleDirectoryFilters(kind: CollegeDirecto
    if(filter.titlePresence!=="ALL")throw new RangeError("LEARNER_ACADEMIC_TITLE_FILTER_UNSUPPORTED");
    if(filter.facultyDepartmentId)throw new RangeError("LEARNER_FACULTY_DEPARTMENT_FILTER_UNSUPPORTED");
   }
-  if (kind === "FACULTY" && filter.teaching === "NONE" && filter.teachingRole !== "ALL") {
+  if (kind === ROLE.FACULTY && filter.teaching === "NONE" && filter.teachingRole !== "ALL") {
     throw new RangeError("FACULTY_TEACHING_FILTER_CONFLICT");
   }
-  if (kind === "LEARNER" && filter.classPresence === "NONE" && filter.sectionId) {
+  if (kind === ROLE.LEARNER && filter.classPresence === "NONE" && filter.sectionId) {
     throw new RangeError("LEARNER_CLASS_FILTER_CONFLICT");
   }
-  if (kind === "LEARNER" && filter.enrollment === "NONE" && (filter.cohortId || filter.programId || filter.sectionId || filter.classPresence === "ASSIGNED")) {
+  if (kind === ROLE.LEARNER && filter.enrollment === "NONE" && (filter.cohortId || filter.programId || filter.sectionId || filter.classPresence === "ASSIGNED")) {
     throw new RangeError("LEARNER_ENROLLMENT_FILTER_CONFLICT");
   }
 }

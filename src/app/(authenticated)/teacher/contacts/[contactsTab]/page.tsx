@@ -21,6 +21,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 const tabs = {
   allContacts: {
     label: "All Contacts",
@@ -48,7 +49,7 @@ export default async function FacultyContactsPage({
   }>;
 }) {
   const context=await getCurrentRequestContext();
-  if(!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY"))redirect("/dashboard");
+  if(!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.FACULTY))redirect("/dashboard");
   const { contactsTab } = await params;
   if (!(contactsTab in tabs)) {
     redirect("/teacher/contacts/allContacts");

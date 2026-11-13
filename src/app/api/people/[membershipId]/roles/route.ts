@@ -14,6 +14,7 @@ import {
 } from "@/modules/people/runtime";
 import { route } from "@/security/route";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime = "nodejs";
 
 /** Presentation labels accompany the stable machine role values. */
@@ -88,7 +89,7 @@ async function handlePOST(
   try {
     const context = await getCurrentRequestContext();
     const input = membershipRoleMutationInputSchema.parse(parsedBody.body);
-    if (input.role === "COLLEGE_ADMIN" || input.role === "TPO") {
+    if (input.role === ROLE.COLLEGE_ADMIN || input.role === ROLE.TPO) {
       requirePermission(context, "admin-scope.select");
     }
     // Every role grant/revoke changes authorization, even LEARNER or FACULTY.
@@ -130,7 +131,7 @@ async function handleDELETE(
   try {
     const context = await getCurrentRequestContext();
     const input = membershipRoleMutationInputSchema.parse(parsedBody.body);
-    if (input.role === "COLLEGE_ADMIN" || input.role === "TPO") {
+    if (input.role === ROLE.COLLEGE_ADMIN || input.role === ROLE.TPO) {
       requirePermission(context, "admin-scope.select");
     }
     // Every role grant/revoke changes authorization, even LEARNER or FACULTY.

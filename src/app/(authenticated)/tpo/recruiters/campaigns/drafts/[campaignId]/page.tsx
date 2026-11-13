@@ -18,6 +18,7 @@ import {TpoCampaignPrototypeSidebar} from "@/components/tpo/tpo-campaign-prototy
 import {TpoCampaignSentStory} from "@/components/tpo/tpo-campaign-sent-story";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
+import { ROLE } from "@/modules/identity/roles";
 /** The persisted provider receipt state determines the old LMS status-pill tone. */
 function receiptTone(status:string):"neutral"|"info"|"success"|"warning"|"error" {
  if(status==="SENT")return "success";
@@ -31,7 +32,7 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
  params:Promise<{campaignId:string}>;searchParams?:Promise<{page?:string|string[]}>;
 }){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");
  const raw=searchParams?await searchParams:{};
  if(Array.isArray(raw.page) || (raw.page!==undefined && !/^[1-9][0-9]{0,5}$/.test(raw.page))) {
   return <div className="min-w-0 space-y-4">

@@ -6,6 +6,7 @@ import {hasMembershipRole,isSuperAdmin,type RequestContext} from "@/modules/iden
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 
+import { ROLE } from "@/modules/identity/roles";
 export type CollegeExistingContentFilters={
  courseId?:string;lessonId?:string;sectionId?:string;search?:string;page?:number;
  allKindsForReorder?:boolean;
@@ -33,7 +34,7 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
  const membership=ctx.membership;
  const superAdmin=isSuperAdmin(ctx);
  if(!superAdmin&&(!membership||membership.status!=="ACTIVE"||
-    ctx.user.platformStatus!=="ACTIVE"||!hasMembershipRole(ctx,"COLLEGE_ADMIN")))
+    ctx.user.platformStatus!=="ACTIVE"||!hasMembershipRole(ctx,ROLE.COLLEGE_ADMIN)))
   throw new AuthorizationError("courses.manage");
  const acting=superAdmin?await resolveActingCollege(ctx,"courses.manage"):null;
  const collegeId=acting?.collegeId??membership!.collegeId;
@@ -150,7 +151,7 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
  * without a learning path. The writer creates its path on demand. */
 export async function getCollegeLessonAuthoringOptions(ctx:RequestContext){
  const membership=ctx.membership;
- if(!membership||!hasMembershipRole(ctx,"COLLEGE_ADMIN"))
+ if(!membership||!hasMembershipRole(ctx,ROLE.COLLEGE_ADMIN))
   throw new AuthorizationError("courses.manage");
  requirePermission(ctx,"courses.manage",{
   collegeId:membership.collegeId,organizationId:membership.organizationId,

@@ -1,3 +1,4 @@
+import { ROLE } from "@/modules/identity/roles";
 /**
  * DB10 legacy bug tracker external access/attachment validation.
  * The legacy read routes were no-login public endpoints. vNext deliberately
@@ -18,7 +19,7 @@ export function canReadBugTrackerIssue(
   principal: BugTrackerPrincipal,
   issue: BugTrackerAccessResource,
 ): boolean {
-  if (principal.kind === "SUPER_ADMIN") {
+  if (principal.kind === ROLE.SUPER_ADMIN) {
     return principal.active && principal.id.trim().length > 0;
   }
   if (principal.kind === "REPORTER") {
@@ -34,7 +35,7 @@ export function canReadBugTrackerIssue(
 export function canMutateBugTrackerWorkflow(
   principal: BugTrackerPrincipal,
 ): boolean {
-  return principal.kind === "SUPER_ADMIN" &&
+  return principal.kind === ROLE.SUPER_ADMIN &&
     principal.active &&
     principal.id.trim().length > 0;
 }

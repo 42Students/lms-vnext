@@ -19,6 +19,7 @@ import {CoursesServiceError,postgresConstraintName} from "./errors";
 import {assignmentFieldsChanged,facultyAssignmentCommandSchema,facultyAssignmentParamsSchema,
  facultyAssignmentVersionMatches,facultyAssignmentEditLockedBySubmissions,facultyAssignmentMethodsChanged} from "./faculty-assignment-authoring-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Own-Section, confirmed text-only commands. Uses row locks + millisecond tokens,
  * which match JS Date precision even when PostgreSQL stores microseconds. */
 export async function commandFacultyAssignment(
@@ -28,16 +29,16 @@ export async function commandFacultyAssignment(
   const input=facultyAssignmentCommandSchema.parse(rawInput);
   const membership=context.membership;
   if(!membership||!hasActiveMembership(context)||
-     !(hasMembershipRole(context,"FACULTY")||hasMembershipRole(context,"COLLEGE_ADMIN")))
+     !(hasMembershipRole(context,ROLE.FACULTY)||hasMembershipRole(context,ROLE.COLLEGE_ADMIN)))
     throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
   const delivery=await loadCourseSectionDeliveryScope(deliveryId);
   if(delivery.collegeId!==membership.collegeId||
      !can(context,"courses.read",{collegeId:delivery.collegeId,organizationId:delivery.organizationId}))
     throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
   const actor=await requireDeliveryContentMutation(context,deliveryId);
-  const admin=actor==="ADMIN"&&hasMembershipRole(context,"COLLEGE_ADMIN")&&
+  const admin=actor==="ADMIN"&&hasMembershipRole(context,ROLE.COLLEGE_ADMIN)&&
     can(context,"courses.manage",{collegeId:delivery.collegeId,organizationId:delivery.organizationId});
-  if(actor!=="FACULTY"&&!admin)
+  if(actor!==ROLE.FACULTY&&!admin)
     throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
   if(input.action==="CREATE"){
     const lesson=await loadCourseLessonScope(input.lessonId);
@@ -196,7 +197,7 @@ export async function getFacultyAssignmentMethods(
  const {deliveryId}=facultyAssignmentParamsSchema.parse(rawParams);
  const assignmentId=z.string().uuid().parse(assignmentIdInput);
  const actor=await requireDeliveryContentMutation(context,deliveryId);
- if(actor!=="FACULTY")throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+ if(actor!==ROLE.FACULTY)throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
  const [row]=await getDb().select({
   id:courseAssignments.id,
   methods:courseAssignments.allowedSubmissionMethods,

@@ -17,6 +17,7 @@ import {friendlyApiError} from "@/lib/friendly-error";
 import {LEGACY_FACULTY_TYPES} from "@/modules/people/college-faculty-type-model";
 import { Label } from "@/components/ui/label";
 
+import { ROLE } from "@/modules/identity/roles";
 type Kind="FACULTY"|"LEARNER";
 function normalizeLegacyDateOfBirth(value:string):string {
   if(/^\d{4}-\d{2}-\d{2}$/.test(value))return value;
@@ -94,7 +95,7 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
             kind,gender:person.gender,dateOfBirth:person.dateOfBirth,
             address:person.address,bio:person.bio,
             contactPhone:person.contactPhone,contactEmail:person.contactEmail,
-            ...(kind==="FACULTY"?{
+            ...(kind===ROLE.FACULTY?{
               primaryDepartmentId:person.primaryDepartmentId||null,
               employmentType:person.employmentType??"",
               academicTitle:person.academicTitle??"",
@@ -103,7 +104,7 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
               registrationNumber:person.registrationNumber??"",
             }),
           })});
-        setSuccess(kind==="FACULTY"?"Faculty updated successfully!":"Student updated successfully!");
+        setSuccess(kind===ROLE.FACULTY?"Faculty updated successfully!":"Student updated successfully!");
         router.refresh();leave();
       }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({}));}
       finally{saving.current=false;}
@@ -111,17 +112,17 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
   }
   return <div className="inline-block">{confirmation}
     <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
-      title={kind==="LEARNER"?"Discard student edits?":"Discard faculty edits?"}
+      title={kind===ROLE.LEARNER?"Discard student edits?":"Discard faculty edits?"}
       description="Unsaved changes to this profile will be lost."
       confirmLabel="Discard edits" cancelLabel="Keep editing"
       onConfirm={leave}/>
     <Button variant="secondary" type="button" onClick={()=>void load()}
-      aria-label={(kind==="FACULTY"?"Edit Faculty ":"Edit Student ")+membershipId}
-      title={kind==="FACULTY"?"Edit Faculty":"Edit Student"} className="min-h-11 md:min-h-9">
-      {kind==="FACULTY"?"Edit Faculty":"Edit Student"}
+      aria-label={(kind===ROLE.FACULTY?"Edit Faculty ":"Edit Student ")+membershipId}
+      title={kind===ROLE.FACULTY?"Edit Faculty":"Edit Student"} className="min-h-11 md:min-h-9">
+      {kind===ROLE.FACULTY?"Edit Faculty":"Edit Student"}
     </Button>
     {success&&<Alert tone="success" className="mt-2">{success}</Alert>}
-    <Dialog open={open} onOpenChange={next=>{if(!next)close();}} title={kind==="FACULTY"?"Edit Faculty":"Edit Student"} dismissible={!pending&&!discardOpen} className="max-w-[600px]">
+    <Dialog open={open} onOpenChange={next=>{if(!next)close();}} title={kind===ROLE.FACULTY?"Edit Faculty":"Edit Student"} dismissible={!pending&&!discardOpen} className="max-w-[600px]">
         
         {loading&&<Skeleton variant="form" count={4} label="Loading profile"/>}
         {error&&<Alert tone="error" role="alert" className="my-2">{error}</Alert>}
@@ -138,7 +139,7 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
           <Label stack>Login Email
             <Input disabled={pending} value={person.canonicalEmail} readOnly className={field+" opacity-70"}/>
           </Label>
-          {kind==="FACULTY"?<>
+          {kind===ROLE.FACULTY?<>
             <Label stack>Department
               <Select disabled={pending} className={field} value={person.primaryDepartmentId??""}
                 onChange={e=>patch("primaryDepartmentId",e.target.value)}>

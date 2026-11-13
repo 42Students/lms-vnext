@@ -12,11 +12,12 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import {z} from "zod";
+import { ROLE } from "@/modules/identity/roles";
 export default async function TpoRoundCalendarPage({searchParams}:{
  searchParams:Promise<{page?:string|string[];q?:string|string[]}>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) redirect("/dashboard");
   const raw=await searchParams;
   const parsed=z.strictObject({
     page:z.coerce.number().int().min(1).max(10000).default(1),

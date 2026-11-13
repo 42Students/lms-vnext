@@ -15,6 +15,7 @@ import { ProjectsServiceError } from "./errors";
 import { projectTeamAuditInput } from "./mentor-team-audit-model";
 import { notifyProjectMemberships } from "./project-notification-service";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Repair stale project learner rows from the authoritative class-team group.
  * This does not edit the group, its active membership, or the mentor roster.
  */
@@ -68,7 +69,7 @@ export async function reconcileProjectTeamRoster(
     const existing = await tx.select().from(projectMembers)
       .where(and(eq(projectMembers.projectId, project.id),
         isNull(projectMembers.endedAt))).for("update");
-    const currentLearners = existing.filter(row => row.role === "LEARNER");
+    const currentLearners = existing.filter(row => row.role === ROLE.LEARNER);
     const existingIds = new Set(currentLearners.map(row => row.membershipId));
     const toRemove = currentLearners.filter(row => !desired.has(row.membershipId));
     const toAdd = [...desired].filter(id => !existingIds.has(id));

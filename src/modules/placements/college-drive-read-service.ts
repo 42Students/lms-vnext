@@ -9,10 +9,11 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
 import { collegeDriveListQuerySchema } from "./college-drive-read-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function requireCollegePlacementAdmin(context: RequestContext) {
  // The existing College Admin pathway is unchanged; a Super Admin uses only
  // the persisted selected-college scope and never impersonates a membership.
- if(!isSuperAdmin(context)&&(!context.membership||!hasMembershipRole(context,"COLLEGE_ADMIN")))
+ if(!isSuperAdmin(context)&&(!context.membership||!hasMembershipRole(context,ROLE.COLLEGE_ADMIN)))
   throw new AuthorizationError("placements.manage");
  const acting=await resolveActingCollege(context,"placements.manage");
  await requirePlacementManageScope(context,acting.collegeId);

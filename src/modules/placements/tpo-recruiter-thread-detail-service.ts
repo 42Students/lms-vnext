@@ -8,6 +8,7 @@ import { hasMembershipRole,type RequestContext } from "@/modules/identity/contex
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { listMessageThreads } from "./tpo-messaging-service";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Legacy author, channel and request-event fields are persisted in vNext.
  * Read them from the scoped thread instead of inventing empty values. */
 export type TpoRecruiterMessageItem={
@@ -18,7 +19,7 @@ export type TpoRecruiterMessageItem={
 };
 export async function getTpoRecruiterThreadDetail(context:RequestContext,rawId:unknown){
  const id=z.string().uuid().parse(rawId),member=context.membership;
- if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,"TPO"))
+ if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,ROLE.TPO))
    throw new AuthorizationError("placements.manage");
  // The existing service verifies the caller's college and permission before
  // listing thread IDs; an arbitrary URL cannot select a foreign college thread.

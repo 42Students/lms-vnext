@@ -10,6 +10,7 @@ import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { tpoCrmFollowupIdSchema } from "@/modules/placements/tpo-crm-validation";
 import { route } from "@/security/route";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ followupId: string }> };
 
@@ -23,7 +24,7 @@ async function handlePOST(request: Request, { params }: RouteContext) {
   }
   try {
     const context = await getCurrentRequestContext();
-    if (!context.membership || !hasMembershipRole(context, "TPO")) {
+    if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
       throw new AuthorizationError("placements.manage");
     }
     const collegeId = context.membership.collegeId;

@@ -14,6 +14,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type SearchParams = { page?: string | string[] };
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -27,7 +28,7 @@ export default async function TpoDriveShortlistPage({
   searchParams: Promise<SearchParams>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) redirect("/dashboard");
   const [{ jobId }, query] = await Promise.all([params, searchParams]);
   if(Array.isArray(query.page))return <section className="min-w-0 space-y-3">
     <PageHeader title="Current shortlist"/>

@@ -25,6 +25,7 @@ import {CollegeDraftCompanyPicker} from "@/components/placements/college-draft-c
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 // Use a static route template: never put tenant/job IDs or filter values in
 // structured error metadata. Authorization failures must reach the role fence
 // instead of being misreported as a transient data-loading problem.
@@ -41,7 +42,7 @@ export default async function CollegeDriveSettingsPage({
 }:{params:Promise<{jobId:string}>;
  searchParams:Promise<Record<string,string|string[]|undefined>>}) {
   const context=await getCurrentRequestContext();
-  if(!context.membership||!hasMembershipRole(context,"COLLEGE_ADMIN")){
+  if(!context.membership||!hasMembershipRole(context,ROLE.COLLEGE_ADMIN)){
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Settings"/>
       <ErrorState title="Admin not assigned to a college"

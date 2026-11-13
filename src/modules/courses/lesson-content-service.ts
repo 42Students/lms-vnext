@@ -41,6 +41,7 @@ import {
   type UpdateLessonContentInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 /** The old LMS used classId=0 for course-wide content. vNext instead uses
  * nullable deliveryId, and positive numeric legacy IDs must be translated by
  * an authenticated, tenant-scoped migration map, never treated as a UUID. */
@@ -345,12 +346,12 @@ export async function listLessonContents(
   // COL-course-tabs-13: hidden lessons are unavailable even by a saved deep link.
   // An active lifecycle label cannot resurrect a soft-deleted lesson.
   // The workspace already enforces both gates; direct content listing must too.
-  if (access === "LEARNER" && (!lesson.visibleToStudents || lesson.deletedAt)) {
+  if (access === ROLE.LEARNER && (!lesson.visibleToStudents || lesson.deletedAt)) {
     throw new CoursesServiceError("LESSON_NOT_FOUND");
   }
 
   if (
-    access === "LEARNER" &&
+    access === ROLE.LEARNER &&
     lesson.learningPathStatus !== "PUBLISHED"
   ) {
     throw new CoursesServiceError(
@@ -387,7 +388,7 @@ export async function listLessonContents(
   // Legacy faculty author lists do not enumerate colleagues' content.
   // College managers retain the full authorized directory.
   // The offering's coordinator also sees the shared items others created, since those are theirs to maintain.
-  if(access==="FACULTY"&&!can(context,"courses.manage",{
+  if(access===ROLE.FACULTY&&!can(context,"courses.manage",{
     organizationId:lesson.organizationId,collegeId:lesson.collegeId,
   })){
     const coordinator=(await resolveOfferingContentAuthority(context,{
@@ -398,7 +399,7 @@ export async function listLessonContents(
       :eq(lessonContents.createdByUserId,context.user.id));
   }
 
-  if (access === "LEARNER") {
+  if (access === ROLE.LEARNER) {
     // Keep direct lesson-content reads aligned with the learner workspace:
     // publication alone does not override author visibility, soft deletion,
     // parent-delete provenance or a legacy active=false snapshot.
@@ -437,7 +438,7 @@ export async function listLessonContents(
   // This also keeps disposable browser fixture setup on the registered path.
   // Until the optional migration exists, all previously published rows retain
   // their legacy default. Once registered, the admin visibility flag is real.
-  const audienceRows = access === "LEARNER"
+  const audienceRows = access === ROLE.LEARNER
     ? await (await import("./faculty-lesson-visibility-staged")).filterStagedStudentVisibleLessonContents(lessonId, rows)
     : rows;
   // Never expose an opaque private R2 object key to a learner even when a
@@ -447,7 +448,7 @@ export async function listLessonContents(
   // same read-boundary policy to direct lesson listings and bookmarked content,
   // which otherwise leaked raw faculty/legacy external_url values.
   const now = Date.now();
-  const visibleRows = access === "LEARNER"
+  const visibleRows = access === ROLE.LEARNER
     ? audienceRows.map(row=>{
         const availability = row.contentType === "LIVE_CLASS" && row.endsAt &&
           row.endsAt.getTime() <= now ? "ENDED"

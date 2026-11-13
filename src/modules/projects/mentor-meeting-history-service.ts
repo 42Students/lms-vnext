@@ -11,6 +11,7 @@ import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { requireProjectReadAccess } from "./access";
 import { ProjectsServiceError } from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 const querySchema = z.strictObject({
   projectId: z.string().uuid(),
   meetingKey: z.string().trim().min(1).max(120).optional(),
@@ -24,14 +25,14 @@ const forbiddenField = /(token|secret|password|credential|authorization|email|ph
  */
 export async function getMentorMeetingChangeHistory(context: RequestContext, raw: unknown) {
   const query = querySchema.parse(raw);
-  if (!hasActiveMembership(context) || !hasMembershipRole(context, "MENTOR")) {
+  if (!hasActiveMembership(context) || !hasMembershipRole(context, ROLE.MENTOR)) {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
   if (!(await resolveOptionalModuleAccess(context)).projects.enabled) {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
   const scope = await requireProjectReadAccess(context, query.projectId);
-  if (scope.access !== "MENTOR" || context.membership?.collegeId !== scope.collegeId) {
+  if (scope.access !== ROLE.MENTOR || context.membership?.collegeId !== scope.collegeId) {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
   const where = and(

@@ -10,6 +10,7 @@ import { archiveCourseOffering } from "./offering-service";
 import { postgresConstraintName } from "./errors";
 import { collegeOfferingLifecycleIdSchema, collegeOfferingLifecycleSchema } from "./college-offering-lifecycle-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export class CollegeOfferingLifecycleError extends Error {
   constructor(public readonly code: "OFFERING_NOT_FOUND" | "OFFERING_STATE_CHANGED" |
     "OFFERING_PARENT_UNAVAILABLE" | "OFFERING_ACTIVE_DUPLICATE") {
@@ -21,7 +22,7 @@ export async function changeCollegeOfferingLifecycle(context: RequestContext, ra
   const id = collegeOfferingLifecycleIdSchema.parse(rawId);
   const input = collegeOfferingLifecycleSchema.parse(raw);
   const member = context.membership;
-  if (!member || member.status !== "ACTIVE" || !hasMembershipRole(context,"COLLEGE_ADMIN") ||
+  if (!member || member.status !== "ACTIVE" || !hasMembershipRole(context,ROLE.COLLEGE_ADMIN) ||
     !can(context,"courses.manage",{collegeId:member.collegeId,organizationId:member.organizationId}))
     throw new AuthorizationError("courses.manage");
   requirePermission(context,"courses.manage",{collegeId:member.collegeId,organizationId:member.organizationId});

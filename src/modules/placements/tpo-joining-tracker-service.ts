@@ -10,8 +10,9 @@ import { listPlacementJobOffers } from "./offer-service";
 import { requirePlacementManageScope } from "./scope";
 import { projectTpoJoiningTracker, tpoJoiningTrackerQuerySchema } from "./tpo-joining-tracker-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function getTpoJoiningTracker(context: RequestContext, raw: unknown) {
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = context.membership.collegeId;

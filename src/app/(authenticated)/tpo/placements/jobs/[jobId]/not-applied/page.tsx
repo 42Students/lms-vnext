@@ -8,12 +8,13 @@ import {listTpoEligibleNonApplicants,getTpoNonApplicantReminderPreview} from "@/
 import {TpoNonApplicantActions} from "@/components/tpo/tpo-non-applicant-actions";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 export default async function TpoRegisteredNonApplicants({
  params,searchParams,
 }:{params:Promise<{jobId:string}>;searchParams:Promise<{page?:string|string[]}>}){
  const ctx=await getCurrentRequestContext();
- if(!ctx.membership||!hasMembershipRole(ctx,"TPO"))redirect("/dashboard");
+ if(!ctx.membership||!hasMembershipRole(ctx,ROLE.TPO))redirect("/dashboard");
  const {jobId}=await params;
  const raw=await searchParams;
  if(typeof raw.page!=="undefined"&&

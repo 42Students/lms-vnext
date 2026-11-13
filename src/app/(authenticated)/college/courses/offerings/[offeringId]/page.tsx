@@ -11,6 +11,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { AdminOfferingLearningPage } from "@/components/courses/admin-offering-learning-page";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function CollegeOfferingLearningPage({
   params,
   searchParams,
@@ -36,7 +37,7 @@ export default async function CollegeOfferingLearningPage({
     if(legacyLink){
       const scope=isSuperAdmin(context)&&context.adminScope?.collegeId
         ?{collegeId:context.adminScope.collegeId,organizationId:context.adminScope.organizationId}
-        :hasMembershipRole(context,"COLLEGE_ADMIN")&&context.membership
+        :hasMembershipRole(context,ROLE.COLLEGE_ADMIN)&&context.membership
         ?{collegeId:context.membership.collegeId,organizationId:context.membership.organizationId}
         :null;
       if(!scope)throw new AuthorizationError("courses.read");

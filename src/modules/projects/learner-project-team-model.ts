@@ -1,3 +1,4 @@
+import { ROLE } from "@/modules/identity/roles";
 export type LearnerProjectTeamMember = {
   projectId: string;
   membershipId: string;
@@ -28,8 +29,8 @@ export function summarizeLearnerProjectTeams(
   return projectIds.map((projectId) => {
     const members = groups.get(projectId) ?? [];
     const primary = members.find((member) =>
-      member.role === "MENTOR" && member.isPrimary);
-    const anyMentor = members.find((member) => member.role === "MENTOR");
+      member.role === ROLE.MENTOR && member.isPrimary);
+    const anyMentor = members.find((member) => member.role === ROLE.MENTOR);
     return {
       projectId,
       mentorName: primary?.displayName ?? anyMentor?.displayName ?? null,

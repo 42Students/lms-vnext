@@ -5,6 +5,7 @@ import { collegeMemberships, colleges, membershipRoles, users, learnerProgramEnr
 import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { adminUsersQuerySchema, ADMIN_USERS_PAGE_SIZE, adminUserDirectoryPaging, roleForPeopleTab } from "./admin-user-directory-model";
+import { ROLE } from "@/modules/identity/roles";
 export async function listSuperAdminUsers(context: RequestContext, raw: unknown) {
  const query=adminUsersQuerySchema.parse(raw);
  if(!isSuperAdmin(context)) throw new AuthorizationError("people.manage");
@@ -69,7 +70,7 @@ export async function listSuperAdminUsers(context: RequestContext, raw: unknown)
   total:paging.total,totalPages:paging.totalPages,
   items:rows.map(row=>{
    const roles=byId.get(row.membershipId)??[];
-   const staff=roles.some(role=>role==="FACULTY"||role==="TPO"||role==="COLLEGE_ADMIN") && !roles.includes("LEARNER");
+   const staff=roles.some(role=>role===ROLE.FACULTY||role===ROLE.TPO||role===ROLE.COLLEGE_ADMIN) && !roles.includes(ROLE.LEARNER);
    // Even Super Admin search results do not become a learner/recruiter contact
    // enumeration surface; staff contact details require explicit college scope.
    const normalized=row.displayName?.trim()??"";
@@ -84,7 +85,7 @@ export async function listSuperAdminUsers(context: RequestContext, raw: unknown)
     phoneE164:staff&&selected?.collegeId ? row.phoneE164 : null,
     contactMobile:staff&&selected?.collegeId ? row.phoneE164 : null,
     contactPhone:null,
-    primaryRole:roles.includes("FACULTY")?"FACULTY":roles.includes("LEARNER")?"LEARNER":roles[0]??null};
+    primaryRole:roles.includes(ROLE.FACULTY)?"FACULTY":roles.includes(ROLE.LEARNER)?"LEARNER":roles[0]??null};
 
   }),
  };

@@ -3,6 +3,7 @@ import {assignmentGradeEventsStaged} from "@/db/schema/db06-history-staged";
 import {assignmentSubmissions} from "@/db/schema/assessments";
 import type {RequestContext} from "@/modules/identity/context";
 import {getDb} from "@/db/client";
+import { ROLE } from "@/modules/identity/roles";
 type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 type Submission=typeof assignmentSubmissions.$inferSelect;
 export async function appendAssignmentGradeAudit(
@@ -14,13 +15,13 @@ export async function appendAssignmentGradeAudit(
   after.deliveryId!==before.deliveryId||
   after.membershipId!==before.membershipId||
   after.id!==before.id)throw new Error("GRADE_AUDIT_MISMATCH");
- const role=ctx.membership?.roles.includes("FACULTY")?"FACULTY":
-  ctx.membership?.roles.includes("COLLEGE_ADMIN")?"COLLEGE_ADMIN":"SUPER_ADMIN";
+ const role=ctx.membership?.roles.includes(ROLE.FACULTY)?"FACULTY":
+  ctx.membership?.roles.includes(ROLE.COLLEGE_ADMIN)?"COLLEGE_ADMIN":"SUPER_ADMIN";
  await tx.insert(assignmentGradeEventsStaged).values({
   assignmentSubmissionId:after.id,assignmentId:after.assignmentId,
   deliveryId:after.deliveryId,learnerMembershipId:after.membershipId,
   collegeId,actorUserId:ctx.user.id,
-  actorMembershipId:role==="SUPER_ADMIN"?null:ctx.membership?.id??null,
+  actorMembershipId:role===ROLE.SUPER_ADMIN?null:ctx.membership?.id??null,
   actorRole:role,action,
   previousPoints:before.pointsAwarded,newPoints:after.pointsAwarded,
   previousFeedback:before.feedback,newFeedback:after.feedback,

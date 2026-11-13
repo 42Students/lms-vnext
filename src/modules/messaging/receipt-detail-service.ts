@@ -9,11 +9,12 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {logInfo} from "@/observability/logger";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Aggregates ONLY, never receipt recipient_key, addresses, or template variables. */
 export async function getTpoMessagingBatch(context:RequestContext,rawId:unknown){
  const batchId=z.string().uuid().parse(rawId);
  const own=context.membership;
- if(!own||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ if(!own||!hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,own.collegeId);
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{

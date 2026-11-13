@@ -11,6 +11,7 @@ import {facultyProfileDocumentSchema} from "./faculty-profile-document";
 import {learnerProfileDocumentSchema} from "./profile-validation";
 import {projectLearnerAdminProfileSections} from "./learner-admin-profile-sections";
 
+import { ROLE } from "@/modules/identity/roles";
 /** COL-people-10: a sanctioned, read-only projection. Never send raw learner PAN/Aadhaar
  * values, private file receipt IDs, or undocumented profile metadata to roster UI. */
 export async function getCollegePersonProfileOverview(ctx:RequestContext,rawId:unknown,rawKind:unknown){
@@ -32,7 +33,7 @@ export async function getCollegePersonProfileOverview(ctx:RequestContext,rawId:u
   .where(and(eq(collegeMemberships.id,id),eq(collegeMemberships.collegeId,scope.collegeId))).limit(1);
  });
  if(!row)throw Error("PERSON_NOT_FOUND");
- if(kind==="FACULTY"){
+ if(kind===ROLE.FACULTY){
   const d=facultyProfileDocumentSchema.parse(row.faculty??{});
   return{person,education:d.education.map(x=>({title:x.program||x.educationType,
    detail:x.institutionName,year:x.endYear,extra:x.grade})),

@@ -15,6 +15,7 @@ import {
   mentorReviewHistoryLiteralSearch,
 } from "./mentor-review-history-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Registered final-delivery decisions for currently assigned Mentor projects.
  * This is a project review history, not an assertion that this Mentor authored
@@ -24,7 +25,7 @@ export async function getMentorReviewHistory(context: RequestContext, rawQuery: 
   const query=mentorReviewHistoryQuerySchema.parse(rawQuery);
   const membership=context.membership;
   if (!membership || !hasActiveMembership(context) ||
-      !hasMembershipRole(context,"MENTOR") ||
+      !hasMembershipRole(context,ROLE.MENTOR) ||
       !can(context,"projects.read",{
         collegeId:membership.collegeId,organizationId:membership.organizationId,
       })) {
@@ -36,7 +37,7 @@ export async function getMentorReviewHistory(context: RequestContext, rawQuery: 
       ...mentorReviewHistoryPagination(0,1),items:[]};
   }
   const assigned=(await listMyProjectInstances(context))
-    .filter(row=>row.memberRole==="MENTOR");
+    .filter(row=>row.memberRole===ROLE.MENTOR);
   const ids=assigned.map(row=>row.project.id);
   const projects=assigned.map(row=>({id:row.project.id,title:row.project.title}));
   if(query.projectId&&!ids.includes(query.projectId))

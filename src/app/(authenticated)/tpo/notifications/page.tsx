@@ -21,6 +21,7 @@ import { getTpoPersonalInbox } from "@/modules/activity/tpo-notifications-servic
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic = "force-dynamic";
 
 type Params = {
@@ -40,7 +41,7 @@ export default async function TpoNotificationsPage({
   searchParams: Promise<Params>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) redirect("/dashboard");
   const raw = await searchParams;
   const parsed = tpoInboxQuerySchema.safeParse({
     view: first(raw.view) ?? undefined,

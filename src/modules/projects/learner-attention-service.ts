@@ -22,6 +22,7 @@ import {
 import { ProjectsServiceError } from "./errors";
 import { listMyProjectInstances } from "./member-service";
 
+import { ROLE } from "@/modules/identity/roles";
 export const LEGACY_LEARNER_WORKSPACE_FIELD_MAP={
  id:"projectId",status:"status",progress:"progressPercent",
  mentor:"mentor",mentorAssignedAt:"mentorSince",
@@ -73,7 +74,7 @@ export async function listMyLearnerProjectAttention(
     )
   ).filter(
     (row) =>
-      row.memberRole === "LEARNER" &&
+      row.memberRole === ROLE.LEARNER &&
       row.project.status !==
         "ARCHIVED",
   );
@@ -160,7 +161,7 @@ export const LEGACY_LEARNER_PROJECT_DTO_EXAMPLE={
 export async function listMyLearnerProjectPageAttention(
   context: RequestContext, projectIds: readonly string[],
 ): Promise<LearnerProjectAttention[]> {
-  if (!hasActiveMembership(context) || !hasMembershipRole(context, "LEARNER") ||
+  if (!hasActiveMembership(context) || !hasMembershipRole(context, ROLE.LEARNER) ||
       context.user.platformStatus !== "ACTIVE" || !context.membership) {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }

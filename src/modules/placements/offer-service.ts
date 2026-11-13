@@ -73,6 +73,7 @@ import {
   type PlacementOfferActionInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 async function loadApplicationContext(
   applicationId: string,
 ) {
@@ -156,7 +157,7 @@ function requireLearnerOfferOwner(
 ) {
   if (
     !context.membership ||
-    !hasMembershipRole(context, "LEARNER") ||
+    !hasMembershipRole(context, ROLE.LEARNER) ||
     context.membership.id !== membershipId
   ) {
     // A foreign offer and an absent offer must have the same public status
@@ -348,7 +349,7 @@ export async function getLatestPlacementOfferForApplication(
  const applicationId=placementApplicationIdSchema.parse(applicationIdInput);
  const current=await loadApplicationContext(applicationId);
  if(context.membership?.id===current.application.membershipId&&
-    hasMembershipRole(context,"LEARNER")){
+    hasMembershipRole(context,ROLE.LEARNER)){
   await requireLearnerPlacementAccess(context);
  }else{
   await requirePlacementManageScope(context,current.job.collegeId);
@@ -369,7 +370,7 @@ export async function listPlacementOfferHistoryForApplication(
  const applicationId=placementApplicationIdSchema.parse(applicationIdInput);
  const current=await loadApplicationContext(applicationId);
  if(context.membership?.id===current.application.membershipId&&
-    hasMembershipRole(context,"LEARNER")){
+    hasMembershipRole(context,ROLE.LEARNER)){
   await requireLearnerPlacementAccess(context);
  }else{
   await requirePlacementManageScope(context,current.job.collegeId);

@@ -7,13 +7,14 @@ import {hasMembershipRole,type RequestContext} from "@/modules/identity/context"
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {requirePlacementManageScope} from "@/modules/placements/scope";
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Preview number of ACTIVE college memberships with an ACTIVE platform user.
  * A visibility estimate, not a recipient list, notification or delivery count.
  */
 export async function previewTpoCollegeAnnouncementVisibility(context:RequestContext){
  const membership=context.membership;
- if(!membership||!hasMembershipRole(context,"TPO"))
+ if(!membership||!hasMembershipRole(context,ROLE.TPO))
   throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
  return getDb().transaction(async tx=>{
@@ -39,7 +40,7 @@ export async function previewTpoCollegeAnnouncementVisibility(context:RequestCon
 export async function previewTpoPlacementAudience(context:RequestContext,raw:unknown){
  const audience=tpoPlacementAudienceSchema.parse(raw);
  const member=context.membership;
- if(!member||!hasMembershipRole(context,"TPO"))
+ if(!member||!hasMembershipRole(context,ROLE.TPO))
    throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,member.collegeId);
  return getDb().transaction(async tx=>{

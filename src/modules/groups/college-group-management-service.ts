@@ -16,6 +16,7 @@ import {
   studyGroupNextStatus,
 } from "./college-group-management-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export class CollegeGroupManagementError extends Error {
   constructor(public readonly code: string, message?: string) {
     super(message??code);
@@ -38,7 +39,7 @@ async function ownCollege(context: RequestContext) {
     return {collegeId:college.id,organizationId:college.organizationId};
   }
   const member = context.membership;
-  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+  if (!member || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
     !can(context, "academics.manage", {
       collegeId: member.collegeId,
       organizationId: member.organizationId,

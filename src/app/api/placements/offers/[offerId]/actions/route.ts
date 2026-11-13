@@ -8,6 +8,7 @@ import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-
 import { actOnPlacementOffer } from "@/modules/placements/offer-service";
 import { placementOfferActionSchema } from "@/modules/placements/validation";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime = "nodejs";
 // The old offer response API requires a literal JSON boolean. Do not
 // coerce "true", 1 or null; an extra action must not override this decision.
@@ -46,7 +47,7 @@ const offer =
         offerId,
         placementOfferActionSchema.parse(actionInput),
         new Date(),
-        context.membership?.roles.includes("LEARNER") ? "ISSUED" : undefined,
+        context.membership?.roles.includes(ROLE.LEARNER) ? "ISSUED" : undefined,
       );
 return NextResponse.json({offer,status:offer?.status},
       {headers:{"Cache-Control":"private, no-store"}});

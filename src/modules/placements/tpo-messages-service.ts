@@ -36,6 +36,7 @@ import { requirePlacementManageScope } from "./scope";
 import { placementTableExists } from "./staged-tables";
 import {getTpoRecruiterThreadSqlPage} from "./tpo-messages-sql-page-service";
 
+import { ROLE } from "@/modules/identity/roles";
 export const tpoMessagesQuerySchema = z
   .object({
     status: z
@@ -103,7 +104,7 @@ export type TpoMessagesQuery =
  */
 export async function requirePersistedTpoInboxReader(context:RequestContext){
   const member=context.membership;
-  if(!member||!hasMembershipRole(context,"TPO")||
+  if(!member||!hasMembershipRole(context,ROLE.TPO)||
     member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE")
     throw new AuthorizationError("placements.manage");
   const college=await requirePlacementManageScope(context,member.collegeId);

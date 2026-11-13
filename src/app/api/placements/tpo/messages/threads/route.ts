@@ -6,6 +6,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {openTpoMessageThread,sendThreadMessage,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 import {hasMembershipRole} from "@/modules/identity/context";
 import { route } from "@/security/route";
+import { ROLE } from "@/modules/identity/roles";
 const input=z.strictObject({
  recruiterUserId:z.string().uuid(),
  jobId:z.string().uuid().nullable().optional(),
@@ -17,7 +18,7 @@ async function handlePOST(request:Request){
  const parsed=input.safeParse(await boundedRequestJson(request).catch(()=>null));
  if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  const context=await getCurrentRequestContext(),membership=context.membership;
- if(!membership||!hasMembershipRole(context,"TPO"))
+ if(!membership||!hasMembershipRole(context,ROLE.TPO))
   return NextResponse.json({error:"FORBIDDEN"},{status:403});
  try{
   const {body,...threadInput}=parsed.data;

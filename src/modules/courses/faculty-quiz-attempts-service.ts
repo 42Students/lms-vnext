@@ -6,6 +6,7 @@ import { getFacultyCourseWorkspace } from "./faculty-course-service";
 import { getFacultyQuizReport } from "./faculty-assessment-report-service";
 import { facultyQuizAttemptsPage, facultyQuizAttemptsQuerySchema, facultySearchQuizAttempts } from "./faculty-quiz-attempts-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Normalize the legacy comma-delimited option IDs and current JSON arrays
  * for faculty report DTOs. An imported integer ID must be resolved by the
  * migration map, never guessed from another quiz at reporting time. */
@@ -22,7 +23,7 @@ function selectedOptionIdsForReport(value:unknown):string[]{
 export async function getFacultyQuizAttemptDrilldown(context:RequestContext,raw:unknown) {
   const query=facultyQuizAttemptsQuerySchema.parse(raw);
   const membership=context.membership;
-  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY")||
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.FACULTY)||
     !can(context,"courses.read",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     }))throw new AuthorizationError("courses.read");

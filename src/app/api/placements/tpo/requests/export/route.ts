@@ -8,12 +8,13 @@ import {globalTpoRequestsQuerySchema} from "@/modules/placements/tpo-global-requ
 import {toTpoRequestsPageCsv} from "@/modules/placements/tpo-requests-page-csv-model";
 import { route } from "@/security/route";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 async function handleGET(request:Request){
  try {
   const context=await getCurrentRequestContext();
-  if(!context.membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+  if(!context.membership||!hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
   const query=globalTpoRequestsQuerySchema.parse(Object.fromEntries(new URL(request.url).searchParams.entries()));
   // Export the authorized filtered view, not an arbitrary visible pagination page.
   // The explicit ceiling protects an interactive worker from unbounded queries.

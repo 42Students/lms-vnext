@@ -23,6 +23,7 @@ import {deriveGlobalEmailSuppressionHashForAddress} from "@/modules/operations/o
 
 import { env, rawEnv } from "@/config/env";
 import { featureReady } from "@/config/features";
+import { ROLE } from "@/modules/identity/roles";
 export class TpoCampaignDispatchError extends Error{
  constructor(readonly code:"NOT_READY"|"ALREADY_STARTED"|"NOT_FOUND"){super(code);}
 }
@@ -81,7 +82,7 @@ export async function tpoCampaignDispatchReady(){
 export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
  const id=z.string().uuid().parse(rawId);
  const member=context.membership;
- if(!member||!hasMembershipRole(context,"TPO")||member.status!=="ACTIVE"||
+ if(!member||!hasMembershipRole(context,ROLE.TPO)||member.status!=="ACTIVE"||
   context.user.platformStatus!=="ACTIVE")throw new AuthorizationError("placements.manage");
  // Provider readiness is tenant-independent; refuse disabled delivery
  // before touching college storage, while still denying unauthenticated roles.
@@ -319,7 +320,7 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
 export async function inspectTpoCampaignDeliveryState(context:RequestContext,rawId:unknown){
  const id=z.string().uuid().parse(rawId);
  const member=context.membership;
- if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,"TPO")||
+ if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,ROLE.TPO)||
     context.user.platformStatus!=="ACTIVE")throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,member.collegeId);
  return getDb().transaction(async tx=>{

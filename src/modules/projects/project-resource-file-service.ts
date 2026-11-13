@@ -24,6 +24,7 @@ import { requireProjectLifecycleAccess, requireProjectReadAccess } from "./acces
 import { projectResourceIdSchema } from "./validation";
 import {canAttachProjectFileToResource} from "./mentor-file-resource-visibility-model";
 
+import { ROLE } from "@/modules/identity/roles";
 type FileRow = typeof projectResourceFiles.$inferSelect;
 
 const idSchema = z.string().uuid();
@@ -115,7 +116,7 @@ export async function issueProjectFileUploadGrant(
 
   const scope = await authorizeOrNotFound(() => requireProjectReadAccess(context, projectIdInput));
   if(!["LEARNER","MENTOR","ADMIN"].includes(scope.access))throw new StorageFileError("STORAGE_NOT_FOUND");
-  if(scope.access==="LEARNER" && scope.project.status!=="ACTIVE")
+  if(scope.access===ROLE.LEARNER && scope.project.status!=="ACTIVE")
     throw new StorageFileError("STORAGE_PARENT_NOT_AVAILABLE");
   requireOpenProject(scope.project.status);
   const uploader = requireUploaderMembership(context, scope.collegeId);
@@ -226,7 +227,7 @@ export async function completeProjectFileUpload(
   if(!["LEARNER","MENTOR","ADMIN"].includes(scope.access))
     throw new StorageFileError("STORAGE_NOT_FOUND");
   const row = await loadFile(scope.project.id, fileIdInput);
-  if(scope.access==="LEARNER" && (row.uploaderMembershipId!==context.membership?.id ||
+  if(scope.access===ROLE.LEARNER && (row.uploaderMembershipId!==context.membership?.id ||
     scope.project.status!=="ACTIVE"))
     throw new StorageFileError("STORAGE_NOT_FOUND");
   if (row.status === "READY") return toProjectFileDto(row);
@@ -335,7 +336,7 @@ export async function completeProjectFileUpload(
  */
 export async function listProjectFiles(context: RequestContext, projectIdInput: string) {
   const scope = await authorizeOrNotFound(() => requireProjectReadAccess(context, projectIdInput));
-  const manager = scope.access === "ADMIN" || scope.access === "MENTOR";
+  const manager = scope.access === "ADMIN" || scope.access === ROLE.MENTOR;
   const rows = await getDb()
     .select()
     .from(projectResourceFiles)
@@ -454,7 +455,7 @@ export async function issueProjectFileDownloadGrant(
   // A malformed or incorrectly migrated file row must not grant access across tenants.
   if (row.collegeId !== scope.collegeId) throw new StorageFileError("STORAGE_NOT_FOUND");
   if (row.status === "DELETED") throw new StorageFileError("STORAGE_NOT_FOUND");
-  const manager = scope.access === "ADMIN" || scope.access === "MENTOR";
+  const manager = scope.access === "ADMIN" || scope.access === ROLE.MENTOR;
   if(scope.project.deletedAt)throw new StorageFileError("STORAGE_NOT_FOUND");
   if(row.resourceId && !manager){
     // Never issue a signed URL when a linked resource is mentor-only, even if

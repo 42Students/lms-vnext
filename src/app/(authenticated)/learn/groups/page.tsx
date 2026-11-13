@@ -5,10 +5,11 @@ import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
 import {LearnerGroupLists} from "@/components/groups/learner-group-lists";
 import {listLearnerGroups} from "@/modules/groups/learner-group-list-service";
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 export default async function LearnerGroupsPage(){
  const context=await getCurrentRequestContext();
- if(!hasMembershipRole(context,"LEARNER"))redirect("/dashboard");
+ if(!hasMembershipRole(context,ROLE.LEARNER))redirect("/dashboard");
  const data=await listLearnerGroups(context).catch(()=>null);
  return <div className="min-w-0 space-y-4">
   <PageHeader title="Groups" description="Your groups and groups accepting members."/>

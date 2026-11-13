@@ -9,6 +9,7 @@ import {CoursesServiceError} from "./errors";
 import {loadCourseSectionDeliveryScope} from "./scope";
 import {requireLearningReadAccess} from "./learning-access";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Invalid legacy numeric indices and invalid UUID route IDs have different
  * field-safe errors. A caller must resolve old positive numeric content IDs
  * through an authenticated import crosswalk before passing this UUID route.
@@ -45,7 +46,7 @@ export async function getLearnerCourseFileReference(
  const access=await requireLearningReadAccess(context,delivery.offeringId,deliveryId,{
   includeHistorical:true,
  });
- if(access!=="LEARNER")throw new CoursesServiceError("LEARNER_PROGRESS_ACCESS_DENIED");
+ if(access!==ROLE.LEARNER)throw new CoursesServiceError("LEARNER_PROGRESS_ACCESS_DENIED");
 
  const files=await getDb().select({
   key:lessonContentMaterials.storageKey,

@@ -17,10 +17,11 @@ import {
   pageMentorPortfolio, mentorActivityPagination, mentorPortfolioActivityCutoff, mentorActivityProjectTitleMatch, safeMentorProjectEventLabel, selectMentorReviewQueue,
 } from "./mentor-portfolio-model";
 
+import { ROLE } from "@/modules/identity/roles";
 async function requireMentorPortfolio(context: RequestContext) {
   const membership = context.membership;
   if (!membership || context.user.platformStatus !== "ACTIVE" ||
-      !hasActiveMembership(context) || !hasMembershipRole(context, "MENTOR")) {
+      !hasActiveMembership(context) || !hasMembershipRole(context, ROLE.MENTOR)) {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
   requirePermission(context, "projects.read", {
@@ -29,7 +30,7 @@ async function requireMentorPortfolio(context: RequestContext) {
   const access = await resolveOptionalModuleAccess(context);
   if (!access.projects.enabled) return { enabled: false as const, projects: [] };
   const assigned = (await listMyProjectInstances(context))
-    .filter(row => row.memberRole === "MENTOR");
+    .filter(row => row.memberRole === ROLE.MENTOR);
   return {
     enabled: true as const,
     projects: assigned.map(row => ({

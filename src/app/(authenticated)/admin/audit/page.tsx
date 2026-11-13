@@ -19,6 +19,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 function smsDate(value:Date){
  return istDateTimeFormatter.format(value)+" IST";
 }
@@ -33,7 +34,7 @@ export default async function SuperAdminAuditPage({searchParams}:{
    action={<TextLink href="/login" className="inline-flex min-h-11 items-center">Sign in</TextLink>}/>
  </div>;}
  if(!isSuperAdmin(context)){
-  if(hasMembershipRole(context,"COLLEGE_ADMIN"))redirect("/activity");
+  if(hasMembershipRole(context,ROLE.COLLEGE_ADMIN))redirect("/activity");
   redirect("/dashboard");
  }
  const raw=await searchParams;

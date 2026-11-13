@@ -3,6 +3,7 @@ import { getDb } from "@/db/client";
 import { collegeMemberships, membershipRoles, systemRoles, users } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 
+import { ROLE } from "@/modules/identity/roles";
 type Client = ReturnType<typeof getDb>;
 type Tx = Parameters<Parameters<Client["transaction"]>[0]>[0];
 
@@ -53,7 +54,7 @@ export async function assertPersistedGroupActor(
     return;
   }
 
-  if (context.user.systemRoles.includes("SUPER_ADMIN")) {
+  if (context.user.systemRoles.includes(ROLE.SUPER_ADMIN)) {
     const [role] = await tx.select({ role: systemRoles.role })
       .from(systemRoles)
       .where(and(eq(systemRoles.userId, context.user.id),

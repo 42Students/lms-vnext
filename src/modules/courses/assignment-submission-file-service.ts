@@ -43,6 +43,7 @@ import {
 } from "./learning-access";
 import { courseSectionDeliveryIdSchema } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 type FileRow = typeof assignmentSubmissionFiles.$inferSelect;
 
 type FileTx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
@@ -159,10 +160,10 @@ async function requireLearnerScope(
   const access = await requireLearningReadAccess(context, assignment.offeringId, deliveryId);
   const membership = context.membership;
   if (
-    access !== "LEARNER" ||
+    access !== ROLE.LEARNER ||
     !membership ||
     membership.status !== "ACTIVE" ||
-    !membership.roles.includes("LEARNER") ||
+    !membership.roles.includes(ROLE.LEARNER) ||
     context.user.platformStatus !== "ACTIVE" ||
     membership.collegeId !== assignment.collegeId
   ) {
@@ -389,7 +390,7 @@ export async function listMySubmissionFiles(
     const access = await requireLearningReadAccess(context, assignment.offeringId, deliveryId, {
       includeHistorical: true,
     });
-    if (access !== "LEARNER" || !context.membership) {
+    if (access !== ROLE.LEARNER || !context.membership) {
       throw new StorageFileError("STORAGE_NOT_FOUND");
     }
     return { assignment, membership: context.membership };
@@ -661,7 +662,7 @@ async function authorizeFileRead(context: RequestContext, row: FileRow) {
     const access = await requireLearningReadAccess(context, assignment.offeringId, row.deliveryId, {
       includeHistorical: true,
     });
-    if (access !== "LEARNER") throw new StorageFileError("STORAGE_NOT_FOUND");
+    if (access !== ROLE.LEARNER) throw new StorageFileError("STORAGE_NOT_FOUND");
     return "OWNER" as const;
   }
   // Staged (unsubmitted) files are private to the learner.

@@ -12,11 +12,12 @@ import {
   discussionHistoryLabel,
 } from "./faculty-discussion-history-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Source-of-truth actor-scoped audit, filtered by exact persisted delivery group. */
 export async function getFacultyDiscussionHistory(context:RequestContext,raw:unknown) {
   const query=facultyDiscussionHistorySchema.parse(raw);
   const membership=context.membership;
-  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY")||
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.FACULTY)||
     !can(context,"courses.read",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     })) throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");

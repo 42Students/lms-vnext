@@ -30,6 +30,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { formatDateTimeIst } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 function formatWhen(
   value: Date | null,
   timezone: string | null,
@@ -45,13 +46,13 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
   const context =
     await getCurrentRequestContext();
   if (!context.membership ||
-      (!hasMembershipRole(context, "LEARNER") && !hasMembershipRole(context, "TPO"))) {
+      (!hasMembershipRole(context, ROLE.LEARNER) && !hasMembershipRole(context, ROLE.TPO))) {
     redirect("/dashboard");
   }
 
   // The TPO portal always uses the TPO scope; holding a learner role must
   // not silently replace the operational view with a coordinator roster.
-  if (hasMembershipRole(context, "TPO")) {
+  if (hasMembershipRole(context, ROLE.TPO)) {
     const raw=await searchParams;
     if (Object.values(raw).some(Array.isArray)) return <div className="min-w-0 space-y-4"><PageHeader title="Drive day" /><Alert tone="error">Invalid drive day filter. <Link href="/tpo/drive-day">Clear filters</Link></Alert></div>;
     const search=tpoLiveRoundSearchSchema.safeParse(Array.isArray(raw.q)?raw.q[0]:raw.q);

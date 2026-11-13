@@ -9,18 +9,19 @@ import {requireProjectReadAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 import {mentorTaskFeedbackParamsSchema} from "./mentor-task-feedback-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Registered reviewer feedback is a single field on each submission version.
  * It is not a comments thread and does not support replies or new messages. */
 export async function getMentorTaskFeedback(context:RequestContext,rawParams:unknown){
  const {projectId,taskId}=mentorTaskFeedbackParamsSchema.parse(rawParams);
  const membership=context.membership;
- if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR"))
+ if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR))
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  // Module-off tenants must not reveal requested project existence.
  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const scope=await requireProjectReadAccess(context,projectId);
- if(scope.access!=="MENTOR"||!can(context,"projects.read",{
+ if(scope.access!==ROLE.MENTOR||!can(context,"projects.read",{
   collegeId:scope.collegeId,organizationId:scope.organizationId,
  }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const [task]=await getDb().select({id:projectTasks.id,title:projectTasks.title})

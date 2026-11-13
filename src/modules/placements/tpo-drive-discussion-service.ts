@@ -10,12 +10,13 @@ import {PlacementsServiceError} from "./errors";
 import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Drive-specific recruiter conversations. Never expose threads belonging to
  * another college, nor infer that a message was delivered externally. */
 export async function getTpoDriveDiscussion(context:RequestContext,jobId:string){
  const membership=context.membership;
  if(!membership||membership.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
-  !hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+  !hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
  const collegeId=membership.collegeId;
  await requirePlacementManageScope(context,collegeId);
  const [job]=await getDb().select({id:placementJobs.id,title:placementJobs.title})

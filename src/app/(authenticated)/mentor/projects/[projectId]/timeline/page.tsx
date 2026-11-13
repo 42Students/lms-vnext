@@ -17,6 +17,7 @@ import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { formatNumberIN } from "@/lib/safe-format";
+import { ROLE } from "@/modules/identity/roles";
 type Search={releaseStatus?:string|string[];sprintStatus?:string|string[];page?:string|string[]};
 export default async function MentorProjectTimelinePage({
   params,searchParams,
@@ -30,7 +31,7 @@ export default async function MentorProjectTimelinePage({
   );
   if(!parsed.success){
  const recoveryContext=await getCurrentRequestContext();
- if(!hasMembershipRole(recoveryContext,"MENTOR"))redirect("/dashboard");
+ if(!hasMembershipRole(recoveryContext,ROLE.MENTOR))redirect("/dashboard");
  await assertMentorProjectRecoveryAccess(recoveryContext,p.projectId);
  return  <div className="min-w-0 space-y-4">
     <PageHeader title="Release & Sprint timeline"/>

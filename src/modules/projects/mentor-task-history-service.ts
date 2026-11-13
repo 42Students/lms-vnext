@@ -10,12 +10,13 @@ import { ProjectsServiceError } from "./errors";
 import { listMyProjectInstances } from "./member-service";
 import { mentorTaskHistoryPage, mentorTaskHistoryQuerySchema } from "./mentor-task-history-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Registered task review decisions on currently assigned same-college projects only. */
 export async function getMentorTaskReviewHistory(context:RequestContext,rawQuery:unknown) {
   const query=mentorTaskHistoryQuerySchema.parse(rawQuery);
   const membership=context.membership;
   if (!membership || !hasActiveMembership(context) ||
-      !hasMembershipRole(context,"MENTOR") ||
+      !hasMembershipRole(context,ROLE.MENTOR) ||
       !can(context,"projects.read",{
         collegeId:membership.collegeId,organizationId:membership.organizationId,
       })) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
@@ -30,7 +31,7 @@ export async function getMentorTaskReviewHistory(context:RequestContext,rawQuery
   });
   if (!modules.projects.enabled) return empty(false);
   const assigned=(await listMyProjectInstances(context)).filter(row=>
-    row.memberRole==="MENTOR" && row.project.status!=="ARCHIVED");
+    row.memberRole===ROLE.MENTOR && row.project.status!=="ARCHIVED");
   const ids=assigned.map(row=>row.project.id);
   if (!ids.length) return empty(true);
 

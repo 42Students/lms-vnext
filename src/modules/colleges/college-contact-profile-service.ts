@@ -13,6 +13,7 @@ import {
   collegeContactProfileInputSchema,
 } from "./college-contact-profile-model";
 
+import { ROLE } from "@/modules/identity/roles";
 type Tx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 type TxRunner = <T>(work: (tx: Tx) => Promise<T>) => Promise<T>;
 
@@ -25,7 +26,7 @@ export class CollegeContactProfileError extends Error {
 
 function activeCollegeAdmin(context: RequestContext) {
   const member = context.membership;
-  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+  if (!member || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
       !can(context, "college.manage", {
         collegeId: member.collegeId,
         organizationId: member.organizationId,

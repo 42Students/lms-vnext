@@ -14,6 +14,7 @@ import {projectMeetingIdSchema} from "./validation";
 import {mentorMeetingDecisionSchema,mentorMeetingDecisionStatus} from "./mentor-meeting-decision-model";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Mentor-only, locked and audited alternative to legacy non-versioned transitions. */
 export async function decideMentorProjectMeeting(context:RequestContext,rawProjectId:string,
  rawMeetingId:string,raw:unknown){
@@ -23,8 +24,8 @@ export async function decideMentorProjectMeeting(context:RequestContext,rawProje
   throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
  const scope=await requireProjectReadAccess(context,rawProjectId);
  const member=context.membership;
- if(scope.access!=="MENTOR"||!member||!hasActiveMembership(context)||
-  !hasMembershipRole(context,"MENTOR")||!can(context,"projects.read",{
+ if(scope.access!==ROLE.MENTOR||!member||!hasActiveMembership(context)||
+  !hasMembershipRole(context,ROLE.MENTOR)||!can(context,"projects.read",{
    collegeId:scope.collegeId,organizationId:scope.organizationId,
   }))throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
  const meetingId=projectMeetingIdSchema.parse(rawMeetingId);

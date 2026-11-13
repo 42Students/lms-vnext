@@ -4,6 +4,7 @@ import type { EmailProvider } from "./types";
 import { isValidRecipient, normalizeRecipient } from "@/modules/messaging/model";
 
 import { rawEnv } from "@/config/env";
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Server-side ZeptoMail adapter. Authentication, notification events and TPO
  * templates share the same fail-closed transport; callers choose a provisioned
@@ -209,7 +210,7 @@ export type ZeptoMailSendResult =
 function purposeLabel(purpose: ZeptoMailPurpose): string {
   if(purpose.kind==="EMAIL_OWNERSHIP_LINK")return "EMAIL_OWNERSHIP_LINK";
   return purpose.kind === "EVENT" ? purpose.event :
-    purpose.kind === "TPO" ? "TPO" : purpose.kind === "PROJECTS" ? "PROJECTS" : "OTP";
+    purpose.kind === ROLE.TPO ? "TPO" : purpose.kind === "PROJECTS" ? "PROJECTS" : "OTP";
 }
 
 /** Explicitly provisioned IDs only. No guessed placeholder or fallback template. */
@@ -423,7 +424,7 @@ export async function sendZeptoMailTemplate(
         template_key: templateKey,
         from: {
           address: fromAddress,
-          name: safeHeaderName(message.senderName ?? (purpose.kind==="TPO"?campusRecruitmentSenderName(message.collegeName):config.fromName)),
+          name: safeHeaderName(message.senderName ?? (purpose.kind===ROLE.TPO?campusRecruitmentSenderName(message.collegeName):config.fromName)),
         },
         to: [{
           email_address: {

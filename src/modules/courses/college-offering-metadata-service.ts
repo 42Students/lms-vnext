@@ -10,6 +10,7 @@ import {hasMembershipRole,type RequestContext} from "@/modules/identity/context"
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {collegeOfferingMetadataSchema,offeringMetadataChangeAffectsDelivery}
   from "./college-offering-metadata-model";
+import { ROLE } from "@/modules/identity/roles";
 export class CollegeOfferingMetadataError extends Error{
   constructor(public readonly code:"OFFERING_NOT_FOUND"|"OFFERING_STALE"|
     "OFFERING_PARENT_UNAVAILABLE"|"OFFERING_HAS_ACTIVE_DELIVERIES"){
@@ -19,7 +20,7 @@ export class CollegeOfferingMetadataError extends Error{
 export async function updateCollegeOfferingMetadata(context:RequestContext,rawId:unknown,raw:unknown){
   const id=z.string().uuid().parse(rawId),input=collegeOfferingMetadataSchema.parse(raw);
   const member=context.membership;
-  if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,"COLLEGE_ADMIN")||
+  if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,ROLE.COLLEGE_ADMIN)||
     !can(context,"courses.manage",{collegeId:member.collegeId,organizationId:member.organizationId}))
     throw new AuthorizationError("courses.manage");
   requirePermission(context,"courses.manage",{collegeId:member.collegeId,organizationId:member.organizationId});

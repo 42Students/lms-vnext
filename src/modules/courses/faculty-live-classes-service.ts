@@ -8,12 +8,13 @@ import {
  type FacultyLiveClass,
 } from "./faculty-live-classes-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Read migrated LIVE_CLASS lesson content for active teaching deliveries.
  * Raw meeting URLs never enter logs, audit metadata or diagnostic exceptions. */
 export async function getFacultyLiveClasses(context:RequestContext,rawQuery:unknown){
  const query=facultyLiveClassesQuerySchema.parse(rawQuery);
  const membership=context.membership;
- if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY")||
+ if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.FACULTY)||
   !can(context,"courses.read",{
    collegeId:membership.collegeId,organizationId:membership.organizationId,
   }))throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");

@@ -9,13 +9,14 @@ import {
   candidateScheduleJobIdSchema, projectTpoCandidateScheduleReadiness,
 } from "./tpo-candidate-schedule-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** TPO/college-owned read of persisted shared-round schedule only. */
 export async function getTpoCandidateScheduleReadiness(
   context: RequestContext,
   rawJobId: unknown,
 ) {
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "TPO")) {
+  if (!membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = membership.collegeId;

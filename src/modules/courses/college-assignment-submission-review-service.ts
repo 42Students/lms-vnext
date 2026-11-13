@@ -12,12 +12,13 @@ import {
 import {facultySubmissionReviewResponse} from "./faculty-submission-review-model";
 import {CoursesServiceError} from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 /** College Admin grade-review API, separate from teacher assignment assertions. */
 export async function getCollegeSubmissionReviewPage(context:RequestContext,raw:unknown){
  const member=context.membership;
  const scopedSA=isSuperAdmin(context)&&Boolean(context.adminScope?.collegeId);
  if(!scopedSA&&(!member||member.status!=="ACTIVE"||
-    context.user.platformStatus!=="ACTIVE"||!hasMembershipRole(context,"COLLEGE_ADMIN")))
+    context.user.platformStatus!=="ACTIVE"||!hasMembershipRole(context,ROLE.COLLEGE_ADMIN)))
   throw new AuthorizationError("courses.manage");
  const query=facultySubmissionListQuerySchema.parse(raw);
  const assignment=await loadCourseAssignmentScope(query.assignmentId,true);

@@ -24,11 +24,12 @@ import {
   tpoBranchSeasonQuerySchema,
 } from "./tpo-branch-season-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function getTpoBranchSeasonDashboard(
   context: RequestContext,
   raw: unknown,
 ) {
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = context.membership.collegeId;

@@ -9,13 +9,14 @@ import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {finishTpoFollowup} from "@/modules/placements/tpo-crm-service";
 import {tpoCrmFollowupIdSchema} from "@/modules/placements/tpo-crm-validation";
 import { route } from "@/security/route";
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{followupId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  if(!await tpoCrmTablesReady())return NextResponse.json({error:"DB09_MIGRATIONS_PENDING"},{status:503});
  try{
   const context=await getCurrentRequestContext();
-  if(!context.membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+  if(!context.membership||!hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
   const collegeId=context.membership.collegeId;
   await requirePlacementManageScope(context,collegeId);
   const {followupId:rawId}=await params;

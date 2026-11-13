@@ -12,6 +12,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {collegeDriveIdSchema} from "./college-drive-read-model";
 import {collegeInterviewActionSchema} from "./college-interview-action-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Legacy Interview row crosswalk (no production data migration in vNext):
  * legacy job/application/learner integer keys -> scoped UUID placementJobs,
  * placementApplications and the resolved college membership;
@@ -106,7 +107,7 @@ export async function mutateCollegeInterview(context:RequestContext,rawJobId:unk
   // A valid TPO placement manager is not automatically a College Admin.
   // Recheck the exact persisted role required by this privileged endpoint;
   // otherwise a revoked admin with a remaining TPO grant can still schedule.
-  if(!isSuperAdmin(persistedActor)&&!hasMembershipRole(persistedActor,"COLLEGE_ADMIN"))
+  if(!isSuperAdmin(persistedActor)&&!hasMembershipRole(persistedActor,ROLE.COLLEGE_ADMIN))
    throw new AuthorizationError("placements.manage");
   let appointment:typeof placementCollegeInterviews.$inferSelect;
   let applicationId:string;

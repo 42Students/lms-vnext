@@ -7,11 +7,12 @@ import type {RequestContext} from "@/modules/identity/context";
 import {CoursesServiceError} from "./errors";
 
 import {type LearnerCourseSetupStatus} from "./learner-course-setup-copy";
+import { ROLE } from "@/modules/identity/roles";
 /** LEARNER-home-courses-03: diagnose only the current learner's saved
  * academic setup, not other students or unrelated college records. */
 export async function getLearnerCourseSetupStatus(context:RequestContext):Promise<LearnerCourseSetupStatus>{
  const member=context.membership;
- if(!member||member.status!=="ACTIVE"||!member.roles.includes("LEARNER")||
+ if(!member||member.status!=="ACTIVE"||!member.roles.includes(ROLE.LEARNER)||
     context.user.platformStatus!=="ACTIVE")
   throw new CoursesServiceError("LEARNER_PROGRESS_ACCESS_DENIED");
  const db=getDb();
@@ -48,7 +49,7 @@ export async function getLearnerCourseSetupStatus(context:RequestContext):Promis
  * active program, even if its course deliveries have not been published yet. */
 export async function listLearnerProgramSemesters(context:RequestContext){
  const member=context.membership;
- if(!member||member.status!=="ACTIVE"||!member.roles.includes("LEARNER")||
+ if(!member||member.status!=="ACTIVE"||!member.roles.includes(ROLE.LEARNER)||
   context.user.platformStatus!=="ACTIVE")throw new CoursesServiceError("LEARNER_PROGRESS_ACCESS_DENIED");
  const db=getDb();
  const active=await db.select({programId:learnerProgramEnrollments.programId})

@@ -9,9 +9,10 @@ import {hasMembershipRole,type RequestContext} from "@/modules/identity/context"
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
+import { ROLE } from "@/modules/identity/roles";
 export async function remindUnreadTpoNotice(context:RequestContext,rawId:unknown){
  const id=z.string().uuid().parse(rawId),member=context.membership;
- if(!member||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ if(!member||!hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,member.collegeId),now=new Date();
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{

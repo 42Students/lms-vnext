@@ -13,6 +13,7 @@ import { FriendlyFetchError } from "@/lib/api-fetch";
 import { friendlyApiError } from "@/lib/friendly-error";
 import { Label } from "@/components/ui/label";
 
+import { ROLE } from "@/modules/identity/roles";
 function useProjectAction() {
   const router = useRouter();
   const { showToast } = useToast();
@@ -231,7 +232,7 @@ export function TaskReviewActions({
   >(initialDecision);
   const [feedback, setFeedback] = useState("");
   useEffect(()=>{
-    if(mode!=="MENTOR"||!shortcut)return;
+    if(mode!==ROLE.MENTOR||!shortcut)return;
     const onKey=(event:KeyboardEvent)=>{
       if(event.altKey||event.ctrlKey||event.metaKey||event.shiftKey||
           event.key.toLowerCase()!==shortcut||event.repeat||event.defaultPrevented)return;
@@ -262,7 +263,7 @@ export function TaskReviewActions({
           "POST",
           {
             decision,
-            ...(mode==="MENTOR"?{expectedUpdatedAt,confirmed:true}:{}),
+            ...(mode===ROLE.MENTOR?{expectedUpdatedAt,confirmed:true}:{}),
             feedback:feedback.trim()||undefined,
           },
         ),

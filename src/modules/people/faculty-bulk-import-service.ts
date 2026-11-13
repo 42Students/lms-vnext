@@ -9,6 +9,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import { onboardPersonWithRuntime, upsertFacultyProfileWithRuntime } from "./runtime";
 import { parseFacultyBulkCsv } from "./faculty-bulk-import-model";
 
+import { ROLE } from "@/modules/identity/roles";
 const schema = z.object({
   collegeId: z.string().uuid(),
   departmentId: z.string().uuid(),
@@ -73,14 +74,14 @@ export async function importFacultyCsv(context: RequestContext, input: unknown) 
       const person = await onboardPersonWithRuntime(context, {
         collegeId: actor.collegeId, displayName: name,
         phoneE164: entry.phoneE164, ...(entry.email?{email:entry.email}:{}),
-        roles:entry.facultyType==="MENTOR"?["FACULTY","MENTOR"]:["FACULTY"],
+        roles:entry.facultyType===ROLE.MENTOR?["FACULTY","MENTOR"]:["FACULTY"],
       });
       // A successful identity is not a successful faculty registration until
       // its tenant-owned department and legacy faculty type are attached.
       try {
         await upsertFacultyProfileWithRuntime(context,person.membership.id,{
           primaryDepartmentId:selectedDepartmentId,
-          employmentType:entry.facultyType==="MENTOR"?"Mentor":"Lecturer",
+          employmentType:entry.facultyType===ROLE.MENTOR?"Mentor":"Lecturer",
           academicTitle:null,
         });
         results.push({row:index+2,name,status:"CREATED",

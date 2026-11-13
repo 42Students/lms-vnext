@@ -16,6 +16,7 @@ import {
   type CandidatePreferencesInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 const DEFAULT_PREFERENCES = {
   preferredRoleTitles: [] as string[],
   preferredLocations: [] as string[],
@@ -33,7 +34,7 @@ function requireLearnerMembership(
 ) {
   if (
     !context.membership ||
-    !hasMembershipRole(context, "LEARNER")
+    !hasMembershipRole(context, ROLE.LEARNER)
   ) {
     throw new AuthorizationError("placements.read");
   }

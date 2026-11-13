@@ -13,6 +13,7 @@ import {
   listLessonContentMetrics,
 } from "@/modules/courses/lesson-content-service";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime = "nodejs";
 const noStore={"Cache-Control":"private, no-store"};
 /** Server-side legacy→vNext crosswalk (numeric course/class/lesson IDs are not
@@ -92,8 +93,8 @@ export const GET = route(
       // Optional old courseSlug takes precedence over courseId. Resolve the
       // slug/code ONLY within the currently authorized learner catalog.
       const courseSlug=url.searchParams.get("courseSlug")?.trim();
-      const learner=hasMembershipRole(context,"LEARNER");
-      const faculty=hasMembershipRole(context,"FACULTY");
+      const learner=hasMembershipRole(context,ROLE.LEARNER);
+      const faculty=hasMembershipRole(context,ROLE.FACULTY);
       if(!learner&&!faculty)throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
       const initial=learner&&courseSlug?await getLearnerAssessmentOverview(context):null;
       const authorizedCourse=courseSlug&&initial?

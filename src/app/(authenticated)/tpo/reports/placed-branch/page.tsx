@@ -18,11 +18,12 @@ import { getTpoPlacedStudentsByBranch } from "@/modules/placements/tpo-placed-br
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { ROLE } from "@/modules/identity/roles";
 type Search = { seasonId?: string | string[]; jobId?: string | string[] };
 function first(input: string | string[] | undefined) { return Array.isArray(input) ? input[0] : input; }
 export default async function TpoPlacedByBranchPage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) redirect("/dashboard");
   const params = await searchParams;
   if(tpoReportHasAmbiguousFilters(params))return <TpoReportInvalidFilters path="/tpo/reports/placed-branch"/>;
   const report = await getTpoPlacedStudentsByBranch(context, {

@@ -6,6 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {parseCollegeRoleDirectoryExportQuery} from "@/modules/people/college-role-directory-export";
 import {exportCollegeRoleDirectoryCsv} from "@/modules/people/college-role-directory-export-service";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -17,7 +18,7 @@ await requireRecentDeviceAuthentication(context.user.id);
 const report=await exportCollegeRoleDirectoryCsv(context,kind,filter);
 return new Response(report.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="college-'+(kind==="FACULTY"?"faculty":"students")+'-filtered.csv"',
+   "Content-Disposition":'attachment; filename="college-'+(kind===ROLE.FACULTY?"faculty":"students")+'-filtered.csv"',
    "Cache-Control":"private, no-store",
    "X-Export-Total":String(report.total),
    "X-Export-Truncated":String(report.truncated),

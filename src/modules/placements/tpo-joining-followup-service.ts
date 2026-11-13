@@ -9,9 +9,10 @@ import {PlacementsServiceError} from "./errors";
 import {requirePlacementManageScope} from "./scope";
 import {isoDateInIndia} from "./tpo-offer-expiry-model";
 import {projectTpoJoiningFollowups,tpoJoiningFollowupQuerySchema} from "./tpo-joining-followup-model";
+import { ROLE } from "@/modules/identity/roles";
 export async function getTpoJoiningFollowups(context:RequestContext,raw:unknown,now=new Date()){
  const member=context.membership;
- if(!member||!hasMembershipRole(context,"TPO")||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE")
+ if(!member||!hasMembershipRole(context,ROLE.TPO)||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE")
    throw new AuthorizationError("placements.manage");
  const collegeId=member.collegeId;
  if(!can(context,"placements.manage",{collegeId}))throw new AuthorizationError("placements.manage");

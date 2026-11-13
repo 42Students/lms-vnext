@@ -40,6 +40,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 type QuizPayload = {
   quiz: {
     id: string;
@@ -165,7 +166,7 @@ export function LearnerQuizAttempt() {
         const activeRole=(data as {currentRole?:unknown}).currentRole;
         // The legacy /quiz URL also served teachers. Faculty must land in the
         // permission-checked report/preview, never in a learner submission UI.
-        if(activeRole==="FACULTY"&&quizId&&deliveryId){
+        if(activeRole===ROLE.FACULTY&&quizId&&deliveryId){
           if(!controller.signal.aborted)router.replace("/teacher/report/quiz/"+encodeURIComponent(quizId)+
             "?deliveryId="+encodeURIComponent(deliveryId));
           return;

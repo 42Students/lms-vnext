@@ -8,6 +8,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "./scope";
+import { ROLE } from "@/modules/identity/roles";
 const inputSchema=z.strictObject({confirmed:z.literal(true),runAuditId:z.string().uuid()});
 const rowSchema=z.strictObject({membershipId:z.string().uuid(),actionId:z.string().uuid(),
  afterUpdatedAt:z.iso.datetime({offset:true}).nullable()});
@@ -31,7 +32,7 @@ export class TpoStudentBulkUndoError extends Error {
  * eligibility event must still be the original run's latest event. */
 export async function undoTpoStudentBulkRun(ctx:RequestContext,raw:unknown){
  const input=inputSchema.parse(raw),member=ctx.membership;
- if(!member||member.status!=="ACTIVE"||ctx.user.platformStatus!=="ACTIVE"||!hasMembershipRole(ctx,"TPO"))
+ if(!member||member.status!=="ACTIVE"||ctx.user.platformStatus!=="ACTIVE"||!hasMembershipRole(ctx,ROLE.TPO))
   throw new AuthorizationError("placements.manage");
  const collegeId=member.collegeId;
  if(!can(ctx,"placements.manage",{collegeId}))throw new AuthorizationError("placements.manage");

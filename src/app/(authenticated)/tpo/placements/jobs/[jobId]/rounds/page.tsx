@@ -21,6 +21,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function TpoDriveRoundsPage({
   params,searchParams,
 }: {
@@ -28,7 +29,7 @@ export default async function TpoDriveRoundsPage({
   searchParams?:Promise<{roundId?:string|string[]}>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) redirect("/dashboard");
   const { jobId } = await params;
   const requested=searchParams?(await searchParams).roundId:undefined;
   const valid=typeof requested!=="string"||z.string().uuid().safeParse(requested).success;

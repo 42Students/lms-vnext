@@ -8,11 +8,12 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
 import {effectiveTpoVerifierSetting,tpoVerifierGrantAllowed} from "./switch-state";
 import {requireVerificationTables} from "./staff-auth";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Never trust a session role, client college ID, or grant flag for private documents. */
 export async function requireTpoVerificationActor(context:RequestContext){
  const membership=context.membership;
  if(context.user.platformStatus!=="ACTIVE"||!membership||membership.status!=="ACTIVE"||
-  !membership.roles.includes("TPO"))throw new AuthorizationError("profile-verification.review");
+  !membership.roles.includes(ROLE.TPO))throw new AuthorizationError("profile-verification.review");
  await requireVerificationTables();
  const [actor]=await getDb().select({
   id:collegeMemberships.id,collegeId:collegeMemberships.collegeId,

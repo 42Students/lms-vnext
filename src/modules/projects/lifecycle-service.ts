@@ -41,6 +41,7 @@ import {
   type UpdateProjectTaskStatusInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 function mapLifecycleConstraint(error: unknown) {
   if (
     postgresConstraintName(error) ===
@@ -867,7 +868,7 @@ export async function unshipProjectRelease(
       projectIdInput,
     );
   const expected=projectReleaseVersionInputSchema.parse(rawInput).expectedUpdatedAt;
-  if(scope.access==="MENTOR"&&!expected)throw new ProjectsServiceError("PROJECT_RELEASE_INVALID_STATE");
+  if(scope.access===ROLE.MENTOR&&!expected)throw new ProjectsServiceError("PROJECT_RELEASE_INVALID_STATE");
   const releaseId =
     projectReleaseIdSchema.parse(releaseIdInput);
   const db = getDb();
@@ -995,7 +996,7 @@ export async function shipProjectRelease(
       projectIdInput,
     );
   const expected=projectReleaseVersionInputSchema.parse(rawInput).expectedUpdatedAt;
-  if(scope.access==="MENTOR"&&!expected)throw new ProjectsServiceError("PROJECT_RELEASE_INVALID_STATE");
+  if(scope.access===ROLE.MENTOR&&!expected)throw new ProjectsServiceError("PROJECT_RELEASE_INVALID_STATE");
   const releaseId =
     projectReleaseIdSchema.parse(releaseIdInput);
   const db = getDb();

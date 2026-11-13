@@ -7,6 +7,7 @@ import {cohorts,colleges,collegeMemberships,departments,facultyProfiles,learnerP
 import type {RequestContext} from "@/modules/identity/context";
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
 import {scopedSearchLike,superAdminReadPages,superAdminReadQuerySchema,type SuperAdminReadResult} from "./super-admin-read-directory-model";
+import { ROLE } from "@/modules/identity/roles";
 export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY"|"LEARNER",raw:unknown):Promise<SuperAdminReadResult>{
  // Accept legacy faculty query aliases only after checking their type and
  // keeping all results confined to the signed-in Super Admin's college.
@@ -37,7 +38,7 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
  delete input["collegeId"];
  const query=superAdminReadQuerySchema.parse(input),
   selected=requireSuperAdminSelectedCollege(context,"people.manage"),db=getDb();
- const enrollmentFilter=role==="LEARNER"&&(query.programId||query.cohortId||query.departmentId||query.sectionId)
+ const enrollmentFilter=role===ROLE.LEARNER&&(query.programId||query.cohortId||query.departmentId||query.sectionId)
   ?exists(db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
     .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
     .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,selected.collegeId)))
@@ -148,19 +149,19 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
  .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
  .where(and(
   query.status==="ALL"?undefined:eq(collegeMemberships.status,query.status as "ACTIVE"|"SUSPENDED"|"ENDED"),
-  role==="FACULTY"&&query.departmentId?eq(departments.id,query.departmentId):undefined,
-  role==="FACULTY"&&query.employmentType?
-    query.employmentType.toUpperCase()==="MENTOR"
+  role===ROLE.FACULTY&&query.departmentId?eq(departments.id,query.departmentId):undefined,
+  role===ROLE.FACULTY&&query.employmentType?
+    query.employmentType.toUpperCase()===ROLE.MENTOR
       ?sql`exists(select 1 from membership_roles mentor_filter where mentor_filter.membership_id=${collegeMemberships.id} and mentor_filter.role='MENTOR')`
       :query.employmentType.toUpperCase()==="ADMIN"
         ?sql`exists(select 1 from membership_roles admin_filter where admin_filter.membership_id=${collegeMemberships.id} and admin_filter.role='COLLEGE_ADMIN')`
-        :query.employmentType.toUpperCase()==="TPO"
+        :query.employmentType.toUpperCase()===ROLE.TPO
           ?sql`exists(select 1 from membership_roles tpo_filter where tpo_filter.membership_id=${collegeMemberships.id} and tpo_filter.role='TPO')`
           :eq(facultyProfiles.employmentType,query.employmentType):undefined,
   enrollmentFilter,
   query.q?or(ilike(users.displayName,scopedSearchLike(query.q)),
    ilike(users.email,scopedSearchLike(query.q)),
-   role==="LEARNER"?ilike(learnerProfiles.rollNumber,scopedSearchLike(query.q)):undefined,
+   role===ROLE.LEARNER?ilike(learnerProfiles.rollNumber,scopedSearchLike(query.q)):undefined,
    ilike(users.phoneE164,scopedSearchLike(query.q))):undefined,
  )).as("super_admin_role_directory");
  const [countRow]=await db.select({total:count()}).from(source);
@@ -174,7 +175,7 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
  // default faculty/learner directory is sorted by normalized full name.
  const rollSort=sql<string>`case when ${source.rollNumber} ~ '^[0-9]{1,15}$'
     then lpad(${source.rollNumber},15,'0') else coalesce(${source.rollNumber},'') end`;
- const sortKey=role==="LEARNER"&&sortBy==="roll"?rollSort:source.name;
+ const sortKey=role===ROLE.LEARNER&&sortBy==="roll"?rollSort:source.name;
  const rows=await db.select().from(source)
   .orderBy(sortDesc?desc(sortKey):asc(sortKey),asc(source.id))
   .limit(query.pageSize).offset((page-1)*query.pageSize);
@@ -186,7 +187,7 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
   status:row.status==="ACTIVE"&&(row.platformStatus!=="ACTIVE"||row.suspendedAt)
     ?"SUSPENDED":row.status,
   details:[
-   ...(role==="FACULTY"?[
+   ...(role===ROLE.FACULTY?[
     "Department: "+(row.departmentName??"-"),
     "Department ID: "+(row.facultyDepartmentId??"Not assigned"),
     "Type: "+(row.employmentType??row.academicTitle??"Not set"),
@@ -261,7 +262,7 @@ export async function listAdminScopedPeopleSuggestions(
  const result=await listAdminScopedPeople(context,role,{
   q,page:1,pageSize:25,status:"ALL",
  });
- const frequency=role==="FACULTY"?
+ const frequency=role===ROLE.FACULTY?
   facultySelections.get(requireSuperAdminSelectedCollege(context,"people.manage").collegeId):undefined;
  const items=!q&&frequency
   ?[...result.items].sort((a,b)=>

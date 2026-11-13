@@ -13,6 +13,7 @@ import {postgresConstraintName} from "./errors";
 import {collegeTeachingReassignIdSchema,collegeTeachingReassignSchema,teachingMembershipIsActive,teachingScheduleConflict}
   from "./college-teaching-reassign-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export class CollegeTeachingReassignError extends Error {
   constructor(public readonly code:"ASSIGNMENT_NOT_FOUND"|"ASSIGNMENT_STALE"|
     "TARGET_NOT_FOUND"|"FACULTY_CONFLICT"|"PRIMARY_CONFLICT"|
@@ -24,7 +25,7 @@ export async function reassignCollegeTeaching(context:RequestContext,rawId:unkno
   const id=collegeTeachingReassignIdSchema.parse(rawId);
   const input=collegeTeachingReassignSchema.parse(raw);
   const member=context.membership;
-  if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,"COLLEGE_ADMIN")||
+  if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,ROLE.COLLEGE_ADMIN)||
     !can(context,"courses.manage",{collegeId:member.collegeId,organizationId:member.organizationId}))
     throw new AuthorizationError("courses.manage");
   requirePermission(context,"courses.manage",{collegeId:member.collegeId,organizationId:member.organizationId});

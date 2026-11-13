@@ -9,6 +9,7 @@ import { loadCollegeOwnProfile } from "@/modules/people/college-admin-profile-ed
 import { CollegeProfileRefresh } from "@/components/college/college-profile-refresh";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function CollegeAdminProfilePage({
   searchParams,
 }: {
@@ -20,11 +21,11 @@ export default async function CollegeAdminProfilePage({
   const context = await getCurrentRequestContext();
   if (!context.membership) return <div className="min-w-0 space-y-6"><PageHeader title="Profile"/><ErrorState title="Profile unavailable" description="Admin not assigned to a college. Contact a Super Admin to access college staff profile controls."/></div>;
   if (context.membership.status !== "ACTIVE") redirect("/dashboard");
-  if (!hasMembershipRole(context, "COLLEGE_ADMIN")) {
-    if(hasMembershipRole(context,"LEARNER"))redirect("/learn/profile");
-    if(hasMembershipRole(context,"FACULTY"))redirect("/teacher/profile");
-    if(hasMembershipRole(context,"MENTOR"))redirect("/mentor/profile");
-    if(hasMembershipRole(context,"TPO"))redirect("/tpo/profile");
+  if (!hasMembershipRole(context, ROLE.COLLEGE_ADMIN)) {
+    if(hasMembershipRole(context,ROLE.LEARNER))redirect("/learn/profile");
+    if(hasMembershipRole(context,ROLE.FACULTY))redirect("/teacher/profile");
+    if(hasMembershipRole(context,ROLE.MENTOR))redirect("/mentor/profile");
+    if(hasMembershipRole(context,ROLE.TPO))redirect("/tpo/profile");
     redirect("/dashboard");
   }
   const [accountResult,profileResult]=await Promise.allSettled([

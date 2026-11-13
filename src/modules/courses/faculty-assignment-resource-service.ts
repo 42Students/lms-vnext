@@ -11,6 +11,7 @@ import {CoursesServiceError} from "./errors";
 import {createPrivateUploadGrant,readPrivateObjectAttestation} from "@/modules/storage/private-object-storage";
 import type {FacultyAssignmentResourceInput} from "./faculty-assignment-authoring-model";
 
+import { ROLE } from "@/modules/identity/roles";
 type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 type Row=typeof courseAssignmentResources.$inferSelect;
 type Resource={
@@ -39,7 +40,7 @@ export async function attestFacultyAssignmentResources(
  const member=context.membership;
  if(!member||member.collegeId!==collegeId||member.status!=="ACTIVE"||
     context.user.platformStatus!=="ACTIVE"||
-    !(member.roles.includes("FACULTY")||member.roles.includes("COLLEGE_ADMIN")))
+    !(member.roles.includes(ROLE.FACULTY)||member.roles.includes(ROLE.COLLEGE_ADMIN)))
   throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
  const existing=new Map<string,Row>();
  if(assignmentId){
@@ -114,8 +115,8 @@ export async function listFacultyAssignmentResources(
  const deliveryId=id.parse(deliveryIdRaw),assignmentId=id.parse(assignmentIdRaw);
  const actor=await requireDeliveryContentMutation(context,deliveryId);
  const admin=actor==="ADMIN"&&context.membership?.status==="ACTIVE"&&
-  context.membership.roles.includes("COLLEGE_ADMIN")&&context.user.platformStatus==="ACTIVE";
- if(actor!=="FACULTY"&&!admin)
+  context.membership.roles.includes(ROLE.COLLEGE_ADMIN)&&context.user.platformStatus==="ACTIVE";
+ if(actor!==ROLE.FACULTY&&!admin)
   throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
  if(admin){
   const scope=await loadCourseSectionDeliveryScope(deliveryId);
@@ -149,9 +150,9 @@ export async function presignFacultyAssignmentResource(
  const deliveryId=id.parse(deliveryIdRaw),member=context.membership;
  const scope=await loadCourseSectionDeliveryScope(deliveryId);
  const actor=await requireDeliveryContentMutation(context,deliveryId);
- const admin=actor==="ADMIN"&&member?.roles.includes("COLLEGE_ADMIN");
+ const admin=actor==="ADMIN"&&member?.roles.includes(ROLE.COLLEGE_ADMIN);
  if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
-    member.collegeId!==scope.collegeId||(actor!=="FACULTY"&&!admin))
+    member.collegeId!==scope.collegeId||(actor!==ROLE.FACULTY&&!admin))
   throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
  if(admin){
   await getDb().transaction(tx=>assertPersistedPlatformPermission(tx,context,

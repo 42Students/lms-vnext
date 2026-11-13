@@ -13,6 +13,7 @@ import {
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Legacy classId/courseId integer pairs cannot be confused with scoped UUID
  * Section deliveries. Resolve imported IDs by the authorized import map, not
  * by casting or letting the caller select a different college. */
@@ -23,7 +24,7 @@ const selectionSchema=z.object({
 
 function collegeForReport(context:RequestContext){
  const member=context.membership;
- if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,"COLLEGE_ADMIN")||
+ if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,ROLE.COLLEGE_ADMIN)||
   context.user.platformStatus!=="ACTIVE")
   throw new AuthorizationError("courses.read");
  requirePermission(context,"courses.read",{

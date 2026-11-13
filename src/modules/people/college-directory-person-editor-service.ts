@@ -12,6 +12,7 @@ import {assertPersistedPlatformPermission,type PermissionTransaction} from "@/mo
 import {facultyContactEditSchema,facultyProfileDocumentSchema} from "./faculty-profile-document";
 import {learnerProfileDocumentSchema} from "./profile-validation";
 
+import { ROLE } from "@/modules/identity/roles";
 const uuid=z.string().uuid();
 const role=z.enum(["FACULTY","LEARNER"]);
 const inputSchema=z.strictObject({
@@ -97,8 +98,8 @@ export async function getCollegePersonEditor(context:RequestContext,rawId:unknow
     .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
     .where(and(eq(collegeMemberships.id,id),eq(collegeMemberships.collegeId,own.collegeId))).limit(1);
   if(!row)throw Error("PERSON_NOT_FOUND");
-  const faculty=kind==="FACULTY"?facultyProfileDocumentSchema.parse(row.faculty??{}):null;
-  const learner=kind==="LEARNER"?learnerProfileDocumentSchema.parse(row.learner??{}):null;
+  const faculty=kind===ROLE.FACULTY?facultyProfileDocumentSchema.parse(row.faculty??{}):null;
+  const learner=kind===ROLE.LEARNER?learnerProfileDocumentSchema.parse(row.learner??{}):null;
   const parts=(row.name??"").trim().split(/\s+/);
   return {id,kind,name:row.name??"",firstName:parts[0]??"",
     lastName:parts.slice(1).join(" "),
@@ -133,7 +134,7 @@ export async function saveCollegePersonEditor(context:RequestContext,rawId:unkno
     // Super Admin may have no college membership; separately lock its
     // selected college/organization lifecycle rather than trusting a cookie.
     await assertLiveProfileTenant(tx,own);
-    if(input.kind==="FACULTY"){
+    if(input.kind===ROLE.FACULTY){
       const [found]=await tx.select({
         document:facultyProfiles.profileDocument,
         profileVersion:facultyProfiles.profileDocumentVersion,
@@ -187,12 +188,12 @@ export async function saveCollegePersonEditor(context:RequestContext,rawId:unkno
       eventType:ACTIVITY_EVENT_TYPES.IDENTITY_COLLEGE_PERSON_PROFILE_UPDATED,
       collegeId:own.collegeId,organizationId:own.organizationId,
       subjectType:"college_membership",subjectId:id,
-      summary:input.kind==="FACULTY"?"Faculty profile updated":"Student profile updated",
+      summary:input.kind===ROLE.FACULTY?"Faculty profile updated":"Student profile updated",
       metadata:{role:input.kind,action:"UPDATE",
-        legacyAuditCategory:input.kind==="FACULTY"?"FACULTY_EDIT":"LEARNER_EDIT",
+        legacyAuditCategory:input.kind===ROLE.FACULTY?"FACULTY_EDIT":"LEARNER_EDIT",
         actorScopeCollegeId:own.collegeId,
         fields:["bio","gender","dateOfBirth","address","contact","website"]}});
     return {id,updated:true,
-      message:input.kind==="FACULTY"?"Faculty updated successfully!":"Student updated successfully!"};
+      message:input.kind===ROLE.FACULTY?"Faculty updated successfully!":"Student updated successfully!"};
   });
 }

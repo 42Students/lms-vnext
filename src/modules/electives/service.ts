@@ -13,6 +13,7 @@ import { postgresConstraintName } from "@/modules/academics/errors";
 import { assertPersistedGroupActor } from "@/modules/groups/actor-access";
 import {assertCollegeElectivesEnabled} from "./college-elective-module-guard";
 
+import { ROLE } from "@/modules/identity/roles";
 const uuid = z.string().uuid();
 const slotInput = z.object({
   collegeId: uuid,
@@ -149,7 +150,7 @@ export async function createElectiveOffering(context: RequestContext, raw: unkno
         kind: "ELECTIVE", status: "ACTIVE",
         name: (slot.name + " · " + input.courseId.slice(0, 8)).slice(0, 150),
         capacity: input.capacity, createdByUserId: context.user.id,
-        createdByType: context.user.systemRoles.includes("SUPER_ADMIN") ? "SUPER_ADMIN" : "COLLEGE_ADMIN",
+        createdByType: context.user.systemRoles.includes(ROLE.SUPER_ADMIN) ? "SUPER_ADMIN" : "COLLEGE_ADMIN",
       }).returning();
       group = created;
     } else if (group.capacity !== input.capacity) {

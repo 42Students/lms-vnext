@@ -11,6 +11,7 @@ import { calendarFollowupCreateSchema } from "@/modules/placements/tpo-calendar-
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { route } from "@/security/route";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime = "nodejs";
 /** Old POST /api/v1/tpo/recruiter-leads/{leadId}/follow-ups maps to
  * POST /api/placements/tpo/calendar/follow-ups with {leadId,dueAt,note}.
@@ -27,7 +28,7 @@ async function handlePOST(request: Request) {
 
   try {
     const context = await getCurrentRequestContext();
-    if (!hasMembershipRole(context, "TPO") || !context.membership) {
+    if (!hasMembershipRole(context, ROLE.TPO) || !context.membership) {
       throw new AuthorizationError("placements.manage");
     }
     const collegeId = context.membership.collegeId;

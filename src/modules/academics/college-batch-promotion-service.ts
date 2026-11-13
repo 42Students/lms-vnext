@@ -15,6 +15,7 @@ import {
   type PromotionBlocker,
 } from "./college-batch-promotion-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export class CollegePromotionPreviewError extends Error {
   constructor(public readonly code: "BATCH_NOT_FOUND" | "PROGRAM_NOT_FOUND") {
     super(code); this.name = "CollegePromotionPreviewError";
@@ -33,7 +34,7 @@ function ownCollege(context: RequestContext) {
       organizationId: context.adminScope.organizationId };
   }
   const member = context.membership;
-  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+  if (!member || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
       !can(context, "academics.manage", {
         collegeId: member.collegeId, organizationId: member.organizationId,
       })) throw new AuthorizationError("academics.manage");

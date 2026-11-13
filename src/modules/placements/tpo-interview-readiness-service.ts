@@ -5,10 +5,11 @@ import {requirePlacementManageScope} from "./scope";
 import {listTpoCalendarRoundChoices} from "./tpo-round-calendar-service";
 import {projectTpoInterviewReadiness,tpoInterviewWindowSchema} from "./tpo-interview-readiness-model";
 import {z} from "zod";
+import { ROLE } from "@/modules/identity/roles";
 /** Interview-only operational view of round schedule evidence. No candidate slots inferred. */
 export async function getTpoInterviewReadiness(context:RequestContext,raw:unknown,now=new Date()){
  const member=context.membership;
- if(!member||!hasMembershipRole(context,"TPO")||
+ if(!member||!hasMembershipRole(context,ROLE.TPO)||
    member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE")
    throw new AuthorizationError("placements.manage");
  const collegeId=member.collegeId;

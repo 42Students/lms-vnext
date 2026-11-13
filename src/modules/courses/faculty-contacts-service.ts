@@ -15,6 +15,7 @@ import {
   facultyContactDetailParamsSchema, facultyContactTabMatches,
 } from "./faculty-contact-detail-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Display identities are derived from authorized profile names, not from the
  * legacy website field (which may contain an arbitrary external URL). */
 export function facultyContactInitials(name:string|null):string {
@@ -30,7 +31,7 @@ export function facultyContactInitials(name:string|null):string {
  * once in each matching role tab, not twice within the same list. */
 export function facultyContactRoleLabels(roles:readonly string[]):string[] {
  return ["FACULTY","LEARNER"].filter(role=>roles.includes(role))
-  .map(role=>role==="FACULTY"?"Teacher":"Student");
+  .map(role=>role===ROLE.FACULTY?"Teacher":"Student");
 }
 const querySchema=z.object({
   tab:z.enum(["ALL","FACULTY","LEARNER"]),
@@ -56,7 +57,7 @@ const querySchema=z.object({
 async function requirePersistedFaculty(context:RequestContext) {
   const membership=context.membership;
   if (!membership || context.user.platformStatus!=="ACTIVE" ||
-      !hasActiveMembership(context) || !hasMembershipRole(context,"FACULTY") ||
+      !hasActiveMembership(context) || !hasMembershipRole(context,ROLE.FACULTY) ||
       !can(context,"courses.read",{
         collegeId:membership.collegeId,organizationId:membership.organizationId,
       })) throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");

@@ -14,6 +14,7 @@ import { facultyReportCsvRequestSchema } from "./faculty-report-csv-request";
 import { selectFacultyAssignmentSubmissions } from "./faculty-assignment-submissions-model";
 import {capFacultyQuizCsvRows,facultyQuizCsvNotice,selectFacultyQuizCsvRows} from "./faculty-quiz-csv-cap";
 
+import { ROLE } from "@/modules/identity/roles";
 /** A GET export re-runs the persisted Section authorization; never trust cached UI report props. */
 export async function getFacultyReportCsvForDownload(
   context: RequestContext,
@@ -22,7 +23,7 @@ export async function getFacultyReportCsvForDownload(
   const query = facultyReportCsvRequestSchema.parse(raw);
   const membership = context.membership;
   if (!membership || !hasActiveMembership(context) ||
-      !hasMembershipRole(context,"FACULTY") ||
+      !hasMembershipRole(context,ROLE.FACULTY) ||
       !can(context,"courses.read",{
         collegeId:membership.collegeId,
         organizationId:membership.organizationId,

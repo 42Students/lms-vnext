@@ -9,11 +9,12 @@ import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import { ProjectsServiceError } from "./errors";
 import { listMyProjectInstances } from "./member-service";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function getMentorProjectWorkCounts(context: RequestContext,
  verifiedRows?:readonly Awaited<ReturnType<typeof listMyProjectInstances>>[number][]) {
   const membership=context.membership;
   if (!membership || !hasActiveMembership(context) ||
-      !hasMembershipRole(context,"MENTOR") || context.user.platformStatus!=="ACTIVE" ||
+      !hasMembershipRole(context,ROLE.MENTOR) || context.user.platformStatus!=="ACTIVE" ||
       !can(context,"projects.read",{
         collegeId:membership.collegeId,organizationId:membership.organizationId,
       })) {
@@ -23,7 +24,7 @@ export async function getMentorProjectWorkCounts(context: RequestContext,
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   // Re-read persisted memberships and active role grants, never trust caller-supplied project IDs.
   const projects=(verifiedRows??await listMyProjectInstances(context)).filter(row=>
-    row.memberRole==="MENTOR"&&row.project.collegeId===membership.collegeId);
+    row.memberRole===ROLE.MENTOR&&row.project.collegeId===membership.collegeId);
   const ids=projects.map(row=>row.project.id);
   const counts=new Map<string,{total:number;open:number}>();
   if(!ids.length)return counts;

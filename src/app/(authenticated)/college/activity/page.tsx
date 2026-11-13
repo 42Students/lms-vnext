@@ -26,6 +26,7 @@ import { istDateTimeFormatter, istTimeFormatter } from "@/lib/format-date";
 import { formatNumberIN } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type RawSearch = Record<string, string | string[] | undefined>;
 
 function when(value: Date) {
@@ -57,7 +58,7 @@ export default async function CollegeActivityPage({
 }: { searchParams: Promise<RawSearch> }) {
   const context = await getCurrentRequestContext();
   if(context.membership&&!isSuperAdmin(context)&&
-     (!hasActiveMembership(context)||!hasMembershipRole(context,"COLLEGE_ADMIN")))redirect("/dashboard");
+     (!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.COLLEGE_ADMIN)))redirect("/dashboard");
   if (!context.membership) return <div className="min-w-0 space-y-3"><PageHeader title="Activity Log"/><Alert tone="warning" title="College not assigned">Ask your administrator to assign a college before you can view the activity log.</Alert></div>;
   const raw = await searchParams;
   const parsed = collegeActivityQuerySchema.safeParse({...(activitySearchParams(raw) as Record<string,unknown>),pageSize:raw["pageSize"] || "50"});

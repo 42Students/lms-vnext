@@ -21,6 +21,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { formatNumberIN } from "@/lib/safe-format";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type Search = { projectState?:string|string[];window?:string|string[];order?:string|string[];version?:string|string[];projectId?:string|string[];decision?: string | string[]; search?: string | string[]; page?: string | string[] };
 const first = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value[0] : value;
@@ -29,7 +30,7 @@ export default async function MentorReviewHistoryPage({
   searchParams,
 }: { searchParams: Promise<Search> }) {
   const context=await getCurrentRequestContext();
-  if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
+  if (!hasMembershipRole(context,ROLE.MENTOR)) redirect("/dashboard");
   const raw=await searchParams;
   const parsed=mentorReviewHistoryQuerySchema.safeParse(Object.values(raw).some(Array.isArray)?null:{
     decision:first(raw.decision) ?? undefined, search:first(raw.search) ?? undefined,

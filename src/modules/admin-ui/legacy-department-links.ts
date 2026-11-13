@@ -5,16 +5,17 @@ import {
   type RequestContext,
 } from "@/modules/identity/context";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Resolve legacy bookmarks to their active vNext account workspace. */
 export function legacyDepartmentDestination(
   context: RequestContext,
   account: "COLLEGE_ADMIN" | "SUPER_ADMIN",
 ) {
-  if (account === "SUPER_ADMIN") {
+  if (account === ROLE.SUPER_ADMIN) {
     return isSuperAdmin(context) ? "/admin/departments" : "/dashboard";
   }
   return hasActiveMembership(context) &&
-    hasMembershipRole(context, "COLLEGE_ADMIN")
+    hasMembershipRole(context, ROLE.COLLEGE_ADMIN)
     ? "/college/departments"
     : "/dashboard";
 }

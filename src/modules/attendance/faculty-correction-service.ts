@@ -5,13 +5,14 @@ import {getFacultyAttendanceWorkspace} from "./faculty-service";
 import {CoursesServiceError} from "@/modules/courses/errors";
 import {facultyCorrectionQuerySchema,facultyCorrectionSessionPage} from "./faculty-correction-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** No registered correction-request table exists. Never report zero requests. */
 export async function getFacultyCorrectionAvailability(
   context:RequestContext,raw:unknown,now=new Date(),
 ){
   const query=facultyCorrectionQuerySchema.parse(raw);
   const membership=context.membership;
-  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY")||
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.FACULTY)||
      !can(context,"courses.read",{
        collegeId:membership.collegeId,organizationId:membership.organizationId,
      }))throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");

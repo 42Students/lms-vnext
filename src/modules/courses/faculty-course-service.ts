@@ -45,6 +45,7 @@ import {
   loadCourseSectionDeliveryScope,
 } from "./scope";
 
+import { ROLE } from "@/modules/identity/roles";
 const cohortDepartments=alias(departments,"faculty_cohort_departments");
 
 /** UUID memberships replace legacy faculty/class integer grants. Semester/year
@@ -65,7 +66,7 @@ function requireFacultyMembership(
     context.user.platformStatus !== "ACTIVE" ||
     !context.membership ||
     context.membership.status !== "ACTIVE" ||
-    !context.membership.roles.includes("FACULTY")
+    !context.membership.roles.includes(ROLE.FACULTY)
   ) {
     throw new CoursesServiceError(
       "FACULTY_TEACHING_SCOPE_REQUIRED",
@@ -366,7 +367,7 @@ export async function getFacultyCourseWorkspace(
       deliveryId,
     );
 
-  if (access !== "FACULTY") {
+  if (access !== ROLE.FACULTY) {
     throw new CoursesServiceError(
       "FACULTY_TEACHING_SCOPE_REQUIRED",
     );

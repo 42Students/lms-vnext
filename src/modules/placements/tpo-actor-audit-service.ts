@@ -14,6 +14,7 @@ import {
   type TpoActorAuditRow,
 } from "./tpo-actor-audit-model";
 
+import { ROLE } from "@/modules/identity/roles";
 function conditions(collegeId: string, query: TpoActorAuditQuery): SQL[] {
   return [
     eq(activityEvents.collegeId, collegeId),
@@ -35,7 +36,7 @@ export async function getTpoActorAudit(
   raw: unknown,
   options: { exportLimit?: number } = {},
 ) {
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = context.membership.collegeId;

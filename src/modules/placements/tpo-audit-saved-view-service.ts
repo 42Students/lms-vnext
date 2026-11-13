@@ -14,6 +14,7 @@ import {
  type TpoAuditSavedView,type TpoAuditSavedViewCommand,
 } from "./tpo-audit-saved-view-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export class TpoAuditSavedViewError extends Error{
  constructor(readonly code:"STORAGE_PENDING"|"VIEW_NOT_FOUND"|"VIEW_LIMIT"|"PIN_LIMIT"|"DUPLICATE_NAME"|"VIEW_STALE"){
   super(code);this.name="TpoAuditSavedViewError";
@@ -34,7 +35,7 @@ function visible(rows:readonly (typeof placementTpoSavedViews.$inferSelect)[]):T
   (b.usedAt??b.createdAt).localeCompare(a.usedAt??a.createdAt));
 }
 async function currentTpoCollege(ctx:RequestContext){
- if(!hasMembershipRole(ctx,"TPO"))throw new AuthorizationError("placements.manage");
+ if(!hasMembershipRole(ctx,ROLE.TPO))throw new AuthorizationError("placements.manage");
  return requireTpoBatchActor(ctx);
 }
 export async function listTpoAuditSavedViews(ctx:RequestContext){
@@ -48,7 +49,7 @@ export async function listTpoAuditSavedViews(ctx:RequestContext){
   const persisted=await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
    collegeId,organizationId:college.organizationId,
   });
-  if(!hasMembershipRole(persisted,"TPO"))throw new AuthorizationError("placements.manage");
+  if(!hasMembershipRole(persisted,ROLE.TPO))throw new AuthorizationError("placements.manage");
   const rows=await tx.select().from(placementTpoSavedViews)
    .where(ownerScope(collegeId,ctx.user.id))
    .orderBy(desc(placementTpoSavedViews.createdAt)).limit(100);
@@ -69,7 +70,7 @@ export async function changeTpoAuditSavedView(ctx:RequestContext,raw:unknown){
   const persisted=await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
    collegeId,organizationId:college.organizationId,
   });
-  if(!hasMembershipRole(persisted,"TPO"))throw new AuthorizationError("placements.manage");
+  if(!hasMembershipRole(persisted,ROLE.TPO))throw new AuthorizationError("placements.manage");
   const rows=await tx.select().from(placementTpoSavedViews)
    .where(ownerScope(collegeId,ctx.user.id)).for("update");
   const all=rows.flatMap(row=>{

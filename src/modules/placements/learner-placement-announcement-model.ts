@@ -1,3 +1,4 @@
+import { ROLE } from "@/modules/identity/roles";
 export type LearnerPlacementNoticeSource = {
   id: string;
   title: string;
@@ -22,10 +23,10 @@ export type LearnerPlacementNoticeSource = {
 /** Only recognize persisted producer/audience enums, never infer a TPO-only notice. */
 export function learnerNoticeSourceLabel(value:string):string|null{
  switch(value){
-  case "TPO":return "Placement cell";
-  case "COLLEGE_ADMIN":return "College administration";
-  case "SUPER_ADMIN":return "Platform administration";
-  case "FACULTY":return "Faculty";
+  case ROLE.TPO:return "Placement cell";
+  case ROLE.COLLEGE_ADMIN:return "College administration";
+  case ROLE.SUPER_ADMIN:return "Platform administration";
+  case ROLE.FACULTY:return "Faculty";
   default:return null;
  }
 }
@@ -36,7 +37,7 @@ export function learnerNoticeAudienceLabel(value:string):string|null{
   case "DEPARTMENT":return "Department";
   case "PROGRAM":return "Program";
   case "CLASS":return "Class";
-  case "LEARNER":return "You";
+  case ROLE.LEARNER:return "You";
   default:return null;
  }
 }

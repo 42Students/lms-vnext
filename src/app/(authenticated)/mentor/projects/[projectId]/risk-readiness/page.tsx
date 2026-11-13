@@ -15,6 +15,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 type Search={focus?:string|string[];taskPriority?:string|string[];page?:string|string[]};
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 
@@ -31,7 +32,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
   );
   if(!parsed.success){
  const recoveryContext=await getCurrentRequestContext();
- if(!hasMembershipRole(recoveryContext,"MENTOR"))redirect("/dashboard");
+ if(!hasMembershipRole(recoveryContext,ROLE.MENTOR))redirect("/dashboard");
  await assertMentorProjectRecoveryAccess(recoveryContext,projectId);
  return  <section role="alert">
     <PageHeader title={"Invalid risk/readiness filters"} />

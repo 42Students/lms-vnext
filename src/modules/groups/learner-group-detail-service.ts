@@ -6,11 +6,12 @@ import {lmsGroups,lmsGroupMembers} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
+import { ROLE } from "@/modules/identity/roles";
 export const learnerGroupKindSchema=z.string().regex(/^[A-Z][A-Z0-9_]{0,39}$/);
 export async function getLearnerGroupDetail(context:RequestContext,rawGroupId:unknown,
  now=new Date()){
  const id=z.uuid().parse(rawGroupId);
- if(!hasMembershipRole(context,"LEARNER")||!context.membership)
+ if(!hasMembershipRole(context,ROLE.LEARNER)||!context.membership)
   throw new AuthorizationError("academics.read");
  const member=context.membership;
  const [group]=await getDb().select({

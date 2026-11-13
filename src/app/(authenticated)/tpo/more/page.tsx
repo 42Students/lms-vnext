@@ -4,11 +4,12 @@ import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { TpoMoreNavigation } from "@/components/tpo/tpo-more-navigation";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function TpoMorePage() {
   const context =
     await getCurrentRequestContext();
 
-  if (!hasMembershipRole(context, "TPO")) {
+  if (!hasMembershipRole(context, ROLE.TPO)) {
     redirect("/dashboard");
   }
 

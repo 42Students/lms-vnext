@@ -10,6 +10,7 @@ import {getTpoRecordedRanDrives} from "@/modules/placements/tpo-engagement-ran-d
 import {joinTpoCompanyEngagementWithPlacement} from "@/modules/placements/tpo-company-engagement-model";
 import {companyEngagementCsv,companyEngagementCsvQuerySchema} from "@/modules/placements/tpo-company-engagement-csv-model";
 import {NextResponse} from "next/server";
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -17,7 +18,7 @@ export const GET = route(
   async ({ request, context: __actor }) => {
     const context = __actor!;
     try {
-if(!context.membership||!hasMembershipRole(context,"TPO"))
+if(!context.membership||!hasMembershipRole(context,ROLE.TPO))
    return NextResponse.json({error:"UNAUTHORIZED"},{status:403});
 const params=new URL(request.url).searchParams;
 if(tpoReportHasRepeatedSearchParams(params))return NextResponse.json({error:"INVALID_QUERY"},{

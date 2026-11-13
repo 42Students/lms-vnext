@@ -4,12 +4,13 @@ import {collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {and,asc,eq,ilike,sql} from "drizzle-orm";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "people.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
-    if(!context.membership||!hasMembershipRole(context,"COLLEGE_ADMIN")||
+    if(!context.membership||!hasMembershipRole(context,ROLE.COLLEGE_ADMIN)||
     context.membership.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE")
     throw new AuthorizationError("people.manage");
     const scope={collegeId:context.membership.collegeId,
@@ -18,7 +19,7 @@ export const GET = route(
     const url=new URL(request.url);
     const kind=url.searchParams.get("kind");
     const value=(url.searchParams.get("q")??"").trim();
-    if((kind!=="FACULTY"&&kind!=="LEARNER")||value.length<2||value.length>80)
+    if((kind!==ROLE.FACULTY&&kind!==ROLE.LEARNER)||value.length<2||value.length>80)
     return Response.json({error:"INVALID_QUERY"},{status:400});
     const escaped=value.replace(/[\\%_]/g,"\\$&");
     const items=await getDb().select({

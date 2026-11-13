@@ -11,6 +11,7 @@ import { legacyFacultyCourseRouteIntent } from "@/modules/courses/faculty-course
 import { TextLink } from "@/components/ui/text-link";
 import { Heading } from "@/components/ui/heading";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function FacultyCourseTabLayout({
   children,
   params,
@@ -22,7 +23,7 @@ export default async function FacultyCourseTabLayout({
   const { deliveryId } = await params;
   // The route context always comes from current, persisted, active Faculty
   // teaching assignments. Never trust a caller's Section or cached role.
-  if(!hasMembershipRole(context,"FACULTY"))
+  if(!hasMembershipRole(context,ROLE.FACULTY))
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Course workspace"/>
       <ErrorState title="Faculty access required"

@@ -11,11 +11,12 @@ import {
   tpoDraftDriveStepOneSchema,
 } from "./tpo-draft-drive-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function createTpoDraftDriveStepOne(
   context: RequestContext,
   raw: unknown,
 ) {
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = context.membership.collegeId;

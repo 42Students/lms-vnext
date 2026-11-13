@@ -16,6 +16,7 @@ import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { Label } from "@/components/ui/label";
 
+import { ROLE } from "@/modules/identity/roles";
 type DepartmentOption = {
   id: string;
   name: string;
@@ -48,8 +49,8 @@ export function PersonProfileDialog({
   const [employmentType, setEmploymentType] = useState("");
   const [academicTitle, setAcademicTitle] = useState("");
 
-  const hasLearner = roles.includes("LEARNER");
-  const hasFaculty = roles.includes("FACULTY");
+  const hasLearner = roles.includes(ROLE.LEARNER);
+  const hasFaculty = roles.includes(ROLE.FACULTY);
 
   async function load() {
     setLoading(true);

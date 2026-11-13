@@ -1,3 +1,4 @@
+import { ROLE } from "@/modules/identity/roles";
 export type AccountMenuVariant =
   | "superAdmin"
   | "collegeAdmin"
@@ -40,10 +41,10 @@ export function accountMenuVariant(input: {
 }): AccountMenuVariant {
   if (input.superAdmin) return "superAdmin";
   if (input.recruiterOnly) return "recruiter";
-  if (input.roles.includes("COLLEGE_ADMIN")) return "collegeAdmin";
-  if (input.roles.includes("TPO")) return "tpo";
-  if (input.roles.includes("FACULTY")) return "faculty";
-  if (input.roles.includes("LEARNER")) return "learner";
+  if (input.roles.includes(ROLE.COLLEGE_ADMIN)) return "collegeAdmin";
+  if (input.roles.includes(ROLE.TPO)) return "tpo";
+  if (input.roles.includes(ROLE.FACULTY)) return "faculty";
+  if (input.roles.includes(ROLE.LEARNER)) return "learner";
   return "other";
 }
 

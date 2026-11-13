@@ -19,13 +19,14 @@ import { TextLink } from "@/components/ui/text-link";
 import { formatNumberIN } from "@/lib/safe-format";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type Params={decision?:string|string[];priority?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 export default async function MentorTaskReviewHistoryPage({
   searchParams,
 }:{searchParams:Promise<Params>}) {
   const context=await getCurrentRequestContext();
-  if(!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
+  if(!hasMembershipRole(context,ROLE.MENTOR)) redirect("/dashboard");
   const raw=await searchParams;
   const parsed=mentorTaskHistoryQuerySchema.safeParse(Object.values(raw).some(Array.isArray)?null:{
     decision:first(raw.decision)??undefined,

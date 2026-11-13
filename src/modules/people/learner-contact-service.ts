@@ -15,6 +15,7 @@ import { learnerContactEditSchema,learnerContactsAreStale,
 import {PeopleServiceError} from "./errors";
 
 
+import { ROLE } from "@/modules/identity/roles";
 export async function updateOwnLearnerContacts(
   context: RequestContext,
   rawInput: unknown,
@@ -23,7 +24,7 @@ export async function updateOwnLearnerContacts(
   const membership = context.membership;
   if (
     !membership ||
-    !membership.roles.includes("LEARNER") ||
+    !membership.roles.includes(ROLE.LEARNER) ||
     !can(context, "profile.self.manage", {
       collegeId: membership.collegeId,
       organizationId: membership.organizationId,

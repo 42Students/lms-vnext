@@ -58,6 +58,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 function formatDriveIst(date:Date|null){
  return date?createDateFormatter("en-IN", {day:"numeric",month:"short",hour:"numeric",
   minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"}).format(date)+" IST":"Date to be decided";
@@ -100,7 +101,7 @@ export async function PlacementDriveWorkspace({
   const offerCandidates=offersRead.status==="fulfilled"?offersRead.value:null;
   const roleOptions=rolesRead.status==="fulfilled"?rolesRead.value:null;
   const placementRequests=requestsRead.status==="fulfilled"?requestsRead.value:null;
-  const isTpo=hasMembershipRole(context,"TPO");
+  const isTpo=hasMembershipRole(context,ROLE.TPO);
   const isSuperAdminDrive=applicationsHref?.startsWith("/admin/placements/jobs/")??false;
   const driveHref=(isTpo?"/tpo/placements/jobs/":isSuperAdminDrive?
    "/admin/placements/jobs/":"/college/placements/jobs/")+encodeURIComponent(jobId);
@@ -332,7 +333,7 @@ export async function PlacementDriveWorkspace({
                 {nextStep.primary.label}
               </ButtonLink>
             ) : null}
-            {hasMembershipRole(context, "TPO") ? (
+            {hasMembershipRole(context, ROLE.TPO) ? (
               <ButtonLink variant="secondary" href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/applicants-pipeline"}>
                 Applicants
               </ButtonLink>
@@ -370,35 +371,35 @@ export async function PlacementDriveWorkspace({
                 Extend deadline
               </ButtonLink>
             ) : null}
-            {hasMembershipRole(context, "TPO") ? (
+            {hasMembershipRole(context, ROLE.TPO) ? (
               <ButtonLink variant="secondary"
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/shortlist"}
               >
                 Current shortlist &amp; CSV
               </ButtonLink>
             ) : null}
-            {hasMembershipRole(context, "TPO") ? (
+            {hasMembershipRole(context, ROLE.TPO) ? (
               <ButtonLink variant="secondary"
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/letters"}
               >
                 Offer letter evidence
               </ButtonLink>
             ) : null}
-            {hasMembershipRole(context, "TPO") ? (
+            {hasMembershipRole(context, ROLE.TPO) ? (
               <ButtonLink variant="secondary"
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/closeout"}
               >
                 Drive close-out report
               </ButtonLink>
             ) : null}
-            {hasMembershipRole(context, "TPO") ? (
+            {hasMembershipRole(context, ROLE.TPO) ? (
               <ButtonLink variant="secondary"
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/candidate-schedule"}
               >
                 Candidate round schedule
               </ButtonLink>
             ) : null}
-            {hasMembershipRole(context, "TPO") ? (
+            {hasMembershipRole(context, ROLE.TPO) ? (
               <ButtonLink variant="secondary"
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/joining"}
               >
@@ -870,7 +871,7 @@ export async function PlacementDriveWorkspace({
       </section>
       {offerCandidates?<div className="min-w-0"><PlacementOfferControls
         jobId={jobId}
-        isTpo={hasMembershipRole(context, "TPO")}
+        isTpo={hasMembershipRole(context, ROLE.TPO)}
         jobTitle={job.title}
         candidates={offerCandidates.map(
           (item) => ({

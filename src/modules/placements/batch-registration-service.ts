@@ -27,6 +27,7 @@ import {
 } from "./batch-registration-policy";
 import { resolvePlacementParticipation } from "./batch-eligibility-policy";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Accept legacy JSON consent and modern acceptedConsent, preserving strict
  * validation after mapping. URL-encoded legacy posts normalize at the route. */
 const selfRegistrationInput = z.preprocess(value=>{
@@ -88,7 +89,7 @@ export async function registerOwnPlacementChoice(
   raw: unknown,
 ) {
   const input = selfRegistrationInput.parse(raw);
-  if (!hasMembershipRole(context, "LEARNER") ||
+  if (!hasMembershipRole(context, ROLE.LEARNER) ||
       !context.membership || context.user.platformStatus !== "ACTIVE") {
     throw new PlacementRegistrationError("DB08_REGISTRATION_FORBIDDEN");
   }

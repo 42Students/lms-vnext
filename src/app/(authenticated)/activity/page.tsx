@@ -35,6 +35,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { istIsoDateFormatter, istDateTimeFormatter } from "@/lib/format-date";
 
 
+import { ROLE } from "@/modules/identity/roles";
 /** Wall-clock read kept out of render bodies (React purity rule). */
 function currentTimeMs(){return Date.now();}
 
@@ -326,7 +327,7 @@ export default async function ActivityPage({
       <PageHeader
         title="Activity Log"
         description="Meaningful college changes, grouped to reduce noise. Low-value request logs stay out of this workspace."
-        actions={isSuperAdmin(context) || hasMembershipRole(context, "COLLEGE_ADMIN") ? (
+        actions={isSuperAdmin(context) || hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ? (
           <div className="flex w-full min-w-0 flex-col items-stretch gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center md:justify-end">
           {result.items.length===0?<span aria-disabled="true" className="inline-flex min-h-11 items-center text-sm text-muted-foreground md:min-h-9">
             Export unavailable (no matching activity)

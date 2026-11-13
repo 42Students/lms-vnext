@@ -28,6 +28,7 @@ import {Textarea} from "@/components/ui/textarea";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 
+import { ROLE } from "@/modules/identity/roles";
 type DiscussionCursor = { beforeCreatedAt: string; beforeId: string };
 
 type DiscussionMessage = {
@@ -678,7 +679,7 @@ export function LearnerCourseDiscussion({
                         <strong className="text-sm text-foreground">
                           {row.item.isMine ? "You" : row.item.senderName}
                         </strong>
-                        {row.item.senderRole==="FACULTY"?<StatusBadge tone="info">Faculty</StatusBadge>:null}
+                        {row.item.senderRole===ROLE.FACULTY?<StatusBadge tone="info">Faculty</StatusBadge>:null}
                         <time dateTime={row.item.createdAt}
                           title={learnerDiscussionTimeLabel(row.item.createdAt)}
                           className="text-xs text-muted-foreground">

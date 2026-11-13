@@ -13,6 +13,7 @@ import {getRecruiterPlacementWorkspace} from "./recruiter-workspace-service";
 import {placementJobIdSchema} from "./validation";
 import {parseLegacyDriveChangeCommand,LEGACY_DRIVE_CHANGE_FIELD_LABELS} from "./tpo-drive-change-request-model";
 
+import { ROLE } from "@/modules/identity/roles";
 type Party="TPO"|"COMPANY";
 /** Preserve the legacy duplicate-open guidance without exposing SQL failures. */
 export class OpenDriveChangeConflict extends PlacementsServiceError {
@@ -25,7 +26,7 @@ export class OpenDriveChangeConflict extends PlacementsServiceError {
 }
 async function scoped(context:RequestContext,rawJobId:unknown){
  const jobId=placementJobIdSchema.parse(rawJobId);
- if(context.membership&&(hasMembershipRole(context,"TPO")||hasMembershipRole(context,"COLLEGE_ADMIN"))){
+ if(context.membership&&(hasMembershipRole(context,ROLE.TPO)||hasMembershipRole(context,ROLE.COLLEGE_ADMIN))){
   const collegeId=await requireTpoJobCollege(context);
   const [job]=await getDb().select({
    id:placementJobs.id,collegeId:placementJobs.collegeId,title:placementJobs.title,
@@ -48,7 +49,7 @@ async function scoped(context:RequestContext,rawJobId:unknown){
 }
 async function recipients(tx:Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0],
  job:{collegeId:string;companyRelationshipId:string},party:Party){
- if(party==="TPO"){
+ if(party===ROLE.TPO){
   const members=await tx.select({userId:collegeMemberships.userId}).from(collegeMemberships)
    .innerJoin(membershipRoles,eq(membershipRoles.membershipId,collegeMemberships.id))
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
@@ -77,7 +78,7 @@ async function announce(tx:Parameters<Parameters<ReturnType<typeof getDb>["trans
  }).returning({id:activityEvents.id});
  if(!event)throw Error("Change-request audit could not be saved.");
  const ids=(await recipients(tx,job,target)).filter(id=>id!==context.user.id);
- const href=target==="TPO"?"/tpo/placements/jobs/"+job.id+"/change-requests":
+ const href=target===ROLE.TPO?"/tpo/placements/jobs/"+job.id+"/change-requests":
   "/recruiter/drives/"+job.id+"/change-requests";
  for(let i=0;i<ids.length;i+=200){
   await tx.insert(inAppNotifications).values(ids.slice(i,i+200).map(userId=>({
@@ -86,7 +87,7 @@ async function announce(tx:Parameters<Parameters<ReturnType<typeof getDb>["trans
  }
  // Mirror each state change to the canonical recruiter/placement Discussion.
  // System lines are already read and never claim external delivery.
- const recruiterId=target==="TPO"?context.user.id:(await recipients(tx,job,"COMPANY")).sort()[0];
+ const recruiterId=target===ROLE.TPO?context.user.id:(await recipients(tx,job,"COMPANY")).sort()[0];
  if(recruiterId){
   await tx.insert(placementTpoMessageThreads).values({
    collegeId:job.collegeId,recruiterUserId:recruiterId,jobId:job.id,
@@ -99,7 +100,7 @@ async function announce(tx:Parameters<Parameters<ReturnType<typeof getDb>["trans
   if(thread){
    const now=new Date();
    await tx.insert(placementTpoMessages).values({
-    threadId:thread.id,senderType:target==="TPO"?"RECRUITER":"TPO",
+    threadId:thread.id,senderType:target===ROLE.TPO?"RECRUITER":"TPO",
     senderUserId:context.user.id,body,readAt:now,createdAt:now,
    });
    await tx.update(placementTpoMessageThreads).set({lastMessageAt:now})
@@ -282,7 +283,7 @@ export async function getDriveChangeRequests(context:RequestContext,jobId:unknow
    createdByName:names.get(r.createdByUserId)??null,
    fieldLabel:legacyChangeFieldLabel(r.legacyField??r.field,r.field),
    kind:r.mode==="SUGGEST"?"PROPOSE":"ASK",
-   direction:r.proposerParty==="TPO"?"COLLEGE_TO_COMPANY":"COMPANY_TO_COLLEGE",
+   direction:r.proposerParty===ROLE.TPO?"COLLEGE_TO_COMPANY":"COMPANY_TO_COLLEGE",
    answerValue:r.answerValue??(r.status==="ANSWERED"?r.decisionNote:null),
    replyText:r.replyText??(r.status==="DECLINED"?r.decisionNote:null),
    currentValue:r.currentValue, // Null means no imported baseline was saved.
@@ -335,7 +336,7 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
   if(input.action!=="WITHDRAW"&&["ARCHIVED","CANCELLED","CLOSED"].includes(lockedJob.status))
    throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
   if(input.action==="CREATE"){
-   const target:Party=party==="TPO"?"COMPANY":"TPO";
+   const target:Party=party===ROLE.TPO?"COMPANY":"TPO";
    const mode=input.field==="OTHER"?"ASK":input.mode==="PROPOSE"?"SUGGEST":input.mode;
    const canonicalField=({
     ROLE_TITLE:"OTHER",DESCRIPTION:"OTHER",JOB_TYPE:"OTHER",WORK_MODE:"OTHER",
@@ -411,7 +412,7 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
     requestId:request.id,senderUserId:context.user.id,senderParty:party,body:input.body,
    }).returning({id:placementDriveChangeRequestMessages.id});
    if(!message)throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
-   await announce(tx,context,job,party==="TPO"?"COMPANY":"TPO",
+   await announce(tx,context,job,party===ROLE.TPO?"COMPANY":"TPO",
     "PLACEMENTS_DRIVE_CHANGE_COMMENTED",request.id,
     "New reply in the "+request.field.toLowerCase()+" change request for "+job.title+".");
    return {id:message.id,status:"COMMENTED"};
@@ -455,13 +456,13 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
   }).where(and(eq(placementDriveChangeRequests.id,request.id),
    eq(placementDriveChangeRequests.status,"OPEN"))).returning({id:placementDriveChangeRequests.id});
   if(!updated)throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
-  const [remaining]=party==="COMPANY"&&request.proposerParty==="TPO"?
+  const [remaining]=party==="COMPANY"&&request.proposerParty===ROLE.TPO?
    await tx.select({id:placementDriveChangeRequests.id}).from(placementDriveChangeRequests)
     .where(and(eq(placementDriveChangeRequests.jobId,job.id),
      eq(placementDriveChangeRequests.proposerParty,"TPO"),
      eq(placementDriveChangeRequests.status,"OPEN"))).limit(1):[];
-  const ready=party==="COMPANY"&&request.proposerParty==="TPO"&&!remaining;
-  await announce(tx,context,job,party==="TPO"?"COMPANY":"TPO",
+  const ready=party==="COMPANY"&&request.proposerParty===ROLE.TPO&&!remaining;
+  await announce(tx,context,job,party===ROLE.TPO?"COMPANY":"TPO",
    ready?"PLACEMENTS_DRIVE_CHANGES_MADE":"PLACEMENTS_DRIVE_CHANGE_REQUEST_DECIDED",request.id,
    ready?"The company answered your change requests for "+job.title+"; ready to review again.":
     "Your change request about "+(request.legacyField??request.field).toLowerCase()+" was "+status.toLowerCase()+". "+input.note);

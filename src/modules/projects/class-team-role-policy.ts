@@ -1,1 +1,2 @@
-export type ProjectTeamActorRole="COLLEGE_ADMIN"|"SUPER_ADMIN"|"MENTOR"|"LEARNER"|"FACULTY"|"TPO"|"HR";export function canManageProjectTeams(role:ProjectTeamActorRole,hasManagePermission:boolean,hasSelectedCollegeScope:boolean){return(role==="COLLEGE_ADMIN"||role==="SUPER_ADMIN")&&hasManagePermission&&hasSelectedCollegeScope;}
+import { ROLE } from "@/modules/identity/roles";
+export type ProjectTeamActorRole="COLLEGE_ADMIN"|"SUPER_ADMIN"|"MENTOR"|"LEARNER"|"FACULTY"|"TPO"|"HR";export function canManageProjectTeams(role:ProjectTeamActorRole,hasManagePermission:boolean,hasSelectedCollegeScope:boolean){return(role===ROLE.COLLEGE_ADMIN||role===ROLE.SUPER_ADMIN)&&hasManagePermission&&hasSelectedCollegeScope;}

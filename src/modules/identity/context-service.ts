@@ -24,6 +24,7 @@ import type {
 } from "@/modules/identity/constants";
 import {MEMBERSHIP_ROLE_DISPLAY_ORDER} from "@/modules/identity/constants";
 
+import { ROLE } from "@/modules/identity/roles";
 export type ContextResolutionErrorCode =
   | "USER_NOT_FOUND"
   | "USER_DISABLED"
@@ -246,7 +247,7 @@ export async function resolveRequestContext(
 
   // The admin-scope cookie is only meaningful for a platform administrator; for anyone else it is dropped here, once, so no
   // downstream code can honour a scope the person was never granted.
-  const isPlatformAdmin = assignedSystemRoles.includes("SUPER_ADMIN");
+  const isPlatformAdmin = assignedSystemRoles.includes(ROLE.SUPER_ADMIN);
 
   if (!input.activeMembershipId) {
     return {

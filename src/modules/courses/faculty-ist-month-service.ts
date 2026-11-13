@@ -9,6 +9,7 @@ import {
   facultyMonthGrid,facultyMonthQuerySchema,
 } from "./faculty-ist-month-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Legacy schedule GET facultyId/startDate/endDate maps to an authorized
  * membership (never a caller-supplied faculty ID) and a bounded IST month
  * window. The 42-cell range includes the trailing/leading adjacent days.
@@ -29,7 +30,7 @@ export async function getFacultyIstMonth(context:RequestContext,raw:unknown) {
   const input=facultyMonthQuerySchema.parse(raw);
   const membership=context.membership;
   if(!membership||!hasActiveMembership(context)||
-      !hasMembershipRole(context,"FACULTY")||
+      !hasMembershipRole(context,ROLE.FACULTY)||
       !can(context,"courses.read",{
         collegeId:membership.collegeId,organizationId:membership.organizationId,
       }))throw new AuthorizationError("courses.read");

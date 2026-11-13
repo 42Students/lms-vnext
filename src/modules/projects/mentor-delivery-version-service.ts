@@ -10,10 +10,11 @@ import {ProjectsServiceError} from "./errors";
 import {mentorDeliveryVersionParamsSchema,mentorDeliveryVersionDisplay}
   from "./mentor-delivery-version-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function getMentorDeliveryVersion(context:RequestContext,raw:unknown){
   const params=mentorDeliveryVersionParamsSchema.parse(raw);
   const member=context.membership;
-  if(!member||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR")||
+  if(!member||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR)||
      !can(context,"projects.read",{
        collegeId:member.collegeId,organizationId:member.organizationId,
      }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
@@ -21,7 +22,7 @@ export async function getMentorDeliveryVersion(context:RequestContext,raw:unknow
   if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const scope=await requireProjectReadAccess(context,params.projectId);
-  if(scope.access!=="MENTOR"||scope.collegeId!==member.collegeId)
+  if(scope.access!==ROLE.MENTOR||scope.collegeId!==member.collegeId)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const [row]=await getDb().select({
     id:projectSubmissions.id,version:projectSubmissions.version,

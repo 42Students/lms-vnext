@@ -8,13 +8,14 @@ import {getPlacementReportWorkspace} from "@/modules/placements/report-service";
 import {companyReportViewSchema,paginateCompanyReport} from "@/modules/placements/tpo-company-report-view-model";
 import {tpoVisibleCompanyReportCsv} from "@/modules/placements/tpo-company-page-csv-model";
 import {NextResponse} from "next/server";
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
   { auth: "user", permission: "service-enforced", stepUp: true },
   async ({ request, context: actor }) => {
     const context = actor!;
-    if(!context.membership||!hasMembershipRole(context,"TPO")){
+    if(!context.membership||!hasMembershipRole(context,ROLE.TPO)){
    return NextResponse.json({error:"FORBIDDEN"},{status:403,headers:{"Cache-Control":"private, no-store"}});
   }
     const params=new URL(request.url).searchParams;

@@ -20,8 +20,9 @@ import { requirePlacementManageScope } from "./scope";
 import { placementTableExists } from "./staged-tables";
 
 import { featureReady } from "@/config/features";
+import { ROLE } from "@/modules/identity/roles";
 async function companyScope(context: RequestContext, companyId: string) {
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = context.membership.collegeId;

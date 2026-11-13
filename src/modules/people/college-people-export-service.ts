@@ -4,10 +4,11 @@ import { AuthorizationError, requirePermission } from "@/modules/permissions/pol
 import { listCollegePeopleWithRuntime } from "./runtime";
 import { PEOPLE_CSV_CAP, peopleCsvQuery, renderPeopleCsv, appendUniquePeopleCsvRows } from "./college-people-export-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function exportCollegePeopleCsv(context: RequestContext, raw: unknown) {
   const filter = peopleCsvQuery.parse(raw);
   const own = context.membership;
-  if (!own || !hasMembershipRole(context, "COLLEGE_ADMIN"))
+  if (!own || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN))
     throw new AuthorizationError("people.manage");
   requirePermission(context, "people.manage", {
     organizationId: own.organizationId, collegeId: own.collegeId,

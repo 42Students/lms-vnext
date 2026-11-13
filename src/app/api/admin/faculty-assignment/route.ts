@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listAdminFacultyAssignments} from "@/modules/admin-ui/super-admin-faculty-assignments-service";
 import { route } from "@/security/route";
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Zero-based legacy admin read adapter. All college scope comes from the
@@ -30,7 +31,7 @@ async function handleGET(request:Request){
   });
   if(!parsed.success)return NextResponse.json({error:"INVALID_FILTERS"},{status:400});
   const context=await getCurrentRequestContext();
-  const selected=context.user.systemRoles.includes("SUPER_ADMIN")?
+  const selected=context.user.systemRoles.includes(ROLE.SUPER_ADMIN)?
    context.adminScope?.collegeId:context.membership?.collegeId;
   if(parsed.data.collegeId&&parsed.data.collegeId!==selected)
    return NextResponse.json({error:"COLLEGE_SCOPE_MISMATCH"},{status:403});

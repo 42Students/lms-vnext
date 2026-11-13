@@ -10,6 +10,7 @@ import { requirePlacementManageScope } from "./scope";
 import { isTpoCompanyTrustCurrent, tpoCompanyTrustChangeSchema } from "./tpo-company-trust-model";
 import { getTpoCompanyDetailReadOnly } from "./tpo-company-detail-read-service";
 
+import { ROLE } from "@/modules/identity/roles";
 export class TpoCompanyTrustConflict extends Error {
   constructor() {
     super("TPO_COMPANY_TRUST_STALE");
@@ -29,7 +30,7 @@ export async function updateConfirmedTpoCompanyTrust(
   rawInput: unknown,
 ) {
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "TPO")) {
+  if (!membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = membership.collegeId;

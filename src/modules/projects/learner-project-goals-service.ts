@@ -7,12 +7,13 @@ import { ProjectsServiceError } from "./errors";
 import { projectTemplateBlueprintSchema } from "./validation";
 import { learnerProjectGoalSummary } from "./learner-project-goals-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Read only the immutable template version assigned to this authorized learner Project. */
 export async function getLearnerProjectGoals(
   context: RequestContext, projectId: string,
 ) {
   const scope=await requireProjectReadAccess(context,projectId);
-  if(scope.access!=="LEARNER")throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  if(scope.access!==ROLE.LEARNER)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const {templateId,templateVersionId}=scope.project;
   // Imported legacy projects may have no template: there are no authored goals.
   if(!templateId||!templateVersionId){

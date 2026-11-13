@@ -16,13 +16,14 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { formatNumberIN } from "@/lib/safe-format";
 
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic = "force-dynamic";
 const FOLLOWUP_SCOPES=["MINE","TEAM"] as const;
 const FOLLOWUP_WINDOWS=["DUE","NEXT_7_DAYS"] as const;
 
 export default async function TpoFollowupQueuePage({searchParams}:{searchParams:Promise<{scope?:string|string[];window?:string|string[];q?:string|string[];page?:string|string[]}>}) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     redirect("/dashboard");
   }
   const raw=await searchParams;

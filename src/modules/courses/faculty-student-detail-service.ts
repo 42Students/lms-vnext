@@ -12,6 +12,7 @@ import {
   summarizeFacultyStudentAttendance,
 } from "./faculty-student-detail-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Old student ID + class ID are numeric legacy identifiers, never UUIDs.
  * Authenticate the courseSectionDelivery UUID and membership UUID from the
  * current roster before revealing profile/contact details. Legacy first/last
@@ -24,7 +25,7 @@ export async function getFacultyStudentDetail(context: RequestContext, rawParams
   const params = facultyStudentDetailParamsSchema.parse(rawParams);
   const membership = context.membership;
   if (!membership || context.user.platformStatus !== "ACTIVE" ||
-      !hasMembershipRole(context, "FACULTY") ||
+      !hasMembershipRole(context, ROLE.FACULTY) ||
       !can(context, "courses.read", {
         collegeId: membership.collegeId,
         organizationId: membership.organizationId,

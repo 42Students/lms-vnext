@@ -12,6 +12,7 @@ import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {requireProjectLifecycleMutationAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 export const mentorProjectUpdateSchema=z.object({
   message:z.string().trim().min(1).max(1000),
 }).strict();
@@ -29,7 +30,7 @@ export async function postMentorProjectUpdate(
 ){
  const {message}=mentorProjectUpdateSchema.parse(raw);
  const access=await requireProjectLifecycleMutationAccess(context,projectId);
- if(access.access!=="MENTOR"||access.project.status!=="ACTIVE")
+ if(access.access!==ROLE.MENTOR||access.project.status!=="ACTIVE")
    throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
  return getDb().transaction(async tx=>{
    // Never trust the status read before an archived/complete transition.

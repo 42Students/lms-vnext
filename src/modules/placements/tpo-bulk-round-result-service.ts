@@ -16,6 +16,7 @@ import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import { placementRoundIdSchema } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Bulk STAGING only. Each successful entry goes through the existing
  * row-locked, audited single-result transaction. This is not an atomic
@@ -28,7 +29,7 @@ export async function confirmTpoBulkRoundResults(
   rawInput: unknown,
 ) {
   if (!context.membership ||
-      !(hasMembershipRole(context, "TPO") || hasMembershipRole(context, "COLLEGE_ADMIN"))) {
+      !(hasMembershipRole(context, ROLE.TPO) || hasMembershipRole(context, ROLE.COLLEGE_ADMIN))) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = context.membership.collegeId;

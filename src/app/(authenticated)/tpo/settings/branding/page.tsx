@@ -19,6 +19,7 @@ import {
 import { Heading } from "@/components/ui/heading";
 import { Img } from "@/components/ui/img";
 
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic = "force-dynamic";
 
 function BrandColor({
@@ -79,7 +80,7 @@ export default async function TpoPlacementBrandingPage() {
 
   if (
     !context.membership ||
-    !hasMembershipRole(context, "TPO")
+    !hasMembershipRole(context, ROLE.TPO)
   ) {
     redirect("/dashboard");
   }

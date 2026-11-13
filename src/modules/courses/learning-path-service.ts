@@ -44,6 +44,7 @@ import {
   type UpdateLearningPathInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 function mapLearningPathConstraint(
   error: unknown,
 ) {
@@ -101,7 +102,7 @@ export async function listLearningPaths(
     ),
   ];
 
-  if (access === "LEARNER") {
+  if (access === ROLE.LEARNER) {
     conditions.push(
       eq(
         courseLearningPaths.status,

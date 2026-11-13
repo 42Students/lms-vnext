@@ -15,6 +15,7 @@ import {teachingScheduleConflict} from "@/modules/courses/college-teaching-reass
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 const editSchema=z.object({
   expectedMembershipId:z.string().uuid(),
@@ -33,7 +34,7 @@ export const PATCH = route(
     const context = actor!;
     const member=context.membership;
     if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
-       !hasMembershipRole(context,"COLLEGE_ADMIN")||
+       !hasMembershipRole(context,ROLE.COLLEGE_ADMIN)||
        !can(context,"courses.manage",{collegeId:member.collegeId,organizationId:member.organizationId}))
       return NextResponse.json({error:"FORBIDDEN"},{status:403});
     requirePermission(context,"courses.manage",{collegeId:member.collegeId,organizationId:member.organizationId});

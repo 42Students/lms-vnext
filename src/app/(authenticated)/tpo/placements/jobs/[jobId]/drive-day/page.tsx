@@ -6,13 +6,14 @@ import { PlacementDriveDayOverview } from "@/components/placements/placement-dri
 import { PageHeader } from "@/components/ui/page-header";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function DriveDayForOneDrive({
   params,
 }: {
   params: Promise<{ jobId: string }>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) redirect("/dashboard");
   const { jobId } = await params;
   const drive = await getPlacementDriveDay(context, jobId);
   return <div className="min-w-0 space-y-4">

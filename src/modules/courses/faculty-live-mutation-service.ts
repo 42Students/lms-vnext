@@ -19,13 +19,14 @@ import {facultyLivePublishedMutationAllowed} from "./faculty-live-published-poli
 import {facultyLiveMutationParamsSchema,facultyLiveMutationSchema,
   facultyLiveWindow} from "./faculty-live-mutation-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function commandFacultyLiveClass(
   context:RequestContext,rawParams:unknown,rawInput:unknown,
 ) {
   const params=facultyLiveMutationParamsSchema.parse(rawParams);
   const input=facultyLiveMutationSchema.parse(rawInput);
   const membership=context.membership;
-  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY")||
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.FACULTY)||
     !can(context,"courses.read",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     }))throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
@@ -53,7 +54,7 @@ export async function commandFacultyLiveClass(
     } catch {
       throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
     }
-    if(!persisted.membership?.roles.includes("FACULTY")||
+    if(!persisted.membership?.roles.includes(ROLE.FACULTY)||
       persisted.membership.id!==membership.id)
       throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
     const [teaching]=await tx.select({id:courseTeachingAssignments.id})

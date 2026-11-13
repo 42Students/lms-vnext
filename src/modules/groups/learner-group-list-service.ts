@@ -5,13 +5,14 @@ import {lmsGroups,lmsGroupMembers} from "@/db/schema";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 
+import { ROLE } from "@/modules/identity/roles";
 export type LearnerGroupListItem={
  id:string;name:string;description:string|null;kind:string;
  status:string;memberState:string|null;capacity:number|null;activeCount:number;
  joinOpen:boolean;
 };
 export async function listLearnerGroups(context:RequestContext,now=new Date(),kind?:string){
- if(!hasMembershipRole(context,"LEARNER")||!context.membership)
+ if(!hasMembershipRole(context,ROLE.LEARNER)||!context.membership)
   throw new AuthorizationError("academics.read");
  const member=context.membership;
  const rows=await getDb().select({

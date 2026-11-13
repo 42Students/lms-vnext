@@ -29,6 +29,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 const uuid = z.string().uuid();
 const ROSTER_PAGE_SIZE = 50;
 function csvCell(value: string | null | undefined): string {
@@ -41,7 +42,7 @@ const href = (slotId: string, offeringId: string) =>
 async function scoped(slotId: string, offeringId: string) {
   const context = await getCurrentRequestContext();
   if (context.user.platformStatus !== "ACTIVE" ||
-      (!isSuperAdmin(context) && !hasMembershipRole(context, "COLLEGE_ADMIN"))) redirect("/dashboard");
+      (!isSuperAdmin(context) && !hasMembershipRole(context, ROLE.COLLEGE_ADMIN))) redirect("/dashboard");
   const parsedSlot = uuid.safeParse(slotId);
   const parsedOffering = uuid.safeParse(offeringId);
   if (!parsedSlot.success || !parsedOffering.success) notFound();

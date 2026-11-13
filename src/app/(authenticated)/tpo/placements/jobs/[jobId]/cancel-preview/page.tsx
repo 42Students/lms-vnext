@@ -8,13 +8,14 @@ import { PlacementsServiceError } from "@/modules/placements/errors";
 import { getTpoDriveCancelPreview } from "@/modules/placements/tpo-drive-cancel-service";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function TpoDriveCancelPreviewPage({
   params,
 }: {
   params: Promise<{ jobId: string }>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) redirect("/dashboard");
   const { jobId } = await params;
   let preview: Awaited<ReturnType<typeof getTpoDriveCancelPreview>>;
   try {

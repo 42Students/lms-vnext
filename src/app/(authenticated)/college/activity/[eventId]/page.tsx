@@ -23,11 +23,12 @@ import { getCollegeActivityDetail } from "@/modules/activity/college-activity-se
 import { Heading } from "@/components/ui/heading";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function CollegeActivityDetailPage({
   params,
 }: { params: Promise<{ eventId: string }> }) {
   const context = await getCurrentRequestContext();
-  if(!isSuperAdmin(context)&&(!hasActiveMembership(context)||!hasMembershipRole(context,"COLLEGE_ADMIN")))redirect("/dashboard");
+  if(!isSuperAdmin(context)&&(!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.COLLEGE_ADMIN)))redirect("/dashboard");
   const { eventId } = await params;
   // Malformed legacy event links are missing pages, never server exceptions.
   if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(eventId))notFound();

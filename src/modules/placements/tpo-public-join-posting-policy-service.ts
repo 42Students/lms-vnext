@@ -10,10 +10,11 @@ import {publicJoinTablesReady} from "./public-join/readiness";
 import {tpoPublicJoinPostingPolicySchema} from "./tpo-public-join-link-model";
 import {TpoPublicJoinLinkError} from "./tpo-public-join-link-service";
 
+import { ROLE } from "@/modules/identity/roles";
 async function contextForPolicy(context:RequestContext){
  const member=context.membership;
  if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
-   !(hasMembershipRole(context,"TPO")||hasMembershipRole(context,"COLLEGE_ADMIN")))
+   !(hasMembershipRole(context,ROLE.TPO)||hasMembershipRole(context,ROLE.COLLEGE_ADMIN)))
   throw new AuthorizationError("placements.manage");
  requirePermission(context,"placements.manage",{collegeId:member.collegeId});
  const college=await requirePlacementManageScope(context,member.collegeId);

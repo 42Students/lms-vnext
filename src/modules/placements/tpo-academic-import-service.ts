@@ -15,6 +15,7 @@ import { tpoAcademicPreviewRowSchema, type TpoLegacyAcademicStagingRow } from ".
 import {evaluatePlacementEligibility} from "./eligibility-service";
 import {tpoAcademicImportNewlyIneligible} from "./tpo-academic-import-recheck-model";
 
+import { ROLE } from "@/modules/identity/roles";
 // Bulk CSVs retain the legacy two-field contract. An individual verified
 // correction can submit only the fields that changed; absent fields are never
 // zeroed or replaced by self-reported values.
@@ -54,7 +55,7 @@ type Input = z.infer<typeof schema>;
 
 async function scope(context: RequestContext) {
   if (!context.membership || context.membership.status !== "ACTIVE" ||
-      !hasMembershipRole(context, "TPO"))
+      !hasMembershipRole(context, ROLE.TPO))
     throw new AuthorizationError("placements.manage");
   return requirePlacementManageScope(context, context.membership.collegeId);
 }

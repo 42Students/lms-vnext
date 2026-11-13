@@ -15,6 +15,7 @@ import {
   mentorTaskReviewAgeBoundary,
 } from "./mentor-task-review-model";
 
+import { ROLE } from "@/modules/identity/roles";
 type PendingTaskReview = {
   id: string; taskId: string; projectId: string; projectTitle: string;
   taskTitle: string; priority: string; version: number; submittedAt: Date;
@@ -27,7 +28,7 @@ export async function getMentorTaskReviews(
   const query = mentorTaskReviewQuerySchema.parse(rawQuery);
   const membership = context.membership;
   if (!membership || context.user.platformStatus !== "ACTIVE" ||
-      !hasActiveMembership(context) || !hasMembershipRole(context, "MENTOR") ||
+      !hasActiveMembership(context) || !hasMembershipRole(context, ROLE.MENTOR) ||
       !can(context, "projects.read", {
         collegeId: membership.collegeId,
         organizationId: membership.organizationId,
@@ -43,7 +44,7 @@ export async function getMentorTaskReviews(
     };
   }
   const assigned = (await listMyProjectInstances(context))
-    .filter(row => row.memberRole === "MENTOR");
+    .filter(row => row.memberRole === ROLE.MENTOR);
   const ids = assigned.map(row => row.project.id);
   const projects = assigned.map(row => ({id:row.project.id,title:row.project.title}));
   if (query.projectId && !ids.includes(query.projectId))

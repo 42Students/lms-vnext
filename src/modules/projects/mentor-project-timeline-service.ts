@@ -8,11 +8,12 @@ import {getProjectInstanceWorkspace} from "./instance-service";
 import {ProjectsServiceError} from "./errors";
 import {mentorTimelineQuerySchema,mentorProjectTimeline} from "./mentor-project-timeline-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Ordered migrated release/sprint progression, not a schedule or forecast. */
 export async function getMentorProjectTimeline(context:RequestContext,raw:unknown){
   const query=mentorTimelineQuerySchema.parse(raw);
   const membership=context.membership;
-  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR")||
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR)||
     !can(context,"projects.read",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
@@ -22,7 +23,7 @@ export async function getMentorProjectTimeline(context:RequestContext,raw:unknow
       query,...mentorProjectTimeline([],[],[],query)};
   }
   const scope=await requireProjectReadAccess(context,query.projectId);
-  if(scope.access!=="MENTOR"||scope.collegeId!==membership.collegeId||
+  if(scope.access!==ROLE.MENTOR||scope.collegeId!==membership.collegeId||
     !can(context,"projects.read",{
       collegeId:scope.collegeId,organizationId:scope.organizationId,
     }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");

@@ -14,6 +14,7 @@ import {tpoCampaignDraftSchema} from "./tpo-campaign-draft-model";
 
 import { rawEnv } from "@/config/env";
 import { featureReady } from "@/config/features";
+import { ROLE } from "@/modules/identity/roles";
 /** Migration-only historical campaign marker. Importing an already-sent
  * legacy header is never a SEND command: no provider API, recipient tokens,
  * or new outbound queue may be created from this projection.
@@ -38,7 +39,7 @@ export class TpoCampaignDraftError extends Error{
 async function scope(context:RequestContext){
  const member=context.membership;
  if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
-  !hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+  !hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
  return requirePlacementManageScope(context,member.collegeId);
 }
 export async function tpoCampaignDraftStorageReady(){

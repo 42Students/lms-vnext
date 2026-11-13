@@ -7,9 +7,10 @@ import { getOwnCollegeContactProfile } from "@/modules/colleges/college-contact-
 import { hasMembershipRole } from "@/modules/identity/context";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function CollegeContactProfilePage() {
   const context = await getCurrentRequestContext();
-  if (!hasMembershipRole(context, "COLLEGE_ADMIN")) redirect("/dashboard");
+  if (!hasMembershipRole(context, ROLE.COLLEGE_ADMIN)) redirect("/dashboard");
   const profile = await getOwnCollegeContactProfile(context);
   return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
     <PageHeader

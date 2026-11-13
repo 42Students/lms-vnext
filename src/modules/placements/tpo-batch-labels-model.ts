@@ -1,3 +1,4 @@
+import { ROLE } from "@/modules/identity/roles";
 /** UI-only wording for persisted eligibility and registration events. */
 export function batchDecisionLabel(value:string|null|undefined):string{
  if(!value||value==="NOT_DECIDED")return "Not decided";
@@ -6,7 +7,7 @@ export function batchDecisionLabel(value:string|null|undefined):string{
  return "Needs review";
 }
 export function batchSourceLabel(value:string|null|undefined):string{
- if(value==="LEARNER")return "Own decision";
+ if(value===ROLE.LEARNER)return "Own decision";
  if(value==="CLASS")return "From class";
  if(value==="BATCH")return "From batch";
  return "Not recorded";

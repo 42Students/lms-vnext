@@ -9,19 +9,20 @@ import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import { ProjectsServiceError } from "./errors";
 import { listMyProjectInstances } from "./member-service";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Active persisted project memberships only, scoped by the same authenticated Mentor roster. */
 export async function getMentorProjectTeamSizes(context:RequestContext,
  verifiedRows?:readonly Awaited<ReturnType<typeof listMyProjectInstances>>[number][],
  learnerOnly=false){
  const membership=context.membership;
- if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR")||
+ if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR)||
    context.user.platformStatus!=="ACTIVE"||!can(context,"projects.read",{
      collegeId:membership.collegeId,organizationId:membership.organizationId,
    }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const ids=(verifiedRows??await listMyProjectInstances(context))
-   .filter(row=>row.memberRole==="MENTOR"&&row.project.collegeId===membership.collegeId)
+   .filter(row=>row.memberRole===ROLE.MENTOR&&row.project.collegeId===membership.collegeId)
    .map(row=>row.project.id);
  const sizes=new Map<string,number>();
  if(!ids.length)return sizes;
@@ -57,14 +58,14 @@ export async function getMentorPortfolioLearnerCounts(
  verifiedRows?:readonly Awaited<ReturnType<typeof listMyProjectInstances>>[number][],
 ):Promise<{uniqueLearners:number;learnerAssignments:number;teamCount:number;membershipCount:number;courseLabels:string[]}>{
  const membership=context.membership;
- if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR")||
+ if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR)||
    context.user.platformStatus!=="ACTIVE"||!can(context,"projects.read",{
      collegeId:membership.collegeId,organizationId:membership.organizationId,
    }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const authorized=(verifiedRows??await listMyProjectInstances(context))
-   .filter(row=>row.memberRole==="MENTOR"&&
+   .filter(row=>row.memberRole===ROLE.MENTOR&&
      row.project.collegeId===membership.collegeId);
  const ids=[...new Set(authorized.map(row=>row.project.id))];
  const courseLabels=[...new Set(authorized.map(row=>row.project.courseLabel?.trim())

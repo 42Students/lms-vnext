@@ -12,6 +12,7 @@ import {facultyGradebookParamsSchema,facultyPublishedGradeRows,
   type GradebookScore,type FacultyGradebookAssessment} from "./faculty-gradebook-model";
 import {z} from "zod";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Published gradebook: exact current Section roster, only scores made visible
  * by persisted publication controls. Incomplete grading never becomes zero.
@@ -19,7 +20,7 @@ import {z} from "zod";
 async function loadFacultyPublishedGradebook(context:RequestContext,raw:unknown){
   const query=facultyGradebookParamsSchema.parse(raw);
   const membership=context.membership;
-  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY")||
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.FACULTY)||
     !can(context,"courses.read",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     }))throw new AuthorizationError("courses.read");

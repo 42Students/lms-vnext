@@ -22,9 +22,10 @@ import {
 } from "./tpo-bulk-lead-owner-model";
 import { requirePlacementManageScope } from "./scope";
 
+import { ROLE } from "@/modules/identity/roles";
 async function requireTpoOwnerScope(context: RequestContext) {
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "TPO")) {
+  if (!membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = membership.collegeId;

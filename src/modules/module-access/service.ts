@@ -20,6 +20,7 @@ import {
   type RequestContext,
 } from "@/modules/identity/context";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Exact old ModuleFeatureCatalog order and app_settings key crosswalk.
  * Legacy LEARNER/CLASS/BATCH scopes are MEMBERSHIP/SECTION/COHORT here;
  * rules are now stored in module_access_rules with UUID scopes rather than
@@ -266,7 +267,7 @@ export async function buildModuleAccessChain(
   const chain: ModuleAccessScope[] = [];
   const membership = context.membership;
 
-  if (membership && hasMembershipRole(context, "LEARNER")) {
+  if (membership && hasMembershipRole(context, ROLE.LEARNER)) {
     pushScope(chain, "MEMBERSHIP", membership.id);
 
     const db = getDb();

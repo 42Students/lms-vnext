@@ -18,12 +18,13 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 const dateFormat = istDateTimeFormatter;
 export default async function TpoCandidateSchedulePage({
   params, searchParams,
 }: { params: Promise<{ jobId: string }>; searchParams: Promise<{roundId?:string|string[]}> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) redirect("/dashboard");
   const { jobId } = await params;
   const query = await searchParams;
   if(tpoReportHasAmbiguousFilters(query))return <TpoReportInvalidFilters path={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/candidate-schedule"}/>;

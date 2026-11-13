@@ -9,6 +9,7 @@ import {listPlacementSeasons} from "@/modules/placements/season-service";
 import {changeTpoSeason,TpoSettingsStaleError} from "@/modules/placements/tpo-season-write-service";
 import { route } from "@/security/route";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 
 /** Legacy /lens/seasons parity: the season selector must be populated by a
@@ -18,7 +19,7 @@ async function handleGET(){
   try{
     const context=await getCurrentRequestContext();
     const collegeId=context.membership?.collegeId;
-    if(!collegeId||!hasMembershipRole(context,"TPO"))
+    if(!collegeId||!hasMembershipRole(context,ROLE.TPO))
       throw new AuthorizationError("placements.manage");
     const seasons=await listPlacementSeasons(context,collegeId);
     const lens=seasons.map(row=>({

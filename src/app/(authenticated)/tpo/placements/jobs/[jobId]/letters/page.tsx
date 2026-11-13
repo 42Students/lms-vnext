@@ -14,11 +14,12 @@ import { placementJobIdSchema } from "@/modules/placements/validation";
 import { projectOfferLetterEvidence } from "@/modules/placements/tpo-offer-letter-evidence-model";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function TpoOfferLettersPage({
   params,
 }: { params: Promise<{ jobId: string }> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) redirect("/dashboard");
   const collegeId = context.membership.collegeId;
   if (!can(context, "placements.manage", { collegeId })) {
     throw new AuthorizationError("placements.manage");

@@ -15,9 +15,10 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
+import { ROLE } from "@/modules/identity/roles";
 export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");
  const {jobId}=await params;
  let job:Awaited<ReturnType<typeof getTpoDriveEditState>>;
  try{job=await getTpoDriveEditState(context,jobId);}catch(error){

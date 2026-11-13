@@ -34,6 +34,7 @@ import { Label } from "@/components/ui/label";
 import { istDateFormatter } from "@/lib/format-date";
 import { formatNumberIN } from "@/lib/safe-format";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Legacy Shortlisted workbench. Pipeline stage (ASSESSMENT by default) is the
  * authoritative filter; screening SHORTLISTED is only a historical decision,
@@ -46,7 +47,7 @@ export default async function CollegeDriveShortlistedPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "COLLEGE_ADMIN")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN)) {
     // Do not expose drive details outside the selected College Admin workspace.
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Shortlisted" />

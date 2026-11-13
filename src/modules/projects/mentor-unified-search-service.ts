@@ -12,6 +12,7 @@ import {ProjectsServiceError} from "./errors";
 import {listMyProjectInstances} from "./member-service";
 import {sortMentorSearchMatches,mentorSearchRank} from "./mentor-search-ranking-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export const mentorUnifiedSearchQuery=z.string().trim().min(1).max(100);
 export const mentorSearchPageSchema=z.coerce.number().int().min(0).max(100);
 const SEARCH_PAGE_SIZE=15;
@@ -30,14 +31,14 @@ export async function searchMentorWorkspacePage(
   const page=mentorSearchPageSchema.parse(pageInput);
   const offset=page*SEARCH_PAGE_SIZE;
   const membership=context.membership;
-  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR")||
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR)||
     context.user.platformStatus!=="ACTIVE"||!can(context,"projects.read",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const projects=(await listMyProjectInstances(context)).filter(row=>
-    row.memberRole==="MENTOR"&&row.project.collegeId===membership.collegeId);
+    row.memberRole===ROLE.MENTOR&&row.project.collegeId===membership.collegeId);
   const byId=new Map(projects.map(item=>[item.project.id,item.project.title]));
   if(!byId.size)return {results:[],hasMore:false,page};
   const ids=[...byId.keys()];

@@ -6,6 +6,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectReadAccess} from "./access";
 import {mentorBlockerAge} from "./mentor-blocker-age-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Block durations are read only from tenant-scoped status transition events.
  * Missing legacy transitions are returned as null, not estimated from
  * unrelated task updates. The caller supplies only currently blocked task IDs
@@ -16,7 +17,7 @@ export async function listMentorBlockedTaskAges(
  now:Date=new Date(),
 ):Promise<Record<string,{sinceIso:string|null;days:number|null}>>{
  const scope=await requireProjectReadAccess(context,projectId);
- if(scope.access!=="MENTOR"||blockedTaskIds.length===0)return {};
+ if(scope.access!==ROLE.MENTOR||blockedTaskIds.length===0)return {};
  const ids=[...new Set(blockedTaskIds)].slice(0,1000);
  const rows=await getDb().select({
   taskId:activityEvents.subjectId,occurredAt:activityEvents.occurredAt,

@@ -11,6 +11,7 @@ import {parseMentorSprintSignOffSnapshot,type MentorSprintSignOffSnapshot}
  from "./mentor-sprint-signoff-snapshot-model";
 import type {MentorRecentCompletedSprint} from "./mentor-consecutive-carry-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Complete three-most-recent completed sprint IDs for every active assigned
  * Mentor project and their valid latest sign-offs. Do not fabricate missing
  * historical snapshots from the present task assignee or sprint.
@@ -19,13 +20,13 @@ export async function getMentorRecentCarryHistory(context:RequestContext):Promis
  sprints:MentorRecentCompletedSprint[];snapshots:MentorSprintSignOffSnapshot[];
 }>{
  const member=context.membership;
- if(!member||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR")||
+ if(!member||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR)||
    context.user.platformStatus!=="ACTIVE")
    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const projects=(await listMyProjectInstances(context))
-   .filter(row=>row.memberRole==="MENTOR"&&
+   .filter(row=>row.memberRole===ROLE.MENTOR&&
       row.project.collegeId===member.collegeId&&row.project.status==="ACTIVE");
  const ids=[...new Set(projects.map(row=>row.project.id))];
  if(!ids.length)return {sprints:[],snapshots:[]};

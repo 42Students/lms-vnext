@@ -9,6 +9,7 @@ import {loadCourseAssignmentScope} from "./assignment-scope";
 import {CoursesServiceError} from "./errors";
 import {normalizeAssignmentMethods} from "./assignment-submission-methods";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Read only the current learner's published assignment policy, never another college's. */
 export async function getLearnerAssignmentMethods(context:RequestContext,rawId:unknown,rawDeliveryId:unknown){
  const assignmentId=z.string().uuid().parse(rawId);
@@ -18,7 +19,7 @@ export async function getLearnerAssignmentMethods(context:RequestContext,rawId:u
   assignment.learningPathStatus!=="PUBLISHED"||assignment.deliveryId&&assignment.deliveryId!==deliveryId)
   throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
  const access=await requireLearningReadAccess(context,assignment.offeringId,deliveryId);
- if(access!=="LEARNER"||!context.membership?.roles.includes("LEARNER"))
+ if(access!==ROLE.LEARNER||!context.membership?.roles.includes(ROLE.LEARNER))
   throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
  const [row]=await getDb().select({
   methods:courseAssignments.allowedSubmissionMethods,

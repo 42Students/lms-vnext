@@ -7,10 +7,11 @@ import {TpoInterviewSlotPlanner} from "@/components/placements/tpo-interview-slo
 import {getTpoInterviewSlotWorkspace} from "@/modules/placements/tpo-interview-slot-service";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import { ButtonLink } from "@/components/ui/button-link";
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 export default async function SlotsPage({params}:{params:Promise<{jobId:string;roundId:string}>}){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");
  const {jobId,roundId}=await params;
  let data:Awaited<ReturnType<typeof getTpoInterviewSlotWorkspace>>;
  try{data=await getTpoInterviewSlotWorkspace(context,jobId,roundId);}

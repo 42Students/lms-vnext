@@ -25,6 +25,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 type SearchParams = Record<string,string|string[]|undefined>;
 function SettingsLayout({children}:{children:ReactNode}){
  return <div className="min-w-0 space-y-5">
@@ -95,7 +96,7 @@ export default async function TpoPlacementRulesSettingsPage({
 
   if (
     !context.membership ||
-    !hasMembershipRole(context, "TPO")
+    !hasMembershipRole(context, ROLE.TPO)
   ) {
     redirect("/dashboard");
   }
@@ -129,7 +130,7 @@ export default async function TpoPlacementRulesSettingsPage({
     </SettingsLayout>;
   }
   const actor=team.members.find(item=>item.membershipId===context.membership?.id);
-  const canEdit=Boolean(actor?.roles.includes("TPO_ADMIN")||actor?.roles.includes("COLLEGE_ADMIN"));
+  const canEdit=Boolean(actor?.roles.includes("TPO_ADMIN")||actor?.roles.includes(ROLE.COLLEGE_ADMIN));
   if(!canEdit)return <SettingsLayout>
     <Alert tone="info">College settings are managed by the TPO admins. Ask a TPO admin if something here needs to change.</Alert>
   </SettingsLayout>;

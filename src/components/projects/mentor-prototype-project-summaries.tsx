@@ -29,6 +29,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type Workspace=Awaited<ReturnType<typeof getProjectWorkspaceView>>;
 type ProjectTask=Workspace["tasks"][number];
 const countTasks=(tasks:readonly ProjectTask[],status:string)=>tasks.filter(task=>task.status===status).length;
@@ -271,8 +272,8 @@ export function MentorPrototypeSprintPlan({workspace,readOnly}:{workspace:Worksp
 }
 
 export function MentorPrototypeTeamOverview({workspace,readOnly,canAddMentor}:{workspace:Workspace;readOnly:boolean;canAddMentor:boolean}){
-  const students=workspace.members.filter(member=>member.role==="LEARNER");
-  const mentors=workspace.members.filter(member=>member.role==="MENTOR");
+  const students=workspace.members.filter(member=>member.role===ROLE.LEARNER);
+  const mentors=workspace.members.filter(member=>member.role===ROLE.MENTOR);
   const academicByMember=new Map(workspace.mentorLearnerAcademicFacts.map(row=>
     [row.membershipId,row] as const));
   const active=workspace.sprints.find(sprint=>sprint.status==="ACTIVE");
@@ -339,7 +340,7 @@ export function MentorPrototypeTeamOverview({workspace,readOnly,canAddMentor}:{w
           <div><strong>{member.displayName||"Team member"}</strong>
             <small>{member.isPrimary?"Primary mentor · ":""}{member.roleLabel||member.role.replaceAll("_"," ")}</small>
             {recordedMentorStudentLead(member)?<small aria-label="Saved student lead label">★ Lead · saved team designation (not a separate permission)</small>:null}
-            {member.role==="LEARNER"?<small>
+            {member.role===ROLE.LEARNER?<small>
               {academics?.registrationNumber?
                 "Registration "+academics.registrationNumber+" · ":
                 academics?.rollNumber?"Roll "+academics.rollNumber+" · ":""}
@@ -349,7 +350,7 @@ export function MentorPrototypeTeamOverview({workspace,readOnly,canAddMentor}:{w
               {academics?.cohortName?" · "+academics.cohortName:""}
               {academics?.academicYear?" · Academic year "+academics.academicYear:""}
             </small>:null}
-            {!readOnly&&member.role==="LEARNER"?
+            {!readOnly&&member.role===ROLE.LEARNER?
               <MentorLearnerTeamActions projectId={workspace.project.id}
                 member={{id:member.id,displayName:member.displayName,
                   roleLabel:member.roleLabel}}/>:null}
@@ -380,12 +381,12 @@ export function MentorPrototypeTeamOverview({workspace,readOnly,canAddMentor}:{w
 
 export function MentorPrototypePerformance({workspace}:{workspace:Workspace}){
   return <MentorPrototypePerformanceTable
-    students={workspace.members.filter(member=>member.role==="LEARNER").map(member=>({
+    students={workspace.members.filter(member=>member.role===ROLE.LEARNER).map(member=>({
       id:member.membershipId,
       name:member.displayName||"Student",
       label:member.roleLabel||"Student",
     }))}
-    formerStudents={workspace.mentorRoster.filter(member=>member.role==="LEARNER"&&member.endedAt!==null)
+    formerStudents={workspace.mentorRoster.filter(member=>member.role===ROLE.LEARNER&&member.endedAt!==null)
       .map(member=>({id:member.membershipId,name:member.displayName||"Former student"}))}
     tasks={workspace.tasks.filter(task=>!task.deletedAt).map(task=>({
       id:task.id,
@@ -562,7 +563,7 @@ export function MentorPrototypeProjectOverview({workspace,attentionItems=[],init
   const inSprint=active?live.filter(task=>task.sprintId===active.id):[];
   const awaiting=inSprint.filter(task=>task.status==="IN_REVIEW");
   const blocked=inSprint.filter(task=>task.status==="BLOCKED");
-  const students=workspace.members.filter(member=>member.role==="LEARNER");
+  const students=workspace.members.filter(member=>member.role===ROLE.LEARNER);
   // Sprint sequence is release-local; use persisted release chronology when
   // finding the next work needing assignment across the release boundary.
   const nextPlanned=active

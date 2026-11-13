@@ -38,6 +38,7 @@ import {
   type PlacementDriveDayCoordinatorInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Both coordinator assignment and check-in compare the same IST civil day. */
 export function dateInIndia(
   now: Date = new Date(),
@@ -100,7 +101,7 @@ async function loadJob(jobId: string) {
 async function hasActiveCoordinatorIdentity(context: RequestContext) {
   const membership = context.membership;
   if (!membership ||
-      !hasMembershipRole(context, "LEARNER") ||
+      !hasMembershipRole(context, ROLE.LEARNER) ||
       context.user.platformStatus !== "ACTIVE") return false;
   const [member] = await getDb().select({ id: collegeMemberships.id })
     .from(collegeMemberships)
@@ -123,7 +124,7 @@ export async function hasStudentCoordinatorAssignmentToday(
 ) {
   if (
     !context.membership ||
-    !hasMembershipRole(context, "LEARNER") ||
+    !hasMembershipRole(context, ROLE.LEARNER) ||
     context.user.platformStatus !== "ACTIVE"
   ) {
     return false;
@@ -383,7 +384,7 @@ export async function listMyDriveDayRounds(
 ) {
   if (
     !context.membership ||
-    !hasMembershipRole(context, "LEARNER") ||
+    !hasMembershipRole(context, ROLE.LEARNER) ||
     context.user.platformStatus !== "ACTIVE"
   ) {
     throw new PlacementsServiceError(
@@ -524,8 +525,8 @@ async function loadRoundAndAccess(
 
   if (
     context.membership &&
-    hasMembershipRole(context, "LEARNER") &&
-    !hasMembershipRole(context, "TPO") &&
+    hasMembershipRole(context, ROLE.LEARNER) &&
+    !hasMembershipRole(context, ROLE.TPO) &&
     !hasMembershipRole(
       context,
       "COLLEGE_ADMIN",

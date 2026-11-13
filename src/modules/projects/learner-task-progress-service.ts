@@ -14,13 +14,14 @@ import {
   learnerTaskProgressInputSchema, learnerTaskProgressParamsSchema, learnerTaskTransitionAllowed,
 } from "./learner-task-progress-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function updateLearnerProjectTaskProgress(
   context: RequestContext, rawParams: unknown, rawInput: unknown,
 ) {
   const params = learnerTaskProgressParamsSchema.parse(rawParams);
   const input = learnerTaskProgressInputSchema.parse(rawInput);
   const scope = await requireProjectReadAccess(context, params.projectId);
-  if (scope.access !== "LEARNER" || !context.membership)
+  if (scope.access !== ROLE.LEARNER || !context.membership)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const membershipId = context.membership.id;
 

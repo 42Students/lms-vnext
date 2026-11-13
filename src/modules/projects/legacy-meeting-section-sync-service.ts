@@ -13,6 +13,7 @@ import { requireProjectLifecycleMutationAccess, requireProjectReadAccess } from 
 import { assertPersistedProjectMutationActor } from "./persisted-mentor-mutation";
 import { ProjectsServiceError } from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 const meetingSchema = z.strictObject({
   meetingKey: z.string().trim().min(1).max(120),
   title: z.string().trim().min(1).max(500),
@@ -66,7 +67,7 @@ async function requireMeetingModule(context: RequestContext) {
 export async function readLegacyProjectMeetingSection(context: RequestContext, projectId: string) {
   await requireMeetingModule(context);
   const scope = await requireProjectReadAccess(context, projectId);
-  if (scope.access !== "MENTOR" && scope.access !== "ADMIN")
+  if (scope.access !== ROLE.MENTOR && scope.access !== "ADMIN")
     throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
   const rows = await getDb().select().from(projectMeetings)
     .where(eq(projectMeetings.projectId, scope.project.id))
@@ -94,7 +95,7 @@ export async function synchronizeLegacyProjectMeetingSection(
   await requireMeetingModule(context);
   const input = sectionSchema.parse(rawInput);
   const scope = await requireProjectLifecycleMutationAccess(context, projectId);
-  if (scope.access !== "MENTOR" && scope.access !== "ADMIN")
+  if (scope.access !== ROLE.MENTOR && scope.access !== "ADMIN")
     throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
   const db = getDb();
   return db.transaction(async tx => {

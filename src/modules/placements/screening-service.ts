@@ -33,6 +33,7 @@ import {
   type PlacementScreeningDecisionInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 type ScreeningStatus =
   | "PENDING"
   | "HOLD"
@@ -355,7 +356,7 @@ export async function getPlacementScreening(
   if (
     context.membership?.id ===
       row.application.membershipId &&
-    hasMembershipRole(context, "LEARNER")
+    hasMembershipRole(context, ROLE.LEARNER)
   ) {
     // A once-valid request context is not sufficient to read learner results:
     // revalidate the persisted learner grant, account status, tenant and

@@ -9,6 +9,7 @@ import {ProjectsServiceError} from "./errors";
 import {can} from "@/modules/permissions/policy";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 
+import { ROLE } from "@/modules/identity/roles";
 /** SQL crosswalk for legacy /api/v1/projects/me/page.
  * Legacy page is zero-based; mentorProjectListQuerySchema normalizes page1,
  * legacyPage and ?page=N to one-based SQL offsets. Max page size stays 50.
@@ -24,7 +25,7 @@ export async function listPagedMentorProjects(context:RequestContext,query:Mento
  query=mentorProjectListQuerySchema.parse({...query,page1:query.page});
  const membership=context.membership;
  if(!membership || membership.status!=="ACTIVE" ||
-   !membership.roles.includes("MENTOR")||context.user.platformStatus!=="ACTIVE"||
+   !membership.roles.includes(ROLE.MENTOR)||context.user.platformStatus!=="ACTIVE"||
    !can(context,"projects.read",{
      collegeId:membership.collegeId,organizationId:membership.organizationId,
    }))

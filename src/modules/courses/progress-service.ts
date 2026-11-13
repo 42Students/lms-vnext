@@ -38,6 +38,7 @@ import {
   type SaveLearnerContentProgressInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Persisted-position threshold required to finish timed content. */
 export const TIMED_CONTENT_COMPLETION_THRESHOLD_PERCENT = 90;
 
@@ -144,7 +145,7 @@ async function requireLearnerProgressScope(
     );
 
   if (
-    access !== "LEARNER" ||
+    access !== ROLE.LEARNER ||
     !context.membership
   ) {
     throw new CoursesServiceError(
@@ -268,7 +269,7 @@ export async function listMyLearnerContentProgressBatch(
  await requireOwnCourseLearnerRead(context);
  const delivery=await loadCourseSectionDeliveryScope(deliveryId);
  const access=await requireLearningReadAccess(context,delivery.offeringId,deliveryId);
- if(access!=="LEARNER"||!context.membership)
+ if(access!==ROLE.LEARNER||!context.membership)
   throw new CoursesServiceError("LEARNER_PROGRESS_ACCESS_DENIED");
  const uniqueIds=[...new Set(contentIds)];
  const available=await getDb().select({

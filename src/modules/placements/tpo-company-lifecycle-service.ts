@@ -13,6 +13,7 @@ import { requirePlacementManageScope } from "./scope";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import { decideTpoCompanyLifecycle, tpoCompanyLifecycleSchema } from "./tpo-company-lifecycle-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export class TpoCompanyLifecycleError extends Error {
   constructor(public readonly code: "NOT_FOUND" | "STALE" | "ACTIVE_DRIVES") {
     super("TPO_COMPANY_" + code);
@@ -20,7 +21,7 @@ export class TpoCompanyLifecycleError extends Error {
 }
 async function companyScope(context: RequestContext) {
   const membership = context.membership;
-  if (!membership || !(hasMembershipRole(context, "TPO")||hasMembershipRole(context, "COLLEGE_ADMIN")) ||
+  if (!membership || !(hasMembershipRole(context, ROLE.TPO)||hasMembershipRole(context, ROLE.COLLEGE_ADMIN)) ||
     membership.status !== "ACTIVE" || context.user.platformStatus !== "ACTIVE") {
     throw new AuthorizationError("placements.manage");
   }

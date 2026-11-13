@@ -44,6 +44,7 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { istDateTimeFormatter, istDateFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
+import { ROLE } from "@/modules/identity/roles";
 type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];targetIds?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[];mine?:string|string[];noticeSuccess?:string|string[];notice?:string|string[];compose?:string|string[]}>};
 
 // Only confirmed persisted delivery starts the 30-second undo window.
@@ -58,7 +59,7 @@ function noticeCanUndo(row:{createdAt:Date;scheduledAt:Date|null;sentAt:Date|nul
 }
 export default async function TpoAnnouncements({searchParams}:Props){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");
  await requirePersistedTpoMembership(context,context.membership.collegeId);
  const raw=await searchParams;
  const scalarKeys=["tab","page","mine","audience","targetId","notice","compose","noticeError","sentNotice","noticeSuccess"] as const;

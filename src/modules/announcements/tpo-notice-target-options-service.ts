@@ -7,12 +7,13 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {requirePlacementManageScope} from "@/modules/placements/scope";
 
+import { ROLE } from "@/modules/identity/roles";
 /** TPO-inbox-team-44: selector choices are facts scoped by college, never
  * user-input IDs or visibility inferred across institutions.
  */
 export async function listTpoNoticeTargetOptions(context:RequestContext){
  const member=context.membership;
- if(!member||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ if(!member||!hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,member.collegeId);
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{

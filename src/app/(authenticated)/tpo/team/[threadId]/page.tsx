@@ -30,6 +30,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { istWeekdayDayMonthFormatter, istDateFormatter, istDayMonthYearFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
+import { ROLE } from "@/modules/identity/roles";
 /** User-facing acknowledgements belong to the interactive action controls,
  * not to this server-rendered conversation snapshot. Their verified response
  * outcomes map ADDED/OK/LEFT for participant/follow/mute/leave/topic actions
@@ -76,7 +77,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  const away=await listTpoTeamAway(context).catch(()=>({ready:false as const,items:[]}));
  const teammates=await getTpoPlacementTeam(context,context.membership!.collegeId);
  const eligibleAssignees=teammates.members.filter(person=>
-  (person.roles.includes("TPO")||person.roles.includes("COLLEGE_ADMIN"))&&
+  (person.roles.includes(ROLE.TPO)||person.roles.includes(ROLE.COLLEGE_ADMIN))&&
   person.membershipId!==context.membership?.id).map(person=>{
    const awayUntil=away.items.find(item=>item.membershipId===person.membershipId)?.awayUntil??null;
    return {membershipId:person.membershipId,displayName:person.displayName,

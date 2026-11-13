@@ -13,6 +13,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {CoursesServiceError} from "./errors";
 import {safeCourseVisibilityFailure} from "./bulk-visibility-failure-model";
 
+import { ROLE } from "@/modules/identity/roles";
 // Registered in migration 0129. Do not use this writer with an unregistered schema.
 // Metadata edits also require updatedAt millisecond CAS.
 const lessonTarget=z.strictObject({
@@ -31,7 +32,7 @@ const batch=z.strictObject({
 export async function updateCollegeLessonStudentVisibility(context:RequestContext,raw:unknown){
  const input=command.parse(raw);
  const acting=await resolveActingCollege(context,"courses.manage");
- if(!isSuperAdmin(context)&&!hasMembershipRole(context,"COLLEGE_ADMIN"))
+ if(!isSuperAdmin(context)&&!hasMembershipRole(context,ROLE.COLLEGE_ADMIN))
   throw new AuthorizationError("courses.manage");
  const scope={collegeId:acting.collegeId,organizationId:acting.organizationId};
  requirePermission(context,"courses.manage",scope);
@@ -53,7 +54,7 @@ export async function updateCollegeLessonStudentVisibility(context:RequestContex
    .for("update",{of:courseLessons}).limit(1);
   if(!lesson)throw new CoursesServiceError("LESSON_NOT_FOUND");
   const persisted=await assertPersistedPlatformPermission(tx,context,"courses.manage",scope);
-  if(!isSuperAdmin(persisted)&&!hasMembershipRole(persisted,"COLLEGE_ADMIN"))
+  if(!isSuperAdmin(persisted)&&!hasMembershipRole(persisted,ROLE.COLLEGE_ADMIN))
    throw new AuthorizationError("courses.manage");
   const expected=Date.parse(input.expectedUpdatedAt);
   if(Math.trunc(lesson.updatedAt.getTime())!==expected)
@@ -86,7 +87,7 @@ export async function bulkCollegeLessonStudentVisibility(context:RequestContext,
  // An unauthorized caller must not receive a successful bulk response
  // that merely embeds per-item permission errors.
  const acting=await resolveActingCollege(context,"courses.manage");
- if(!isSuperAdmin(context)&&!hasMembershipRole(context,"COLLEGE_ADMIN"))
+ if(!isSuperAdmin(context)&&!hasMembershipRole(context,ROLE.COLLEGE_ADMIN))
   throw new AuthorizationError("courses.manage");
  requirePermission(context,"courses.manage",{
   collegeId:acting.collegeId,organizationId:acting.organizationId,

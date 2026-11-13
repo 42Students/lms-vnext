@@ -13,6 +13,7 @@ import {useToast} from "@/components/ui/toast";
 import { Radio } from "@/components/ui/radio";
 import { Label } from "@/components/ui/label";
 
+import { ROLE } from "@/modules/identity/roles";
 type Candidate={membershipId:string;displayName:string|null;email:string|null};
 type Member=Candidate&{role:string;id:string};
 type Result={added:number;removed:number;updatedAt:string};
@@ -49,7 +50,7 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
     apiFetch<{candidates:Candidate[]}>(endpoint+"/member-candidates?role=LEARNER&limit=20",{cache:"no-store"}),
    ]);
    if(request!==requestSequence.current)return;
-   const learners=members.members.filter(member=>member.role==="LEARNER");
+   const learners=members.members.filter(member=>member.role===ROLE.LEARNER);
    const choices=[...learners,...candidates.candidates];
    setOptions([...new Map(choices.map(candidate=>[candidate.membershipId,candidate])).values()]);
    const ids=learners.map(x=>x.membershipId);

@@ -10,11 +10,12 @@ import {
   tpoIntelligenceFiltersSchema,
 } from "./tpo-intelligence-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function getTpoPerformanceIntelligence(
   context: RequestContext,
   rawQuery: unknown,
 ) {
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = context.membership.collegeId;

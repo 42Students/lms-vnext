@@ -7,6 +7,7 @@ import {getTpoBatchStudents} from "./tpo-batch-workspace-read-service";
 import {selectTpoBatchStudentView,type TpoBatchStudentViewOptions} from "./tpo-batch-student-selection-model";
 import {placementTableExists} from "./staged-tables";
 import {tpoRegistrationChoiceSchema} from "./tpo-batch-registration-summary-model";
+import { ROLE } from "@/modules/identity/roles";
 /** Only learner IDs already proven to be actively enrolled are looked up. */
 export async function getTpoBatchStudentRegistrations(
  context:RequestContext,cohortId:string,page:number,search:string="",onlyDirect=false,wholeRoster=false,
@@ -48,7 +49,7 @@ export async function getTpoBatchStudentRegistrationView(
   const direct=await getTpoBatchStudentRegistrations(context,cohortId,page,view.q);
   return {...direct,rosterTruncated:false,classOptions:null as {id:string;name:string}[]|null,matching:null as number|null};
  }
- const full=await getTpoBatchStudentRegistrations(context,cohortId,1,view.q,view.source==="LEARNER",true);
+ const full=await getTpoBatchStudentRegistrations(context,cohortId,1,view.q,view.source===ROLE.LEARNER,true);
  const matching=selectTpoBatchStudentView(full.students,view,full.registrationAvailable);
  const classes=new Map<string,string>();
  for(const student of full.students){

@@ -14,6 +14,7 @@ import {ProjectsServiceError} from "./errors";
 import {mentorEmailPreferenceFromSavedEvent,mentorEmailPreferenceSaveSchema}
  from "./mentor-email-preference-model";
 
+import { ROLE } from "@/modules/identity/roles";
 const eventType=ACTIVITY_EVENT_TYPES.PROJECTS_MENTOR_EMAIL_PREFERENCE_CHANGED;
 const subjectType="mentor_email_preference";
 const preferenceFilter=(userId:string,collegeId:string)=>and(
@@ -53,7 +54,7 @@ export async function saveMentorEmailPreference(context:RequestContext,raw:unkno
   const actor=await assertPersistedPlatformPermission(tx,context,"projects.read",{
    collegeId:membership.collegeId,organizationId:membership.organizationId,
   });
-  if(!hasMembershipRole(actor,"MENTOR"))
+  if(!hasMembershipRole(actor,ROLE.MENTOR))
    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const [current]=await tx.select({id:activityEvents.id,
    metadata:activityEvents.metadata}).from(activityEvents).where(

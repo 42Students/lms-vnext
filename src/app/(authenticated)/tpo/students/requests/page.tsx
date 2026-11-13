@@ -24,6 +24,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { formatNumberIN } from "@/lib/safe-format";
 
+import { ROLE } from "@/modules/identity/roles";
 type SearchParams = {
   status?: string | string[];
   search?: string | string[];
@@ -109,7 +110,7 @@ export default async function TpoStudentRequestsPage({
 }) {
   const context = await getCurrentRequestContext();
 
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     redirect("/dashboard");
   }
 

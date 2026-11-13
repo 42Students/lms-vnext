@@ -51,6 +51,7 @@ import {
   publishableProjectTemplateBlueprintSchema,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 function mapInstanceConstraint(error: unknown) {
   switch (postgresConstraintName(error)) {
     case "project_instances_college_slug_uq":
@@ -720,8 +721,8 @@ export async function getProjectInstanceWorkspace(
               projectResources.projectId,
               projectId,
             ),
-            scope.access === "ADMIN" || scope.access === "MENTOR" ? undefined : eq(projectResources.status, "ACTIVE"),
-            scope.access === "ADMIN" || scope.access === "MENTOR" ? undefined : eq(projectResources.visibility, "TEAM"),
+            scope.access === "ADMIN" || scope.access === ROLE.MENTOR ? undefined : eq(projectResources.status, "ACTIVE"),
+            scope.access === "ADMIN" || scope.access === ROLE.MENTOR ? undefined : eq(projectResources.visibility, "TEAM"),
           ),
         )
         .orderBy(asc(projectResources.sequence)),

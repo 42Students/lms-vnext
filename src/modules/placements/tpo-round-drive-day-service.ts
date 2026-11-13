@@ -41,6 +41,7 @@ import {
   placementRoundIdSchema,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * TPO-only, read-only projection of one Drive Day round.
  *
@@ -68,7 +69,7 @@ export async function getTpoRoundDriveDay(
 ) {
   if (
     !context.membership ||
-    !hasMembershipRole(context, "TPO")
+    !hasMembershipRole(context, ROLE.TPO)
   ) {
     throw new AuthorizationError(
       "placements.manage",

@@ -14,6 +14,7 @@ import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 import {ProjectsServiceError} from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 export const mentorMeetingRsvpSchema=z.strictObject({
  response:z.enum(["ACCEPTED","DECLINED","TENTATIVE"]),
  expectedUpdatedAt:z.iso.datetime({offset:true}),
@@ -33,7 +34,7 @@ export async function respondToProjectMeeting(
  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
   throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
  const scope=await requireProjectReadAccess(context,projectId);
- if((scope.access!=="MENTOR"&&scope.access!=="LEARNER")||
+ if((scope.access!==ROLE.MENTOR&&scope.access!==ROLE.LEARNER)||
   !context.membership||context.user.platformStatus!=="ACTIVE")
   throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
  return getDb().transaction(async tx=>{
@@ -43,7 +44,7 @@ export async function respondToProjectMeeting(
    eq(projectInstances.collegeId,scope.collegeId))).for("update").limit(1);
   if(!project||project.deletedAt||["ARCHIVED","COMPLETED"].includes(project.status))
    throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
-  if(scope.access==="MENTOR")await assertPersistedProjectMutationActor(tx,context,scope);
+  if(scope.access===ROLE.MENTOR)await assertPersistedProjectMutationActor(tx,context,scope);
   else await assertPersistedLearnerProjectMutation(tx,context,scope.project.id,scope.collegeId);
   const [meeting]=await tx.select({
    id:projectMeetings.id,status:projectMeetings.status,

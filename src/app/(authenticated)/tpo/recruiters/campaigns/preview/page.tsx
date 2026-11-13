@@ -9,10 +9,11 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {engageAudienceQuerySchema} from "@/modules/messaging/engage-audience-model";
 import {previewEngageCampaignAudience} from "@/modules/messaging/engage-audience-service";
 import { TextLink } from "@/components/ui/text-link";
+import { ROLE } from "@/modules/identity/roles";
 type PageProps={searchParams:Promise<{segment?:string|string[]}>};
 export default async function PreviewCampaign({searchParams}:PageProps){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");
  const raw=await searchParams;
  const segment=Array.isArray(raw.segment)?raw.segment[0]:raw.segment;
  const query=engageAudienceQuerySchema.safeParse({segment});

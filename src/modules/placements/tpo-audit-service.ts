@@ -31,6 +31,7 @@ import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {tpoAuditEntityHref} from "./tpo-audit-entity-link-model";
 import { placementTableExists } from "./staged-tables";
 
+import { ROLE } from "@/modules/identity/roles";
 const dateSchema = z.iso.date();
 
 /** Original LMS filterModel stores a checklist as f_key=a,b.
@@ -605,7 +606,7 @@ export async function getTpoAuditLog(
 ) {
   if (
     !context.membership ||
-    !hasMembershipRole(context, "TPO")
+    !hasMembershipRole(context, ROLE.TPO)
   ) {
     throw new AuthorizationError(
       "placements.manage",

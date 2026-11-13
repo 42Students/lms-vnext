@@ -1,3 +1,4 @@
+import { ROLE } from "@/modules/identity/roles";
 /** A previously assigned faculty grader may revise their own earlier grade
  * after the teaching term ends, but not after losing active FACULTY membership
  * or moving to another college. This pure check is ONLY the preflight:
@@ -11,7 +12,7 @@ export function legacyPriorGraderEligible(input:{
  const {membership}=input;
  return Boolean(membership&&membership.status==="ACTIVE"&&
   membership.collegeId===input.collegeId&&
-  membership.roles.includes("FACULTY")&&
+  membership.roles.includes(ROLE.FACULTY)&&
   input.gradedByUserId===input.userId&&
   (membership.userId===undefined||membership.userId===input.userId));
 }

@@ -10,6 +10,7 @@ import {requirePersistedMentorInboxMembership} from
  "@/modules/activity/mentor-notifications-service";
 import type {RequestContext} from "@/modules/identity/context";
 
+import { ROLE } from "@/modules/identity/roles";
 const MARKER_TYPE="mentor_project_activity_seen";
 const MARKER_EVENT=ACTIVITY_EVENT_TYPES.IDENTITY_MENTOR_NOTIFICATION_ACKNOWLEDGED;
 
@@ -22,7 +23,7 @@ export async function getMentorProjectActivitySeenState(
 ):Promise<{lastSeenAt:string|null;newCount:number|null}>{
  const membership=await requirePersistedMentorInboxMembership(context);
  const scope=await requireProjectReadAccess(context,projectId);
- if(scope.access!=="MENTOR"||scope.collegeId!==membership.collegeId)
+ if(scope.access!==ROLE.MENTOR||scope.collegeId!==membership.collegeId)
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const [receipt]=await getDb().select({occurredAt:activityEvents.occurredAt})
   .from(activityEvents).where(and(
@@ -62,7 +63,7 @@ export async function markMentorProjectActivitySeen(
 ):Promise<{lastSeenAt:string}>{
  const membership=await requirePersistedMentorInboxMembership(context);
  const scope=await requireProjectReadAccess(context,projectId);
- if(scope.access!=="MENTOR"||scope.collegeId!==membership.collegeId)
+ if(scope.access!==ROLE.MENTOR||scope.collegeId!==membership.collegeId)
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const marker=await getDb().transaction(async tx=>{
   await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${context.user.id}, 37))`);

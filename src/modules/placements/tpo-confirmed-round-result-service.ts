@@ -11,6 +11,7 @@ import { stagePlacementRoundResult } from "./result-service";
 import { requirePlacementManageScope } from "./scope";
 import { placementRoundIdSchema } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Only the TPO page's confirmed optimistic write reaches this adapter.
  * The existing result service performs participant/progression validation,
@@ -22,7 +23,7 @@ export async function confirmTpoRoundResult(
   rawBody: unknown,
 ) {
   if (!context.membership ||
-      !(hasMembershipRole(context, "TPO") || hasMembershipRole(context, "COLLEGE_ADMIN"))) {
+      !(hasMembershipRole(context, ROLE.TPO) || hasMembershipRole(context, ROLE.COLLEGE_ADMIN))) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = context.membership.collegeId;

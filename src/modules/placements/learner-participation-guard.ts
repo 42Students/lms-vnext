@@ -22,6 +22,7 @@ import {
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { resolveLearnerPlacementParticipation } from "./access-service";
 
+import { ROLE } from "@/modules/identity/roles";
 type PlacementMembership = NonNullable<RequestContext["membership"]>;
 
 /**
@@ -51,7 +52,7 @@ export async function requireLearnerPlacementAccess(
   const membership = context.membership;
   if (
     !membership ||
-    !hasMembershipRole(context, "LEARNER") ||
+    !hasMembershipRole(context, ROLE.LEARNER) ||
     membership.status !== "ACTIVE" ||
     context.user.platformStatus !== "ACTIVE"
   ) {

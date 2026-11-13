@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { ROLE } from "@/modules/identity/roles";
 export const mentorTeamCoverageQuerySchema = z.object({
   filter: z.enum(["ALL", "NO_LEARNERS", "NO_PRIMARY_MENTOR","HAS_LEARNERS","HAS_PRIMARY_MENTOR","MULTIPLE_MENTORS","SINGLE_MENTOR","NO_LEARNERS_NO_PRIMARY","FIVE_PLUS_LEARNERS"]).default("ALL"),
   order: z.enum(["TITLE","FEWEST_LEARNERS","MOST_LEARNERS","FEWEST_MENTORS","MOST_MENTORS"]).default("TITLE"),
@@ -14,10 +15,10 @@ export type MentorTeamCoverageQuery = z.infer<typeof mentorTeamCoverageQuerySche
 export function summarizeActiveProjectTeam(
   members: readonly { role: string; isPrimary: boolean }[],
 ) {
-  const learners = members.filter(row => row.role === "LEARNER").length;
-  const mentors = members.filter(row => row.role === "MENTOR").length;
+  const learners = members.filter(row => row.role === ROLE.LEARNER).length;
+  const mentors = members.filter(row => row.role === ROLE.MENTOR).length;
   const hasPrimaryMentor = members.some(row =>
-    row.role === "MENTOR" && row.isPrimary,
+    row.role === ROLE.MENTOR && row.isPrimary,
   );
   return { learners, mentors, hasPrimaryMentor };
 }

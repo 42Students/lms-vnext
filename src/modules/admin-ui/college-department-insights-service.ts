@@ -26,6 +26,7 @@ import {
   type DepartmentInsightsKind,
 } from "./college-department-insights-model";
 
+import { ROLE } from "@/modules/identity/roles";
 async function requireCollegeDepartmentInsightAccess(
   context: RequestContext,
   kind: DepartmentInsightsKind,
@@ -40,7 +41,7 @@ async function requireCollegeDepartmentInsightAccess(
   }
   const membership = context.membership;
   const permission = kind === "ATTENDANCE" ? "academics.read" : "placements.read";
-  if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+  if (!membership || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
       !can(context, permission, {
         organizationId: membership.organizationId,
         collegeId: membership.collegeId,

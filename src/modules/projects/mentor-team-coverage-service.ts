@@ -17,6 +17,7 @@ import {
   type MentorTeamCoverageRow,
 } from "./mentor-team-coverage-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Only currently assigned Mentor projects are eligible. The active team
  * counts are real registered project_members joined to active same-college
@@ -28,7 +29,7 @@ export async function getMentorTeamCoverage(
   const query = mentorTeamCoverageQuerySchema.parse(rawQuery);
   const membership = context.membership;
   if (!membership || !hasActiveMembership(context) ||
-      !hasMembershipRole(context,"MENTOR") ||
+      !hasMembershipRole(context,ROLE.MENTOR) ||
       !can(context,"projects.read",{
         collegeId: membership.collegeId,
         organizationId: membership.organizationId,
@@ -44,7 +45,7 @@ export async function getMentorTeamCoverage(
   if (!access.projects.enabled) return empty(false);
 
   const assigned = (await listMyProjectInstances(context))
-    .filter(row => row.memberRole === "MENTOR" &&
+    .filter(row => row.memberRole === ROLE.MENTOR &&
       row.project.status !== "ARCHIVED");
   if (!assigned.length) return empty(true);
   const projectIds = assigned.map(row => row.project.id);

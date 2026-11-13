@@ -3,6 +3,7 @@ import { and, eq, inArray, isNull } from "drizzle-orm";
 import { collegeMemberships, projectMembers, users } from "@/db/schema";
 import { deliverInAppNotificationInTransaction } from "@/modules/activity/notification-service";
 
+import { ROLE } from "@/modules/identity/roles";
 type Writer = Parameters<typeof deliverInAppNotificationInTransaction>[0];
 type ProjectNotice = {
   projectId: string;
@@ -14,7 +15,7 @@ type ProjectNotice = {
 };
 
 export function projectNoticeHref(role: "LEARNER" | "MENTOR", projectId: string): string {
-  return (role === "MENTOR" ? "/mentor/projects/" : "/learn/projects/") + encodeURIComponent(projectId);
+  return (role === ROLE.MENTOR ? "/mentor/projects/" : "/learn/projects/") + encodeURIComponent(projectId);
 }
 
 /** Only the current project's active, same-college members are eligible.

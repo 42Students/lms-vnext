@@ -9,6 +9,7 @@ import {AuthorizationError,can,requirePermission} from "@/modules/permissions/po
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {collegeHallBookingSchema,hallBookingWindow,hallCanFitClass,hallFacultyIsEligible} from "./college-hall-booking-model";
+import { ROLE } from "@/modules/identity/roles";
 export class CollegeHallBookingError extends Error{
   constructor(public readonly code:"HALL_NOT_FOUND"|"SECTION_NOT_FOUND"|"SECTION_STALE"|
     "SECTION_PERIOD_INVALID"|"HALL_CAPACITY_CONFLICT"|"FACULTY_NOT_FOUND"|"SCHEDULE_CONFLICT"){
@@ -18,7 +19,7 @@ export class CollegeHallBookingError extends Error{
 export async function createCollegeHallBooking(context:RequestContext,rawHallId:unknown,raw:unknown){
   const hallId=z.string().uuid().parse(rawHallId),input=collegeHallBookingSchema.parse(raw);
   const member=context.membership;
-  if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,"COLLEGE_ADMIN")||
+  if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,ROLE.COLLEGE_ADMIN)||
     !can(context,"academics.manage",{collegeId:member.collegeId,organizationId:member.organizationId}))
     throw new AuthorizationError("academics.manage");
   requirePermission(context,"academics.manage",{collegeId:member.collegeId,organizationId:member.organizationId});

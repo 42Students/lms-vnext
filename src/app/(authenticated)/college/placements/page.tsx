@@ -21,6 +21,7 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function CollegePlacementsPage({searchParams}:{
   searchParams:Promise<Record<string,string|string[]|undefined>>;
 }) {
@@ -29,7 +30,7 @@ export default async function CollegePlacementsPage({searchParams}:{
     <PageHeader title="Placement Drives"/>
     <EmptyState title="Admin not assigned to a college" description="You must be assigned to a college to view and manage jobs. Contact your administrator."/>
   </div>;
-  if (!hasMembershipRole(context,"COLLEGE_ADMIN")) redirect("/dashboard");
+  if (!hasMembershipRole(context,ROLE.COLLEGE_ADMIN)) redirect("/dashboard");
   const moduleAccess = await resolveOptionalModuleAccess(context);
   if (!moduleAccess.placements.enabled) return (
     <section role="status" className="min-w-0 space-y-[var(--lms-space-4)]">

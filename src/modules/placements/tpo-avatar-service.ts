@@ -9,6 +9,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {createPrivateUploadGrant,readPrivateObjectAttestation,createPrivateReadGrant} from "@/modules/storage/private-object-storage";
 
+import { ROLE } from "@/modules/identity/roles";
 const types=["image/png","image/jpeg","image/webp"] as const;
 const startSchema=z.strictObject({contentType:z.enum(types),
  sizeBytes:z.number().int().positive().max(5*1024*1024)});
@@ -17,7 +18,7 @@ const finishSchema=z.strictObject({objectKey:z.string().min(20).max(1024),
 
 async function ownMembership(context:RequestContext){
  const member=context.membership;
- if(!member||!hasMembershipRole(context,"TPO")||member.status!=="ACTIVE")
+ if(!member||!hasMembershipRole(context,ROLE.TPO)||member.status!=="ACTIVE")
   throw new Error("TPO_ROLE_REQUIRED");
  await requirePlacementManageScope(context,member.collegeId);
  return member;

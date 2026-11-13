@@ -18,13 +18,14 @@ import { TextLink } from "@/components/ui/text-link";
 import { formatNumberIN } from "@/lib/safe-format";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type Params = { assignment?:string|string[];projectId?:string|string[];projectStatus?: string | string[]; search?: string | string[]; order?: string | string[]; age?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 
 export default async function MentorReviewsPage({
   searchParams,
 }: { searchParams: Promise<Params> }) {
   const context = await getCurrentRequestContext();
-  if (!hasMembershipRole(context,"MENTOR")) redirect("/dashboard");
+  if (!hasMembershipRole(context,ROLE.MENTOR)) redirect("/dashboard");
   const raw = await searchParams;
   const parsed = mentorReviewQuerySchema.safeParse(singleValueMentorFilters({
     search:raw.search,projectStatus:raw.projectStatus,projectId:raw.projectId,

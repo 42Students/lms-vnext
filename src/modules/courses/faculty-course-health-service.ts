@@ -17,6 +17,7 @@ import {
   type FacultyCourseHealthCandidate,
 } from "./faculty-course-health-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Course-specific published assessment health for the Faculty currently
  * assigned to this exact delivery. Existing report readers recheck teaching
@@ -28,7 +29,7 @@ export async function getFacultyCourseAssessmentHealth(
   const query = facultyCourseHealthParamsSchema.parse(rawInput);
   const membership = context.membership;
   if (!membership || !hasActiveMembership(context) ||
-      !hasMembershipRole(context,"FACULTY") ||
+      !hasMembershipRole(context,ROLE.FACULTY) ||
       !can(context,"courses.read",{
         collegeId: membership.collegeId,
         organizationId: membership.organizationId,

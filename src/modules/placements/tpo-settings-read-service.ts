@@ -31,6 +31,7 @@ import {
   tpoSettingOrigin,
 } from "./tpo-settings-model";
 
+import { ROLE } from "@/modules/identity/roles";
 const rulesPageSchema = z
   .object({
     page: z.union([
@@ -53,7 +54,7 @@ async function assertLiveTpoSettingsRead(context:RequestContext,collegeId:string
   const actor=await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    collegeId,organizationId:college.organizationId,
   });
-  if(!hasMembershipRole(actor,"TPO"))throw new AuthorizationError("placements.manage");
+  if(!hasMembershipRole(actor,ROLE.TPO))throw new AuthorizationError("placements.manage");
  });
 }
 
@@ -70,7 +71,7 @@ async function requireTpoSettingsCollege(
 ): Promise<string> {
   if (
     !context.membership ||
-    !hasMembershipRole(context, "TPO")
+    !hasMembershipRole(context, ROLE.TPO)
   ) {
     throw new AuthorizationError(
       "placements.manage",

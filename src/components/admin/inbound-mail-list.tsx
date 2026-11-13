@@ -13,6 +13,7 @@ import { Table } from "@/components/ui/table";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Inbox list data is a preview, never a full-message permission grant.
  * The full plain-text body is fetched only after opening the global-SA drawer. */
 export type InboundMailRow={
@@ -162,7 +163,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}){
          {row.senderDisplayName?<span className="block break-all text-xs text-muted-foreground">{row.fromAddress||"Unknown sender"}</span>:null}
          {row.senderKind?<span className="mt-1 inline-flex max-w-full flex-wrap items-center gap-1 text-xs">
           <StatusBadge>{row.senderKind==="RECRUITER"?"Recruiter":
-            row.senderKind==="LEARNER"||row.senderKind==="STUDENT"?"Student":
+            row.senderKind===ROLE.LEARNER||row.senderKind==="STUDENT"?"Student":
             row.senderKind==="HR"?"Recruiter":row.senderKind}</StatusBadge>
           {row.collegeName?<span className="text-muted-foreground">{row.collegeName}</span>:null}
          </span>:null}

@@ -7,6 +7,7 @@ import {assertPersistedPlatformPermission,type PermissionTransaction}
 import type {RequestContext} from "@/modules/identity/context";
 import {CoursesServiceError} from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Recheck the canonical user, membership, roles and teaching grant while
  * holding SHARE locks in the SAME transaction that publishes results.
  *
@@ -31,7 +32,7 @@ export async function assertPersistedFacultyTeachingMutation(
  if(!persisted.membership||
    persisted.membership.id!==submitted.id||
    persisted.membership.status!=="ACTIVE"||
-   !persisted.membership.roles.includes("FACULTY")||
+   !persisted.membership.roles.includes(ROLE.FACULTY)||
    persisted.membership.collegeId!==scope.collegeId||
    persisted.membership.organizationId!==scope.organizationId){
   throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");

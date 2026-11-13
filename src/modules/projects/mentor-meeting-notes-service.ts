@@ -17,16 +17,17 @@ import {mentorMeetingFacilitationSchema,mentorMeetingFacilitationWriteSchema}
   from "./mentor-meeting-facilitation-model";
 import {preservesMentorMeetingFacilitationReferences} from "./mentor-meeting-facilitation-editor-model";
 
+import { ROLE } from "@/modules/identity/roles";
 async function getMentorMeetingNotesScope(context:RequestContext,projectId:string){
   const membership=context.membership;
-  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR"))
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR))
     throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
   // Resolve module entitlement before dereferencing the supplied project ID.
   // A disabled tenant must not reveal whether that project exists.
   if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
     throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
   const scope=await requireProjectReadAccess(context,projectId);
-  if(scope.access!=="MENTOR"||!can(context,"projects.read",{
+  if(scope.access!==ROLE.MENTOR||!can(context,"projects.read",{
     collegeId:scope.collegeId,organizationId:scope.organizationId,
   }))throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
   return scope;

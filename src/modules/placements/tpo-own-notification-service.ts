@@ -8,13 +8,14 @@ import { requirePlacementManageScope } from "./scope";
 import { tpoOwnNotificationQuerySchema, tpoMarkOwnNotificationSchema } from "./tpo-own-notification-model";
 import { safePlacementNotificationSubject } from "./tpo-messages-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export class TpoOwnNotificationConflict extends Error {
   constructor() { super("TPO_NOTIFICATION_MISSING_OR_STALE"); this.name = "TpoOwnNotificationConflict"; }
 }
 
 async function authorized(context: RequestContext) {
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "TPO") ||
+  if (!membership || !hasMembershipRole(context, ROLE.TPO) ||
       context.user.platformStatus !== "ACTIVE") throw new AuthorizationError("placements.manage");
   const collegeId = membership.collegeId;
   if (!can(context, "placements.manage", { collegeId })) throw new AuthorizationError("placements.manage");

@@ -5,6 +5,7 @@ import { collegeMemberships, membershipRoles, users } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Courses read contract for own learner surfaces: trust the signed-in request
  * for routing, then verify the persisted actor, college, active status and role.
@@ -13,7 +14,7 @@ export async function requireOwnCourseLearnerRead(context: RequestContext) {
   const membership=context.membership;
   if (!membership || membership.status!=="ACTIVE" ||
       context.user.platformStatus!=="ACTIVE" ||
-      !membership.roles.includes("LEARNER")) {
+      !membership.roles.includes(ROLE.LEARNER)) {
     throw new AuthorizationError("courses.read");
   }
   const membershipId=z.string().uuid().parse(membership.id);

@@ -9,6 +9,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { route } from "@/security/route";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime = "nodejs";
 
 /** Learner-only placement announcement unread count, never personal alert count. */
@@ -18,7 +19,7 @@ async function handleGET() {
   }
   try {
     const context = await getCurrentRequestContext();
-    if (!hasMembershipRole(context, "LEARNER")) {
+    if (!hasMembershipRole(context, ROLE.LEARNER)) {
       throw new AuthorizationError("placements.read");
     }
     const own = await requireLearnerPlacementAccess(context);

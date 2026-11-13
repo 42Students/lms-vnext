@@ -2,6 +2,7 @@ import { z } from "zod";
 import { MEMBERSHIP_ROLES, MEMBERSHIP_ROLE_LABELS, resolveLegacyAccountRole,
  type MembershipRole } from "@/modules/identity/constants";
 
+import { ROLE } from "@/modules/identity/roles";
 export const personCollegeIdSchema = z.string().uuid();
 export const personMembershipIdSchema = z.string().uuid();
 
@@ -39,10 +40,10 @@ export const MEMBERSHIP_ROLE_LEGACY_HELP={
 export const MEMBERSHIP_ROLE_PICKER_OPTIONS:ReadonlyArray<{
  value:MembershipRole;label:string;description:string;
  }>=MEMBERSHIP_ROLES.map(value=>({value,label:MEMBERSHIP_ROLE_LABELS[value],
-  description:value==="COLLEGE_ADMIN"?"Manage college settings and people":
-   value==="TPO"?"Manage placement operations":
-   value==="MENTOR"?"Guide assigned project teams":
-   value==="FACULTY"?"Teach and manage course delivery":
+  description:value===ROLE.COLLEGE_ADMIN?"Manage college settings and people":
+   value===ROLE.TPO?"Manage placement operations":
+   value===ROLE.MENTOR?"Guide assigned project teams":
+   value===ROLE.FACULTY?"Teach and manage course delivery":
     "Learn through courses and activities",
  }));
 export function legacyRolePickerResolution(role:string,facultyType?:string|null){

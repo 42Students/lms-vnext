@@ -6,6 +6,7 @@ import {collegeMemberships,colleges,membershipRoles,users,learnerProgramEnrollme
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {ownLearnerProfilePrincipalMatches} from "./learner-profile-access-model";
+import { ROLE } from "@/modules/identity/roles";
 export async function requireOwnLearnerProfileAccess(context:RequestContext){
   const member=context.membership;
   if(!member)throw new AuthorizationError("profile.self.manage");
@@ -53,13 +54,13 @@ export async function requireStaffLearnerProfileReadAccess(
    eq(collegeMemberships.collegeId,learner.collegeId),
    eq(collegeMemberships.status,"ACTIVE"))).limit(1);
  if(!persistedActor)throw new AuthorizationError("people.manage");
- const allowedRoles=actor.roles.filter(role=>role==="COLLEGE_ADMIN"||role==="FACULTY");
+ const allowedRoles=actor.roles.filter(role=>role===ROLE.COLLEGE_ADMIN||role===ROLE.FACULTY);
  if(!allowedRoles.length)throw new AuthorizationError("people.manage");
  const persistedRoles=await getDb().select({role:membershipRoles.role})
   .from(membershipRoles).where(eq(membershipRoles.membershipId,actor.id));
- if(allowedRoles.includes("COLLEGE_ADMIN")&&persistedRoles.some(x=>x.role==="COLLEGE_ADMIN"))
+ if(allowedRoles.includes(ROLE.COLLEGE_ADMIN)&&persistedRoles.some(x=>x.role===ROLE.COLLEGE_ADMIN))
   return {membershipId:learner.id,collegeId:learner.collegeId,reason:"COLLEGE_ADMIN" as const};
- if(!allowedRoles.includes("FACULTY")||!persistedRoles.some(x=>x.role==="FACULTY"))
+ if(!allowedRoles.includes(ROLE.FACULTY)||!persistedRoles.some(x=>x.role===ROLE.FACULTY))
   throw new AuthorizationError("people.manage");
  const [teaching]=await getDb().select({id:sectionFacultyAssignments.id})
   .from(sectionFacultyAssignments)

@@ -23,6 +23,7 @@ import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {collegeDriveIdSchema} from "./college-drive-read-model";
 
+import { ROLE } from "@/modules/identity/roles";
 const uuid=z.string().uuid();
 async function scoped(ctx:RequestContext,rawJobId:unknown,rawId:unknown){
  const collegeId=await requireCollegePlacementAdmin(ctx);
@@ -202,7 +203,7 @@ export async function getCollegeApplicationDetail(
  // Do not expose an object key or signed URL. The linked receipt API performs
  // a separate authorization check and validates the CLEAN private object.
  const prefix=isSuperAdmin(ctx)?"/api/admin/verification":
-   hasMembershipRole(ctx,"TPO")?"/api/tpo/verification":"/api/college/verification";
+   hasMembershipRole(ctx,ROLE.TPO)?"/api/tpo/verification":"/api/college/verification";
  const resumeUrl=resumeReceipt?
    prefix+"/"+encodeURIComponent(application.membershipId)+"/EDUCATION/documents/"+
    encodeURIComponent(resumeReceipt.receiptId)+

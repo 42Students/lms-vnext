@@ -13,6 +13,7 @@ import {verificationLastPage,verificationPageUrl} from "@/modules/verification/p
 import {listVerificationBatchOptions,listVerificationBranchOptions,listVerificationClassOptions,listVerificationProgramOptions} from "@/modules/verification/filter-options-service";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 export default async function CollegeVerificationPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -22,7 +23,7 @@ export default async function CollegeVerificationPage({searchParams}:{
   <PageHeader title="Profile verification"/>
   <ErrorState title="Profile verification" description="Admin not assigned to a college. Ask a Super Admin to assign a college before reviewing students."/>
  </div>;
- if(!hasMembershipRole(context,"COLLEGE_ADMIN"))return <div className="min-w-0 space-y-4">
+ if(!hasMembershipRole(context,ROLE.COLLEGE_ADMIN))return <div className="min-w-0 space-y-4">
   <PageHeader title="Profile verification"/>
   <Alert tone="info" title="You cannot verify profiles here">Profile verification is available to an assigned College Admin in the selected college. Switch to the correct college and role to review requests.</Alert>
   <TextLink href="/dashboard" className="inline-flex min-h-11 items-center md:min-h-9">Back to dashboard</TextLink>

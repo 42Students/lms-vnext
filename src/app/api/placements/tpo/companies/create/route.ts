@@ -13,13 +13,14 @@ import { recordActivityEvent } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { matchesCompanyDomain } from "@/modules/placements/public-join/domain-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime = "nodejs";
 
 export const POST = route(
   { auth: "user", permission: "placements.manage" },
   async ({ request, context: actor }) => {
     const context = actor!;
-    if (!context.membership || !hasMembershipRole(context, "TPO")) {
+    if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
       throw new AuthorizationError("placements.manage");
     }
     const collegeId = context.membership.collegeId;

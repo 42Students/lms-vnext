@@ -17,13 +17,14 @@ import { AuthorizationError, requirePermission } from "@/modules/permissions/pol
 import { buildOwnLearnerAcademicSummary } from "./learner-academic-summary-model";
 import { getOwnAcademicEvidence } from "@/modules/placements/eligibility-service";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Profile academic identity comes from a live enrollment, never client profile
  * JSON or a caller-supplied membership ID. A missing enrollment stays unknown.
  */
 export async function getOwnLearnerAcademicSummary(context: RequestContext) {
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "LEARNER") ||
+  if (!membership || !hasMembershipRole(context, ROLE.LEARNER) ||
       membership.status !== "ACTIVE" || context.user.platformStatus !== "ACTIVE") {
     throw new AuthorizationError("academics.read");
   }

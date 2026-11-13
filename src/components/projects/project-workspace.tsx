@@ -92,6 +92,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type Workspace = Awaited<
   ReturnType<typeof getProjectWorkspaceView>
 >;
@@ -440,10 +441,10 @@ export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel,sectio
   backLabel?: string;
   section?:ProjectWorkspaceSection;
 }) {
-  const headerDescription = mode==="MENTOR"
+  const headerDescription = mode===ROLE.MENTOR
               ? [workspace.project.courseLabel?.trim()||null,
-                 workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName??
-                 workspace.members.find(member=>member.role==="MENTOR")?.displayName??null]
+                 workspace.members.find(member=>member.role===ROLE.MENTOR&&member.isPrimary)?.displayName??
+                 workspace.members.find(member=>member.role===ROLE.MENTOR)?.displayName??null]
                 .filter(Boolean).join(" · ")||"Project workspace"
               : mode==="ADMIN"&&section==="audit"?
                 "Trace resource changes here, or open the full project audit trail for broader events.":
@@ -538,7 +539,7 @@ export function ProjectWorkspace({
     goal:authoredBrief.goal,description:authoredBrief.description,
     deliverables:authoredBrief.deliverables,
   }:templateBrief;
-  const mentorReviewHref = mode === "MENTOR"
+  const mentorReviewHref = mode === ROLE.MENTOR
     ? mentorReviewSubmissionHref(workspace.project.id, workspace.finalDelivery.submissions)
     : null;
   const show = (section: ProjectWorkspaceSection) =>
@@ -645,8 +646,8 @@ export function ProjectWorkspace({
   );
 
   return (
-    <div className={mode==="MENTOR" ? "prototype-mentor-project-body min-w-0 space-y-4" : polishAdminSection && mode==="ADMIN" ? "min-w-0 space-y-4" : "min-w-0 space-y-4 md:space-y-6"}>
-      {mode!=="ADMIN" && !(mode==="MENTOR" && hidePageHeader)?<PageBackLink href={backHref} label={backLabel === "Projects" ? "Back to projects" : backLabel} />:null}
+    <div className={mode===ROLE.MENTOR ? "prototype-mentor-project-body min-w-0 space-y-4" : polishAdminSection && mode==="ADMIN" ? "min-w-0 space-y-4" : "min-w-0 space-y-4 md:space-y-6"}>
+      {mode!=="ADMIN" && !(mode===ROLE.MENTOR && hidePageHeader)?<PageBackLink href={backHref} label={backLabel === "Projects" ? "Back to projects" : backLabel} />:null}
       {polishAdminSection && mode==="ADMIN"?<PageBackLink href={backHref} label={backLabel} />:null}
 
       {!hidePageHeader ? <ProjectWorkspaceHeader workspace={workspace} mode={mode} section={activeSection}
@@ -728,13 +729,13 @@ export function ProjectWorkspace({
               "Read-only project access"}
           </p>
           <p className="mt-1 text-sm leading-6 text-body">
-            {archived&&mode==="MENTOR"?
+            {archived&&mode===ROLE.MENTOR?
               "This workspace is archived. You can review historical tasks, resources, meetings and submissions, but cannot change them.":
-              archived&&mode==="LEARNER"?
+              archived&&mode===ROLE.LEARNER?
                 "This workspace is archived, so it is read-only.":
               workspace.project.status==="COMPLETED"?
                 "This project is complete. Existing work and meetings remain available to read; editing is disabled.":
-                mode==="MENTOR"?
+                mode===ROLE.MENTOR?
                   "Your Project Mentor membership is read-only. Ask the College Admin to restore editing access or assign a writable Mentor role.":
                   "Team, execution, delivery, resources, meetings and activity remain available for review. Mutations are disabled."}
           </p>
@@ -757,8 +758,8 @@ export function ProjectWorkspace({
         estimatedTaskCount={workspace.tasks.filter(task =>
           !task.deletedAt && task.estimatePoints !== null).length}
         hasMentor={workspace.members.some(member=>
-          member.role==="MENTOR")}/>:null}
-      {(mode !== "ADMIN" && show("summary")) || (mode === "MENTOR" && show("overview")) ? (
+          member.role===ROLE.MENTOR)}/>:null}
+      {(mode !== "ADMIN" && show("summary")) || (mode === ROLE.MENTOR && show("overview")) ? (
         <div className="grid min-w-0 grid-cols-2 gap-x-4 gap-y-0 border-t border-[var(--lms-canvas-border)] xl:grid-cols-4">
           <Metric
             label="Tasks"
@@ -808,7 +809,7 @@ export function ProjectWorkspace({
         </div>
       ) : null}
 
-      {mode === "LEARNER" && show("delivery") ? (
+      {mode === ROLE.LEARNER && show("delivery") ? (
         <section className="border-b border-[var(--lms-canvas-border)] pb-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -856,7 +857,7 @@ export function ProjectWorkspace({
       ) : null}
 
       {show("overview") ? (
-        <section id={mode==="MENTOR"?"mentor-project-brief-editor":undefined}
+        <section id={mode===ROLE.MENTOR?"mentor-project-brief-editor":undefined}
           className="border-b border-[var(--lms-canvas-border)] pb-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <Heading level={2} size="lg" className="m-0 text-foreground">{mode==="ADMIN"?"Overview":"About this project"}</Heading>
@@ -865,11 +866,11 @@ export function ProjectWorkspace({
               Review submission
             </ButtonLink> : null}
           </div>
-          {(mode==="ADMIN"||mode==="MENTOR")&&!readOnly?<WorkspaceBriefEditor
+          {(mode==="ADMIN"||mode===ROLE.MENTOR)&&!readOnly?<WorkspaceBriefEditor
             requireDeliverables={workspaceBriefRequiresDeliverables(workspace.project.status)}
             projectId={workspace.project.id} initial={authoredBrief}
             updatedAt={workspace.project.updatedAt}/>:null}
-          {mode==="MENTOR"&&!readOnly?<MentorProjectAboutEditor project={workspace.project}/>:null}
+          {mode===ROLE.MENTOR&&!readOnly?<MentorProjectAboutEditor project={workspace.project}/>:null}
           {(isAuthored&&authoredBrief.completionConditions.length>0)||
             (isAuthored&&authoredBrief.personas.length>0)?<div className="mt-4 grid gap-3 sm:grid-cols-2">
             <div><Heading level={3} size="sm">Completion conditions</Heading>
@@ -894,18 +895,18 @@ export function ProjectWorkspace({
               <ul className="mt-2 space-y-1 text-sm text-body">
                 <li>Mentor · Reviews tasks and final delivery</li>
                 <li>Project team · Works on assigned tasks and shared submissions</li>
-                {workspace.members.filter(m=>m.role==="MENTOR").slice(0,2).map(m=>
+                {workspace.members.filter(m=>m.role===ROLE.MENTOR).slice(0,2).map(m=>
                   <li key={m.membershipId}>{m.displayName} · Mentor</li>)}
               </ul>
             </section>
           </div>:null}
-          {mode==="MENTOR"?<section aria-label="Final submission" className="mt-4 border-b border-border pb-4 text-sm text-body">
+          {mode===ROLE.MENTOR?<section aria-label="Final submission" className="mt-4 border-b border-border pb-4 text-sm text-body">
             <Heading level={3} className="text-foreground">Final submission</Heading>
             <p className="mt-1">Status: {readiness.finalSubmission.latest?label(readiness.finalSubmission.latest.status):"Not submitted"}</p>
             <TextLink href={mentorReviewHref??("/mentor/projects/"+workspace.project.id+"?tab=delivery")}
               className="mt-2 inline-flex min-h-11 md:min-h-9 items-center">Review submission</TextLink>
           </section>:null}
-          {mode==="MENTOR"?<section aria-label="Mentor task progress" className="mt-4 border-b border-border pb-4">
+          {mode===ROLE.MENTOR?<section aria-label="Mentor task progress" className="mt-4 border-b border-border pb-4">
             <Heading level={3}>Task progress</Heading>
             <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
               {groupLearnerBoardLanes(workspace.tasks,workspace.sprints).map(lane=>
@@ -917,7 +918,7 @@ export function ProjectWorkspace({
             <p className="mt-2 text-xs text-body">Submission also needs all {readiness.execution.sprints.total}
               {" "}sprints signed off ({readiness.execution.sprints.completed} so far).</p>
           </section>:null}
-          {mode==="LEARNER"?<section aria-label="Task completion donut" className="mt-4 border-b border-border pb-4">
+          {mode===ROLE.LEARNER?<section aria-label="Task completion donut" className="mt-4 border-b border-border pb-4">
             <Heading level={3} size="sm">Task completion</Heading>
             {readiness.execution.tasks.total>0?<div className="mt-3 flex flex-wrap items-center gap-4">
               <svg viewBox="0 0 42 42" role="img"
@@ -944,7 +945,7 @@ export function ProjectWorkspace({
                 {" "}sprints signed off ({readiness.execution.sprints.completed} so far).</p>:
               <p className="mt-3 text-xs text-body">Tasks only — this project has no sprints.</p>}
           </section>:null}
-          {mode==="LEARNER"?<section aria-label="Task lane progress" className="mt-4 border-b border-border pb-4">
+          {mode===ROLE.LEARNER?<section aria-label="Task lane progress" className="mt-4 border-b border-border pb-4">
             <Heading level={3} className="text-foreground">Task progress</Heading>
             <div className="mt-2 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3 lg:grid-cols-6">
               {groupLearnerBoardLanes(workspace.tasks,workspace.sprints).map(lane=>
@@ -978,7 +979,7 @@ export function ProjectWorkspace({
           ) : mode==="ADMIN"&&!readOnly
             ? <p className="mt-2 text-sm text-body">Start by describing the project goal, deliverables and completion conditions in the editor above.</p>
             : <p className="mt-2 text-sm text-body">No authored project brief is available.</p>}
-          {mode === "LEARNER" ? (
+          {mode === ROLE.LEARNER ? (
             <div className="mt-3 space-y-2 text-sm text-body">
               {workspace.project.phase ? <p>Phase: <strong>{workspace.project.phase}</strong></p> : null}
               {workspace.project.dueLabel || workspace.project.endDate ?
@@ -999,7 +1000,7 @@ export function ProjectWorkspace({
                 </div> : null}
             </div>
           ) : null}
-          {mode === "LEARNER" ? (
+          {mode === ROLE.LEARNER ? (
             <section className="mt-4 border-b border-border pb-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <Heading level={3} size="sm" className="text-foreground">Final submission</Heading>
@@ -1025,14 +1026,14 @@ export function ProjectWorkspace({
               </TextLink>
             </section>
           ) : null}
-          {mode === "LEARNER" ? (
+          {mode === ROLE.LEARNER ? (
             <div className="mt-4 space-y-3">
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
                   <p className="font-semibold text-foreground">Mentor</p>
                   <p className="mt-1 text-body">{workspace.members.find(member =>
-                    member.role === "MENTOR" && member.isPrimary)?.displayName ??
-                    workspace.members.find(member => member.role === "MENTOR")?.displayName ??
+                    member.role === ROLE.MENTOR && member.isPrimary)?.displayName ??
+                    workspace.members.find(member => member.role === ROLE.MENTOR)?.displayName ??
                     "Not assigned"}</p>
                 </div>
                 <div className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
@@ -1055,9 +1056,9 @@ export function ProjectWorkspace({
               ) : null}
             </div>
           ) : null}
-          {mode==="MENTOR"?<section className="mt-4 space-y-3 border-b border-border pb-4 text-sm">
-            <p>Mentor: {workspace.members.find(m=>m.role==="MENTOR"&&m.isPrimary)?.displayName??
-              workspace.members.find(m=>m.role==="MENTOR")?.displayName??"Not assigned"}</p>
+          {mode===ROLE.MENTOR?<section className="mt-4 space-y-3 border-b border-border pb-4 text-sm">
+            <p>Mentor: {workspace.members.find(m=>m.role===ROLE.MENTOR&&m.isPrimary)?.displayName??
+              workspace.members.find(m=>m.role===ROLE.MENTOR)?.displayName??"Not assigned"}</p>
             <p>Due date: <strong>{workspace.project.dueLabel??workspace.project.endDate??"No due date"}</strong></p>
             {workspace.project.phase?<p>Phase: {workspace.project.phase}</p>:null}
             <div className="flex flex-wrap gap-3">
@@ -1084,14 +1085,14 @@ export function ProjectWorkspace({
       {show("team") ? <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <Heading level={2} size="lg" className="m-0 text-foreground">{mode==="LEARNER"?"Project team":"Team"}</Heading>
+            <Heading level={2} size="lg" className="m-0 text-foreground">{mode===ROLE.LEARNER?"Project team":"Team"}</Heading>
             <p className="mt-1 text-sm text-body">Manage mentor ownership, student membership and workload across this workspace.</p>
           </div>
           {mode==="ADMIN"&&!readOnly
             ?<CollegeProjectMentorDialog projectId={workspace.project.id}
               collegeId={workspace.project.collegeId}
               {...(() => {
-                const mentorName=workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName;
+                const mentorName=workspace.members.find(member=>member.role===ROLE.MENTOR&&member.isPrimary)?.displayName;
                 return mentorName===undefined?{}:{currentMentorName:mentorName};
               })()}/>
             :mode==="ADMIN"?<Button type="button" variant="secondary" disabled>Reassign mentor…</Button>:null}
@@ -1101,13 +1102,13 @@ export function ProjectWorkspace({
             :mode==="ADMIN"?<Button type="button" variant="secondary" disabled>Manage students…</Button>:null}
         </div>
         {mode==="ADMIN"?<CollegeAdminWorkspaceTeamOverview members={workspace.members} tasks={workspace.tasks}/>:null}
-        {mode==="MENTOR" && mentorWorkspaceMissingPrimaryMentor(workspace.project.status,workspace.members) ? (
+        {mode===ROLE.MENTOR && mentorWorkspaceMissingPrimaryMentor(workspace.project.status,workspace.members) ? (
           <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm text-body">
             No primary Mentor is recorded in the current Project roster.
             Team staffing changes remain a College Admin action.
           </p>
         ) : null}
-        {mode==="MENTOR" ? (() => {
+        {mode===ROLE.MENTOR ? (() => {
           const facts=workspace.mentorEvidence.team;
           return <p className="text-sm text-body">
             Current recorded roster: {facts.learners} Learner{facts.learners===1?"":"s"} ·
@@ -1144,14 +1145,14 @@ export function ProjectWorkspace({
             tasksInReview:assigned.filter(task=>task.status==="IN_REVIEW").length,
             tasksInProgress:assigned.filter(task=>task.status==="IN_PROGRESS").length,
             lastTaskUpdate:last?formatDateTime(last):null,
-            canEdit:!readOnly&&(!workspace.project.teamGroupId||member.role!=="LEARNER"),
+            canEdit:!readOnly&&(!workspace.project.teamGroupId||member.role!==ROLE.LEARNER),
           };
         })}/></>:null}
         <div className="grid min-w-0 gap-x-6 gap-y-2 md:grid-cols-2 xl:grid-cols-3">
-          {mode==="MENTOR"?workspace.mentorRoster.map(member=>{
+          {mode===ROLE.MENTOR?workspace.mentorRoster.map(member=>{
             const active=member.endedAt===null && member.memberStatus==="ACTIVE" &&
               member.accountStatus==="ACTIVE";
-            const linkedIn=member.role==="MENTOR"?safeProjectExternalHref(member.linkedIn):null;
+            const linkedIn=member.role===ROLE.MENTOR?safeProjectExternalHref(member.linkedIn):null;
             return <article key={member.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
@@ -1160,10 +1161,10 @@ export function ProjectWorkspace({
                 </div>
                 <div className="flex flex-wrap gap-1">
                   <StatusBadge tone={active?"success":"neutral"}>{active?"Active":"Inactive"}</StatusBadge>
-                  {member.role==="MENTOR"?<StatusBadge tone="info">{member.isPrimary?"Primary mentor":"Mentor"}</StatusBadge>:null}
+                  {member.role===ROLE.MENTOR?<StatusBadge tone="info">{member.isPrimary?"Primary mentor":"Mentor"}</StatusBadge>:null}
                 </div>
               </div>
-              {member.role==="MENTOR"?<div className="mt-3 space-y-2 text-sm text-body">
+              {member.role===ROLE.MENTOR?<div className="mt-3 space-y-2 text-sm text-body">
                 <p className="font-semibold text-foreground">{member.academicTitle?.trim()||"Project mentor"}</p>
                 {member.bio?<p className="whitespace-pre-wrap break-words">{member.bio}</p>:
                   <p className="text-xs">No mentor bio yet. Update your faculty profile to introduce your role.</p>}
@@ -1172,7 +1173,7 @@ export function ProjectWorkspace({
               </div>:null}
             </article>;
           }):null}
-          {mode==="LEARNER"?workspace.members.map((member) => (
+          {mode===ROLE.LEARNER?workspace.members.map((member) => (
             <article
               key={member.id}
               className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4"
@@ -1190,12 +1191,12 @@ export function ProjectWorkspace({
                 </div>
                 <StatusBadge
                   tone={
-                    member.role === "MENTOR"
+                    member.role === ROLE.MENTOR
                       ? "info"
                       : "neutral"
                   }
                 >
-                  {member.role === "MENTOR" &&
+                  {member.role === ROLE.MENTOR &&
                   member.isPrimary
                     ? "Primary mentor"
                     : label(member.role)}
@@ -1242,11 +1243,11 @@ export function ProjectWorkspace({
               </div>)}
             </dl>
           </section>:null}
-          {mode!=="LEARNER"&&!readOnly?
+          {mode!==ROLE.LEARNER&&!readOnly?
             <div id="mentor-project-add-release" className="scroll-mt-24">
               <MentorReleaseEditor projectId={workspace.project.id}/>
             </div>:null}
-          {mode==="MENTOR"&&workspace.releases.length===0?
+          {mode===ROLE.MENTOR&&workspace.releases.length===0?
             <EmptyState title="No sprints yet"
               description="Add the sprints this project should be measured against."
               action={readOnly?
@@ -1266,7 +1267,7 @@ export function ProjectWorkspace({
               </TextLink>
             </div>
           ) : null}
-          {mode!=="MENTOR"&&!workspace.releasesLoadError&&workspace.releases.length===0?
+          {mode!==ROLE.MENTOR&&!workspace.releasesLoadError&&workspace.releases.length===0?
             <EmptyState title={mode==="ADMIN"?"No releases on this project yet":"No sprints yet"}
               description={mode==="ADMIN"?
                 "A sprint must belong to a release. Create or seed a project release before adding a new sprint.":
@@ -1283,7 +1284,7 @@ export function ProjectWorkspace({
               </TextLink>
             </div>:null}
         </div>
-        {mode==="LEARNER"?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
+        {mode===ROLE.LEARNER?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
           {(()=>{
             const today=createDateFormatter("sv-SE", {timeZone:"Asia/Kolkata",
               year:"numeric",month:"2-digit",day:"2-digit"}).format(renderTime);
@@ -1292,7 +1293,7 @@ export function ProjectWorkspace({
               {" · "}{rollup.overdue} Overdue</>;
           })()}
         </div>:null}
-        {mode==="LEARNER"&&workspace.releases.length>0?
+        {mode===ROLE.LEARNER&&workspace.releases.length>0?
           <nav aria-label="Release roadmap" className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
             {workspace.releases.map(release=><TextLink variant="bare" key={release.id}
               href={"#project-release-"+release.id}
@@ -1421,7 +1422,7 @@ export function ProjectWorkspace({
                   <Heading level={3} size="base" className="mt-1 min-w-0 break-words text-foreground">
                     {release.title}
                   </Heading>
-                  {mode==="MENTOR"?<p className="mt-2 text-xs font-semibold text-body">
+                  {mode===ROLE.MENTOR?<p className="mt-2 text-xs font-semibold text-body">
                     {(sprintsByRelease.get(release.id)??[]).filter(s=>s.status==="COMPLETED").length}
                     {" "}of {(sprintsByRelease.get(release.id)??[]).length} sprints complete ·
                     {" "}{mentorEstimateLabel(workspace.tasks.filter(t=>t.sprintId!==null&&
@@ -1440,10 +1441,10 @@ export function ProjectWorkspace({
                   <StatusBadge tone={tone(release.status)}>
                     {label(release.status)}
                   </StatusBadge>
-                  {mode!=="LEARNER"&&!readOnly?<MentorReleaseEditor
+                  {mode!==ROLE.LEARNER&&!readOnly?<MentorReleaseEditor
                     projectId={workspace.project.id} release={release}
                     linkedSprints={(sprintsByRelease.get(release.id)??[]).length}/>:null}
-                  {mode !== "LEARNER" && !readOnly && release.status !== "SHIPPED" ? (
+                  {mode !== ROLE.LEARNER && !readOnly && release.status !== "SHIPPED" ? (
                     <MentorSprintCreate projectId={workspace.project.id}
                       inline={mode==="ADMIN"} releaseId={release.id}
                       releases={workspace.releases.map(item=>({
@@ -1460,7 +1461,7 @@ export function ProjectWorkspace({
                           updatedAt:task.updatedAt.toISOString(),
                           estimatePoints:task.estimatePoints}))} />
                   ) : null}
-                  {mode !== "LEARNER" && !readOnly ? (
+                  {mode !== ROLE.LEARNER && !readOnly ? (
                     <ReleaseLifecycleActions
                       projectId={workspace.project.id}
                       releaseId={release.id}
@@ -1504,7 +1505,7 @@ export function ProjectWorkspace({
                           Sprint {sprint.sequence + 1} ·{" "}
                           {sprint.title}
                         </p>
-                        {mode==="LEARNER"?(()=>{
+                        {mode===ROLE.LEARNER?(()=>{
                           const progress=learnerSprintProgress(sprint,workspace.tasks);
                           return <p className="mt-2 text-xs text-body"
                             aria-label={sprint.title+": "+progress.percentage+"% complete"}>
@@ -1517,7 +1518,7 @@ export function ProjectWorkspace({
                             {sprint.description}
                           </p>
                         ) : null}
-                        {mode==="MENTOR" ? (() => {
+                        {mode===ROLE.MENTOR ? (() => {
                           const facts=workspace.mentorEvidence.tasksBySprint[sprint.id]??mentorSprintTaskFacts([]);
                           return <p className="mt-2 text-xs text-body">
                             Tasks: {facts.done}/{facts.total} done · {facts.inReview} In review · {facts.blocked} Blocked
@@ -1531,12 +1532,12 @@ export function ProjectWorkspace({
                         >
                           {label(sprint.status)}
                         </StatusBadge>
-                        {mode!=="LEARNER"&&!readOnly&&sprint.status==="PLANNED"&&release.status!=="SHIPPED"?
+                        {mode!==ROLE.LEARNER&&!readOnly&&sprint.status==="PLANNED"&&release.status!=="SHIPPED"?
                           <MentorSprintDeleteControl projectId={workspace.project.id}
                             sprintId={sprint.id} title={sprint.title}
                             taskCount={(tasksBySprint.get(sprint.id)??[]).length}
                             updatedAt={sprint.updatedAt.toISOString()}/>:null}
-                        {mode !== "LEARNER" && !readOnly ? <>
+                        {mode !== ROLE.LEARNER && !readOnly ? <>
                           {["PLANNED","ACTIVE"].includes(sprint.status) &&
                             release.status !== "SHIPPED" ? (
                               <MentorSprintDetailsEdit
@@ -1560,14 +1561,14 @@ export function ProjectWorkspace({
                                 status={sprint.status}
                               />
                             ) : null}
-                          {mode === "MENTOR" &&
+                          {mode === ROLE.MENTOR &&
                           ["PLANNED","ACTIVE"].includes(sprint.status) &&
                           release.status !== "SHIPPED" ? (
                             <MentorTaskCreate
                               projectId={workspace.project.id}
                               sprintId={sprint.id}
                               updatedAt={sprint.updatedAt.toISOString()}
-                              learners={workspace.members.filter(m=>m.role==="LEARNER").map(m=>({membershipId:m.membershipId,displayName:m.displayName}))}
+                              learners={workspace.members.filter(m=>m.role===ROLE.LEARNER).map(m=>({membershipId:m.membershipId,displayName:m.displayName}))}
                               sprints={workspace.sprints.filter(item=>item.status!=="COMPLETED"
                                 && workspace.releases.some(release=>release.id===item.releaseId
                                   && release.status!=="SHIPPED")).map(item=>({
@@ -1576,7 +1577,7 @@ export function ProjectWorkspace({
                               }))}
                             />
                           ) : null}
-                          {mode === "MENTOR" ? (
+                          {mode === ROLE.MENTOR ? (
                             <MentorSprintTransition
                               projectId={workspace.project.id}
                               sprintId={sprint.id}
@@ -1597,7 +1598,7 @@ export function ProjectWorkspace({
                     </div>
 
                     <div className="mt-3 grid gap-2">
-                      {mode==="MENTOR" && mentorSprintEmptyWorkNotice(sprint.status,tasksBySprint.get(sprint.id)??[]) ? (
+                      {mode===ROLE.MENTOR && mentorSprintEmptyWorkNotice(sprint.status,tasksBySprint.get(sprint.id)??[]) ? (
                         <p role="status" className="border-l-2 border-[var(--lms-canvas-border)] pl-3 py-2 text-xs text-body">
                           {mentorSprintEmptyWorkNotice(sprint.status,tasksBySprint.get(sprint.id)??[])}
                         </p>
@@ -1640,12 +1641,12 @@ export function ProjectWorkspace({
                                     </p>
                                   </Disclosure>
                                 ) : null}
-                                {mode==="MENTOR" && mentorTaskReviewEvidence(task.status,latestAttempt)==="REVIEW_PENDING" ? (
+                                {mode===ROLE.MENTOR && mentorTaskReviewEvidence(task.status,latestAttempt)==="REVIEW_PENDING" ? (
                                   <p role="status" className="mt-2 text-xs font-semibold text-link">
                                     Submitted attempt v{latestAttempt?.version} is waiting for Mentor review.
                                   </p>
                                 ) : null}
-                                {mode==="MENTOR" && latestAttempt ? (
+                                {mode===ROLE.MENTOR && latestAttempt ? (
                                   <TextLink href={mentorTaskFeedbackHref(workspace.project.id,task.id)}
                                     className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-xs">
                                     Review recorded task feedback →
@@ -1704,7 +1705,7 @@ export function ProjectWorkspace({
                                     className="max-md:inline-flex max-md:min-h-11 max-md:items-center">Open submission</TextLink></dd>
                                 </div> : null}
                             </dl>
-                            {mode === "LEARNER" &&
+                            {mode === ROLE.LEARNER &&
                             !readOnly &&
                             sprint.status === "ACTIVE" &&
                             task.status !== "DONE" &&
@@ -1716,7 +1717,7 @@ export function ProjectWorkspace({
                                 />
                               </div>
                             ) : null}
-                            {mode === "LEARNER" && !readOnly &&
+                            {mode === ROLE.LEARNER && !readOnly &&
                               sprint.status === "ACTIVE" &&
                               ["TODO", "IN_PROGRESS", "BLOCKED"].includes(task.status) &&
                               task.assigneeMembershipId === currentMembershipId ? (
@@ -1733,7 +1734,7 @@ export function ProjectWorkspace({
                             <ProjectTaskComments projectId={workspace.project.id}
                               taskId={task.id} updatedAt={task.updatedAt.toISOString()}
                               canPost={!readOnly}/>
-                            {mode !== "LEARNER" && !readOnly ? (
+                            {mode !== ROLE.LEARNER && !readOnly ? (
                               <div className="mt-3 flex min-w-0 flex-wrap items-end gap-2 border-t border-[var(--lms-canvas-border)] pt-3">
                                 {["PLANNED","ACTIVE"].includes(sprint.status) &&
                                   release.status !== "SHIPPED" &&
@@ -1762,12 +1763,12 @@ export function ProjectWorkspace({
                                     taskId={task.id}
                                     assigneeMembershipId={task.assigneeMembershipId}
                                     updatedAt={task.updatedAt.toISOString()}
-                                    learners={workspace.members.filter(member=>member.role==="LEARNER").map(member=>({
+                                    learners={workspace.members.filter(member=>member.role===ROLE.LEARNER).map(member=>({
                                       membershipId:member.membershipId,displayName:member.displayName,
                                     }))}
                                   />
                                 ) : null}
-                                {mode === "MENTOR" ? (
+                                {mode === ROLE.MENTOR ? (
                                   <MentorTaskStatusTransition
                                     projectId={workspace.project.id}
                                     taskId={task.id}
@@ -1811,7 +1812,7 @@ export function ProjectWorkspace({
       </section> : null}
 
       {show("delivery") ? <section className="space-y-3">
-        {mode === "LEARNER" && workspace.members.filter(member => member.role === "LEARNER").length > 1 ? (
+        {mode === ROLE.LEARNER && workspace.members.filter(member => member.role === ROLE.LEARNER).length > 1 ? (
           <div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm text-body">
             Team submission: this final delivery is shared with everyone on your project team.
             Edits and submission status are visible to all team members.
@@ -1834,7 +1835,7 @@ export function ProjectWorkspace({
             review its original evidence and decisions.
           </p>
          </div>:null}
-        {mode==="MENTOR" && workspace.mentorEvidence.latestDelivery ? (
+        {mode===ROLE.MENTOR && workspace.mentorEvidence.latestDelivery ? (
           <p role="status" className="min-w-0 border-y border-[var(--lms-canvas-border)] py-3 text-sm text-body">
             Latest recorded delivery: version {workspace.mentorEvidence.latestDelivery?.version}
             {" · "}{workspace.mentorEvidence.latestDelivery?.status}.
@@ -1895,7 +1896,7 @@ export function ProjectWorkspace({
                       </StatusBadge>
                     </div>
 
-                    {mode !== "LEARNER" ? (
+                    {mode !== ROLE.LEARNER ? (
                       <dl className="mt-3 grid gap-2 text-xs text-body sm:grid-cols-2">
                         <div><dt className="font-semibold">Submission type</dt>
                           <dd>{submission.attachments.some(item=>(item as {kind?:string}|null)?.kind==="FILE") ? "File upload" :
@@ -1911,12 +1912,12 @@ export function ProjectWorkspace({
                           <dd>{submission.legacyRevisionCount ?? "—"}</dd></div>
                       </dl>
                     ) : null}
-                    {mode !== "LEARNER" && submission.notes ? (
+                    {mode !== ROLE.LEARNER && submission.notes ? (
                       <p className="mt-2 whitespace-pre-wrap text-sm text-body">
                         {submission.notes}
                       </p>
                     ) : null}
-                    {mode !== "LEARNER" && submission.attachments.length ? (
+                    {mode !== ROLE.LEARNER && submission.attachments.length ? (
                       <section aria-label="Additional evidence" className="mt-3 space-y-2">
                         <Heading level={3} size="sm" className="text-foreground">Additional evidence</Heading>
                         {submission.attachments.map((item, index) => {
@@ -1973,7 +1974,7 @@ export function ProjectWorkspace({
                       No mentor feedback has been recorded yet.
                     </p> : null}
 
-                    {mode!=="LEARNER"?<Disclosure title="Submission history" className="mt-3 border-t border-[var(--lms-canvas-border)] pt-3">
+                    {mode!==ROLE.LEARNER?<Disclosure title="Submission history" className="mt-3 border-t border-[var(--lms-canvas-border)] pt-3">
                       <ul className="mt-2 space-y-2 text-xs text-body">
                         {workspace.activity.filter(event=>event.subjectId===submission.id&&
                           event.eventType.includes("delivery")).map(event=>
@@ -1991,11 +1992,11 @@ export function ProjectWorkspace({
                         locked={Boolean(submission.lockedAt)}
                         projectStatus={workspace.project.status} allowLock={false}/>
                     ) : null}
-                    {mode==="MENTOR"&&!readOnly?<MentorDeliveryLockControl
+                    {mode===ROLE.MENTOR&&!readOnly?<MentorDeliveryLockControl
                       projectId={workspace.project.id} submissionId={submission.id}
                       status={submission.status} lockedAt={submission.lockedAt}
                       updatedAt={submission.updatedAt}/>:null}
-                    {mode === "MENTOR" && !readOnly &&
+                    {mode === ROLE.MENTOR && !readOnly &&
                       submission.status === "SUBMITTED" ? (
                       <div className="mt-3">
                         <FinalReviewControl projectId={workspace.project.id}
@@ -2004,7 +2005,7 @@ export function ProjectWorkspace({
                       </div>
                     ) : null}
 
-                    {mode !== "LEARNER" &&
+                    {mode !== ROLE.LEARNER &&
                     !readOnly &&
                     submission.status ===
                       "APPROVED" &&
@@ -2017,7 +2018,7 @@ export function ProjectWorkspace({
                       </div>
                     ) : null}
 
-                    {mode !== "LEARNER" &&
+                    {mode !== ROLE.LEARNER &&
                      workspace.project.status === "ACTIVE" &&
                      submission.status === "APPROVED" &&
                      !evaluation &&
@@ -2065,15 +2066,15 @@ export function ProjectWorkspace({
               {mode==="ADMIN"?<p className="mt-1 text-sm text-body">
                 Curate the references, files and access guidance this workspace team needs.
               </p>:null}
-              {mode==="LEARNER"?<p aria-label="Resource counts" className="mt-1 text-sm text-body">
+              {mode===ROLE.LEARNER?<p aria-label="Resource counts" className="mt-1 text-sm text-body">
                 {workspace.resources.filter(resource=>resource.status!=="ARCHIVED").length} active resources ·
                 {" "}{workspace.resources.filter(resource=>resource.required&&resource.status!=="ARCHIVED").length} required
               </p>:null}
             </div>
-            {!readOnly && (mode !== "LEARNER" || workspace.project.status === "ACTIVE") ? (
+            {!readOnly && (mode !== ROLE.LEARNER || workspace.project.status === "ACTIVE") ? (
               <CreateProjectResourceControl
                 projectId={workspace.project.id}
-                isLearner={mode === "LEARNER"}
+                isLearner={mode === ROLE.LEARNER}
                 sprints={workspace.sprints.map(item=>({id:item.id,label:item.title}))}
                 tasks={workspace.tasks.map(item=>({id:item.id,label:item.title}))}
               />
@@ -2085,7 +2086,7 @@ export function ProjectWorkspace({
             resources={workspace.resources}/>:null}
           <ProjectResourceList projectId={workspace.project.id} rows={workspace.resources}
             mode={mode} readOnly={readOnly}
-            sharers={mode==="MENTOR"?workspace.mentorResourceSharers:[]}
+            sharers={mode===ROLE.MENTOR?workspace.mentorResourceSharers:[]}
             sprints={workspace.sprints.map(item=>({id:item.id,label:item.title,status:item.status}))}
             tasks={workspace.tasks.map(item=>({id:item.id,label:item.title}))}/>
           {mode==="ADMIN"?<p className="text-xs text-body">
@@ -2095,7 +2096,7 @@ export function ProjectWorkspace({
             projectId={workspace.project.id}
             readOnly={readOnly}
             resources={workspace.resources.filter(item=>
-                item.status==="ACTIVE"||mode!=="LEARNER"&&item.status==="DRAFT")
+                item.status==="ACTIVE"||mode!==ROLE.LEARNER&&item.status==="DRAFT")
               .map(item=>({id:item.id,title:item.title,visibility:item.visibility,
                 status:item.status,updatedAt:item.updatedAt.toISOString()}))}
             mode={mode}
@@ -2123,11 +2124,11 @@ export function ProjectWorkspace({
               </Heading>
               <p className="mt-1 text-sm text-body">
                 {mode==="ADMIN"?"Plan project touchpoints and connect conversations to the work they support.":
-                  mode==="LEARNER"?"Upcoming meetings and recent history.":
+                  mode===ROLE.LEARNER?"Upcoming meetings and recent history.":
                   "Keep project conversations attached to the work they move forward."}
               </p>
             </div>
-            {!readOnly && mode === "LEARNER" ? (
+            {!readOnly && mode === ROLE.LEARNER ? (
               <RequestProjectMeetingControl
                 projectId={workspace.project.id}
               />
@@ -2171,7 +2172,7 @@ export function ProjectWorkspace({
           {mode==="ADMIN"?<p className="border-b border-border pb-3 text-xs text-body">
             Calendar sync and automatic reminders are not enabled. Follow-up notes and status are saved with each meeting.
           </p>:null}
-          {mode==="MENTOR" && workspace.meetings.length ? (() => {
+          {mode===ROLE.MENTOR && workspace.meetings.length ? (() => {
             const upcoming=workspace.meetings.filter(m=>(m.status==="SCHEDULED"||m.status==="RESCHEDULED")&&new Date(m.endsAt)>renderTime)
               .sort((a,b)=>new Date(a.startsAt).getTime()-new Date(b.startsAt).getTime());
             return <section aria-label="Upcoming project meetings" className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
@@ -2186,7 +2187,7 @@ export function ProjectWorkspace({
                   <li key={m.id}>{m.title} · {formatDateTime(m.startsAt)}
                     {m.meetingType?" · "+label(m.meetingType):""}</li>)}</ul>
               </Disclosure>:null}
-              <MentorMeetingHistory {...(mode==="MENTOR"?{projectId:workspace.project.id}:{})} meetings={workspace.meetings
+              <MentorMeetingHistory {...(mode===ROLE.MENTOR?{projectId:workspace.project.id}:{})} meetings={workspace.meetings
                 .filter(m=>m.status==="COMPLETED"||m.status==="CANCELLED"||
                   ((m.status==="SCHEDULED"||m.status==="RESCHEDULED")&&new Date(m.endsAt)<=renderTime))
                 .sort((a,b)=>new Date(b.startsAt).getTime()-new Date(a.startsAt).getTime())
@@ -2196,7 +2197,7 @@ export function ProjectWorkspace({
                 }))}/>
             </section>;
           })():null}
-          {mode==="LEARNER"&&workspace.meetings.length>0?<Heading level={3} size="sm">
+          {mode===ROLE.LEARNER&&workspace.meetings.length>0?<Heading level={3} size="sm">
             Meeting history
           </Heading>:null}
           <div className="space-y-3">
@@ -2238,13 +2239,13 @@ export function ProjectWorkspace({
                         </StatusBadge>
                       </div>
                     </div>
-                    {rsvp&&mode==="MENTOR"?<p className="mt-2 text-xs text-muted-foreground">
+                    {rsvp&&mode===ROLE.MENTOR?<p className="mt-2 text-xs text-muted-foreground">
                       In-app invitations: {rsvp.activeInvitees} current project members ·
                       {" "}{rsvp.accepted} accepted · {rsvp.tentative} maybe ·
                       {" "}{rsvp.declined} declined · {rsvp.notRecorded} unrecorded.
                       These are not Google Calendar RSVP receipts.
                     </p>:null}
-                    {(mode==="LEARNER"||mode==="MENTOR")&&!readOnly&&
+                    {(mode===ROLE.LEARNER||mode===ROLE.MENTOR)&&!readOnly&&
                       (meeting.status==="SCHEDULED"||meeting.status==="RESCHEDULED")&&
                       meeting.startsAt.getTime()>renderTime.getTime()?
                       <MentorMeetingRsvpControl projectId={workspace.project.id}
@@ -2290,7 +2291,7 @@ export function ProjectWorkspace({
                         Outcome: {meeting.outcome}
                       </p>
                     ) : null}
-                    {mode==="MENTOR"?(()=>{
+                    {mode===ROLE.MENTOR?(()=>{
                       const detail=mentorMeetingFacilitationSchema.parse(meeting.facilitation??{});
                       const hasNotes=Boolean(detail.notes||detail.actionItems||detail.actionItemRows.length);
                       const hasRetro=Boolean(detail.wentWell||detail.retroDidntGoWell||
@@ -2350,7 +2351,7 @@ export function ProjectWorkspace({
                         </section>:null}
                       </Disclosure>:null;
                     })():null}
-                    {mode==="MENTOR"? (
+                    {mode===ROLE.MENTOR? (
                       <TextLink
                         href={"/mentor/projects/"+encodeURIComponent(workspace.project.id)+
                           "/meetings/"+encodeURIComponent(meeting.id)+"/notes"}
@@ -2367,7 +2368,7 @@ export function ProjectWorkspace({
                         Join meeting ↗
                       </TextLink>
                     ) : null}
-                    {mode !== "LEARNER" &&
+                    {mode !== ROLE.LEARNER &&
                     !readOnly &&
                     (meeting.status === "REQUESTED" || meeting.status === "DRAFT" ||
                       meeting.status === "SCHEDULED" || meeting.status === "RESCHEDULED") && mentorMeetingDisplayStatus(meeting.status,meeting.endsAt,renderTime)!=="MISSED" ? (
@@ -2445,12 +2446,12 @@ export function ProjectWorkspace({
           }))} /> : null}
           {!workspace.activityLoadError&&mode!=="ADMIN"?<ProjectActivityFilteredList
             projectId={workspace.project.id} events={workspace.activity}
-            sprints={mode==="MENTOR"?workspace.sprints:[]}
-            mentorWeekSummary={mode==="MENTOR"}
-            weekContributors={mode==="MENTOR"?workspace.mentorWeekContributors:[]}
-            weekTotals={mode==="MENTOR"?workspace.mentorWeekActivityTotals:null}
-            resourceHistoryTotals={mode==="MENTOR"?workspace.mentorProjectActivityCounts?.resources:null}
-            actorOptions={mode==="MENTOR"?workspace.members.map(member=>({
+            sprints={mode===ROLE.MENTOR?workspace.sprints:[]}
+            mentorWeekSummary={mode===ROLE.MENTOR}
+            weekContributors={mode===ROLE.MENTOR?workspace.mentorWeekContributors:[]}
+            weekTotals={mode===ROLE.MENTOR?workspace.mentorWeekActivityTotals:null}
+            resourceHistoryTotals={mode===ROLE.MENTOR?workspace.mentorProjectActivityCounts?.resources:null}
+            actorOptions={mode===ROLE.MENTOR?workspace.members.map(member=>({
               id:member.userId,label:member.displayName??"Team member",
             })):[]}
             now={new Date().toISOString()} />:null}

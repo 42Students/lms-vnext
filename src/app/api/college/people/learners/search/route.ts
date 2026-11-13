@@ -11,6 +11,7 @@ import {listCollegePeopleWithRuntime} from "@/modules/people/runtime";
 import {apiErrorResponse} from "@/lib/api-error";
 import { route } from "@/security/route";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"private, no-store"};
@@ -29,7 +30,7 @@ async function handleGET(request:Request){
   catch{return NextResponse.json({error:"AUTHENTICATION_REQUIRED",
     message:"Authentication required"},{status:401,headers:noStore});}
   const member=context.membership;
-  if(!member||!hasMembershipRole(context,"COLLEGE_ADMIN"))
+  if(!member||!hasMembershipRole(context,ROLE.COLLEGE_ADMIN))
     return NextResponse.json({error:"FORBIDDEN",message:"College Admin access required"},
       {status:403,headers:noStore});
   try{

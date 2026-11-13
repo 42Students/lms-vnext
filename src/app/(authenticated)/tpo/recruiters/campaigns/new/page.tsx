@@ -9,6 +9,7 @@ import {TpoCampaignPrototypeSidebar} from "@/components/tpo/tpo-campaign-prototy
 import {tpoCampaignDispatchReady} from "@/modules/messaging/tpo-campaign-dispatch-service";
 import {CAMPAIGN_DRAFT_UNAVAILABLE} from "@/modules/messaging/tpo-campaign-draft-model";
 import { TextLink } from "@/components/ui/text-link";
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 export default async function NewTpoCampaignPage({searchParams}:{searchParams:Promise<{selected?:string|string[]}>}){
  const requested=(await searchParams).selected;
@@ -20,7 +21,7 @@ export default async function NewTpoCampaignPage({searchParams}:{searchParams:Pr
  const unsafeSelection=invalidSelection||(requested!==undefined&&raw.length===0)||(raw.length>0&&(candidateIds.length>100||
    validIds.length!==candidateIds.length||selectedLeadIds.length===0));
  const ctx=await getCurrentRequestContext();
- if(!ctx.membership||!hasMembershipRole(ctx,"TPO"))redirect("/dashboard");
+ if(!ctx.membership||!hasMembershipRole(ctx,ROLE.TPO))redirect("/dashboard");
  if(unsafeSelection)return <div className="min-w-0 space-y-4">
   <PageHeader title="Review recipients"/>
   <Alert tone="error">Some selected recruiters could not be identified. No campaign draft was created. Return to Engage and select up to 100 recruiters again.</Alert>

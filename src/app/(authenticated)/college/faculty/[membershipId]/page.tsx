@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function CollegeFacultyDetailPage({ params, searchParams }: {
   params: Promise<{ membershipId: string }>;
   searchParams: Promise<{status?:string|string[];role?:string|string[];page?:string|string[];pageSize?:string|string[]}>;
@@ -31,7 +32,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
   // teacher profiles remain /teacher/profile and always derive self identity.
   if(/^[0-9]+$/.test(membershipId)){
     const owner=context.membership;
-    if(!owner||!hasMembershipRole(context,"COLLEGE_ADMIN"))
+    if(!owner||!hasMembershipRole(context,ROLE.COLLEGE_ADMIN))
       throw new AuthorizationError("people.manage");
     requirePermission(context,"people.manage",{
       collegeId:owner.collegeId,organizationId:owner.organizationId,

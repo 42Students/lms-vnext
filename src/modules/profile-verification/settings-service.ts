@@ -14,6 +14,7 @@ import {
   type CgpaRule, type RawAcademicMark,
 } from "./academic-marks";
 
+import { ROLE } from "@/modules/identity/roles";
 const uuid=z.string().uuid();
 const ruleInput=z.enum(["X9_5","MINUS_0_5_X10","MINUS_0_75_X10","X10"]);
 type Level="10TH"|"12TH"|"DIPLOMA"|"UG"|"PG";
@@ -128,7 +129,7 @@ export async function readTpoProfileVerificationEnabled(context:RequestContext,r
   const membership=context.membership;
   if(!membership||membership.collegeId!==collegeId||membership.status!=="ACTIVE"||
      context.user.platformStatus!=="ACTIVE"||
-     !membership.roles.some(role=>role==="TPO"||role==="COLLEGE_ADMIN"))
+     !membership.roles.some(role=>role===ROLE.TPO||role===ROLE.COLLEGE_ADMIN))
    throw new AuthorizationError("placements.read");
  }else{
   requirePermission(context,"college.read",{collegeId,organizationId:college.organizationId});

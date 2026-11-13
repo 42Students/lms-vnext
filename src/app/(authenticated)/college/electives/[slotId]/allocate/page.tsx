@@ -24,6 +24,7 @@ import {ErrorState} from "@/components/ui/error-state";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 const uuid = z.string().uuid();
 const fieldStyle = "min-h-11 min-w-0 md:min-h-9";
 const base = (id: string) => "/college/electives/" + encodeURIComponent(id) + "/allocate";
@@ -31,7 +32,7 @@ const base = (id: string) => "/college/electives/" + encodeURIComponent(id) + "/
 async function scopedSlot(slotId: string) {
   const context = await getCurrentRequestContext();
   if (!context.membership || context.membership.status !== "ACTIVE" ||
-      !hasMembershipRole(context, "COLLEGE_ADMIN")) redirect("/dashboard");
+      !hasMembershipRole(context, ROLE.COLLEGE_ADMIN)) redirect("/dashboard");
   requirePermission(context, "academics.manage", {
     collegeId: context.membership.collegeId,
     organizationId: context.membership.organizationId,
@@ -92,7 +93,7 @@ export default async function CollegeElectiveAllocatePage({
   const input = await searchParams;
   const actor = await getCurrentRequestContext();
   if (!actor.membership || actor.membership.status !== "ACTIVE" ||
-      !hasMembershipRole(actor,"COLLEGE_ADMIN")) {
+      !hasMembershipRole(actor,ROLE.COLLEGE_ADMIN)) {
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Allocate elective students" />
       <ErrorState title="Admin not assigned to an active college"

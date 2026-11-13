@@ -11,6 +11,7 @@ import {requirePersistedTpoMembership} from "@/modules/placements/tpo-persisted-
 import { TpoCalendarViewportDefault } from "./tpo-calendar-viewport-default";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 type SearchParams = {
   date?: string | string[];
   view?: string | string[];
@@ -29,7 +30,7 @@ export default async function TpoCalendarPage({
 
   if (
     !context.membership ||
-    !hasMembershipRole(context, "TPO")
+    !hasMembershipRole(context, ROLE.TPO)
   ) {
     redirect("/dashboard");
   }

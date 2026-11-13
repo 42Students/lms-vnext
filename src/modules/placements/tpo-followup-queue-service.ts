@@ -26,9 +26,10 @@ import {
 } from "./tpo-followup-queue-model";
 import { TpoCrmError } from "./tpo-crm-service";
 
+import { ROLE } from "@/modules/identity/roles";
 async function requireTpo(context: RequestContext) {
   const membership = context.membership;
-  if (!membership || (!hasMembershipRole(context, "TPO") && !hasMembershipRole(context, "COLLEGE_ADMIN"))) {
+  if (!membership || (!hasMembershipRole(context, ROLE.TPO) && !hasMembershipRole(context, ROLE.COLLEGE_ADMIN))) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = membership.collegeId;

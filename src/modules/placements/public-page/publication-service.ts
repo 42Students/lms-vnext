@@ -17,6 +17,7 @@ import {formatPublicPlacementMetric,PUBLIC_METRIC_LABELS,
 import { publicPlacementPublicationInput,publicPublicationDecision,
  publicPublicationTimestamp } from "./publication-policy";
 
+import { ROLE } from "@/modules/identity/roles";
 export class PublicPlacementPublishError extends Error {
  constructor(readonly code:"NOT_CONFIGURED"|"SMALL_COHORT"|"NOT_REGISTERED"){
   super(code);this.name="PublicPlacementPublishError";
@@ -25,7 +26,7 @@ export class PublicPlacementPublishError extends Error {
 async function scope(context:RequestContext){
  const member=context.membership;
  if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
-    !hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+    !hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
  return {member,college:await requirePlacementManageScope(context,member.collegeId)};
 }
 /** Live count of distinct active, consented learners in invited unfinished batches. */

@@ -31,6 +31,7 @@ import { canAccessAnnouncements } from "./actor-status-model";
 import {readGlobalRuntimeNumber} from "@/modules/platform-settings/runtime-numeric-service";
 import { requireCurrentAnnouncementVersion } from "./announcement-version-guard";
 
+import { ROLE } from "@/modules/identity/roles";
 type ReceiverType = (typeof ANNOUNCEMENT_RECEIVER_TYPES)[number];
 
 async function activeCollegeScope(collegeId: string) {
@@ -104,7 +105,7 @@ async function resolveTarget(type: ReceiverType, id: string) {
     return row;
   }
 
-  const requiredRole = type === "FACULTY" ? "FACULTY" : "LEARNER";
+  const requiredRole = type === ROLE.FACULTY ? "FACULTY" : "LEARNER";
   const [row] = await db
     .select({ collegeId: collegeMemberships.collegeId, organizationId: colleges.organizationId })
     .from(collegeMemberships)
@@ -127,9 +128,9 @@ async function resolveTarget(type: ReceiverType, id: string) {
 
 function senderType(context: RequestContext) {
   if (isSuperAdmin(context)) return "SUPER_ADMIN" as const;
-  if (hasMembershipRole(context, "COLLEGE_ADMIN")) return "COLLEGE_ADMIN" as const;
-  if (hasMembershipRole(context, "TPO")) return "TPO" as const;
-  if (hasMembershipRole(context, "FACULTY")) return "FACULTY" as const;
+  if (hasMembershipRole(context, ROLE.COLLEGE_ADMIN)) return "COLLEGE_ADMIN" as const;
+  if (hasMembershipRole(context, ROLE.TPO)) return "TPO" as const;
+  if (hasMembershipRole(context, ROLE.FACULTY)) return "FACULTY" as const;
   return "LEARNER" as const;
 }
 
@@ -145,7 +146,7 @@ function adminListScope(context: RequestContext): { collegeId?: string; organiza
     if (context.adminScope?.organizationId) return { organizationId: context.adminScope.organizationId };
     return {};
   }
-  if (hasMembershipRole(context, "COLLEGE_ADMIN") && context.membership) {
+  if (hasMembershipRole(context, ROLE.COLLEGE_ADMIN) && context.membership) {
     return { collegeId: context.membership.collegeId };
   }
   throw new AnnouncementError("FORBIDDEN");
@@ -558,13 +559,13 @@ export async function listVisibleAnnouncementsForMembership(
       eq(db10Announcements.receiverId, membership.collegeId),
       // Placement broadcasts with the legacy ALL audience reach learners,
       // not every faculty or administrator who belongs to the college.
-      membership.roles.includes("LEARNER")
+      membership.roles.includes(ROLE.LEARNER)
         ? undefined
         : sql`${db10Announcements.senderType} <> 'TPO'`,
     )!,
   ];
 
-  if (membership.roles.includes("LEARNER")) {
+  if (membership.roles.includes(ROLE.LEARNER)) {
     receiverConditions.push(and(
       eq(db10Announcements.receiverType, "LEARNER"),
       eq(db10Announcements.receiverId, membership.id),
@@ -604,7 +605,7 @@ export async function listVisibleAnnouncementsForMembership(
     }
   }
 
-  if (membership.roles.includes("FACULTY")) {
+  if (membership.roles.includes(ROLE.FACULTY)) {
     receiverConditions.push(and(
       eq(db10Announcements.receiverType, "FACULTY"),
       eq(db10Announcements.receiverId, membership.id),
@@ -721,7 +722,7 @@ export async function listAnnouncementTargetOptions(context: RequestContext) {
   let collegeId: string | null = null;
   if (isSuperAdmin(context)) {
     collegeId = context.adminScope?.collegeId ?? null;
-  } else if (hasMembershipRole(context, "COLLEGE_ADMIN") && context.membership) {
+  } else if (hasMembershipRole(context, ROLE.COLLEGE_ADMIN) && context.membership) {
     collegeId = context.membership.collegeId;
   } else {
     throw new AnnouncementError("FORBIDDEN");

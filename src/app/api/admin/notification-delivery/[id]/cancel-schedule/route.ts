@@ -12,6 +12,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { requireStaffNotificationMutation } from "@/modules/activity/notification-service";
 import { route } from "@/security/route";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -28,7 +29,7 @@ async function handlePOST(request: Request, { params }: RouteContext) {
 
   try {
     const context = await getCurrentRequestContext();
-    if (!isSuperAdmin(context) && !hasMembershipRole(context, "COLLEGE_ADMIN"))
+    if (!isSuperAdmin(context) && !hasMembershipRole(context, ROLE.COLLEGE_ADMIN))
       return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
     const db = getDb();
     const ready = await db.execute<{ ready: boolean }>(sql`

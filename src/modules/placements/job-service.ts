@@ -46,6 +46,7 @@ import {
   type UpdatePlacementJobInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 async function loadActiveRelationship(
   collegeId: string,
   relationshipId: string,
@@ -290,7 +291,7 @@ export async function listOrganizationPlacementJobsPage(
   options:PlacementJobListOptions={},
 ){
  const organizationId=z.string().uuid().parse(organizationIdInput);
- if(!context.user.systemRoles.includes("SUPER_ADMIN") ||
+ if(!context.user.systemRoles.includes(ROLE.SUPER_ADMIN) ||
     context.user.platformStatus!=="ACTIVE" ||
     (context.adminScope?.organizationId!==null &&
      context.adminScope?.organizationId!==undefined &&

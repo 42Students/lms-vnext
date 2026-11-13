@@ -15,6 +15,7 @@ import {createPrivateReadGrant} from "@/modules/storage/private-object-storage";
 import {StorageFileError} from "@/modules/storage/file-errors";
 import {resourceMaterialCommandSchema,resourceMaterialsWriteReady,safeLearnerResourceMaterialHref} from "./lesson-resource-materials-model";
 
+import { ROLE } from "@/modules/identity/roles";
 function ensureReady(){
  if(!resourceMaterialsWriteReady())throw new CoursesServiceError("CONTENT_TYPE_SHAPE_INVALID");
 }
@@ -29,7 +30,7 @@ async function authorizeMaterial(context:RequestContext,contentId:string,deliver
    throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
  }else{
   const role=await requireLearningReadAccess(context,content.offeringId,deliveryId);
-  if(role==="LEARNER"){
+  if(role===ROLE.LEARNER){
    const offering=await loadCourseOfferingScope(content.offeringId);
    const course=await loadCourseScope(offering.courseId);
    if(!course.enabled||course.legacyAllowedForDisplay===0||

@@ -19,6 +19,7 @@ import {
   type RenameOrganizationInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 /** DTO adapter: preserve the old soft-delete flag without exposing a
  * fabricated numeric primary key. Consumers must treat id as a UUID.
  */
@@ -163,7 +164,7 @@ export async function listOrganizations(
     .orderBy(asc(organizations.createdAt),asc(organizations.id));
    return page?globalList.limit(page.limit).offset(page.offset):globalList;
   }
-  if(!context.membership||!hasMembershipRole(context,"COLLEGE_ADMIN"))
+  if(!context.membership||!hasMembershipRole(context,ROLE.COLLEGE_ADMIN))
    requirePermission(context,"organization.read");
   const organizationId=context.membership?.organizationId;
   if(!organizationId){

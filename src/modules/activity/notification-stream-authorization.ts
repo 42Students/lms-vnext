@@ -5,6 +5,7 @@ import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
 import { canOwnLearnerReceiveClassNotice } from "./learner-notification-membership-service";
 import { requireStaffNotificationAudience } from "./notification-service";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Class IDs are not authorization tokens. The live class stream requires an
  * enrolled learner, an assigned faculty member, or an explicitly scoped admin.
  * No enrolment/assignment/existence information is returned to the caller. */
@@ -13,11 +14,11 @@ export async function canSubscribeToClassNotificationStream(
   classId: string,
 ): Promise<boolean> {
   try {
-    if (hasMembershipRole(context, "LEARNER")) {
+    if (hasMembershipRole(context, ROLE.LEARNER)) {
       return await canOwnLearnerReceiveClassNotice(context, classId);
     }
-    if (!hasMembershipRole(context, "FACULTY") &&
-        !hasMembershipRole(context, "COLLEGE_ADMIN") &&
+    if (!hasMembershipRole(context, ROLE.FACULTY) &&
+        !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) &&
         !isSuperAdmin(context)) {
       return false;
     }

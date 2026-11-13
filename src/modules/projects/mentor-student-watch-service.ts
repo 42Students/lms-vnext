@@ -12,6 +12,7 @@ import {deriveMentorStudentTaskSignals} from "./mentor-student-task-signals-mode
 import {getMentorRecentCarryHistory} from "./mentor-consecutive-carry-service";
 import {mentorConsecutiveCarryInSignal} from "./mentor-consecutive-carry-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export type MentorStudentWatchItem={
   id:string;
   name:string;
@@ -33,14 +34,14 @@ export async function getMentorStudentWatch(
   now:Date=new Date(),
 ):Promise<MentorStudentWatchItem[]>{
   const membership=context.membership;
-  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR")||
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR)||
     context.user.platformStatus!=="ACTIVE"||!can(context,"projects.read",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const assigned=(verifiedRows??await listMyProjectInstances(context))
-    .filter(row=>row.memberRole==="MENTOR"&&row.project.collegeId===membership.collegeId&&
+    .filter(row=>row.memberRole===ROLE.MENTOR&&row.project.collegeId===membership.collegeId&&
       row.project.status==="ACTIVE");
   const byId=new Map(assigned.map(row=>[row.project.id,row.project.title]));
   if(!byId.size)return [];

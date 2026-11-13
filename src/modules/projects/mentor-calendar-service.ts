@@ -14,6 +14,7 @@ import {mentorCalendarCanMutateMeeting} from "./mentor-calendar-mutation-access-
 import {safeMentorCalendarMeetingType,type MentorMeetingCalendarItem}
   from "./mentor-calendar-view";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Organizer time zones describe how meetings were originally scheduled, not
  * the attendee's display zone. vNext intentionally displays every meeting in
@@ -54,7 +55,7 @@ export async function listMyMentorCalendarMeetings(
 ): Promise<MentorMeetingCalendarItem[]> {
   const membership = context.membership;
   if (context.user.platformStatus !== "ACTIVE" ||
-      !hasActiveMembership(context) || !hasMembershipRole(context, "MENTOR") ||
+      !hasActiveMembership(context) || !hasMembershipRole(context, ROLE.MENTOR) ||
       !membership || !can(context,"projects.read",{
         collegeId:membership.collegeId,organizationId:membership.organizationId,
       })) {
@@ -176,7 +177,7 @@ export async function listMyMentorSchedulableSprints(
   verifiedProjects?:readonly Awaited<ReturnType<typeof listMyProjectInstances>>[number][],
 ){
   const membership=context.membership;
-  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR")||
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR)||
     context.user.platformStatus!=="ACTIVE"||!can(context,"projects.read",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");

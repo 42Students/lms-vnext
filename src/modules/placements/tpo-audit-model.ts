@@ -1,3 +1,4 @@
+import { ROLE } from "@/modules/identity/roles";
 export const TPO_AUDIT_KINDS = [
   "ACTIVITY",
   "APPLICATION",
@@ -51,7 +52,7 @@ export function tpoAuditAboutCategory(eventType:string,subjectType?:string|null)
  if(value.includes("SETTINGS")||value.includes("RULES")||value.includes("CONFIG"))return "SETTINGS";
  if(value.includes("SHARE")||value.includes("DOWNLOAD"))return "SHARE";
  if(value.includes("RECRUITER")||value.includes("LEAD"))return "RECRUITER_LEAD";
- if(value.includes("STUDENT")||value.includes("LEARNER"))return "STUDENT";
+ if(value.includes("STUDENT")||value.includes(ROLE.LEARNER))return "STUDENT";
  if(value.includes("OFFER"))return "OFFER";
  if(value.includes("ROUND")||value.includes("RESULT")||value.includes("ATTENDANCE"))return "ROUND";
  if(value.includes("DRIVE")||value.includes("JOB")||value.includes("APPLICATION"))return "DRIVE";

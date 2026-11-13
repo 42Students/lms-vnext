@@ -28,6 +28,7 @@ import {
 import { loadSectionScope } from "./scope";
 import { sectionIdSchema } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 async function listRoleChoices(
   collegeId: string,
   role: "LEARNER" | "FACULTY",
@@ -76,7 +77,7 @@ export async function getSectionOperationsWorkspace(
 ) {
   // A guessed Section UUID must not reveal even whether an administrative
   // workspace exists to Faculty, Mentor, Learner or disabled actors.
-  if(!isSuperAdmin(context)&&!hasMembershipRole(context,"COLLEGE_ADMIN"))
+  if(!isSuperAdmin(context)&&!hasMembershipRole(context,ROLE.COLLEGE_ADMIN))
     throw new AuthorizationError("academics.manage");
   const sectionId =
     sectionIdSchema.parse(sectionIdInput);

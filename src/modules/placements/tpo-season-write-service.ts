@@ -12,6 +12,7 @@ import { requirePlacementManageScope } from "./scope";
 import { tpoRulesChangeSchema, tpoSeasonChangeSchema, tpoSeasonRegistrationActionSchema } from "./tpo-season-write-model";
 import { PlacementsServiceError } from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 /** The legacy independent registration lifecycle is persisted separately
  * from a season's ACTIVE/CLOSED state and from cohort invitations. Writes
  * are audited, versioned and guarded by a live persisted TPO actor. */
@@ -43,7 +44,7 @@ export async function changeTpoSeasonRegistration(context:RequestContext, raw:un
     const actor=await assertPersistedPlatformPermission(tx,context,"placements.manage",{
       collegeId:college.id,organizationId:college.organizationId,
     });
-    if(!hasMembershipRole(actor,"TPO"))throw new AuthorizationError("placements.manage");
+    if(!hasMembershipRole(actor,ROLE.TPO))throw new AuthorizationError("placements.manage");
     const [before]=await tx.select().from(placementSeasons).where(and(
       eq(placementSeasons.id,input.seasonId),eq(placementSeasons.collegeId,college.id),
     )).for("update").limit(1);
@@ -90,7 +91,7 @@ export class TpoSettingsStaleError extends Error {
 }
 async function requireTpo(context: RequestContext) {
   const member = context.membership;
-  if (!member || !hasMembershipRole(context, "TPO") || context.user.platformStatus !== "ACTIVE") {
+  if (!member || !hasMembershipRole(context, ROLE.TPO) || context.user.platformStatus !== "ACTIVE") {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = member.collegeId;
@@ -119,7 +120,7 @@ export async function changeTpoSeason(context: RequestContext, raw: unknown) {
     const liveActor=await assertPersistedPlatformPermission(tx,context,"placements.manage",{
       collegeId:college.id,organizationId:college.organizationId,
     });
-    if(!hasMembershipRole(liveActor,"TPO"))
+    if(!hasMembershipRole(liveActor,ROLE.TPO))
       throw new AuthorizationError("placements.manage");
     const [current] = await tx.select().from(placementSeasons)
       .where(and(eq(placementSeasons.id, input.seasonId), eq(placementSeasons.collegeId, auth.collegeId)))

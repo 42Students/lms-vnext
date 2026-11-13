@@ -17,6 +17,7 @@ import {
 } from "@/modules/placements/tpo-students-service";
 import { route } from "@/security/route";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -34,7 +35,7 @@ async function handleGET(request: Request) {
 
     if (
       !context.membership ||
-      !hasMembershipRole(context, "TPO")
+      !hasMembershipRole(context, ROLE.TPO)
     ) {
       throw new AuthorizationError("placements.manage");
     }

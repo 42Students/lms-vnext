@@ -13,6 +13,7 @@ import {
   paginateFacultyResults, type FacultyResultCandidate,
 } from "./faculty-results-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * A bounded read-first summary. The existing report readers perform a second
  * active teaching-scope check for each chosen Section and assessment.
@@ -22,7 +23,7 @@ export async function getFacultyAssessmentResults(
 ) {
   const query = facultyResultsQuerySchema.parse(rawQuery);
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context,"FACULTY") ||
+  if (!membership || !hasMembershipRole(context,ROLE.FACULTY) ||
       !can(context,"courses.read",{
         collegeId: membership.collegeId, organizationId: membership.organizationId,
       })) {

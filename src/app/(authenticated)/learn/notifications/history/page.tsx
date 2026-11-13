@@ -12,6 +12,7 @@ import {
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function LearnerNotificationHistoryPage({
   searchParams,
 }: {
@@ -22,7 +23,7 @@ export default async function LearnerNotificationHistoryPage({
   }>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!hasActiveMembership(context) || !hasMembershipRole(context,"LEARNER")) redirect("/dashboard");
+  if (!hasActiveMembership(context) || !hasMembershipRole(context,ROLE.LEARNER)) redirect("/dashboard");
   const raw = await searchParams;
   const parsed = learnerNotificationHistoryQuerySchema.safeParse(raw);
   if (!parsed.success) return <section role="alert" className="min-w-0 max-w-full space-y-4">

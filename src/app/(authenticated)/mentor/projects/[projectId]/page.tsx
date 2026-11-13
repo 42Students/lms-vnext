@@ -27,6 +27,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function MentorProjectPage({
   params,
   searchParams,
@@ -72,7 +73,7 @@ export default async function MentorProjectPage({
     projectId,
   );
 
-  if (access.access !== "MENTOR" && !(access.access === "OBSERVER" && access.member?.role === "MENTOR")) {
+  if (access.access !== ROLE.MENTOR && !(access.access === "OBSERVER" && access.member?.role === ROLE.MENTOR)) {
     redirect("/mentor/projects");
   }
 
@@ -84,9 +85,9 @@ export default async function MentorProjectPage({
       context,
       projectId,
     );
-  const activitySeen=selectedTab==="activity"&&access.access==="MENTOR"?
+  const activitySeen=selectedTab==="activity"&&access.access===ROLE.MENTOR?
     await getMentorProjectActivitySeenState(context,projectId):null;
-  const overviewAttention=access.access==="MENTOR"
+  const overviewAttention=access.access===ROLE.MENTOR
     ?(await listMyMentorProjectAttention(context))
       .filter(item=>item.projectId===projectId):[];
   const overviewLater=overviewAttention.length
@@ -96,7 +97,7 @@ export default async function MentorProjectPage({
   // Only actual persisted sprints become segments; 16 is NOT hard-coded.
   const headerAction=overviewAttention.find(item=>
     !overviewLater.includes(mentorAttentionReceiptKey(item)))??null;
-  const canCreate=access.access==="MENTOR"&&workspace.project.status==="ACTIVE";
+  const canCreate=access.access===ROLE.MENTOR&&workspace.project.status==="ACTIVE";
   const googleConnected=canCreate?
     (await mentorGoogleConnectionState(context).catch(()=>({connected:false}))).connected:false;
   const allowedSprints=workspace.sprints.filter(item=>item.status!=="COMPLETED"&&
@@ -104,7 +105,7 @@ export default async function MentorProjectPage({
   const timeline = orderMentorSprints(workspace.sprints,workspace.releases);
   const currentSprint = timeline.find(sprint => sprint.status === "ACTIVE");
   const completedSprints = timeline.filter(sprint => sprint.status === "COMPLETED").length;
-  const studentCount = workspace.members.filter(member => member.role === "LEARNER").length;
+  const studentCount = workspace.members.filter(member => member.role === ROLE.LEARNER).length;
   const mentorBase = "/mentor/projects/" + encodeURIComponent(projectId);
   const projectStatus = workspace.project.status === "ACTIVE" ? "In progress" :
     workspace.project.status === "COMPLETED" ? "Completed" :
@@ -134,7 +135,7 @@ export default async function MentorProjectPage({
               estimationUnit={workspace.project.estimationUnit??null}
               sprints={allowedSprints.map(item=>({id:item.id,title:item.title,
                 status:item.status,updatedAt:item.updatedAt.toISOString()}))}
-              learners={workspace.members.filter(item=>item.role==="LEARNER")
+              learners={workspace.members.filter(item=>item.role===ROLE.LEARNER)
                 .map(item=>({membershipId:item.membershipId,displayName:item.displayName}))}/>:null}
           </div>
         </div>
@@ -182,13 +183,13 @@ export default async function MentorProjectPage({
           </section>}
       {selectedTab==="overview" ? <><MentorPrototypeProjectOverview workspace={workspace}
          attentionItems={overviewAttention} initialLater={overviewLater}
-         readOnly={access.access!=="MENTOR"||workspace.project.status!=="ACTIVE"}/><MentorPrototypeProjectBrief workspace={workspace}
-         readOnly={access.access!=="MENTOR"||workspace.project.status!=="ACTIVE"}/></> : null}
-      {selectedTab==="sprints" ? <MentorPrototypeSprintPlan workspace={workspace} readOnly={access.access!=="MENTOR"||workspace.project.status!=="ACTIVE"} /> : null}
+         readOnly={access.access!==ROLE.MENTOR||workspace.project.status!=="ACTIVE"}/><MentorPrototypeProjectBrief workspace={workspace}
+         readOnly={access.access!==ROLE.MENTOR||workspace.project.status!=="ACTIVE"}/></> : null}
+      {selectedTab==="sprints" ? <MentorPrototypeSprintPlan workspace={workspace} readOnly={access.access!==ROLE.MENTOR||workspace.project.status!=="ACTIVE"} /> : null}
       {selectedTab==="team" ? <MentorPrototypeTeamOverview workspace={workspace}
-        readOnly={access.access!=="MENTOR"||workspace.project.status==="COMPLETED"||workspace.project.status==="ARCHIVED"}
-        canAddMentor={access.access==="MENTOR"&&workspace.members.some(member=>
-          member.membershipId===context.membership?.id&&member.role==="MENTOR"&&
+        readOnly={access.access!==ROLE.MENTOR||workspace.project.status==="COMPLETED"||workspace.project.status==="ARCHIVED"}
+        canAddMentor={access.access===ROLE.MENTOR&&workspace.members.some(member=>
+          member.membershipId===context.membership?.id&&member.role===ROLE.MENTOR&&
           member.isPrimary)} /> : null}
       {selectedTab==="performance" ? <MentorPrototypePerformance workspace={workspace} /> : null}
       {selectedTab==="activity" ? <>
@@ -197,7 +198,7 @@ export default async function MentorProjectPage({
           newCount={activitySeen.newCount}/>:
           <p>Activity review markers are available to assigned Mentors only.</p>}
         <MentorProjectUpdateComposer projectId={projectId}
-          readOnly={access.access!=="MENTOR"||workspace.project.status!=="ACTIVE"} />
+          readOnly={access.access!==ROLE.MENTOR||workspace.project.status!=="ACTIVE"} />
         <MentorPrototypeActivitySummary workspace={workspace} />
       </> : null}
       {selectedTab==="delivery" ? <MentorPrototypeDeliveryEvidence workspace={workspace} /> : null}
@@ -235,7 +236,7 @@ export default async function MentorProjectPage({
         activeSection={activeSection}
       />}
       </MentorProjectSectionCache>
-      {access.access === "MENTOR" ? <section className="min-w-0 border-b border-border pb-4"><Disclosure title="Additional project tools" className="min-w-0 [&>summary]:text-link"><div className="mt-3 grid min-w-0 gap-x-4 gap-y-1 sm:grid-cols-2 xl:grid-cols-3">
+      {access.access === ROLE.MENTOR ? <section className="min-w-0 border-b border-border pb-4"><Disclosure title="Additional project tools" className="min-w-0 [&>summary]:text-link"><div className="mt-3 grid min-w-0 gap-x-4 gap-y-1 sm:grid-cols-2 xl:grid-cols-3">
         <TextLink href={"/mentor/projects/"+encodeURIComponent(projectId)+"/board-review"}
           className="inline-flex min-h-11 min-w-0 items-center break-words text-sm md:min-h-9">
           Task board status

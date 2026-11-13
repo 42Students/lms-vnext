@@ -11,12 +11,13 @@ import {getAdminLearnerProfileSections} from "@/modules/people/admin-learner-pro
 import {AdminLearnerProfileSections} from "@/components/admin/admin-learner-profile-sections";
 import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
+import { ROLE } from "@/modules/identity/roles";
 export default async function MembershipDetail({params}:{params:Promise<{membershipId:string}>}){
  const {membershipId}=await params;
  const context=await getCurrentRequestContext();
  const detail=await getSuperAdminMembershipDetail(context,membershipId);
  if(!detail)notFound();
- const learnerSections=detail.roles.includes("LEARNER")&&context.adminScope?.collegeId?
+ const learnerSections=detail.roles.includes(ROLE.LEARNER)&&context.adminScope?.collegeId?
   await getAdminLearnerProfileSections(context,membershipId):null;
  const fmt=istDateTimeFormatter;
  const fields=[

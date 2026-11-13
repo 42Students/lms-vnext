@@ -7,11 +7,12 @@ import {COLLEGE_LEARNING_PAGE_SIZE} from "./college-learning-directory-model";
 import {collectCollegeExportRows} from "@/modules/academics/college-directory-export-model";
 import {collegeProgressCsvSchema,renderCollegeProgressCsv,PROGRESS_EXPORT_CAP}
  from "./college-progress-export-model";
+import { ROLE } from "@/modules/identity/roles";
 export async function exportCollegeCourseProgress(context:RequestContext,raw:unknown){
  const query=collegeProgressCsvSchema.parse(raw);
  const member=context.membership;
  if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
-  !hasMembershipRole(context,"COLLEGE_ADMIN")||
+  !hasMembershipRole(context,ROLE.COLLEGE_ADMIN)||
   !can(context,"courses.read",{collegeId:member.collegeId,organizationId:member.organizationId}))
   throw new AuthorizationError("courses.read");
  requirePermission(context,"courses.read",{collegeId:member.collegeId,organizationId:member.organizationId});

@@ -6,6 +6,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectReadAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 export type MentorWeekActivityTotals={
   taskMoves:number;comments:number;resourcesShared:number;count:number;
 };
@@ -17,7 +18,7 @@ export async function getMentorWeekActivityTotals(
  context:RequestContext,projectId:string,now:Date=new Date(),
 ):Promise<MentorWeekActivityTotals>{
  const scope=await requireProjectReadAccess(context,projectId);
- if(scope.access!=="MENTOR")throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ if(scope.access!==ROLE.MENTOR)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  if(!Number.isFinite(now.getTime()))
    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const ist=new Date(now.getTime()+330*60000);

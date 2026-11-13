@@ -52,6 +52,7 @@ import { sanitizeActivityMetadata } from "./metadata-sanitizer";
 import { safeExternalAssessmentUrl, safeNotificationActionHref } from "./notification-action";
 import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "./taxonomy";
 
+import { ROLE } from "@/modules/identity/roles";
 type NotificationWriter = Pick<
   ReturnType<typeof getDb>,
   "select" | "insert"
@@ -256,8 +257,8 @@ export async function requireStaffNotificationAudience(
   if (draft.scheduledAt) parseStaffNotificationSchedule(draft.scheduledAt);
   if (context.user.platformStatus !== "ACTIVE" ||
       (!isSuperAdmin(context) &&
-       !hasMembershipRole(context, "COLLEGE_ADMIN") &&
-       !hasMembershipRole(context, "FACULTY"))) {
+       !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) &&
+       !hasMembershipRole(context, ROLE.FACULTY))) {
     throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
   }
 
@@ -351,7 +352,7 @@ export async function requireStaffNotificationAudience(
     classId: draft.classId ?? null,
     courseId: resolvedCourseId,
   };
-  if (isSuperAdmin(context) || hasMembershipRole(context, "COLLEGE_ADMIN")) {
+  if (isSuperAdmin(context) || hasMembershipRole(context, ROLE.COLLEGE_ADMIN)) {
     requirePermission(context, "courses.manage", scope);
     return { draft, audience };
   }
@@ -458,7 +459,7 @@ export async function requireStaffNotificationMutation(
       existing.metadata["deletedAt"] != null) {
     throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
   }
-  const isAdmin = isSuperAdmin(context) || hasMembershipRole(context, "COLLEGE_ADMIN");
+  const isAdmin = isSuperAdmin(context) || hasMembershipRole(context, ROLE.COLLEGE_ADMIN);
   if (!isAdmin && existing.actorUserId !== context.user.id) {
     throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
   }
@@ -547,12 +548,12 @@ async function assertStaffNoticeWriterInTransaction(
  tx:PermissionTransaction,context:RequestContext,audience:StaffNotificationAudience,
  creatorUserId?:string|null,
 ){
- const fromContextAdmin=isSuperAdmin(context)||hasMembershipRole(context,"COLLEGE_ADMIN");
+ const fromContextAdmin=isSuperAdmin(context)||hasMembershipRole(context,ROLE.COLLEGE_ADMIN);
  const persisted=await assertPersistedPlatformPermission(tx,context,
   fromContextAdmin?"courses.manage":"courses.read",{
    collegeId:audience.collegeId,organizationId:audience.organizationId,
   });
- const persistedAdmin=isSuperAdmin(persisted)||hasMembershipRole(persisted,"COLLEGE_ADMIN");
+ const persistedAdmin=isSuperAdmin(persisted)||hasMembershipRole(persisted,ROLE.COLLEGE_ADMIN);
  if(!persistedAdmin&&creatorUserId!==undefined&&creatorUserId!==persisted.user.id)
   throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
  if(!persistedAdmin){
@@ -1241,11 +1242,11 @@ export async function markAllOwnNotificationsRead(
 export type OwnNotificationCategory="COURSE"|"PROJECT"|"ANNOUNCEMENTS"|"JOB"|
  "COLLEGE"|"DEPARTMENT"|"FACULTY"|"PERSONAL";
 export function ownNotificationCategoryChoices(context:RequestContext){
- if(context.membership?.roles.includes("LEARNER"))return [
+ if(context.membership?.roles.includes(ROLE.LEARNER))return [
   {id:"COURSE",label:"Course"},{id:"PROJECT",label:"Project"},
   {id:"ANNOUNCEMENTS",label:"Announcements"},{id:"JOB",label:"Job"},
  ] as const;
- if(context.membership?.roles.includes("FACULTY"))return [
+ if(context.membership?.roles.includes(ROLE.FACULTY))return [
   {id:"COLLEGE",label:"College"},{id:"DEPARTMENT",label:"Department"},
   {id:"FACULTY",label:"Faculty"},{id:"PERSONAL",label:"Personal"},
  ] as const;
@@ -1535,7 +1536,7 @@ export async function deleteStaffNotification(
         (event.metadata["classId"]??null)!==original.classId ||
         (event.metadata["courseId"]??null)!==original.courseId ||
         (event.actorUserId !== context.user.id &&
-         !isSuperAdmin(context) && !hasMembershipRole(context, "COLLEGE_ADMIN"))) {
+         !isSuperAdmin(context) && !hasMembershipRole(context, ROLE.COLLEGE_ADMIN))) {
       throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
     }
     await assertStaffNoticeWriterInTransaction(tx,context,original,event.actorUserId);
@@ -1600,7 +1601,7 @@ export async function updateStaffNotification(
         (event.metadata["classId"]??null)!==original.classId ||
         (event.metadata["courseId"]??null)!==original.courseId ||
         (event.actorUserId !== context.user.id &&
-         !isSuperAdmin(context) && !hasMembershipRole(context, "COLLEGE_ADMIN"))) {
+         !isSuperAdmin(context) && !hasMembershipRole(context, ROLE.COLLEGE_ADMIN))) {
       throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
     }
     await assertStaffNoticeWriterInTransaction(tx,context,original,event.actorUserId);

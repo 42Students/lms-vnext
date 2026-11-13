@@ -12,6 +12,7 @@ import {requireLearnerPlacementAccess} from "./learner-participation-guard";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 
+import { ROLE } from "@/modules/identity/roles";
 const allowed=new Set([
  "preferredRoleTitles","preferredLocations","preferredEmploymentTypes",
  "preferredWorkMode","shiftPreference","minimumAnnualCtcInr",
@@ -27,7 +28,7 @@ const patchSchema=z.strictObject({
  */
 export async function patchCandidatePreferences(context:RequestContext,raw:unknown){
  const membership=context.membership;
- if(!membership||!hasMembershipRole(context,"LEARNER"))
+ if(!membership||!hasMembershipRole(context,ROLE.LEARNER))
   throw new AuthorizationError("placements.read");
  await requireLearnerPlacementAccess(context);
  const input=patchSchema.parse(raw);

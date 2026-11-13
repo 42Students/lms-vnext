@@ -12,6 +12,7 @@ import {
 } from "./service";
 import { collegeGroupIdSchema } from "./college-group-management-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** The core service performs its own serialized group + actor checks again. */
 export async function manageCollegeStudyMember(
   context: RequestContext, groupIdRaw: unknown, raw: unknown,
@@ -19,7 +20,7 @@ export async function manageCollegeStudyMember(
   const groupId = collegeGroupIdSchema.parse(groupIdRaw);
   const input = collegeStudyMemberSchema.parse(raw);
   const scope = context.membership;
-  if (!scope || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+  if (!scope || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
       !can(context, "academics.manage", {
         collegeId: scope.collegeId, organizationId: scope.organizationId,
       })) throw new AuthorizationError("academics.manage");

@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { formatDateTimeIst } from "@/lib/format-date";
 import { formatDateWith } from "@/lib/format-date";
+import { ROLE } from "@/modules/identity/roles";
 type Party="TPO"|"COMPANY";
 type Item={id:string;proposerParty:string;targetParty:string;mode:string;field:string;legacyField?:string|null;
  proposedValue:string;reason:string;status:string;createdByUserId:string;createdByName?:string|null;
@@ -224,18 +225,18 @@ export function TpoDriveChangeRequests({jobId,party,requests,initialField,openIn
        Question: {readableValue(item.field,item.proposedValue)}
       </p>}
      <p className="text-xs text-muted-foreground">
-       {item.createdByName??(item.proposerParty==="TPO"?"Placement cell":"Company")} · {formatCreatedAt(item.createdAt)}
+       {item.createdByName??(item.proposerParty===ROLE.TPO?"Placement cell":"Company")} · {formatCreatedAt(item.createdAt)}
      </p>
      <p className="break-words [overflow-wrap:anywhere] text-sm text-body leading-[22px]">
      {item.reason==="No reason provided"?"Reason not provided":"Why: "+item.reason}
-     {" · From "}{item.createdByName??(item.proposerParty==="TPO"?"placement cell":"company")}</p>
+     {" · From "}{item.createdByName??(item.proposerParty===ROLE.TPO?"placement cell":"company")}</p>
      {(item.answerValue??item.replyText??item.decisionNote)?
       <Alert tone="info">{item.answerValue?"Answer: ":item.replyText?"Declined: ":"Decision: "}
        {item.answerValue??item.replyText??item.decisionNote}</Alert>:null}
      {item.resolvedAt?<p className="text-xs text-body">
       Resolved {formatDateTimeIst(new Date(item.resolvedAt))} IST
      </p>:null}
-     <TextLink href={party==="TPO"
+     <TextLink href={party===ROLE.TPO
        ?"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion?requestId="+encodeURIComponent(item.id)
        :"/recruiter/drives/"+encodeURIComponent(jobId)+"/messages?requestId="+encodeURIComponent(item.id)}
        className="inline-flex min-h-11 items-center text-sm">
@@ -244,7 +245,7 @@ export function TpoDriveChangeRequests({jobId,party,requests,initialField,openIn
      <Disclosure title={"Discussion ("+item.messages.length+")"} defaultOpen={item.status==="OPEN"&&item.targetParty===party} className="min-w-0 border-t border-border pt-2" contentClassName="min-w-0 space-y-2 pt-3">
       {item.messages.length===0?<p className="text-sm text-body leading-[22px]">No discussion yet.</p>:null}
       {item.messages.map(message=><p key={message.id} className="break-words [overflow-wrap:anywhere] border-b border-[var(--lms-canvas-border)] bg-transparent py-3 text-sm leading-[22px]">
-       <strong>{message.senderParty==="TPO"?"Placement cell":"Company"}:</strong> {message.body}
+       <strong>{message.senderParty===ROLE.TPO?"Placement cell":"Company"}:</strong> {message.body}
       </p>)}
       <Label stack>
        {item.mode==="ASK"&&item.targetParty===party?"Answer or discussion reply":"Reply or decision explanation"}

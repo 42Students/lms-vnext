@@ -7,6 +7,7 @@ import {hasMembershipRole,type RequestContext} from "@/modules/identity/context"
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "./scope";
 
+import { ROLE } from "@/modules/identity/roles";
 /** A globally unverified employer cannot be made verified merely because a
  * recruiter joined or the college has chosen to trust its relationship.
  * This read-only queue surfaces actual pending identity verification, never
@@ -15,7 +16,7 @@ export async function getTpoTodayCompanyVerificationAttention(
  context:RequestContext,scope:"MINE"|"TEAM",
 ){
  const membership=context.membership;
- if(!membership||!hasMembershipRole(context,"TPO")||
+ if(!membership||!hasMembershipRole(context,ROLE.TPO)||
     membership.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE")
    throw new AuthorizationError("placements.manage");
  const collegeId=membership.collegeId;

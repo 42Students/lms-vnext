@@ -5,6 +5,7 @@ import {collegeMemberships,colleges,membershipRoles,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 
+import { ROLE } from "@/modules/identity/roles";
 export class VerificationUnavailableError extends Error {
  constructor(){super("VERIFICATION_TABLES_NOT_INSTALLED");this.name="VerificationUnavailableError";}
 }
@@ -14,7 +15,7 @@ export class VerificationUnavailableError extends Error {
 export async function requireCollegeVerificationActor(context:RequestContext) {
  const membership=context.membership;
  if(context.user.platformStatus!=="ACTIVE"||!membership||membership.status!=="ACTIVE"||
- !membership.roles.includes("COLLEGE_ADMIN"))throw new AuthorizationError("profile-verification.review");
+ !membership.roles.includes(ROLE.COLLEGE_ADMIN))throw new AuthorizationError("profile-verification.review");
  const [row]=await getDb().select({
   id:collegeMemberships.id,collegeId:collegeMemberships.collegeId,
   userId:collegeMemberships.userId,organizationId:colleges.organizationId,

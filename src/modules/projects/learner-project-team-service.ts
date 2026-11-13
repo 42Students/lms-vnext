@@ -8,6 +8,7 @@ import { ProjectsServiceError } from "./errors";
 import { listMyProjectInstances } from "./member-service";
 import { summarizeLearnerProjectTeams } from "./learner-project-team-model";
 
+import { ROLE } from "@/modules/identity/roles";
 const projectIdsSchema = z.array(z.string().uuid()).max(2000);
 
 /** Bulk read, scoped to this live learner assignment; arbitrary IDs cannot broaden it. */
@@ -15,12 +16,12 @@ export async function listMyLearnerProjectTeams(
   context: RequestContext,
   rawProjectIds: unknown,
 ) {
-  if (!hasActiveMembership(context) || !hasMembershipRole(context, "LEARNER")) {
+  if (!hasActiveMembership(context) || !hasMembershipRole(context, ROLE.LEARNER)) {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
   const requested = projectIdsSchema.parse(rawProjectIds);
   const assigned = await listMyProjectInstances(context);
-  const allowed = new Set(assigned.filter(row => row.memberRole === "LEARNER")
+  const allowed = new Set(assigned.filter(row => row.memberRole === ROLE.LEARNER)
     .map(row => row.project.id));
   const projectIds = [...new Set(requested.filter(id => allowed.has(id)))];
   if (projectIds.length === 0) return [];

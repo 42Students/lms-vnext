@@ -1,6 +1,7 @@
 import { hasActiveMembership, hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Who may open the /tpo workspace. Legacy lets a college admin into the placement cell
  * (PORTAL_GUESTS['/tpo'] = [ADMIN, FACULTY]; sidebar row "Placement cell" -> /tpo/home), so
@@ -30,7 +31,7 @@ export function getTpoWorkspaceAccessDecision(
   })) return { allowed: false, status: 403, reason: "PLACEMENTS_ACCESS_DENIED" };
   return {
     allowed: true,
-    scope: hasMembershipRole(context, "TPO") ? "TPO" : "COLLEGE_PLACEMENTS",
+    scope: hasMembershipRole(context, ROLE.TPO) ? "TPO" : "COLLEGE_PLACEMENTS",
   };
 }
 
@@ -40,5 +41,5 @@ export function canOpenTpoWorkspace(context: RequestContext | null | undefined):
 
 /** True when the person also holds the TPO role and so has the full TPO tooling. */
 export function hasTpoTooling(context: RequestContext | null | undefined): boolean {
-  return canOpenTpoWorkspace(context) && hasMembershipRole(context, "TPO");
+  return canOpenTpoWorkspace(context) && hasMembershipRole(context, ROLE.TPO);
 }

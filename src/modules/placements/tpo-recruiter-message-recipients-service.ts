@@ -9,12 +9,13 @@ import {hasMembershipRole,type RequestContext} from "@/modules/identity/context"
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "./scope";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Recruiter picker: only active, verified and unexpired access in this college.
  * Never emit emails, phone numbers or anyone else's memberships.
  */
 export async function listTpoMessageRecruiters(context:RequestContext){
  const member=context.membership;
- if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,"TPO")||
+ if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,ROLE.TPO)||
     context.user.platformStatus!=="ACTIVE")throw new AuthorizationError("placements.manage");
  await requirePlacementManageScope(context,member.collegeId);
  return getDb().selectDistinct({

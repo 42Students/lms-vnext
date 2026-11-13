@@ -12,6 +12,7 @@ import {isSuperAdmin} from "@/modules/identity/context";
 import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 
+import { ROLE } from "@/modules/identity/roles";
 const base=z.strictObject({offeringId:z.uuid(),membershipId:z.uuid()});
 const command=base.extend({
  confirmed:z.literal(true),
@@ -29,7 +30,7 @@ async function readRetakeScope(tx:Tx,ctx:RequestContext,offeringId:string,member
  // Super Admin must explicitly act in one selected college.
  const superAdmin=isSuperAdmin(ctx);
  const collegeId=superAdmin?ctx.adminScope?.collegeId:
-  ctx.membership?.status==="ACTIVE"&&ctx.membership.roles.includes("COLLEGE_ADMIN")
+  ctx.membership?.status==="ACTIVE"&&ctx.membership.roles.includes(ROLE.COLLEGE_ADMIN)
    ?ctx.membership.collegeId:null;
  if(ctx.user.platformStatus!=="ACTIVE"||!collegeId)
   throw new AuthorizationError("courses.manage");

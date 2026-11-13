@@ -39,6 +39,7 @@ import {facultyDiscussionModerationSchema,facultyDiscussionTokenMatches}
  from "./faculty-discussion-moderation-model";
 import {facultyReplyParentTokenMatches} from "./faculty-discussion-reply-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Crosswalk for legacy classroom courseId+classId:
  * resolve the requesting learner/faculty's verified Section Delivery UUID
  * first; never accept a client-selected class ID as a grant to another tenant.
@@ -189,7 +190,7 @@ export async function listCourseDiscussionMessages(
 ) {
   const page = historySchema.parse(rawPage);
   const { deliveryId, mode } = await discussionAccess(context, deliveryIdInput, true);
-  if (mode === "LEARNER") await requireOwnCourseLearnerRead(context);
+  if (mode === ROLE.LEARNER) await requireOwnCourseLearnerRead(context);
   let canPost = true;
   try {
     await discussionAccess(context, deliveryIdInput, false);
@@ -291,7 +292,7 @@ async function assertLiveLearnerDiscussionWriter(
   context:RequestContext,
 ):Promise<void>{
   const member=context.membership;
-  if(!member||member.status!=="ACTIVE"||!member.roles.includes("LEARNER")||
+  if(!member||member.status!=="ACTIVE"||!member.roles.includes(ROLE.LEARNER)||
      context.user.platformStatus!=="ACTIVE")
     throw new CoursesServiceError("DISCUSSION_POST_ACCESS_DENIED");
   const [active]=await tx.select({id:collegeMemberships.id})
@@ -333,7 +334,7 @@ export async function listCourseDiscussionChanges(
   }).strict().parse(rawQuery);
   const { deliveryId, mode } =
     await discussionAccess(context, deliveryIdInput, true);
-  if (mode === "LEARNER") await requireOwnCourseLearnerRead(context);
+  if (mode === ROLE.LEARNER) await requireOwnCourseLearnerRead(context);
   const changedAfter = query.afterId
     ? sql`(${courseDiscussionMessages.updatedAt}, ${courseDiscussionMessages.id}) >
         (${query.since}::timestamptz, ${query.afterId}::uuid)`
@@ -412,18 +413,18 @@ export async function createCourseDiscussionMessage(
 
   const input =
     createDiscussionMessageSchema.parse(rawInput);
-  if (mode === "LEARNER") await requireOwnCourseLearnerRead(context);
+  if (mode === ROLE.LEARNER) await requireOwnCourseLearnerRead(context);
   const senderRole =
-    mode === "LEARNER"
+    mode === ROLE.LEARNER
       ? "LEARNER"
-      : mode === "FACULTY"
+      : mode === ROLE.FACULTY
         ? "FACULTY"
         : "ADMIN";
 
   return getDb().transaction(async (tx) => {
-    if(mode==="LEARNER")await assertLiveLearnerDiscussionWriter(tx,context);
+    if(mode===ROLE.LEARNER)await assertLiveLearnerDiscussionWriter(tx,context);
     // Recheck the persisted teaching scope before the write, not only on read.
-    if(mode==="FACULTY")await assertLiveFacultyDiscussionModerator(tx,context,deliveryId);
+    if(mode===ROLE.FACULTY)await assertLiveFacultyDiscussionModerator(tx,context,deliveryId);
     if(input.lessonContentId){
       const [lesson]=await tx.select({id:lessonContents.id})
         .from(lessonContents).where(and(
@@ -442,7 +443,7 @@ export async function createCourseDiscussionMessage(
       throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
     if(parent&&parent.lessonContentId!==(input.lessonContentId??null))
       throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
-    if(mode==="FACULTY"&&parent&&(!input.confirmed||!input.expectedParentUpdatedAt||
+    if(mode===ROLE.FACULTY&&parent&&(!input.confirmed||!input.expectedParentUpdatedAt||
        !facultyReplyParentTokenMatches(parent.updatedAt,input.expectedParentUpdatedAt)))
       throw new CoursesServiceError("DISCUSSION_STALE_VERSION");
     const messageText=formatDiscussionReply(input.messageText,parent?.id??null);
@@ -466,7 +467,7 @@ export async function createCourseDiscussionMessage(
       messageText,
     }).returning();
     await recordActivityEventInTransaction(tx, context, {
-      eventType: mode==="FACULTY"&&parent?
+      eventType: mode===ROLE.FACULTY&&parent?
         ACTIVITY_EVENT_TYPES.COURSES_DISCUSSION_REPLIED:
         ACTIVITY_EVENT_TYPES.COURSES_DISCUSSION_POSTED,
       collegeId: membership.collegeId,
@@ -535,7 +536,7 @@ export async function toggleCourseDiscussionPin(
     message.deliveryId,
   );
 
-  if (mode === "LEARNER") {
+  if (mode === ROLE.LEARNER) {
     throw new CoursesServiceError(
       "DISCUSSION_MODERATION_ACCESS_DENIED",
     );
@@ -549,7 +550,7 @@ export async function toggleCourseDiscussionPin(
       tx,context,"courses.manage",{
         collegeId:delivery.collegeId,organizationId:delivery.organizationId,
       });
-    if (mode === "FACULTY") await assertLiveFacultyDiscussionModerator(tx,context,message.deliveryId);
+    if (mode === ROLE.FACULTY) await assertLiveFacultyDiscussionModerator(tx,context,message.deliveryId);
     const [updated] = await tx.update(courseDiscussionMessages).set({
       pinned: not(courseDiscussionMessages.pinned),
       pinnedByUserId: sql`case when ${courseDiscussionMessages.pinned}
@@ -596,11 +597,11 @@ export async function deleteCourseDiscussionMessage(
     message.deliveryId,
   );
 
-  if (mode === "LEARNER") await requireOwnCourseLearnerRead(context);
+  if (mode === ROLE.LEARNER) await requireOwnCourseLearnerRead(context);
   // The legacy author can delete their own post even while it is pinned;
   // the tombstone also releases the pinned slot atomically.
   const canDelete =
-    mode !== "LEARNER" ||
+    mode !== ROLE.LEARNER ||
     context.membership?.id === message.senderMembershipId;
 
   if (!canDelete) {
@@ -612,12 +613,12 @@ export async function deleteCourseDiscussionMessage(
   if(concurrency&&!facultyDiscussionTokenMatches(message.updatedAt,concurrency.expectedUpdatedAt))
     throw new CoursesServiceError("DISCUSSION_STALE_VERSION");
   return getDb().transaction(async (tx) => {
-    if(mode==="LEARNER")await assertLiveLearnerDiscussionWriter(tx,context);
+    if(mode===ROLE.LEARNER)await assertLiveLearnerDiscussionWriter(tx,context);
     if(mode==="ADMIN")await assertPersistedPlatformPermission(
       tx,context,"courses.manage",{
         collegeId:delivery.collegeId,organizationId:delivery.organizationId,
       });
-    if (mode === "FACULTY") await assertLiveFacultyDiscussionModerator(tx,context,message.deliveryId);
+    if (mode === ROLE.FACULTY) await assertLiveFacultyDiscussionModerator(tx,context,message.deliveryId);
     // Retain the stable ID and moderation evidence for delta subscribers.
     // Normal history hides deleted rows; delta reads return only the redacted
     // tombstone, never the retained body, sender identity or attribution.
@@ -631,7 +632,7 @@ export async function deleteCourseDiscussionMessage(
       eq(courseDiscussionMessages.id, message.id),
       eq(courseDiscussionMessages.deliveryId, message.deliveryId),
       isNull(courseDiscussionMessages.deletedAt),
-      mode === "LEARNER"
+      mode === ROLE.LEARNER
         ? eq(courseDiscussionMessages.senderMembershipId, context.membership!.id)
         : undefined,
       concurrency?sql`date_trunc('milliseconds', ${courseDiscussionMessages.updatedAt}) =
@@ -661,7 +662,7 @@ export async function listLessonContentDiscussionMessages(
  const deliveryId=deliveryIdSchema.parse(deliveryIdInput);
  const lessonContentId=messageIdSchema.parse(lessonContentIdInput);
  const {mode}=await discussionAccess(context,deliveryId,true);
- if(mode==="LEARNER")await requireOwnCourseLearnerRead(context);
+ if(mode===ROLE.LEARNER)await requireOwnCourseLearnerRead(context);
  const [content]=await getDb().select({id:lessonContents.id})
   .from(lessonContents).where(and(
    eq(lessonContents.id,lessonContentId),

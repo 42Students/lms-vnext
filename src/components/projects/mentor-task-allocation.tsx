@@ -18,6 +18,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
+import { ROLE } from "@/modules/identity/roles";
 type Task={id:string;title:string;sprintId:string|null;carriedFromSprintId?:string|null;assigneeMembershipId:string|null;
  updatedAt:Date;status:string;priority:string;estimatePoints:number|null;
  sequence?:number;deletedAt?:Date|null};
@@ -48,7 +49,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
   window.history.replaceState(null,"",window.location.pathname+
     (query.toString()?"?"+query.toString():""));
  }
- const learners=members.filter(member=>member.role==="LEARNER");
+ const learners=members.filter(member=>member.role===ROLE.LEARNER);
  const nextSprint=nextMentorAllocatableSprint(sprints,releases);
  const nextSprintRelease=nextSprint?
    releases.find(row=>row.id===nextSprint.releaseId):null;

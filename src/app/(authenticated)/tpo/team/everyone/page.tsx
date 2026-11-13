@@ -12,12 +12,13 @@ import {TPO_EVERYONE_DESCRIPTION,TPO_EVERYONE_TITLE,TPO_EVERYONE_WELCOME} from "
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 export default async function TpoEveryonePage({searchParams}:{
  searchParams:Promise<{page?:string|string[]}>,
 }){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");
  const raw=(await searchParams).page;
  const validPage=raw===undefined||(typeof raw==="string"&&/^[1-9][0-9]{0,3}$/.test(raw));
  if(!validPage)return <section role="alert" className="min-w-0 space-y-3">

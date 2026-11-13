@@ -11,6 +11,7 @@ import {PlacementsServiceError} from "./errors";
 import {sameTpoBulkRequestRun,persistedTpoBulkRequestCount} from "./tpo-request-bulk-run-model";
 import {requireTpoJobActor} from "./tpo-job-write-base";
 
+import { ROLE } from "@/modules/identity/roles";
 const uuid=z.string().uuid();
 const schema=z.strictObject({
  runId:uuid,action:z.enum(["APPROVE","REJECT"]),
@@ -21,7 +22,7 @@ const schema=z.strictObject({
  */
 export async function recordTpoBulkRequestRun(ctx:RequestContext,raw:unknown){
  const input=schema.parse(raw),actor=ctx.membership;
- if(!actor||!hasMembershipRole(ctx,"TPO")||actor.status!=="ACTIVE"||
+ if(!actor||!hasMembershipRole(ctx,ROLE.TPO)||actor.status!=="ACTIVE"||
    !can(ctx,"placements.manage",{collegeId:actor.collegeId}))
   throw new AuthorizationError("placements.manage");
  requirePermission(ctx,"placements.manage",{collegeId:actor.collegeId});

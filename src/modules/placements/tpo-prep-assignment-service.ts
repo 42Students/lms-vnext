@@ -13,6 +13,7 @@ import {requirePlacementManageScope} from "./scope";
 import {requirePersistedTpoMembership} from "./tpo-persisted-actor-service";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {placementTableExists} from "./staged-tables";
+import { ROLE } from "@/modules/identity/roles";
 const inputSchema=tpoPrepAssignmentInputSchema;
 /** A foreign, archived or disabled target cohort must never be offered for
  * supplementary preparation, even if the course itself is college-owned. */
@@ -45,7 +46,7 @@ function isDueDateConstraintFailure(reason:unknown):boolean{
 }
 async function requireTpo(ctx:RequestContext){
  const m=ctx.membership;
- if(!m||!hasMembershipRole(ctx,"TPO")||m.status!=="ACTIVE"||ctx.user.platformStatus!=="ACTIVE")
+ if(!m||!hasMembershipRole(ctx,ROLE.TPO)||m.status!=="ACTIVE"||ctx.user.platformStatus!=="ACTIVE")
   throw new AuthorizationError("placements.manage");
  if(!can(ctx,"placements.manage",{collegeId:m.collegeId}))throw new AuthorizationError("placements.manage");
  requirePermission(ctx,"placements.manage",{collegeId:m.collegeId});
@@ -73,7 +74,7 @@ export async function listTpoPrepCourseOptions(ctx:RequestContext){
   const current=await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
    collegeId:college.id,organizationId:college.organizationId,
   });
-  if(!hasMembershipRole(current,"TPO"))throw new AuthorizationError("placements.manage");
+  if(!hasMembershipRole(current,ROLE.TPO))throw new AuthorizationError("placements.manage");
  });
  return rows;
 }
@@ -104,7 +105,7 @@ export async function assignTpoPrepCourse(ctx:RequestContext,raw:unknown){
   const persisted=await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
    collegeId:college.id,organizationId:college.organizationId,
   });
-  if(!hasMembershipRole(persisted,"TPO"))throw new AuthorizationError("placements.manage");
+  if(!hasMembershipRole(persisted,ROLE.TPO))throw new AuthorizationError("placements.manage");
   if(due&&due.getTime()<=Date.now())throw new TpoPrepError("DUE_DATE_INVALID");
   const [offering]=await tx.select({id:courseOfferings.id,cohortId:courseOfferings.cohortId,
    title:courses.name}).from(courseOfferings)
@@ -163,7 +164,7 @@ export async function assignTpoPrepCourse(ctx:RequestContext,raw:unknown){
 }
 export async function listOwnTpoPrepAssignments(ctx:RequestContext){
  const member=ctx.membership;
- if(!member||!hasMembershipRole(ctx,"LEARNER")||member.status!=="ACTIVE"||ctx.user.platformStatus!=="ACTIVE")
+ if(!member||!hasMembershipRole(ctx,ROLE.LEARNER)||member.status!=="ACTIVE"||ctx.user.platformStatus!=="ACTIVE")
   throw new AuthorizationError("placements.read");
  // Do not trust a cached LEARNER role after account suspension or college
  // unenrollment. Prove the same currently active person and college first.
@@ -193,7 +194,7 @@ export async function listOwnTpoPrepAssignments(ctx:RequestContext){
   const persisted=await assertPersistedPlatformPermission(tx,ctx,"placements.read",{
    collegeId:member.collegeId,organizationId:college.organizationId,
   });
-  if(!hasMembershipRole(persisted,"LEARNER"))throw new AuthorizationError("placements.read");
+  if(!hasMembershipRole(persisted,ROLE.LEARNER))throw new AuthorizationError("placements.read");
  });
  return rows;
 }

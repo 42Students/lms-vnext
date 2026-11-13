@@ -32,6 +32,7 @@ import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-servi
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function LearnerProjectPage({
   params,
   searchParams,
@@ -92,7 +93,7 @@ export default async function LearnerProjectPage({
     throw error;
   });
 
-  if (access.access !== "LEARNER") {
+  if (access.access !== ROLE.LEARNER) {
     redirect("/learn/projects");
   }
 

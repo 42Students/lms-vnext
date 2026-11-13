@@ -41,6 +41,7 @@ import {
   loadLessonContentScope,
 } from "./scope";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Legacy remote-URL imports were a browser-to-backend fetch. They cannot be
  * reenabled by forwarding arbitrary URLs: the old flow lacks DNS/IP SSRF
  * pinning, a bounded download worker and object-scan attestations. The only
@@ -833,7 +834,7 @@ export async function issueVideoPlaybackGrant(
     return { lesson: lessonScope, access: mode };
   });
 
-  if (access === "LEARNER") {
+  if (access === ROLE.LEARNER) {
     if (!(await learnerVisibility(row, lesson))) throw new StorageFileError("STORAGE_NOT_FOUND");
   } else if (
     !videoPlayableForStaff({
@@ -893,7 +894,7 @@ export async function issueVideoPlaybackGrant(
   }
 
   let resumePositionSeconds = 0;
-  if (access === "LEARNER" && row.lessonContentId && context.membership) {
+  if (access === ROLE.LEARNER && row.lessonContentId && context.membership) {
     const [progress] = await getDb()
       .select({ lastPositionSeconds: learnerContentProgress.lastPositionSeconds })
       .from(learnerContentProgress)

@@ -17,6 +17,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { createNumberFormatter } from "@/lib/safe-format";
 
+import { ROLE } from "@/modules/identity/roles";
 type SearchParams = { page?: string | string[] };
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -32,7 +33,7 @@ export default async function TpoLearnerPlacementHistoryPage({
   searchParams: Promise<SearchParams>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     redirect("/dashboard");
   }
   const [{ membershipId }, search] = await Promise.all([params, searchParams]);

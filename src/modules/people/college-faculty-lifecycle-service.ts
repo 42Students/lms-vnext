@@ -16,6 +16,7 @@ import {
   collegeFacultyIdSchema, collegeFacultyLifecycleSchema,
 } from "./college-faculty-lifecycle-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export class CollegeFacultyLifecycleError extends Error {
   constructor(public readonly code:
     "FACULTY_NOT_FOUND" | "FACULTY_STATUS_CHANGED" |
@@ -33,7 +34,7 @@ export async function transitionCollegeFaculty(
   const membershipId = collegeFacultyIdSchema.parse(idRaw);
   const input = collegeFacultyLifecycleSchema.parse(raw);
   const own = context.membership;
-  if (!own || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+  if (!own || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
       !can(context, "membership.lifecycle.manage", {
         collegeId: own.collegeId, organizationId: own.organizationId,
       })) throw new AuthorizationError("membership.lifecycle.manage");
@@ -49,7 +50,7 @@ export async function transitionCollegeFaculty(
       });
     if(!checked.membership||checked.membership.id!==own.id||
        checked.membership.collegeId!==own.collegeId||
-       !checked.membership.roles.includes("COLLEGE_ADMIN"))
+       !checked.membership.roles.includes(ROLE.COLLEGE_ADMIN))
       throw new AuthorizationError("membership.lifecycle.manage");
     const [faculty] = await tx.select({
       id: collegeMemberships.id, userId:collegeMemberships.userId, status: collegeMemberships.status,

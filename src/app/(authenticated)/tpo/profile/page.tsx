@@ -12,6 +12,7 @@ import { Heading } from "@/components/ui/heading";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic = "force-dynamic";
 
 function ProfileField({label,value,empty="Not set"}:{
@@ -27,7 +28,7 @@ export default async function TpoProfilePage() {
   const context = await getCurrentRequestContext();
   // Legacy TPO-only view; the membership-scoped service independently checks
   // live authorization and cannot reveal another college's staff details.
-  if (!hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  if (!hasMembershipRole(context, ROLE.TPO)) redirect("/dashboard");
   const profile = await getOwnTpoProfile(context);
   const displayName = profile.displayName?.trim() || "";
 

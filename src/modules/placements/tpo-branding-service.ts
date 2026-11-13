@@ -22,6 +22,7 @@ import {
   requirePlacementManageScope,
 } from "./scope";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Read the selected TPO's own college-wide branding.
  *
@@ -44,7 +45,7 @@ export async function getTpoPlacementBranding(
 
   if (
     !membership ||
-    !hasMembershipRole(context, "TPO")
+    !hasMembershipRole(context, ROLE.TPO)
   ) {
     throw new AuthorizationError(
       "placements.manage",

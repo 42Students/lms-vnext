@@ -5,16 +5,17 @@ import {cohorts,programs,departments,sections,facultyProfiles,collegeMemberships
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
+import { ROLE } from "@/modules/identity/roles";
 /** Current-college names only: never trust caller-supplied college scopes. */
 export async function listCollegeContactFilterOptions(context:RequestContext){
  const actor=context.membership;
- if(context.user.platformStatus!=="ACTIVE"||!actor||actor.status!=="ACTIVE"||!actor.roles.includes("COLLEGE_ADMIN"))
+ if(context.user.platformStatus!=="ACTIVE"||!actor||actor.status!=="ACTIVE"||!actor.roles.includes(ROLE.COLLEGE_ADMIN))
   throw new AuthorizationError("people.manage");
  return getDb().transaction(async tx=>{
   const checked=await assertPersistedPlatformPermission(tx,context,"people.manage",{
    collegeId:actor.collegeId,organizationId:actor.organizationId,
   });
-  if(!checked.membership||checked.membership.id!==actor.id||!checked.membership.roles.includes("COLLEGE_ADMIN")||
+  if(!checked.membership||checked.membership.id!==actor.id||!checked.membership.roles.includes(ROLE.COLLEGE_ADMIN)||
    checked.membership.collegeId!==actor.collegeId)
    throw new AuthorizationError("people.manage");
   const cohortRows=await tx.select({id:cohorts.id,name:cohorts.name,programName:programs.name})

@@ -9,6 +9,7 @@ import {requireProjectReadAccess} from "@/modules/projects/access";
 import {ProjectsServiceError} from "@/modules/projects/errors";
 import {readMentorProjectCommandBody,MentorProjectCommandBodyError,mentorProjectBodyFailureMessage} from "@/modules/projects/mentor-command-body";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
 export const POST = route(
@@ -19,9 +20,9 @@ export const POST = route(
 const path=params;
 const body=await readMentorProjectCommandBody(request);
 const scope=await requireProjectReadAccess(context,path.projectId);
-if(scope.access!=="LEARNER" && scope.access!=="MENTOR")
+if(scope.access!==ROLE.LEARNER && scope.access!==ROLE.MENTOR)
       throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-const task=scope.access==="LEARNER"
+const task=scope.access===ROLE.LEARNER
       ? await createLearnerOwnTask(context,path,body)
       : await createMentorProjectTask(context,path,body);
 return NextResponse.json({task,message:"Project tasks updated"},{status:201});

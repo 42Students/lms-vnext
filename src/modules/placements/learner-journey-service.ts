@@ -30,6 +30,7 @@ import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {learnerStaffApplicationOptOut} from "./learner-staff-application-optout-model";
 import {learnerWithdrawalMode} from "./learner-withdrawal-mode-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Display labels are legacy learner phrasing; raw codes remain available for
  * staff workflows and exact API state transitions. */
 function learnerScreeningLabel(status:string):string{
@@ -48,7 +49,7 @@ function learnerScheduleRoom(value:string|null):string|null{
 function requireLearner(context: RequestContext) {
   if (
     !context.membership ||
-    !hasMembershipRole(context, "LEARNER")
+    !hasMembershipRole(context, ROLE.LEARNER)
   ) {
     throw new AuthorizationError("placements.read");
   }

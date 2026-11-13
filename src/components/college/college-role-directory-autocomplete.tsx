@@ -3,6 +3,7 @@ import {useEffect,useRef,useState} from "react";
 import {Input} from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+import { ROLE } from "@/modules/identity/roles";
 type Result={membershipId:string;name:string};
 type Kind="LEARNER"|"FACULTY";
 const escapeQuery=(value:string)=>value.trim().slice(0,80);
@@ -33,7 +34,7 @@ export function CollegeRoleDirectoryAutocomplete({
     }catch{setRecent([]);}
   },[storageKey]);
   useEffect(()=>{
-    if(kind!=="FACULTY")return;
+    if(kind!==ROLE.FACULTY)return;
     const controller=new AbortController();
     void fetch("/api/college/roles/suggest/popular",{
       signal:controller.signal,credentials:"same-origin",cache:"no-store",
@@ -79,7 +80,7 @@ export function CollegeRoleDirectoryAutocomplete({
     setQuery(value);remember(value);setOpen(false);
     // Persist popularity only for a real, same-college Faculty option.
     // A recent free-text term has no membership and cannot grant access.
-    if(kind==="FACULTY"&&/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(row.membershipId)&&!popularityWriteRef.current){
+    if(kind===ROLE.FACULTY&&/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(row.membershipId)&&!popularityWriteRef.current){
       if(popularityWriteRef.current){/* A selection write is already in progress. */}
       else popularityWriteRef.current = true;
       try{
@@ -111,7 +112,7 @@ export function CollegeRoleDirectoryAutocomplete({
         if(event.key==="Escape")setOpen(false);}}
     />
     {open?<div id={"college-role-suggest-"+kind} role="listbox"
-      aria-label={kind==="FACULTY"?"Faculty name suggestions":"Student suggestions"}
+      aria-label={kind===ROLE.FACULTY?"Faculty name suggestions":"Student suggestions"}
       className="absolute left-0 right-0 top-full z-(--lms-z-sticky-inline) mt-1 max-h-52 overflow-y-auto rounded border border-border bg-surface p-1 shadow-lg">
       <p className="px-2 py-1 text-xs text-muted-foreground">
         {loading?"Searching…":showingLive?"Matching this college":recent.length?"Recent searches":"Popular on this page"}

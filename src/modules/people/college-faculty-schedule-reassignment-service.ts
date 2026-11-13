@@ -8,13 +8,14 @@ import {activityEvents,collegeMemberships,membershipRoles,sectionScheduleEvents,
 import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
+import { ROLE } from "@/modules/identity/roles";
 const ids=z.uuid();
 export const scheduleReassignInput=z.strictObject({
  replacementMembershipId:ids,confirmed:z.literal(true),
 });
 function college(ctx:RequestContext){
  const m=ctx.membership;
- if(!m||m.status!=="ACTIVE"||!hasMembershipRole(ctx,"COLLEGE_ADMIN"))
+ if(!m||m.status!=="ACTIVE"||!hasMembershipRole(ctx,ROLE.COLLEGE_ADMIN))
   throw new AuthorizationError("academics.manage");
  requirePermission(ctx,"academics.manage",{collegeId:m.collegeId,organizationId:m.organizationId});
  return m;

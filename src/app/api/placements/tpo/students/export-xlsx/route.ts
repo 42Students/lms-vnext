@@ -10,11 +10,12 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {getTpoStudentsIntelligence,tpoStudentsQueryObjectSchema,tpoStudentsRangeRefinement} from "@/modules/placements/tpo-students-service";
 import {exportTpoStudentsXlsx} from "@/modules/placements/tpo-students-xlsx";
 import { route } from "@/security/route";
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 async function handleGET(request:Request){
  try{
   const ctx=await getCurrentRequestContext();
-  if(!ctx.membership||!hasMembershipRole(ctx,"TPO"))throw new AuthorizationError("placements.manage");
+  if(!ctx.membership||!hasMembershipRole(ctx,ROLE.TPO))throw new AuthorizationError("placements.manage");
   const url=new URL(request.url);
   const raw=Object.fromEntries(url.searchParams.entries());
   const ids=raw["ids"];

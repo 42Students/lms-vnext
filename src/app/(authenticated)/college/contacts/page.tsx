@@ -26,6 +26,7 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { istDateFormatter } from "@/lib/format-date";
+import { ROLE } from "@/modules/identity/roles";
 type RawSearch=Record<string,string|string[]|undefined>;
 const dateFormat=istDateFormatter;
 const initials="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -49,7 +50,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
     action={<TextLink href="/dashboard" className="inline-flex min-h-11 items-center md:min-h-9">Back to dashboard</TextLink>}/>
  </div>;
  if(context.membership.status!=="ACTIVE"||
-    !hasMembershipRole(context,"COLLEGE_ADMIN"))return <div className="min-w-0 space-y-4">
+    !hasMembershipRole(context,ROLE.COLLEGE_ADMIN))return <div className="min-w-0 space-y-4">
   <PageHeader title="People Directory"/>
   <ErrorState title="The contacts directory is for staff only"
    description="This directory is restricted to authorized college administration staff. Faculty and TPO members can use their own scoped people tools; learners and recruiters cannot view this roster."
@@ -289,7 +290,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
          cell:contact=>contact.phone||"—"},
         ...(filter.tab==="ALL"?[
          {key:"roles",header:"Role",mobileLabel:"Role",mobilePriority:"secondary" as const,
-          cell:(contact:typeof results.items[number])=><span>{contact.roles.map(role=>role==="LEARNER"?"Student":"Faculty").join(" / ")||"—"}</span>}
+          cell:(contact:typeof results.items[number])=><span>{contact.roles.map(role=>role===ROLE.LEARNER?"Student":"Faculty").join(" / ")||"—"}</span>}
         ]:[]),
       ]}/>}
   </section>

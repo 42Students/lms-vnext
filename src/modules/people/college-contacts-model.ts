@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {COURSE_TEACHING_ROLES} from "@/modules/courses/constants";
+import { ROLE } from "@/modules/identity/roles";
 export const COLLEGE_CONTACTS_PAGE_SIZE=10;
 // URL pagination must be decimal digits; z.coerce.number also accepts
 // hexadecimal, exponent notation and whitespace supplied by a forged URL.
@@ -40,7 +41,7 @@ export const collegeContactsQuerySchema=z.strictObject({
 export type CollegeContactsQuery=z.infer<typeof collegeContactsQuerySchema>;
 export function contactRoleAudienceCompatible(filter:{tab:string;audience:string}):boolean {
  return !(filter.tab==="STUDENT"&&filter.audience==="FACULTY_ONLY")&&
-  !(filter.tab==="FACULTY"&&filter.audience==="LEARNER_ONLY");
+  !(filter.tab===ROLE.FACULTY&&filter.audience==="LEARNER_ONLY");
 }
 export function contactAcademicFiltersCompatible(filter:{teaching:string;teachingRole:string;enrollment:string;cohortId?:string|undefined;programId?:string|undefined;sectionId?:string|undefined;classPresence:string}):boolean {
  if(filter.enrollment==="NONE"&&(filter.cohortId||filter.programId||filter.sectionId||filter.classPresence==="ASSIGNED"))return false;
@@ -179,9 +180,9 @@ export function activeCollegeContactFilterCount(filter:CollegeContactsQuery):num
 export function collegeContactPageRoleCounts(rows:readonly {roles:readonly ("FACULTY"|"LEARNER")[]}[]){
  let facultyOnly=0,learnerOnly=0,dual=0;
  for(const row of rows){
-  if(row.roles.includes("FACULTY")&&row.roles.includes("LEARNER"))dual++;
-  else if(row.roles.includes("FACULTY"))facultyOnly++;
-  else if(row.roles.includes("LEARNER"))learnerOnly++;
+  if(row.roles.includes(ROLE.FACULTY)&&row.roles.includes(ROLE.LEARNER))dual++;
+  else if(row.roles.includes(ROLE.FACULTY))facultyOnly++;
+  else if(row.roles.includes(ROLE.LEARNER))learnerOnly++;
  }
  return {facultyOnly,learnerOnly,dual};
 }

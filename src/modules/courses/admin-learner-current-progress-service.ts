@@ -10,6 +10,7 @@ import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { loadCourseMembership, loadCourseSectionDeliveryScope } from "./scope";
 
+import { ROLE } from "@/modules/identity/roles";
 const id = z.string().uuid();
 
 /** Legacy live-content universe, narrowed by the selected college and delivery.
@@ -22,7 +23,7 @@ export async function getAdminLearnerCurrentContentAttempts(
  const deliveryId=id.parse(deliveryIdRaw);
  const selectedCollegeId=isSuperAdmin(context)
   ? context.adminScope?.collegeId
-  : hasMembershipRole(context,"COLLEGE_ADMIN") ? context.membership?.collegeId : null;
+  : hasMembershipRole(context,ROLE.COLLEGE_ADMIN) ? context.membership?.collegeId : null;
  const selectedOrgId=isSuperAdmin(context)?context.adminScope?.organizationId:context.membership?.organizationId;
  if(!selectedCollegeId || !selectedOrgId)throw new AuthorizationError("courses.read");
  requirePermission(context,"courses.read",{
@@ -33,7 +34,7 @@ export async function getAdminLearnerCurrentContentAttempts(
    loadCourseMembership(learnerMembershipId),
  ]);
  if(delivery.collegeId!==selectedCollegeId || learner.collegeId!==selectedCollegeId ||
-    learner.status!=="ACTIVE" || !learner.roles.includes("LEARNER"))
+    learner.status!=="ACTIVE" || !learner.roles.includes(ROLE.LEARNER))
    throw new AuthorizationError("courses.read");
  const now=new Date();
  const valid=await getDb().select({

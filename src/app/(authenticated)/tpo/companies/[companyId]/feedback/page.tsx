@@ -13,6 +13,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type SearchParams = { page?: string | string[] };
 const dateFormat = istDateTimeFormatter;
 function first(v: string | string[] | undefined) {
@@ -26,7 +27,7 @@ export default async function TpoCompanyFeedbackPage({
   searchParams: Promise<SearchParams>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) redirect("/dashboard");
   await requireTpoBatchActor(context);
   const [{ companyId }, search] = await Promise.all([params, searchParams]);
   if (Array.isArray(search.page)) notFound();

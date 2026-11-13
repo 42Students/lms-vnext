@@ -44,6 +44,7 @@ import {
   scheduleProjectMeetingInputSchema,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 type ProjectMeetingTx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 
 /** The old RepeatingItemEditor submitted up to 500 meetings in a single
@@ -248,7 +249,7 @@ export async function listProjectMeetings(
     throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
   }
   const scope = await requireProjectReadAccess(context, projectIdInput);
-  const moderator = scope.access === "MENTOR" || scope.access === "ADMIN";
+  const moderator = scope.access === ROLE.MENTOR || scope.access === "ADMIN";
   const archive = options.archive ?? "ACTIVE";
   if (!moderator && (archive !== "ACTIVE" || options.state === "DRAFT")) {
     throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
@@ -301,7 +302,7 @@ export async function requestProjectMeeting(
     throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
   const scope = await requireProjectReadAccess(context, projectIdInput);
   ensureMeetingProjectMutable(scope.project.status);
-  if (scope.access !== "LEARNER" || !context.membership) {
+  if (scope.access !== ROLE.LEARNER || !context.membership) {
     throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
   }
   const input = requestProjectMeetingInputSchema.parse(rawInput);
@@ -407,7 +408,7 @@ export async function scheduleProjectMeeting(
     if (meetingIdInput && !existing) throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
     // MEN-projects-meetings-R07: reject obsolete mentor submissions before
     // making any meeting or activity changes inside the locked transaction.
-    if (scope.access==="MENTOR" && (
+    if (scope.access===ROLE.MENTOR && (
       (existing && !input.expectedUpdatedAt) ||
       (!existing && !input.expectedProjectUpdatedAt)
     )) throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
@@ -589,7 +590,7 @@ export async function transitionProjectMeeting(
   if (input.action === "COMPLETE") {
     if (
       scope.access !== "ADMIN" &&
-      scope.access !== "MENTOR"
+      scope.access !== ROLE.MENTOR
     ) {
       throw new ProjectsServiceError(
         "PROJECT_MEETING_ACCESS_DENIED",
@@ -658,14 +659,14 @@ export async function transitionProjectMeeting(
   }
 
   const learnerMayCancel =
-    scope.access === "LEARNER" &&
+    scope.access === ROLE.LEARNER &&
     context.membership &&
     meeting.status === "REQUESTED" &&
     meeting.requestedByMembershipId ===
       context.membership.id;
   const managerMayCancel =
     scope.access === "ADMIN" ||
-    scope.access === "MENTOR";
+    scope.access === ROLE.MENTOR;
 
   if (
     !learnerMayCancel &&
@@ -694,7 +695,7 @@ export async function transitionProjectMeeting(
     )).for("update").limit(1);
   if(!project||project.deletedAt)throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   ensureMeetingProjectMutable(project.status);
-  if(scope.access==="MENTOR"||scope.access==="ADMIN")
+  if(scope.access===ROLE.MENTOR||scope.access==="ADMIN")
     await assertPersistedProjectMutationActor(tx,context,scope);
   else
     await assertPersistedLearnerProjectMutation(tx,context,scope.project.id,scope.collegeId);
@@ -714,7 +715,7 @@ export async function transitionProjectMeeting(
         ),
         eq(projectMeetings.status,meeting.status),
         sql`date_trunc('milliseconds', ${projectMeetings.updatedAt}) = ${meeting.updatedAt.toISOString()}::timestamptz`,
-        ...(scope.access === "LEARNER" ? [
+        ...(scope.access === ROLE.LEARNER ? [
           eq(projectMeetings.status, "REQUESTED"),
           eq(projectMeetings.requestedByMembershipId, context.membership!.id),
         ] : []),
@@ -740,7 +741,7 @@ export async function transitionProjectMeeting(
       projectId:scope.project.id,collegeId:scope.collegeId,roles:[role],
       exceptUserId:context.user.id,
       title:"Project meeting",body:"A project meeting has been cancelled.",
-      actionHref:(role==="MENTOR"?"/mentor/projects/":"/learn/projects/")+
+      actionHref:(role===ROLE.MENTOR?"/mentor/projects/":"/learn/projects/")+
         scope.project.id+"?tab=meetings",
     });
   }

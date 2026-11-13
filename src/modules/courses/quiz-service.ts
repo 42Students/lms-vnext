@@ -52,6 +52,7 @@ import {
   courseSectionDeliveryIdSchema,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 function mapQuizConstraint(error: unknown) {
   switch (postgresConstraintName(error)) {
     case "course_quizzes_generic_active_name_uq":
@@ -157,12 +158,12 @@ export async function listCourseQuizzes(
   );
 
   // COL-course-tabs-13: hidden lessons are unavailable even by a saved deep link.
-  if (access === "LEARNER" && !lesson.visibleToStudents) {
+  if (access === ROLE.LEARNER && !lesson.visibleToStudents) {
     throw new CoursesServiceError("LESSON_NOT_FOUND");
   }
 
   if (
-    access === "LEARNER" &&
+    access === ROLE.LEARNER &&
     lesson.learningPathStatus !== "PUBLISHED"
   ) {
     throw new CoursesServiceError(
@@ -194,7 +195,7 @@ export async function listCourseQuizzes(
     audience,
   ];
 
-  if (access === "LEARNER") {
+  if (access === ROLE.LEARNER) {
     conditions.push(
       inArray(courseQuizzes.status, [
         "PUBLISHED",
@@ -250,12 +251,12 @@ export async function listCourseQuizzesAcrossLessonsPage(
       }
       throw error;
     }
-    if (access === "LEARNER" &&
+    if (access === ROLE.LEARNER &&
         (!lesson.visibleToStudents || lesson.learningPathStatus !== "PUBLISHED")) continue;
     if (options.includeArchived && !can(context, "courses.manage", {
       collegeId: lesson.collegeId, organizationId: lesson.organizationId,
     })) throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
-    learner ||= access === "LEARNER";
+    learner ||= access === ROLE.LEARNER;
     eligible.push(id);
   }
   if (eligible.length === 0) return { quizzes: [], total: 0 };
@@ -302,11 +303,11 @@ export async function getCourseQuiz(
     deliveryId,
   );
 
-  if (access === "LEARNER" && !quiz.lessonVisibleToStudents) {
+  if (access === ROLE.LEARNER && !quiz.lessonVisibleToStudents) {
     throw new CoursesServiceError("QUIZ_NOT_PUBLISHED");
   }
   if (
-    access === "LEARNER" &&
+    access === ROLE.LEARNER &&
     (!["PUBLISHED", "CLOSED"].includes(
       quiz.status,
     ) ||
@@ -328,7 +329,7 @@ export async function getCourseQuiz(
   }
 
   let attemptCount = 0;
-  if (access === "LEARNER") {
+  if (access === ROLE.LEARNER) {
     if (!context.membership || !deliveryId) {
       throw new CoursesServiceError(
         "LEARNING_ACCESS_DENIED",
@@ -378,7 +379,7 @@ export async function getCourseQuiz(
 
   // GET editors opt in to private answer keys; learner release remains gated.
   const resultsReleased=learnerQuizResultsReleased(quiz,Date.now());
-  const revealCorrect=includeCorrectAnswers && (access!=="LEARNER"||resultsReleased);
+  const revealCorrect=includeCorrectAnswers && (access!==ROLE.LEARNER||resultsReleased);
 
   const grouped = new Map<
     string,
@@ -424,21 +425,21 @@ export async function getCourseQuiz(
   return {
     quiz,
     attemptsUsed:
-      access === "LEARNER"
+      access === ROLE.LEARNER
         ? attemptCount
         : null,
     attemptsRemaining:
-      access === "LEARNER"
+      access === ROLE.LEARNER
         ? Math.max(
             0,
             quiz.maxAttempts - attemptCount,
           )
         : null,
     resultsVisible:
-      access === "LEARNER"
+      access === ROLE.LEARNER
         ? resultsReleased
         : true,
-    questions:access==="LEARNER"&&context.membership
+    questions:access===ROLE.LEARNER&&context.membership
       ? shuffleQuizForLearner([...grouped.values()],quizId,context.membership.id,
           quiz.shuffleQuestions,quiz.shuffleOptions)
       : [...grouped.values()],
@@ -548,7 +549,7 @@ export async function updateCourseQuiz(
     current,
   );
 
-  if (actor === "FACULTY" && current.deliveryId) {
+  if (actor === ROLE.FACULTY && current.deliveryId) {
     return commandFacultyQuiz(context,{deliveryId:current.deliveryId},facultyQuizLegacyEdit(current,input));
   }
 
@@ -758,7 +759,7 @@ export async function transitionCourseQuiz(
     current,
   );
 
-  if (actor === "FACULTY" && current.deliveryId) {
+  if (actor === ROLE.FACULTY && current.deliveryId) {
     return commandFacultyQuiz(context,{deliveryId:current.deliveryId},{
       action:input.action,quizId:current.id,
       expectedUpdatedAt:input.expectedUpdatedAt,confirmed:input.confirmed,
@@ -857,7 +858,7 @@ export async function setCourseQuizResults(
   const manage=can(context,"courses.manage",{
     collegeId:current.collegeId,organizationId:current.organizationId,
   });
-  const authorized=manage||(actor==="FACULTY"&&current.deliveryId!==null);
+  const authorized=manage||(actor===ROLE.FACULTY&&current.deliveryId!==null);
   if(!authorized)throw new CoursesServiceError("QUIZ_RESULTS_ADMIN_ONLY");
   return getDb().transaction(async tx=>{
     const [locked]=await tx.select().from(courseQuizzes)

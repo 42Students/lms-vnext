@@ -9,6 +9,7 @@ import {type RequestContext,hasMembershipRole} from "@/modules/identity/context"
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {requirePlacementManageScope} from "./scope";
+import { ROLE } from "@/modules/identity/roles";
 const jobIdSchema=z.string().uuid();
 const slugSchema=z.string().regex(/^smr-[0-9a-f]{16}$/);
 function publicExternalHref(raw:string|null){
@@ -22,7 +23,7 @@ function publicExternalHref(raw:string|null){
 }
 export async function createPublicExternalJobLink(context:RequestContext,rawId:unknown){
  const jobId=jobIdSchema.parse(rawId),member=context.membership;
- if(!member||!hasMembershipRole(context,"TPO"))
+ if(!member||!hasMembershipRole(context,ROLE.TPO))
   throw new AuthorizationError("placements.manage");
  requirePermission(context,"placements.manage",{collegeId:member.collegeId});
  const college=await requirePlacementManageScope(context,member.collegeId);

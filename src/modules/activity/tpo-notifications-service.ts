@@ -23,6 +23,7 @@ import { ActivityServiceError } from "./errors";
 import { listOwnNotificationPage, releasedNotificationEvent, releasedNotificationReceipt } from "./notification-service";
 import { resolveTpoInboxQuery,tpoInboxPageHref } from "./tpo-notifications-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Personal TPO inbox: centrally authorized and verified against the live
  * persisted membership + TPO role, not only a caller-provided context.
@@ -32,7 +33,7 @@ export async function requirePersistedTpoInboxMembership(context: RequestContext
   if (
     !membership ||
     !hasActiveMembership(context) ||
-    !hasMembershipRole(context, "TPO") ||
+    !hasMembershipRole(context, ROLE.TPO) ||
     context.user.platformStatus !== "ACTIVE"
   ) {
     throw new AuthorizationError("placements.manage");

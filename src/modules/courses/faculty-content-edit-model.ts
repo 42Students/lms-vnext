@@ -1,4 +1,5 @@
 import { authoringDueInstant } from "./faculty-authoring-datetime-model";
+import { ROLE } from "@/modules/identity/roles";
 export type EditableContent = "RESOURCE" | "YOUTUBE" | "LIVE_CLASS" | "VIDEO";
 export function facultyContentPatch(input: {
   kind: EditableContent;
@@ -130,7 +131,7 @@ export const FACULTY_YOUTUBE_DRAWER_CONTRACT={
 
 export type FacultyContentAction="EDIT"|"DELETE";
 export function facultyYoutubeActions(actorRoles:readonly string[]):readonly FacultyContentAction[]{
- return actorRoles.includes("FACULTY")?["EDIT","DELETE"]:[];
+ return actorRoles.includes(ROLE.FACULTY)?["EDIT","DELETE"]:[];
 }
 export function facultyYoutubeEditDefaults(content:{
  contentTitle?:string|null;points?:number|null;

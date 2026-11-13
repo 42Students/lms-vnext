@@ -7,11 +7,12 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoCompanyLifecycle } from "@/modules/placements/tpo-company-lifecycle-service";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function TpoManageCompanyPage({
   params,
 }: { params: Promise<{ companyId: string }> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     redirect("/dashboard");
   }
   await requireTpoBatchActor(context);

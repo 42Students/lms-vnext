@@ -25,6 +25,7 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 
+import { ROLE } from "@/modules/identity/roles";
 type Option = { id: string; name: string; code?: string };
 type CohortOption = Option & {
   status: "PLANNED" | "ACTIVE" | "COMPLETED" | "ARCHIVED";
@@ -477,7 +478,7 @@ export function AdminCourseCreatePanel({
        {nextSetupStep==="COURSE"?"Start by creating or choosing a Course.":
         nextSetupStep==="OFFERING"?"Course created. Choose a Cohort and Academic Period for its Offering.":
         nextSetupStep==="DELIVERY"?"Offering created. Choose the compatible Section for the Delivery.":
-        nextSetupStep==="FACULTY"?"Section Delivery created. Assign Faculty to that Section.":
+        nextSetupStep===ROLE.FACULTY?"Section Delivery created. Assign Faculty to that Section.":
         "Teaching assignment saved. The Course setup flow is complete."}
       </p>
       <form id="setup-course" noValidate onSubmit={createCourse} className="scroll-mt-24 border-b border-border pb-4">

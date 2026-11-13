@@ -12,6 +12,7 @@ import {getTpoUnplacedLastApplications} from "@/modules/placements/tpo-unplaced-
 import {getTpoStudentsIntelligence} from "@/modules/placements/tpo-students-service";
 import {unplacedFilteredExportQuerySchema,tpoUnplacedFilteredCsv}
  from "@/modules/placements/tpo-unplaced-filtered-export-model";
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -19,7 +20,7 @@ export const GET = route(
   async ({ request, context: __actor }) => {
     const context = __actor!;
     try {
-if(!context.membership||!hasMembershipRole(context,"TPO"))return NextResponse.json({error:"UNAUTHORIZED"},{status:403});
+if(!context.membership||!hasMembershipRole(context,ROLE.TPO))return NextResponse.json({error:"UNAUTHORIZED"},{status:403});
 const params=new URL(request.url).searchParams;
 if(tpoReportHasRepeatedSearchParams(params))return NextResponse.json({error:"INVALID_QUERY"},{
    status:400,headers:{"Cache-Control":"private, no-store"},

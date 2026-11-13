@@ -8,6 +8,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectReadAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 export type MentorLearnerAcademicFact={
  membershipId:string;rollNumber:string|null;
  registrationNumber:string|null;programName:string|null;
@@ -22,7 +23,7 @@ export async function getMentorLearnerAcademicFacts(
  context:RequestContext,projectIdInput:string,
 ):Promise<MentorLearnerAcademicFact[]>{
  const scope=await requireProjectReadAccess(context,projectIdInput);
- if(scope.access!=="MENTOR")throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ if(scope.access!==ROLE.MENTOR)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const rows=await getDb().select({
   membershipId:projectMembers.membershipId,
   rollNumber:learnerProfiles.rollNumber,

@@ -23,6 +23,7 @@ import {
   loadCourseSectionDeliveryScope,
 } from "./scope";
 
+import { ROLE } from "@/modules/identity/roles";
 export type LearningAccessMode =
   | "ADMIN"
   | "FACULTY"
@@ -46,7 +47,7 @@ async function hasFacultyDeliveryAccess(
 ) {
   if (
     !context.membership ||
-    !context.membership.roles.includes("FACULTY")
+    !context.membership.roles.includes(ROLE.FACULTY)
   ) {
     return false;
   }
@@ -101,7 +102,7 @@ async function hasLearnerDeliveryAccess(
 ) {
   if (
     !context.membership ||
-    !context.membership.roles.includes("LEARNER")
+    !context.membership.roles.includes(ROLE.LEARNER)
   ) {
     return false;
   }
@@ -225,7 +226,7 @@ export async function requireLearningReadAccess(
   if (
     !deliveryId &&
     activeSameCollegeMembership(context, offering.collegeId) &&
-    context.membership?.roles.includes("FACULTY") &&
+    context.membership?.roles.includes(ROLE.FACULTY) &&
     (await resolveOfferingContentAuthority(context, {
       id: offering.id,
       collegeId: offering.collegeId,
@@ -277,7 +278,7 @@ export async function requireLearningReadAccess(
   }
 
   throw new CoursesServiceError(
-    context.membership?.roles.includes("FACULTY")
+    context.membership?.roles.includes(ROLE.FACULTY)
       ? "FACULTY_TEACHING_SCOPE_REQUIRED"
       : "LEARNER_ENROLLMENT_SCOPE_REQUIRED",
   );

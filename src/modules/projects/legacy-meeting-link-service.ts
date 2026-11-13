@@ -8,6 +8,7 @@ import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {requireProjectReadAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Old deep links name a meeting by an arbitrary project-local key, not by
  * globally meaningful UUID. Resolve only after checking the *current* project
  * role/college and feature flag, including tombstones and cross-tenant misses.
@@ -31,7 +32,7 @@ export async function resolveLegacyMeetingKeyLink(
   sql`lower(${projectMeetings.meetingKey})=lower(${key})`,
  )).limit(2);
  if(candidates.length!==1||!candidates[0]?.meetingKey||
-    (scope.access==="LEARNER"&&candidates[0].status==="DRAFT"))
+    (scope.access===ROLE.LEARNER&&candidates[0].status==="DRAFT"))
   throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
  return {meetingId:candidates[0].id,projectId:scope.project.id,
   meetingKey:candidates[0].meetingKey};

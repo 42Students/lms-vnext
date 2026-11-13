@@ -14,13 +14,14 @@ import {
   CollegePersonNotFoundError, recordedAttendanceSummary,
 } from "./college-person-detail-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function getCollegeStudentDetail(
   context: RequestContext, membershipIdInput: unknown, rawQuery: unknown = {},
 ) {
   const membershipId = collegePersonIdSchema.parse(membershipIdInput);
   const filter=collegeStudentEnrollmentQuerySchema.parse(rawQuery);
   const owner = context.membership;
-  if (!owner || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+  if (!owner || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
       !can(context, "people.manage", {collegeId: owner.collegeId, organizationId: owner.organizationId})) {
     throw new AuthorizationError("people.manage");
   }

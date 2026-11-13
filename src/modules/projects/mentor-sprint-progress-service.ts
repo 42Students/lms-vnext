@@ -17,6 +17,7 @@ import {
   summarizeSprintTasks,
 } from "./mentor-sprint-progress-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function getMentorSprintProgress(
   context: RequestContext, rawQuery: unknown,
 ) {
@@ -24,7 +25,7 @@ export async function getMentorSprintProgress(
   const membership = context.membership;
   if (!membership || context.user.platformStatus!=="ACTIVE" ||
       !hasActiveMembership(context) ||
-      !hasMembershipRole(context, "MENTOR") ||
+      !hasMembershipRole(context, ROLE.MENTOR) ||
       !can(context, "projects.read", {
         collegeId: membership.collegeId,
         organizationId: membership.organizationId,
@@ -44,7 +45,7 @@ export async function getMentorSprintProgress(
   if (!modules.projects.enabled) return empty(false);
 
   const projects = (await listMyProjectInstances(context))
-    .filter(row => row.memberRole === "MENTOR" &&
+    .filter(row => row.memberRole === ROLE.MENTOR &&
       row.project.collegeId === membership.collegeId &&
       row.project.status !== "ARCHIVED");
   const ids = projects.map(row => row.project.id);

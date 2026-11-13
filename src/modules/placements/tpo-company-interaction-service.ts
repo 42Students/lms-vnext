@@ -19,6 +19,7 @@ import {
 } from "./tpo-company-interaction-model";
 import { TpoCrmError } from "./tpo-crm-service";
 
+import { ROLE } from "@/modules/identity/roles";
 export class TpoCompanyInteractionConflict extends Error {
   constructor() {
     super("TPO_COMPANY_INTERACTION_STALE");
@@ -38,7 +39,7 @@ export async function createConfirmedTpoCompanyInteraction(
   raw: unknown,
 ) {
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "TPO")) {
+  if (!membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = membership.collegeId;

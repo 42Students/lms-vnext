@@ -8,6 +8,7 @@ import { onboardPersonWithRuntime } from "@/modules/people/runtime";
 
 import {z} from "zod";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime = "nodejs";
 
 export const POST = route(
@@ -43,11 +44,11 @@ export const POST = route(
     if(!parsed.success)return NextResponse.json({error:"INVALID_FACULTY_PROFILE",
       message:"Check the department, faculty type and profile information."},{status:400});
     const facultyProfile=parsed.data.facultyProfile;
-    if(facultyProfile&&(!Array.isArray(parsed.data["roles"])||!parsed.data["roles"].includes("FACULTY")))
+    if(facultyProfile&&(!Array.isArray(parsed.data["roles"])||!parsed.data["roles"].includes(ROLE.FACULTY)))
       return NextResponse.json({error:"FACULTY_ROLE_REQUIRED"},{status:400});
     const validatedPerson = onboardPersonInputSchema.parse(body);
     if (validatedPerson.roles.some(role =>
-      role === "COLLEGE_ADMIN" || role === "TPO")) {
+      role === ROLE.COLLEGE_ADMIN || role === ROLE.TPO)) {
       requirePermission(context, "admin-scope.select");
     }
     await requireRecentDeviceAuthentication(context.user.id);

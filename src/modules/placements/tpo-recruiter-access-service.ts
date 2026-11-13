@@ -38,6 +38,7 @@ import {
 import {escapeLiteralApplicantSearch} from "./company-share/public-filter-model";
 import {requirePersistedTpoMembership} from "./tpo-persisted-actor-service";
 
+import { ROLE } from "@/modules/identity/roles";
 const PAGE_SIZE = 25;
 
 /**
@@ -56,7 +57,7 @@ export async function listTpoRecruiterAccess(
   options: {exportAll?:boolean} = {},
 ) {
   if (
-    !hasMembershipRole(context, "TPO") ||
+    !hasMembershipRole(context, ROLE.TPO) ||
     !context.membership
   ) {
     throw new AuthorizationError(

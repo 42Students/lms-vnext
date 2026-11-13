@@ -17,6 +17,7 @@ import { ProjectsServiceError } from "./errors";
 import { deriveMentorProjectAttention } from "./mentor-attention";
 import { currentPendingMentorSubmissions } from "./mentor-latest-review-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Legacy mentor notification crosswalk (read-only, never fabricated):
  * resolvedDelivery / latest deliverable => newest persisted projectSubmissions
  *   whose version/status means a learner still needs mentor review;
@@ -36,7 +37,7 @@ export async function listMyMentorProjectAttention(
   context: RequestContext, now: Date = new Date(),
   verifiedRows?:readonly Awaited<ReturnType<typeof listMyProjectInstances>>[number][],
 ) {
-  if (!hasActiveMembership(context) || !hasMembershipRole(context,"MENTOR") || !context.membership ||
+  if (!hasActiveMembership(context) || !hasMembershipRole(context,ROLE.MENTOR) || !context.membership ||
       context.user.platformStatus!=="ACTIVE" || !can(context,"projects.read",{
         collegeId:context.membership.collegeId,organizationId:context.membership.organizationId,
       })) {
@@ -46,7 +47,7 @@ export async function listMyMentorProjectAttention(
   if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const rows=(verifiedRows??await listMyProjectInstances(context))
-    .filter(row=>row.memberRole==="MENTOR"&&row.project.collegeId===membership.collegeId);
+    .filter(row=>row.memberRole===ROLE.MENTOR&&row.project.collegeId===membership.collegeId);
   if (!rows.length) return [];
   const ids=rows.map(row=>row.project.id);
   const idSet=new Set(ids);

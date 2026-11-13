@@ -8,11 +8,12 @@ import {getFacultyDeliveryRoster} from "@/modules/attendance/faculty-service";
 import {facultyDiscussionParticipationSchema,facultyDiscussionParticipationSummary}
   from "./faculty-discussion-participation-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Registered messages only; reply relationships cannot be counted without a reply FK. */
 export async function getFacultyDiscussionParticipation(context:RequestContext,raw:unknown){
   const {deliveryId}=facultyDiscussionParticipationSchema.parse(raw);
   const membership=context.membership;
-  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY")||
+  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.FACULTY)||
     !can(context,"courses.read",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     }))throw new AuthorizationError("courses.read");

@@ -9,10 +9,11 @@ import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-requ
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 export default async function TpoChangeRequestsPage({params}:{params:Promise<{jobId:string}>}){
  const context=await getCurrentRequestContext();
- if(!context.membership||!(hasMembershipRole(context,"TPO")||hasMembershipRole(context,"COLLEGE_ADMIN")))redirect("/dashboard");
+ if(!context.membership||!(hasMembershipRole(context,ROLE.TPO)||hasMembershipRole(context,ROLE.COLLEGE_ADMIN)))redirect("/dashboard");
  const {jobId}=await params;
  let data:Awaited<ReturnType<typeof getDriveChangeRequests>>|null=null;
  let loadFailed=false;
@@ -29,13 +30,13 @@ export default async function TpoChangeRequestsPage({params}:{params:Promise<{jo
     Request a change
    </ButtonLink>
   </section>
-  {!loadFailed&&data?.storageReady&&data.party==="TPO"?<TpoDriveRecruiterReviewInvite jobId={jobId}/>:null}
+  {!loadFailed&&data?.storageReady&&data.party===ROLE.TPO?<TpoDriveRecruiterReviewInvite jobId={jobId}/>:null}
   {loadFailed||!data?<Alert tone="error">Couldn\u0027t load the change requests. <TextLink href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/change-requests"}>Retry</TextLink></Alert>:
    !data.storageReady?<Alert tone="warning">
    {data.pendingMessage} Changes cannot be recorded until the platform migration is registered.</Alert>
    :<section id="new" aria-label="Drive change requests" className="min-w-0 scroll-mt-24 space-y-3">
      {data.requests.length===0?<Alert tone="info">
-      {data.party==="TPO"
+      {data.party===ROLE.TPO
        ?"No change requests from this drive yet. Ask the company to clarify role, pay, location or schedule, or suggest a correction below."
        :"No change requests from the placement cell yet. Send a request or respond to the placement cell below."}
      </Alert>:null}

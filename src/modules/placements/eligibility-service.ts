@@ -43,6 +43,7 @@ import {
   type PlacementEligibilityPolicyInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 /** G2-18-023-045: legacy eligibility columns and their scoped vNext reads.
  * A job's academic criterion is not the college's offer-limit policy;
  * a pre-placement talk or college exam block is an event, not a PASS check.
@@ -307,7 +308,7 @@ async function loadLearnerMembership(
 function requireSelfLearner(context: RequestContext) {
   if (
     !context.membership ||
-    !hasMembershipRole(context, "LEARNER")
+    !hasMembershipRole(context, ROLE.LEARNER)
   ) {
     throw new AuthorizationError("placements.read");
   }

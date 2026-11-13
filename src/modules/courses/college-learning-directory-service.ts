@@ -31,6 +31,7 @@ import {
   type CollegeCourseProgressRecord,
 } from "./college-learning-directory-model";
 
+import { ROLE } from "@/modules/identity/roles";
 const cohortDepartment = alias(departments, "learning_cohort_department");
 
 function requireCollegeCoursesRead(context: RequestContext) {
@@ -44,7 +45,7 @@ function requireCollegeCoursesRead(context: RequestContext) {
     return context.adminScope.collegeId;
   }
   const member = context.membership;
-  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+  if (!member || !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
       !can(context, "courses.read", {
         collegeId: member.collegeId,
         organizationId: member.organizationId,

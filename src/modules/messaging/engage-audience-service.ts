@@ -10,6 +10,7 @@ import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {engageAudienceQuerySchema} from "./engage-audience-model";
 import {planTpoCampaignRecipients} from "./tpo-campaign-send-policy";
 
+import { ROLE } from "@/modules/identity/roles";
 const selectedCampaignPreviewSchema=z.strictObject({
  selectedLeadIds:z.array(z.string().uuid()).min(1).max(100)
   .refine(ids=>new Set(ids).size===ids.length,"Select different recruiter leads"),
@@ -17,7 +18,7 @@ const selectedCampaignPreviewSchema=z.strictObject({
 /** Count-only preview; no emails leave this service. A send requires separate revalidation. */
 export async function previewEngageCampaignAudience(context:RequestContext,raw:unknown={}){
  const collegeId=context.membership?.collegeId;
- if(!collegeId||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ if(!collegeId||!hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,collegeId);
  const query=engageAudienceQuerySchema.parse(raw);
  return getDb().transaction(async tx=>{
@@ -52,7 +53,7 @@ export async function previewEngageCampaignAudience(context:RequestContext,raw:u
 export async function previewSelectedTpoCampaignAudience(context:RequestContext,raw:unknown){
  const query=selectedCampaignPreviewSchema.parse(raw);
  const collegeId=context.membership?.collegeId;
- if(!collegeId||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ if(!collegeId||!hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,collegeId);
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{

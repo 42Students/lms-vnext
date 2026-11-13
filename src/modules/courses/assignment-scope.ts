@@ -18,6 +18,7 @@ import {
   loadCourseSectionDeliveryScope,
 } from "./scope";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Legacy assignment-scope error copy for API/UI adapters. Identifiers in
  * vNext are UUIDs; do not imply an old numeric lesson content ID is valid. */
 export function assignmentScopeUserMessage(code:string):string{
@@ -150,7 +151,7 @@ export async function loadAssignmentSubmissionScope(
 export async function requireWholeAssignmentBulkPermission(
  context: RequestContext, assignmentId: string,
 ) {
- if(!isSuperAdmin(context)&&!hasMembershipRole(context,"COLLEGE_ADMIN"))
+ if(!isSuperAdmin(context)&&!hasMembershipRole(context,ROLE.COLLEGE_ADMIN))
   throw new AuthorizationError("courses.manage");
  const scope=await loadCourseAssignmentScope(assignmentId);
  requirePermission(context,"courses.manage",{

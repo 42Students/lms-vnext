@@ -9,6 +9,7 @@ import { redactAlertText, safeAlertPath } from "@/modules/log-alerts/redaction";
 import { route } from "@/security/route";
 
 import { env } from "@/config/env";
+import { ROLE } from "@/modules/identity/roles";
 export const runtime = "nodejs";
 const MAX_BYTES = 4096;
 
@@ -75,9 +76,9 @@ async function handlePOST(request: Request) {
     return NextResponse.json({message:"Too many reports. Please try again later."},
       {status:429,headers:{"Retry-After":"60"}});
   }
-  const roleCategory=context.membership?.roles.includes("COLLEGE_ADMIN")?"COLLEGE_ADMIN":
-    context.membership?.roles.includes("FACULTY")?"FACULTY":
-    context.membership?.roles.includes("LEARNER")?"LEARNER":
+  const roleCategory=context.membership?.roles.includes(ROLE.COLLEGE_ADMIN)?"COLLEGE_ADMIN":
+    context.membership?.roles.includes(ROLE.FACULTY)?"FACULTY":
+    context.membership?.roles.includes(ROLE.LEARNER)?"LEARNER":
     context.recruiter?"RECRUITER":"OTHER";
   const identity={userId:context.user.id,collegeId:context.membership?.collegeId,roleCategory};
   const report = parsed.data;

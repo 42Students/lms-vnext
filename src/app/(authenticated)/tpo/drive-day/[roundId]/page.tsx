@@ -9,6 +9,7 @@ import { getDriveDayRoster } from "@/modules/placements/drive-day-coordinator-se
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import { getTpoRoundDriveDay } from "@/modules/placements/tpo-round-drive-day-service";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function DriveDayRoundPage({
   params,
 }: {
@@ -19,8 +20,8 @@ export default async function DriveDayRoundPage({
   if (
     !context.membership ||
     (
-      !hasMembershipRole(context, "LEARNER") &&
-      !hasMembershipRole(context, "TPO")
+      !hasMembershipRole(context, ROLE.LEARNER) &&
+      !hasMembershipRole(context, ROLE.TPO)
     )
   ) {
     redirect("/dashboard");
@@ -30,7 +31,7 @@ export default async function DriveDayRoundPage({
 
   // This TPO route opens the operator workspace for TPO memberships,
   // even when that same membership also has a learner role.
-  if (hasMembershipRole(context, "TPO")) {
+  if (hasMembershipRole(context, ROLE.TPO)) {
     let data: Awaited<
       ReturnType<typeof getTpoRoundDriveDay>
     >;

@@ -26,13 +26,14 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type Params=Record<string,string|string[]|undefined>;
 
 export default async function FacultyCalendarPage({
   searchParams,
 }:{searchParams:Promise<Params>}) {
   const context=await getCurrentRequestContext();
-  if(!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY"))redirect("/dashboard");
+  if(!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.FACULTY))redirect("/dashboard");
   const raw=await searchParams;
   const accepted=Object.keys(raw).every(key=>key==="month"||key==="deliveryId")&&
     Object.values(raw).every(value=>!Array.isArray(value));

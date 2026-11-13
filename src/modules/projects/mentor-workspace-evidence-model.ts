@@ -1,3 +1,4 @@
+import { ROLE } from "@/modules/identity/roles";
 
 export function safeProjectExternalHref(raw:string|null):string|null {
   if (!raw || raw.length>2048) return null;
@@ -9,7 +10,7 @@ export function safeProjectExternalHref(raw:string|null):string|null {
 }
 
 export function showMentorTaskCriteria(mode:"LEARNER"|"MENTOR"|"ADMIN",criteria:string|null){
-  return (mode==="LEARNER"||mode==="MENTOR")&&Boolean(criteria?.trim());
+  return (mode===ROLE.LEARNER||mode===ROLE.MENTOR)&&Boolean(criteria?.trim());
 }
 
 export function mentorSprintTaskFacts(tasks:readonly {status:string}[]) {
@@ -43,16 +44,16 @@ export function mentorTaskFeedbackHref(projectId:string,taskId:string){
 }
 
 export function mentorWorkspaceTeamFacts(members:readonly {role:string;isPrimary:boolean}[]){
-  return {learners:members.filter(row=>row.role==="LEARNER").length,
-    mentors:members.filter(row=>row.role==="MENTOR").length,
-    primaryMentors:members.filter(row=>row.role==="MENTOR"&&row.isPrimary).length};
+  return {learners:members.filter(row=>row.role===ROLE.LEARNER).length,
+    mentors:members.filter(row=>row.role===ROLE.MENTOR).length,
+    primaryMentors:members.filter(row=>row.role===ROLE.MENTOR&&row.isPrimary).length};
 }
 
 export function mentorWorkspaceMissingPrimaryMentor(
  projectStatus:string,members:readonly {role:string;isPrimary:boolean}[]
 ){
   return projectStatus!=="ARCHIVED"&&
-    !members.some(row=>row.role==="MENTOR"&&row.isPrimary);
+    !members.some(row=>row.role===ROLE.MENTOR&&row.isPrimary);
 }
 
 export function mentorLatestDeliveryVersion(

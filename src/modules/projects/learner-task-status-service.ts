@@ -13,6 +13,7 @@ import {ProjectsServiceError} from "./errors";
 import {canLearnerMoveOwnTask,learnerTaskStatusInputSchema} from "./learner-task-status-policy";
 import {z} from "zod";
 
+import { ROLE } from "@/modules/identity/roles";
 /** LEARNER-projects-25: only active learner member and exact assigned task.
  * All state/ownership checks are repeated under DB locks. No DONE/IN_REVIEW escape. */
 export async function moveOwnLearnerProjectTask(context:RequestContext,rawProjectId:unknown,
@@ -21,10 +22,10 @@ export async function moveOwnLearnerProjectTask(context:RequestContext,rawProjec
  const taskId=z.string().uuid().parse(rawTaskId);
  const input=learnerTaskStatusInputSchema.parse(rawInput);
  const membership=context.membership;
- if(!membership || !membership.roles.includes("LEARNER"))
+ if(!membership || !membership.roles.includes(ROLE.LEARNER))
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const scope=await requireProjectReadAccess(context,projectId);
- if(scope.access!=="LEARNER")throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ if(scope.access!==ROLE.LEARNER)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  return getDb().transaction(async tx=>{

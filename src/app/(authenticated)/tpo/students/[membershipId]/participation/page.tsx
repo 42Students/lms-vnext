@@ -14,13 +14,14 @@ import {tpoStudentJourneyLinks} from "@/modules/placements/tpo-student-journey-l
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function TpoLearnerParticipationPage({
   params,
 }: {
   params: Promise<{ membershipId: string }>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     redirect("/dashboard");
   }
   const { membershipId } = await params;

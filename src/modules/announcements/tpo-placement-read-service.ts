@@ -11,12 +11,13 @@ import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import {senderTypeForTpoTab,tpoAnnouncementTabSchema,projectTpoAnnouncementRows} from "./tpo-placement-read-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Read only explicitly college-targeted TPO/42 announcements; no learner targeting guesses. */
 export async function listTpoPlacementAnnouncements(
  context:RequestContext,rawTab:unknown="yours",now:Date=new Date(),page=1,scope:"MINE"|"COLLEGE"="MINE",
 ){
  const membership=context.membership;
- if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ if(!membership||!hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
  const tab=tpoAnnouncementTabSchema.parse(rawTab);
  const targetedReady=await placementTableExists("placement_tpo_notice_audiences");
@@ -108,7 +109,7 @@ export async function listTpoPlacementAnnouncements(
 /** TPO-inbox-team-54: total unacknowledged From 42 notices, not a first-page estimate. */
 export async function countUnreadTpo42Announcements(context:RequestContext,now:Date=new Date()){
  const membership=context.membership;
- if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ if(!membership||!hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
  if(!await placementTableExists("announcements")||
     !await placementTableExists("placement_cell_announcement_reads"))return null;

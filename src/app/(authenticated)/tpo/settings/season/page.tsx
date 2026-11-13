@@ -15,12 +15,13 @@ import { getTpoPlacementSeasonSettings } from "@/modules/placements/tpo-settings
 import { Heading } from "@/components/ui/heading";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function TpoPlacementSeasonSettingsPage() {
   const context = await getCurrentRequestContext();
 
   if (
     !context.membership ||
-    !hasMembershipRole(context, "TPO")
+    !hasMembershipRole(context, ROLE.TPO)
   ) {
     redirect("/dashboard");
   }

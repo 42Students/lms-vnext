@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type Params = {
   assignment?: string | string[];
   search?: string | string[];
@@ -34,7 +35,7 @@ export default async function MentorTaskReviewsPage({
   searchParams,
 }: { searchParams: Promise<Params> }) {
   const context = await getCurrentRequestContext();
-  if (!hasMembershipRole(context, "MENTOR")) redirect("/dashboard");
+  if (!hasMembershipRole(context, ROLE.MENTOR)) redirect("/dashboard");
   const raw = await searchParams;
   const parsed = mentorTaskReviewQuerySchema.safeParse(singleValueMentorFilters({
     search:raw.search,projectId:raw.projectId,assignment:raw.assignment,

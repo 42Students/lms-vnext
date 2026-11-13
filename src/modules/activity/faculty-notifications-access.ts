@@ -8,6 +8,7 @@ import {
   requirePermission,
 } from "@/modules/permissions/policy";
 
+import { ROLE } from "@/modules/identity/roles";
 /** The old notification shell used route flags for learner vs faculty.
  * vNext uses persisted college membership role: a Mentor-only actor, a
  * College Admin-only actor, and a Super Admin scoped to a college are NOT
@@ -16,10 +17,10 @@ import {
  * selected role workspace, with no cross-role inbox data sharing. */
 export function facultyNotificationsFallbackPath(context:RequestContext):string{
  if(hasActiveMembership(context)){
-  if(hasMembershipRole(context,"LEARNER"))return "/learn/notifications";
-  if(hasMembershipRole(context,"MENTOR"))return "/mentor/projects";
-  if(hasMembershipRole(context,"TPO"))return "/tpo/notifications";
-  if(hasMembershipRole(context,"COLLEGE_ADMIN"))return "/college";
+  if(hasMembershipRole(context,ROLE.LEARNER))return "/learn/notifications";
+  if(hasMembershipRole(context,ROLE.MENTOR))return "/mentor/projects";
+  if(hasMembershipRole(context,ROLE.TPO))return "/tpo/notifications";
+  if(hasMembershipRole(context,ROLE.COLLEGE_ADMIN))return "/college";
  }
  return "/dashboard";
 }
@@ -30,7 +31,7 @@ export function facultyNotificationsFallbackPath(context:RequestContext):string{
 export function requireFacultyNotificationsAccess(context: RequestContext) {
   const membership = context.membership;
   if (!membership || !hasActiveMembership(context) ||
-      !hasMembershipRole(context, "FACULTY")) {
+      !hasMembershipRole(context, ROLE.FACULTY)) {
     throw new AuthorizationError("academics.read");
   }
   requirePermission(context, "academics.read", {

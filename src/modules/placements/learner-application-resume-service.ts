@@ -8,6 +8,7 @@ import {hasMembershipRole,type RequestContext} from "@/modules/identity/context"
 import {createPrivateUploadGrant,readPrivateObjectAttestation,
  createPrivateReadGrant} from "@/modules/storage/private-object-storage";
 
+import { ROLE } from "@/modules/identity/roles";
 const appId=z.string().uuid();
 const request=z.discriminatedUnion("action",[
  z.strictObject({action:z.literal("INITIATE"),contentType:z.literal("application/pdf"),
@@ -17,7 +18,7 @@ const request=z.discriminatedUnion("action",[
 ]);
 function ownMembership(context:RequestContext){
  if(context.user.platformStatus!=="ACTIVE"||!context.membership||
-   context.membership.status!=="ACTIVE"||!hasMembershipRole(context,"LEARNER"))
+   context.membership.status!=="ACTIVE"||!hasMembershipRole(context,ROLE.LEARNER))
   throw new Error("PLACEMENT_RESUME_NOT_FOUND");
  return context.membership;
 }

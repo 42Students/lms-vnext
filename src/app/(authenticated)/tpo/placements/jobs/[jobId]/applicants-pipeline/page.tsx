@@ -21,10 +21,11 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { ROLE } from "@/modules/identity/roles";
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function TpoApplicantPipelinePage({params,searchParams}:Props){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO")) redirect("/dashboard");
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO)) redirect("/dashboard");
  const {jobId}=await params;
  const {query:legacyQuery,...modernQuery}=await searchParams;
  // Historical search-controller URLs used ?query=. Search is still scoped

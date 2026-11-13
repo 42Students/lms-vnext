@@ -11,17 +11,18 @@ import {
  mentorReviewOverviewSchema,classifyMentorDeliveryReview,mentorDeliveryReviewCounts,
 } from "./mentor-review-overview-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Only registered per-version final delivery and review facts. Never infer absent history. */
 export async function getMentorDeliveryReviewOverview(context:RequestContext,raw:unknown){
  const query=mentorReviewOverviewSchema.parse(raw);
  const membership=context.membership;
- if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR"))
+ if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR))
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  // A disabled tenant must not enumerate delivery review project identities.
  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const scope=await requireProjectReadAccess(context,query.projectId);
- if(scope.access!=="MENTOR"||!can(context,"projects.read",{
+ if(scope.access!==ROLE.MENTOR||!can(context,"projects.read",{
   collegeId:scope.collegeId,organizationId:scope.organizationId,
  }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const db=getDb();

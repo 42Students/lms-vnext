@@ -1,6 +1,7 @@
 import {StatusBadge} from "@/components/ui/status-badge";
 import { Heading } from "@/components/ui/heading";
 
+import { ROLE } from "@/modules/identity/roles";
 type Member={membershipId:string;role:string;isPrimary:boolean;displayName:string|null};
 type Task={assigneeMembershipId:string|null};
 
@@ -8,8 +9,8 @@ type Task={assigneeMembershipId:string|null};
 export function CollegeAdminWorkspaceTeamOverview({members,tasks}:{
  members:readonly Member[];tasks:readonly Task[];
 }){
- const learners=members.filter(m=>m.role==="LEARNER");
- const faculty=members.filter(m=>m.role==="MENTOR");
+ const learners=members.filter(m=>m.role===ROLE.LEARNER);
+ const faculty=members.filter(m=>m.role===ROLE.MENTOR);
  const primary=faculty.find(m=>m.isPrimary);
  const learnerIds=new Set(learners.map(m=>m.membershipId));
  const assigned=new Set(tasks.map(t=>t.assigneeMembershipId).filter((id):id is string=>

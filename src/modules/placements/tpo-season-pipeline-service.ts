@@ -13,9 +13,10 @@ import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import { projectTpoSeasonPipeline, tpoSeasonPipelineQuerySchema } from "./tpo-season-pipeline-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function getTpoSeasonPipeline(context: RequestContext, raw: unknown) {
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "TPO") ||
+  if (!membership || !hasMembershipRole(context, ROLE.TPO) ||
     membership.status !== "ACTIVE" || context.user.platformStatus !== "ACTIVE") {
     throw new AuthorizationError("placements.manage");
   }

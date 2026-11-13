@@ -47,6 +47,7 @@ import {
   courseSectionDeliveryIdSchema,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Legacy LessonContents(ASSIGNMENT) crosswalk into a distinct,
  * college-scoped courseAssignments row. Never accept a raw numeric lesson ID
  * as a UUID, and retain historical ordering within the resolved lesson.
@@ -160,12 +161,12 @@ export async function listCourseAssignments(
     );
 
   // COL-course-tabs-13: hidden lessons are unavailable even by a saved deep link.
-  if (access === "LEARNER" && !lesson.visibleToStudents) {
+  if (access === ROLE.LEARNER && !lesson.visibleToStudents) {
     throw new CoursesServiceError("LESSON_NOT_FOUND");
   }
 
   if (
-    access === "LEARNER" &&
+    access === ROLE.LEARNER &&
     lesson.learningPathStatus !== "PUBLISHED"
   ) {
     throw new CoursesServiceError(
@@ -200,7 +201,7 @@ export async function listCourseAssignments(
     audience,
   ];
 
-  if (access === "LEARNER") {
+  if (access === ROLE.LEARNER) {
     conditions.push(
       eq(
         courseAssignments.status,
@@ -349,7 +350,7 @@ export async function updateCourseAssignment(
     current,
   );
 
-  if (actor === "FACULTY" && current.deliveryId) {
+  if (actor === ROLE.FACULTY && current.deliveryId) {
     return commandFacultyAssignment(context, {deliveryId: current.deliveryId},
       facultyAssignmentLegacyEdit(current, input));
   }
@@ -452,7 +453,7 @@ export async function transitionCourseAssignment(
     current,
   );
 
-  if (actor === "FACULTY" && current.deliveryId) {
+  if (actor === ROLE.FACULTY && current.deliveryId) {
     return commandFacultyAssignment(context,{deliveryId:current.deliveryId},{
       action:input.action,assignmentId:current.id,
       expectedUpdatedAt:input.expectedUpdatedAt,confirmed:input.confirmed,

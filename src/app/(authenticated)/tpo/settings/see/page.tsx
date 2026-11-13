@@ -15,6 +15,7 @@ import {
 } from "@/modules/placements/tpo-policy-service";
 import { Heading } from "@/components/ui/heading";
 
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic = "force-dynamic";
 
 export default async function TpoWhatCompaniesSeePage() {
@@ -22,7 +23,7 @@ export default async function TpoWhatCompaniesSeePage() {
 
   if (
     !context.membership ||
-    !hasMembershipRole(context, "TPO")
+    !hasMembershipRole(context, ROLE.TPO)
   ) {
     redirect("/dashboard");
   }

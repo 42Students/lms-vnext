@@ -18,6 +18,7 @@ import { courseDisplayRuntimeEnabled } from "./course-display-readiness";
 import { loadCourseScope } from "./scope";
 import { courseIdSchema } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const IMAGE_MIMES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const IMAGE_PATH = /^private\/[a-f0-9-]{36}\/[a-f0-9-]{36}\/course-resource\/[a-f0-9-]{36}$/i;
@@ -72,7 +73,7 @@ async function authorize(context: RequestContext, rawId: string, manage: boolean
     const ownCollegeMember = context.membership?.status === "ACTIVE" &&
       context.membership.collegeId === scope.collegeId;
     if (context.user.platformStatus !== "ACTIVE" ||
-        !ownCollegeMember && !context.user.systemRoles.includes("SUPER_ADMIN"))
+        !ownCollegeMember && !context.user.systemRoles.includes(ROLE.SUPER_ADMIN))
       fail("COURSE_IMAGE_NOT_FOUND", 404);
     if (!ownCollegeMember) requirePermission(context, "courses.read", {
       collegeId: scope.collegeId, organizationId: scope.organizationId,

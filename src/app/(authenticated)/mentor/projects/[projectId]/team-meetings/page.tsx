@@ -23,6 +23,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { formatNumberIN } from "@/lib/safe-format";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type Params={status?:string|string[];type?:string|string[];outcome?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
 export default async function MentorTeamMeetingsPage({
   params,searchParams,
@@ -37,7 +38,7 @@ export default async function MentorTeamMeetingsPage({
   );
   if(!parsed.success){
  const recoveryContext=await getCurrentRequestContext();
- if(!hasMembershipRole(recoveryContext,"MENTOR"))redirect("/dashboard");
+ if(!hasMembershipRole(recoveryContext,ROLE.MENTOR))redirect("/dashboard");
  await assertMentorProjectRecoveryAccess(recoveryContext,projectId);
  return  <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid meeting history filters"} />

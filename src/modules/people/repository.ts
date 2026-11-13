@@ -48,6 +48,7 @@ import type {
   PersonOnboardingMutationContext,
 } from "./service";
 
+import { ROLE } from "@/modules/identity/roles";
 function isUniqueViolation(error: unknown) {
   return Boolean(
     error &&
@@ -237,7 +238,7 @@ export const drizzlePeopleRepository:
       return await db.transaction(async (tx) => {
         // Recheck the active selected role before any identity or membership write.
         await assertAuthorizedCollegeMutation(tx, mutation.context, input.collegeId, "people.manage");
-        if (input.roles.includes("COLLEGE_ADMIN") || input.roles.includes("TPO")) {
+        if (input.roles.includes(ROLE.COLLEGE_ADMIN) || input.roles.includes(ROLE.TPO)) {
           await assertPersistedPlatformPermission(tx, mutation.context, "admin-scope.select");
         }
         const candidateWhere = input.email
@@ -469,7 +470,7 @@ export const drizzlePeopleRepository:
         );
 
         if(input.facultyProfile){
-          if(!roles.includes("FACULTY"))
+          if(!roles.includes(ROLE.FACULTY))
             throw new Error("FACULTY_ROLE_REQUIRED");
           // Authorize the exact department in this same transaction. A
           // follow-up profile write could leave a fully active faculty
@@ -695,7 +696,7 @@ export const drizzlePeopleRepository:
       }
 
       await assertAuthorizedCollegeMutation(tx, mutation.context, parent.collegeId, "membership.role.manage");
-      if (role === "COLLEGE_ADMIN" || role === "TPO") {
+      if (role === ROLE.COLLEGE_ADMIN || role === ROLE.TPO) {
         await assertPersistedPlatformPermission(tx, mutation.context, "admin-scope.select");
       }
 
@@ -836,7 +837,7 @@ export const drizzlePeopleRepository:
       }
 
       await assertAuthorizedCollegeMutation(tx, mutation.context, parent.collegeId, "membership.role.manage");
-      if (role === "COLLEGE_ADMIN" || role === "TPO") {
+      if (role === ROLE.COLLEGE_ADMIN || role === ROLE.TPO) {
         await assertPersistedPlatformPermission(tx, mutation.context, "admin-scope.select");
       }
 
@@ -850,8 +851,8 @@ export const drizzlePeopleRepository:
       const currentRoles = currentRows.map((row) => row.role);
       assertMutableMembershipTarget(mutation.context,
         {userId:parent.userId,roles:currentRoles},"ROLE_REMOVE",role);
-      if (role === "COLLEGE_ADMIN" && parent.status === "ACTIVE" &&
-          currentRoles.includes("COLLEGE_ADMIN")) {
+      if (role === ROLE.COLLEGE_ADMIN && parent.status === "ACTIVE" &&
+          currentRoles.includes(ROLE.COLLEGE_ADMIN)) {
         await assertAnotherActiveCollegeAdmin(tx, parent.collegeId, membershipId);
       }
       const nextRoles = removeMembershipRoleFromSet(
@@ -976,7 +977,7 @@ export const drizzlePeopleRepository:
       // Only a transition AWAY from ACTIVE can remove this membership from
       // the college's live administrator roster.
       if (current.status === "ACTIVE" && patch.status !== "ACTIVE" &&
-          lockedRoles.some(row => row.role === "COLLEGE_ADMIN")) {
+          lockedRoles.some(row => row.role === ROLE.COLLEGE_ADMIN)) {
         await assertAnotherActiveCollegeAdmin(tx, current.collegeId, membershipId);
       }
 

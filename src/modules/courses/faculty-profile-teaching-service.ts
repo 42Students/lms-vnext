@@ -6,6 +6,7 @@ import { getOwnFacultyProfileWithRuntime } from "@/modules/people/runtime";
 import { listFacultyCourseDeliveries } from "./faculty-course-service";
 import { facultyProfileTeachingQuerySchema, pageOwnFacultyTeaching } from "./faculty-profile-teaching-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Only the signed-in persisted Faculty identity and current teaching deliveries. */
 export async function getOwnFacultyTeachingSection(
   context: RequestContext, rawQuery: unknown,
@@ -13,7 +14,7 @@ export async function getOwnFacultyTeachingSection(
   const query=facultyProfileTeachingQuerySchema.parse(rawQuery);
   const membership=context.membership;
   if(!membership || !hasActiveMembership(context) ||
-    !hasMembershipRole(context,"FACULTY") ||
+    !hasMembershipRole(context,ROLE.FACULTY) ||
     !can(context,"courses.read",{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     })) throw new AuthorizationError("courses.read");

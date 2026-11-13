@@ -7,12 +7,13 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { listArchivedTpoCompanyRelationships } from "@/modules/placements/tpo-company-lifecycle-service";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 const directoryLinkClasses =
   "lms-inline-link inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:underline focus-ring md:min-h-9";
 
 export default async function ArchivedCompanyRelationshipsPage() {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     redirect("/dashboard");
   }
   await requireTpoBatchActor(context);

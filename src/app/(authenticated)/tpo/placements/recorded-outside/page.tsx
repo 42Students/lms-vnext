@@ -12,11 +12,12 @@ import {listTpoOutsideDriveRecords} from "@/modules/placements/recorded-outside-
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 import { istDateFormatter } from "@/lib/format-date";
+import { ROLE } from "@/modules/identity/roles";
 export default async function TpoRecordedOutsidePage({searchParams}:{searchParams:Promise<{saved?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(
   !context.membership ||
-  !hasMembershipRole(context,"TPO")
+  !hasMembershipRole(context,ROLE.TPO)
  ){
   redirect("/dashboard");
  }

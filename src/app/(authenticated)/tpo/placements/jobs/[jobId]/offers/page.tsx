@@ -25,9 +25,10 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { formatNumberIN } from "@/lib/safe-format";
+import { ROLE } from "@/modules/identity/roles";
 export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[];page?:string|string[];q?:string|string[];joining?:string|string[];kind?:string|string[];expiry?:string|string[];minCtcLpa?:string|string[];maxCtcLpa?:string|string[]}>}){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");
  const [p,q]=await Promise.all([params,searchParams]);
  if(tpoReportHasAmbiguousFilters(q)||Object.prototype.hasOwnProperty.call(q,"jobId"))return <TpoReportInvalidFilters path={"/tpo/placements/jobs/"+encodeURIComponent(p.jobId)+"/offers"}/>;
  const raw=Array.isArray(q.status)?q.status[0]:q.status;

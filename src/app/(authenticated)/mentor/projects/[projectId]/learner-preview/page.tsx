@@ -8,6 +8,7 @@ import {mentorStudentVisibilityPreview}
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Visibility-only preview: no student impersonation, mutation endpoints,
  * personal learner records, Mentor-only resource notes or signed file links.
  */
@@ -19,8 +20,8 @@ export default async function MentorLearnerVisibilityPreview({
  const moduleAccess=await resolveOptionalModuleAccess(context);
  if(!moduleAccess.projects.enabled)notFound();
  const access=await requireProjectReadAccess(context,projectId).catch(()=>notFound());
- if(access.access!=="MENTOR"&&
-   !(access.access==="OBSERVER"&&access.member?.role==="MENTOR"))notFound();
+ if(access.access!==ROLE.MENTOR&&
+   !(access.access==="OBSERVER"&&access.member?.role===ROLE.MENTOR))notFound();
  if(access.project.deletedAt)notFound();
  const workspace=await getProjectInstanceWorkspace(context,projectId);
  const visible=mentorStudentVisibilityPreview({

@@ -20,6 +20,7 @@ import {PlacementsServiceError} from "@/modules/placements/errors";
 import { route } from "@/security/route";
 
 import { featureReady } from "@/config/features";
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 type Ctx={params:Promise<{jobId:string}>};
@@ -37,7 +38,7 @@ const headers={"Cache-Control":"private, no-store"} as const;
  * relationship on this drive. A company name alone is NEVER a grant. */
 async function scoped(requestCtx:Awaited<ReturnType<typeof getCurrentRequestContext>>,
  rawJobId:string) {
- if(!requestCtx.membership||!hasMembershipRole(requestCtx,"TPO"))
+ if(!requestCtx.membership||!hasMembershipRole(requestCtx,ROLE.TPO))
   throw new AuthorizationError("placements.manage");
  const collegeId=await requireTpoJobCollege(requestCtx);
  const jobId=placementJobIdSchema.parse(rawJobId);

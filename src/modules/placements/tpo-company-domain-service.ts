@@ -10,6 +10,7 @@ import {requirePlacementManageScope} from "./scope";
 import {companyDomainSchema} from "./company-curation-domain-model";
 import {companyDomainAcceptsMail} from "./company-mail-domain-resolver";
 
+import { ROLE } from "@/modules/identity/roles";
 export const addCompanyDomainSchema=z.strictObject({
  // Legacy accepts bare domain, @domain, work email and http(s) company URLs.
  // Use the same canonicalizer as the global company-domain editor.
@@ -20,7 +21,7 @@ export class CompanyDomainError extends Error{
 }
 export async function addTpoCompanyDomain(context:RequestContext,raw:unknown){
  const member=context.membership;
- if(!member||!hasMembershipRole(context,"TPO")||member.status!=="ACTIVE"||
+ if(!member||!hasMembershipRole(context,ROLE.TPO)||member.status!=="ACTIVE"||
    context.user.platformStatus!=="ACTIVE")throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,member.collegeId);
  if(!can(context,"placements.manage",{collegeId:college.id}))throw new AuthorizationError("placements.manage");

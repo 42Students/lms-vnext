@@ -9,11 +9,12 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export default async function TpoDriveCloseoutPage({
   params,
 }: { params: Promise<{ jobId: string }> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) redirect("/dashboard");
   const { jobId } = await params;
   let data: Awaited<ReturnType<typeof getTpoDriveCloseout>>;
   try { data = await getTpoDriveCloseout(context, jobId); }

@@ -35,6 +35,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
 import { formatDateTimeIst } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 function currentTimeMs() {
   return Date.now();
 }
@@ -151,7 +152,7 @@ export default async function AnnouncementsPage({
   }));
 
   const receiptResult=await getSuperAdminBroadcastReceiptCounts(context,
-    page.items.filter(x=>x.senderType==="SUPER_ADMIN"&&x.receiverType==="COLLEGE").map(x=>x.id))
+    page.items.filter(x=>x.senderType===ROLE.SUPER_ADMIN&&x.receiverType==="COLLEGE").map(x=>x.id))
     .then(value=>({ok:true as const,value}))
     .catch(error=>{
       if(error instanceof AuthorizationError)throw error;
@@ -161,7 +162,7 @@ export default async function AnnouncementsPage({
   // A page may contain only some of one broadcast's recipient colleges.
   // Resolve all copies by their immutable audit group before claiming N of M.
   const broadcastGroupReceipts=await getSuperAdminBroadcastGroupReceiptCounts(context,
-    page.items.filter(item=>item.senderType==="SUPER_ADMIN"&&
+    page.items.filter(item=>item.senderType===ROLE.SUPER_ADMIN&&
       item.receiverType==="COLLEGE").map(item=>item.id))
     .catch(error=>{
       if(error instanceof AuthorizationError)throw error;
@@ -173,7 +174,7 @@ export default async function AnnouncementsPage({
   // The persisted broadcast identity prevents grouping unrelated notices with equal copy.
   const groupedBroadcasts = new Map<string, typeof page.items>();
   for (const item of page.items) {
-    if (item.senderType !== "SUPER_ADMIN" || item.receiverType !== "COLLEGE") continue;
+    if (item.senderType !== ROLE.SUPER_ADMIN || item.receiverType !== "COLLEGE") continue;
     const groupKey = item.broadcastGroupId ?? item.id;
     const copies = groupedBroadcasts.get(groupKey) ?? [];
     copies.push(item);

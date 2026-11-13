@@ -42,6 +42,7 @@ import { assertPersistedPlatformPermission } from "@/modules/permissions/persist
 import { placementTableExists } from "./staged-tables";
 import { placementEligibilityEvents } from "@/db/schema/placement-batches";
 
+import { ROLE } from "@/modules/identity/roles";
 const uuid = z.string().uuid();
 type Client = ReturnType<typeof getDb>;
 type Tx = Parameters<Parameters<Client["transaction"]>[0]>[0];
@@ -58,7 +59,7 @@ function unavailable(): never {
 }
 
 async function requireTpoCollege(context: RequestContext) {
-  if (!context.membership || !hasMembershipRole(context, "TPO") ||
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO) ||
       context.user.platformStatus !== "ACTIVE") {
     return unavailable();
   }
@@ -233,7 +234,7 @@ export async function decideTpoLearnerParticipation(
       tx,context,"placements.manage",{
         collegeId:college.id,organizationId:college.organizationId,
       });
-    if(!persistedActor.membership?.roles.includes("TPO"))return unavailable();
+    if(!persistedActor.membership?.roles.includes(ROLE.TPO))return unavailable();
 
     const [member] = await tx.select({
       id: collegeMemberships.id,

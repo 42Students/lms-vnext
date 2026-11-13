@@ -16,6 +16,7 @@ import {
   type FacultyResponseCandidate,
 } from "./faculty-response-followup-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Read-first, bounded response gaps for published, past-due assessments only.
  * Both report readers recheck the exact persisted teaching Section and current
@@ -27,7 +28,7 @@ export async function getFacultyResponseFollowUps(
 ) {
   const query = facultyResponseFollowUpQuerySchema.parse(rawQuery);
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "FACULTY") ||
+  if (!membership || !hasMembershipRole(context, ROLE.FACULTY) ||
       !can(context, "courses.read", {
         collegeId: membership.collegeId,
         organizationId: membership.organizationId,

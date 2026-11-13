@@ -24,6 +24,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { formatNumberIN } from "@/lib/safe-format";
+import { ROLE } from "@/modules/identity/roles";
 export default async function SuperAdminUserDirectory({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }) {
@@ -123,7 +124,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    {college.city?", "+college.city:""}{college.state?", "+college.state:""}</p>:null}
 
   <p className="text-xs text-muted-foreground">
-   {data.query.tab==="STUDENT"?"Learner memberships":data.query.tab==="FACULTY"?"Faculty memberships":"All permitted memberships"} ·
+   {data.query.tab==="STUDENT"?"Learner memberships":data.query.tab===ROLE.FACULTY?"Faculty memberships":"All permitted memberships"} ·
    {" "}
    {data.contactVisible?"Contact shown within the explicitly selected college.":"Email and phone are masked outside a selected college."}
   </p>

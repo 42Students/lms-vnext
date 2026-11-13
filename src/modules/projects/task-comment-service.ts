@@ -12,6 +12,7 @@ import {projectTaskCommentInputSchema,PROJECT_TASK_ACTIVITY_EVENT_KINDS} from ".
 import {projectTaskIdSchema} from "./validation";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function listProjectTaskComments(context:RequestContext,projectId:string,taskIdInput:string){
  const scope=await requireProjectReadAccess(context,projectId);
  const taskId=projectTaskIdSchema.parse(taskIdInput);
@@ -177,11 +178,11 @@ export async function postProjectTaskComment(context:RequestContext,projectId:st
       projectId:scope.project.id,collegeId:scope.collegeId,
       roles:[recipient],
       exceptUserId:context.user.id,
-      title:input.commentKind==="FLAG_FOR_MENTOR"&&recipient==="MENTOR"
+      title:input.commentKind==="FLAG_FOR_MENTOR"&&recipient===ROLE.MENTOR
         ?"Flag for mentor: "+task.title:"New comment on "+task.title,
       body:input.commentKind==="FLAG_FOR_MENTOR"
         ?"A project task needs mentor attention.":"A team member commented on a project task.",
-      actionHref:recipient==="MENTOR" ? "/mentor/projects/"+scope.project.id+"?tab=board"
+      actionHref:recipient===ROLE.MENTOR ? "/mentor/projects/"+scope.project.id+"?tab=board"
         : "/learn/projects/"+scope.project.id+"?tab=board",
     });
   }

@@ -31,6 +31,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 const columns: DataTableColumn<PersonMembershipView>[] = [
   {
     key: "person",
@@ -54,7 +55,7 @@ const columns: DataTableColumn<PersonMembershipView>[] = [
     header: "Roles",
     cell: (person) => person.membership.roles.length ? (
       <div className="flex min-w-0 flex-wrap gap-[var(--lms-space-1)]">
-        {person.membership.roles.map(role => <Badge key={role} tone="neutral">{role==="COLLEGE_ADMIN"?"Admin":role}</Badge>)}
+        {person.membership.roles.map(role => <Badge key={role} tone="neutral">{role===ROLE.COLLEGE_ADMIN?"Admin":role}</Badge>)}
       </div>
     ) : "—",
   },
@@ -187,7 +188,7 @@ export default async function SuperAdminPeoplePage({
         </Label>
         <Label stack className="min-w-0">Role
          <Select name="role" defaultValue={role} className="min-h-11 w-full md:min-h-9">
-          {["COLLEGE_ADMIN","TPO","ALL","LEARNER","FACULTY","MENTOR","HR"].map(s=><option key={s} value={s}>{s==="COLLEGE_ADMIN"?"Admin":s==="ALL"?"All roles":s}</option>)}
+          {["COLLEGE_ADMIN","TPO","ALL","LEARNER","FACULTY","MENTOR","HR"].map(s=><option key={s} value={s}>{s===ROLE.COLLEGE_ADMIN?"Admin":s==="ALL"?"All roles":s}</option>)}
          </Select>
         </Label>
         <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Search</Button>

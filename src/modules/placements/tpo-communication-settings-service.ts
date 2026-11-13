@@ -12,6 +12,7 @@ import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 
+import { ROLE } from "@/modules/identity/roles";
 export class TpoCommunicationSettingsError extends Error {
  constructor(public readonly code:"TPO_SETTINGS_PENDING"|"TPO_SETTINGS_STALE"|"TPO_SETTINGS_NOT_FOUND"){super(code);}
 }
@@ -164,7 +165,7 @@ export function tpoOutgoingDispatchDecision(input:{
    :event==="NUDGE"?settings.notifyNudges
    :event==="PREP_ASSIGNED"?settings.notifyPrepAssigned:true;
  if(channel==="EMAIL"){
-  if(recipient==="LEARNER"&&!EMAIL_INTERVIEW.has(event))
+  if(recipient===ROLE.LEARNER&&!EMAIL_INTERVIEW.has(event))
    return {allowed:false,reason:"CHANNEL_NOT_ALLOWED"};
   if(!switchOn)return {allowed:false,reason:"OPTION_DISABLED"};
   return {allowed:true,sendAfter:DIGEST_NOTICE.has(event)?
@@ -225,7 +226,7 @@ export async function claimTpoOutgoingPolicyAtSend(raw:unknown):Promise<TpoOutbo
      eq(users.platformStatus,"ACTIVE")))
    .innerJoin(membershipRoles,and(
      eq(membershipRoles.membershipId,collegeMemberships.id),
-     eq(membershipRoles.role,input.recipient==="LEARNER"?"LEARNER":"TPO")))
+     eq(membershipRoles.role,input.recipient===ROLE.LEARNER?"LEARNER":"TPO")))
    .where(and(eq(collegeMemberships.collegeId,input.collegeId),
      eq(collegeMemberships.userId,input.recipientUserId),
      eq(collegeMemberships.status,"ACTIVE"))).for("share").limit(1);

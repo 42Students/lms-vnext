@@ -11,11 +11,12 @@ import {Alert} from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
+import { ROLE } from "@/modules/identity/roles";
 export default async function TpoOutsideDriveDetail({params,searchParams}:{
  params:Promise<{recordId:string}>;searchParams:Promise<{q?:string|string[]}>;
 }){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!context.membership||!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");
  const {recordId}=await params;
  const search=await searchParams;
  const raw=search.q;

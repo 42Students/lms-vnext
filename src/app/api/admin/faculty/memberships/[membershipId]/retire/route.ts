@@ -12,6 +12,7 @@ import {getPersonMembershipDetailWithRuntime,updateMembershipLifecycleWithRuntim
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import { route } from "@/security/route";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"private, no-store"} as const;
@@ -30,7 +31,7 @@ async function impact({membershipId}: {membershipId:string}){
  });
  const person=await getPersonMembershipDetailWithRuntime(context,membershipId);
  if(person.membership.collegeId!==selected.collegeId||
-    !person.membership.roles.includes("FACULTY"))
+    !person.membership.roles.includes(ROLE.FACULTY))
   throw new AuthorizationError("membership.lifecycle.manage");
  const db=getDb(),now=new Date(),id=person.membership.id;
  const [[courses],[schedules],[projects]]=await Promise.all([
@@ -44,7 +45,7 @@ async function impact({membershipId}: {membershipId:string}){
    eq(projectMembers.membershipId,id),isNull(projectMembers.endedAt),
    isNull(projectMembers.deletedAt))),
  ]);
- const otherRoles=person.membership.roles.some(role=>role!=="FACULTY");
+ const otherRoles=person.membership.roles.some(role=>role!==ROLE.FACULTY);
  const canEnd=person.membership.status!=="ENDED" &&
   person.user.id!==context.user.id && !otherRoles &&
   !(courses?.n||schedules?.n||projects?.n);

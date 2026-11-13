@@ -14,6 +14,7 @@ import {CoursesServiceError} from "./errors";
 import {createPrivateReadGrant} from "@/modules/storage/private-object-storage";
 import {facultyAssignmentMaterialLinkSchema,safeLearnerAssignmentMaterialLink} from "./learner-assignment-materials-model";
 
+import { ROLE } from "@/modules/identity/roles";
 type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 const uuid=z.string().uuid();
 export async function assignmentMaterialTableReady():Promise<boolean>{
@@ -28,7 +29,7 @@ export async function listOwnLearnerAssignmentMaterialLinks(context:RequestConte
  if(assignment.deliveryId&&assignment.deliveryId!==deliveryId)
   throw new CoursesServiceError("ASSIGNMENT_DELIVERY_MISMATCH");
  const role=await requireLearningReadAccess(context,assignment.offeringId,deliveryId);
- if(role==="LEARNER"&&(assignment.status!=="PUBLISHED" ||
+ if(role===ROLE.LEARNER&&(assignment.status!=="PUBLISHED" ||
   assignment.learningPathStatus!=="PUBLISHED" || !assignment.lessonVisibleToStudents))
   throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
  if(!(await assignmentMaterialTableReady()))return {available:false,links:[]};
@@ -55,7 +56,7 @@ export async function commandFacultyAssignmentMaterialLink(context:RequestContex
  ]).parse(raw);
  const assignmentId=uuid.parse(assignmentIdInput),deliveryId=uuid.parse(deliveryIdInput);
  const role=await requireDeliveryContentMutation(context,deliveryId);
- if(role!=="FACULTY"&&role!=="ADMIN")throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
+ if(role!==ROLE.FACULTY&&role!=="ADMIN")throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
  if(!(await assignmentMaterialTableReady()))throw new CoursesServiceError("ASSIGNMENT_FILE_NOT_READY");
  const assignment=await loadCourseAssignmentScope(assignmentId);
  // A course-wide (SHARED) assignment belongs to every delivery in its
@@ -127,7 +128,7 @@ export async function listOwnLearnerAssignmentResources(
  if(assignment.deliveryId&&assignment.deliveryId!==deliveryId)
   throw new CoursesServiceError("ASSIGNMENT_DELIVERY_MISMATCH");
  const role=await requireLearningReadAccess(context,assignment.offeringId,deliveryId);
- if(role==="LEARNER"&&(assignment.status!=="PUBLISHED"||
+ if(role===ROLE.LEARNER&&(assignment.status!=="PUBLISHED"||
     assignment.learningPathStatus!=="PUBLISHED"||!assignment.lessonVisibleToStudents))
   throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
  const result=await getDb().execute(sql`
@@ -164,7 +165,7 @@ export async function createLearnerAssignmentResourceReadGrant(
  if(assignment.deliveryId&&assignment.deliveryId!==deliveryId)
   throw new CoursesServiceError("ASSIGNMENT_DELIVERY_MISMATCH");
  const role=await requireLearningReadAccess(context,assignment.offeringId,deliveryId);
- if(role==="LEARNER"&&(assignment.status!=="PUBLISHED"||
+ if(role===ROLE.LEARNER&&(assignment.status!=="PUBLISHED"||
    assignment.learningPathStatus!=="PUBLISHED"||!assignment.lessonVisibleToStudents))
   throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
  const [item]=await getDb().select({

@@ -17,6 +17,7 @@ import { getOwnLearnerPlacementPreparation } from "@/modules/placements/learner-
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 
+import { ROLE } from "@/modules/identity/roles";
 type Params={view?:string|string[]};
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 
@@ -30,7 +31,7 @@ export default async function LearnerPlacementPreparationPage({
     <ErrorState title="Invalid preparation filter" description="Choose a valid preparation category." action={<TextLink href="/learn/my-placements/preparation" className="inline-flex min-h-11 items-center text-sm md:min-h-9">Clear filters</TextLink>}/>
   </div>;
   const context=await getCurrentRequestContext();
-  if(!hasMembershipRole(context,"LEARNER")) redirect("/dashboard");
+  if(!hasMembershipRole(context,ROLE.LEARNER)) redirect("/dashboard");
   let data:Awaited<ReturnType<typeof getOwnLearnerPlacementPreparation>>;
   try {
     data=await getOwnLearnerPlacementPreparation(context,parsed.data);

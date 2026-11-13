@@ -10,6 +10,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {assertPersistedGroupActor,GroupActorAccessError} from "./actor-access";
 import {collegeGroupDetailIdSchema,collegeGroupDetailWriteSchema,collegeWaitlistPromotionBlocker} from "./college-group-detail-write-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Legacy AdminGroupController route matrix under membership-scoped UUIDs.
  * Numeric learner IDs are resolved by the import adapter, not here; the
  * import service applies tenant checks and preserves MANUAL/CSV event source.
@@ -38,7 +39,7 @@ export async function writeCollegeGroupDetail(context:RequestContext,rawId:unkno
   const groupId=collegeGroupDetailIdSchema.parse(rawId);
   const input=collegeGroupDetailWriteSchema.parse(raw);
   const actor=context.membership;
-  if(!actor||actor.status!=="ACTIVE"||!hasMembershipRole(context,"COLLEGE_ADMIN")||
+  if(!actor||actor.status!=="ACTIVE"||!hasMembershipRole(context,ROLE.COLLEGE_ADMIN)||
     !can(context,"academics.manage",{collegeId:actor.collegeId,organizationId:actor.organizationId}))
     throw new AuthorizationError("academics.manage");
   requirePermission(context,"academics.manage",{

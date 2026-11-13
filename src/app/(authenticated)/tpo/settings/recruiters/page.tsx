@@ -48,6 +48,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 
+import { ROLE } from "@/modules/identity/roles";
 type SearchParams = {
   status?: string | string[];
   page?: string | string[];
@@ -64,7 +65,7 @@ export default async function TpoRecruiterAccessPage({
 
   if (
     !context.membership ||
-    !hasMembershipRole(context, "TPO")
+    !hasMembershipRole(context, ROLE.TPO)
   ) {
     redirect("/dashboard");
   }
@@ -120,7 +121,7 @@ export default async function TpoRecruiterAccessPage({
   const [data,linkedCompanies,publicLink,communication,team]=loaded.values;
   const actor=team.members.find(item=>item.membershipId===context.membership?.id);
   const canManage=Boolean(actor?.roles.includes("TPO_ADMIN")||
-    actor?.roles.includes("COLLEGE_ADMIN"));
+    actor?.roles.includes(ROLE.COLLEGE_ADMIN));
 
   const {
     query,

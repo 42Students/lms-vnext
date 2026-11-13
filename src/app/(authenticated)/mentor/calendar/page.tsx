@@ -24,13 +24,14 @@ import {mentorCalendarFiltersSchema,filterMentorCalendar}
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic="force-dynamic";
 type Search={sprint?:string|string[];join?:string|string[];projectId?:string|string[];attention?:string|string[];status?:string|string[];type?:string|string[];projectState?:string|string[];search?:string|string[];period?:string|string[]};
 export default async function MentorCalendarPage({searchParams}:{
   searchParams:Promise<Search>;
 }){
   const context=await getCurrentRequestContext();
-  if(!hasActiveMembership(context)||!hasMembershipRole(context,"MENTOR"))redirect("/dashboard");
+  if(!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.MENTOR))redirect("/dashboard");
   const raw=await searchParams;
   const parsed=mentorCalendarFiltersSchema.safeParse(singleValueMentorCalendarFilters({
     sprint:raw.sprint,join:raw.join,projectId:raw.projectId,

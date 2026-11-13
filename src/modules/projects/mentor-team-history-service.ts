@@ -14,13 +14,14 @@ import {
   mentorTeamHistoryQuerySchema,
 } from "./mentor-team-history-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Registered P4 membership start/end facts for an assigned Mentor's project. */
 export async function getMentorTeamHistory(
   context: RequestContext,
   rawQuery: unknown,
 ) {
   const query = mentorTeamHistoryQuerySchema.parse(rawQuery);
-  if (!hasMembershipRole(context, "MENTOR") || !context.membership ||
+  if (!hasMembershipRole(context, ROLE.MENTOR) || !context.membership ||
       context.user.platformStatus !== "ACTIVE") {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
@@ -32,7 +33,7 @@ export async function getMentorTeamHistory(
     };
   }
   const scope = await requireProjectReadAccess(context, query.projectId);
-  if (scope.access !== "MENTOR" ||
+  if (scope.access !== ROLE.MENTOR ||
       !can(context, "projects.read", {
         collegeId: scope.collegeId,
         organizationId: scope.organizationId,

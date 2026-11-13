@@ -10,6 +10,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {buildModuleAccessChain,resolveOptionalModuleAccessForChain,type ModuleAccessScope} from "./service";
 import {studentRuleMatches} from "./admin-student-rule-model";
 
+import { ROLE } from "@/modules/identity/roles";
 const moduleSchema=z.enum(["projects","electives"]);
 const idList=z.array(z.uuid()).min(1).max(25).refine(
   value=>new Set(value).size===value.length,"Duplicate learner selection");
@@ -35,7 +36,7 @@ type Preview={
  * tenant or an acting-in-college Super Admin scope on the College Admin route.
  * Per-learner chains are reconstructed from DB identity, not from user input. */
 function collegeActor(context:RequestContext){
-  if(!context.membership||!hasMembershipRole(context,"COLLEGE_ADMIN")||
+  if(!context.membership||!hasMembershipRole(context,ROLE.COLLEGE_ADMIN)||
     context.membership.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE")
     throw new AuthorizationError("people.manage");
   const {collegeId,organizationId}=context.membership;
@@ -127,7 +128,7 @@ export async function applyCollegeStudentModuleBulk(
     const actor=await assertPersistedPlatformPermission(
       tx,context,"people.manage",scope);
     if(!actor.membership||actor.membership.id!==context.membership?.id||
-      !actor.membership.roles.includes("COLLEGE_ADMIN"))
+      !actor.membership.roles.includes(ROLE.COLLEGE_ADMIN))
       throw new AuthorizationError("people.manage");
     const ids=prepared.map(item=>item.membershipId);
     const members=await tx.select({id:collegeMemberships.id,

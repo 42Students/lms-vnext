@@ -14,6 +14,7 @@ import {
 } from "@/modules/placements/job-service";
 import { route } from "@/security/route";
 
+import { ROLE } from "@/modules/identity/roles";
 export const runtime = "nodejs";
 
 /** The old /api/v2/jobs/search reader was a global cache. This replacement
@@ -94,7 +95,7 @@ async function handleGET(request: Request) {
       if(parsed.data.learnerId){
         // Legacy learnerId is never an impersonation switch. Its only safe
         // equivalent is the active learner's own role-and-college feed.
-        if(!context.membership||!hasMembershipRole(context,"LEARNER")||
+        if(!context.membership||!hasMembershipRole(context,ROLE.LEARNER)||
            parsed.data.learnerId!==context.membership.id)
           return NextResponse.json({error:"FORBIDDEN"},{status:403});
         if(parsed.data.programId||parsed.data.deptId)

@@ -7,9 +7,10 @@ import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.modul
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getTpoMessagingBatch} from "@/modules/messaging/receipt-detail-service";
 import { TextLink } from "@/components/ui/text-link";
+import { ROLE } from "@/modules/identity/roles";
 export default async function BatchDetail({params}:{params:Promise<{batchId:string}>}){
  const context=await getCurrentRequestContext();
- if(!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");
  const {batchId}=await params;
  if(!z.string().uuid().safeParse(batchId).success)notFound();
  const batch=await getTpoMessagingBatch(context,batchId);

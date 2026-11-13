@@ -34,6 +34,7 @@ import {hrConversationDetailPageWindow} from "./hr-conversation-detail-paginatio
 import {notifyTpoOfRecruiterMessage} from "./recruiter-message-tpo-notification-service";
 import {formatHrDriveProposal,hrDriveProposalSchema} from "./hr-drive-proposal-model";
 
+import { ROLE } from "@/modules/identity/roles";
 const collegeIdSchema = z.string().uuid();
 const userIdSchema = z.string().uuid();
 const jobIdSchema = z.string().uuid();
@@ -344,7 +345,7 @@ export async function openTpoMessageThread(
   },
 ) {
   const actor = await readActor(context, input.collegeId);
-  if (actor.type !== "TPO") {
+  if (actor.type !== ROLE.TPO) {
     throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
   }
   const recruiter = await assertRecruiterForCollege(
@@ -360,7 +361,7 @@ export async function openTpoMessageThread(
   );
   return getDb().transaction(async (tx) => {
     const persisted = await mutationActor(tx, context, actor.collegeId);
-    if (persisted.type !== "TPO") {
+    if (persisted.type !== ROLE.TPO) {
       throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
     }
     const lockedRecruiter = await assertRecruiterForCollege(
@@ -498,7 +499,7 @@ export async function listThreadMessages(
         true,
       );
     }
-    if (actor.type === "TPO") {
+    if (actor.type === ROLE.TPO) {
       await assertRecruiterForCollege(
         tx,
         thread.collegeId,
@@ -565,7 +566,7 @@ export async function sendThreadMessage(
         true,
       );
     }
-    if (actor.type === "TPO") {
+    if (actor.type === ROLE.TPO) {
       await assertRecruiterForCollege(
         tx,
         thread.collegeId,

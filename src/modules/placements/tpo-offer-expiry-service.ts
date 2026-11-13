@@ -13,12 +13,13 @@ import {
   tpoOfferExpiryQuerySchema,
 } from "./tpo-offer-expiry-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Read-only TPO watchlist. All date bounds are comparable IST YYYY-MM-DD text. */
 export async function getTpoOfferExpiryWatchlist(
   context: RequestContext, raw: unknown, now: Date = new Date(),
 ) {
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "TPO") ||
+  if (!membership || !hasMembershipRole(context, ROLE.TPO) ||
       membership.status !== "ACTIVE" || context.user.platformStatus !== "ACTIVE") {
     throw new AuthorizationError("placements.manage");
   }

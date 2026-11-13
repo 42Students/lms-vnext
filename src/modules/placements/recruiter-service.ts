@@ -375,7 +375,7 @@ export async function grantPlacementRecruiter(
           current.relationship.id,
         grantedByUserId: context.user.id,
         grantedByType: isSuperAdmin(context) ? "SUPER_ADMIN" :
-          context.membership?.roles.includes("TPO") ? "TPO" : "COLLEGE_ADMIN",
+          context.membership?.roles.includes(ROLE.TPO) ? "TPO" : "COLLEGE_ADMIN",
       })
       .returning();
 
@@ -465,6 +465,7 @@ export async function revokePlacementRecruiterGrant(
 
 import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function listOwnRecruiterPlacementJobs(
   context: RequestContext,
   collegeId?: string,

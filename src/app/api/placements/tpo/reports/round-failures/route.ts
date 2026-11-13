@@ -6,6 +6,7 @@ import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getPlacementFailureReasonsReport} from "@/modules/placements/report-extra-service";
 import {tpoRoundFailureCsvQuerySchema,tpoRoundFailureCsv} from "@/modules/placements/tpo-round-failure-csv-model";
+import { ROLE } from "@/modules/identity/roles";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -13,7 +14,7 @@ export const GET = route(
   async ({ request, context: __actor }) => {
     const context = __actor!;
     try {
-if(!context.membership||!hasMembershipRole(context,"TPO"))
+if(!context.membership||!hasMembershipRole(context,ROLE.TPO))
    return NextResponse.json({error:"UNAUTHORIZED"},{status:403,headers:{"Cache-Control":"private, no-store"}});
 const params=new URL(request.url).searchParams;
 if(tpoReportHasRepeatedSearchParams(params))return NextResponse.json({error:"INVALID_QUERY"},{

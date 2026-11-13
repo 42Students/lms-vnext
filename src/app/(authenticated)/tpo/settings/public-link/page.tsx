@@ -6,11 +6,12 @@ import { TpoPublicJoinLinkCard } from "@/components/tpo/tpo-public-join-link-car
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoPublicJoinLinkStatus } from "@/modules/placements/tpo-public-join-link-service";
 
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic = "force-dynamic";
 
 export default async function TpoRecruiterPublicLinkPage() {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) redirect("/dashboard");
   const initial = await getTpoPublicJoinLinkStatus(context, "COLLEGE");
   return (
     <div className="min-w-0 space-y-5">

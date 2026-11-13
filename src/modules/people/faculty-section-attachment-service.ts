@@ -11,6 +11,7 @@ import {createPrivateUploadGrant,createPrivateReadGrant,readPrivateObjectAttesta
 import {facultyProfileDocumentSchema,type FacultyProfileDocument} from "./faculty-profile-document";
 import {facultyProfileDocumentStorageReady} from "./faculty-profile-readiness";
 
+import { ROLE } from "@/modules/identity/roles";
 const purposes={
  EDUCATION_CERTIFICATE:{collection:"education",field:"certificateDocumentId"},
  CERTIFICATION:{collection:"certifications",field:"certificateDocumentId"},
@@ -30,7 +31,7 @@ const read=key.extend({receiptId:z.uuid()});
 const remove=key.extend({expectedVersion:z.number().int().nonnegative()});
 function memberFor(context:RequestContext){
  const member=context.membership;
- if(!member||member.status!=="ACTIVE"||!member.roles.includes("FACULTY")||
+ if(!member||member.status!=="ACTIVE"||!member.roles.includes(ROLE.FACULTY)||
     context.user.platformStatus!=="ACTIVE")
   throw new Error("FACULTY_ROLE_REQUIRED");
  return member;

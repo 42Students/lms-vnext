@@ -14,13 +14,14 @@ import {projectDeliveryActivity} from "./delivery-activity-model";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 import {learnerProjectDeliveryReviewNotice} from "./learner-project-review-notification-model";
 
+import { ROLE } from "@/modules/identity/roles";
 export async function decideMentorFinalDelivery(context:RequestContext,projectId:string,
  submissionIdInput:string,raw:unknown){
  const input=mentorFinalDeliveryDecisionSchema.parse(raw);
  const scope=await requireProjectLifecycleMutationAccess(context,projectId);
  const membership=context.membership;
- if(scope.access!=="MENTOR"||!membership||!hasActiveMembership(context)||
- !hasMembershipRole(context,"MENTOR")||!can(context,"projects.read",{
+ if(scope.access!==ROLE.MENTOR||!membership||!hasActiveMembership(context)||
+ !hasMembershipRole(context,ROLE.MENTOR)||!can(context,"projects.read",{
   collegeId:scope.collegeId,organizationId:scope.organizationId,
  }))throw new ProjectsServiceError("PROJECT_SUBMISSION_ACCESS_DENIED");
  const submissionId=projectSubmissionIdSchema.parse(submissionIdInput);

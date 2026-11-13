@@ -14,6 +14,7 @@ import {placementTableExists} from "@/modules/placements/staged-tables";
 import {parseTpoNoticeSchedule} from "./tpo-notice-schedule-model";
 import {tpoNoticeDeliveryVerified} from "./tpo-notice-delivery-readiness";
 
+import { ROLE } from "@/modules/identity/roles";
 export const tpoNoticeCreateSchema=z.object({
  title:z.string().trim().min(1,"Give the announcement a title").max(200),
  message:z.string().trim().min(1,"Write an announcement").max(8000,"Keep it under 8000 characters."),
@@ -47,7 +48,7 @@ export async function createTpoNotice(context:RequestContext,raw:unknown){
  const data=tpoNoticeCreateSchema.parse(raw);
  const schedule=parseTpoNoticeSchedule({sendAt:data.sendAt,showUntil:data.showUntil},new Date());
  const membership=context.membership;
- if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ if(!membership||!hasMembershipRole(context,ROLE.TPO))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
  // The authoring form has no draft state: "Send" and "Schedule" both
  // promise user notices. Fail closed until a durable leased delivery worker

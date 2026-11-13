@@ -19,6 +19,7 @@ import {
   type TpoLeadImportRowResult,
 } from "./tpo-lead-csv-import-model";
 
+import { ROLE } from "@/modules/identity/roles";
 /**
  * Every accepted CSV record and its staff-attributed NOTE activity are
  * inserted together inside ONE transaction. Invalid rows are explained;
@@ -31,7 +32,7 @@ export async function importTpoLeadsCsv(
   rawCollegeId: unknown,
   rawPayload: unknown,
 ) {
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const ownerMembershipId = context.membership.id;
@@ -164,7 +165,7 @@ export async function previewTpoLeadImportCollisions(
   rawCollegeId: unknown,
   rawPayload: unknown,
 ) {
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership || !hasMembershipRole(context, ROLE.TPO)) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = tpoCrmCollegeIdSchema.parse(rawCollegeId);

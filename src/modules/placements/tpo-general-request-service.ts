@@ -15,6 +15,7 @@ import {requireTpoJobActor} from "./tpo-job-write-base";
 import {placementTableExists} from "./staged-tables";
 import {tpoGeneralRequestInputSchema,tpoGeneralRequestDecisionSchema,tpoGeneralRequestTarget,
  tpoGeneralRequestPayload,tpoGeneralReviewQuerySchema,tpoOwnGeneralRequestQuerySchema} from "./tpo-general-request-model";
+import { ROLE } from "@/modules/identity/roles";
 export class TpoGeneralRequestError extends Error{
  constructor(readonly code:"UNAVAILABLE"|"SCOPE"|"STALE"|"EFFECT_UNSUPPORTED"|"TARGET_CHANGED"){
   super(code);
@@ -39,7 +40,7 @@ async function requireRegisteredKind(tx:Tx,kind:string){
 
 async function requireLearner(ctx:RequestContext){
  const member=ctx.membership;
- if(!member||!hasMembershipRole(ctx,"LEARNER")||member.status!=="ACTIVE"||ctx.user.platformStatus!=="ACTIVE")
+ if(!member||!hasMembershipRole(ctx,ROLE.LEARNER)||member.status!=="ACTIVE"||ctx.user.platformStatus!=="ACTIVE")
   throw new AuthorizationError("placements.read");
  const [row]=await getDb().select({id:collegeMemberships.id}).from(collegeMemberships)
   .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
@@ -51,7 +52,7 @@ async function requireLearner(ctx:RequestContext){
 }
 async function requireTpo(ctx:RequestContext){
  const member=ctx.membership;
- if(!member||member.status!=="ACTIVE"||!hasMembershipRole(ctx,"TPO")||ctx.user.platformStatus!=="ACTIVE")
+ if(!member||member.status!=="ACTIVE"||!hasMembershipRole(ctx,ROLE.TPO)||ctx.user.platformStatus!=="ACTIVE")
   throw new AuthorizationError("placements.manage");
  if(!can(ctx,"placements.manage",{collegeId:member.collegeId}))throw new AuthorizationError("placements.manage");
  requirePermission(ctx,"placements.manage",{collegeId:member.collegeId});

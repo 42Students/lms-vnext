@@ -10,11 +10,12 @@ import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { messagingHistoryQuerySchema, projectMessagingHistory, legacyMessagingHistoryPaging } from "./receipt-history-model";
 import {messagingHistoryPageWindow} from "./receipt-history-window-model";
 
+import { ROLE } from "@/modules/identity/roles";
 const PAGE_SIZE = 25;
 /** A bounded export preserves filtering and tenant checks instead of exporting a page. */
 export async function exportTpoMessagingHistory(context:RequestContext,raw:unknown={}){
  const collegeId=context.membership?.collegeId;
- if(!collegeId||!hasMembershipRole(context,"TPO"))
+ if(!collegeId||!hasMembershipRole(context,ROLE.TPO))
    throw new AuthorizationError("placements.manage");
  const query=messagingHistoryQuerySchema.parse(raw);
  const college=await requirePlacementManageScope(context,collegeId);
@@ -46,7 +47,7 @@ export async function listTpoMessagingHistory(
   context: RequestContext, raw: unknown = {},
 ) {
   const collegeId = context.membership?.collegeId;
-  if (!collegeId || !hasMembershipRole(context, "TPO"))
+  if (!collegeId || !hasMembershipRole(context, ROLE.TPO))
     throw new AuthorizationError("placements.manage");
   const query = messagingHistoryQuerySchema.parse(raw);
   const college = await requirePlacementManageScope(context, collegeId);

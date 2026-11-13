@@ -26,6 +26,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 
+import { ROLE } from "@/modules/identity/roles";
 type Submission = {
   id: string;
   updatedAt: Date | string;
@@ -522,7 +523,7 @@ export function FinalReviewControl({
   // The legacy mentor ?tab=delivery link opens one review on entry.
   // A dismissal must not immediately reopen it while the URL is unchanged.
   useEffect(() => {
-    if (mode !== "MENTOR" || searchParams.get("tab") !== "delivery" ||
+    if (mode !== ROLE.MENTOR || searchParams.get("tab") !== "delivery" ||
         openedFromDeliveryLink.current) return;
     openedFromDeliveryLink.current = true;
     setDecision("APPROVED");
@@ -532,7 +533,7 @@ export function FinalReviewControl({
     setOpen(false);setFeedback("");setDecision("APPROVED");setStaleReview(false);
   }
   const guard=useProjectEditorDiscardGuard(open||confirmReview,
-    Boolean(feedback.trim())||(mode!=="MENTOR"&&decision!=="APPROVED"),
+    Boolean(feedback.trim())||(mode!==ROLE.MENTOR&&decision!=="APPROVED"),
     pending,discardDraft);
 
   async function review() {
@@ -549,11 +550,11 @@ export function FinalReviewControl({
     setPending(true);
     try {
       await projectMutation(
-        mode==="MENTOR"?`/api/projects/${projectId}/submissions/${submissionId}/mentor-decision`:`/api/projects/${projectId}/submissions/${submissionId}/review`,
+        mode===ROLE.MENTOR?`/api/projects/${projectId}/submissions/${submissionId}/mentor-decision`:`/api/projects/${projectId}/submissions/${submissionId}/review`,
         "POST",
         {
           decision,
-          ...(mode==="MENTOR"?{expectedUpdatedAt,confirmed:true}:{}),
+          ...(mode===ROLE.MENTOR?{expectedUpdatedAt,confirmed:true}:{}),
           feedback:
             feedback.trim() || undefined,
         },
@@ -589,7 +590,7 @@ export function FinalReviewControl({
 
   return (
     <>
-      {mode==="MENTOR" ? (
+      {mode===ROLE.MENTOR ? (
         <div className="prototype-mentor-review-actions flex flex-wrap gap-2">
           <Button size="sm" variant="primary" aria-label="Accept submission" aria-haspopup="dialog" aria-expanded={open} onClick={() => {
             setDecision("APPROVED"); setStaleReview(false); setOpen(true);
@@ -606,9 +607,9 @@ export function FinalReviewControl({
       <Dialog
         open={open}
         onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}}
-        title={mode==="MENTOR" ? (decision==="APPROVED"
+        title={mode===ROLE.MENTOR ? (decision==="APPROVED"
           ? "Accept this submission?" : "Request changes on this submission?") : "Review submission"}
-        description={mode==="MENTOR"
+        description={mode===ROLE.MENTOR
           ? (decision==="APPROVED"
             ? "The learner will be notified their submission was accepted."
             : "The learner will see your feedback and be able to edit and resubmit it.")
@@ -622,7 +623,7 @@ export function FinalReviewControl({
         }
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)]">
-          {mode!=="MENTOR" ? <Label stack className="min-w-0">
+          {mode!==ROLE.MENTOR ? <Label stack className="min-w-0">
             Decision
             <Select value={decision} onChange={event=>setDecision(event.target.value as "APPROVED"|"CHANGES_REQUESTED")}>
               <option value="APPROVED">Accept</option>
@@ -636,7 +637,7 @@ export function FinalReviewControl({
               Refresh latest submission
             </Button>
           </div>:null}
-          {mode==="MENTOR"&&decision==="CHANGES_REQUESTED"?<div className="prototype-mentor-review-reasons"
+          {mode===ROLE.MENTOR&&decision==="CHANGES_REQUESTED"?<div className="prototype-mentor-review-reasons"
             role="group" aria-label="Reasons to request changes">
             {(["Report is incomplete","Demo doesn’t match the app",
               "Code isn’t in the repo","Trial evidence missing"] as const).map(reason=>

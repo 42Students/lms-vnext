@@ -68,6 +68,7 @@ import {
   type ReviewProjectSubmissionInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 function mapSubmissionConstraint(error: unknown) {
   const constraint =
     postgresConstraintName(error);
@@ -99,7 +100,7 @@ async function requireLearnerSubmissionAccess(
     );
 
   if (
-    scope.access !== "LEARNER" ||
+    scope.access !== ROLE.LEARNER ||
     !context.membership
   ) {
     throw new ProjectsServiceError(
@@ -585,7 +586,7 @@ export async function reviewProjectSubmission(
       // transaction. A mentor removed mid-review or an administrator disabled
       // after the initial request context must not finalize a private result.
       const reviewerAccess=scope.access;
-      if(reviewerAccess!=="ADMIN"&&reviewerAccess!=="MENTOR")
+      if(reviewerAccess!=="ADMIN"&&reviewerAccess!==ROLE.MENTOR)
         throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
       await assertCurrentEvaluationActor(tx,context,{
         project:{id:scope.project.id},

@@ -11,6 +11,7 @@ import {
   type MembershipLifecycleInput,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Distinguish the human-facing role from the immutable stored enum. */
 export function membershipRoleHumanLabel(role:MembershipRole):string {
  return MEMBERSHIP_ROLE_LABELS[role];
@@ -98,7 +99,7 @@ export async function addMembershipRole(
   const input = membershipRoleMutationInputSchema.parse(rawInput);
   // Legacy ADMIN and TPO are protected faculty types: never allow a college
   // operator to grant or revoke either privileged role via a generic role edit.
-  if (input.role === "COLLEGE_ADMIN" || input.role === "TPO") {
+  if (input.role === ROLE.COLLEGE_ADMIN || input.role === ROLE.TPO) {
     requirePermission(context, "admin-scope.select");
   }
   const person = await loadAuthorizedMembership(
@@ -126,7 +127,7 @@ export async function removeMembershipRole(
   const input = membershipRoleMutationInputSchema.parse(rawInput);
   // Legacy ADMIN and TPO are protected faculty types: never allow a college
   // operator to grant or revoke either privileged role via a generic role edit.
-  if (input.role === "COLLEGE_ADMIN" || input.role === "TPO") {
+  if (input.role === ROLE.COLLEGE_ADMIN || input.role === ROLE.TPO) {
     requirePermission(context, "admin-scope.select");
   }
   const person = await loadAuthorizedMembership(

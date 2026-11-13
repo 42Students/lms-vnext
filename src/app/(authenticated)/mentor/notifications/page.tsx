@@ -33,6 +33,7 @@ import { SkeletonBlock } from "@/components/ui/skeleton-block";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { ROLE } from "@/modules/identity/roles";
 export const dynamic = "force-dynamic";
 const MENTOR_INBOX = "/mentor/notifications";
 type Params = {
@@ -116,7 +117,7 @@ async function MentorNotificationsContent({
       return [];
     }) : [];
   const assigned = projectAccess?.projects.enabled
-    ? await listMyProjectInstances(context).then(rows=>rows.filter(row=>row.memberRole==="MENTOR"))
+    ? await listMyProjectInstances(context).then(rows=>rows.filter(row=>row.memberRole===ROLE.MENTOR))
       .catch(() => { failedSources.push("Assigned projects"); return []; })
     : [];
   const sourceKeys=[...alerts.map(mentorAttentionReceiptKey),

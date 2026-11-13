@@ -6,6 +6,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectReadAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Last persisted project action *authored by* each active roster user.
  * This is NOT online presence, login time, or the last task assigned to them.
  * Query scope is the authenticated project and college, never a global audit.
@@ -15,7 +16,7 @@ export async function getMentorTeamRecentActorActivity(
  roster:readonly {userId:string}[],
 ):Promise<Record<string,string>>{
  const scope=await requireProjectReadAccess(context,projectId);
- if(scope.access!=="MENTOR")throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ if(scope.access!==ROLE.MENTOR)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const users=[...new Set(roster.map(row=>row.userId).filter(Boolean))];
  if(!users.length)return {};
  const rows=await getDb().select({

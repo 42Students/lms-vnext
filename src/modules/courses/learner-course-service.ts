@@ -58,6 +58,7 @@ import {
   courseSectionDeliveryIdSchema,
 } from "./validation";
 
+import { ROLE } from "@/modules/identity/roles";
 function requireLearnerMembership(
   context: RequestContext,
 ) {
@@ -65,7 +66,7 @@ function requireLearnerMembership(
     context.user.platformStatus !== "ACTIVE" ||
     !context.membership ||
     context.membership.status !== "ACTIVE" ||
-    !context.membership.roles.includes("LEARNER")
+    !context.membership.roles.includes(ROLE.LEARNER)
   ) {
     throw new CoursesServiceError(
       "LEARNER_PROGRESS_ACCESS_DENIED",
@@ -399,7 +400,7 @@ export async function listLearnerCourseInstructors(
     { includeHistorical: true },
   );
 
-  if (access !== "LEARNER") {
+  if (access !== ROLE.LEARNER) {
     throw new CoursesServiceError(
       "LEARNER_PROGRESS_ACCESS_DENIED",
     );
@@ -519,7 +520,7 @@ export async function getLearnerCourseWorkspace(
       { includeHistorical: true },
     );
 
-  if (access !== "LEARNER") {
+  if (access !== ROLE.LEARNER) {
     throw new CoursesServiceError(
       "LEARNER_PROGRESS_ACCESS_DENIED",
     );

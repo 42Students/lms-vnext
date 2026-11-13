@@ -6,10 +6,11 @@ import { getFacultyAssessmentOverview } from "./faculty-assessment-service";
 import { getFacultyCourseAssessmentHealth } from "./faculty-course-health-service";
 import { CoursesServiceError } from "./errors";
 import {facultyReportsHubQuerySchema,publishedReportBreakdown,attendanceReportCounts} from "./faculty-reports-hub-model";
+import { ROLE } from "@/modules/identity/roles";
 export async function getFacultyReportsHub(context:RequestContext,raw:unknown){
  const query=facultyReportsHubQuerySchema.parse(raw);
  const membership=context.membership;
- if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY")||
+ if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,ROLE.FACULTY)||
  !can(context,"courses.read",{collegeId:membership.collegeId,organizationId:membership.organizationId}))
  throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
  const [attendance,health,overview]=await Promise.all([

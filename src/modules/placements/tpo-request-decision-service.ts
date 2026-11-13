@@ -11,6 +11,7 @@ import { tpoRequestDecisionSchema } from "./tpo-request-decision-model";
 import { placementRequestIdSchema } from "./validation";
 import { PlacementsServiceError } from "./errors";
 
+import { ROLE } from "@/modules/identity/roles";
 /** Legacy TpoRequestController had only inbox and decision endpoints.
  * vNext preserves service effects through these explicit owners:
  * - createPlacementRequest in request-service validates target/effect and
@@ -23,7 +24,7 @@ import { PlacementsServiceError } from "./errors";
  * delegating; no legacy numeric user ID or client-supplied college scope. */
 export async function decideTpoRequest(context: RequestContext, rawId: unknown, raw: unknown) {
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "TPO"))
+  if (!membership || !hasMembershipRole(context, ROLE.TPO))
     throw new AuthorizationError("placements.manage");
   const collegeId = membership.collegeId;
   if (!can(context, "placements.manage", { collegeId }))

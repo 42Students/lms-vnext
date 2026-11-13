@@ -36,6 +36,7 @@ import {
   type CollegeRoleDirectoryRow,
 } from "./college-role-directory-model";
 
+import { ROLE } from "@/modules/identity/roles";
 function escapedSearch(value: string) {
   return "%" + value.replace(/[\\%_]/g, "\\$&") + "%";
 }
@@ -64,7 +65,7 @@ export async function listCollegeRoleDirectory(
   assertCompatibleCollegeRoleDirectoryFilters(kind,filter);
   if (
     !context.membership ||
-    !hasMembershipRole(context, "COLLEGE_ADMIN") ||
+    !hasMembershipRole(context, ROLE.COLLEGE_ADMIN) ||
     context.user.platformStatus !== "ACTIVE"
   ) {
     throw new AuthorizationError("people.manage");
@@ -76,43 +77,43 @@ export async function listCollegeRoleDirectory(
     collegeId,
   });
 
-  if (kind === "FACULTY" && filter.sectionId) {
+  if (kind === ROLE.FACULTY && filter.sectionId) {
     throw new RangeError("FACULTY_SECTION_FILTER_UNSUPPORTED");
   }
-  if (kind === "FACULTY" && filter.programId) {
+  if (kind === ROLE.FACULTY && filter.programId) {
     throw new RangeError("FACULTY_PROGRAM_FILTER_UNSUPPORTED");
   }
-  if (kind === "FACULTY" && filter.cohortId) {
+  if (kind === ROLE.FACULTY && filter.cohortId) {
     throw new RangeError("FACULTY_COHORT_FILTER_UNSUPPORTED");
   }
-  if (kind === "FACULTY" && filter.classPresence !== "ALL") {
+  if (kind === ROLE.FACULTY && filter.classPresence !== "ALL") {
     throw new RangeError("FACULTY_CLASS_FILTER_UNSUPPORTED");
   }
-  if (kind === "FACULTY" && filter.registrationPresence !== "ALL") {
+  if (kind === ROLE.FACULTY && filter.registrationPresence !== "ALL") {
     throw new RangeError("FACULTY_REGISTRATION_FILTER_UNSUPPORTED");
   }
-  if (kind === "FACULTY" && filter.rollPresence !== "ALL") {
+  if (kind === ROLE.FACULTY && filter.rollPresence !== "ALL") {
     throw new RangeError("FACULTY_ROLL_FILTER_UNSUPPORTED");
   }
-  if (kind === "FACULTY" && filter.enrollment !== "ALL") {
+  if (kind === ROLE.FACULTY && filter.enrollment !== "ALL") {
     throw new RangeError("FACULTY_ENROLLMENT_FILTER_UNSUPPORTED");
   }
-  if (kind === "LEARNER" && filter.teachingRole !== "ALL") {
+  if (kind === ROLE.LEARNER && filter.teachingRole !== "ALL") {
     throw new RangeError("LEARNER_TEACHING_ROLE_UNSUPPORTED");
   }
-  if (kind === "LEARNER" && filter.teaching !== "ALL") {
+  if (kind === ROLE.LEARNER && filter.teaching !== "ALL") {
     throw new RangeError("LEARNER_TEACHING_FILTER_UNSUPPORTED");
   }
-  if (kind === "LEARNER" && filter.employmentType) {
+  if (kind === ROLE.LEARNER && filter.employmentType) {
     throw new RangeError("LEARNER_EMPLOYMENT_FILTER_UNSUPPORTED");
   }
-  if (kind === "LEARNER" && filter.departmentPresence !== "ALL") {
+  if (kind === ROLE.LEARNER && filter.departmentPresence !== "ALL") {
     throw new RangeError("LEARNER_PRIMARY_DEPARTMENT_FILTER_UNSUPPORTED");
   }
-  if (kind === "LEARNER" && filter.titlePresence !== "ALL") {
+  if (kind === ROLE.LEARNER && filter.titlePresence !== "ALL") {
     throw new RangeError("LEARNER_ACADEMIC_TITLE_FILTER_UNSUPPORTED");
   }
-  if (kind === "LEARNER" && filter.facultyDepartmentId) {
+  if (kind === ROLE.LEARNER && filter.facultyDepartmentId) {
     throw new RangeError("LEARNER_FACULTY_DEPARTMENT_FILTER_UNSUPPORTED");
   }
   return getDb().transaction(async db => {
@@ -122,7 +123,7 @@ export async function listCollegeRoleDirectory(
   });
   if (!checked.membership || checked.membership.id !== actorMembership.id ||
       checked.membership.collegeId !== collegeId ||
-      !checked.membership.roles.includes("COLLEGE_ADMIN")) {
+      !checked.membership.roles.includes(ROLE.COLLEGE_ADMIN)) {
     throw new AuthorizationError("people.manage");
   }
   const activeEnrollment = exists(db.select({ enrollmentId: learnerProgramEnrollments.id })
@@ -289,34 +290,34 @@ export async function listCollegeRoleDirectory(
       filter.accountStatus === "ALL" ? undefined : eq(users.platformStatus, filter.accountStatus),
       filter.joinedFrom ? gte(collegeMemberships.createdAt,roleDirectoryIstDayStart(filter.joinedFrom)) : undefined,
       filter.joinedThrough ? lt(collegeMemberships.createdAt,roleDirectoryNextIstDayStart(filter.joinedThrough)) : undefined,
-      kind === "FACULTY" ? facultyInDepartment : undefined,
-      kind === "FACULTY" && filter.titlePresence !== "ALL"
+      kind === ROLE.FACULTY ? facultyInDepartment : undefined,
+      kind === ROLE.FACULTY && filter.titlePresence !== "ALL"
         ? (filter.titlePresence === "PRESENT" ? hasAcademicTitle : not(hasAcademicTitle)) : undefined,
-      kind === "FACULTY" && filter.departmentPresence !== "ALL"
+      kind === ROLE.FACULTY && filter.departmentPresence !== "ALL"
         ? (filter.departmentPresence === "ASSIGNED" ? hasPrimaryDepartment : not(hasPrimaryDepartment)) : undefined,
-      kind === "LEARNER" && filter.rollPresence !== "ALL"
+      kind === ROLE.LEARNER && filter.rollPresence !== "ALL"
         ? (filter.rollPresence === "PRESENT" ? hasRoll : not(hasRoll)) : undefined,
-      kind === "LEARNER" && filter.registrationPresence !== "ALL"
+      kind === ROLE.LEARNER && filter.registrationPresence !== "ALL"
         ? (filter.registrationPresence === "PRESENT" ? hasRegistration : not(hasRegistration)) : undefined,
-      kind === "FACULTY" ? matchesEmployment : undefined,
-      kind === "LEARNER" ? belongsToPlacement : undefined,
-      kind === "LEARNER" && !belongsToPlacement && filter.classPresence !== "ALL"
+      kind === ROLE.FACULTY ? matchesEmployment : undefined,
+      kind === ROLE.LEARNER ? belongsToPlacement : undefined,
+      kind === ROLE.LEARNER && !belongsToPlacement && filter.classPresence !== "ALL"
         ? (filter.classPresence === "ASSIGNED" ? assignedClass : not(assignedClass)) : undefined,
-      kind !== "LEARNER" || filter.enrollment === "ALL" ? undefined :
+      kind !== ROLE.LEARNER || filter.enrollment === "ALL" ? undefined :
         filter.enrollment === "ACTIVE" ? activeEnrollment : not(activeEnrollment),
-      kind === "FACULTY" && filter.teachingRole !== "ALL" ? activeTeaching : undefined,
-      kind !== "FACULTY" || filter.teaching === "ALL" ? undefined :
+      kind === ROLE.FACULTY && filter.teachingRole !== "ALL" ? activeTeaching : undefined,
+      kind !== ROLE.FACULTY || filter.teaching === "ALL" ? undefined :
         filter.teaching === "ASSIGNED" ? activeTeaching : not(activeTeaching),
       filter.q ? or(
         ilike(users.displayName, escapedSearch(filter.q)),
         ilike(users.email, escapedSearch(filter.q)),
         // Full-college phone lookup is permitted only in this persisted,
         // people.manage-authorized admin service; do not return the phone in rows.
-        kind === "LEARNER" ? ilike(users.phoneE164, escapedSearch(filter.q)) : undefined,
-        kind === "LEARNER" ? matchesLearnerIdentity(escapedSearch(filter.q)) : undefined,
-        kind === "LEARNER" ? matchesLearnerProgram(escapedSearch(filter.q)) : undefined,
-        kind === "LEARNER" ? matchesLearnerClass(escapedSearch(filter.q)) : undefined,
-        kind === "FACULTY" ? matchesFacultyIdentity(escapedSearch(filter.q)) : undefined,
+        kind === ROLE.LEARNER ? ilike(users.phoneE164, escapedSearch(filter.q)) : undefined,
+        kind === ROLE.LEARNER ? matchesLearnerIdentity(escapedSearch(filter.q)) : undefined,
+        kind === ROLE.LEARNER ? matchesLearnerProgram(escapedSearch(filter.q)) : undefined,
+        kind === ROLE.LEARNER ? matchesLearnerClass(escapedSearch(filter.q)) : undefined,
+        kind === ROLE.FACULTY ? matchesFacultyIdentity(escapedSearch(filter.q)) : undefined,
       ) : undefined,
     )).as("college_role_directory");
 
@@ -333,9 +334,9 @@ export async function listCollegeRoleDirectory(
     db.select({ total: count() }).from(query),
     db.select().from(query)
       .orderBy(
-        filter.sort === "ROLL" && kind==="LEARNER"
+        filter.sort === "ROLL" && kind===ROLE.LEARNER
           ? sql`${numericRoll} asc nulls last` :
-          filter.sort === "ROLL_DESC" && kind==="LEARNER"
+          filter.sort === "ROLL_DESC" && kind===ROLE.LEARNER
           ? sql`${numericRoll} desc nulls last` :
           filter.sort === "NEWEST" ? desc(query.joinedAt) :
           filter.sort === "OLDEST" ? asc(query.joinedAt) :
@@ -348,7 +349,7 @@ export async function listCollegeRoleDirectory(
       .offset((filter.page - 1) * filter.pageSize),
   ]);
   const ids = baseRows.map((item) => item.membershipId);
-  const academic = kind === "LEARNER" && ids.length
+  const academic = kind === ROLE.LEARNER && ids.length
     ? await db.select({
         membershipId: learnerProgramEnrollments.membershipId,
         enrollmentId: learnerProgramEnrollments.id,
@@ -395,7 +396,7 @@ export async function listCollegeRoleDirectory(
           eq(sectionEnrollments.status, "ACTIVE"),
         ))
     : [];
-  const facultyAssignments = kind === "FACULTY" && ids.length
+  const facultyAssignments = kind === ROLE.FACULTY && ids.length
     ? await db.select({
         membershipId: courseTeachingAssignments.membershipId,
         total: count(),
@@ -416,7 +417,7 @@ export async function listCollegeRoleDirectory(
         ))
         .groupBy(courseTeachingAssignments.membershipId)
     : [];
-  const facultyDirectoryDetails=kind==="FACULTY"&&ids.length
+  const facultyDirectoryDetails=kind===ROLE.FACULTY&&ids.length
     ? await db.select({
         membershipId:facultyProfiles.membershipId,
         departmentName:departments.name,
@@ -474,23 +475,23 @@ export async function listCollegeRoleDirectory(
     .innerJoin(users,eq(users.id,collegeMemberships.userId))
     .where(eq(collegeMemberships.collegeId,collegeId));
   const total = counts[0]?.total ?? 0;
-  const departmentRows = kind === "FACULTY" ? await db.select({id:departments.id,name:departments.name})
+  const departmentRows = kind === ROLE.FACULTY ? await db.select({id:departments.id,name:departments.name})
     .from(departments).where(and(eq(departments.collegeId,collegeId),isNull(departments.archivedAt)))
     .orderBy(asc(departments.name),asc(departments.id)).limit(201) : [];
-  const sectionRows = kind === "LEARNER" ? await db.select({id:sections.id,name:sections.name,batchName:cohorts.name})
+  const sectionRows = kind === ROLE.LEARNER ? await db.select({id:sections.id,name:sections.name,batchName:cohorts.name})
     .from(sections).innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
     .innerJoin(programs,eq(programs.id,cohorts.programId))
     .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
     .where(eq(sections.status,"ACTIVE"))
     .orderBy(asc(cohorts.name),asc(sections.name),asc(sections.id)).limit(201) : [];
-  const programRows = kind === "LEARNER" ? await db.select({id:programs.id,name:programs.name})
+  const programRows = kind === ROLE.LEARNER ? await db.select({id:programs.id,name:programs.name})
     .from(programs).innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
     .orderBy(asc(programs.name),asc(programs.id)).limit(201) : [];
-  const cohortRows = kind === "LEARNER" ? await db.select({id:cohorts.id,name:cohorts.name,programName:programs.name})
+  const cohortRows = kind === ROLE.LEARNER ? await db.select({id:cohorts.id,name:cohorts.name,programName:programs.name})
     .from(cohorts).innerJoin(programs,eq(programs.id,cohorts.programId))
     .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
     .orderBy(asc(programs.name),asc(cohorts.name),asc(cohorts.id)).limit(201) : [];
-  const employmentRows = kind === "FACULTY" ? await db.selectDistinct({employmentType:facultyProfiles.employmentType})
+  const employmentRows = kind === ROLE.FACULTY ? await db.selectDistinct({employmentType:facultyProfiles.employmentType})
     .from(facultyProfiles).innerJoin(collegeMemberships,eq(collegeMemberships.id,facultyProfiles.membershipId))
     .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"FACULTY")))
     .where(eq(collegeMemberships.collegeId,collegeId))
@@ -538,7 +539,7 @@ export async function listFacultyAssignedClassLearners(
   if (
     context.user.platformStatus !== "ACTIVE" ||
     context.membership?.status !== "ACTIVE" ||
-    !hasMembershipRole(context, "FACULTY")
+    !hasMembershipRole(context, ROLE.FACULTY)
   ) {
     throw new AuthorizationError("courses.read");
   }
@@ -582,7 +583,7 @@ async function authorizedCollegeLearnerLookup<T>(
   const membership = context.membership;
   if (!membership || membership.status !== "ACTIVE" ||
       context.user.platformStatus !== "ACTIVE" ||
-      !hasMembershipRole(context,"COLLEGE_ADMIN")) {
+      !hasMembershipRole(context,ROLE.COLLEGE_ADMIN)) {
     throw new AuthorizationError("people.manage");
   }
   requirePermission(context,"people.manage",{
@@ -594,7 +595,7 @@ async function authorizedCollegeLearnerLookup<T>(
     });
     if (!checked.membership || checked.membership.id !== membership.id ||
         checked.membership.collegeId !== membership.collegeId ||
-        !checked.membership.roles.includes("COLLEGE_ADMIN")) {
+        !checked.membership.roles.includes(ROLE.COLLEGE_ADMIN)) {
       throw new AuthorizationError("people.manage");
     }
     return read(membership.collegeId);
@@ -713,7 +714,7 @@ export async function listLegacyCollegeLearnerPage(context:RequestContext,raw:un
  * details are persisted in the event stream. */
 export async function listPopularFacultyDirectory(context:RequestContext,limit=10){
  if(!context.membership||context.membership.status!=="ACTIVE"||
-    !hasMembershipRole(context,"COLLEGE_ADMIN")||
+    !hasMembershipRole(context,ROLE.COLLEGE_ADMIN)||
     context.user.platformStatus!=="ACTIVE")
   throw new AuthorizationError("people.manage");
  const member=context.membership;
@@ -751,7 +752,7 @@ export async function recordFacultyDirectorySelection(
  context:RequestContext,facultyMembershipId:string,
 ){
  if(!context.membership||context.membership.status!=="ACTIVE"||
-    !hasMembershipRole(context,"COLLEGE_ADMIN")||
+    !hasMembershipRole(context,ROLE.COLLEGE_ADMIN)||
     context.user.platformStatus!=="ACTIVE")
   throw new AuthorizationError("people.manage");
  const member=context.membership;

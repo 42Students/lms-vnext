@@ -21,6 +21,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { formatNumberIN } from "@/lib/safe-format";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type Params={deliveryId?:string|string[];filter?:string|string[];page?:string|string[];order?:string|string[];q?:string|string[];publication?:string|string[]};
 
 export default async function FacultyAssignmentSubmissionsPage({
@@ -29,7 +30,7 @@ export default async function FacultyAssignmentSubmissionsPage({
   const context=await getCurrentRequestContext();
   if(context.user.platformStatus!=="ACTIVE" ||
     context.membership?.status!=="ACTIVE" ||
-    !context.membership.roles.includes("FACULTY"))notFound();
+    !context.membership.roles.includes(ROLE.FACULTY))notFound();
   const [{contentId},raw]=await Promise.all([params,searchParams]);
   const search=facultySubmissionReportSearchSchema.safeParse(raw);
   const parsed=facultySubmissionReportPageQuerySchema.safeParse({

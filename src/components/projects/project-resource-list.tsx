@@ -18,6 +18,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { istDayMonthYearFormatter, istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 type ResourceRow={
  id:string;title:string;description:string|null;url:string|null;required:boolean;
  visibility:string;status:string;createdAt:Date;updatedAt:Date;sequence:number;
@@ -34,14 +35,14 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  // Deep links from the persisted activity timeline must reveal records that
  // would otherwise be folded under a completed Sprint or archived status.
  useEffect(()=>{
-   if(mode!=="MENTOR"||typeof window==="undefined")return;
+   if(mode!==ROLE.MENTOR||typeof window==="undefined")return;
    const match=/^#mentor-resource-([0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12})$/i
      .exec(window.location.hash);
    if(!match||!rows.some(row=>row.id===match[1]))return;
    setShowEarlier(true);
    setStatus("ALL");
  },[mode,rows]);
- const [groupBySprint,setGroupBySprint]=useState(mode==="MENTOR");
+ const [groupBySprint,setGroupBySprint]=useState(mode===ROLE.MENTOR);
  const [expanded,setExpanded]=useState<Record<string,boolean>>({});
  const [type,setType]=useState("ALL");
  const [visibility,setVisibility]=useState("ALL");
@@ -72,10 +73,10 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  },[sourceKey,sourceChanged,unsaved]);
  const [reordering,setReordering]=useState(false);
  const [reorderError,setReorderError]=useState("");
- const canReorder=mode!=="LEARNER"&&!readOnly&&!reordering&&!sourceChanged&&
+ const canReorder=mode!==ROLE.LEARNER&&!readOnly&&!reordering&&!sourceChanged&&
     !search.trim()&&type==="ALL"&&visibility==="ALL"&&status==="ACTIVE"&&!pinned&&
     !sprint&&!task&&sharer==="ALL"&&!groupBySprint&&activeRows.length<=250&&
-    !(mode==="MENTOR"&&!showEarlier&&sprints.some(item=>item.status==="COMPLETED"&&
+    !(mode===ROLE.MENTOR&&!showEarlier&&sprints.some(item=>item.status==="COMPLETED"&&
       activeRows.some(row=>row.sprintId===item.id)));
  async function saveOrder(){
    if(!canReorder||!unsaved)return;
@@ -133,7 +134,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
       bySharer.get(row.id)?.userId===sharer));
  });
  const earlierSprintIds=new Set(sprints.filter(item=>item.status==="COMPLETED").map(item=>item.id));
- const collapseEarlier=mode==="MENTOR"&&!showEarlier&&!search.trim()&&type==="ALL"&&
+ const collapseEarlier=mode===ROLE.MENTOR&&!showEarlier&&!search.trim()&&type==="ALL"&&
     visibility==="ALL"&&status==="ACTIVE"&&!pinned&&!sprint&&!task&&sharer==="ALL";
  const earlierScope=mentorResourceEarlierScope(matching,earlierSprintIds,collapseEarlier);
  const earlierCount=earlierScope.earlierCount;
@@ -143,7 +144,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
    (a.status==="ACTIVE"?0:1)-(b.status==="ACTIVE"?0:1)||
    (a.status==="ACTIVE"?stableOrder.indexOf(a.id):a.sequence)-
    (b.status==="ACTIVE"?stableOrder.indexOf(b.id):b.sequence));
- const orderedResources=mode==="MENTOR"&&groupBySprint?
+ const orderedResources=mode===ROLE.MENTOR&&groupBySprint?
    mentorResourceGroupOrder(listOrder,sprints):listOrder;
  const groupKey=(row:ResourceRow)=>
    mentorResourceGroupKey(row,groupBySprint,sprints);
@@ -160,7 +161,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  const drafts=rows.filter(row=>row.status==="DRAFT").length;
  const pinnedCount=rows.filter(row=>row.pinned).length;
  // The editor already shows its own resource summary for managers.
- const legacySummary=mode!=="LEARNER";
+ const legacySummary=mode!==ROLE.LEARNER;
 
  return <section aria-label="Project resource directory" aria-busy={reordering} className="space-y-3">
   {/* The admin library editor immediately above owns the legacy headline
@@ -187,14 +188,14 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
          <option key={kind} value={kind}>{kind[0]+kind.slice(1).toLowerCase()}</option>)}
       </Select>
     </Label>
-    {mode!=="LEARNER"?<Label stack className="text-[length:var(--lms-font-sm)]">Visible to
+    {mode!==ROLE.LEARNER?<Label stack className="text-[length:var(--lms-font-sm)]">Visible to
       <Select value={visibility} onChange={event=>setVisibility(event.target.value)}
        className="">
         <option value="ALL">Everyone and mentors</option>
         <option value="TEAM">Everyone</option><option value="MENTOR_ONLY">Mentors only</option>
       </Select>
     </Label>:null}
-    {mode!=="LEARNER"?<>
+    {mode!==ROLE.LEARNER?<>
       <Label stack className="text-[length:var(--lms-font-sm)]">Status
         <Select value={status} onChange={event=>setStatus(event.target.value)}
           className="">
@@ -206,7 +207,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
         <Checkbox className="size-5" checked={pinned} onChange={event=>setPinned(event.target.checked)}/>
         Pinned only
       </Label>
-      {mode==="MENTOR"?<Label className="flex min-h-11 items-center gap-2">
+      {mode===ROLE.MENTOR?<Label className="flex min-h-11 items-center gap-2">
         <Checkbox className="size-5" checked={groupBySprint}
           onChange={event=>setGroupBySprint(event.target.checked)}/>
         Show by sprint
@@ -218,7 +219,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
           {sprints.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
         </Select>
       </Label>
-      {mode==="MENTOR"?<Label stack className="text-[length:var(--lms-font-sm)]">Shared by · recorded creator
+      {mode===ROLE.MENTOR?<Label stack className="text-[length:var(--lms-font-sm)]">Shared by · recorded creator
         <Select value={sharer} onChange={event=>setSharer(event.target.value)}>
           <option value="ALL">Anyone</option>
           {sharerOptions.map(([id,name])=><option value={id} key={id}>{name}</option>)}
@@ -233,11 +234,11 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
         </Select>
       </Label>
     </>:null}
-    <Button variant="secondary" type="button" onClick={()=>{setSearch("");setType("ALL");setVisibility("ALL");setStatus("ACTIVE");setPinned(false);setSprint("");setTask("");setSharer("ALL");setGroupBySprint(mode==="MENTOR");
+    <Button variant="secondary" type="button" onClick={()=>{setSearch("");setType("ALL");setVisibility("ALL");setStatus("ACTIVE");setPinned(false);setSprint("");setTask("");setSharer("ALL");setGroupBySprint(mode===ROLE.MENTOR);
          setShowEarlier(false);}}
       className="min-h-11 text-sm font-semibold text-link underline md:min-h-9">Clear filters</Button>
   </div>
-  {mode==="MENTOR"&&earlierCount>0?<div className="prototype-mentor-resource-earlier"
+  {mode===ROLE.MENTOR&&earlierCount>0?<div className="prototype-mentor-resource-earlier"
     role="group" aria-label="Earlier sprint resources">
     <span>Earlier sprints · {earlierCount} {earlierCount===1?"resource":"resources"}</span>
     <Button type="button" variant="secondary" size="sm"
@@ -245,20 +246,20 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
       {showEarlier?"Hide earlier sprints":"Show earlier sprints"}
     </Button>
   </div>:null}
-  {mode!=="LEARNER"&&!readOnly?<p role="status" className="text-xs text-muted-foreground leading-[20px]">
+  {mode!==ROLE.LEARNER&&!readOnly?<p role="status" className="text-xs text-muted-foreground leading-[20px]">
     {groupBySprint?"Turn off Show by sprint to rearrange the saved resource order.":
       canReorder?"Drag resources to arrange a draft, then select Save order.":
       activeRows.length>250?"Reorder up to 500 resources in Edit resource library; the directory only reorders complete lists of 250 or fewer.":
       "Resource reordering is available when no filters are active."}
   </p>:null}
-  {mode!=="LEARNER"&&!readOnly&&unsaved?<div className="flex flex-wrap items-center gap-2" role="group" aria-label="Unsaved resource order">
+  {mode!==ROLE.LEARNER&&!readOnly&&unsaved?<div className="flex flex-wrap items-center gap-2" role="group" aria-label="Unsaved resource order">
     <span className="text-xs text-muted-foreground">Resource order has unsaved changes.</span>
     <Button type="button" disabled={!canReorder||sourceChanged} onClick={()=>void saveOrder()}>Save order</Button>
     <Button type="button" variant="secondary" disabled={reordering} onClick={discardOrder}>Discard changes</Button>
   </div>:null}
   {sourceChanged&&unsaved?<p role="alert" className="text-sm text-error">Resources changed since you started arranging. Discard changes to reload the latest order.</p>:null}
   {reorderError?<p role="alert" className="text-sm text-error leading-[22px]">{reorderError}</p>:null}
-  {rows.length===0?<EmptyState title="No resources yet" description={mode==="LEARNER"
+  {rows.length===0?<EmptyState title="No resources yet" description={mode===ROLE.LEARNER
     ?"Share the first link or file with your team."
     :"Add the briefs, templates and reference links your team will need."}
   />:filtered.length===0?<EmptyState
@@ -269,7 +270,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
     const safe=resource.url?safeProjectExternalHref(resource.url):null;
     const sourceSharer=bySharer.get(resource.id);
     return <Fragment key={resource.id}>
-      {mode==="MENTOR"&&(index===0||
+      {mode===ROLE.MENTOR&&(index===0||
         (orderedResources[index-1]?groupKey(orderedResources[index-1]!)!==groupKey(resource):true))?
         <Heading level={3} className="prototype-mentor-resource-group-heading">
           {mentorResourceGroupLabel(groupKey(resource),sprints)}
@@ -286,11 +287,11 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
      <div className="flex flex-wrap items-start justify-between gap-3">
       <div className="min-w-0">
        <p className="font-semibold text-foreground">{resource.title}</p>
-       {mode==="MENTOR"?<p className="text-xs text-muted-foreground">
+       {mode===ROLE.MENTOR?<p className="text-xs text-muted-foreground">
          Created by {sourceSharer?.displayName??"unknown recorded creator"} ·
          {" "}{istDayMonthYearFormatter.format(new Date(resource.createdAt))} IST
        </p>:null}
-       {mode==="MENTOR"?<p className="mt-1 text-xs text-muted-foreground">
+       {mode===ROLE.MENTOR?<p className="mt-1 text-xs text-muted-foreground">
          {sourceSharer?.sharedAt?
            <>First shared with team: <time dateTime={sourceSharer.sharedAt}>{
              istDateTimeFormatter.format(new Date(sourceSharer.sharedAt))
@@ -298,7 +299,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
            "Team sharing time not recorded"}
        </p>:null}
        {(rows.length<=12||expanded[resource.id])&&resource.description?<p className="mt-1 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{resource.description}</p>:null}
-       {(rows.length<=12||expanded[resource.id])&&mode!=="LEARNER"&&resource.accessNotes?
+       {(rows.length<=12||expanded[resource.id])&&mode!==ROLE.LEARNER&&resource.accessNotes?
          <p className="mt-2 whitespace-pre-wrap break-words text-xs text-body leading-[20px]">
            Access notes: {resource.accessNotes}
          </p>:null}
@@ -311,7 +312,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
       <div className="flex flex-wrap gap-2">
        <StatusBadge tone="neutral">{resource.resourceType??(safe?"Link":"Other")}</StatusBadge>
        <StatusBadge tone="neutral">{resource.status==="ARCHIVED"?"Archived":resource.status==="DRAFT"?"Draft":"Active"}</StatusBadge>
-       {resource.visibility==="MENTOR_ONLY"&&mode!=="LEARNER"?<StatusBadge tone="neutral">Mentors only</StatusBadge>:null}
+       {resource.visibility==="MENTOR_ONLY"&&mode!==ROLE.LEARNER?<StatusBadge tone="neutral">Mentors only</StatusBadge>:null}
        {resource.required?<StatusBadge tone="warning">Required</StatusBadge>:null}
        {resource.pinned?<StatusBadge tone="warning">Pinned</StatusBadge>:null}
        {mentorResourceLinkedScopeLabels(resource,sprints,tasks).map(label=>
@@ -324,7 +325,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
        {expanded[resource.id]?"Collapse":"Expand"} {resource.title}
      </Button>:null}
      <div id={"resource-details-"+resource.id} hidden={rows.length>12&&!expanded[resource.id]}>
-     <ProjectResourceOpenLink url={resource.url} linkText={mode==="LEARNER"?"Open resource ↗":"Open link"}/>
+     <ProjectResourceOpenLink url={resource.url} linkText={mode===ROLE.LEARNER?"Open resource ↗":"Open link"}/>
      {canReorder&&resource.status==="ACTIVE"?<div className="mt-2 flex flex-wrap gap-2">
        <Button variant="secondary" type="button" disabled={stableOrder[0]===resource.id}
          aria-label={"Move up "+resource.title} className="text-xs"
@@ -333,7 +334,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
          aria-label={"Move down "+resource.title} className="text-xs"
          onClick={()=>moveRelative(resource.id,1)}>Move down</Button>
      </div>:null}
-     {mode!=="LEARNER"&&!readOnly?<ProjectResourceActions
+     {mode!==ROLE.LEARNER&&!readOnly?<ProjectResourceActions
         projectId={projectId} resource={{id:resource.id,title:resource.title,
          description:resource.description,url:resource.url,required:resource.required,
          visibility:resource.visibility==="MENTOR_ONLY"?"MENTOR_ONLY":"TEAM",

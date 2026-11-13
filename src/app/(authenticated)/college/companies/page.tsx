@@ -21,12 +21,13 @@ import { parseCollegeCompaniesQuery, collegeCompaniesHref } from "@/modules/plac
 import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 
+import { ROLE } from "@/modules/identity/roles";
 /** College-only employer relationships. Never render the Super Admin directory. */
 export default async function CollegeCompaniesPage({
   searchParams,
 }: {searchParams:Promise<Record<string,string|string[]|undefined>>}) {
   const context = await getCurrentRequestContext();
-  const collegeId = context.membership && hasMembershipRole(context,"COLLEGE_ADMIN")
+  const collegeId = context.membership && hasMembershipRole(context,ROLE.COLLEGE_ADMIN)
     ? context.membership.collegeId
     : isSuperAdmin(context) ? context.adminScope?.collegeId : null;
   if (!collegeId) return <div className="min-w-0 max-w-full overflow-x-clip space-y-4">
@@ -35,7 +36,7 @@ export default async function CollegeCompaniesPage({
       You must be assigned to a college to manage companies. Contact your administrator.
     </Alert>
   </div>;
-  if (!hasMembershipRole(context,"COLLEGE_ADMIN") && !isSuperAdmin(context))
+  if (!hasMembershipRole(context,ROLE.COLLEGE_ADMIN) && !isSuperAdmin(context))
     redirect("/dashboard");
   const parsed=parseCollegeCompaniesQuery(await searchParams);
   if(!parsed.success) return <div className="min-w-0 max-w-full overflow-x-clip space-y-4"><PageHeader title="Companies"/>

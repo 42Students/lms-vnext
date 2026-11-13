@@ -31,6 +31,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { ROLE } from "@/modules/identity/roles";
 function dutyDate(value: string) {
   // PostgreSQL DATE is rendered without constructing a client clock.
   const [year, month, day] = value.split("-");
@@ -48,7 +49,7 @@ export default async function TpoPlacementTeamPage({searchParams}: {
 
   if (
     !context.membership ||
-    !hasMembershipRole(context, "TPO")
+    !hasMembershipRole(context, ROLE.TPO)
   ) {
     redirect("/dashboard");
   }
@@ -88,7 +89,7 @@ export default async function TpoPlacementTeamPage({searchParams}: {
     overdueAsks:workloadByMember.get(member.membershipId)?.overdueAsks??0,
   })),sort);
   const actorMembershipId = context.membership.id;
-  const handoverCandidates=members.filter(member=>member.roles.includes("TPO")||member.roles.includes("COLLEGE_ADMIN"))
+  const handoverCandidates=members.filter(member=>member.roles.includes(ROLE.TPO)||member.roles.includes(ROLE.COLLEGE_ADMIN))
     .map(member=>({membershipId:member.membershipId,displayName:member.displayName}));
   const candidates = sources.teamAssignmentsAvailable
     ? await listTpoTeamAssignableStaff(context)
@@ -200,7 +201,7 @@ export default async function TpoPlacementTeamPage({searchParams}: {
       </Disclosure>
 
       {unowned.ready?<TpoTeamAssignUnowned drives={unowned.drives} companies={unowned.companies}
-        members={members.filter(member=>member.roles.includes("TPO")||member.roles.includes("COLLEGE_ADMIN"))
+        members={members.filter(member=>member.roles.includes(ROLE.TPO)||member.roles.includes(ROLE.COLLEGE_ADMIN))
           .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/>
        :<Alert tone="warning">Unowned placement work cannot be verified right now. Assignments are unavailable until the registered ownership records can be checked.</Alert>}
 
@@ -252,8 +253,8 @@ export default async function TpoPlacementTeamPage({searchParams}: {
                   membershipId={member.membershipId} displayName={member.displayName}
                   removable={sources.teamAssignmentsAvailable && (member.roles.includes("TPO_ADMIN") || member.roles.includes("FACULTY_COORDINATOR"))}
                   isSelf={member.membershipId===actorMembershipId}
-                  permanentRole={member.roles.includes("TPO") || member.roles.includes("COLLEGE_ADMIN")}/>
-                {(member.roles.includes("TPO")||member.roles.includes("COLLEGE_ADMIN")||
+                  permanentRole={member.roles.includes(ROLE.TPO) || member.roles.includes(ROLE.COLLEGE_ADMIN)}/>
+                {(member.roles.includes(ROLE.TPO)||member.roles.includes(ROLE.COLLEGE_ADMIN)||
                   member.roles.includes("FACULTY_COORDINATOR"))&&
                   member.membershipId!==actorMembershipId&&handoverCandidates.length>0?
                   <TpoTeamHandover sourceMembershipId={member.membershipId}
