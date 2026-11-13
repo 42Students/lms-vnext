@@ -25,6 +25,7 @@ import { StorageFileError } from "@/modules/storage/file-errors";
 import { logError } from "@/observability/logger";
 import {StudentRuleConflict} from "@/modules/module-access/admin-student-rule-write";
 import {isPlainRoleDenial} from "@/lib/plain-role-denial";
+import { AppError, statusForCode } from "@/lib/error-registry";
 
 /**
  * GR-06 / GR-07: retain machine error keys for existing callers, but always
@@ -115,289 +116,41 @@ export function apiErrorResponse(error: unknown) {
     );
   }
 
-  if (error instanceof DepartmentServiceError) {
-    const status =
-      error.code === "DEPARTMENT_NAME_CONFLICT"
-        ? 409
-        : 404;
-
+  if (error instanceof AppError) {
     return respond(
-      { error: error.code },
-      { status },
+      { error: error.code, ...(error.details ?? {}), ...(error.retryable ? { retryable: true } : {}) },
+      { status: error.status },
     );
   }
 
-  if (error instanceof OrganizationServiceError) {
-    const status =
-      error.code === "ORGANIZATION_NAME_CONFLICT" ||
-      error.code === "ORGANIZATION_HAS_COLLEGES"
-        ? 409
-        : 404;
+  if (error instanceof DepartmentServiceError) return respond({ error: error.code }, { status: statusForCode("department", error.code) });
 
+  if (error instanceof OrganizationServiceError) {
     return respond(
       { error: error.code, ...(error.code==="ORGANIZATION_HAS_COLLEGES"&&error.blockers?
         {blockers:error.blockers}:{}) },
-      { status },
+      { status: statusForCode("organization", error.code) },
     );
   }
 
-  if (
-    error instanceof
-    CollegeHasDependenciesError
-  ) {
-    return respond(
-      {
-        error:
-          "COLLEGE_HAS_DEPENDENCIES",
-        usage: error.usage,
-      },
-      { status: 409 },
-    );
+  if (error instanceof CollegeHasDependenciesError) {
+    return respond({ error: "COLLEGE_HAS_DEPENDENCIES", usage: error.usage }, { status: 409 });
   }
 
-  if (error instanceof CollegeServiceError) {
-    const status =
-      error.code === "COLLEGE_CODE_CONFLICT"
-        ? 409
-        : 404;
-
-    return respond(
-      { error: error.code },
-      { status },
-    );
-  }
-
-  if (error instanceof AcademicsServiceError) {
-    const notFound = new Set([
-      "COLLEGE_NOT_FOUND",
-      "DEPARTMENT_NOT_FOUND",
-      "PROGRAM_NOT_FOUND",
-      "ACADEMIC_PERIOD_NOT_FOUND",
-      "COHORT_NOT_FOUND",
-      "SECTION_NOT_FOUND",
-      "LEARNER_ENROLLMENT_NOT_FOUND",
-      "SECTION_ENROLLMENT_NOT_FOUND",
-      "FACULTY_ASSIGNMENT_NOT_FOUND",
-      "SCHEDULE_EVENT_NOT_FOUND",
-      "MEMBERSHIP_NOT_FOUND",
-    ]);
-
-    // AcademicsServiceError is not a permission decision by itself; only
-    // explicit access-denied codes map to HTTP 403.
-    const forbidden = new Set([
-      "ACADEMICS_ACCESS_DENIED",
-      "FACULTY_ACCESS_DENIED",
-      "LEARNER_SCHEDULE_ACCESS_DENIED",
-      "LEARNER_ROLE_REQUIRED",
-      "FACULTY_ROLE_REQUIRED",
-      "MEMBERSHIP_NOT_ACTIVE",
-      "MEMBERSHIP_COLLEGE_MISMATCH",
-    ]);
-
-    return respond(
-      { error: error.code },
-      {
-        status: notFound.has(error.code)?404:forbidden.has(error.code)?403:409,
-      },
-    );
-  }
-
-  if (error instanceof CoursesServiceError) {
-    const notFound = new Set([
-      "COLLEGE_NOT_FOUND",
-      "DEPARTMENT_NOT_FOUND",
-      "COURSE_NOT_FOUND",
-      "OFFERING_NOT_FOUND",
-      "SECTION_DELIVERY_NOT_FOUND",
-      "TEACHING_ASSIGNMENT_NOT_FOUND",
-      "LEARNING_PATH_NOT_FOUND",
-      "LESSON_NOT_FOUND",
-      "LESSON_CONTENT_NOT_FOUND",
-      "MEMBERSHIP_NOT_FOUND",
-      "ASSIGNMENT_NOT_FOUND",
-      "ASSIGNMENT_SUBMISSION_NOT_FOUND",
-      "QUIZ_NOT_FOUND",
-      "QUIZ_ATTEMPT_NOT_FOUND",
-      "DISCUSSION_MESSAGE_NOT_FOUND",
-      "COORDINATOR_NOT_FOUND",
-    ]);
-
-    const forbidden = new Set([
-      "LEARNING_ACCESS_DENIED",
-      "FACULTY_TEACHING_SCOPE_REQUIRED",
-      "LEARNER_ENROLLMENT_SCOPE_REQUIRED",
-      "LEARNER_PROGRESS_ACCESS_DENIED",
-      "DISCUSSION_POST_ACCESS_DENIED",
-      "DISCUSSION_MODERATION_ACCESS_DENIED",
-    ]);
-    const badRequest = new Set([
-      "CONTENT_TYPE_SHAPE_INVALID",
-      "CONTENT_NOT_STARTED",
-      "TIMED_CONTENT_MANUAL_COMPLETION_NOT_ALLOWED",
-      "CONTENT_DURATION_REQUIRED",
-      "LIVE_CLASS_NOT_FINISHED",
-      "COURSE_VISIBILITY_BULK_TOO_LARGE",
-      "ASSIGNMENT_GRADE_INVALID",
-      "ASSIGNMENT_DEADLINE_PASSED",
-      "ASSIGNMENT_DEADLINE_NOT_CONFIGURED",
-      "ASSIGNMENT_METHOD_NOT_ALLOWED",
-      "QUIZ_QUESTION_INVALID",
-      "QUIZ_DEADLINE_NOT_CONFIGURED",
-      "QUIZ_OPTION_INVALID",
-      "QUIZ_ANSWER_INVALID",
-      "COORDINATOR_NOT_ELIGIBLE",
-    ]);
-
-    const status = notFound.has(error.code)
-      ? 404
-      : forbidden.has(error.code)
-        ? 403
-        : badRequest.has(error.code)
-          ? 400
-          : 409;
-
-    return respond(
-      { error: error.code },
-      { status },
-    );
-  }
-
-  if (error instanceof ProjectsServiceError) {
-    const notFound = new Set([
-      "COLLEGE_NOT_FOUND",
-      "PROJECT_TEMPLATE_NOT_FOUND",
-      "PROJECT_TEMPLATE_VERSION_NOT_FOUND",
-      "PROJECT_TEMPLATE_ASSIGNMENT_NOT_FOUND",
-      "PROJECT_NOT_FOUND",
-      "PROJECT_MEMBER_NOT_FOUND",
-      "PROJECT_RELEASE_NOT_FOUND",
-      "PROJECT_SPRINT_NOT_FOUND",
-      "PROJECT_TASK_NOT_FOUND",
-      "PROJECT_TASK_SUBMISSION_NOT_FOUND",
-      "PROJECT_SUBMISSION_NOT_FOUND",
-      "PROJECT_RESOURCE_NOT_FOUND",
-      "PROJECT_MEETING_NOT_FOUND",
-    ]);
-
-    const forbidden = new Set([
-      "PROJECT_ACCESS_DENIED",
-      "PROJECT_LIFECYCLE_ACCESS_DENIED",
-      "PROJECT_TASK_SUBMISSION_ACCESS_DENIED",
-      "PROJECT_SUBMISSION_ACCESS_DENIED",
-      "PROJECT_MEETING_ACCESS_DENIED",
-    ]);
-
-    return respond(
-      { error: error.code },
-      {
-        status: error.code === "PROJECT_UPDATE_RATE_LIMITED"
-          ? 429
-          : notFound.has(error.code)
-            ? 404
-            : forbidden.has(error.code)
-              ? 403
-              : 409,
-      },
-    );
-  }
+  if (error instanceof CollegeServiceError) return respond({ error: error.code }, { status: statusForCode("college", error.code) });
+  if (error instanceof AcademicsServiceError) return respond({ error: error.code }, { status: statusForCode("academics", error.code) });
+  if (error instanceof CoursesServiceError) return respond({ error: error.code }, { status: statusForCode("courses", error.code) });
+  if (error instanceof ProjectsServiceError) return respond({ error: error.code }, { status: statusForCode("projects", error.code) });
 
   if (error instanceof TpoPublicJoinLinkError && error.code === "NOT_FOUND") {
     return respond({ error: "NOT_FOUND" }, { status: 404 });
   }
 
-  if (error instanceof PlacementsServiceError) {
-    const notFound = new Set([
-      "COLLEGE_NOT_FOUND",
-      "PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND",
-      "PLACEMENT_RECRUITER_USER_NOT_FOUND",
-      "PLACEMENT_RECRUITER_GRANT_NOT_FOUND",
-      "PLACEMENT_OWNER_MEMBERSHIP_NOT_FOUND",
-      "PLACEMENT_SEASON_NOT_FOUND",
-      "PLACEMENT_JOB_NOT_FOUND",
-      "PLACEMENT_ROLE_OPTION_NOT_FOUND",
-      "PLACEMENT_LEARNER_MEMBERSHIP_NOT_FOUND",
-      "PLACEMENT_ELIGIBILITY_OVERRIDE_NOT_FOUND",
-      "PLACEMENT_APPLICATION_NOT_FOUND",
-      "PLACEMENT_SCREENING_NOT_FOUND",
-      "PLACEMENT_ROUND_NOT_FOUND",
-      "PLACEMENT_RESULT_NOT_FOUND",
-      "PLACEMENT_OFFER_NOT_FOUND",
-      "PLACEMENT_REQUEST_NOT_FOUND",
-      "PLACEMENT_COORDINATOR_ASSIGNMENT_NOT_FOUND",
-      "PLACEMENT_DRIVE_DAY_CANDIDATE_NOT_FOUND",
-    ]);
-    const forbidden = new Set([
-      "PLACEMENT_DRIVE_DAY_ACCESS_DENIED",
-      "PLACEMENT_DRIVE_DAY_ATTENDANCE_FORBIDDEN",
-    ]);
-
-    return respond(
-      { error: error.code },
-      {
-        status: error.code === "PLACEMENT_APPLICATION_RATE_LIMITED"
-          ? 429
-          : notFound.has(error.code)
-            ? 404
-            : forbidden.has(error.code)
-              ? 403
-              : 409,
-      },
-    );
-  }
-
-  if (error instanceof ActivityServiceError) {
-    const notFound = new Set([
-      "ACTIVITY_SCOPE_NOT_FOUND",
-      "ACTIVITY_EVENT_NOT_FOUND",
-      "NOTIFICATION_NOT_FOUND",
-      "NOTIFICATION_RECIPIENT_NOT_FOUND",
-    ]);
-    return respond(
-      { error: error.code },
-      {
-        status: notFound.has(error.code)
-          ? 404
-          : 409,
-      },
-    );
-  }
-
-  if (error instanceof AdminScopeServiceError) {
-    return respond(
-      { error: error.code },
-      { status: 404 },
-    );
-  }
-
-  if (error instanceof TenantDomainServiceError) {
-    const status =
-      error.code === "DOMAIN_NOT_FOUND" ||
-      error.code === "COLLEGE_NOT_FOUND"
-        ? 404
-        : 409;
-
-    return respond(
-      { error: error.code },
-      { status },
-    );
-  }
-
-  if (error instanceof PeopleServiceError) {
-    const status =
-      error.code === "COLLEGE_NOT_FOUND" ||
-      error.code === "MEMBERSHIP_NOT_FOUND" ||
-      error.code === "DEPARTMENT_NOT_FOUND"
-        ? 404
-        : error.code === "ALTERNATE_PHONE_INVALID" ||
-          error.code === "ALTERNATE_PHONE_SAME_AS_PRIMARY"
-          ? 400
-          : 409;
-
-    return respond(
-      { error: error.code },
-      { status },
-    );
-  }
+  if (error instanceof PlacementsServiceError) return respond({ error: error.code }, { status: statusForCode("placements", error.code) });
+  if (error instanceof ActivityServiceError) return respond({ error: error.code }, { status: statusForCode("activity", error.code) });
+  if (error instanceof AdminScopeServiceError) return respond({ error: error.code }, { status: statusForCode("adminScope", error.code) });
+  if (error instanceof TenantDomainServiceError) return respond({ error: error.code }, { status: statusForCode("tenantDomain", error.code) });
+  if (error instanceof PeopleServiceError) return respond({ error: error.code }, { status: statusForCode("people", error.code) });
 
   // Role refusals that older services throw as plain errors are denials (403), not server faults (500).
   if (isPlainRoleDenial(error)) {

@@ -1,18 +1,14 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
+import { statusForCode } from "@/lib/error-registry";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { TpoMessagingError } from "@/modules/placements/tpo-messaging-service";
 
 export function tpoMessagingApiErrorResponse(error: unknown) {
   if (error instanceof TpoMessagingError) {
-    const notFound = [
-      "TPO_MESSAGE_THREAD_NOT_FOUND",
-      "TPO_MESSAGE_RECRUITER_NOT_FOUND",
-      "TPO_MESSAGE_JOB_NOT_FOUND",
-    ].includes(error.code);
     return NextResponse.json(
       { error: error.code },
-      { status: notFound ? 404 : 403 },
+      { status: statusForCode("tpoMessaging", error.code) },
     );
   }
   if (error instanceof AuthorizationError) {
