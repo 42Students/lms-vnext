@@ -84,6 +84,46 @@ describe("ambiguous multirole membership switch cannot mint authorization cookie
    currentRole:null,roleSelectionRequired:true,membershipSelectionRequired:true,
   });
  });
+ it("restores the chooser for an active local member even without a selected membership cookie",async()=>{
+  // The unselected identity has no recruiter grant and therefore cannot pass
+  // the normal workspace-bound tenant check; the persisted local membership
+  // is sufficient to show the chooser but not to grant a portal role.
+  vi.mocked(isTenantAccessAllowed).mockReturnValue(false);
+  const response=await GET(new Request("https://campus.example.test/api/auth/memberships"));
+  expect(response.status).toBe(200);
+  expect(await response.json()).toMatchObject({
+   memberships:[{id:membership,collegeId:college,status:"ACTIVE"}],
+   roleSelectionRequired:true,
+  });
+  expect(listMembershipChoices).toHaveBeenCalledWith(identity);
+  const switched=await POST(request({membershipId:membership,role:"LEARNER"}));
+  expect(switched.status).toBe(200);
+  expect(switched.cookies.get("lms_membership")?.value).toBe(membership);
+  expect(switched.cookies.get("lms_role")?.value).toBe("LEARNER");
+ });
+
+ it("does not use an inactive or foreign membership to bypass the college host",async()=>{
+  vi.mocked(isTenantAccessAllowed).mockReturnValue(false);
+  vi.mocked(listMembershipChoices).mockResolvedValue([{
+   id:membership,collegeId:college,organizationId:organization,
+   collegeName:"College A",organizationName:"Organization",collegeCode:"A",
+   status:"SUSPENDED",roles:["LEARNER"],
+  }] as never);
+  const suspended=await GET(new Request("https://campus.example.test/api/auth/memberships"));
+  expect(suspended.status).toBe(401);
+  expect((await suspended.text())).not.toContain(membership);
+  const denied=await POST(request({membershipId:membership,role:"LEARNER"}));
+  expect(denied.status).toBe(401);
+  expect(denied.cookies.get("lms_role")).toBeUndefined();
+  vi.mocked(listMembershipChoices).mockResolvedValue([{
+   id:membership,collegeId:"another-college",organizationId:organization,
+   collegeName:"Foreign college",organizationName:"Organization",collegeCode:"B",
+   status:"ACTIVE",roles:["LEARNER"],
+  }] as never);
+  const foreign=await GET(new Request("https://campus.example.test/api/auth/memberships"));
+  expect(foreign.status).toBe(401);
+ });
+
  it("rejects switch without role and writes no membership or role cookies",async()=>{
   const response=await POST(request({membershipId:membership}));
   expect(response.status).toBe(400);
