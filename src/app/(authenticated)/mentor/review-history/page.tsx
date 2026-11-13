@@ -22,10 +22,8 @@ import { formatNumberIN } from "@/lib/safe-format";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 type Search = { projectState?:string|string[];window?:string|string[];order?:string|string[];version?:string|string[];projectId?:string|string[];decision?: string | string[]; search?: string | string[]; page?: string | string[] };
-const first = (value: string | string[] | undefined) =>
-  Array.isArray(value) ? value[0] : value;
-
 export default async function MentorReviewHistoryPage({
   searchParams,
 }: { searchParams: Promise<Search> }) {

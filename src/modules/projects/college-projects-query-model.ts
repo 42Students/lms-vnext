@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { first } from "@/lib/shared";
 // Preserve historic phase and blocker status selectors while keeping current
 // persisted PLANNED/COMPLETED bookmarks valid.
 const statuses = ["PLANNED","ACTIVE","IN_PROGRESS","READY","BLOCKED","COMPLETED","ARCHIVED"] as const;
@@ -22,10 +23,6 @@ const schema = z.object({
     z.string().regex(/^(?:10|20|50|100)$/).transform(Number),
   ]).default(DEFAULT_COLLEGE_PROJECTS_PAGE_SIZE),
 });
-
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 /** Invalid or hostile URL filters must produce a recoverable UI, not a 500. */
 export function parseCollegeProjectsQuery(

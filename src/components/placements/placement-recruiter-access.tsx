@@ -10,6 +10,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 
+import { humanize } from "@/lib/shared";
 export type RecruiterRelationshipChoice = {
   relationshipId: string;
   name: string;
@@ -25,18 +26,6 @@ export type PlacementRecruiterGrantItem = {
   email: string | null;
   title: string | null;
 };
-
-function humanize(value: string) {
-  return value
-    .toLowerCase()
-    .split("_")
-    .map(
-      (part) =>
-        part.charAt(0).toUpperCase() +
-        part.slice(1),
-    )
-    .join(" ");
-}
 
 export function PlacementRecruiterAccess({
   relationships,

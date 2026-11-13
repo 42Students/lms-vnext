@@ -21,6 +21,7 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { createNumberFormatter } from "@/lib/safe-format";
 
+import { humanize } from "@/lib/shared";
 type OfferStatus =
   | "ISSUED"
   | "ACCEPTED"
@@ -70,18 +71,6 @@ type Draft = {
   joiningReason: string;
   correctionReason: string;
 };
-
-function humanize(value: string) {
-  return value
-    .toLowerCase()
-    .split("_")
-    .map(
-      (part) =>
-        part.charAt(0).toUpperCase() +
-        part.slice(1),
-    )
-    .join(" ");
-}
 
 function formatMoney(value: number | null) {
   if (value == null) return null;

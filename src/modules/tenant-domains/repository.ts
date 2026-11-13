@@ -23,6 +23,7 @@ import {
   type TenantDomainView,
 } from "./service";
 
+import { isUniqueViolation } from "@/lib/shared";
 /** Host resolution is deliberately verified-only in deployed vNext.
  * Readiness consumes this exact resolver contract, not a separate env guess. */
 export const TENANT_RESOLVER_REQUIRES_VERIFIED_DOMAIN=true;
@@ -55,15 +56,6 @@ export function tenantDnsDiagnostic(result:"VERIFIED"|"TXT_RECORD_MISSING"|"TXT_
  * or purged after domain mutations; never key one college's HTML by another
  * college's host or fall back to an unverified binding.
  */
-function isUniqueViolation(error: unknown) {
-  return Boolean(
-    error &&
-      typeof error === "object" &&
-      "code" in error &&
-      (error as { code?: unknown }).code === "23505",
-  );
-}
-
 async function loadDomainFromDb(
   domainId: string,
 ): Promise<TenantDomainView | null> {

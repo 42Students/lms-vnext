@@ -47,6 +47,7 @@ import {
   updateSuperAdminHrInputSchema,
 } from "./super-admin-hr-validation";
 
+import { isUniqueViolation } from "@/lib/shared";
 function requireHrAdmin(context: RequestContext) {
   // This centrally defined permission is available only
   // to an active SUPER_ADMIN, including one using a
@@ -649,16 +650,6 @@ function defaultRecruiterGrantExpiry(now:Date):Date{
    Math.min(local.getUTCDate(),daysInTarget),
    local.getUTCHours(),local.getUTCMinutes(),local.getUTCSeconds(),
    local.getUTCMilliseconds())-istOffsetMs);
-}
-
-function isUniqueViolation(error: unknown) {
-  return Boolean(
-    error &&
-      typeof error === "object" &&
-      "code" in error &&
-      (error as { code?: unknown }).code ===
-        "23505",
-  );
 }
 
 export async function createSuperAdminHrAccount(

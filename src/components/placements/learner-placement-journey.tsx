@@ -8,6 +8,7 @@ import { istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { humanize } from "@/lib/shared";
 export type LearnerPlacementJourneyItem = {
   applicationId: string;
   jobId: string;
@@ -40,18 +41,6 @@ export type LearnerPlacementJourneyItem = {
     appliedAt: Date | null;
   }>;
 };
-
-function humanize(value: string) {
-  return value
-    .toLowerCase()
-    .split("_")
-    .map(
-      (part) =>
-        part.charAt(0).toUpperCase() +
-        part.slice(1),
-    )
-    .join(" ");
-}
 
 /** Only persisted staff-origin codes qualify; never infer from an application's outcome. */
 export function isPlacementCellApplied(channel:string):boolean{

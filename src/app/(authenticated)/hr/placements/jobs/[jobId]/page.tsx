@@ -66,8 +66,7 @@ import { createNumberFormatter } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
-function currentTimeMs(){return Date.now();}
-
+import { currentTimeMs } from "@/lib/clock";
 function safeDriveReturnTo(raw:string|undefined){
  if(!raw)return "/recruiter/drives";
  try{

@@ -12,6 +12,7 @@ import {
 import {managedBaseDomain} from "./managed-subdomain-model";
 
 import { env } from "@/config/env";
+import { isUniqueViolation } from "@/lib/shared";
 export type TenantDomainView = {
   id: string;
   collegeId: string;
@@ -112,19 +113,6 @@ export class TenantDomainServiceError extends Error {
 /** Drizzle and PostgreSQL drivers may wrap 23505 in one or more causes.
  * Only a genuine duplicate-key SQLSTATE may be converted into an idempotent
  * host create response. Never inspect/log database messages or raw SQL text. */
-function isUniqueViolation(error: unknown): boolean {
-  const seen = new Set<unknown>();
-  let cursor: unknown = error;
-  for (let depth = 0; depth < 6; depth++) {
-    if (!cursor || typeof cursor !== "object" || seen.has(cursor)) return false;
-    seen.add(cursor);
-    const value = cursor as { code?: unknown; cause?: unknown };
-    if (value.code === "23505") return true;
-    cursor = value.cause;
-  }
-  return false;
-}
-
 function verificationToken() {
   return randomBytes(24).toString("base64url");
 }

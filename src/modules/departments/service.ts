@@ -37,6 +37,7 @@ import {
   type RenameDepartmentInput,
 } from "./validation";
 
+import { isUniqueViolation } from "@/lib/shared";
 export type DepartmentServiceErrorCode =
   | "COLLEGE_NOT_FOUND"
   | "DEPARTMENT_NOT_FOUND"
@@ -243,15 +244,6 @@ async function assertUniqueActiveName(
   if (existing) {
     throw new DepartmentServiceError("DEPARTMENT_NAME_CONFLICT");
   }
-}
-
-function isUniqueViolation(error: unknown) {
-  return Boolean(
-    error &&
-      typeof error === "object" &&
-      "code" in error &&
-      (error as { code?: unknown }).code === "23505",
-  );
 }
 
 export async function listDepartments(

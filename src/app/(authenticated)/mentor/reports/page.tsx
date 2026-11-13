@@ -18,9 +18,9 @@ import { TextLink } from "@/components/ui/text-link";
 import { formatNumberIN } from "@/lib/safe-format";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 type Search={taskCoverage?:string|string[];status?:string|string[];attention?:string|string[];assignment?:string|string[];order?:string|string[];
   search?:string|string[];page?:string|string[]};
-const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
 export default async function MentorReportsPage({searchParams}:{
   searchParams:Promise<Search>;
 }){

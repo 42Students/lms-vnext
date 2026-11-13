@@ -55,6 +55,7 @@ import { istTimeFormatter, istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 type CalendarAudience = "TPO" | "COLLEGE_ADMIN" | "SUPER_ADMIN";
 
 /** Bounded same-principal, same-college, same-window last verified appointments.
@@ -185,14 +186,6 @@ const ROUND_FILTERS: ReadonlyArray<{
   { value: "TEST", label: "Tests" },
   { value: "VENDOR_TEST", label: "Vendor tests" },
 ];
-
-function first(
-  value: string | string[] | undefined,
-): string | undefined {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
 
 function validDay(
   value: string | undefined,

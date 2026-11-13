@@ -18,9 +18,8 @@ import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 type Params={view?:string|string[]};
-const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
-
 export default async function LearnerPlacementPreparationPage({
   searchParams,
 }:{searchParams:Promise<Params>}) {

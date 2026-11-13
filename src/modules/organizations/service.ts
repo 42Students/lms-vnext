@@ -20,6 +20,7 @@ import {
 } from "./validation";
 
 import { ROLE } from "@/modules/identity/roles";
+import { isUniqueViolation } from "@/lib/shared";
 /** DTO adapter: preserve the old soft-delete flag without exposing a
  * fabricated numeric primary key. Consumers must treat id as a UUID.
  */
@@ -45,15 +46,6 @@ export class OrganizationServiceError extends Error {
     super(code);
     this.name = "OrganizationServiceError";
   }
-}
-
-function isUniqueViolation(error: unknown) {
-  return Boolean(
-    error &&
-      typeof error === "object" &&
-      "code" in error &&
-      (error as { code?: unknown }).code === "23505",
-  );
 }
 
 async function loadActiveOrganization(organizationId: string) {

@@ -22,6 +22,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { Label } from "@/components/ui/label";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { humanize } from "@/lib/shared";
 type RoundKind =
   | "TALK"
   | "TEST"
@@ -161,18 +162,6 @@ type ResultDraft = {
 
 const inputClass = "min-h-11 w-full md:min-h-9";
 const textareaClass = "min-h-28 w-full";
-
-function humanize(value: string) {
-  return value
-    .toLowerCase()
-    .split("_")
-    .map(
-      (part) =>
-        part.charAt(0).toUpperCase() +
-        part.slice(1),
-    )
-    .join(" ");
-}
 
 function toLocalInput(value: string | null) {
   if (!value) return "";

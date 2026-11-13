@@ -40,10 +40,10 @@ import { createDateFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { first } from "@/lib/shared";
 export const dynamic = "force-dynamic";
 type Params = { request?:string|string[];proof?:string|string[];branchId?:string|string[];
  registration?:string|string[];afterCollege?:string|string[];urgentOnly?:string|string[]; jobId?:string|string[]; age?:string|string[]; sort?:string|string[]; requestType?:string|string[]; status?: string | string[]; search?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
-function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 function href(input: { status: string; age:string; sort:string; requestType:string; search: string; page: number; pageSize: number; urgentOnly?:boolean | undefined;jobId?:string | undefined;proof?:string | undefined;branchId?:string | undefined;registration?:string | undefined;afterCollege?:string | undefined }) {
   const p = new URLSearchParams();
   p.set("status", input.status);if(input.age!=="ALL")p.set("age",input.age);p.set("sort",input.sort);if(input.requestType!=="ALL")p.set("requestType",input.requestType); if (input.search) p.set("search", input.search);if(input.urgentOnly)p.set("urgentOnly","true");if(input.jobId)p.set("jobId",input.jobId);

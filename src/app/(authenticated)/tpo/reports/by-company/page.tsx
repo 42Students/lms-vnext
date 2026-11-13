@@ -29,6 +29,7 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 type SearchParams = {
   seasonId?: string | string[];
   jobId?: string | string[];
@@ -37,10 +38,6 @@ type SearchParams = {
   sort?: string | string[];
   outcome?:string|string[];
 };
-
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 export default async function TpoByCompanyReportPage({
   searchParams,

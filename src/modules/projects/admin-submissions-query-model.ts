@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { first } from "@/lib/shared";
 // Guard URL numbers before they reach paging SQL; Zod coercion admits
 // hex, exponent notation, whitespace and the empty string as integers.
 const decimalPage = (min: number, max: number, fallback: number) => z.union([
@@ -23,7 +24,6 @@ const schema = z.strictObject({
   path:["submissionStatus"],
   message:"Submission status applies only to the All submissions view",
 });
-const first = (value: string | string[] | undefined) => Array.isArray(value) ? value[0] : value;
 const legacySubmissionStatus: Record<string,string> = {
   accepted:"APPROVED", approved:"APPROVED", submitted:"SUBMITTED",
   underreview:"UNDER_REVIEW", "under review":"UNDER_REVIEW",

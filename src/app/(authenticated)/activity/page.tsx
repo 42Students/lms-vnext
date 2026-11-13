@@ -36,9 +36,8 @@ import { istIsoDateFormatter, istDateTimeFormatter } from "@/lib/format-date";
 
 
 import { ROLE } from "@/modules/identity/roles";
+import { currentTimeMs } from "@/lib/clock";
 /** Wall-clock read kept out of render bodies (React purity rule). */
-function currentTimeMs(){return Date.now();}
-
 type SearchParams = Promise<
   Record<
     string,

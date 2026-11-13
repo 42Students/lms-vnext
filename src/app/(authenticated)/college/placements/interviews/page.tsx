@@ -23,9 +23,9 @@ import { Label } from "@/components/ui/label";
 import { istDateTimeFormatter } from "@/lib/format-date";
 import { formatNumberIN } from "@/lib/safe-format";
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 export const dynamic="force-dynamic";
 type Params=Record<string,string|string[]|undefined>;
-const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 export default async function CollegeInterviewsPage({searchParams}:{searchParams:Promise<Params>}){
  const context=await getCurrentRequestContext();
  if(!context.membership)return <div className="min-w-0 space-y-4">

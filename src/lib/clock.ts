@@ -38,3 +38,6 @@ export function fixedClock(at: Date | number | string): Clock {
 export function timeZoneForCollege(_collegeId?: string | null): string {
   return DEFAULT_TIME_ZONE;
 }
+
+/** Same as nowMs; kept under the name many call sites already use. */
+export const currentTimeMs: Clock = nowMs;

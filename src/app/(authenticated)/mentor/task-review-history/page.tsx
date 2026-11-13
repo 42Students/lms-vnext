@@ -20,8 +20,8 @@ import { formatNumberIN } from "@/lib/safe-format";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 type Params={decision?:string|string[];priority?:string|string[];order?:string|string[];search?:string|string[];page?:string|string[]};
-const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
 export default async function MentorTaskReviewHistoryPage({
   searchParams,
 }:{searchParams:Promise<Params>}) {

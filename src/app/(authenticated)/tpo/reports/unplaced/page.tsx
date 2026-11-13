@@ -32,16 +32,13 @@ import { formatDateWith } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { first } from "@/lib/shared";
 type SearchParams = {
   seasonId?: string | string[];
   jobId?: string | string[];
   batchId?:string|string[];
   branchId?:string|string[];
 };
-
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 export default async function TpoUnplacedReportPage({
   searchParams,

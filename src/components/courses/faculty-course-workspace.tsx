@@ -45,9 +45,8 @@ import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
 
+import { currentTimeMs } from "@/lib/clock";
 /** Wall-clock read kept out of render bodies (React purity rule). */
-function currentTimeMs(){return Date.now();}
-
 type Workspace = Awaited<
   ReturnType<
     typeof getFacultyCourseWorkspace

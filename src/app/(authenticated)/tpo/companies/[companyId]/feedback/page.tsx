@@ -14,12 +14,9 @@ import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 type SearchParams = { page?: string | string[] };
 const dateFormat = istDateTimeFormatter;
-function first(v: string | string[] | undefined) {
-  return Array.isArray(v) ? v[0] : v;
-}
-
 export default async function TpoCompanyFeedbackPage({
   params, searchParams,
 }: {

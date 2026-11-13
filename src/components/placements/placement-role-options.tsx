@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { createNumberFormatter } from "@/lib/safe-format";
 import { Disclosure } from "@/components/ui/disclosure";
 
+import { humanize } from "@/lib/shared";
 type PlacementRoleOptionItem = {
   id: string;
   title: string;
@@ -50,18 +51,6 @@ const emptyDraft: RoleDraft = {
 };
 
 const inputClass = "min-h-11 w-full md:min-h-9";
-
-function humanize(value: string) {
-  return value
-    .toLowerCase()
-    .split("_")
-    .map(
-      (part) =>
-        part.charAt(0).toUpperCase() +
-        part.slice(1),
-    )
-    .join(" ");
-}
 
 function money(value: number | null) {
   if (value == null) return null;

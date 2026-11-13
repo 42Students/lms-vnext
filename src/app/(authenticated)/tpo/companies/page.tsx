@@ -22,6 +22,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { first } from "@/lib/shared";
 type PageProps = {
   searchParams: Promise<{
     name?: string | string[];
@@ -34,10 +35,6 @@ type PageProps = {
     sort?: string | string[];
   }>;
 };
-
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 function companiesHref(
   filters: {

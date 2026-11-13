@@ -15,8 +15,8 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { TextLink } from "@/components/ui/text-link";
 
+import { first } from "@/lib/shared";
 type Query={page?:string|string[];pageSize?:string|string[]};
-const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
 function parseQuery(q:Query):{page:number;pageSize:10|20|25|50|100}|null{
  const rawPage=first(q.page);
  const rawSize=first(q.pageSize);

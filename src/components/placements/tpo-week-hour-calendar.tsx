@@ -21,9 +21,8 @@ import { istIsoDateFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { currentTimeMs } from "@/lib/clock";
 /** Wall-clock read kept out of render bodies (React purity rule). */
-function currentTimeMs(){return Date.now();}
-
 const FIRST=7,LAST=21,HEIGHT=52;
 type WeekConfirm =
  | {kind:"MOVE";followupId:string;day:string;hour:number;prompts:string[];index:number}

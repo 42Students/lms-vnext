@@ -34,6 +34,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 export const dynamic = "force-dynamic";
 const MENTOR_INBOX = "/mentor/notifications";
 type Params = {
@@ -45,10 +46,6 @@ type Params = {
   beforeCreatedAt?: string | string[];
   beforeId?: string | string[];
 };
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
-
 function MentorNotificationsLoading() {
   return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Loading notifications">
     <PageHeader title="Notifications" />

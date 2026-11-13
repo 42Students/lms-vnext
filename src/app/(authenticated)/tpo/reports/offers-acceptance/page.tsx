@@ -18,14 +18,11 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementReportDetails } from "@/modules/placements/report-service";
 
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 type SearchParams = {
   seasonId?: string | string[];
   jobId?: string | string[];
 };
-
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 export default async function TpoOffersAcceptanceReportPage({
   searchParams,

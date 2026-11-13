@@ -11,6 +11,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { humanize } from "@/lib/shared";
 export type PlacementRequestQueueItem = {
   id: string;
   requestType:
@@ -34,18 +35,6 @@ export type PlacementRequestQueueItem = {
   offerExpiresAt: string | null;
   effectPayload: Record<string, unknown>;
 };
-
-function humanize(value: string) {
-  return value
-    .toLowerCase()
-    .split("_")
-    .map(
-      (part) =>
-        part.charAt(0).toUpperCase() +
-        part.slice(1),
-    )
-    .join(" ");
-}
 
 function when(value: unknown) {
   if (typeof value !== "string") {

@@ -33,6 +33,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { currentTimeMs } from "@/lib/clock";
 /** Mirrors the legacy destructive/access-changing action keys. Count each
  * raw activity item, not distinct projects or condensed groups. */
 const destructiveProjectEventTypes=new Set<string>([
@@ -72,8 +73,6 @@ function linkedWorkspaceId(event:{
 
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
-function currentTimeMs(){return Date.now();}
-
 type SearchParams = Record<
   string,
   string | string[] | undefined

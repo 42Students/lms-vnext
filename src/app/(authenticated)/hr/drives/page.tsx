@@ -38,9 +38,9 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { formatDateTimeIst, formatDateIst } from "@/lib/format-date";
 import { formatNumberIN } from "@/lib/safe-format";
 
+import { first } from "@/lib/shared";
 type Params = { collegeId?: string | string[]; view?: string | string[]; tab?:string|string[]; q?: string | string[];
  employment?:string|string[]; mode?:string|string[]; deadline?:string|string[]; page?:string|string[];sort?:string|string[] };
-function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 function legacyDriveTab(value:string|undefined){
  switch(value?.toLowerCase()){
   case "all":return "ALL";

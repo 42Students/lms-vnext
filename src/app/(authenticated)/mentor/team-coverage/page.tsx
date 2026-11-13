@@ -21,6 +21,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { formatNumberIN } from "@/lib/safe-format";
 
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 type Params = {
   filter?: string | string[];
   status?: string | string[];
@@ -29,10 +30,6 @@ type Params = {
   search?: string | string[];
   page?: string | string[];
 };
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
-
 export default async function MentorTeamCoveragePage({
   searchParams,
 }: { searchParams: Promise<Params> }) {

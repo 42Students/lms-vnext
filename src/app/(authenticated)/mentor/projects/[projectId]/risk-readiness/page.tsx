@@ -16,9 +16,8 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 type Search={focus?:string|string[];taskPriority?:string|string[];page?:string|string[]};
-const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
-
 export default async function MentorRiskReadinessPage({params,searchParams}:{
   params:Promise<{projectId:string}>;searchParams:Promise<Search>;
 }){

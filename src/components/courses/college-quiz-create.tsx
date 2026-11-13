@@ -15,9 +15,8 @@ import {useRouter} from "next/navigation";
 import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
 import { Label } from "@/components/ui/label";
 
+import { currentTimeMs } from "@/lib/clock";
 /** Wall-clock read kept out of render bodies (React purity rule). */
-function currentTimeMs(){return Date.now();}
-
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
 type Option={text:string;correct:boolean};

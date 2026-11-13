@@ -20,10 +20,8 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 type Search = { seasonId?: string | string[]; jobId?: string | string[] };
-function first(input: string | string[] | undefined) {
-  return Array.isArray(input) ? input[0] : input;
-}
 export default async function TpoSeasonPipelinePage({
   searchParams,
 }: { searchParams: Promise<Search> }) {

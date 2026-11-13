@@ -14,10 +14,8 @@ import {CollegeCourseRetakeAction} from "@/components/college/college-course-ret
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { first } from "@/lib/shared";
 type Search = Record<string, string | string[] | undefined>;
-const first = (value: string | string[] | undefined) =>
-  Array.isArray(value) ? value[0] : value;
-
 export default async function CollegeCourseProgressPage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
   if(!context.membership)return <CollegeCourseMissingScope area="Course Progress"/>;

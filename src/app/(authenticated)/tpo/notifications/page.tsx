@@ -22,6 +22,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 export const dynamic = "force-dynamic";
 
 type Params = {
@@ -30,10 +31,6 @@ type Params = {
   beforeId?: string | string[];
   limit?:string|string[];
 };
-
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 export default async function TpoNotificationsPage({
   searchParams,

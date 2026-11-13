@@ -20,11 +20,8 @@ import { TextLink } from "@/components/ui/text-link";
 import { formatNumberIN } from "@/lib/safe-format";
 
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 type Params = { order?:string|string[];taskAttention?:string|string[];projectId?:string|string[];state?: string | string[]; release?: string | string[]; search?: string | string[]; page?: string | string[] };
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
-
 export default async function MentorSprintProgressPage({
   searchParams,
 }: { searchParams: Promise<Params> }) {

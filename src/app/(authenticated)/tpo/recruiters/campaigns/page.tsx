@@ -24,8 +24,8 @@ import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 type PageProps = {searchParams:Promise<{page?:string|string[];purpose?:string|string[]}>};
-function first(value:string|string[]|undefined){return Array.isArray(value)?value[0]:value;}
 export default async function CampaignHistory({searchParams}:PageProps){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,ROLE.TPO))redirect("/dashboard");

@@ -19,6 +19,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { istIsoDateFormatter, istDayMonthYearFormatter, istDateTimeFormatter } from "@/lib/format-date";
 import { formatNumberIN } from "@/lib/safe-format";
 
+import { humanize } from "@/lib/shared";
 function relativePostedDate(value:string|null|undefined){
  if(!value||!Number.isFinite(Date.parse(value)))return "Not specified";
  // Compare IST calendar dates, not elapsed 24-hour intervals: a drive
@@ -36,10 +37,6 @@ function relativePostedDate(value:string|null|undefined){
  if(days<7)return days+" days ago";
  if(days<30)return Math.floor(days/7)+" week"+(days>=14?"s":"")+" ago";
  return istDayMonthYearFormatter.format(posted);
-}
-function humanize(value: string) {
-  return value.toLowerCase().split("_").map((part) =>
-    part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
 }
 function detailValue(value: string | number | null) {
   return value === null || value === "" ? "Not provided" : String(value);

@@ -20,9 +20,8 @@ import { createDateFormatter } from "@/lib/format-date";
 
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { currentTimeMs } from "@/lib/clock";
 /** Wall-clock read kept out of render bodies (React purity rule). */
-function currentTimeMs(){return Date.now();}
-
 type Person = {
   id: string;
   name: string;

@@ -22,7 +22,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 import { ROLE } from "@/modules/identity/roles";
-function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
+import { first } from "@/lib/shared";
 export default async function TpoApplicantPipelinePage({params,searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,ROLE.TPO)) redirect("/dashboard");

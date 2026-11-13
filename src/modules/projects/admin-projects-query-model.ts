@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { first } from "@/lib/shared";
 // URL numbers are decimal-only: coercion would also admit 0x10, 1e2 and whitespace.
 const positiveDecimal = (min: number, max: number, fallback: number) =>
   z.union([
@@ -26,10 +27,6 @@ const schema = z.strictObject({
   page: positiveDecimal(1, 100000, 1),
   pageSize: positiveDecimal(10, 100, 20),
 });
-
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 /** Super Admin supports legacy `search` and current `q` query keys.
  * Query validation happens before the DB call so invalid URL parameters render

@@ -14,8 +14,8 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { formatNumberIN } from "@/lib/safe-format";
 import { istDateTimeFormatter } from "@/lib/format-date";
+import { first } from "@/lib/shared";
 type Params={view?:string|string[];deliveryId?:string|string[];page?:string|string[]};
-function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function Page({searchParams}:{searchParams:Promise<Params>}){
  const raw=await searchParams;
  const parsed=facultyLiveClassesQuerySchema.safeParse({

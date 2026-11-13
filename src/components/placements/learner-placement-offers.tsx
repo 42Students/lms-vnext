@@ -27,6 +27,7 @@ import { Label } from "@/components/ui/label";
 import { SkeletonBlock } from "@/components/ui/skeleton-block";
 import { TextLink } from "@/components/ui/text-link";
 
+import { humanize } from "@/lib/shared";
 type OfferAcceptImpact={
  offerId:string;offerStatus:string;expiresAt:string|null;blockedByAnotherAcceptedOffer:boolean;
  withdrawn:Array<{id:string;title:string}>;declined:Array<{id:string;title:string}>;
@@ -70,18 +71,6 @@ export type LearnerPlacementOfferItem = {
     reason: string | null;
   } | null;
 };
-
-function humanize(value: string) {
-  return value
-    .toLowerCase()
-    .split("_")
-    .map(
-      (part) =>
-        part.charAt(0).toUpperCase() +
-        part.slice(1),
-    )
-    .join(" ");
-}
 
 function offerCtcLpa(item:LearnerPlacementOfferItem):string|null{
   const saved=item.legacyCtcLpa?.trim();

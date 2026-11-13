@@ -34,10 +34,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
-
+import { first } from "@/lib/shared";
 export default async function LearnerCourseTabPage({
   params,
   searchParams,

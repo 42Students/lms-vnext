@@ -25,6 +25,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { humanize } from "@/lib/shared";
 type ResultOutcome =
   | "PASS"
   | "FAIL"
@@ -71,18 +72,6 @@ type Draft = {
   reasonCategory: string;
   candidateMessage: string;
 };
-
-function humanize(value: string) {
-  return value
-    .toLowerCase()
-    .split("_")
-    .map(
-      (part) =>
-        part.charAt(0).toUpperCase() +
-        part.slice(1),
-    )
-    .join(" ");
-}
 
 function formatWhen(
   value: string | null,

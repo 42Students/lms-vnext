@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { first } from "@/lib/shared";
 // Filter URLs are user-controlled: decimal strings only, not hex/exponent/blank coercions.
 const decimalPage = (min: number, max: number, fallback: number) => z.union([
   z.number().int().min(min).max(max),
@@ -14,8 +15,6 @@ const schema = z.strictObject({
   page: decimalPage(1,100000,1),
   pageSize: z.literal(25).default(25),
 });
-const first = (value: string | string[] | undefined) => Array.isArray(value) ? value[0] : value;
-
 /** Fail safely on forged or out-of-range risk URLs, without hiding their filters. */
 export function parseProjectAdminRiskQuery(params: Record<string,string|string[]|undefined>) {
   if (Object.values(params).some(Array.isArray) ||

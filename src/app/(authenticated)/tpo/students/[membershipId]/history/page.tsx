@@ -18,11 +18,8 @@ import { istDateTimeFormatter } from "@/lib/format-date";
 import { createNumberFormatter } from "@/lib/safe-format";
 
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 type SearchParams = { page?: string | string[] };
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
-
 const dateFormat = istDateTimeFormatter;
 
 export default async function TpoLearnerPlacementHistoryPage({

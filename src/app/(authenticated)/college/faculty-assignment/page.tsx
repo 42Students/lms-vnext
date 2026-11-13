@@ -24,10 +24,8 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { formatNumberIN } from "@/lib/safe-format";
 
+import { first } from "@/lib/shared";
 type Search = Record<string, string | string[] | undefined>;
-const first = (value: string | string[] | undefined) =>
-  Array.isArray(value) ? value[0] : value;
-
 export default async function CollegeFacultyAssignmentPage({
   searchParams,
 }: { searchParams: Promise<Search> }) {

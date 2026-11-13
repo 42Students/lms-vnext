@@ -16,6 +16,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { humanize } from "@/lib/shared";
 /** Legacy seven-option vocabulary. Keep specialized vNext request payload
  * shapes separate: Withdrawal needs an application, Extension an offer; the
  * remaining five are the authorized general-request kinds. Round reschedule
@@ -87,18 +88,6 @@ export function legacyLearnerRequestStatus(value:RequestItem["status"]):string{
  return value==="PENDING"?"Waiting for the placement cell":
   value==="REJECTED"?"Not approved":value==="APPROVED"?"Approved":"Cancelled";
 }
-function humanize(value: string) {
-  return value
-    .toLowerCase()
-    .split("_")
-    .map(
-      (part) =>
-        part.charAt(0).toUpperCase() +
-        part.slice(1),
-    )
-    .join(" ");
-}
-
 function when(value: string | null) {
   if (!value) return "Not set";
   return istDateTimeFormatter.format(new Date(value));

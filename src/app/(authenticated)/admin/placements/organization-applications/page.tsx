@@ -13,9 +13,9 @@ import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { first } from "@/lib/shared";
 export const dynamic="force-dynamic";
 type Params=Record<string,string|string[]|undefined>;
-function first(value:string|string[]|undefined){return Array.isArray(value)?value[0]:value;}
 function listingUrl(params:{search:string;status:string;sort:string;pageSize:number},page:number){
  const values=new URLSearchParams({search:params.search,status:params.status,sort:params.sort,
   pageSize:String(params.pageSize),page:String(page)});

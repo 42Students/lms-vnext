@@ -27,16 +27,13 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { formatNumberIN } from "@/lib/safe-format";
 
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 type SearchParams = {
   seasonId?: string | string[];
   jobId?: string | string[];
   q?: string | string[];
   group?: string | string[];
 };
-
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 export default async function TpoReportsPage({
   searchParams,

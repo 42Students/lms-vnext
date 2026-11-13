@@ -22,6 +22,7 @@ import { istDateTimeFormatter } from "@/lib/format-date";
 import { formatNumberIN } from "@/lib/safe-format";
 
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 type SearchParams = {
   actorId?: string | string[];
   entityType?: string | string[];
@@ -32,9 +33,6 @@ type SearchParams = {
   page?: string | string[];
   pageSize?: string | string[];
 };
-function first(value: string | string[] | undefined): string | undefined {
-  return Array.isArray(value) ? value[0] : value;
-}
 export default async function TpoActorAuditPage({
   searchParams,
 }: { searchParams: Promise<SearchParams> }) {

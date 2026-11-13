@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { first } from "@/lib/shared";
 type PageProps = {
   searchParams: Promise<{
     view?: string | string[];
@@ -32,10 +33,6 @@ type PageProps = {
     due?: string | string[];
   }>;
 };
-
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 export default async function TpoRecruiterLeadsPage({ searchParams }: PageProps) {
   const context = await getCurrentRequestContext();

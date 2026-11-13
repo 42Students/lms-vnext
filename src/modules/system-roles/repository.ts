@@ -15,15 +15,7 @@ import {
   type SystemRoleUserView,
 } from "./service";
 
-function isUniqueViolation(error: unknown) {
-  return Boolean(
-    error &&
-      typeof error === "object" &&
-      "code" in error &&
-      (error as { code?: unknown }).code === "23505",
-  );
-}
-
+import { isUniqueViolation } from "@/lib/shared";
 function emailsEqual(
   first: string | null | undefined,
   second: string | null | undefined,

@@ -40,6 +40,7 @@ import { istDateTimeFormatter } from "@/lib/format-date";
 
 
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 type SearchParams = {
   kind?: string | string[];
   f_about?:string|string[];
@@ -50,14 +51,6 @@ type SearchParams = {
   page?: string | string[];
   pageSize?: string | string[];
 };
-
-function first(
-  value: string | string[] | undefined,
-) {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
 
 function auditDateTime(
   value: string,

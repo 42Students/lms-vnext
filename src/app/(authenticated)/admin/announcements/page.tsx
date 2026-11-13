@@ -36,10 +36,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { formatDateTimeIst } from "@/lib/format-date";
 
 import { ROLE } from "@/modules/identity/roles";
-function currentTimeMs() {
-  return Date.now();
-}
-
+import { currentTimeMs } from "@/lib/clock";
 export default async function AnnouncementsPage({
   searchParams,
 }: {

@@ -16,10 +16,8 @@ import {CollegeLessonsCapture} from "@/components/courses/college-lessons-last-g
 import { TextLink } from "@/components/ui/text-link";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { first } from "@/lib/shared";
 type Search = Record<string, string | string[] | undefined>;
-const first = (value: string | string[] | undefined) =>
-  Array.isArray(value) ? value[0] : value;
-
 export default async function CollegeLessonsPage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
   if(!context.membership)return <div className="min-w-0 max-w-full overflow-x-clip space-y-4">

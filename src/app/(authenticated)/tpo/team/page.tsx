@@ -4,11 +4,8 @@ import { hasPlacementTeamMembership } from "@/modules/placements/placement-team-
 import { hasMembershipRole } from "@/modules/identity/context";
 
 import { ROLE } from "@/modules/identity/roles";
+import { first } from "@/lib/shared";
 type LegacyTeamSearch = Record<string, string | string[] | undefined>;
-
-function first(value: string | string[] | undefined): string | undefined {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 /**
  * The old /tpo/team path is a bookmark-only shim, not another workspace.

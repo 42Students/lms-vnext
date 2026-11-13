@@ -53,6 +53,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { istTimeFormatter, istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
+import { first } from "@/lib/shared";
 export const dynamic = "force-dynamic";
 
 type SearchParams = {
@@ -67,14 +68,6 @@ const VIEWS: readonly PlacementCalendarView[] = [
   "week",
   "month",
 ];
-
-function first(
-  value: string | string[] | undefined,
-): string | undefined {
-  return Array.isArray(value)
-    ? value[0]
-    : value;
-}
 
 function validDay(
   value: string | undefined,

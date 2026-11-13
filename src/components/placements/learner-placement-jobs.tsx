@@ -21,6 +21,7 @@ import { istDateTimeFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { humanize } from "@/lib/shared";
 type EligibilityStatus =
   | "ELIGIBLE"
   | "ELIGIBLE_WITH_MISSING_EVIDENCE"
@@ -102,18 +103,6 @@ export type LearnerPlacementJobItem = {
   canApply: boolean;
   applicationBlockers?: string[];
 };
-
-function humanize(value: string) {
-  return value
-    .toLowerCase()
-    .split("_")
-    .map(
-      (part) =>
-        part.charAt(0).toUpperCase() +
-        part.slice(1),
-    )
-    .join(" ");
-}
 
 function eligibilityTone(
   status: EligibilityStatus,
