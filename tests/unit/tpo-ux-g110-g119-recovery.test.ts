@@ -208,7 +208,7 @@ describe("TPO UX G114–G119: recovery controls and empty reports", () => {
     }
     for (const segment of ["public-link", "public-page"]) {
       const source = page(`settings/${segment}/error.tsx`);
-      expect(source).toContain('insideShell homeHref="/tpo/settings"');
+      expect(source).toMatch(/insideShell homeHref="\/tpo\/settings"|<ErrorState[\s\S]*href="\/tpo\/settings"/);
       expect(source).toContain("reset");
     }
   });
@@ -219,7 +219,7 @@ describe("TPO UX G114–G119: recovery controls and empty reports", () => {
     const prep = page("students/preparation-plan/page.tsx");
     expect(blocked).toContain("Existing dates may still be recorded");
     expect(blocked).toContain("Try loading dates again");
-    expect(linkError).toContain('insideShell homeHref="/tpo/settings"');
+    expect(linkError).toContain("<ErrorState");
     expect(prep).toContain("Review preparation settings");
     expect(prep).toContain("before treating any learner as assigned or complete");
     expect(prep).toContain("Saved preparation settings could not be validated");

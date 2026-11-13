@@ -26,10 +26,6 @@
     {
       "file": "tests/unit/tpo-announcements-prototype-workspace-2026.test.ts",
       "why": "expects the old scalarKeys list literal in the announcements page"
-    },
-    {
-      "file": "tests/unit/tpo-ux-g110-g119-recovery.test.ts",
-      "why": "expects `insideShell homeHref` on the TPO settings error boundaries, which now use a different recovery component"
     }
   ]
 }
