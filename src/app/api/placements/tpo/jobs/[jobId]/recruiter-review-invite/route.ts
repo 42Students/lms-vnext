@@ -19,6 +19,7 @@ import {outboundQueueRuntimeEnabled} from "@/modules/operations/outbound-deliver
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import { route } from "@/security/route";
 
+import { featureReady } from "@/config/features";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 type Ctx={params:Promise<{jobId:string}>};
@@ -127,7 +128,7 @@ async function handlePOST(request:Request,{params}:Ctx) {
   });
   // Existing invite-issuance service owns credential hashing, audit and
   // provider delivery. Never duplicate or log a bearer token in this route.
-  const mailReady=process.env["TPO_RECRUITER_INVITE_EMAIL_READY"]==="VERIFIED";
+  const mailReady=featureReady("tpoRecruiterInviteEmail");
   const outboxReady=outboundQueueRuntimeEnabled();
   const invite=await issueTpoRecruiterInvite(context,collegeId,leadId,new Date(),{
    sendEmail:body.sendEmail&&(outboxReady||mailReady),

@@ -11,6 +11,7 @@
  * has first moved the settings to `SET LOCAL` inside every transaction and acknowledged it with
  * DB_ALLOW_TRANSACTION_POOLER=acknowledged.
  */
+import { rawEnv } from "@/config/env";
 const POOLER_PORTS = new Set(["6432", "6543"]);
 const POOLER_HOST_MARKERS = ["pooler.", "pgbouncer", "hyperdrive", "-pooler."];
 
@@ -31,7 +32,7 @@ export function looksLikeTransactionPooler(connectionString: string): boolean {
 
 export function assertTenantScopePoolingSafe(
   connectionString: string | undefined,
-  env: Record<string, string | undefined> = process.env,
+  env: Record<string, string | undefined> = rawEnv(),
 ): void {
   if (env["DB_TENANT_SCOPE"] !== "on") return;
   if (!connectionString) return;

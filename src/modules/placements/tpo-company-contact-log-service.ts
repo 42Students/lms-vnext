@@ -17,6 +17,7 @@ import {
   tpoCompanyContactLogQuerySchema,
 } from "./tpo-operations-export-model";
 
+import { featureReady } from "@/config/features";
 export { tpoCompanyContactLogQuerySchema } from "./tpo-operations-export-model";
 
 /**
@@ -143,7 +144,7 @@ export async function getTpoCompanyContactLog(
       name: row.name,
       updatedAtIso: row.updatedAt.toISOString(),
     })),
-    writeEnabled: process.env["DB09_TPO_API_READY"] === "DB09_VERIFIED" &&
+    writeEnabled: featureReady("tpoApi") &&
       company.relationshipStatus === "ACTIVE",
     page: query.page,
     total,

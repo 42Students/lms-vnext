@@ -15,6 +15,7 @@ import {
 } from "./outbound-delivery-contract";
 
 
+import { rawEnv } from "@/config/env";
 /** Legacy assignment/quiz and interview reminder merge fields, converted to
  * IST with the original old-LMS keys. This is a pure producer-side mapper,
  * not a send action: it must enter a registered, permission-checked template
@@ -160,7 +161,7 @@ function resolveRing(arg: string | OutboundKeyRing): OutboundKeyRing {
   return arg;
 }
 
-export function outboundKeyRingFromEnv(env: NodeJS.ProcessEnv = process.env): string | OutboundKeyRing {
+export function outboundKeyRingFromEnv(env: NodeJS.ProcessEnv = rawEnv()): string | OutboundKeyRing {
   const current = env["DB10_OUTBOUND_ENCRYPTION_KEY_BASE64"] ?? "";
   const currentId = env["DB10_OUTBOUND_ENCRYPTION_KEY_ID"] || "v1";
   const previous = env["DB10_OUTBOUND_ENCRYPTION_KEY_PREVIOUS_BASE64"] ?? "";

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import { env } from "@/config/env";
 export const dynamic = "force-dynamic";
 
 /**
@@ -9,7 +10,7 @@ export const dynamic = "force-dynamic";
  */
 export default function RootErrorFixture() {
   if (process.env.NODE_ENV !== "development" ||
-      process.env.UX_ROOT_ERROR_FIXTURE !== "1") {
+      env.UX_ROOT_ERROR_FIXTURE !== "1") {
     notFound();
   }
   throw new Error("SYNTHETIC_TEST_ERROR_DO_NOT_DISPLAY");

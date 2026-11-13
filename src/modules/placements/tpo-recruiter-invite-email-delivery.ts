@@ -5,14 +5,16 @@ import {colleges,placementTpoLeads} from "@/db/schema";
 import {createOutboundProvider,readOutboundProviderConfig} from "@/modules/messaging/providers";
 import {isCampaignTemplateKey} from "@/modules/messaging/template-boundary-model";
 
+import { env } from "@/config/env";
+import { featureReady } from "@/config/features";
 /** Existing messaging provider enforces non-production recipient allowlisting.
  * Delivery is explicitly gated; no email is attempted for an unprovisioned template.
  */
 export async function deliverTpoRecruiterInviteEmail(collegeId:string,leadId:string,token:string){
- const template=process.env["TPO_RECRUITER_INVITE_ZEPTO_TEMPLATE_KEY"]??"";
- const origin=process.env["APP_PUBLIC_URL"]??"";
- if(process.env["TPO_RECRUITER_INVITE_EMAIL_READY"]!=="VERIFIED"||
-   !isCampaignTemplateKey(template)||template===process.env["ZEPTOMAIL_OTP_TEMPLATE_KEY"])
+ const template=env.TPO_RECRUITER_INVITE_ZEPTO_TEMPLATE_KEY??"";
+ const origin=env.APP_PUBLIC_URL??"";
+ if(!featureReady("tpoRecruiterInviteEmail")||
+   !isCampaignTemplateKey(template)||template===env.ZEPTOMAIL_OTP_TEMPLATE_KEY)
   return false;
  let url:URL;
  try{url=new URL(origin);}catch{return false}

@@ -4,6 +4,7 @@ import {sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {codeMac,contactFingerprint,generateCode,safeEqualHex} from "@/modules/auth/crypto";
 
+import { env } from "@/config/env";
 /**
  * Historical faculty_acct_verification / learner_acct_verification replacement:
  * a separate, scoped, one-time account proof, NEVER a LOGIN/device credential.
@@ -28,7 +29,7 @@ function timestamp(value:unknown){
  return date;
 }
 function secret(){
- const s=process.env["AUTH_ROLE_PROOF_SECRET"]??"";
+ const s=env.AUTH_ROLE_PROOF_SECRET??"";
  if(s.length<32)throw new Error("ROLE_PROOF_PROVIDER_NOT_CONFIGURED");
  return s;
 }

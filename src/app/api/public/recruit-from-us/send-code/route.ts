@@ -4,6 +4,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { sendPublicEnquiryCode,PublicEnquiryError } from "@/modules/placements/public-enquiry/send-service";
 import {readPublicRecruitEnquiryBody} from "@/modules/placements/public-enquiry/body-model";
 import { route } from "@/security/route";
+import { featureReady } from "@/config/features";
 export const runtime="nodejs";
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -15,7 +16,7 @@ async function handlePOST(request:Request){
  const body=await readPublicRecruitEnquiryBody(request);
  if(body.kind!=="OK")return NextResponse.json({error:body.kind==="TOO_LARGE"?"REQUEST_TOO_LARGE":"COULD_NOT_SEND_CODE"},
   {status:body.kind==="TOO_LARGE"?413:400,headers:{"Cache-Control":"no-store"}});
- const ip=process.env["PUBLIC_JOIN_TRUSTED_PROXY_READY"]==="VERIFIED"
+ const ip=featureReady("publicJoinTrustedProxy")
   ?request.headers.get("x-public-verified-client-ip"):null;
  try{
   const result=await sendPublicEnquiryCode(tenant.collegeId,body.value,ip);

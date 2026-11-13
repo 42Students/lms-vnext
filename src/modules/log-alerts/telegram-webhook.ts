@@ -6,6 +6,7 @@ import { getDb } from "@/db/client";
 import { db10LogAlertSignatures as signatures } from "@/db/schema/db10-log-alerts.draft";
 import { logAlertsRuntimeEnabled } from "./readiness";
 
+import { env } from "@/config/env";
 const callbackSchema = z.object({
   callback_query: z.object({
     id: z.string().min(1).max(120),
@@ -23,7 +24,7 @@ const callbackSchema = z.object({
 
 /** An authentic bot callback from another conversation must never triage alerts. */
 export function validTelegramCallbackChat(chatId: string | number): boolean {
-  const expected = process.env["TELEGRAM_ALERT_CHAT_ID"];
+  const expected = env.TELEGRAM_ALERT_CHAT_ID;
   return Boolean(expected && String(chatId) === expected);
 }
 
@@ -31,7 +32,7 @@ export function validTelegramCallbackChat(chatId: string | number): boolean {
  * Telegram user ID is explicitly allowlisted by the production operator.
  * Telegram supplies callback_query.from.id from the authenticated tapper. */
 export function validTelegramCallbackOperator(userId: number): boolean {
-  const allowed = process.env["TELEGRAM_ALERT_OPERATOR_IDS"];
+  const allowed = env.TELEGRAM_ALERT_OPERATOR_IDS;
   if (!allowed || !Number.isSafeInteger(userId) || userId <= 0) return false;
   return allowed.split(",").some((value) => {
     const id = value.trim();
@@ -47,8 +48,8 @@ export function validTelegramAcknowledgementId(data: string): string | null {
 }
 
 export function validTelegramWebhookSecret(header: string | null): boolean {
-  if (process.env["APP_ENV"] !== "production") return false;
-  const expected = process.env["TELEGRAM_ALERT_WEBHOOK_SECRET"];
+  if (env.APP_ENV !== "production") return false;
+  const expected = env.TELEGRAM_ALERT_WEBHOOK_SECRET;
   if (!expected || !header || Buffer.byteLength(expected, "utf8") < 32) return false;
   const a = Buffer.from(header);
   const b = Buffer.from(expected);
@@ -56,7 +57,7 @@ export function validTelegramWebhookSecret(header: string | null): boolean {
 }
 
 async function postTelegramOperation(operation:"answerCallbackQuery"|"editMessageText",payload:Record<string,unknown>){
-  const token=process.env["TELEGRAM_ALERT_BOT_TOKEN"];
+  const token=env.TELEGRAM_ALERT_BOT_TOKEN;
   if(!token)return false;
   const controller=new AbortController();
   const timeout=setTimeout(()=>controller.abort(),2_000);
@@ -95,7 +96,7 @@ async function editAcknowledgedMessage(chatId:string|number,messageId:number,ori
 }
 
 export async function handleTelegramCallback(payload: unknown): Promise<boolean> {
-  if (process.env["APP_ENV"] !== "production" || !logAlertsRuntimeEnabled()) return false;
+  if (env.APP_ENV !== "production" || !logAlertsRuntimeEnabled()) return false;
   const parsed = callbackSchema.safeParse(payload);
   if (!parsed.success) return false;
   if (!validTelegramCallbackChat(parsed.data.callback_query.message.chat.id) ||

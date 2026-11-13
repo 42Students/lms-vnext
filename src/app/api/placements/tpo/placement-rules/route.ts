@@ -9,6 +9,7 @@ import {
 } from "@/modules/placements/tpo-policy-service";
 import { route } from "@/security/route";
 
+import { featureReady } from "@/config/features";
 export const runtime = "nodejs";
 
 function migrationPendingResponse(){
@@ -22,7 +23,7 @@ function migrationPendingResponse(){
 }
 
 async function handleGET(request: Request) {
-  if (process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED") return migrationPendingResponse();
+  if (!featureReady("tpoApi")) return migrationPendingResponse();
 
   try {
     const context = await getCurrentRequestContext();
@@ -39,7 +40,7 @@ export const GET = route(
 );
 
 async function handlePUT(request: Request) {
-  if (process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED") return migrationPendingResponse();
+  if (!featureReady("tpoApi")) return migrationPendingResponse();
 
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });

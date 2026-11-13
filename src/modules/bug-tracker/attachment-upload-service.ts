@@ -13,6 +13,7 @@ import {validateBugScreenshotUpload,
  from "./access-and-attachments";
 import {trackerAdminRuntimeEnabled} from "./readiness";
 
+import { env } from "@/config/env";
 const publicIdSchema=z.string().regex(/^LMS-[0-9]{4,}$/).max(24);
 const requestSchema=z.discriminatedUnion("action",[
  z.strictObject({action:z.literal("INITIATE"),fileName:z.string().max(255),
@@ -109,7 +110,7 @@ export async function handleOwnTrackerAttachment(context:RequestContext,
     scanner!=="lms-vnext-privileged-scanner"){
   // Development-only visual-format attestation is not antivirus. Production
   // requires an actual privileged scanner and keeps screenshots unavailable.
-  if(process.env["APP_ENV"]!=="development"&&process.env["APP_ENV"]!=="test")
+  if(env.APP_ENV!=="development"&&env.APP_ENV!=="test")
    throw new Error("TRACKER_ATTACHMENT_UNVERIFIED");
   if(!await sniffMagic(input.storageKey,valid.contentType))
    throw new Error("TRACKER_ATTACHMENT_UNVERIFIED");

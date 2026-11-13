@@ -5,6 +5,7 @@ import {independentAuditImporterReady,syncIndependentAuditInbox} from
  "@/modules/bug-tracker/independent-audit-inbox-importer";
 import { route } from "@/security/route";
 
+import { env } from "@/config/env";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"private, no-store"} as const;
@@ -17,7 +18,7 @@ const noStore={"Cache-Control":"private, no-store"} as const;
  */
 async function handleGET(request:Request){
  const rejection=auditCronRequestRejection(
-  request,process.env["AUDIT_FINDINGS_CRON_SECRET"]);
+  request,env.AUDIT_FINDINGS_CRON_SECRET);
  if(rejection)
   return NextResponse.json({error:rejection},{
    status:rejection==="UNAUTHORIZED"?401:400,headers:noStore});

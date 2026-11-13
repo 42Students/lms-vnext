@@ -30,11 +30,13 @@ import {
   type FacultyOnboardingProfile,
 } from "./service";
 
+import { env } from "@/config/env";
+import { featureReady } from "@/config/features";
 function runtimeIdentityDirectory() {
   if (
     process.env.NODE_ENV !== "production" &&
-    process.env["APP_ENV"] === "development" &&
-    process.env["E2E_AUTH_ENABLED"] === "true"
+    env.APP_ENV === "development" &&
+    featureReady("e2eAuth")
   ) {
     return e2eIdentityDirectory;
   }

@@ -20,6 +20,7 @@ import { publicJoinTablesReady } from "./readiness";
 import { publicRecruiterJoinedNotification } from "./join-notification-model";
 import { recruiterGrantValidUntil, recruiterGrantEffectiveAt } from "../recruiter-grant-expiry-policy";
 
+import { env } from "@/config/env";
 /** Legacy public-link behavior is deliberately not implicitly grandfathered.
  * Old indefinite HMAC/nonced links and direct-post paths cannot be authorized
  * by vNext's explicit expiry/revocation, OTP and reviewed-drive grant model.
@@ -55,7 +56,7 @@ export async function acceptPublicRecruiterJoin(
 ): Promise<{ joined: true; outcome: "JOINED" | "ALREADY_JOINED";signInEmail:string }> {
   const input = publicJoinAcceptSchema.safeParse(raw);
   if (!input.success) throw new PublicJoinAcceptError("INVALID");
-  const secret = process.env["TPO_RECRUITER_OTP_HMAC_SECRET"] ?? "";
+  const secret = env.TPO_RECRUITER_OTP_HMAC_SECRET ?? "";
   if (Buffer.byteLength(secret, "utf8") < 32) throw new PublicJoinAcceptError("NOT_CONFIGURED");
   let ipTag: string;
   try { ipTag = opaqueNetworkTag(verifiedClientIp ?? "", secret); }

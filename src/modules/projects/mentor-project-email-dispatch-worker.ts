@@ -7,6 +7,7 @@ import {resolveMentorProjectEmailPreflight} from
  "./mentor-project-email-dispatch-preflight-service";
 import {sendMentorProjectEventEmail} from "./mentor-project-email-provider";
 
+import { rawEnv } from "@/config/env";
 const QUEUED=ACTIVITY_EVENT_TYPES.PROJECTS_MENTOR_EMAIL_QUEUED;
 const STATE=ACTIVITY_EVENT_TYPES.PROJECTS_MENTOR_EMAIL_DISPATCH_STATE;
 const RECEIPT="mentor_project_email_dispatch_receipt";
@@ -38,7 +39,7 @@ function jobIdentity(job:Job){
     ?{sourceEventId,recipientUserId}:null;
 }
 export function mentorProjectEmailWorkerReady(
- env:Record<string,string|undefined>=process.env,
+ env:Record<string,string|undefined>=rawEnv(),
  now:Date=new Date(),
 ):{ready:true;activatedAt:Date}|{ready:false}{
  if(env["MENTOR_PROJECT_EMAIL_OUTBOX_READY"]!=="verified"||
@@ -121,7 +122,7 @@ async function settleJob(job:Job,claim:Claim,status:State):Promise<boolean>{
  * deterministic ZeptoMail idempotency key. ACCEPTED is not delivery proof.
  */
 export async function runMentorProjectEmailDispatchBatch(
- env:Record<string,string|undefined>=process.env,
+ env:Record<string,string|undefined>=rawEnv(),
 ):Promise<{status:"DISABLED"|"CHECKED";examined:number;accepted:number;
  suppressed:number;retry:number}>{
  const state=mentorProjectEmailWorkerReady(env);

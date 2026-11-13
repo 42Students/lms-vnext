@@ -13,6 +13,7 @@ import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {collegeDriveIdSchema} from "./college-drive-read-model";
 import {PlacementsServiceError} from "./errors";
 
+import { featureReady } from "@/config/features";
 export const collegeStageUndoSchema=z.strictObject({
  applicationId:z.string().uuid(),
  undoEventId:z.string().uuid(),
@@ -37,7 +38,7 @@ export async function undoCollegeApplicationStage(
  const collegeId=await requireCollegePlacementAdmin(context);
  const acting=await resolveActingCollege(context,"placements.manage");
  const jobId=collegeDriveIdSchema.parse(rawJobId);
- if(process.env["DB10_NOTIFICATION_OUTBOX_READY"]!=="DB10_VERIFIED")
+ if(!featureReady("notificationOutbox"))
   throw Error(COLLEGE_STAGE_UNDO_TOO_LATE);
  return getDb().transaction(async tx=>{
   const [job]=await tx.select({id:placementJobs.id,status:placementJobs.status})

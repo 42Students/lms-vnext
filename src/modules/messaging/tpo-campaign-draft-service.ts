@@ -12,6 +12,8 @@ import {planTpoCampaignRecipients} from "./tpo-campaign-send-policy";
 import {resolveTpoCampaignRecipientSecret,issueTpoCampaignEmailRecipientKey} from "./tpo-campaign-recipient-token";
 import {tpoCampaignDraftSchema} from "./tpo-campaign-draft-model";
 
+import { rawEnv } from "@/config/env";
+import { featureReady } from "@/config/features";
 /** Migration-only historical campaign marker. Importing an already-sent
  * legacy header is never a SEND command: no provider API, recipient tokens,
  * or new outbound queue may be created from this projection.
@@ -40,7 +42,7 @@ async function scope(context:RequestContext){
  return requirePlacementManageScope(context,member.collegeId);
 }
 export async function tpoCampaignDraftStorageReady(){
- if(process.env["DB09_TPO_API_READY"]!=="DB09_VERIFIED")return false;
+ if(!featureReady("tpoApi"))return false;
  try{
   const check=await getDb().execute<{ready:boolean}>(sql`select
    to_regclass('public.placement_tpo_campaign_drafts') is not null as ready`);
@@ -52,7 +54,7 @@ export async function createTpoCampaignDraft(context:RequestContext,raw:unknown)
  const input=tpoCampaignDraftSchema.parse(raw);
  const college=await scope(context);
  if(!await tpoCampaignDraftStorageReady())throw new TpoCampaignDraftError("NOT_READY");
- const key=resolveTpoCampaignRecipientSecret(process.env);
+ const key=resolveTpoCampaignRecipientSecret(rawEnv());
  if(Buffer.byteLength(key,"utf8")<32)throw new TpoCampaignDraftError("NOT_READY");
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{

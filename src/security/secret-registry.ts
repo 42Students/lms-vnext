@@ -1,5 +1,6 @@
 import { checkSecrets, type ConfigIssue, type SecretSpec } from "@/security/config-core";
 
+import { rawEnv } from "@/config/env";
 const machine = (name: string, purpose: string, requiredInProduction = true): SecretSpec =>
   ({ name, purpose, kind: "secret", minBytes: 32, requiredInProduction, distinct: true });
 const key = (name: string, purpose: string): SecretSpec =>
@@ -34,6 +35,6 @@ export const SECRET_REGISTRY: readonly SecretSpec[] = [
 ];
 
 /** Validates the live environment. Never throws and never returns a secret value. */
-export function validateSecretConfig(env: Record<string, string | undefined> = process.env): ConfigIssue[] {
+export function validateSecretConfig(env: Record<string, string | undefined> = rawEnv()): ConfigIssue[] {
   return checkSecrets(env, SECRET_REGISTRY, env["NODE_ENV"] === "production");
 }

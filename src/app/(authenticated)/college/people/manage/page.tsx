@@ -27,6 +27,7 @@ import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 
+import { env } from "@/config/env";
 type Search = Record<string, string | string[] | undefined>;
 function collegePeopleManageHref(filter: CollegePeopleDirectoryFilter) {
   return collegePeopleDirectoryHref(filter).replace("/college/people", "/college/people/manage");
@@ -131,7 +132,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
       actions={<PersonOnboardDialog collegeId={membership.collegeId} />} />
     <Disclosure title="Other people actions" className="min-w-0">
       <nav aria-label="People directory tools" className="flex min-w-0 flex-wrap items-center gap-3 pt-2">
-        {process.env["COLLEGE_STUDY_GROUPS_RELEASED"] === "true" ? <TextLink href="/college/groups"
+        {env.COLLEGE_STUDY_GROUPS_RELEASED === "true" ? <TextLink href="/college/groups"
         className="inline-flex min-h-11 items-center md:min-h-9">Student groups</TextLink> : null}<TextLink href="/college/contacts" className="inline-flex min-h-11 items-center md:min-h-9">Browse contacts</TextLink><TextLink href={collegePeopleExportHref(filter)} className="inline-flex min-h-11 items-center md:min-h-9">Export filtered CSV</TextLink>
       </nav>
     </Disclosure>

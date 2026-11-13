@@ -8,6 +8,7 @@ import { ToastProvider } from "@/components/ui/toast";
 import type { TpoTimedDebarRow } from "@/modules/placements/tpo-timed-debar-view-model";
 import { Heading } from "@/components/ui/heading";
 
+import { env } from "@/config/env";
 export const dynamic = "force-dynamic";
 
 const active: TpoTimedDebarRow[] = [
@@ -25,7 +26,7 @@ const active: TpoTimedDebarRow[] = [
  */
 export default function AuthTpoUxFixture() {
   if (process.env.NODE_ENV !== "development" ||
-      process.env.UX_G160_G133_FIXTURE !== "1") notFound();
+      env.UX_G160_G133_FIXTURE !== "1") notFound();
 
   return <main id="lms-main-content"
     className="mx-auto w-full max-w-[70rem] min-w-0 space-y-8 px-4 py-6 md:px-8">

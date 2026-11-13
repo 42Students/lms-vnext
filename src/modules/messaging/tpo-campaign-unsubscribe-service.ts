@@ -9,6 +9,7 @@ import {verifyTpoCampaignRecipientToken,campaignUnsubscribeDecision,resolveTpoCa
 import {deriveGlobalEmailSuppressionHashForAddress} from "@/modules/operations/outbound-delivery-envelope";
 import {GlobalEmailSuppressionUnavailable,persistVerifiedGlobalEmailSuppression} from "@/modules/operations/global-email-suppression-service";
 
+import { env, rawEnv } from "@/config/env";
 export class CampaignUnsubscribeInvalid extends Error {
   constructor(){super("CAMPAIGN_UNSUBSCRIBE_INVALID");this.name="CampaignUnsubscribeInvalid";}
 }
@@ -23,7 +24,7 @@ export async function unsubscribeTpoCampaignRecipient(
 ):Promise<{unsubscribed:true}>{
   // Verify the purpose-bound recipient token before touching the database.
   // Untrusted or malformed links must not trigger a privileged storage probe.
-  const key=resolveTpoCampaignRecipientSecret(process.env);
+  const key=resolveTpoCampaignRecipientSecret(rawEnv());
   const claim=verifyTpoCampaignRecipientToken(token,key,Date.now());
   // A legacy recipient link was an opaque token stored only as SHA256.
   // Migrated recipient records carry the historical digest separately.
@@ -56,7 +57,7 @@ export async function unsubscribeTpoCampaignRecipient(
   // followed by a local failure conservatively keeps that email suppressed;
   // a retry safely completes the per-campaign state.
   let globalSnapshotProof:{recipientKey:string;leadId:string}|null=null;
-  const globalKey=process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"]??"";
+  const globalKey=env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64??"";
   if(globalKey){
     const [recipient]=await db.select({
       recipientKey:placementTpoEmailCampaignRecipients.recipientKey,

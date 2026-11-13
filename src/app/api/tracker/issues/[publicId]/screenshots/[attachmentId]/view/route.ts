@@ -14,6 +14,7 @@ import {getPrivateR2Config} from "@/modules/storage/r2-config";
 import {headObject,presignUrl} from "@/modules/storage/s3-client";
 import {apiErrorResponse} from "@/lib/api-error";
 import {canSignBugScreenshotDownload} from "@/modules/bug-tracker/access-and-attachments";
+import { env } from "@/config/env";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -50,7 +51,7 @@ export const GET = route(
     if(!canSignBugScreenshotDownload({
     publicId:row.storedPublicId,storageKey:row.key,
     contentType:row.type,sizeBytes:row.sizeBytes,
-   },head,process.env["APP_ENV"]))
+   },head,env.APP_ENV))
    return NextResponse.json({error:"SCREENSHOT_NOT_AVAILABLE"},{status:404});
     const signed=presignUrl(getPrivateR2Config(),{
    method:"GET",key:row.key,expiresSeconds:120,

@@ -6,6 +6,7 @@ import { isSuperAdmin } from "@/modules/identity/context";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 
+import { featureReady } from "@/config/features";
 export const metadata: Metadata = {
   title: "Retired test sign-in · 42 LMS",
   robots: { index: false, follow: false, noarchive: true },
@@ -27,7 +28,7 @@ export default async function LegacySuperAdminE2ELoginPage({
   // query parameter to authorize or construct a session.
   const providedPhone = typeof raw["phone"] === "string" && raw["phone"].trim().length > 0;
   let devVerifiedSuperAdmin = false;
-  if (process.env.NODE_ENV === "development" && process.env["E2E_AUTH_ENABLED"] === "true") {
+  if (process.env.NODE_ENV === "development" && featureReady("e2eAuth")) {
     try {
       devVerifiedSuperAdmin = isSuperAdmin(await getCurrentRequestContext());
     } catch {

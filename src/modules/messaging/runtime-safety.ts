@@ -1,5 +1,6 @@
 import { parseAuthTestAllowlist } from "./allowlist";
 import { isValidRecipient, normalizeRecipient } from "./model";
+import { rawEnv } from "@/config/env";
 /** Read the same AUTH test recipient lists used by login; missing APP_ENV is never production.
  * Legacy STAGE/DEV_MAIL_ALLOW could allow an entire @domain. That broad
  * behavior is intentionally not honored: nonproduction sending is limited
@@ -9,7 +10,7 @@ import { isValidRecipient, normalizeRecipient } from "./model";
 export function canContactRecipientAtRuntime(
   channel: "EMAIL" | "SMS",
   rawRecipient: string,
-  env: Record<string, string | undefined> = process.env,
+  env: Record<string, string | undefined> = rawEnv(),
 ): boolean {
   const recipient = normalizeRecipient(channel, rawRecipient);
   if (!isValidRecipient(channel, recipient)) return false;
@@ -28,7 +29,7 @@ export function canContactRecipientAtRuntime(
  */
 export function recipientRuntimeSuppressionReason(
  channel:"EMAIL"|"SMS",rawRecipient:string,
- env:Record<string,string|undefined>=process.env,
+ env:Record<string,string|undefined>=rawEnv(),
 ):"INVALID_RECIPIENT"|"SUPPRESSED_NONPROD"|null{
  const recipient=normalizeRecipient(channel,rawRecipient);
  if(!isValidRecipient(channel,recipient))return "INVALID_RECIPIENT";

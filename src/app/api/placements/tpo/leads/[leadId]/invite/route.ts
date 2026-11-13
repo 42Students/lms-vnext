@@ -9,6 +9,7 @@ import {deliverTpoRecruiterInviteEmail} from "@/modules/placements/tpo-recruiter
 import {outboundQueueRuntimeEnabled} from "@/modules/operations/outbound-delivery-queue";
 import { route } from "@/security/route";
 
+import { featureReady } from "@/config/features";
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ leadId: string }> };
 
@@ -26,7 +27,7 @@ async function handlePOST(request: Request, { params }: RouteContext) {
     // A verified outbox may accept encrypted intent before any provider sends.
     if(body.sendEmail===true &&
        !outboundQueueRuntimeEnabled() &&
-       process.env["TPO_RECRUITER_INVITE_EMAIL_READY"]!=="VERIFIED")
+       !featureReady("tpoRecruiterInviteEmail"))
       return NextResponse.json({error:"TPO_RECRUITER_INVITE_DELIVERY_PENDING"},{status:503});
     const context = await getCurrentRequestContext();
     const { leadId } = await params;

@@ -2,11 +2,12 @@ import { notFound } from "next/navigation";
 import { acknowledgedTelegramMessageText } from "@/modules/log-alerts/telegram-webhook";
 import { limitTelegramAlert, sanitizeTelegramLine } from "@/modules/log-alerts/telegram-notifier";
 
+import { env } from "@/config/env";
 export const dynamic="force-dynamic";
 
 /** UX witness only: never reads provider credentials, persists data or sends a message. */
 export default function TelegramAlertCopyPreview() {
-  if(process.env.NODE_ENV!=="development"||process.env.UX_G176_TELEGRAM_FIXTURE!=="1")notFound();
+  if(process.env.NODE_ENV!=="development"||env.UX_G176_TELEGRAM_FIXTURE!=="1")notFound();
   const incidentId="11111111-1111-4111-8111-111111111111";
   const raw=[
     "Time: 2099-01-01T01:02:03.000Z",

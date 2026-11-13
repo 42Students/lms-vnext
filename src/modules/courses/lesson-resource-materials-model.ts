@@ -1,5 +1,6 @@
 import {z} from "zod";
 
+import { rawEnv } from "@/config/env";
 /** FAC-courses-14 and LEARNER-course-detail-07: canonical DB05 materials.
  * This schema validates each LINK child. The RESOURCE parent is validated by
  * createLessonContentInputSchema in validation.ts (required lesson UUID and
@@ -45,6 +46,6 @@ export const resourceMaterialCommandSchema=z.discriminatedUnion("action",[
  resourceMaterialLinkSchema.extend({action:z.literal("EDIT_LINK"),materialId:resourceMaterialIdSchema}),
  z.object({action:z.literal("REMOVE"),materialId:resourceMaterialIdSchema}).strict(),
 ]);
-export function resourceMaterialsWriteReady(env:NodeJS.ProcessEnv=process.env){
+export function resourceMaterialsWriteReady(env:NodeJS.ProcessEnv=rawEnv()){
  return env["DB05_RESOURCE_MATERIALS_READY"]==="DB05_VERIFIED";
 }

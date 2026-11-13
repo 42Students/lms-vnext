@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { UXG184AuthenticatedStatesPreview, type G184Role, type G184State } from "@/components/ux/ux-g184-authenticated-states-preview";
 
+import { env } from "@/config/env";
 export const dynamic="force-dynamic";
 const roles=["admin","college-admin","hr","teach","teacher"] as const;
 const states=["error","loading","not-found"] as const;
@@ -11,7 +12,7 @@ export default async function G184RouteStateFixture({
 }:{
   searchParams:Promise<{role?:string;state?:string}>;
 }){
-  if(process.env.NODE_ENV!=="development"||process.env.UX_G184_ROUTE_STATE_FIXTURE!=="1")notFound();
+  if(process.env.NODE_ENV!=="development"||env.UX_G184_ROUTE_STATE_FIXTURE!=="1")notFound();
   const {role,state}=await searchParams;
   if(!roles.some(value=>value===role)||!states.some(value=>value===state)||
     (role==="college-admin"&&state!=="not-found"))notFound();

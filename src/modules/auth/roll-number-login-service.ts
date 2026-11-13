@@ -7,6 +7,7 @@ import { collegeMemberships, colleges, learnerProfiles, membershipRoles, users }
 import { LoginError } from "./login-service";
 import { startLoginWithRuntime } from "./runtime";
 
+import { env } from "@/config/env";
 /**
  * Old roll-number OTP is a lookup alias, NOT an authentication factor.
  * Sign-in still requires a fresh one-time code delivered to the learner's
@@ -21,7 +22,7 @@ export const rollNumberStartSchema = z.strictObject({
 });
 export function rollNumberOtpEnabledForCollege(collegeId: string | null): boolean {
   if (!collegeId) return false;
-  const allowlist = (process.env["AUTH_ROLL_NUMBER_COLLEGES"] ?? "")
+  const allowlist = (env.AUTH_ROLL_NUMBER_COLLEGES ?? "")
     .split(",").map(value => value.trim().toLowerCase());
   return allowlist.includes(collegeId.toLowerCase());
 }

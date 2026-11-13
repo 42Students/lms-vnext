@@ -6,6 +6,7 @@ import {
 } from "@/modules/storage/production-scan-verdict-service";
 import { route } from "@/security/route";
 
+import { env } from "@/config/env";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"no-store"} as const;
@@ -19,7 +20,7 @@ const noStore={"Cache-Control":"no-store"} as const;
 async function handlePOST(request:Request){
   // One machine-only gate, evaluated before parsing, scanning or database I/O.
   const rejection=scannerCallbackRequestRejection(
-   request,process.env["PRIVATE_STORAGE_SCANNER_WEBHOOK_SECRET"]);
+   request,env.PRIVATE_STORAGE_SCANNER_WEBHOOK_SECRET);
   if(rejection==="INVALID_ORIGIN")
    return NextResponse.json({error:rejection},{status:403,headers:noStore});
   if(!productionScannerCallbackReady())

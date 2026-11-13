@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { sendTelegramAlert } from "@/modules/log-alerts/telegram-notifier";
 import { acknowledgedTelegramMessageText } from "@/modules/log-alerts/telegram-webhook";
 
+import { env } from "@/config/env";
 /**
  * Development-only, deterministic outbound-message witness.
  * The injected transport prevents all provider network calls. The browser
@@ -9,7 +10,7 @@ import { acknowledgedTelegramMessageText } from "@/modules/log-alerts/telegram-w
  */
 export default async function TelegramAlertPreviewPage() {
   if (process.env.NODE_ENV !== "development" ||
-      process.env.UX_G176_TELEGRAM_FIXTURE !== "1") notFound();
+      env.UX_G176_TELEGRAM_FIXTURE !== "1") notFound();
 
   let sentText = "";
   const transport: typeof fetch = async (_request, init) => {

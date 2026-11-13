@@ -17,9 +17,10 @@ import {deliverInAppNotificationInTransaction} from "@/modules/activity/notifica
 import {facultyAttendanceScheduleParamsSchema,facultyAttendanceScheduleSchema,facultyScheduleFieldsChanged}
   from "./faculty-schedule-mutation-model";
 
+import { env } from "@/config/env";
 /** Configurable near-now booking grace (legacy default: five minutes). */
 function bookingGraceMs() {
-  const minutes=Number(process.env["FACULTY_SCHEDULE_BOOKING_GRACE_MINUTES"] ?? "5");
+  const minutes=Number(env.FACULTY_SCHEDULE_BOOKING_GRACE_MINUTES ?? "5");
   if(!Number.isInteger(minutes)||minutes<0||minutes>30)
     throw new Error("INVALID_FACULTY_SCHEDULE_BOOKING_GRACE");
   return minutes*60_000;

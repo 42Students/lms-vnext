@@ -21,14 +21,16 @@ import {TpoRecruiterInviteServiceError} from "./tpo-recruiter-invite-service";
 import {publicRecruiterJoinedNotification} from "./public-join/join-notification-model";
 import {recruiterInviteAcceptanceBodySchema} from "./recruiter-invite-otp-accept-model";
 
+import { env } from "@/config/env";
+import { featureReady } from "@/config/features";
 /** Public signup is authorized solely by an invite bound to a known work email
  * plus its latest DELIVERED OTP. Never accept claimed user, email, company or college IDs.
  */
 export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode:unknown,rawDetails:unknown={}):
  Promise<{accepted:true;ok:true;outcome:"JOINED"|"PENDING_CONSENT";status:"JOINED"|"PENDING_HR";collegeName:string;signInEmail:string}> {
  const invalid=()=>new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_FOUND");
- const secret=process.env["TPO_RECRUITER_OTP_HMAC_SECRET"]??"";
- if(process.env["TPO_RECRUITER_OTP_READY"]!=="VERIFIED"||
+ const secret=env.TPO_RECRUITER_OTP_HMAC_SECRET??"";
+ if(!featureReady("tpoRecruiterOtp")||
   Buffer.byteLength(secret,"utf8")<32||
   typeof rawToken!=="string"||!isRecruiterInviteTokenShape(rawToken)||
   !recruiterInviteOtpSchema.safeParse(rawCode).success)throw invalid();

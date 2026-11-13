@@ -9,6 +9,7 @@ import {sendRecruiterMessageDigest,recruiterDigestReadiness} from "./recruiter-m
 import {readZeptoMailConfig,resolveZeptoMailTemplateId,sendZeptoMailTemplate} from "@/modules/notifications/zeptomail-email";
 import {isCampaignTemplateKey} from "@/modules/messaging/template-boundary-model";
 
+import { rawEnv } from "@/config/env";
 type Candidate={
  thread_id:string;recruiter_user_id:string;recipient_email:string;
  recipient_name:string;college_id:string;
@@ -22,7 +23,7 @@ type MailSummary={examined:number;sent:number;enabled:boolean;
  * No page GET sends mail. Before migration/provider enablement it is an inert no-op.
  */
 export async function dispatchRecruiterUnreadMessageDigests(
- env:Record<string,string|undefined>=process.env,
+ env:Record<string,string|undefined>=rawEnv(),
  now:Date=new Date(),
 ):Promise<MailSummary>{
  const readiness=recruiterDigestReadiness(env);
@@ -176,7 +177,7 @@ export async function dispatchRecruiterUnreadMessageDigests(
  * Schedule this worker at 09:00 Asia/Kolkata, separately from message digests.
  */
 export async function dispatchPendingRecruiterInviteReminders(
- env:Record<string,string|undefined>=process.env,now=new Date(),
+ env:Record<string,string|undefined>=rawEnv(),now=new Date(),
 ):Promise<MailSummary>{
  const enabled=env.TPO_RECRUITER_INVITE_REMINDER_ENABLED==="true";
  const templateName="RECRUITER_INVITE_REMINDER";

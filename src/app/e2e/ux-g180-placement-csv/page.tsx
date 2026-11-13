@@ -6,10 +6,11 @@ import { companyEngagementCsv } from "@/modules/placements/tpo-company-engagemen
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { env } from "@/config/env";
 export const dynamic = "force-dynamic";
 /** Development-only synthetic serializer fixture. Real endpoints and tenant data are untouched. */
 export default function TpoBatchCompanyCsvProof() {
- if(process.env.NODE_ENV !== "development" || process.env.UX_G180_FIXTURE !== "1")notFound();
+ if(process.env.NODE_ENV !== "development" || env.UX_G180_FIXTURE !== "1")notFound();
  const poison = "\u093E=FORMULA(1)";
  const samples = [
   {title:"Cohort decision history",name:"cohort-history.csv",csv:serializeTpoCohortHistoryCsv([{

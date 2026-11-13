@@ -28,6 +28,8 @@ import {
   tpoCrmLeadIdSchema,
 } from "./tpo-crm-validation";
 
+import { env } from "@/config/env";
+import { featureReady } from "@/config/features";
 export type TpoRecruiterInviteServiceErrorCode =
   | "TPO_RECRUITER_INVITE_NOT_FOUND"
   | "TPO_RECRUITER_INVITE_NOT_ALLOWED";
@@ -112,7 +114,7 @@ export async function issueTpoRecruiterInvite(
   let inviteOrigin: string | null = null;
   if (queueRequested) {
     try {
-      const url = new URL(process.env["APP_PUBLIC_URL"] ?? "");
+      const url = new URL(env.APP_PUBLIC_URL ?? "");
       if (url.protocol !== "https:" || url.username || url.password ||
           url.search || url.hash) throw new Error("UNSAFE_ORIGIN");
       inviteOrigin = url.origin;
@@ -288,7 +290,7 @@ export async function remindTpoRecruiterInvite(
   deliver: (email: string, token: string, expiresAt: Date) => Promise<boolean>,
   now = new Date(),
 ): Promise<{ reminded: true }> {
-  if (process.env["TPO_RECRUITER_REMINDER_READY"] !== "VERIFIED") {
+  if (!featureReady("tpoRecruiterReminder")) {
     throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_ALLOWED");
   }
   const collegeId = tpoCrmCollegeIdSchema.parse(collegeIdInput);

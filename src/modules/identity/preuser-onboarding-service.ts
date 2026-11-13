@@ -6,6 +6,7 @@ import {getDb} from "@/db/client";
 import {identityPreuserChallenges} from "@/db/schema/identity-auth-attempts";
 import {collegeMemberships,membershipRoles,colleges,organizations,users} from "@/db/schema";
 
+import { env } from "@/config/env";
 const uuid=z.string().uuid();
 const input=z.strictObject({
  collegeId:uuid,channel:z.enum(["EMAIL","PHONE"]),
@@ -15,7 +16,7 @@ const input=z.strictObject({
 });
 const MAX_PER_30_MIN=5;
 function secret(){
- const value=process.env["AUTH_ONBOARDING_PEPPER"]??"";
+ const value=env.AUTH_ONBOARDING_PEPPER??"";
  if(value.length<32)throw new Error("ONBOARDING_PROVIDER_NOT_CONFIGURED");
  return value;
 }

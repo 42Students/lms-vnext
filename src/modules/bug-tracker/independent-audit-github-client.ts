@@ -1,6 +1,7 @@
 import "server-only";
 import {createSign} from "node:crypto";
 
+import { env } from "@/config/env";
 const REPO="42Students/lms-findings";
 const API="https://api.github.com";
 const HEAD="main";
@@ -11,10 +12,10 @@ export type AuditInboxBlob={path:string;sha:string};
 /** Strict fixed-repo read client. App credentials are never exposed in any
  * response, log, URL or exception. A classic token is a local-only fallback. */
 export function independentAuditGithubConfigured(){
- return Boolean(process.env["AUDIT_FINDINGS_GITHUB_TOKEN"]?.trim()||
-  (process.env["AUDIT_FINDINGS_GITHUB_APP_ID"]?.trim()&&
-   process.env["AUDIT_FINDINGS_GITHUB_INSTALLATION_ID"]?.trim()&&
-   process.env["AUDIT_FINDINGS_GITHUB_PRIVATE_KEY"]?.trim()));
+ return Boolean(env.AUDIT_FINDINGS_GITHUB_TOKEN?.trim()||
+  (env.AUDIT_FINDINGS_GITHUB_APP_ID?.trim()&&
+   env.AUDIT_FINDINGS_GITHUB_INSTALLATION_ID?.trim()&&
+   env.AUDIT_FINDINGS_GITHUB_PRIVATE_KEY?.trim()));
 }
 async function githubJson(path:string,token:string,method:"GET"|"POST"="GET") {
  const controller=new AbortController();
@@ -40,11 +41,11 @@ function record(input:unknown):Record<string,unknown>{
  return input as Record<string,unknown>;
 }
 async function accessToken():Promise<string>{
- const direct=process.env["AUDIT_FINDINGS_GITHUB_TOKEN"]?.trim();
+ const direct=env.AUDIT_FINDINGS_GITHUB_TOKEN?.trim();
  if(direct)return direct;
- const id=process.env["AUDIT_FINDINGS_GITHUB_APP_ID"]?.trim()??"";
- const installation=process.env["AUDIT_FINDINGS_GITHUB_INSTALLATION_ID"]?.trim()??"";
- const privateKey=process.env["AUDIT_FINDINGS_GITHUB_PRIVATE_KEY"]?.trim()??"";
+ const id=env.AUDIT_FINDINGS_GITHUB_APP_ID?.trim()??"";
+ const installation=env.AUDIT_FINDINGS_GITHUB_INSTALLATION_ID?.trim()??"";
+ const privateKey=env.AUDIT_FINDINGS_GITHUB_PRIVATE_KEY?.trim()??"";
  if(!/^\d+$/.test(id)||!/^\d+$/.test(installation)||!privateKey)
   throw new Error("Findings sync credentials are not configured");
  const now=Math.floor(Date.now()/1000);

@@ -11,6 +11,7 @@
  * Cloud Logging alert, and a ready log alert cannot enable bug-report writes.
  *   DB10_TRACKER_READY=DB10_VERIFIED
  */
+import { featureReady } from "@/config/features";
 export function trackerAdminRuntimeEnabled() {
-  return process.env["DB10_TRACKER_READY"] === "DB10_VERIFIED";
+  return featureReady("tracker");
 }

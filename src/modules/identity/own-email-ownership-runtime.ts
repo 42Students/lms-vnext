@@ -4,13 +4,14 @@ import type {EmailLinkScope} from "@/modules/identity/email-link-verification-se
 import {issueEmailOwnershipLink,redeemEmailOwnershipLink} from "@/modules/identity/email-link-verification-service";
 import {sendZeptoMailTemplate} from "@/modules/notifications/zeptomail-email";
 
+import { env } from "@/config/env";
 /** Sends only through the independently provisioned ownership-link template.
  * Never produce a token in an API response or a server-access-log URL. */
 export async function issueOwnEmailOwnershipLink(
  scope:EmailLinkScope,origin:string,
 ){
- if(process.env["APP_ENV"]!=="production" &&
-    process.env["AUTH_DEV_REAL_DELIVERY"]!=="VERIFIED")
+ if(env.APP_ENV!=="production" &&
+    env.AUTH_DEV_REAL_DELIVERY!=="VERIFIED")
   throw new Error("EMAIL_LINK_DELIVERY_DISABLED");
  const base=new URL(origin);
  if(base.origin!==origin ||

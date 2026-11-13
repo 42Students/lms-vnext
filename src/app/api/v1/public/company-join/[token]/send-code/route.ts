@@ -4,6 +4,7 @@ import {readBoundedJsonBody} from "@/lib/bounded-json-body";
 import {requestPublicJoinCode,PublicJoinCodeError} from "@/modules/placements/public-join/send-code-service";
 import {deliverPublicRecruiterJoinCode} from "@/modules/messaging/public-join-code-delivery";
 import { route } from "@/security/route";
+import { featureReady } from "@/config/features";
 export const runtime="nodejs";
 /** Legacy token-in-path adapter; same verified-IP throttle and OTP delivery. */
 async function handlePOST(request:Request,{params}:{params:Promise<{token:string}>}){
@@ -13,7 +14,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{token:string
   {status:body.kind==="TOO_LARGE"?413:400,headers:{"Cache-Control":"no-store"}});
  const payload=body.value;
  const {token}=await params;
- const trusted=process.env["PUBLIC_JOIN_TRUSTED_PROXY_READY"]==="VERIFIED";
+ const trusted=featureReady("publicJoinTrustedProxy");
  const ip=trusted?request.headers.get("x-public-verified-client-ip"):null;
  try{
   const email=typeof payload==="object"&&payload!==null&&"email" in payload?payload.email:undefined;

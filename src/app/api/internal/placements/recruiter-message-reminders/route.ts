@@ -6,12 +6,13 @@ import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
 import {dispatchRecruiterUnreadMessageDigests} from "@/modules/placements/recruiter-message-email-dispatch-service";
 import { route } from "@/security/route";
+import { env } from "@/config/env";
 export const runtime="nodejs";
 // The legacy job waited 90 seconds after process startup. Our external
 // dev CronJob invokes this authenticated worker on five-minute ticks.
 const STARTUP_GRACE_MS=90_000;
 function allowed(request:Request){
- const secret=process.env["RECRUITER_MESSAGE_WORKER_SECRET"]??"";
+ const secret=env.RECRUITER_MESSAGE_WORKER_SECRET??"";
  const authorization=request.headers.get("authorization")??"";
  // Whitespace-only/misquoted secrets must not enable a privileged mail worker.
  if(Buffer.byteLength(secret.trim(),"utf8")<32||secret!==secret.trim()||

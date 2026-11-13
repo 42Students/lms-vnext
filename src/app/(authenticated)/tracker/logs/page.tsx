@@ -24,6 +24,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { formatDateTimeIst } from "@/lib/format-date";
 import { Disclosure } from "@/components/ui/disclosure";
 
+import { env } from "@/config/env";
 function LockKeyhole({className = ""}: {className?: string}) {
   return <svg aria-hidden="true" viewBox="0 0 24 24" width={26} height={26}
     className={className} fill="none" stroke="currentColor" strokeWidth={1.8}
@@ -97,9 +98,9 @@ export default async function TrackerLogsPage({
   const alertsReady = logAlertsRuntimeEnabled();
   const pollingReady = cloudLogPollConfigured();
   const telegramReady = telegramAlertsConfigured();
-  const commit = process.env["DEPLOY_COMMIT"] ?? "";
+  const commit = env.DEPLOY_COMMIT ?? "";
   const deploy = /^[0-9a-f]{7,64}$/i.test(commit) ? commit : null;
-  const startedRaw = process.env["DEPLOY_STARTED_AT"] ?? "";
+  const startedRaw = env.DEPLOY_STARTED_AT ?? "";
   const backendStartedAt = startedRaw && Number.isFinite(Date.parse(startedRaw))
     ? formatDateTimeIst(new Date(startedRaw))
     : null;

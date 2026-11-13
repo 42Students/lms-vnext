@@ -8,11 +8,12 @@ import { tpoUnplacedFilteredCsv } from "@/modules/placements/tpo-unplaced-filter
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { env } from "@/config/env";
 export const dynamic = "force-dynamic";
 
 /** Synthetic proof for the real CSV serializers. Never available in production. */
 export default function TpoCsvProof() {
-  if (process.env.NODE_ENV !== "development" || process.env.UX_G181_FIXTURE !== "1") notFound();
+  if (process.env.NODE_ENV !== "development" || env.UX_G181_FIXTURE !== "1") notFound();
   const dangerous = "\u093E=FORMULA(1)";
   const now = new Date("2026-11-08T00:00:00Z");
   const samples = [

@@ -10,6 +10,8 @@ import type {
 } from "./identity";
 import {PeopleServiceError} from "./errors";
 import {buildE2EFixtureManifest,reconcileE2EFixtureManifest,E2E_FIXTURE_INSERT_ORDER} from "./e2e-fixture-manifest";
+import { env } from "@/config/env";
+import { featureReady } from "@/config/features";
 export {buildE2EFixtureManifest,reconcileE2EFixtureManifest,buildE2EFixtureSeedLedger,E2E_FIXTURE_INSERT_ORDER} from "./e2e-fixture-manifest";
 export {seedIsolatedE2EAcademicGraph} from "./e2e-fixture-seed-service";
 
@@ -141,11 +143,11 @@ export async function persistIsolatedE2EIdentityUsers(input:{
 }):Promise<{namespace:string;userIds:Record<"facultyA"|"facultyB"|"adminA"|"learnerA"|"learnerB",string>;
  reused:number;created:number}>{
  if(process.env.NODE_ENV==="production"||
-    process.env["APP_ENV"]!=="test"||
-    process.env["E2E_SEED_ENABLED"]!=="true"||
-    process.env["E2E_ISOLATED_DATABASE"]!=="true"||
-    process.env["E2E_ALLOW_GRAPH_WRITES"]!=="true"||
-    process.env["APP_E2E_SEED_ENABLED"]!=="true"||
+    env.APP_ENV!=="test"||
+    !featureReady("e2eSeed")||
+    env.E2E_ISOLATED_DATABASE!=="true"||
+    env.E2E_ALLOW_GRAPH_WRITES!=="true"||
+    !featureReady("appE2eSeed")||
     !input.operatorAuthorized)
   throw new Error("E2E_SEED_DISABLED");
  const manifest=buildE2EFixtureManifest(input.namespace);
@@ -190,7 +192,7 @@ export async function persistIsolatedE2EIdentityUsers(input:{
  * grant a role, membership, token or object-read permission. */
 export function previewNonproductionE2ESeed(namespace="e2e-dev"){
  if(process.env.NODE_ENV==="production"||
-    process.env["E2E_SEED_ENABLED"]!=="true")
+    !featureReady("e2eSeed"))
   throw new Error("E2E_SEED_DISABLED");
  const manifest=buildE2EFixtureManifest(namespace);
  const decisions=reconcileE2EFixtureManifest(manifest,new Map());

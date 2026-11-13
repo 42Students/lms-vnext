@@ -7,6 +7,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {MentorProjectEmailKind} from "./mentor-project-email-provider";
 import {mentorEmailPreferenceFromSavedEvent} from "./mentor-email-preference-model";
 
+import { featureReady } from "@/config/features";
 type Writer=Pick<ReturnType<typeof getDb>,"select"|"selectDistinctOn"|"insert">;
 type Params={
  sourceEventId:string;projectId:string;collegeId:string;
@@ -22,7 +23,7 @@ type Params={
 export async function queueMentorProjectEmailIntent(
  tx:Writer,input:Params,
 ):Promise<number>{
- if(process.env["MENTOR_PROJECT_EMAIL_OUTBOX_READY"]!=="verified")return 0;
+ if(!featureReady("mentorProjectEmailOutbox"))return 0;
  const recipients=await tx.select({userId:users.id})
   .from(projectMembers)
   .innerJoin(collegeMemberships,and(

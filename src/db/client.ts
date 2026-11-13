@@ -14,6 +14,7 @@ import {
   type DatabasePrincipalCapability,
 } from "./runtime-principal-policy";
 
+import { env } from "@/config/env";
 type DbState = {
   pool?: Pool | undefined;
   db?: ReturnType<typeof drizzle> | undefined;
@@ -59,7 +60,7 @@ function getPool() {
     const config = poolConfig();
     // Fail closed: per-request tenant settings are unsafe behind a transaction-mode pooler (see pooling-guard.ts).
     assertTenantScopePoolingSafe("connectionString" in config ? config.connectionString : `postgres://${config.host ?? ""}`);
-    state.pool = withTenantScope(new Pool(config), process.env["DB_TENANT_SCOPE"] === "on");
+    state.pool = withTenantScope(new Pool(config), env.DB_TENANT_SCOPE === "on");
   }
   return state.pool;
 }
@@ -78,7 +79,7 @@ export async function checkDatabaseConnection() {
     // A failed metadata read also prevents readiness: no unsafe fallback.
     if (enforceProductionDatabasePrincipal({
       nodeEnv: process.env.NODE_ENV,
-      appEnv: process.env["APP_ENV"],
+      appEnv: env.APP_ENV,
     })) {
       const principal = await client.query<DatabasePrincipalCapability>(`
         SELECT
@@ -173,7 +174,7 @@ export async function checkDatabaseConnection() {
         "select current_setting('app.rls_mode', true) as rls_mode, to_regclass('public.security_shared_store')::text as store",
       );
       const facts = {
-        tenantScopeEnv: process.env["DB_TENANT_SCOPE"],
+        tenantScopeEnv: env.DB_TENANT_SCOPE,
         rlsMode: tenant.rows[0]?.rls_mode,
         sharedStoreEnabled: sharedStoreEnabled(),
         sharedStoreTablePresent: Boolean(tenant.rows[0]?.store),

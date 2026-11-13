@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { maskEmail, maskPhone } from "@/modules/auth/crypto";
 import { LoginError, normalizeEmail, normalizePhone } from "@/modules/auth/login-service";
 
+import { rawEnv } from "@/config/env";
 /**
  * Account enumeration control (SEC-01-003). With AUTH_UNIFORM_UNKNOWN_CONTACT=1
  * the sign-in start answers an unknown, disabled or out-of-college contact the
@@ -12,7 +13,7 @@ import { LoginError, normalizeEmail, normalizePhone } from "@/modules/auth/login
 const MASKED_CODES = new Set(["NOT_REGISTERED", "NO_ACCOUNT_FOR_DOMAIN", "ACCOUNT_DISABLED", "ACCOUNT_SUSPENDED"]);
 const FLOOR_MS = 350;
 
-export function uniformStartEnabled(env: NodeJS.ProcessEnv = process.env) {
+export function uniformStartEnabled(env: NodeJS.ProcessEnv = rawEnv()) {
   return env.AUTH_UNIFORM_UNKNOWN_CONTACT === "1";
 }
 

@@ -8,6 +8,7 @@ import {inboundMailMessages} from "@/db/schema/inbound-mail";
 import {notifyTpoOfRecruiterMessage} from "./recruiter-message-tpo-notification-service";
 import {verifyRecruiterMailBridgeWithRotation,extractRecruiterEmailReply} from "./recruiter-message-email-model";
 
+import { rawEnv } from "@/config/env";
 const inboundSchema=z.strictObject({
  from:z.email().max(320).transform(x=>x.trim().toLowerCase()),
  to:z.email().max(320).transform(x=>x.trim().toLowerCase()),
@@ -95,7 +96,7 @@ function senderVerified(auth:string|undefined,fromAddress:string){
  * addresses, message bodies, or token secrets are logged here.
  */
 export async function acceptAuthenticatedRecruiterEmailReply(
- rawBody:string,signature:string,env:Record<string,string|undefined>=process.env,
+ rawBody:string,signature:string,env:Record<string,string|undefined>=rawEnv(),
 ):Promise<RecruiterEmailInboundResult>{
  // Enforce the same byte bound for non-HTTP callers before HMAC and JSON work.
  // The gateway currently caps HTTP requests at 20 kB. Once its verified

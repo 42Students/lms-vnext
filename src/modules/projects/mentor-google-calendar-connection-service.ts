@@ -9,8 +9,9 @@ import {ProjectsServiceError} from "./errors";
 import {MENTOR_CALENDAR_SCOPE,mentorGoogleConfig,mentorGoogleRefreshToken}
  from "./mentor-google-calendar-provider";
 
+import { rawEnv } from "@/config/env";
 const ENV_KEY="MENTOR_GOOGLE_TOKEN_ENCRYPTION_KEY";
-function keyFromEnv(env:Record<string,string|undefined>=process.env):Buffer{
+function keyFromEnv(env:Record<string,string|undefined>=rawEnv()):Buffer{
  const raw=(env[ENV_KEY]??"").trim();
  if(!/^[A-Za-z0-9_-]{43}=?$/.test(raw))
   throw new Error("GOOGLE_CALENDAR_KEY_UNAVAILABLE");

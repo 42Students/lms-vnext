@@ -8,6 +8,7 @@
  * This guard is deliberately pure and used after a scoped DB row is loaded,
  * not as a replacement for membership authorization or a signed R2 grant.
  */
+import { rawEnv } from "@/config/env";
 export type AssignmentFileAttestation = {
   status: string;
   scanStatus: string;
@@ -27,7 +28,7 @@ export const NON_PRODUCTION_FILE_ATTESTATION = "lms-vnext-dev-attestation";
 
 export function assignmentFileAttestationUsable(
   file: AssignmentFileAttestation,
-  env: Readonly<Record<string, string | undefined>> = process.env,
+  env: Readonly<Record<string, string | undefined>> = rawEnv(),
   now = new Date(),
 ): boolean {
   if (file.status !== "READY" || file.scanStatus !== "CLEAN") return false;

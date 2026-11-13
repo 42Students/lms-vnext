@@ -3,6 +3,7 @@ import { TpoSelectionImport } from "@/components/placements/tpo-selection-import
 import { TpoWaitlistPromotionControl } from "@/components/placements/tpo-waitlist-promotion-control";
 import { TpoWeekHourCalendar } from "@/components/placements/tpo-week-hour-calendar";
 
+import { env } from "@/config/env";
 export const dynamic = "force-dynamic";
 const jobId="00000000-0000-4000-8000-000000000149";
 const applicants=Array.from({length:101},(_,index)=>({
@@ -18,7 +19,7 @@ const week=["2027-01-04","2027-01-05","2027-01-06","2027-01-07","2027-01-08","20
 
 /** Only synthetic source components. No seeded actor, tenant query or real mutation on the server. */
 export default function TpoPlacementUxFixture() {
-  if (process.env.NODE_ENV!=="development" || process.env.UX_G149_PLACEMENT_FIXTURE!=="1") notFound();
+  if (process.env.NODE_ENV!=="development" || env.UX_G149_PLACEMENT_FIXTURE!=="1") notFound();
   return <main className="mx-auto min-w-0 max-w-5xl space-y-8 px-4 py-8">
     <h1 className="text-2xl font-bold">Placement recovery acceptance</h1>
     <p role="note">Synthetic TPO component props; all API calls must be intercepted by browser acceptance.</p>

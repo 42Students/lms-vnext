@@ -5,6 +5,7 @@ import {sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {generateToken,mac} from "@/modules/auth/crypto";
 
+import { env } from "@/config/env";
 /**
  * First-party replacement for legacy email_verification_token.
  * Authenticated callers must supply the server-resolved user ID; never use
@@ -30,12 +31,12 @@ function timestamp(value:unknown){
  return date;
 }
 function getSecret(){
- const value=process.env["AUTH_EMAIL_VERIFICATION_SECRET"]??"";
+ const value=env.AUTH_EMAIL_VERIFICATION_SECRET??"";
  if(value.length<32)throw new Error("EMAIL_LINK_PROVIDER_NOT_CONFIGURED");
  return value;
 }
 function keyVersion(){
- const value=process.env["AUTH_EMAIL_VERIFICATION_KEY_VERSION"]??"v1";
+ const value=env.AUTH_EMAIL_VERIFICATION_KEY_VERSION??"v1";
  if(!/^[a-zA-Z0-9_-]{1,16}$/.test(value))
   throw new Error("EMAIL_LINK_KEY_VERSION_INVALID");
  return value;

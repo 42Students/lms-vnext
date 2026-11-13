@@ -8,6 +8,8 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
 import {managedBaseDomain,managedHost,isManagedHost,managedSubdomainRequest} from "./managed-subdomain-model";
 import {TenantDomainServiceError} from "./service";
 import {z} from "zod";
+import { env } from "@/config/env";
+import { featureReady } from "@/config/features";
 export class ManagedSubdomainError extends Error{
  constructor(readonly code:"MANAGED_WILDCARD_NOT_READY"|"SUBDOMAIN_STALE"|
   "SUBDOMAIN_ALREADY_ALLOTTED"|"SUBDOMAIN_MISSING"|"SUBDOMAIN_CONFLICT"){
@@ -15,8 +17,8 @@ export class ManagedSubdomainError extends Error{
  }
 }
 function configuredDomain(){
- return managedBaseDomain(process.env["TENANT_MANAGED_BASE_DOMAIN"],
-  process.env["TENANT_MANAGED_WILDCARD_READY"]==="true");
+ return managedBaseDomain(env.TENANT_MANAGED_BASE_DOMAIN,
+  featureReady("tenantManagedWildcard"));
 }
 async function checkedCollege(ctx:RequestContext,input:string){
  if(!isSuperAdmin(ctx))throw new AuthorizationError("admin-scope.select");
@@ -32,8 +34,8 @@ export async function getManagedCollegeSubdomain(ctx:RequestContext,collegeInput
  const college=await checkedCollege(ctx,collegeInput);
  // A configured suffix can be displayed before wildcard deployment is ready.
  // Only the explicit operator readiness flag permits allotment or changes.
- const baseDomain=managedBaseDomain(process.env["TENANT_MANAGED_BASE_DOMAIN"],true);
- const ready=Boolean(baseDomain)&&process.env["TENANT_MANAGED_WILDCARD_READY"]==="true";
+ const baseDomain=managedBaseDomain(env.TENANT_MANAGED_BASE_DOMAIN,true);
+ const ready=Boolean(baseDomain)&&featureReady("tenantManagedWildcard");
  const rows=baseDomain?await getDb().select({host:tenantDomains.host,isPrimary:tenantDomains.isPrimary})
   .from(tenantDomains).where(and(eq(tenantDomains.collegeId,college.id),isNull(tenantDomains.deletedAt))):[];
  const managed=baseDomain?rows.find(row=>isManagedHost(row.host,baseDomain)):undefined;

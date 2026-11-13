@@ -11,6 +11,7 @@ import {evaluatePlacementEligibilityBatch} from "@/modules/placements/eligibilit
 import {generateDeadlineTodayEvents} from "@/modules/operations/tpo-reminder-source-events";
 import type {ScheduledJobFence} from "@/modules/operations/scheduled-job-runner";
 
+import { env } from "@/config/env";
 const MS_IST=330*60_000;
 function indiaDayWindow(now:Date){
  if(!Number.isFinite(now.getTime()))throw new Error("TPO_DEADLINE_TIME_INVALID");
@@ -27,7 +28,7 @@ function indiaDayWindow(now:Date){
  * identity is used solely for the existing eligibility evaluator.
  */
 async function jobEligibilityActor(){
- const identityUid=process.env["TPO_REMINDER_SYSTEM_IDENTITY_UID"]?.trim()??"";
+ const identityUid=env.TPO_REMINDER_SYSTEM_IDENTITY_UID?.trim()??"";
  if(identityUid.length<16)throw new Error("TPO_REMINDER_ACTOR_NOT_CONFIGURED");
  const actor=await resolveRequestContext({identityUid});
  if(!isSuperAdmin(actor))throw new Error("TPO_REMINDER_ACTOR_NOT_AUTHORIZED");

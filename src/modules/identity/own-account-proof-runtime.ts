@@ -7,11 +7,12 @@ import {
  type ScopedAccountProofRequest,
 } from "@/modules/identity/scoped-account-verification-service";
 
+import { env } from "@/config/env";
 /** No external sends in local/E2E/test execution. Real provider configuration
  * and acceptance are mandatory; there is no dev code echo or mock success. */
 export async function issueOwnAccountProofWithProvider(request:ScopedAccountProofRequest){
- const live=process.env["APP_ENV"]==="production"||
-  process.env["AUTH_DEV_REAL_DELIVERY"]==="VERIFIED";
+ const live=env.APP_ENV==="production"||
+  env.AUTH_DEV_REAL_DELIVERY==="VERIFIED";
  if(!live)throw new Error("ROLE_PROOF_DELIVERY_DISABLED");
  return issueScopedAccountProof(request,async ({channel,to,code})=>{
   const accepted=channel==="PHONE"

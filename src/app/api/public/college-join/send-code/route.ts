@@ -5,6 +5,7 @@ import { requestPublicJoinCode, PublicJoinCodeError } from "@/modules/placements
 import { deliverPublicRecruiterJoinCode } from "@/modules/messaging/public-join-code-delivery";
 import { route } from "@/security/route";
 
+import { featureReady } from "@/config/features";
 export const runtime = "nodejs";
 async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
@@ -16,7 +17,7 @@ async function handlePOST(request: Request) {
   const input=body.value;
   // A trusted ingress must overwrite this header. Without explicit proxy
   // attestation this public endpoint fails closed (never rate-limit by spoofed IP).
-  const trusted = process.env["PUBLIC_JOIN_TRUSTED_PROXY_READY"] === "VERIFIED";
+  const trusted = featureReady("publicJoinTrustedProxy");
   const network = trusted ? request.headers.get("x-public-verified-client-ip") : null;
   try {
     const result=await requestPublicJoinCode("COLLEGE", input, network, deliverPublicRecruiterJoinCode);

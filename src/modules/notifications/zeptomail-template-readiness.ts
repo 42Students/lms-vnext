@@ -4,6 +4,7 @@ import {LEGACY_NOTIFICATION_TEMPLATE_KEYS,readZeptoMailConfig,
  resolveZeptoMailTemplateId,type LegacyMailEvent} from "./zeptomail-email";
 import {LEGACY_NOTIFICATION_CHANNELS} from "@/modules/messaging/providers";
 
+import { rawEnv } from "@/config/env";
 /** Deliberately status-only. Never emit provider IDs, credentials, addresses
  * or merge variables into logs, UI or a readiness response. */
 export type LegacyTemplateStatus="READY"|"MISSING TEMPLATE"|"CHANNEL DISABLED";
@@ -16,7 +17,7 @@ const checkedRegistry:Readonly<Record<LegacyMailEvent,readonly ("IN_APP"|"EMAIL"
  LEGACY_NOTIFICATION_CHANNELS;
 export function resolveLegacyMailTemplateStatus(
  event:LegacyMailEvent|null|undefined,
- env:Record<string,string|undefined>=process.env,
+ env:Record<string,string|undefined>=rawEnv(),
 ):LegacyTemplateStatus{
  if(!event||!Object.prototype.hasOwnProperty.call(checkedRegistry,event))
   return "MISSING TEMPLATE";
@@ -24,7 +25,7 @@ export function resolveLegacyMailTemplateStatus(
  const id=resolveZeptoMailTemplateId({kind:"EVENT",event},env,readZeptoMailConfig(env));
  return id?"READY":"MISSING TEMPLATE";
 }
-export function zeptoMailTemplateReadiness(env:Record<string,string|undefined>=process.env){
+export function zeptoMailTemplateReadiness(env:Record<string,string|undefined>=rawEnv()){
  const config=readZeptoMailConfig(env);
  const mapped:LegacyTemplateReadiness[]=events.map(event=>{
   const status=resolveLegacyMailTemplateStatus(event,env);
@@ -42,7 +43,7 @@ let didLogReadiness=false;
  * The deployment must provision all required EMAIL events before production.
  */
 export function logInitialZeptoMailTemplateReadiness(
- env:Record<string,string|undefined>=process.env,
+ env:Record<string,string|undefined>=rawEnv(),
 ){
  if(didLogReadiness)return zeptoMailTemplateReadiness(env);
  didLogReadiness=true;

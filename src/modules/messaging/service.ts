@@ -2,6 +2,7 @@ import { canContactRecipientAtRuntime } from "./runtime-safety";
 import { opaqueBatchAttemptKey } from "./batch-dedupe";
 import { decideDelivery, normalizeRecipient, outboundSendSchema, type DeliveryPolicy, type OutboundSendRequest, type OutboundStatus } from "./model";
 
+import { rawEnv } from "@/config/env";
 export type ProviderAcceptance =
   | boolean
   | { status: "ACCEPTED" | "NOT_CONFIGURED" | "FAILED" };
@@ -193,7 +194,7 @@ export async function deliverBatch(args: {
     // Enforce the independently configured AUTH test allowlist even if a caller
     // accidentally builds a permissive DeliveryPolicy object.
     const decision = canContactRecipientAtRuntime(
-      request.channel, request.recipient, args.runtimeEnv ?? process.env,
+      request.channel, request.recipient, args.runtimeEnv ?? rawEnv(),
     ) ? initial : {status:"SUPPRESSED" as const, reason:"nonprod-not-allowlisted" as const};
     // Never dispatch the same keyed recipient twice for the same purpose in one batch.
     // Use only the opaque key, never contact details, in the deduplication set.
@@ -243,7 +244,7 @@ export async function deliverBatch(args: {
           record.status = "SUPPRESSED";
           record.reason = refreshed.reason;
         }else if(!canContactRecipientAtRuntime(
-          request.channel,request.recipient,args.runtimeEnv ?? process.env,
+          request.channel,request.recipient,args.runtimeEnv ?? rawEnv(),
         )){
           record.status = "SUPPRESSED";
           record.reason = "nonprod-not-allowlisted";

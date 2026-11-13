@@ -8,6 +8,7 @@ import { acceptClientErrorRate, browserErrorSchema, safeBrowserComponent } from 
 import { redactAlertText, safeAlertPath } from "@/modules/log-alerts/redaction";
 import { route } from "@/security/route";
 
+import { env } from "@/config/env";
 export const runtime = "nodejs";
 const MAX_BYTES = 4096;
 
@@ -62,7 +63,7 @@ async function handlePOST(request: Request) {
   // shared auth parser; never trust X-Real-IP or the caller's first hop.
   // Unverified ingress still gets the authenticated per-user quota.
   const ip = trustedClientErrorIp(
-    request, process.env["TRUSTED_CLIENT_IP_HEADERS"] === "true",
+    request, env.TRUSTED_CLIENT_IP_HEADERS === "true",
   );
   const ipHash=ip?createHash("sha256").update(ip).digest("hex"):null;
   const userHash=createHash("sha256").update(context.user.id).digest("hex");

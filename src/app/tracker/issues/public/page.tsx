@@ -5,6 +5,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { runAsSystem } from "@/db/tenant-context";
 
+import { featureReady } from "@/config/features";
 export const dynamic="force-dynamic";
 export const metadata={title:"Public issue updates · 42 Tracker"};
 
@@ -13,7 +14,7 @@ export const metadata={title:"Public issue updates · 42 Tracker"};
  * DB capability is explicitly gated until migration and review are enabled.
  */
 async function PublicIssuesPage(){
- const enabled=process.env["PUBLIC_ISSUE_CATALOG_READY"]==="true";
+ const enabled=featureReady("publicIssueCatalog");
  const result=!enabled?{ok:false as const,items:[]}:
    await getDb().select({
      publicId:db10BugReports.publicId,

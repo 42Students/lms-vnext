@@ -11,6 +11,8 @@ import { TpoRecruiterInviteServiceError } from "./tpo-recruiter-invite-service";
 import { createRecruiterInviteOtp, recruiterOtpDigest,
   recruiterOtpSendAllowed, RECRUITER_OTP_TTL_MS } from "./recruiter-invite-otp-policy";
 
+import { env } from "@/config/env";
+import { featureReady } from "@/config/features";
 /**
  * T-S1-03 staged writer: a verified delivery adapter is mandatory. Never
  * return the six-digit code, the HMAC key, or the challenge hash to the UI.
@@ -22,10 +24,10 @@ export async function requestRecruiterInviteOtp(
   deliver: (email: string, code: string) => Promise<boolean>,
   requestedWorkEmail?: string | null,
 ): Promise<{sent:true}> {
-  if (process.env["TPO_RECRUITER_OTP_READY"] !== "VERIFIED") {
+  if (!featureReady("tpoRecruiterOtp")) {
     throw new Error("RECRUITER_OTP_NOT_REGISTERED");
   }
-  const secret = process.env["TPO_RECRUITER_OTP_HMAC_SECRET"];
+  const secret = env.TPO_RECRUITER_OTP_HMAC_SECRET;
   if (!secret || Buffer.byteLength(secret, "utf8") < 32 ||
       !isRecruiterInviteTokenShape(token)) {
     throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_FOUND");

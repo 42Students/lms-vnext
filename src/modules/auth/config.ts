@@ -6,6 +6,7 @@
  * than at import time.
  */
 
+import { rawEnv } from "@/config/env";
 export type AuthConfig = {
   /** Keyed-MAC secret for codes, contact fingerprints and session digests. */
   secret: string;
@@ -44,7 +45,7 @@ function list(value: string | undefined) {
 }
 
 export function readAuthConfig(
-  env: Record<string, string | undefined> = process.env,
+  env: Record<string, string | undefined> = rawEnv(),
 ): AuthConfig {
   const secret = env.AUTH_SECRET ?? "";
 
@@ -84,7 +85,7 @@ export function readAuthConfig(
  * (and keep failing closed) even where sign-in is not configured.
  */
 export function getPlatformHosts(
-  env: Record<string, string | undefined> = process.env,
+  env: Record<string, string | undefined> = rawEnv(),
 ): ReadonlySet<string> {
   // Explicit PLATFORM_HOSTS must include the production apex and every
   // platform-owned alias; verified college subdomains remain tenant domains.

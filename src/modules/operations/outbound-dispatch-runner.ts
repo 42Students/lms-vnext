@@ -25,6 +25,7 @@ import { drainOutboundBatch } from "./outbound-dispatch-batch";
 import { claimOutboundDispatchBatch } from "./outbound-delivery-queue";
 import { requireVerifiedGlobalEmailSuppression } from "./email-suppression-activation";
 
+import { env } from "@/config/env";
 /** A trusted worker supplies the transport after independent verification.
  * Never mount this runner on a public/tenant API route. */
 export type TrustedOutboundProvider = {
@@ -112,7 +113,7 @@ async function openLiveOutboundClaim(
   const globalEmailHash = intent.channel === "EMAIL"
     ? deriveGlobalEmailSuppressionHashForAddress(
         intent.recipient,
-        process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"] ?? "",
+        env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64 ?? "",
       )
     : null;
   return { intent, attempts: Number(row.attempts), globalEmailHash };

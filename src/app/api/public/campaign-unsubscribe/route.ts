@@ -6,6 +6,7 @@ import {verifyTpoCampaignRecipientToken,resolveTpoCampaignRecipientSecret} from 
 import {CampaignUnsubscribeInvalid,unsubscribeTpoCampaignRecipient} from "@/modules/messaging/tpo-campaign-unsubscribe-service";
 import {GlobalEmailSuppressionUnavailable,persistVerifiedGlobalEmailSuppression} from "@/modules/operations/global-email-suppression-service";
 import { route } from "@/security/route";
+import { env, rawEnv } from "@/config/env";
 export const runtime="nodejs";
 /** Do not acknowledge a signed opt-out when its recipient table has not
  * been deployed. Public callers get a generic retryable state, never a
@@ -47,7 +48,7 @@ async function handlePOST(request:Request){
  const rawToken=form?.get("token");
  if(typeof rawToken!=="string"||!rawToken.trim()||rawToken.length>2048)
   return successResponse(request,"placement-cell");
- const tpoClaim=verifyTpoCampaignRecipientToken(rawToken,resolveTpoCampaignRecipientSecret(process.env),Date.now());
+ const tpoClaim=verifyTpoCampaignRecipientToken(rawToken,resolveTpoCampaignRecipientSecret(rawEnv()),Date.now());
  if(tpoClaim){
   try{
    await unsubscribeTpoCampaignRecipient(rawToken);
@@ -76,7 +77,7 @@ async function handlePOST(request:Request){
    throw e;
   }
  }
- const claim=verifyUnsubscribeToken(rawToken,process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"]??"",Date.now());
+ const claim=verifyUnsubscribeToken(rawToken,env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64??"",Date.now());
  // Do not expose whether a guessed or old one-click token matches a recipient.
  // The legacy public controller acknowledged both already-cleared and unknown
  // links identically; only verified claims ever reach the suppression writer.

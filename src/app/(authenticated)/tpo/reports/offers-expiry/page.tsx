@@ -17,6 +17,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
+import { featureReady } from "@/config/features";
 type Query = { days?: string | string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoOffersExpiryPage({ searchParams }: { searchParams: Promise<Query> }) {
@@ -30,12 +31,12 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
     <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader eyebrow="TPO · Offers" title="Offer expiry watchlist"
         description="Currently issued offers expiring in an IST calendar-day window. No speculative expiry dates."
-        actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto"><TextLink href="/tpo/reports" className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">← Reports</TextLink>{process.env["DB09_TPO_API_READY"] === "DB09_VERIFIED" ? <ButtonLink variant="primary" href={"/api/placements/tpo/offers/expiry?days=" + data.days}
+        actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto"><TextLink href="/tpo/reports" className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto md:min-h-9">← Reports</TextLink>{featureReady("tpoApi") ? <ButtonLink variant="primary" href={"/api/placements/tpo/offers/expiry?days=" + data.days}
           className="w-full sm:w-auto">
           Export CSV
         </ButtonLink> : null}</div>}
       />
-      {process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED" ? (
+      {!featureReady("tpoApi") ? (
         <Alert tone="warning">CSV export is unavailable until the DB09 verification gate is enabled.</Alert>
       ) : null}
       <form action="/tpo/reports/offers-expiry" method="get"

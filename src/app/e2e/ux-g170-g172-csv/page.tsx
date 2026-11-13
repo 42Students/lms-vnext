@@ -8,6 +8,7 @@ import type { CollegeReadinessEvaluation } from "@/modules/colleges/readiness-mo
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { env } from "@/config/env";
 export const dynamic = "force-dynamic";
 
 /**
@@ -17,7 +18,7 @@ export const dynamic = "force-dynamic";
  */
 export default function UxAttendanceCollegeCsvFixture() {
   if (process.env.NODE_ENV !== "development" ||
-      process.env.UX_EXPORT_FIXTURE !== "1") notFound();
+      env.UX_EXPORT_FIXTURE !== "1") notFound();
   const readiness: CollegeReadinessEvaluation = {
     overall: "NOT_READY",
     counts: {total: 1, passed: 0, failed: 1, unknown: 0},

@@ -13,10 +13,11 @@ import {normalizeContentType} from "./file-policy";
 import {getPrivateR2Config} from "./r2-config";
 import {headObject} from "./s3-client";
 
+import { rawEnv } from "@/config/env";
 /** Merely configuring R2 cannot authorize public downloads. A separately
  * operated scanning worker must attest bytes and be deployed/verified.
  * APP_ENV is mandatory; a missing value fails closed like production. */
-export function productionScannerCallbackReady(env:NodeJS.ProcessEnv=process.env){
+export function productionScannerCallbackReady(env:NodeJS.ProcessEnv=rawEnv()){
  return env.APP_ENV==="production"&&
   env.PRIVATE_STORAGE_SCANNER_READY==="PROD_VERIFIED"&&
   validScannerCallbackSecret(env.PRIVATE_STORAGE_SCANNER_WEBHOOK_SECRET);

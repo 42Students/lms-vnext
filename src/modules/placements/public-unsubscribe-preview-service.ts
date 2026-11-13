@@ -2,6 +2,7 @@ import "server-only";
 import { verifyUnsubscribeToken } from "@/modules/messaging/unsubscribe-model";
 import { verifyTpoCampaignRecipientToken,resolveTpoCampaignRecipientSecret } from "@/modules/messaging/tpo-campaign-recipient-token";
 
+import { env, rawEnv } from "@/config/env";
 export type CampaignUnsubscribeTokenKind = "PLACEMENT_CELL" | "GLOBAL";
 
 /** GET never persists suppression; it only validates the purpose-specific signed token. */
@@ -15,10 +16,10 @@ export async function campaignUnsubscribeTokenKind(
   if (!token || token.length > 2048) return null;
   const now = Date.now();
   if (verifyTpoCampaignRecipientToken(
-    token, resolveTpoCampaignRecipientSecret(process.env), now,
+    token, resolveTpoCampaignRecipientSecret(rawEnv()), now,
   )) return "PLACEMENT_CELL";
   if (verifyUnsubscribeToken(
-    token, process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"] ?? "", now,
+    token, env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64 ?? "", now,
   )) return "GLOBAL";
   if (token.length <= 200 && !token.includes(".") && token.trim() === token)
     return "PLACEMENT_CELL";

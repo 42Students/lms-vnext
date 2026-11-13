@@ -19,6 +19,7 @@ import {
 import { requirePlacementManageScope } from "./scope";
 import { placementTableExists } from "./staged-tables";
 
+import { featureReady } from "@/config/features";
 async function companyScope(context: RequestContext, companyId: string) {
   if (!context.membership || !hasMembershipRole(context, "TPO")) {
     throw new AuthorizationError("placements.manage");
@@ -109,7 +110,7 @@ export async function getTpoCompanyFeedback(context: RequestContext, raw: unknow
   return {
     companyName: company.companyName,
     available: true as const,
-    writeEnabled: process.env["DB09_TPO_API_READY"] === "DB09_VERIFIED",
+    writeEnabled: featureReady("tpoApi"),
     contacts,
     notes: projectTpoCompanyFeedback(facts),
     page: input.page,
@@ -127,7 +128,7 @@ export async function createTpoCompanyFeedback(
   const input = tpoCompanyFeedbackWriteSchema.parse(raw);
   const company = await companyScope(context, companyId);
   if (!company) return null;
-  if (process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED") {
+  if (!featureReady("tpoApi")) {
     throw new Error("DB09_TPO_API_NOT_READY");
   }
   const [lead] = await getDb().select({ id: placementTpoLeads.id })

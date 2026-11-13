@@ -15,6 +15,7 @@ import {
 } from "@/modules/operations/notification-scheduled-job-service";
 import { internalRoute } from "@/security/internal-route";
 
+import { featureReady } from "@/config/features";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 const headers = { "Cache-Control": "no-store" } as const;
@@ -28,7 +29,7 @@ type WiredJob = "notification.release" | "notification.cleanup"
  * publish notifications. Deployment/IAM is a separate explicit release gate.
  */
 async function handlePOST(request: Request) {
-  if (process.env["DB10_NOTIFICATION_SCHEDULER_READY"] !== "DB10_VERIFIED") {
+  if (!featureReady("notificationScheduler")) {
     return NextResponse.json({ error: "SCHEDULER_NOT_READY" },
       { status: 503, headers });
   }
@@ -62,7 +63,7 @@ async function handlePOST(request: Request) {
   // outbox is unverified: that would silently drop delayed notifications.
   // The 0214 migration and producer dedupe index are a release prerequisite.
   if (jobName === "notification.release" &&
-      process.env["DB10_NOTIFICATION_OUTBOX_READY"] !== "DB10_VERIFIED") {
+      !featureReady("notificationOutbox")) {
     return NextResponse.json({ error: "NOTIFICATION_OUTBOX_NOT_READY" },
       { status: 503, headers });
   }

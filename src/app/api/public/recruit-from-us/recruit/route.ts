@@ -5,6 +5,7 @@ import { submitPublicRecruitEnquiry } from "@/modules/placements/public-enquiry/
 import { PublicEnquiryError } from "@/modules/placements/public-enquiry/send-service";
 import {readPublicRecruitEnquiryBody} from "@/modules/placements/public-enquiry/body-model";
 import { route } from "@/security/route";
+import { featureReady } from "@/config/features";
 export const runtime="nodejs";
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN",message:"This request could not be verified."},{status:403});
@@ -27,7 +28,7 @@ async function handlePOST(request:Request){
   return NextResponse.json({error:"CODE_REQUIRED",message:"Enter the code"},{status:400,headers:{"Cache-Control":"no-store"}});
  if(!/^[0-9]{6}$/.test(input["code"]))
   return NextResponse.json({error:"WRONG_CODE",message:"Enter the 6-digit code we sent to your work email."},{status:400,headers:{"Cache-Control":"no-store"}});
- const ip=process.env["PUBLIC_JOIN_TRUSTED_PROXY_READY"]==="VERIFIED"
+ const ip=featureReady("publicJoinTrustedProxy")
   ?request.headers.get("x-public-verified-client-ip"):null;
  try{
   const result=await submitPublicRecruitEnquiry(tenant.collegeId,body.value,ip);

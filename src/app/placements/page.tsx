@@ -13,6 +13,7 @@ import { Heading } from "@/components/ui/heading";
 import { istDateFormatter } from "@/lib/format-date";
 import { runAsSystem } from "@/db/tenant-context";
 
+import { featureReady } from "@/config/features";
 /** Public route: never loads private placements, identities, or employer contacts.
  * A verified public publication producer and code delivery are still required
  * before displaying live numbers or accepting recruitment enquiries.
@@ -144,8 +145,8 @@ async function PublicPlacementsPage() {
         <section aria-label="Recruit from us"
           className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 sm:p-6 [&>section]:mt-0 [&>section]:border-0 [&>section]:p-0 [&>section]:shadow-none">
           <PublicRecruitFromUs collegeName={college?.collegeName ?? ""}
-            enabled={Boolean(published) && process.env["DB09_TPO_API_READY"] === "DB09_VERIFIED" &&
-              process.env["PUBLIC_JOIN_TRUSTED_PROXY_READY"] === "VERIFIED"}/>
+            enabled={Boolean(published) && featureReady("tpoApi") &&
+              featureReady("publicJoinTrustedProxy")}/>
         </section>
       </main>
     </div>

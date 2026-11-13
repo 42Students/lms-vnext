@@ -11,6 +11,7 @@ import { clientIp } from "@/auth/ip-rate-limit";
 import { allowWriteBudget } from "@/security/shared-store";
 import { createSecured } from "@/security/secure-handler-core";
 
+import { env } from "@/config/env";
 /** Wrap any existing route handler without touching its body. New routes should use `route()` instead. */
 export const secured = createSecured({
   isSameOrigin: isSameOriginRequest,
@@ -38,7 +39,7 @@ export const secured = createSecured({
   onError: (error) => apiErrorResponse(error),
   // Every state-changing request draws on one generous budget per caller (address + session), without resolving the
   // session, so no handler's own order changes. SECURITY_SHIM_RATE_LIMIT=off is the emergency switch.
-  allowRequest: process.env["SECURITY_SHIM_RATE_LIMIT"] === "off" ? undefined : allowWriteBudget,
+  allowRequest: env.SECURITY_SHIM_RATE_LIMIT === "off" ? undefined : allowWriteBudget,
   // Two budgets: a coarse one per address (sized for a campus behind one NAT; it also caps how many cookie-rotated
   // buckets one host can create) and a finer one per address + session cookie. The cookie value is never trusted as
   // identity, only used to separate people sharing an address.

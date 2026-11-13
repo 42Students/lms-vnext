@@ -10,6 +10,7 @@ import { assertPersistedPlatformPermission } from "@/modules/permissions/persist
 import { requireTpoJobCollege } from "./tpo-job-write-base";
 import { PlacementsServiceError } from "./errors";
 
+import { featureReady } from "@/config/features";
 const uuid = z.string().uuid();
 const draft = z.strictObject({
   action: z.literal("SAVE"),
@@ -45,7 +46,7 @@ export class PrivateDiversityPolicyError extends Error {
   }
 }
 function requireReady() {
-  if (process.env["DB10_DIVERSITY_OUTREACH_READY"] !== "PRIVACY_APPROVED")
+  if (!featureReady("diversityOutreach"))
     throw new PrivateDiversityPolicyError("DIVERSITY_NOT_READY");
 }
 type Tx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];

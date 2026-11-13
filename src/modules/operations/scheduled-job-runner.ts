@@ -13,6 +13,7 @@ import type { JobLease } from "./scheduled-job-lease";
 import {createHmac,randomUUID} from "node:crypto";
 import {TPO_SCHEDULED_JOBS,TPO_JOB_TIME_ZONE} from "./tpo-scheduled-job-registry";
 
+import { env } from "@/config/env";
 export interface ScheduledJobLeaseStore {
   acquire(input: {
     jobName: string;
@@ -404,7 +405,7 @@ const scheduledInstanceSalt=randomUUID().slice(0,16);
 export function scheduledJobWorkerIdentity(hostname?:string):{
   holderId:string;hostPresent:boolean;
 }{
-  const host=hostname??process.env["HOSTNAME"]??"";
+  const host=hostname??env.HOSTNAME??"";
   const normalized=host.trim();
   const valid=/^[a-zA-Z0-9][a-zA-Z0-9.-]{0,59}$/.test(normalized);
   return{

@@ -8,8 +8,9 @@
  * The TPO placement notice services additionally check real table existence
  * (placementTableExists) and report NOT_REGISTERED when the table is absent.
  */
+import { featureReady } from "@/config/features";
 export function announcementsRuntimeEnabled() {
-  return process.env["DB10_ANNOUNCEMENTS_READY"] === "DB10_VERIFIED";
+  return featureReady("announcements");
 }
 
 /** Separate an operator-disabled module from a ready module whose database

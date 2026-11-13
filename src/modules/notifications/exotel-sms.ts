@@ -9,6 +9,7 @@ import type { SmsProvider } from "./types";
 import { isExotelAcceptedResponse } from "@/modules/messaging/provider-acceptance-model";
 import { validatedSmsAttempt } from "./sms-attempt-validation";
 
+import { rawEnv } from "@/config/env";
 /**
  * Exotel transactional SMS, matching the legacy LMS integration.
  * Indian DLT rules require the registered entity, sender and template IDs;
@@ -49,7 +50,7 @@ export type ExotelConfig = {
 };
 
 export function readExotelConfig(
-  env: Record<string, string | undefined> = process.env,
+  env: Record<string, string | undefined> = rawEnv(),
 ): ExotelConfig {
   return {
     apiKey: env["EXOTEL_API_KEY"] ?? "",

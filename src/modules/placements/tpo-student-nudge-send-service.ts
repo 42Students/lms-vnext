@@ -14,6 +14,7 @@ import { tpoStudentNudgeInputSchema } from "./tpo-student-nudge-send-model";
 import { sendZeptoMailTemplate } from "@/modules/notifications/zeptomail-email";
 import { placementEmailChannelEnabled } from "./placement-mail-event-matrix";
 
+import { rawEnv } from "@/config/env";
 /** TPO-students-04: private, tenant-scoped in-app delivery and transactional audit.
  * Repeating the same exact message to the same recipient on the same UTC day is
  * idempotent, not a second notification. Never write free text to the audit log.
@@ -78,7 +79,7 @@ export async function sendTpoStudentNudges(context:RequestContext,raw:unknown){
  // non-OTP template for each notification intent.
  let emailAccepted=0,emailFailed=0,emailSkipped=0;
  for(const recipient of stored.emailRecipients){
-  if(!placementEmailChannelEnabled("STUDENT_NUDGE",process.env)||!recipient.email){
+  if(!placementEmailChannelEnabled("STUDENT_NUDGE",rawEnv())||!recipient.email){
    emailSkipped++;
    continue;
   }

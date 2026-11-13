@@ -17,6 +17,7 @@ import {
   learnerGalleryUploadSchema, MAX_LEARNER_PROFILE_IMAGES,
 } from "./learner-image-gallery-parity-model";
 
+import { featureReady } from "@/config/features";
 const uuid = z.string().uuid();
 export type GalleryAccess = { membershipId: string; collegeId: string; canEdit: boolean; canUpload: boolean };
 export class LearnerGalleryError extends Error {
@@ -29,7 +30,7 @@ export class LearnerGalleryError extends Error {
 }
 function requireGalleryReady() {
   // Promotion requires receipt-owned migration replay and scanner negative tests.
-  if (process.env["DB04_PROFILE_GALLERY_READY"] !== "DB04_VERIFIED")
+  if (!featureReady("profileGallery"))
     throw new LearnerGalleryError("GALLERY_NOT_READY");
 }
 async function galleryAccess(context: RequestContext, rawMembershipId: unknown): Promise<GalleryAccess> {

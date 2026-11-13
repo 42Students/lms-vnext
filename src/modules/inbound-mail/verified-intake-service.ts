@@ -7,6 +7,7 @@ import {inboundMailMessages} from "@/db/schema/inbound-mail";
 import {inboundMailRecipientKind} from "@/db/schema/inbound-mail";
 import {acceptAuthenticatedRecruiterEmailReply} from "@/modules/placements/recruiter-message-email-inbound-service";
 
+import { rawEnv } from "@/config/env";
 /** The Cloudflare worker must validate upstream provider provenance before
  * signing the exact UTF-8 payload. Never trust unsigned From/auth headers. */
 const payload=z.strictObject({
@@ -40,7 +41,7 @@ function safelyFlattenHtml(html:string){
   .slice(0,20000);
 }
 export async function ingestVerifiedInboundMail(raw:string,signature:string,
- env:Record<string,string|undefined>=process.env){
+ env:Record<string,string|undefined>=rawEnv()){
  if(Buffer.byteLength(raw,"utf8")>20000)throw new VerifiedInboundMailError("INVALID_PAYLOAD");
  if(env["INBOUND_MAIL_INGESTION_ENABLED"]!=="true")
   throw new VerifiedInboundMailError("NOT_CONFIGURED");

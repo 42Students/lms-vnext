@@ -6,11 +6,12 @@ import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
 import {Heading} from "@/components/ui/heading";
 import {UxG159FixtureReady} from "./ready";
 
+import { env } from "@/config/env";
 export const dynamic="force-dynamic";
 
 /** Synthetic-data-only acceptance harness, not a publicly available route. */
 export default function TeamInteractionFixture(){
- if(process.env.NODE_ENV!=="development"||process.env.UX_G159_FIXTURE!=="1")notFound();
+ if(process.env.NODE_ENV!=="development"||env.UX_G159_FIXTURE!=="1")notFound();
  return <main id="lms-main-content" className="mx-auto w-full max-w-[70rem] min-w-0 space-y-7 px-4 py-6 md:px-8">
   <UxG159FixtureReady/>
   <Heading level={1} className="text-2xl font-bold">TPO team interaction acceptance</Heading>

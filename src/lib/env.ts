@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { env as appEnv } from "@/config/env";
 function emptyStringToUndefined(value: unknown) {
   return typeof value === "string" && value.trim() === ""
     ? undefined
@@ -132,14 +133,14 @@ export function getServerEnv(): ServerEnv {
   }
 
   cachedEnv = parseServerEnv({
-    DATABASE_URL: process.env["DATABASE_URL"],
-    DB_USER: process.env["DB_USER"],
-    DB_PASSWORD: process.env["DB_PASSWORD"],
-    DB_NAME: process.env["DB_NAME"],
-    INSTANCE_UNIX_SOCKET: process.env["INSTANCE_UNIX_SOCKET"],
-    DB_POOL_MAX: process.env["DB_POOL_MAX"],
-    GOOGLE_CLOUD_PROJECT: process.env["GOOGLE_CLOUD_PROJECT"],
-    GCP_REGION: process.env["GCP_REGION"],
+    DATABASE_URL: appEnv.DATABASE_URL,
+    DB_USER: appEnv.DB_USER,
+    DB_PASSWORD: appEnv.DB_PASSWORD,
+    DB_NAME: appEnv.DB_NAME,
+    INSTANCE_UNIX_SOCKET: appEnv.INSTANCE_UNIX_SOCKET,
+    DB_POOL_MAX: appEnv.DB_POOL_MAX,
+    GOOGLE_CLOUD_PROJECT: appEnv.GOOGLE_CLOUD_PROJECT,
+    GCP_REGION: appEnv.GCP_REGION,
   });
 
   return cachedEnv;

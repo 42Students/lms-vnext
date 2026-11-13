@@ -7,11 +7,12 @@ import { mentorPortfolioActivityCsv } from "@/modules/projects/mentor-portfolio-
 import { mentorReviewExportCsv } from "@/modules/projects/mentor-review-export-model";
 import { mentorReviewedTasksCsv } from "@/modules/projects/mentor-task-review-export-model";
 
+import { env } from "@/config/env";
 export const dynamic = "force-dynamic";
 
 /** Dev-only serializer preview. Never queries private data or issues an auth session. */
 export default function ProjectCsvFixture() {
-  if (process.env.NODE_ENV !== "development" || process.env.UX_G182_EXPORT_FIXTURE !== "1") notFound();
+  if (process.env.NODE_ENV !== "development" || env.UX_G182_EXPORT_FIXTURE !== "1") notFound();
   const when = new Date("2026-11-07T13:00:00Z");
   const items = [
     {

@@ -9,6 +9,8 @@ import { publicEnquirySendSchema,canSendPublicEnquiryCode,newEnquiryCode,enquiry
 import { z } from "zod";
 import {publicPublicationFresh} from "../public-page/publication-freshness-model";
 
+import { env } from "@/config/env";
+import { featureReady } from "@/config/features";
 export class PublicEnquiryError extends Error {
  constructor(readonly code:"NOT_READY"|"INVALID"|"LIMIT"|"DELIVERY_FAILED"|"NAME_REQUIRED"|
    "CODE_EXPIRED"|"CODE_LOCKED"|"WRONG_CODE"){super("PUBLIC_ENQUIRY_"+code);}
@@ -23,9 +25,9 @@ export async function sendPublicEnquiryCode(collegeId:string,raw:unknown,verifie
  const input=publicEnquirySendSchema.safeParse(raw);
  if(!input.success||!z.string().uuid().safeParse(collegeId).success)
   throw new PublicEnquiryError("INVALID");
- if(process.env["DB09_TPO_API_READY"]!=="DB09_VERIFIED"||!await publicEnquiryTablesReady())
+ if(!featureReady("tpoApi")||!await publicEnquiryTablesReady())
   throw new PublicEnquiryError("NOT_READY");
- const secret=process.env["TPO_RECRUITER_OTP_HMAC_SECRET"]??"";
+ const secret=env.TPO_RECRUITER_OTP_HMAC_SECRET??"";
  const network=publicEnquiryNetworkTag(verifiedIp,secret);
  const ready=await getDb().execute<{ready:boolean}>(sql`select to_regclass('public.placement_public_enquiry_rate_events') is not null as ready`);
  if(ready.rows[0]?.ready!==true)throw new PublicEnquiryError("NOT_READY");

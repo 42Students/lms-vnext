@@ -3,13 +3,14 @@ import { logInfo } from "@/observability/logger";
 import { handleTelegramCallback, validTelegramWebhookSecret } from "@/modules/log-alerts/telegram-webhook";
 import { route } from "@/security/route";
 
+import { env } from "@/config/env";
 export const runtime = "nodejs";
 const MAX_WEBHOOK_BYTES = 8192;
 const noStore = { "Cache-Control": "no-store" } as const;
 
 /** Telegram is a third-party webhook: secret-token verification replaces browser Origin. */
 async function handlePOST(request: Request) {
-  if (process.env["APP_ENV"] !== "production") {
+  if (env.APP_ENV !== "production") {
     logInfo("telegram.webhook.unavailable_outside_production");
     return NextResponse.json({ message: "Not available." }, { status: 404, headers: noStore });
   }

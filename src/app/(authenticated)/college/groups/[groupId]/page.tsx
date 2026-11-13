@@ -17,6 +17,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { TextLink } from "@/components/ui/text-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { env } from "@/config/env";
 type Detail = Awaited<ReturnType<typeof getCollegeGroupDetail>>;
 
 const STATE_TONE = {
@@ -58,7 +59,7 @@ export default async function CollegeGroupDetailPage({
   const { groupId } = await params;
   // Legacy student-group bookmarks never loaded a group. Preserve the
   // history-replacing People redirect instead of treating numeric IDs as UUIDs.
-  if (process.env["COLLEGE_STUDY_GROUPS_RELEASED"] !== "true") redirect("/college/people");
+  if (env.COLLEGE_STUDY_GROUPS_RELEASED !== "true") redirect("/college/people");
   // The old student-groups detail route redirected EVERY identifier (even
   // malformed, removed, or nonnumeric bookmarks) to People. Only a canonical
   // vNext UUID is eligible to reach the college-scoped group detail lookup.

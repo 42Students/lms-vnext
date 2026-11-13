@@ -4,10 +4,11 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoFollowupQueueCsv} from "@/modules/placements/tpo-followup-queue-service";
 import { route } from "@/security/route";
+import { featureReady } from "@/config/features";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 async function handleGET(request:Request){
- if(process.env["DB09_TPO_API_READY"]!=="DB09_VERIFIED")
+ if(!featureReady("tpoApi"))
   return NextResponse.json({error:"DB09_MIGRATIONS_PENDING"},{status:503,
    headers:{"Cache-Control":"private, no-store, max-age=0"}});
  try{

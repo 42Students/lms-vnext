@@ -5,10 +5,11 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {tpoCrmApiErrorResponse} from "@/lib/tpo-crm-api-error";
 import {rescheduleConfirmedTpoFollowup} from "@/modules/placements/tpo-followup-queue-service";
 import { route } from "@/security/route";
+import { featureReady } from "@/config/features";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{followupId:string}>};
 async function handlePOST(request:Request,{params}:RouteContext){
- if(process.env["DB09_TPO_API_READY"]!=="DB09_VERIFIED")
+ if(!featureReady("tpoApi"))
   return NextResponse.json({error:"DB09_MIGRATIONS_PENDING"},{status:503});
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});

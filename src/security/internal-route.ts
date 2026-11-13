@@ -7,6 +7,7 @@ import { recordSecurityEvent } from "@/security/audit-store";
 import { createInternalRoute } from "@/security/internal-route-core";
 import { claimDeliveryShared } from "@/security/shared-store";
 
+import { env } from "@/config/env";
 // Per-process fallback when the shared store is off (single replica / development).
 const localNonces = new Map<string, number>();
 async function claimLocalNonce(key: string, ttlSeconds: number): Promise<boolean> {
@@ -29,7 +30,7 @@ export const internalRoute = createInternalRoute({
   runInSystemScope: runAsSystem,
   newRequestId: () => randomUUID(),
   // INTERNAL_REPLAY_PROTECTION=on makes every machine call carry x-lms-timestamp and a one-time x-lms-nonce.
-  replayRequired: () => process.env["INTERNAL_REPLAY_PROTECTION"] === "on",
+  replayRequired: () => env.INTERNAL_REPLAY_PROTECTION === "on",
   claimNonce: (key, ttl) => claimDeliveryShared(key, ttl, claimLocalNonce),
   onDenied: (event) => {
     // Structured, secret-free denial record; the credential is never logged.

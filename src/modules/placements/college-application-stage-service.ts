@@ -18,6 +18,7 @@ import {collegeStageCommandSchema,COLLEGE_APPLICATION_TRANSITIONS,COLLEGE_APPLIC
 import {PlacementsServiceError} from "./errors";
 import {learnerAcceptsPlacementApplicationNotices} from "./learner-placement-event-delivery";
 
+import { featureReady } from "@/config/features";
 export async function getCollegeApplicationPipeline(context:RequestContext,rawJobId:unknown,raw:unknown){
  const collegeId=await requireCollegePlacementAdmin(context),jobId=collegeDriveIdSchema.parse(rawJobId);
  const data=await listCollegeDriveApplications(context,jobId,raw);
@@ -328,7 +329,7 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
     const noticeAllowed=input.notifyLearnerInApp&&
      await learnerAcceptsPlacementApplicationNotices(tx,{collegeId,userId:application.userId});
     const reversible=noticeAllowed&&
-     process.env["DB10_NOTIFICATION_OUTBOX_READY"]==="DB10_VERIFIED"&&
+     featureReady("notificationOutbox")&&
      input.action==="MOVE"&&
      ([["SHORTLISTED","ASSESSMENT"],["ASSESSMENT","INTERVIEW"],
        ["INTERVIEW","WAITLISTED"],["WAITLISTED","ASSESSMENT"],

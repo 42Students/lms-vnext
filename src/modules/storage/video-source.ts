@@ -5,6 +5,7 @@ import { getPrivateR2Config } from "./r2-config";
 import { awsEncode, presignUrl } from "./s3-client";
 import { StorageFileError } from "./file-errors";
 
+import { rawEnv } from "@/config/env";
 /**
  * Where a video object is read from. R2 (the private dev/production bucket) is
  * the default and the only source wired to lesson_video_assets today. The GCS
@@ -32,7 +33,7 @@ function clampTtl(ttlSeconds: number) {
 export class R2VideoSource implements VideoSource {
   readonly name = "R2" as const;
 
-  constructor(private readonly env: NodeJS.ProcessEnv = process.env) {}
+  constructor(private readonly env: NodeJS.ProcessEnv = rawEnv()) {}
 
   createPlaybackUrl(input: { objectKey: string; ttlSeconds: number; now?: Date }): PlaybackUrl {
     const ttl = clampTtl(input.ttlSeconds);
@@ -54,7 +55,7 @@ export type GcsVideoConfig = {
 };
 
 /** Returns null (adapter disabled) unless the opt-in flag and all three values are present. */
-export function readGcsVideoConfig(env: NodeJS.ProcessEnv = process.env): GcsVideoConfig | null {
+export function readGcsVideoConfig(env: NodeJS.ProcessEnv = rawEnv()): GcsVideoConfig | null {
   if (env.GCS_VIDEO_ENABLED !== "true") return null;
   const bucket = env.GCS_VIDEO_BUCKET?.trim();
   const clientEmail = env.GCS_VIDEO_CLIENT_EMAIL?.trim();
@@ -132,7 +133,7 @@ export class GcsVideoSource implements VideoSource {
 /** R2 unless GCS is explicitly requested and fully configured; an unconfigured GCS request fails closed. */
 export function resolveVideoSource(
   name: VideoSourceName = "R2",
-  env: NodeJS.ProcessEnv = process.env,
+  env: NodeJS.ProcessEnv = rawEnv(),
 ): VideoSource {
   if (name === "R2") return new R2VideoSource(env);
   const config = readGcsVideoConfig(env);

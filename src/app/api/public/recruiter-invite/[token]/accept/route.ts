@@ -8,6 +8,7 @@ import {
 import {acceptPublicTpoRecruiterInviteOtp} from "@/modules/placements/public-recruiter-invite-accept-service";
 import { route } from "@/security/route";
 
+import { env } from "@/config/env";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"} as const;
@@ -16,9 +17,9 @@ async function handlePOST(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  if(!recruiterInviteAcceptReady({
-   db09:process.env["DB09_TPO_API_READY"],
-   otp:process.env["TPO_RECRUITER_OTP_READY"],
-   delivery:process.env["TPO_RECRUITER_OTP_DELIVERY_READY"],
+   db09:env.DB09_TPO_API_READY,
+   otp:env.TPO_RECRUITER_OTP_READY,
+   delivery:env.TPO_RECRUITER_OTP_DELIVERY_READY,
  }))return NextResponse.json({error:"RECRUITER_INVITE_NOT_READY"},{status:503,headers:noStore});
  if(new URL(request.url).search)
   return NextResponse.json({error:"INVITE_INVALID"},{status:400,headers:noStore});

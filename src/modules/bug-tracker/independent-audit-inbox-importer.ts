@@ -15,6 +15,7 @@ import {
 } from "./independent-audit-inbox-model";
 import {independentAuditFindingsReady} from "./independent-audit-findings-service";
 
+import { featureReady } from "@/config/features";
 /**
  * The automated scheduler and a human Super Admin have different authority.
  * Mandatory explicit provenance prevents callers from silently dropping a
@@ -34,7 +35,7 @@ const fixable=new Set(["NEW","CONFIRMED","IN_PROGRESS","NEEDS_INFO","CANT_REPROD
  * creates audit_finding_file with the schema's unique constraints. */
 export function independentAuditImporterReady(){
  return independentAuditFindingsReady() &&
-  process.env["DB10_AUDIT_FINDINGS_LEDGER_READY"]==="LEDGER_VERIFIED" &&
+  featureReady("auditFindingsLedger") &&
   independentAuditGithubConfigured();
 }
 type LedgerAction="IMPORT"|"UPDATE"|"DELETE";

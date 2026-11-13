@@ -7,6 +7,7 @@ import {assertE2EFixtureWriterEnabled,seedIsolatedE2EAcademicGraph}
  from "@/modules/people/e2e-fixture-seed-service";
 import { route } from "@/security/route";
 
+import { env } from "@/config/env";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const headers={"Cache-Control":"private, no-store"};
@@ -28,7 +29,7 @@ async function handlePOST(request:Request){
   return NextResponse.json({status:"ERROR",error:"E2E_SEED_DISABLED"},
    {status:503,headers});
  }
- const secret=process.env["E2E_SEED_OPERATOR_SECRET"]??"";
+ const secret=env.E2E_SEED_OPERATOR_SECRET??"";
  const supplied=request.headers.get("x-e2e-seed-key")??"";
  if(Buffer.byteLength(secret,"utf8")<32)
   return NextResponse.json({status:"ERROR",error:"E2E_SEED_NOT_CONFIGURED"},

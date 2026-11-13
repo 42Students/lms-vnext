@@ -5,12 +5,13 @@ import { ErrorState } from "@/components/ui/error-state";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Heading } from "@/components/ui/heading";
 
+import { env } from "@/config/env";
 export const dynamic = "force-dynamic";
 
 /** Synthetic text and routes only; never serves in a production build. */
 export default function TpoRecoveryFixture() {
   if (process.env.NODE_ENV !== "development" ||
-      process.env.UX_TPO_G110_G119_FIXTURE !== "1") notFound();
+      env.UX_TPO_G110_G119_FIXTURE !== "1") notFound();
 
   return (
     <main id="lms-main-content" className="mx-auto w-full max-w-4xl min-w-0 space-y-8 px-4 py-6 md:px-8">

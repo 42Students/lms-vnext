@@ -15,6 +15,7 @@ import { alertEnvironment, errorSignatureHash } from "./signature";
 import { burstSlot, countSuppressedOccurrence, decideAlert, reopenRegressedSignature } from "./policy";
 import { sendTelegramAlert, telegramAlertsConfigured } from "./telegram-notifier";
 
+import { env } from "@/config/env";
 export type ReportableError = {
   event: string;
   error: unknown;
@@ -91,7 +92,7 @@ function trustedAccountHash(input: ReportableError): string | null {
   return deriveVerifiedAlertAccountHash({
     userId: input.userId,
     collegeId: input.collegeId,
-    key: process.env["LOG_ALERT_ACCOUNT_HASH_KEY"],
+    key: env.LOG_ALERT_ACCOUNT_HASH_KEY,
   });
 }
 

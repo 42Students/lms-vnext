@@ -3,6 +3,7 @@ import "server-only";
 import type { S3Config } from "./s3-client";
 import { PrivateObjectStorageError } from "./storage-errors";
 
+import { rawEnv } from "@/config/env";
 /**
  * Legacy Spring properties: r2.account.id → R2_ACCOUNT_ID,
  * r2.access.key → R2_ACCESS_KEY, r2.secret.key → R2_SECRET_KEY,
@@ -23,7 +24,7 @@ import { PrivateObjectStorageError } from "./storage-errors";
 /** A legacy-null R2 component maps to a retryable 503 state, never an
  * unscoped fallback bucket or public URL. Safe to show on a settings page. */
 export const PRIVATE_R2_RETRYABLE_STATUS = 503;
-export function privateR2SetupState(env:NodeJS.ProcessEnv=process.env):{
+export function privateR2SetupState(env:NodeJS.ProcessEnv=rawEnv()):{
   configured:boolean;status:200|503;message:string;
 } {
   try {
@@ -38,7 +39,7 @@ export function privateR2SetupState(env:NodeJS.ProcessEnv=process.env):{
 }
 
 export function getPrivateR2Config(
-  env: NodeJS.ProcessEnv = process.env,
+  env: NodeJS.ProcessEnv = rawEnv(),
 ): S3Config {
   const accountId = env.R2_ACCOUNT_ID?.trim();
   const privateAccessKeyId = env.R2_PRIVATE_ACCESS_KEY?.trim();

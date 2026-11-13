@@ -2,6 +2,7 @@ import "server-only";
 import {readZeptoMailConfig,sendZeptoMailTemplate,type ZeptoMailSendResult}
  from "@/modules/notifications/zeptomail-email";
 
+import { rawEnv } from "@/config/env";
 /** Only these two Mentor events can use external email. All routine task
  * comments, blocked alerts, college announcements and weekly updates remain
  * in-app. The dispatch worker must read live saved opt-in and membership first.
@@ -32,7 +33,7 @@ const clean=(text:string,max=160)=>text.replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu,"
  */
 export async function sendMentorProjectEventEmail(
  input:MentorProjectEmailDispatch,
- env:Record<string,string|undefined>=process.env,
+ env:Record<string,string|undefined>=rawEnv(),
  fetchImpl:typeof fetch=fetch,
 ):Promise<MentorProjectEmailOutcome>{
  if(!mentorProjectEmailAllowed(input.kind,input.savedOptIn))

@@ -2,6 +2,7 @@ import "server-only";
 import {sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 
+import { featureReady } from "@/config/features";
 /** Grade-audit parity is not complete until the registered PostgreSQL log,
  * append-only privileges, and every grading producer write in one
  * transaction with its corresponding immutable audit event.
@@ -14,9 +15,9 @@ export const GRADE_AUDIT_PARITY_REQUIREMENTS={
 } as const;
 
 export function gradeAuditParityConfigured(){
- return process.env["DB045_GRADE_HISTORY_READY"]==="DB045_VERIFIED" &&
-  process.env["DB045_GRADE_PRODUCERS_READY"]==="DB045_VERIFIED" &&
-  process.env["DB045_GRADE_REPLAY_READY"]==="DB045_VERIFIED";
+ return featureReady("gradeHistory") &&
+  featureReady("gradeProducers") &&
+  featureReady("gradeReplay");
 }
 
 /** Fail closed: do not advertise grade audit history or purge old grade

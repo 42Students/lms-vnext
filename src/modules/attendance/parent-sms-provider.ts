@@ -2,6 +2,7 @@ import "server-only";
 import {outboundFetch} from "@/lib/outbound";
 import {appendSmsDeliveryAttempt} from "@/modules/notifications/exotel-sms";
 import {verifiedParentPhoneSchema,type AttendanceParentSmsKind} from "./parent-sms-model";
+import { rawEnv } from "@/config/env";
 /** A transport response only certifies that the provider accepted the API
  * request; handset delivery needs an independent delivery receipt. */
 export const ATTENDANCE_PARENT_SMS_STATUS_COPY={
@@ -17,7 +18,7 @@ export const ATTENDANCE_PARENT_SMS_LEGACY_LIMIT_NOTE=
 export async function sendAttendanceParentSms(input:{
  phoneE164:string;body:string;kind:AttendanceParentSmsKind;
  collegeId?:string|null;organizationId?:string|null;
-},env:Record<string,string|undefined>=process.env,
+},env:Record<string,string|undefined>=rawEnv(),
  fetchImpl:typeof fetch=fetch):Promise<"ACCEPTED"|"NOT_CONFIGURED"|"REJECTED">{
  const purpose=input.kind==="ABSENT"?"attendance.absence":"attendance.correction";
  const record=async(outcome:"PROVIDER_ACCEPTED"|"FAILED",providerSid:string|null,failureCode:string|null)=>{

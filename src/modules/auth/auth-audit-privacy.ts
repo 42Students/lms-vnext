@@ -1,5 +1,6 @@
 import { createHmac } from "node:crypto";
 
+import { env } from "@/config/env";
 /**
  * Use purpose-separated keyed identifiers for sensitive authentication events.
  * Plain SHA-256 of IPv4 addresses is enumerable; never log a reversible IP
@@ -11,7 +12,7 @@ import { createHmac } from "node:crypto";
 export function authAuditTag(
   purpose: "ip" | "user",
   value: string,
-  secret: string | undefined = process.env["AUTH_SECRET"],
+  secret: string | undefined = env.AUTH_SECRET,
 ): string {
   if (!secret || secret.length < 32) return "unavailable";
   return createHmac("sha256", secret)
@@ -30,7 +31,7 @@ export type AuthAuditScalar = string | number | boolean | null;
  */
 export function safeAuthAuditFields(
   fields: Record<string, AuthAuditScalar>,
-  secret: string | undefined = process.env["AUTH_SECRET"],
+  secret: string | undefined = env.AUTH_SECRET,
 ): Record<string, AuthAuditScalar> {
   const output: Record<string, AuthAuditScalar> = {};
   for (const [key, value] of Object.entries(fields)) {

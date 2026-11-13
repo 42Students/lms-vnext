@@ -8,10 +8,11 @@ import {appendSmsDeliveryAttempt} from "./exotel-sms";
 import type {ApprovedSmsTemplateRequest,ApprovedNotificationSmsProvider,
  SmsDeliveryAcceptance,ApprovedSmsPurpose} from "./types";
 
+import { rawEnv } from "@/config/env";
 /** This adapter accepts only deployment-registered templates and DLT headers;
  * caller-supplied body text cannot become a new template. */
 export function createApprovedNotificationSmsProvider(
- env:Record<string,string|undefined>=process.env,
+ env:Record<string,string|undefined>=rawEnv(),
 ):ApprovedNotificationSmsProvider {
  const notice=registeredNoticeSmsTemplate(env);
  const absence=registeredAttendanceSmsTemplate("attendance.absence",env);

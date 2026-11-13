@@ -11,10 +11,11 @@ import { db10LogAlertSignatures as signatures, db10LogAlertStates as states, db1
 import { logAlertsRuntimeEnabled } from "./readiness";
 import { sendTelegramAlert, telegramAlertsConfigured } from "./telegram-notifier";
 
+import { env as appEnv, rawEnv } from "@/config/env";
 /** Legacy environment fallback is PRODUCTION when the deployment omits it;
  * cross-environment schedulers sharing one DB must never share poll/digest
  * cursor keys or leases. */
-export function alertEnvironment(env: NodeJS.ProcessEnv = process.env) {
+export function alertEnvironment(env: NodeJS.ProcessEnv = rawEnv()) {
   return env["APP_ENV"] === "development" || env["APP_ENV"] === "test" ? "DEVELOPMENT" :
     env["APP_ENV"] === "uat" ? "UAT" : "PRODUCTION";
 }
@@ -196,7 +197,7 @@ function noteCloudPollingFailure() {
 }
 
 /** Operator-opted Cloud Logging backup. Production cannot silently query the dev namespace. */
-export function cloudPollSettings(env: NodeJS.ProcessEnv = process.env):
+export function cloudPollSettings(env: NodeJS.ProcessEnv = rawEnv()):
   { project: string; namespace: string } | null {
   if (env["LOG_ALERT_CLOUD_POLL_ENABLED"] !== "true") return null;
   const project = env["GOOGLE_CLOUD_PROJECT"];
@@ -385,7 +386,7 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
       lockedBy: leases.lockedBy,
       updatedAt: leases.updatedAt,
     }).from(leases).where(eq(leases.jobName, "vnext-health-watch")).limit(1);
-    const deployCommit = process.env["DEPLOY_COMMIT"];
+    const deployCommit = appEnv.DEPLOY_COMMIT;
     const message = formatDailyDigest({
       day: previousDay,
       health: healthWatchStatus(health, now),

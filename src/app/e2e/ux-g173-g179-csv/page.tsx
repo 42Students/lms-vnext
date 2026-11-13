@@ -13,12 +13,13 @@ import {buildHrOfferCsv} from "@/modules/placements/hr-offer-export-model";
 import {buildHrTeamCsv} from "@/modules/placements/hr-team-csv-model";
 import {tpoCompanyShareAuditCsv} from "@/modules/placements/company-share/audit-csv-model";
 
+import { env } from "@/config/env";
 export const dynamic="force-dynamic";
 
 /** Synthetic UX proof only: real serializers, no database or tenant data.
  * Never mount this in production, even with the opt-in fixture flag. */
 export default function UxCourseRecruiterCsvFixture(){
- if(process.env.NODE_ENV!=="development"||process.env.UX_G173_G179_FIXTURE!=="1")notFound();
+ if(process.env.NODE_ENV!=="development"||env.UX_G173_G179_FIXTURE!=="1")notFound();
  const unsafe="\u093E=HYPERLINK(1,2)";
  const date=new Date("2026-11-08T07:00:00.000Z");
  const college={title:unsafe,course:"Example course",lesson:"Unit A",

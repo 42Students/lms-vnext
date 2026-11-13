@@ -40,6 +40,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Label } from "@/components/ui/label";
 import { istDateFormatter } from "@/lib/format-date";
 
+import { env } from "@/config/env";
 type Workspace = Awaited<
   ReturnType<typeof getAdminCourseWorkspace>
 >;
@@ -608,7 +609,7 @@ export function AdminCourseOverview({
         {courseBasePath.startsWith("/admin/") ? <SuperAdminCourseBulkVisibility
           key={workspace.collegeId}
           collegeId={workspace.collegeId}
-          maxSelection={(() => { const n=Number(process.env["COURSE_BULK_STATUS_MAX"]??"100"); return Number.isInteger(n)?Math.min(100,Math.max(1,n)):100; })()}
+          maxSelection={(() => { const n=Number(env.COURSE_BULK_STATUS_MAX??"100"); return Number.isInteger(n)?Math.min(100,Math.max(1,n)):100; })()}
           courses={(catalogue?catalogue.items:workspace.courses).map(course=>({id:course.id,name:course.name}))}/> : null}
         {!courseBasePath.startsWith("/admin/")?<CollegeCourseBulkVisibility
          key={workspace.collegeId}

@@ -6,6 +6,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { createTpoCompanyFeedback } from "@/modules/placements/tpo-company-feedback-service";
 import { route } from "@/security/route";
 
+import { featureReady } from "@/config/features";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,7 @@ async function handlePOST(request: Request, { params }: RouteContext) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
-  if (process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED") {
+  if (!featureReady("tpoApi")) {
     return NextResponse.json({ error: "DB09_MIGRATIONS_PENDING" }, { status: 503 });
   }
   try {

@@ -13,6 +13,8 @@ import { publicEnquiryTablesReady } from "./readiness";
 import { enquiryMacMatches } from "./otp-model";
 import { publicEnquiryNetworkTag,PublicEnquiryError } from "./send-service";
 
+import { env } from "@/config/env";
+import { featureReady } from "@/config/features";
 function safePublicText(value:string,maxLength:number):string {
  return value.replace(/<[^>]*>/g," ").replace(/[<>\u0000-\u001f\u007f]/g," ").replace(/\s+/g," ").trim().slice(0,maxLength);
 }
@@ -24,9 +26,9 @@ export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,ve
    throw new PublicEnquiryError("NAME_REQUIRED");
   throw new PublicEnquiryError("INVALID");
  }
- if(process.env["DB09_TPO_API_READY"]!=="DB09_VERIFIED"||!await publicEnquiryTablesReady())
+ if(!featureReady("tpoApi")||!await publicEnquiryTablesReady())
   throw new PublicEnquiryError("NOT_READY");
- const secret=process.env["TPO_RECRUITER_OTP_HMAC_SECRET"]??"";
+ const secret=env.TPO_RECRUITER_OTP_HMAC_SECRET??"";
  const ipTag=publicEnquiryNetworkTag(verifiedIp,secret);
  const ready=await getDb().execute<{ready:boolean}>(sql`select to_regclass('public.placement_public_enquiry_rate_events') is not null as ready`);
  if(ready.rows[0]?.ready!==true)throw new PublicEnquiryError("NOT_READY");

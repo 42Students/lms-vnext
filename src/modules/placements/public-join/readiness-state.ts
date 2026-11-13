@@ -1,13 +1,15 @@
 import "server-only";
 import {sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
+import { env } from "@/config/env";
+import { featureReady } from "@/config/features";
 export type PublicJoinUnavailable = "PROXY_UNVERIFIED"|"OTP_NOT_CONFIGURED"|"RATE_TABLE_MISSING"|null;
 /** No need for an obsolete PUBLIC_JOIN_RATE_EVENTS_READY environment flag:
  * migration 0100 is real; readiness checks actual PostgreSQL registration.
  */
 export async function publicJoinUnavailable():Promise<PublicJoinUnavailable>{
- if(process.env["PUBLIC_JOIN_TRUSTED_PROXY_READY"]!=="VERIFIED")return "PROXY_UNVERIFIED";
- if(Buffer.byteLength(process.env["TPO_RECRUITER_OTP_HMAC_SECRET"]??"","utf8")<32)
+ if(!featureReady("publicJoinTrustedProxy"))return "PROXY_UNVERIFIED";
+ if(Buffer.byteLength(env.TPO_RECRUITER_OTP_HMAC_SECRET??"","utf8")<32)
   return "OTP_NOT_CONFIGURED";
  try{
   const r=await getDb().execute<{ok:boolean}>(sql`select to_regclass('public.placement_public_join_rate_events') is not null as ok`);

@@ -26,14 +26,15 @@ import {
   decodeAdminScopeCookie,
 } from "./admin-scope";
 
+import { env } from "@/config/env";
 type CookieStore = Awaited<ReturnType<typeof cookies>>;
 
 async function resolveIdentityUid(cookieStore: CookieStore) {
   const e2eIdentityUid = resolveE2eIdentityUid({
     nodeEnv: process.env.NODE_ENV,
-    appEnv: process.env["APP_ENV"],
-    enabled: process.env["E2E_AUTH_ENABLED"],
-    configuredSecret: process.env["E2E_AUTH_SECRET"],
+    appEnv: env.APP_ENV,
+    enabled: env.E2E_AUTH_ENABLED,
+    configuredSecret: env.E2E_AUTH_SECRET,
     cookieSecret:
       cookieStore.get(E2E_SECRET_COOKIE_NAME)?.value,
     identityUid:

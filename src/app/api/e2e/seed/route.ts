@@ -10,17 +10,19 @@ import { can } from "@/modules/permissions/policy";
 import { seedDevE2eCollegeFixtures } from "@/modules/people/dev-e2e-seed-service";
 import { route } from "@/security/route";
 
+import { env } from "@/config/env";
+import { featureReady } from "@/config/features";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 function enabled() {
   return process.env.NODE_ENV !== "production" &&
-    process.env["APP_ENV"] === "development" &&
-    process.env["APP_E2E_SEED_ENABLED"] === "true";
+    env.APP_ENV === "development" &&
+    featureReady("appE2eSeed");
 }
 
 function seedSecretMatches(provided: string | null) {
-  const expected = process.env["APP_E2E_SEED_SECRET"];
+  const expected = env.APP_E2E_SEED_SECRET;
   if (!expected || expected.length < 32 || !provided) return false;
   const a = Buffer.from(provided);
   const b = Buffer.from(expected);

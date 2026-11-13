@@ -15,6 +15,8 @@ import {
   type OutboundCompletionInput,
 } from "./outbound-dispatch-completion";
 
+import { env } from "@/config/env";
+import { featureReady } from "@/config/features";
 /**
  * W06 durable queue boundary, deliberately disabled until W01 migrates the
  * isolated outbox + suppression drafts and disposable PostgreSQL tests pass.
@@ -28,7 +30,7 @@ import {
 type OutboundWriter = Pick<ReturnType<typeof getDb>, "execute">;
 
 export function outboundQueueRuntimeEnabled() {
-  return process.env["DB10_OUTBOUND_READY"] === "DB10_VERIFIED";
+  return featureReady("outbound");
 }
 
 export type OutboundQueueResult =
@@ -89,8 +91,8 @@ export async function queueOutboundDeliveryInTransaction(
     throw new OutboundDeliveryError("OUTBOUND_SCOPE_INVALID");
   }
 
-  const encryptionKey = process.env["DB10_OUTBOUND_ENCRYPTION_KEY_BASE64"] ?? "";
-  const globalEmailKey = process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"] ?? "";
+  const encryptionKey = env.DB10_OUTBOUND_ENCRYPTION_KEY_BASE64 ?? "";
+  const globalEmailKey = env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64 ?? "";
   // A stable cross-college consent HMAC cannot share the encryption secret.
   // Rotating ciphertext keys must not erase a recipient's previous opt-out.
   if (intent.channel === "EMAIL" && encryptionKey === globalEmailKey) {
@@ -208,7 +210,7 @@ export async function queueOutboundDelivery(
  */
 export function outboundDispatchRuntimeEnabled() {
   return outboundQueueRuntimeEnabled() &&
-    process.env["DB10_OUTBOUND_DISPATCH_READY"] === "DB10_VERIFIED";
+    featureReady("outboundDispatch");
 }
 
 export class OutboundDispatchNotReadyError extends Error {

@@ -11,6 +11,7 @@ import {getDb} from "@/db/client";
 import {academicPeriods,sectionEnrollments,sections} from "@/db/schema";
 import {countOwnUnreadNotifications,listOwnNotifications} from "@/modules/activity/notification-service";
 import { route } from "@/security/route";
+import { env } from "@/config/env";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -67,7 +68,7 @@ async function handleGET(request:Request){
   // closure. A session revoked after SSE upgrade must not keep receiving
   // events until the client disconnects or the 110-second timeout.
   const sessionToken=(await cookies()).get(SESSION_COOKIE_NAME)?.value??null;
-  if(!sessionToken&&process.env.APP_ENV!=="development")
+  if(!sessionToken&&env.APP_ENV!=="development")
    return NextResponse.json({error:"SESSION_MISSING"},{status:401,
     headers:{"Cache-Control":"private, no-store"}});
   const key=context.user.id;
@@ -103,7 +104,7 @@ async function handleGET(request:Request){
       if(sessionToken){
        const identity=await verifyIdentitySessionCookie(sessionToken);
        if(identity.uid!==context.user.identityUid){stop();return;}
-      }else if(process.env.APP_ENV!=="development"){stop();return;}
+      }else if(env.APP_ENV!=="development"){stop();return;}
       // Reconstruct persisted scope before every poll. Revoke the stream on
       // role, membership, system privilege, recruiter grant or tenant change,
       // including a previously selected role silently falling back to another.

@@ -10,6 +10,7 @@ import {isCampaignTemplateKey} from "@/modules/messaging/template-boundary-model
 import {placementEmailChannelEnabled} from "./placement-mail-event-matrix";
 import {safeRecruiterDigestMessages,safeRecruiterEmailMergeText,isRecruiterReplyAddress,safeRecruiterEmailAddressName} from "./recruiter-message-email-model";
 
+import { rawEnv } from "@/config/env";
 export type RecruiterMailDigest={
  recipient:string;recipientName:string;companyName:string;collegeName:string;
  replyTo:string;messages:readonly {body:string;createdAt?:Date|string;
@@ -55,7 +56,7 @@ export type RecruiterDigestReadiness={
   "TEMPLATE_NOT_CONFIGURED"|"REPLY_DOMAIN_INVALID";
 };
 export function recruiterDigestReadiness(
- env:Record<string,string|undefined>=process.env,
+ env:Record<string,string|undefined>=rawEnv(),
 ):RecruiterDigestReadiness{
  if(!placementEmailChannelEnabled("RECRUITER_MESSAGE_DIGEST",env))
   return {configured:false,reason:"BRIDGE_DISABLED"};
@@ -125,7 +126,7 @@ export async function verifiedRecruiterWorkspaceUrl(collegeId:string|undefined):
  * A digest failure is not an acknowledgement of a placement-cell message.
  */
 export async function sendRecruiterMessageDigest(
- digest:RecruiterMailDigest,env:Record<string,string|undefined>=process.env,
+ digest:RecruiterMailDigest,env:Record<string,string|undefined>=rawEnv(),
  fetchImpl:typeof fetch=fetch,
 ):Promise<boolean>{
  if(!placementEmailChannelEnabled("RECRUITER_MESSAGE_DIGEST",env))return false;

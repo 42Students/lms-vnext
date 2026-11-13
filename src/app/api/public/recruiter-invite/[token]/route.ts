@@ -4,6 +4,7 @@ import { previewRecruiterInvite } from "@/modules/placements/tpo-recruiter-invit
 import { isRecruiterInviteTokenShape } from "@/modules/placements/tpo-recruiter-invite-policy";
 import { route } from "@/security/route";
 
+import { featureReady } from "@/config/features";
 /** Legacy PublicRecruiterInviteController route crosswalk (all five methods):
  * GET /api/v1/public/recruiter-invite/{token} => GET here, now {invite}.
  * POST /{token}/send-code => POST /api/public/recruiter-invite/{token}/send-code,
@@ -21,7 +22,7 @@ const privateHeaders = { "Cache-Control": "private, no-store", "Referrer-Policy"
 type RouteContext = { params: Promise<{ token: string }> };
 
 async function handleGET(_request: Request, { params }: RouteContext) {
-  if (process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED") {
+  if (!featureReady("tpoApi")) {
     return NextResponse.json({ error: "DB09_MIGRATIONS_PENDING" }, { status: 503, headers: privateHeaders });
   }
   try {

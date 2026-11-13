@@ -1,6 +1,7 @@
 import { createHash, createHmac, randomBytes, randomInt, scryptSync, timingSafeEqual } from "node:crypto";
 import { z } from "zod";
 
+import { env } from "@/config/env";
 /** Raw secrets are issued only once. The database stores the SHA-256 digest. */
 export const companyShareTokenSchema = z.string().regex(/^[A-Za-z0-9_-]{43}$/);
 /** Old job URL slugs are NOT share capabilities. This validator must never
@@ -90,7 +91,7 @@ export function validCompanyShareAccessCode(code:unknown,salt:string,expected:st
 export function companyShareAccessProof(shareId:string,tokenHash:string,codeHash:string){
  // A dedicated key keeps a share-proof leak from also breaking session signing; AUTH_SECRET stays the fallback so
  // a deployment without the new secret keeps working (SEC-15).
- const secret=process.env["COMPANY_SHARE_PROOF_SECRET"]||process.env["AUTH_SECRET"]||process.env["NEXTAUTH_SECRET"];
+ const secret=env.COMPANY_SHARE_PROOF_SECRET||env.AUTH_SECRET||env.NEXTAUTH_SECRET;
  if(!secret||secret.length<32)return null;
  return createHmac("sha256",secret).update(shareId+"."+tokenHash+"."+codeHash).digest("hex");
 }

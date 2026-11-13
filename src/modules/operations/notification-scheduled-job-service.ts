@@ -4,6 +4,7 @@ import { getDb } from "@/db/client";
 import { safeNotificationActionHref } from "@/modules/activity/notification-action";
 import { tomorrowInIndiaUtcWindow, type ScheduledJobFence } from "./scheduled-job-runner";
 
+import { featureReady } from "@/config/features";
 type BatchResult = { processed: number; hasMore: boolean };
 
 /**
@@ -125,7 +126,7 @@ export async function releaseScheduledNotificationOutbox(
 ): Promise<BatchResult> {
   if (fence.lease.jobName !== "notification.release")
     throw new Error("INVALID_NOTIFICATION_JOB_LEASE");
-  if (process.env["DB10_NOTIFICATION_OUTBOX_READY"] !== "DB10_VERIFIED")
+  if (!featureReady("notificationOutbox"))
     return { processed: 0, hasMore: false };
   let processed = 0;
   for (let n = 0; n < 200; n++) {

@@ -7,6 +7,7 @@ import {deliverPublicRecruiterJoinCode} from "@/modules/messaging/public-join-co
 import {isRecruiterInviteTokenShape} from "@/modules/placements/tpo-recruiter-invite-policy";
 import {recruiterInviteAcceptReady} from "@/modules/placements/recruiter-invite-otp-accept-model";
 import { route } from "@/security/route";
+import { env } from "@/config/env";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"} as const;
@@ -16,8 +17,8 @@ async function handlePOST(request:Request,{params}:{params:Promise<{token:string
   return NextResponse.json({error:"INVALID_REQUEST"},{status:400,headers:noStore});
  const {token}=await params;
  if(!isRecruiterInviteTokenShape(token))return NextResponse.json({error:"INVITE_INVALID"},{status:404,headers:noStore});
- if(!recruiterInviteAcceptReady({db09:process.env["DB09_TPO_API_READY"],
-  otp:process.env["TPO_RECRUITER_OTP_READY"],delivery:process.env["TPO_RECRUITER_OTP_DELIVERY_READY"]}))
+ if(!recruiterInviteAcceptReady({db09:env.DB09_TPO_API_READY,
+  otp:env.TPO_RECRUITER_OTP_READY,delivery:env.TPO_RECRUITER_OTP_DELIVERY_READY}))
    return NextResponse.json({error:"RECRUITER_INVITE_NOT_READY"},{status:503,headers:noStore});
  let email:string|undefined;
  if(request.body!==null){

@@ -10,6 +10,7 @@ import { TpoCompanyPersonEditor } from "@/components/placements/tpo-company-pers
 import { listTpoCompanyPeople } from "@/modules/placements/tpo-company-person-service";
 import { TextLink } from "@/components/ui/text-link";
 
+import { featureReady } from "@/config/features";
 export default async function TpoCompanyPeoplePage({
   params,
 }: { params: Promise<{ companyId: string }> }) {
@@ -25,7 +26,7 @@ export default async function TpoCompanyPeoplePage({
         href={"/tpo/companies/" + encodeURIComponent(companyId)}>
         ← Back to company
       </TextLink></>}/>
-      {process.env["DB09_TPO_API_READY"] === "DB09_VERIFIED" ? (
+      {featureReady("tpoApi") ? (
         <Disclosure title="Add or edit contact person" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3"><TpoCompanyPersonEditor companyId={companyId} contacts={company.contacts}/></Disclosure>
       ) : <Alert tone="warning">DB09 contact writes are unavailable.</Alert>}
       {company.contacts.length === 0

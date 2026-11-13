@@ -1,6 +1,7 @@
 import "server-only";
 import {createHash} from "node:crypto";
 
+import { rawEnv } from "@/config/env";
 /** Google Calendar REST bridge. Does not imply an OAuth connection: callers
  * must supply a refreshable token from encrypted, consented user storage and
  * a tenant-checked saved meeting. Fail closed if credentials are absent.
@@ -11,7 +12,7 @@ export const MENTOR_CALENDAR_SCOPE="https://www.googleapis.com/auth/calendar.eve
 export type MentorGoogleConfig={
  clientId:string;clientSecret:string;redirectUri:string;
 };
-export function mentorGoogleConfig(env:Record<string,string|undefined>=process.env):
+export function mentorGoogleConfig(env:Record<string,string|undefined>=rawEnv()):
  MentorGoogleConfig|null{
  const clientId=(env["MENTOR_GOOGLE_CLIENT_ID"]??"").trim();
  const clientSecret=(env["MENTOR_GOOGLE_CLIENT_SECRET"]??"").trim();

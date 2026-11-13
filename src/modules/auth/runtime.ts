@@ -14,6 +14,7 @@ import {
   type LoginDependencies,
 } from "./login-service";
 
+import { env } from "@/config/env";
 /** Production wiring: real Exotel + ZeptoMail, Postgres, system clock.
  * Live transport is disabled in development unless explicitly verified.
  * Provider acceptance never means handset/inbox delivery; webhook status is
@@ -21,7 +22,7 @@ import {
 function dependencies(): LoginDependencies {
   const config=getAuthConfig();
   // Development fixtures never hit live DLT or ZeptoMail by accident.
-  const liveTransport=config.appEnv==="production" || process.env["AUTH_DEV_REAL_DELIVERY"]==="VERIFIED";
+  const liveTransport=config.appEnv==="production" || env.AUTH_DEV_REAL_DELIVERY==="VERIFIED";
   return {
     repository: drizzleLoginRepository,
     sms:liveTransport?createExotelSmsProvider():{sendOtp:async()=>false},

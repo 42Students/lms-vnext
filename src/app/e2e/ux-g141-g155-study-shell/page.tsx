@@ -7,12 +7,13 @@ import { MobileNavigation } from "@/components/shell/mobile-navigation";
 import { RouteAnnouncer } from "@/components/shell/route-announcer";
 import { Heading } from "@/components/ui/heading";
 
+import { env } from "@/config/env";
 export const dynamic = "force-dynamic";
 
 /** Synthetic interaction fixture, never enabled in production. */
 export default function UXG141G155StudyShellFixture() {
   if (process.env.NODE_ENV !== "development" ||
-      process.env["UX_STUDY_SHELL_FIXTURE"] !== "1") notFound();
+      env.UX_STUDY_SHELL_FIXTURE !== "1") notFound();
 
   const groupId = "10000000-0000-4000-8000-000000000001";
   return <main id="lms-main-content" tabIndex={-1}

@@ -9,8 +9,9 @@ import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {ACTIVE_FINDING_STATUSES,RELEASE_BLOCKER_FINDING_STATUSES,INDEPENDENT_AUDIT_PAGE_SIZE,type FindingFilters} from "./independent-audit-findings-model";
 
+import { featureReady } from "@/config/features";
 export function independentAuditFindingsReady(){
- return process.env["DB10_AUDIT_FINDINGS_READY"]==="DB10_VERIFIED";
+ return featureReady("auditFindings");
 }
 /** The release flag records an operator approval, but cannot prove a
  * partially replayed schema is ready. Query the canonical tables and indexed

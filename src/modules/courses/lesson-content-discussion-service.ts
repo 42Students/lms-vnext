@@ -15,6 +15,7 @@ import { loadCourseSectionDeliveryScope, loadLessonContentScope } from "./scope"
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 
+import { featureReady } from "@/config/features";
 const identity = z.string().uuid();
 const pageInput = z.strictObject({
   deliveryId: identity,
@@ -31,7 +32,7 @@ const writeInput = z.strictObject({
 
 /** Feature gate remains false until DB05 SQL/journal and security tests pass. */
 export function lessonContentDiscussionsEnabled(): boolean {
-  return process.env["DB05_LESSON_DISCUSSIONS_READY"] === "DB05_VERIFIED";
+  return featureReady("lessonDiscussions");
 }
 
 async function requireContentDiscussionScope(

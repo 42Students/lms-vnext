@@ -4,6 +4,7 @@ import {readBoundedJsonBody} from "@/lib/bounded-json-body";
 import {acceptPublicRecruiterJoin,PublicJoinAcceptError} from "@/modules/placements/public-join/join-service";
 import {z} from "zod";
 import { route } from "@/security/route";
+import { featureReady } from "@/config/features";
 export const runtime="nodejs";
 const legacy=z.strictObject({
  email:z.string().email().max(254),code:z.string().regex(/^[0-9]{6}$/),
@@ -23,7 +24,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{token:string
  const parsed=legacy.safeParse(body.value);
  if(!parsed.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
  const {token}=await params;
- const trusted=process.env["PUBLIC_JOIN_TRUSTED_PROXY_READY"]==="VERIFIED";
+ const trusted=featureReady("publicJoinTrustedProxy");
  const ip=trusted?request.headers.get("x-public-verified-client-ip"):null;
  try{
   const input=parsed.data;

@@ -1,6 +1,7 @@
+import { env } from "@/config/env";
 export function lessonContentOrderRuntimeEnabled() {
   return (
-    process.env["DB05_CONTENT_ORDER_READY"] ===
+    env.DB05_CONTENT_ORDER_READY ===
     "DB05_VERIFIED"
   );
 }

@@ -1,9 +1,10 @@
 import { createHash } from "node:crypto";
 import { redactAlertText, safeAlertPath } from "./redaction";
 
+import { env } from "@/config/env";
 export function alertEnvironment(): "PRODUCTION" | "UAT" | "DEVELOPMENT" {
-  if (process.env["APP_ENV"] === "production") return "PRODUCTION";
-  if (process.env["APP_ENV"] === "uat") return "UAT";
+  if (env.APP_ENV === "production") return "PRODUCTION";
+  if (env.APP_ENV === "uat") return "UAT";
   return "DEVELOPMENT";
 }
 

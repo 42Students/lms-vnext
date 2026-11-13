@@ -9,6 +9,8 @@ import {queueFencedInterviewReminderEmails}
  from "@/modules/announcements/tpo-interview-reminder-email-service";
 import { internalRoute } from "@/security/internal-route";
 
+import { env } from "@/config/env";
+import { featureReady } from "@/config/features";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"no-store"};
@@ -16,9 +18,9 @@ const noStore={"Cache-Control":"no-store"};
  * paired worker INSTEAD OF the in-app-only notification scheduler route for
  * tpo.interviewReminders, never both. The morning route stays IN_APP-only. */
 async function handlePOST(request:Request){
- if(process.env["DB10_NOTIFICATION_SCHEDULER_READY"]!=="DB10_VERIFIED"||
-    process.env["TPO_INTERVIEW_EMAIL_READY"]!=="VERIFIED"||
-    process.env["ZEPTOMAIL_LEGACY_KEY_REVOKED"]!=="confirmed")
+ if(!featureReady("notificationScheduler")||
+    !featureReady("tpoInterviewEmail")||
+    env.ZEPTOMAIL_LEGACY_KEY_REVOKED!=="confirmed")
   return NextResponse.json({error:"INTERVIEW_EMAIL_UNPROVISIONED"},
    {status:503,headers:noStore});
  const localHour=new Date(Date.now()+330*60_000).getUTCHours();

@@ -5,6 +5,7 @@ import { securityAuditEvents } from "@/db/schema/security-audit-events";
 import { createAnomalyDetector } from "@/security/anomaly";
 import { logError } from "@/observability/logger";
 
+import { env } from "@/config/env";
 /**
  * Durable security audit trail (SEC-19). Off unless SECURITY_AUDIT_DB=on (the migration must be applied first).
  * Writing never blocks or fails a request: it is fire-and-forget, bounded, and falls back to the structured log
@@ -32,7 +33,7 @@ let inFlight = 0;
 let warned = false;
 let dropped = 0;
 
-const enabled = () => process.env["SECURITY_AUDIT_DB"] === "on";
+const enabled = () => env.SECURITY_AUDIT_DB === "on";
 const uuidOrNull = (value: string | null | undefined) =>
   typeof value === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value) ? value : null;
 const text = (value: string | null | undefined, max: number) => (typeof value === "string" ? value.slice(0, max) : null);

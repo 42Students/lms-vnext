@@ -30,6 +30,8 @@ import {
  buildE2EFixtureManifest,buildE2EFixtureSeedLedger,type E2EFixtureKey,
 } from "./e2e-fixture-manifest";
 
+import { env } from "@/config/env";
+import { featureReady } from "@/config/features";
 /** Every auxiliary UUID uses the same deterministic v4/variant shape as
  * the public manifest, but a distinct domain label and schema-version salt.
  */
@@ -48,11 +50,11 @@ const roleOf={
 
 export function assertE2EFixtureWriterEnabled(){
  if(process.env.NODE_ENV==="production"||
-    process.env["APP_ENV"]!=="test"||
-    process.env["E2E_SEED_ENABLED"]!=="true"||
-    process.env["E2E_ISOLATED_DATABASE"]!=="true"||
-    process.env["E2E_ALLOW_GRAPH_WRITES"]!=="true"||
-    process.env["APP_E2E_SEED_ENABLED"]!=="true")
+    env.APP_ENV!=="test"||
+    !featureReady("e2eSeed")||
+    env.E2E_ISOLATED_DATABASE!=="true"||
+    env.E2E_ALLOW_GRAPH_WRITES!=="true"||
+    !featureReady("appE2eSeed"))
   throw new Error("E2E_SEED_DISABLED");
 }
 
@@ -70,7 +72,7 @@ export function assertE2EFixtureWriterEnabled(){
  */
 export async function seedIsolatedE2EAcademicGraph(
  actor:RequestContext,
- namespace=process.env["E2E_FIXTURE_NAMESPACE"]||"e2e-dev",
+ namespace=env.E2E_FIXTURE_NAMESPACE||"e2e-dev",
 ){
  assertE2EFixtureWriterEnabled();
  if(!isSuperAdmin(actor))throw new Error("E2E_SEED_FORBIDDEN");

@@ -3,6 +3,7 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { sql } from "drizzle-orm";
 import { Pool } from "pg";
 
+import { rawEnv } from "@/config/env";
 /**
  * The trusted EMAIL dispatcher MUST NOT silently reuse the ordinary app
  * connection. Its login is provisioned separately by operations and receives
@@ -40,7 +41,7 @@ function loginFromDatabaseUrl(raw: string): string | null {
  * is mandatory even when this static preflight succeeds.
  */
 export function validateOutboundDispatchDbConfig(
-  env: Record<string, string | undefined> = process.env,
+  env: Record<string, string | undefined> = rawEnv(),
 ): { url: string; login: string } {
   const raw = env["DB10_DISPATCH_DATABASE_URL"] ?? "";
   let url: URL;

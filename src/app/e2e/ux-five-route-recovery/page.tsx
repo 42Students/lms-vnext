@@ -5,6 +5,7 @@ import SuperAdminNotFound from "@/app/(authenticated)/superadmin/not-found";
 import { UXFiveRouteErrorPreview } from "@/components/ux/ux-five-route-error-preview";
 import { Heading } from "@/components/ui/heading";
 
+import { env } from "@/config/env";
 export const dynamic = "force-dynamic";
 
 /**
@@ -14,7 +15,7 @@ export const dynamic = "force-dynamic";
  */
 export default async function UXFiveRouteRecoveryFixture() {
   if (process.env.NODE_ENV !== "development" ||
-      process.env["UX_FIVE_ROUTE_FIXTURE"] !== "1") notFound();
+      env.UX_FIVE_ROUTE_FIXTURE !== "1") notFound();
 
   return <main className="mx-auto w-full max-w-4xl min-w-0 space-y-8 px-4 py-8">
     <Heading level={1} className="text-xl font-semibold">Five-group route recovery acceptance</Heading>

@@ -7,6 +7,7 @@ import {queueEligibleDeadlineTodayReminders}
  from "@/modules/announcements/tpo-deadline-today-job-service";
 import { internalRoute } from "@/security/internal-route";
 
+import { featureReady } from "@/config/features";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"no-store"};
@@ -17,8 +18,8 @@ const noStore={"Cache-Control":"no-store"};
  * required in addition to a transactional PostgreSQL lease.
  */
 async function handlePOST(request:Request){
- if(process.env["DB10_NOTIFICATION_SCHEDULER_READY"]!=="DB10_VERIFIED"||
-    process.env["TPO_DEADLINE_TODAY_READY"]!=="VERIFIED")
+ if(!featureReady("notificationScheduler")||
+    !featureReady("tpoDeadlineToday"))
   return NextResponse.json({error:"SCHEDULER_NOT_READY"},{status:503,headers:noStore});
  try{
   const result=await executeScheduledJobWithLease(

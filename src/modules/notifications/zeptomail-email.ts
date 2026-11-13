@@ -3,6 +3,7 @@ import { writeStructuredLog } from "@/observability/logger";
 import type { EmailProvider } from "./types";
 import { isValidRecipient, normalizeRecipient } from "@/modules/messaging/model";
 
+import { rawEnv } from "@/config/env";
 /**
  * Server-side ZeptoMail adapter. Authentication, notification events and TPO
  * templates share the same fail-closed transport; callers choose a provisioned
@@ -86,7 +87,7 @@ function pairedUnquote(value:string){
 }
 
 export function readZeptoMailConfig(
-  env: Record<string, string | undefined> = process.env,
+  env: Record<string, string | undefined> = rawEnv(),
 ): ZeptoMailConfig {
   return {
     apiUrl: env["ZEPTOMAIL_API_URL"] ?? "https://api.zeptomail.in/v1.1/email/template",
@@ -214,7 +215,7 @@ function purposeLabel(purpose: ZeptoMailPurpose): string {
 /** Explicitly provisioned IDs only. No guessed placeholder or fallback template. */
 export function resolveZeptoMailTemplateId(
   purpose: ZeptoMailPurpose,
-  env: Record<string, string | undefined> = process.env,
+  env: Record<string, string | undefined> = rawEnv(),
   config: ZeptoMailConfig = readZeptoMailConfig(env),
 ): string | null {
   let value: string | undefined;
@@ -245,7 +246,7 @@ export function resolveZeptoMailTemplateId(
  * Keep optional event templates out of required send readiness and avoid
  * recording opaque IDs or provider credentials in the response/logs. */
 export function zeptoMailProvisioning(
- env:Record<string,string|undefined>=process.env,
+ env:Record<string,string|undefined>=rawEnv(),
 ){
  const config=readZeptoMailConfig(env);
  const eventTemplates=Object.keys(LEGACY_NOTIFICATION_TEMPLATE_KEYS).map(event=>{
@@ -355,7 +356,7 @@ export async function sendZeptoMailTemplate(
   message: ZeptoMailTemplateMessage,
   config: ZeptoMailConfig = readZeptoMailConfig(),
   fetchImpl: typeof fetch = fetch,
-  env: Record<string, string | undefined> = process.env,
+  env: Record<string, string | undefined> = rawEnv(),
 ): Promise<ZeptoMailSendResult> {
   const purpose = message.purpose;
   if (!config.token.trim()) return notSent(purpose, "TOKEN_NOT_CONFIGURED");

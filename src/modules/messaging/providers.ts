@@ -13,6 +13,7 @@ import { canContactRecipientAtRuntime } from "./runtime-safety";
 import { isExotelAcceptedResponse } from "./provider-acceptance-model";
 import { isCampaignTemplateKey } from "./template-boundary-model";
 
+import { rawEnv } from "@/config/env";
 /** Templates are provisioned server-side; OTP IDs never enter this registry. */
 export type OutboundTemplate = {
   zeptoTemplateKey?: string;
@@ -138,7 +139,7 @@ export function outboundTemplateReadiness(
 export function createOutboundProvider(
   config: OutboundProviderConfig,
   fetchImpl: typeof fetch = fetch,
-  env: Record<string, string | undefined> = process.env,
+  env: Record<string, string | undefined> = rawEnv(),
 ): OutboundProviderWithOutcomes {
   async function sendDetailedOnce(rawRequest: OutboundSendRequest): Promise<OutboundProviderOutcome> {
     const parsed = outboundSendSchema.safeParse(rawRequest);
@@ -319,7 +320,7 @@ const safeSenderId = (raw: string | undefined) =>
  * mappings fail closed and never fall back to OTP templates.
  */
 export function legacyJobSmsTemplate(
-  env: Record<string, string | undefined> = process.env,
+  env: Record<string, string | undefined> = rawEnv(),
   approvedOverrides: { dltId?: string; body?: string; senderId?: string } = {},
 ): OutboundTemplate | null {
   const dltId = (approvedOverrides.dltId ?? env["EXOTEL_JOB_DLT_TEMPLATE_ID"] ?? "").trim();
@@ -341,7 +342,7 @@ export function legacyJobSmsTemplate(
 
 export function registerLegacySmsTemplates(
   templates: OutboundProviderConfig["templates"],
-  env: Record<string, string | undefined> = process.env,
+  env: Record<string, string | undefined> = rawEnv(),
   approvedOverrides: { dltId?: string; body?: string; senderId?: string } = {},
 ): OutboundProviderConfig["templates"] {
   const job = legacyJobSmsTemplate(env, approvedOverrides);
@@ -397,7 +398,7 @@ export async function sendApprovedNotificationSms(
  * an owner-provisioned template and its approved variable slots are required.
  */
 export function registeredNoticeSmsTemplate(
-  env: Record<string, string | undefined> = process.env,
+  env: Record<string, string | undefined> = rawEnv(),
   approvedBody?: string,
   approvedDltId?: string,
 ): OutboundTemplate | null {
@@ -427,7 +428,7 @@ export function registeredNoticeSmsTemplate(
  */
 export function registeredAttendanceSmsTemplate(
  purpose:"attendance.absence"|"attendance.correction",
- env:Record<string,string|undefined>=process.env,
+ env:Record<string,string|undefined>=rawEnv(),
 ):OutboundTemplate|null {
  const key=purpose==="attendance.absence"?"ABSENCE":"CORRECTION";
  const dltId=(env["EXOTEL_ATTENDANCE_"+key+"_DLT_TEMPLATE_ID"]??"").trim();

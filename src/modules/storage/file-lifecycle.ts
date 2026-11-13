@@ -24,6 +24,7 @@ import {
   presignUrl,
 } from "./s3-client";
 
+import { rawEnv } from "@/config/env";
 /** Recorded in scan_attested_by when the dev attestation marks an upload usable. */
 export const DEV_ATTESTATION_ID = "lms-vnext-dev-attestation";
 /** Reserved for the future privileged malware scanner. */
@@ -36,7 +37,7 @@ export const PRODUCTION_SCANNER_ID = "lms-vnext-privileged-scanner";
  * uploads. Production default: uploads stay VERIFYING / PROCESSING and are
  * never served until a real scanner records a verdict.
  */
-export function devAttestationAllowed(env: NodeJS.ProcessEnv = process.env) {
+export function devAttestationAllowed(env: NodeJS.ProcessEnv = rawEnv()) {
   return env["APP_ENV"] === "development" || env["APP_ENV"] === "test";
 }
 

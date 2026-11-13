@@ -5,13 +5,14 @@ import {renderLectureHallsCsv} from "@/modules/academics/college-lecture-halls-e
 import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { env } from "@/config/env";
 export const dynamic="force-dynamic";
 
 /** Browser acceptance fixture for synthetic academic CSV records only.
  * The production export API, auth context and database are never called.
  * This route is denied in every production build, even if the flag is set. */
 export default function AcademicExportProof(){
- if(process.env.NODE_ENV!=="development"||process.env.UX_G166_FIXTURE!=="1")notFound();
+ if(process.env.NODE_ENV!=="development"||env.UX_G166_FIXTURE!=="1")notFound();
  const examples=[
   {id:"batches",title:"Batch export",filename:"batches.csv",csv:renderBatchCsv([{
    id:"batch-1",name:"\u093E=SUM(1)",code:"B",status:"ACTIVE",programId:"program-1",

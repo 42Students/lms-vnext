@@ -18,6 +18,8 @@ import {
 } from "./recruiter-invite-otp-policy";
 import { TpoRecruiterInviteServiceError } from "./tpo-recruiter-invite-service";
 
+import { env } from "@/config/env";
+import { featureReady } from "@/config/features";
 /**
  * T-S1-03: authenticated first-party user's email must match the OTP target;
  * a client-supplied recruiterUserId is never accepted. The lead, latest code,
@@ -28,9 +30,9 @@ import { TpoRecruiterInviteServiceError } from "./tpo-recruiter-invite-service";
 export async function acceptTpoRecruiterInviteOtp(
   context:RequestContext, rawToken:unknown, rawCode:unknown,
 ):Promise<{accepted:true}> {
- if(process.env["TPO_RECRUITER_OTP_READY"]!=="VERIFIED")
+ if(!featureReady("tpoRecruiterOtp"))
    throw new Error("RECRUITER_OTP_NOT_REGISTERED");
- const secret=process.env["TPO_RECRUITER_OTP_HMAC_SECRET"];
+ const secret=env.TPO_RECRUITER_OTP_HMAC_SECRET;
  const invalid=()=>new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_FOUND");
  if(typeof rawToken!=="string" || !isRecruiterInviteTokenShape(rawToken) ||
     !recruiterInviteOtpSchema.safeParse(rawCode).success ||

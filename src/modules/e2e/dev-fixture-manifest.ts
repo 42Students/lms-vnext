@@ -1,6 +1,7 @@
 import "server-only";
 import { z } from "zod";
 
+import { rawEnv } from "@/config/env";
 /** External dev fixture provisioning runs in a single DB transaction before
  * publishing this manifest. This module NEVER creates accounts or objects.
  * It replaces the legacy unaudited seed endpoint with a read-only, gated
@@ -46,7 +47,7 @@ export const devFixtureManifestSchema = z.strictObject({
 });
 export type DevFixtureManifest = z.infer<typeof devFixtureManifestSchema>;
 
-export function readProvisionedDevFixtureManifest(env: NodeJS.ProcessEnv = process.env) {
+export function readProvisionedDevFixtureManifest(env: NodeJS.ProcessEnv = rawEnv()) {
   const raw = env["APP_E2E_SEED_MANIFEST_JSON"];
   if (!raw || raw.length > 24_000) return null;
   let parsed: unknown;
@@ -55,7 +56,7 @@ export function readProvisionedDevFixtureManifest(env: NodeJS.ProcessEnv = proce
   return result.success ? result.data : null;
 }
 
-export function devFixtureManifestEnabled(env: NodeJS.ProcessEnv = process.env) {
+export function devFixtureManifestEnabled(env: NodeJS.ProcessEnv = rawEnv()) {
   return env.NODE_ENV !== "production" &&
     env["APP_ENV"] === "development" &&
     env["APP_E2E_SEED_ENABLED"] === "true" &&
