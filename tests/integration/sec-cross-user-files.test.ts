@@ -20,6 +20,7 @@ import {
   seedLearnerCourseWriteFixture,
 } from "../support/learner-course-write-fixture";
 import { objects, pdfBytes, putFromGrant, resetFakeObjectStore } from "../support/fake-object-store";
+import { contextFor, insertPerson as insertActor, person, type Person, type TestRole } from "../support/actors";
 
 vi.mock("@/modules/storage/s3-client", async (importOriginal) => {
   const fake = await import("../support/fake-object-store");
@@ -49,8 +50,6 @@ const fixture = newLearnerCourseWriteFixture();
 const { ids } = fixture;
 const college = SEED_IDS.collegeA;
 
-type Person = { user: string; membership: string; role: string };
-const person = (): Person => ({ user: randomUUID(), membership: randomUUID(), role: randomUUID() });
 const learnerBp = person();
 const learnerCp = person();
 const teacher1 = person();
@@ -63,10 +62,7 @@ const enrollment = { b: randomUUID(), c: randomUUID() };
 const sectionEnrollment = { b: randomUUID(), c: randomUUID() };
 const teaching = { t1: randomUUID(), t2: randomUUID() };
 
-const as = (p: Person, role: "LEARNER" | "FACULTY" | "COLLEGE_ADMIN", collegeId = college): RequestContext => ({
-  user: { id: p.user, identityUid: "sec-file-" + p.user, platformStatus: "ACTIVE", systemRoles: [] },
-  membership: { id: p.membership, collegeId, organizationId: SEED_IDS.organization, status: "ACTIVE", roles: [role] },
-});
+const as = (p: Person, role: TestRole, collegeId: string = college): RequestContext => contextFor(p, role, collegeId, "sec-file");
 const learnerA = fixture.context;
 const learnerB = as(learnerBp, "LEARNER");
 const learnerC = as(learnerCp, "LEARNER");
@@ -81,11 +77,7 @@ const otherCollegeAdmin = as(person(), "COLLEGE_ADMIN", SEED_IDS.collegeB);
 
 const NOT_FOUND = { code: "STORAGE_NOT_FOUND" };
 
-async function insertPerson(p: Person, role: string, name: string) {
-  await pool.query("INSERT INTO users(id,identity_uid,display_name,platform_status) VALUES($1,$2,$3,'ACTIVE')", [p.user, "sec-file-" + p.user, name]);
-  await pool.query("INSERT INTO college_memberships(id,user_id,college_id,status) VALUES($1,$2,$3,'ACTIVE')", [p.membership, p.user, college]);
-  await pool.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,$3)", [p.role, p.membership, role]);
-}
+const insertPerson = (p: Person, role: string, name: string) => insertActor(pool, p, role, name, college, "sec-file");
 
 /** Stage a READY (verified, not yet submitted) pdf for a learner. */
 async function stage(actor: RequestContext, name: string, body: string) {

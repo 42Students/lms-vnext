@@ -20,6 +20,7 @@ import {
   newLearnerCourseWriteFixture,
   seedLearnerCourseWriteFixture,
 } from "../support/learner-course-write-fixture";
+import { contextFor, insertPerson as insertActor, person, type Person, type TestRole } from "../support/actors";
 
 /**
  * Assignment submissions: object-level access between people of the SAME college.
@@ -39,8 +40,6 @@ const fixture = newLearnerCourseWriteFixture(); // learner A, section 1, deliver
 const { ids } = fixture;
 const college = SEED_IDS.collegeA;
 
-type Person = { user: string; membership: string; role: string };
-const person = (): Person => ({ user: randomUUID(), membership: randomUUID(), role: randomUUID() });
 const learnerBp = person();
 const learnerCp = person();
 const teacher1 = person();
@@ -56,10 +55,7 @@ const enrollment = { b: randomUUID(), c: randomUUID() };
 const sectionEnrollment = { b: randomUUID(), c: randomUUID() };
 const teaching = { t1: randomUUID(), t2: randomUUID() };
 
-const as = (p: Person, role: "LEARNER" | "FACULTY" | "COLLEGE_ADMIN", collegeId = college): RequestContext => ({
-  user: { id: p.user, identityUid: "sec-sub-" + p.user, platformStatus: "ACTIVE", systemRoles: [] },
-  membership: { id: p.membership, collegeId, organizationId: SEED_IDS.organization, status: "ACTIVE", roles: [role] },
-});
+const as = (p: Person, role: TestRole, collegeId: string = college): RequestContext => contextFor(p, role, collegeId, "sec-sub");
 const learnerA = fixture.context;
 const learnerB = as(learnerBp, "LEARNER");
 const learnerC = as(learnerCp, "LEARNER");
@@ -89,11 +85,7 @@ async function refused(call: Promise<unknown>, who: string) {
   return error;
 }
 
-async function insertPerson(p: Person, role: string, name: string) {
-  await pool.query("INSERT INTO users(id,identity_uid,display_name,platform_status) VALUES($1,$2,$3,'ACTIVE')", [p.user, "sec-sub-" + p.user, name]);
-  await pool.query("INSERT INTO college_memberships(id,user_id,college_id,status) VALUES($1,$2,$3,'ACTIVE')", [p.membership, p.user, college]);
-  await pool.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,$3)", [p.role, p.membership, role]);
-}
+const insertPerson = (p: Person, role: string, name: string) => insertActor(pool, p, role, name, college, "sec-sub");
 async function insertSubmission(id: string, delivery: string, membership: string, text: string) {
   await pool.query(
     "INSERT INTO assignment_submissions(id,assignment_id,delivery_id,membership_id,submission_type,text_content) VALUES($1,$2,$3,$4,'TEXT',$5)",

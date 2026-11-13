@@ -12,8 +12,8 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [x] 0.1 CI green on main (last green run a7082f66e3; head b9517b34e3 is docs-only, run pending)
 - [x] 0.2 scripts/centralisation-metrics.mjs + docs/security/baselines/centralisation.json (35 metrics, all tracking until their module lands)
 - [x] 0.3 `npm run centralisation:check` is part of `npm run lint` (CI lint job)
-- [ ] 0.4 tests/support/actors.ts; security suites moved onto it
-- [ ] 0.5 coordination note for UX lanes
+- [x] 0.4 tests/support/actors.ts; five security suites moved onto it (63 DB tests green, tsc 0 source errors)
+- [x] 0.5 docs/planning/CENTRALISATION-IN-PROGRESS.md (what changes, what to use instead, which dirs, ratchet rules)
 
 ## Phase 1: safety nets
 - [ ] 1.1 production readiness startup guard
@@ -83,6 +83,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [ ] 8.5 final gate: LF unit suite, all DB suites, CI green
 
 ## Log (newest first)
+- 2026-11-14: Phase 0 complete (0.1-0.5).
 - 2026-11-14: 0.2 and 0.3 done: metrics script, baseline and lint wiring; metrics flip to ENFORCED in scripts/centralisation-metrics.mjs when their module lands.
 - 2026-11-14: owner confirmed GCP and Cloudflare are out of scope; rule added above and to memory.
 - 2026-11-14: tracker created.

@@ -23,6 +23,7 @@ import {
   newLearnerCareerCalendarFixture,
   seedLearnerCareerCalendarFixture,
 } from "../support/learner-career-calendar-fixture";
+import { contextFor, insertPerson as insertActor, person, type Person, type TestRole } from "../support/actors";
 
 /**
  * Placement applications: object-level access between people of the SAME college.
@@ -45,8 +46,6 @@ const otherJobId = fixture.drive.ids.olderJob; // learner B applied here
 const applicationA = fixture.applicationId;
 const applicationB = randomUUID();
 
-type Person = { user: string; membership: string; role: string };
-const person = (): Person => ({ user: randomUUID(), membership: randomUUID(), role: randomUUID() });
 const learnerBp = person();
 const tpoP = person();
 const adminP = person();
@@ -54,10 +53,7 @@ const facultyP = person();
 const enrollmentB = randomUUID();
 const decisionB = randomUUID();
 
-const as = (p: Person, role: "LEARNER" | "TPO" | "COLLEGE_ADMIN" | "FACULTY", collegeId = college): RequestContext => ({
-  user: { id: p.user, identityUid: "sec-app-" + p.user, platformStatus: "ACTIVE", systemRoles: [] },
-  membership: { id: p.membership, collegeId, organizationId: SEED_IDS.organization, status: "ACTIVE", roles: [role] },
-});
+const as = (p: Person, role: TestRole, collegeId: string = college): RequestContext => contextFor(p, role, collegeId, "sec-app");
 
 const learnerA = fixture.drive.learner.context;
 const learnerB = as(learnerBp, "LEARNER");
@@ -67,11 +63,7 @@ const faculty = as(facultyP, "FACULTY");
 // A TPO of a different college: same platform, wrong college.
 const otherCollegeTpo = as(person(), "TPO", SEED_IDS.collegeB);
 
-async function insertPerson(p: Person, role: string, name: string) {
-  await pool.query("INSERT INTO users(id,identity_uid,display_name,platform_status) VALUES($1,$2,$3,'ACTIVE')", [p.user, "sec-app-" + p.user, name]);
-  await pool.query("INSERT INTO college_memberships(id,user_id,college_id,status) VALUES($1,$2,$3,'ACTIVE')", [p.membership, p.user, college]);
-  await pool.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,$3)", [p.role, p.membership, role]);
-}
+const insertPerson = (p: Person, role: string, name: string) => insertActor(pool, p, role, name, college, "sec-app");
 
 const status = async (id: string) =>
   (await pool.query("SELECT status FROM placement_applications WHERE id=$1", [id])).rows[0]?.status as string | undefined;

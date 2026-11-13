@@ -18,6 +18,7 @@ import {
 } from "@/modules/announcements/service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
+import { person, seedContext, type TestRole } from "../support/actors";
 
 /**
  * Object-level access between people of the SAME college (row-level security only separates colleges).
@@ -33,13 +34,7 @@ const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL, max: 2 
 
 const label = "SEC-ISO-" + randomUUID().slice(0, 8);
 
-const ctx = (user: string, membership: string, college: string, roles: RequestContext["membership"] extends infer M ? string[] : never): RequestContext => ({
-  user: { id: user, identityUid: "sec-iso-" + user, platformStatus: "ACTIVE", systemRoles: [] },
-  membership: {
-    id: membership, collegeId: college, organizationId: SEED_IDS.organization, status: "ACTIVE",
-    roles: roles as never,
-  },
-});
+const ctx = (user: string, membership: string, college: string, roles: TestRole[]): RequestContext => seedContext(user, membership, college, roles, "sec-iso");
 
 const learnerA = ctx(SEED_IDS.learnerUser, SEED_IDS.learnerCollegeAMembership, SEED_IDS.collegeA, ["LEARNER"]);
 const faculty = ctx(SEED_IDS.facultyUser, SEED_IDS.facultyCollegeAMembership, SEED_IDS.collegeA, ["FACULTY"]);
@@ -47,7 +42,7 @@ const admin = ctx(SEED_IDS.collegeAdminUser, SEED_IDS.collegeAdminMembership, SE
 // A College B administrator: same platform, different college.
 const otherCollegeAdmin = ctx(SEED_IDS.facultyUser, SEED_IDS.facultyCollegeBMembership, SEED_IDS.collegeB, ["COLLEGE_ADMIN"]);
 
-const b = { user: randomUUID(), membership: randomUUID(), role: randomUUID() };
+const b = person();
 const learnerB = ctx(b.user, b.membership, SEED_IDS.collegeA, ["LEARNER"]);
 
 const digest = (seed: string) => createHash("sha256").update(seed).digest("hex");

@@ -15,6 +15,7 @@ import { VerificationStateError } from "@/modules/profile-verification/domain";
 import { openCollegeVerificationDocument } from "@/modules/verification/staff-private-document-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
+import { contextFor, insertPerson as insertActor, person, type Person, type TestRole } from "../support/actors";
 
 // The storage layer is a spy: this file proves WHO is allowed to ask for a signed link, and that nobody else ever does.
 const grants = vi.hoisted(() => ({ calls: [] as Array<{ objectKey: string; ownerMembershipId: string }> }));
@@ -39,8 +40,6 @@ if (!process.env.TEST_DATABASE_URL || process.env.DB03_ISOLATED_TEST_DATABASE !=
 assertDb018DisposableTarget(process.env, { serviceBound: true });
 const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL, max: 2 });
 
-type Person = { user: string; membership: string; role: string };
-const person = (): Person => ({ user: randomUUID(), membership: randomUUID(), role: randomUUID() });
 const learnerAp = person();
 const learnerBp = person();
 const facultyP = person();
@@ -54,10 +53,7 @@ const receiptB = randomUUID(); // B's own marksheet
 const verificationA = randomUUID();
 const objectKeyA = "private/sec-prof/" + receiptA;
 
-const as = (p: Person, role: "LEARNER" | "FACULTY" | "TPO" | "COLLEGE_ADMIN", collegeId = collegeA): RequestContext => ({
-  user: { id: p.user, identityUid: "sec-prof-" + p.user, platformStatus: "ACTIVE", systemRoles: [] },
-  membership: { id: p.membership, collegeId, organizationId: SEED_IDS.organization, status: "ACTIVE", roles: [role] },
-});
+const as = (p: Person, role: TestRole, collegeId: string = collegeA): RequestContext => contextFor(p, role, collegeId, "sec-prof");
 const learnerA = as(learnerAp, "LEARNER");
 const learnerB = as(learnerBp, "LEARNER");
 const faculty = as(facultyP, "FACULTY");
@@ -68,11 +64,7 @@ const adminA: RequestContext = {
 };
 const adminB = as(adminBp, "COLLEGE_ADMIN", collegeB);
 
-async function insertPerson(p: Person, role: string, name: string, collegeId: string) {
-  await pool.query("INSERT INTO users(id,identity_uid,display_name,platform_status) VALUES($1,$2,$3,'ACTIVE')", [p.user, "sec-prof-" + p.user, name]);
-  await pool.query("INSERT INTO college_memberships(id,user_id,college_id,status) VALUES($1,$2,$3,'ACTIVE')", [p.membership, p.user, collegeId]);
-  await pool.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,$3)", [p.role, p.membership, role]);
-}
+const insertPerson = (p: Person, role: string, name: string, collegeId: string) => insertActor(pool, p, role, name, collegeId, "sec-prof");
 
 /** The call must be refused by an access rule, never by bad input or a crash. */
 async function refusedWith(call: Promise<unknown>, who: string, kind: "authorization" | "gallery" | "verification") {
