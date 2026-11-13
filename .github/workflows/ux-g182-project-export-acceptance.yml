@@ -78,7 +78,7 @@ jobs:
           node -e 'const s=require("./ux-g182-results.json").stats;console.log("G182 browser cases:",s);if(s.expected!==15||s.unexpected!==0||s.flaky!==0||s.skipped!==0)process.exit(1)'
       - name: Preserve evidence screenshots and download traces
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: ux-g182-project-export-browser-${{ github.sha }}
           path: |
