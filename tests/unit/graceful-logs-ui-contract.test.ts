@@ -24,7 +24,10 @@ describe("known error triage UI resilience", () => {
     expect(source).toContain('import { FRIENDLY_MESSAGES, friendlyApiError } from "@/lib/friendly-error"');
     // Two mutations render the mapped message; a third use only decides whether the outcome is uncertain and shows nothing.
     expect(source.match(/error instanceof FriendlyFetchError/g)).toHaveLength(3);
-    expect(source.match(/error\.message === FRIENDLY_MESSAGES\.timeout/g)).toHaveLength(2);
+    // The update path maps a timeout to the safe message; the first mutation instead treats a timeout as an uncertain
+    // outcome (never retried, reload required) and shows a fixed sentence.
+    expect(source.match(/error\.message === FRIENDLY_MESSAGES\.timeout/g)).toHaveLength(1);
+    expect(source).toContain("The update may have been saved. Reload known errors before trying again.");
     expect(source).not.toMatch(/description:\s*error\.message\b/);
     expect(source).toContain("setConfirmMute(false)");
     expect(source).toContain("router.refresh()");

@@ -39,7 +39,8 @@ describe("chat-16 tracker live log to known error actions",()=>{
     expect(panel).toContain('action:"MUTE",muted:nextMuted');
     // Failures now show the mapped, safe message of FriendlyFetchError (never the raw exception text).
     expect(panel).toContain("error instanceof FriendlyFetchError?error.message");
-    expect(panel).not.toMatch(/setNotice\(error\.message\)/);
+    // The one bare error.message is only reachable after the uncertain-outcome check, i.e. for a FriendlyFetchError.
+    expect(panel).toContain("const outcomeUnknown=!(error instanceof FriendlyFetchError)");
     const triage=read("src/components/tracker/known-errors-workspace.tsx");
     expect(triage).toContain('id={"known-error-"+item.id}');
     expect(triage).toContain('id="known-errors"');

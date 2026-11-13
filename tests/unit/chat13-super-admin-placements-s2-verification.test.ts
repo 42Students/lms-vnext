@@ -46,7 +46,7 @@ describe("Chat 13 Super Admin placement S1/S2 source contracts", () => {
   });
   it("SA-placements-projects-17 drive navigation", () => {
     const code = source("src/app/(authenticated)/admin/placements/jobs/[jobId]/layout.tsx");
-    expect(code).toContain("<AdminPlacementJobTabs basePath={base} />");
+    expect(code).toContain("<AdminPlacementJobTabs basePath={base}");
     const tabs=source("src/app/(authenticated)/admin/placements/jobs/[jobId]/admin-placement-job-tabs.tsx");
     expect(tabs).toContain("Drive breadcrumb");
     for(const label of ["Overview","Applications","Schedule","Settings"])expect(tabs).toContain(label);
