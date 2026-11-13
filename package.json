@@ -13,7 +13,7 @@
     "security:integrity": "node scripts/security/test-integrity.mjs",
     "security:deps": "node scripts/security/dependency-deny.mjs",
     "security:api-surface": "node scripts/security/api-surface-audit.mjs",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "node --max-old-space-size=6144 ./node_modules/typescript/bin/tsc --noEmit",
     "test": "vitest run",
     "test:quarantine": "node scripts/run-quarantine.mjs",
     "centralisation:check": "node scripts/centralisation-metrics.mjs --check",
