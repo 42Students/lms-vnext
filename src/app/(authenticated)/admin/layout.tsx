@@ -1,7 +1,7 @@
 import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
 import {getCurrentRequestContext} from "@/auth/request-context";
-import {isSuperAdmin} from "@/modules/identity/context";
+import {canAccessRolePortal} from "@/modules/identity/role-portal-policy";
 import {SuperAdminLegacyGroupTabs} from "@/components/admin/super-admin-legacy-group-tabs";
 import { TextLink } from "@/components/ui/text-link";
 
@@ -11,7 +11,7 @@ export default async function SuperAdminLayout({
   const context=await getCurrentRequestContext();
   // Deny the console but retain the user's existing session/workspace.
   // Old LMS showed a Superadmin access-denied message without signing out.
-  if(!isSuperAdmin(context))return <div className="min-w-0 space-y-4">
+  if(!canAccessRolePortal(context,"admin"))return <div className="min-w-0 space-y-4">
     <PageHeader title="Access denied"/>
     <ErrorState title="Access denied. You are not authorized to access Superadmin."
       description="Your current account session is unchanged."
