@@ -26,3 +26,22 @@ solid is recorded as such and locked with a test, so it cannot quietly regress.
 ## Not done here (needs owner or a cloud change)
 
 Independent reviewer, Cloud SQL SSL enforcement, secret rotation, security contact address. Unchanged from `OWNER-ACTIONS.md`.
+
+---
+
+# Pass 2: what is still unproven, and the tests that now cover it
+
+Pass 1 closed eight core gaps. Pass 2 went after the biggest unknown: access *between people of the same college*, which row-level
+security cannot see (it only separates colleges), plus validation, list bounds and the red CI gate.
+
+| # | Item | Finding | Result | Locked by |
+|---|---|---|---|---|
+| 1 | Same-college object access | About 1,075 routes decide access inside their own service. Measured: every signed-in route reaches an actor-based authorization decision; the 52 routes that query the database directly were read for scoping and are re-checked by the service. | Executable cross-user tests on a real database: device sessions (list, revoke, sign-out-others) and notices addressed to one learner cannot be seen, changed, withdrawn or restored by another learner, a faculty member, or another college's admin. Existing suites already cover files, profile, saved jobs, attendance and course access. | `tests/integration/sec-same-college-isolation.test.ts`, `tests/unit/sec-route-contracts.test.ts` (A, A2) |
+| 2 | Input validation | The audit's 286 "no schema in the route file" were checked downstream: 284 reach a schema in the service; the other 2 are machine routes with no body. The 76 "not strict" drop unknown keys (Zod default), so mass assignment is not possible; they just do not reject extras. | Zero-tolerance contract: every body-reading mutating route reaches a schema. | `sec-route-contracts` (B) |
+| 3 | List bounds | Of 122 routes mentioning a page size, all but one alias reach a hard maximum (for example `limit` max 100 in the people schema); the rest were the word "limit" meaning a rate limit. | Contract: every page-size route reaches an upper bound; six reviewed rate-limit-only exceptions are named in the test. | `sec-route-contracts` (C) |
+| 4 | CI gate | 8 tests in 5 files failed because layouts moved their guard into the central `canAccessRolePortal(context, role)` policy and the tests still searched for the old inline form. The guards were intact. | Tests updated to the current form, with the same ordering checks (guard before children). | the five files, plus `chat17-identity-portal-matrix` |
+
+How strong the contracts are: they prove a check is *reachable* from a route, following service imports two levels deep (the wrapper,
+shared helpers and auth plumbing are excluded, because they mention these words themselves). A deliberately bad canary route fails
+all three. They do not prove the check is *correct* for every object; that is what per-family tests like the same-college file are for,
+and each new family should add one.
