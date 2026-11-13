@@ -15,6 +15,7 @@ import { FRIENDLY_MESSAGES } from "@/lib/friendly-error";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 
+import { TIMEOUT_MS } from "@/security/limits";
 function roleLabel(roles: readonly string[]) {
   return roles
     .map((role) =>
@@ -40,7 +41,7 @@ export function MembershipChooser({
     null,
   );
   const [error, setError] = useState<string | null>(null);
-  const { pending, run } = useGuardedAction({ busyLabel: "Opening…", timeoutMs: 30_000 });
+  const { pending, run } = useGuardedAction({ busyLabel: "Opening…", timeoutMs: TIMEOUT_MS.SLOW });
   /** One card per college and role: a person with several roles chooses a workspace, roles are never mixed. */
   const entries = useMemo(() => memberships.flatMap((membership) =>
     membership.status === "ACTIVE" && membership.roles.length > 1

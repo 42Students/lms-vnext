@@ -4,6 +4,7 @@ import {DELETE as revokeCurrentSession} from "@/app/api/auth/session/route";
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { RATE_LIMITS } from "@/security/limits";
 export const runtime="nodejs";
 
 /** Legacy POST /api/v1/auth/logout adapter. No Bearer refresh-token
@@ -24,6 +25,6 @@ async function handlePOST(request:Request){
  return revokeCurrentSession(request);
 }
 export const POST = route(
-  { auth: "public", publicReason: "Sign-in, recovery and session endpoints run before or independently of a session; each handler enforces its own challenge, device or session-state checks.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  { auth: "public", publicReason: "Sign-in, recovery and session endpoints run before or independently of a session; each handler enforces its own challenge, device or session-state checks.", rateLimit: RATE_LIMITS.BULK },
   ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
 );

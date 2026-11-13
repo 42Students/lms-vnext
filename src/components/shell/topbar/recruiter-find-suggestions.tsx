@@ -5,6 +5,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {SearchIcon} from "./icons";
 import style from "./topbar.module.css";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type Choice={id:string;name:string};
 type SearchResult={key:string;kind:"Drive";title:string;context:string;href:string};
 type Payload={results:SearchResult[];chooseCollege:boolean;choices:Choice[]};
@@ -40,7 +41,7 @@ export function RecruiterFindSuggestions({
   const timer=window.setTimeout(()=>{
    void apiFetch<unknown>("/api/placements/recruiter/quick-search?q="+encodeURIComponent(term)+
     (collegeId?"&collegeId="+encodeURIComponent(collegeId):""),{
-     signal:controller.signal,cache:"no-store",timeoutMs:12000,
+     signal:controller.signal,cache:"no-store",timeoutMs:TIMEOUT_MS.REQUEST,
     }).then(value=>{
      if(controller.signal.aborted)return;
      if(!value||typeof value!=="object"||!("results" in value)||

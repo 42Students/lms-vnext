@@ -5,6 +5,7 @@ import {readBoundedRecruiterInboundBody} from "@/modules/placements/recruiter-ma
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { RATE_LIMITS } from "@/security/limits";
 export const runtime="nodejs";
 
 /**
@@ -69,6 +70,6 @@ async function handlePOST(request:Request){
  }
 }
 export const POST = route(
-  { auth: "public", publicReason: "Machine-to-machine endpoint: the handler authenticates the caller with its own shared secret or signature.", csrf: false, csrfExemptReason: "Callers are servers or schedulers and send no browser Origin; the handler checks its credential instead.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  { auth: "public", publicReason: "Machine-to-machine endpoint: the handler authenticates the caller with its own shared secret or signature.", csrf: false, csrfExemptReason: "Callers are servers or schedulers and send no browser Origin; the handler checks its credential instead.", rateLimit: RATE_LIMITS.BULK },
   ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
 );

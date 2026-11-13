@@ -12,6 +12,7 @@ import {friendlyApiError} from "@/lib/friendly-error";
 import {Textarea} from "@/components/ui/textarea";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TIMEOUT_MS } from "@/security/limits";
 export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnded=false,quote}:{
  threadId:string;unread:boolean;actorUserId:string;accessEnded?:boolean;quote?:string;
 }){
@@ -33,7 +34,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
   if(!unread||markedOnOpen.current===threadId)return;
   markedOnOpen.current=threadId;
   void apiFetch("/api/placements/tpo/messages/threads/"+encodeURIComponent(threadId)+"/read",{
-    method:"POST",credentials:"same-origin",timeoutMs:12000,
+    method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
     headers:{"Content-Type":"application/json"},body:JSON.stringify({confirmed:true}),
   }).then(()=>router.refresh()).catch(reason=>{
     setError(reason instanceof Error?reason.message:friendlyApiError({network:true}));
@@ -76,7 +77,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
   try{
    await apiFetch("/api/placements/tpo/messages/threads/"+
     encodeURIComponent(threadId)+"/"+mode,{
-     method:"POST",credentials:"same-origin",timeoutMs:15000,
+     method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.STANDARD,
      headers:{"Content-Type":"application/json"},
      body:JSON.stringify(mode==="messages"?{body:body.trim()}:{confirmed:true}),
    });

@@ -13,6 +13,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 
+import { TIMEOUT_MS } from "@/security/limits";
 const CANCEL_REASONS = [
   "Company withdrew",
   "Hiring freeze",
@@ -29,7 +30,7 @@ type Preview = {
 
 export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
   const router = useRouter();
-  const {run}=useGuardedAction({timeoutMs:35000});
+  const {run}=useGuardedAction({timeoutMs:TIMEOUT_MS.BATCH});
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reason, setReason] = useState("");

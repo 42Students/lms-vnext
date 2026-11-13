@@ -11,6 +11,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {Textarea} from "@/components/ui/textarea";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TIMEOUT_MS } from "@/security/limits";
 type Row={applicationId:string;name:string;roleTitle:string;annualCtcInr:number|null;rank:number;
  reasons:string[];canPromote:boolean;promotionStatus:string|null};
 type Preview={storageReady:boolean;freeSeats:number|null;activeOffers:number;rows:Row[];next:Row|null;previewToken:string};
@@ -23,7 +24,7 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
   inFlight.current=true;
   setBusy(true);setError("");setSuccess("");
   try{const data=await apiFetch<{seatNumber?:number}>("/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/waitlist-promote",{
-   method:"POST",credentials:"same-origin",timeoutMs:35000,headers:{"content-type":"application/json"},
+   method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.BATCH,headers:{"content-type":"application/json"},
    body:JSON.stringify({action:"OFFER_NEXT",confirmed:true,expectedPreviewToken:preview.previewToken,reason:reason.trim()}),
   });
   if(typeof data?.seatNumber!=="number"||!Number.isSafeInteger(data.seatNumber)||data.seatNumber<1)

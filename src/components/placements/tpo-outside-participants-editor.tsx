@@ -9,6 +9,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {outsideDriveResultLabel} from "@/modules/placements/recorded-outside-participation-model";
 import { Label } from "@/components/ui/label";
+import { TIMEOUT_MS } from "@/security/limits";
 const outcomes=["PARTICIPATED","PASSED","FAILED","SELECTED","HIRED"] as const;
 type Result=typeof outcomes[number];
 export function TpoOutsideParticipantsEditor({recordId,available,choices,participants}:{
@@ -17,7 +18,7 @@ export function TpoOutsideParticipantsEditor({recordId,available,choices,partici
  participants:readonly {id:string;membershipId:string;name:string|null;result:string;notes:string|null}[];
 }){
  const router=useRouter();
- const {run,pending}=useGuardedAction({timeoutMs:30000});
+ const {run,pending}=useGuardedAction({timeoutMs:TIMEOUT_MS.SLOW});
  const [membershipId,setMembershipId]=useState("");
  const [result,setResult]=useState<Result>("PARTICIPATED");
  const [message,setMessage]=useState("");

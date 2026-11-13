@@ -3,6 +3,7 @@ import {outboundFetch} from "@/lib/outbound";
 import {appendSmsDeliveryAttempt} from "@/modules/notifications/exotel-sms";
 import {verifiedParentPhoneSchema,type AttendanceParentSmsKind} from "./parent-sms-model";
 import { rawEnv } from "@/config/env";
+import { TIMEOUT_MS } from "@/security/limits";
 /** A transport response only certifies that the provider accepted the API
  * request; handset delivery needs an independent delivery receipt. */
 export const ATTENDANCE_PARENT_SMS_STATUS_COPY={
@@ -51,7 +52,7 @@ export async function sendAttendanceParentSms(input:{
     method:"POST",headers:{
      Authorization:"Basic "+Buffer.from(key+":"+token).toString("base64"),
      "Content-Type":"application/x-www-form-urlencoded",Accept:"application/json",
-    },body:form,timeoutMs:10000,maxAttempts:1,fetchImpl,
+    },body:form,timeoutMs:TIMEOUT_MS.QUICK,maxAttempts:1,fetchImpl,
    });
   if(!response.ok){
    await record("FAILED",null,"PROVIDER_HTTP_REJECTED");

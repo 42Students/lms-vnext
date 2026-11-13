@@ -13,11 +13,12 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import type {TpoBatchRuleFields,TpoBatchRuleOverrides} from "@/modules/placements/tpo-batch-rules-model";
 import { Heading } from "@/components/ui/heading";
 
+import { TIMEOUT_MS } from "@/security/limits";
 export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,expectedVersion,readOnly}:{
  batchId:string;batchName:string;college:TpoBatchRuleFields;initialOverride:TpoBatchRuleOverrides;
  expectedVersion:string;readOnly:boolean;
 }){
- const router=useRouter(),{run}=useGuardedAction({timeoutMs:35000});
+ const router=useRouter(),{run}=useGuardedAction({timeoutMs:TIMEOUT_MS.BATCH});
  const [draft,setDraft]=useState<TpoBatchRuleOverrides>(initialOverride);
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [expected,setExpected]=useState(expectedVersion);

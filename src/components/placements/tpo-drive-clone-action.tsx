@@ -8,11 +8,12 @@ import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {useToast} from "@/components/ui/toast";
 
+import { TIMEOUT_MS } from "@/security/limits";
 /** TPO-drives-26 / GR-04 / GR-35: cloning is an explicit, guarded draft mutation. */
 export function TpoDriveCloneAction({jobId,label="Run it again"}:{jobId:string;label?:string}){
  const router=useRouter();
  const {showToast}=useToast();
- const {pending,run}=useGuardedAction({timeoutMs:30000});
+ const {pending,run}=useGuardedAction({timeoutMs:TIMEOUT_MS.SLOW});
  const [open,setOpen]=useState(false);
  const [error,setError]=useState<string|null>(null);
  async function clone(){

@@ -6,6 +6,7 @@ import {readCollegeLogoForm,CollegeLogoRequestError} from "@/modules/colleges/co
 import {CollegeLogoError,uploadCollegeLogo,getPublicCollegeLogo,removeCollegeLogo} from "@/modules/colleges/admin-branding-logo-service";
 import { route } from "@/security/route";
 import { CACHE, privateJson } from "@/security/responses";
+import { RATE_LIMITS } from "@/security/limits";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 // The logo uses an explicitly scoped same-origin multipart endpoint as the
@@ -53,7 +54,7 @@ async function handlePOST(request:Request,{params}:Params){
  }
 }
 export const POST = route(
-  { auth: "public", publicReason: "Link or form opened without an account (token, slug or anonymous report); the handler validates the token or input and is rate limited per address.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  { auth: "public", publicReason: "Link or form opened without an account (token, slug or anonymous report); the handler validates the token or input and is rate limited per address.", rateLimit: RATE_LIMITS.BULK },
   ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
 );
 async function handleGET(_request:Request,{params}:Params){
@@ -68,7 +69,7 @@ async function handleGET(_request:Request,{params}:Params){
  }catch{return new Response(null,{status:503,headers:{"Cache-Control":CACHE.NONE}});}
 }
 export const GET = route(
-  { auth: "public", publicReason: "Link or form opened without an account (token, slug or anonymous report); the handler validates the token or input and is rate limited per address.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  { auth: "public", publicReason: "Link or form opened without an account (token, slug or anonymous report); the handler validates the token or input and is rate limited per address.", rateLimit: RATE_LIMITS.BULK },
   ({ request, params }) => handleGET(request as Parameters<typeof handleGET>[0], { params: Promise.resolve(params) } as Parameters<typeof handleGET>[1]),
 );
 
@@ -80,6 +81,6 @@ async function handleDELETE(request:Request,{params}:Params){
  }catch(error){return apiErrorResponse(error);}
 }
 export const DELETE = route(
-  { auth: "public", publicReason: "Link or form opened without an account (token, slug or anonymous report); the handler validates the token or input and is rate limited per address.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  { auth: "public", publicReason: "Link or form opened without an account (token, slug or anonymous report); the handler validates the token or input and is rate limited per address.", rateLimit: RATE_LIMITS.BULK },
   ({ request, params }) => handleDELETE(request as Parameters<typeof handleDELETE>[0], { params: Promise.resolve(params) } as Parameters<typeof handleDELETE>[1]),
 );

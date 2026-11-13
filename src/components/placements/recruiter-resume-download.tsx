@@ -4,12 +4,13 @@ import { InlineNotice } from "@/components/ui/inline-notice";
 import {useState} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 
+import { TIMEOUT_MS } from "@/security/limits";
 /** A signed resume URL exists only in an ephemeral response to this click.
  * Never place a raw private receipt or object key into SSR props, DOM or storage.
  */
 export function RecruiterResumeDownload({jobId,applicationId}:{jobId:string;applicationId:string}){
  const [message,setMessage]=useState("");
- const {run,pending}=useGuardedAction({timeoutMs:15000,busyLabel:"Preparing resume…"});
+ const {run,pending}=useGuardedAction({timeoutMs:TIMEOUT_MS.STANDARD,busyLabel:"Preparing resume…"});
  async function openResume(){
   if(pending)return;
   setMessage("");

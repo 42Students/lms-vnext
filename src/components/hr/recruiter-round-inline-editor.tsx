@@ -12,6 +12,7 @@ import {isVerifiedHrRoundMutation,hrRoundEditorHasUnsavedChanges} from "@/module
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type Kind="TALK"|"TEST"|"VENDOR_TEST"|"GD"|"INTERVIEW";
 type Row={id:string;name:string;kind:string;mode:string|null;status:string;
  createdByYou:boolean;updatedAt:string;inUse?:boolean};
@@ -36,7 +37,7 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
  const [notice,setNotice]=useState("");
  const [error,setError]=useState("");
  const [nameError,setNameError]=useState("");
- const {pending,run}=useGuardedAction({timeoutMs:30000});
+ const {pending,run}=useGuardedAction({timeoutMs:TIMEOUT_MS.SLOW});
  const reset=()=>{setOpen(false);setConfirmRemove(false);setConfirmDiscard(false);setActive(null);setName("");setError("");setNameError("");};
  const dirty=hrRoundEditorHasUnsavedChanges({name,kind,mode},active);
  function requestClose(){

@@ -14,6 +14,7 @@ import { isExotelAcceptedResponse } from "./provider-acceptance-model";
 import { isCampaignTemplateKey } from "./template-boundary-model";
 
 import { rawEnv } from "@/config/env";
+import { TIMEOUT_MS } from "@/security/limits";
 /** Templates are provisioned server-side; OTP IDs never enter this registry. */
 export type OutboundTemplate = {
   zeptoTemplateKey?: string;
@@ -236,7 +237,7 @@ export function createOutboundProvider(
             "Content-Type": "application/x-www-form-urlencoded",
             Accept: "application/json",
           },
-          body: form, timeoutMs: 10_000, maxAttempts: 1, fetchImpl,
+          body: form, timeoutMs: TIMEOUT_MS.QUICK, maxAttempts: 1, fetchImpl,
         },
       );
       if (!response.ok) return { status: "FAILED", reason: "SMS_PROVIDER_REJECTED", httpStatus: response.status };

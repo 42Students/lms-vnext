@@ -6,6 +6,7 @@ import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {tpoHeaderSnapshotSchema} from "@/modules/activity/tpo-header-snapshot-model";
 
+import { TIMEOUT_MS } from "@/security/limits";
 /** TPO-inbox-team-68: retain last successful notification cards on a failed refresh. */
 export function TpoNotificationRefresh(){
  const router=useRouter();
@@ -17,7 +18,7 @@ export function TpoNotificationRefresh(){
    loading=true;setState("refreshing");
    try{
     const raw=await apiFetch<unknown>("/api/tpo/header-snapshot",{
-     credentials:"same-origin",cache:"no-store",timeoutMs:12000,
+     credentials:"same-origin",cache:"no-store",timeoutMs:TIMEOUT_MS.REQUEST,
     });
     if(!tpoHeaderSnapshotSchema.safeParse(raw).success)throw new Error("Invalid refresh");
     if(active){setState("idle");router.refresh();}

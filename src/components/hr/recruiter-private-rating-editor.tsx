@@ -8,6 +8,7 @@ import {parseRecruiterPrivateReviewReceipt,isConfirmedRecruiterPrivateReview,
  type RecruiterPrivateReviewReceipt} from "@/modules/placements/recruiter-private-rating-receipt-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TIMEOUT_MS } from "@/security/limits";
 type Review=RecruiterPrivateReviewReceipt;
 const empty:Review={rating:null,note:"",updatedAt:null};
 type PrivateRatingEditorProps={jobId:string;applicationId:string};
@@ -24,7 +25,7 @@ function RecruiterPrivateRatingEditorState({jobId,applicationId}:PrivateRatingEd
  const [saved,setSaved]=useState<Review>(empty);
  const [rating,setRating]=useState<number|null>(null),[note,setNote]=useState("");
  const [ready,setReady]=useState(false),[message,setMessage]=useState("");
- const {run,pending}=useGuardedAction({timeoutMs:15000});
+ const {run,pending}=useGuardedAction({timeoutMs:TIMEOUT_MS.STANDARD});
  const mounted=useRef(true);
  useEffect(()=>{
   mounted.current=true;

@@ -9,8 +9,9 @@ import { InlineNotice } from "@/components/ui/inline-notice";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TIMEOUT_MS } from "@/security/limits";
 export function TpoDeleteDraftAction({jobId,updatedAt}:{jobId:string;updatedAt:string}){
- const router=useRouter(),{run}=useGuardedAction({timeoutMs:35000});
+ const router=useRouter(),{run}=useGuardedAction({timeoutMs:TIMEOUT_MS.BATCH});
  const [reviewed,setReviewed]=useState(false),[pending,setPending]=useState(false);
  const [error,setError]=useState("");
  async function archive(){

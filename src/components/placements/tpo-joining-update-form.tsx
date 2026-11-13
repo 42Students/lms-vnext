@@ -14,6 +14,7 @@ import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { Label } from "@/components/ui/label";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type JoiningChoice = "JOINED" | "DEFERRED" | "DID_NOT_JOIN";
 
 export function TpoJoiningUpdateForm({
@@ -26,7 +27,7 @@ export function TpoJoiningUpdateForm({
   initialJoiningDate: string | null;
 }) {
   const router = useRouter();
-  const {run}=useGuardedAction({timeoutMs:40000});
+  const {run}=useGuardedAction({timeoutMs:TIMEOUT_MS.VERY_SLOW});
   const [status, setStatus] = useState<JoiningChoice>(
     initialStatus === "DEFERRED" || initialStatus === "DID_NOT_JOIN" ? initialStatus : "JOINED");
   const [joiningDate, setJoiningDate] = useState(initialJoiningDate ?? "");
@@ -64,7 +65,7 @@ export function TpoJoiningUpdateForm({
           {
             method: "PUT",
             credentials: "same-origin",
-            timeoutMs: 35000,
+            timeoutMs: TIMEOUT_MS.BATCH,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               status,

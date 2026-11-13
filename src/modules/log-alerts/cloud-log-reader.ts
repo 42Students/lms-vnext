@@ -6,6 +6,7 @@
  */
 import { redactAlertText, safeAlertPath, safeAlertLabel } from "./redaction";
 
+import { TIMEOUT_MS } from "@/security/limits";
 export type CloudErrorRecord = {
   id: string;
   timestamp: Date;
@@ -118,7 +119,7 @@ export async function boundedCloudJsonRequest(
   url: string,
   init: RequestInit,
   transport: Transport,
-  timeoutMs = 5_000,
+  timeoutMs = TIMEOUT_MS.SHORT,
 ): Promise<{ ok: boolean; status: number; payload: unknown }> {
   const controller = new AbortController();
   let timer: ReturnType<typeof setTimeout> | undefined;

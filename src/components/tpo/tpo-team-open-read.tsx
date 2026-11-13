@@ -4,6 +4,7 @@ import {Button} from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
+import { TIMEOUT_MS } from "@/security/limits";
 /** A POST, not a GET side effect, moves the user's per-thread read pointer on open. */
 export function TpoTeamOpenRead({threadId}:{threadId:string}){
  const router=useRouter();
@@ -14,7 +15,7 @@ export function TpoTeamOpenRead({threadId}:{threadId:string}){
   async function acknowledge(){
    try{
     await apiFetch("/api/placements/tpo/team/threads/"+encodeURIComponent(threadId)+"/acknowledge",{
-     method:"POST",credentials:"same-origin",timeoutMs:12000,
+     method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
      headers:{Accept:"application/json"},
     });
     if(active)router.refresh();

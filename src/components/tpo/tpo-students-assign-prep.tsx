@@ -11,6 +11,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {useTpoStudentsSelection} from "./tpo-students-selection";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TIMEOUT_MS } from "@/security/limits";
 type Course={id:string;cohortId:string;name:string;code:string};
 type Result={id:string;status:"assigned"|"duplicate"|"skipped"};
 export function TpoStudentsAssignPrep(){
@@ -20,7 +21,7 @@ export function TpoStudentsAssignPrep(){
  const [offeringId,setOfferingId]=useState(""),[dueAt,setDueAt]=useState("");
  const [confirm,setConfirm]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [results,setResults]=useState<Result[]>([]);
- const {run,pending}=useGuardedAction({timeoutMs:120000});
+ const {run,pending}=useGuardedAction({timeoutMs:TIMEOUT_MS.UPLOAD});
  useEffect(()=>{void Promise.resolve().then(async()=>{
   try{const r=await apiFetch<{courses:Course[]}>("/api/placements/tpo/students/prep",{cache:"no-store"});
    setCourses(r.courses);

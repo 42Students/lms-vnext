@@ -5,6 +5,7 @@ import {useToast} from "@/components/ui/toast";
 import {useState} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
+import { TIMEOUT_MS } from "@/security/limits";
 export const PUBLIC_PLACEMENT_TOGGLE_ERRORS={
  unavailable:"Public placement publication is unavailable. Contact your administrator.",
  small:"At least five consented learners in an invited, active batch are required.",
@@ -13,7 +14,7 @@ export const PUBLIC_PLACEMENT_TOGGLE_ERRORS={
 export function TpoPublicPlacementToggle({enabled,canEnable}:{enabled:boolean;canEnable:boolean}){
  const router=useRouter();
  const {showToast}=useToast();
- const {pending:busy,run}=useGuardedAction({timeoutMs:30000});
+ const {pending:busy,run}=useGuardedAction({timeoutMs:TIMEOUT_MS.SLOW});
  const [message,setMessage]=useState("");
  async function save(){
   setMessage("");

@@ -13,6 +13,7 @@ import {
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { RATE_LIMITS } from "@/security/limits";
 export const runtime = "nodejs";
 
 /** Legacy session migration map:
@@ -46,7 +47,7 @@ async function handleGET() {
   }
 }
 export const GET = route(
-  { auth: "public", publicReason: "Sign-in, recovery and session endpoints run before or independently of a session; each handler enforces its own challenge, device or session-state checks.", csrf: false, csrfExemptReason: "The handler applies its own origin and challenge checks, unchanged by this wrapper.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  { auth: "public", publicReason: "Sign-in, recovery and session endpoints run before or independently of a session; each handler enforces its own challenge, device or session-state checks.", csrf: false, csrfExemptReason: "The handler applies its own origin and challenge checks, unchanged by this wrapper.", rateLimit: RATE_LIMITS.BULK },
   () => handleGET(),
 );
 
@@ -96,6 +97,6 @@ async function handleDELETE(request: Request) {
   }
 }
 export const DELETE = route(
-  { auth: "public", publicReason: "Sign-in, recovery and session endpoints run before or independently of a session; each handler enforces its own challenge, device or session-state checks.", csrf: false, csrfExemptReason: "The handler applies its own origin and challenge checks, unchanged by this wrapper.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  { auth: "public", publicReason: "Sign-in, recovery and session endpoints run before or independently of a session; each handler enforces its own challenge, device or session-state checks.", csrf: false, csrfExemptReason: "The handler applies its own origin and challenge checks, unchanged by this wrapper.", rateLimit: RATE_LIMITS.BULK },
   ({ request }) => handleDELETE(request as Parameters<typeof handleDELETE>[0]),
 );

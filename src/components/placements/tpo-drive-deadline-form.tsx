@@ -13,12 +13,13 @@ import { Label } from "@/components/ui/label";
 import { formatDateTimeIst, istDateTimeFormatter } from "@/lib/format-date";
 import { formatDateWith } from "@/lib/format-date";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { TIMEOUT_MS } from "@/security/limits";
 type Deadline={id:string;updatedAt:string;applicationDeadline:string|null};
 
 /** TPO-drives-15, TPO-drives-45: first deadlines work and every failure is recoverable. */
 export function TpoDriveDeadlineForm({job}:{job:Deadline}){
  const router=useRouter();
- const {pending,run}=useGuardedAction({timeoutMs:30000});
+ const {pending,run}=useGuardedAction({timeoutMs:TIMEOUT_MS.SLOW});
  const [error,setError]=useState<string|null>(null);
  const [proposal,setProposal]=useState<{newDeadlineIso:string;reason:string}|null>(null);
  const [confirmOpen,setConfirmOpen]=useState(false);

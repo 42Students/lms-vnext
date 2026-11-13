@@ -6,6 +6,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { Label } from "@/components/ui/label";
+import { TIMEOUT_MS } from "@/security/limits";
 export function TpoTeamAwayForm({until}:{until:string|null}){
  const pending=useRef(false),router=useRouter();
  const [date,setDate]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
@@ -14,7 +15,7 @@ export function TpoTeamAwayForm({until}:{until:string|null}){
   pending.current=true;setBusy(true);setError("");setNotice("");
   try{
    await apiFetch("/api/placements/tpo/team/away",{
-    method:"POST",credentials:"same-origin",timeoutMs:12000,
+    method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({until:next,expectedUntil:until}),
    });

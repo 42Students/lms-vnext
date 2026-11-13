@@ -33,6 +33,7 @@ import { formatNumberIN } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { TIMEOUT_MS } from "@/security/limits";
 export type PlacementAcademicTargetingChoice = {
   programs: Array<{
     id: string;
@@ -287,7 +288,7 @@ export function PlacementJobCreateForm({
         legacyPostingDetails?:{responsibilities?:string;skillsWanted?:string[];
           customEligibilityRules?:Array<{label:string;value:string}>};
       }}>(`/api/placements/jobs/${encodeURIComponent(sourceJobId)}`,{
-        credentials:"same-origin",timeoutMs:30000
+        credentials:"same-origin",timeoutMs:TIMEOUT_MS.SLOW
       });
       const source=response.job;
       if(!source||source.id!==sourceJobId||source.collegeId!==collegeId||
@@ -368,7 +369,7 @@ export function PlacementJobCreateForm({
     let active=true;
     void apiFetch<{job:{updatedAt:string;createdByUserId:string}}>(
       `/api/placements/jobs/${encodeURIComponent(partialJobId)}`,
-      {credentials:"same-origin",timeoutMs:15000},
+      {credentials:"same-origin",timeoutMs:TIMEOUT_MS.STANDARD},
     ).then(response=>{
       if(!active)return;
       const lastSaved=response.job?.updatedAt;
@@ -981,7 +982,7 @@ export function PlacementJobCreateForm({
       // remain non-primary options; retrying a partial save never duplicates them.
       const savedRoles=await apiFetch<{roles:Array<{id:string;title:string;status:string;isPrimary:boolean}>}>(
         `/api/placements/jobs/${encodeURIComponent(jobId)}/roles`,
-        {credentials:"same-origin",timeoutMs:30000},
+        {credentials:"same-origin",timeoutMs:TIMEOUT_MS.SLOW},
       );
       const defaultRole=savedRoles.roles.find(role=>role.isPrimary&&role.status==="ACTIVE");
       if(!defaultRole)throw new Error("Could not load the draft's default pay package.");
@@ -1032,7 +1033,7 @@ export function PlacementJobCreateForm({
       if(planned.length){
         const saved=await apiFetch<{rounds:Array<{kind:string;name:string}>}>(
           `/api/placements/jobs/${encodeURIComponent(jobId)}/rounds`,
-          {credentials:"same-origin",timeoutMs:30000},
+          {credentials:"same-origin",timeoutMs:TIMEOUT_MS.SLOW},
         );
         if(saved.rounds.length>planned.length||saved.rounds.some((row,index)=>
           row.kind!==planned[index]?.kind||row.name!==planned[index]?.name))

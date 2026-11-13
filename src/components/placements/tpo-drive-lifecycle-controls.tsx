@@ -19,6 +19,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { ButtonLink } from "@/components/ui/button-link";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type Readiness = Awaited<ReturnType<typeof getTpoDriveLifecycleReadiness>>;
 type Action = "PUBLISH" | "CLOSE" | "REOPEN";
 const DECLINE_REQUEST_REASONS=[
@@ -34,7 +35,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
 }) {
   const router = useRouter();
   const {showToast}=useToast();
-  const {run}=useGuardedAction({timeoutMs:35000});
+  const {run}=useGuardedAction({timeoutMs:TIMEOUT_MS.BATCH});
   const [action, setAction] = useState<Action | null>(initialPublish ? "PUBLISH" : null);
   const [reason, setReason] = useState("");
   const [declineOpen,setDeclineOpen]=useState(false);

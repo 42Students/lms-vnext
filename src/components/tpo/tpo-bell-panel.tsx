@@ -13,6 +13,7 @@ import { Heading } from "@/components/ui/heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { createDateFormatter } from "@/lib/format-date";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { TIMEOUT_MS } from "@/security/limits";
 export type BellItem={id:string;title:string;body:string|null;actionHref:string|null;readAt:string|null;createdAt:string};
 export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{initialUnread:number;items:readonly BellItem[];revision?:number;compact?:boolean}){
  const [open,setOpen]=useState(false),[pending,setPending]=useState(false),[error,setError]=useState("");
@@ -43,7 +44,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
   setRefreshing(true);setError("");
   try{
    const payload=await apiFetch<unknown>("/api/tpo/header-snapshot",{
-    cache:"no-store",credentials:"same-origin",timeoutMs:12000,
+    cache:"no-store",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
    });
    const parsed=tpoHeaderSnapshotSchema.safeParse(payload);
    if(!parsed.success)throw new Error("Couldn\u0027t refresh notifications.");
@@ -89,7 +90,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
    setPending(true);setError("");
    try{
     await apiFetch("/api/tpo/notifications/"+encodeURIComponent(item.id)+"/read",{
-     method:"POST",credentials:"same-origin",timeoutMs:12000,
+     method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
      headers:{"Content-Type":"application/json"},body:"{}",
     });
     setReadIds(ids=>ids.includes(item.id)?ids:[...ids,item.id]);
@@ -108,7 +109,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
   setPending(true);setError("");
   try{
    await apiFetch("/api/tpo/notifications/read-all",{
-    method:"POST",credentials:"same-origin",timeoutMs:12000,
+    method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
     headers:{"Content-Type":"application/json"},body:"{}",
    });
    setAllReadRevision(revision);setReadIds(displayedItems.map(item=>item.id));router.refresh();

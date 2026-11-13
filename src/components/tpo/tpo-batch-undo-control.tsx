@@ -8,9 +8,10 @@ import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { Label } from "@/components/ui/label";
+import { TIMEOUT_MS } from "@/security/limits";
 export function TpoBatchUndoControl({batchId,actionId}:{batchId:string;actionId:string}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
- const {run}=useGuardedAction({timeoutMs:35000});
+ const {run}=useGuardedAction({timeoutMs:TIMEOUT_MS.BATCH});
  const [reviewed,setReviewed]=useState(false);
  async function undo(){
   if(busy||!reviewed)return;

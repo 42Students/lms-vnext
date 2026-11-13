@@ -10,11 +10,12 @@
 import { useCallback, useRef, useState } from "react";
 import { FRIENDLY_MESSAGES } from "@/lib/friendly-error";
 
+import { TIMEOUT_MS } from "@/security/limits";
 export function useGuardedAction(options: {
   timeoutMs?: number;
   busyLabel?: string;
 } = {}) {
-  const { timeoutMs = 30_000, busyLabel = "Saving..." } = options;
+  const { timeoutMs = TIMEOUT_MS.SLOW, busyLabel = "Saving..." } = options;
   const inFlight = useRef(false);
   const [pending, setPending] = useState(false);
 

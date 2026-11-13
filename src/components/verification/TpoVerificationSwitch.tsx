@@ -6,6 +6,7 @@ import {useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import { Heading } from "@/components/ui/heading";
+import { TIMEOUT_MS } from "@/security/limits";
 export function TpoVerificationSwitch({initialEnabled,collegeId}:{initialEnabled:boolean;collegeId?:string}){
  const [enabled,setEnabled]=useState(initialEnabled);
  const [busy,setBusy]=useState(false);
@@ -15,7 +16,7 @@ export function TpoVerificationSwitch({initialEnabled,collegeId}:{initialEnabled
   if(busy||value===enabled)return;
   setBusy(true);setError("");setNotice("");
   try{
-   const result=await apiFetch<{tpoCanVerify:boolean}>(collegeId?"/api/admin/verification/settings":"/api/college/verification/settings",{method:"PATCH",credentials:"same-origin",timeoutMs:12000,
+   const result=await apiFetch<{tpoCanVerify:boolean}>(collegeId?"/api/admin/verification/settings":"/api/college/verification/settings",{method:"PATCH",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
     headers:{"Content-Type":"application/json"},body:JSON.stringify({tpoCanVerify:value,...(collegeId?{collegeId}:{})})});
    setEnabled(result.tpoCanVerify);
    setNotice(result.tpoCanVerify

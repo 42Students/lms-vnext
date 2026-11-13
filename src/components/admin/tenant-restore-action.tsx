@@ -9,6 +9,7 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useToast} from "@/components/ui/toast";
 
+import { TIMEOUT_MS } from "@/security/limits";
 /** SA-tenants-modules-R02: no implicit role/identity/domain resurrection. */
 export function TenantRestoreAction({
  kind,id,name,
@@ -17,7 +18,7 @@ export function TenantRestoreAction({
  const {showToast}=useToast();
  const [open,setOpen]=useState(false);
  const [error,setError]=useState("");
- const {pending,run}=useGuardedAction({timeoutMs:30000});
+ const {pending,run}=useGuardedAction({timeoutMs:TIMEOUT_MS.SLOW});
  async function restore(){
   if(pending)return;
   setError("");

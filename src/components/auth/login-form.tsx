@@ -14,6 +14,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type Channel = "PHONE" | "EMAIL";
 
 type AccountChoice = {
@@ -168,7 +169,7 @@ async function post<T>(url: string, body: unknown): Promise<{
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
-      timeoutMs: 30_000,
+      timeoutMs: TIMEOUT_MS.SLOW,
     });
     return { ok: true, data: data as T & { error?: string } };
   } catch (reason) {
@@ -383,7 +384,7 @@ export function LoginForm({
       // from URL parameters. Each choice is confirmed server-side on switch.
       try {
         const listed=await apiFetch<MembershipListResponse>("/api/auth/memberships",{
-          method:"GET",timeoutMs:15_000,
+          method:"GET",timeoutMs:TIMEOUT_MS.STANDARD,
         });
         const accounts=selectableLoginAccounts(listed);
         if(accounts.length>1||result.data.membershipSelectionRequired){

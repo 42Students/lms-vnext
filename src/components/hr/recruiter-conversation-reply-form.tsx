@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {isVerifiedHrReplyReceipt,hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TIMEOUT_MS } from "@/security/limits";
 /** Never carry a recruiter draft across two different employer-college threads. */
 export function RecruiterConversationReplyForm({threadId,quoteId,quoteLabel,historyAvailable=true}:{
  threadId:string;quoteId?:string|null;quoteLabel?:string|null;historyAvailable?:boolean;
@@ -23,7 +24,7 @@ function RecruiterConversationReplyFormState({threadId,quoteId,quoteLabel,histor
  threadId:string;quoteId?:string|null;quoteLabel?:string|null;historyAvailable:boolean;
 }){
  const router=useRouter();
- const {run:runGuarded}=useGuardedAction({timeoutMs:15000});
+ const {run:runGuarded}=useGuardedAction({timeoutMs:TIMEOUT_MS.STANDARD});
  const formRef=useRef<HTMLFormElement>(null);
  const inputRef=useRef<HTMLTextAreaElement>(null);
  const navigating=useRef(false);

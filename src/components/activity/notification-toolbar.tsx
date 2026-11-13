@@ -11,6 +11,7 @@ import { useToast } from "@/components/ui/toast";
 import { TextLink } from "@/components/ui/text-link";
 import { notificationFilterHref, type NotificationPreservedParams } from "@/modules/activity/notification-filter-links";
 
+import { TIMEOUT_MS } from "@/security/limits";
 export function NotificationToolbar({
   view,
   unreadCount,
@@ -52,7 +53,7 @@ export function NotificationToolbar({
   async function markAllRead() {
     try {
       await run(async () => {
-        await apiFetch(markAllEndpoint, { method: "POST", timeoutMs: 25_000 });
+        await apiFetch(markAllEndpoint, { method: "POST", timeoutMs: TIMEOUT_MS.LONG });
         setConfirmOpen(false);
         showToast({ tone: "success", title: "Marked all as read" });
         router.refresh();

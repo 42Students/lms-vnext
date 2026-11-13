@@ -16,6 +16,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { TIMEOUT_MS } from "@/security/limits";
 export type NotificationListItem = {
   id: string;
   title: string;
@@ -111,7 +112,7 @@ export function NotificationList({
       await apiFetch(readEndpoint + "/" + encodeURIComponent(id) + "/read", {
         method: "POST",
         credentials: "same-origin",
-        timeoutMs: 12000,
+        timeoutMs: TIMEOUT_MS.REQUEST,
         headers: { Accept: "application/json" },
       });
       acknowledged = true;

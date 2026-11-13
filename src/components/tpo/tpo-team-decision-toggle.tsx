@@ -4,6 +4,7 @@ import { InlineNotice } from "@/components/ui/inline-notice";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
+import { TIMEOUT_MS } from "@/security/limits";
 export function TpoTeamDecisionToggle({threadId,messageId,marked}:{
  threadId:string;messageId:string;marked:boolean;
 }){
@@ -15,7 +16,7 @@ export function TpoTeamDecisionToggle({threadId,messageId,marked}:{
   try{
    await apiFetch("/api/placements/tpo/team/threads/"+encodeURIComponent(threadId)+
     "/messages/"+encodeURIComponent(messageId)+"/decision",{
-    method:"POST",credentials:"same-origin",timeoutMs:12000,
+    method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({mark:!marked,expectedMarked:marked}),
    });

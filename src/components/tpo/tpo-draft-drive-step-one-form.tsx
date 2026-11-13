@@ -13,6 +13,7 @@ import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type Company = { relationshipId: string; name: string };
 type Season = { id: string; name: string; startDate: string; endDate: string };
 
@@ -88,7 +89,7 @@ export function TpoDraftDriveStepOneForm({
     setError("");
     try {
       const body=await apiFetch<{id:string;status:string}>("/api/placements/tpo/drives/draft",{
-        method:"POST",credentials:"same-origin",timeoutMs:30000,
+        method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.SLOW,
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({
           confirmed:true,seasonId:season.id,companyRelationshipId,

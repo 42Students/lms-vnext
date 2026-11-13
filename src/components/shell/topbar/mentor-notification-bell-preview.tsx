@@ -15,6 +15,7 @@ import { TextLink } from "@/components/ui/text-link";
 import { formatDateWith } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { TIMEOUT_MS } from "@/security/limits";
 type PreviewResponse={items:MentorUnifiedNotification[];hasMore:boolean};
 /** The Mentor portal gets its own verified merged-source bell, not the generic
  * learner/recruiter drawer nor a copy of unverified legacy sample notices.
@@ -52,7 +53,7 @@ export function MentorNotificationBellPreview({unreadCount,partial}:{
   try{
    const payload=await apiFetch<PreviewResponse>(
       "/api/mentor/notifications/preview",{
-       cache:"no-store",credentials:"same-origin",timeoutMs:12000,
+       cache:"no-store",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
       });
    if(!Array.isArray(payload.items))throw Error("Invalid notification preview");
    setItems(payload.items.slice(0,5));setHasMore(payload.hasMore===true);
@@ -75,7 +76,7 @@ export function MentorNotificationBellPreview({unreadCount,partial}:{
   setWorking(item.source+":"+item.id);setError("");
   try{
    await apiFetch(request.url,{
-    method:"POST",credentials:"same-origin",timeoutMs:12000,
+    method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
     ...(request.body?{body:request.body,
       headers:{"content-type":"application/json"}}:{}),
    });
@@ -90,7 +91,7 @@ export function MentorNotificationBellPreview({unreadCount,partial}:{
   setWorking("all");setError("");
   try{
    await apiFetch("/api/mentor/notifications/unified-read-all",{
-    method:"POST",credentials:"same-origin",timeoutMs:25000,
+    method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.LONG,
    });
    window.dispatchEvent(new Event("lms:notifications-updated"));
    setConfirmOpen(false);

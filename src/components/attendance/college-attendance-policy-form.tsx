@@ -12,6 +12,7 @@ import { DEFAULT_ATTENDANCE_POLICY } from "@/modules/attendance/policy-validatio
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type PolicyValues = {
   eligibilityThresholdPercent: number;
   correctionWindowHours: number;
@@ -50,7 +51,7 @@ export function CollegeAttendancePolicyForm({
   const thresholdValid=/^\d+$/.test(threshold)&&Number(threshold)>=1&&Number(threshold)<=100;
   const hoursValid=/^\d+$/.test(correctionHours)&&Number(correctionHours)>=1&&Number(correctionHours)<=168;
   const validDraft=thresholdValid&&hoursValid;
-  const {pending,run}=useGuardedAction({timeoutMs:35000});
+  const {pending,run}=useGuardedAction({timeoutMs:TIMEOUT_MS.BATCH});
   const [message, setMessage] =
     useState<SaveMessage | null>(null);
 

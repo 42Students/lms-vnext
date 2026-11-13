@@ -10,6 +10,7 @@ import { apiFetch } from "@/lib/api-fetch";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type Member = { membershipId: string; displayName: string };
 
 export function TpoTeamAssignUnowned({
@@ -45,7 +46,7 @@ export function TpoTeamAssignUnowned({
         "/api/placements/tpo/team/unowned", {
           method: "POST",
           credentials: "same-origin",
-          timeoutMs: 15000,
+          timeoutMs: TIMEOUT_MS.STANDARD,
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ targetMembershipId: teammate.membershipId }),
         },

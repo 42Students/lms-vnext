@@ -33,6 +33,7 @@ import { Label } from "@/components/ui/label";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
 
+import { TIMEOUT_MS } from "@/security/limits";
 function NotificationCategoryIcon({ category }: { category: LearnerNotificationCategory }) {
   const paths: Record<LearnerNotificationCategory,string> = {
     all:"M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4",
@@ -173,7 +174,7 @@ export function LearnerNotificationsInbox({
     setMarkAllError(null);
     try{
       await runMarkAll(async () => {
-        await apiFetch("/api/notifications/read-all", { method: "POST", timeoutMs: 25_000 });
+        await apiFetch("/api/notifications/read-all", { method: "POST", timeoutMs: TIMEOUT_MS.LONG });
         setConfirmReadAll(false);
         router.refresh();
       });

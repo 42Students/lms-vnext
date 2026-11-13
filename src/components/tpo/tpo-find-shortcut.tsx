@@ -12,6 +12,7 @@ import {Input} from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type Match=TpoFindResult;
 
 export function TpoFindShortcut(){
@@ -42,7 +43,7 @@ export function TpoFindShortcut(){
    void (async()=>{
     try{
      const data=await apiFetch<unknown>("/api/tpo/find-suggestions?q="+encodeURIComponent(query.trim()),{
-      signal:controller.signal,cache:"no-store",timeoutMs:12000,
+      signal:controller.signal,cache:"no-store",timeoutMs:TIMEOUT_MS.REQUEST,
      });
      if(controller.signal.aborted)return;
      if(!data||typeof data!=="object"||!("results" in data)||!Array.isArray(data.results))

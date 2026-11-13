@@ -13,6 +13,7 @@ import {Disclosure} from "@/components/ui/disclosure";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { istDateTimeFormatter } from "@/lib/format-date";
+import { TIMEOUT_MS } from "@/security/limits";
 type Ask={
  id:string;title:string;status:string;dueAt:string|null;doneNote:string|null;
  askerMembershipId:string;assigneeMembershipId:string;
@@ -29,7 +30,7 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
   try{
    await apiFetch("/api/placements/tpo/team/threads/"+encodeURIComponent(threadId)+
     "/asks/"+encodeURIComponent(ask.id),{
-    method:"POST",credentials:"same-origin",timeoutMs:12000,
+    method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({action:confirmation,expectedStatus:"OPEN",...(confirmation==="DONE"?{note:note.trim()}:{})}),
    });
@@ -96,14 +97,14 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
     threadForm.set("topic",("Ask: "+title.trim()).slice(0,200));
     threadForm.set("idempotencyKey",key.current);
     const createdThread=await apiFetch<{id:string}>("/api/placements/tpo/team/threads",{
-     method:"POST",credentials:"same-origin",timeoutMs:12000,
+     method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
      headers:{Accept:"application/json"},body:threadForm,
     });
     if(!createdThread?.id)throw new Error("TEAM_THREAD_CREATE_FAILED");
     askThreadId=createdThread.id;
    }
    const createdAsk=await apiFetch<{id:string}>("/api/placements/tpo/team/threads/"+encodeURIComponent(askThreadId)+"/asks",{
-    method:"POST",credentials:"same-origin",timeoutMs:12000,
+    method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({assigneeMembershipId:assigneeId,requestKey:key.current,
      title:title.trim(),dueAt:dueAt?.toISOString()??null}),

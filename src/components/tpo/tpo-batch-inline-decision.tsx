@@ -14,6 +14,7 @@ import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import type {TpoMembershipDecisionSnapshot} from "@/modules/placements/tpo-participation-model";
 import { Label } from "@/components/ui/label";
+import { TIMEOUT_MS } from "@/security/limits";
 type Decision="ELIGIBLE"|"INELIGIBLE"|"NOT_DECIDED";
 const LEGACY_INELIGIBLE_REASONS=[
  "Higher studies","Not interested in placements","Detained / year back",
@@ -22,7 +23,7 @@ const LEGACY_INELIGIBLE_REASONS=[
 export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membershipId:string;batchId:string;expected:TpoMembershipDecisionSnapshot}){
  const router=useRouter();
  const [reasonOpen,setReasonOpen]=useState(false);
- const {run}=useGuardedAction({timeoutMs:35000});
+ const {run}=useGuardedAction({timeoutMs:TIMEOUT_MS.BATCH});
  const [decision,setDecision]=useState<Decision>(expected.status??"NOT_DECIDED");
  const [reason,setReason]=useState(expected.reason??"");
  const [other,setOther]=useState(false),[reviewed,setReviewed]=useState(false);

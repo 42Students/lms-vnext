@@ -7,6 +7,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import { Label } from "@/components/ui/label";
+import { TIMEOUT_MS } from "@/security/limits";
 type Member={membershipId:string;displayName:string};
 export function TpoTeamHandover({sourceMembershipId,sourceName,members}:{
  sourceMembershipId:string;sourceName:string;members:Member[];
@@ -25,7 +26,7 @@ export function TpoTeamHandover({sourceMembershipId,sourceName,members}:{
   try{
    const result=await apiFetch<{counts:{drives:number;companies:number;recruiterLeads:number;followups:number};roleRevoked:false}>(
     "/api/placements/tpo/team/handover",{
-     method:"POST",credentials:"same-origin",timeoutMs:12000,
+     method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
      headers:{"Content-Type":"application/json"},
      body:JSON.stringify({sourceMembershipId,targetMembershipId:target}),
     });

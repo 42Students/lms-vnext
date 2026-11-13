@@ -14,6 +14,7 @@ import {Textarea} from "@/components/ui/textarea";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type Row={id:string;studentName:string;requestType:string;expectedUpdatedAt:string;proofMissing?:boolean};
 const PROOF_SKIP_NOTE="No proof attached: open it to decide";
 type Outcome={id:string;name:string;status:"updated"|"failed";message:string};
@@ -22,7 +23,7 @@ const MAX_BULK_REQUESTS=10;
 /** Decisions remain separate tenant-scoped and version-checked transactions. */
 export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
  const router=useRouter();
- const {run:runGuarded,pending}=useGuardedAction({timeoutMs:120000});
+ const {run:runGuarded,pending}=useGuardedAction({timeoutMs:TIMEOUT_MS.UPLOAD});
  const [selected,setSelected]=useState<string[]>([]);
  const [action,setAction]=useState<"APPROVE"|"REJECT">("APPROVE");
  const [reason,setReason]=useState("");

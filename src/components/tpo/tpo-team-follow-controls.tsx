@@ -5,6 +5,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
+import { TIMEOUT_MS } from "@/security/limits";
 export function TpoTeamFollowControls({threadId,following,muted,ready}:{
  threadId:string;following:boolean;muted:boolean;ready:boolean;
 }){
@@ -19,7 +20,7 @@ export function TpoTeamFollowControls({threadId,following,muted,ready}:{
   try{
    const result=await apiFetch<{following:boolean;muted:boolean}>(
     "/api/placements/tpo/team/threads/"+encodeURIComponent(threadId)+"/preferences",{
-     method:"POST",credentials:"same-origin",timeoutMs:30000,
+     method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.SLOW,
      headers:{"Content-Type":"application/json"},body:JSON.stringify({action}),
     });
    setState(result);router.refresh();

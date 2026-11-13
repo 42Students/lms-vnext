@@ -12,6 +12,7 @@ import {safeRecruiterDigestMessages,safeRecruiterEmailMergeText,isRecruiterReply
 
 import { rawEnv } from "@/config/env";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { TIMEOUT_MS } from "@/security/limits";
 export type RecruiterMailDigest={
  recipient:string;recipientName:string;companyName:string;collegeName:string;
  replyTo:string;messages:readonly {body:string;createdAt?:Date|string;
@@ -211,7 +212,7 @@ export async function sendRecruiterMessageDigest(
       }),
     },
    }),
-   timeoutMs:10_000,maxAttempts:1,fetchImpl,
+   timeoutMs:TIMEOUT_MS.QUICK,maxAttempts:1,fetchImpl,
   });
   return response.ok;
  }catch{return false;}

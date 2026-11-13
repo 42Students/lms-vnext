@@ -4,10 +4,11 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
+import { TIMEOUT_MS } from "@/security/limits";
 export function SuperAdminBatchGraduateAction({cohortId,name}:{cohortId:string;name:string}){
  const router=useRouter();
  const [open,setOpen]=useState(false);
- const {pending,run}=useGuardedAction({timeoutMs:30000});
+ const {pending,run}=useGuardedAction({timeoutMs:TIMEOUT_MS.SLOW});
  const [error,setError]=useState(""),[success,setSuccess]=useState("");
  async function submit(){
   setError("");

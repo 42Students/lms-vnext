@@ -6,6 +6,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import { Heading } from "@/components/ui/heading";
 import { TextLink } from "@/components/ui/text-link";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type Counts={requests:number;messages:number;notifications:number;team:number|null};
 function showBadge(count:number){
  return Number.isFinite(count)&&count>0?(count>99?"99+":String(count)):null;
@@ -47,7 +48,7 @@ export function TpoMoreNavigation(){
   inFlight.current=true;setBusy(true);setError(false);
   try{
    const reply=await apiFetch<Counts>("/api/tpo/shell-counts",{
-    credentials:"same-origin",cache:"no-store",timeoutMs:15000,
+    credentials:"same-origin",cache:"no-store",timeoutMs:TIMEOUT_MS.STANDARD,
    });
    if(!Number.isSafeInteger(reply.requests)||reply.requests<0||
       !Number.isSafeInteger(reply.messages)||reply.messages<0)throw new Error("Invalid count response");

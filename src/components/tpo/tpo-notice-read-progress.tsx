@@ -9,6 +9,7 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import { Heading } from "@/components/ui/heading";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type UnreadRecipient=string|{id?:string;name:string;rollNumber?:string|null;branchName?:string|null};
 type Summary={delivered:number;read:number;unread:UnreadRecipient[];notDelivered:boolean};
 function isNoticeReadSummary(value:unknown):value is Summary {
@@ -36,7 +37,7 @@ export function TpoNoticeReadProgress({id,status="SENT"}:{id:string;status?:"SEN
   pending.current=true;setBusy(true);setError("");
   try{
    const result=await apiFetch<unknown>("/api/placements/tpo/announcements/"+encodeURIComponent(id)+"/receipts",{
-    cache:"no-store",credentials:"same-origin",timeoutMs:15000,
+    cache:"no-store",credentials:"same-origin",timeoutMs:TIMEOUT_MS.STANDARD,
    });
    if(!isNoticeReadSummary(result))throw new Error("Read status was incomplete. Try refreshing it.");
    setData(result);
@@ -54,7 +55,7 @@ export function TpoNoticeReadProgress({id,status="SENT"}:{id:string;status?:"SEN
   pending.current=true;setBusy(true);setError("");setReminder("");
   try{
    const reply=await apiFetch<{reminded:number}>("/api/placements/tpo/announcements/"+encodeURIComponent(id)+"/remind",{
-    method:"POST",credentials:"same-origin",timeoutMs:15000,
+    method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.STANDARD,
     headers:{"Content-Type":"application/json"},body:"{}",
    });
    const count=Number.isFinite(reply.reminded)?reply.reminded:0;

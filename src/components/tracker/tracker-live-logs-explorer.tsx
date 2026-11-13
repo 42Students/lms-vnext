@@ -23,6 +23,7 @@ import { formatDateWith } from "@/lib/format-date";
 import { spreadsheetCsvCell } from "@/security/csv-cell";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { TIMEOUT_MS } from "@/security/limits";
 type Entry={id:string;time:string;event:string;message:string;path:string;requestId:string|null;component:string|null;
   knownErrorId?:string|null;muted?:boolean|null};
 type Page={configured:boolean;items:Entry[];nextPageToken:string|null};
@@ -326,7 +327,7 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
         method:"PATCH",headers:{"content-type":"application/json"},
         body:JSON.stringify({action:"MUTE",muted:nextMuted,
           ...(nextMuted&&muteReason.trim()?{reason:muteReason.trim()}:{}),}),
-        timeoutMs:15_000,
+        timeoutMs:TIMEOUT_MS.STANDARD,
       });
       setItems(previous=>previous.map(item=>item.knownErrorId===muteTarget.id?
         {...item,muted:nextMuted}:item));

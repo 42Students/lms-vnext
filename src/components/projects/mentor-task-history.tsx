@@ -6,6 +6,7 @@ import { Heading } from "@/components/ui/heading";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { TIMEOUT_MS } from "@/security/limits";
 type HistoryEvent={id:string;eventType:string;summary:string;
  occurredAt:string;actorDisplayName:string|null};
 type Cursor={time:string;id:string};
@@ -33,7 +34,7 @@ export function MentorTaskHistory({projectId,taskId}:{
     query.set("beforeTime",cursor.time);query.set("beforeId",cursor.id);
    }
    const page=await apiFetch<Page>("/api/projects/"+encodeURIComponent(projectId)+
-     "/activity?"+query.toString(),{cache:"no-store",timeoutMs:15000});
+     "/activity?"+query.toString(),{cache:"no-store",timeoutMs:TIMEOUT_MS.STANDARD});
    if(!Array.isArray(page.events))throw Error("Invalid activity response");
    setEvents(previous=>{
     const seen=new Set(previous.map(event=>event.id));

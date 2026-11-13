@@ -7,6 +7,7 @@ import { route } from "@/security/route";
 
 import { env } from "@/config/env";
 import { CACHE } from "@/security/responses";
+import { RATE_LIMITS } from "@/security/limits";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":CACHE.PRIVATE} as const;
@@ -34,6 +35,6 @@ async function handleGET(request:Request){
  }
 }
 export const GET = route(
-  { auth: "public", publicReason: "Machine-to-machine endpoint: the handler authenticates the caller with its own shared secret or signature.", csrf: false, csrfExemptReason: "Callers are servers or schedulers and send no browser Origin; the handler checks its credential instead.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  { auth: "public", publicReason: "Machine-to-machine endpoint: the handler authenticates the caller with its own shared secret or signature.", csrf: false, csrfExemptReason: "Callers are servers or schedulers and send no browser Origin; the handler checks its credential instead.", rateLimit: RATE_LIMITS.BULK },
   ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
 );

@@ -5,6 +5,7 @@ import { POST as canonicalPOST } from "@/app/api/public/college-join/send-code/r
 import { route } from "@/security/route";
 
 import { CACHE } from "@/security/responses";
+import { RATE_LIMITS } from "@/security/limits";
 export const runtime = "nodejs";
 
 /** Compat POST endpoint. Legacy link tokens must still pass the new
@@ -21,6 +22,6 @@ async function handlePOST(
   return canonicalPOST(adapted);
 }
 export const POST = route(
-  { auth: "public", publicReason: "Link or form opened without an account (token, slug or anonymous report); the handler validates the token or input and is rate limited per address.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  { auth: "public", publicReason: "Link or form opened without an account (token, slug or anonymous report); the handler validates the token or input and is rate limited per address.", rateLimit: RATE_LIMITS.BULK },
   ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
 );

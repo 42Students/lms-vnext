@@ -10,6 +10,7 @@ import { DEPARTMENT_COPY } from "@/modules/admin-ui/department-copy";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 
+import { TIMEOUT_MS } from "@/security/limits";
 export function DepartmentCreateForm({collegeId}:{collegeId:string}) {
   void collegeId; // College identity is scoped by the server request context.
   const router=useRouter();
@@ -18,7 +19,7 @@ export function DepartmentCreateForm({collegeId}:{collegeId:string}) {
   const [fieldError,setFieldError]=useState("");
   const [notice,setNotice]=useState<string|null>(null);
   const noticeTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
-  const {pending,run}=useGuardedAction({timeoutMs:30000});
+  const {pending,run}=useGuardedAction({timeoutMs:TIMEOUT_MS.SLOW});
   useEffect(()=>()=>{if(noticeTimer.current)clearTimeout(noticeTimer.current);},[]);
   function announce(text:string){
     if(noticeTimer.current)clearTimeout(noticeTimer.current);

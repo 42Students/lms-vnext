@@ -28,11 +28,12 @@ import { istDateTimeFormatter } from "@/lib/format-date";
 import { formatNumberIN } from "@/lib/safe-format";
 import { createDateFormatter } from "@/lib/format-date";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { TIMEOUT_MS } from "@/security/limits";
 type Draft=Awaited<ReturnType<typeof getTpoDriveEditState>>;
 function optionalNumber(v:FormDataEntryValue|null){const s=String(v??"").trim();return s===""?null:Number(s);}
 export function TpoDriveEditForm({job}:{job:Draft}){
  const router=useRouter();
- const {pending,run}=useGuardedAction({timeoutMs:30000});
+ const {pending,run}=useGuardedAction({timeoutMs:TIMEOUT_MS.SLOW});
  const {dirty,markDirty,clearDirty,guardDialog}=useUnsavedDriveGuard();
  const {showToast}=useToast();
  const [version,setVersion]=useState(job.updatedAt);

@@ -5,10 +5,11 @@ import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 
+import { TIMEOUT_MS } from "@/security/limits";
 export function RecruiterResumesZipDownload({jobId}:{jobId:string}){
  const [message,setMessage]=useState("");
  const [succeeded,setSucceeded]=useState(false);
- const {run,pending}=useGuardedAction({timeoutMs:120000,busyLabel:"Preparing resumes…"});
+ const {run,pending}=useGuardedAction({timeoutMs:TIMEOUT_MS.UPLOAD,busyLabel:"Preparing resumes…"});
  async function download(){
   if(pending)return;
   setMessage("");

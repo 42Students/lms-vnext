@@ -13,6 +13,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { formatDateWith } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { TIMEOUT_MS } from "@/security/limits";
 function MentorPersonalRead({id}:{id:string}){
  const router=useRouter();
  const [busy,setBusy]=useState(false);
@@ -22,7 +23,7 @@ function MentorPersonalRead({id}:{id:string}){
   setBusy(true);setError("");
   try{
    await apiFetch("/api/mentor/notifications/"+encodeURIComponent(id)+"/read",{
-    method:"POST",timeoutMs:12000,
+    method:"POST",timeoutMs:TIMEOUT_MS.REQUEST,
    });
    window.dispatchEvent(new Event("lms:notifications-updated"));
      router.refresh();
@@ -64,7 +65,7 @@ export function MentorUnifiedNotificationFeed({items,announcementNextCursor,pers
      beforeCreatedAt:nextPersonal.beforeCreatedAt,beforeId:nextPersonal.beforeId});
    const page=await apiFetch<PersonalPage>(
      "/api/mentor/notifications/personal?"+query.toString(),
-     {cache:"no-store",credentials:"same-origin",timeoutMs:15000});
+     {cache:"no-store",credentials:"same-origin",timeoutMs:TIMEOUT_MS.STANDARD});
    setOlderPersonal(previous=>{
      const known=new Set(previous.map(row=>row.id));
      return [...previous,...page.items.filter(
@@ -87,7 +88,7 @@ export function MentorUnifiedNotificationFeed({items,announcementNextCursor,pers
    });
    const page=await apiFetch<NoticePage>(
      "/api/mentor/notifications/announcements?"+query.toString(),
-     {cache:"no-store",credentials:"same-origin",timeoutMs:15000});
+     {cache:"no-store",credentials:"same-origin",timeoutMs:TIMEOUT_MS.STANDARD});
    setOlderNotices(previous=>{
      const known=new Set(previous.map(row=>row.source+":"+row.id));
      return [...previous,...page.items.filter(item=>{
@@ -113,7 +114,7 @@ export function MentorUnifiedNotificationFeed({items,announcementNextCursor,pers
   event.preventDefault();
   setOpening(item.source+":"+item.id);setOpenError("");
   void apiFetch(request.url,{
-    method:"POST",credentials:"same-origin",timeoutMs:12000,
+    method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
     ...(request.body?{body:request.body,
       headers:{"content-type":"application/json"}}:{}),
   }).then(()=>{

@@ -9,6 +9,7 @@ import { MessageIcon, BellIcon } from "./icons";
 import style from "./topbar.module.css";
 import { TextLink } from "@/components/ui/text-link";
 
+import { TIMEOUT_MS } from "@/security/limits";
 export function TpoNotificationCluster() {
   const [state, setState] = useState<{ value: TpoHeaderSnapshot; revision: number } | null>(null);
   const refreshInFlight = useRef(false);
@@ -18,7 +19,7 @@ export function TpoNotificationCluster() {
     refreshInFlight.current = true;
     try {
       const raw = await apiFetch<unknown>("/api/tpo/header-snapshot", {
-        cache: "no-store", credentials: "same-origin", timeoutMs: 12000,
+        cache: "no-store", credentials: "same-origin", timeoutMs: TIMEOUT_MS.REQUEST,
       });
       const result = tpoHeaderSnapshotSchema.safeParse(raw);
       if (!result.success) return;

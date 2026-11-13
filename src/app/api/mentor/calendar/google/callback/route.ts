@@ -9,6 +9,7 @@ import {mentorGoogleConfig,mentorGoogleExchangeCode} from
 import {saveMentorGoogleConnection} from
  "@/modules/projects/mentor-google-calendar-connection-service";
 import { route } from "@/security/route";
+import { RATE_LIMITS } from "@/security/limits";
 export const runtime="nodejs";
 const oauthCookie="mentor-google-oauth";
 async function handleGET(request:Request){
@@ -47,6 +48,6 @@ async function handleGET(request:Request){
  }catch{return response("failed");}
 }
 export const GET = route(
-  { auth: "public", publicReason: "OAuth redirect endpoint: the handler validates the signed state and the signed-in user itself and redirects on failure.", csrf: false, csrfExemptReason: "Redirects come from the identity provider; the handler validates state instead of Origin.", rateLimit: { limit: 3000, windowMs: 60_000 }, repeatableQuery: ["code", "state"] },
+  { auth: "public", publicReason: "OAuth redirect endpoint: the handler validates the signed state and the signed-in user itself and redirects on failure.", csrf: false, csrfExemptReason: "Redirects come from the identity provider; the handler validates state instead of Origin.", rateLimit: RATE_LIMITS.BULK, repeatableQuery: ["code", "state"] },
   ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
 );

@@ -8,6 +8,7 @@ import {publicNetworkNotice} from "@/modules/auth/public-network-notice-model";
 import { friendlyApiError } from "@/lib/friendly-error";
 import { isRequestId } from "@/lib/request-id";
 
+import { TIMEOUT_MS } from "@/security/limits";
 let pageIsUnloading=false;
 if(typeof window!=="undefined"){
   window.addEventListener?.("beforeunload",()=>{pageIsUnloading=true;window.setTimeout?.(()=>{pageIsUnloading=false;},10000);});
@@ -74,7 +75,7 @@ export async function apiFetch<T = unknown>(
   input: RequestInfo | URL,
   init: ApiFetchOptions = {},
 ): Promise<T> {
-  const { timeoutMs = 30_000, ...options } = init;
+  const { timeoutMs = TIMEOUT_MS.SLOW, ...options } = init;
   const controller = new AbortController();
   const forwardAbort = () => controller.abort();
   if (options.signal?.aborted) controller.abort();

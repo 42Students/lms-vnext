@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {apiFetch} from "@/lib/api-fetch";
 
+import { TIMEOUT_MS } from "@/security/limits";
 export function MentorSourceNotificationRead({receiptKey,read}:{receiptKey:string;read:boolean}){
  const [pending,setPending]=useState(false);
  const [error,setError]=useState("");
@@ -15,7 +16,7 @@ export function MentorSourceNotificationRead({receiptKey,read}:{receiptKey:strin
    try{
      await apiFetch("/api/mentor/notifications/source-read",{
        method:"POST",headers:{"content-type":"application/json"},
-       body:JSON.stringify({key:receiptKey}),timeoutMs:12000,
+       body:JSON.stringify({key:receiptKey}),timeoutMs:TIMEOUT_MS.REQUEST,
      });
      window.dispatchEvent(new Event("lms:notifications-updated"));
      router.refresh();

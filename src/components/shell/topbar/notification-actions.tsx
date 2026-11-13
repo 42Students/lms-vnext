@@ -12,6 +12,7 @@ import { BellIcon, MessageIcon } from "./icons";
 import style from "./topbar.module.css";
 import { TextLink } from "@/components/ui/text-link";
 
+import { TIMEOUT_MS } from "@/security/limits";
 function CountBadge({ count }: { count: number | null }) {
   const label = shellUnreadBadge(count);
   return label ? <span className={style["badge"]} aria-hidden="true">{label}</span> : null;
@@ -52,7 +53,7 @@ export function TopbarNotifications({ config }: { config: TopbarConfig }) {
         const value=await apiFetch<{
           unreadCount:number;partial:boolean;
         }>("/api/mentor/notifications/count",{
-          cache:"no-store",credentials:"same-origin",timeoutMs:12000,
+          cache:"no-store",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
         });
         if(Number.isSafeInteger(value.unreadCount)&&value.unreadCount>=0){
           setGeneral(value.unreadCount);setGeneralPartial(value.partial===true);
@@ -60,7 +61,7 @@ export function TopbarNotifications({ config }: { config: TopbarConfig }) {
         return;
       }
       const next = await apiFetch<unknown>("/api/notifications?limit=40", {
-        cache: "no-store", credentials: "same-origin", timeoutMs: 12000,
+        cache: "no-store", credentials: "same-origin", timeoutMs: TIMEOUT_MS.REQUEST,
       });
       if (!next || typeof next !== "object" || !("notifications" in next)) return;
       const records = (next as { notifications: unknown }).notifications;

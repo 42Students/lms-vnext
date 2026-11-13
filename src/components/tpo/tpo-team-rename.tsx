@@ -6,6 +6,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { Label } from "@/components/ui/label";
+import { TIMEOUT_MS } from "@/security/limits";
 export function TpoTeamRename({threadId,currentTopic}:{threadId:string;currentTopic:string}){
  const router=useRouter();
  const busyRef=useRef(false);
@@ -17,7 +18,7 @@ export function TpoTeamRename({threadId,currentTopic}:{threadId:string;currentTo
   busyRef.current=true;setBusy(true);setError("");
   try{
    await apiFetch("/api/placements/tpo/team/threads/"+encodeURIComponent(threadId)+"/rename",{
-    method:"POST",credentials:"same-origin",timeoutMs:12000,
+    method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({topic:topic.trim(),expectedTopic:currentTopic}),
    });

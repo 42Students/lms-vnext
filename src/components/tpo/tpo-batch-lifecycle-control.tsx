@@ -8,11 +8,12 @@ import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { Label } from "@/components/ui/label";
+import { TIMEOUT_MS } from "@/security/limits";
 type State={invitedAt:string|null;finishedAt:string|null;expectedVersion:string};
 export function TpoBatchLifecycleControl({batchId,state}:{batchId:string;state:State|null}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
  const [reviewed,setReviewed]=useState(false),[success,setSuccess]=useState("");
- const {run}=useGuardedAction({timeoutMs:35000});
+ const {run}=useGuardedAction({timeoutMs:TIMEOUT_MS.BATCH});
  const current=state??{invitedAt:null,finishedAt:null,expectedVersion:"none"};
  const expectedVersion=current.expectedVersion;
  const action=current.finishedAt?"REOPEN" as const:"FINISH" as const;

@@ -16,13 +16,14 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { Disclosure } from "@/components/ui/disclosure";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type Member={membershipId:string;displayName:string};
 async function postForm(url:string,values:Record<string,string|readonly string[]>){
  const body=buildTpoTeamFormData(values);
  try{
   const reply=await apiFetch<{id?:string;href?:string}>(url,{
    method:"POST",credentials:"same-origin",
-   headers:{Accept:"application/json"},body,timeoutMs:30000,
+   headers:{Accept:"application/json"},body,timeoutMs:TIMEOUT_MS.SLOW,
   });
   if(!reply||typeof reply.id!=="string")
    return {ok:false,code:"INVALID_RESPONSE",message:friendlyApiError({status:502})};

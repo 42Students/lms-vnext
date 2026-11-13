@@ -12,6 +12,7 @@ import { assertSafeOutboundUrl } from "@/lib/outbound-url-guard";
 import { createRequestId } from "@/lib/request-id";
 import { logError, logInfo } from "@/observability/logger";
 
+import { TIMEOUT_MS } from "@/security/limits";
 export type OutboundOptions = RequestInit & {
   timeoutMs?: number;
   maxAttempts?: number;
@@ -35,7 +36,7 @@ const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve,
 
 export async function outboundFetch(url: string, options: OutboundOptions = {}): Promise<Response> {
   const {
-    timeoutMs = 10_000, maxAttempts = 3, baseDelayMs = 250,
+    timeoutMs = TIMEOUT_MS.QUICK, maxAttempts = 3, baseDelayMs = 250,
     idempotencyKey, fetchImpl = fetch, ...init
   } = options;
   // SSRF guard (SEC-15-010/011): HTTPS to a public host only; refused before any network activity.

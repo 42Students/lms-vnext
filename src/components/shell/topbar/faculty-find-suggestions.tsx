@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import type {FacultyFindGroup} from "@/modules/courses/faculty-find-model";
 import style from "./topbar.module.css";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type Result={key:string;group:FacultyFindGroup;label:string;context:string;href:string};
 const permitted=(raw:unknown):raw is Result=>
  raw!==null&&typeof raw==="object"&&
@@ -36,7 +37,7 @@ export function FacultyFindSuggestions({query,onOpen}:{
   const controller=new AbortController();
   const timer=window.setTimeout(()=>{
    void apiFetch<unknown>("/api/courses/faculty/find?q="+encodeURIComponent(needle),{
-    signal:controller.signal,cache:"no-store",timeoutMs:12000,
+    signal:controller.signal,cache:"no-store",timeoutMs:TIMEOUT_MS.REQUEST,
    }).then(payload=>{
     if(controller.signal.aborted)return;
     const rows=payload&&typeof payload==="object"&&"results" in payload&&

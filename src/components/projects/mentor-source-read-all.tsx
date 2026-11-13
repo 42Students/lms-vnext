@@ -5,6 +5,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type Outcome={markedRead:number;remainingLoaded:number;notice:string};
 export function MentorSourceReadAll({unread}:{unread:number}){
  const router=useRouter();
@@ -19,7 +20,7 @@ export function MentorSourceReadAll({unread}:{unread:number}){
   try{
    const result=await apiFetch<Outcome>(
      "/api/mentor/notifications/source-read-all",
-     {method:"POST",timeoutMs:25000});
+     {method:"POST",timeoutMs:TIMEOUT_MS.LONG});
    setFeedback(result.markedRead+" source alerts marked read"+
      (result.remainingLoaded>0?
        "; "+result.remainingLoaded+" more loaded items still need review.":"."));

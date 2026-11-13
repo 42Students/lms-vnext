@@ -17,6 +17,7 @@ import { istDayMonthYearFormatter } from "@/lib/format-date";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { TIMEOUT_MS } from "@/security/limits";
 type FocusItem = MentorProjectAttention;
 
 function attentionLabel(kind:FocusItem["kind"]):string {
@@ -86,7 +87,7 @@ export function MentorPrototypeHome({
       const result=await apiFetch<{hidden:boolean}>(
         "/api/mentor/attention/later",{
           method:"POST",headers:{"content-type":"application/json"},
-          body:JSON.stringify({key}),timeoutMs:12000,
+          body:JSON.stringify({key}),timeoutMs:TIMEOUT_MS.REQUEST,
         });
       if(!result.hidden)throw new Error("Attention was not postponed.");
       setSnoozed(previous=>[...new Set([...previous,key])]);

@@ -6,6 +6,7 @@ import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import { Label } from "@/components/ui/label";
+import { TIMEOUT_MS } from "@/security/limits";
 export function TpoCompanyTeamComposer({companyId,actorUserId}:{
  companyId:string;actorUserId:string;
 }){
@@ -53,7 +54,7 @@ function TpoCompanyTeamComposerEditor({companyId,actorUserId}:{
    const idempotencyKey=key.current;
    try{sessionStorage.setItem(storageKey+":key",idempotencyKey);}catch{/* Optional. */}
    await apiFetch("/api/placements/tpo/companies/"+encodeURIComponent(companyId)+"/team",{
-    method:"POST",credentials:"same-origin",timeoutMs:12000,
+    method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({body:body.trim(),idempotencyKey}),
    });

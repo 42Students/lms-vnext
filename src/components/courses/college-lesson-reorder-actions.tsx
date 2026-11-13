@@ -8,6 +8,7 @@ import { useToast } from "@/components/ui/toast";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 
+import { TIMEOUT_MS } from "@/security/limits";
 export function CollegeLessonReorderActions({
   learningPathId, lessonId, expectedSequence, canMoveUp, canMoveDown,
   fullCourseOrder = false, hasActiveFilters = false,
@@ -49,7 +50,7 @@ export function CollegeLessonReorderActions({
     startTransition(async () => {
       try {
         await apiFetch<unknown>("/api/courses/lessons/reorder", {
-          method: "POST", credentials:"same-origin",timeoutMs:12000,
+          method: "POST", credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ learningPathId, lessonId, expectedSequence, direction: requested }),
         });

@@ -11,6 +11,7 @@ import {friendlyApiError} from "@/lib/friendly-error";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 
+import { TIMEOUT_MS } from "@/security/limits";
 export function TpoEveryoneControls({muted,actorUserId}:{muted:boolean;actorUserId:string}){
  const router=useRouter();
  const messageLengthId=useId();
@@ -51,7 +52,7 @@ export function TpoEveryoneControls({muted,actorUserId}:{muted:boolean;actorUser
    form.set("body",message.trim());
    await apiFetch<{id:string}>("/api/placements/tpo/team/everyone/messages",{
     method:"POST",credentials:"same-origin",headers:{Accept:"application/json"},
-    body:form,timeoutMs:30000,
+    body:form,timeoutMs:TIMEOUT_MS.SLOW,
    });
    updateMessage("");setSuccess("Message sent to Everyone.");router.refresh();
   }catch(reason){
@@ -66,7 +67,7 @@ export function TpoEveryoneControls({muted,actorUserId}:{muted:boolean;actorUser
    form.set("muted",localMuted?"false":"true");
    const reply=await apiFetch<{muted:boolean}>("/api/placements/tpo/team/everyone/mute",{
     method:"POST",credentials:"same-origin",headers:{Accept:"application/json"},
-    body:form,timeoutMs:30000,
+    body:form,timeoutMs:TIMEOUT_MS.SLOW,
    });
    setLocalMuted(reply.muted);router.refresh();
   }catch(reason){

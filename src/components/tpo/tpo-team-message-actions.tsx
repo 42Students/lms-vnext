@@ -7,6 +7,7 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {Textarea} from "@/components/ui/textarea";
 import {Dialog} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { TIMEOUT_MS } from "@/security/limits";
 type Props={threadId:string;messageId:string;body:string;expectedBodyHash:string;canEdit:boolean};
 export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,canEdit}:Props){
  const router=useRouter(),pending=useRef(false);
@@ -19,7 +20,7 @@ export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,
   try{
    await apiFetch("/api/placements/tpo/team/threads/"+encodeURIComponent(threadId)+
     "/messages/"+encodeURIComponent(messageId)+"/change",{
-    method:"POST",credentials:"same-origin",timeoutMs:12000,
+    method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.REQUEST,
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({action,expectedBodyHash,...(action==="EDIT"?{body:draft.trim()}:{})}),
    });

@@ -10,10 +10,11 @@ import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TIMEOUT_MS } from "@/security/limits";
 type Preview={id:string;expectedUpdatedAt:string;counts:{applications:number;rounds:number;offers:number}};
 export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
  const router=useRouter(),[pending,setPending]=useState(false),[error,setError]=useState<string|null>(null);
- const {run}=useGuardedAction({timeoutMs:40000});
+ const {run}=useGuardedAction({timeoutMs:TIMEOUT_MS.VERY_SLOW});
  const [confirmOpen,setConfirmOpen]=useState(false);
  const [confirmedReason,setConfirmedReason]=useState("");
  const [reasonText,setReasonText]=useState("");
@@ -30,7 +31,7 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
     setPending(true);setError(null);
     try{
       await apiFetch("/api/placements/tpo/jobs/"+encodeURIComponent(preview.id)+"/close-preview",{
-        method:"POST",credentials:"same-origin",timeoutMs:35000,
+        method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.BATCH,
         headers:{"content-type":"application/json"},
         body:JSON.stringify({action:"CLOSE",confirmed:true,
           expectedUpdatedAt:preview.expectedUpdatedAt,

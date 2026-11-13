@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import style from "./topbar.module.css";
 import { safeTpoFindResult, type TpoFindResult } from "./tpo-find-model";
 
+import { TIMEOUT_MS } from "@/security/limits";
 export function TpoFindSuggestions({
   query, onOpen,
 }: {
@@ -25,7 +26,7 @@ export function TpoFindSuggestions({
     const timer = window.setTimeout(() => {
       void apiFetch<unknown>(
         "/api/tpo/find-suggestions?q=" + encodeURIComponent(needle),
-        { signal: controller.signal, cache: "no-store", timeoutMs: 12000 },
+        { signal: controller.signal, cache: "no-store", timeoutMs: TIMEOUT_MS.REQUEST },
       ).then(payload => {
         if (controller.signal.aborted) return;
         if (!payload || typeof payload !== "object" ||

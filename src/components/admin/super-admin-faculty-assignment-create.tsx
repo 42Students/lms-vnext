@@ -17,6 +17,7 @@ import {facultyAssignmentRoleLabel} from "@/modules/courses/college-courses-copy
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type Delivery={id:string;sectionId:string;courseCode:string;courseName:string;sectionName:string;
   cohortName:string;academicPeriodName:string;endedAt:Date|null;programName?:string};
 type Faculty={membershipId:string;displayName:string};
@@ -38,7 +39,7 @@ export function SuperAdminFacultyAssignmentCreate({
  const [role,setRole]=useState<CourseTeachingRole>("PRIMARY");
  const [error,setError]=useState("");
  const [notice,setNotice]=useState("");
- const {pending,run}=useGuardedAction({timeoutMs:20000});
+ const {pending,run}=useGuardedAction({timeoutMs:TIMEOUT_MS.EXTENDED});
  const available=deliveries.filter(item=>!item.endedAt);
  const programs=[...new Set(available.map(item=>item.programName??""))].sort();
  const batchNames=[...new Set(available.filter(item=>item.programName===programName)

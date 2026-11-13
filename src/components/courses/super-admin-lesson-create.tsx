@@ -13,6 +13,7 @@ import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 import { TextLink } from "@/components/ui/text-link";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type Path={id:string;courseName:string;cohortName:string;periodName:string};
  export function SuperAdminLessonCreate({paths}:{paths:readonly Path[]}){
  const router=useRouter();
@@ -41,7 +42,7 @@ type Path={id:string;courseName:string;cohortName:string;periodName:string};
   try{
    // Legacy sequence=0 means atomically append under the path lock; do
    // not race a client GET(max sequence) against another author's create.
-   const created=await apiFetch<{lesson:{id:string}}>("/api/courses/lessons",{method:"POST",timeoutMs:12000,
+   const created=await apiFetch<{lesson:{id:string}}>("/api/courses/lessons",{method:"POST",timeoutMs:TIMEOUT_MS.REQUEST,
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({learningPathId:pathId,name:name.trim(),
      description:description.trim()||null,sequence:0,

@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch} from "@/lib/api-fetch";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type Outcome={markedPersonal:number;markedSources:number;
   examinedSources:number;completeForCurrentVisibleSources:boolean};
 /** Uses one server transaction for current recipient, not several sequential
@@ -23,7 +24,7 @@ export function MentorUnifiedReadAll({loadedUnread,moreNoticesPossible=false}:{
   try{
    const result=await apiFetch<Outcome>(
      "/api/mentor/notifications/unified-read-all",
-     {method:"POST",timeoutMs:25000});
+     {method:"POST",timeoutMs:TIMEOUT_MS.LONG});
    if(!result.completeForCurrentVisibleSources)
      throw Error("The server did not confirm all visible sources were acknowledged.");
    setConfirmOpen(false);

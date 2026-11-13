@@ -8,6 +8,7 @@ import {GlobalEmailSuppressionUnavailable,persistVerifiedGlobalEmailSuppression}
 import { route } from "@/security/route";
 import { env, rawEnv } from "@/config/env";
 import { CACHE } from "@/security/responses";
+import { RATE_LIMITS } from "@/security/limits";
 export const runtime="nodejs";
 /** Do not acknowledge a signed opt-out when its recipient table has not
  * been deployed. Public callers get a generic retryable state, never a
@@ -100,6 +101,6 @@ async function handlePOST(request:Request){
  return successResponse(request,null);
 }
 export const POST = route(
-  { auth: "public", publicReason: "Link or form opened without an account (token, slug or anonymous report); the handler validates the token or input and is rate limited per address.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  { auth: "public", publicReason: "Link or form opened without an account (token, slug or anonymous report); the handler validates the token or input and is rate limited per address.", rateLimit: RATE_LIMITS.BULK },
   ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
 );

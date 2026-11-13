@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label";
 import { ButtonLink } from "@/components/ui/button-link";
 import { istDateTimeFormatter } from "@/lib/format-date";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type KnownError = Awaited<ReturnType<typeof listKnownErrorsForAdmin>>[number];
 
 function formatInstant(value: Date | string | null) {
@@ -29,7 +30,7 @@ function formatInstant(value: Date | string | null) {
 function KnownErrorCard({ item }: { item: KnownError }) {
   const router = useRouter();
   const { showToast } = useToast();
-  const { run, pending } = useGuardedAction({ timeoutMs: 20_000 });
+  const { run, pending } = useGuardedAction({ timeoutMs: TIMEOUT_MS.EXTENDED });
   const [note, setNote] = useState("");
   const [muteReason, setMuteReason] = useState("");
   const [confirmMute, setConfirmMute] = useState(false);
@@ -50,7 +51,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           method: "PATCH",
           headers: { "content-type": "application/json" },
           body: JSON.stringify(body),
-          timeoutMs: 15_000,
+          timeoutMs: TIMEOUT_MS.STANDARD,
         });
         showToast({ tone: "success", title: "Known error updated" });
         setConfirmMute(false);
@@ -266,7 +267,7 @@ export function KnownErrorsWorkspace({
 }) {
   const router = useRouter();
   const { showToast } = useToast();
-  const { run, pending } = useGuardedAction({ timeoutMs: 20_000 });
+  const { run, pending } = useGuardedAction({ timeoutMs: TIMEOUT_MS.EXTENDED });
   const viewedOnce = useRef(false);
   const [dismissed, setDismissed] = useState(false);
   const [drawerOpen,setDrawerOpen]=useState(false);
@@ -280,7 +281,7 @@ export function KnownErrorsWorkspace({
     if (viewedOnce.current) return;
     viewedOnce.current = true;
     void apiFetch("/api/tracker/logs/viewed", {
-      method: "POST", timeoutMs: 15_000,
+      method: "POST", timeoutMs: TIMEOUT_MS.STANDARD,
     }).catch(() => { viewedOnce.current = false; });
   }, []);
 
@@ -288,7 +289,7 @@ export function KnownErrorsWorkspace({
     try {
       await run(async () => {
         await apiFetch("/api/tracker/logs/viewed", {
-          method: "POST", timeoutMs: 15_000,
+          method: "POST", timeoutMs: TIMEOUT_MS.STANDARD,
         });
         router.refresh();
         showToast({ tone: "success", title: "Logs review time updated" });

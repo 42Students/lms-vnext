@@ -8,6 +8,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {rearrangeLessonIds} from "@/modules/courses/college-lesson-order-model";
 import { Heading } from "@/components/ui/heading";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type Lesson={id:string;name:string;sequence:number};
 export function CollegeLessonDragOrder({learningPathId,lessons}:{
  learningPathId:string;lessons:readonly Lesson[];
@@ -36,7 +37,7 @@ export function CollegeLessonDragOrder({learningPathId,lessons}:{
   setOrder(next);setError("");setBusy(true);
   try{
    await apiFetch("/api/courses/lessons/reorder-all",{
-    method:"POST",credentials:"same-origin",timeoutMs:15000,
+    method:"POST",credentials:"same-origin",timeoutMs:TIMEOUT_MS.STANDARD,
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({learningPathId,expected:lessons.map(({id,sequence})=>({id,sequence})),orderedIds:next}),
    });

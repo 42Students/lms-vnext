@@ -5,6 +5,7 @@ import { isValidRecipient, normalizeRecipient } from "@/modules/messaging/model"
 
 import { rawEnv } from "@/config/env";
 import { ROLE } from "@/modules/identity/roles";
+import { TIMEOUT_MS } from "@/security/limits";
 /**
  * Server-side ZeptoMail adapter. Authentication, notification events and TPO
  * templates share the same fail-closed transport; callers choose a provisioned
@@ -435,7 +436,7 @@ export async function sendZeptoMailTemplate(
         ...(replyTo ? { reply_to: [{ address: replyTo }] } : {}),
         merge_info: mergeInfo,
       }),
-      timeoutMs: 10_000,
+      timeoutMs: TIMEOUT_MS.QUICK,
       maxAttempts: canRetry?3:1,
       baseDelayMs: 500,
       ...(canRetry?{idempotencyKey:message.idempotencyKey}:{}),

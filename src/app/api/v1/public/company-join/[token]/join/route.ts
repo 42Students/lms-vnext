@@ -6,6 +6,7 @@ import {z} from "zod";
 import { route } from "@/security/route";
 import { featureReady } from "@/config/features";
 import { CACHE, noStoreJson } from "@/security/responses";
+import { RATE_LIMITS } from "@/security/limits";
 export const runtime="nodejs";
 const legacy=z.strictObject({
  email:z.string().email().max(254),code:z.string().regex(/^[0-9]{6}$/),
@@ -42,6 +43,6 @@ async function handlePOST(request:Request,{params}:{params:Promise<{token:string
  }
 }
 export const POST = route(
-  { auth: "public", publicReason: "Link or form opened without an account (token, slug or anonymous report); the handler validates the token or input and is rate limited per address.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  { auth: "public", publicReason: "Link or form opened without an account (token, slug or anonymous report); the handler validates the token or input and is rate limited per address.", rateLimit: RATE_LIMITS.BULK },
   ({ request, params }) => handlePOST(request as Parameters<typeof handlePOST>[0], { params: Promise.resolve(params) } as Parameters<typeof handlePOST>[1]),
 );

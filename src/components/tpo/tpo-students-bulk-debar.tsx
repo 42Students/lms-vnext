@@ -15,6 +15,7 @@ import {validateTpoBulkDebarDraft} from "@/modules/placements/tpo-bulk-debar-mod
 import {mapTpoBulkBounded} from "@/modules/placements/tpo-bulk-bounded-execution";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TIMEOUT_MS } from "@/security/limits";
 type Learner={id:string;name:string;debarred:boolean};
 type DebarRow={id:string;active:boolean};
 type Result={id:string;name:string;status:"saved"|"skipped"|"failed";detail:string};
@@ -33,7 +34,7 @@ export function TpoStudentsBulkDebar({learners}:{learners:readonly Learner[]}){
  const [confirm,setConfirm]=useState(false);
  const [results,setResults]=useState<Result[]>([]);
  const [error,setError]=useState("");
- const {run:runGuarded,pending}=useGuardedAction({timeoutMs:120000});
+ const {run:runGuarded,pending}=useGuardedAction({timeoutMs:TIMEOUT_MS.UPLOAD});
  const picked=learners.filter(row=>selected.includes(row.id));
  const visibleIds=new Set(learners.map(row=>row.id));
  const outsideSelection=selected.filter(id=>!visibleIds.has(id)).length;

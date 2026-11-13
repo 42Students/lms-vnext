@@ -15,6 +15,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Label } from "@/components/ui/label";
 import { createDateFormatter } from "@/lib/format-date";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { TIMEOUT_MS } from "@/security/limits";
 type LeadChoice={id:string;name:string;companyName:string|null};
 const field="min-h-11 w-full md:min-h-9";
 export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
@@ -38,7 +39,7 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
  const [when,setWhen]=useState("");
  const [note,setNote]=useState("");
  const [loading,setLoading]=useState(false);
- const {pending:saving,run}=useGuardedAction({timeoutMs:30000});
+ const {pending:saving,run}=useGuardedAction({timeoutMs:TIMEOUT_MS.SLOW});
  const [error,setError]=useState("");
  const hasDraft=open&&Boolean(leadId||when||note.trim());
  useEffect(()=>{

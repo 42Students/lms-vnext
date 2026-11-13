@@ -7,6 +7,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import { createDateFormatter } from "@/lib/format-date";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { TIMEOUT_MS } from "@/security/limits";
 /** The recipient-specific high-water marker and total come from PostgreSQL.
  * The client never stores a parallel localStorage cursor or guesses from
  * the first page of events. New events after marking remain unread.
@@ -22,7 +23,7 @@ export function MentorActivitySinceLastVisit({projectId,lastSeenAt,newCount}:{
   setBusy(true);setError("");
   try{
    await apiFetch("/api/projects/"+encodeURIComponent(projectId)+
-     "/activity/seen",{method:"POST",cache:"no-store",timeoutMs:12000});
+     "/activity/seen",{method:"POST",cache:"no-store",timeoutMs:TIMEOUT_MS.REQUEST});
    router.refresh();
   }catch(reason){
    setError(reason instanceof Error?reason.message:

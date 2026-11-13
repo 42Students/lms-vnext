@@ -11,11 +11,12 @@ import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TIMEOUT_MS } from "@/security/limits";
 export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}: {
   jobId: string; applicationId: string; expectedUpdatedAt: string;
 }) {
   const router = useRouter();
-  const {run}=useGuardedAction({timeoutMs:35000});
+  const {run}=useGuardedAction({timeoutMs:TIMEOUT_MS.BATCH});
   const [decision,setDecision]=useState<"SHORTLISTED"|"REJECTED">("SHORTLISTED");
   const [note,setNote]=useState("");
   const [internalReason,setInternalReason]=useState("");

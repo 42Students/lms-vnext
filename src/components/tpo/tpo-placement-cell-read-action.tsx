@@ -6,9 +6,10 @@ import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
 
+import { TIMEOUT_MS } from "@/security/limits";
 export function TpoPlacementCellReadAction({id,autoMarkRead=false}:{id:string;autoMarkRead?:boolean}){
  const router=useRouter();
- const {pending:busy,run}=useGuardedAction({timeoutMs:30000});
+ const {pending:busy,run}=useGuardedAction({timeoutMs:TIMEOUT_MS.SLOW});
  const [error,setError]=useState("");
  const [notice,setNotice]=useState("");
  const autoRequested=useRef(false);
@@ -18,7 +19,7 @@ export function TpoPlacementCellReadAction({id,autoMarkRead=false}:{id:string;au
    await run(async () => {
     const data=await apiFetch<{firstInCollege?:boolean}>(
      "/api/placements/tpo/announcements/"+encodeURIComponent(id)+"/read-cell",{
-      method:"POST",headers:{"content-type":"application/json"},body:"{}",timeoutMs:25000,
+      method:"POST",headers:{"content-type":"application/json"},body:"{}",timeoutMs:TIMEOUT_MS.LONG,
      });
     if(!automatic)setNotice(data?.firstInCollege?
      "Marked as read for this placement cell.":

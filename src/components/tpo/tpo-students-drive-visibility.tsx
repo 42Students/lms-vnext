@@ -14,6 +14,7 @@ import {tpoDriveVisibilitySelection,tpoDriveVisibilityValid} from "@/modules/pla
 import {mapTpoBulkBounded} from "@/modules/placements/tpo-bulk-bounded-execution";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
+import { TIMEOUT_MS } from "@/security/limits";
 type Learner={id:string;name:string};
 type Drive={id:string;name:string;status:string};
 type PreviousOverride={id:string;decision:"INCLUDE"|"EXCLUDE";reason:string};
@@ -29,7 +30,7 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
  const [results,setResults]=useState<Outcome[]>([]);
  const [lastActionJobId,setLastActionJobId]=useState("");
  const [undoFeedback,setUndoFeedback]=useState("");
- const {run,pending}=useGuardedAction({timeoutMs:120000});
+ const {run,pending}=useGuardedAction({timeoutMs:TIMEOUT_MS.UPLOAD});
  const picked=tpoDriveVisibilitySelection(selection?.selected??[],learners,200);
  const valid=tpoDriveVisibilityValid({jobId,decision,reason,count:picked.length});
  const selectedDrive=drives.find(drive=>drive.id===jobId);

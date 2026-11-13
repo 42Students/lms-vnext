@@ -8,6 +8,7 @@ import {mentorGoogleConfig,mentorGoogleConsentUrl,mentorGooglePkceChallenge} fro
 import {mentorGoogleConnectionState} from
  "@/modules/projects/mentor-google-calendar-connection-service";
 import { route } from "@/security/route";
+import { RATE_LIMITS } from "@/security/limits";
 export const runtime="nodejs";
 /** An authenticated, explicit user navigation starts Google OAuth. A signed-in
  * Mentor alone may connect their own college-scoped calendar grant.
@@ -35,6 +36,6 @@ async function handleGET(request:Request){
  }
 }
 export const GET = route(
-  { auth: "public", publicReason: "OAuth redirect endpoint: the handler validates the signed state and the signed-in user itself and redirects on failure.", csrf: false, csrfExemptReason: "Redirects come from the identity provider; the handler validates state instead of Origin.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  { auth: "public", publicReason: "OAuth redirect endpoint: the handler validates the signed state and the signed-in user itself and redirects on failure.", csrf: false, csrfExemptReason: "Redirects come from the identity provider; the handler validates state instead of Origin.", rateLimit: RATE_LIMITS.BULK },
   ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
 );

@@ -10,6 +10,7 @@ import { isExotelAcceptedResponse } from "@/modules/messaging/provider-acceptanc
 import { validatedSmsAttempt } from "./sms-attempt-validation";
 
 import { rawEnv } from "@/config/env";
+import { TIMEOUT_MS } from "@/security/limits";
 /**
  * Exotel transactional SMS, matching the legacy LMS integration.
  * Indian DLT rules require the registered entity, sender and template IDs;
@@ -282,7 +283,7 @@ export function createExotelSmsProvider(
               Accept: "application/json",
             },
             body: form,
-            timeoutMs: 10_000,
+            timeoutMs: TIMEOUT_MS.QUICK,
             maxAttempts: 1, // OTP POST has no provider idempotency guarantee.
             fetchImpl,
           },

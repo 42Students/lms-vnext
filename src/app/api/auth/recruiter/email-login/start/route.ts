@@ -10,6 +10,7 @@ import {startLoginWithRuntime} from "@/modules/auth/runtime";
 import {publicWorkEmailIssue} from "@/modules/placements/public-work-email-policy";
 import { route } from "@/security/route";
 
+import { RATE_LIMITS } from "@/security/limits";
 export const runtime="nodejs";
 const schema=z.strictObject({
   channel:z.literal("EMAIL"),
@@ -73,6 +74,6 @@ async function handlePOST(request:Request){
   }
 }
 export const POST = route(
-  { auth: "public", publicReason: "Sign-in, recovery and session endpoints run before or independently of a session; each handler enforces its own challenge, device or session-state checks.", csrf: false, csrfExemptReason: "The handler applies its own origin and challenge checks, unchanged by this wrapper.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  { auth: "public", publicReason: "Sign-in, recovery and session endpoints run before or independently of a session; each handler enforces its own challenge, device or session-state checks.", csrf: false, csrfExemptReason: "The handler applies its own origin and challenge checks, unchanged by this wrapper.", rateLimit: RATE_LIMITS.BULK },
   ({ request }) => handlePOST(request as Parameters<typeof handlePOST>[0]),
 );

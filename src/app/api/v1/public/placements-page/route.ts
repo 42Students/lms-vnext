@@ -10,6 +10,7 @@ import {DEFAULT_PUBLIC_METRICS,PUBLIC_METRIC_LABELS,formatPublicPlacementMetric}
 import {publicPlacementDisclosure} from "@/modules/placements/public-placement-disclosure-model";
 import { route } from "@/security/route";
 
+import { RATE_LIMITS } from "@/security/limits";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -72,6 +73,6 @@ async function handleGET(request:Request){
   }catch{return unavailable();}
 }
 export const GET = route(
-  { auth: "public", publicReason: "Link or form opened without an account (token, slug or anonymous report); the handler validates the token or input and is rate limited per address.", csrf: false, csrfExemptReason: "Links and email clients send no same-origin header; the handler validates the token or applies its own origin check.", rateLimit: { limit: 3000, windowMs: 60_000 } },
+  { auth: "public", publicReason: "Link or form opened without an account (token, slug or anonymous report); the handler validates the token or input and is rate limited per address.", csrf: false, csrfExemptReason: "Links and email clients send no same-origin header; the handler validates the token or applies its own origin check.", rateLimit: RATE_LIMITS.BULK },
   ({ request }) => handleGET(request as Parameters<typeof handleGET>[0]),
 );

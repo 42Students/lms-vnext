@@ -17,6 +17,7 @@ import {Button} from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Label } from "@/components/ui/label";
 
+import { TIMEOUT_MS } from "@/security/limits";
 type CandidateOffer = {
   id: string;
   label: string;
@@ -32,7 +33,7 @@ export function TpoOfferLifecyclePanel({
   choices: readonly CandidateOffer[];
 }) {
   const router = useRouter();
-  const {run}=useGuardedAction({timeoutMs:35000});
+  const {run}=useGuardedAction({timeoutMs:TIMEOUT_MS.BATCH});
   const [reviewed,setReviewed]=useState(false);
   const [action, setAction] = useState<TpoOfferAction>("EXTEND");
   const [ids, setIds] = useState<string[]>([]);

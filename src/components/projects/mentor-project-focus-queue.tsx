@@ -7,6 +7,7 @@ import {mentorAttentionReceiptKey} from "@/modules/projects/mentor-attention-rea
 import type {MentorProjectAttention} from "@/modules/projects/mentor-attention";
 import { Button } from "@/components/ui/button";
 
+import { TIMEOUT_MS } from "@/security/limits";
 export function MentorProjectFocusQueue({items,initialLater}:{
  items:readonly MentorProjectAttention[];initialLater:readonly string[];
 }){
@@ -22,7 +23,7 @@ export function MentorProjectFocusQueue({items,initialLater}:{
   try{
    const result=await apiFetch<{hidden:boolean}>("/api/mentor/attention/later",{
     method:"POST",body:JSON.stringify({key}),
-    headers:{"content-type":"application/json"},timeoutMs:12000,
+    headers:{"content-type":"application/json"},timeoutMs:TIMEOUT_MS.REQUEST,
    });
    if(!result.hidden)throw Error("Alert was not postponed");
    setLater(old=>[...new Set([...old,key])]);
