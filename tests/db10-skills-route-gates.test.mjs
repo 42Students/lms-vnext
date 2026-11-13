@@ -12,10 +12,10 @@ const get = route.slice(Math.max(route.indexOf("export async function GET("),rou
 const post = route.slice(Math.max(route.indexOf("export async function POST("),route.indexOf("async function handlePOST(")), route.indexOf("type ReadMode"));
 
 test("skills GET is disabled until replay, synonym seed and source are verified", () => {
-  assert.match(readiness, /\["DB10_SKILLS_READY"\]\s*===\s*"DB10_VERIFIED"/);
-  assert.match(readiness, /\["DB10_SKILLS_SCHEMA_READY"\]\s*===\s*"DB10_REPLAY_VERIFIED"/);
-  assert.match(readiness, /\["DB10_SKILLS_SYNONYMS_READY"\]\s*===\s*"SEED_VERIFIED"/);
-  assert.match(readiness, /\["DB10_SKILLS_SOURCE_RECONCILED"\]\s*===\s*"LEGACY_RTF_RECONCILED"/);
+  assert.match(readiness, /featureReady\("skills"\)/);
+  assert.match(readiness, /featureReady\("skillsSchema"\)/);
+  assert.match(readiness, /featureReady\("skillsSynonyms"\)/);
+  assert.match(readiness, /env\.DB10_SKILLS_SOURCE_RECONCILED\s*===\s*"LEGACY_RTF_RECONCILED"/);
   const gate = get.indexOf("if (!skillsCatalogRuntimeEnabled())");
   const dataContext = get.indexOf("const context = await getCurrentRequestContext();", gate);
   assert.ok(gate >= 0 && gate < dataContext, "ordinary read must fail before DB-backed catalog queries");

@@ -40,8 +40,8 @@ test("canonical placements.manage is TPO/COLLEGE_ADMIN only", () => {
   const end = policy.indexOf('case "college.manage":', start);
   assert.notEqual(end, -1);
   const block = policy.slice(start, end);
-  assert.match(block, /hasMembershipRole\(context, "TPO"\)/);
-  assert.match(block, /hasMembershipRole\(context, "COLLEGE_ADMIN"\)/);
+  assert.match(block, /hasMembershipRole\(context, ROLE.TPO\)/);
+  assert.match(block, /hasMembershipRole\(context, ROLE.COLLEGE_ADMIN\)/);
   assert.doesNotMatch(block, /FACULTY_COORDINATOR|placement_tpo_team_members/);
 });
 

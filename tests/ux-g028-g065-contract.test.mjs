@@ -7,7 +7,7 @@ const read = path => readFileSync("src/app/(authenticated)/"+path,"utf8");
 test("UX-G065 learner notification history checks membership before bad cursor recovery",()=>{
   const s=read("learn/notifications/history/page.tsx");
   assert.match(s,/hasActiveMembership\(context\)/);
-  assert.match(s,/hasMembershipRole\(context,"LEARNER"\)/);
+  assert.match(s,/hasMembershipRole\(context,ROLE.LEARNER\)/);
   assert.ok(s.indexOf("hasActiveMembership(context)")<s.indexOf("learnerNotificationHistoryQuerySchema.safeParse"));
   assert.match(s,/No personal notifications were loaded/);
   assert.match(s,/href="\/learn\/notifications\/history"/);

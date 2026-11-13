@@ -146,7 +146,7 @@ test("DB030 current grader guard mirrors service admin/faculty authorization", (
   assert.match(assignmentService, /can\(context, "courses\.manage"/);
   assert.match(assignmentService, /requireDeliveryContentMutation/);
   assert.match(permissionPolicy, /case "courses\.manage":/);
-  assert.match(permissionPolicy, /hasMembershipRole\(context, "COLLEGE_ADMIN"\)/);
+  assert.match(permissionPolicy, /hasMembershipRole\(context, ROLE.COLLEGE_ADMIN\)/);
 });
 
 test("DB030 historical grade correction does not require the learner to remain actively enrolled", () => {
