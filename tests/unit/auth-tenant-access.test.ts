@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { RequestContext } from "@/modules/identity/context";
-import { isTenantAccessAllowed } from "@/modules/auth/tenant-access";
+import { isTenantAccessAllowed, scopeContextToTenant } from "@/modules/auth/tenant-access";
 
 const COLLEGE_A = "college-a";
 const COLLEGE_B = "college-b";
@@ -120,6 +120,39 @@ describe("isTenantAccessAllowed", () => {
     expect(isTenantAccessAllowed(original,host)).toBe(true);
     expect(isTenantAccessAllowed(stale,host)).toBe(false);
     expect(isTenantAccessAllowed(stale,{kind:"platform"})).toBe(true);
+  });
+
+  it("blocks a College A membership from borrowing a College B recruiter grant to enter host B", () => {
+    const member = memberOf(COLLEGE_A);
+    const recruiter = recruiterAt(COLLEGE_B);
+    const combined: RequestContext = { ...member, recruiter: recruiter.recruiter };
+    expect(isTenantAccessAllowed(combined, {kind:"college",collegeId:COLLEGE_A})).toBe(true);
+    expect(isTenantAccessAllowed(combined, {kind:"college",collegeId:COLLEGE_B})).toBe(false);
+    expect(isTenantAccessAllowed({...combined,membership:null}, {kind:"college",collegeId:COLLEGE_B})).toBe(true);
+  });
+
+  it("drops cross-college recruiter grants on a member's college host while retaining them on the platform host", () => {
+    const a = recruiterAt(COLLEGE_A).recruiter!;
+    const b = recruiterAt(COLLEGE_B).recruiter!.grants[0]!;
+    const member = memberOf(COLLEGE_A);
+    const combined: RequestContext = {
+      ...member, recruiter: {...a,grants:[...a.grants,b]},
+    };
+    const scoped = scopeContextToTenant(combined,{kind:"college",collegeId:COLLEGE_A});
+    expect(scoped.membership).toEqual(member.membership);
+    expect(scoped.recruiter?.grants.map(g=>g.collegeId)).toEqual([COLLEGE_A]);
+    expect(scopeContextToTenant(combined,{kind:"platform"})).toBe(combined);
+    expect(scopeContextToTenant(combined,{kind:"unknown"})).toBe(combined);
+    expect(scopeContextToTenant(member,{kind:"college",collegeId:COLLEGE_A})).toBe(member);
+  });
+
+  it("does not expose a recruiter workspace on a college host when that user holds only an unrelated college grant", () => {
+    const combined: RequestContext = {
+      ...memberOf(COLLEGE_A), recruiter: recruiterAt(COLLEGE_B).recruiter,
+    };
+    const scoped=scopeContextToTenant(combined,{kind:"college",collegeId:COLLEGE_A});
+    expect(scoped.recruiter).toBeNull();
+    expect(isTenantAccessAllowed(scoped,{kind:"college",collegeId:COLLEGE_A})).toBe(true);
   });
 
   it("fails closed on unknown hosts", () => {
