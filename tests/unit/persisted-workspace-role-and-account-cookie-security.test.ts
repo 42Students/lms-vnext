@@ -57,12 +57,12 @@ describe("account-bound auth cookies", () => {
 
   it("clears the previous person's selected role on successful login", () => {
     const source = read("src/app/api/auth/login/verify/route.ts");
-    expect(source).toContain('response.cookies.set(ROLE_COOKIE_NAME, "", {');
+    expect(source).toContain("clearAuthCookie(response, ROLE_COOKIE_NAME)");
   });
 
   it("clears the role alongside the device session and membership on logout", () => {
     const source = read("src/app/api/auth/session/route.ts");
-    const names = source.split("for (const name of [")[1]?.split("])")[0] ?? "";
+    const names = source.split("clearAuthCookies(response, [")[1]?.split("]);")[0] ?? "";
     expect(names).toContain("SESSION_COOKIE_NAME");
     expect(names).toContain("MEMBERSHIP_COOKIE_NAME");
     expect(names).toContain("ROLE_COOKIE_NAME");

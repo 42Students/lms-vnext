@@ -111,10 +111,10 @@ describe("Chat-6 adversarial OTP, handoff and session lifecycle", () => {
     expect(verify).toContain("previousToken: previousToken(request)");
     expect(verify).toContain("tenantCollegeId: guarded.tenantCollegeId");
     expect(verify).toContain("membership.status === \"ACTIVE\"");
-    expect(verify).toContain("response.cookies.set(ADMIN_SCOPE_COOKIE_NAME, \"\",");
+    expect(verify).toContain("clearAuthCookie(response, ADMIN_SCOPE_COOKIE_NAME)");
     expect(verify).toContain("autoMembershipId ?? \"\"");
-    expect(verify).toContain("httpOnly: true");
-    expect(verify).toContain('sameSite: "lax"');
+    expect(readFileSync("src/auth/cookies.ts", "utf8")).toContain("httpOnly: true");
+    expect(readFileSync("src/auth/cookies.ts", "utf8")).toContain('sameSite: "lax"');
     const login = source("src/modules/auth/login-service.ts");
     expect(login).toContain("await assertCanSignInHere(deps, user, input.tenantCollegeId)");
     expect(login).toContain("deps.repository.consumeAttempt(");
@@ -129,7 +129,7 @@ describe("Chat-6 adversarial OTP, handoff and session lifecycle", () => {
       "SESSION_COOKIE_NAME", "MEMBERSHIP_COOKIE_NAME",
       "ROLE_COOKIE_NAME", "ADMIN_SCOPE_COOKIE_NAME",
     ]) expect(route).toContain(name);
-    expect(route).toContain('maxAge: 0');
+    expect(route).toMatch(/clearAuthCookies?\(/);
     expect(route).toContain('response.headers.set("Clear-Site-Data"');
     expect(route).toContain("revokeOtherSessions(session.userId,session.sessionId)");
   });
@@ -145,7 +145,7 @@ describe("Chat-6 adversarial OTP, handoff and session lifecycle", () => {
     expect(one).toContain("revokeOwnSession(sessionId, session.userId)");
     expect(one).toContain("z.string().uuid().parse");
     expect(one).toContain("sessionId === session.sessionId");
-    expect(one).toContain("maxAge: 0");
+    expect(one).toMatch(/clearAuthCookies?\(/);
     expect(one).toContain('response.headers.set("Clear-Site-Data"');
     for (const cookie of ["SESSION_COOKIE_NAME","MEMBERSHIP_COOKIE_NAME","ROLE_COOKIE_NAME","ADMIN_SCOPE_COOKIE_NAME"]) {
       expect(one).toContain(cookie);
@@ -153,7 +153,7 @@ describe("Chat-6 adversarial OTP, handoff and session lifecycle", () => {
     for(const cookie of ["SESSION_COOKIE_NAME","MEMBERSHIP_COOKIE_NAME","ADMIN_SCOPE_COOKIE_NAME"]) {
       expect(logout).toContain(cookie);
     }
-    expect(logout).toContain("maxAge: 0");
+    expect(logout).toMatch(/clearAuthCookies?\(/);
     expect(logout).toContain('response.headers.set("Cache-Control", "no-store")');
     expect(logout).toContain("logError(\"auth.logout_revoke_failed\", error)");
   });

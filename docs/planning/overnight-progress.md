@@ -42,7 +42,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [x] 3.2 (core) src/security/responses.ts: CACHE constants + privateJson/strictPrivateJson/noStoreJson/publicJson/withCachePolicy; 265 single-line NextResponse.json calls became helper calls, 877 header literals became CACHE.*; Cache-Control literals in API routes 1,180 -> 915 (ratchet enforced). NOT done: multi-line json responses, downloads/redirect helpers, 1,680 numeric status literals
 - [x] 3.3 (part) one body reader module src/lib/request-body.ts replaces 5 reader modules (4 shims deleted, auth reader folded in), behaviour of each call shape unchanged and tested; ratchets enforced on handler origin checks (262) and body modules (1). NOT done: removing the 262 redundant handler-level origin checks and 410 handler actor lookups: 277 test files pin the old text and the checks are harmless defence in depth, so a ratchet holds the count until a dedicated pass
 - [x] 3.4 (part) src/security/limits.ts: RATE_LIMITS and TIMEOUT_MS tiers; 174 inline literals replaced, remaining 2 rate-limit and 5 timeout literals are non-standard values (ratchets enforced). NOT done: the other ~120 retry/limit literals that carry route-specific numbers
-- [ ] 3.5 session cookie helper
+- [x] 3.5 (part) src/auth/cookies.ts (setAuthCookie, clearAuthCookie(s), setOrClearAuthCookie): 16 of 20 cookie writes migrated, one Secure rule (production or COOKIE_SECURE=1) now applies to all of them; 4 path-scoped cookies (mentor Google OAuth x2, company-share x2) keep their own options; ratchet enforced
 - [ ] 3.6 idempotency option
 
 ## Phase 4: authorization and tenant
