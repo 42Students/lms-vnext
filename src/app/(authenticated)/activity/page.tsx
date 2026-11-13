@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import {sanitizeActivityMetadata} from "@/modules/activity/metadata-sanitizer";
 import { activityQuickHref } from "@/modules/activity/ux-query";
 import {
+  hasMembershipRole,
   isSuperAdmin,
 } from "@/modules/identity/context";
 import {
