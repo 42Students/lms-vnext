@@ -1,6 +1,19 @@
+import "server-only";
+import { redirect } from "next/navigation";
 import "@/styles/college-admin-north-star.css";
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { canAccessRolePortal } from "@/modules/identity/role-portal-policy";
+import { deniedPortalHome } from "@/modules/identity/unauthorized-portal-home";
 
-/** Apply the College Admin skin to legacy alias route fallbacks as well. */
-export default function CollegeAdminAliasLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+/** Legacy /college-admin aliases must enforce the same role boundary as
+ * canonical /college before nested dynamic bookmarks query tenant resources.
+ */
+export default async function CollegeAdminAliasLayout({
+  children,
+}: Readonly<{children: React.ReactNode}>) {
+  const context=await getCurrentRequestContext();
+  if(!canAccessRolePortal(context,"college-admin")) {
+    redirect(deniedPortalHome(context));
+  }
   return <div className="lms-college-portal">{children}</div>;
 }
