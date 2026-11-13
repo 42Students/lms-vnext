@@ -54,6 +54,6 @@ test("G132 faculty schedule fixture is gated from production builds", async () =
   const { readFileSync } = await import("node:fs");
   const source=readFileSync("src/app/e2e/ux-g132-faculty-schedule/page.tsx","utf8");
   expect(source).toContain('process.env.NODE_ENV !== "development"');
-  expect(source).toContain('process.env["UX_G132_SCHEDULE_FIXTURE"] !== "1"');
+  expect(source).toContain('env.UX_G132_SCHEDULE_FIXTURE !== "1"');
   expect(source).toContain("notFound()");
 });
