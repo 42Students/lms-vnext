@@ -8,6 +8,7 @@ import { ROLE } from "@/modules/identity/roles";
 export const runtime = "nodejs";
 
 /** Faculty: the courses this teacher currently coordinates (their own grants only). Other roles get 403. */
+// @security-reviewed GET auth=session tenant=college permission=courses.read csrf=route-wrapper test=tests/unit/course-coordinator-policy.test.ts
 export const GET = route(
   { auth: "user", permission: "courses.read" },
   async ({ context: actor }) => {

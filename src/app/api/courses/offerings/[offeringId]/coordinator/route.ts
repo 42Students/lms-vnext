@@ -15,6 +15,7 @@ export const runtime = "nodejs";
 const grantBodySchema = z.object({ membershipId: z.string().uuid() }).strict();
 
 /** College admin: who coordinates this course now, who could, and what changed before. */
+// @security-reviewed GET auth=session tenant=college permission=courses.manage csrf=route-wrapper test=tests/unit/course-coordinator-policy.test.ts
 export const GET = route(
   { auth: "user", permission: "courses.manage" },
   async ({ context: actor, params }) => {
@@ -30,6 +31,7 @@ export const GET = route(
 );
 
 /** College admin: nominate one of the course's teachers. */
+// @security-reviewed PUT auth=session tenant=college permission=courses.manage csrf=route-wrapper test=tests/unit/course-coordinator-policy.test.ts
 export const PUT = route(
   { auth: "user", permission: "courses.manage" },
   async ({ request, context: actor, params }) => {
@@ -42,6 +44,7 @@ export const PUT = route(
 );
 
 /** College admin: remove the current coordinator. */
+// @security-reviewed DELETE auth=session tenant=college permission=courses.manage csrf=route-wrapper test=tests/unit/course-coordinator-policy.test.ts
 export const DELETE = route(
   { auth: "user", permission: "courses.manage" },
   async ({ context: actor, params }) => {
