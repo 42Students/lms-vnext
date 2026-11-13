@@ -9,7 +9,6 @@ import {
   ilike,
   inArray,
   isNull,
-  ne,
   or,
   sql,
 } from "drizzle-orm";
@@ -37,6 +36,7 @@ import type { MembershipManagementRepository } from "./membership-service";
 import { PeopleServiceError } from "./errors";
 import {assertMutableMembershipTarget} from "./membership-protection";
 import {activeMentorProjectCount} from "./active-mentor-project-guard";
+import {assertAnotherActiveCollegeAdmin} from "./last-college-admin-guard";
 import {facultyProfileDocumentSchema} from "./faculty-profile-document";
 import type {
   CollegePeoplePage,
@@ -173,46 +173,6 @@ async function loadMembershipDetailFromDb(
 }
 
 /** Database-owned tenant and live actor grant must be checked inside the write transaction. */
-/**
- * #81 — A tenant must retain an active College Admin before the current one
- * can lose access. The advisory transaction lock is keyed by college and is
- * shared by both role-removal and membership-lifecycle mutations.
- *
- * Lock acquisition is after the target membership row lock: existing
- * grant/onboarding code also locks the member before checking its college.
- * A fresh READ COMMITTED query runs AFTER acquiring the advisory lock, so
- * two concurrent removals cannot both count the other as the replacement.
- * This protects these repository writers, not unreviewed direct SQL or
- * independent global-user disable paths.
- */
-async function assertAnotherActiveCollegeAdmin(
-  tx: PermissionTransaction,
-  collegeId: string,
-  removedMembershipId: string,
-) {
-  await tx.execute(sql`
-    SELECT pg_advisory_xact_lock(
-      hashtextextended(${"lms:last-college-admin:" + collegeId}, 0)
-    )
-  `);
-  const [replacement] = await tx
-    .select({ id: collegeMemberships.id })
-    .from(collegeMemberships)
-    .innerJoin(membershipRoles, and(
-      eq(membershipRoles.membershipId, collegeMemberships.id),
-      eq(membershipRoles.role, "COLLEGE_ADMIN"),
-    ))
-    .innerJoin(users, eq(users.id, collegeMemberships.userId))
-    .where(and(
-      eq(collegeMemberships.collegeId, collegeId),
-      ne(collegeMemberships.id, removedMembershipId),
-      eq(collegeMemberships.status, "ACTIVE"),
-      eq(users.platformStatus, "ACTIVE"),
-    ))
-    .limit(1);
-  if (!replacement) throw new PeopleServiceError("LAST_COLLEGE_ADMIN");
-}
-
 async function assertAuthorizedCollegeMutation(
   tx: PermissionTransaction,
   context: RequestContext,
