@@ -1,4 +1,5 @@
-import { DEFAULT_TIME_ZONE } from "@/config/locale";
+/** Loaded directly by node:test without path aliases, so it cannot import DEFAULT_TIME_ZONE; tests/unit/sec-clock-locale.test.ts keeps this equal to it. */
+const INDIA_TIME_ZONE = "Asia/Kolkata";
 /** Client-safe, already-college-scoped debarment view. */
 export type TpoTimedDebarRow={
  id:string;reason:string;untilDate:string|null;untilDrives:number|null;
@@ -9,7 +10,7 @@ export type TpoTimedDebarRow={
 /** Match the placement API's India-local calendar dates, regardless of browser time zone. */
 export function todayInIndia(now: Date = new Date()): string {
  const parts = new Intl.DateTimeFormat("en-GB", {
-  timeZone: DEFAULT_TIME_ZONE, day: "2-digit", month: "2-digit", year: "numeric",
+  timeZone: INDIA_TIME_ZONE, day: "2-digit", month: "2-digit", year: "numeric",
  }).formatToParts(now);
  const part = (type: Intl.DateTimeFormatPartTypes) => parts.find(item => item.type === type)?.value ?? "";
  return [part("year"), part("month"), part("day")].join("-");

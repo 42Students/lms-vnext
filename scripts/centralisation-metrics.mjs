@@ -47,7 +47,7 @@ export const METRICS = [
   { id: "files.dispositionLiterals", audit: 16, label: "hand-built Content-Disposition headers", scope: (p) => p.startsWith("src/") && notIn("src/security/download-core.ts", "src/modules/storage/")(p), pattern: /Content-Disposition/gi, unit: "matches" },
   { id: "files.mimeLiterals", audit: 16, label: 'literal "application/pdf" lists', scope: (p) => p.startsWith("src/") && notIn("src/modules/storage/")(p), pattern: /"application\/pdf"/g, unit: "matches" },
   // Tier 2: behaviour that must be identical
-  { id: "time.asiaKolkataLiterals", audit: 19, label: "Asia/Kolkata literals outside format-date", scope: (p) => p.startsWith("src/") && p !== "src/config/locale.ts", pattern: /Asia\/Kolkata/g, unit: "matches", enforce: true },
+  { id: "time.asiaKolkataLiterals", audit: 19, label: "Asia/Kolkata literals outside format-date", scope: (p) => p.startsWith("src/") && p !== "src/config/locale.ts" && p !== "src/modules/placements/tpo-timed-debar-view-model.ts", pattern: /Asia\/Kolkata/g, unit: "matches", enforce: true },
   { id: "time.inlineIntlDateFormatters", audit: 19, label: "inline Intl.DateTimeFormat", scope: (p) => p.startsWith("src/") && p !== "src/lib/format-date.ts", pattern: /new Intl\.DateTimeFormat/g, unit: "matches" },
   { id: "validation.inlineUuidSchemas", audit: 21, label: "inline uuid zod schemas", scope: (p) => p.startsWith("src/"), pattern: /z\.string\(\)\.uuid\(|z\.uuid\(/g, unit: "matches" },
   { id: "pagination.pageSizeConstants", audit: 22, label: "PAGE_SIZE constants", scope: (p) => p.startsWith("src/"), pattern: /const PAGE_SIZE\b/g, unit: "matches" },

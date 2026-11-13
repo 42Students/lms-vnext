@@ -34,7 +34,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 - [x] 2.2 feature registry: src/config/features.ts, 37 flags, bare flag reads 97 -> 0 (ratchet enforced)
 - [x] 2.3 role constants: ROLE in src/modules/identity/roles.ts; role literals in value positions 2826 -> 1199 (remaining are type positions, keys, tables; ratchet enforced)
 - [x] 2.4 clock (src/lib/clock.ts: nowMs, installClock, timeZoneForCollege) and src/config/locale.ts; Asia/Kolkata literals 526 -> 69 (prose only, ratchet enforced). A stored per-college zone is NOT built: it needs a column migration the owner approves; timeZoneForCollege is the single seam. 233 inline Intl formatters remain for Phase 7
-- [ ] 2.5 shared utilities (first, when, humanize, initials, isUniqueViolation, ...)
+- [x] 2.5 shared utilities in src/lib/shared.ts (first, clamp, humanize, isUniqueViolation) and currentTimeMs in src/lib/clock.ts; 89 local copies removed. NOT unified (meanings differ between copies): when, initials, 5 humanize variants, 1 isUniqueViolation variant, 2 first variants
 - [ ] 2.6 one baselines folder and reader
 
 ## Phase 3: request, response, error plumbing

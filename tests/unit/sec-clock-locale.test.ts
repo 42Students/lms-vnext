@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { DEFAULT_LOCALE, DEFAULT_TIME_ZONE } from "@/config/locale";
 import { fixedClock, installClock, now, nowMs, timeZoneForCollege } from "@/lib/clock";
+import { readFileSync } from "node:fs";
 import { formatDateIst } from "@/lib/format-date";
 
 let restore: (() => void) | null = null;
@@ -34,5 +35,9 @@ describe("locale and zone", () => {
   });
   it("formats a date in the default zone: 20:00 UTC is already the next day in India", () => {
     expect(formatDateIst("2026-03-01T20:00:00Z")).toContain("2 Mar 2026");
+  });
+  it("keeps the alias-free copy in the node-loaded debar view model equal to the default zone", () => {
+    const source = readFileSync("src/modules/placements/tpo-timed-debar-view-model.ts", "utf8");
+    expect(source).toContain(`const INDIA_TIME_ZONE = "${DEFAULT_TIME_ZONE}";`);
   });
 });
