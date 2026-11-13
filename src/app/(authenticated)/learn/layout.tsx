@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { hasMembershipRole } from "@/modules/identity/context";
+import { canAccessRolePortal } from "@/modules/identity/role-portal-policy";
 
 export default async function LearnerLayout({
   children,
@@ -9,7 +9,7 @@ export default async function LearnerLayout({
 }>) {
   const context = await getCurrentRequestContext();
 
-  if (!hasMembershipRole(context, "LEARNER")) {
+  if (!canAccessRolePortal(context, "learn")) {
     redirect("/dashboard");
   }
 
