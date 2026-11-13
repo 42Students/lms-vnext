@@ -7,6 +7,7 @@ import {verificationCsv} from "@/modules/verification/queue-export";
 import { route } from "@/security/route";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -28,13 +29,13 @@ async function handleGET(request:Request){
     params.getAll("batchId").length>1||params.getAll("branchId").length>1||
     (tab&&!allowedTabs.some(value=>value===tab))||
     (kind&&!["EDUCATION","IDENTITY"].includes(kind)))
-    return new Response("Invalid queue export filters",{status:400,headers:{"Cache-Control":"private, no-store"}});
+    return new Response("Invalid queue export filters",{status:400,headers:{"Cache-Control":CACHE.PRIVATE}});
   const parsed=tpoVerificationQuerySchema.safeParse({
     tab:tab??"WAITING",kind:kind??"ALL",waitingState:"ALL",waitingSince:"ALL",
     search,batchId,branchId,page:1,pageSize:100,
   });
   if(!parsed.success)return new Response("Invalid queue export filters",{
-    status:400,headers:{"Cache-Control":"private, no-store"},
+    status:400,headers:{"Cache-Control":CACHE.PRIVATE},
   });
   const queue=await readTpoVerificationExport(context,parsed.data);
   if(!queue.available||!queue.enabled||!queue.permitted)
@@ -51,7 +52,7 @@ async function handleGET(request:Request){
   return new Response(result.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="tpo-verification.csv"',
-   "Cache-Control":"private, no-store","Vary":"Cookie",
+   "Cache-Control":CACHE.PRIVATE,"Vary":"Cookie",
    "X-Content-Type-Options":"nosniff",
    "X-Export-Range":"first-1000-matching-authorized",
    "X-Export-Truncated":queue.hasMore?"true":"false",

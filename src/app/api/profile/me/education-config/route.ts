@@ -4,6 +4,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getOwnLearnerEducationCatalog} from "@/modules/people/learner-profile-education-catalog-service";
 import { route } from "@/security/route";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  const params=new URL(request.url).searchParams;
@@ -14,7 +15,7 @@ async function handleGET(request:Request){
  try{
   const result=await getOwnLearnerEducationCatalog(
    await getCurrentRequestContext(),q);
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(result);
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(

@@ -6,6 +6,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { createPlacementRequest,listOwnPlacementRequests } from "@/modules/placements/request-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 /** Compatibility for old GET /learner/requests/mine and new unified history.
@@ -28,7 +29,7 @@ export const GET = route(
     return NextResponse.json({status:"success",message:"Your placement requests",
    items,data:items,total:rows.length,page,pageSize:Number(sizeRaw),
    nextPage:page*Number(sizeRaw)<rows.length?page+1:null,
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 export const POST = route(

@@ -8,9 +8,10 @@ import {getPrivateR2Config} from "@/modules/storage/r2-config";
 import {isAllowedCompanyShareResumeDownload} from "@/modules/placements/company-share/signed-resume-guard";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const privateHeaders={"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer",
+const privateHeaders={"Cache-Control":CACHE.PRIVATE,"Referrer-Policy":"no-referrer",
  "X-Content-Type-Options":"nosniff","X-Robots-Tag":"noindex, nofollow, noarchive"};
 const maxResumeBytes=12*1024*1024;
 const maxZipFiles=20;

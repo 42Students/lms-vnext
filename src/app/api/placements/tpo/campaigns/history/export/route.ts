@@ -5,6 +5,7 @@ import {exportTpoMessagingHistory} from "@/modules/messaging/receipt-history-ser
 import {messagingHistoryCsv} from "@/modules/messaging/receipt-history-export-model";
 import {z} from "zod";
 import { route } from "@/security/route";
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  const context=await getCurrentRequestContext();
@@ -13,7 +14,7 @@ async function handleGET(request:Request){
  // a private export. The downloaded scope must match the visible request.
  const keys=[...raw.keys()];
  if(keys.length!==new Set(keys).size||keys.some(key=>key!=="purpose"))
-  return NextResponse.json({error:"INVALID_QUERY"},{status:400,headers:{"Cache-Control":"private, no-store"}});
+  return privateJson({error:"INVALID_QUERY"}, { status: 400 });
  const parsed=z.object({purpose:z.string().trim().max(160).optional()}).strict().safeParse({
    purpose:raw.get("purpose")||undefined,
  });
@@ -32,7 +33,7 @@ async function handleGET(request:Request){
  return new NextResponse(csv,{headers:{
   "Content-Type":"text/csv; charset=utf-8",
   "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-campaign-batches", "csv") + '"',
-  "Cache-Control":"private, no-store",
+  "Cache-Control":CACHE.PRIVATE,
   "X-Content-Type-Options":"nosniff",
   "X-Export-Scope":"All filtered batches",
  }});

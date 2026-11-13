@@ -5,6 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {readCollegeLogoForm,CollegeLogoRequestError} from "@/modules/colleges/college-logo-request-body";
 import {CollegeLogoError,uploadCollegeLogo,getPublicCollegeLogo,removeCollegeLogo} from "@/modules/colleges/admin-branding-logo-service";
 import { route } from "@/security/route";
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 // The logo uses an explicitly scoped same-origin multipart endpoint as the
@@ -39,11 +40,11 @@ async function handlePOST(request:Request,{params}:Params){
   if(file.size>2*1024*1024)
    return NextResponse.json({error:"LOGO_TOO_LARGE",message:"Use a PNG logo no larger than 2 MiB."},{status:413});
   const result=await uploadCollegeLogo(context,collegeId,file);
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(result);
  }catch(error){
   if(error instanceof CollegeLogoRequestError)return NextResponse.json({error:error.code},{
    status:error.code==="LOGO_TOO_LARGE"?413:400,
-   headers:{"Cache-Control":"private, no-store"},
+   headers:{"Cache-Control":CACHE.PRIVATE},
   });
   if(error instanceof CollegeLogoError)
    return NextResponse.json({error:error.code},{status:error.code==="COLLEGE_NOT_FOUND"?404:
@@ -58,13 +59,13 @@ export const POST = route(
 async function handleGET(_request:Request,{params}:Params){
  try{
   const file=await getPublicCollegeLogo((await params).collegeId);
-  if(!file)return new Response(null,{status:404,headers:{"Cache-Control":"no-store"}});
+  if(!file)return new Response(null,{status:404,headers:{"Cache-Control":CACHE.NONE}});
   return new Response(file.body,{headers:{
     "Content-Type":"image/png","X-Content-Type-Options":"nosniff",
     "Content-Security-Policy":"default-src 'none'; sandbox",
     "Cache-Control":"public, max-age=60",
   }});
- }catch{return new Response(null,{status:503,headers:{"Cache-Control":"no-store"}});}
+ }catch{return new Response(null,{status:503,headers:{"Cache-Control":CACHE.NONE}});}
 }
 export const GET = route(
   { auth: "public", publicReason: "Link or form opened without an account (token, slug or anonymous report); the handler validates the token or input and is rate limited per address.", rateLimit: { limit: 3000, windowMs: 60_000 } },
@@ -75,7 +76,7 @@ async function handleDELETE(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const result=await removeCollegeLogo(await getCurrentRequestContext(),(await params).collegeId);
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(result);
  }catch(error){return apiErrorResponse(error);}
 }
 export const DELETE = route(

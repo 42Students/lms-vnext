@@ -7,6 +7,7 @@ import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { announcementStatisticsForAdmin } from "@/modules/announcements/service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,7 @@ async function handleGET() {
     const context = await getCurrentRequestContext();
     if (!isSuperAdmin(context)) {
       return NextResponse.json({ error: "FORBIDDEN" },
-        { status: 403, headers: { "Cache-Control": "private, no-store" } });
+        { status: 403, headers: { "Cache-Control": CACHE.PRIVATE } });
     }
     requirePermission(context, "admin-scope.select");
     // Unlike the old in-process cache, scoped Super Admin must only learn the
@@ -27,7 +28,7 @@ async function handleGET() {
     return NextResponse.json({
       status: "success", message: "Stats retrieved",
       data: { totalAnnouncements: counts.total - counts.deleted, ...counts },
-    }, { headers: { "Cache-Control": "private, no-store" } });
+    }, { headers: { "Cache-Control": CACHE.PRIVATE } });
   } catch (error) {
     return announcementApiError(error);
   }

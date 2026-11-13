@@ -6,6 +6,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {updateMentorProjectOverview} from "@/modules/projects/mentor-overview-edit-service";
 import {readMentorProjectCommandBody,MentorProjectCommandBodyError,mentorProjectBodyFailureMessage}
  from "@/modules/projects/mentor-command-body";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
@@ -14,7 +15,7 @@ export const PATCH = route(
     try {
 const {projectId}=params;
 const updated=await updateMentorProjectOverview(__ctx,projectId,await readMentorProjectCommandBody(request));
-return NextResponse.json({project:updated},{headers:{"Cache-Control":"private, no-store"}});
+return privateJson({project:updated});
 } catch(error){if(error instanceof MentorProjectCommandBodyError)
   return NextResponse.json({error:error.code,message:mentorProjectBodyFailureMessage(error.status)},
    {status:error.status});

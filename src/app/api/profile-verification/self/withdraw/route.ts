@@ -10,6 +10,7 @@ import {verifyPrivateDocumentReceipt} from "@/modules/profile-verification/priva
 import {withdrawOwnPendingVerification} from "@/modules/profile-verification/service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 const withdrawSchema=z.strictObject({
  section:z.enum(["EDUCATION","IDENTITY"]),
@@ -30,7 +31,7 @@ async function handlePOST(request:Request){
    createProfileVerificationRepository(verifyPrivateDocumentReceipt),
   );
   return NextResponse.json({status:record.status,version:record.version},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){
   if(error instanceof AuthorizationError)
    return NextResponse.json({error:"NOT_FOUND"},{status:404});
@@ -38,7 +39,7 @@ async function handlePOST(request:Request){
    if(error.code==="NOT_ALLOWED")return NextResponse.json({error:"NOT_FOUND"},{status:404});
    return NextResponse.json({error:error.code},{
     status:error.code==="STALE_VERSION"?409:422,
-    headers:{"Cache-Control":"private, no-store"},
+    headers:{"Cache-Control":CACHE.PRIVATE},
    });
   }
   throw error;

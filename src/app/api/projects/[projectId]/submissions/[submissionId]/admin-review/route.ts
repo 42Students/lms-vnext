@@ -4,6 +4,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {reviewAdminProjectSubmission} from "@/modules/projects/admin-submission-review-service";
 import { route } from "@/security/route";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 
 async function handlePOST(request:Request,{params}:{
@@ -21,7 +22,7 @@ async function handlePOST(request:Request,{params}:{
   try{body=JSON.parse(raw);}catch{return NextResponse.json({error:"INVALID_BODY"},{status:400});}
   const context=await getCurrentRequestContext(),{projectId,submissionId}=await params;
   const result=await reviewAdminProjectSubmission(context,projectId,submissionId,body);
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(result);
  }catch(error){return apiErrorResponse(error);}
 }
 export const POST = route(

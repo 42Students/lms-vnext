@@ -8,9 +8,10 @@ import {
  issueOwnFacultyAttachmentUpload,completeOwnFacultyAttachmentUpload,
  openOwnFacultyAttachment,revokeOwnFacultyAttachment,
 } from "@/modules/people/faculty-section-attachment-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"private, no-store"};
+const noStore={"Cache-Control":CACHE.PRIVATE};
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
   async ({ request, context: __actor }) => {

@@ -9,6 +9,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {updateOwnRecruiterDesignation} from "@/modules/placements/recruiter-designation-service";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {readRecruiterJsonBody,RecruiterJsonBodyError} from "@/modules/placements/recruiter-json-request";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
@@ -42,6 +43,6 @@ export const GET = route(
    grants:context.recruiter.grants.map(grant=>({
     collegeId:grant.collegeId,companyRelationshipId:grant.companyRelationshipId,
    })),
-  }},{headers:{"Cache-Control":"private, no-store"}});
+  }},{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

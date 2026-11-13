@@ -3,6 +3,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getSuperAdminBatchRosterOverview} from "@/modules/admin-ui/super-admin-batch-roster-service";
 import {superAdminBatchRosterCsv} from "@/modules/admin-ui/super-admin-batch-roster-export-model";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handleGET(_request:Request,{params}:{params:Promise<{batchId:string}>}){
  try{
@@ -15,7 +16,7 @@ async function handleGET(_request:Request,{params}:{params:Promise<{batchId:stri
   return new Response(superAdminBatchRosterCsv(data.roster,labels),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="batch-students.csv"',
-   "Cache-Control":"private, no-store",
+   "Cache-Control":CACHE.PRIVATE,
    "X-Content-Type-Options":"nosniff",
   }});
  }catch(error){return apiErrorResponse(error);}

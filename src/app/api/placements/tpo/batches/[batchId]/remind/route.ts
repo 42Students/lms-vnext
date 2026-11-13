@@ -5,6 +5,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {remindTpoBatch,TpoBatchReminderError} from "@/modules/placements/tpo-batch-reminder-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "placements.manage" },
@@ -13,7 +14,7 @@ export const POST = route(
     try {
 const {batchId}=params;
 return NextResponse.json(await remindTpoBatch(__ctx,batchId,await boundedRequestJson(request)),
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch(error){
   if(error instanceof TpoBatchReminderError)
    return NextResponse.json({error:error.code},{status:409});

@@ -4,6 +4,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {TpoGeneralRequestError,listTpoGeneralRequests} from "@/modules/placements/tpo-general-request-service";
 import {tpoGeneralReviewQuerySchema} from "@/modules/placements/tpo-general-request-model";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 async function handleGET(request:Request){
  try{
@@ -18,7 +19,7 @@ async function handleGET(request:Request){
   if(!parsed.success)
    return NextResponse.json({error:"Invalid review filters"},{status:400});
   return NextResponse.json(await listTpoGeneralRequests(await getCurrentRequestContext(),parsed.data),
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){
   if(error instanceof TpoGeneralRequestError&&error.code==="UNAVAILABLE")
    return NextResponse.json({error:"REQUESTS_NOT_READY"},{status:503});

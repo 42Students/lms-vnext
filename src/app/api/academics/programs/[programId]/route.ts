@@ -17,6 +17,7 @@ import {
   restoreCollegeProgram,
 } from "@/modules/academics/college-program-mutation-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ programId: string }> };
 
@@ -105,7 +106,7 @@ return NextResponse.json({
         program.durationTerms/2:null,
         // Old model used numeric program IDs; UUID is authoritative.
         id:program.id,departmentId:program.departmentId},
-    },{headers:{"Cache-Control":"private, no-store"}});
+    },{headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch (error) { return handledError(error); }
   },
 );
@@ -119,7 +120,7 @@ const { programId } = params;
 const parsedBody = await readBoundedJsonBody(request, 16_384);
 if (parsedBody.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: parsedBody.kind === "TOO_LARGE" ? 413 : 400,
-      headers: { "Cache-Control": "no-store" },
+      headers: { "Cache-Control": CACHE.NONE },
     });
 const body: unknown = parsedBody.value;
 const program = body && typeof body === "object" && "action" in body && body.action === "RESTORE"
@@ -139,7 +140,7 @@ const { programId } = params;
 const parsedBody = await readBoundedJsonBody(request, 16_384);
 if (parsedBody.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: parsedBody.kind === "TOO_LARGE" ? 413 : 400,
-      headers: { "Cache-Control": "no-store" },
+      headers: { "Cache-Control": CACHE.NONE },
     });
 const body: unknown = parsedBody.value;
 const program = await archiveCollegeProgram(context, programId, body);

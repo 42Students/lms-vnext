@@ -7,6 +7,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {readTpoSettingsBody,TpoCommunicationBodyError} from "@/modules/placements/tpo-communication-request-model";
 import {getPublicJoinPostingPolicy,setPublicJoinPostingPolicy} from "@/modules/placements/tpo-public-join-posting-policy-service";
 import {TpoPublicJoinLinkError} from "@/modules/placements/tpo-public-join-link-service";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -24,7 +25,7 @@ const input=z.discriminatedUnion("scope",[
    :{scope:search.get("scope"),...(search.has("companyId")?{companyId:search.get("companyId")}:{})});
 const value=await getPublicJoinPostingPolicy(__ctx,
    input.scope,input.scope==="COMPANY"?input.companyId:undefined);
-return NextResponse.json(value,{headers:{"Cache-Control":"private, no-store"}});
+return privateJson(value);
 } catch(error){
   if(error instanceof z.ZodError)return NextResponse.json({error:"INVALID_QUERY"},{status:400});
   if(error instanceof TpoPublicJoinLinkError)return NextResponse.json({error:error.code},{
@@ -40,7 +41,7 @@ export const POST = route(
     try {
 const value=await setPublicJoinPostingPolicy(__ctx,
    await readTpoSettingsBody(request));
-return NextResponse.json(value,{headers:{"Cache-Control":"private, no-store"}});
+return privateJson(value);
 } catch(error){
   if(error instanceof TpoCommunicationBodyError)return NextResponse.json({error:"INVALID_BODY"},{
    status:error.code==="BODY_TOO_LARGE"?413:400});

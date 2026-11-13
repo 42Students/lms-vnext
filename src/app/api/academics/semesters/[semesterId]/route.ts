@@ -15,6 +15,7 @@ import {
   updateCollegeSemester,
 } from "@/modules/academics/semester-mutation-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ semesterId: string }> };
 /** Legacy GET /programStructures/{id} -> GET here;
@@ -75,7 +76,7 @@ if (!semester) return NextResponse.json({
       error: "SEMESTER_NOT_FOUND", message: "Program structure not found.",
     }, { status: 404 });
 return NextResponse.json({ status: "OK", message: "OK", data: semester, semester },
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch (error) { return handledError(error); }
   },
 );

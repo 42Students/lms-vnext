@@ -7,6 +7,7 @@ import { readMentorProjectCommandBody, MentorProjectCommandBodyError,
   mentorProjectBodyFailureMessage } from "@/modules/projects/mentor-command-body";
 import { saveProjectSprintPlan } from "@/modules/projects/project-sprint-plan-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ projectId: string }> };
 
@@ -18,7 +19,7 @@ export const PATCH = route(
 const { projectId } = params;
 const input = await readMentorProjectCommandBody(request);
 const result = await saveProjectSprintPlan(__ctx, projectId, input);
-return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
+return privateJson(result);
 } catch (error) {
     if (error instanceof MentorProjectCommandBodyError) {
       return NextResponse.json({

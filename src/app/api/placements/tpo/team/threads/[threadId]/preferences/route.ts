@@ -6,6 +6,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {updateTpoTeamThreadPreferences} from "@/modules/placements/tpo-team-preferences-service";
 import { route } from "@/security/route";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{threadId:string}>}){
  if(!isSameOriginRequest(request))
@@ -16,7 +17,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{threadId:str
   const result=await updateTpoTeamThreadPreferences(await getCurrentRequestContext(),{
    threadId,action:body?.action,
   });
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(result);
  }catch(error){
   if(error instanceof ZodError)return NextResponse.json({error:"INVALID_REQUEST"},{status:422});
   if(error instanceof AuthorizationError)return NextResponse.json({error:"FORBIDDEN"},{status:403});

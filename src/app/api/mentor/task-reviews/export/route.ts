@@ -6,6 +6,7 @@ import {mentorTaskReviewQuerySchema} from "@/modules/projects/mentor-task-review
 import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
 import {getMentorTaskReviews} from "@/modules/projects/mentor-task-review-service";
 import {mentorPendingTaskReviewCsv} from "@/modules/projects/mentor-pending-task-review-export";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced", stepUp: true },
@@ -29,7 +30,7 @@ export const GET = route(
     return new Response(mentorPendingTaskReviewCsv(rows,omitted),{
    headers:{"Content-Type":"text/csv; charset=utf-8",
     "Content-Disposition":'attachment; filename="mentor-pending-task-reviews.csv"',
-    "Cache-Control":"private, no-store","X-Export-Omitted":String(omitted)},
+    "Cache-Control":CACHE.PRIVATE,"X-Export-Omitted":String(omitted)},
   });
   },
 );

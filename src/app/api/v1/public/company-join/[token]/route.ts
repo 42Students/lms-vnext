@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import {getPublicJoinPreview} from "@/modules/placements/public-join/preview-service";
 import { route } from "@/security/route";
+import { CACHE, noStoreJson } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 async function handleGET(_request:Request,{params}:{params:Promise<{token:string}>}){
@@ -8,13 +9,13 @@ async function handleGET(_request:Request,{params}:{params:Promise<{token:string
   const {token}=await params;
   const preview=await getPublicJoinPreview(token,"COMPANY");
   if(preview.kind!=="READY")
-   return NextResponse.json({success:false,error:"NOT_FOUND"},{status:404,headers:{"Cache-Control":"no-store"}});
+   return noStoreJson({success:false,error:"NOT_FOUND"}, { status: 404 });
   return NextResponse.json({success:true,data:{
    collegeName:preview.collegeName,companyName:preview.companyName,
    companyDomain:preview.companyDomain,
-  }},{headers:{"Cache-Control":"no-store"}});
+  }},{headers:{"Cache-Control":CACHE.NONE}});
  }catch{
-  return NextResponse.json({success:false,error:"SERVICE_UNAVAILABLE"},{status:503,headers:{"Cache-Control":"no-store"}});
+  return noStoreJson({success:false,error:"SERVICE_UNAVAILABLE"}, { status: 503 });
  }
 }
 export const GET = route(

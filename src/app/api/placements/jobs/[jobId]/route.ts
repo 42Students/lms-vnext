@@ -11,6 +11,7 @@ import {
 import {updatePlacementJobInputSchema,placementJobIdSchema} from "@/modules/placements/validation";
 import { route } from "@/security/route";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -77,7 +78,7 @@ async function handleDELETE(request: Request, { params }: RouteContext) {
     // persisted job in its actual college using the service's policy/CAS.
     // A future org-wide model needs explicit schema and permission support.
     const job = await archivePlacementJob(context, jobId);
-    return NextResponse.json(job,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(job);
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -127,7 +128,7 @@ async function handlePUT(request:Request,{params}:RouteContext){
   const validated=updatePlacementJobInputSchema.parse(next);
   const job=await updatePlacementJob(await getCurrentRequestContext(),jobId,validated);
   return NextResponse.json({job},{
-   headers:{"Cache-Control":"private, no-store","Deprecation":"true"},
+   headers:{"Cache-Control":CACHE.PRIVATE,"Deprecation":"true"},
   });
  }catch(error){return apiErrorResponse(error);}
 }

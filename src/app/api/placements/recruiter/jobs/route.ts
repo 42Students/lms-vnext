@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const GET = route(
@@ -15,7 +16,7 @@ export const GET = route(
         context,
       );
     return NextResponse.json({ jobs },{
-      headers:{"Cache-Control":"private, no-store"},
+      headers:{"Cache-Control":CACHE.PRIVATE},
     });
   },
 );

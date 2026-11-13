@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {previewOwnOfferAcceptanceImpact} from "@/modules/placements/offer-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -15,7 +16,7 @@ export const GET = route(
     try {
 const {offerId}=params;
 const result=await previewOwnOfferAcceptanceImpact(__ctx,offerId);
-return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store, max-age=0","Vary":"Cookie"}});
+return NextResponse.json(result,{headers:{"Cache-Control":CACHE.PRIVATE_STRICT,"Vary":"Cookie"}});
 } catch(error){
   const response=apiErrorResponse(error);
   response.headers.set("Cache-Control","private, no-store, max-age=0");

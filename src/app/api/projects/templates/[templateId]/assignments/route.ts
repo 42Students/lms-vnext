@@ -14,6 +14,7 @@ import {
   getProjectTemplateDetail,
 } from "@/modules/projects/template-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -95,7 +96,7 @@ export const PUT = route(
     addedCount:result.added.length,removedCount:result.removed.length,
     message:result.added.length||result.removed.length?
       "Template assignments updated":"Template assignments unchanged",
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 
@@ -117,6 +118,6 @@ export const GET = route(
     total:detail.assignments.length,
     templateId:detail.template.id,
     editHint:"Use this collegeIds list as expectedCollegeIds on PUT to prevent overwriting another administrator's edits.",
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

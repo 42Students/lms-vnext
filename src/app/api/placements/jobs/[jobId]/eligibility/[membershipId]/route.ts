@@ -17,6 +17,7 @@ import {
 } from "@/modules/placements/eligibility-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -106,7 +107,7 @@ async function updateOverride(request:Request,{params}:RouteContext){
      ...(clear.data.reason !== undefined ? {reason:clear.data.reason} : {}),
    });
    return NextResponse.json({override,ok:true,message:"Eligibility override cleared."},
-     {headers:{"Cache-Control":"private, no-store"}});
+     {headers:{"Cache-Control":CACHE.PRIVATE}});
   }
   const candidate={
    decision:hasLegacyOverride?(record["override"]?"INCLUDE":"EXCLUDE"):
@@ -116,16 +117,16 @@ async function updateOverride(request:Request,{params}:RouteContext){
   };
   if(typeof candidate.reason!=="string"||candidate.reason.trim().length<3)
    return NextResponse.json({error:"INVALID_REASON",message:"A reason is required."},
-    {status:400,headers:{"Cache-Control":"private, no-store"}});
+    {status:400,headers:{"Cache-Control":CACHE.PRIVATE}});
   const parsed=placementEligibilityOverrideInputSchema.safeParse(candidate);
   if(!parsed.success)
    return NextResponse.json({error:"INVALID_ELIGIBILITY_OVERRIDE",
-     message:"Choose include or exclude."},{status:400,headers:{"Cache-Control":"private, no-store"}});
+     message:"Choose include or exclude."},{status:400,headers:{"Cache-Control":CACHE.PRIVATE}});
   // Present-day editors always send an expectedOverrideId. The old
   // POST equivalent may only create when no override already exists.
   const override=await setEligibilityOverride(context,jobId,membershipId,parsed.data);
   return NextResponse.json({override,ok:true,message:"Eligibility override saved.",
-   expectedOverrideId:override?.id},{headers:{"Cache-Control":"private, no-store"}});
+   expectedOverrideId:override?.id},{headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 async function handlePUT(request:Request,route:RouteContext){

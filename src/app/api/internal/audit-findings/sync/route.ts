@@ -6,9 +6,10 @@ import {independentAuditImporterReady,syncIndependentAuditInbox} from
 import { route } from "@/security/route";
 
 import { env } from "@/config/env";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"private, no-store"} as const;
+const noStore={"Cache-Control":CACHE.PRIVATE} as const;
 
 /**
  * Dedicated Cloud Scheduler entrypoint. Retain the existing GET contract,

@@ -5,13 +5,14 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {TpoGeneralRequestError,decideTpoGeneralRequest} from "@/modules/placements/tpo-general-request-service";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{requestId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {requestId}=await params;
   return NextResponse.json(await decideTpoGeneralRequest(await getCurrentRequestContext(),requestId,await boundedRequestJson(request)),
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){
   if(error instanceof TpoGeneralRequestError)return NextResponse.json({error:error.code},
    {status:error.code==="UNAVAILABLE"?503:error.code==="STALE"||error.code==="TARGET_CHANGED"?409:

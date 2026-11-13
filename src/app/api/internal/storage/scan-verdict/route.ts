@@ -7,9 +7,10 @@ import {
 import { route } from "@/security/route";
 
 import { env } from "@/config/env";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"no-store"} as const;
+const noStore={"Cache-Control":CACHE.NONE} as const;
 
 /**
  * Restricted service-to-service callback. Only a deployed, vetted malware

@@ -6,6 +6,7 @@ import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { searchLegacyAnnouncementsForGlobalSuperAdmin } from "@/modules/announcements/service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,7 @@ async function handleGET(request: Request) {
         status: "error",
         message: "Announcement search is GLOBAL-only. Use /api/v1/announcements/* scoped APIs.",
         data: null,
-      }, { status: 403, headers: { "Cache-Control": "private, no-store" } });
+      }, { status: 403, headers: { "Cache-Control": CACHE.PRIVATE } });
     }
     const params = new URL(request.url).searchParams;
     const query = params.get("query") ?? "";
@@ -31,7 +32,7 @@ async function handleGET(request: Request) {
       status: "success", message: "Announcements retrieved",
       version: 2, idFormat: "uuid",
       data: data.map(row => ({ ...row, receiverValue: null })),
-    }, { headers: { "Cache-Control": "private, no-store" } });
+    }, { headers: { "Cache-Control": CACHE.PRIVATE } });
   } catch (error) {
     return announcementApiError(error);
   }

@@ -8,6 +8,7 @@ import {
 } from "@/modules/courses/assignment-submission-service";
 import { facultyLegacySubmissionPagingSchema } from "@/modules/courses/faculty-assignment-submissions-model";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 /**
@@ -29,13 +30,13 @@ export const GET = route(
     const deliveryId = params.get("deliveryId") ?? "";
     if (!deliveryId || Boolean(legacyId) === Boolean(suppliedAssignmentId)) {
       return NextResponse.json({ error: "INVALID_ASSIGNMENT_SCOPE" },
-        { status: 400, headers: { "Cache-Control": "private, no-store" } });
+        { status: 400, headers: { "Cache-Control": CACHE.PRIVATE } });
     }
     let assignmentId = suppliedAssignmentId ?? "";
     if (legacyId !== null) {
       if (!/^[1-9][0-9]{0,9}$/.test(legacyId)) {
         return NextResponse.json({ error: "ASSIGNMENT_NOT_FOUND" },
-          { status: 404, headers: { "Cache-Control": "private, no-store" } });
+          { status: 404, headers: { "Cache-Control": CACHE.PRIVATE } });
       }
       const [mapped] = await getDb().select({ id: courseAssignments.id })
         .from(courseAssignments)
@@ -43,7 +44,7 @@ export const GET = route(
         .limit(1);
       if (!mapped) {
         return NextResponse.json({ error: "ASSIGNMENT_NOT_FOUND" },
-          { status: 404, headers: { "Cache-Control": "private, no-store" } });
+          { status: 404, headers: { "Cache-Control": CACHE.PRIVATE } });
       }
       assignmentId = mapped.id;
     }
@@ -58,7 +59,7 @@ export const GET = route(
       context, assignmentId, deliveryId, paging,
     );
     return NextResponse.json({ submissions }, {
-      headers: { "Cache-Control": "private, no-store" },
+      headers: { "Cache-Control": CACHE.PRIVATE },
     });
   },
 );

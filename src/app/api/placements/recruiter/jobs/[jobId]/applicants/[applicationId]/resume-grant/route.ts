@@ -6,6 +6,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {grantRecruiterSharedResume,RecruiterResumeUnavailable}
  from "@/modules/placements/recruiter-applicant-resume-service";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 type Params={params:Promise<{jobId:string;applicationId:string}>};
 export const POST = route(
@@ -17,7 +18,7 @@ if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
    return NextResponse.json({error:"NOT_FOUND"},{status:404});
 const {jobId,applicationId}=params;
 const grant=await grantRecruiterSharedResume(context,jobId,applicationId);
-return NextResponse.json({grant},{headers:{"Cache-Control":"private, no-store"}});
+return privateJson({grant});
 } catch(error){
   if(error instanceof RecruiterResumeUnavailable||error instanceof z.ZodError)
    return NextResponse.json({error:"RESUME_NOT_AVAILABLE"},{status:404});

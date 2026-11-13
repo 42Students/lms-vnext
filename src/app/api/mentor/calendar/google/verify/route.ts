@@ -6,8 +6,9 @@ import {mentorGoogleVerifyCalendarAccess} from "@/modules/projects/mentor-google
 import {getMentorGoogleAccessToken,mentorGoogleConnectionState}
  from "@/modules/projects/mentor-google-calendar-connection-service";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
-const headers={"Cache-Control":"private, no-store"};
+const headers={"Cache-Control":CACHE.PRIVATE};
 
 /** Explicit, same-origin check of a refreshable Google grant. Never return
  * access/refresh tokens to the browser or call Google on page render. */

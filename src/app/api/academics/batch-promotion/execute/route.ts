@@ -10,6 +10,7 @@ import { CollegePromotionExecuteError, executeCollegeBatchPromotion } from "@/mo
 
 import { markCollegeBatchGraduated, CollegeBatchGraduationError } from "@/modules/academics/college-batch-graduation-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 /** Legacy /api/v1/batch/{numericId}/promote cannot authorize mutations by
  * numeric ID. The vNext flow is GET preview (cohort UUID; acting-college
@@ -48,7 +49,7 @@ if (body && typeof body === "object" && !Array.isArray(body) &&
     }
 const result = await executeCollegeBatchPromotion(context, promotionInput);
 return NextResponse.json({status:"OK",message:result.message,result,data:result},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch (error) {
     if(error instanceof ZodError||error instanceof SyntaxError)
       return NextResponse.json({error:"INVALID_PROMOTION_INPUT",

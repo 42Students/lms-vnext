@@ -14,6 +14,7 @@ import {
 } from "@/modules/courses/progress-service";
 import { route } from "@/security/route";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -40,12 +41,12 @@ async function handleGET(
        message:"The content ID in the URL must be included in contentIds"},{status:400});
       const progress=await listMyLearnerContentProgressBatch(context,deliveryId,contentIds);
       return NextResponse.json({progress,status:"OK",message:"OK",data:progress},
-       {headers:{"Cache-Control":"private, no-store"}});
+       {headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     const progress=await getLearnerContentProgress(context,contentId,deliveryId);
 
     return NextResponse.json({progress,status:"OK",message:"OK",data:progress},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -94,7 +95,7 @@ async function handlePUT(
       (reportedComplete!==null&&(progress.status==="COMPLETED")!==reportedComplete);
     return NextResponse.json({progress,status:"OK",message:"OK",data:progress,
       ...(reportedDuration!==null||reportedComplete!==null?{playbackReconciled}: {})},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -130,7 +131,7 @@ const retakeInput=z.strictObject({
 
 async function handlePOST(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))
-  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:{"Cache-Control":"private, no-store"}});
+  return privateJson({error:"INVALID_ORIGIN"}, { status: 403 });
  try{
   const context=await getCurrentRequestContext();
   const {contentId}=await params;
@@ -156,7 +157,7 @@ async function handlePOST(request:Request,{params}:RouteContext){
    const progress=await listMyLearnerContentProgressBatch(
     context,batch.data.deliveryId,batch.data.contentIds);
    return NextResponse.json({progress,status:"OK",message:"OK",data:progress},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   }
   const parsed=retakeInput.safeParse(raw);
   if(!parsed.success){
@@ -181,7 +182,7 @@ async function handlePOST(request:Request,{params}:RouteContext){
     ?"This learner has no recorded progress for that course — they are already starting fresh."
     :"Attempt "+result.attempt+" started. The previous attempt is kept as history.",
    data:result,historyPreserved:true,partial:false},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){
   if(error instanceof CourseProgressRetakeError)
    return NextResponse.json({error:error.code,message:

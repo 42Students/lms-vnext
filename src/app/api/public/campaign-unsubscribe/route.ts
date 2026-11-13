@@ -7,6 +7,7 @@ import {CampaignUnsubscribeInvalid,unsubscribeTpoCampaignRecipient} from "@/modu
 import {GlobalEmailSuppressionUnavailable,persistVerifiedGlobalEmailSuppression} from "@/modules/operations/global-email-suppression-service";
 import { route } from "@/security/route";
 import { env, rawEnv } from "@/config/env";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 /** Do not acknowledge a signed opt-out when its recipient table has not
  * been deployed. Public callers get a generic retryable state, never a
@@ -16,7 +17,7 @@ function recipientStorageUnavailable(error:unknown):NextResponse|null {
     (error.message!=="TPO_CAMPAIGNS_NOT_REGISTERED"&&
      !(error instanceof GlobalEmailSuppressionUnavailable)))return null;
  return NextResponse.json({error:"SUPPRESSIONS_NOT_READY",message:"That didn't work. Please try again."},{
-  status:503,headers:{"Cache-Control":"no-store"},
+  status:503,headers:{"Cache-Control":CACHE.NONE},
  });
 }
 function successResponse(request:Request,scope:"placement-cell"|null){
@@ -25,7 +26,7 @@ function successResponse(request:Request,scope:"placement-cell"|null){
  const wantsJson=(request.headers.get("accept")??"").toLowerCase().includes("application/json") ||
   (request.headers.get("prefer")??"").toLowerCase().includes("return=representation");
  if(wantsJson)return NextResponse.json({status:"UNSUBSCRIBED",inPlace:true,scope},{
-  status:200,headers:{"Cache-Control":"no-store"},
+  status:200,headers:{"Cache-Control":CACHE.NONE},
  });
  const url=new URL("/campaign-unsubscribe/confirmed",request.url);
  if(scope==="placement-cell")url.searchParams.set("scope","placement-cell");
@@ -39,9 +40,9 @@ async function handlePOST(request:Request){
  // Reconstruct only the bounded UTF-8 bytes for the same native form parser.
  const body=await readBoundedUtf8Body(request,8192);
  if(body.kind==="TOO_LARGE")return NextResponse.json({error:"INVALID_OR_EXPIRED_LINK"},
-  {status:413,headers:{"Cache-Control":"no-store"}});
+  {status:413,headers:{"Cache-Control":CACHE.NONE}});
  if(body.kind!=="OK")return NextResponse.json({error:"INVALID_OR_EXPIRED_LINK"},
-  {status:400,headers:{"Cache-Control":"no-store"}});
+  {status:400,headers:{"Cache-Control":CACHE.NONE}});
  const input=new Request(request.url,{method:"POST",body:body.body,
   headers:{"content-type":request.headers.get("content-type")??""}});
  const form=await input.formData().catch(()=>null);
@@ -93,7 +94,7 @@ async function handlePOST(request:Request){
   if(error instanceof GlobalEmailSuppressionUnavailable)
    return NextResponse.json({
     error:"SUPPRESSIONS_NOT_READY",message:"That didn't work. Please try again.",
-   },{status:503,headers:{"Cache-Control":"no-store"}});
+   },{status:503,headers:{"Cache-Control":CACHE.NONE}});
   throw error;
  }
  return successResponse(request,null);

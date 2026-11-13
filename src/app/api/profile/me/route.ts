@@ -13,9 +13,10 @@ import {updateOwnLearnerProfileDocument} from "@/modules/people/learner-profile-
 import { route } from "@/security/route";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 const MAX_PROFILE_DOCUMENT_BYTES = 2 * 1024 * 1024;
-const privateHeaders = { "Cache-Control": "private, no-store" };
+const privateHeaders = { "Cache-Control": CACHE.PRIVATE };
 
 async function handleGET(request: Request) {
   try {
@@ -116,7 +117,7 @@ async function handleOPTIONS() {
     sections: LEARNER_PROFILE_ROUTE_REPLACEMENTS,
     legacySectionRedirect: "GET /api/profile/me?legacySection={section}",
     administrativeProfile: "GET /api/college/students/{membershipId}/profile (requires authorized college context)",
-  }, { headers: { Allow: "GET, PUT, OPTIONS", "Cache-Control": "no-store" } });
+  }, { headers: { Allow: "GET, PUT, OPTIONS", "Cache-Control": CACHE.NONE } });
 }
 export const OPTIONS = route(
   { auth: "user", permission: "service-enforced" },

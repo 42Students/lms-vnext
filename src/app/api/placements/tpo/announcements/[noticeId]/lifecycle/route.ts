@@ -7,6 +7,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {mutateTpoNotice} from "@/modules/announcements/tpo-placement-notice-lifecycle";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{noticeId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -23,7 +24,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{noticeId:str
   await mutateTpoNotice(await getCurrentRequestContext(),parsed.data);
   if(request.headers.get("accept")?.includes("application/json"))
    return NextResponse.json({saved:true,action:parsed.data.action,noticeId},
-    {headers:{"Cache-Control":"private, no-store"}});
+    {headers:{"Cache-Control":CACHE.PRIVATE}});
   const tab=parsed.data.action==="RESTORE"?"deleted":"yours";
   const destination=new URL("/tpo/announcements?tab="+tab,request.url);
   if(parsed.data.action==="DELETE")destination.searchParams.set("noticeSuccess","DELETED");
@@ -39,7 +40,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{noticeId:str
    return NextResponse.json({
     error:"UNDO_WINDOW_EXPIRED",
     message:"The 30-second Undo window has ended. Refresh announcements to see the current state.",
-   },{status:409,headers:{"Cache-Control":"no-store"}});
+   },{status:409,headers:{"Cache-Control":CACHE.NONE}});
   }
   if(error instanceof Error&&error.message==="ANNOUNCEMENT_STALE")
    return noticePostError(request,"STALE_VERSION",409);
@@ -72,14 +73,14 @@ async function handleDELETE(request:Request,{params}:{params:Promise<{noticeId:s
   .safeParse({noticeId,expectedVersion:version});
  if(!parsed.success)return NextResponse.json({error:"VERSION_REQUIRED",
   message:"Refresh the announcement and send its current version to delete it.",
- },{status:409,headers:{"Cache-Control":"private, no-store"}});
+ },{status:409,headers:{"Cache-Control":CACHE.PRIVATE}});
  try{
   await mutateTpoNotice(await getCurrentRequestContext(),{
    ...parsed.data,action:"DELETE",
   });
   return NextResponse.json({saved:true,softDeleted:true,noticeId,
    message:"Announcement deleted. Undo is available from Deleted announcements.",
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){
   if(error instanceof AuthorizationError)return noticePostError(request,"FORBIDDEN",403);
   if(error instanceof Error&&error.message==="ANNOUNCEMENT_STALE")
@@ -107,20 +108,20 @@ async function handlePUT(request:Request,{params}:{params:Promise<{noticeId:stri
  if(!parsed.success)return NextResponse.json({
   error:"INVALID_LIFECYCLE_ACTION",
   message:"Use a versioned RESTORE or UNDO_SEND action. Edit title and message in the announcement editor.",
- },{status:422,headers:{"Cache-Control":"private, no-store"}});
+ },{status:422,headers:{"Cache-Control":CACHE.PRIVATE}});
  try{
   await mutateTpoNotice(await getCurrentRequestContext(),{
    noticeId,...parsed.data,
   });
   return NextResponse.json({saved:true,action:parsed.data.action,noticeId,
    message:parsed.data.action==="RESTORE"?"Announcement restored":"Announcement send undone",
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){
   if(error instanceof AuthorizationError)return noticePostError(request,"FORBIDDEN",403);
   if(error instanceof Error&&error.message==="ANNOUNCEMENT_UNDO_EXPIRED")
    return NextResponse.json({error:"UNDO_WINDOW_EXPIRED",
     message:"The 30-second Undo window has ended. Refresh announcements."},
-    {status:409,headers:{"Cache-Control":"private, no-store"}});
+    {status:409,headers:{"Cache-Control":CACHE.PRIVATE}});
   if(error instanceof Error&&error.message==="ANNOUNCEMENT_STALE")
    return noticePostError(request,"STALE_VERSION",409);
   if(error instanceof Error&&error.message==="ANNOUNCEMENT_NOT_FOUND")

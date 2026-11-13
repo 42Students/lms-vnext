@@ -9,6 +9,7 @@ import { alertEnvironment } from "@/modules/log-alerts/signature";
 import { logAlertsRuntimeEnabled } from "@/modules/log-alerts/readiness";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 async function handlePATCH(
@@ -17,7 +18,7 @@ async function handlePATCH(
 ) {
   if (!logAlertsRuntimeEnabled()) {
     return NextResponse.json({error:"DB10_LOG_ALERTS_MIGRATIONS_PENDING",message:"Known Errors are unavailable until the log-alert schema is verified."},
-      {status:503,headers:{"Cache-Control":"private, no-store"}});
+      {status:503,headers:{"Cache-Control":CACHE.PRIVATE}});
   }
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });

@@ -1,10 +1,11 @@
 import { route } from "@/security/route";
-import {NextResponse} from "next/server";
+
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {resolveLegacyMeetingKeyLink}
  from "@/modules/projects/legacy-meeting-link-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 type Params={params:Promise<{projectId:string;meetingKey:string}>};
@@ -20,6 +21,6 @@ export const GET = route(
     const {projectId,meetingKey}=params;
     const result=await resolveLegacyMeetingKeyLink(
    __ctx,projectId,meetingKey);
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(result);
   },
 );

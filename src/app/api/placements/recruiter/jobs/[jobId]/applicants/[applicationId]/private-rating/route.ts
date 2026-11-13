@@ -8,8 +8,9 @@ import {readRecruiterJsonBody,RecruiterJsonBodyError} from "@/modules/placements
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import {readRecruiterPrivateReview,writeRecruiterPrivateReview,
  RecruiterPrivateReviewConflict,RecruiterPrivateReviewMigrationPending} from "@/modules/placements/recruiter-private-rating-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
-const headers={"Cache-Control":"private, no-store"};
+const headers={"Cache-Control":CACHE.PRIVATE};
 type Params={params:Promise<{jobId:string;applicationId:string}>};
 export const GET = route(
   { auth: "user", permission: "service-enforced" },

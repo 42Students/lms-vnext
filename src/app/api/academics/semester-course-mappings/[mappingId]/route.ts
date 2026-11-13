@@ -11,6 +11,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { updateCollegeTermMapping, removeCollegeTermMapping, CollegeTermMappingError } from "@/modules/academics/college-term-mapping-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 /** Legacy semester courses endpoint map (numeric term/course identifiers must
  * be mapped within the acting college, never trusted from a client request):
@@ -69,7 +70,7 @@ export const GET = route(
       },
       deleteWarning:activeOffering?inUseMessage:
         "Removing this course will remove it from the semester map; historical course and learner records are retained."},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 
@@ -81,7 +82,7 @@ export const DELETE = route(
 const { mappingId } = params;
 const result = await removeCollegeTermMapping(context, mappingId, await boundedRequestJson(request));
 return NextResponse.json({status:"OK",result,message:"Course removed from semester"},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch (error) {
     if (error instanceof CollegeTermMappingError)
       return NextResponse.json({ error: error.code,
@@ -102,7 +103,7 @@ const { mappingId } = params;
 const mapping = await updateCollegeTermMapping(context, mappingId, await boundedRequestJson(request));
 return NextResponse.json({ status:"OK", mapping,
       data:mapping,message:"Semester course updated",
-      reorderHint:"Changing position resequences other courses within this semester." }, { headers: { "Cache-Control": "private, no-store" } });
+      reorderHint:"Changing position resequences other courses within this semester." }, { headers: { "Cache-Control": CACHE.PRIVATE } });
 } catch (error) {
     if (error instanceof CollegeTermMappingError)
       return NextResponse.json({ error: error.code }, { status: error.code.endsWith("NOT_FOUND") ? 404 : 409 });

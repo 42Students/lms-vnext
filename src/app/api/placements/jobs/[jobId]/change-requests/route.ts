@@ -21,6 +21,7 @@ import {postTpoInternalMessage} from "@/modules/placements/tpo-team-internal-rep
 
 import {legacyDriveChangeStatus} from "@/modules/placements/tpo-drive-change-request-model";
 
+import { CACHE } from "@/security/responses";
 /**
  * Legacy /api/v1/tpo compatibility map (G2-5-023-001/034):
  * GET  /drives/{jobId}/change-requests -> GET this route
@@ -93,7 +94,7 @@ export const GET = route(
    const scoped=await scopedDriveThreads(context,jobId);
    const threadId=url.searchParams.get("threadId");
    if(!threadId)return NextResponse.json(scoped,{
-    headers:{"Cache-Control":"private, no-store"}});
+    headers:{"Cache-Control":CACHE.PRIVATE}});
    if(!scoped.threads.some(thread=>thread.id===threadId))
     return NextResponse.json({error:"TEAM_THREAD_NOT_FOUND"},{status:404});
    const data=await readTpoInternalConversation(context,threadId,
@@ -101,13 +102,13 @@ export const GET = route(
    if(data.status!=="READY")
     return NextResponse.json({error:data.status},{status:data.status==="NOT_REGISTERED"?503:404});
    return NextResponse.json({...data,messages:data.messages.filter(row=>!row.removed)},{
-    headers:{"Cache-Control":"private, no-store"}});
+    headers:{"Cache-Control":CACHE.PRIVATE}});
   }
     const page=await getDriveChangeRequests(context,jobId,url.searchParams.get("cursor"));
     return NextResponse.json({...page,requests:page.requests.map(request=>({
    ...request,
    legacyStatus:legacyDriveChangeStatus(request.status,request.replyText),
-  }))},{headers:{"Cache-Control":"private, no-store"}});
+  }))},{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 export const POST = route(
@@ -131,16 +132,16 @@ if(body&&typeof body==="object"&&!Array.isArray(body)&&
    });
    return NextResponse.json({kind:"INTERNAL_NOTE",threadId:created.threadId,
     messageId:created.id,notified:created.notified},
-    {status:201,headers:{"Cache-Control":"private, no-store"}});
+    {status:201,headers:{"Cache-Control":CACHE.PRIVATE}});
   }
 const result=await mutateDriveChangeRequest(context,jobId,body);
 return NextResponse.json({...result,
    legacyStatus:result.status==="DECLINED"?"REPLIED":legacyDriveChangeStatus(result.status,null)},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch(e){
   if(e instanceof OpenDriveChangeConflict)
    return NextResponse.json({error:e.code,message:e.legacyMessage},
-    {status:409,headers:{"Cache-Control":"private, no-store"}});
+    {status:409,headers:{"Cache-Control":CACHE.PRIVATE}});
   return apiErrorResponse(e);
  }
   },

@@ -6,6 +6,7 @@ import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-q
 import {mentorTaskHistoryQuerySchema} from "@/modules/projects/mentor-task-history-model";
 import {getMentorTaskReviewHistory} from "@/modules/projects/mentor-task-history-service";
 import {mentorReviewedTasksCsv} from "@/modules/projects/mentor-task-review-export-model";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 /** Own assigned Mentor project review history only; capped, no raw feedback. */
 export const GET = route(
@@ -16,7 +17,7 @@ export const GET = route(
     const filters=singleValueMentorExportFilters(url.searchParams,
       ["decision","priority","order","search"]);
     if(!filters)return NextResponse.json({error:"INVALID_QUERY"},{status:400,
-      headers:{"Cache-Control":"private, no-store"}});
+      headers:{"Cache-Control":CACHE.PRIVATE}});
     const query=mentorTaskHistoryQuerySchema.parse({...filters,page:1});
     const first=await getMentorTaskReviewHistory(context,query);
     if(!first.enabled)return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403});
@@ -30,7 +31,7 @@ export const GET = route(
     return new Response(mentorReviewedTasksCsv(rows,omitted),{
       headers:{"Content-Type":"text/csv; charset=utf-8",
         "Content-Disposition":'attachment; filename="mentor-reviewed-tasks.csv"',
-        "Cache-Control":"private, no-store","X-Export-Omitted":String(omitted)},
+        "Cache-Control":CACHE.PRIVATE,"X-Export-Omitted":String(omitted)},
     });
   },
 );

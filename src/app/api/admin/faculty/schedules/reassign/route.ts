@@ -6,6 +6,7 @@ import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {reassignSuperAdminFacultySchedules,SuperAdminFacultyScheduleReassignError}
   from "@/modules/admin-ui/super-admin-faculty-schedule-reassign-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -15,7 +16,7 @@ export const POST = route(
 const parsed=await readBoundedJsonRequest(request,8192);
 if(!parsed.ok)return Response.json({error:"INVALID_REQUEST"},{status:400});
 const report=await reassignSuperAdminFacultySchedules(context,parsed.value);
-return Response.json({report},{headers:{"Cache-Control":"private, no-store"}});
+return Response.json({report},{headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch(error){
     if(error instanceof SuperAdminFacultyScheduleReassignError)
       return Response.json({error:error.code},{status:409});

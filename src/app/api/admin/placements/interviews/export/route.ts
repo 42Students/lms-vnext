@@ -4,6 +4,7 @@ import {exportSuperAdminInterviewsCsv} from "@/modules/admin-ui/super-admin-plac
 import {superAdminReadQuerySchema} from "@/modules/admin-ui/super-admin-read-directory-model";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 async function handleGET(request:Request){
@@ -16,7 +17,7 @@ async function handleGET(request:Request){
   return new Response(result.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":"attachment; filename=\"interviews.csv\"",
-   "Cache-Control":"private, no-store",
+   "Cache-Control":CACHE.PRIVATE,
    "X-Content-Type-Options":"nosniff",
    "X-Export-Total":String(result.total),
    "X-Export-Truncated":String(result.truncated),

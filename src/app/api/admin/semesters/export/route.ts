@@ -4,6 +4,7 @@ import {collegeSemesterDirectorySchema} from "@/modules/academics/college-academ
 import {listCollegeSemesters} from "@/modules/academics/college-academic-directory-service";
 import {placementReportCsv} from "@/modules/placements/report-model";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -33,7 +34,7 @@ async function handleGET(request:Request){
   ],rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="semesters.csv"',
-   "Cache-Control":"private, no-store",
+   "Cache-Control":CACHE.PRIVATE,
    "X-Export-Truncated":records.length<total?"true":"false",
   }});
  }catch(error){return apiErrorResponse(error);}

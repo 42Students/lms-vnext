@@ -5,17 +5,18 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {changeManagedCollegeSubdomain,getManagedCollegeSubdomain,ManagedSubdomainError} from "@/modules/tenant-domains/managed-subdomain-service";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import { route } from "@/security/route";
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 type Params={params:Promise<{collegeId:string}>};
 async function handleGET(_request:Request,{params}:Params){
  try{
   const {collegeId}=await params;
   return NextResponse.json(await getManagedCollegeSubdomain(await getCurrentRequestContext(),collegeId),
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){
   if(error instanceof ManagedSubdomainError)return NextResponse.json(
     {error:error.code},{status:error.code==="MANAGED_WILDCARD_NOT_READY"?503:409,
-      headers:{"Cache-Control":"private, no-store"}});
+      headers:{"Cache-Control":CACHE.PRIVATE}});
   return apiErrorResponse(error);
  }
 }
@@ -46,7 +47,7 @@ async function mutate(request:Request,{params}:Params,legacyVerb?:"PUT"|"DELETE"
     (await getManagedCollegeSubdomain(context,collegeId)).currentHost?"CHANGE":"ALLOT"};
   }
   const result=await changeManagedCollegeSubdomain(context,collegeId,raw);
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(result);
  }catch(error){return apiErrorResponse(error);}
 }
 async function handlePOST(request:Request,params:Params){return mutate(request,params);}

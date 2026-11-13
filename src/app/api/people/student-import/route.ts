@@ -6,6 +6,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { runCollegeStudentCsv, listSuperAdminStudentCsvImportHistory } from "@/modules/people/college-student-csv-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 // PREVIEW and IMPORT deliberately share one scoped validation contract.
 // Legacy bulk registration history/undo needs a durable cross-system ledger;
@@ -31,7 +32,7 @@ async function handlePOST(request: Request) {
         requiresManualReconciliation:
           "recoveryRequired" in report && report.recoveryRequired === true,
       },
-    },{headers:{"Cache-Control":"private, no-store"}});
+    },{headers:{"Cache-Control":CACHE.PRIVATE}});
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -50,7 +51,7 @@ async function handleGET() {
       await getCurrentRequestContext(),
     );
     return NextResponse.json({history,action:"BULK_IMPORT_HISTORY",undoAvailable:false},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   } catch(error) { return apiErrorResponse(error); }
 }
 export const GET = route(
@@ -68,7 +69,7 @@ async function handleDELETE(request:Request) {
     error:"BULK_UNDO_REQUIRES_REVIEW",
     message:"Bulk import reversal requires a membership-by-membership dependency review. No learner, attendance or placement records were deleted.",
     recovery:"Review the import history and end eligible memberships individually.",
-  },{status:409,headers:{"Cache-Control":"private, no-store"}});
+  },{status:409,headers:{"Cache-Control":CACHE.PRIVATE}});
 }
 export const DELETE = route(
   { auth: "user", permission: "service-enforced", stepUp: true },

@@ -7,6 +7,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listCompanyCommunication,updateCompanyCommunication,CompanyCommunicationUnavailable}
  from "@/modules/placements/tpo-company-communication-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -14,7 +15,7 @@ export const GET = route(
   async ({ context: __actor }) => {
     const __ctx = __actor!;
     return NextResponse.json(await listCompanyCommunication(__ctx),{
-  headers:{"Cache-Control":"no-store"},
+  headers:{"Cache-Control":CACHE.NONE},
  });
   },
 );

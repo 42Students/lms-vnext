@@ -11,6 +11,7 @@ import { tpoCrmFollowupIdSchema } from "@/modules/placements/tpo-crm-validation"
 import { route } from "@/security/route";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ followupId: string }> };
 
@@ -39,11 +40,11 @@ async function handlePOST(request: Request, { params }: RouteContext) {
     // timestamp without writing a second completion.
     if(request.headers.get("prefer")?.split(",").some(value=>value.trim()==="return=minimal"))
       return new NextResponse(null,{status:204,headers:{
-        "Cache-Control":"private, no-store","Preference-Applied":"return=minimal",
+        "Cache-Control":CACHE.PRIVATE,"Preference-Applied":"return=minimal",
       }});
     return NextResponse.json({
       followup: { id: followup.id, doneAt: followup.doneAt?.toISOString() ?? null },
-    }, { headers: { "Cache-Control": "private, no-store" } });
+    }, { headers: { "Cache-Control": CACHE.PRIVATE } });
   } catch (error) {
     return tpoCrmApiErrorResponse(error);
   }

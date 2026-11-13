@@ -6,6 +6,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { previewCollegeInterviewConflicts } from "@/modules/placements/college-interview-conflict-preview";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 type Props={params:Promise<{jobId:string}>};
@@ -21,7 +22,7 @@ export const POST = route(
     return NextResponse.json(
       await previewCollegeInterviewConflicts(
         __ctx,jobId,await boundedRequestJson(request),
-      ),{headers:{"Cache-Control":"private, no-store"}},
+      ),{headers:{"Cache-Control":CACHE.PRIVATE}},
     );
   },
 );

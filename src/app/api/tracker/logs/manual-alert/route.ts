@@ -7,6 +7,7 @@ import {requireGlobalLogAdmin} from "@/modules/log-alerts/admin-service";
 import {sendManualTelegramAlertForAdmin} from "@/modules/log-alerts/manual-ops";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 const inputSchema=z.strictObject({kind:z.enum(["TEST","DIGEST"])});
 async function handlePOST(request:Request){
@@ -26,7 +27,7 @@ async function handlePOST(request:Request){
     // accepted within ten minutes must not be submitted twice.
     if(result.reason==="RATE_LIMITED")
       return NextResponse.json({message:"A manual alert was sent recently. Try again in 10 minutes."},
-        {status:429,headers:{"Retry-After":"600","Cache-Control":"no-store"}});
+        {status:429,headers:{"Retry-After":"600","Cache-Control":CACHE.NONE}});
     if(result.reason==="UNCONFIGURED")
       return NextResponse.json({
         configured:false,accepted:false,delivered:null,
@@ -38,7 +39,7 @@ async function handlePOST(request:Request){
     return NextResponse.json({
       configured:true,accepted:true,delivered:null,sent:true,
       message:"Telegram accepted the alert request. Delivery is not confirmed.",
-    },{headers:{"Cache-Control":"no-store"}});
+    },{headers:{"Cache-Control":CACHE.NONE}});
   }catch{
     return NextResponse.json({message:"Could not send the alert. Try again later."},{status:503});
   }

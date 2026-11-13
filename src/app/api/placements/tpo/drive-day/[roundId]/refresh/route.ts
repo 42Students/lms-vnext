@@ -7,6 +7,7 @@ import {getTpoRoundDriveDay} from "@/modules/placements/tpo-round-drive-day-serv
 import {placementRoundIdSchema} from "@/modules/placements/validation";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -28,7 +29,7 @@ requirePermission(context,"placements.manage",{
 const {roundId}=params;
 await getTpoRoundDriveDay(context,placementRoundIdSchema.parse(roundId));
 return new Response(null,{status:204,headers:{
-   "Cache-Control":"private, no-store, max-age=0",
+   "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff",
    Vary:"Cookie",
   }});

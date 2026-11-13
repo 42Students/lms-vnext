@@ -15,6 +15,7 @@ import {
 import { route } from "@/security/route";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 /** Presentation labels accompany the stable machine role values. */
@@ -61,7 +62,7 @@ async function handleGET(
     );
 
     return NextResponse.json({ roles, roleLabels:roleLabels(roles) }, {
-      headers: { "Cache-Control": "private, no-store", "Vary": "Cookie" },
+      headers: { "Cache-Control": CACHE.PRIVATE, "Vary": "Cookie" },
     });
   } catch (error) {
     return apiErrorResponse(error);
@@ -103,7 +104,7 @@ async function handlePOST(
     );
 
     return NextResponse.json({ roles, roleLabels:roleLabels(roles) }, {
-      headers: { "Cache-Control": "private, no-store", "Vary": "Cookie" },
+      headers: { "Cache-Control": CACHE.PRIVATE, "Vary": "Cookie" },
     });
   } catch (error) {
     return apiErrorResponse(error);
@@ -145,7 +146,7 @@ async function handleDELETE(
     );
 
     return NextResponse.json({ roles, roleLabels:roleLabels(roles) }, {
-      headers: { "Cache-Control": "private, no-store", "Vary": "Cookie" },
+      headers: { "Cache-Control": CACHE.PRIVATE, "Vary": "Cookie" },
     });
   } catch (error) {
     return apiErrorResponse(error);

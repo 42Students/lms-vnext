@@ -21,11 +21,12 @@ import { parseSkillCatalogQuery } from "@/modules/skills/catalog-validation";
 import { skillUsageNameSchema } from "@/modules/skills/usage-normalization";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 // Preserve complete 1,000-row Unicode-rich imports within a finite byte budget.
 const SKILLS_POST_MAX_BYTES = 4 * 1024 * 1024;
-const privateHeaders = { "Cache-Control": "private, no-store" };
+const privateHeaders = { "Cache-Control": CACHE.PRIVATE };
 
 // The catalog is not writable while DB10 schema replay is unverified.
 // A successful import does not auto-enable GET or certify synonym/source parity.
@@ -53,7 +54,7 @@ async function handlePOST(request:Request) {
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   if(!skillsCatalogSchemaReady())
     return NextResponse.json({error:"DB10_SKILLS_MIGRATIONS_PENDING"},
-      {status:503,headers:{"Cache-Control":"private, no-store"}});
+      {status:503,headers:{"Cache-Control":CACHE.PRIVATE}});
   try{
     const context=await getCurrentRequestContext();
     // Import accepts up to 1,000 bounded entries. Never buffer an
@@ -87,20 +88,20 @@ async function handlePOST(request:Request) {
       return NextResponse.json({
         processed:input.items.length,created,skipped:input.items.length-created,
         remaining:0,sourceReconciled:false,verificationRequired:true,
-      },{headers:{"Cache-Control":"private, no-store"}});
+      },{headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     // Schema replay permits a controlled import, not live selection traffic.
     // Usage writers require the same complete seed/source readiness as reads.
     if(!skillsCatalogRuntimeEnabled())
       return NextResponse.json({error:"DB10_SKILLS_MIGRATIONS_PENDING"},
-        {status:503,headers:{"Cache-Control":"private, no-store"}});
+        {status:503,headers:{"Cache-Control":CACHE.PRIVATE}});
     const selected=selectionInput.parse(payload);
     await recordSkillSelection(context,{
       name:selected.name,source:selected.action==="SELECT_V1"?"v1":"v2",
       ...(selected.action==="SELECT_V1"?{skillId:selected.skillId}:{}),
     });
     return NextResponse.json({recorded:true},{
-      headers:{"Cache-Control":"private, no-store"}});
+      headers:{"Cache-Control":CACHE.PRIVATE}});
   }catch(error){
     if(error instanceof ZodError)
       return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
@@ -171,7 +172,7 @@ async function handleGET(request: Request) {
       if(!isSuperAdmin(context)||context.user.platformStatus!=="ACTIVE")
         return NextResponse.json({error:"FORBIDDEN"},{status:403});
       return NextResponse.json(skillsCatalogReadiness(),
-        {headers:{"Cache-Control":"private, no-store"}});
+        {headers:{"Cache-Control":CACHE.PRIVATE}});
     }catch(error){return apiErrorResponse(error);}
   }
   if (!skillsCatalogRuntimeEnabled()) {
@@ -181,7 +182,7 @@ async function handleGET(request: Request) {
         message: "Failed to search skills. Please try again or contact support. You can still save the entered skill name.",
         retryable: true,
       },
-      { status: 503, headers: { "Cache-Control": "private, no-store" } },
+      { status: 503, headers: { "Cache-Control": CACHE.PRIVATE } },
     );
   }
 
@@ -220,7 +221,7 @@ async function handleGET(request: Request) {
       const exists = rows.length > 0;
       return NextResponse.json(
         successPayload("exists", compat, compat ? exists : { exists }, Date.now() - startedAt),
-        { headers: { "Cache-Control": "private, no-store" } },
+        { headers: { "Cache-Control": CACHE.PRIVATE } },
       );
     }
 
@@ -245,7 +246,7 @@ async function handleGET(request: Request) {
       };
       return NextResponse.json(
         successPayload("stats", compat, stats, Date.now() - startedAt),
-        { headers: { "Cache-Control": "private, no-store" } },
+        { headers: { "Cache-Control": CACHE.PRIVATE } },
       );
     }
 
@@ -262,7 +263,7 @@ async function handleGET(request: Request) {
     const data = input.mode === "categories" ? result.categories ?? [] : result.items ?? [];
     return NextResponse.json(
       successPayload(input.mode, compat, compat ? data : result, Date.now() - startedAt),
-      { headers: { "Cache-Control": "private, no-store" } },
+      { headers: { "Cache-Control": CACHE.PRIVATE } },
     );
   } catch (error) {
     if (error instanceof ZodError || error instanceof SyntaxError) {
@@ -319,7 +320,7 @@ async function recordSelectedSkillIds(
 ) {
   if (!skillsCatalogRuntimeEnabled())
     return NextResponse.json({error:"DB10_SKILLS_MIGRATIONS_PENDING"},
-      {status:503,headers:{"Cache-Control":"private, no-store"}});
+      {status:503,headers:{"Cache-Control":CACHE.PRIVATE}});
   try {
     if(!canReadSkillCatalog(context))
       return NextResponse.json({error:"FORBIDDEN"},{status:403});
@@ -378,7 +379,7 @@ async function recordSelectedSkillIds(
       compat==="v1"||compat==="v2"?
         {status:"success",message:"Selection recorded",data:{selected:ids.length}}:
         {recorded:true,selected:ids.length,replayed:result==="ALREADY_RECORDED"},
-      {headers:{"Cache-Control":"private, no-store"}},
+      {headers:{"Cache-Control":CACHE.PRIVATE}},
     );
   }catch(error){
     if(error instanceof ZodError||error instanceof SyntaxError)

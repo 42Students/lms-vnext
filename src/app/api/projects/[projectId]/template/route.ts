@@ -8,6 +8,7 @@ import { readMentorProjectCommandBody, MentorProjectCommandBodyError,
 import { replaceProjectWorkspaceTemplate, searchWorkspaceAssignedTemplates }
   from "@/modules/projects/project-template-replace-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 type Context = { params: Promise<{ projectId: string }> };
 
@@ -23,7 +24,7 @@ export const GET = route(
     const templates = await searchWorkspaceAssignedTemplates(
       __ctx, projectId, search,
     );
-    return NextResponse.json({ templates }, { headers: { "Cache-Control": "private, no-store" } });
+    return privateJson({ templates });
   },
 );
 export const POST = route(

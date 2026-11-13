@@ -15,6 +15,7 @@ import {
 } from "@/modules/academics/lecture-hall-service";
 import { lectureHallErrorResponse } from "./error-response";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const GET = route(
@@ -25,7 +26,7 @@ export const GET = route(
 const search=new URL(request.url).searchParams;
 const legacy=search.get("legacy")==="1";
 const stats=search.get("stats")==="1";
-const responseOptions = { headers: { "Cache-Control": "private, no-store" } };
+const responseOptions = { headers: { "Cache-Control": CACHE.PRIVATE } };
 const collegeId = search.get("collegeId");
 if (stats) {
       return NextResponse.json(await getLectureHallStatistics(context, collegeId ?? ""), responseOptions);
@@ -56,8 +57,8 @@ const result=await listLectureHalls(context,params);
 if(legacy)return NextResponse.json({status:"success",message:"Lecture halls retrieved",
       data:result.items,total:result.pagination.total,
       pagination:result.pagination,collegeId:result.collegeId},
-     {headers:{"Cache-Control":"private, no-store"}});
-return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+     {headers:{"Cache-Control":CACHE.PRIVATE}});
+return privateJson(result);
 } catch (error) {
     if (error instanceof LectureHallError) return lectureHallErrorResponse(error);
     return apiErrorResponse(error);

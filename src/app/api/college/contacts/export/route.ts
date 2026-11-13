@@ -4,6 +4,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {parseCollegeContactsExportParams} from "@/modules/people/college-contacts-export-model";
 import {exportCollegeContactsCsv} from "@/modules/people/college-contacts-export-service";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -12,7 +13,7 @@ async function handleGET(request:Request){
   return new Response(report.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="college-contacts.csv"',
-   "Cache-Control":"private, no-store",
+   "Cache-Control":CACHE.PRIVATE,
    "X-Content-Type-Options":"nosniff",
    Vary:"Cookie",
    "X-Export-Total":String(report.total),
@@ -23,7 +24,7 @@ async function handleGET(request:Request){
    return NextResponse.json({
     error:"INVALID_CONTACT_EXPORT",
     message:"Contact export filters are invalid. Clear the filters and try again.",
-   },{status:400,headers:{"Cache-Control":"private, no-store",Vary:"Cookie"}});
+   },{status:400,headers:{"Cache-Control":CACHE.PRIVATE,Vary:"Cookie"}});
   const response=apiErrorResponse(error);
   response.headers.set("Cache-Control","private, no-store");
   response.headers.set("Vary","Cookie");

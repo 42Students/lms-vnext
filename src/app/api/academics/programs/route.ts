@@ -13,6 +13,7 @@ import {
   createCollegeProgram,
 } from "@/modules/academics/college-program-mutation-service";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 const legacySearchSchema = z.object({
@@ -132,7 +133,7 @@ export const GET = route(
     );
     if (mode || url.searchParams.has("query") || url.searchParams.has("q")) {
       const legacy=legacyProgramSearch(programs,url.searchParams,url.searchParams.get("collegeId") ?? "");
-      return NextResponse.json(legacy,{headers:{"Cache-Control":"private, no-store"}});
+      return privateJson(legacy);
     }
     const page=parseLegacyProgramPage(url.searchParams);
     if(page===false)return NextResponse.json({error:"INVALID_PAGINATION",message:"Page must be a non-negative integer and size must be between 1 and 100."},{status:400});
@@ -146,7 +147,7 @@ export const GET = route(
         content,totalElements:scoped.total,totalPages,number:page.page,size:page.size,
         first:page.page===0,last:totalPages===0||page.page>=totalPages-1,
         numberOfElements:content.length,empty:content.length===0,
-      }},{headers:{"Cache-Control":"private, no-store"}});
+      }},{headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     return NextResponse.json({ programs });
   },
@@ -161,7 +162,7 @@ const parsedBody = await readBoundedJsonBody(request, 16_384);
 if (parsedBody.kind !== "OK") return NextResponse.json({
       error: "INVALID_REQUEST", message: "Enter valid program details.",
     }, { status: parsedBody.kind === "TOO_LARGE" ? 413 : 400,
-      headers: { "Cache-Control": "no-store" } });
+      headers: { "Cache-Control": CACHE.NONE } });
 const body: unknown = parsedBody.value;
 const legacy=new URL(request.url).searchParams.get("legacy")==="1";
 const program = await createCollegeProgram(context, legacy?legacyProgramCreateInput(body):body);

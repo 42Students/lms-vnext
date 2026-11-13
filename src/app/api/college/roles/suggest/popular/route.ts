@@ -7,9 +7,10 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listPopularFacultyDirectory,recordFacultyDirectorySelection}
  from "@/modules/people/college-role-directory-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"private, no-store"};
+const noStore={"Cache-Control":CACHE.PRIVATE};
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
   async ({ context: __actor }) => {

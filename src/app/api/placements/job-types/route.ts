@@ -1,8 +1,9 @@
 import { route } from "@/security/route";
-import {NextResponse} from "next/server";
+
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listPlacementJobTypeChoices} from "@/modules/placements/tpo-configuration-read-service";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** College members require persisted placements.read; a user with no college
@@ -12,6 +13,6 @@ export const GET = route(
   async ({ context: actor }) => {
     const context = actor!;
     const choices=await listPlacementJobTypeChoices(context,context.membership?.collegeId??null);
-    return NextResponse.json({choices},{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson({choices});
   },
 );

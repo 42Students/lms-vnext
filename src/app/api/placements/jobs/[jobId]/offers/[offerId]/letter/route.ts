@@ -1,6 +1,6 @@
 import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
-import {NextResponse} from "next/server";
+
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
@@ -8,6 +8,7 @@ import {
  getTpoOfferLetterAttachment,attachTpoOfferLetter,
 } from "@/modules/placements/tpo-offer-lifecycle-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 type Route={params:Promise<{jobId:string;offerId:string}>};
 
@@ -20,7 +21,7 @@ export const GET = route(
     const {jobId,offerId}=params;
     const result=await getTpoOfferLetterAttachment(
    __ctx,jobId,offerId);
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(result);
   },
 );
 export const POST = route(
@@ -31,6 +32,6 @@ export const POST = route(
     const raw:unknown=await boundedRequestJson(request);
     const result=await attachTpoOfferLetter(
    __ctx,jobId,offerId,raw);
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(result);
   },
 );

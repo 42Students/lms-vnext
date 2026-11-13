@@ -11,6 +11,7 @@ import {
 import { listPrograms } from "@/modules/academics/program-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 type Context = { params: Promise<{ action: string[] }> };
 const uuid = z.string().uuid();
@@ -37,9 +38,9 @@ async function handleGET(request: Request, { params }: Context) {
         url.searchParams.get("departmentId") ?? url.searchParams.get("deptId"));
       if (programs.length === 0)
         return NextResponse.json({status:"error",message:"No programs found for this college",data:[]},
-          {status:404,headers:{"Cache-Control":"private, no-store"}});
+          {status:404,headers:{"Cache-Control":CACHE.PRIVATE}});
       return NextResponse.json({status:"success",message:"Programs retrieved",data:programs},
-        {headers:{"Cache-Control":"private, no-store"}});
+        {headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     const detailId = action.length === 2 ? id
       : operation === "fetchProgramDetails" && action.length === 1
@@ -50,7 +51,7 @@ async function handleGET(request: Request, { params }: Context) {
       if (!response.ok) return response;
       const body = await response.json() as {program:unknown};
       return NextResponse.json({status:"success",message:"Program retrieved",data:body.program},
-        {headers:{"Cache-Control":"private, no-store"}});
+        {headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     if ((operation === "fetchPaged" || operation === "fetchByCollegePaged") && action.length === 1) {
       url.searchParams.set("page",url.searchParams.get("page") ?? "0");
@@ -93,7 +94,7 @@ async function handlePUT(request: Request, { params }: Context) {
     const parsedBody = await readBoundedJsonBody(request, 16_384);
     if (parsedBody.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: parsedBody.kind === "TOO_LARGE" ? 413 : 400,
-      headers: { "Cache-Control": "no-store" },
+      headers: { "Cache-Control": CACHE.NONE },
     });
     const body = z.record(z.string(),z.unknown()).parse(parsedBody.value);
     const currentResponse = await canonicalGetDetail(request,{

@@ -11,9 +11,10 @@ import {
 } from "@/modules/projects/template-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 const TEMPLATE_MAX_BYTES=8 * 1024 * 1024;
-const privateHeaders={"Cache-Control":"private, no-store"};
+const privateHeaders={"Cache-Control":CACHE.PRIVATE};
 
 async function handleGET(request: Request) {
   try {

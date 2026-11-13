@@ -4,6 +4,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getFacultyAssignmentMethods} from "@/modules/courses/faculty-assignment-authoring-service";
 import {parseFacultyAssignmentMethodsQuery} from "@/modules/courses/faculty-assignment-methods-query";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -12,6 +13,6 @@ export const GET = route(
     const {deliveryId}=params;
     const {assignmentId}=parseFacultyAssignmentMethodsQuery(request.url);
     const methods=await getFacultyAssignmentMethods(context,{deliveryId},assignmentId);
-    return Response.json({methods},{headers:{"Cache-Control":"private, no-store"}});
+    return Response.json({methods},{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

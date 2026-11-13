@@ -9,9 +9,10 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listLearnerCourseDeliveries} from "@/modules/courses/learner-course-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 const selectedSchema=z.strictObject({deliveryId:z.uuid()});
-const noStore={"Cache-Control":"private, no-store"};
+const noStore={"Cache-Control":CACHE.PRIVATE};
 
 /** The deprecated v2 course-search usage counter was process-local and
  * accepted legacy integer course IDs. This scoped replacement counts only

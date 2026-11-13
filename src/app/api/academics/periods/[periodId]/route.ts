@@ -10,6 +10,7 @@ import {
   updateAcademicPeriod,
 } from "@/modules/academics/period-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -25,7 +26,7 @@ const { periodId } = params;
 const parsedBody = await readBoundedJsonBody(request, 16_384);
 if (parsedBody.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: parsedBody.kind === "TOO_LARGE" ? 413 : 400,
-      headers: { "Cache-Control": "private, no-store" },
+      headers: { "Cache-Control": CACHE.PRIVATE },
     });
 const body = parsedBody.value;
 const period =

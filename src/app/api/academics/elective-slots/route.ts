@@ -6,6 +6,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { CollegeElectiveSlotMutationError, createCollegeElectiveSlot, listCollegeElectiveSlotOptions } from "@/modules/electives/college-slot-mutation-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 /** Old /api/v1/electives/admin/slots is now scoped to the selected college
  * and available at /api/academics/elective-slots; subsequent edits use
@@ -25,7 +26,7 @@ export const GET = route(
     archive:"/college/electives"},
    selectedCollegeRequired:true,
    legacyRoute:"/api/v1/electives/admin/slots",
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 
@@ -37,7 +38,7 @@ export const POST = route(
 const parsed = await readBoundedJsonBody(request, 16_384);
 if (parsed.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: parsed.kind === "TOO_LARGE" ? 413 : 400,
-      headers: { "Cache-Control": "private, no-store" },
+      headers: { "Cache-Control": CACHE.PRIVATE },
     });
 const body: unknown = parsed.value;
 const result = await createCollegeElectiveSlot(context, body);
@@ -56,7 +57,7 @@ return NextResponse.json({
     if (error instanceof CollegeElectiveSlotMutationError) {
       return NextResponse.json({
         error:error.code,message:"Could not save the elective slot. Review the selected college and fields.",
-      },{status:409,headers:{"Cache-Control":"private, no-store"}});
+      },{status:409,headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     return apiErrorResponse(error);
   }

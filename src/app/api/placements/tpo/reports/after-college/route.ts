@@ -7,6 +7,7 @@ import {AFTER_COLLEGE_LABELS} from "@/modules/placements/tpo-after-college-model
 import {apiErrorResponse} from "@/lib/api-error";
 import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-url-guard";
 import {z} from "zod";
+import { CACHE, privateJson } from "@/security/responses";
 const params=z.object({batchId:z.uuid().optional(),branchId:z.uuid().optional()}).strict();
 const csv=(v:unknown)=>{
  const value=String(v??"");
@@ -20,7 +21,7 @@ export const GET = route(
     const ctx = __actor!;
     const q=new URL(request.url).searchParams;
     if(tpoReportHasRepeatedSearchParams(q)||[...q.keys()].some(key=>key!=="batchId"&&key!=="branchId"))
-   return NextResponse.json({error:"INVALID_QUERY"},{status:400,headers:{"Cache-Control":"private, no-store"}});
+   return privateJson({error:"INVALID_QUERY"}, { status: 400 });
     const parsed=params.parse({...(q.get("batchId")?{batchId:q.get("batchId")}:{}),...(q.get("branchId")?{branchId:q.get("branchId")}:{})});
     if(!ctx.membership)return NextResponse.json({error:"UNAUTHORIZED"},{status:403});
     if(parsed.batchId){
@@ -37,7 +38,7 @@ export const GET = route(
    AFTER_COLLEGE_LABELS[row.outcome],row.applicationCount]);
     return new Response([header,...rows].map(row=>row.map(csv).join(",")).join("\r\n")+"\r\n",
    {headers:{"Content-Type":"text/csv; charset=utf-8","Content-Disposition":"attachment; filename=after-college.csv",
-    "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff",
+    "Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff",
     "X-Export-Truncated":data.rows.length>rows.length?"true":"false",Vary:"Cookie"}});
   },
 );

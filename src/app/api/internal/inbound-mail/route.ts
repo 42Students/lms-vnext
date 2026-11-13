@@ -4,9 +4,10 @@ import {ingestVerifiedInboundMail,VerifiedInboundMailError}
 import {readBoundedRecruiterInboundBody} from "@/modules/placements/recruiter-mail-body-model";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"no-store"} as const;
+const noStore={"Cache-Control":CACHE.NONE} as const;
 
 /**
  * A dedicated provider worker submits a signed, bounded JSON envelope.

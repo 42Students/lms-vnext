@@ -6,6 +6,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { updateLearnerProjectTaskProgress } from "@/modules/projects/learner-task-progress-service";
 import { route } from "@/security/route";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ projectId: string; taskId: string }> };
 async function handlePATCH(request: Request, { params }: RouteContext) {
@@ -14,7 +15,7 @@ async function handlePATCH(request: Request, { params }: RouteContext) {
   try {
     const [context, path] = await Promise.all([getCurrentRequestContext(), params]);
     const task = await updateLearnerProjectTaskProgress(context, path, await boundedRequestJson(request));
-    return NextResponse.json({ task }, { headers: { "Cache-Control": "private, no-store" } });
+    return privateJson({ task });
   } catch (error) {
     return apiErrorResponse(error);
   }

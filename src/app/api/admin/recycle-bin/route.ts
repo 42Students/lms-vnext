@@ -15,6 +15,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -40,7 +41,7 @@ const typeSchema = z.enum([
 type RecycleType = z.infer<typeof typeSchema>;
 type DeletedRow = { id: string; name: string; subtitle: string };
 const limit = 200;
-const headers = { "Cache-Control": "private, no-store" };
+const headers = { "Cache-Control": CACHE.PRIVATE };
 
 function typedError(message: string, status: number) {
   return NextResponse.json({error:"INVALID_RECYCLE_BIN_FILTER",message},{status,headers});

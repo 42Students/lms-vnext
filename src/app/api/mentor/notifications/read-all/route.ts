@@ -7,6 +7,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { parseMentorNotificationReadBody } from "@/modules/activity/mentor-notification-read-input";
 import { markAllOwnMentorNotificationsRead } from "@/modules/activity/mentor-notification-read-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -15,7 +16,7 @@ export const POST = route(
     const decoded=await readBoundedUtf8Body(request,512);
     if(decoded.kind!=="OK")return NextResponse.json({error:"INVALID_BODY"},
       {status:decoded.kind==="TOO_LARGE"?413:400,
-       headers:{"Cache-Control":"private, no-store"}});
+       headers:{"Cache-Control":CACHE.PRIVATE}});
     parseMentorNotificationReadBody(decoded.body);
     const result=await markAllOwnMentorNotificationsRead(context);
     return NextResponse.json(result);

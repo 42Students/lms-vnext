@@ -9,6 +9,7 @@ import {
 } from "@/modules/academics/enrollment-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 async function handleGET(request: Request) {
@@ -16,7 +17,7 @@ async function handleGET(request: Request) {
     const url = new URL(request.url);
     if (["programId", "cohortId"].some(key => url.searchParams.getAll(key).length > 1))
       return NextResponse.json({ error: "INVALID_FILTERS" }, {
-        status: 400, headers: { "Cache-Control": "private, no-store" },
+        status: 400, headers: { "Cache-Control": CACHE.PRIVATE },
       });
     const context = await getCurrentRequestContext();
     const enrollments =
@@ -49,7 +50,7 @@ async function handlePOST(request: Request) {
     const parsed = await readBoundedJsonBody(request, 16_384);
     if (parsed.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: parsed.kind === "TOO_LARGE" ? 413 : 400,
-      headers: { "Cache-Control": "private, no-store" },
+      headers: { "Cache-Control": CACHE.PRIVATE },
     });
     const body = parsed.value;
     const enrollment =

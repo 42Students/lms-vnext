@@ -6,6 +6,7 @@ import {
   stagePlacementRoundResult,
 } from "@/modules/placements/result-service";
 
+import { CACHE } from "@/security/responses";
 // HTTP status mapping (legacy mapped every IllegalArgumentException to 404):
 // invalid round ID / invalid outcome input -> 400 via ZodError;
 // missing round -> 404 via PLACEMENT_ROUND_NOT_FOUND;
@@ -42,7 +43,7 @@ export const POST = route(
       );
     return NextResponse.json(
       { result },
-      { status: 201, headers:{"Cache-Control":"no-store"} },
+      { status: 201, headers:{"Cache-Control":CACHE.NONE} },
     );
   },
 );

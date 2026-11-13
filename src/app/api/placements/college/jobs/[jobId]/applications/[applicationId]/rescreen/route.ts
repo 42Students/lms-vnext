@@ -5,6 +5,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {rescreenCollegeApplication} from "@/modules/placements/college-application-detail-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 type Ctx={params:Promise<{jobId:string;applicationId:string}>};
 export const POST = route(
@@ -18,6 +19,6 @@ export const POST = route(
    ...result,screeningProvider:"PERSISTED_ELIGIBILITY_RULES",
    automatedScoringAvailable:false,
    automatedScoringUnavailableReason:"AUTOMATED_SCORING_MODULE_DISABLED",
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

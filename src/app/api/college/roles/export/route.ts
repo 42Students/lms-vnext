@@ -7,6 +7,7 @@ import {parseCollegeRoleDirectoryExportQuery} from "@/modules/people/college-rol
 import {exportCollegeRoleDirectoryCsv} from "@/modules/people/college-role-directory-export-service";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -19,7 +20,7 @@ const report=await exportCollegeRoleDirectoryCsv(context,kind,filter);
 return new Response(report.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="college-'+(kind===ROLE.FACULTY?"faculty":"students")+'-filtered.csv"',
-   "Cache-Control":"private, no-store",
+   "Cache-Control":CACHE.PRIVATE,
    "X-Export-Total":String(report.total),
    "X-Export-Truncated":String(report.truncated),
   }});

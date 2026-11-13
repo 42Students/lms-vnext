@@ -13,6 +13,7 @@ import type { ZodType } from "zod";
 
 import { hardenDownload, isDownload } from "@/security/download-core";
 
+import { CACHE } from "@/security/responses";
 export type BodyReadResult = { kind: "OK"; value: unknown } | { kind: "INVALID" } | { kind: "TOO_LARGE" };
 
 export type RouteDeps<Context> = {
@@ -125,7 +126,7 @@ const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 function jsonError(requestId: string, status: number, error: string) {
   return Response.json(
     { error },
-    { status, headers: { "Cache-Control": "private, no-store", "x-request-id": requestId } },
+    { status, headers: { "Cache-Control": CACHE.PRIVATE, "x-request-id": requestId } },
   );
 }
 
@@ -153,7 +154,7 @@ export function routePattern(pathname: string, params: Record<string, string | s
 function rateLimited(requestId: string, windowMs: number) {
   return Response.json(
     { error: "RATE_LIMITED" },
-    { status: 429, headers: { "Cache-Control": "private, no-store", "x-request-id": requestId, "Retry-After": String(Math.max(1, Math.ceil(windowMs / 1000))) } },
+    { status: 429, headers: { "Cache-Control": CACHE.PRIVATE, "x-request-id": requestId, "Retry-After": String(Math.max(1, Math.ceil(windowMs / 1000))) } },
   );
 }
 

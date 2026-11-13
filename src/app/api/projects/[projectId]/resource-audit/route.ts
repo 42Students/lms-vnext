@@ -5,6 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getProjectResourceAuditPage} from "@/modules/projects/workspace-view-service";
 import {z} from "zod";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 const cursorSchema=z.object({
   beforeTime:z.iso.datetime().optional(),
@@ -24,6 +25,6 @@ export const GET = route(
     const cursor=parsed.data.beforeTime&&parsed.data.beforeId
       ?{beforeTime:parsed.data.beforeTime,beforeId:parsed.data.beforeId}:undefined;
     const page=await getProjectResourceAuditPage(__ctx,projectId,cursor);
-    return NextResponse.json(page,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(page);
   },
 );

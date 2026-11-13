@@ -10,8 +10,9 @@ import {
 } from "@/modules/placements/tpo-diversity-outreach-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
-const noStore = { "Cache-Control": "private, no-store" };
+const noStore = { "Cache-Control": CACHE.PRIVATE };
 type Params = { params: Promise<{ jobId: string }> };
 async function handleGET(_request: Request, { params }: Params) {
   try {

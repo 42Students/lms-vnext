@@ -7,7 +7,7 @@ function csvResponse(header:string[],rows:(string|number|null)[][],file:string,t
  return new Response("\uFEFF"+placementReportCsv(header,rows),{headers:{
   "Content-Type":"text/csv; charset=utf-8",
   "Content-Disposition":'attachment; filename="'+file+'"',
-  "Cache-Control":"private, no-store",
+  "Cache-Control":CACHE.PRIVATE,
   "X-Export-Truncated":String(truncated),
   "X-Content-Type-Options":"nosniff",
  }});
@@ -16,6 +16,7 @@ function csvResponse(header:string[],rows:(string|number|null)[][],file:string,t
 import {collegeBatchDirectorySchema} from "@/modules/academics/college-academic-directory-model";
 import {listCollegeBatches} from "@/modules/academics/college-academic-directory-service";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 async function handleGET(request:Request){
  try{
   const params=new URL(request.url).searchParams;

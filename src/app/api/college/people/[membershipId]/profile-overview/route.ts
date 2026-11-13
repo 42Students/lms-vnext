@@ -3,6 +3,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getCollegePersonProfileOverview} from "@/modules/people/college-person-profile-overview-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -13,6 +14,6 @@ export const GET = route(
     const kind=new URL(req.url).searchParams.get("kind");
     return NextResponse.json(await getCollegePersonProfileOverview(
    __ctx,membershipId,kind),
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

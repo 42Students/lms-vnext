@@ -12,6 +12,7 @@ import {academicPeriods,sectionEnrollments,sections} from "@/db/schema";
 import {countOwnUnreadNotifications,listOwnNotifications} from "@/modules/activity/notification-service";
 import { route } from "@/security/route";
 import { env } from "@/config/env";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -27,15 +28,15 @@ async function handleGET(request:Request){
  if(params.has("token")||params.has("access_token")||params.has("bearer")||
    params.has("authorization"))
   return NextResponse.json({error:"BEARER_QUERY_FORBIDDEN"},{status:400,
-   headers:{"Cache-Control":"private, no-store"}});
+   headers:{"Cache-Control":CACHE.PRIVATE}});
  // No ambiguous duplicate keys, ignored selectors or bearer credentials.
  if([...params.keys()].some(key=>key!=="classId")||params.getAll("classId").length>1)
   return NextResponse.json({error:"INVALID_STREAM_QUERY"},{status:400,
-   headers:{"Cache-Control":"private, no-store"}});
+   headers:{"Cache-Control":CACHE.PRIVATE}});
  const classId=params.get("classId");
  if(classId!==null&&!uuid.test(classId))
   return NextResponse.json({error:"INVALID_SECTION"},{status:400,
-   headers:{"Cache-Control":"private, no-store"}});
+   headers:{"Cache-Control":CACHE.PRIVATE}});
  try{
   const context=await getCurrentRequestContext();
   if(context.user.platformStatus!=="ACTIVE")
@@ -45,7 +46,7 @@ async function handleGET(request:Request){
    // authority. Deny before even querying aggregate class size.
    if(!(await canSubscribeToClassNotificationStream(context,classId)))
     return NextResponse.json({error:"NOT_FOUND"},{status:404,
-      headers:{"Cache-Control":"private, no-store"}});
+      headers:{"Cache-Control":CACHE.PRIVATE}});
    const [audience]=await getDb().select({
     collegeId:academicPeriods.collegeId,
     recipients:count(sectionEnrollments.id),
@@ -59,10 +60,10 @@ async function handleGET(request:Request){
    const selectedCollege=context.membership?.collegeId??context.adminScope?.collegeId;
    if(!audience||audience.collegeId!==selectedCollege)
     return NextResponse.json({error:"NOT_FOUND"},{status:404,
-      headers:{"Cache-Control":"private, no-store"}});
+      headers:{"Cache-Control":CACHE.PRIVATE}});
    if(audience.recipients>3000)
     return NextResponse.json({error:"CLASS_STREAM_TOO_LARGE"},{status:429,
-      headers:{"Cache-Control":"private, no-store"}});
+      headers:{"Cache-Control":CACHE.PRIVATE}});
   }
   // Capture only the opaque first-party token in this short-lived server
   // closure. A session revoked after SSE upgrade must not keep receiving
@@ -70,11 +71,11 @@ async function handleGET(request:Request){
   const sessionToken=(await cookies()).get(SESSION_COOKIE_NAME)?.value??null;
   if(!sessionToken&&env.APP_ENV!=="development")
    return NextResponse.json({error:"SESSION_MISSING"},{status:401,
-    headers:{"Cache-Control":"private, no-store"}});
+    headers:{"Cache-Control":CACHE.PRIVATE}});
   const key=context.user.id;
   const connections=streamsByUser.get(key)??0;
   if(connections>=3)return NextResponse.json({error:"TOO_MANY_STREAMS"},{status:429,
-    headers:{"Retry-After":"30","Cache-Control":"private, no-store"}});
+    headers:{"Retry-After":"30","Cache-Control":CACHE.PRIVATE}});
   streamsByUser.set(key,connections+1);
   let release=()=>{};
   const source=new ReadableStream<Uint8Array>({

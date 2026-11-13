@@ -7,6 +7,7 @@ import {
  readLearnerPlaybackSettings,
 } from "@/modules/courses/learner-playback-settings";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 
 /** Legacy authenticated client-settings endpoint. Settings are global safe
@@ -18,7 +19,7 @@ export const GET = route(
     const context = actor!;
     const settings=await readLearnerPlaybackSettings(context.membership?.collegeId);
     return NextResponse.json(legacyClientSettingsEnvelope(settings),{
-   headers:{"Cache-Control":"private, no-store"},
+   headers:{"Cache-Control":CACHE.PRIVATE},
   });
   },
 );

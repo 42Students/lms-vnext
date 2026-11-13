@@ -8,9 +8,10 @@ import {isRecruiterInviteTokenShape} from "@/modules/placements/tpo-recruiter-in
 import {recruiterInviteAcceptReady} from "@/modules/placements/recruiter-invite-otp-accept-model";
 import { route } from "@/security/route";
 import { env } from "@/config/env";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"} as const;
+const noStore={"Cache-Control":CACHE.PRIVATE,"Referrer-Policy":"no-referrer"} as const;
 async function handlePOST(request:Request,{params}:{params:Promise<{token:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  if(new URL(request.url).search)

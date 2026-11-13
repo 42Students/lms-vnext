@@ -18,6 +18,7 @@ import {
 import { route } from "@/security/route";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -60,7 +61,7 @@ async function handleGET(
         readOnlyReason:protectedRole&&!isSuperAdmin(context)
           ?"Protected staff profiles are read-only for College Admins":null,
         roleScope:"COLLEGE_STAFF",
-      },{headers:{"Cache-Control":"private, no-store"}});
+      },{headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     const profile = await getFacultyProfileWithRuntime(context,membershipId);
     return NextResponse.json({ profile });
@@ -139,7 +140,7 @@ async function handlePATCH(request:Request,{params}:RouteContext){
    aadhaarDocumentId:null,panDocumentId:null,
   },profileImageDocumentId:null};
   return NextResponse.json({document:safeDocument,version:result.version,updated:true},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const PATCH = route(

@@ -4,6 +4,7 @@ import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { apiErrorResponse } from "@/lib/api-error";
 import { exportSuperAdminUsers } from "@/modules/people/admin-users-export-service";
 import { readSuperAdminPeopleExportParams } from "@/modules/people/admin-users-export-model";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const GET = route(
   { auth: "user", permission: "people.manage" },
@@ -15,7 +16,7 @@ export const GET = route(
     return new Response(data.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="super-admin-people-ist.csv"',
-   "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff",
+   "Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff",
    "X-Export-Row-Cap":String(data.cap),"X-Export-Truncated":String(data.truncated),
   }});
   },

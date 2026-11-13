@@ -9,8 +9,9 @@ import {
 } from "@/modules/placements/recruiter-jd-upload-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
-const noStore = { "Cache-Control": "private, no-store" };
+const noStore = { "Cache-Control": CACHE.PRIVATE };
 
 function failed(error: unknown) {
   if (error instanceof RecruiterJsonBodyError)

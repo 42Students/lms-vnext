@@ -2,6 +2,7 @@ import {NextResponse} from "next/server";
 import {publicCollegeJoinTokenSchema} from "@/modules/placements/public-college-join-model";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 
 /** The legacy public GET /api/v1/public/college-join/{token} now moves to
@@ -14,7 +15,7 @@ async function handleGET(request:Request,{params}:{
  const {token}=await params;
  if(!publicCollegeJoinTokenSchema.safeParse(token).success){
   return NextResponse.json({error:"LINK_UNAVAILABLE"},{status:404,
-   headers:{"Cache-Control":"private, no-store"}});
+   headers:{"Cache-Control":CACHE.PRIVATE}});
  }
  const destination=new URL("/college-join/"+encodeURIComponent(token),request.url);
  const response=NextResponse.redirect(destination,307);

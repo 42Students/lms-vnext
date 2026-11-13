@@ -9,6 +9,7 @@ import {muteLegacyKnownErrorForAdmin} from "@/modules/log-alerts/admin-service";
 import {legacyKnownErrorMuteLookupSchema} from "@/modules/log-alerts/validation";
 import { route } from "@/security/route";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 async function handlePOST(request:Request){
  if(!logAlertsRuntimeEnabled())return NextResponse.json({
@@ -22,7 +23,7 @@ async function handlePOST(request:Request){
   if(input.environment!==alertEnvironment())
    return NextResponse.json({error:"ENVIRONMENT_NOT_AVAILABLE"},{status:400});
   const item=await muteLegacyKnownErrorForAdmin(ctx,input);
-  return NextResponse.json({item},{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson({item});
  }catch(error){return logAlertApiError(error);}
 }
 export const POST = route(

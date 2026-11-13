@@ -2,6 +2,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {exportTpoDriveLifecycle} from "@/modules/placements/tpo-drive-list-export-service";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 async function handleGET(request:Request){
  try{
@@ -11,7 +12,7 @@ async function handleGET(request:Request){
   return new Response("\uFEFF"+result.csv,{
    status:200,headers:{"Content-Type":"text/csv; charset=utf-8",
     "Content-Disposition":'attachment; filename="'+result.fileName+'"',
-    "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"},
+    "Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff"},
   });
  }catch(error){return apiErrorResponse(error);}
 }

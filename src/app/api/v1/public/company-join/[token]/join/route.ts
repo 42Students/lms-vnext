@@ -5,6 +5,7 @@ import {acceptPublicRecruiterJoin,PublicJoinAcceptError} from "@/modules/placeme
 import {z} from "zod";
 import { route } from "@/security/route";
 import { featureReady } from "@/config/features";
+import { CACHE, noStoreJson } from "@/security/responses";
 export const runtime="nodejs";
 const legacy=z.strictObject({
  email:z.string().email().max(254),code:z.string().regex(/^[0-9]{6}$/),
@@ -32,12 +33,12 @@ async function handlePOST(request:Request,{params}:{params:Promise<{token:string
    token,email:input.email,code:input.code,name:input.firstName+" "+input.lastName,
    designation:input.designation??"",phone:input.phone??"",companyName:"",
   },ip);
-  return NextResponse.json(joined,{headers:{"Cache-Control":"no-store"}});
+  return noStoreJson(joined);
  }catch(error){
   const code=error instanceof PublicJoinAcceptError?error.code:"SERVICE_UNAVAILABLE";
   const unavailable=["NETWORK_GUARD_NOT_READY","NOT_CONFIGURED","PHONE_STORAGE_NOT_READY","SERVICE_UNAVAILABLE"].includes(code);
   return NextResponse.json({error:code==="REMOVED"?"ACCESS_REMOVED":unavailable?"SERVICE_NOT_READY":code},
-   {status:unavailable?503:code==="RATE_LIMITED"?429:400,headers:{"Cache-Control":"no-store"}});
+   {status:unavailable?503:code==="RATE_LIMITED"?429:400,headers:{"Cache-Control":CACHE.NONE}});
  }
 }
 export const POST = route(

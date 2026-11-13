@@ -7,6 +7,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { PlacementBatchError } from "@/modules/placements/batch-participation-service";
 import { TpoBatchInvitationError } from "@/modules/placements/tpo-batch-invitation-model";
 import { inviteTpoBatch, saveTpoBatchRegistrationDeadline } from "@/modules/placements/tpo-batch-invitation-service";
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 type Params = { params: Promise<{ batchId: string }> };
 
@@ -19,7 +20,7 @@ const { batchId } = params;
 const result = await inviteTpoBatch(
       __ctx, batchId, await boundedRequestJson(request),
     );
-return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
+return privateJson(result);
 } catch (error) {
     if (error instanceof PlacementBatchError)
       return NextResponse.json({ error: error.code }, {
@@ -41,7 +42,7 @@ const { batchId } = params;
 const result = await saveTpoBatchRegistrationDeadline(
       __ctx, batchId, await boundedRequestJson(request),
     );
-return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
+return privateJson(result);
 } catch (error) {
     if (error instanceof PlacementBatchError)
       return NextResponse.json({ error: error.code }, {

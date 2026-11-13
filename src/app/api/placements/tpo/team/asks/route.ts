@@ -5,6 +5,7 @@ import {getTpoTeamAskSummary,listOwnTpoTeamAsks,
  listTpoTeamMentions,lookupTpoTeamAsk} from "@/modules/placements/tpo-team-asks-service";
 import { route } from "@/security/route";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  const params=new URL(request.url).searchParams;
@@ -24,7 +25,7 @@ async function handleGET(request:Request){
    view==="lookup"?await lookupTpoTeamAsk(context,params.get("askId")!):
    view==="mentions"?await listTpoTeamMentions(context,Number(limitText)):
    await listOwnTpoTeamAsks(context,Number(limitText));
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(result);
  }catch(error){
   if(error instanceof AuthorizationError)
    return NextResponse.json({error:"FORBIDDEN"},{status:403});

@@ -7,6 +7,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoApplicantPipeline} from "@/modules/placements/tpo-applicant-pipeline-service";
 import {tpoApplicantPipelineParams} from "@/modules/placements/tpo-applicant-pipeline-model";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -38,7 +39,7 @@ export const GET = route(
    raw[key]=value;
   }
     const value=await read(__ctx,jobId,raw);
-    return NextResponse.json(value,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(value);
   },
 );
 /** No refresh cache exists. Re-read the actual scoped pipeline and report
@@ -58,6 +59,6 @@ export const POST = route(
     const value=await read(__ctx,jobId,{mode:"stats"});
     return NextResponse.json({...value,message:"Live application statistics retrieved",
    refreshed:false,reason:"Applications are read directly from the database; no refresh is required."},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

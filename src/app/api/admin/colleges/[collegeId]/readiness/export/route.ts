@@ -5,6 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getSuperAdminCollegeReadiness} from "@/modules/colleges/readiness-service";
 import {buildSuperAdminReadinessCsv} from "@/modules/colleges/admin-readiness-export-model";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handleGET(_request:Request,{params}:{params:Promise<{collegeId:string}>}){
  try {
@@ -12,7 +13,7 @@ async function handleGET(_request:Request,{params}:{params:Promise<{collegeId:st
   const id=z.uuid().parse(collegeId);
   const data=await getSuperAdminCollegeReadiness(await getCurrentRequestContext(),id);
   if(!data)return NextResponse.json({error:"NOT_FOUND",message:"College readiness evidence was not found."},{
-   status:404,headers:{"Cache-Control":"private, no-store",Vary:"Cookie"},
+   status:404,headers:{"Cache-Control":CACHE.PRIVATE,Vary:"Cookie"},
   });
   return new Response(buildSuperAdminReadinessCsv(data.college,data.evaluation),{
    headers:{"content-type":"text/csv; charset=utf-8",

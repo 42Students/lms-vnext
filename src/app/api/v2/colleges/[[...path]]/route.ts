@@ -8,9 +8,10 @@ import {collegeMemberships} from "@/db/schema";
 import {listColleges} from "@/modules/colleges/service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"};
+const noStore={"Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff"};
 type RouteContext={params:Promise<{path?:string[]}>};
 const synonyms:Record<string,string>={
  iit:"indian institute of technology",nit:"national institute of technology",

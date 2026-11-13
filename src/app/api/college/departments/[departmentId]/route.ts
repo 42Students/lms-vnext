@@ -5,6 +5,7 @@ import {
   renameCollegeDepartment, archiveCollegeDepartment,
 } from "@/modules/departments/college-department-mutation-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const PATCH = route(
@@ -14,7 +15,7 @@ export const PATCH = route(
     const { departmentId } = params;
     const department=await renameCollegeDepartment(context,departmentId,await boundedRequestJson(request));
     return NextResponse.json({department,message:"Department updated successfully"},{
-      headers:{"Cache-Control":"private, no-store"}
+      headers:{"Cache-Control":CACHE.PRIVATE}
     });
   },
 );
@@ -31,7 +32,7 @@ export const DELETE = route(
     const department=await archiveCollegeDepartment(context,departmentId,await boundedRequestJson(request));
     return NextResponse.json({department,archived:true,
       message:"Department archived successfully"},{
-      headers:{"Cache-Control":"private, no-store"}
+      headers:{"Cache-Control":CACHE.PRIVATE}
     });
   },
 );

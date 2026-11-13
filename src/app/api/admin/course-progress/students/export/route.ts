@@ -11,6 +11,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getSuperAdminStudentCourseProgress} from "@/modules/courses/super-admin-student-course-progress";
 import {studentCourseCompletion} from "@/modules/courses/super-admin-student-progress-model";
 import {placementReportCsv} from "@/modules/placements/report-model";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "admin-scope.select" },
@@ -26,7 +27,7 @@ export const GET = route(
     const deliveryRaw=search.get("deliveryId");
     const deliveryId=deliveryRaw&&z.string().uuid().safeParse(deliveryRaw).success?deliveryRaw:null;
     if(!id||(deliveryRaw!==null&&!deliveryId))
-   return Response.json({error:"INVALID_REQUEST"},{status:400,headers:{"Cache-Control":"private, no-store"}});
+   return Response.json({error:"INVALID_REQUEST"},{status:400,headers:{"Cache-Control":CACHE.PRIVATE}});
     const rows:(string|number|null)[][]=[];
     let authorizedCourseId:string|null=null,authorizedSectionId:string|null=null;
     let page=1;
@@ -61,7 +62,7 @@ export const GET = route(
     return new Response("\uFEFF"+csv,{
    headers:{"Content-Type":"text/csv; charset=utf-8",
     "Content-Disposition":'attachment; filename="'+fileName+'"',
-    "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff","Vary":"Cookie"},
+    "Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff","Vary":"Cookie"},
   });
   },
 );

@@ -3,6 +3,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
 import {verifyPublicCompanyShareCode} from "@/modules/placements/company-share/access-service";
 import {companyShareTokenSchema} from "@/modules/placements/company-share/token-model";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** The browser submits a six-character code; never let an anonymous caller
@@ -10,7 +11,7 @@ export const dynamic="force-dynamic";
  * Preserve native form compatibility within the 2 KiB byte budget.
  */
 const MAX_SHARE_CODE_FORM_BYTES=2048;
-const privateHeaders={"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"};
+const privateHeaders={"Cache-Control":CACHE.PRIVATE,"Referrer-Policy":"no-referrer"};
 function rejected(status:number) {
  return NextResponse.json({error:"INVALID_REQUEST"},{status,headers:privateHeaders});
 }

@@ -10,6 +10,7 @@ import {
   updateSuperAdminHrInputSchema,
 } from "@/modules/placements/super-admin-hr-validation";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const GET = route(
@@ -22,7 +23,7 @@ export const GET = route(
         context,
         userId,
       );
-    return NextResponse.json({ account }, { headers: { "Cache-Control": "private, no-store" } });
+    return privateJson({ account });
   },
 );
 
@@ -49,6 +50,6 @@ export const PATCH = route(
         userId,
         input,
       );
-    return NextResponse.json({ account }, { headers: { "Cache-Control": "private, no-store" } });
+    return privateJson({ account });
   },
 );

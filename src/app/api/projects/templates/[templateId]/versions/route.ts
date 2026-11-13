@@ -5,6 +5,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { getSuperAdminTemplateVersionHistory } from "@/modules/projects/template-version-history-service";
 import { templateVersionHistoryQuerySchema } from "@/modules/projects/template-version-history-model";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 type Route = { params: Promise<{ templateId: string }> };
 
@@ -23,7 +24,7 @@ export const GET = route(
     const result = await getSuperAdminTemplateVersionHistory(
       __ctx, templateId, parsed);
     return NextResponse.json(result, {
-      headers: {"Cache-Control":"private, no-store"},
+      headers: {"Cache-Control":CACHE.PRIVATE},
     });
   },
 );

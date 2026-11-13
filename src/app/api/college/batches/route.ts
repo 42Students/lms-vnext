@@ -8,6 +8,7 @@ import {
 } from "@/modules/academics/college-cohort-mutation-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 async function handlePOST(request: Request) {
@@ -69,7 +70,7 @@ async function handleGET(request:Request){
     status:"OK",message:"OK",data:data.items,pagination:{
      page:data.query.page,pageSize:data.query.pageSize,total:data.total,totalPages:data.totalPages,
     },idKind:"UUID",
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(

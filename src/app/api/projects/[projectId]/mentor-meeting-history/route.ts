@@ -1,9 +1,9 @@
 import { route } from "@/security/route";
-import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getMentorMeetingChangeHistory } from "@/modules/projects/mentor-meeting-history-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 type Route = { params: Promise<{ projectId: string }> };
 
@@ -19,6 +19,6 @@ export const GET = route(
       ...(url.searchParams.has("meetingKey") ? { meetingKey: url.searchParams.get("meetingKey") } : {}),
       page: url.searchParams.get("page") ?? "1",
     });
-    return NextResponse.json(data, { headers: { "Cache-Control": "private, no-store" } });
+    return privateJson(data);
   },
 );

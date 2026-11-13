@@ -7,6 +7,7 @@ import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-q
 import {getMentorProjectActivityHistory}
   from "@/modules/projects/mentor-project-activity-service";
 import {mentorActivityCsv} from "@/modules/projects/mentor-project-activity-export-model";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
 /** Read-only, strict project and current Mentor scope; no external sending. */
@@ -35,7 +36,7 @@ export const GET = route(
     return new Response(mentorActivityCsv(rows,omitted),{
       headers:{"Content-Type":"text/csv; charset=utf-8",
         "Content-Disposition":'attachment; filename="mentor-project-activity.csv"',
-        "Cache-Control":"private, no-store",
+        "Cache-Control":CACHE.PRIVATE,
         "X-Export-Omitted":String(omitted)},
     });
   },

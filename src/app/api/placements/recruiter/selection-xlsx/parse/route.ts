@@ -5,6 +5,7 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {parseRecruiterSelectionXlsx} from "@/modules/placements/recruiter-selection-xlsx-model";
 import {readRecruiterUploadEnvelope,RecruiterUploadTooLargeError} from "@/modules/placements/recruiter-upload-size-model";
 import { route } from "@/security/route";
+import { noStoreJson } from "@/security/responses";
 export const runtime="nodejs";
 /** Parses only worksheet A IDs. This endpoint never grants candidate visibility
  * or stages a selection: the submission service rechecks the exact shortlist. */
@@ -34,7 +35,7 @@ async function handlePOST(request:Request){
   return NextResponse.json({error:"INVALID_FILE"},{status:400});
  const outcome=parseRecruiterSelectionXlsx(new Uint8Array(await file.arrayBuffer()));
  if(!outcome.ok)return NextResponse.json({error:outcome.error},{status:422});
- return NextResponse.json(outcome,{headers:{"Cache-Control":"no-store"}});
+ return noStoreJson(outcome);
 }
 export const POST = route(
   { auth: "user", permission: "service-enforced" },

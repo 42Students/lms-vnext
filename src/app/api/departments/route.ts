@@ -13,6 +13,7 @@ import {
 import { apiErrorResponse } from "@/lib/api-error";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 /** Legacy transport map: /api/v1/department/fetch?collegeId -> GET,
  * /fetchAll -> GET (verified Super Admin only), /fetchPaged?page&size
@@ -39,7 +40,7 @@ async function handleGET(request: Request) {
       return NextResponse.json({
         status:"OK",message:"OK",data:page.content,departments:page.content,
         ...page,
-      },{headers:{"Cache-Control":"private, no-store"}});
+      },{headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     const collegeId = query.get("collegeId") || context.adminScope?.collegeId ||
       context.membership?.collegeId || "";
@@ -50,17 +51,17 @@ async function handleGET(request: Request) {
       const inventories = await Promise.all(colleges.map(college => listDepartments(context,college.id)));
       const items = inventories.flat();
       return NextResponse.json({ status: "OK", message: "OK", data: items, departments: items },
-        {headers:{"Cache-Control":"private, no-store"}});
+        {headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     if(!collegeId){
       // No actor-owned selected college: return an empty directory, never
       // guess the tenant or expose a cross-college roster.
       return NextResponse.json({status:"OK",message:"OK",data:[],departments:[]},
-        {headers:{"Cache-Control":"private, no-store"}});
+        {headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     const items = await listDepartments(context, collegeId);
     return NextResponse.json({ status: "OK", message: "OK", data: items, departments: items },
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   } catch (error) {
     if (error instanceof SessionAuthenticationError)
       return NextResponse.json({ error: "UNAUTHENTICATED", message: "Authentication required" }, { status: 401 });

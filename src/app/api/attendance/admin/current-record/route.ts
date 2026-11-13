@@ -2,6 +2,7 @@ import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getAdminCurrentAttendanceRecord } from "@/modules/attendance/admin-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 /** Scopes both event and learner through the selected college delivery. */
@@ -17,7 +18,7 @@ export const GET = route(
       membershipId: search.get("membershipId"),
     });
     return NextResponse.json(record, {
-      headers: {"Cache-Control":"private, no-store"},
+      headers: {"Cache-Control":CACHE.PRIVATE},
     });
   },
 );

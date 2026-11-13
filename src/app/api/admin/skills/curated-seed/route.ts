@@ -10,6 +10,7 @@ import { reconcileCuratedSkillSynonyms } from "@/modules/skills/curated-synonym-
 import { skillsCatalogReadiness } from "@/modules/skills/catalog-readiness";
 import { route } from "@/security/route";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 const inputSchema = z.strictObject({
@@ -30,9 +31,9 @@ async function handlePOST(request: Request) {
     if(!skillsCatalogReadiness().schemaReplayVerified)
       return NextResponse.json({error:"DB10_SKILLS_MIGRATIONS_PENDING",
         message:"Verify the DB10 PostgreSQL migration replay before importing."},
-        {status:503,headers:{"Cache-Control":"private, no-store"}});
+        {status:503,headers:{"Cache-Control":CACHE.PRIVATE}});
     const _p=await readBoundedJsonRequest(request,8192);
-    if(!_p.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400,headers:{"Cache-Control":"private, no-store"}});
+    if(!_p.ok)return privateJson({error:"INVALID_REQUEST"}, { status: 400 });
     const raw:unknown=_p.value;
     const input=inputSchema.parse(raw);
     await requireRecentDeviceAuthentication(context.user.id);
@@ -40,7 +41,7 @@ async function handlePOST(request: Request) {
     return NextResponse.json({report,requiresVerification:true,
       message:input.dryRun?"Curated skill synonym preview complete":
         "Curated synonyms reconciled. Verify seed counts before enabling the catalog."},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   }catch(error){return apiErrorResponse(error);}
 }
 export const POST = route(

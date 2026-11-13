@@ -1,10 +1,10 @@
 import { route } from "@/security/route";
-import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { listProjectTeamClasses } from "@/modules/projects/class-team-roster-service";
 
+import { noStoreJson } from "@/security/responses";
 export const runtime = "nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -17,6 +17,6 @@ export const GET = route(
       offset:z.coerce.number().int().min(0).max(99900).optional(),
     }).strict().parse(Object.fromEntries(url.searchParams));
     const classes = await listProjectTeamClasses(context,collegeId,{...(q!==undefined?{q}:{}),...(limit!==undefined?{limit}:{}),...(offset!==undefined?{offset}:{})});
-    return NextResponse.json({ classes }, { headers: { "Cache-Control": "no-store" } });
+    return noStoreJson({ classes });
   },
 );

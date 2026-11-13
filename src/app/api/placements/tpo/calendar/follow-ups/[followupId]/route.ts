@@ -13,6 +13,7 @@ import { tpoCrmFollowupIdSchema } from "@/modules/placements/tpo-crm-validation"
 import { route } from "@/security/route";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ followupId: string }> };
 
@@ -41,7 +42,7 @@ async function handlePATCH(request: Request, { params }: RouteContext) {
     return NextResponse.json({
       followup: {id:followup.id,dueAt:followup.dueAt.toISOString()},
       status:"UPDATED",
-    },{headers:{"Cache-Control":"private, no-store"}});
+    },{headers:{"Cache-Control":CACHE.PRIVATE}});
   } catch (error) {
     return tpoCrmApiErrorResponse(error);
   }

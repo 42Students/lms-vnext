@@ -5,6 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {archiveOwnLearnerNotification} from "@/modules/activity/learner-notification-read-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{notificationId:string}>};
 async function archive(request:Request,{params}:RouteContext,alias:boolean){
@@ -18,7 +19,7 @@ async function archive(request:Request,{params}:RouteContext,alias:boolean){
     return NextResponse.json({
       ...result,
       message:alias?"Deleted notification successfully":result.message,
-    },{headers:{"Cache-Control":"private, no-store"}});
+    },{headers:{"Cache-Control":CACHE.PRIVATE}});
   }catch(error){return apiErrorResponse(error);}
 }
 async function handleDELETE(request:Request,context:RouteContext){

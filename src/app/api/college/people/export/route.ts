@@ -6,6 +6,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { parsePeopleCsvParams } from "@/modules/people/college-people-export-model";
 import { exportCollegePeopleCsv } from "@/modules/people/college-people-export-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const GET = route(
   { auth: "user", permission: "people.manage" },
@@ -18,7 +19,7 @@ const report = await exportCollegePeopleCsv(context, query);
 return new Response(report.csv, { headers: {
       "Content-Type": "text/csv; charset=utf-8",
       "Content-Disposition": 'attachment; filename="college-people.csv"',
-      "Cache-Control": "private, no-store",
+      "Cache-Control": CACHE.PRIVATE,
       "X-Export-Truncated": String(report.truncated),
       "X-Export-Total": String(report.total),
     }});

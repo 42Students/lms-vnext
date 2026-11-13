@@ -9,6 +9,7 @@ import {
   getProjectInstanceWorkspace,
 } from "@/modules/projects/instance-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -41,6 +42,6 @@ export const PATCH = route(
    return NextResponse.json({error:"USE_VERSIONED_SECTION_ENDPOINTS"},{status:400});
     const updated=await updateCollegeProjectSummary(__ctx,projectId,input);
     return NextResponse.json({project:updated,message:"Project updated"},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

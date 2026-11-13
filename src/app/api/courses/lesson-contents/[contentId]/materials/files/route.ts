@@ -5,9 +5,10 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {beginLessonResourceFileUpload} from "@/modules/courses/lesson-resource-file-upload-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 type Route={params:Promise<{contentId:string}>};
-const noStore={"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"};
+const noStore={"Cache-Control":CACHE.PRIVATE,"Referrer-Policy":"no-referrer"};
 
 export const POST = route(
   { auth: "user", permission: "service-enforced" },

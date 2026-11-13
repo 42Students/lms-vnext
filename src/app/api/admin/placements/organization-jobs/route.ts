@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {searchOrganizationPlacementJobs} from "@/modules/placements/organization-job-search-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -23,6 +24,6 @@ export const GET = route(
    query[key]=value;
   }
     const result=await searchOrganizationPlacementJobs(context,query);
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(result);
   },
 );

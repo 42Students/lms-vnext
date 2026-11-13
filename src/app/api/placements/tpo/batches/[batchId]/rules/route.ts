@@ -7,6 +7,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {PlacementBatchError} from "@/modules/placements/batch-participation-service";
 import {saveTpoBatchRuleOverrides} from "@/modules/placements/tpo-batch-rules-service";
 import {getTpoBatch} from "@/modules/placements/tpo-batch-workspace-read-service";
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 /** Legacy GET /batches/{id}/rules: scoped read, never a write or a guessed
  * college. The full batch and students views use sibling routes. */
@@ -28,7 +29,7 @@ export const GET = route(
     students:"/tpo/batches/"+encodeURIComponent(batchId)+"/students",
     back:"/tpo/batches",
    },
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 export const POST = route(
@@ -38,7 +39,7 @@ export const POST = route(
     try {
 const {batchId}=params;
 const result=await saveTpoBatchRuleOverrides(__ctx,batchId,await boundedRequestJson(request));
-return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+return privateJson(result);
 } catch(error){
   if(error instanceof PlacementBatchError&&error.code==="DB08_ACTION_STALE")
    return NextResponse.json({error:"BATCH_RULES_CHANGED"},{status:409});

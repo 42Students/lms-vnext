@@ -4,6 +4,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {duplicateCollegeDrive} from "@/modules/placements/college-drive-clone-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "placements.manage" },
@@ -13,6 +14,6 @@ export const POST = route(
     const parsed=await readBoundedJsonRequest(request,8192);
     if(!parsed.ok)return Response.json({error:"INVALID_REQUEST"},{status:400});
     return Response.json(await duplicateCollegeDrive(ctx,jobId,parsed.value),
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

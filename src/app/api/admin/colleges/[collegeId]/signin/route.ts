@@ -5,6 +5,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readAdminSignInRequestBody,AdminSignInRequestError} from "@/modules/colleges/admin-signin-request-body";
 import {CollegeSignInPolicyError,readAdminCollegeSignInPolicy,saveAdminCollegeSignInPolicy} from "@/modules/colleges/admin-signin-policy-service";
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 /** Legacy branding readers consume data.branding.loginMethods or
  * data.data.branding.loginMethods; do not expose unrelated tenant branding.
@@ -17,10 +18,10 @@ export const GET = route(
     const state=await readAdminCollegeSignInPolicy(__ctx,collegeId);
     if(state.policy.kind==="MIGRATION_PENDING")
    return NextResponse.json({error:"SIGNIN_STORAGE_PENDING"},{status:503,
-    headers:{"Cache-Control":"private, no-store"}});
+    headers:{"Cache-Control":CACHE.PRIVATE}});
     if(state.policy.kind==="INVALID_POLICY")
    return NextResponse.json({error:"SIGNIN_POLICY_INVALID"},{status:409,
-    headers:{"Cache-Control":"private, no-store"}});
+    headers:{"Cache-Control":CACHE.PRIVATE}});
     const legacyMethod=state.policy.method==="EMAIL_AND_PHONE"?"EMAIL_PHONE"
    :state.policy.method==="PHONE_AND_EMAIL"?"PHONE_EMAIL"
    :state.policy.method??"EMAIL_PHONE";
@@ -28,7 +29,7 @@ export const GET = route(
     const version=state.version??0;
     return NextResponse.json({
    branding,data:{branding},policy:{...state.policy,version},version,
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 export const PUT = route(
@@ -57,11 +58,11 @@ const payload=legacy!==undefined
 if(!("collegeId" in payload)||payload["collegeId"]!==collegeId)
    return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
 const policy=await saveAdminCollegeSignInPolicy(context,payload);
-return NextResponse.json({policy},{headers:{"Cache-Control":"private, no-store"}});
+return privateJson({policy});
 } catch(error){
   if(error instanceof AdminSignInRequestError)return NextResponse.json({error:"INVALID_REQUEST"},{
    status:error.code==="BODY_TOO_LARGE"?413:400,
-   headers:{"Cache-Control":"private, no-store"},
+   headers:{"Cache-Control":CACHE.PRIVATE},
   });
   if(error instanceof CollegeSignInPolicyError)return NextResponse.json({error:error.code},{
    status:error.code==="SIGNIN_STORAGE_PENDING"?503:409});

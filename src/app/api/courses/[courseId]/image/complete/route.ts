@@ -7,12 +7,13 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { CourseImageError, completeCourseImage } from "@/modules/courses/course-image-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 const schema = z.object({ receiptId: z.string().uuid() }).strict();
 type RouteContext = { params: Promise<{ courseId: string }> };
 
 async function handlePOST(request: Request, { params }: RouteContext) {
-  const headers = { "Cache-Control": "private, no-store", Vary: "Cookie" };
+  const headers = { "Cache-Control": CACHE.PRIVATE, Vary: "Cookie" };
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403, headers });
   }

@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getCollegeLearnerProgressReport} from "@/modules/courses/college-learner-progress-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 const quote=(value:unknown)=>'"'+String(value??"").replace(/"/g,'""')+'"';
 
@@ -39,7 +40,7 @@ export const GET = route(
     return new Response(csv,{status:200,headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="'+filename+'"',
-   "Cache-Control":"private, no-store",
+   "Cache-Control":CACHE.PRIVATE,
    "X-Content-Type-Options":"nosniff",
   }});
   },

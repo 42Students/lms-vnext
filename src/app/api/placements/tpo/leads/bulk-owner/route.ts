@@ -10,6 +10,7 @@ import {
 } from "@/modules/placements/tpo-bulk-lead-owner-service";
 import { route } from "@/security/route";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,7 @@ async function handleGET() {
   }
   try {
     const owners = await listTpoLeadOwners(await getCurrentRequestContext());
-    return NextResponse.json({ owners }, { headers: { "Cache-Control": "private, no-store" } });
+    return privateJson({ owners });
   } catch (error) {
     return tpoCrmApiErrorResponse(error);
   }

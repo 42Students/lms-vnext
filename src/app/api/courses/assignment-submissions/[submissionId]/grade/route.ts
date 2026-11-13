@@ -6,6 +6,7 @@ import {
 } from "@/modules/courses/assignment-submission-service";
 import { gradeAssignmentSubmissionInputSchema } from "@/modules/courses/assignment-validation";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const PATCH = route(
@@ -21,7 +22,7 @@ export const PATCH = route(
         body,
       );
     return NextResponse.json({ submission }, {
-      headers: { "Cache-Control": "no-store" },
+      headers: { "Cache-Control": CACHE.NONE },
     });
   },
 );

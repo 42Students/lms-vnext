@@ -4,6 +4,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {previewTenantHostResolutionWithRuntime} from "@/modules/tenant-domains/runtime";
 import { route } from "@/security/route";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 
 /** Read-only, global-super-admin host resolution diagnostic; no DNS request. */
@@ -17,7 +18,7 @@ async function handleGET(request:Request){
    return NextResponse.json({error:"INVALID_HOST"},{status:400});
   const context=await getCurrentRequestContext();
   const preview=await previewTenantHostResolutionWithRuntime(context,host);
-  return NextResponse.json(preview,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(preview);
  }catch(error){
   return apiErrorResponse(error);
  }

@@ -6,6 +6,7 @@ import {hrDriveProposalHistoryQuerySchema} from "@/modules/placements/hr-drive-p
 import {listHrDriveProposals} from "@/modules/placements/hr-drive-proposal-history-service";
 import {hrDriveProposalHistoryCsv} from "@/modules/placements/hr-drive-proposal-export-model";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 /** Read-only, college-scoped CSV for the requested 20-row proposal-history page. */
 async function handleGET(request:Request){
@@ -33,7 +34,7 @@ async function handleGET(request:Request){
  return new NextResponse(csv,{headers:{
   "Content-Type":"text/csv; charset=utf-8",
   "Content-Disposition":'attachment; filename="recruiter-discussion-proposals.csv"',
-  "Cache-Control":"private, no-store",
+  "Cache-Control":CACHE.PRIVATE,
   "X-Export-Scope":"CURRENT_PAGE",
   "X-Export-Page":String(result.page),
  }});

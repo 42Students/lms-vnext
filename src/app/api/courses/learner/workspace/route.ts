@@ -1,9 +1,9 @@
 import { route } from "@/security/route";
-import { NextResponse } from "next/server";
 import {
   getLearnerCourseWorkspace,
 } from "@/modules/courses/learner-course-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const GET = route(
@@ -17,6 +17,6 @@ export const GET = route(
         url.searchParams.get("deliveryId") ??
           "",
       );
-    return NextResponse.json({ workspace }, {headers:{"Cache-Control":"private, no-store"}});
+    return privateJson({ workspace });
   },
 );

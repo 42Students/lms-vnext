@@ -12,6 +12,7 @@ import {
 } from "@/modules/auth/session-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 /** Legacy session migration map:
@@ -39,7 +40,7 @@ async function handleGET() {
         expiresAt: row["expires_at"],
         current: row["id"] === session.sessionId,
       })),
-    }, { headers: { "Cache-Control": "private, no-store" } });
+    }, { headers: { "Cache-Control": CACHE.PRIVATE } });
   } catch (error) {
     return privateAuthResponse(apiErrorResponse(error));
   }
@@ -70,7 +71,7 @@ async function handleDELETE(request: Request) {
     const response = privateAuthResponse(NextResponse.json({ ok: true, revoked,
       revokedCount:revoked,scope,currentExcluded:scope==="others",
       message:scope==="all"?"All sessions revoked":"Other sessions revoked",
-      currentSessionRevoked:scope==="all" }, { headers: { "Cache-Control": "private, no-store" } }));
+      currentSessionRevoked:scope==="all" }, { headers: { "Cache-Control": CACHE.PRIVATE } }));
     if (scope === "all") {
       // The database has revoked the current device too. Immediately expire
       // every cookie that could preserve a stale selected role or tenant.

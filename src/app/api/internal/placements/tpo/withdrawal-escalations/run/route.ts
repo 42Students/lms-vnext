@@ -6,9 +6,10 @@ import {NextResponse} from "next/server";
 import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
 import {escalatePendingWithdrawalRequests} from "@/modules/placements/tpo-withdrawal-escalation-service";
 import { internalRoute } from "@/security/internal-route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"no-store"} as const;
+const noStore={"Cache-Control":CACHE.NONE} as const;
 /** POST-only scheduler using the existing TPO scheduler secret; GET cannot send notifications. */
 async function handlePOST(request:Request){
  try{

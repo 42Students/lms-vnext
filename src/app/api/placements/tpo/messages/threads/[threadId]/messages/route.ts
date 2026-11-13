@@ -7,6 +7,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {sendThreadMessage,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 import { route } from "@/security/route";
 import { ROLE } from "@/modules/identity/roles";
+import { noStoreJson } from "@/security/responses";
 const schema=z.strictObject({body:z.string().trim().min(1).max(4000)});
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{threadId:string}>}){
@@ -19,7 +20,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{threadId:str
   return NextResponse.json({error:"FORBIDDEN"},{status:403});
  try{
   const message=await sendThreadMessage(context,id.data,input.data.body);
-  return NextResponse.json({messageId:message.id},{status:201,headers:{"Cache-Control":"no-store"}});
+  return noStoreJson({messageId:message.id}, { status: 201 });
  }catch(error){
   if(error instanceof TpoMessagingError)return NextResponse.json({error:"THREAD_NOT_FOUND"},{status:404});
   throw error;

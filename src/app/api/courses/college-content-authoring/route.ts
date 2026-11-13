@@ -5,6 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {
  getCollegeContentAuthoringOptions,collegeExistingContentFiltersFromSearch,
 } from "@/modules/courses/college-content-authoring-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Authorized scoped GET. No private storage keys or unreleased playback
@@ -22,7 +23,7 @@ export const GET = route(
      "existingSearch","existingPage","existingOrderAll"].includes(key)||
      Object.hasOwn(raw,key))
     return Response.json({error:"INVALID_CONTENT_FILTER"},{
-     status:400,headers:{"Cache-Control":"private, no-store"},
+     status:400,headers:{"Cache-Control":CACHE.PRIVATE},
     });
    raw[key]=value;
   }
@@ -33,6 +34,6 @@ export const GET = route(
    items:data.existing,existingPage:data.existingPage,
    existingTruncated:data.existingTruncated,
    existingFilters:data.existingFilters,
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

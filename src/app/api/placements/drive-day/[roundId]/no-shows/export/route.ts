@@ -10,6 +10,7 @@ import { placementRoundIdSchema } from "@/modules/placements/validation";
 import { route } from "@/security/route";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type RouteContext = { params: Promise<{ roundId: string }> };
@@ -36,7 +37,7 @@ async function handleGET(_request: Request, { params }: RouteContext) {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
         "Content-Disposition": 'attachment; filename="tpo-round-explicit-no-shows.csv"',
-        "Cache-Control": "private, no-store, max-age=0",
+        "Cache-Control": CACHE.PRIVATE_STRICT,
         "X-Content-Type-Options": "nosniff",
         Vary: "Cookie",
       },

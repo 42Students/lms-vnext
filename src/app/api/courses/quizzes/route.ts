@@ -15,6 +15,7 @@ import {
 } from "@/modules/courses/quiz-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 /** Legacy QuizController crosswalk:
@@ -110,7 +111,7 @@ async function handleGET(request: Request) {
     const selected=alreadyPaged?quizzes:
       unpaged&&(shape==="array"||(Boolean(lessonId)&&!shape))
         ?quizzes:quizzes.slice((page-1)*size,page*size);
-    const headers={"Cache-Control":"private, no-store"};
+    const headers={"Cache-Control":CACHE.PRIVATE};
     if(shape==="array")return NextResponse.json(selected,{headers});
     if(shape==="page")return NextResponse.json({
       content:selected,number:page-1,size,totalElements:total,
@@ -155,7 +156,7 @@ async function handlePOST(request: Request) {
       quiz,status:"OK",message:"OK",data:quiz,
       published:quiz.status==="PUBLISHED",
       draft:quiz.status==="DRAFT",
-    },{status:201,headers:{"Cache-Control":"private, no-store"}});
+    },{status:201,headers:{"Cache-Control":CACHE.PRIVATE}});
   } catch (error) {
     return apiErrorResponse(error);
   }

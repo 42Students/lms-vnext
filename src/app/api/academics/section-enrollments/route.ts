@@ -10,6 +10,7 @@ import {
 } from "@/modules/academics/roster-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 async function handleGET(request: Request) {
@@ -20,7 +21,7 @@ async function handleGET(request: Request) {
     if (["sectionId", "learnerEnrollmentId"].some(key => query.getAll(key).length > 1) ||
         (query.has("sectionId") && query.has("learnerEnrollmentId")))
       return NextResponse.json({ error: "AMBIGUOUS_ENROLLMENT_SCOPE" }, {
-        status: 400, headers: { "Cache-Control": "private, no-store" },
+        status: 400, headers: { "Cache-Control": CACHE.PRIVATE },
       });
     const sectionId =
       url.searchParams.get("sectionId");
@@ -63,7 +64,7 @@ async function handlePOST(request: Request) {
     const parsedBody = await readBoundedJsonBody(request, 16_384);
     if (parsedBody.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: parsedBody.kind === "TOO_LARGE" ? 413 : 400,
-      headers: { "Cache-Control": "private, no-store" },
+      headers: { "Cache-Control": CACHE.PRIVATE },
     });
     const body = parsedBody.value;
     const enrollment =

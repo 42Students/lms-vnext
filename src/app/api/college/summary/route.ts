@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {getCollegeDashboardCards} from "@/modules/admin-ui/college-dashboard-cards-service";
 import {apiErrorResponse} from "@/lib/api-error";
 import {requirePermission} from "@/modules/permissions/policy";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Read-only compatibility projection of the old college summary controller.
@@ -30,6 +31,6 @@ export const GET = route(
    courseCount:count("course-list"),activeDriveCount:count("jobs"),
   };
     return NextResponse.json({data,...data,scope:{collegeId:membership.collegeId},
-   updatedAt:new Date().toISOString()},{headers:{"Cache-Control":"private, no-store"}});
+   updatedAt:new Date().toISOString()},{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

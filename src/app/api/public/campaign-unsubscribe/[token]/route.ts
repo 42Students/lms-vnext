@@ -2,6 +2,7 @@ import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
 import {POST as confirmUnsubscribe} from "../route";
 import { route } from "@/security/route";
+import { noStoreJson } from "@/security/responses";
 export const runtime="nodejs";
 /**
  * Compatibility with the legacy path-token POST client. Never accept an
@@ -14,7 +15,7 @@ async function handlePOST(request:Request,{params}:{
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const {token}=await params;
  if(typeof token!=="string"||token.length===0||token.length>2048)
-  return NextResponse.json({error:"INVALID_OR_EXPIRED_LINK"},{status:400,headers:{"Cache-Control":"no-store"}});
+  return noStoreJson({error:"INVALID_OR_EXPIRED_LINK"}, { status: 400 });
  const headers=new Headers({"content-type":"application/x-www-form-urlencoded","accept":"application/json"});
  // Delegation must retain the verified Host. The same-origin write guard
  // intentionally rejects synthetic requests without that header.

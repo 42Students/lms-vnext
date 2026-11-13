@@ -5,6 +5,7 @@ import {isSuperAdmin} from "@/modules/identity/context";
 import {getCollegeAttendancePolicy} from "@/modules/attendance/policy-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -33,7 +34,7 @@ async function handleGET(request:Request){
    },
    source:hasCollegeOverride?"COLLEGE":"DEFAULT",
    collegeId,
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(

@@ -8,6 +8,7 @@ import {
 } from "@/modules/skills/catalog-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 type Context = {params:Promise<{path:string[]}>};
 
@@ -17,7 +18,7 @@ async function handleGET(request:Request,{params}:Context) {
   if(!skillsCatalogRuntimeEnabled())return NextResponse.json({
     error:"DB10_SKILLS_MIGRATIONS_PENDING",
     message:"Synonym catalog is not ready; entered skill names can be saved without selecting an alias.",
-  },{status:503,headers:{"Cache-Control":"private, no-store"}});
+  },{status:503,headers:{"Cache-Control":CACHE.PRIVATE}});
   try{
     const context=await getCurrentRequestContext();
     if(!canReadSkillCatalog(context))
@@ -29,14 +30,14 @@ async function handleGET(request:Request,{params}:Context) {
       const items=await listSkillSynonymsForParent(context,path[1]);
       if(items===null)return NextResponse.json({error:"SKILL_NOT_FOUND"},{status:404});
       return NextResponse.json({status:"success",data:items},
-        {headers:{"Cache-Control":"private, no-store"}});
+        {headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     if(path[0]==="exists"&&path.length===1)
       return NextResponse.json({status:"success",data:await skillSynonymExists(context,term)},
-        {headers:{"Cache-Control":"private, no-store"}});
+        {headers:{"Cache-Control":CACHE.PRIVATE}});
     if(path[0]==="exact"&&path.length===1)
       return NextResponse.json({status:"success",data:await searchSkillsByExactSynonym(context,term)},
-        {headers:{"Cache-Control":"private, no-store"}});
+        {headers:{"Cache-Control":CACHE.PRIVATE}});
     return NextResponse.json({error:"NOT_FOUND"},{status:404});
   }catch(error){return apiErrorResponse(error);}
 }

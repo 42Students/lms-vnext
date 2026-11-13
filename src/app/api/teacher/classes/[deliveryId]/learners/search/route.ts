@@ -2,6 +2,7 @@ import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { listFacultyAssignedClassLearners } from "@/modules/people/college-role-directory-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,6 @@ export const GET = route(
       deliveryId: data.deliveryId,
       sectionId: data.sectionId,
       courseId: data.courseId,
-    }, { headers: { "Cache-Control": "private, no-store" } });
+    }, { headers: { "Cache-Control": CACHE.PRIVATE } });
   },
 );

@@ -5,6 +5,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {addTpoTeamAssignment,removeTpoTeamAssignment,readTpoTeamRemovalImpact} from "@/modules/placements/tpo-settings-team-actions-service";
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 function teamErrorResponse(error:unknown){
  if(error instanceof Error){
@@ -16,7 +17,7 @@ function teamErrorResponse(error:unknown){
   };
   const response=responses[error.message];
   if(response)return NextResponse.json({error:error.message,message:response.message},
-   {status:response.status,headers:{"Cache-Control":"private, no-store"}});
+   {status:response.status,headers:{"Cache-Control":CACHE.PRIVATE}});
  }
  return apiErrorResponse(error);
 }
@@ -27,7 +28,7 @@ export const GET = route(
     try {
 const membershipId=new URL(request.url).searchParams.get("membershipId");
 const impact=await readTpoTeamRemovalImpact(__ctx,membershipId);
-return NextResponse.json({impact},{headers:{"Cache-Control":"private, no-store"}});
+return privateJson({impact});
 } catch(error){return teamErrorResponse(error);}
   },
 );
@@ -37,7 +38,7 @@ export const POST = route(
     const __ctx = __actor!;
     try {
 return NextResponse.json(await addTpoTeamAssignment(__ctx,await boundedRequestJson(request)),
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch(error){return teamErrorResponse(error);}
   },
 );
@@ -47,7 +48,7 @@ export const DELETE = route(
     const __ctx = __actor!;
     try {
 return NextResponse.json(await removeTpoTeamAssignment(__ctx,await boundedRequestJson(request)),
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch(error){return teamErrorResponse(error);}
   },
 );

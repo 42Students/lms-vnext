@@ -10,6 +10,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {profileVerificationSettings} from "@/db/schema/profile-verification";
 import {requireCollegeVerificationActor,requireVerificationTables,VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {setTpoProfileVerificationEnabled} from "@/modules/profile-verification/settings-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 const inputSchema=z.strictObject({tpoCanVerify:z.boolean()});
 export const GET = route(
@@ -22,7 +23,7 @@ await requireVerificationTables();
 const [row]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
    .from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,scope.collegeId)).limit(1);
 return NextResponse.json({tpoCanVerify:row?.enabled??true},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch(error){
   if(error instanceof VerificationUnavailableError)return NextResponse.json({error:error.message},{status:503});
   return apiErrorResponse(error);
@@ -39,7 +40,7 @@ await requireVerificationTables();
 const input=inputSchema.parse(await boundedRequestJson(request));
 await setTpoProfileVerificationEnabled(context,scope.collegeId,input.tpoCanVerify);
 return NextResponse.json({tpoCanVerify:input.tpoCanVerify},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch(error){
   if(error instanceof VerificationUnavailableError)return NextResponse.json({error:error.message},{status:503});
   return apiErrorResponse(error);

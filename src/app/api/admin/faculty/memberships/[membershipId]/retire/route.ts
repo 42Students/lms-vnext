@@ -13,9 +13,10 @@ import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import { route } from "@/security/route";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"private, no-store"} as const;
+const noStore={"Cache-Control":CACHE.PRIVATE} as const;
 type Props={params:Promise<{membershipId:string}>};
 
 /** Non-destructive replacement for legacy faculty delete: check all known

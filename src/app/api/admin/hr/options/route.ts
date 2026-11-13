@@ -1,10 +1,10 @@
 import { route } from "@/security/route";
-import { NextResponse } from "next/server";
 import {
   listSuperAdminHrRelationshipOptions,
   listSuperAdminHrColleges,
 } from "@/modules/placements/super-admin-hr-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const GET = route(
@@ -21,6 +21,6 @@ export const GET = route(
         collegeId,
       );
     const colleges=await listSuperAdminHrColleges(context);
-    return NextResponse.json({relationships,colleges},{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson({relationships,colleges});
   },
 );

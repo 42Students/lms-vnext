@@ -7,6 +7,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {createRequestId} from "@/lib/request-id";
 import {readTpoCompanyTeamBody,TpoCompanyTeamBodyError} from "@/modules/placements/tpo-company-team-request-body";
 import {readTpoCompanyTeam,mutateTpoCompanyTeam,TpoCompanyTeamError} from "@/modules/placements/tpo-company-team-service";
+import { CACHE, noStoreJson } from "@/security/responses";
 export const runtime="nodejs";
 type Params={params:Promise<{companyId:string}>};
 function safeError(error:unknown){
@@ -16,7 +17,7 @@ function safeError(error:unknown){
    error.status===415?"Send the Team update as JSON and try again.":
    "Check the Team update and try again.";
   return NextResponse.json({error:error.code,message,requestId},{status:error.status,
-   headers:{"Cache-Control":"no-store","x-request-id":requestId}});
+   headers:{"Cache-Control":CACHE.NONE,"x-request-id":requestId}});
  }
  if(error instanceof TpoCompanyTeamError){
   const requestId=createRequestId();
@@ -29,13 +30,13 @@ function safeError(error:unknown){
    :error.code==="NOT_FOUND"?"This company discussion is unavailable."
    :"Check the Team message details and try again.";
   return NextResponse.json({error:error.code,message,requestId},{status,
-   headers:{"Cache-Control":"no-store","x-request-id":requestId}});
+   headers:{"Cache-Control":CACHE.NONE,"x-request-id":requestId}});
  }
  if(error instanceof ZodError){
   const requestId=createRequestId();
   return NextResponse.json({error:"INVALID_REQUEST",
    message:"Check the Team message details and try again.",requestId},{
-   status:400,headers:{"Cache-Control":"no-store","x-request-id":requestId}});
+   status:400,headers:{"Cache-Control":CACHE.NONE,"x-request-id":requestId}});
  }
  return apiErrorResponse(error);
 }
@@ -46,7 +47,7 @@ export const GET = route(
     try {
 const {companyId}=params;
 const result=await readTpoCompanyTeam(__ctx,companyId);
-return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+return noStoreJson(result);
 } catch(error){return safeError(error);}
   },
 );
@@ -57,7 +58,7 @@ export const POST = route(
     try {
 const {companyId}=params;
 const result=await mutateTpoCompanyTeam(__ctx,companyId,await readTpoCompanyTeamBody(request));
-return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+return noStoreJson(result);
 } catch(error){return safeError(error);}
   },
 );

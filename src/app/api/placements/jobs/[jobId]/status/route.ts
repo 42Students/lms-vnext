@@ -1,6 +1,5 @@
 import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
-import { NextResponse } from "next/server";
 import { z } from "zod";
 import { legacyDriveStatusActionSchema } from "@/modules/placements/tpo-drive-publish-entry-model";
 import {reopenCollegeDrive} from "@/modules/placements/college-drive-reopen-service";
@@ -8,6 +7,7 @@ import {
   closePlacementJob,
 } from "@/modules/placements/job-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 const statusCommandSchema=z.union([
  legacyDriveStatusActionSchema,
@@ -27,6 +27,6 @@ export const POST = route(
     const job = reopen
       ? await reopenCollegeDrive(context,jobId,{confirmed:true})
       : await closePlacementJob(context,jobId);
-    return NextResponse.json(job,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(job);
   },
 );

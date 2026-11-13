@@ -4,6 +4,7 @@ import {hrApplicantFilterSchema} from "@/modules/placements/hr-job-applicants-mo
 import {getHrJobRead} from "@/modules/placements/hr-job-read-service";
 import {buildHrOfferCsv,HR_OFFER_EXPORT_CAP} from "@/modules/placements/hr-offer-export-model";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handleGET(request:Request,{params}:{params:Promise<{jobId:string}>}){
  try{
@@ -35,7 +36,7 @@ async function handleGET(request:Request,{params}:{params:Promise<{jobId:string}
   return new Response(exportResult.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="recruiter-offers.csv"',
-   "Cache-Control":"private, no-store","X-Export-Omitted":String(exportResult.omitted),
+   "Cache-Control":CACHE.PRIVATE,"X-Export-Omitted":String(exportResult.omitted),
   }});
  }catch(error){return apiErrorResponse(error);}
 }

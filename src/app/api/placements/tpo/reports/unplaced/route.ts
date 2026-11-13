@@ -14,6 +14,7 @@ import {unplacedFilteredExportQuerySchema,tpoUnplacedFilteredCsv}
  from "@/modules/placements/tpo-unplaced-filtered-export-model";
 import { ROLE } from "@/modules/identity/roles";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -24,7 +25,7 @@ export const GET = route(
 if(!context.membership||!hasMembershipRole(context,ROLE.TPO))return NextResponse.json({error:"UNAUTHORIZED"},{status:403});
 const params=new URL(request.url).searchParams;
 if(tpoReportHasRepeatedSearchParams(params))return NextResponse.json({error:"INVALID_QUERY"},{
-   status:400,headers:{"Cache-Control":"private, no-store"},
+   status:400,headers:{"Cache-Control":CACHE.PRIVATE},
   });
 const input=unplacedFilteredExportQuerySchema.parse(Object.fromEntries(params.entries()));
 const collegeId=context.membership.collegeId;
@@ -62,7 +63,7 @@ const rows=visible.map(student=>{
 return new Response("\uFEFF"+tpoUnplacedFilteredCsv(rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="unplaced-filtered.csv"',
-   "Cache-Control":"private, no-store, max-age=0",
+   "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff","X-Export-Truncated":matching.length>rows.length?"true":"false",
    Vary:"Cookie",
   }});

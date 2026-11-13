@@ -6,6 +6,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { collegeAdminSessionDisplay, listCollegeAdminSessions, revokeCollegeAdminSessions } from "@/modules/colleges/admin-session-service";
 import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 type RouteContext = {params:Promise<{collegeId:string}>};
 async function handleGET(request:Request,{params}:RouteContext){
@@ -36,7 +37,7 @@ async function handleGET(request:Request,{params}:RouteContext){
     createdAt:row.created_at,expiresAt:row.expires_at};
   });
   return NextResponse.json({...result,sessions,sessionCount:sessions.length},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(
@@ -55,7 +56,7 @@ async function handlePOST(request:Request,{params}:RouteContext){
   return NextResponse.json({...result,ok:result.revoked>0,
    partial:false,refreshSessions:true,
    message:result.revoked===0?"No active sessions to revoke.":result.message,
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const POST = route(

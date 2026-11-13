@@ -5,6 +5,7 @@ import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
 import { resetLoginOtpLockout } from "@/modules/auth/admin-otp-lockout-reset-service";
 
 import { ROLE } from "@/modules/identity/roles";
+import { noStoreJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const POST = route(
@@ -15,6 +16,6 @@ export const POST = route(
       return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
     const input: unknown = await boundedRequestJson(request);
     const result = await resetLoginOtpLockout(context, input);
-    return NextResponse.json(result, { headers: { "Cache-Control": "no-store" } });
+    return noStoreJson(result);
   },
 );

@@ -10,6 +10,7 @@ import {
 import { route } from "@/security/route";
 
 import { featureReady } from "@/config/features";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 function migrationPendingResponse(){
@@ -19,7 +20,7 @@ function migrationPendingResponse(){
     eligibility:null,
     retryable:true,
     message:"Placement rules are temporarily unavailable. This does not mean a learner is ineligible; retry after the placement database is ready.",
-  },{status:503,headers:{"Cache-Control":"private, no-store","Retry-After":"60"}});
+  },{status:503,headers:{"Cache-Control":CACHE.PRIVATE,"Retry-After":"60"}});
 }
 
 async function handleGET(request: Request) {

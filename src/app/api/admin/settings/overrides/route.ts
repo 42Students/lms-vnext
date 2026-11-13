@@ -8,6 +8,7 @@ import {listAdminTenantSettings,saveAdminTenantSettings,addUnlistedTenantSetting
 import {listOrganizationTenantSettings,saveOrganizationTenantSettings,removeOrganizationTenantSetting,OrganizationSettingsError}
  from "@/modules/platform-settings/organization-settings-service";
 import { route } from "@/security/route";
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -15,12 +16,12 @@ async function handleGET(request:Request){
   const scope=q.get("scope");
   if(scope==="ORG"||scope==="ORGANIZATION")return NextResponse.json(await listOrganizationTenantSettings(
    await getCurrentRequestContext(),q.get("organizationId")??""),
-   {headers:{"Cache-Control":"private, no-store","X-Legacy-Org-Settings":"read-only-compat"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE,"X-Legacy-Org-Settings":"read-only-compat"}});
   if(scope!=="GLOBAL"&&scope!=="COLLEGE")
    return NextResponse.json({error:"INVALID_SCOPE",message:scope==="ORG"||scope==="ORGANIZATION"
     ?"Organization overrides are not writable in the registered GLOBAL/COLLEGE settings schema. Select a college or global scope.":"Select a global or college scope."},{status:400});
   return NextResponse.json(await listAdminTenantSettings(await getCurrentRequestContext(),scope,q.get("collegeId")??undefined),
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(
@@ -44,15 +45,15 @@ async function handlePATCH(request:Request){
    perKeyErrors:"results" in result&&Array.isArray(result.results)
     ?result.results.filter((row:{status:string})=>row.status==="FAILED"):[],
    partial:"failed" in result&&typeof result.failed==="number"&&result.failed>0,
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){
   if(error instanceof OrganizationSettingsError)
    return NextResponse.json({error:error.code},{
     status:error.code==="SETTINGS_STORAGE_PENDING"?503:error.code==="SETTING_SCOPE_DENIED"?403:409,
-    headers:{"Cache-Control":"private, no-store"}});
+    headers:{"Cache-Control":CACHE.PRIVATE}});
   if(error instanceof TenantSettingEditorError)return NextResponse.json({error:error.code},{
    status:error.code==="SETTINGS_STORAGE_PENDING"?503:error.code==="SETTING_SCOPE_DENIED"?403:error.code==="EMPTY_BODY"?400:409,
-   headers:{"Cache-Control":"private, no-store"}});
+   headers:{"Cache-Control":CACHE.PRIVATE}});
   return apiErrorResponse(error);
  }
 }
@@ -94,7 +95,7 @@ async function handlePUT(request:Request){
   });
   return NextResponse.json({...result,perKeyErrors:result.results.filter(row=>row.status==="FAILED"),
    partial:result.failed>0,legacyCompatibility:"VERSIONED_MAP"},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const PUT = route(
@@ -110,7 +111,7 @@ async function handlePOST(request:Request){
   if(!_ps.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
   const result=await addUnlistedTenantSetting(await getCurrentRequestContext(),_ps.value);
   return NextResponse.json({...result,message:"Tenant setting added successfully"},
-   {status:201,headers:{"Cache-Control":"private, no-store"}});
+   {status:201,headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){
   if(error instanceof TenantSettingEditorError)
    return NextResponse.json({error:error.code},{status:error.code==="SETTING_STALE"?409:403});
@@ -131,7 +132,7 @@ async function handleDELETE(request:Request){
    (body as {scopeType?:unknown}).scopeType==="ORG"
    ?await removeOrganizationTenantSetting(await getCurrentRequestContext(),body)
    :await removeUnlistedTenantSetting(await getCurrentRequestContext(),body);
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(result);
  }catch(error){
   if(error instanceof OrganizationSettingsError)
    return NextResponse.json({error:error.code},{status:error.code==="SETTING_SCOPE_DENIED"?403:409});

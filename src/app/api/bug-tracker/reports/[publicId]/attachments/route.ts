@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {handleOwnTrackerAttachment} from "@/modules/bug-tracker/attachment-upload-service";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{
  params:Promise<{publicId:string}>;
@@ -14,7 +15,7 @@ async function handlePOST(request:Request,{params}:{
  try{
   return NextResponse.json(await handleOwnTrackerAttachment(
    await getCurrentRequestContext(),(await params).publicId,raw),
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){
   const code=error instanceof Error?error.message:"";
   if(code==="TRACKER_ATTACHMENT_NOT_FOUND")

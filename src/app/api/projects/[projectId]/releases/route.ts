@@ -6,6 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {readMentorProjectCommandBody,MentorProjectCommandBodyError,mentorProjectBodyFailureMessage}
  from "@/modules/projects/mentor-command-body";
 import {writeMentorProjectRelease} from "@/modules/projects/mentor-release-write-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -15,7 +16,7 @@ export const POST = route(
 const {projectId}=params;
 const result=await writeMentorProjectRelease(__ctx,projectId,null,"POST",await readMentorProjectCommandBody(request));
 return NextResponse.json({...result,message:"Release added.",success:true},{
-   status:201,headers:{"Cache-Control":"private, no-store"},
+   status:201,headers:{"Cache-Control":CACHE.PRIVATE},
   });
 } catch(error) {
     if(error instanceof MentorProjectCommandBodyError)

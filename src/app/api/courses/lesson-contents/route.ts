@@ -14,8 +14,9 @@ import {
 } from "@/modules/courses/lesson-content-service";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
-const noStore={"Cache-Control":"private, no-store"};
+const noStore={"Cache-Control":CACHE.PRIVATE};
 /** Server-side legacy→vNext crosswalk (numeric course/class/lesson IDs are not
  * authority). Legacy lesson_id→lessonId UUID, class_id→deliveryId UUID,
  * content_title→title, content_type→contentType, duration→durationSeconds,
@@ -87,7 +88,7 @@ export const GET = route(
       const content=contents.find(item=>item.id===id);
       if(!content)throw new CoursesServiceError("LESSON_CONTENT_NOT_FOUND");
       return NextResponse.json({content,data:content,status:"SUCCESS",reason:"Lesson content retrieved"},
-        {headers:{"Cache-Control":"private, no-store"}});
+        {headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     if(assessmentKind==="ASSIGNMENT"||assessmentKind==="QUIZ"){
       // Optional old courseSlug takes precedence over courseId. Resolve the
@@ -110,7 +111,7 @@ export const GET = route(
         ?contentsUnfiltered.filter(item=>item.courseCode.toLowerCase()===courseSlug.toLowerCase())
         :contentsUnfiltered;
       return NextResponse.json({contents,data:contents,status:"SUCCESS",reason:"Lesson contents retrieved"},
-        {headers:{"Cache-Control":"private, no-store"}});
+        {headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     const contents = await listLessonContents(
       context,
@@ -119,7 +120,7 @@ export const GET = route(
       url.searchParams.get("includeArchived") === "true",
     );
     return NextResponse.json({contents,data:contents,status:"SUCCESS",reason:"Lesson contents retrieved"},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 

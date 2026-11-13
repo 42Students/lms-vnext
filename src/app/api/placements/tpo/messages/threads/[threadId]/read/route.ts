@@ -7,6 +7,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {listThreadMessages,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 import { route } from "@/security/route";
 import { ROLE } from "@/modules/identity/roles";
+import { noStoreJson } from "@/security/responses";
 const confirm=z.strictObject({confirmed:z.literal(true)});
 export const runtime="nodejs";
 /** POST is the only TPO read acknowledgement; GET remains read-only. */
@@ -20,7 +21,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{threadId:str
   return NextResponse.json({error:"FORBIDDEN"},{status:403});
  try{
   await listThreadMessages(context,id.data);
-  return NextResponse.json({acknowledged:true},{headers:{"Cache-Control":"no-store"}});
+  return noStoreJson({acknowledged:true});
  }catch(error){
   if(error instanceof TpoMessagingError)return NextResponse.json({error:"THREAD_NOT_FOUND"},{status:404});
   throw error;

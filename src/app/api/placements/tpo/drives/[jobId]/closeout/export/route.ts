@@ -4,6 +4,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoDriveCloseout } from "@/modules/placements/tpo-drive-closeout-service";
 import { tpoDriveCloseoutCsv } from "@/modules/placements/tpo-drive-closeout-model";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 async function handleGET(_request: Request, { params }: {
@@ -17,7 +18,7 @@ async function handleGET(_request: Request, { params }: {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
         "Content-Disposition": 'attachment; filename="' + gridExportFilename("tpo-drive-closeout", "csv") + '"',
-        "Cache-Control": "private, no-store",
+        "Cache-Control": CACHE.PRIVATE,
         "X-Content-Type-Options": "nosniff",
         "Vary": "Cookie",
       },

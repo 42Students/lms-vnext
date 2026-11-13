@@ -9,6 +9,7 @@ import {tpoSheetRowSchema} from "@/modules/placements/tpo-eligibility-sheet-mode
 import {decidePlacementParticipation,PlacementBatchError} from "@/modules/placements/batch-participation-service";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 const inputSchema=z.object({
  rows:z.array(tpoSheetRowSchema).min(1).max(5000),
@@ -52,7 +53,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{batchId:stri
    collegeId:context.membership!.collegeId,expectedCohortId:batchId,changes,
   });
   return NextResponse.json({actionId:outcome.actionId,changedCount:outcome.changedCount,
-    skipped:preview.skipped,matched:changes.length},{headers:{"Cache-Control":"private, no-store"}});
+    skipped:preview.skipped,matched:changes.length},{headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){
   if(error instanceof PlacementBatchError&&error.code==="DB08_ACTION_STALE")
    return NextResponse.json({error:"IMPORT_PREVIEW_STALE"},{status:409});

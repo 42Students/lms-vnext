@@ -9,6 +9,7 @@ import {privateAuthResponse} from "@/modules/auth/private-response";
 import { revokeOwnSession } from "@/modules/auth/session-service";
 import { route } from "@/security/route";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = { params: Promise<{ sessionId: string }> };
@@ -39,7 +40,7 @@ async function handleDELETE(request: Request, { params }: RouteContext) {
       return privateAuthResponse(NextResponse.json({ error: "SESSION_NOT_FOUND", message: "Session not found" }, { status: 404 }));
     }
 
-    const response=privateAuthResponse(NextResponse.json({ ok: true, message: "Session revoked" }, { headers: { "Cache-Control": "private, no-store" } }));
+    const response=privateAuthResponse(privateJson({ ok: true, message: "Session revoked" }));
     // A user may revoke this very device from its security page. A revoked
     // session cannot remain selected in the browser's college/role UI.
     if (sessionId === session.sessionId) {

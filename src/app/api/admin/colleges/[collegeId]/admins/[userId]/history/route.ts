@@ -4,6 +4,7 @@ import {listCollegeAdminHistory} from "@/modules/colleges/admin-session-service"
 import {collegeAdminHistoryCsv} from "@/modules/colleges/admin-history-export-model";
 import {parseAdminSessionHistoryPage} from "@/modules/colleges/admin-session-query-model";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 async function handleGET(request:Request,{params}:{params:Promise<{collegeId:string;userId:string}>}){
@@ -17,13 +18,13 @@ async function handleGET(request:Request,{params}:{params:Promise<{collegeId:str
   }
   const page=parseAdminSessionHistoryPage(raw);
   if(page===null)return new Response("Choose a valid history page without repeated or unrelated filters.",{
-    status:400,headers:{"Content-Type":"text/plain; charset=utf-8","Cache-Control":"private, no-store"},
+    status:400,headers:{"Content-Type":"text/plain; charset=utf-8","Cache-Control":CACHE.PRIVATE},
   });
   const data=await listCollegeAdminHistory(await getCurrentRequestContext(),collegeId,userId,page);
   return new Response(collegeAdminHistoryCsv(data.events),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="college-admin-history.csv"',
-   "Cache-Control":"private, no-store, max-age=0",
+   "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff",
    "X-Export-Truncated":String(data.truncated),
    Vary:"Cookie",

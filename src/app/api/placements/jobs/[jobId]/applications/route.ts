@@ -11,6 +11,7 @@ import {
   listPlacementJobApplications,
 } from "@/modules/placements/application-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 /** Legacy /api/v1/jobs/{jobId}/apply/{learnerId} maps to this POST.
@@ -46,14 +47,14 @@ const { jobId } = params;
 if(!placementJobIdSchema.safeParse(jobId).success)
       return NextResponse.json({error:"INVALID_REQUEST",
         message:"This drive link is invalid. Open the drive from your college placements page."},
-        {status:400,headers:{"Cache-Control":"private, no-store"}});
+        {status:400,headers:{"Cache-Control":CACHE.PRIVATE}});
 let input: unknown;
 try {
       input = await boundedRequestJson(request);
     } catch {
       return NextResponse.json({ error: "INVALID_REQUEST",
         message: "Provide a valid JSON application body." },
-        { status: 400, headers: { "Cache-Control": "private, no-store" } });
+        { status: 400, headers: { "Cache-Control": CACHE.PRIVATE } });
     }
 const application = await applyToPlacementJob(
       context,
@@ -65,7 +66,7 @@ return NextResponse.json(
         message:"Application submitted. Screening will be completed shortly.",
         screeningStatus:"PENDING_REVIEW",
       },
-      {status:201,headers:{"Cache-Control":"private, no-store"}},
+      {status:201,headers:{"Cache-Control":CACHE.PRIVATE}},
     );
 } catch (error) {
     const response=apiErrorResponse(error);

@@ -9,6 +9,7 @@ import { onboardPersonWithRuntime } from "@/modules/people/runtime";
 import {z} from "zod";
 
 import { ROLE } from "@/modules/identity/roles";
+import { noStoreJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const POST = route(
@@ -53,6 +54,6 @@ export const POST = route(
     }
     await requireRecentDeviceAuthentication(context.user.id);
     const person = await onboardPersonWithRuntime(context, body, facultyProfile);
-    return NextResponse.json({ person,profileIncomplete:false },{headers:{"Cache-Control":"no-store"}});
+    return noStoreJson({ person,profileIncomplete:false });
   },
 );

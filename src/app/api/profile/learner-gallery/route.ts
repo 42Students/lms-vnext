@@ -8,6 +8,7 @@ import {
   LearnerGalleryError, listLearnerGallery, appendLearnerGalleryImage,
 } from "@/modules/profile-verification/learner-image-gallery-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 function failure(error: unknown) {
   if (error instanceof LearnerGalleryError)
@@ -25,7 +26,7 @@ export const GET = route(
     try {
 const membershipId = new URL(request.url).searchParams.get("membershipId") ?? undefined;
 const result = await listLearnerGallery(__ctx, membershipId);
-return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
+return privateJson(result);
 } catch (error) { return failure(error); }
   },
 );
@@ -38,7 +39,7 @@ const query = new URL(request.url).searchParams;
 const input: unknown = await boundedRequestJson(request);
 const result = await appendLearnerGalleryImage(
       __ctx, input, query.get("membershipId") ?? undefined);
-return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
+return privateJson(result);
 } catch (error) { return failure(error); }
   },
 );

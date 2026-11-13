@@ -3,9 +3,10 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoDriveEligibilityReachPreview} from "@/modules/placements/tpo-drive-edit-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"private, no-store"} as const;
+const noStore={"Cache-Control":CACHE.PRIVATE} as const;
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
   async ({ context: __actor, params }) => {

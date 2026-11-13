@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { listLessonContents,updateLessonContent } from "@/modules/courses/lesson-content-service";
 import {loadLessonContentScope} from "@/modules/courses/scope";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 /** Legacy fetchById maps to this read-only, scoped metadata projection.
@@ -17,9 +18,9 @@ export const GET = route(
     const rows=await listLessonContents(context,scope.lessonId,scope.deliveryId);
     const content=rows.find(row=>row.id===contentId);
     if(!content)return NextResponse.json({error:"LESSON_CONTENT_NOT_FOUND"},
-    {status:404,headers:{"Cache-Control":"private, no-store"}});
+    {status:404,headers:{"Cache-Control":CACHE.PRIVATE}});
     return NextResponse.json({content,status:"OK",reason:"OK"},
-    {headers:{"Cache-Control":"private, no-store"}});
+    {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 

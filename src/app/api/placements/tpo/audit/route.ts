@@ -4,6 +4,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoAuditLog,tpoAuditQuerySchema} from "@/modules/placements/tpo-audit-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -23,7 +24,7 @@ async function handleGET(request:Request){
   return NextResponse.json({
    items:result.items,matchedCount:result.matchedCount,
    page:result.page,pageSize:result.pageSize,
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(

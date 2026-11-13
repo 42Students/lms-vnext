@@ -4,8 +4,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {searchAuthorizedCourseSuggestions} from "@/modules/courses/college-course-catalogue-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
-const noStore={"Cache-Control":"private, no-store"};
+const noStore={"Cache-Control":CACHE.PRIVATE};
 const querySchema=z.strictObject({
   query:z.string().trim().min(1).max(200),
   limit:z.coerce.number().int().min(1).max(50).default(15),

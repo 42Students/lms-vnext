@@ -11,6 +11,7 @@ import {getLearnerCourseFileReference,validCourseResourceStorageKey} from "@/mod
 import {loadCourseSectionDeliveryScope} from "@/modules/courses/scope";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 /** Reject ambiguous, negative and out-of-range historical material indices before
  * making any scoped file lookup. Keep errors field-safe for older clients. */
 class LearnerCourseFileReferenceInputError extends Error {
@@ -49,7 +50,7 @@ async function handleGET(request:Request,{params}:RouteContext){
    (values.length===1&&!["0","1"].includes(values[0]!)) ||
    (rawMaterialId!==null&&!/^[a-f\d]{8}-[a-f\d]{4}-[1-8][a-f\d]{3}-[89ab][a-f\d]{3}-[a-f\d]{12}$/i.test(rawMaterialId)))
   return Response.json({error:"INVALID_REQUEST"},{status:400,headers:{
-   "Cache-Control":"private, no-store",
+   "Cache-Control":CACHE.PRIVATE,
   }});
  const {deliveryId,contentId}=await params;
  let ordinal:number|null=null;
@@ -62,7 +63,7 @@ async function handleGET(request:Request,{params}:RouteContext){
   if(error instanceof LearnerCourseFileReferenceInputError){
    return Response.json({error:error.field==="materialIndex"?"INVALID_MATERIAL_INDEX":
     error.field==="contentId"?"INVALID_CONTENT_ID":"INVALID_DELIVERY_ID",
-    message:error.message},{status:400,headers:{"Cache-Control":"private, no-store"}});
+    message:error.message},{status:400,headers:{"Cache-Control":CACHE.PRIVATE}});
   }
   throw error;
  }
@@ -74,16 +75,16 @@ async function handleGET(request:Request,{params}:RouteContext){
     ?await resolveLegacyResourceMaterialId(context,contentId,deliveryId,ordinal!):null);
   if(rawMaterialId!==null||rawOrdinal!==null){
    if(!selectedMaterialId)return Response.json({error:"COURSE_FILE_NOT_FOUND",message:"Resource file not found"},
-     {status:404,headers:{"Cache-Control":"private, no-store"}});
+     {status:404,headers:{"Cache-Control":CACHE.PRIVATE}});
    const visible=await listLessonResourceMaterials(context,contentId,deliveryId);
    const selected=visible.find(row=>row.id===selectedMaterialId);
    if(!selected)return Response.json({error:"COURSE_FILE_NOT_FOUND",message:"Resource not found"},
-     {status:404,headers:{"Cache-Control":"private, no-store"}});
+     {status:404,headers:{"Cache-Control":CACHE.PRIVATE}});
    if(selected.kind!=="FILE")return Response.json({error:"INVALID_REQUEST",message:"Invalid Resource material"},
-     {status:400,headers:{"Cache-Control":"private, no-store"}});
+     {status:400,headers:{"Cache-Control":CACHE.PRIVATE}});
    if(selected.uploadStatus!=="READY")return Response.json({
      error:"COURSE_FILE_UNAVAILABLE",message:"Resource file storage is not allowed"
-   },{status:503,headers:{"Cache-Control":"private, no-store"}});
+   },{status:503,headers:{"Cache-Control":CACHE.PRIVATE}});
    const [material]=await getDb().select({
     key:lessonContentMaterials.storageKey,name:lessonContentMaterials.originalName,
     generation:lessonContentMaterials.objectGeneration,
@@ -114,7 +115,7 @@ async function handleGET(request:Request,{params}:RouteContext){
    }
   }
  }catch(error){return apiErrorResponse(error);}
- if(!key)return Response.json({error:"COURSE_FILE_NOT_FOUND",message:"Resource file not found"},{status:404,headers:{"Cache-Control":"private, no-store"}});
+ if(!key)return Response.json({error:"COURSE_FILE_NOT_FOUND",message:"Resource file not found"},{status:404,headers:{"Cache-Control":CACHE.PRIVATE}});
  let config:ReturnType<typeof getPrivateR2Config>;
  let storedContentType:string|null=null;
  try{
@@ -122,10 +123,10 @@ async function handleGET(request:Request,{params}:RouteContext){
   const existing=await headObject(config,key);
   storedContentType=existing?.contentType??null;
   if(!existing||!existing.sizeBytes||existing.sizeBytes<=0)
-   return Response.json({error:"COURSE_FILE_NOT_FOUND",message:"Resource file not found"},{status:404,headers:{"Cache-Control":"private, no-store"}});
+   return Response.json({error:"COURSE_FILE_NOT_FOUND",message:"Resource file not found"},{status:404,headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch{
   return Response.json({error:"COURSE_FILE_UNAVAILABLE",
-   message:"Resource file storage is not allowed"},{status:503,headers:{"Cache-Control":"private, no-store"}});
+   message:"Resource file storage is not allowed"},{status:503,headers:{"Cache-Control":CACHE.PRIVATE}});
  }
  const download=values[0]==="1";
  // Inline only for types that cannot run script (PDF, images, audio, video). HTML, SVG and anything unknown is
@@ -140,16 +141,16 @@ async function handleGET(request:Request,{params}:RouteContext){
   // or a disclosure of R2 credentials to the learner.
   return Response.json({error:"COURSE_FILE_UNAVAILABLE",
    message:"Cannot sign Resource file URL"},
-   {status:503,headers:{"Cache-Control":"private, no-store"}});
+   {status:503,headers:{"Cache-Control":CACHE.PRIVATE}});
  }
  // Legacy clients can opt into an authorized JSON link response; browser
  // navigation retains the download/playback redirect and R2 Range support.
  if(request.headers.get("accept")?.includes("application/json"))
   return Response.json({status:"OK",message:"OK",data:{url:signed}},
-   {headers:{"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE,"Referrer-Policy":"no-referrer"}});
  return new Response(null,{status:302,headers:{
   Location:signed,
-  "Cache-Control":"private, no-store",
+  "Cache-Control":CACHE.PRIVATE,
   "Referrer-Policy":"no-referrer",
  }});
 }

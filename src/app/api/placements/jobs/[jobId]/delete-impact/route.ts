@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getPlacementJobStopImpact } from "@/modules/placements/job-service";
 import { placementJobIdSchema } from "@/modules/placements/validation";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 /**
@@ -22,6 +23,6 @@ export const GET = route(
       }, { status: 404 });
     }
     const impact = await getPlacementJobStopImpact(context, jobId);
-    return NextResponse.json({ impact }, { headers: { "Cache-Control": "private, no-store" } });
+    return privateJson({ impact });
   },
 );

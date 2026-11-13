@@ -6,6 +6,7 @@ import {placementCalendarWindow} from "@/modules/placements/placement-calendar-m
 import {hrCalendarCategorySchema} from "@/modules/placements/hr-calendar-category-model";
 import {buildHrCalendarCsv} from "@/modules/placements/hr-calendar-export-model";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -24,7 +25,7 @@ async function handleGET(request:Request){
   return new Response(result.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="recruiter-calendar.csv"',
-   "Cache-Control":"private, no-store","X-Export-Omitted":String(result.omitted),
+   "Cache-Control":CACHE.PRIVATE,"X-Export-Omitted":String(result.omitted),
   }});
  }catch(error){return apiErrorResponse(error);}
 }

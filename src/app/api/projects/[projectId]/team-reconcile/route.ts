@@ -5,6 +5,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { reconcileProjectTeamRoster } from "@/modules/projects/project-team-roster-reconcile-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = { params: Promise<{ projectId: string }> };
@@ -18,7 +19,7 @@ export const POST = route(
       __ctx, projectId,
     );
     return NextResponse.json(result, {
-      headers: { "Cache-Control": "private, no-store" },
+      headers: { "Cache-Control": CACHE.PRIVATE },
     });
   },
 );

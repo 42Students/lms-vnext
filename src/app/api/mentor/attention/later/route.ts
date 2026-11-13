@@ -7,6 +7,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {markOwnMentorAttentionLater} from
  "@/modules/projects/mentor-attention-later-service";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 const inputSchema=z.strictObject({key:z.string().min(8).max(320)});
 export const POST = route(
@@ -25,6 +26,6 @@ export const POST = route(
     const {key}=inputSchema.parse(input);
     const result=await markOwnMentorAttentionLater(
     __ctx,key);
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(result);
   },
 );

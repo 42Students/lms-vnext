@@ -5,6 +5,7 @@ import {previewTpoCollegeAnnouncementVisibility,previewTpoPlacementAudience} fro
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {apiErrorResponse} from "@/lib/api-error";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 /** Scoped, non-cacheable count only; no recipient identities or contact data. */
 async function handleGET(request:Request){
@@ -25,7 +26,7 @@ async function handleGET(request:Request){
   const preview=scope?await previewTpoPlacementAudience(context,scope):
    await previewTpoCollegeAnnouncementVisibility(context);
   return Response.json({...preview,emailReady:false},{
-   headers:{"Cache-Control":"private, no-store"}});
+   headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){
   if(error instanceof AuthorizationError)return Response.json({error:"FORBIDDEN"},{status:403});
   if(error instanceof z.ZodError)return Response.json({error:"INVALID_AUDIENCE"},{status:400});

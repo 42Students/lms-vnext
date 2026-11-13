@@ -7,6 +7,7 @@ import {postMentorProjectUpdate} from "@/modules/projects/mentor-project-update-
 import {readMentorProjectCommandBody,MentorProjectCommandBodyError,
   mentorProjectBodyFailureMessage} from "@/modules/projects/mentor-command-body";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -17,14 +18,14 @@ const {projectId}=params;
 const body=await readMentorProjectCommandBody(request,4096);
 const posted=await postMentorProjectUpdate(__ctx,projectId,body);
 return NextResponse.json({id:posted.id,message:"Project update posted"},{status:201,
-      headers:{"Cache-Control":"private, no-store"}});
+      headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch(error){
     if(error instanceof MentorProjectCommandBodyError){
       return NextResponse.json({
         error:error.status===413?"UPDATE_TOO_LONG":
           error.status===400?"INVALID_JSON":error.code,
         message:mentorProjectBodyFailureMessage(error.status),
-      },{status:error.status,headers:{"Cache-Control":"no-store"}});
+      },{status:error.status,headers:{"Cache-Control":CACHE.NONE}});
     }
     return apiErrorResponse(error);
   }

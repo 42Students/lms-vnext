@@ -6,11 +6,12 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listOwnRecruiterPendingInvites,respondToOwnRecruiterPendingInvite} from "@/modules/placements/recruiter-pending-invites-service";
 import { route } from "@/security/route";
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 async function handleGET(){
  try{
   return NextResponse.json(await listOwnRecruiterPendingInvites(await getCurrentRequestContext()),
-    {headers:{"Cache-Control":"private, no-store"}});
+    {headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(
@@ -37,7 +38,7 @@ async function handlePOST(request:Request){
    await getCurrentRequestContext(),grantId,{
     action:action.toUpperCase(),expectedVersion,
    });
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(result);
  }catch(error){
   const code=error instanceof Error?error.message:"";
   if(code==="PENDING_RECRUITER_ACCESS_DENIED")

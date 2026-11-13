@@ -8,6 +8,7 @@ import {findTpoPeopleAndCompanies} from "@/modules/placements/tpo-find-people-se
 import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {getPlacementTpoOperations} from "@/modules/placements/tpo-operations-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 const termSchema=z.string().trim().min(2).max(100);
 
@@ -46,6 +47,6 @@ export const GET = route(
     .slice(0,5).map(item=>({group:"Drives",label:item.job.title+" · "+item.job.company.name,
      href:"/tpo/placements/jobs/"+encodeURIComponent(item.job.id)})),
   ];
-    return NextResponse.json({results},{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson({results});
   },
 );

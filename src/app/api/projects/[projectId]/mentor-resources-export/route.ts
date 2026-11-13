@@ -6,6 +6,7 @@ import {getMentorResourceDirectory} from "@/modules/projects/mentor-resource-dir
 import {mentorResourceDirectoryQuerySchema,mentorResourceDirectoryCsv}
  from "@/modules/projects/mentor-resource-directory-model";
 import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
 export const GET = route(
@@ -16,7 +17,7 @@ export const GET = route(
     const filters=singleValueMentorExportFilters(url.searchParams,
    ["required","link","description","order","search"]);
     if(!filters)return NextResponse.json({error:"INVALID_RESOURCE_FILTERS"},{status:400,
-   headers:{"Cache-Control":"private, no-store"}});
+   headers:{"Cache-Control":CACHE.PRIVATE}});
     const query=mentorResourceDirectoryQuerySchema.parse({
    projectId,...filters,page:1,
   });
@@ -25,7 +26,7 @@ export const GET = route(
     return new Response(mentorResourceDirectoryCsv(data.exportItems,data.exportOmitted),{
    headers:{"Content-Type":"text/csv; charset=utf-8",
     "Content-Disposition":'attachment; filename="mentor-resource-directory.csv"',
-    "Cache-Control":"private, no-store","X-Export-Omitted":String(data.exportOmitted)},
+    "Cache-Control":CACHE.PRIVATE,"X-Export-Omitted":String(data.exportOmitted)},
   });
   },
 );

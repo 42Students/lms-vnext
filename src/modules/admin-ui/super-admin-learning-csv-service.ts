@@ -8,6 +8,7 @@ import {listCollegeAssessmentAggregate} from "@/modules/courses/college-assessme
 import {adminLearningQuerySchema} from "@/modules/courses/admin-learning-read-model";
 import {adminAssessmentQuerySchema} from "@/modules/courses/admin-assessment-directory-model";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { CACHE } from "@/security/responses";
 type Kind="LESSONS"|"PROGRESS"|"ASSIGNMENT"|"QUIZ";
 export async function exportSuperAdminLearningDirectory(request:Request,kind:Kind,
  reader:typeof listCollegeAssessmentAggregate=listCollegeAssessmentAggregate):Promise<Response>{
@@ -87,7 +88,7 @@ export async function exportSuperAdminLearningDirectory(request:Request,kind:Kin
   return new Response("\uFEFF"+placementReportCsv(headers,items),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="'+filename+'"',
-   "Cache-Control":"private, no-store",
+   "Cache-Control":CACHE.PRIVATE,
    "X-Content-Type-Options":"nosniff",
    "X-Export-Truncated":String(!pageOnly&&total>max),
   }});

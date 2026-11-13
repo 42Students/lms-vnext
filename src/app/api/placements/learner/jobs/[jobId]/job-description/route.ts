@@ -6,8 +6,9 @@ import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-servi
 import { createPrivateReadGrant } from "@/modules/storage/private-object-storage";
 import { placementJobIdSchema } from "@/modules/placements/validation";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
-const noStore = { "Cache-Control": "private, no-store" };
+const noStore = { "Cache-Control": CACHE.PRIVATE };
 type Params = { params: Promise<{ jobId: string }> };
 
 /** Read only a published drive visible to this learner's scoped college,

@@ -2,6 +2,7 @@ import { route } from "@/security/route";
 import { NextResponse } from "next/server";
 import { getAttendanceParentSmsReadiness } from "@/modules/attendance/parent-sms-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 /** Returns consent state only. Phone, evidence reference and SMS body stay private. */
@@ -15,7 +16,7 @@ export const GET = route(
       membershipId: search.get("membershipId"),
     });
     return NextResponse.json(status, {
-      headers: {"Cache-Control":"private, no-store"},
+      headers: {"Cache-Control":CACHE.PRIVATE},
     });
   },
 );

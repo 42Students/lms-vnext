@@ -15,6 +15,7 @@ import {
 import { route } from "@/security/route";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 /** The old /api/v2/jobs/search reader was a global cache. This replacement
@@ -62,7 +63,7 @@ async function handleGET(request: Request) {
       error:"COLLEGE_CONTEXT_REQUIRED",
       message:"Organization context required for job search. Provide learnerId or ensure authentication.",
       retryable:false,
-    },{status:400,headers:{"Cache-Control":"no-store"}});
+    },{status:400,headers:{"Cache-Control":CACHE.NONE}});
     const requestedMode=url.searchParams.get("mode")??"list";
     if(requestedMode!=="search"&&requestedMode!=="list")
       return NextResponse.json({error:"INVALID_SEARCH_MODE",message:"Choose a valid job search mode."},
@@ -135,7 +136,7 @@ async function handleGET(request: Request) {
           source:"OWN_LEARNER_SCOPE",page:parsed.data.page,size:parsed.data.size,
           totalElements:ordered.length,totalPages:Math.ceil(ordered.length/parsed.data.size),
           empty:subset.length===0,retryable:false},
-          {headers:{"Cache-Control":"private, no-store"}});
+          {headers:{"Cache-Control":CACHE.PRIVATE}});
       }
       const page=await listPlacementJobsPage(context,collegeId,{
         q:parsed.data.q,status:parsed.data.status,sort:parsed.data.sort,
@@ -154,11 +155,11 @@ async function handleGET(request: Request) {
         page:parsed.data.page,size:page.pageSize,
         totalElements:page.totalCount,totalPages:page.totalPages,
         empty:page.empty,retryable:false,
-      },{headers:{"Cache-Control":"private, no-store"}});
+      },{headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     // The original list shape remains unchanged for existing vNext callers.
     const jobs = await listPlacementJobs(context, collegeId);
-    return NextResponse.json({ jobs },{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson({ jobs });
   } catch (error) {
     // Never reinterpret a failed database read as an empty job catalog.
     const response=apiErrorResponse(error);

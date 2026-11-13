@@ -5,6 +5,7 @@ import { acceptPublicRecruiterJoin, PublicJoinAcceptError } from "@/modules/plac
 import { route } from "@/security/route";
 
 import { featureReady } from "@/config/features";
+import { CACHE, noStoreJson } from "@/security/responses";
 export const runtime = "nodejs";
 async function handlePOST(request: Request) {
   if (!isSameOriginRequest(request)) {
@@ -12,12 +13,12 @@ async function handlePOST(request: Request) {
   }
   const body=await readBoundedJsonBody(request);
   if(body.kind!=="OK")return NextResponse.json({error:body.kind==="TOO_LARGE"?"REQUEST_TOO_LARGE":"COULD_NOT_JOIN"},
-    {status:body.kind==="TOO_LARGE"?413:400,headers:{"Cache-Control":"no-store"}});
+    {status:body.kind==="TOO_LARGE"?413:400,headers:{"Cache-Control":CACHE.NONE}});
   const trusted = featureReady("publicJoinTrustedProxy");
   const ip = trusted ? request.headers.get("x-public-verified-client-ip") : null;
   try {
     const result = await acceptPublicRecruiterJoin("COMPANY", body.value, ip);
-    return NextResponse.json(result, { headers: { "Cache-Control": "no-store" } });
+    return noStoreJson(result);
   } catch (error) {
     if (error instanceof PublicJoinAcceptError) {
       const unready = error.code === "NETWORK_GUARD_NOT_READY" || error.code === "NOT_CONFIGURED" || error.code === "PHONE_STORAGE_NOT_READY";
@@ -28,11 +29,11 @@ async function handlePOST(request: Request) {
           "OTHER_COMPANY_EMAIL","COMPANY_EXISTS","COMPANY_REQUIRED","ACCOUNT_UNAVAILABLE"].includes(error.code)
             ? error.code : "COULD_NOT_JOIN",
       }, { status: unready ? 503 : error.code === "RATE_LIMITED" ? 429 : 400,
-        headers: { "Cache-Control": "no-store" } });
+        headers: { "Cache-Control": CACHE.NONE } });
     }
     // Do not expose provider, database or account-identifying failures on this public endpoint.
     return NextResponse.json({error:"SERVICE_UNAVAILABLE"},
-      {status:503,headers:{"Cache-Control":"no-store"}});
+      {status:503,headers:{"Cache-Control":CACHE.NONE}});
   }
 }
 export const POST = route(

@@ -12,6 +12,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoBatch } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { placementTableExists } from "@/modules/placements/staged-tables";
 import { undoPlacementParticipation, PlacementBatchError } from "@/modules/placements/batch-participation-service";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 const inputSchema=z.object({actionId:z.string().uuid()}).strict();
 export const POST = route(
@@ -46,7 +47,7 @@ if(membershipIds.length){
     return NextResponse.json({error:"BATCH_ACTION_NOT_FOUND"},{status:404});
   }
 const result=await undoPlacementParticipation(ctx,{collegeId,actionId});
-return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+return privateJson(result);
 } catch(error){
   if(error instanceof PlacementBatchError&&error.code==="DB08_ACTION_STALE")
    return NextResponse.json({error:"BATCH_ACTION_STALE"},{status:409});

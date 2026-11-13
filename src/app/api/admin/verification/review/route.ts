@@ -13,6 +13,7 @@ import {verificationReviewInput} from "@/modules/verification/review-input";
 import {requireSuperAdminVerificationCollege} from "@/modules/verification/super-admin-scope";
 import {requireVerificationTables,VerificationUnavailableError} from "@/modules/verification/staff-auth";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -33,7 +34,7 @@ const record=await reviewProfileVerification(context,input,
 return NextResponse.json({decision:{
    learnerMembershipId:record.learnerMembershipId,section:record.section,
    status:record.status,version:record.version,
-  }},{headers:{"Cache-Control":"private, no-store"}});
+  }},{headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch(error){
   if(error instanceof VerificationUnavailableError)
    return NextResponse.json({error:error.message},{status:503});

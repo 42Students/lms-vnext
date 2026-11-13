@@ -7,6 +7,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {reviewSuperAdminVerificationBulk} from "@/modules/verification/super-admin-bulk-review-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -27,7 +28,7 @@ const receipts=result.outcomes.map(item=>({
   }));
 return NextResponse.json({...result,receipts,
    status:result.summary.failed>0?"PARTIAL":"COMPLETE",
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch(error){
   if(error instanceof VerificationUnavailableError)return NextResponse.json({error:"VERIFICATION_STORAGE_PENDING"},{status:503});
   return apiErrorResponse(error);

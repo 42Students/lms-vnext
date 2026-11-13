@@ -2,6 +2,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listSuperAdminCompanyDirectory} from "@/modules/placements/admin-company-directory-service";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 /** Search currently authorized, active company relationships only. The
  * merge writer still independently checks same-college source/target scope. */
@@ -18,7 +19,7 @@ async function handleGET(request:Request){
    item.companyId,{id:item.companyId,name:item.name},
   ]));
   return Response.json({items:[...unique.values()],page:data.query.page,more:data.truncated},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(

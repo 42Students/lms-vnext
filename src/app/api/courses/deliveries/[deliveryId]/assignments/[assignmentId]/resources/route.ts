@@ -7,6 +7,7 @@ import {
  listOwnLearnerAssignmentResources,
 } from "@/modules/courses/learner-assignment-materials-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 type Params={params:Promise<{deliveryId:string;assignmentId:string}>};
 
@@ -22,7 +23,7 @@ export const GET = route(
    listOwnLearnerAssignmentMaterialLinks(context,assignmentId,deliveryId),
   ]);
     return NextResponse.json({resources,materials},{
-   headers:{"Cache-Control":"private, no-store"},
+   headers:{"Cache-Control":CACHE.PRIVATE},
   });
   },
 );

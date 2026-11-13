@@ -8,6 +8,7 @@ import {tpoCrmApiErrorResponse} from "@/lib/tpo-crm-api-error";
 import {TpoBulkUndoError,undoTpoRecruiterBulkRun} from "@/modules/placements/tpo-bulk-undo-service";
 import { route } from "@/security/route";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -20,7 +21,7 @@ async function handlePOST(request:Request){
  try{
   const payload=await boundedRequestJson(request, 8 * 1024 * 1024).catch(()=>null);
   const restored=await undoTpoRecruiterBulkRun(await getCurrentRequestContext(),payload);
-  return NextResponse.json(restored,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(restored);
  }catch(error){
   if(error instanceof ZodError)
    return NextResponse.json({error:"INVALID_UNDO_REQUEST"},{status:422});

@@ -10,6 +10,7 @@ import {
   createSuperAdminHrInputSchema,
 } from "@/modules/placements/super-admin-hr-validation";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 /** Old numeric recruiter account endpoints map to canonical user identities:
@@ -39,7 +40,7 @@ export const GET = route(
             params.get("pageSize") ?? undefined,
         },
       );
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(result);
   },
 );
 
@@ -66,7 +67,7 @@ export const POST = route(
       );
     return NextResponse.json(
       { account, idKind:"USER_UUID" },
-      { status: 201, headers:{"Cache-Control":"private, no-store"} },
+      { status: 201, headers:{"Cache-Control":CACHE.PRIVATE} },
     );
   },
 );

@@ -6,6 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {listSupportSmsDeliveryHistory} from "@/modules/messaging/receipt-history-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 /** POST avoids recording pasted contact details in URLs, browser history or
  * proxy access logs. The service enforces GLOBAL Super Admin access. */
@@ -23,6 +24,6 @@ export const POST = route(
    recipientSuffix:source["recipientSuffix"],purpose:source["purpose"],
    page:source["page"],size:source["size"],
   });
-    return NextResponse.json(rows,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(rows);
   },
 );

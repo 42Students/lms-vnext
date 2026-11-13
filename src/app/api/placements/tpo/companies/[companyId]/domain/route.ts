@@ -6,6 +6,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {addTpoCompanyDomain,CompanyDomainError} from "@/modules/placements/tpo-company-domain-service";
 import {apiErrorResponse} from "@/lib/api-error";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -26,13 +27,13 @@ return NextResponse.json({
       domains:"/api/placements/tpo/companies/"+(params).companyId+"/domain",
       trust:"/tpo/companies/"+(params).companyId},
     verifiedBy42:false,
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch(error){
   if(error instanceof ZodError)return NextResponse.json({
     error:"INVALID_DOMAIN",
     message:error.issues[0]?.message??"Enter a valid company email domain.",
     field:"domain",
-  },{status:422,headers:{"Cache-Control":"private, no-store"}});
+  },{status:422,headers:{"Cache-Control":CACHE.PRIVATE}});
   if(error instanceof CompanyDomainError){
    // Global domain uniqueness must not expose another college's private employer list.
    const message=error.code==="DOMAIN_IN_USE"?
@@ -41,7 +42,7 @@ return NextResponse.json({
     "This company already has an email domain. Ask 42Students support to review changes.":
     "This company is no longer available in your placement directory.";
    return NextResponse.json({error:error.code,message},{
-    status:error.code==="COMPANY_NOT_FOUND"?404:409,headers:{"Cache-Control":"no-store"}});
+    status:error.code==="COMPANY_NOT_FOUND"?404:409,headers:{"Cache-Control":CACHE.NONE}});
   }
   return apiErrorResponse(error);
  }

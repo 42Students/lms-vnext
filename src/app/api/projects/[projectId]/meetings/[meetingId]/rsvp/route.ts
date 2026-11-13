@@ -6,6 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {respondToProjectMeeting} from
  "@/modules/projects/mentor-meeting-rsvp-service";
 import { route } from "@/security/route";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 type Params={params:Promise<{projectId:string;meetingId:string}>};
 async function handlePOST(request:Request,{params}:Params){
@@ -18,7 +19,7 @@ async function handlePOST(request:Request,{params}:Params){
   const {projectId,meetingId}=await params;
   const result=await respondToProjectMeeting(
    await getCurrentRequestContext(),projectId,meetingId,parsed.value);
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(result);
  }catch(error){return apiErrorResponse(error);}
 }
 export const POST = route(

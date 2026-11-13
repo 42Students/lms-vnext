@@ -7,9 +7,10 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoJdStatus,initiateTpoJdUpload,saveTpoJdUpload} from "@/modules/placements/tpo-jd-upload-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"private, no-store"} as const;
+const noStore={"Cache-Control":CACHE.PRIVATE} as const;
 type Ctx={params:Promise<{jobId:string}>};
 const discriminator=z.object({action:z.enum(["INITIATE","CONFIRM","REMOVE"])});
 async function handlePOST(request:Request,{params}:Ctx){

@@ -8,6 +8,7 @@ import {PlacementsServiceError} from "@/modules/placements/errors";
 import {placementJobIdSchema} from "@/modules/placements/validation";
 import { changeTpoDriveLifecycle,TpoPublishEmailUnavailable } from "@/modules/placements/tpo-drive-lifecycle-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -25,12 +26,12 @@ if(!body||typeof body!=="object"||Array.isArray(body))
       return NextResponse.json({error:"INVALID_REQUEST",
         message:"Choose a drive lifecycle action and try again."},{status:400});
 return NextResponse.json(await changeTpoDriveLifecycle(context,jobId,body),
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch (error) {
     if(error instanceof TpoPublishEmailUnavailable)
       return NextResponse.json({error:error.message,
         message:"Drive status has not changed because the required email delivery is unavailable. Retry when notifications are restored."},
-        {status:422,headers:{"Cache-Control":"private, no-store"}});
+        {status:422,headers:{"Cache-Control":CACHE.PRIVATE}});
     const response=apiErrorResponse(error);
     if(error instanceof PlacementsServiceError){
       const explanation:Partial<Record<string,string>>={

@@ -5,6 +5,7 @@ import {getBugTrackerIssueForAdmin} from "@/modules/bug-tracker/admin-service";
 import {readTrackerLiveLogs} from "@/modules/bug-tracker/tracker-cloud-logs";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handleGET(
   _request:Request,{params}:{params:Promise<{publicId:string}>},
@@ -24,7 +25,7 @@ async function handleGET(
       query:"",
     });
     return NextResponse.json({...result,anchorAt:issue.report.createdAt.toISOString()},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   }catch{
     return NextResponse.json({message:"Nearby log entries could not be loaded."},{status:503});
   }

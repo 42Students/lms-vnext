@@ -5,6 +5,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {setTpoTeamEveryoneMuted} from "@/modules/placements/tpo-team-everyone-service";
 import { route } from "@/security/route";
+import { noStoreJson } from "@/security/responses";
 export const runtime="nodejs";
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -12,7 +13,7 @@ async function handlePOST(request:Request){
  try{
   const result=await setTpoTeamEveryoneMuted(await getCurrentRequestContext(),{muted:form?.get("muted")==="true"});
   if(request.headers.get("accept")?.includes("application/json"))
-   return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+   return noStoreJson(result);
   return NextResponse.redirect(new URL("/tpo/team/everyone",request.url),303);
  }catch(error){
   if(error instanceof ZodError)return NextResponse.json({error:"INVALID_BODY"},{status:422});

@@ -6,6 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {listOwnLearnerAssignmentMaterialLinks,commandFacultyAssignmentMaterialLink}
  from "@/modules/courses/learner-assignment-materials-service";
 import { route } from "@/security/route";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 type Params={params:Promise<{deliveryId:string;assignmentId:string}>};
 async function handleGET(_request:Request,{params}:Params){
@@ -13,7 +14,7 @@ async function handleGET(_request:Request,{params}:Params){
   const {deliveryId,assignmentId}=await params;
   const result=await listOwnLearnerAssignmentMaterialLinks(
    await getCurrentRequestContext(),assignmentId,deliveryId);
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(result);
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(
@@ -28,7 +29,7 @@ async function change(request:Request,params:Params["params"]){
   const input=await boundedRequestJson(request);
   const result=await commandFacultyAssignmentMaterialLink(
    await getCurrentRequestContext(),assignmentId,deliveryId,input);
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(result);
  }catch(error){return apiErrorResponse(error);}
 }
 async function handlePOST(request:Request,{params}:Params){

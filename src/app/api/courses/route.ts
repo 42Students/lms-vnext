@@ -8,6 +8,7 @@ import {
 } from "@/modules/courses/course-service";
 import {projectLegacyCoursePublic} from "@/modules/courses/legacy-course-public-projection";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 /** Historical /api/v1/courses endpoints are NOT live aliases. Old callers
  * must use the authenticated vNext API, resolve legacy integer IDs via an
@@ -73,13 +74,13 @@ export const GET = route(
         ?listing.courses.map(projectLegacyCoursePublic):listing.courses,
         page,size,totalElements:listing.total,
         totalPages:Math.ceil(listing.total/size)},
-        {headers:{"Cache-Control":"private, no-store"}});
+        {headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     const courses=await listCourses(context,collegeId,departmentId,
       includeArchived,undefined,onlyArchived);
     return NextResponse.json({courses:legacyView
       ?courses.map(projectLegacyCoursePublic):courses},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 

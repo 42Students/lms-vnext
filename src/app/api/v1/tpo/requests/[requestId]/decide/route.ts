@@ -5,6 +5,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {decideLegacyTpoRequest} from "@/modules/placements/tpo-global-requests-service";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -15,6 +16,6 @@ export const POST = route(
     if(!_body.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
     const decided=await decideLegacyTpoRequest(
    __ctx,requestId,_body.value);
-    return NextResponse.json(decided,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(decided);
   },
 );

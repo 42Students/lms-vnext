@@ -7,6 +7,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {getPlacementFailureReasonsReport} from "@/modules/placements/report-extra-service";
 import {tpoRoundFailureCsvQuerySchema,tpoRoundFailureCsv} from "@/modules/placements/tpo-round-failure-csv-model";
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -15,10 +16,10 @@ export const GET = route(
     const context = __actor!;
     try {
 if(!context.membership||!hasMembershipRole(context,ROLE.TPO))
-   return NextResponse.json({error:"UNAUTHORIZED"},{status:403,headers:{"Cache-Control":"private, no-store"}});
+   return privateJson({error:"UNAUTHORIZED"}, { status: 403 });
 const params=new URL(request.url).searchParams;
 if(tpoReportHasRepeatedSearchParams(params))return NextResponse.json({error:"INVALID_QUERY"},{
-   status:400,headers:{"Cache-Control":"private, no-store"},
+   status:400,headers:{"Cache-Control":CACHE.PRIVATE},
   });
 const query=tpoRoundFailureCsvQuerySchema.parse(Object.fromEntries(params.entries()));
 const report=await getPlacementFailureReasonsReport(context,{
@@ -28,7 +29,7 @@ const rows=report.roundBranchFailureShares.slice(0,5000);
 return new Response(tpoRoundFailureCsv(rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="round-failures-by-branch.csv"',
-   "Cache-Control":"private, no-store, max-age=0",
+   "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff",
    "X-Export-Truncated":String(report.roundBranchFailureShares.length>rows.length),
    Vary:"Cookie",

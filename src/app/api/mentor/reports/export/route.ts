@@ -6,6 +6,7 @@ import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-q
 import {getMentorReports} from "@/modules/projects/mentor-reports-service";
 import {mentorReportsQuerySchema,mentorReportsCsv}
   from "@/modules/projects/mentor-reports-model";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 /** Only registered current Mentor project state, never learner data. */
 export const GET = route(
@@ -16,7 +17,7 @@ export const GET = route(
     const filters=singleValueMentorExportFilters(url.searchParams,
       ["taskCoverage","status","attention","assignment","order","search"]);
     if(!filters)return NextResponse.json({error:"INVALID_QUERY"},{status:400,
-      headers:{"Cache-Control":"private, no-store"}});
+      headers:{"Cache-Control":CACHE.PRIVATE}});
     const query=mentorReportsQuerySchema.parse({...filters,page:1});
     const report=await getMentorReports(__ctx,query);
     if(!report.enabled)
@@ -24,7 +25,7 @@ export const GET = route(
     return new Response(mentorReportsCsv(report.exportItems,report.exportOmitted),{
       headers:{"Content-Type":"text/csv; charset=utf-8",
         "Content-Disposition":'attachment; filename="mentor-project-reports.csv"',
-        "Cache-Control":"private, no-store",
+        "Cache-Control":CACHE.PRIVATE,
         "X-Export-Omitted":String(report.exportOmitted)},
     });
   },

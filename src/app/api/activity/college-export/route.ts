@@ -7,6 +7,7 @@ import { exportCollegeActivity } from "@/modules/activity/college-activity-expor
 import { route } from "@/security/route";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 async function handleGET(request: Request) {
   try {
@@ -25,7 +26,7 @@ async function handleGET(request: Request) {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
         "Content-Disposition": `attachment; filename="${filename}"`,
-        "Cache-Control": "private, no-store",
+        "Cache-Control": CACHE.PRIVATE,
         "X-Export-Truncated": String(result.truncated),
         "X-Export-Row-Cap": String(result.cap),
         "X-Content-Type-Options": "nosniff",

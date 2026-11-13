@@ -7,6 +7,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {markOwnMentorSourceRead} from
   "@/modules/projects/mentor-notification-source-receipts-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 const inputSchema=z.strictObject({key:z.string().min(8).max(320)});
 
@@ -25,6 +26,6 @@ export const POST = route(
     }
     const {key}=inputSchema.parse(raw);
     const result=await markOwnMentorSourceRead(__ctx,key);
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(result);
   },
 );

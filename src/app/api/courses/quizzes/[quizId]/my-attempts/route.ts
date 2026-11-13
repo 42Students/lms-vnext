@@ -1,9 +1,9 @@
 import { route } from "@/security/route";
-import { NextResponse } from "next/server";
 import {
   getMyQuizAttempts,resolveOwnQuizDeliveryId,
 } from "@/modules/courses/quiz-attempt-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const GET = route(
@@ -15,6 +15,6 @@ export const GET = route(
     const explicit=url.searchParams.get("deliveryId");
     const deliveryId=explicit||await resolveOwnQuizDeliveryId(context,quizId);
     const attempts = await getMyQuizAttempts(context,quizId,deliveryId);
-    return NextResponse.json({ attempts,deliveryId }, {headers:{"Cache-Control":"private, no-store"}});
+    return privateJson({ attempts,deliveryId });
   },
 );

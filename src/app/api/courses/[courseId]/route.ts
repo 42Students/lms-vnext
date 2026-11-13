@@ -17,6 +17,7 @@ import {
 } from "@/modules/courses/course-service";
 import { route } from "@/security/route";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -38,7 +39,7 @@ type RouteContext = {
 const courseUuid=z.string().uuid();
 const validSlug=/^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
 function slugError(message:string){
- return NextResponse.json({error:"INVALID_SLUG",message},{status:400,headers:{"Cache-Control":"private, no-store"}});
+ return privateJson({error:"INVALID_SLUG",message}, { status: 400 });
 }
 /** Read a course without using a guessed numeric legacy ID or leaking tenants.
  * A supplied courseSlug must resolve to the same authorized course ID. */
@@ -83,7 +84,7 @@ async function handleGET(request:Request,{params}:RouteContext){
    if(!mapped||(mapped.slug??scope.code).toLowerCase()!==providedSlug.toLowerCase())
     throw new CoursesServiceError("COURSE_NOT_FOUND");
   }
-  return NextResponse.json({course:scope},{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson({course:scope});
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(

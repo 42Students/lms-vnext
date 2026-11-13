@@ -1,10 +1,11 @@
 import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
-import {NextResponse} from "next/server";
+
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getCohortCreationPreflight} from "@/modules/projects/cohort-preflight-service";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 
 function resultEnvelope(result:Awaited<ReturnType<typeof getCohortCreationPreflight>>){
@@ -23,7 +24,7 @@ export const POST = route(
     const __ctx = __actor!;
     const raw:unknown=await boundedRequestJson(request);
     const result=await getCohortCreationPreflight(__ctx,raw);
-    return NextResponse.json(resultEnvelope(result),{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(resultEnvelope(result));
   },
 );
 export const GET = route(
@@ -34,6 +35,6 @@ export const GET = route(
     const result=await getCohortCreationPreflight(__ctx,{
    collegeId:params.get("collegeId"),classId:params.get("classId"),templateId:params.get("templateId"),
   });
-    return NextResponse.json(resultEnvelope(result),{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(resultEnvelope(result));
   },
 );

@@ -3,6 +3,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listOwnPlacementSavedJobs} from "@/modules/placements/saved-job-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 /** Missing DB08 migration: keep a recoverable 503 instead of an opaque 500. */
 function savedJobsTableUnavailable(error: unknown): boolean {
@@ -30,11 +31,11 @@ const jobs=await listOwnPlacementSavedJobs(context);
 if(idsOnly)return NextResponse.json({ids:jobs.map(job=>job.jobId),
     data:jobs.map(job=>job.jobId),status:"success",
     message:jobs.length?"Saved jobs retrieved":"No saved jobs"},{
-    headers:{"Cache-Control":"private, no-store"},
+    headers:{"Cache-Control":CACHE.PRIVATE},
   });
 return NextResponse.json({jobs,status:"success",
    message:jobs.length?"Saved jobs retrieved":"No saved jobs",data:jobs},{
-   headers:{"Cache-Control":"private, no-store"},
+   headers:{"Cache-Control":CACHE.PRIVATE},
   });
 } catch(error){
   if(savedJobsTableUnavailable(error)){

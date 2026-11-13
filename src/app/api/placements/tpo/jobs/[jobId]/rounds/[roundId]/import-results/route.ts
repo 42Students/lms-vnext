@@ -6,13 +6,14 @@ import {BoundedFormDataError,readBoundedFormData} from "@/lib/bounded-form-data"
 import {ROUND_IMPORT_TEMPLATE} from "@/modules/placements/tpo-round-import-model";
 import {previewTpoRoundImport,stageTpoRoundImport} from "@/modules/placements/tpo-round-import-service";
 import { route } from "@/security/route";
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 type Props={params:Promise<{jobId:string;roundId:string}>};
 async function handleGET(_request:Request){
  return new Response("\uFEFF"+ROUND_IMPORT_TEMPLATE,{headers:{
   "Content-Type":"text/csv; charset=utf-8",
   "Content-Disposition":'attachment; filename="round-results-template.csv"',
-  "Cache-Control":"private, no-store",
+  "Cache-Control":CACHE.PRIVATE,
  }});
 }
 export const GET = route(
@@ -31,7 +32,7 @@ async function handlePOST(request:Request,{params}:Props){
     if(!(error instanceof BoundedFormDataError))throw error;
     return NextResponse.json({
       error:error.code==="BODY_TOO_LARGE"?"IMPORT_TOO_LARGE":"INVALID_FORM",
-    },{status:error.code==="BODY_TOO_LARGE"?413:400,headers:{"Cache-Control":"private, no-store"}});
+    },{status:error.code==="BODY_TOO_LARGE"?413:400,headers:{"Cache-Control":CACHE.PRIVATE}});
   }
   const file=form.get("file");
   if(!(file instanceof File)||file.size<=0||file.size>3_000_000)
@@ -53,7 +54,7 @@ async function handlePOST(request:Request,{params}:Props){
      skippedLines:JSON.parse(String(form.get("skippedLines")??"[]")),
    }):null;
   if(!value)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
-  return NextResponse.json(value,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(value);
  }catch(e){return apiErrorResponse(e);}
 }
 export const POST = route(

@@ -8,6 +8,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {tpoCrmCollegeIdSchema} from "@/modules/placements/tpo-crm-validation";
 import {tpoCrmTablesReady} from "@/modules/placements/tpo-crm-storage-readiness";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 
 /** Remote and bounded recruiter lookup: tenant-scoped, no contact fields. */
@@ -38,7 +39,7 @@ export const GET = route(
   )).orderBy(asc(placementTpoLeads.name),asc(placementTpoLeads.id))
    .limit(21).offset((page-1)*20);
     return NextResponse.json({leads:matches.slice(0,20),hasMore:matches.length>20,page},{
-   headers:{"Cache-Control":"private, no-store"},
+   headers:{"Cache-Control":CACHE.PRIVATE},
   });
   },
 );

@@ -6,6 +6,7 @@ import {trackerAdminRuntimeEnabled} from "@/modules/bug-tracker/readiness";
 import {presignTrackerAttachment} from "@/modules/bug-tracker/attachment-storage-service";
 import {bugTrackerApiError} from "@/lib/bug-tracker-api-error";
 import { route } from "@/security/route";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{publicId:string}>}){
  if(!isSameOriginRequest(request))
@@ -17,7 +18,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{publicId:str
   const {publicId}=await params;
   const result=await presignTrackerAttachment(
     await getCurrentRequestContext(),publicId,raw);
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(result);
  }catch(error){return bugTrackerApiError(error);}
 }
 export const POST = route(

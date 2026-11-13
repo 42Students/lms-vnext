@@ -3,6 +3,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {exportCollegeFacultyAssignments} from "@/modules/academics/college-faculty-assignment-export-service";
 import {exportParams} from "@/modules/academics/college-faculty-assignment-export-model";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -11,7 +12,7 @@ async function handleGET(request:Request){
   return new Response(result.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="college-faculty-assignments.csv"',
-   "Cache-Control":"private, no-store",
+   "Cache-Control":CACHE.PRIVATE,
    "X-Export-Truncated":String(result.truncated),
    "X-Export-Row-Cap":String(result.cap),
    "X-Content-Type-Options":"nosniff",

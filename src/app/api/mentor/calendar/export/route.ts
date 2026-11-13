@@ -8,6 +8,7 @@ import {mentorCalendarFiltersSchema,filterMentorCalendar}
  from "@/modules/projects/mentor-calendar-filter-model";
 import {mentorCalendarCsv} from "@/modules/projects/mentor-calendar-export-model";
 import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced", stepUp: true },
@@ -28,7 +29,7 @@ export const GET = route(
     return new Response(mentorCalendarCsv(rows,omitted),{
    headers:{"Content-Type":"text/csv; charset=utf-8",
     "Content-Disposition":'attachment; filename="mentor-meetings-calendar.csv"',
-    "Cache-Control":"private, no-store","X-Export-Omitted":String(omitted)},
+    "Cache-Control":CACHE.PRIVATE,"X-Export-Omitted":String(omitted)},
   });
   },
 );

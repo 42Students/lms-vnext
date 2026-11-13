@@ -5,6 +5,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {reopenCollegeDrive} from "@/modules/placements/college-drive-reopen-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 type Props={params:Promise<{jobId:string}>};
 export const POST = route(
@@ -13,6 +14,6 @@ export const POST = route(
     const __ctx = __actor!;
     const {jobId}=params;
     return NextResponse.json(await reopenCollegeDrive(__ctx,jobId,
-   await boundedRequestJson(req)),{headers:{"Cache-Control":"private, no-store"}});
+   await boundedRequestJson(req)),{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

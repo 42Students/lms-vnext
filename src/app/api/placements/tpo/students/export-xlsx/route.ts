@@ -11,6 +11,7 @@ import {getTpoStudentsIntelligence,tpoStudentsQueryObjectSchema,tpoStudentsRange
 import {exportTpoStudentsXlsx} from "@/modules/placements/tpo-students-xlsx";
 import { route } from "@/security/route";
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 async function handleGET(request:Request){
  try{
@@ -50,7 +51,7 @@ async function handleGET(request:Request){
    "Content-Type":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
    "Content-Disposition":'attachment; filename="' + (!savedViewRequested?legacyGridExportFilename(downloadName, "xlsx"):
     legacySavedViewExportFilename(viewName, "xlsx")) + '"',
-   "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff","Vary":"Cookie",
+   "Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff","Vary":"Cookie",
   }});
  }catch(error){return apiErrorResponse(error);}
 }

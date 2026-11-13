@@ -5,12 +5,13 @@ import { listKnownErrorsForAdmin } from "@/modules/log-alerts/admin-service";
 import { logAlertsRuntimeEnabled } from "@/modules/log-alerts/readiness";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 async function handleGET(request: Request) {
   if (!logAlertsRuntimeEnabled()) {
     return NextResponse.json({error:"DB10_LOG_ALERTS_MIGRATIONS_PENDING",message:"Known Errors are unavailable until the log-alert schema is verified."},
-      {status:503,headers:{"Cache-Control":"private, no-store","Retry-After":"60"}});
+      {status:503,headers:{"Cache-Control":CACHE.PRIVATE,"Retry-After":"60"}});
   }
   try {
     const context = await getCurrentRequestContext();
@@ -20,7 +21,7 @@ async function handleGET(request: Request) {
       limit: params.get("limit") ?? undefined,
     });
     return NextResponse.json({ items }, {
-      headers: { "Cache-Control": "private, no-store" },
+      headers: { "Cache-Control": CACHE.PRIVATE },
     });
   } catch (error) {
     return logAlertApiError(error);

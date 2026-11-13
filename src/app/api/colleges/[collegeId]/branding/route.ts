@@ -12,6 +12,7 @@ import {
 } from "@/modules/colleges/branding-service";
 import { z } from "zod";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = { params: Promise<{ collegeId: string }> };
@@ -36,7 +37,7 @@ export const GET = route(
 const collegeId = collegeIdSchema.parse((params).collegeId);
 return NextResponse.json({
       branding: await getCollegeBranding(context, collegeId),
-    },{headers:{"Cache-Control":"private, no-store"}});
+    },{headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch (error) {
     if (error instanceof CollegeBrandingNotFoundError) return notFound();
     return apiErrorResponse(error);
@@ -53,16 +54,16 @@ const collegeId = collegeIdSchema.parse((params).collegeId);
 const body=await readCollegeBrandingBody(request);
 return NextResponse.json({
       branding: await saveCollegeBranding(context, collegeId, body),
-    },{headers:{"Cache-Control":"private, no-store"}});
+    },{headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch (error) {
     if (error instanceof CollegeBrandingBodyError)
       return NextResponse.json({error:"INVALID_REQUEST"},{
        status:error.code==="BODY_TOO_LARGE"?413:400,
-       headers:{"Cache-Control":"private, no-store"},
+       headers:{"Cache-Control":CACHE.PRIVATE},
       });
     if (error instanceof CollegeBrandingVersionError)
       return NextResponse.json({error:"BRANDING_STALE"},{status:409,
-       headers:{"Cache-Control":"private, no-store"}});
+       headers:{"Cache-Control":CACHE.PRIVATE}});
     if (error instanceof CollegeBrandingNotFoundError) return notFound();
     return apiErrorResponse(error);
   }

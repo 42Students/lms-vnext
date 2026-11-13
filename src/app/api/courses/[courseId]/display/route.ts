@@ -12,9 +12,10 @@ import {
 import { courseDisplayRuntimeEnabled } from "@/modules/courses/course-display-readiness";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-const privateHeaders = { "Cache-Control": "private, no-store", Vary: "Cookie" } as const;
+const privateHeaders = { "Cache-Control": CACHE.PRIVATE, Vary: "Cookie" } as const;
 function privateError(error: unknown) {
   const response = apiErrorResponse(error);
   response.headers.set("Cache-Control", "private, no-store");

@@ -10,6 +10,7 @@ import {
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ announcementId: string }> };
 
@@ -32,7 +33,7 @@ async function handlePATCH(request: Request, { params }: RouteContext) {
     return NextResponse.json({
       status:"UPDATED",announcement,
       actionScope:announcement.broadcastGroupId?"BROADCAST_GROUP":"SINGLE_NOTICE",
-    },{headers:{"Cache-Control":"private, no-store"}});
+    },{headers:{"Cache-Control":CACHE.PRIVATE}});
   } catch (error) {
     return announcementApiError(error);
   }
@@ -59,7 +60,7 @@ async function handleDELETE(request: Request, { params }: RouteContext) {
     return NextResponse.json({
       status:"DELETED",announcement,
       actionScope:announcement.broadcastGroupId?"BROADCAST_GROUP":"SINGLE_NOTICE",
-    },{headers:{"Cache-Control":"private, no-store"}});
+    },{headers:{"Cache-Control":CACHE.PRIVATE}});
   } catch (error) {
     return announcementApiError(error);
   }

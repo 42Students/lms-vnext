@@ -4,12 +4,13 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { CourseImageError, getCourseImageStatus } from "@/modules/courses/course-image-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type RouteContext = { params: Promise<{ courseId: string }> };
 
 async function handleGET(_request: Request, { params }: RouteContext) {
-  const headers = { "Cache-Control": "private, no-store", Vary: "Cookie" };
+  const headers = { "Cache-Control": CACHE.PRIVATE, Vary: "Cookie" };
   try {
     const context = await getCurrentRequestContext();
     const { courseId } = await params;

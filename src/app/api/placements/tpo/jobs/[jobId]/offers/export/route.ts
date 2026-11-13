@@ -4,6 +4,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoDriveOfferRegisterCsv } from "@/modules/placements/tpo-drive-offer-register-service";
 import {tpoReportHasRepeatedSearchParams} from "@/modules/placements/tpo-report-url-guard";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 async function handleGET(request:Request,{params}:{
@@ -19,7 +20,7 @@ async function handleGET(request:Request,{params}:{
       error:"Invalid report filters. Clear the filters and try again.",
     },{
       status:400,headers:{
-        "Cache-Control":"private, no-store, max-age=0",
+        "Cache-Control":CACHE.PRIVATE_STRICT,
         "X-Content-Type-Options":"nosniff",
         Vary:"Cookie",
       },
@@ -29,7 +30,7 @@ async function handleGET(request:Request,{params}:{
   return new Response("\uFEFF"+result.csv,{status:200,headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-drive-offers", "csv") + '"',
-   "Cache-Control":"private, no-store, max-age=0",
+   "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff",
    "Vary":"Cookie",
    "X-Export-Truncated":String(result.truncated),

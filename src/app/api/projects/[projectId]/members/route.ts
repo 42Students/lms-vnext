@@ -9,6 +9,7 @@ import {
 } from "@/modules/projects/member-service";
 import { addProjectMemberInputSchema } from "@/modules/projects/validation";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const GET = route(
@@ -40,7 +41,7 @@ export const POST = route(
         context, projectId, choice.primaryMentorMembershipId, choice.roleLabel,
       );
       return NextResponse.json({ primaryMentor }, {
-        headers: { "Cache-Control": "private, no-store" },
+        headers: { "Cache-Control": CACHE.PRIVATE },
       });
     }
     const member = await addProjectMember(

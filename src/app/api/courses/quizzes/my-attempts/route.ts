@@ -4,9 +4,10 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { listOwnQuizAttemptHistory } from "@/modules/courses/learner-quiz-attempt-history-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-const headers = { "Cache-Control": "private, no-store" };
+const headers = { "Cache-Control": CACHE.PRIVATE };
 
 /** Historic /my-submissions is now a membership-scoped all-quiz index.
  * Never accept caller-selected learner IDs, raw numeric quiz IDs or colleges. */

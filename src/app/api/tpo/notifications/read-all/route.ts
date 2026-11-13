@@ -7,6 +7,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { parseTpoNotificationReadBody } from "@/modules/activity/tpo-notifications-model";
 import { markAllOwnTpoNotificationsRead } from "@/modules/activity/tpo-notifications-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const POST = route(
@@ -16,7 +17,7 @@ export const POST = route(
     const decoded=await readBoundedUtf8Body(request,512);
     if (decoded.kind!=="OK") return NextResponse.json(
       {error:"INVALID_BODY"},{status:decoded.kind==="TOO_LARGE"?413:400,
-        headers:{"Cache-Control":"private, no-store"}},
+        headers:{"Cache-Control":CACHE.PRIVATE}},
     );
     parseTpoNotificationReadBody(decoded.body);
     return NextResponse.json(await markAllOwnTpoNotificationsRead(context));

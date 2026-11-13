@@ -4,9 +4,10 @@ import { handleTelegramCallback, validTelegramWebhookSecret } from "@/modules/lo
 import { route } from "@/security/route";
 
 import { env } from "@/config/env";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 const MAX_WEBHOOK_BYTES = 8192;
-const noStore = { "Cache-Control": "no-store" } as const;
+const noStore = { "Cache-Control": CACHE.NONE } as const;
 
 /** Telegram is a third-party webhook: secret-token verification replaces browser Origin. */
 async function handlePOST(request: Request) {

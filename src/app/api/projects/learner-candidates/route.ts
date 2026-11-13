@@ -1,10 +1,10 @@
 import { route } from "@/security/route";
-import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { listStandaloneProjectLearnerCandidates } from "@/modules/projects/class-team-roster-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -16,6 +16,6 @@ export const GET = route(
     }).parse(Object.fromEntries(new URL(request.url).searchParams));
     const result=await listStandaloneProjectLearnerCandidates(__ctx,
       input.collegeId,input.q??"",input.page??0);
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(result);
   },
 );

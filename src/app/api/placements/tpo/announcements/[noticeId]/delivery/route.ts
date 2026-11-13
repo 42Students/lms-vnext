@@ -13,6 +13,7 @@ import { deliverDueTpoNotices } from "@/modules/announcements/tpo-notice-deliver
 import { route } from "@/security/route";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -64,7 +65,7 @@ async function handleGET(_request: Request, { params }: Params) {
         : failed ? "The notice could not be delivered. Retry after checking the audience." : null,
       retryable: failed,
       lastAttemptAt: event?.occurredAt.toISOString() ?? null,
-    }, {headers: {"Cache-Control":"private, no-store"}});
+    }, {headers: {"Cache-Control":CACHE.PRIVATE}});
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -98,7 +99,7 @@ async function handlePOST(request: Request, { params }: Params) {
     }
     return NextResponse.json({
       status:"OK",noticeId:notice.id,delivered:outcome.delivered,
-    }, {headers:{"Cache-Control":"private, no-store"}});
+    }, {headers:{"Cache-Control":CACHE.PRIVATE}});
   } catch (error) {
     return apiErrorResponse(error);
   }

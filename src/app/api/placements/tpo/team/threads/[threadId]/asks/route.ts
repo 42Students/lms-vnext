@@ -7,6 +7,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {createTpoTeamAsk,TpoTeamAddPeopleRequiredError} from "@/modules/placements/tpo-team-asks-service";
 import {tpoTeamAskCreateSchema} from "@/modules/placements/tpo-team-asks-model";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{threadId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -23,7 +24,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{threadId:str
     error:"ADD_PEOPLE",
     message:"Add the selected colleague to this private thread before assigning an ask.",
     missingMembershipIds:error.missingMembershipIds,
-   },{status:409,headers:{"Cache-Control":"private, no-store"}});
+   },{status:409,headers:{"Cache-Control":CACHE.PRIVATE}});
   if(error instanceof AuthorizationError)return NextResponse.json({error:"FORBIDDEN"},{status:403});
   if(error instanceof z.ZodError)return NextResponse.json({error:"INVALID_BODY"},{status:400});
   const code=error instanceof Error?error.message:"";

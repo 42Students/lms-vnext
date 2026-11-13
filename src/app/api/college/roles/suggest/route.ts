@@ -5,6 +5,7 @@ import {and,asc,eq,ilike,sql} from "drizzle-orm";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "people.manage" },
@@ -40,6 +41,6 @@ export const GET = route(
    .limit(8);
     return Response.json({items:items.map(row=>({
     membershipId:row.membershipId,name:row.name??"Unnamed",
-  }))},{headers:{"Cache-Control":"private, no-store"}});
+  }))},{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

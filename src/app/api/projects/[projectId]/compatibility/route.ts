@@ -6,6 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {legacyProjectSectionOrder,projectLegacyCompatibilityRoutes}
  from "@/modules/projects/legacy-project-api-crosswalk";
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -22,6 +23,6 @@ export const GET = route(
    sections:legacyProjectSectionOrder[role],
    routes:projectLegacyCompatibilityRoutes(scope.project.id,role,
       scope.access!=="OBSERVER"),
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

@@ -5,6 +5,7 @@ import {exportParams} from "@/modules/academics/college-directory-export-model";
 import {listCollegeCourseCatalogueExport} from "@/modules/courses/college-course-catalogue-service";
 import {renderCollegeCourseCatalogueCsv} from "@/modules/courses/college-course-catalogue-export-model";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "courses.read", stepUp: true },
@@ -18,7 +19,7 @@ export const GET = route(
     return new Response(renderCollegeCourseCatalogueCsv(rows,truncated),{
    headers:{"Content-Type":"text/csv; charset=utf-8",
     "Content-Disposition":'attachment; filename="college-courses.csv"',
-    "Cache-Control":"private, no-store"},
+    "Cache-Control":CACHE.PRIVATE},
   });
   },
 );

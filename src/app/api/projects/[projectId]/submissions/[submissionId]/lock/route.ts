@@ -5,6 +5,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {lockAdminProjectSubmission} from "@/modules/projects/admin-submission-review-service";
 import {readLimitedProjectLockInput} from "@/modules/projects/admin-lock-request-model";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -16,6 +17,6 @@ export const POST = route(
     const {projectId,submissionId}=params;
     const submission=await lockAdminProjectSubmission(__ctx,
    projectId,submissionId,command.value);
-    return NextResponse.json({submission},{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson({submission});
   },
 );

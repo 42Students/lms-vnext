@@ -10,6 +10,7 @@ import {changeTpoSeason,TpoSettingsStaleError} from "@/modules/placements/tpo-se
 import { route } from "@/security/route";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 
 /** Legacy /lens/seasons parity: the season selector must be populated by a
@@ -35,7 +36,7 @@ async function handleGET(){
         expectedUpdatedAt:row.updatedAt.toISOString(),
       })),
       currentSeasonId:lens.find(row=>row.isCurrent)?.id??null,
-    },{headers:{"Cache-Control":"private, no-store"}});
+    },{headers:{"Cache-Control":CACHE.PRIVATE}});
   }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(
@@ -56,7 +57,7 @@ async function writeSeason(request:Request,action:"POST"|"PUT"){
     const input=action==="PUT"?{...raw,action:"EDIT"}:raw;
     const season=await changeTpoSeason(context,input);
     return NextResponse.json({season,ok:true},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   }catch(error){
     if(error instanceof TpoSettingsStaleError)
       return NextResponse.json({error:"TPO_SETTINGS_STALE"},{status:409});

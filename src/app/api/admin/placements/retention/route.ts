@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getSuperAdminPlacementRetentionReport } from "@/modules/admin-ui/super-admin-placement-retention-service";
 import { requireSuperAdminSelectedCollege } from "@/modules/admin-ui/super-admin-selected-college";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const GET = route(
@@ -13,7 +14,7 @@ export const GET = route(
     const requestedCollege = new URL(request.url).searchParams.get("collegeId");
     if (!requestedCollege || requestedCollege !== scope.collegeId) {
       return NextResponse.json({ error: "COLLEGE_SCOPE_CHANGED" }, {
-        status: 409, headers: { "Cache-Control": "private, no-store" },
+        status: 409, headers: { "Cache-Control": CACHE.PRIVATE },
       });
     }
     const report = await getSuperAdminPlacementRetentionReport(context);
@@ -25,6 +26,6 @@ export const GET = route(
       })),
       truncated: report.truncated, cutoff: report.cutoff,
       totalStaleCount: report.truncated ? null : report.rows.length,
-    }, { headers: { "Cache-Control": "private, no-store" } });
+    }, { headers: { "Cache-Control": CACHE.PRIVATE } });
   },
 );

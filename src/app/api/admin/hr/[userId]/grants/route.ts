@@ -9,6 +9,7 @@ import {
   grantSuperAdminHrCollegeInputSchema,
 } from "@/modules/placements/super-admin-hr-validation";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const POST = route(
@@ -36,7 +37,7 @@ export const POST = route(
       );
     return NextResponse.json(
       { grant },
-      { status: 201, headers: { "Cache-Control": "private, no-store" } },
+      { status: 201, headers: { "Cache-Control": CACHE.PRIVATE } },
     );
   },
 );

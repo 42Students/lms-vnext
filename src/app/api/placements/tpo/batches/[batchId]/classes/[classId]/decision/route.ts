@@ -9,6 +9,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoBatch} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {decidePlacementParticipation} from "@/modules/placements/batch-participation-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 const command=z.discriminatedUnion("decision",[
  z.strictObject({decision:z.literal("ELIGIBLE"),expectedVersion:z.string().min(1)}),
@@ -33,6 +34,6 @@ export const POST = route(
    expectedVersion:input.expectedVersion,
    reason:input.decision==="INELIGIBLE"?input.reason:null,
   }]});
-    return Response.json(outcome,{headers:{"Cache-Control":"private, no-store"}});
+    return Response.json(outcome,{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

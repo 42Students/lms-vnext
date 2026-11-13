@@ -7,6 +7,7 @@ import {parseMentorNotificationReadBody} from
   "@/modules/activity/mentor-notification-read-input";
 import {markVisibleMentorSourcesRead} from
   "@/modules/projects/mentor-notification-source-receipts-service";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 
 /** Mark only current, verified visible Mentor source notifications.
@@ -20,6 +21,6 @@ export const POST = route(
     if(body.length>256)return NextResponse.json({error:"INVALID_REQUEST"},{status:413});
     parseMentorNotificationReadBody(body);
     const result=await markVisibleMentorSourcesRead(__ctx);
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(result);
   },
 );

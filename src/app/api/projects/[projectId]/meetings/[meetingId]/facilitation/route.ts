@@ -7,6 +7,7 @@ import {readMentorProjectCommandBody,MentorProjectCommandBodyError,
 import {updateMentorMeetingFacilitation} from
  "@/modules/projects/mentor-meeting-notes-service";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 type Context={params:Promise<{projectId:string;meetingId:string}>};
 async function handlePATCH(request:Request,{params}:Context){
@@ -17,7 +18,7 @@ async function handlePATCH(request:Request,{params}:Context){
   const result=await updateMentorMeetingFacilitation(context,path,
     await readMentorProjectCommandBody(request));
   return NextResponse.json({meeting:result},{
-    headers:{"Cache-Control":"private, no-store"},
+    headers:{"Cache-Control":CACHE.PRIVATE},
   });
  }catch(error){
   if(error instanceof MentorProjectCommandBodyError)

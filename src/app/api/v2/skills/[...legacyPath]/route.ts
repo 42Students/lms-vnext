@@ -3,10 +3,11 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { GET as readSkills, POST as selectSkill } from "@/app/api/skills/route";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type Context = { params: Promise<{ legacyPath: string[] }> };
-const headers = { "Cache-Control": "private, no-store" };
+const headers = { "Cache-Control": CACHE.PRIVATE };
 
 function readMode(parts: string[]) {
   if (parts.length === 1 && ["search", "popular", "categories", "stats"].includes(parts[0]!))

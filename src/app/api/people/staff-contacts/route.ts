@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { listCollegeStaffContacts } from "@/modules/people/college-contacts-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 /**
@@ -22,7 +23,7 @@ export const GET = route(
       limit: params.get("limit") ?? undefined,
     });
     return NextResponse.json(result, {
-      headers: { "Cache-Control": "private, no-store" },
+      headers: { "Cache-Control": CACHE.PRIVATE },
     });
   },
 );

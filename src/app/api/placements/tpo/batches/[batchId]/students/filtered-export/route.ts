@@ -6,6 +6,7 @@ import {parseBatchStudentSearchParams} from "@/modules/placements/tpo-batch-stud
 import {selectTpoBatchStudentView} from "@/modules/placements/tpo-batch-student-selection-model";
 import {serializeTpoBatchStudentViewCsv} from "@/modules/placements/tpo-batch-student-filtered-export-model";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const pageSchema=z.coerce.number().int().min(1).max(100000).default(1);
@@ -21,7 +22,7 @@ async function handleGET(request:Request,{params}:{params:Promise<{batchId:strin
   return new Response("\uFEFF"+serializeTpoBatchStudentViewCsv(chosen),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="tpo-batch-students-filtered-page.csv"',
-   "Cache-Control":"private, no-store, max-age=0",
+   "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff",
    "X-Export-Scope":"authorized-current-page-only",
    "Vary":"Cookie",

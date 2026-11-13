@@ -6,6 +6,7 @@ import {
 } from "@/modules/placements/tpo-shareable-shortlist-model";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type RouteContext = { params: Promise<{ jobId: string }> };
@@ -21,7 +22,7 @@ async function handleGET(request: Request, { params }: RouteContext) {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
         "Content-Disposition": 'attachment; filename="tpo-recruiter-visible-shortlist.csv"',
-        "Cache-Control": "private, no-store",
+        "Cache-Control": CACHE.PRIVATE,
         "X-Content-Type-Options": "nosniff",
         Vary: "Cookie",
       },

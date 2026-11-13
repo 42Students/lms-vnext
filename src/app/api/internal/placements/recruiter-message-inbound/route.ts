@@ -4,6 +4,7 @@ import {acceptAuthenticatedRecruiterEmailReply} from "@/modules/placements/recru
 import {readBoundedRecruiterInboundBody} from "@/modules/placements/recruiter-mail-body-model";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 
 /**
@@ -22,7 +23,7 @@ export const runtime="nodejs";
  * Public /api/v1/public/inbound-email is NOT exposed by this app; an external
  * adapter must rewrite it after verifying the provider signature.
  */
-const noStore={"Cache-Control":"no-store"};
+const noStore={"Cache-Control":CACHE.NONE};
 function reply(body:{error:string;outcome?:string;action?:string;retryable?:boolean}|
   {accepted:true;replayed:boolean;outcome:"POSTED"|"STORED"|"DUPLICATE"|"NOT_OURS"},status=200){
  return NextResponse.json(body,{status,headers:noStore});

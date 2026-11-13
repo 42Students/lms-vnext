@@ -7,6 +7,7 @@ import {findLegacyReassignmentMentorMembership}
 import {z} from "zod";
 import {bulkProjectMentorReassignmentInputSchema} from "@/modules/projects/validation";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const POST = route(
@@ -46,6 +47,6 @@ export const POST = route(
     return NextResponse.json({...result,
       partialSuccess:result.failures.length>0&&result.reassignedCount>0,
       failedProjects:result.failures,
-    },{headers:{"Cache-Control":"private, no-store"}});
+    },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

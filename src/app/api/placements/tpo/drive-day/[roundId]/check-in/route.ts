@@ -5,6 +5,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { confirmTpoDriveDayCheckIn,TpoAttendanceStaleError } from "@/modules/placements/tpo-drive-day-checkin-service";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -17,7 +18,7 @@ return NextResponse.json(await confirmTpoDriveDayCheckIn(context, roundId, await
     if(error instanceof TpoAttendanceStaleError)
       return NextResponse.json({error:"ATTENDANCE_STALE",
        message:"Attendance changed in another session. Refresh the roster and retry."},
-       {status:409,headers:{"Cache-Control":"private, no-store"}});
+       {status:409,headers:{"Cache-Control":CACHE.PRIVATE}});
     return apiErrorResponse(error);
   }
   },

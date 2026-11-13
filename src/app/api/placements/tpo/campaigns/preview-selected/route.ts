@@ -7,6 +7,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {readTpoSettingsBody,TpoCommunicationBodyError} from "@/modules/placements/tpo-communication-request-model";
 import {previewSelectedTpoCampaignAudience} from "@/modules/messaging/engage-audience-service";
 
+import { CACHE, noStoreJson } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -18,10 +19,10 @@ export const POST = route(
     try {
 const input=await readTpoSettingsBody(request);
 const result=await previewSelectedTpoCampaignAudience(__ctx,input);
-return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+return noStoreJson(result);
 } catch(error){
   if(error instanceof TpoCommunicationBodyError)return NextResponse.json({error:"INVALID_SELECTION"},{
-   status:error.code==="BODY_TOO_LARGE"?413:400,headers:{"Cache-Control":"private, no-store"},
+   status:error.code==="BODY_TOO_LARGE"?413:400,headers:{"Cache-Control":CACHE.PRIVATE},
   });
   if(error instanceof ZodError)return NextResponse.json({error:"INVALID_SELECTION"},{status:422});
   return apiErrorResponse(error);

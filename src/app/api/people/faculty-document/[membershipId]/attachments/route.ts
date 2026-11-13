@@ -12,9 +12,10 @@ import {
 } from "@/modules/people/faculty-admin-document-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"private, no-store"};
+const noStore={"Cache-Control":CACHE.PRIVATE};
 type Params={params:Promise<{membershipId:string}>};
 
 async function readInput(request:Request){

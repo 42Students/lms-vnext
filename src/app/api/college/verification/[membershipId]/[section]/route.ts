@@ -6,6 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {VerificationStateError} from "@/modules/profile-verification/domain";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {getCollegeVerificationDetail} from "@/modules/verification/staff-review-detail-service";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -15,7 +16,7 @@ export const GET = route(
 const raw=params;
 const input=z.strictObject({membershipId:z.string().uuid(),section:z.enum(["EDUCATION","IDENTITY"])}).parse(raw);
 const review=await getCollegeVerificationDetail(__ctx,input.membershipId,input.section);
-return NextResponse.json({review},{headers:{"Cache-Control":"private, no-store"}});
+return privateJson({review});
 } catch(error){
   if(error instanceof VerificationStateError)return NextResponse.json({error:"NOT_FOUND"},{status:404});
   if(error instanceof VerificationUnavailableError)return NextResponse.json({error:error.message},{status:503});

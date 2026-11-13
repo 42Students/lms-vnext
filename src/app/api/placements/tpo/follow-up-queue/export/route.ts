@@ -5,19 +5,20 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoFollowupQueueCsv} from "@/modules/placements/tpo-followup-queue-service";
 import { route } from "@/security/route";
 import { featureReady } from "@/config/features";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 async function handleGET(request:Request){
  if(!featureReady("tpoApi"))
   return NextResponse.json({error:"DB09_MIGRATIONS_PENDING"},{status:503,
-   headers:{"Cache-Control":"private, no-store, max-age=0"}});
+   headers:{"Cache-Control":CACHE.PRIVATE_STRICT}});
  try{
   const query=Object.fromEntries(new URL(request.url).searchParams.entries());
   const result=await getTpoFollowupQueueCsv(await getCurrentRequestContext(),query);
   return new Response("\uFEFF"+result.csv,{status:200,headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-recruiter-followups", "csv") + '"',
-   "Cache-Control":"private, no-store, max-age=0",
+   "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff","Vary":"Cookie",
    "X-Export-Truncated":String(result.truncated),
   }});

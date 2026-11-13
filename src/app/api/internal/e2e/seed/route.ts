@@ -8,9 +8,10 @@ import {assertE2EFixtureWriterEnabled,seedIsolatedE2EAcademicGraph}
 import { route } from "@/security/route";
 
 import { env } from "@/config/env";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const headers={"Cache-Control":"private, no-store"};
+const headers={"Cache-Control":CACHE.PRIVATE};
 /**
  * No production registration is authorized to execute this endpoint:
  * strict server-side env gates, a separately provisioned 32+ byte secret,

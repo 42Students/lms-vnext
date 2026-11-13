@@ -6,6 +6,7 @@ import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-q
 import {csvSafeCell} from "@/modules/projects/mentor-board-review-model";
 import {mentorSprintProgressQuerySchema} from "@/modules/projects/mentor-sprint-progress-model";
 import {getMentorSprintProgress} from "@/modules/projects/mentor-sprint-progress-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced", stepUp: true },
@@ -15,7 +16,7 @@ export const GET = route(
     const filters=singleValueMentorExportFilters(url.searchParams,
       ["projectId","taskAttention","order","state","release","search"]);
     if(!filters)return NextResponse.json({error:"INVALID_QUERY"},{status:400,
-      headers:{"Cache-Control":"private, no-store"}});
+      headers:{"Cache-Control":CACHE.PRIVATE}});
     const query=mentorSprintProgressQuerySchema.parse({...filters,page:1});
     const first=await getMentorSprintProgress(context,query);
     if(!first.enabled)return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403});
@@ -39,7 +40,7 @@ export const GET = route(
     return new Response("\uFEFF"+csv.join("\r\n")+"\r\n",{
       headers:{"Content-Type":"text/csv; charset=utf-8",
         "Content-Disposition":'attachment; filename="mentor-sprint-progress.csv"',
-        "Cache-Control":"private, no-store","X-Export-Omitted":String(omitted)},
+        "Cache-Control":CACHE.PRIVATE,"X-Export-Omitted":String(omitted)},
     });
   },
 );

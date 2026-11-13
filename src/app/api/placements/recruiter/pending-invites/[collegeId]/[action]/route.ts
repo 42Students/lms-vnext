@@ -4,6 +4,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {resolveSignedInRecruiterPendingInvite} from "@/modules/placements/public-recruiter-invite-accept-service";
 import { route } from "@/security/route";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 type Params={params:Promise<{collegeId:string;action:string}>};
 async function handlePOST(request:Request,{params}:Params){
@@ -12,7 +13,7 @@ async function handlePOST(request:Request,{params}:Params){
  if(action!=="accept"&&action!=="decline")return NextResponse.json({error:"NOT_FOUND"},{status:404});
  try{
   const result=await resolveSignedInRecruiterPendingInvite(await getCurrentRequestContext(),collegeId,action);
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(result);
  }catch(error){return apiErrorResponse(error);}
 }
 export const POST = route(

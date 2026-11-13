@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoPersonalInbox} from "@/modules/activity/tpo-notifications-service";
 import {countTpoUnreadRecruiterMessages} from "@/modules/placements/tpo-recruiter-unread-count-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 /** TPO-home-33 / TPO-inbox-team-62: own-college unread counts, no message bodies. */
 export const GET = route(
@@ -20,7 +21,7 @@ export const GET = route(
    createdAt:notification.createdAt.toISOString(),
   }));
     return NextResponse.json({messages,unread:inbox.unreadCount,items},{
-   headers:{"Cache-Control":"private, no-store"},
+   headers:{"Cache-Control":CACHE.PRIVATE},
   });
   },
 );

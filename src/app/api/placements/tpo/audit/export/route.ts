@@ -9,6 +9,7 @@ import {tpoAuditXlsx} from "@/modules/placements/tpo-audit-xlsx-model";
 import {getTpoAuditLog,tpoAuditQuerySchema,type TpoAuditRow} from "@/modules/placements/tpo-audit-service";
 import { route } from "@/security/route";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Page through the actual college-scoped union, never export unfiltered raw history. */
@@ -18,11 +19,11 @@ async function handleGET(request:Request){
   const format=url.searchParams.get("format")??"csv";
   if(format!=="csv"&&format!=="xlsx")return new Response(JSON.stringify({
     error:"INVALID_EXPORT_FORMAT",message:"Choose CSV or XLSX.",
-  }),{status:422,headers:{"Content-Type":"application/json","Cache-Control":"private, no-store"}});
+  }),{status:422,headers:{"Content-Type":"application/json","Cache-Control":CACHE.PRIVATE}});
   const selected=url.searchParams.getAll("id");
   if(selected.length>5000||selected.some(id=>!/^[0-9a-f-]{36}$/i.test(id)))
    return new Response(JSON.stringify({error:"INVALID_SELECTION"}),
-    {status:400,headers:{"Content-Type":"application/json","Cache-Control":"private, no-store"}});
+    {status:400,headers:{"Content-Type":"application/json","Cache-Control":CACHE.PRIVATE}});
   const columnsInput=url.searchParams.get("columns");
   const permitted=["Event","About","Detail","Actor","When"] as const;
   const chosen:(typeof permitted[number])[]=columnsInput===null?["Event","Actor","When"]:
@@ -30,7 +31,7 @@ async function handleGET(request:Request){
     permitted.some(name=>name===value));
   if(chosen.length===0)return new Response(JSON.stringify({
     error:"INVALID_COLUMNS",message:"Choose at least one audit column to export.",
-  }),{status:400,headers:{"Content-Type":"application/json","Cache-Control":"private, no-store"}});
+  }),{status:400,headers:{"Content-Type":"application/json","Cache-Control":CACHE.PRIVATE}});
   const raw=Object.fromEntries(url.searchParams.entries());
   for(const key of ["page","pageSize","format","columns","id"])delete raw[key];
   const filters=tpoAuditQuerySchema.parse({...raw,page:1,pageSize:100});
@@ -67,7 +68,7 @@ async function handleGET(request:Request){
   return new Response(body,{headers:{
    "Content-Type":format==="xlsx"?"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="' + gridExportFilename("audit-log", format) + '"',
-   "Cache-Control":"private, no-store, max-age=0",
+   "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff",
    "X-Export-Truncated":items.length<total?"true":"false",
    "X-Export-Selected":String(filtered.length),

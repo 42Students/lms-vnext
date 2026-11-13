@@ -6,6 +6,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {reconcileLegacySkillCatalog} from "@/modules/skills/skill-source-import-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 /** Upload the bounded decoded RTF/CSV text through authenticated JSON only.
  * No remote URL fetch, file path, automatic seed or public ingestion route. */
@@ -25,6 +26,6 @@ export const POST = route(
     await requireRecentDeviceAuthentication(context.user.id);
     const result=await reconcileLegacySkillCatalog(context,body);
     return NextResponse.json({report:result},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

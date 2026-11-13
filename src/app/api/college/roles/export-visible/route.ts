@@ -5,6 +5,7 @@ import {collegeRoleDirectoryQuerySchema} from "@/modules/people/college-role-dir
 import {exportVisibleCollegePeople} from "@/modules/people/college-visible-directory-export";
 import { route } from "@/security/route";
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 async function handleGET(req:Request){
  try{
@@ -20,7 +21,7 @@ async function handleGET(req:Request){
   return new Response(data.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="'+name+'"',
-   "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff",
+   "Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff",
    "X-Export-Page":String(data.page),"X-Export-Count":String(data.shown),
   }});
  }catch(e){return apiErrorResponse(e);}

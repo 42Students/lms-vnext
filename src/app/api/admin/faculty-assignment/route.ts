@@ -5,6 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {listAdminFacultyAssignments} from "@/modules/admin-ui/super-admin-faculty-assignments-service";
 import { route } from "@/security/route";
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Zero-based legacy admin read adapter. All college scope comes from the
@@ -47,7 +48,7 @@ async function handleGET(request:Request){
   }
   return NextResponse.json({content,totalElements:first.total,
    totalPages:Math.max(1,Math.ceil(first.total/size)),page,size},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(

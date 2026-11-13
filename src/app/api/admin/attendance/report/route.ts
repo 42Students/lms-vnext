@@ -4,6 +4,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getAdminAttendanceGrid} from "@/modules/attendance/admin-service";
 import {attendanceIndiaDay} from "@/modules/attendance/admin-grid-model";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 const query=z.strictObject({
  deliveryId:z.string().uuid(),
@@ -73,7 +74,7 @@ async function handleGET(request:Request){
    rows:flat,
   }:{rows:flat};
   return Response.json({deliveryId,startDate,endDate,view,...report},{
-   headers:{"Cache-Control":"private, no-store"}});
+   headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(

@@ -7,9 +7,10 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {undoCollegeApplicationStage,COLLEGE_STAGE_UNDO_TOO_LATE}
  from "@/modules/placements/college-stage-undo-service";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"private, no-store"} as const;
+const noStore={"Cache-Control":CACHE.PRIVATE} as const;
 type Params={params:Promise<{jobId:string}>};
 async function handlePOST(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))

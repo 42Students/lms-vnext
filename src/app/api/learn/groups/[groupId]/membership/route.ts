@@ -6,6 +6,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {joinGroup,leaveGroup} from "@/modules/groups/service";
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -19,6 +20,6 @@ export const POST = route(
    await joinGroup(context,id,context.membership.id,"SELF"):
    await leaveGroup(context,id,context.membership.id,"SELF");
     return NextResponse.json({group:{id,memberState:membership.state==="REMOVED"?null:membership.state}},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

@@ -8,6 +8,7 @@ import { cloudPollSettings } from "@/modules/log-alerts/scheduler";
 import { cloudLoggingAccessToken, readCloudLogErrorPage } from "@/modules/log-alerts/cloud-log-reader";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,7 @@ const querySchema = z.strictObject({
   minimumSeverity: z.enum(["WARNING", "ERROR"]).default("WARNING"),
 });
 const HEADERS = {
-  "Cache-Control": "private, no-store",
+  "Cache-Control": CACHE.PRIVATE,
   "X-Content-Type-Options": "nosniff",
 } as const;
 

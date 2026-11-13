@@ -12,6 +12,7 @@ import { getCollegeDashboardSetupGaps } from "@/modules/admin-ui/college-dashboa
 import { getCollegeClosingQuizzes } from "@/modules/admin-ui/college-dashboard-quizzes-service";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 function value<T>(result: PromiseSettledResult<T>): T | null {
   return result.status === "fulfilled" ? result.value : null;
@@ -60,6 +61,6 @@ export const GET = route(
       unstaffed:value(staffing) ? {count:value(staffingCount),items:value(staffing)} : null,
       setupGaps:value(setup),
       dueQuizzes:value(quizzes),
-    }, {headers:{"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"}});
+    }, {headers:{"Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff"}});
   },
 );

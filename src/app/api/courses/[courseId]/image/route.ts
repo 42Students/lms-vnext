@@ -8,10 +8,11 @@ import {
   CourseImageError, grantCourseImage, readCourseImage, removeCourseImage,
 } from "@/modules/courses/course-image-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type RouteContext = { params: Promise<{ courseId: string }> };
-const privateHeaders = { "Cache-Control": "private, no-store", Vary: "Cookie" };
+const privateHeaders = { "Cache-Control": CACHE.PRIVATE, Vary: "Cookie" };
 
 function imageError(error: unknown) {
   if (error instanceof CourseImageError) {

@@ -11,6 +11,7 @@ import {VerificationStateError} from "@/modules/profile-verification/domain";
 import {reviewProfileVerification} from "@/modules/profile-verification/service";
 import {createProfileVerificationRepository} from "@/modules/profile-verification/repository";
 import {verifyPrivateDocumentReceipt} from "@/modules/profile-verification/private-receipts";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -31,7 +32,7 @@ const message=input.action==="VERIFY"?sectionLabel+" verified":
     :sectionLabel+" sent back for changes";
 return NextResponse.json({decision:{learnerMembershipId:record.learnerMembershipId,
    section:record.section,status:record.status,version:record.version},message},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch(error){
   if(error instanceof VerificationUnavailableError)
    return NextResponse.json({error:error.message},{status:503});
@@ -45,7 +46,7 @@ return NextResponse.json({decision:{learnerMembershipId:record.learnerMembership
     :error.code==="NOT_ALLOWED"?"This verification record is not available."
     :"Could not complete the review. Reload the student and try again.";
    return NextResponse.json({error:error.code==="NOT_ALLOWED"?"NOT_FOUND":error.code,message},
-    {status,headers:{"Cache-Control":"private, no-store"}});
+    {status,headers:{"Cache-Control":CACHE.PRIVATE}});
   }
   return apiErrorResponse(error);
  }

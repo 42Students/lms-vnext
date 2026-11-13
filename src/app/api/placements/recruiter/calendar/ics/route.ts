@@ -8,6 +8,7 @@ import {recruiterCalendarQuerySchema,listRecruiterCalendarEvents}
  from "@/modules/placements/recruiter-calendar-service";
 import {recruiterCalendarIcs} from "@/modules/placements/recruiter-calendar-ics-model";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 const querySchema=z.strictObject({
  from:z.iso.date(),to:z.iso.date(),collegeId:z.string().uuid().optional(),
@@ -39,7 +40,7 @@ export const GET = route(
     return new Response(exported.ics,{headers:{
    "Content-Type":"text/calendar; charset=utf-8",
    "Content-Disposition":'attachment; filename="recruiter-drives.ics"',
-   "Cache-Control":"private, no-store",
+   "Cache-Control":CACHE.PRIVATE,
    "X-Content-Type-Options":"nosniff",
    ...(exported.truncated?{"X-Export-Truncated":"true"}:{}),
   }});

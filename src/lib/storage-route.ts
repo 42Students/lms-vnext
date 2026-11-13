@@ -3,6 +3,7 @@ import { ZodError } from "zod";
 import { readBoundedUtf8Body } from "@/lib/bounded-utf8-body";
 import { StorageFileError } from "@/modules/storage/file-errors";
 
+import { CACHE } from "@/security/responses";
 /** Metadata-only JSON: private file bytes are uploaded directly to storage. */
 export const MAX_STORAGE_JSON_BYTES = 64 * 1024;
 
@@ -52,5 +53,5 @@ export async function readOptionalJsonBody(request: Request): Promise<unknown> {
 
 /** JSON response that must never be cached (carries short-lived signed URLs or private state). */
 export function storageJson(body: unknown, status = 200) {
-  return NextResponse.json(body, { status, headers: { "Cache-Control": "no-store" } });
+  return NextResponse.json(body, { status, headers: { "Cache-Control": CACHE.NONE } });
 }

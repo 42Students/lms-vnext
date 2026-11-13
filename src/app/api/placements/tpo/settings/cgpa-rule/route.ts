@@ -8,6 +8,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-service";
 import {setCollegeCgpaConversionRule} from "@/modules/profile-verification/settings-service";
 import { ROLE } from "@/modules/identity/roles";
+import { noStoreJson } from "@/security/responses";
 export const runtime="nodejs";
 const body=z.strictObject({
  rule:z.enum(["X9_5","MINUS_0_5_X10","MINUS_0_75_X10","X10"]),
@@ -27,6 +28,6 @@ export const POST = route(
    return NextResponse.json({error:"FORBIDDEN"},{status:403});
     const rule=body.parse(JSON.parse(decoded.body)).rule;
     const result=await setCollegeCgpaConversionRule(context,context.membership.collegeId,rule);
-    return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+    return noStoreJson(result);
   },
 );

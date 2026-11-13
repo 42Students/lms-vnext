@@ -6,6 +6,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
 import { issuePlacementOffer } from "@/modules/placements/offer-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -33,7 +34,7 @@ return NextResponse.json(
     );
 } catch (error) {
     if(error instanceof TpoBulkBodyError)return NextResponse.json({error:error.message},{
-      status:error.status,headers:{"Cache-Control":"private, no-store"},
+      status:error.status,headers:{"Cache-Control":CACHE.PRIVATE},
     });
     return apiErrorResponse(error);
   }

@@ -6,6 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {readBoundedFacultyProfileJson,FacultyProfileBodyTooLarge} from "@/modules/people/faculty-profile-request-body";
 import {getFacultyDocumentForAdmin,patchFacultyDocumentForAdmin} from "@/modules/people/faculty-admin-document-service";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 type Params={params:Promise<{membershipId:string}>};
 export const GET = route(
@@ -14,7 +15,7 @@ export const GET = route(
     const __ctx = __actor!;
     const {membershipId}=params;
     return NextResponse.json(await getFacultyDocumentForAdmin(__ctx,membershipId),
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 export const PATCH = route(
@@ -27,7 +28,7 @@ export const PATCH = route(
   catch(error){return NextResponse.json({error:error instanceof FacultyProfileBodyTooLarge?
    "REQUEST_TOO_LARGE":"INVALID_REQUEST"},{status:error instanceof FacultyProfileBodyTooLarge?413:400});}
     const value=await patchFacultyDocumentForAdmin(__ctx,membershipId,body);
-    return NextResponse.json(value,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(value);
   },
 );
 export const PUT=PATCH;

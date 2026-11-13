@@ -5,6 +5,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {previewCollegeBulkDrives,updateCollegeBulkDrives} from "@/modules/placements/college-bulk-drive-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -14,6 +15,6 @@ export const POST = route(
     return NextResponse.json(raw?.confirmStage==="PREVIEW"?
    await previewCollegeBulkDrives(ctx,{action:raw.action,jobIds:raw.jobIds}):
    await updateCollegeBulkDrives(ctx,{action:raw.action,jobIds:raw.jobIds,confirmed:raw.confirmed}),
-  {headers:{"Cache-Control":"private, no-store"}});
+  {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

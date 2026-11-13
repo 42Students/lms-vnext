@@ -7,6 +7,7 @@ import {mentorReviewOverviewSchema,mentorDeliveryReviewCsv}
  from "@/modules/projects/mentor-review-overview-model";
 import {getMentorDeliveryReviewOverview}
  from "@/modules/projects/mentor-review-overview-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
 /** Read-only exact-project Mentor audit summary. No raw feedback, identity or URLs. */
@@ -18,7 +19,7 @@ export const GET = route(
     const filters=singleValueMentorExportFilters(url.searchParams,
    ["status","feedback","version"]);
     if(!filters)return NextResponse.json({error:"INVALID_QUERY"},{status:400,
-   headers:{"Cache-Control":"private, no-store"}});
+   headers:{"Cache-Control":CACHE.PRIVATE}});
     const query=mentorReviewOverviewSchema.parse({projectId,...filters,page:1});
     const first=await getMentorDeliveryReviewOverview(context,query);
     const pages=Math.min(10,first.totalPages);
@@ -29,7 +30,7 @@ export const GET = route(
     return new Response(mentorDeliveryReviewCsv(rows,omitted),{
    headers:{"Content-Type":"text/csv; charset=utf-8",
     "Content-Disposition":'attachment; filename="mentor-delivery-reviews.csv"',
-    "Cache-Control":"private, no-store","X-Export-Omitted":String(omitted)},
+    "Cache-Control":CACHE.PRIVATE,"X-Export-Omitted":String(omitted)},
   });
   },
 );

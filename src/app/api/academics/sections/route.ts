@@ -15,6 +15,7 @@ import { z } from "zod";
 import { createSectionInputSchema } from "@/modules/academics/validation";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 /**
@@ -54,7 +55,7 @@ async function handleGET(request: Request) {
       if(mode==="exists"){
         const result=await collegeClassNameExists(context,q,programId);
         return NextResponse.json({status:"success",message:"OK",...result},
-          {headers:{"Cache-Control":"private, no-store"}});
+          {headers:{"Cache-Control":CACHE.PRIVATE}});
       }
       if(mode==="select")return NextResponse.json({error:"USE_POST_FOR_SELECTION",
         message:"Confirm the class selection with an authenticated POST."},{status:405});
@@ -65,7 +66,7 @@ async function handleGET(request: Request) {
         className:row.name,batchId:row.cohortId,batchName:row.cohortName,
         programId:row.programId,programName:row.programName,
         academicPeriodId:row.academicPeriodId}));
-      const headers={"Cache-Control":"private, no-store"};
+      const headers={"Cache-Control":CACHE.PRIVATE};
 
       // A name-existence check reads the full college scope above, not a page.
       if(mode==="stats")return NextResponse.json({returned:items.length,limited:items.length===limit,
@@ -113,7 +114,7 @@ async function handlePOST(request: Request) {
     const parsed = await readBoundedJsonBody(request, 16_384);
     if (parsed.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: parsed.kind === "TOO_LARGE" ? 413 : 400,
-      headers: { "Cache-Control": "private, no-store" },
+      headers: { "Cache-Control": CACHE.PRIVATE },
     });
     const body: unknown = parsed.value;
     // Do not interpret the old no-body refresh or click/select actions as a
@@ -127,7 +128,7 @@ async function handlePOST(request: Request) {
       const result=await recordClassSearchSelection(context,
         selected.sectionId,selected.idempotencyKey);
       return NextResponse.json({status:"success",message:"Class selection recorded",
-        ...result},{headers:{"Cache-Control":"private, no-store"}});
+        ...result},{headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     if (!body || typeof body !== "object" || Array.isArray(body) ||
         ("action" in body && (

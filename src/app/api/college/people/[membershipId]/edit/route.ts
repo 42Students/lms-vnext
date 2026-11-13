@@ -4,6 +4,7 @@ import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCollegePersonEditor,saveCollegePersonEditor} from "@/modules/people/college-directory-person-editor-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -12,7 +13,7 @@ export const GET = route(
     const {membershipId}=params;
     const kind=z.enum(["FACULTY","LEARNER"]).parse(new URL(request.url).searchParams.get("kind"));
     const person=await getCollegePersonEditor(context,membershipId,kind);
-    return NextResponse.json({person},{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson({person});
   },
 );
 export const PATCH = route(

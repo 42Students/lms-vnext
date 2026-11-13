@@ -6,6 +6,7 @@ import {
   setCourseQuizResults,
 } from "@/modules/courses/quiz-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const POST = route(
@@ -24,13 +25,13 @@ export const POST = route(
       const quiz=await setCourseQuizResults(context,quizId,{published});
       return NextResponse.json({quiz,status:"OK",message:"OK",data:quiz,
        operation:published?"PUBLISH_GRADES":"UNPUBLISH_GRADES"},
-       {headers:{"Cache-Control":"private, no-store"}});
+       {headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     const action=data["action"]==="DELETE"?"ARCHIVE":data["action"];
     const quiz=await transitionCourseQuiz(context,quizId,{...data,action});
     return NextResponse.json({quiz,status:"OK",message:"OK",data:quiz,
      operation:action,archived:action==="ARCHIVE",
      retainedHistory:action==="ARCHIVE"},
-     {headers:{"Cache-Control":"private, no-store"}});
+     {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

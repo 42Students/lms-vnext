@@ -4,6 +4,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {placementReportCsv} from "@/modules/placements/report-model";
 import {listAdminFacultyAssignments} from "./super-admin-faculty-assignments-service";
 import {superAdminReadQuerySchema} from "./super-admin-read-directory-model";
+import { CACHE } from "@/security/responses";
 const columns=["Faculty","Course","Class","Semester","Year","Role","Active"] as const;
 export async function exportSuperAdminFacultyAssignments(request:Request){
  try{
@@ -32,7 +33,7 @@ export async function exportSuperAdminFacultyAssignments(request:Request){
   const cap=300;
   if(total>cap)rows.push(["TRUNCATED: showing first 300 assignments","Narrow filters to export remaining rows.", ...Array.from({length:columns.length-2},()=>"")]);
   return new Response("\uFEFF"+placementReportCsv(columns,rows),{headers:{
-   "Content-Type":"text/csv; charset=utf-8","Cache-Control":"private, no-store",
+   "Content-Type":"text/csv; charset=utf-8","Cache-Control":CACHE.PRIVATE,
    "Content-Disposition":'attachment; filename="faculty-assignments.csv"',
    "X-Export-Truncated":String(total>cap),"X-Content-Type-Options":"nosniff",
   }});

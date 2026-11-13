@@ -10,6 +10,7 @@ import {finishTpoFollowup} from "@/modules/placements/tpo-crm-service";
 import {tpoCrmFollowupIdSchema} from "@/modules/placements/tpo-crm-validation";
 import { route } from "@/security/route";
 import { ROLE } from "@/modules/identity/roles";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{followupId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -22,7 +23,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{followupId:s
   const {followupId:rawId}=await params;
   const id=tpoCrmFollowupIdSchema.parse(rawId);
   const done=await finishTpoFollowup(context,collegeId,id);
-  return NextResponse.json({id:done.id,status:"DONE"},{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson({id:done.id,status:"DONE"});
  }catch(error){return tpoCrmApiErrorResponse(error);}
 }
 export const POST = route(

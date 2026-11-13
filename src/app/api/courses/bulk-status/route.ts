@@ -1,8 +1,9 @@
 import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
-import {NextResponse} from "next/server";
+
 import {bulkSuperAdminCourseVisibility} from "@/modules/courses/super-admin-course-bulk-visibility";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 
 /** College Admin bulk visibility adapter. The shared service resolves and
@@ -14,6 +15,6 @@ export const POST = route(
   async ({ request, context: actor }) => {
     const context = actor!;
     const report=await bulkSuperAdminCourseVisibility(context,await boundedRequestJson(request, 8 * 1024 * 1024));
-    return NextResponse.json(report,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(report);
   },
 );

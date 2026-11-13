@@ -7,6 +7,7 @@ import {
   LearnerGalleryError, deactivateLearnerGalleryImage, openLearnerGalleryImage,
 } from "@/modules/profile-verification/learner-image-gallery-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 type Params = { params: Promise<{ imageId: string }> };
 function failure(error: unknown) {
@@ -27,7 +28,7 @@ const { imageId } = params;
 const member = new URL(request.url).searchParams.get("membershipId") ?? undefined;
 const result = await openLearnerGalleryImage(
       __ctx, imageId, member);
-return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
+return privateJson(result);
 } catch (error) { return failure(error); }
   },
 );
@@ -40,7 +41,7 @@ const { imageId } = params;
 const member = new URL(request.url).searchParams.get("membershipId") ?? undefined;
 const result = await deactivateLearnerGalleryImage(
       __ctx, imageId, member);
-return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
+return privateJson(result);
 } catch (error) { return failure(error); }
   },
 );

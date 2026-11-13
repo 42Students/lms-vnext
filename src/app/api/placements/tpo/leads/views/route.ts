@@ -7,6 +7,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listTpoRecruiterSavedViews,changeTpoRecruiterSavedView,TpoSavedViewError}
  from "@/modules/placements/tpo-recruiter-saved-view-service";
+import { noStoreJson } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -14,7 +15,7 @@ export const GET = route(
   async ({ context: __actor }) => {
     const __ctx = __actor!;
     const result=await listTpoRecruiterSavedViews(__ctx);
-    return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+    return noStoreJson(result);
   },
 );
 export const POST = route(
@@ -23,7 +24,7 @@ export const POST = route(
     const __ctx = __actor!;
     try {
 const result=await changeTpoRecruiterSavedView(__ctx,await boundedRequestJson(request));
-return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+return noStoreJson(result);
 } catch(e){
   if(e instanceof ZodError)return NextResponse.json({error:"INVALID_SAVED_VIEW"},{status:422});
   if(e instanceof TpoSavedViewError)return NextResponse.json({error:e.code},{status:

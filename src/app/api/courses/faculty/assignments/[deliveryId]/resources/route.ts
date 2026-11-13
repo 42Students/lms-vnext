@@ -10,6 +10,7 @@ import {
  listFacultyAssignmentResources,presignFacultyAssignmentResource,
 } from "@/modules/courses/faculty-assignment-resource-service";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 type Params={params:Promise<{deliveryId:string}>};
 
@@ -23,7 +24,7 @@ export const GET = route(
     const assignmentId=new URL(request.url).searchParams.get("assignmentId")??"";
     const result=await listFacultyAssignmentResources(
    __ctx,deliveryId,assignmentId);
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(result);
   },
 );
 
@@ -39,11 +40,11 @@ const {deliveryId}=params;
 const body=await readFacultyAssignmentCommandBody(request);
 const grant=await presignFacultyAssignmentResource(
    __ctx,deliveryId,body);
-return NextResponse.json({grant},{headers:{"Cache-Control":"private, no-store"}});
+return privateJson({grant});
 } catch(error){
   if(error instanceof FacultyAssignmentBodyError)
    return NextResponse.json({error:error.code},{
-    status:error.status,headers:{"Cache-Control":"private, no-store"}});
+    status:error.status,headers:{"Cache-Control":CACHE.PRIVATE}});
   return apiErrorResponse(error);
  }
   },

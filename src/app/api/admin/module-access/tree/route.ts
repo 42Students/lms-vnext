@@ -5,6 +5,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readCompleteCollegeModuleTree} from "@/modules/module-access/admin-full-tree-read";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const query=z.strictObject({
@@ -32,6 +33,6 @@ export const GET = route(
     return NextResponse.json({
    ...tree,scopeTypes:{COHORT:"Batch",SECTION:"Class",MEMBERSHIP:"Learner"},
    description:"Every academic scope in the selected college, including inherited-only nodes.",
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

@@ -5,6 +5,7 @@ import {getLearnerPlacementRequestWorkspace} from "@/modules/placements/request-
 import {apiErrorResponse} from "@/lib/api-error";
 import {partitionLearnerPlacementSchedule} from "@/modules/placements/learner-placement-schedule-model";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Legacy learner /schedule adapter. Caller identity is session-owned; never
@@ -46,6 +47,6 @@ export const GET = route(
    })),
    total:filter.length,truncated:filter.length>500,
    fromOwnMembership:true,
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

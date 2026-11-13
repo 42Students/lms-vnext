@@ -15,8 +15,9 @@ import {
 } from "@/modules/placements/learner-default-resume-service";
 import { PrivateObjectStorageError } from "@/modules/storage/private-object-storage";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
-const headers = { "Cache-Control": "private, no-store" };
+const headers = { "Cache-Control": CACHE.PRIVATE };
 const command = z.discriminatedUnion("action", [
   z.strictObject({
     action: z.literal("INITIATE"),

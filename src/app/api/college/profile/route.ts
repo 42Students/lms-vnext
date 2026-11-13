@@ -9,6 +9,7 @@ import {
   CollegeProfileVersionConflict, CollegeProfileVersionRequired,
 } from "@/modules/people/college-admin-profile-edit-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const GET = route(
@@ -16,7 +17,7 @@ export const GET = route(
   async ({ context: __actor }) => {
     const context = __actor!;
     const profile = await loadCollegeOwnProfile(context);
-    return NextResponse.json({ profile }, { headers: { "Cache-Control": "private, no-store" } });
+    return privateJson({ profile });
   },
 );
 export const PATCH = route(
@@ -25,7 +26,7 @@ export const PATCH = route(
     const context = __actor!;
     try {
 const profile = await updateCollegeOwnProfile(context, await boundedRequestJson(request));
-return NextResponse.json({ profile },{headers:{"Cache-Control":"private, no-store"}});
+return privateJson({ profile });
 } catch (error) {
     if(error instanceof CollegeProfileVersionConflict)
       return NextResponse.json({error:"PROFILE_VERSION_CHANGED",

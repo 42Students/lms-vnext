@@ -5,6 +5,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {AfterCollegeError,setTpoAfterCollegeOutcome} from "@/modules/placements/tpo-after-college-write-service";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const PUT = route(
   { auth: "user", permission: "service-enforced" },
@@ -19,7 +20,7 @@ const data=await setTpoAfterCollegeOutcome(__ctx,{
    learnerMembershipId:membershipId,outcome:input["outcome"],
    outcomeLabel:input["outcomeLabel"],outcomeDetail:input["outcomeDetail"],
    expectedVersion:input["expectedVersion"]});
-return NextResponse.json(data,{headers:{"Cache-Control":"private, no-store"}});
+return privateJson(data);
 } catch(error){
   if(error instanceof AfterCollegeError)return NextResponse.json({error:error.code},{status:
    error.code==="AFTER_COLLEGE_STALE"?409:error.code==="AFTER_COLLEGE_INVALID_LABEL"?400:

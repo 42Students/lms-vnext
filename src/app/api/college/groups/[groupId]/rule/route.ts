@@ -8,6 +8,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {clearGroupRule,refreshGroupRule,GroupRuleServiceError}
  from "@/modules/groups/rules-service";
 import {previewCollegeGroupRule} from "@/modules/groups/college-rule-preview-service";
+import { noStoreJson } from "@/security/responses";
 export const runtime="nodejs";
 type Ctx={params:Promise<{groupId:string}>};
 const mutation=z.strictObject({confirmed:z.literal(true),
@@ -31,7 +32,7 @@ if(preview.projection.incomplete)
    return NextResponse.json({error:"RULE_PREVIEW_INCOMPLETE",
      message:"The learner preview is truncated. Narrow the criteria before applying."},{status:409});
 const result=await refreshGroupRule(ctx,groupId,body.expectedGroupVersion);
-return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+return noStoreJson(result);
 } catch(e){return fail(e);}
   },
 );
@@ -43,7 +44,7 @@ export const DELETE = route(
 const input=mutation.parse(await boundedRequestJson(request));
 const {groupId}=params;
 const result=await clearGroupRule(__ctx,groupId,input.expectedGroupVersion);
-return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+return noStoreJson(result);
 } catch(e){return fail(e);}
   },
 );

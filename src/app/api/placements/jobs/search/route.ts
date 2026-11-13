@@ -2,6 +2,7 @@ import {NextResponse} from "next/server";
 import {GET as listScopedPlacementJobs} from "../route";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 
 /** Authenticated, college-scoped replacement for the old /api/v2/jobs/search
@@ -20,7 +21,7 @@ async function handleGET(request:Request){
    error:"LEGACY_JOB_SEARCH_FILTER_UNAVAILABLE",
    message:"Use your college-scoped learner job search for learner, department, program or job-type filters.",
    unsupported,
-  },{status:400,headers:{"Cache-Control":"private, no-store"}});
+  },{status:400,headers:{"Cache-Control":CACHE.PRIVATE}});
  }
  url.searchParams.set("mode","search");
  const scopedRequest=new Request(url.toString(),{

@@ -8,6 +8,7 @@ import {PlacementsServiceError} from "@/modules/placements/errors";
 import {saveOwnPlacementJob,unsaveOwnPlacementJob,SavedJobsStorageUnavailableError} from "@/modules/placements/saved-job-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{jobId:string}>};
 
@@ -32,7 +33,7 @@ function savedJobError(error:unknown,action:"SAVE"|"UNSAVE"="SAVE"){
  const response=apiErrorResponse(error);
  if(response.status>=500)return NextResponse.json({
   error:"SAVED_JOB_OPERATION_FAILED",message:retryMessage,
- },{status:response.status,headers:{"Cache-Control":"no-store"}});
+ },{status:response.status,headers:{"Cache-Control":CACHE.NONE}});
  return response;
 }
 async function handlePOST(request:Request,{params}:RouteContext){

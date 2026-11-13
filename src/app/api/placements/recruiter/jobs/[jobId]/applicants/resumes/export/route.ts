@@ -7,9 +7,10 @@ import {grantRecruiterSharedResume} from "@/modules/placements/recruiter-applica
 import {makeStoredZip,type ZipEntry} from "@/modules/placements/company-share/zip-model";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const headers={"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff",
+const headers={"Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff",
  "Referrer-Policy":"no-referrer","X-Robots-Tag":"noindex, nofollow, noarchive"};
 const MAX_FILES=20;
 const MAX_FILE_BYTES=5*1024*1024;

@@ -9,9 +9,10 @@ import {
 import {
  listTpoAuditSavedViews,changeTpoAuditSavedView,TpoAuditSavedViewError,
 } from "@/modules/placements/tpo-audit-saved-view-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"};
+const noStore={"Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff"};
 
 export const GET = route(
   { auth: "user", permission: "service-enforced" },

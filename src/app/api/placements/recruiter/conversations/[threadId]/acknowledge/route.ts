@@ -6,6 +6,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {acknowledgeRecruiterThread,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{threadId:string}>}){
  if(!isSameOriginRequest(request))
@@ -21,7 +22,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{threadId:str
   // persisted, thread-scoped JSON receipt before claiming read completion.
   if(request.headers.get("accept")?.includes("application/json"))
    return NextResponse.json({saved:true,threadId:id.data,acknowledged:receipt.acknowledged},
-    {headers:{"Cache-Control":"private, no-store"}});
+    {headers:{"Cache-Control":CACHE.PRIVATE}});
   return NextResponse.redirect(new URL("/hr/conversations/"+id.data,request.url),303);
  }catch(error){
   if(error instanceof TpoMessagingError)

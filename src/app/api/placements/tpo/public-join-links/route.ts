@@ -9,6 +9,7 @@ import {
   changeTpoPublicJoinLink, TpoPublicJoinLinkError,
 } from "@/modules/placements/tpo-public-join-link-service";
 
+import { CACHE, noStoreJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const POST = route(
@@ -18,10 +19,10 @@ export const POST = route(
     try {
 const body = await readTpoSettingsBody(request);
 const result = await changeTpoPublicJoinLink(__ctx, body);
-return NextResponse.json(result, { status: 201, headers: { "Cache-Control": "no-store" } });
+return noStoreJson(result, { status: 201 });
 } catch (error) {
     if(error instanceof TpoCommunicationBodyError)return NextResponse.json({error:"INVALID_BODY"},{
-      status:error.code==="BODY_TOO_LARGE"?413:400,headers:{"Cache-Control":"private, no-store"},
+      status:error.code==="BODY_TOO_LARGE"?413:400,headers:{"Cache-Control":CACHE.PRIVATE},
     });
     if (error instanceof ZodError) {
       return NextResponse.json({ error: "INVALID_BODY" }, { status: 400 });

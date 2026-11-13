@@ -8,6 +8,7 @@ import {parseMentorNotificationReadBody} from
 import {markAllMentorUnifiedNotificationsRead} from
   "@/modules/projects/mentor-unified-notification-read-all-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -18,6 +19,6 @@ export const POST = route(
     parseMentorNotificationReadBody(body);
     const result=await markAllMentorUnifiedNotificationsRead(
     __ctx);
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(result);
   },
 );

@@ -12,9 +12,10 @@ import {apiErrorResponse} from "@/lib/api-error";
 import { route } from "@/security/route";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"private, no-store"};
+const noStore={"Cache-Control":CACHE.PRIVATE};
 const querySchema=z.strictObject({
   q:z.string().trim().max(100).default(""),
   membershipId:z.string().uuid().optional(),

@@ -8,6 +8,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {markMentorProjectActivitySeen} from
  "@/modules/projects/mentor-activity-seen-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -22,6 +23,6 @@ export const POST = route(
    return NextResponse.json({error:"INVALID_BODY"},{status:400});
     const result=await markMentorProjectActivitySeen(
     __ctx,id);
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(result);
   },
 );

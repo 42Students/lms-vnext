@@ -7,6 +7,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { CollegeElectiveSlotMutationError, updateCollegeElectiveSlot } from "@/modules/electives/college-slot-mutation-service";
 import { getSuperAdminElectiveSlotDetail } from "@/modules/electives/admin-directory-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 /** Old GET admin/slots/{id}: full selected-slot panel for an explicitly
@@ -21,7 +22,7 @@ export const GET = route(
     const detail=await getSuperAdminElectiveSlotDetail(context,slotId);
     if(!detail)return NextResponse.json({error:"ELECTIVE_SLOT_NOT_FOUND"},{status:404});
     return NextResponse.json({status:"OK",data:detail,...detail},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 

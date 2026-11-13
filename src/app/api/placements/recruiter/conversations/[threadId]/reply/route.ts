@@ -7,6 +7,7 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrRecruiterReplySchema} from "@/modules/placements/hr-conversation-reply-model";
 import {openRecruiterMessageThread,sendRecruiterThreadMessage,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handlePOST(request:Request,{params}:{params:Promise<{threadId:string}>}){
  if(!isSameOriginRequest(request))
@@ -42,7 +43,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{threadId:str
   const receipt=await sendRecruiterThreadMessage(context,resolvedThreadId,body,quoteId);
   if(request.headers.get("accept")?.includes("application/json"))
    return NextResponse.json({sent:true,id:receipt.id,threadId:receipt.threadId},
-    {headers:{"Cache-Control":"private, no-store"}});
+    {headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){
   if(error instanceof TpoMessagingError)
    return NextResponse.json({error:error.code==="TPO_MESSAGE_FORBIDDEN"?"FORBIDDEN":"NOT_FOUND"},

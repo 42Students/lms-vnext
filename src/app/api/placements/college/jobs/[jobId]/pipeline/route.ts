@@ -5,6 +5,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getCollegeApplicationPipeline,mutateCollegeApplicationStages} from "@/modules/placements/college-application-stage-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 type Props={params:Promise<{jobId:string}>};
 export const GET = route(
@@ -13,7 +14,7 @@ export const GET = route(
     const __ctx = __actor!;
     const {jobId}=params;
     return NextResponse.json(await getCollegeApplicationPipeline(__ctx,jobId,
-   Object.fromEntries(new URL(req.url).searchParams)),{headers:{"Cache-Control":"private, no-store"}});
+   Object.fromEntries(new URL(req.url).searchParams)),{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 export const POST = route(
@@ -34,6 +35,6 @@ export const POST = route(
    ...(result.skipped>0?{retryHref:"/college/placements/jobs/"+
      encodeURIComponent(jobId)+"/applications"}:{})},
    {status:result.moved===0&&result.skipped>0?409:200,
-    headers:{"Cache-Control":"private, no-store"}});
+    headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

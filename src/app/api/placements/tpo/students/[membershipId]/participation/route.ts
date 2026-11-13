@@ -9,6 +9,7 @@ import {
   TpoParticipationConflictError,
 } from "@/modules/placements/tpo-participation-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ membershipId: string }> };
 
@@ -22,7 +23,7 @@ const result = await decideTpoLearnerParticipation(
       context, membershipId, await boundedRequestJson(request),
     );
 return NextResponse.json(result, {
-      headers: { "Cache-Control": "private, no-store" },
+      headers: { "Cache-Control": CACHE.PRIVATE },
     });
 } catch (error) {
     if (error instanceof TpoParticipationConflictError) {

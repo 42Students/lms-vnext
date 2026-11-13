@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { hasAmbiguousQuerySelectors } from "@/lib/security-query-selectors";
 import { listActivityEvents } from "@/modules/activity/service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 function value(
@@ -35,7 +36,7 @@ export const GET = route(
       "collegeId", "organizationId", "actorUserId", "actorId",
       "beforeOccurredAt", "beforeId", "limit",
     ])) return NextResponse.json({ error: "INVALID_ACTIVITY_QUERY" }, {
-      status: 400, headers: { "Cache-Control": "private, no-store" },
+      status: 400, headers: { "Cache-Control": CACHE.PRIVATE },
     });
     const result =
       await listActivityEvents(
@@ -113,6 +114,6 @@ export const GET = route(
                 result.nextCursor.beforeId,
             }
           : null,
-    },{headers:{"Cache-Control":"private, no-store"}});
+    },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

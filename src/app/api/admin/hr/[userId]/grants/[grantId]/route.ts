@@ -1,10 +1,10 @@
 import { route } from "@/security/route";
-import { NextResponse } from "next/server";
 import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import {
   revokeSuperAdminHrCollegeAccess,
 } from "@/modules/placements/super-admin-hr-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const DELETE = route(
@@ -22,6 +22,6 @@ export const DELETE = route(
         userId,
         grantId,
       );
-    return NextResponse.json({ grant }, { headers: { "Cache-Control": "private, no-store" } });
+    return privateJson({ grant });
   },
 );

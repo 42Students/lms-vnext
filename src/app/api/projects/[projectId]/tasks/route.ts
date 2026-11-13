@@ -10,6 +10,7 @@ import {ProjectsServiceError} from "@/modules/projects/errors";
 import {readMentorProjectCommandBody,MentorProjectCommandBodyError,mentorProjectBodyFailureMessage} from "@/modules/projects/mentor-command-body";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
 export const POST = route(
@@ -29,7 +30,7 @@ return NextResponse.json({task,message:"Project tasks updated"},{status:201});
 } catch(error){
     if(error instanceof MentorProjectCommandBodyError)
       return NextResponse.json({error:error.code,message:mentorProjectBodyFailureMessage(error.status)},
-        {status:error.status,headers:{"Cache-Control":"no-store"}});
+        {status:error.status,headers:{"Cache-Control":CACHE.NONE}});
     return apiErrorResponse(error);
   }
   },

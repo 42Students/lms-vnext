@@ -7,6 +7,7 @@ import {exportTpoCompanyDirectory,tpoCompaniesQuerySchema} from "@/modules/place
 import {tpoStudentCsvCell} from "@/modules/placements/tpo-students-csv";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -44,7 +45,7 @@ async function handleGET(request:Request) {
   return new Response("\uFEFF"+[header.map(cell).join(","),...records].join("\r\n")+"\r\n",{
    headers:{"Content-Type":"text/csv; charset=utf-8",
     "Content-Disposition":'attachment; filename="' + gridExportFilename("companies", "csv") + '"',
-    "Cache-Control":"private, no-store"},
+    "Cache-Control":CACHE.PRIVATE},
   });
  } catch(error) {return apiErrorResponse(error);}
 }

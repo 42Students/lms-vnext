@@ -10,6 +10,7 @@ import {
   reviewProjectTaskSubmission,
 } from "@/modules/projects/task-submission-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -44,7 +45,7 @@ return NextResponse.json(result);
     if(error instanceof MentorProjectCommandBodyError)
       return NextResponse.json({error:error.code,
         message:mentorProjectBodyFailureMessage(error.status)},
-        {status:error.status,headers:{"Cache-Control":"no-store"}});
+        {status:error.status,headers:{"Cache-Control":CACHE.NONE}});
     return apiErrorResponse(error);
   }
   },

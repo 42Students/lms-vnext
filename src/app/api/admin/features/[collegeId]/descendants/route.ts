@@ -6,6 +6,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {readDescendantRule,writeDescendantRule} from "@/modules/module-access/admin-descendant-rule-write";
+import { privateJson } from "@/security/responses";
 const query=z.strictObject({scopeType:z.enum(["DEPARTMENT","PROGRAM","COHORT","SECTION"]),scopeId:z.uuid(),module:z.enum(["projects","placements","electives"])});
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -15,7 +16,7 @@ export const GET = route(
     const u=new URL(request.url);
     const value=query.parse({scopeType:u.searchParams.get("scopeType"),scopeId:u.searchParams.get("scopeId"),module:u.searchParams.get("module")});
     const result=await readDescendantRule(__ctx,collegeId,value.scopeType,value.scopeId,value.module);
-    return result?NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}}):NextResponse.json({error:"NOT_FOUND"},{status:404});
+    return result?privateJson(result):NextResponse.json({error:"NOT_FOUND"},{status:404});
   },
 );
 export const PUT = route(
@@ -27,6 +28,6 @@ export const PUT = route(
     if(!_p.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
     const raw=_p.value;
     const result=await writeDescendantRule(__ctx,collegeId,raw);
-    return result?NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}}):NextResponse.json({error:"NOT_FOUND"},{status:404});
+    return result?privateJson(result):NextResponse.json({error:"NOT_FOUND"},{status:404});
   },
 );

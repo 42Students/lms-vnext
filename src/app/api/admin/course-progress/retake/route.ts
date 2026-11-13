@@ -6,9 +6,10 @@ import {
  CourseProgressRetakeError,previewAdminCourseProgressRetake,startAdminCourseProgressRetake,
 } from "@/modules/courses/admin-progress-retake-service";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const cache={"Cache-Control":"private, no-store"};
+const cache={"Cache-Control":CACHE.PRIVATE};
 function failure(error:unknown){
  if(error instanceof CourseProgressRetakeError){
   const code=error.code;

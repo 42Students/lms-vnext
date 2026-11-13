@@ -7,6 +7,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {
   decideTpoRecruiterDriveRequest,TpoDriveRequestDecisionError,
 } from "@/modules/placements/tpo-drive-request-decision-service";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -17,7 +18,7 @@ const {requestId}=params;
 const response=await decideTpoRecruiterDriveRequest(
       __ctx,requestId,await boundedRequestJson(request),
     );
-return NextResponse.json(response,{headers:{"Cache-Control":"private, no-store"}});
+return privateJson(response);
 } catch(error){
     if(error instanceof TpoDriveRequestDecisionError)
       return NextResponse.json({error:error.code},{

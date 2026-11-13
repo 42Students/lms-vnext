@@ -1,9 +1,9 @@
 import { route } from "@/security/route";
-import { NextResponse } from "next/server";
 import {
   getMyAssignmentSubmission,
 } from "@/modules/courses/assignment-submission-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const GET = route(
@@ -19,6 +19,6 @@ export const GET = route(
         url.searchParams.get("deliveryId") ??
           "",
       );
-    return NextResponse.json({ submission }, {headers:{"Cache-Control":"private, no-store"}});
+    return privateJson({ submission });
   },
 );

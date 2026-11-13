@@ -7,8 +7,9 @@ import {
   listLearnerCourseDeliveries,
 } from "@/modules/courses/learner-course-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
-const headers = { "Cache-Control": "private, no-store" };
+const headers = { "Cache-Control": CACHE.PRIVATE };
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 /** Authenticated-learner-only replacement for StudentCourseController:

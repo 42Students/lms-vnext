@@ -6,6 +6,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { CompanyShareError, issueTpoCompanyApplicantShare, listTpoCompanyApplicantShares } from "@/modules/placements/company-share/manage-service";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type RouteContext = {params:Promise<{jobId:string}>};
@@ -13,7 +14,7 @@ function errorResponse(error:unknown) {
   if (error instanceof CompanyShareError) {
     return NextResponse.json({error:error.code},{
       status:error.code==="MIGRATION_PENDING"?503:error.code==="NOT_FOUND"?404:error.code==="ACTIVE_LINK_LIMIT"?409:422,
-      headers:{"Cache-Control":"private, no-store"},
+      headers:{"Cache-Control":CACHE.PRIVATE},
     });
   }
   return apiErrorResponse(error);
@@ -25,7 +26,7 @@ export const GET = route(
     try {
 const {jobId}=params;
 const result=await listTpoCompanyApplicantShares(__ctx,jobId,new URL(request.url).searchParams.get("status")??"ALL",new URL(request.url).searchParams.get("page")??1);
-return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+return privateJson(result);
 } catch(error){return errorResponse(error);}
   },
 );
@@ -45,7 +46,7 @@ const result=await issueTpoCompanyApplicantShare(__ctx,{jobId,expiresInDays,
       ...(selectedApplicationIds!==undefined?{selectedApplicationIds}:{}),
       ...(selectedColumns!==undefined?{selectedColumns}:{}),
       ...(shortlistBy!==undefined?{shortlistBy}:{})});
-return NextResponse.json(result,{status:201,headers:{"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"}});
+return NextResponse.json(result,{status:201,headers:{"Cache-Control":CACHE.PRIVATE,"Referrer-Policy":"no-referrer"}});
 } catch(error){return errorResponse(error);}
   },
 );

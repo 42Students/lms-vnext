@@ -1,7 +1,8 @@
 import { route } from "@/security/route";
-import {NextResponse} from "next/server";
+
 import {restoreCourse} from "@/modules/courses/course-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 /** Legacy POST /api/v1/course/restore/{id} maps to an authenticated,
  * department-owned UUID. The service locks the archived record, verifies
@@ -12,6 +13,6 @@ export const POST = route(
     const context = actor!;
     const {courseId}=params;
     const course=await restoreCourse(context,courseId);
-    return NextResponse.json({course,status:"RESTORED"},{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson({course,status:"RESTORED"});
   },
 );

@@ -4,6 +4,7 @@ import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readTenantDirectoryExportParams } from "@/modules/colleges/admin-tenant-export-model";
 import { exportSuperAdminTenantDirectory } from "@/modules/colleges/admin-tenant-lifecycle-service";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -15,7 +16,7 @@ await requireRecentDeviceAuthentication(context.user.id);
 const result = await exportSuperAdminTenantDirectory(context, query);
 return new Response(result.csv, { headers: {
       "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": 'attachment; filename="tenant-directory-ist.csv"',
-      "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff",
+      "Cache-Control": CACHE.PRIVATE, "X-Content-Type-Options": "nosniff",
       Vary: "Cookie",
       "X-Export-Truncated": String(result.truncated), "X-Export-Row-Cap": String(result.cap),
     } });

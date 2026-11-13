@@ -21,6 +21,7 @@ import { route } from "@/security/route";
 
 import { featureReady } from "@/config/features";
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 type Ctx={params:Promise<{jobId:string}>};
@@ -32,7 +33,7 @@ const requestSchema=z.strictObject({
  includePublicLink:z.boolean().default(false),
  sendEmail:z.boolean().default(false),
 });
-const headers={"Cache-Control":"private, no-store"} as const;
+const headers={"Cache-Control":CACHE.PRIVATE} as const;
 
 /** Recruiter reviewer invitations must be attached to the exact employer
  * relationship on this drive. A company name alone is NEVER a grant. */

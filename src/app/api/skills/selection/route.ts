@@ -14,6 +14,7 @@ import { skillsCatalogRuntimeEnabled } from "@/modules/skills/catalog-readiness"
 import { normalizeSkillUsageKey, skillUsageNameSchema } from "@/modules/skills/usage-normalization";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 const selectionSchema = z.strictObject({
@@ -45,7 +46,7 @@ async function handlePOST(request: Request) {
     return NextResponse.json({
       error: "DB10_SKILLS_MIGRATIONS_PENDING",
       message: "Skill selection tracking is not available yet.",
-    }, { status: 503, headers: { "Cache-Control": "private, no-store" } });
+    }, { status: 503, headers: { "Cache-Control": CACHE.PRIVATE } });
   }
   try {
     const context = await getCurrentRequestContext();
@@ -122,7 +123,7 @@ async function handlePOST(request: Request) {
       status: "success",
       message: count === 1 ? "Selection recorded" : "Selections recorded",
       duplicate: result.outcome === "duplicate",
-    }, { headers: { "Cache-Control": "private, no-store" } });
+    }, { headers: { "Cache-Control": CACHE.PRIVATE } });
   } catch (error) {
     if (error instanceof Error && error.message === "SKILL_SELECTION_CHANGED") {
       return NextResponse.json({ error: "SKILL_NOT_FOUND" }, { status: 409 });

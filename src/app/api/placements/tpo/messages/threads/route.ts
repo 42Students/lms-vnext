@@ -7,6 +7,7 @@ import {openTpoMessageThread,sendThreadMessage,TpoMessagingError} from "@/module
 import {hasMembershipRole} from "@/modules/identity/context";
 import { route } from "@/security/route";
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 const input=z.strictObject({
  recruiterUserId:z.string().uuid(),
  jobId:z.string().uuid().nullable().optional(),
@@ -34,12 +35,12 @@ async function handlePOST(request:Request){
    if(!message)return NextResponse.json({error:"MESSAGE_NOT_CREATED"},{status:500});
    return NextResponse.json({
     threadId:thread.id,messageId:message.id,messageSent:true,action:"MESSAGE_SENT",
-   },{status:201,headers:{"Cache-Control":"private, no-store"}});
+   },{status:201,headers:{"Cache-Control":CACHE.PRIVATE}});
   }
   return NextResponse.json({
    threadId:thread.id,messageSent:false,action:"THREAD_OPENED",
    sendHref:"/api/placements/tpo/messages/threads/"+thread.id+"/messages",
-  },{status:201,headers:{"Cache-Control":"private, no-store"}});
+  },{status:201,headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){
   if(error instanceof TpoMessagingError)return NextResponse.json({error:"RECRUITER_ACCESS_UNAVAILABLE"},{status:404});
   throw error;

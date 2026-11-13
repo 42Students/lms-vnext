@@ -4,6 +4,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { exportTpoSeasonPipelineCsv } from "@/modules/placements/tpo-season-pipeline-model";
 import { getTpoSeasonPipeline } from "@/modules/placements/tpo-season-pipeline-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ return new Response("\uFEFF" + result.csv, {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
         "Content-Disposition": 'attachment; filename="tpo-season-pipeline.csv"',
-        "Cache-Control": "private, no-store, max-age=0",
+        "Cache-Control": CACHE.PRIVATE_STRICT,
         "X-Content-Type-Options": "nosniff",
         Vary: "Cookie",
         "X-Export-Truncated": String(result.truncated),

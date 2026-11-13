@@ -1,9 +1,10 @@
 import { route } from "@/security/route";
-import {NextResponse} from "next/server";
+
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listMentorGoogleInvitees} from
  "@/modules/projects/mentor-google-meeting-sync-service";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 type Params={params:Promise<{projectId:string;meetingId:string}>};
 /** Current assigned Mentor only; reveal a bounded roster of names and opaque
@@ -16,6 +17,6 @@ export const GET = route(
     const {projectId,meetingId}=params;
     const result=await listMentorGoogleInvitees(
    __ctx,projectId,meetingId);
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(result);
   },
 );

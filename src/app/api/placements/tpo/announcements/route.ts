@@ -6,6 +6,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {createTpoNotice} from "@/modules/announcements/tpo-placement-write-service";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -87,7 +88,7 @@ async function handlePOST(request:Request){
     data:notice,recipientSnapshot:"FROZEN_AT_CREATION",
     lifecycle:{edit:"/api/placements/tpo/announcements/"+notice.id+"/edit",
       undo:"/api/placements/tpo/announcements/"+notice.id+"/lifecycle"},
-  },{status:201,headers:{"Cache-Control":"no-store"}});
+  },{status:201,headers:{"Cache-Control":CACHE.NONE}});
   const returnUrl=new URL("/tpo/announcements?tab=yours",request.url);
   returnUrl.searchParams.set("sentNotice",notice.id);
   return NextResponse.redirect(returnUrl,303);

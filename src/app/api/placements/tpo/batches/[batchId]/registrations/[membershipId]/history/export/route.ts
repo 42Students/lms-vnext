@@ -5,6 +5,7 @@ import {getTpoLearnerRegistrationHistory} from "@/modules/placements/tpo-learner
 import {tpoRegistrationHistoryQuery,filterTpoRegistrationEvents} from "@/modules/placements/tpo-registration-history-filter-model";
 import {serializeTpoRegistrationEventHistoryCsv} from "@/modules/placements/tpo-registration-event-history-csv-model";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 async function handleGET(request:Request,{params}:{params:Promise<{batchId:string;membershipId:string}>}){
@@ -13,12 +14,12 @@ async function handleGET(request:Request,{params}:{params:Promise<{batchId:strin
   const query=new URL(request.url).searchParams;
   const filters=tpoRegistrationHistoryQuery.parse({source:query.get("source")??undefined,event:query.get("event")??undefined});
   const evidence=await getTpoLearnerRegistrationHistory(await getCurrentRequestContext(),batchId,membershipId);
-  if(!evidence.ready)return new Response("Registration event history unavailable",{status:503,headers:{"Cache-Control":"private, no-store, max-age=0"}});
+  if(!evidence.ready)return new Response("Registration event history unavailable",{status:503,headers:{"Cache-Control":CACHE.PRIVATE_STRICT}});
   const rows=filterTpoRegistrationEvents(evidence.events,filters);
   return new Response("\uFEFF"+serializeTpoRegistrationEventHistoryCsv(rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-registration-event-history", "csv") + '"',
-   "Cache-Control":"private, no-store, max-age=0",
+   "Cache-Control":CACHE.PRIVATE_STRICT,
    "X-Content-Type-Options":"nosniff",
    "X-Export-Scope":"current-learner-latest-100-events",
    "X-Export-Truncated":evidence.truncated?"true":"false",

@@ -10,8 +10,9 @@ import {
 } from "@/modules/profile-verification/learner-image-gallery-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
-const noStore = { "Cache-Control": "private, no-store" };
+const noStore = { "Cache-Control": CACHE.PRIVATE };
 const schema = z.discriminatedUnion("action", [
   z.strictObject({ action: z.literal("INITIATE"), originalName: z.string(),
     contentType: z.string(), sizeBytes: z.number() }),

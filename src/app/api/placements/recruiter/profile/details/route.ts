@@ -6,6 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {updateOwnRecruiterProfileDetails} from "@/modules/placements/recruiter-profile-details-service";
 import {normalizeLegacyRecruiterMobile} from "@/modules/placements/recruiter-profile-details-model";
 import {readRecruiterJsonBody,RecruiterJsonBodyError} from "@/modules/placements/recruiter-json-request";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const PATCH = route(
   { auth: "user", permission: "service-enforced" },
@@ -22,7 +23,7 @@ if(typeof raw==="object"&&raw!==null&&!Array.isArray(raw)){
     if(Object.hasOwn(source,"contactMail"))
       return NextResponse.json({error:"WORK_EMAIL_LOCKED",
         message:"Work email is locked to your verified sign-in identity."},
-        {status:422,headers:{"Cache-Control":"private, no-store"}});
+        {status:422,headers:{"Cache-Control":CACHE.PRIVATE}});
     if(Object.hasOwn(source,"designation")||Object.hasOwn(source,"contactMobile")){
       const {designation,contactMobile,...fields}=source;
       normalized={...fields,
@@ -36,14 +37,14 @@ if(normalized&&typeof normalized==="object"&&!Array.isArray(normalized)){
       return NextResponse.json({
         error:"INVALID_MOBILE",
         message:"Enter a valid 10-digit mobile number, or leave it blank",
-      },{status:400,headers:{"Cache-Control":"private, no-store"}});
+      },{status:400,headers:{"Cache-Control":CACHE.PRIVATE}});
     }
   }
 const profile=await updateOwnRecruiterProfileDetails(
     __ctx,normalized);
 return NextResponse.json({profile,workEmailEditable:false,
     workEmailHelp:"Work email is linked to your verified sign-in account."},
-    {headers:{"Cache-Control":"private, no-store"}});
+    {headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch(error){if(error instanceof RecruiterJsonBodyError)
   return NextResponse.json({error:"INVALID_REQUEST"},{status:error.kind==="TOO_LARGE"?413:400});
   return apiErrorResponse(error);}

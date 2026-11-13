@@ -5,6 +5,7 @@ import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-servi
 import { summarizeLegacyLearnerJobs } from "@/modules/placements/legacy-job-read-adapter";
 import { route } from "@/security/route";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 async function handleGET(request: Request) {
@@ -22,8 +23,8 @@ async function handleGET(request: Request) {
     if (legacy) return NextResponse.json({
       status: "OK", message: "Visible jobs retrieved successfully",
       data: summarizeLegacyLearnerJobs(jobs),
-    }, {headers: {"Cache-Control":"private, no-store"}});
-    return NextResponse.json({ jobs }, {headers: {"Cache-Control":"private, no-store"}});
+    }, {headers: {"Cache-Control":CACHE.PRIVATE}});
+    return privateJson({ jobs });
   } catch (error) {
     return apiErrorResponse(error);
   }

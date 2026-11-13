@@ -6,6 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {previewSuperAdminDriveArchive,archiveSuperAdminDrive}
  from "@/modules/placements/super-admin-drive-archive-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 type Ctx={params:Promise<{jobId:string}>};
 export const GET = route(
@@ -14,7 +15,7 @@ export const GET = route(
     const __ctx = __actor!;
     const {jobId}=params;
     return NextResponse.json(await previewSuperAdminDriveArchive(__ctx,jobId),
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 export const POST = route(

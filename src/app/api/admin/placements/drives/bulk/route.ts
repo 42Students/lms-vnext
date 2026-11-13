@@ -7,6 +7,7 @@ import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 import { previewSuperAdminBulkDrives, updateSuperAdminBulkDrives }
   from "@/modules/placements/super-admin-bulk-drive-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const POST = route(
@@ -22,6 +23,6 @@ export const POST = route(
       : await updateSuperAdminBulkDrives(context, {
           action: body["action"], jobIds: body["jobIds"], confirmed: body["confirmed"],
         });
-    return NextResponse.json(result, {headers: {"Cache-Control": "private, no-store"}});
+    return privateJson(result);
   },
 );

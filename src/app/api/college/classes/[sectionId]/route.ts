@@ -10,6 +10,7 @@ import {
 
 import { deleteCollegeSection, CollegeSectionLifecycleError } from "@/modules/academics/college-section-lifecycle-service";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const PATCH = route(
@@ -41,12 +42,12 @@ export const DELETE = route(
     try {
 const {sectionId}=params;
 const deleted=await deleteCollegeSection(context,sectionId,await boundedRequestJson(request));
-return NextResponse.json({deleted},{headers:{"Cache-Control":"private, no-store"}});
+return privateJson({deleted});
 } catch(error){
   if(error instanceof CollegeSectionLifecycleError || error instanceof CollegeSectionError)
    return NextResponse.json({error:error.code},{
     status:error.code==="CLASS_NOT_FOUND"?404:409,
-    headers:{"Cache-Control":"private, no-store"},
+    headers:{"Cache-Control":CACHE.PRIVATE},
    });
   return apiErrorResponse(error);
  }

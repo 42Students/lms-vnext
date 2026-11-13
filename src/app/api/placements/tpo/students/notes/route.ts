@@ -5,6 +5,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {addTpoStudentNotes} from "@/modules/placements/tpo-student-notes-service";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -13,10 +14,10 @@ export const POST = route(
     try {
 const body=await readTpoBulkRequestBody(req);
 const result=await addTpoStudentNotes(__ctx,body);
-return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+return privateJson(result);
 } catch(error){
   if(error instanceof TpoBulkBodyError)return NextResponse.json({error:error.message},
-   {status:error.status,headers:{"Cache-Control":"private, no-store"}});
+   {status:error.status,headers:{"Cache-Control":CACHE.PRIVATE}});
   return apiErrorResponse(error);
  }
   },

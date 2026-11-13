@@ -1,8 +1,9 @@
 import { route } from "@/security/route";
-import {NextResponse} from "next/server";
+
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {resolveLegacyProjectIdentity} from "@/modules/projects/project-legacy-id-resolver";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -16,6 +17,6 @@ export const GET = route(
       ...(query.get("sprintKey") !== null ? {sprintKey:query.get("sprintKey") ?? ""} : {}),
       ...(query.get("taskKey") !== null ? {taskKey:query.get("taskKey") ?? ""} : {}),
     });
-    return NextResponse.json(data,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(data);
   },
 );

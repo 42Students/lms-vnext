@@ -4,6 +4,7 @@ import {trackerAdminRuntimeEnabled} from "@/modules/bug-tracker/readiness";
 import {listTrackerAttachments} from "@/modules/bug-tracker/attachment-storage-service";
 import {bugTrackerApiError} from "@/lib/bug-tracker-api-error";
 import { route } from "@/security/route";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 async function handleGET(_request:Request,{params}:{params:Promise<{publicId:string}>}){
  if(!trackerAdminRuntimeEnabled())
@@ -11,7 +12,7 @@ async function handleGET(_request:Request,{params}:{params:Promise<{publicId:str
  try{
   const {publicId}=await params;
   const items=await listTrackerAttachments(await getCurrentRequestContext(),publicId);
-  return NextResponse.json({items},{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson({items});
  }catch(error){return bugTrackerApiError(error);}
 }
 export const GET = route(

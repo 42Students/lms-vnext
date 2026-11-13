@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoPlacedStudentsByBranch } from "@/modules/placements/tpo-placed-branch-service";
 import { tpoPlacedBranchCsv } from "@/modules/placements/tpo-placed-branch-model";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const GET = route(
@@ -15,7 +16,7 @@ const report = await getTpoPlacedStudentsByBranch(context,
 if (!report.season) {
       return Response.json({ error: "PLACEMENT_SEASON_NOT_FOUND" }, {
         status: 404,
-        headers: { "Cache-Control": "private, no-store, max-age=0" },
+        headers: { "Cache-Control": CACHE.PRIVATE_STRICT },
       });
     }
 const exported = tpoPlacedBranchCsv(report.season.name, report);
@@ -24,7 +25,7 @@ return new Response("\uFEFF" + exported.csv, {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
         "Content-Disposition": 'attachment; filename="tpo-placed-by-branch.csv"',
-        "Cache-Control": "private, no-store, max-age=0",
+        "Cache-Control": CACHE.PRIVATE_STRICT,
         "X-Content-Type-Options": "nosniff",
         Vary: "Cookie",
         "X-Export-Truncated": String(exported.truncated),

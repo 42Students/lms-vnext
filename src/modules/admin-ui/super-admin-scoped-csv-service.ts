@@ -6,6 +6,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import type {SuperAdminReadQuery,SuperAdminReadResult} from "./super-admin-read-directory-model";
 import {SUPER_ADMIN_READ_PAGE_SIZE} from "./super-admin-read-directory-model";
 import {SUPER_ADMIN_SCOPED_CSV_CAP,buildSuperAdminScopedCsv,parseSuperAdminScopedCsvParams,scopedCsvStatusAllowed} from "./super-admin-scoped-csv-model";
+import { CACHE } from "@/security/responses";
 type DirectoryLoader=(context:RequestContext,query:SuperAdminReadQuery)=>Promise<SuperAdminReadResult>;
 export async function exportSuperAdminScopedDirectory(request:Request,config:{
  filename:string;statuses:readonly string[];loader:DirectoryLoader;
@@ -17,7 +18,7 @@ export async function exportSuperAdminScopedDirectory(request:Request,config:{
   const query=parseSuperAdminScopedCsvParams(new URL(request.url).searchParams);
   if(!scopedCsvStatusAllowed(query.status,config.statuses)){
    return Response.json({error:"UNSUPPORTED_EXPORT_STATUS"},{status:400,
-    headers:{"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"}});
+    headers:{"Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff"}});
   }
   // CSV always uses fixed 25-row chunks. A manually edited pageSize=10
   // previously fetched only 100 of the promised first 250 matching records;
@@ -33,7 +34,7 @@ export async function exportSuperAdminScopedDirectory(request:Request,config:{
   return new Response(buildSuperAdminScopedCsv(rows,truncated),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":`attachment; filename="${config.filename}"`,
-   "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff",
+   "Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff",
    "X-Export-Row-Cap":String(SUPER_ADMIN_SCOPED_CSV_CAP),
    "X-Export-Truncated":String(truncated),
   }});

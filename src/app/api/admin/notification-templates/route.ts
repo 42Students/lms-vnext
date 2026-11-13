@@ -1,9 +1,10 @@
 import { route } from "@/security/route";
-import {NextResponse} from "next/server";
+
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {zeptoMailTemplateReadiness,logInitialZeptoMailTemplateReadiness} from "@/modules/notifications/zeptomail-template-readiness";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -11,8 +12,8 @@ export const GET = route(
   async ({ context: actor }) => {
     const context = actor!;
     if(!isSuperAdmin(context)||context.adminScope?.collegeId||context.adminScope?.organizationId)
-   return NextResponse.json({error:"FORBIDDEN"},{status:403,headers:{"Cache-Control":"private, no-store"}});
+   return privateJson({error:"FORBIDDEN"}, { status: 403 });
     logInitialZeptoMailTemplateReadiness();
-    return NextResponse.json(zeptoMailTemplateReadiness(),{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(zeptoMailTemplateReadiness());
   },
 );

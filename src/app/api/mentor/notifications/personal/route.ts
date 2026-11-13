@@ -7,6 +7,7 @@ import {mentorInboxQuerySchema} from
  "@/modules/activity/mentor-notifications-model";
 import {parseNotificationCursor} from "@/modules/activity/notification-cursor";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 /** Page only the authenticated recipient's personal notices. The cursor is
  * validated before DB access; the service re-verifies active Mentor role and
@@ -48,7 +49,7 @@ async function handleGET(request:Request){
      beforeCreatedAt:result.page.nextCursor.beforeCreatedAt.toISOString(),
      beforeId:result.page.nextCursor.beforeId,
    }:null,
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(

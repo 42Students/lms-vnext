@@ -4,6 +4,7 @@ import { legacyCollegeJoinRequest } from "@/modules/placements/public-join/legac
 import { POST as canonicalPOST } from "@/app/api/public/college-join/send-code/route";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 /** Compat POST endpoint. Legacy link tokens must still pass the new
@@ -15,7 +16,7 @@ async function handlePOST(
   const { token } = await params;
   const adapted = await legacyCollegeJoinRequest(request, token);
   if (!adapted) return NextResponse.json(
-    { error: "LINK_INVALID" }, { status: 400, headers: { "Cache-Control": "no-store" } },
+    { error: "LINK_INVALID" }, { status: 400, headers: { "Cache-Control": CACHE.NONE } },
   );
   return canonicalPOST(adapted);
 }

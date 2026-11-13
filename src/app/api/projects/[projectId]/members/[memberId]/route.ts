@@ -9,6 +9,7 @@ import {
 } from "@/modules/projects/member-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -95,7 +96,7 @@ async function handlePOST(request:Request,route:RouteContext){
   const result=await endProjectMember(
    await getCurrentRequestContext(),projectId,memberId);
   return NextResponse.json({member:result},
-   {headers:{"Deprecation":"true","Cache-Control":"private, no-store"}});
+   {headers:{"Deprecation":"true","Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const POST = route(

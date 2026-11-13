@@ -5,6 +5,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {archiveCollegeDrive,previewCollegeDriveArchive} from "@/modules/placements/college-drive-archive-preview-service";
+import { CACHE } from "@/security/responses";
 /** Legacy DELETE /admin/jobs/{id} was a soft deletion. In vNext GET presents
  * scoped impact, then same-origin confirmed POST archives (never hard deletes)
  * the job and preserves applications, offers and event history. Consumers
@@ -19,7 +20,7 @@ export const GET = route(
     const {jobId}=params;
     return NextResponse.json(
   await previewCollegeDriveArchive(__ctx,jobId),
-  {headers:{"Cache-Control":"private, no-store"}});
+  {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 export const POST = route(
@@ -29,6 +30,6 @@ export const POST = route(
     const {jobId}=params;
     return NextResponse.json(
   await archiveCollegeDrive(__ctx,jobId,await boundedRequestJson(req)),
-  {headers:{"Cache-Control":"private, no-store"}});
+  {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

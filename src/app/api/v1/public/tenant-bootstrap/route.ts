@@ -8,11 +8,12 @@ import {
 import { getPublicCollegeBranding } from "@/modules/colleges/branding-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const headers = {
-  "Cache-Control": "no-store",
+  "Cache-Control": CACHE.NONE,
   "X-Content-Type-Options": "nosniff",
   Vary: "Host",
 };

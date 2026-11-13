@@ -3,6 +3,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {DELETE as revokeCurrentSession} from "@/app/api/auth/session/route";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 
 /** Legacy POST /api/v1/auth/logout adapter. No Bearer refresh-token
@@ -18,7 +19,7 @@ async function handlePOST(request:Request){
   return NextResponse.json({
    error:"LEGACY_BEARER_LOGOUT_UNSUPPORTED",
    message:"This old login method is no longer supported. Please sign in again with a fresh one-time code.",
-  },{status:410,headers:{"Cache-Control":"no-store"}});
+  },{status:410,headers:{"Cache-Control":CACHE.NONE}});
  }
  return revokeCurrentSession(request);
 }

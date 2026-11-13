@@ -4,6 +4,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {createPublicExternalJobLink} from "@/modules/placements/public-external-job-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -14,7 +15,7 @@ const json:unknown=await boundedRequestJson(request);
 const jobId=json&&typeof json==="object"&&!Array.isArray(json)&&"jobId" in json
    ?(json as {jobId:unknown}).jobId:null;
 return NextResponse.json(await createPublicExternalJobLink(
-   __ctx,jobId),{headers:{"Cache-Control":"private, no-store"}});
+   __ctx,jobId),{headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch(error){
   if(error instanceof Error&&error.message==="PUBLIC_EXTERNAL_JOB_NOT_FOUND")
    return NextResponse.json({error:"NOT_FOUND"},{status:404});

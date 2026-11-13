@@ -6,6 +6,7 @@ import {isSuperAdmin} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 
 /** Legacy POST /job-applications/refresh repopulated a startup Spring cache.
@@ -29,7 +30,7 @@ async function handlePOST(request:Request){
    message:"Applications are read live; no cache refresh is required",
    cache:"LIVE_DATABASE",
    refreshed:false,
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const POST = route(

@@ -5,6 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {listTpoBatchRegistrationRoster} from "@/modules/placements/tpo-batch-registration-roster-service";
 import {exportTpoBatchRegistrationsCsv} from "@/modules/placements/tpo-batch-registration-export-model";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Same filters and 25-row pagination as UI. No export of consent metadata. */
@@ -20,7 +21,7 @@ async function handleGET(request:Request,{params}:{params:Promise<{batchId:strin
   return new Response("\uFEFF"+csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-batch-registration-page", "csv") + '"',
-   "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff",
+   "Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff",
    "X-TPO-Export-Scope":"CURRENT_PAGE_ONLY",Vary:"Cookie",
   }});
  }catch(error){return apiErrorResponse(error);}

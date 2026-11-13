@@ -8,9 +8,10 @@ import {
 } from "@/modules/courses/lesson-resource-file-upload-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 type Route={params:Promise<{contentId:string;materialId:string}>};
-const noStore={"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"};
+const noStore={"Cache-Control":CACHE.PRIVATE,"Referrer-Policy":"no-referrer"};
 const scopeSchema=z.strictObject({deliveryId:z.string().uuid().nullable().optional()});
 async function act(request:Request,{params}:Route,action:"COMPLETE"|"REMOVE"|"EDIT"){
  if(!isSameOriginRequest(request))

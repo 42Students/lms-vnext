@@ -13,6 +13,7 @@ import {
 } from "@/modules/courses/assignment-file-readiness";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 const MAX_PROXY_UPLOAD_BYTES=10*1024*1024;
 
@@ -66,7 +67,7 @@ async function handlePOST(
           message:error.code==="BODY_TOO_LARGE"
             ?"Server-assisted upload supports files up to 10 MiB. Use the signed direct upload for larger files."
             :"Invalid upload form.",
-        },{status:error.code==="BODY_TOO_LARGE"?413:400,headers:{"Cache-Control":"private, no-store"}});
+        },{status:error.code==="BODY_TOO_LARGE"?413:400,headers:{"Cache-Control":CACHE.PRIVATE}});
       }
       const file=form.get("file");
       if(!(file instanceof File))
@@ -98,23 +99,23 @@ async function handlePOST(
         return NextResponse.json({error:"STORAGE_PROXY_NETWORK_ERROR",
           message:"Could not transfer the file to private storage. The upload is not complete. Check the connection and try again.",
           receiptId:grant.receiptId,
-        },{status:502,headers:{"Cache-Control":"private, no-store"}});
+        },{status:502,headers:{"Cache-Control":CACHE.PRIVATE}});
       }
       if(!transferred.ok)return NextResponse.json({
         error:"STORAGE_PROXY_UPLOAD_REJECTED",
         message:"Private storage rejected the transfer. The file was not submitted. Retry the upload.",
         receiptId:grant.receiptId,
-      },{status:502,headers:{"Cache-Control":"private, no-store"}});
+      },{status:502,headers:{"Cache-Control":CACHE.PRIVATE}});
       return NextResponse.json({
         receiptId:grant.receiptId,uploaded:true,verificationPending:true,
         message:"Transfer complete. Verify the upload receipt before submitting this assignment.",
-      },{status:201,headers:{"Cache-Control":"private, no-store"}});
+      },{status:201,headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     const bounded=await readBoundedUtf8Body(request, 8 * 1024);
     if (bounded.kind!=="OK") {
       return NextResponse.json({
         error:bounded.kind==="TOO_LARGE"?"REQUEST_TOO_LARGE":"INVALID_REQUEST",
-      },{status:bounded.kind==="TOO_LARGE"?413:400,headers:{"Cache-Control":"private, no-store"}});
+      },{status:bounded.kind==="TOO_LARGE"?413:400,headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     let body:unknown;
     try { body=JSON.parse(bounded.body); }
@@ -141,7 +142,7 @@ async function handlePOST(
       uploadUrl:grant.uploadUrl,expiresAt:grant.expiresAt,
       requiredHeaders:grant.requiredHeaders,
       message:"Upload permission created. Complete the signed PUT and verify the receipt before submitting. If direct upload fails due to CORS or connectivity, retry with multipart/form-data (up to 10 MiB) for this assignment and delivery.",
-    },{status:201,headers:{"Cache-Control":"private, no-store"}});
+    },{status:201,headers:{"Cache-Control":CACHE.PRIVATE}});
   } catch (error) {
     return apiErrorResponse(error);
   }

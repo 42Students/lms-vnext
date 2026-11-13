@@ -13,6 +13,7 @@ import {
 } from "@/modules/projects/resource-history-service";
 import { route } from "@/security/route";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -51,15 +52,15 @@ async function handleGET(
           totalLoaded:history.rows.length,
           rangeLabel:first+"–"+last+" of "+history.total+" matching changes",
           hasUnloadedHistory:history.hasMore},
-      },{headers:{"Cache-Control":"private, no-store"}});
+      },{headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     const resources=await listProjectResources(context,projectId);
-    return NextResponse.json({resources},{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson({resources});
   } catch(error){
     if(error instanceof ProjectResourceHistoryUnavailable)
       return NextResponse.json({
         error:"RESOURCE_AUDIT_UNAVAILABLE",message:"Failed to fetch resource audit",
-      },{status:503,headers:{"Cache-Control":"private, no-store"}});
+      },{status:503,headers:{"Cache-Control":CACHE.PRIVATE}});
     return apiErrorResponse(error);
   }
 }

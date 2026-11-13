@@ -5,6 +5,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getIndependentAuditFinding,listIndependentAuditFindingEvents,listIndependentAuditFindings,mutateIndependentAuditFinding} from "@/modules/bug-tracker/independent-audit-findings-service";
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 type Params={params:Promise<{publicId:string}>};
@@ -14,7 +15,7 @@ export const GET = route(
     const ctx = __actor!;
     const {publicId}=params;
     const finding=await getIndependentAuditFinding(ctx,publicId);
-    if(!finding)return NextResponse.json({error:"NOT_FOUND"},{status:404,headers:{"Cache-Control":"private, no-store"}});
+    if(!finding)return privateJson({error:"NOT_FOUND"}, { status: 404 });
     const [events,matches]=await Promise.all([
    listIndependentAuditFindingEvents(ctx,finding.id),
    listIndependentAuditFindings(ctx,{q:"",view:"ALL",statuses:[],severities:[],kinds:[],area:finding.area,page:1}),
@@ -26,7 +27,7 @@ export const GET = route(
    const score=shared/Math.max(tokens.size,candidateTokens.size,1);
    return {id:item.id,externalId:item.externalId,title:item.title,status:item.status,score};
   }).filter(item=>item.score>=0.6).sort((a,b)=>b.score-a.score).slice(0,5);
-    return NextResponse.json({finding,events,similar},{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson({finding,events,similar});
   },
 );
 export const PATCH = route(
@@ -46,7 +47,7 @@ export const PATCH = route(
     result.reason==="DUPLICATE_TARGET_NOT_FOUND"?"That finding doesn't exist":
     "The finding changed or cannot be updated. Refresh and retry.",
   },{status:result.reason==="NOT_FOUND"?404:result.reason==="NOT_READY"?503:
-    result.reason==="INVALID_STATUS_TRANSITION"||result.reason==="FIX_COMMIT_REQUIRES_FIXED"?422:409,headers:{"Cache-Control":"private, no-store"}});
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    result.reason==="INVALID_STATUS_TRANSITION"||result.reason==="FIX_COMMIT_REQUIRES_FIXED"?422:409,headers:{"Cache-Control":CACHE.PRIVATE}});
+    return privateJson(result);
   },
 );

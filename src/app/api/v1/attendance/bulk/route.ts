@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 /** Legacy /api/v1/attendance/bulk accepted numeric classScheduleId and
  * student identifiers. Those are not safe vNext authorization keys. The
@@ -23,7 +24,7 @@ async function handlePOST(request:Request){
    deliveryId:"selected delivery UUID, required",
   },
   transaction:"Atomic entire active roster; no partial saves",
- },{status:410,headers:{"Cache-Control":"no-store"}});
+ },{status:410,headers:{"Cache-Control":CACHE.NONE}});
 }
 export const POST = route(
   { auth: "user", permission: "service-enforced" },

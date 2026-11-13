@@ -11,6 +11,7 @@ import {
 } from "@/modules/projects/lifecycle-service";
 import {updateProjectTaskStatusInputSchema} from "@/modules/projects/validation";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -38,7 +39,7 @@ return NextResponse.json({ task });
     if (error instanceof MentorProjectCommandBodyError) {
       return NextResponse.json(
         { error: error.code, message: mentorProjectBodyFailureMessage(error.status) },
-        { status: error.status, headers: { "Cache-Control": "no-store" } },
+        { status: error.status, headers: { "Cache-Control": CACHE.NONE } },
       );
     }
     return apiErrorResponse(error);
@@ -57,7 +58,7 @@ return NextResponse.json(await deleteMentorProjectTask(context,projectId,taskId,
 } catch(error){
   if(error instanceof MentorProjectCommandBodyError)
    return NextResponse.json({error:error.code,message:mentorProjectBodyFailureMessage(error.status)},
-    {status:error.status,headers:{"Cache-Control":"no-store"}});
+    {status:error.status,headers:{"Cache-Control":CACHE.NONE}});
   return apiErrorResponse(error);
  }
   },

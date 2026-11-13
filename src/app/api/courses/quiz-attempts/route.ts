@@ -4,6 +4,7 @@ import {
   listQuizAttempts,
 } from "@/modules/courses/quiz-attempt-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const GET = route(
@@ -27,6 +28,6 @@ export const GET = route(
       hasMore:attempts.length>25,
       nextPage:attempts.length>25?page+1:null,
       deliveryId},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

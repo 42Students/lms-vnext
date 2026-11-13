@@ -13,6 +13,7 @@ import {z} from "zod";
 import {readResourceMaterialCommandJson} from "@/modules/courses/resource-material-command-json";
 import {isSameOriginRequest} from "@/auth/origin";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 type Route={params:Promise<{contentId:string}>};
 const deliveryQuerySchema=z.strictObject({deliveryId:z.string().uuid().optional()});
@@ -66,13 +67,13 @@ export const GET = route(
     return grantLessonResourceMaterialFile(context,contentId,deliveryId,materialId);
    });
    return Response.json({grant},{headers:{
-    "Cache-Control":"private, no-store, max-age=0",
+    "Cache-Control":CACHE.PRIVATE_STRICT,
     "Referrer-Policy":"no-referrer",
     "X-Content-Type-Options":"nosniff",
    }});
   }
     const materials=await listLessonResourceMaterials(context,contentId,deliveryId);
-    return Response.json({materials},{headers:{"Cache-Control":"private, no-store"}});
+    return Response.json({materials},{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 export const POST = route(
@@ -85,6 +86,6 @@ export const POST = route(
     const deliveryId=deliveryQuerySchema.parse(normalizeContentAliases(contentId,queryParams(request))).deliveryId??null;
     const result=await commandLessonResourceMaterial(
    __ctx,contentId,deliveryId,input);
-    return Response.json({result},{status:201,headers:{"Cache-Control":"private, no-store"}});
+    return Response.json({result},{status:201,headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

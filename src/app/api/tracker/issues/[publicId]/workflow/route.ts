@@ -7,6 +7,7 @@ import { updateBugTrackerWorkflowForAdmin } from "@/modules/bug-tracker/admin-se
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 async function handlePATCH(
@@ -42,7 +43,7 @@ async function handlePATCH(
       // legacy controller's full issue response for status-only callers.
       issue, ...issue, currentVersion: issue.version,
     }, {
-      headers: { "Cache-Control": "private, no-store" },
+      headers: { "Cache-Control": CACHE.PRIVATE },
     });
   } catch (error) {
     return bugTrackerApiError(error);

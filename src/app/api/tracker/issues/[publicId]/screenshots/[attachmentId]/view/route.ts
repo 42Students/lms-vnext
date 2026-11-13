@@ -15,6 +15,7 @@ import {headObject,presignUrl} from "@/modules/storage/s3-client";
 import {apiErrorResponse} from "@/lib/api-error";
 import {canSignBugScreenshotDownload} from "@/modules/bug-tracker/access-and-attachments";
 import { env } from "@/config/env";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -57,7 +58,7 @@ export const GET = route(
    method:"GET",key:row.key,expiresSeconds:120,
   });
     return NextResponse.redirect(signed,{status:302,headers:{
-   "Cache-Control":"private, no-store","Referrer-Policy":"no-referrer",
+   "Cache-Control":CACHE.PRIVATE,"Referrer-Policy":"no-referrer",
   }});
   },
 );

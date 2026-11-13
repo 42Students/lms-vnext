@@ -2,8 +2,9 @@ import "server-only";
 import {NextResponse} from "next/server";
 import {verifyPublicCompanyShareCode} from "./access-service";
 import {companyShareTokenSchema} from "./token-model";
+import { CACHE } from "@/security/responses";
 export const legacyShareHeaders={
- "Cache-Control":"private, no-store","Referrer-Policy":"no-referrer",
+ "Cache-Control":CACHE.PRIVATE,"Referrer-Policy":"no-referrer",
  "X-Content-Type-Options":"nosniff","X-Robots-Tag":"noindex, nofollow, noarchive",
 } as const;
 export function legacyShareInvalid(){

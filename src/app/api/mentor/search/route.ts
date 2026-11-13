@@ -5,6 +5,7 @@ import {mentorUnifiedSearchQuery,searchMentorWorkspace}
   from "@/modules/projects/mentor-unified-search-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handleGET(request:Request){
   try{
@@ -18,7 +19,7 @@ async function handleGET(request:Request){
     const results=await searchMentorWorkspace(
       await getCurrentRequestContext(),parsed.data);
     return NextResponse.json({results},{
-      headers:{"Cache-Control":"private, no-store"},
+      headers:{"Cache-Control":CACHE.PRIVATE},
     });
   }catch(error){return apiErrorResponse(error);}
 }

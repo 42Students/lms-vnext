@@ -8,9 +8,10 @@ import {queueEligibleDeadlineTodayReminders}
 import { internalRoute } from "@/security/internal-route";
 
 import { featureReady } from "@/config/features";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"no-store"};
+const noStore={"Cache-Control":CACHE.NONE};
 
 /** Bind an external Cloud Scheduler with Asia/Kolkata cron 0 8 * * *.
  * No browser or cross-tenant request can select jobs or recipient IDs.

@@ -12,6 +12,7 @@ import { and,eq,inArray,isNull,or } from "drizzle-orm";
 import { z } from "zod";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 const previewSchema=z.object({
   collegeId:z.string().uuid(),
   csv:z.string().min(1).max(1_500_000),
@@ -72,10 +73,10 @@ async function handlePOST(request:Request){
       return Response.json({preview:true,total:rows.length,
         ready:results.filter(row=>row.status==="READY").length,
         needsReview:results.filter(row=>row.status!=="READY").length,
-        results},{headers:{"Cache-Control":"private, no-store"}});
+        results},{headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     return Response.json(await importFacultyCsv(context,command.value),
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   }catch(error){return apiErrorResponse(error);}
 }
 export const POST = route(

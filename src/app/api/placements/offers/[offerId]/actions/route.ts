@@ -9,6 +9,7 @@ import { actOnPlacementOffer } from "@/modules/placements/offer-service";
 import { placementOfferActionSchema } from "@/modules/placements/validation";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 // The old offer response API requires a literal JSON boolean. Do not
 // coerce "true", 1 or null; an extra action must not override this decision.
@@ -50,10 +51,10 @@ const offer =
         context.membership?.roles.includes(ROLE.LEARNER) ? "ISSUED" : undefined,
       );
 return NextResponse.json({offer,status:offer?.status},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch (error) {
     if(error instanceof TpoBulkBodyError)return NextResponse.json({error:error.message},{
-      status:error.status,headers:{"Cache-Control":"private, no-store"},
+      status:error.status,headers:{"Cache-Control":CACHE.PRIVATE},
     });
     return apiErrorResponse(error);
   }

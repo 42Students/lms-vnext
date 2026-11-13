@@ -8,6 +8,7 @@ import {alertEnvironment} from "@/modules/log-alerts/signature";
 import {isSuperAdmin} from "@/modules/identity/context";
 import { route } from "@/security/route";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 const filters=["windowMinutes","pageToken","query","minimumSeverity","anchorAt","anchor","environment","size","level","search","window"] as const;
 const actions=z.strictObject({
@@ -63,7 +64,7 @@ function safeLogFailure(cause:unknown):SafeLogFailure{
 function logFailureResponse(cause:unknown){
  const failure=safeLogFailure(cause);
  return NextResponse.json({code:failure.code,message:failure.message},{status:failure.status,
-  headers:{"Cache-Control":"private, no-store",...(failure.status===503?{"Retry-After":"30"}:{})}});
+  headers:{"Cache-Control":CACHE.PRIVATE,...(failure.status===503?{"Retry-After":"30"}:{})}});
 }
 function authorized(context:Awaited<ReturnType<typeof getCurrentRequestContext>>){
   return isSuperAdmin(context)&&context.user.platformStatus==="ACTIVE"&&
@@ -78,11 +79,11 @@ async function execute(context:Awaited<ReturnType<typeof getCurrentRequestContex
     if(detailId){
       const item=page.items.find(row=>row.id===detailId);
       if(!item)return NextResponse.json({message:"Log entry not found in this page."},{status:404});
-      return NextResponse.json({entry:safeTrackerCloudLogDetail(item)},{headers:{"Cache-Control":"private, no-store"}});
+      return privateJson({entry:safeTrackerCloudLogDetail(item)});
     }
     return NextResponse.json({...page,items:page.items.slice(0,parsed.size),
       environment:alertEnvironment(),size:parsed.size},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   }catch(cause){
     return logFailureResponse(cause);
   }
@@ -120,7 +121,7 @@ async function handlePOST(request:Request){
     // No authoritative release catalogue exists; log timestamps are not releases.
     return NextResponse.json({environment,configured:false,available:false,deploys:[],
       message:"Deployment history is not configured for this environment."},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   }
   const at=parsed.data.at;
   if(!at)return NextResponse.json({message:"Deployment timestamp is required."},{status:400});
@@ -153,7 +154,7 @@ async function handlePOST(request:Request){
         "Cloud Logging is not configured for deployment comparisons.":
         !complete?"Log samples were paginated; deployment health is unknown.":
         "Log sample comparison completed. Release health remains unverified without a deployment marker."},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   }catch(cause){
     return logFailureResponse(cause);
   }

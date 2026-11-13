@@ -6,6 +6,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listTpoBatchSavedViews,mutateTpoBatchSavedView}
  from "@/modules/placements/tpo-batch-saved-view-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 type Params={params:Promise<{batchId:string}>};
 export const GET = route(
@@ -14,7 +15,7 @@ export const GET = route(
     const __ctx = __actor!;
     const {batchId}=params;
     return NextResponse.json(await listTpoBatchSavedViews(__ctx,batchId),
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 export const POST = route(
@@ -23,6 +24,6 @@ export const POST = route(
     const __ctx = __actor!;
     const {batchId}=params;
     return NextResponse.json(await mutateTpoBatchSavedView(__ctx,batchId,await boundedRequestJson(request)),
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

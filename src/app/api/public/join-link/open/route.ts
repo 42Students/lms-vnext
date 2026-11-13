@@ -4,22 +4,23 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {readBoundedJsonBody} from "@/lib/bounded-json-body";
 import {recordPublicJoinOpen} from "@/modules/placements/public-join/open-service";
 import { route } from "@/security/route";
+import { CACHE, noStoreJson } from "@/security/responses";
 export const runtime="nodejs";
 const schema=z.strictObject({token:z.string().min(32).max(256),scope:z.enum(["COLLEGE","COMPANY"])});
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const body=await readBoundedJsonBody(request);
  if(body.kind==="TOO_LARGE")return NextResponse.json({error:"INVALID_BODY"},
-  {status:413,headers:{"Cache-Control":"no-store"}});
+  {status:413,headers:{"Cache-Control":CACHE.NONE}});
  const input=schema.safeParse(body.kind==="OK"?body.value:null);
  if(!input.success)return NextResponse.json({error:"INVALID_BODY"},
-  {status:400,headers:{"Cache-Control":"no-store"}});
+  {status:400,headers:{"Cache-Control":CACHE.NONE}});
  try{
   const opened=await recordPublicJoinOpen(input.data.token,input.data.scope);
-  return NextResponse.json({opened},{headers:{"Cache-Control":"no-store"}});
+  return noStoreJson({opened});
  }catch{
   return NextResponse.json({error:"SERVICE_UNAVAILABLE"},
-   {status:503,headers:{"Cache-Control":"no-store"}});
+   {status:503,headers:{"Cache-Control":CACHE.NONE}});
  }
 }
 export const POST = route(

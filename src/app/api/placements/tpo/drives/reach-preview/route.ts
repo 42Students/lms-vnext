@@ -7,9 +7,10 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {previewDraftDriveTargeting} from "@/modules/placements/tpo-drive-create-reach-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"private, no-store"} as const;
+const noStore={"Cache-Control":CACHE.PRIVATE} as const;
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},
   {status:403,headers:noStore});

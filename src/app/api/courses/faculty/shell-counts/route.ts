@@ -9,6 +9,7 @@ import {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment
 import {getFacultyClassSchedule} from "@/modules/courses/faculty-schedule-service";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 /** Live workload counts from current Faculty grants, never shared with
  * the College, Mentor, Recruiter, or TPO navigation. */
@@ -69,6 +70,6 @@ export const GET = route(
     return NextResponse.json({
    today,
    assessments:toGrade+drafts,
-  },{headers:{"Cache-Control":"private, no-store","Vary":"Cookie"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE,"Vary":"Cookie"}});
   },
 );

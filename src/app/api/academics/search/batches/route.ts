@@ -7,6 +7,7 @@ import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { searchCollegeBatchAutocomplete,recordCollegeBatchSearchSelection } from "@/modules/academics/college-academic-directory-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 const schema = z.object({
   q: z.string().trim().max(100).default(""),
@@ -17,7 +18,7 @@ async function handleGET(request: Request) {
   const url = new URL(request.url);
   if ([...url.searchParams.keys()].some(key => url.searchParams.getAll(key).length > 1))
     return NextResponse.json({ error: "INVALID_FILTERS" }, {
-      status: 400, headers: { "Cache-Control": "private, no-store" },
+      status: 400, headers: { "Cache-Control": CACHE.PRIVATE },
     });
   const input = schema.safeParse(Object.fromEntries(url.searchParams));
   if (!input.success) {
@@ -45,14 +46,14 @@ async function handlePOST(request:Request){
   const bounded = await readBoundedJsonBody(request, 16_384);
   if (bounded.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
     status: bounded.kind === "TOO_LARGE" ? 413 : 400,
-    headers: { "Cache-Control": "private, no-store" },
+    headers: { "Cache-Control": CACHE.PRIVATE },
   });
   const raw: unknown = bounded.value;
   const parsed=z.strictObject({batchId:z.string().uuid()}).safeParse(raw);
   if(!parsed.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
   return NextResponse.json(await recordCollegeBatchSearchSelection(
     await getCurrentRequestContext(),parsed.data.batchId),{
-      headers:{"Cache-Control":"private, no-store"}});
+      headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const POST = route(

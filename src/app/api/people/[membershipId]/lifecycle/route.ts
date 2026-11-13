@@ -9,6 +9,7 @@ import { PeopleServiceError } from "@/modules/people/errors";
 import { updateMembershipLifecycleWithRuntime } from "@/modules/people/runtime";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 /** Legacy /api/v1/admin/users/{userType}/{userId}/suspend and /reactivate
@@ -77,7 +78,7 @@ async function handlePATCH(
       status: person.membership.status,
       suspendedAt: person.membership.suspendedAt,
       suspensionReason: person.membership.suspensionReason,
-    }, { headers: { "Cache-Control": "private, no-store", "Vary": "Cookie" } });
+    }, { headers: { "Cache-Control": CACHE.PRIVATE, "Vary": "Cookie" } });
   } catch (error) {
     if (error instanceof PeopleServiceError && error.code === "MEMBERSHIP_NOT_FOUND") {
       return NextResponse.json({

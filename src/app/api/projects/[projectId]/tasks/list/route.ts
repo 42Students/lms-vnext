@@ -1,8 +1,9 @@
 import { route } from "@/security/route";
-import {NextResponse} from "next/server";
+
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listLegacyProjectTasks} from "@/modules/projects/legacy-workspace-task-query";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 
 export const GET = route(
@@ -20,6 +21,6 @@ export const GET = route(
   };
     const data=await listLegacyProjectTasks(
    __ctx,projectId,taskQuery);
-    return NextResponse.json(data,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(data);
   },
 );

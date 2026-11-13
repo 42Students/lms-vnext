@@ -7,6 +7,7 @@ import {FACULTY_LEGACY_PROFILE_COMPATIBILITY} from "@/modules/people/faculty-leg
 import {z} from "zod";
 import { readBoundedFacultyProfileJson,FacultyProfileBodyTooLarge } from "@/modules/people/faculty-profile-request-body";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -14,18 +15,18 @@ export const GET = route(
     const context = actor!;
     if(new URL(request.url).searchParams.get("compatibility")==="legacy")
     return NextResponse.json({routes:FACULTY_LEGACY_PROFILE_COMPATIBILITY},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
     const current=await loadOwnFacultyProfileDocumentStaged(context);
     const section=new URL(request.url).searchParams.get("section");
     if(section===null)return NextResponse.json({
     ...current,
     selfProfileHref:"/teacher/profile",
     collegeAdminProfileHref:null,
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
     const parsed=facultySelfEditableSection.safeParse(section);
     if(!parsed.success)return NextResponse.json({error:"INVALID_SECTION"},{status:400});
     return NextResponse.json({section:parsed.data,value:current.document[parsed.data],
-    version:current.version},{headers:{"Cache-Control":"private, no-store"}});
+    version:current.version},{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 export const PATCH = route(
@@ -39,7 +40,7 @@ export const PATCH = route(
   }
     const result=await patchOwnFacultyProfileSection(context,body);
     return NextResponse.json({...result,profileCompletenessRefresh:true},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 
@@ -76,6 +77,6 @@ export const DELETE = route(
    section:input.section,value:next,expectedVersion:input.expectedVersion,
   });
     return NextResponse.json({...result,removedEntryId:input.id,
-    profileCompletenessRefresh:true},{headers:{"Cache-Control":"private, no-store"}});
+    profileCompletenessRefresh:true},{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

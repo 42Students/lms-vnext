@@ -11,6 +11,7 @@ import { organizationIdSchema } from "@/modules/organizations/validation";
 import { listOrganizations } from "@/modules/organizations/service";
 import { route } from "@/security/route";
 
+import { CACHE, noStoreJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -30,14 +31,14 @@ async function handleGET(_request: Request,{params}:RouteContext) {
   if(!id.success)return NextResponse.json({
    error:"ORGANIZATION_NOT_FOUND",
    message:"Failed to fetch organization. Please try again or contact support.",
-  },{status:404,headers:{"Cache-Control":"no-store"}});
+  },{status:404,headers:{"Cache-Control":CACHE.NONE}});
   const rows=await listOrganizations(await getCurrentRequestContext());
   const organization=rows.find(item=>item.id===id.data);
   if(!organization)return NextResponse.json({
    error:"ORGANIZATION_NOT_FOUND",
    message:"Failed to fetch organization. Please try again or contact support.",
-  },{status:404,headers:{"Cache-Control":"no-store"}});
-  return NextResponse.json({organization},{headers:{"Cache-Control":"no-store"}});
+  },{status:404,headers:{"Cache-Control":CACHE.NONE}});
+  return noStoreJson({organization});
  } catch(error) {
   return apiErrorResponse(error);
  }

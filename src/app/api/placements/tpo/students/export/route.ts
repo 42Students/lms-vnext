@@ -18,6 +18,7 @@ import {
 import { route } from "@/security/route";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -96,7 +97,7 @@ async function handleGET(request: Request) {
         "Content-Disposition":
           'attachment; filename="' + (savedViewRequested?legacySavedViewExportFilename(viewName, "csv"):
             legacyGridExportFilename(viewName, "csv")) + '"',
-        "Cache-Control": "private, no-store, max-age=0",
+        "Cache-Control": CACHE.PRIVATE_STRICT,
         "X-Content-Type-Options": "nosniff",
         "X-Placement-Registration-Data":
           result.definitions.registrationsAvailable

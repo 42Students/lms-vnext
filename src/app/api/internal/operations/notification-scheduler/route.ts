@@ -16,9 +16,10 @@ import {
 import { internalRoute } from "@/security/internal-route";
 
 import { featureReady } from "@/config/features";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-const headers = { "Cache-Control": "no-store" } as const;
+const headers = { "Cache-Control": CACHE.NONE } as const;
 type WiredJob = "notification.release" | "notification.cleanup"
   | "notification.interviewReminders" | "notification.assignmentReminders"
   | "tpo.interviewReminders" | "tpo.interviewMorningReminders";

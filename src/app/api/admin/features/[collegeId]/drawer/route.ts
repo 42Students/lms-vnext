@@ -7,6 +7,7 @@ import {getSuperAdminLearnerAccessTrace} from "@/modules/module-access/admin-tra
 import {studentRuleCards} from "@/modules/module-access/admin-student-rule-model";
 
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 const query=z.strictObject({
  q:z.string().trim().min(2).max(100).optional(),
@@ -72,6 +73,6 @@ export const GET = route(
      blocked:student.modules.some(m=>m.module===item.module&&m.winnerLocked&&m.winnerLevel!=="MEMBERSHIP"),
     })),
    }:null,
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

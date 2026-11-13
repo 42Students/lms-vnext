@@ -6,6 +6,7 @@ import {parseSuperAdminQuizQuery} from "@/modules/admin-ui/super-admin-quiz-quer
 import {listCollegeAssessmentAggregate} from "@/modules/courses/college-assessment-aggregate-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** Read-only response adapter for the retired Super Admin quiz directory API.
@@ -23,14 +24,14 @@ async function handleGET(request:Request){
   }
   const parsed=parseSuperAdminQuizQuery(raw);
   if(!parsed.success)return NextResponse.json({success:false,error:"INVALID_FILTERS"},
-   {status:400,headers:{"Cache-Control":"private, no-store"}});
+   {status:400,headers:{"Cache-Control":CACHE.PRIVATE}});
   const context=await getCurrentRequestContext();
   requireSuperAdminSelectedCollege(context,"courses.read");
   const results=await listCollegeAssessmentAggregate(context,"QUIZ",parsed.data);
   return NextResponse.json({success:true,message:"Quizzes fetched successfully",
    data:{items:results.items,total:results.total,page:results.page,
     pageSize:results.pageSize,totalPages:results.totalPages}},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(

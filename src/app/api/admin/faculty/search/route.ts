@@ -11,8 +11,9 @@ import {
   recordAdminScopedFacultySelection,
 } from "@/modules/admin-ui/super-admin-scoped-people-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
-const privateHeaders = { "Cache-Control": "private, no-store" };
+const privateHeaders = { "Cache-Control": CACHE.PRIVATE };
 
 export const GET = route(
   { auth: "user", permission: "service-enforced" },

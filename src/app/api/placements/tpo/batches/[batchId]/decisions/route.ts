@@ -7,6 +7,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoBatch } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { decidePlacementParticipation, PlacementBatchError } from "@/modules/placements/batch-participation-service";
 import { tpoBatchDecisionSchema } from "@/modules/placements/tpo-batch-decision-model";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 type Params={params:Promise<{batchId:string}>};
 export const POST = route(
@@ -23,7 +24,7 @@ const outcome=await decidePlacementParticipation(ctx,{collegeId,expectedCohortId
    scopeType:"COHORT",scopeId:batchId,status:input.decision,
    reason:input.decision==="INELIGIBLE"?input.reason:null,expectedVersion:input.expectedVersion,
   }]});
-return NextResponse.json(outcome,{headers:{"Cache-Control":"private, no-store"}});
+return privateJson(outcome);
 } catch(error){
   if(error instanceof PlacementBatchError&&["DB08_ACTION_STALE","DB08_BATCH_FINISHED"].includes(error.code))
    return NextResponse.json({error:"BATCH_DECISION_CHANGED"},{status:409});

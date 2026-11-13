@@ -6,6 +6,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { createClassTeamWorkspaces } from "@/modules/projects/class-team-workspace-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -27,7 +28,7 @@ return NextResponse.json({
       partialFailure:false,
       countSummary:{created:result.teamCount,alreadyCovered:result.alreadyCovered},
       nextAction:result.teamCount===0?"REVIEW_CLASS_OR_TEMPLATE":"OPEN_TEAM_WORKSPACES",
-    }, {status:unchanged?200:201,headers:{"Cache-Control":"no-store"}});
+    }, {status:unchanged?200:201,headers:{"Cache-Control":CACHE.NONE}});
 } catch(error) {
     // A missing project table is a deployment dependency, not a partial team
     // creation. The service transaction rolls back all groups and projects.
@@ -36,7 +37,7 @@ return NextResponse.json({
       if(cause&&typeof cause==="object"&&(cause as {code?:unknown}).code==="42P01")
         return NextResponse.json({error:"PROJECT_TEAMS_UNAVAILABLE",
           message:"Project teams are not available. Try again after project storage is configured."},
-          {status:503,headers:{"Cache-Control":"no-store","Retry-After":"60"}});
+          {status:503,headers:{"Cache-Control":CACHE.NONE,"Retry-After":"60"}});
       cause=cause&&typeof cause==="object"?(cause as {cause?:unknown}).cause:null;
     }
     return apiErrorResponse(error);

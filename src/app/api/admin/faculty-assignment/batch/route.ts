@@ -3,6 +3,7 @@ import {NextResponse} from "next/server";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {createCourseTeachingAssignmentsBatch} from "@/modules/courses/teaching-assignment-batch-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 
 /** SA-academics-people-101: create 1–10 faculty/course grants atomically.
@@ -27,6 +28,6 @@ export const POST = route(
     return NextResponse.json({assignments,createdCount:assignments.length,
     message:assignments.length===1?"Assignment created successfully":
       assignments.length+" assignments created"},{status:201,
-    headers:{"Cache-Control":"private, no-store"}});
+    headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

@@ -6,6 +6,7 @@ import {
   updateCohort,
 } from "@/modules/academics/cohort-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const PATCH = route(
@@ -16,7 +17,7 @@ export const PATCH = route(
     const parsedBody = await readBoundedJsonBody(request, 16_384);
     if (parsedBody.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: parsedBody.kind === "TOO_LARGE" ? 413 : 400,
-      headers: { "Cache-Control": "private, no-store" },
+      headers: { "Cache-Control": CACHE.PRIVATE },
     });
     const body = parsedBody.value;
     const cohort =

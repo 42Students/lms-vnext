@@ -7,6 +7,7 @@ import {fetchPagedDepartments} from "@/modules/departments/service";
 import {filterDepartmentRows,type DepartmentDirectoryRow} from "@/modules/admin-ui/department-directory";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 const inputSchema=z.strictObject({
  mode:z.enum(["search","popular","college","categories","category","stats","exists"]).default("search"),
@@ -52,7 +53,7 @@ async function handleGET(request:Request){
    if(rows.length>=total)break;
   }
   const truncated=rows.length<total;
-  const headers={"Cache-Control":"private, no-store"};
+  const headers={"Cache-Control":CACHE.PRIVATE};
   if(input.mode==="stats"){
    return NextResponse.json({departments:total,
     colleges:[...new Set(rows.map(row=>row.collegeId))].length,
@@ -96,7 +97,7 @@ async function handlePOST(request:Request){
   await getCurrentRequestContext();
   return NextResponse.json({error:"SELECTION_ANALYTICS_UNAVAILABLE",
    message:"Selection analytics are not configured. Department selection is still available in the directory."},
-   {status:503,headers:{"Cache-Control":"no-store"}});
+   {status:503,headers:{"Cache-Control":CACHE.NONE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const POST = route(

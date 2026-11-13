@@ -6,6 +6,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
 import { getTpoSelectionWorkspace, recordTpoDriveSelections, verifyAndReleaseTpoSelections } from "@/modules/placements/tpo-drive-selection-service";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type Props = { params: Promise<{jobId:string}> };
@@ -16,7 +17,7 @@ export const GET = route(
     const __ctx = __actor!;
     const {jobId}=params;
     return NextResponse.json(await getTpoSelectionWorkspace(__ctx,jobId),{
-      headers:{"Cache-Control":"private, no-store"},
+      headers:{"Cache-Control":CACHE.PRIVATE},
     });
   },
 );
@@ -33,10 +34,10 @@ const result=body["action"]==="RECORD"
         ? await verifyAndReleaseTpoSelections(context,jobId,body)
         : null;
 if(!result)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
-return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+return privateJson(result);
 } catch(error){
     if(error instanceof TpoBulkBodyError)return NextResponse.json({error:error.message},
-      {status:error.status,headers:{"Cache-Control":"private, no-store"}});
+      {status:error.status,headers:{"Cache-Control":CACHE.PRIVATE}});
     return apiErrorResponse(error);
   }
   },

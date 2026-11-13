@@ -6,6 +6,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {changeTpoBatchLifecycle} from "@/modules/placements/tpo-batch-lifecycle-service";
 import {TpoBatchLifecycleError} from "@/modules/placements/tpo-batch-lifecycle-model";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "placements.manage" },
@@ -20,7 +21,7 @@ const item=body as Record<string,unknown>;
 const result=await changeTpoBatchLifecycle(__ctx,{
    batchId,action:item["action"],expectedVersion:item["expectedVersion"],
   });
-return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+return privateJson(result);
 } catch(error){
   if(error instanceof TpoBatchLifecycleError){
    const status=error.code==="BATCH_ACTION_STALE"?409:

@@ -12,6 +12,7 @@ import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { parseAnnouncementAdminApiQuery } from "@/modules/announcements/admin-api-query";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 async function handleGET(request: Request) {
@@ -74,7 +75,7 @@ async function handlePOST(request: Request) {
     // Preserve legacy HTTP 200/status OK while retaining the vNext document.
     return NextResponse.json({ status:"OK",announcement,
       data:{...announcement,announcementId:announcement.id}},
-      {status:200,headers:{"Cache-Control":"private, no-store"}});
+      {status:200,headers:{"Cache-Control":CACHE.PRIVATE}});
   } catch (error) {
     return announcementApiError(error);
   }

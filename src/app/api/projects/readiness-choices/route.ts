@@ -5,6 +5,7 @@ import {listCollegeReadinessWorkspaceChoicePage}
  from "@/modules/projects/college-readiness-releases-service";
 import {z} from "zod";
 import { route } from "@/security/route";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 const schema=z.strictObject({
  collegeId:z.string().uuid(),q:z.string().trim().max(120).default(""),
@@ -26,7 +27,7 @@ async function handleGET(request:Request){
   const result=await listCollegeReadinessWorkspaceChoicePage(
    await getCurrentRequestContext(),values.collegeId,
    {page:values.page,search:values.q});
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(result);
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(

@@ -6,6 +6,7 @@ import {readBoundedJsonBody} from "@/lib/bounded-json-body";
 import {apiErrorResponse} from "@/lib/api-error";
 import {changeInboundMailStatusForAdmin,getInboundMailDetailForAdmin} from "@/modules/inbound-mail/admin-service";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 /** Canonical CAS PATCH for triage. The old POST /{id}/done?done=true|false
  * is translated under the same Super Admin guard at [id]/done/route.ts. */
@@ -15,7 +16,7 @@ export const PATCH = route(
     const context = __actor!;
     const body=await readBoundedJsonBody(request,8192);
     if(body.kind!=="OK")return NextResponse.json({error:"INVALID_BODY"},
-   {status:body.kind==="TOO_LARGE"?413:400,headers:{"Cache-Control":"private, no-store"}});
+   {status:body.kind==="TOO_LARGE"?413:400,headers:{"Cache-Control":CACHE.PRIVATE}});
     const result=await changeInboundMailStatusForAdmin(context,body.value);
     if(result.kind==="STALE") {
    // The already-authorized service validated the ID and mutation scope.
@@ -30,6 +31,6 @@ export const PATCH = route(
   }
     if(result.kind==="UNAVAILABLE")
    return NextResponse.json({error:"INBOUND_MAIL_STORAGE_UNAVAILABLE"},{status:503});
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(result);
   },
 );

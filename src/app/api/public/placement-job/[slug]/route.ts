@@ -1,12 +1,13 @@
 import {NextResponse} from "next/server";
 import {readPublicExternalJobShare} from "@/modules/placements/tpo-public-join-link-service";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 type Props={params:Promise<{slug:string}>};
 async function handleGET(_request:Request,{params}:Props){
  try{const {slug}=await params;
   return NextResponse.json(await readPublicExternalJobShare(slug),
-   {headers:{"Cache-Control":"no-store"}});
+   {headers:{"Cache-Control":CACHE.NONE}});
  }catch{return NextResponse.json({error:"NOT_FOUND"},{status:404});}
 }
 export const GET = route(

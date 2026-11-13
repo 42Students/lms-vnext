@@ -11,9 +11,10 @@ import { internalRoute } from "@/security/internal-route";
 
 import { env } from "@/config/env";
 import { featureReady } from "@/config/features";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"no-store"};
+const noStore={"Cache-Control":CACHE.NONE};
 /** The private Cloud Scheduler runs at 19:00 Asia/Kolkata. Configure this
  * paired worker INSTEAD OF the in-app-only notification scheduler route for
  * tpo.interviewReminders, never both. The morning route stays IN_APP-only. */

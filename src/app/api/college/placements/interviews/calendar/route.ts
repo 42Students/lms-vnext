@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {listCollegeInterviewDirectory}
  from "@/modules/placements/college-interview-directory-service";
 import {apiErrorResponse} from "@/lib/api-error";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 const escape=(value:string)=>value.replaceAll("\\","\\\\").replaceAll(";","\\;")
  .replaceAll(",","\\,").replaceAll("\n","\\n");
@@ -36,7 +37,7 @@ export const GET = route(
     return new Response(lines.join("\r\n")+"\r\n",{headers:{
    "Content-Type":"text/calendar; charset=utf-8",
    "Content-Disposition":"attachment; filename="+(q.get("interviewId")?"interview.ics":"college-interviews.ics"),
-   "Cache-Control":"private, no-store",
+   "Cache-Control":CACHE.PRIVATE,
    "X-Content-Type-Options":"nosniff",
    ...(data.limited?{"X-Export-Truncated":"true"}:{}),
   }});

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { apiErrorResponse } from "@/lib/api-error";
 import { TpoRecruiterInviteServiceError } from "@/modules/placements/tpo-recruiter-invite-service";
 
+import { CACHE } from "@/security/responses";
 export function tpoRecruiterInviteApiErrorResponse(error: unknown) {
   if (error instanceof TpoRecruiterInviteServiceError) {
     return NextResponse.json(
@@ -12,7 +13,7 @@ export function tpoRecruiterInviteApiErrorResponse(error: unknown) {
           ? "This invitation is no longer available."
           : "The invitation cannot be completed. Check the recruiter details or ask the placement cell." },
       { status: error.code === "TPO_RECRUITER_INVITE_NOT_FOUND" ? 404 : 400,
-        headers: { "Cache-Control": "private, no-store", "Referrer-Policy": "no-referrer" } },
+        headers: { "Cache-Control": CACHE.PRIVATE, "Referrer-Policy": "no-referrer" } },
     );
   }
   // The generic handler also handles unexpected errors. A bearer-token

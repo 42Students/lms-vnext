@@ -6,6 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {changeInboundMailStatusForAdmin,getInboundMailDetailForAdmin} from "@/modules/inbound-mail/admin-service";
 import { route } from "@/security/route";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{id:string}>};
 
@@ -14,36 +15,36 @@ type RouteContext={params:Promise<{id:string}>};
  * The authorized current row provides the expected status and version. */
 async function handlePOST(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},
-  {status:403,headers:{"Cache-Control":"private, no-store"}});
+  {status:403,headers:{"Cache-Control":CACHE.PRIVATE}});
  try{
   const url=new URL(request.url),doneValues=url.searchParams.getAll("done");
   if([...url.searchParams.keys()].some(key=>key!=="done")||
     doneValues.length!==1||!["true","false"].includes(doneValues[0]!))
    return NextResponse.json({error:"INVALID_REQUEST",message:"Choose done or reopen."},
-    {status:400,headers:{"Cache-Control":"private, no-store"}});
+    {status:400,headers:{"Cache-Control":CACHE.PRIVATE}});
   const {id}=await params;
   if(!z.string().uuid().safeParse(id).success)
    return NextResponse.json({error:"MESSAGE_NOT_FOUND"},{status:404,
-    headers:{"Cache-Control":"private, no-store"}});
+    headers:{"Cache-Control":CACHE.PRIVATE}});
   const context=await getCurrentRequestContext();
   const current=await getInboundMailDetailForAdmin(context,id);
   if(!current)return NextResponse.json({error:"MESSAGE_NOT_FOUND"},
-   {status:404,headers:{"Cache-Control":"private, no-store"}});
+   {status:404,headers:{"Cache-Control":CACHE.PRIVATE}});
   const target=doneValues[0]==="true"?"RESOLVED":"NEW";
   if(current.status===target)return NextResponse.json({
    kind:"UNCHANGED",id,status:target,version:current.version,
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
   const result=await changeInboundMailStatusForAdmin(context,{
    id,expectedStatus:current.status,expectedVersion:current.version,status:target,
   });
   if(result.kind==="STALE")
    return NextResponse.json({error:"MESSAGE_CHANGED",
     message:"This message changed. Reload it and try again."},
-    {status:409,headers:{"Cache-Control":"private, no-store"}});
+    {status:409,headers:{"Cache-Control":CACHE.PRIVATE}});
   if(result.kind==="UNAVAILABLE")
    return NextResponse.json({error:"INBOUND_MAIL_STORAGE_UNAVAILABLE"},
-    {status:503,headers:{"Cache-Control":"private, no-store"}});
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    {status:503,headers:{"Cache-Control":CACHE.PRIVATE}});
+  return privateJson(result);
  }catch(error){return apiErrorResponse(error);}
 }
 export const POST = route(

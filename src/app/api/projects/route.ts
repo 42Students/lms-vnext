@@ -8,6 +8,7 @@ import {
   listProjectInstances,
 } from "@/modules/projects/instance-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const GET = route(
@@ -24,7 +25,7 @@ export const GET = route(
       /^[1-9][0-9]{0,2}$/.test(limitRaw)?Math.min(200,Number(limitRaw)):null;
     if(page===null||limit===null)return NextResponse.json({
       error:"INVALID_PROJECT_PAGE",message:"Use a positive page and limit (1–200).",
-    },{status:400,headers:{"Cache-Control":"no-store"}});
+    },{status:400,headers:{"Cache-Control":CACHE.NONE}});
     const projects=await listProjectInstances(context,collegeId);
     if(query.get("paged")==="1"){
       const slice=projects.slice((page-1)*limit,page*limit);
@@ -33,13 +34,13 @@ export const GET = route(
         totalPages:Math.max(1,Math.ceil(projects.length/limit)),
         message:"Projects retrieved",status:"success",
         nextPage:page*limit<projects.length?page+1:null,
-      },{headers:{"Cache-Control":"no-store"}});
+      },{headers:{"Cache-Control":CACHE.NONE}});
     }
     return NextResponse.json({
       projects,message:"Projects retrieved",status:"success",
       legacyEndpoints:{list:"GET /api/v1/admin/projects",
         paged:"GET /api/v1/admin/projects?page={page}&limit={limit}"},
-    },{headers:{"Cache-Control":"no-store"}});
+    },{headers:{"Cache-Control":CACHE.NONE}});
   },
 );
 
@@ -66,7 +67,7 @@ export const POST = route(
       error:"PROJECT_TEMPLATE_REQUIRED",
       message:"Choose an assigned project template before creating this workspace.",
       nextAction:"ASSIGN_PROJECT_TEMPLATE",
-    },{status:422,headers:{"Cache-Control":"no-store"}});
+    },{status:422,headers:{"Cache-Control":CACHE.NONE}});
     const legacyStatus=normalizeLegacyProjectCreationStatus(
       legacy.data.initialStatus??legacy.data.status??"PLANNED",{
         ...(typeof legacy.data["phase"]==="string"?{phase:legacy.data["phase"]}:{}),
@@ -98,7 +99,7 @@ export const POST = route(
         data:project,legacyResponse:{status:"success",message:"Project created",data:project},
         href:"/admin/projects/"+project.id,
         templateLink:"/admin/project-templates/"+encodeURIComponent(legacy.data.templateId) },
-      {status:201,headers:{"Cache-Control":"no-store"}},
+      {status:201,headers:{"Cache-Control":CACHE.NONE}},
     );
   },
 );

@@ -5,6 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getProjectActivityPage} from "@/modules/projects/activity-service";
 import {parseLearnerProjectActivityFilters} from "@/modules/projects/learner-project-activity-filter-model";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -44,6 +45,6 @@ export const GET = route(
     events:page.events.map(({cursorOccurredAt,...event})=>event),
     hasMore:page.hasMore,
     nextCursor:last&&page.hasMore?{time:last.cursorOccurredAt,id:last.id}:null,
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

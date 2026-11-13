@@ -9,6 +9,7 @@ import {requirePermission} from "@/modules/permissions/policy";
 import {z} from "zod";
 import { route } from "@/security/route";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 /** Modern scoped equivalent of legacy GET department search. Non-global
  * callers must have a persisted active college or supply that same college;
@@ -40,7 +41,7 @@ async function handleGET(request:Request){
    .from(departments).where(and(eq(departments.collegeId,collegeId),
     isNull(departments.archivedAt),ilike(departments.name,"%"+term+"%")))
    .orderBy(asc(departments.name),asc(departments.id)).limit(15);
-  return NextResponse.json({items:rows},{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson({items:rows});
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(

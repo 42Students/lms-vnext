@@ -5,6 +5,7 @@ import { buildHrApplicantCsv, HR_APPLICANT_EXPORT_CAP } from "@/modules/placemen
 import { getHrJobRead } from "@/modules/placements/hr-job-read-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ jobId: string }> };
 
@@ -36,7 +37,7 @@ async function handleGET(request: Request, { params }: RouteContext) {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
         "Content-Disposition": 'attachment; filename="recruiter-shared-applicants.csv"',
-        "Cache-Control": "private, no-store",
+        "Cache-Control": CACHE.PRIVATE,
         "X-Export-Omitted": String(exportResult.omitted),
       },
     });

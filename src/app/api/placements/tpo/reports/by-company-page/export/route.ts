@@ -9,6 +9,7 @@ import {companyReportViewSchema,paginateCompanyReport} from "@/modules/placement
 import {tpoVisibleCompanyReportCsv} from "@/modules/placements/tpo-company-page-csv-model";
 import {NextResponse} from "next/server";
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const GET = route(
@@ -16,12 +17,12 @@ export const GET = route(
   async ({ request, context: actor }) => {
     const context = actor!;
     if(!context.membership||!hasMembershipRole(context,ROLE.TPO)){
-   return NextResponse.json({error:"FORBIDDEN"},{status:403,headers:{"Cache-Control":"private, no-store"}});
+   return privateJson({error:"FORBIDDEN"}, { status: 403 });
   }
     const params=new URL(request.url).searchParams;
     if(tpoReportHasRepeatedSearchParams(params))return NextResponse.json(
    {error:"INVALID_REPORT_FILTERS"},
-   {status:400,headers:{"Cache-Control":"private, no-store"}});
+   {status:400,headers:{"Cache-Control":CACHE.PRIVATE}});
     const parsed=companyReportViewSchema.safeParse({
    q:params.get("q")??"",outcome:params.get("outcome")??"ALL",sort:params.get("sort")??"NAME",page:params.get("page")??1,
   });
@@ -40,7 +41,7 @@ export const GET = route(
     return new Response("\uFEFF"+tpoVisibleCompanyReportCsv(rows),{
    headers:{"Content-Type":"text/csv; charset=utf-8",
     "Content-Disposition":'attachment; filename="' + gridExportFilename(all==="1"?"tpo-company-report-filtered":"tpo-company-report-visible-page", "csv") + '"',
-    "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"},
+    "Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff"},
   });
   },
 );

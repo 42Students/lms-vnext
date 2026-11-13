@@ -11,6 +11,7 @@ import {getPublicPlacementPageContent,saveTpoPublicPlacementContent} from "@/mod
 import {publicPlacementContentInput} from "@/modules/placements/public-page/content-model";
 import { route } from "@/security/route";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 
 async function handlePOST(request:Request){
@@ -49,7 +50,7 @@ async function handleGET(){
   const content=await getPublicPlacementPageContent(ctx.membership.collegeId);
   return NextResponse.json({...data,contentVersion:content.updatedAt,
     links:{settings:"/tpo/settings/public-page",preview:"/placements"}},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(
@@ -74,11 +75,11 @@ async function handlePUT(request:Request){
   const parsed=legacyPublicPagePut.safeParse(raw);
   if(!parsed.success)return NextResponse.json({error:"INVALID_BODY",
    message:"Check the publication setting, text, selected numbers and saved version."},
-   {status:400,headers:{"Cache-Control":"private, no-store"}});
+   {status:400,headers:{"Cache-Control":CACHE.PRIVATE}});
   const ctx=await getCurrentRequestContext();
   if("enabled" in parsed.data){
    const state=await setTpoPublicPlacementPublication(ctx,{enabled:parsed.data.enabled});
-   return NextResponse.json({state},{headers:{"Cache-Control":"private, no-store"}});
+   return privateJson({state});
   }
   const contentInput=publicPlacementContentInput.safeParse({
    about:parsed.data.about,
@@ -87,9 +88,9 @@ async function handlePUT(request:Request){
   });
   if(!contentInput.success)return NextResponse.json({error:"INVALID_BODY",
    message:"Review the public number choices and content version."},
-   {status:400,headers:{"Cache-Control":"private, no-store"}});
+   {status:400,headers:{"Cache-Control":CACHE.PRIVATE}});
   const content=await saveTpoPublicPlacementContent(ctx,contentInput.data);
-  return NextResponse.json({content},{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson({content});
  }catch(error){
   if(error instanceof PublicPlacementPublishError)
    return NextResponse.json({error:error.code},

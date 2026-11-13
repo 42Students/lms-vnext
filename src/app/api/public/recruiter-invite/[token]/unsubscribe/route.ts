@@ -6,9 +6,10 @@ import { unsubscribeRecruiterInvite } from "@/modules/placements/tpo-recruiter-i
 import { route } from "@/security/route";
 
 import { featureReady } from "@/config/features";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-const noStore = { "Cache-Control": "private, no-store", "Referrer-Policy": "no-referrer" } as const;
+const noStore = { "Cache-Control": CACHE.PRIVATE, "Referrer-Policy": "no-referrer" } as const;
 type RouteContext = { params: Promise<{ token: string }> };
 
 async function handlePOST(request: Request, { params }: RouteContext) {

@@ -6,6 +6,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
 import { cancelTpoDriveWithPreview, getTpoDriveCancelPreview } from "@/modules/placements/tpo-drive-cancel-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const POST = route(
@@ -23,7 +24,7 @@ return NextResponse.json(
     );
 } catch (error) {
     if(error instanceof TpoBulkBodyError)return NextResponse.json({error:error.message},{
-      status:error.status,headers:{"Cache-Control":"private, no-store"},
+      status:error.status,headers:{"Cache-Control":CACHE.PRIVATE},
     });
     return apiErrorResponse(error);
   }
@@ -37,6 +38,6 @@ export const GET = route(
     const __ctx = __actor!;
     const {jobId}=params;
     return NextResponse.json(await getTpoDriveCancelPreview(__ctx,jobId),
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

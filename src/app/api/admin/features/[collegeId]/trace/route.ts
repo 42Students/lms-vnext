@@ -6,6 +6,7 @@ import {getSuperAdminLearnerAccessTrace} from "@/modules/module-access/admin-tra
 import {studentRuleCards} from "@/modules/module-access/admin-student-rule-model";
 import {adminModuleTraceQuerySchema} from "@/modules/module-access/admin-trace-service";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 /** SA-tenants-modules-31: authenticated, college-scoped read-only autocomplete
  * and explanation, never a way to act as the selected student. */
@@ -48,6 +49,6 @@ export const GET = route(
      blocked:student.modules.some(m=>m.module===item.module&&m.winnerLocked&&m.winnerLevel!=="MEMBERSHIP"),
     })),
    }:null,
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

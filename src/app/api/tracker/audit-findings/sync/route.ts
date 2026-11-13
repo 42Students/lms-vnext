@@ -13,9 +13,10 @@ import {
 import {independentAuditGithubConfigured} from "@/modules/bug-tracker/independent-audit-github-client";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"private, no-store"} as const;
+const noStore={"Cache-Control":CACHE.PRIVATE} as const;
 
 async function authorizedContext(){
  const context=await getCurrentRequestContext();

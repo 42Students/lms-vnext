@@ -1,10 +1,11 @@
-import {NextResponse} from "next/server";
+
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {parseIndependentFindingFilters} from "@/modules/bug-tracker/independent-audit-findings-model";
 import {listIndependentAuditFindings} from "@/modules/bug-tracker/independent-audit-findings-service";
 import { route } from "@/security/route";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -21,9 +22,9 @@ async function handleGET(request:Request){
    raw[key]=values.length===1?values[0]:values;
   }
   const parsed=parseIndependentFindingFilters(raw);
-  if(!parsed)return NextResponse.json({error:"INVALID_FILTERS"},{status:400,headers:{"Cache-Control":"private, no-store"}});
+  if(!parsed)return privateJson({error:"INVALID_FILTERS"}, { status: 400 });
   const result=await listIndependentAuditFindings(await getCurrentRequestContext(),parsed);
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(result);
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(

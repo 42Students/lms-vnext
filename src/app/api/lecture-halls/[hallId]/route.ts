@@ -12,6 +12,7 @@ import {
 import { lectureHallErrorResponse } from "../error-response";
 import { route } from "@/security/route";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = { params: Promise<{ hallId: string }> };
@@ -20,7 +21,7 @@ async function handleGET(_request:Request,{params}:RouteContext){
  try{
   const ctx=await getCurrentRequestContext();
   const hall=await getLectureHallDetail(ctx,(await params).hallId);
-  return NextResponse.json({hall},{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson({hall});
  }catch(error){
   if(error instanceof LectureHallError)return lectureHallErrorResponse(error);
   return apiErrorResponse(error);

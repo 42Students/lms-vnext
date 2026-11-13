@@ -7,6 +7,7 @@ import {
 } from "@/modules/courses/assignment-service";
 import { updateCourseAssignmentInputSchema } from "@/modules/courses/assignment-validation";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 // Admin/faculty edits are read-modify-write: the version the editor loaded
@@ -21,7 +22,7 @@ export const GET = route(
     const context = actor!;
     const {assignmentId}=params;
     const assignment=await getCourseAssignmentForAdmin(context,assignmentId);
-    return NextResponse.json({assignment},{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson({assignment});
   },
 );
 

@@ -1,9 +1,10 @@
 import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
-import {NextResponse} from "next/server";
+
 import {moveCourseDepartmentInputSchema} from "@/modules/courses/validation";
 import {moveCourseDepartment} from "@/modules/courses/course-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 
 /** A same-college department reassignment is possible only without any
@@ -17,6 +18,6 @@ export const POST = route(
     const input=moveCourseDepartmentInputSchema.parse(body);
     const course=await moveCourseDepartment(context,courseId,
       input.departmentId,input.expectedUpdatedAt);
-    return NextResponse.json({course},{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson({course});
   },
 );

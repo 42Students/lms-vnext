@@ -6,6 +6,7 @@ import {
 import {listSuperAdminContentDirectory} from "@/modules/courses/super-admin-content-directory-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -35,7 +36,7 @@ async function handleGET(request:Request){
   const first=await listSuperAdminContentDirectory(context,kind,filters);
   if(first.totalPages>1000)return Response.json({
    error:"EXPORT_TOO_LARGE",message:"Apply more specific course and lesson filters before exporting.",
-  },{status:413,headers:{"Cache-Control":"private, no-store"}});
+  },{status:413,headers:{"Cache-Control":CACHE.PRIVATE}});
   const rows=[...first.items];
   for(let page=2;page<=first.totalPages;page++){
    const current=await listSuperAdminContentDirectory(context,kind,{...filters,page});
@@ -54,7 +55,7 @@ async function handleGET(request:Request){
    status:200,headers:{
     "Content-Type":"text/csv; charset=utf-8",
     "Content-Disposition":'attachment; filename="lesson-content.csv"',
-    "Cache-Control":"private, no-store",
+    "Cache-Control":CACHE.PRIVATE,
     "X-Content-Type-Options":"nosniff",
    },
   });

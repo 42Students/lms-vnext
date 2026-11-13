@@ -5,6 +5,7 @@ import { friendlyApiError } from "@/lib/friendly-error";
 import { createRequestId } from "@/lib/request-id";
 import { LogAlertsAdminError } from "@/modules/log-alerts/admin-service";
 
+import { CACHE } from "@/security/responses";
 export function logAlertApiError(error: unknown) {
   if (!(error instanceof ZodError) && !(error instanceof LogAlertsAdminError)) {
     return apiErrorResponse(error);
@@ -15,6 +16,6 @@ export function logAlertApiError(error: unknown) {
   const requestId = createRequestId();
   return NextResponse.json(
     { error: code, message: friendlyApiError({ status, code }), requestId },
-    { status, headers: { "x-request-id": requestId, "Cache-Control": "no-store" } },
+    { status, headers: { "x-request-id": requestId, "Cache-Control": CACHE.NONE } },
   );
 }

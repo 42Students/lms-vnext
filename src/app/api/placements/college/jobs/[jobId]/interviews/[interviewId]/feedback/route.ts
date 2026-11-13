@@ -1,11 +1,12 @@
 import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
-import {NextResponse} from "next/server";
+
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getCollegeInterviewFeedback,recordCollegeInterviewFeedback} from "@/modules/placements/college-interview-feedback-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 type Context={params:Promise<{jobId:string;interviewId:string}>};
 export const GET = route(
@@ -14,7 +15,7 @@ export const GET = route(
     const __ctx = __actor!;
     const {jobId,interviewId}=params;
     const data=await getCollegeInterviewFeedback(__ctx,jobId,interviewId);
-    return NextResponse.json(data,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(data);
   },
 );
 export const POST = route(
@@ -24,6 +25,6 @@ export const POST = route(
     const {jobId,interviewId}=params;
     const data=await recordCollegeInterviewFeedback(__ctx,
    jobId,interviewId,await boundedRequestJson(request));
-    return NextResponse.json(data,{status:201,headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(data, { status: 201 });
   },
 );

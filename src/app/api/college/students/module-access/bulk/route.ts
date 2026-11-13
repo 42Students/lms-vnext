@@ -5,6 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {applyCollegeStudentModuleBulk,previewCollegeStudentModuleBulk}
  from "@/modules/module-access/college-student-bulk-rule-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -17,10 +18,10 @@ export const POST = route(
      return Response.json({error:"INVALID_REQUEST"},{status:400});
     if(raw.action==="PREVIEW")
      return Response.json(await previewCollegeStudentModuleBulk(
-       __ctx,raw),{headers:{"Cache-Control":"private, no-store"}});
+       __ctx,raw),{headers:{"Cache-Control":CACHE.PRIVATE}});
     if(raw.action==="APPLY")
      return Response.json(await applyCollegeStudentModuleBulk(
-       __ctx,raw),{headers:{"Cache-Control":"private, no-store"}});
+       __ctx,raw),{headers:{"Cache-Control":CACHE.PRIVATE}});
     return Response.json({error:"INVALID_REQUEST"},{status:400});
   },
 );

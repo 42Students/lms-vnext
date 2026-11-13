@@ -6,6 +6,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { getLearnerPlacementJourney } from "@/modules/placements/learner-journey-service";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const GET = route(
@@ -38,6 +39,6 @@ export const GET = route(
       schedule,
       offers,
       processes,
-    },{headers:{"Cache-Control":"private, no-store"}});
+    },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

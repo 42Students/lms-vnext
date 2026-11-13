@@ -14,6 +14,7 @@ import { LoginError, loginErrorMessage } from "./login-service";
 import { resolveRequestTenant } from "./request-tenant";
 import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "./bounded-json";
 
+import { CACHE } from "@/security/responses";
 /** Keyed, purpose-separated privacy tag; fixed 24-hex width fits the DB cap. */
 export function ipTag(ip: string) {
   return authAuditTag("ip", ip);
@@ -158,7 +159,7 @@ export async function guardLoginRequest<T extends z.ZodTypeAny>(
       ok: false,
       response: privateAuthJson(
         { error: "TENANT_LOOKUP_UNAVAILABLE" },
-        { status: 503, headers: { "Cache-Control": "no-store", "Retry-After": "30" } },
+        { status: 503, headers: { "Cache-Control": CACHE.NONE, "Retry-After": "30" } },
       ),
     };
   }

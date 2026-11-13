@@ -6,6 +6,7 @@ import {privateR2SetupState} from "@/modules/storage/r2-config";
 import {devAttestationAllowed} from "@/modules/storage/file-lifecycle";
 import {productionScannerCallbackReady} from "@/modules/storage/production-scan-verdict-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -16,7 +17,7 @@ export const GET = route(
   async ({ context: actor }) => {
     const context = actor!;
     if(!isSuperAdmin(context))
-   return Response.json({error:"FORBIDDEN"},{status:403,headers:{"Cache-Control":"private, no-store"}});
+   return Response.json({error:"FORBIDDEN"},{status:403,headers:{"Cache-Control":CACHE.PRIVATE}});
     const readiness=privateR2SetupState();
     const developmentAttestation=devAttestationAllowed();
     const scannerVerified=productionScannerCallbackReady();
@@ -36,6 +37,6 @@ export const GET = route(
     message:operational?readiness.message:readiness.configured?scanReadiness.message:readiness.message,
     scanner:scanReadiness,
   },{status:operational?200:503,
-   headers:{"Cache-Control":"private, no-store"}});
+   headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

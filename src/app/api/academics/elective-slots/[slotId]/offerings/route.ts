@@ -3,6 +3,7 @@ import { route } from "@/security/route";
 import {NextResponse} from "next/server";
 import {listCollegeOfferingChoices} from "@/modules/electives/college-offering-choices-service";
 import {createElectiveOffering} from "@/modules/electives/service";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -10,7 +11,7 @@ export const GET = route(
     const context = actor!;
     const {slotId}=params;
     const choices=await listCollegeOfferingChoices(context,slotId);
-    return NextResponse.json(choices,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(choices);
   },
 );
 export const POST = route(

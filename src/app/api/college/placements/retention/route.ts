@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getCollegeApplicationRetentionReport} from "@/modules/placements/college-retention-report-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 
 /** Legacy 180-day housekeeping preview is loaded only when expanded.
@@ -30,6 +31,6 @@ export const GET = route(
    })),
    totalStaleCount:first.total,cutoff:first.cutoff.toISOString(),
    truncated:first.total>rows.length,
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

@@ -7,6 +7,7 @@ import { tpoCrmApiErrorResponse } from "@/lib/tpo-crm-api-error";
 import { previewTpoLeadImportCollisions } from "@/modules/placements/tpo-lead-csv-import-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,7 @@ async function handlePOST(request: Request) {
     }
     return NextResponse.json(await previewTpoLeadImportCollisions(
       context, context.membership.collegeId, await boundedRequestJson(request, 8 * 1024 * 1024),
-    ), { headers: { "Cache-Control": "no-store" } });
+    ), { headers: { "Cache-Control": CACHE.NONE } });
   } catch (error) {
     if (error instanceof Error && error.message.startsWith("CSV_")) {
       return NextResponse.json({ error: error.message }, { status: 422 });

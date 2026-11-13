@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getInboundMailDetailForAdmin} from "@/modules/inbound-mail/admin-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 type Params={params:Promise<{id:string}>};
 /** Full plain text is available only after a separate global-Super-Admin read.
@@ -15,8 +16,8 @@ export const GET = route(
     const {id}=params;
     const message=await getInboundMailDetailForAdmin(__ctx,id);
     if(!message)return NextResponse.json({error:"INBOUND_MAIL_NOT_FOUND"},{status:404,
-    headers:{"Cache-Control":"private, no-store"}});
+    headers:{"Cache-Control":CACHE.PRIVATE}});
     return NextResponse.json({message},{
-   headers:{"Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"}});
+   headers:{"Cache-Control":CACHE.PRIVATE,"X-Content-Type-Options":"nosniff"}});
   },
 );

@@ -8,6 +8,7 @@ import {
   listPlacementSeasons,
 } from "@/modules/placements/season-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 /** Scoped legacy TPO season route mapping:
  * GET /api/v1/tpo/season → GET /api/placements/seasons (optional selected collegeId)
@@ -36,7 +37,7 @@ export const GET = route(
       return NextResponse.json({
         season, ...currentPlacementSeasonCopy(season),
         message:season?null:"No seasons created. Create a placement season before opening registration.",
-      },{headers:{"Cache-Control":"private, no-store"}});
+      },{headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     const seasons =
       await listPlacementSeasons(context,scopedCollegeId);
@@ -46,7 +47,7 @@ export const GET = route(
       message:seasons.length===0
         ?"No seasons created. Create a placement season before opening registration."
         :null,
-    },{headers:{"Cache-Control":"private, no-store"}});
+    },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 

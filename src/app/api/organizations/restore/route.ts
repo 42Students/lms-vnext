@@ -1,8 +1,9 @@
 import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
-import {NextResponse} from "next/server";
+
 import {restoreArchivedEntity} from "@/modules/organizations/service";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 
 /** Legacy POST /restore compatibility for ORGANIZATION and COLLEGE only.
@@ -13,6 +14,6 @@ export const POST = route(
     const context = actor!;
     const body:unknown=await boundedRequestJson(request);
     const result=await restoreArchivedEntity(context,body);
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(result);
   },
 );

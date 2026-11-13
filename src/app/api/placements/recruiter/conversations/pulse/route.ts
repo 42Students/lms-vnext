@@ -9,6 +9,7 @@ import { placementTpoMessages, placementTpoMessageThreads } from "@/db/schema/tp
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { route } from "@/security/route";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 /** Scoped lightweight recruiter inbox pulse. No message bodies or foreign
@@ -36,7 +37,7 @@ async function handleGET(request:Request) {
   if(collegeIds===null)
    return NextResponse.json({error:"FORBIDDEN"},{status:403});
   if(!collegeIds.length)
-   return NextResponse.json({version:"no-access"},{headers:{"Cache-Control":"private, no-store"}});
+   return privateJson({version:"no-access"});
   const [pulse]=await getDb().select({
    version:sql<string>`concat(
       count(distinct ${placementTpoMessageThreads.id}), ':',
@@ -52,7 +53,7 @@ async function handleGET(request:Request) {
      ...(parsed.data.threadId?[eq(placementTpoMessageThreads.id,parsed.data.threadId)]:[]),
    ));
   return NextResponse.json({version:pulse?.version??"empty"},{
-   headers:{"Cache-Control":"private, no-store"},
+   headers:{"Cache-Control":CACHE.PRIVATE},
   });
  }catch(error){return apiErrorResponse(error);}
 }

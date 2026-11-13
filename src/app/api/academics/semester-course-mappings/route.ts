@@ -8,6 +8,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { addCollegeTermMapping, addCollegeTermMappings, reorderCollegeTermMappings, CollegeTermMappingError } from "@/modules/academics/college-term-mapping-service";
 import { collegeTermCourseFullOrderSchema, TERM_MAPPING_COPY } from "@/modules/academics/college-term-mapping-model";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 /** Legacy addCourse -> POST, addCourses -> POST {mappings}, reorderCourses
  * -> PUT full ordered set; update/unmap -> PATCH/DELETE /[mappingId].
@@ -59,7 +60,7 @@ export const PUT = route(
 const input=collegeTermCourseFullOrderSchema.parse(await boundedRequestJson(request));
 const result=await reorderCollegeTermMappings(context,input);
 return NextResponse.json({status:"OK",message:"Semester course order updated",
-      data:result,result},{headers:{"Cache-Control":"private, no-store"}});
+      data:result,result},{headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch(error){
     if(error instanceof CollegeTermMappingError)
       return NextResponse.json({error:error.code},{status:error.code.endsWith("NOT_FOUND")?404:409});

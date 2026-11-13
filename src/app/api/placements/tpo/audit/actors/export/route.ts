@@ -5,6 +5,7 @@ import { getTpoActorAudit } from "@/modules/placements/tpo-actor-audit-service";
 import { tpoActorAuditCsv, tpoActorAuditQuerySchema } from "@/modules/placements/tpo-actor-audit-model";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,7 @@ async function handleGET(request: Request) {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
         "Content-Disposition": 'attachment; filename="' + gridExportFilename("tpo-actor-entity-audit", "csv") + '"',
-        "Cache-Control": "private, no-store, max-age=0",
+        "Cache-Control": CACHE.PRIVATE_STRICT,
         "X-Content-Type-Options": "nosniff",
         Vary: "Cookie",
         "X-Export-Truncated": data.truncated ? "true" : "false",

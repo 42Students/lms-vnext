@@ -9,6 +9,7 @@ import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { createCollegeSemester, SemesterMutationError } from "@/modules/academics/semester-mutation-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 /** Legacy-semester compatibility map:
  *   GET /programStructures, /semesters -> GET /api/academics/semesters
@@ -33,7 +34,7 @@ async function handleGET(request: Request) {
     return NextResponse.json({ status: "OK", message: "OK", data: directory.items,
       semesters: directory.items, total: directory.total, page: Number(query.get("page") ?? "1"),
       totalPages: directory.totalPages, programs: directory.programs },
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   } catch (error) { return apiErrorResponse(error); }
 }
 export const GET = route(
@@ -51,12 +52,12 @@ async function handlePOST(request: Request) {
     const parsed = await readBoundedJsonBody(request, 16_384);
     if (parsed.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: parsed.kind === "TOO_LARGE" ? 413 : 400,
-      headers: { "Cache-Control": "private, no-store" },
+      headers: { "Cache-Control": CACHE.PRIVATE },
     });
     const body: unknown = parsed.value;
     const semester = await createCollegeSemester(context, body);
     return NextResponse.json({ status: "OK", message: "Semester created successfully", data: semester, semester },
-      {status:201,headers:{"Cache-Control":"private, no-store"}});
+      {status:201,headers:{"Cache-Control":CACHE.PRIVATE}});
   } catch (error) {
     if(error instanceof ZodError||error instanceof SyntaxError){
       return NextResponse.json({error:"INVALID_SEMESTER",message:"Check the required semester fields."},

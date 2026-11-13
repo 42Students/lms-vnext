@@ -9,6 +9,7 @@ import { authorizeOrNotFound } from "@/modules/storage/file-access";
 import { z } from "zod";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -29,7 +30,7 @@ async function handleGET(request: Request, { params }: RouteContext) {
     if (!parsedIds.success) {
       return Response.json(
         { error: "INVALID_REQUEST", message: "Invalid Resource material" },
-        { status: 400, headers: { "Cache-Control": "private, no-store" } },
+        { status: 400, headers: { "Cache-Control": CACHE.PRIVATE } },
       );
     }
     const ids = parsedIds.data;
@@ -39,7 +40,7 @@ async function handleGET(request: Request, { params }: RouteContext) {
         [...url.searchParams.keys()].some(key => key !== "deliveryId")) {
       return Response.json(
         { error: "INVALID_REQUEST", message: "Invalid Resource material" },
-        { status: 400, headers: { "Cache-Control": "private, no-store" } },
+        { status: 400, headers: { "Cache-Control": CACHE.PRIVATE } },
       );
     }
     const parsedDelivery = values[0] === undefined
@@ -48,7 +49,7 @@ async function handleGET(request: Request, { params }: RouteContext) {
     if (parsedDelivery && !parsedDelivery.success) {
       return Response.json(
         { error: "INVALID_REQUEST", message: "Invalid Resource material" },
-        { status: 400, headers: { "Cache-Control": "private, no-store" } },
+        { status: 400, headers: { "Cache-Control": CACHE.PRIVATE } },
       );
     }
     const deliveryId = parsedDelivery?.data ?? null;
@@ -57,7 +58,7 @@ async function handleGET(request: Request, { params }: RouteContext) {
     if (!isUuid && !isLegacyIndex) {
       return Response.json(
         { error: "INVALID_REQUEST", message: "Invalid Resource material" },
-        { status: 400, headers: { "Cache-Control": "private, no-store" } },
+        { status: 400, headers: { "Cache-Control": CACHE.PRIVATE } },
       );
     }
     const context = await getCurrentRequestContext();
@@ -85,7 +86,7 @@ async function handleGET(request: Request, { params }: RouteContext) {
       },
       {
         headers: {
-          "Cache-Control": "private, no-store, max-age=0",
+          "Cache-Control": CACHE.PRIVATE_STRICT,
           "Referrer-Policy": "no-referrer",
           "X-Content-Type-Options": "nosniff",
         },

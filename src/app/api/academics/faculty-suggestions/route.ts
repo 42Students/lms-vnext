@@ -4,6 +4,7 @@ import {isSuperAdmin} from "@/modules/identity/context";
 import {listPopularCollegeFaculty,searchCollegeFacultySuggestions}
  from "@/modules/courses/college-faculty-picker-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -29,6 +30,6 @@ export const GET = route(
     ...(params.has("departmentId")?{departmentId:params.get("departmentId")}:{}),
     ...(params.has("employmentType")?{employmentType:params.get("employmentType")}:{}),
    });
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(result);
   },
 );

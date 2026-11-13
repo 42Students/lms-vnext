@@ -6,6 +6,7 @@ import {
   commitTpoAcademicImport, previewTpoAcademicImport,previewTpoLegacyAcademicImport,
 } from "@/modules/placements/tpo-academic-import-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced", stepUp: true },
@@ -21,19 +22,19 @@ export const POST = route(
     if ((body.action === "CORRECT" || mode === "SINGLE") && body.rows.length !== 1)
       return NextResponse.json({error:"ACADEMIC_CORRECTION_REQUIRES_ONE_STUDENT",
         message:"Choose exactly one learner to correct.",
-      },{status:422,headers:{"Cache-Control":"private, no-store"}});
+      },{status:422,headers:{"Cache-Control":CACHE.PRIVATE}});
     const input = {rows:body.rows,mode,skipUnmatched:mode==="SINGLE"?false:body.skipUnmatched??false};
     if(body.action==="LEGACY_PREVIEW")
       return NextResponse.json({
         preview:await previewTpoLegacyAcademicImport(context,body.rows),
         identifierType:"SCOPED_ROLL_OR_MEMBERSHIP_UUID",
-      },{headers:{"Cache-Control":"private, no-store"}});
+      },{headers:{"Cache-Control":CACHE.PRIVATE}});
     if(body.action==="IMPORT"&&body.rows.length>200)
       return NextResponse.json({error:"ACADEMIC_IMPORT_BATCH_TOO_LARGE",
         message:"Review the complete preview, then import up to 200 verified rows per batch.",
         batchSize:200,batchCount:Math.ceil(body.rows.length/200),
         stagedCount:body.rows.length,
-      },{status:422,headers:{"Cache-Control":"private, no-store"}});
+      },{status:422,headers:{"Cache-Control":CACHE.PRIVATE}});
     if (body.action === "PREVIEW"){
       const combined:Awaited<ReturnType<typeof previewTpoAcademicImport>>["rows"]=[];
       for(let offset=0;offset<body.rows.length;offset+=200){
@@ -49,7 +50,7 @@ export const POST = route(
         batchSize:200,batchCount:Math.ceil(combined.length/200),
         requiresExplicitConfirmation:true,
         identifierType:"COLLEGE_LEARNER_MEMBERSHIP_UUID",
-      },{headers:{"Cache-Control":"private, no-store"}});
+      },{headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     const result=await commitTpoAcademicImport(context,input);
     return NextResponse.json({
@@ -57,6 +58,6 @@ export const POST = route(
       updatedCount:result.updated,
       message:result.updated===0?"No academic records were changed.":mode==="SINGLE"?"Academic record corrected":"Academic records updated",
       identifierType:"COLLEGE_LEARNER_MEMBERSHIP_UUID",
-    },{headers:{"Cache-Control":"private, no-store"}});
+    },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

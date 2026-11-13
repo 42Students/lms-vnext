@@ -7,6 +7,7 @@ import { retestBugTrackerIssueForAdmin } from "@/modules/bug-tracker/admin-servi
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 async function handlePOST(
@@ -49,7 +50,7 @@ async function handlePOST(
     // explicit refresh token rather than a stale pre-action snapshot.
     return NextResponse.json({ issue, status:issue.status, version:issue.version,
       retestStatus:issue.retestStatus },
-      {headers:{"Cache-Control":"private, no-store",
+      {headers:{"Cache-Control":CACHE.PRIVATE,
         ...(alias?{"Deprecation":"true"}:{})}});
   } catch (error) {
     return bugTrackerApiError(error);

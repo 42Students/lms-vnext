@@ -6,6 +6,7 @@ import {getMentorPortfolioActivity} from "@/modules/projects/mentor-portfolio-se
 import {mentorActivityQuerySchema} from "@/modules/projects/mentor-portfolio-model";
 import {singleValueMentorExportFilters} from "@/modules/projects/mentor-filter-query";
 import {mentorPortfolioActivityCsv} from "@/modules/projects/mentor-portfolio-activity-export-model";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 
 /** Current, college-scoped Mentor projects only; never exports raw activity metadata. */
@@ -35,7 +36,7 @@ export const GET = route(
    headers:{
     "Content-Type":"text/csv; charset=utf-8",
     "Content-Disposition":'attachment; filename="mentor-portfolio-activity.csv"',
-    "Cache-Control":"private, no-store",
+    "Cache-Control":CACHE.PRIVATE,
     "X-Export-Omitted":String(omitted),
    },
   });

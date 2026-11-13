@@ -6,6 +6,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {ProjectsServiceError} from "@/modules/projects/errors";
 import {listProjectSubmissions,updateProjectSubmissionDraft} from "@/modules/projects/submission-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 type Ctx={params:Promise<{projectId:string}>};
 export const GET = route(
@@ -15,7 +16,7 @@ export const GET = route(
     const {projectId}=params;
     const result=await listProjectSubmissions(__ctx,projectId);
     return NextResponse.json({message:"Project delivery loaded",delivery:result.legacyDelivery,
-   history:result.history},{headers:{"Cache-Control":"private, no-store"}});
+   history:result.history},{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 /** Legacy PUT /submission safely writes the current DRAFT only. It never

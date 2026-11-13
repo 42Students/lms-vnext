@@ -1,5 +1,6 @@
 import { hardenDownload, isDownload } from "@/security/download-core";
 
+import { CACHE } from "@/security/responses";
 /**
  * `secured()` wraps ANY route handler without reading or changing its body (docs/security/central-security-architecture.md).
  *
@@ -135,7 +136,7 @@ export function createSecured(deps: SecuredDeps) {
           }
           if (over) {
             const limited = Response.json({ error: "RATE_LIMITED" }, {
-              status: 429, headers: { "x-request-id": requestId, "Retry-After": String(Math.ceil(windowMs / 1000)), "Cache-Control": "no-store" },
+              status: 429, headers: { "x-request-id": requestId, "Retry-After": String(Math.ceil(windowMs / 1000)), "Cache-Control": CACHE.NONE },
             });
             audit(429);
             return limited;

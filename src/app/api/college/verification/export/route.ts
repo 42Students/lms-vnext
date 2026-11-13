@@ -6,6 +6,7 @@ import {parseVerificationExportQuery} from "@/modules/verification/export-query"
 import {VerificationQueueLimitError} from "@/modules/verification/staff-queue-service";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -14,7 +15,7 @@ async function handleGET(request:Request){
   return new Response(report.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="college-profile-verification.csv"',
-   "Cache-Control":"private, no-store",
+   "Cache-Control":CACHE.PRIVATE,
    "X-Export-Truncated":String(report.truncated),"X-Export-Total":String(report.total),
   }});
  }catch(error){

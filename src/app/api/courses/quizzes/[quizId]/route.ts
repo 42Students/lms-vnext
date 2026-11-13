@@ -15,6 +15,7 @@ import {eq,sql} from "drizzle-orm";
 import {can} from "@/modules/permissions/policy";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -33,7 +34,7 @@ async function handleGET(
     const answerFlags=url.searchParams.getAll("includeCorrectAnswers");
     if(answerFlags.length>1||(answerFlags.length===1&&!["true","false"].includes(answerFlags[0]!)))
       return NextResponse.json({error:"INVALID_REQUEST",message:"includeCorrectAnswers must be true or false."},
-        {status:400,headers:{"Cache-Control":"private, no-store"}});
+        {status:400,headers:{"Cache-Control":CACHE.PRIVATE}});
     const quiz = await getCourseQuiz(
       context,
       quizId,

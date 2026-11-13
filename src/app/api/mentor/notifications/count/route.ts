@@ -15,6 +15,7 @@ import {listOwnMentorSourceReceipts} from
 import {mentorAttentionReceiptKey,mentorAnnouncementReceiptKey}
   from "@/modules/projects/mentor-attention-read-model";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 /** Bell count shares exactly the signed-in user's persisted read receipts.
  * A full-college notice count is not invented if the notice feed is paged.
@@ -40,6 +41,6 @@ export const GET = route(
     loadedSourceUnread:sourceUnread,
     /** Source notices return at most 100 newest at a time. */
     partial:announcementsRuntimeEnabled()&&notices.length>=100,
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

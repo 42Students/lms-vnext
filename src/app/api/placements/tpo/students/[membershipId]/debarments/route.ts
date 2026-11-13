@@ -7,6 +7,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {createPlacementDebarment,liftPlacementDebarment,listTpoMemberDebarments,PlacementDebarmentError} from "@/modules/placements/debarment-service";
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 type Context={params:Promise<{membershipId:string}>};
 const input=z.discriminatedUnion("action",[
@@ -22,7 +23,7 @@ export const GET = route(
     const ctx = __actor!;
     const {membershipId}=params;
     const rows=await listTpoMemberDebarments(ctx,membershipId);
-    return NextResponse.json({rows},{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson({rows});
   },
 );
 export const POST = route(
@@ -42,7 +43,7 @@ if(body.action==="LIFT"){
     reason:body.reason,untilDate:body.untilDate??null,untilDrives:body.untilDrives??null});
   }
 return NextResponse.json({rows:await listTpoMemberDebarments(ctx,membershipId)},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch(e){
   if(e instanceof PlacementDebarmentError&&e.code==="DB08_DEBARMENT_ALREADY_ACTIVE")
    return NextResponse.json({error:"CONFLICT"},{status:409});

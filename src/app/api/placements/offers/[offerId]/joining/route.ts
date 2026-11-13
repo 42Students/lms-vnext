@@ -7,6 +7,7 @@ import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-
 import { recordPlacementJoiningOutcome } from "@/modules/placements/offer-service";
 import { placementJoiningOutcomeInputSchema } from "@/modules/placements/validation";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -28,7 +29,7 @@ const joining =
 return NextResponse.json({ joining });
 } catch (error) {
     if(error instanceof TpoBulkBodyError)return NextResponse.json({error:error.message},{
-      status:error.status,headers:{"Cache-Control":"private, no-store"},
+      status:error.status,headers:{"Cache-Control":CACHE.PRIVATE},
     });
     return apiErrorResponse(error);
   }

@@ -8,6 +8,7 @@ import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-
 import {TpoBulkApplicationsUnavailable} from "@/modules/placements/tpo-bulk-workflow-model";
 import {confirmTpoBulkAction,TpoBulkPreviewError}
  from "@/modules/placements/tpo-bulk-action-confirm-service";
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -18,17 +19,17 @@ const body=await readTpoBulkRequestBody(request);
 await requireTpoJobCollege(context);
 const result=await confirmTpoBulkAction(
      context,body);
-return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+return privateJson(result);
 } catch(error){
    if(error instanceof TpoBulkBodyError)
      return NextResponse.json({error:error.message},{status:error.status,
-       headers:{"Cache-Control":"private, no-store"}});
+       headers:{"Cache-Control":CACHE.PRIVATE}});
    if(error instanceof TpoBulkApplicationsUnavailable)
      return NextResponse.json({error:"DB09_MIGRATIONS_PENDING"},{status:503,
-       headers:{"Cache-Control":"private, no-store"}});
+       headers:{"Cache-Control":CACHE.PRIVATE}});
    if(error instanceof TpoBulkPreviewError)
      return NextResponse.json({error:error.message},{status:409,
-       headers:{"Cache-Control":"private, no-store"}});
+       headers:{"Cache-Control":CACHE.PRIVATE}});
    return apiErrorResponse(error);
  }
   },

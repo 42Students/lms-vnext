@@ -6,6 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {submitRecruiterSelectionList} from "@/modules/placements/recruiter-selection-list-write-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 
 const requestErrors:Record<string,{status:number;message:string}>={
@@ -29,7 +30,7 @@ async function handlePOST(request:Request,{params}:{params:Promise<{jobId:string
   const {jobId}=await params;
   const saved=await submitRecruiterSelectionList(await getCurrentRequestContext(),jobId,input);
   return Response.json(saved,{status:saved.submitted?201:200,
-   headers:{"Cache-Control":"private, no-store"}});
+   headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){
   if(error instanceof z.ZodError)
    return Response.json({error:"INVALID_SELECTION",message:"Review the selection fields and try again."},{status:400});

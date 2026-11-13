@@ -25,6 +25,7 @@ import {
 } from "@/modules/placements/report-service";
 
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -543,7 +544,7 @@ if(query.kind==="accreditation-students"){
       return new Response("\uFEFF"+studentReport.csv,{
        headers:{"Content-Type":"text/csv; charset=utf-8",
         "Content-Disposition":'attachment; filename="naac-5.2.1-students.csv"',
-        "Cache-Control":"private, no-store, max-age=0","X-Content-Type-Options":"nosniff",Vary:"Cookie"},
+        "Cache-Control":CACHE.PRIVATE_STRICT,"X-Content-Type-Options":"nosniff",Vary:"Cookie"},
       });
     }
 if (query.kind === "accreditation") {
@@ -556,7 +557,7 @@ if (query.kind === "accreditation") {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
           "Content-Disposition": 'attachment; filename="tpo-accreditation-evidence.csv"',
-          "Cache-Control": "private, no-store, max-age=0",
+          "Cache-Control": CACHE.PRIVATE_STRICT,
           "X-Content-Type-Options": "nosniff",
           Vary: "Cookie",
         },
@@ -640,7 +641,7 @@ return new Response(`﻿${csv}`, {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
         "Content-Disposition": `attachment; filename="${filename}"`,
-        "Cache-Control": "private, no-store, max-age=0",
+        "Cache-Control": CACHE.PRIVATE_STRICT,
         "X-Content-Type-Options": "nosniff",
         Vary: "Cookie",
       },

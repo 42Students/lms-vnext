@@ -15,6 +15,7 @@ import {getDb} from "@/db/client";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 /**
@@ -52,7 +53,7 @@ export const GET = route(
           code:row.code,uniqueId:row.uniqueId,
         })),
         readOnly:true,scopeChangePerformed:false,
-      },{headers:{"Cache-Control":"private, no-store"}});
+      },{headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     const q=params.get("q")?.trim()??"";
     const name=params.get("name")?.trim()??"";
@@ -69,11 +70,11 @@ export const GET = route(
       return NextResponse.json({
         status:"OK",message:"Colleges retrieved",data,colleges:data,
         scopeChangePerformed:false,
-      },{headers:{"Cache-Control":"private, no-store"}});
+      },{headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     const started=Date.now();
     const items=await listColleges(context,organizationId);
-    if(mode==="list")return NextResponse.json({colleges:items},{headers:{"Cache-Control":"private, no-store"}});
+    if(mode==="list")return privateJson({colleges:items});
     const elapsed=Math.max(0,Date.now()-started);
     const project=(row:typeof items[number])=>({
       id:row.id,organizationId:row.organizationId,
@@ -85,25 +86,25 @@ export const GET = route(
       if(!name)return NextResponse.json({error:"NAME_REQUIRED"},{status:400});
       const exists=items.some(item=>item.name.toLocaleLowerCase("en-IN")===name.toLocaleLowerCase("en-IN"));
       return NextResponse.json({status:"OK",message:"Checked",data:exists,exists},
-        {headers:{"Cache-Control":"private, no-store"}});
+        {headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     if(mode==="names"){
       const names=items.map(item=>({id:item.id,name:item.name,uniqueId:item.code}));
       return NextResponse.json({status:"OK",message:"Colleges retrieved",data:names,names},
-        {headers:{"Cache-Control":"private, no-store"}});
+        {headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     if(mode==="stats"){
       const data={total:items.length,
         states:new Set(items.map(row=>row.state).filter(Boolean)).size,
         cities:new Set(items.map(row=>row.city).filter(Boolean)).size};
       return NextResponse.json({status:"OK",message:"Stats retrieved",data},
-        {headers:{"Cache-Control":"private, no-store"}});
+        {headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     if(mode==="refresh"){
       // Fresh persisted read above already bypasses process-local caches.
       return NextResponse.json({status:"OK",message:"Directory refreshed",
         data:items.map(project).slice(0,parsedLimit??50)},
-        {headers:{"Cache-Control":"private, no-store"}});
+        {headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     if(mode==="select"){
       const id=params.get("collegeId")??params.get("id");
@@ -111,12 +112,12 @@ export const GET = route(
       if(!selected)return NextResponse.json({error:"COLLEGE_NOT_FOUND"},{status:404});
       return NextResponse.json({status:"OK",message:"College selected for preview",
         data:project(selected),scopeChangePerformed:false},
-        {headers:{"Cache-Control":"private, no-store"}});
+        {headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     if(mode==="states"||mode==="categories"){
       const data=[...new Set(items.map(row=>row.state?.trim()).filter((v):v is string=>Boolean(v)))].sort();
       return NextResponse.json({status:"OK",message:mode==="states"?"States retrieved":"Categories retrieved",data},
-        {headers:{"Cache-Control":"private, no-store"}});
+        {headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     if(!["search","popular","state","city","category"].includes(mode))
       return NextResponse.json({error:"INVALID_SEARCH_MODE"},{status:400});
@@ -133,7 +134,7 @@ export const GET = route(
           "Colleges retrieved in "+elapsed+"ms",
         data,colleges:data,
         ...(mode==="popular"?{popularityAvailable:false,popularityProxy:"ACTIVE_MEMBERSHIP_COUNT"}:{}),
-      },{headers:{"Cache-Control":"private, no-store"}});
+      },{headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     const result=items.filter(row=>{
       if(mode==="state"||mode==="category")return Boolean(region)&&row.state?.toLocaleLowerCase("en-IN")===region;
@@ -146,7 +147,7 @@ export const GET = route(
       :"Colleges retrieved in "+elapsed+"ms";
     return NextResponse.json({status:"OK",message,data:result,colleges:result,
       ...(mode==="popular"?{popularityAvailable:false}:{})},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 
@@ -173,7 +174,7 @@ export const POST = route(
       if(!college)return NextResponse.json({error:"COLLEGE_NOT_FOUND"},{status:404});
       const usage=await resolveCollegeUsage(college.id);
       return NextResponse.json({status:"OK",collegeId:college.id,data:usage},
-        {headers:{"Cache-Control":"private, no-store"}});
+        {headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     const college = await createCollege(
       context,

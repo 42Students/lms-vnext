@@ -8,6 +8,7 @@ import {
   bulkUpdateTpoAfterCollege, BulkAfterCollegeError,
 } from "@/modules/placements/tpo-after-college-bulk-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -15,7 +16,7 @@ export const POST = route(
     const context = __actor!;
     try {
 const result = await bulkUpdateTpoAfterCollege(context, await boundedRequestJson(request, 8 * 1024 * 1024));
-return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
+return privateJson(result);
 } catch (error) {
     if (error instanceof BulkAfterCollegeError)
       return NextResponse.json({ error: error.code }, {

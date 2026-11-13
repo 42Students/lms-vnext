@@ -13,6 +13,7 @@ import {mentorAttentionReceiptKey,mentorAnnouncementReceiptKey} from
  "@/modules/projects/mentor-attention-read-model";
 import {sortMentorUnifiedNotifications} from
  "@/modules/projects/mentor-unified-notification-model";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 /** Every source read reauthorizes the signed-in recipient, college and live
  * Mentor role. Render at most five source-owned entries in the shell.
@@ -55,7 +56,7 @@ export const GET = route(
     return NextResponse.json({items,hasMore:Boolean(inbox.page.nextCursor)||
     announcementsRuntimeEnabled()&&notices.length>=100||
     alerts.length+notices.length+inbox.page.items.length>5},{
-      headers:{"Cache-Control":"private, no-store"},
+      headers:{"Cache-Control":CACHE.PRIVATE},
   });
   },
 );

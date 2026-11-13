@@ -9,8 +9,9 @@ import {
 } from "@/modules/courses/lesson-content-discussion-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
-const noStore = { "Cache-Control": "private, no-store" };
+const noStore = { "Cache-Control": CACHE.PRIVATE };
 type RouteContext = { params: Promise<{contentId:string}> };
 
 /** Separate, gated legacy lesson-content feed, not delivery classroom chat. */

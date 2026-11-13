@@ -7,6 +7,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {checkMentorGoogleMeeting,syncMentorGoogleMeeting,
  removeCancelledMentorGoogleMeeting}
  from "@/modules/projects/mentor-google-meeting-sync-service";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 type Params={params:Promise<{projectId:string;meetingId:string}>};
 const inputSchema=z.strictObject({
@@ -20,7 +21,7 @@ export const GET = route(
     const {projectId,meetingId}=params;
     const status=await checkMentorGoogleMeeting(
    __ctx,projectId,meetingId);
-    return NextResponse.json(status,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(status);
   },
 );
 export const POST = route(
@@ -35,7 +36,7 @@ if(!input.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400
 const {projectId,meetingId}=params;
 const result=await syncMentorGoogleMeeting(__ctx,
    projectId,meetingId,input.data.weeklyCount,input.data.inviteeMembershipIds);
-return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+return privateJson(result);
 } catch(error){
   if(error instanceof SyntaxError)
    return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
@@ -54,6 +55,6 @@ export const DELETE = route(
     const {projectId,meetingId}=params;
     const result=await removeCancelledMentorGoogleMeeting(
    __ctx,projectId,meetingId);
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(result);
   },
 );

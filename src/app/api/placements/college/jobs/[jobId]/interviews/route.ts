@@ -6,6 +6,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getCollegeRoundSlotAppointments,mutateCollegeRoundSlotInterview} from "@/modules/placements/college-round-slot-action-service";
 import {driveInterviewsParams} from "@/modules/placements/college-drive-interviews-model";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 type Props={params:Promise<{jobId:string}>};
 export const GET = route(
@@ -28,7 +29,7 @@ export const GET = route(
      ...(query.candidatePageSize !== undefined ? {candidatePageSize:query.candidatePageSize} : {}),
      ...(query.candidateSearch !== undefined ? {candidateSearch:query.candidateSearch} : {}),
    }),
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 export const POST = route(
@@ -37,6 +38,6 @@ export const POST = route(
     const __ctx = __actor!;
     const {jobId}=params;
     return NextResponse.json(await mutateCollegeRoundSlotInterview(__ctx,jobId,await boundedRequestJson(request)),
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

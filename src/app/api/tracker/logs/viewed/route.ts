@@ -9,6 +9,7 @@ import {
 import { logAlertsRuntimeEnabled } from "@/modules/log-alerts/readiness";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 async function handleGET() {
@@ -18,7 +19,7 @@ async function handleGET() {
   try {
     const context = await getCurrentRequestContext();
     return NextResponse.json(await readLogAlertAdminState(context), {
-      headers: { "Cache-Control": "private, no-store" },
+      headers: { "Cache-Control": CACHE.PRIVATE },
     });
   } catch (error) {
     return logAlertApiError(error);

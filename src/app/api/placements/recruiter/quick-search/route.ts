@@ -7,6 +7,7 @@ import {recruiterDriveListQuerySchema} from "@/modules/placements/recruiter-driv
 import {searchOwnRecruiterDrives} from "@/modules/placements/recruiter-drive-search-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 const uuid=z.string().uuid();
 const term=z.string().trim().min(2).max(100);
@@ -37,7 +38,7 @@ async function handleGET(request:NextRequest){
    const unique=new Map(grants.map(item=>[item.collegeId,item.collegeName]));
    return NextResponse.json({
     results:[],chooseCollege:true,choices:Array.from(unique,([id,name])=>({id,name})),
-   },{headers:{"Cache-Control":"private, no-store"}});
+   },{headers:{"Cache-Control":CACHE.PRIVATE}});
   }
   const filter=recruiterDriveListQuerySchema.parse({
    collegeId,q:parsed.data,view:"ALL",page:1,sort:"RECENT",
@@ -52,7 +53,7 @@ async function handleGET(request:NextRequest){
    href:"/recruiter/drives/"+encodeURIComponent(item.job.id),
   }));
   return NextResponse.json({results,chooseCollege:false,choices:[]},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(

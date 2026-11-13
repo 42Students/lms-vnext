@@ -6,6 +6,7 @@ import {countTpoUnreadRecruiterMessages} from "@/modules/placements/tpo-recruite
 import {getPendingTpoRequestsCount} from "@/modules/placements/tpo-pending-requests-count-service";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listMyTpoInternalThreads} from "@/modules/placements/tpo-team-internal-read-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -19,6 +20,6 @@ export const GET = route(
   ]);
     return NextResponse.json({notifications:personal.unreadCount,messages,requests,
    team:team.status==="READY"?team.items.reduce((sum,item)=>sum+item.unreadCount,0):null},{
-   headers:{"Cache-Control":"private, no-store"}});
+   headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

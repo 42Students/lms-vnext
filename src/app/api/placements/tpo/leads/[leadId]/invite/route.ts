@@ -10,6 +10,7 @@ import {outboundQueueRuntimeEnabled} from "@/modules/operations/outbound-deliver
 import { route } from "@/security/route";
 
 import { featureReady } from "@/config/features";
+import { CACHE, noStoreJson } from "@/security/responses";
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ leadId: string }> };
 
@@ -54,17 +55,17 @@ async function handlePOST(request: Request, { params }: RouteContext) {
         return NextResponse.json({invite:{
           leadId:invite.leadId,expiresAt:invite.expiresAt,
           emailAvailable:invite.emailAvailable,emailed:false,queued:true,
-        }},{status:202,headers:{"Cache-Control":"no-store"}});
+        }},{status:202,headers:{"Cache-Control":CACHE.NONE}});
       if(!invite.emailed)
         return NextResponse.json({
           error:"INVITE_EMAIL_NOT_ACCEPTED",emailAvailable:invite.emailAvailable,emailed:false,
-        },{status:503,headers:{"Cache-Control":"no-store"}});
+        },{status:503,headers:{"Cache-Control":CACHE.NONE}});
       return NextResponse.json({invite:{
         leadId:invite.leadId,expiresAt:invite.expiresAt,
         emailAvailable:invite.emailAvailable,emailed:true,
-      }},{headers:{"Cache-Control":"no-store"}});
+      }},{headers:{"Cache-Control":CACHE.NONE}});
     }
-    return NextResponse.json({ invite },{headers:{"Cache-Control":"no-store"}});
+    return noStoreJson({ invite });
   } catch (error) {
     return tpoRecruiterInviteApiErrorResponse(error);
   }

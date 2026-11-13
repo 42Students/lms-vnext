@@ -5,6 +5,7 @@ import {z} from "zod";
 import {overrideProjectReadiness} from "@/modules/projects/readiness-override-service";
 import {legacyBooleanProjectReadinessState} from "@/modules/projects/readiness-override-model";
 import {getProjectAdminCollegeId} from "@/modules/projects/admin-college-scope";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 const legacyReadinessBody=z.object({
  collegeId:z.string().uuid().optional(),
@@ -27,6 +28,6 @@ export const POST = route(
       :raw;
     const override=await overrideProjectReadiness(context,projectId,payload);
     return NextResponse.json({override,message:"Readiness updated"},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

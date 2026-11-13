@@ -5,6 +5,7 @@ import { isRecruiterInviteTokenShape } from "@/modules/placements/tpo-recruiter-
 import { route } from "@/security/route";
 
 import { featureReady } from "@/config/features";
+import { CACHE } from "@/security/responses";
 /** Legacy PublicRecruiterInviteController route crosswalk (all five methods):
  * GET /api/v1/public/recruiter-invite/{token} => GET here, now {invite}.
  * POST /{token}/send-code => POST /api/public/recruiter-invite/{token}/send-code,
@@ -18,7 +19,7 @@ import { featureReady } from "@/config/features";
  */
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-const privateHeaders = { "Cache-Control": "private, no-store", "Referrer-Policy": "no-referrer", "X-Robots-Tag": "noindex, nofollow" } as const;
+const privateHeaders = { "Cache-Control": CACHE.PRIVATE, "Referrer-Policy": "no-referrer", "X-Robots-Tag": "noindex, nofollow" } as const;
 type RouteContext = { params: Promise<{ token: string }> };
 
 async function handleGET(_request: Request, { params }: RouteContext) {

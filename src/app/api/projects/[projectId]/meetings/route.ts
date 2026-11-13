@@ -12,6 +12,7 @@ import {replaceLegacyProjectMeetingDraftSection} from "@/modules/projects/projec
 import {parseMentorMeetingCollectionPagination} from "@/modules/projects/mentor-meeting-collection-pagination";
 import { route } from "@/security/route";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 /** Old bulk PUT /{projectId}/meetings maps to this GET collection plus
  * individual POST create and scoped /{meetingId} PATCH/DELETE mutations.
@@ -53,9 +54,9 @@ async function handleGET(
       const size=pageSize??25;
       return NextResponse.json({meetings:meetings.slice(0,size),
         page:page??1,pageSize:size,hasMore:meetings.length>size},
-        {headers:{"Cache-Control":"private, no-store"}});
+        {headers:{"Cache-Control":CACHE.PRIVATE}});
     }
-    return NextResponse.json({meetings},{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson({meetings});
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -122,7 +123,7 @@ async function handlePUT(request:Request,{params}:RouteContext){
   const result=await replaceLegacyProjectMeetingDraftSection(
     await getCurrentRequestContext(),projectId,body);
   return NextResponse.json({...result,message:result.changed?"Meetings updated":"No changes to save"},
-    {headers:{"Cache-Control":"private, no-store"}});
+    {headers:{"Cache-Control":CACHE.PRIVATE}});
  }catch(error){return apiErrorResponse(error);}
 }
 export const PUT = route(

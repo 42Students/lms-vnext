@@ -6,6 +6,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {finishCollegeInterview,CollegeInterviewLifecycleError}
  from "@/modules/placements/college-interview-lifecycle-service";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "placements.manage" },
@@ -18,7 +19,7 @@ const result=await finishCollegeInterview(__ctx,{
    id:interviewId,status:raw["status"],expectedVersion:raw["expectedVersion"],
    reason:raw["reason"],
   });
-return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+return privateJson(result);
 } catch(error){
   if(error instanceof CollegeInterviewLifecycleError)
    return NextResponse.json({error:error.code},{status:error.code==="INTERVIEW_STORAGE_PENDING"?503:409});

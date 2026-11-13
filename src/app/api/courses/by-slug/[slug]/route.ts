@@ -11,6 +11,7 @@ import { loadCourseScope } from "@/modules/courses/scope";
 import { requirePermission } from "@/modules/permissions/policy";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
@@ -33,7 +34,7 @@ async function handleGET(request: Request, { params }: RouteContext) {
     const courseParams = url.searchParams.getAll("courseId");
     if (!slug.success || collegeParams.length !== 1 || courseParams.length > 1) {
       return NextResponse.json({ error: "INVALID_REQUEST" }, {
-        status: 400, headers: { "Cache-Control": "private, no-store" },
+        status: 400, headers: { "Cache-Control": CACHE.PRIVATE },
       });
     }
     // A selected/authorized college is required even for a globally unique
@@ -62,7 +63,7 @@ async function handleGET(request: Request, { params }: RouteContext) {
     }
     const course = await loadCourseScope(match.id);
     return NextResponse.json({ course }, {
-      headers: { "Cache-Control": "private, no-store" },
+      headers: { "Cache-Control": CACHE.PRIVATE },
     });
   } catch (error) {
     return apiErrorResponse(error);

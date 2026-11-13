@@ -1,7 +1,7 @@
 import { boundedRequestJson } from "@/lib/bounded-request-json";
 import { route } from "@/security/route";
-import { NextResponse } from "next/server";
 import { sendTpoStudentNudges } from "@/modules/placements/tpo-student-nudge-send-service";
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -13,6 +13,6 @@ export const POST = route(
     const input=body&&!Object.prototype.hasOwnProperty.call(body,"template")
     ?{...body,template:"CUSTOM"}:raw;
     const result=await sendTpoStudentNudges(context,input);
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(result);
   },
 );

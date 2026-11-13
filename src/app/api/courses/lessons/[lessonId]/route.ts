@@ -7,6 +7,7 @@ import {
   updateCourseLesson,
 } from "@/modules/courses/lesson-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const PATCH = route(
@@ -20,7 +21,7 @@ export const PATCH = route(
       return NextResponse.json({
         error:"LESSON_PARENT_IMMUTABLE",
         message:"A lesson cannot be moved to a different course. Create a new lesson in the destination course.",
-      },{status:409,headers:{"Cache-Control":"private, no-store"}});
+      },{status:409,headers:{"Cache-Control":CACHE.PRIVATE}});
     }
     const lesson = await updateCourseLesson(
       context,

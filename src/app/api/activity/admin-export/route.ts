@@ -4,6 +4,7 @@ import { readCollegeActivityExportParams } from "@/modules/activity/college-acti
 import { exportSuperAdminActivity } from "@/modules/activity/super-admin-audit-export-service";
 import { route } from "@/security/route";
 import { DEFAULT_TIME_ZONE } from "@/config/locale";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handleGET(request:Request) {
  try {
@@ -16,7 +17,7 @@ async function handleGET(request:Request) {
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="activity-all-matching-'+istDate+'.csv"',
    "X-Export-Scope": "all-matching-filtered",
-   "Cache-Control":"private, no-store",
+   "Cache-Control":CACHE.PRIVATE,
    "X-Content-Type-Options":"nosniff",
    "X-Export-Truncated":String(result.truncated),
    "X-Export-Row-Cap":String(result.cap),

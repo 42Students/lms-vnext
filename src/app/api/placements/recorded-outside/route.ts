@@ -8,6 +8,7 @@ import {recordOutsideDrive} from "@/modules/placements/recorded-outside-service"
 import {parseIstLocalSlot} from "@/modules/placements/hr-interview-slot-model";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import { ROLE } from "@/modules/identity/roles";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -20,7 +21,7 @@ try {form=await readBoundedFormData(request,64*1024);}
    if(!(error instanceof BoundedFormDataError))throw error;
    return NextResponse.json({
     error:error.code==="BODY_TOO_LARGE"?"FORM_TOO_LARGE":"INVALID_FORM",
-   },{status:error.code==="BODY_TOO_LARGE"?413:400,headers:{"Cache-Control":"private, no-store"}});
+   },{status:error.code==="BODY_TOO_LARGE"?413:400,headers:{"Cache-Control":CACHE.PRIVATE}});
   }
 const payload={
    collegeId:form.get("collegeId"),

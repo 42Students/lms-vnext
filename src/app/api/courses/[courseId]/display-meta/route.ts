@@ -9,9 +9,10 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {requirePermission} from "@/modules/permissions/policy";
 import {loadCourseScope} from "@/modules/courses/scope";
 import {legacyCourseMetadataPreview} from "@/modules/courses/legacy-course-metadata-preview";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const privateHeaders={"Cache-Control":"private, no-store",Vary:"Cookie"} as const;
+const privateHeaders={"Cache-Control":CACHE.PRIVATE,Vary:"Cookie"} as const;
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
   async ({ context: __actor, params }) => {

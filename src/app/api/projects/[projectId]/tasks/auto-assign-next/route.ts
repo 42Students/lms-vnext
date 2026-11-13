@@ -8,6 +8,7 @@ import {readMentorProjectCommandBody,MentorProjectCommandBodyError,
 import {autoAssignMentorNextSprint} from
   "@/modules/projects/mentor-auto-assign-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const POST = route(
   { auth: "user", permission: "service-enforced" },
@@ -17,7 +18,7 @@ export const POST = route(
 const {projectId}=params;
 const result=await autoAssignMentorNextSprint(
    context,projectId,await readMentorProjectCommandBody(request));
-return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+return privateJson(result);
 } catch(error){
   if(error instanceof MentorProjectCommandBodyError)
    return NextResponse.json({error:error.code,

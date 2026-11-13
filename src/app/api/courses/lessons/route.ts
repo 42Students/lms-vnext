@@ -14,8 +14,9 @@ import {
   resolveLegacyLessonLearningPath,
 } from "@/modules/courses/lesson-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
-const noStore = { "Cache-Control": "private, no-store" };
+const noStore = { "Cache-Control": CACHE.PRIVATE };
 
 /** The legacy /api/v2/lessons/search and /stats are not mounted here.
  * The UUID-based, scoped replacements are GET ?view=search&courseId=<UUID>

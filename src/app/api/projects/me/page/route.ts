@@ -5,6 +5,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {listMyProjectInstancesLegacyPage} from "@/modules/projects/member-service";
 import { route } from "@/security/route";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -35,7 +36,7 @@ async function handleGET(request:Request){
     ...(query.status !== undefined ? {status:query.status} : {}),
     ...(query.attention !== undefined ? {attention:query.attention} : {}),
    });
-  return NextResponse.json(page,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(page);
  }catch(error){return apiErrorResponse(error);}
 }
 export const GET = route(

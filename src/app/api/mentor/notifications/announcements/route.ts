@@ -10,6 +10,7 @@ import {listOwnMentorSourceReceipts} from
   "@/modules/projects/mentor-notification-source-receipts-service";
 import {mentorAnnouncementReceiptKey} from
   "@/modules/projects/mentor-attention-read-model";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 const cursorSchema=z.strictObject({
  beforePinned:z.enum(["0","1"]),
@@ -51,6 +52,6 @@ export const GET = route(
     beforeCreatedAt:page.nextCursor.createdAt.toISOString(),
     beforeId:page.nextCursor.id,
    }:null,
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

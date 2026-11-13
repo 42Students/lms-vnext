@@ -3,6 +3,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {listHrNotifications} from "@/modules/placements/hr-notifications-service";
 import {apiErrorResponse} from "@/lib/api-error";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 
 /** Legacy RecruiterSelfController notifications crosswalk:
@@ -34,6 +35,6 @@ export const GET = route(
     markAllMethod:"PUT",
     notifications:"/hr/notifications",
    },
-  },{headers:{"Cache-Control":"private, no-store"}});
+  },{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

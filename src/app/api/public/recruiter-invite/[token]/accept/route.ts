@@ -9,9 +9,10 @@ import {acceptPublicTpoRecruiterInviteOtp} from "@/modules/placements/public-rec
 import { route } from "@/security/route";
 
 import { env } from "@/config/env";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-const noStore={"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"} as const;
+const noStore={"Cache-Control":CACHE.PRIVATE,"Referrer-Policy":"no-referrer"} as const;
 type RouteContext={params:Promise<{token:string}>};
 async function handlePOST(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))

@@ -6,6 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {searchOrganizationPlacementApplications,getOrganizationApplicationStats} from "@/modules/placements/organization-application-search-service";
 
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 
@@ -16,7 +17,7 @@ export const GET = route(
     const __ctx = __actor!;
     const query=Object.fromEntries(new URL(request.url).searchParams.entries());
     const data=await searchOrganizationPlacementApplications(__ctx,query);
-    return NextResponse.json(data,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(data);
   },
 );
 
@@ -33,6 +34,6 @@ export const POST = route(
     const stats=await getOrganizationApplicationStats(__ctx,input);
     return NextResponse.json({...stats,refreshed:false,
    reason:"Applications are read directly from the database; no refresh is required."},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

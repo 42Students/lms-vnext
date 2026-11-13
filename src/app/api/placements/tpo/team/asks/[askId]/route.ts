@@ -7,6 +7,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {changeTpoTeamAskById} from "@/modules/placements/tpo-team-asks-service";
 import { route } from "@/security/route";
 
+import { privateJson } from "@/security/responses";
 export const runtime="nodejs";
 const actionSchema=z.strictObject({
  action:z.enum(["DONE","CANCEL"]),
@@ -27,7 +28,7 @@ async function handlePOST(request:Request,{params}:{
   const result=await changeTpoTeamAskById(await getCurrentRequestContext(),{
    askId,action:parsed.data.action,...(parsed.data.note!==undefined?{note:parsed.data.note}:{}),
   });
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  return privateJson(result);
  }catch(error){
   if(error instanceof AuthorizationError)
    return NextResponse.json({error:"FORBIDDEN"},{status:403});

@@ -7,6 +7,7 @@ import {createTpoInternalThread} from "@/modules/placements/tpo-team-internal-cr
 import {internalThreadSchema} from "@/modules/placements/tpo-team-internal-model";
 import {TpoTeamAddPeopleRequiredError} from "@/modules/placements/tpo-team-asks-service";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handlePOST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -45,7 +46,7 @@ async function handlePOST(request:Request){
  if(!parsed.success)return NextResponse.json({
   error:"INVALID_BODY",message:"Review the recipient, topic and first message.",
   field:String(parsed.error.issues[0]?.path[0]??"thread"),
- },{status:400,headers:{"Cache-Control":"private, no-store"}});
+ },{status:400,headers:{"Cache-Control":CACHE.PRIVATE}});
  try{
   const thread=await createTpoInternalThread(await getCurrentRequestContext(),parsed.data);
   if(isJson||request.headers.get("accept")?.includes("application/json"))
@@ -54,7 +55,7 @@ async function handlePOST(request:Request){
      navigation:{list:"/tpo/team",thread:"/tpo/team/"+thread.id,
       about:"/tpo/team/"+thread.id+"?tab=about",
       messages:"/api/placements/tpo/team/threads/"+thread.id+"/messages"},
-   },{status:201,headers:{"Cache-Control":"private, no-store"}});
+   },{status:201,headers:{"Cache-Control":CACHE.PRIVATE}});
   return NextResponse.redirect(new URL("/tpo/team/"+thread.id,request.url),303);
  }catch(error){
   // ADD_PEOPLE is only safe when the scoped team-ask service has verified
@@ -65,23 +66,23 @@ async function handlePOST(request:Request){
     missingMembershipIds:error.missingMembershipIds,
     message:"Add these people to the private conversation, then retry.",
     nextAction:"ADD_PEOPLE",
-   },{status:409,headers:{"Cache-Control":"private, no-store"}});
+   },{status:409,headers:{"Cache-Control":CACHE.PRIVATE}});
   if(error instanceof AuthorizationError)return NextResponse.json({
    error:"FORBIDDEN",message:"You cannot create this team conversation.",
-  },{status:403,headers:{"Cache-Control":"private, no-store"}});
+  },{status:403,headers:{"Cache-Control":CACHE.PRIVATE}});
   if(error instanceof z.ZodError)return NextResponse.json({error:"INVALID_BODY"},{status:400});
   if(error instanceof Error&&error.message==="TEAM_RECIPIENT_NOT_FOUND")
    return NextResponse.json({
     error:"RECIPIENT_NOT_FOUND",message:"Choose an active member of your college placement team.",
-   },{status:404,headers:{"Cache-Control":"private, no-store"}});
+   },{status:404,headers:{"Cache-Control":CACHE.PRIVATE}});
   if(error instanceof Error&&error.message==="TEAM_IDEMPOTENCY_CONFLICT")
    return NextResponse.json({
     error:"STALE_MESSAGE",message:"This conversation has changed. Review and try again.",
-   },{status:409,headers:{"Cache-Control":"private, no-store"}});
+   },{status:409,headers:{"Cache-Control":CACHE.PRIVATE}});
   if(error instanceof Error&&error.message==="TEAM_TABLES_PENDING")
    return NextResponse.json({
     error:"TEAM_TABLES_PENDING",message:"Team conversations are temporarily unavailable. Try again later.",
-   },{status:503,headers:{"Cache-Control":"private, no-store","Retry-After":"60"}});
+   },{status:503,headers:{"Cache-Control":CACHE.PRIVATE,"Retry-After":"60"}});
   throw error;
  }
 }

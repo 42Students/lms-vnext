@@ -6,6 +6,7 @@ import {recruiterDriveListQuerySchema} from "@/modules/placements/recruiter-driv
 import {searchOwnRecruiterDrives} from "@/modules/placements/recruiter-drive-search-service";
 import {buildHrDrivesCsv,HR_DRIVE_CSV_CAP} from "@/modules/placements/hr-drives-csv-model";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -35,7 +36,7 @@ async function handleGET(request:Request){
   return new Response(output.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="recruiter-drives.csv"',
-   "Cache-Control":"private, no-store","X-Export-Capped":output.truncated?"true":"false",
+   "Cache-Control":CACHE.PRIVATE,"X-Export-Capped":output.truncated?"true":"false",
   }});
  }catch(error){return apiErrorResponse(error);}
 }

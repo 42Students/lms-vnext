@@ -10,6 +10,7 @@ import { requireLearnerPlacementAccess } from "@/modules/placements/learner-part
 import {
   PlacementRegistrationError, registerOwnPlacementChoice,
 } from "@/modules/placements/batch-registration-service";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 export const GET = route(
   { auth: "user", permission: "service-enforced" },
@@ -18,7 +19,7 @@ export const GET = route(
     try {
 const registration=await getOwnLearnerRegistration(__ctx);
 return NextResponse.json({registration,data:registration,status:"OK"},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch (error) {return registrationError(error);}
   },
 );
@@ -37,7 +38,7 @@ if(mime.toLowerCase().includes("application/x-www-form-urlencoded")){
       catch(error){
         if(!(error instanceof BoundedFormDataError))throw error;
         return NextResponse.json({error:error.code==="BODY_TOO_LARGE"?"REQUEST_TOO_LARGE":"INVALID_REQUEST"},
-          {status:error.code==="BODY_TOO_LARGE"?413:400,headers:{"Cache-Control":"private, no-store"}});
+          {status:error.code==="BODY_TOO_LARGE"?413:400,headers:{"Cache-Control":CACHE.PRIVATE}});
       }
       const consent=form.get("acceptedConsent")??form.get("consent");
       payload={choice:form.get("choice"),
@@ -46,7 +47,7 @@ if(mime.toLowerCase().includes("application/x-www-form-urlencoded")){
       const raw=await readBoundedUtf8Body(request,8*1024);
       if(raw.kind!=="OK")return NextResponse.json({
         error:raw.kind==="TOO_LARGE"?"REQUEST_TOO_LARGE":"INVALID_REQUEST",
-      },{status:raw.kind==="TOO_LARGE"?413:400,headers:{"Cache-Control":"private, no-store"}});
+      },{status:raw.kind==="TOO_LARGE"?413:400,headers:{"Cache-Control":CACHE.PRIVATE}});
       try {payload=JSON.parse(raw.body);}
       catch{return NextResponse.json({error:"INVALID_REQUEST"},{status:400});}
       // Historical JSON bodies used consent, not acceptedConsent. Do not
@@ -61,7 +62,7 @@ if(mime.toLowerCase().includes("application/x-www-form-urlencoded")){
     }
 const result=await registerOwnPlacementChoice(context,payload);
 return NextResponse.json({ok:true,status:"OK",choice:result.choice,version:result.version, data:{choice:result.choice,version:result.version}},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch (error) {return registrationError(error);}
   },
 );

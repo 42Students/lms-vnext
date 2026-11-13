@@ -7,6 +7,7 @@ import {
   listPlacementCompanies,
 } from "@/modules/placements/company-service";
 
+import { privateJson } from "@/security/responses";
 export const runtime = "nodejs";
 
 export const GET = route(
@@ -20,7 +21,7 @@ export const GET = route(
       context,
       collegeId ?? "",
     );
-    return NextResponse.json({ companies, message:"Companies fetched" },{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson({ companies, message:"Companies fetched" });
   },
 );
 

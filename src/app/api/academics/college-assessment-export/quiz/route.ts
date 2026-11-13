@@ -4,6 +4,7 @@ import {exportParams} from "@/modules/academics/college-directory-export-model";
 import {exportCollegeAssessments} from "@/modules/courses/college-assessment-export-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 async function handleGET(request:Request){
  try{
@@ -13,7 +14,7 @@ async function handleGET(request:Request){
   return new Response(result.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="college-quizs.csv"',
-   "Cache-Control":"private, no-store",
+   "Cache-Control":CACHE.PRIVATE,
    "X-Export-Truncated":String(result.truncated),
    "X-Export-Row-Cap":String(result.cap),
    "X-Content-Type-Options":"nosniff",

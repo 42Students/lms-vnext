@@ -7,6 +7,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
 import {previewTpoBulkAction} from "@/modules/placements/tpo-bulk-action-preview-service";
 import {TpoBulkApplicationsUnavailable} from "@/modules/placements/tpo-bulk-workflow-model";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 const previewMessages:Record<string,string>={
  REQUEST_TOO_LARGE:"This bulk action is too large. Select no more than 200 rows at once.",
@@ -32,17 +33,17 @@ return NextResponse.json({
      summary:ready+" ready · "+skipped+" skipped",
      confirmationRequired:true,
      message:"Review the eligible rows and confirm before applying this bulk action.",
-   },{headers:{"Cache-Control":"private, no-store"}});
+   },{headers:{"Cache-Control":CACHE.PRIVATE}});
 } catch(error){
    if(error instanceof TpoBulkBodyError)
      return NextResponse.json({error:error.message,
        message:previewMessages[error.message]??"The bulk selection could not be previewed.",
        retryable:error.status!==415,
-     },{status:error.status,headers:{"Cache-Control":"private, no-store"}});
+     },{status:error.status,headers:{"Cache-Control":CACHE.PRIVATE}});
    if(error instanceof TpoBulkApplicationsUnavailable)
      return NextResponse.json({error:"DB09_MIGRATIONS_PENDING",
        message:previewMessages["DB09_MIGRATIONS_PENDING"],
-     },{status:503,headers:{"Cache-Control":"private, no-store"}});
+     },{status:503,headers:{"Cache-Control":CACHE.PRIVATE}});
    return apiErrorResponse(error);
  }
   },

@@ -5,9 +5,10 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {readOwnApplicationResume,updateOwnApplicationResume}
  from "@/modules/placements/learner-application-resume-service";
 import { route } from "@/security/route";
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 type Params={params:Promise<{applicationId:string}>};
-const headers={"Cache-Control":"private, no-store"};
+const headers={"Cache-Control":CACHE.PRIVATE};
 function errorResponse(error:unknown){
  const value=error instanceof Error?error.message:"";
  if(value==="PLACEMENT_RESUME_NOT_FOUND")

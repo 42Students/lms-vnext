@@ -8,6 +8,7 @@ import {
   listCourseDiscussionChanges,
 } from "@/modules/courses/discussion-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 /** This is a DELIVERY-scoped discussion feed, not the legacy
@@ -18,7 +19,7 @@ export const runtime = "nodejs";
  * persisted {message} receipt (201), so don't replace either response with
  * the older 200 Response(OK,OK,...) envelope on this route.
  */
-const noStore={"Cache-Control":"private, no-store"};
+const noStore={"Cache-Control":CACHE.PRIVATE};
 type LegacyEnvelope<T>={status:"OK";message:"OK";data:T};
 /** Opt-in only. Default vNext clients consume cursor page data, not the
  * legacy Java Response.data.data nesting. This adapter intentionally does

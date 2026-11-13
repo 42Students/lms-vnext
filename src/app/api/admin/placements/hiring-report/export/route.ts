@@ -6,6 +6,7 @@ import {superAdminHiringReportQuery,hiringCompanyRollups} from "@/modules/admin-
 import {placementReportCsv,placementReportCsvCell} from "@/modules/placements/report-model";
 import {apiErrorResponse} from "@/lib/api-error";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 
 /** Read-only selected-college or organization export with the legacy summary, funnel,
@@ -62,7 +63,7 @@ export const GET = route(
    headers:{
     "Content-Type":"text/csv; charset=utf-8",
     "Content-Disposition":'attachment; filename="hiring-report-'+date+'.csv"',
-    "Cache-Control":"private, no-store",
+    "Cache-Control":CACHE.PRIVATE,
     "X-Export-Truncated":data.truncated?"true":"false",
    },
   });

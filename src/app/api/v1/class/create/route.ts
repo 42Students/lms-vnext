@@ -8,6 +8,7 @@ import {
   CollegeSectionError, createCollegeSection,
 } from "@/modules/academics/college-section-mutation-service";
 
+import { CACHE } from "@/security/responses";
 export const runtime = "nodejs";
 
 /**
@@ -23,17 +24,17 @@ export const POST = route(
 const parsed = await readBoundedJsonBody(request, 16_384);
 if (parsed.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
       status: parsed.kind === "TOO_LARGE" ? 413 : 400,
-      headers: { "Cache-Control": "private, no-store" },
+      headers: { "Cache-Control": CACHE.PRIVATE },
     });
 const body: unknown = parsed.value;
 const section = await createCollegeSection(context, body);
 return NextResponse.json({ status: "OK", message: "OK", data: section },
-      { status: 200, headers: { "Cache-Control": "private, no-store" } });
+      { status: 200, headers: { "Cache-Control": CACHE.PRIVATE } });
 } catch (error) {
     if (error instanceof CollegeSectionError) {
       return NextResponse.json({ status: "ERROR", message: error.code, data: null },
         { status: error.code === "CLASS_COHORT_NOT_FOUND" ? 404 : 409,
-          headers: { "Cache-Control": "private, no-store" } });
+          headers: { "Cache-Control": CACHE.PRIVATE } });
     }
     return apiErrorResponse(error);
   }

@@ -6,6 +6,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {appendCollegeApplicationNote,attachCollegeApplicationOfferLetter,getCollegeApplicationDetail}
  from "@/modules/placements/college-application-detail-service";
+import { CACHE, privateJson } from "@/security/responses";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 type Params={params:Promise<{jobId:string;applicationId:string}>};
 export const GET = route(
@@ -14,7 +15,7 @@ export const GET = route(
     const __ctx = __actor!;
     const {jobId,applicationId}=params;
     const detail=await getCollegeApplicationDetail(__ctx,jobId,applicationId);
-    return NextResponse.json(detail,{headers:{"Cache-Control":"private, no-store"}});
+    return privateJson(detail);
   },
 );
 export const POST = route(
@@ -23,7 +24,7 @@ export const POST = route(
     const __ctx = __actor!;
     const {jobId,applicationId}=params;
     return NextResponse.json(await appendCollegeApplicationNote(__ctx,
-   jobId,applicationId,await boundedRequestJson(req)),{status:201,headers:{"Cache-Control":"private, no-store"}});
+   jobId,applicationId,await boundedRequestJson(req)),{status:201,headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );
 export const PATCH = route(
@@ -41,10 +42,10 @@ export const PATCH = route(
       error:active.length===0?"PLACEMENT_OFFER_NOT_FOUND":"PLACEMENT_OFFER_AMBIGUOUS",
       message:active.length===0?"No current offer is available for this application.":
         "More than one current offer was found. Choose the offer explicitly.",
-    },{status:active.length===0?404:409,headers:{"Cache-Control":"private, no-store"}});
+    },{status:active.length===0?404:409,headers:{"Cache-Control":CACHE.PRIVATE}});
     input={...raw,offerId:active[0]!.id};
   }
     return NextResponse.json(await attachCollegeApplicationOfferLetter(
-    context,jobId,applicationId,input),{headers:{"Cache-Control":"private, no-store"}});
+    context,jobId,applicationId,input),{headers:{"Cache-Control":CACHE.PRIVATE}});
   },
 );

@@ -5,6 +5,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { previewCollegeBatchPromotion, CollegePromotionPreviewError } from "@/modules/academics/college-batch-promotion-service";
 import { route } from "@/security/route";
 
+import { CACHE } from "@/security/responses";
 export const runtime="nodejs";
 
 /** GET /api/academics/batch-promotion/preview?cohortId=UUID&yearStart=YYYY-YY
@@ -23,7 +24,7 @@ async function handleGET(request:Request){
       yearStart:query.get("yearStart")??undefined,
     });
     return NextResponse.json({status:"OK",preview:result,data:result},
-      {headers:{"Cache-Control":"private, no-store"}});
+      {headers:{"Cache-Control":CACHE.PRIVATE}});
   }catch(error){
     if(error instanceof ZodError)
       return NextResponse.json({error:"INVALID_PROMOTION_QUERY",
