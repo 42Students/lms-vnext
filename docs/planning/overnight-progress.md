@@ -18,7 +18,7 @@ Resume rule for a new wake-up: read this file, take the first unticked item, do 
 ## Phase 1: safety nets
 - [x] 1.1 production readiness: checkDatabaseConnection() now also fails closed unless DB_TENANT_SCOPE=on, app.rls_mode=enforce and the shared-store table exists (src/db/tenant-readiness-policy.ts, pure + 7 unit tests); applies only where the unsafe-role check already applies (production, APP_ENV not dev/test)
 - [x] 1.2a cross-user: quiz attempts (sec-cross-user-quizzes, 7 tests, 2 of 3 guards mutation-checked, third is a redundant layer)
-- [ ] 1.2b cross-user: attendance and parent contacts
+- [x] 1.2b cross-user: attendance, roster, marking, guardian contacts (sec-cross-user-attendance, 9 tests; faculty guard mutation-checked, admin guard has a redundant second layer)
 - [ ] 1.2c cross-user: placement offers and recruiter/company data
 - [ ] 1.2d cross-user: project and mentor workspaces
 - [ ] 1.2e cross-user: notifications and staff inbox
