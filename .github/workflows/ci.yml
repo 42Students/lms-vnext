@@ -774,6 +774,8 @@ jobs:
           psql "postgresql://postgres@127.0.0.1:5432/lms_vnext_smoke_test" -v ON_ERROR_STOP=1 <<'SQL'
           CREATE ROLE lms_runtime LOGIN PASSWORD 'lms_runtime_smoke' NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS NOINHERIT;
           GRANT CONNECT ON DATABASE lms_vnext_smoke_test TO lms_runtime;
+          -- Production readiness refuses to report ready unless row-level security is enforced; the smoke runs the production build, so enforce it here too.
+          ALTER DATABASE lms_vnext_smoke_test SET app.rls_mode = 'enforce';
           DO $$
           DECLARE s text;
           BEGIN
@@ -788,6 +790,7 @@ jobs:
         shell: bash
         env:
           DATABASE_URL: postgresql://lms_runtime:lms_runtime_smoke@127.0.0.1:5432/lms_vnext_smoke_test
+          DB_TENANT_SCOPE: "on"
         run: |
           set -euo pipefail
           PORT=3000 HOSTNAME=127.0.0.1 node .next/standalone/server.js > /tmp/lms-vnext-smoke.log 2>&1 &
@@ -801,6 +804,7 @@ jobs:
         shell: bash
         env:
           DATABASE_URL: postgresql://lms_runtime:lms_runtime_smoke@127.0.0.1:5432/lms_vnext_smoke_test
+          DB_TENANT_SCOPE: "on"
         run: |
           set -euo pipefail
           PORT=3001 HOSTNAME=127.0.0.1 node .next/standalone/server.js > /tmp/lms-vnext-gate.log 2>&1 &
@@ -816,6 +820,7 @@ jobs:
         env:
           PGADMIN_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_smoke_test
           DATABASE_URL: postgresql://lms_runtime:lms_runtime_smoke@127.0.0.1:5432/lms_vnext_smoke_test
+          DB_TENANT_SCOPE: "on"
         run: |
           set -euo pipefail
           ALLOW_TEST_SEED=I_ACCEPT DATABASE_URL="$PGADMIN_URL" npx tsx scripts/seed-test-tenants.ts
