@@ -3,7 +3,7 @@
 // set of routes each role can read (HTTP 200) is compared with the committed baseline. A role gaining a route fails
 // the run; a role losing one is reported (update the baseline on purpose with --write).
 //
-//   SWEEP_BASE=https://vnext.development.42lms.com SWEEP_OTP=<dev test code> node scripts/verify/role-route-matrix.mjs [--write]
+//   SWEEP_BASE=https://vnext.development.42lms.com SWEEP_OTP=<dev test code> node scripts/verify/role-route-matrix.mjs [--all-roles] [--write]
 //
 // Dev or localhost only. The test code is the dev AUTH_TEST_OTP; never run this against production.
 import { execSync } from "node:child_process";
@@ -18,13 +18,19 @@ const BASELINE = process.env.MATRIX_BASELINE ?? "docs/security/role-matrix-basel
 const college = process.env.SWEEP_COLLEGE ?? "TESTA";
 
 // Seeded accounts of scripts/seed-test-tenants.ts (college A).
-const ROLES = [
+const FIVE_MEMBERSHIP_ROLES = [
   ["LEARNER", "+919100061101"],
   ["FACULTY", "+919100061102"],
   ["MENTOR", "+919100061103"],
   ["COLLEGE_ADMIN", "+919100061104"],
   ["TPO", "+919100061105"],
 ];
+// Legacy baseline covers the five membership roles. --all-roles explicitly
+// adds recruiter (grant-backed) and system Super Admin (no membership).
+// Do not silently claim those two roles were covered by the old baseline.
+const ROLES = process.argv.includes("--all-roles")
+  ? [...FIVE_MEMBERSHIP_ROLES, ["RECRUITER", "+919100061301"], ["SUPER_ADMIN", "+919100061000"]]
+  : FIVE_MEMBERSHIP_ROLES;
 
 const files = execSync("git ls-files src/app/api", { encoding: "utf8" }).split("\n").filter((f) => f.endsWith("/route.ts"));
 const routes = [];
@@ -80,11 +86,16 @@ for (const [role, phone] of ROLES) {
   if (!start.json?.attemptId) throw new Error(`${role}: login start answered ${start.status}`);
   const verify = await call(jar, "POST", "/api/auth/login/verify", { attemptId: start.json.attemptId, code: otp });
   if (verify.status !== 200) throw new Error(`${role}: login verify answered ${verify.status}`);
-  const memberships = await call(jar, "GET", "/api/auth/memberships");
-  const mine = memberships.json?.memberships?.find((m) => m.collegeCode === college);
-  if (!mine) throw new Error(`${role}: no ${college} membership`);
-  const select = await call(jar, "POST", "/api/auth/memberships", { membershipId: mine.id, role });
-  if (select.status !== 200) throw new Error(`${role}: role selection answered ${select.status}`);
+  if (role !== "RECRUITER" && role !== "SUPER_ADMIN") {
+    const memberships = await call(jar, "GET", "/api/auth/memberships");
+    const mine = memberships.json?.memberships?.find((m) => m.collegeCode === college);
+    if (!mine) throw new Error(`${role}: no ${college} membership`);
+    const select = await call(jar, "POST", "/api/auth/memberships", { membershipId: mine.id, role });
+    if (select.status !== 200) throw new Error(`${role}: role selection answered ${select.status}`);
+  }
+  // Recruiters resolve through verified employer/college grants; Super Admin
+  // resolves through the system role and optional admin scope. Neither should
+  // mint an arbitrary college-membership role for a GET authorization sweep.
   const allowed = [];
   const odd = [];
   for (const path of routes) {
@@ -103,15 +114,29 @@ for (const [role, phone] of ROLES) {
   await new Promise((resolve) => setTimeout(resolve, 3000)); // stay under the login start budget
 }
 
-if (write || !existsSync(BASELINE)) {
-  writeFileSync(BASELINE, JSON.stringify({ generatedFor: base, routes: routes.length, roles: Object.fromEntries(Object.entries(result).map(([k, v]) => [k, v.allowed])) }, null, 1) + "\n");
-  console.log(`baseline written to ${BASELINE}`);
+if (!write && !existsSync(BASELINE)) {
+  throw new Error("Role route baseline missing; refusing to auto-create or implicitly permit newly discovered routes.");
+}
+if (write) {
+  // Updating five roles must not erase a previously reviewed seven-role
+  // baseline; all-role additions require a separate explicit --all-roles --write.
+  const previous = existsSync(BASELINE)
+    ? JSON.parse(readFileSync(BASELINE,"utf8")).roles ?? {} : {};
+  const merged = { ...previous, ...Object.fromEntries(
+    Object.entries(result).map(([k, v]) => [k, v.allowed])) };
+  writeFileSync(BASELINE, JSON.stringify({ generatedFor: base, routes: routes.length, roles: merged }, null, 1) + "\n");
+  console.log(`baseline written to ${BASELINE} (review required before committing)`);
   process.exit(0);
 }
 const baseline = JSON.parse(readFileSync(BASELINE, "utf8")).roles;
 let failures = 0;
 for (const [role, { allowed, serverErrors }] of Object.entries(result)) {
-  const before = new Set(baseline[role] ?? []);
+  if(!Object.hasOwn(baseline,role)){
+    failures++;
+    console.error(`${role} HAS NO REVIEWED BASELINE. Run --all-roles --write only in a disposable dev environment, review each allowed route, then commit.`);
+    continue;
+  }
+  const before = new Set(baseline[role]);
   const gained = allowed.filter((p) => !before.has(p));
   const lost = [...before].filter((p) => !allowed.includes(p));
   if (gained.length) {
