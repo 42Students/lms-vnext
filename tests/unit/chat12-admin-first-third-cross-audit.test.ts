@@ -70,7 +70,7 @@ describe("UX-admin-first-third-chat12 independent source cross-audit",()=>{
   expect(src).toContain("parseAdminSessionHistoryPage(raw)");
   expect(src.indexOf("if(page===null)")).toBeLessThan(src.indexOf("listCollegeAdminHistory("));
   expect(src).toContain('title="Invalid history page"');
-  expect(src).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("Asia/Kolkata");
+  expect(src).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("DEFAULT_TIME_ZONE");
   expect(src).toContain("Cross-college and raw event metadata are excluded.");
   expect(src).toContain("No matching identity or platform history was recorded");
  });

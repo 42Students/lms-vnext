@@ -8,7 +8,7 @@ describe("Final sprint recruiter calendar and inbox parity — group A",()=>{
   const calendar=read("src/app/(authenticated)/hr/calendar/page.tsx");
   const service=read("src/modules/placements/recruiter-calendar-service.ts");
   expect(calendar).toContain('event.endsAt?<span>– <time dateTime={event.endsAt.toISOString()}>{eventTime(event.endsAt)} IST</time>');
-  expect(calendar).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('"Asia/Kolkata"');
+  expect(calendar).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('DEFAULT_TIME_ZONE');
   expect(service).toContain("durationMinutes: placementJobRounds.durationMinutes");
  });
  it("REC-calendar-messages-profile-05 uses recruiter calendar legacy subtitle and accessible week navigation",()=>{

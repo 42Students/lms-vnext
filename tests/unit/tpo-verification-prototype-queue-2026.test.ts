@@ -34,6 +34,6 @@ describe("TPO Students / To verify prototype",()=>{
   expect(side).toContain("rows.find(row=>row.learnerMembershipId");
   expect(side).toContain("row.learnerName");
   expect(side).toContain("focus.submittedAt");
-  expect(side).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('"Asia/Kolkata"');
+  expect(side).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('DEFAULT_TIME_ZONE');
  });
 });

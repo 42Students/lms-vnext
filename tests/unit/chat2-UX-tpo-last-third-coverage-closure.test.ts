@@ -17,7 +17,7 @@ describe("TPO last third page-level UX coverage closure",()=>{
   expect(s).toContain('aria-label="Everyone messages"');
   expect(s).toContain("Newer messages");
   expect(s).toContain("Older messages");
-  expect(s).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('"Asia/Kolkata"');
+  expect(s).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('DEFAULT_TIME_ZONE');
   expect(s).toContain("TpoEveryoneControls");
   expect(TPO_EVERYONE_TITLE).toBeTruthy();
   expect(TPO_EVERYONE_DESCRIPTION).toBeTruthy();

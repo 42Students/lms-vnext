@@ -29,6 +29,6 @@ describe("UX-college-csv-tables-01 responsive row reports",()=>{
     const page=source("college-student-import-history");
     expect(page).toContain('if(!response.ok||!Array.isArray(body?.items))throw Error("Import history unavailable.");');
     expect(page).toContain('aria-label="Import history pages"');
-    expect(page).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("Asia/Kolkata");
+    expect(page).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("DEFAULT_TIME_ZONE");
   });
 });

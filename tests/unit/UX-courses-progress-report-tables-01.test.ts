@@ -23,7 +23,7 @@ describe("UX-courses-progress-report-tables-01",()=>{
   expect(src).toContain("<DataTable");
   expect(src).toContain("rows={filtered}");
   expect(src).toContain("rows.filter(student=>!query||student.name.toLocaleLowerCase().includes(query))");
-  expect(src).toContain('timeZone:"Asia/Kolkata"');
+  expect(src).toContain('timeZone:DEFAULT_TIME_ZONE');
   expect(src).toContain('const missing="No students match “"+search+"”.');
   expect(src).toContain('student.percent===null?');
   expect(src).toContain('mobileMode="cards"');

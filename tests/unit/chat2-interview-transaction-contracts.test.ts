@@ -28,7 +28,7 @@ describe("chat-2 TPO round and interview transaction boundaries",()=>{
   const move=s.slice(s.indexOf('if(input.action==="MOVE"){'));
   expect(move).toContain("tx.insert(placementApplicationRoundExceptions).values({");
   expect(move).toContain("applicationId:slot.applicationId,roundId:info.round.id");
-  expect(move).toContain("scheduledAt:target.startsAt,timezone:\"Asia/Kolkata\"");
+  expect(move).toContain("scheduledAt:target.startsAt,timezone:DEFAULT_TIME_ZONE");
   expect(move).toContain(".onConflictDoUpdate({");
   expect(move).toContain("placementApplicationRoundExceptions.applicationId,placementApplicationRoundExceptions.roundId");
   expect(move).toContain('await notice(tx,context,job,slot.applicationId,"PLACEMENTS_TPO_INTERVIEW_MOVED"');

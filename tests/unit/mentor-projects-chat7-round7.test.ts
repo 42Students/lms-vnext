@@ -15,5 +15,5 @@ it("MEN-projects-meetings-38 retains the reviewed mentor legacy and resilience c
   '"Sprint plan":"Execution"):"Releases and Sprints"'])
   expect(s).toContain(phrase);
 });
-it("MEN-projects-meetings-R03 retains the reviewed mentor legacy and resilience contract",()=>{const s=read("src/modules/projects/validation.ts");for(const phrase of [".transform(() => \"Asia/Kolkata\" as const)"])expect(s).toContain(phrase);});
+it("MEN-projects-meetings-R03 retains the reviewed mentor legacy and resilience contract",()=>{const s=read("src/modules/projects/validation.ts");for(const phrase of [".transform(() => DEFAULT_TIME_ZONE)"])expect(s).toContain(phrase);});
 });

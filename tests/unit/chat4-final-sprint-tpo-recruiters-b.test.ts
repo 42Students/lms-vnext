@@ -73,7 +73,7 @@ describe("chat-4 final sprint TPO recruiter gaps B",()=>{
   expect(detail).toContain("Please tell us why this recruiter is not available now.");
   expect(detail).toContain("notNowReason.trim()");
   expect(detail).toContain("Revisit on ");
-  expect(detail).toContain('timeZone:"Asia/Kolkata"');
+  expect(detail).toContain('timeZone:DEFAULT_TIME_ZONE');
  });
  it("TPO-recruiters-32 restores q, due and campaign deep links with company-prefilled creation",()=>{
   const page=source("src/app/(authenticated)/tpo/recruiters/page.tsx");

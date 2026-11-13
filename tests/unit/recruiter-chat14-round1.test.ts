@@ -94,7 +94,7 @@ describe("chat-14 recruiter reassigned exact-parity round 1",()=>{
  it("REC-home-drives-R07 intentionally uses IST for all LMS recruiter's dates by owner decision",()=>{
   const home=read("src/app/(authenticated)/hr/home/page.tsx");
   const portfolio=read("src/components/placements/recruiter-placement-portfolio.tsx");
-  expect(home).toContain('timeZone:"Asia/Kolkata"');
-  expect(portfolio).toContain('timeZone:"Asia/Kolkata"');
+  expect(home).toContain('timeZone:DEFAULT_TIME_ZONE');
+  expect(portfolio).toContain('timeZone:DEFAULT_TIME_ZONE');
  });
 });

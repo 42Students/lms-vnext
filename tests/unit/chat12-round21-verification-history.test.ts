@@ -12,7 +12,7 @@ it("TPO-requests-verification-29 returns the latest 50 named audit events and fu
  expect(service).toContain(".limit(50)");
  expect(drawer).toContain("Showing the latest 50 history events.");
  expect(drawer).toContain('item.actorName??item.actorKind');
- expect(drawer).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("Asia/Kolkata");
+ expect(drawer).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("DEFAULT_TIME_ZONE");
  expect(drawer).toContain('row.learnerName+(row.rollNumber?" · "+row.rollNumber:"")');
  expect(drawer).toContain('verificationEducationRows(detail.review.submittedSnapshot["education"])');
  expect(drawer).toContain('caption="Submitted education records"');

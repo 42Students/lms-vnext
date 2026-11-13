@@ -23,7 +23,7 @@ describe("UX-learn-profile-data-access-01 /learn/profile/data-access",()=>{
   expect(page).toContain("<Heading level={2}");
   expect(page).toContain('role="status"');
   expect(page).toContain("No recorded membership changes to display.");
-  expect(page).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("Asia/Kolkata");
+  expect(page).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("DEFAULT_TIME_ZONE");
   expect(page).toContain("min-w-0");
  });
 });

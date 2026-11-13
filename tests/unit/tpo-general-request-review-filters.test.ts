@@ -41,6 +41,6 @@ describe("TPO server-scoped general request filters",()=>{
   expect(panel).toContain('onReviewed={load} disabled={loading||stale||pending}');
   expect(panel).toContain('dateTime={row.requestedAt}');
   expect(panel).toContain('dateTime={row.decidedAt}');
-  expect(panel).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('"Asia/Kolkata"');
+  expect(panel).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('DEFAULT_TIME_ZONE');
  });
 });

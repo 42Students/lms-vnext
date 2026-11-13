@@ -34,7 +34,7 @@ describe("TPO Students / Requests prototype",()=>{
   const workspace=file("src/components/tpo/tpo-request-prototype-workspace.tsx");
   const page=file("src/app/(authenticated)/tpo/requests/page.tsx");
   expect(workspace).toContain('row.urgent?<StatusBadge tone="warning">Urgent</StatusBadge>');
-  expect(workspace).toContain("timeZone:\"Asia/Kolkata\"");
+  expect(workspace).toContain("timeZone:DEFAULT_TIME_ZONE");
   expect(workspace).toContain("selected.contextHref");
   expect(page).toContain("tpoRequestContextLink(row).href");
   expect(page).toContain("row.nextRoundAt??null");

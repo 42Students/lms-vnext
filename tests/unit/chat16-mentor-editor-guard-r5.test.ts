@@ -25,7 +25,7 @@ describe("chat-16 mentor editor safeguards",()=>{
   it("MEN-projects-meetings-57 renders private file timestamps in IST beside status",()=>{
     const files=source("src/components/projects/project-resource-files-panel.tsx");
     expect(files).toContain("Last updated: <time dateTime={file.completedAt??file.createdAt}>");
-    expect(files).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("Asia/Kolkata");
+    expect(files).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("DEFAULT_TIME_ZONE");
     expect(files).toContain("{descriptor.label}");
     expect(files).toContain("{file.originalName}");
   });

@@ -83,7 +83,7 @@ describe("Super Admin college and tenant subpage threat and state audit", () => 
     expect(devices).toContain("up to 100 shown");
     expect(devices).toContain("No active sessions for this account.");
     expect(devices).toContain("AdminRevokeSessions");
-    expect(devices).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('"Asia/Kolkata"');
+    expect(devices).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('DEFAULT_TIME_ZONE');
     const guard = history.indexOf('requirePermission(context,"admin-scope.select")');
     const parse = history.indexOf("parseAdminSessionHistoryPage(raw)");
     const list = history.indexOf("listCollegeAdminHistory(context,collegeId,userId,page)");

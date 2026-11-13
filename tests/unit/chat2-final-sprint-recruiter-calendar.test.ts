@@ -10,7 +10,7 @@ describe("Final sprint recruiter calendar verification",()=>{
   expect(service).toContain("durationMinutes: placementJobRounds.durationMinutes");
   expect(calendar).toContain("event.endsAt");
   expect(calendar).toContain("eventTime(event.endsAt)");
-  expect(calendar).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('"Asia/Kolkata"');
+  expect(calendar).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('DEFAULT_TIME_ZONE');
  });
  it("REC-calendar-messages-profile-05 shows the legacy range, navigation and empty calendar wording",()=>{
   const page=src("src/app/(authenticated)/hr/calendar/page.tsx");

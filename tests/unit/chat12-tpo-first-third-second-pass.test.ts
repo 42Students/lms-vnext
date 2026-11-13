@@ -43,7 +43,7 @@ describe("UX-tpo-first-third-12 explicit denial, recovery and scope contracts",(
   expect(code).toContain('role="alert"');
   expect(code).toContain("if(!detail||!header)notFound()");
   expect(code).toContain('role="log" aria-live="polite"');
-  expect(code).toContain('timeZone:"Asia/Kolkata"');
+  expect(code).toContain('timeZone:DEFAULT_TIME_ZONE');
  });
  it("UX-tpo-notifications-01 does not query inbox for malformed cursors or deactivated membership",()=>{
   const code=page("/notifications");

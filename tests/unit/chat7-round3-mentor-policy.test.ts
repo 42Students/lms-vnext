@@ -21,7 +21,7 @@ expect(source).toContain("points");
 it("MEN-projects-meetings-R03 meeting form fixes the user-visible wall-time zone to IST",()=>{
 const source=read("src/components/projects/project-meeting-controls.tsx");
 expect(source).toContain("Times are in Asia/Kolkata (IST).");
-expect(source).toContain("setTimeZone(\"Asia/Kolkata\")");
+expect(source).toContain("setTimeZone(DEFAULT_TIME_ZONE)");
 });
 it("MEN-projects-meetings-R04 join action does not appear on cancelled, completed or missed meetings",()=>{
 const source=read("src/components/projects/project-workspace.tsx");

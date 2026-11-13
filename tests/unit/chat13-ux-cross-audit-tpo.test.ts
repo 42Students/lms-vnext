@@ -16,7 +16,7 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
  it("UX-cross-tpo-second-C13-002 share audit preserves UTC evidence on phone and paging",()=>{
   const s=read("src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx");
   expect(s).toContain('<DataTable');
-  expect(s).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("Asia/Kolkata");
+  expect(s).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("DEFAULT_TIME_ZONE");
   expect(s).toContain('+" IST"');
   expect(s).toContain('No share-page views or CSV downloads match this event filter for this drive.');
   expect(s).toContain('companyShareAuditPageHref');

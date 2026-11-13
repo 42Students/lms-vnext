@@ -27,7 +27,7 @@ describe("centralisation metrics", () => {
 
   it("excludes the central module itself from its own metric", () => {
     const sources = [
-      src("src/lib/format-date.ts", 'timeZone: "Asia/Kolkata"'),
+      src("src/config/locale.ts", 'timeZone: "Asia/Kolkata"'),
       src("src/components/x.tsx", 'timeZone: "Asia/Kolkata"'),
     ];
     expect(countMetric(byId("time.asiaKolkataLiterals"), sources)).toBe(1);

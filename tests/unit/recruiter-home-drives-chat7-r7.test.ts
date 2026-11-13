@@ -9,5 +9,5 @@ it("REC-home-drives-50 confirms the audited source behavior",()=>{const s=read("
   expect(read("src/components/hr/hr-job-offers-grid.tsx")).toContain('label:"Reply by"');});
 it("REC-home-drives-54 confirms the audited source behavior",()=>{const s=read("src/app/(authenticated)/hr/placements/jobs/[jobId]/not-found.tsx");for(const p of ["We could not find this drive","It isn&apos;t one of your drives at this college"])expect(s).toContain(p);});
 it("REC-home-drives-55 confirms the audited source behavior",()=>{const s=read("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");for(const p of ["Rounds & interviews","Applicants (","Offers (","Discussion"])expect(s).toContain(p);});
-it("REC-home-drives-R07 confirms the audited source behavior",()=>{const s=read("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");for(const p of ["timeZone:\"Asia/Kolkata\""," IST"])expect(s).toContain(p);});
+it("REC-home-drives-R07 confirms the audited source behavior",()=>{const s=read("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");for(const p of ["timeZone:DEFAULT_TIME_ZONE"," IST"])expect(s).toContain(p);});
 });

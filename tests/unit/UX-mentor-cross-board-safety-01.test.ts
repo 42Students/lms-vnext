@@ -23,7 +23,7 @@ describe("Mentor board external links and modal focus",()=>{
   expect(dialog).toContain("useOverlayExit(ref, opener, open, 180)");
   expect(dialog).toContain("opener.current.focus()");
   expect(dialog).toContain("onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}");
-  expect(detail).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("Asia/Kolkata");
+  expect(detail).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("DEFAULT_TIME_ZONE");
  });
  it("UX-mentor-cross-B06 board and destructive controls have 44px targets",()=>{
   for(const path of ["src/components/projects/mentor-lane-board.tsx","src/components/projects/mentor-board-task-detail-dialog.tsx","src/components/projects/mentor-task-delete-control.tsx"]){

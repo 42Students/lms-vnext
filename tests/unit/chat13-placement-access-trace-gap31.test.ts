@@ -31,7 +31,7 @@ describe("SA-tenants-modules-31 placement-cell decision trace",()=>{
   const page=read("src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx");
   for(const label of ["Placement cell decision","Not decided yet","Eligible","Ineligible","Decided by"])
    expect(page).toContain(label);
-  expect(page).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/);expect(read("src/lib/format-date.ts")).toContain("Asia/Kolkata");
+  expect(page).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/);expect(read("src/lib/format-date.ts")).toContain("DEFAULT_TIME_ZONE");
   expect(page).toContain("selected.placementParticipation");
  });
 });

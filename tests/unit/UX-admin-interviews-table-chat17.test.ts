@@ -31,7 +31,7 @@ describe("UX-UNOWNED-TABLE-04 Super Admin interview operations",()=>{
   it("retains IST formatting and permission-preserving schedule destination",()=>{
     const source=readFileSync(join(process.cwd(),
       "src/components/admin/super-admin-interview-operations.tsx"),"utf8");
-    expect(source).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("Asia/Kolkata");
+    expect(source).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("DEFAULT_TIME_ZONE");
     expect(source).toContain('href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)+"/schedule"}');
     expect(source).toContain('conflicts.get(row.id)?.join("; ")');
     expect(source).toContain('title:e.title,date:e.startsAt');

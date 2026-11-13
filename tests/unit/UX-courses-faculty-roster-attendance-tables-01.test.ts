@@ -26,7 +26,7 @@ describe("UX-courses-faculty-roster-attendance-tables-01",()=>{
   expect(source).toContain("learnerAttendanceStatusTone(row.status)");
   expect(source).toContain("statusLabel(row.status)");
   expect(source).toContain("row.facultyName,row.location");
-  expect(source).toContain('timeZone:"Asia/Kolkata"');
+  expect(source).toContain('timeZone:DEFAULT_TIME_ZONE');
   expect(source).toContain("No sessions match this status");
   expect(source).toContain("Download attendance CSV");
   expect(source).not.toContain("<table");

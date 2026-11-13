@@ -14,12 +14,12 @@ describe("Final sprint recruiter IST date decision",()=>{
   ];
   for(const path of paths){
    const content=readFileSync(path,"utf8");
-   expect(content).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('"Asia/Kolkata"');
+   expect(content).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist[A-Za-z]+Formatter|createDateFormatter/);expect(readFormatDate()).toContain('DEFAULT_TIME_ZONE');
   }
   const page=readFileSync(paths[0]!,"utf8");
   expect(page).toContain(" IST");
   const detail=readFileSync(paths[2]!,"utf8");
-  expect(detail).toContain('timeZone:"Asia/Kolkata"');
+  expect(detail).toContain('timeZone:DEFAULT_TIME_ZONE');
   const acceptance=readFileSync("docs/audit/acceptance/recruiter-home-drives-verification.md","utf8");
   expect(acceptance).toContain("REC-home-drives-R07");
   expect(acceptance).toContain("Owner requires India Standard Time");

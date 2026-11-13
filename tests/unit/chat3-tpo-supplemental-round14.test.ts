@@ -70,7 +70,7 @@ describe("TPO supplemental job metadata",()=>{
   expect(form).toContain("setLastLocalSaveAt(Date.now())");
   expect(form).toContain("Changes not saved to the server · Browser backup at ");
   expect(form).toContain("Not saved yet · Your changes are backed up locally");
-  expect(form).toContain("timeZone:\"Asia/Kolkata\"");
+  expect(form).toContain("timeZone:DEFAULT_TIME_ZONE");
  });
 
  it("TPO-drives-43 stores an uncertain create outcome after timeout instead of retrying blindly",()=>{

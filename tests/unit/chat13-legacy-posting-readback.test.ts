@@ -7,7 +7,7 @@ describe("Super Admin supplemental draft terms",()=>{
    "Important dates","Custom eligibility rules (informational)"])expect(page).toContain(label);
   expect(page).toContain("driveSettingsIstDate(job.legacyPostingDetails.assessmentDeadline)");
   const dates=readFileSync("src/modules/placements/admin-drive-settings-date-model.ts","utf8");
-  expect(dates).toContain('timeZone:"Asia/Kolkata"');
+  expect(dates).toContain('timeZone:DEFAULT_TIME_ZONE');
   expect(page).toContain("enforceable learner eligibility remains in the drive policy");
  });
 });

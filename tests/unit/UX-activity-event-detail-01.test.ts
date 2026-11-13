@@ -17,7 +17,7 @@ describe("UX-activity-event-detail-01",()=>{
   const page=read("src/app/(authenticated)/activity/[eventId]/page.tsx");
   expect(page).toContain('<section className="min-w-0 space-y-4 border-b border-border pb-5">');
   expect(page).toContain('<time dateTime={event.occurredAt.toISOString()}>');
-  expect(page).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("Asia/Kolkata");
+  expect(page).toMatch(/formatDateTimeIst|formatDateIst|formatDateWith|ist\w+Formatter|createDateFormatter|formatDate/),expect(__fmt()).toContain("DEFAULT_TIME_ZONE");
   expect(page).toContain("max-w-full overflow-auto");
   expect(page).toContain("This event has no structured context.");
   expect(page).toContain("Event context");

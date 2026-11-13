@@ -25,7 +25,7 @@ describe("TPO Drives latest prototype list",()=>{
   expect(src).toContain("job.offersMade");
   expect(src).toContain("tpoDriveWhereItIs(job,data.asOf)");
   expect(src).toContain("job.nextRoundAt");
-  expect(src).toContain('timeZone:"Asia/Kolkata"');
+  expect(src).toContain('timeZone:DEFAULT_TIME_ZONE');
   expect(src).toContain("Counts are recorded application, round and offer facts, not inferred shortlist totals.");
  });
  it("preserves the real permission boundary, drilldown and original bulk export tools",()=>{
